@@ -1,0 +1,55 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: class fabioimage</title>
+</head><body bgcolor="#f0f0f8">
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><strong>fabio.fabioimage</strong> = <a name="fabio.fabioimage">class fabioimage</a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>A&nbsp;common&nbsp;object&nbsp;for&nbsp;images&nbsp;in&nbsp;fable<br>
+Contains&nbsp;a&nbsp;Numeric&nbsp;array&nbsp;(.data)&nbsp;and&nbsp;dict&nbsp;of&nbsp;meta&nbsp;data&nbsp;(.header)<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="fabioimage-__init__"><strong>__init__</strong></a>(self, data<font color="#909090">=None</font>, header<font color="#909090">={}</font>)</dt><dd><tt>Set&nbsp;up&nbsp;initial&nbsp;values</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-add"><strong>add</strong></a>(self, otherImage)</dt><dd><tt>Add&nbsp;another&nbsp;Image&nbsp;-&nbsp;warnign,&nbsp;does&nbsp;not&nbsp;clip&nbsp;to&nbsp;16&nbsp;bit&nbsp;images&nbsp;by&nbsp;default</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-getheader"><strong>getheader</strong></a>(self)</dt><dd><tt>returns&nbsp;self.<strong>header</strong></tt></dd></dl>
+
+<dl><dt><a name="fabioimage-getmax"><strong>getmax</strong></a>(self)</dt><dd><tt>Find&nbsp;max&nbsp;value&nbsp;in&nbsp;self.<strong>data</strong>,&nbsp;caching&nbsp;for&nbsp;the&nbsp;future</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-getmean"><strong>getmean</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;mean</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-getmin"><strong>getmin</strong></a>(self)</dt><dd><tt>Find&nbsp;min&nbsp;value&nbsp;in&nbsp;self.<strong>data</strong>,&nbsp;caching&nbsp;for&nbsp;the&nbsp;future</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-getstddev"><strong>getstddev</strong></a>(self)</dt><dd><tt>return&nbsp;the&nbsp;standard&nbsp;deviation</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-integrate_area"><strong>integrate_area</strong></a>(self, coords, floor<font color="#909090">=0</font>)</dt><dd><tt>Sums&nbsp;up&nbsp;a&nbsp;region&nbsp;of&nbsp;interest&nbsp;<br>
+if&nbsp;len(coords)&nbsp;==&nbsp;4&nbsp;-&gt;&nbsp;convert&nbsp;coords&nbsp;to&nbsp;slices<br>
+if&nbsp;len(coords)&nbsp;==&nbsp;2&nbsp;-&gt;&nbsp;use&nbsp;as&nbsp;slices<br>
+floor&nbsp;-&gt;&nbsp;?</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-make_slice"><strong>make_slice</strong></a>(self, coords)</dt><dd><tt>Convert&nbsp;a&nbsp;len(4)&nbsp;set&nbsp;of&nbsp;coords&nbsp;into&nbsp;a&nbsp;len(2)&nbsp;<br>
+tuple&nbsp;(pair)&nbsp;of&nbsp;slice&nbsp;objects<br>
+the&nbsp;latter&nbsp;are&nbsp;immutable,&nbsp;meaning&nbsp;the&nbsp;roi&nbsp;can&nbsp;be&nbsp;cached</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-read"><strong>read</strong></a>(self, filename)</dt><dd><tt>To&nbsp;be&nbsp;overridden&nbsp;-&nbsp;fill&nbsp;in&nbsp;self.<strong>header</strong>&nbsp;and&nbsp;self.<strong>data</strong></tt></dd></dl>
+
+<dl><dt><a name="fabioimage-readheader"><strong>readheader</strong></a>(self, file_obj)</dt><dd><tt>To&nbsp;be&nbsp;overridden&nbsp;-&nbsp;fill&nbsp;in&nbsp;self.<strong>header</strong></tt></dd></dl>
+
+<dl><dt><a name="fabioimage-rebin"><strong>rebin</strong></a>(self, x_rebin_fact, y_rebin_fact)</dt><dd><tt>Rebin&nbsp;the&nbsp;data&nbsp;and&nbsp;adjust&nbsp;dims</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-resetvals"><strong>resetvals</strong></a>(self)</dt><dd><tt>Reset&nbsp;cache&nbsp;-&nbsp;call&nbsp;on&nbsp;changing&nbsp;data</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-toPIL16"><strong>toPIL16</strong></a>(self, filename<font color="#909090">=None</font>)</dt><dd><tt>Convert&nbsp;to&nbsp;Python&nbsp;Imaging&nbsp;Library&nbsp;16&nbsp;bit&nbsp;greyscale&nbsp;image</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-update_header"><strong>update_header</strong></a>(self, **kwds)</dt><dd><tt>update&nbsp;the&nbsp;header&nbsp;entries<br>
+by&nbsp;default&nbsp;pass&nbsp;in&nbsp;a&nbsp;dict&nbsp;of&nbsp;key,&nbsp;values.</tt></dd></dl>
+
+<dl><dt><a name="fabioimage-write"><strong>write</strong></a>(self, fname)</dt><dd><tt>To&nbsp;be&nbsp;overwritten&nbsp;-&nbsp;write&nbsp;the&nbsp;file</tt></dd></dl>
+
+</td></tr></table>
+</body></html>

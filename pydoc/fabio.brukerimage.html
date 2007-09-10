@@ -1,0 +1,112 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module fabio.brukerimage</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.brukerimage</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/python2.5/site-packages/fabio/brukerimage.py">/usr/lib/python2.5/site-packages/fabio/brukerimage.py</a></font></td></tr></table>
+    <p><tt>Authors:&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Center&nbsp;for&nbsp;Fundamental&nbsp;Research:&nbsp;Metal&nbsp;Structures&nbsp;in&nbsp;Four&nbsp;Dimensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Risoe&nbsp;National&nbsp;Laboratory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frederiksborgvej&nbsp;399<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DK-4000&nbsp;Roskilde<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email:erik.knudsen@risoe.dk<br>
+&nbsp;<br>
+Based&nbsp;on:&nbsp;openbruker,readbruker,&nbsp;readbrukerheader&nbsp;functions&nbsp;in&nbsp;the&nbsp;opendata<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;module&nbsp;of&nbsp;ImageD11&nbsp;written&nbsp;by&nbsp;Jon&nbsp;Wright,&nbsp;ESRF,&nbsp;Grenoble,&nbsp;France</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="PIL.Image.html">PIL.Image</a><br>
+</td><td width="25%" valign=top><a href="Numeric.html">Numeric</a><br>
+</td><td width="25%" valign=top><a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="fabio.brukerimage.html#brukerimage">brukerimage</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="brukerimage">class <strong>brukerimage</strong></a></font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="brukerimage-add"><strong>add</strong></a>(self, otherImage)</dt></dl>
+
+<dl><dt><a name="brukerimage-getheader"><strong>getheader</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="brukerimage-getmax"><strong>getmax</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="brukerimage-getmean"><strong>getmean</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="brukerimage-getmin"><strong>getmin</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="brukerimage-getstddev"><strong>getstddev</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="brukerimage-integrate_area"><strong>integrate_area</strong></a>(self, coords, floor<font color="#909090">=0</font>)</dt></dl>
+
+<dl><dt><a name="brukerimage-read"><strong>read</strong></a>(self, fname, verbose<font color="#909090">=0</font>)</dt></dl>
+
+<dl><dt><a name="brukerimage-readbytestream"><strong>readbytestream</strong></a>(self, file, offset, x, y, nbytespp, datatype<font color="#909090">='int'</font>, signed<font color="#909090">='n'</font>, swap<font color="#909090">='n'</font>, typeout<font color="#909090">='w'</font>)</dt><dd><tt>Reads&nbsp;in&nbsp;a&nbsp;bytestream&nbsp;from&nbsp;a&nbsp;file&nbsp;(which&nbsp;may&nbsp;be&nbsp;a&nbsp;string&nbsp;indicating<br>
+a&nbsp;filename,&nbsp;or&nbsp;an&nbsp;already&nbsp;opened&nbsp;file&nbsp;(should&nbsp;be&nbsp;"rb"))<br>
+offset&nbsp;is&nbsp;the&nbsp;position&nbsp;(in&nbsp;bytes)&nbsp;where&nbsp;the&nbsp;pixel&nbsp;data&nbsp;start<br>
+nbytespp&nbsp;=&nbsp;number&nbsp;of&nbsp;bytes&nbsp;per&nbsp;pixel<br>
+type&nbsp;can&nbsp;be&nbsp;int&nbsp;or&nbsp;float&nbsp;(4&nbsp;bytes&nbsp;pp)&nbsp;or&nbsp;double&nbsp;(8&nbsp;bytes&nbsp;pp)<br>
+signed:&nbsp;normally&nbsp;signed&nbsp;data&nbsp;'y',&nbsp;but&nbsp;'n'&nbsp;to&nbsp;try&nbsp;to&nbsp;get&nbsp;back&nbsp;the&nbsp;right&nbsp;numbers<br>
+&nbsp;&nbsp;when&nbsp;unsigned&nbsp;data&nbsp;are&nbsp;converted&nbsp;to&nbsp;signed&nbsp;(python&nbsp;has&nbsp;no&nbsp;unsigned&nbsp;numeric&nbsp;types.)<br>
+swap,&nbsp;normally&nbsp;do&nbsp;not&nbsp;bother,&nbsp;but&nbsp;'y'&nbsp;to&nbsp;swap&nbsp;bytes<br>
+typeout&nbsp;is&nbsp;the&nbsp;Numeric&nbsp;type&nbsp;to&nbsp;output,&nbsp;normally&nbsp;UInt16,&nbsp;but&nbsp;more&nbsp;if&nbsp;overflows&nbsp;occurred<br>
+x&nbsp;and&nbsp;y&nbsp;are&nbsp;the&nbsp;pixel&nbsp;dimensions<br>
+&nbsp;<br>
+TODO&nbsp;:&nbsp;Read&nbsp;in&nbsp;regions&nbsp;of&nbsp;interest<br>
+&nbsp;<br>
+PLEASE&nbsp;LEAVE&nbsp;THE&nbsp;STRANGE&nbsp;INTERFACE&nbsp;ALONE&nbsp;-&nbsp;IT&nbsp;IS&nbsp;USEFUL&nbsp;FOR&nbsp;THE&nbsp;BRUKER&nbsp;FORMAT</tt></dd></dl>
+
+<dl><dt><a name="brukerimage-rebin"><strong>rebin</strong></a>(self, x_rebin_fact, y_rebin_fact)</dt></dl>
+
+<dl><dt><a name="brukerimage-resetvals"><strong>resetvals</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="brukerimage-toPIL16"><strong>toPIL16</strong></a>(self, filename<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="brukerimage-write"><strong>write</strong></a>(self, fname)</dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>bytecode</strong> = None</dl>
+
+<dl><dt><strong>data</strong> = None</dl>
+
+<dl><dt><strong>dim1</strong> = 0</dl>
+
+<dl><dt><strong>dim2</strong> = 0</dl>
+
+<dl><dt><strong>header</strong> = {}</dl>
+
+<dl><dt><strong>header_keys</strong> = []</dl>
+
+<dl><dt><strong>m</strong> = None</dl>
+
+<dl><dt><strong>maxval</strong> = None</dl>
+
+<dl><dt><strong>minval</strong> = None</dl>
+
+<dl><dt><strong>stddev</strong> = None</dl>
+
+</td></tr></table></td></tr></table>
+</body></html>

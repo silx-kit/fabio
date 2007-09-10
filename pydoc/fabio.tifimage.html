@@ -1,0 +1,97 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module fabio.tifimage</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.tifimage</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/python2.5/site-packages/fabio/tifimage.py">/usr/lib/python2.5/site-packages/fabio/tifimage.py</a></font></td></tr></table>
+    <p><tt>Authors:&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Center&nbsp;for&nbsp;Fundamental&nbsp;Research:&nbsp;Metal&nbsp;Structures&nbsp;in&nbsp;Four&nbsp;Dimensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Risoe&nbsp;National&nbsp;Laboratory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frederiksborgvej&nbsp;399<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DK-4000&nbsp;Roskilde<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email:henning.sorensen@risoe.dk</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="PIL.Image.html">PIL.Image</a><br>
+</td><td width="25%" valign=top><a href="Numeric.html">Numeric</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="fabio.tifimage.html#tifimage">tifimage</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="tifimage">class <strong>tifimage</strong></a></font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="tifimage-getheader"><strong>getheader</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="tifimage-getmax"><strong>getmax</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="tifimage-getmean"><strong>getmean</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="tifimage-getmin"><strong>getmin</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="tifimage-getstddev"><strong>getstddev</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="tifimage-integrate_area"><strong>integrate_area</strong></a>(self, coords)</dt></dl>
+
+<dl><dt><a name="tifimage-read"><strong>read</strong></a>(self, fname, verbose<font color="#909090">=0</font>)</dt></dl>
+
+<dl><dt><a name="tifimage-rebin"><strong>rebin</strong></a>(self, x_rebin_factor, y_rebin_factor)</dt></dl>
+
+<dl><dt><a name="tifimage-toPIL16"><strong>toPIL16</strong></a>(self, filename<font color="#909090">=None</font>)</dt><dd><tt>#ugly&nbsp;hack&nbsp;but&nbsp;apparently&nbsp;necessary&nbsp;for&nbsp;some&nbsp;reason&nbsp;which&nbsp;escapes&nbsp;me&nbsp;(Erik)</tt></dd></dl>
+
+<dl><dt><a name="tifimage-toPIL32"><strong>toPIL32</strong></a>(self, filename<font color="#909090">=None</font>)</dt></dl>
+
+<dl><dt><a name="tifimage-write"><strong>write</strong></a>(self)</dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>bytecode</strong> = None</dl>
+
+<dl><dt><strong>data</strong> = None</dl>
+
+<dl><dt><strong>dim1</strong> = 0</dl>
+
+<dl><dt><strong>dim2</strong> = 0</dl>
+
+<dl><dt><strong>header</strong> = {}</dl>
+
+<dl><dt><strong>header_keys</strong> = []</dl>
+
+<dl><dt><strong>m</strong> = None</dl>
+
+<dl><dt><strong>maxval</strong> = None</dl>
+
+<dl><dt><strong>minval</strong> = None</dl>
+
+<dl><dt><strong>stddev</strong> = None</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__warningregistry__</strong> = {("Not importing directory '/usr/lib/python2.5/site-packages/Numeric': missing __init__.py", &lt;type 'exceptions.ImportWarning'&gt;, 14): 1}</td></tr></table>
+</body></html>
