@@ -24,8 +24,9 @@ def construct_filename(oldfilename, newfilenumber, padding=True):
     else:
         return oldfilename
 
-def deconstruct_filename(filename):
+def deconstruct_filename_old(filename):
     p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
+    # misses when data9999.edf -> data10000.edf
     m=re.match(p,filename)
     if m==None or m.group(2)=='':
         number=0;
@@ -46,6 +47,58 @@ def deconstruct_filename(filename):
               m.group(2): 'bruker'
               }[ext[1][1:]]
     return (number,filetype)
+
+
+filetypes = {'edf': 'edf',
+             'pnm' : 'pnm',
+             'pgm' : 'pnm',
+             'pbm' : 'pnm',
+             'tif': 'tif',
+             'tiff': 'tif',
+             'img': 'adsc',
+             'mccd': 'marccd',
+             'mar2300':'mar345',
+             'sfrm': 'bruker100'
+             }
+            
+def getnum(name):
+    # try to figure out a file number
+    # guess it starts at the back
+    nl = []
+    first = False
+    for c in name[::-1]: # this means iterate backwards through the string
+        if c.isdigit():
+            first = True
+            nl.append(c)
+            continue
+        if first: break
+    num = "".join(nl[::-1])
+    return int(num)
+
+
+def deconstruct_filename(filename):
+    parts = os.path.split(filename)[-1].split(".")
+    # loop back from end
+    compressed = False
+    if parts[-1] in ["gz","bz2"]:
+        parts = parts[:-1]
+        compressed=True
+    if parts[-1] in filetypes.keys():
+        typ = filetypes[parts[-1]]
+        try:
+            num = getnum("".join(parts[:-1]))
+        except:
+            num = 0
+    else:
+        try:
+            num = int(parts[-1])
+            typ = 'bruker'
+        except:
+            # unregistered type??
+            raise Exception("Cannot decode "+filename)
+    return num, typ
+            
+
 
 def extract_filenumber(filename):
     return deconstruct_filename(filename)[0]
