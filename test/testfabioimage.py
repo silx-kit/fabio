@@ -84,6 +84,17 @@ class test_open(unittest.TestCase):
         r = self.o._open("testfile.bz2").read()
         self.assertEqual( r , "{ hello }" ) 
 
+
+names = { Numeric.UInt8 : "Numeric.UInt8",
+          Numeric.Int8  : "Numeric.Int8" ,  
+          Numeric.UInt16: "Numeric.UInt16",  
+          Numeric.Int16 :  "Numeric.Int16" ,  
+          Numeric.UInt32:  "Numeric.UInt32" , 
+          Numeric.Int32 :  "Numeric.Int32"   ,
+          Numeric.Float32: "Numeric.Float32" ,
+          Numeric.Float64:"Numeric.Float64"}
+
+
 class testPILimage(unittest.TestCase):
     def setUp(self):
         self.okformats = [Numeric.UInt8 ,
@@ -93,27 +104,91 @@ class testPILimage(unittest.TestCase):
                           Numeric.UInt32 ,
                           Numeric.Int32  ,
                           Numeric.Float32]
-#                          Numeric.Float64]
+
         
     def testPIL_1(self):
         import RandomArray, sys
         for t in self.okformats:
+            name = names[t]
             for s in [(10,20), (431,1325)]:
                 testdata = (RandomArray.random(s)).astype(t)
                 im = fabioimage(testdata, {"title":"Random data"})
                 pm = im.toPIL16()
                 for i in [ 0, 5, s[1]-1 ]:
                     for j in [0, 5, s[0]-1 ]:
-                        err = "%d %d %f %f t=%s"%(i,j,testdata[j,i],
+                        err = name+" %d %d %f %f t=%s"%(i,j,testdata[j,i],
                                             pm.getpixel((i,j)),
                                             t)
-                        e = testdata[j,i] - pm.getpixel((i,j))
-                        if abs(e>0.1):
+                        e1 = im.data[j,i] - pm.getpixel((i,j))
+                        e2 = im.data[j,i] + pm.getpixel((i,j))
+                        
+                        if e2 != 0.:
+                            e = e1/e2
+                        else:
+                            e = e1
+
+
+                        if abs(e)>0.001:
+                            print err
+
+                        self.assertAlmostEquals( e,
+                                                 0,
+                                                 6, err)
+
+    def testPIL_2(self):
+        import RandomArray, sys
+        for t in self.okformats:
+            name = names[t]
+            for s in [(10,20), (431,1325)]:
+                testdata = (RandomArray.random(s)*sys.maxint/10).astype(t)
+                im = fabioimage(testdata, {"title":"Random data"})
+                pm = im.toPIL16()
+                for i in [ 0, 5, s[1]-1 ]:
+                    for j in [0, 5, s[0]-1 ]:
+                        err = name+" %d %d %f %f t=%s"%(i,j,testdata[j,i],
+                                            pm.getpixel((i,j)),
+                                            t)
+                        e1 = im.data[j,i] - pm.getpixel((i,j))
+                        e2 = im.data[j,i] + pm.getpixel((i,j))
+                        if e2 != 0.:
+                            e = e1/e2
+                        else:
+                            e = e1
+                        if abs(e)>0.001:
+                            print err
+
+                        self.assertAlmostEquals( e,
+                                                 0,
+                                                 6, err)
+                                            
+        
+    def testPIL_3(self):
+        import RandomArray, sys
+        for t in self.okformats:
+            name = names[t]
+            for s in [(10,20), (431,1325)]:
+                testdata = ((RandomArray.random(s)-0.5)*sys.maxint/10).astype(t)
+                im = fabioimage(testdata, {"title":"Random data"})
+                pm = im.toPIL16()
+                for i in [ 0, 5, s[1]-1 ]:
+                    for j in [0, 5, s[0]-1 ]:
+                        err = name+" %d %d %f %f t=%s"%(i,j,testdata[j,i],
+                                            pm.getpixel((i,j)),
+                                            t)
+
+                        e1 = im.data[j,i] - pm.getpixel((i,j))
+                        e2 = im.data[j,i] + pm.getpixel((i,j))
+                        if e2 != 0.:
+                            e = e1/e2
+                        else:
+                            e = e1
+                
+                        if abs(e)>0.001:
                             print err
                                             
-#                        self.assertAlmostEquals( testdata[j,i],
-#                                                 pm.getpixel((i,j)),
-#                                                 6, err)
+                        self.assertAlmostEquals( e,
+                                                 0,
+                                                 6, err)
         
     
 if __name__=="__main__":

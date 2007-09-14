@@ -119,11 +119,11 @@ class fabioimage:
         #         the all green pixels, finally all blue 
         bm = { Numeric.UInt8   : ["F","F;8"]    ,  #  8-bit unsigned integer.
                Numeric.Int8    : ["F","F;8S"]   ,  #  8-bit signed integer.
-               Numeric.UInt16  : ["F","F;16N"]  ,  #  16-bit native unsigned integer.
-               Numeric.Int16   : ["F","F;16NS"] ,  #  16-bit native signed integer.
+               Numeric.UInt16  : ["F","F;16"]  ,  #  16-bit native unsigned integer.
+               Numeric.Int16   : ["F","F;16S"] ,  #  16-bit native signed integer.
                Numeric.UInt32  : ["F","F;32N"]  ,  #  32-bit native unsigned integer.
                Numeric.Int32   : ["F","F;32NS"] ,  #  32-bit native signed integer.
-               Numeric.Float32 : ["F","F;32"] }    #  32-bit native floating point.
+               Numeric.Float32 : ["F","F;32NF"] }    #  32-bit native floating point.
         # Apparently does not work...:
              #  Numeric.Float64 : ["F","F;64NF"] }  #  64-bit native floating point
         #names = { Numeric.UInt8 : "Numeric.UInt8",
@@ -141,7 +141,7 @@ class fabioimage:
         except:
             raise Exception("Unknown data format in array!!!")
         try:
-            PILimage = Image.frombuffer(byteformat[0],(self.data.shape[1],self.data.shape[0]),self.data,"raw", byteformat[1], 0,-1 )
+            PILimage = Image.frombuffer(byteformat[0],(self.data.shape[1],self.data.shape[0]),self.data,"raw", byteformat[1], 0, 1 )
         except:
             print byteformat
             raise 
