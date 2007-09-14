@@ -83,6 +83,38 @@ class test_open(unittest.TestCase):
     def testBz2(self):    
         r = self.o._open("testfile.bz2").read()
         self.assertEqual( r , "{ hello }" ) 
+
+class testPILimage(unittest.TestCase):
+    def setUp(self):
+        self.okformats = [Numeric.UInt8 ,
+                          Numeric.Int8,
+                          Numeric.UInt16 ,
+                          Numeric.Int16  ,
+                          Numeric.UInt32 ,
+                          Numeric.Int32  ,
+                          Numeric.Float32]
+#                          Numeric.Float64]
+        
+    def testPIL_1(self):
+        import RandomArray, sys
+        for t in self.okformats:
+            for s in [(10,20), (431,1325)]:
+                testdata = (RandomArray.random(s)).astype(t)
+                im = fabioimage(testdata, {"title":"Random data"})
+                pm = im.toPIL16()
+                for i in [ 0, 5, s[1]-1 ]:
+                    for j in [0, 5, s[0]-1 ]:
+                        err = "%d %d %f %f t=%s"%(i,j,testdata[j,i],
+                                            pm.getpixel((i,j)),
+                                            t)
+                        e = testdata[j,i] - pm.getpixel((i,j))
+                        if abs(e>0.1):
+                            print err
+                                            
+#                        self.assertAlmostEquals( testdata[j,i],
+#                                                 pm.getpixel((i,j)),
+#                                                 6, err)
+        
     
 if __name__=="__main__":
     unittest.main()

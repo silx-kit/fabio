@@ -43,8 +43,7 @@ def array2image(a):
         mode = "F"
     else:
         raise ValueError, "unsupported image mode"
-
-
+    return Image.fromstring(mode, (a.shape[1], a.shape[0]), a.tostring())
 
 
 
@@ -84,18 +83,70 @@ class fabioimage:
         """
         if filename:
             self.read(filename)
-        if self.bytecode == 'w':
-            PILimage = Image.frombuffer("F",
-                                        (self.dim1,self.dim2),
-                                        self.data,
-                                        "raw","F;16",0,-1)
-            return PILimage
-        if self.bytecode == 'f':
-            PILimage = Image.frombuffer("F",
-                                        (self.dim1,self.dim2),
-                                        self.data.astype(Numeric.UInt16),
-                                        "raw","F;16",0,-1)
-        raise Exception("fabio does not handle type yet")
+        # >>> help(Image.frombuffer)
+        # frombuffer(mode, size, data, decoder_name='raw', *args)
+        # Load image from string or buffer
+        # *args == raw mode, stride, orientation
+        # raw mode 
+        # The pixel layout used in the file, and is used to properly
+        # convert data to PIL's internal layout. For a summary of the
+        # available formats, see the table below.
+        #
+        # stride 
+        #  The distance in bytes between two consecutive lines in the
+        # image. If 0, the image is assumed to be packed (no padding
+        # between lines). If omitted, the stride defaults to 0.
+        #
+        # orientation 
+        # Whether the first line in the image is the top line on the
+        # screen (1), or the bottom line (-1). If omitted, the orientation
+        # defaults to 1.
+        #
+        #  mode  description
+        #  "1"   1-bit bilevel, stored with the leftmost pixel in the
+        #        most significant bit. 0 means black, 1 means white.
+        #  "1;I" 1-bit inverted bilevel, stored with the leftmost pixel
+        #        in the most significant bit. 0 means white, 1 means black.
+        #  "1;R" 1-bit reversed bilevel, stored with the leftmost pixel
+        #        in the least significant bit. 0 means black, 1 means white.
+        #  "L"   8-bit greyscale. 0 means black, 255 means white.
+        #  "L;I" 8-bit inverted greyscale. 0 means white, 255 means black.
+        #  "P"   8-bit palette-mapped image.
+        # "RGB"  24-bit true colour, stored as (red, green, blue).
+        # "BGR"  24-bit true colour, stored as (blue, green, red).
+        # "RGBX" 24-bit true colour, stored as (blue, green, red, pad).
+        # "RGB;L" 24-bit true colour, line interleaved (first all red pixels,
+        #         the all green pixels, finally all blue 
+        bm = { Numeric.UInt8   : ["F","F;8"]    ,  #  8-bit unsigned integer.
+               Numeric.Int8    : ["F","F;8S"]   ,  #  8-bit signed integer.
+               Numeric.UInt16  : ["F","F;16N"]  ,  #  16-bit native unsigned integer.
+               Numeric.Int16   : ["F","F;16NS"] ,  #  16-bit native signed integer.
+               Numeric.UInt32  : ["F","F;32N"]  ,  #  32-bit native unsigned integer.
+               Numeric.Int32   : ["F","F;32NS"] ,  #  32-bit native signed integer.
+               Numeric.Float32 : ["F","F;32"] }    #  32-bit native floating point.
+        # Apparently does not work...:
+             #  Numeric.Float64 : ["F","F;64NF"] }  #  64-bit native floating point
+        #names = { Numeric.UInt8 : "Numeric.UInt8",
+        #          Numeric.Int8  : "Numeric.Int8" ,  
+        #          Numeric.UInt16: "Numeric.UInt16",  
+        #          Numeric.Int16 :  "Numeric.Int16" ,  
+        #          Numeric.UInt32:  "Numeric.UInt32" , 
+        #          Numeric.Int32 :  "Numeric.Int32"   ,
+        #          Numeric.Float32: "Numeric.Float32" ,
+        #          Numeric.Float64:"Numeric.Float64"}
+        try:
+            byteformat = bm [ self.data.typecode() ]
+            # print "Numeric typecode",self.data.typecode(),\
+            #      "name",names[self.data.typecode()],byteformat
+        except:
+            raise Exception("Unknown data format in array!!!")
+        try:
+            PILimage = Image.frombuffer(byteformat[0],(self.data.shape[1],self.data.shape[0]),self.data,"raw", byteformat[1], 0,-1 )
+        except:
+            print byteformat
+            raise 
+        return PILimage
+        
 
     def getheader(self):
         """ returns self.header """
