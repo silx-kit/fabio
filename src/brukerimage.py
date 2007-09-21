@@ -46,24 +46,26 @@ class brukerimage(fabioimage):
     otherwise it wont contain whole key: value pairs
     """
     
-    l=f.read(512)
+    l=f.read(512*5)
     i = 80
     self.header = {}
-    while i < 512:
-      key,val=l[i-80:i].split(":",1)
-      key=key.strip()         # remove the whitespace (why?)
-      val=val.strip()
-      if self.header.has_key(key):             # append lines if key already there
-	self.header[key]=self.header[key]+'\n'+val
-      else:
-	self.header[key]=val
-        self.header_keys.append(key)
+    while i < 512*5:
+      if l[i-80:i].find(":") > 0:
+        key,val=l[i-80:i].split(":",1)
+        key=key.strip()         # remove the whitespace (why?)
+        val=val.strip()
+        if self.header.has_key(key):             # append lines if key already there
+	  self.header[key]=self.header[key]+'\n'+val
+        else:
+	  self.header[key]=val
+          self.header_keys.append(key)
       i=i+80                  # next 80 characters
 
     nhdrblks=int(self.header['HDRBLKS'])    # we must have read this in the first 512 bytes.
     # Now read in the rest of the header blocks, appending to what we have
-    rest=f.read(512*(nhdrblks-1))
+    rest=f.read(512*(nhdrblks-5))
     l = l[i-80:512] + rest
+    i=80
     j=512*nhdrblks
     while i < j :
       if l[i-80:i].find(":") > 0:          # as for first 512 bytes of header
@@ -81,7 +83,6 @@ class brukerimage(fabioimage):
     self.dim1   =int(self.header['NROWS'])
     self.dim2   =int(self.header['NCOLS'])
 
-	
   def read(self,fname,verbose=0):
     f=self._open(fname,"rb")
     try:
@@ -102,7 +103,9 @@ class brukerimage(fabioimage):
     
     size=rows*cols*npixelb
     self.data=self._readbytestream(f,f.tell(),rows,cols,npixelb,datatype="int",signed='n',swap='n')
-    no=int(self.header['NOVERFL'])        # now process the overflows
+    
+    #handle overflows
+    no=int(self.header['NOVERFL'])
     if no>0:   # Read in the overflows
         # need at least Int32 sized data I guess - can reach 2^21
         self.data=self.data.astype(Numeric.UInt32)
