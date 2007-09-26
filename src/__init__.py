@@ -1,11 +1,13 @@
 
 import tifimage, adscimage, brukerimage
 import marccdimage, bruker100image, pnmimage
+import fit2dmaskimage
 
 
 from fabioimage import fabioimage
 from edfimage import edfimage
 from marccdimage import marccdimage
+from fit2dmaskimage import fit2dmaskimage
 
 import re, os # -> move elsewhere?
 

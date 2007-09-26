@@ -1,0 +1,114 @@
+************* Module testfilenames
+C0111:  1: Missing docstring
+C0103:  7: Invalid name "cases" (should match (([A-Z_]*)|(__.*__))$)
+C0111: 21:testfilenames: Missing docstring
+C0111: 22:testfilenames.test_many_cases: Missing docstring
+C0324: 23:testfilenames.test_many_cases: Comma not followed by a space
+        for num,typ,name in cases:
+               ^^
+C0324: 24:testfilenames.test_many_cases: Comma not followed by a space
+            fnum,ftyp = fabio.deconstruct_filename(name)
+                ^^
+C0324: 25:testfilenames.test_many_cases: Comma not followed by a space
+            self.assertEqual(num,fnum)
+                                ^^
+C0324: 26:testfilenames.test_many_cases: Comma not followed by a space
+            self.assertEqual(ftyp,typ)
+                                 ^^
+
+
+Report
+======
+11 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |24     |85.71 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |0      |0.00  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |0      |0.00  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |4      |14.29 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testfilenames)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |8      |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0324      |4          |
++-----------+-----------+
+|C0111      |3          |
++-----------+-----------+
+|C0103      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 2.73/10
+

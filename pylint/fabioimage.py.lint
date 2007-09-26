@@ -1,0 +1,297 @@
+************* Module fabioimage
+C0301: 63: Line too long (94/80)
+C0301:122: Line too long (84/80)
+C0301:123: Line too long (82/80)
+C0301:124: Line too long (85/80)
+C0301:125: Line too long (83/80)
+C0301:126: Line too long (85/80)
+C0301:128: Line too long (83/80)
+C0301:144: Line too long (132/80)
+C0301:222: Line too long (82/80)
+C0301:245: Line too long (88/80)
+C0301:267: Line too long (81/80)
+W0511:160: FIXME - removed int cast to leave type alone
+W0511:168: FIXME - removed int cast to leave type alone
+W0511:271: FIXME - why do you divide by 2? Rebinning should increase counts?
+W0511:314: FIXME - what about seek ? 
+C0111: 29:image2array: Missing docstring
+C0103: 29:image2array: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 33:image2array: Invalid name "a" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 35:image2array: Invalid name "a" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 39:array2image: Missing docstring
+C0103: 39:array2image: Invalid name "a" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 74:fabioimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+R0902: 53:fabioimage: Too many instance attributes (13/7)
+W0102: 58:fabioimage.__init__: Dangerous default value {} as argument
+C0103: 80:fabioimage.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:120:fabioimage.toPIL16: Comma not followed by a space
+        bm = { Numeric.UInt8   : ["F","F;8"]    ,  #  8-bit unsigned integer.
+                                     ^^
+               Numeric.Int8    : ["F","F;8S"]   ,  #  8-bit signed integer.
+               Numeric.UInt16  : ["F","F;16"]  ,  #  16-bit native unsigned integer.
+               Numeric.Int16   : ["F","F;16S"] ,  #  16-bit native signed integer.
+               Numeric.UInt32  : ["F","F;32N"]  ,  #  32-bit native unsigned integer.
+               Numeric.Int32   : ["F","F;32NS"] ,  #  32-bit native signed integer.
+               Numeric.Float32 : ["F","F;32NF"] }    #  32-bit native floating point.
+C0103:120:fabioimage.toPIL16: Invalid name "bm" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:144:fabioimage.toPIL16: Comma not followed by a space
+            PILimage = Image.frombuffer(byteformat[0],(self.data.shape[1],self.data.shape[0]),self.data,"raw", byteformat[1], 0, 1 )
+                                                     ^^
+C0103:144:fabioimage.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
+W0621:188:fabioimage.make_slice: Redefining name 'c' from outer scope (line 345)
+C0322:180:fabioimage.make_slice: Operator not preceded by a space
+            if coords[0]>coords[2]:
+                        ^
+C0322:181:fabioimage.make_slice: Operator not preceded by a space
+                coords[0:3:2]=[coords[2],coords[0]]
+                             ^
+C0322:182:fabioimage.make_slice: Operator not preceded by a space
+            if coords[1]>coords[3]:
+                        ^
+C0322:183:fabioimage.make_slice: Operator not preceded by a space
+                coords[1:4:2]=[coords[3],coords[1]]
+                             ^
+C0322:188:fabioimage.make_slice: Operator not preceded by a space
+            c=(self.dim2 - coords[3] - 1,
+             ^
+               coords[0] ,
+               self.dim2 - coords[1] - 1,
+               coords[2])
+C0103:188:fabioimage.make_slice: Invalid name "c" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:203:fabioimage.integrate_area: Operator not preceded by a space
+        if self.data==None:
+                    ^^
+C0103:207:fabioimage.integrate_area: Invalid name "sl" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:210:fabioimage.integrate_area: Invalid name "sl" (should match [a-z_][a-z0-9_]{2,30}$)
+W0613:196:fabioimage.integrate_area: Unused argument 'floor'
+C0103:234:fabioimage.getstddev: Invalid name "N" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:236:fabioimage.getstddev: Invalid name "S2" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:240:fabioimage.add: Invalid name "otherImage" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:257:fabioimage.rebin: Comma not followed by a space
+    def rebin(self,x_rebin_fact,y_rebin_fact):
+                  ^^
+C0322:259:fabioimage.rebin: Operator not preceded by a space
+        if self.data==None:
+                    ^^
+C0324:261:fabioimage.rebin: Comma not followed by a space
+        (mx,ex)=math.frexp(x_rebin_fact)
+           ^^
+C0103:261:fabioimage.rebin: Invalid name "mx" (should match [a-z_][a-z0-9_]{2,30}$)
+E0602:261:fabioimage.rebin: Undefined variable 'math'
+C0324:262:fabioimage.rebin: Comma not followed by a space
+        (my,ey)=math.frexp(y_rebin_fact)
+           ^^
+C0103:262:fabioimage.rebin: Invalid name "my" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:262:fabioimage.rebin: Invalid name "ey" (should match [a-z_][a-z0-9_]{2,30}$)
+E0602:262:fabioimage.rebin: Undefined variable 'math'
+W0701:267:fabioimage.rebin: Raising a string exception
+C0322:269:fabioimage.rebin: Operator not preceded by a space
+        i=1
+         ^
+C0322:272:fabioimage.rebin: Operator not preceded by a space
+            self.data=((self.data[:,::2]+self.data[:,1::2])/2)
+                     ^
+C0322:273:fabioimage.rebin: Operator not preceded by a space
+            i=i*2
+             ^
+C0322:274:fabioimage.rebin: Operator not preceded by a space
+        i=1
+         ^
+C0322:275:fabioimage.rebin: Operator not preceded by a space
+        while i<y_rebin_fact:
+               ^
+C0322:276:fabioimage.rebin: Operator not preceded by a space
+            self.data=((self.data[::2,:]+self.data[1::2,:])/2)
+                     ^
+C0322:277:fabioimage.rebin: Operator not preceded by a space
+            i=i*2
+             ^
+W0612:261:fabioimage.rebin: Unused variable 'ex'
+W0612:262:fabioimage.rebin: Unused variable 'ey'
+C0324:284:fabioimage.write: Comma not followed by a space
+    def write(self,fname):
+                  ^^
+R0201:284:fabioimage.write: Method could be a function
+R0201:290:fabioimage.readheader: Method could be a function
+R0201:304:fabioimage.read: Method could be a function
+W0621:320:fabioimage._open: Redefining name 'os' from outer scope (line 366)
+W0404:320:fabioimage._open: Reimport 'os' (imported line 366)
+R0201:310:fabioimage._open: Method could be a function
+C0322:329: Operator not preceded by a space
+if __name__=='__main__':
+           ^^
+C0103:331: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
+C0324:333: Comma not followed by a space
+    d = Numeric.ones((1024,1024), Numeric.UInt16)
+                          ^^
+C0103:333: Invalid name "d" (should match (([A-Z_]*)|(__.*__))$)
+C0103:334: Invalid name "d" (should match (([A-Z_]*)|(__.*__))$)
+C0324:335: Comma not followed by a space
+    assert d.typecode() == Numeric.ones((1),Numeric.UInt16).typecode()
+                                           ^^
+C0103:336: Invalid name "h" (should match (([A-Z_]*)|(__.*__))$)
+C0324:337: Comma not followed by a space
+    o = fabioImage(d,h)
+                    ^^
+C0103:337: Invalid name "o" (should match (([A-Z_]*)|(__.*__))$)
+E0602:337: Undefined variable 'fabioImage'
+C0324:344: Comma not followed by a space
+    d2 = Numeric.zeros((1024,1024), Numeric.UInt16, savespace = 1 )
+                            ^^
+C0103:344: Invalid name "d2" (should match (([A-Z_]*)|(__.*__))$)
+C0103:345: Invalid name "c" (should match (([A-Z_]*)|(__.*__))$)
+C0103:346: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
+C0103:349: Invalid name "o" (should match (([A-Z_]*)|(__.*__))$)
+E0602:349: Undefined variable 'fabioImage'
+C0103:357: Invalid name "npix" (should match (([A-Z_]*)|(__.*__))$)
+C0103:359: Invalid name "a1" (should match (([A-Z_]*)|(__.*__))$)
+C0103:361: Invalid name "a2" (should match (([A-Z_]*)|(__.*__))$)
+C0111:368:clean: Missing docstring
+C0324:369:clean: Comma not followed by a space
+        for name in ["testfile","testfile.gz", "testfile.bz2"]:
+                               ^^
+W0704:372:clean: Except doesn't do anything
+W0702:373:clean: No exception's type specified
+C0103:379: Invalid name "fo" (should match (([A-Z_]*)|(__.*__))$)
+W0212:379: Access to a protected member _open of a client class
+C0103:380: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
+C0103:385: Invalid name "fo" (should match (([A-Z_]*)|(__.*__))$)
+W0212:385: Access to a protected member _open of a client class
+C0103:386: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
+C0103:389: Invalid name "ft" (should match (([A-Z_]*)|(__.*__))$)
+W0212:391: Access to a protected member _open of a client class
+C0103:393: Invalid name "fo" (should match (([A-Z_]*)|(__.*__))$)
+W0212:393: Access to a protected member _open of a client class
+C0103:394: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
+C0324:400: Comma not followed by a space
+    print "Passed in",time.time()-start,"s"
+                     ^^
+
+
+Report
+======
+194 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |217    |59.45 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |62     |16.99 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |58     |15.89 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |28     |7.67  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    PIL 
+      \-Image (fabioimage)
+    Numeric (fabioimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |17     |NC         |NC         |100.00      |5.88     |
++---------+-------+-----------+-----------+------------+---------+
+|function |3      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |77     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |5      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |18     |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |4      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0103      |36         |
++-----------+-----------+
+|C0322      |15         |
++-----------+-----------+
+|C0324      |12         |
++-----------+-----------+
+|C0301      |11         |
++-----------+-----------+
+|W0511      |4          |
++-----------+-----------+
+|W0212      |4          |
++-----------+-----------+
+|R0201      |4          |
++-----------+-----------+
+|E0602      |4          |
++-----------+-----------+
+|C0111      |3          |
++-----------+-----------+
+|W0621      |2          |
++-----------+-----------+
+|W0612      |2          |
++-----------+-----------+
+|W0704      |1          |
++-----------+-----------+
+|W0702      |1          |
++-----------+-----------+
+|W0701      |1          |
++-----------+-----------+
+|W0613      |1          |
++-----------+-----------+
+|W0404      |1          |
++-----------+-----------+
+|W0102      |1          |
++-----------+-----------+
+|R0902      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 3.81/10
+

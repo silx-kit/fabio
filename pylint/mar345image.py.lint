@@ -1,0 +1,555 @@
+************* Module mar345image
+W0311: 20: Bad indentation. Found 2 spaces, expected 4
+W0311: 21: Bad indentation. Found 4 spaces, expected 8
+W0311: 22: Bad indentation. Found 4 spaces, expected 8
+W0311: 23: Bad indentation. Found 4 spaces, expected 8
+W0311: 24: Bad indentation. Found 4 spaces, expected 8
+W0311: 25: Bad indentation. Found 4 spaces, expected 8
+W0311: 26: Bad indentation. Found 4 spaces, expected 8
+W0311: 27: Bad indentation. Found 4 spaces, expected 8
+W0311: 28: Bad indentation. Found 4 spaces, expected 8
+W0311: 29: Bad indentation. Found 6 spaces, expected 12
+W0311: 31: Bad indentation. Found 2 spaces, expected 4
+W0311: 32: Bad indentation. Found 4 spaces, expected 8
+W0311: 33: Bad indentation. Found 6 spaces, expected 12
+W0311: 34: Bad indentation. Found 4 spaces, expected 8
+C0301: 35: Line too long (105/80)
+C0301: 36: Line too long (82/80)
+C0301: 37: Line too long (83/80)
+W0311: 39: Bad indentation. Found 4 spaces, expected 8
+W0311: 41: Bad indentation. Found 2 spaces, expected 4
+W0311: 42: Bad indentation. Found 4 spaces, expected 8
+W0311: 43: Bad indentation. Found 6 spaces, expected 12
+W0311: 44: Bad indentation. Found 4 spaces, expected 8
+W0311: 45: Bad indentation. Found 6 spaces, expected 12
+W0311: 46: Bad indentation. Found 4 spaces, expected 8
+W0311: 48: Bad indentation. Found 2 spaces, expected 4
+W0311: 49: Bad indentation. Found 4 spaces, expected 8
+W0311: 50: Bad indentation. Found 4 spaces, expected 8
+W0311: 51: Bad indentation. Found 4 spaces, expected 8
+W0311: 53: Bad indentation. Found 4 spaces, expected 8
+W0311: 54: Bad indentation. Found 6 spaces, expected 12
+W0311: 55: Bad indentation. Found 4 spaces, expected 8
+W0311: 56: Bad indentation. Found 6 spaces, expected 12
+W0311: 57: Bad indentation. Found 6 spaces, expected 12
+W0311: 58: Bad indentation. Found 6 spaces, expected 12
+W0311: 59: Bad indentation. Found 6 spaces, expected 12
+W0311: 60: Bad indentation. Found 6 spaces, expected 12
+W0311: 61: Bad indentation. Found 6 spaces, expected 12
+W0311: 62: Bad indentation. Found 6 spaces, expected 12
+W0311: 64: Bad indentation. Found 4 spaces, expected 8
+W0311: 65: Bad indentation. Found 6 spaces, expected 12
+W0311: 66: Bad indentation. Found 4 spaces, expected 8
+C0301: 67: Line too long (81/80)
+W0311: 67: Bad indentation. Found 6 spaces, expected 12
+W0311: 68: Bad indentation. Found 6 spaces, expected 12
+W0311: 69: Bad indentation. Found 4 spaces, expected 8
+W0311: 70: Bad indentation. Found 4 spaces, expected 8
+W0311: 71: Bad indentation. Found 4 spaces, expected 8
+W0311: 73: Bad indentation. Found 2 spaces, expected 4
+W0311: 74: Bad indentation. Found 4 spaces, expected 8
+W0311: 75: Bad indentation. Found 4 spaces, expected 8
+W0311: 76: Bad indentation. Found 4 spaces, expected 8
+W0311: 77: Bad indentation. Found 4 spaces, expected 8
+W0311: 79: Bad indentation. Found 2 spaces, expected 4
+W0311: 80: Bad indentation. Found 4 spaces, expected 8
+W0311: 82: Bad indentation. Found 2 spaces, expected 4
+W0311: 83: Bad indentation. Found 4 spaces, expected 8
+W0311: 85: Bad indentation. Found 4 spaces, expected 8
+W0311: 86: Bad indentation. Found 4 spaces, expected 8
+W0311: 89: Bad indentation. Found 4 spaces, expected 8
+C0301: 90: Line too long (129/80)
+C0301: 91: Line too long (100/80)
+C0301: 92: Line too long (91/80)
+W0311: 93: Bad indentation. Found 4 spaces, expected 8
+W0311: 94: Bad indentation. Found 6 spaces, expected 12
+W0311: 96: Bad indentation. Found 4 spaces, expected 8
+W0311: 98: Bad indentation. Found 4 spaces, expected 8
+W0311: 99: Bad indentation. Found 4 spaces, expected 8
+W0311:101: Bad indentation. Found 4 spaces, expected 8
+W0311:102: Bad indentation. Found 4 spaces, expected 8
+W0311:103: Bad indentation. Found 4 spaces, expected 8
+W0311:104: Bad indentation. Found 6 spaces, expected 12
+W0311:105: Bad indentation. Found 4 spaces, expected 8
+W0311:106: Bad indentation. Found 6 spaces, expected 12
+W0311:107: Bad indentation. Found 4 spaces, expected 8
+W0311:108: Bad indentation. Found 6 spaces, expected 12
+C0301:109: Line too long (90/80)
+W0311:109: Bad indentation. Found 6 spaces, expected 12
+W0311:111: Bad indentation. Found 4 spaces, expected 8
+W0311:113: Bad indentation. Found 4 spaces, expected 8
+W0311:114: Bad indentation. Found 4 spaces, expected 8
+W0311:116: Bad indentation. Found 4 spaces, expected 8
+W0311:117: Bad indentation. Found 4 spaces, expected 8
+W0311:119: Bad indentation. Found 4 spaces, expected 8
+W0311:121: Bad indentation. Found 4 spaces, expected 8
+W0311:123: Bad indentation. Found 4 spaces, expected 8
+W0311:124: Bad indentation. Found 4 spaces, expected 8
+W0311:126: Bad indentation. Found 4 spaces, expected 8
+W0311:127: Bad indentation. Found 4 spaces, expected 8
+W0311:129: Bad indentation. Found 4 spaces, expected 8
+W0311:130: Bad indentation. Found 4 spaces, expected 8
+W0311:133: Bad indentation. Found 4 spaces, expected 8
+W0311:134: Bad indentation. Found 4 spaces, expected 8
+C0301:135: Line too long (101/80)
+W0311:135: Bad indentation. Found 6 spaces, expected 12
+W0311:136: Bad indentation. Found 4 spaces, expected 8
+W0311:137: Bad indentation. Found 4 spaces, expected 8
+W0311:138: Bad indentation. Found 6 spaces, expected 12
+W0311:139: Bad indentation. Found 6 spaces, expected 12
+W0311:140: Bad indentation. Found 6 spaces, expected 12
+W0311:141: Bad indentation. Found 8 spaces, expected 16
+C0301:142: Line too long (178/80)
+W0311:142: Bad indentation. Found 6 spaces, expected 12
+W0311:143: Bad indentation. Found 8 spaces, expected 16
+W0311:144: Bad indentation. Found 8 spaces, expected 16
+W0311:145: Bad indentation. Found 6 spaces, expected 12
+W0311:146: Bad indentation. Found 8 spaces, expected 16
+W0311:147: Bad indentation. Found 8 spaces, expected 16
+C0301:148: Line too long (105/80)
+W0311:148: Bad indentation. Found 6 spaces, expected 12
+W0311:149: Bad indentation. Found 8 spaces, expected 16
+W0311:150: Bad indentation. Found 8 spaces, expected 16
+W0311:151: Bad indentation. Found 8 spaces, expected 16
+W0311:152: Bad indentation. Found 4 spaces, expected 8
+W0311:153: Bad indentation. Found 4 spaces, expected 8
+W0311:155: Bad indentation. Found 2 spaces, expected 4
+W0311:156: Bad indentation. Found 4 spaces, expected 8
+W0311:158: Bad indentation. Found 2 spaces, expected 4
+W0311:159: Bad indentation. Found 4 spaces, expected 8
+W0311:160: Bad indentation. Found 6 spaces, expected 12
+W0311:161: Bad indentation. Found 6 spaces, expected 12
+W0311:162: Bad indentation. Found 4 spaces, expected 8
+W0311:164: Bad indentation. Found 2 spaces, expected 4
+W0311:165: Bad indentation. Found 4 spaces, expected 8
+W0311:166: Bad indentation. Found 6 spaces, expected 12
+W0311:167: Bad indentation. Found 6 spaces, expected 12
+W0311:168: Bad indentation. Found 4 spaces, expected 8
+W0311:170: Bad indentation. Found 2 spaces, expected 4
+W0311:171: Bad indentation. Found 4 spaces, expected 8
+C0301:172: Line too long (94/80)
+W0311:172: Bad indentation. Found 6 spaces, expected 12
+W0311:173: Bad indentation. Found 4 spaces, expected 8
+W0311:175: Bad indentation. Found 2 spaces, expected 4
+W0311:176: Bad indentation. Found 4 spaces, expected 8
+W0311:177: Bad indentation. Found 6 spaces, expected 12
+W0311:178: Bad indentation. Found 6 spaces, expected 12
+W0311:179: Bad indentation. Found 4 spaces, expected 8
+W0311:180: Bad indentation. Found 6 spaces, expected 12
+C0301:181: Line too long (120/80)
+W0311:181: Bad indentation. Found 6 spaces, expected 12
+W0311:182: Bad indentation. Found 6 spaces, expected 12
+W0311:183: Bad indentation. Found 4 spaces, expected 8
+W0311:185: Bad indentation. Found 2 spaces, expected 4
+W0311:186: Bad indentation. Found 4 spaces, expected 8
+W0311:189: Bad indentation. Found 2 spaces, expected 4
+W0311:190: Bad indentation. Found 2 spaces, expected 4
+W0311:191: Bad indentation. Found 2 spaces, expected 4
+W0311:192: Bad indentation. Found 2 spaces, expected 4
+W0311:193: Bad indentation. Found 2 spaces, expected 4
+W0311:194: Bad indentation. Found 2 spaces, expected 4
+W0511: 92: TODO: turn this into a real check
+W0402: 17: Uses of a deprecated module 'string'
+C0111: 19:mar345image: Missing docstring
+C0103: 25:mar345image.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+R0902: 19:mar345image: Too many instance attributes (13/7)
+C0324: 20:mar345image.__init__: Comma not followed by a space
+  def __init__(self,filename=None):
+                   ^^
+C0322: 21:mar345image.__init__: Operator not preceded by a space
+    self.data=None
+             ^
+C0322: 22:mar345image.__init__: Operator not preceded by a space
+    self.header={}
+               ^
+C0322: 24:mar345image.__init__: Operator not preceded by a space
+    self.dim1=self.dim2=0
+             ^
+C0322: 25:mar345image.__init__: Operator not preceded by a space
+    self.m=self.maxval=self.stddev=self.minval=None
+          ^
+C0322: 26:mar345image.__init__: Operator not preceded by a space
+    self.header_keys=[]
+                    ^
+C0322: 27:mar345image.__init__: Operator not preceded by a space
+    self.bytecode=None
+                 ^
+C0103: 31:mar345image.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 31:mar345image.toPIL16: Missing docstring
+C0324: 31:mar345image.toPIL16: Comma not followed by a space
+  def toPIL16(self,filename=None):
+                  ^^
+C0322: 34:mar345image.toPIL16: Operator not preceded by a space
+    PILimage={
+            ^
+      'f':Image.frombuffer("F",(self.dim1,self.dim2),self.data.astype(Numeric.UInt16),"raw","F;16",0,-1),
+      'w':Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1),
+      'u':Image.fromstring("F",(self.dim1,self.dim2),self.data,"raw","F;32N",0,-1),
+      }[self.bytecode]
+C0103: 34:mar345image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 41:mar345image._open: Missing docstring
+C0324: 41:mar345image._open: Comma not followed by a space
+  def _open(self,fname,mode="rb"):
+                ^^
+C0322: 43:mar345image._open: Operator not preceded by a space
+      f=open(fname,mode)
+       ^
+C0103: 43:mar345image._open: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+R0201: 41:mar345image._open: Method could be a function
+C0111: 48:mar345image.read: Missing docstring
+C0324: 48:mar345image.read: Comma not followed by a space
+  def read(self,fname):
+               ^^
+C0322: 50:mar345image.read: Operator not preceded by a space
+    f=self._open(self.filename,"rb")
+     ^
+C0103: 50:mar345image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+W0702: 56:mar345image.read: No exception's type specified
+C0322: 58:mar345image.read: Operator not preceded by a space
+      self.dim1=1
+               ^
+C0322: 59:mar345image.read: Operator not preceded by a space
+      self.dim2=1
+               ^
+C0322: 60:mar345image.read: Operator not preceded by a space
+      self.bytecode='u'
+                   ^
+C0322: 61:mar345image.read: Operator not preceded by a space
+      self.data=Numeric.resize(Numeric.array([0],'u'),[1,1])
+               ^
+C0322: 65:mar345image.read: Operator not preceded by a space
+      self.data=mar345_io.unpack(f,self.dim1,self.dim2,self.numhigh)
+               ^
+C0322: 69:mar345image.read: Operator not preceded by a space
+    self.bytecode='u'
+                 ^
+C0111: 73:mar345image.readheader: Missing docstring
+C0324: 73:mar345image.readheader: Comma not followed by a space
+  def readheader(self,fname):
+                     ^^
+C0322: 74:mar345image.readheader: Operator not preceded by a space
+    f=self._open(fname)
+     ^
+C0103: 74:mar345image.readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 79:mar345image.getheader: Missing docstring
+W0621:101:mar345image._readheader: Redefining name 'i' from outer scope (line 190)
+C0111: 82:mar345image._readheader: Missing docstring
+C0324: 82:mar345image._readheader: Comma not followed by a space
+  def _readheader(self,infile=None):
+                      ^^
+C0322: 85:mar345image._readheader: Operator not preceded by a space
+    f=infile
+     ^
+C0103: 85:mar345image._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 86:mar345image._readheader: Operator not preceded by a space
+    h={}
+     ^
+C0103: 86:mar345image._readheader: Invalid name "h" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 89:mar345image._readheader: Operator not preceded by a space
+    l=f.read(64)
+     ^
+C0103: 89:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 94:mar345image._readheader: Operator not preceded by a space
+      formatstring='L'
+                  ^
+C0322: 96:mar345image._readheader: Operator not preceded by a space
+    self.dim1=self.dim2=int(struct.unpack('L',l[4:8])[0])
+             ^
+C0322: 98:mar345image._readheader: Operator not preceded by a space
+    self.numhigh=struct.unpack('L',l[2*4:(2+1)*4])[0]
+                ^
+C0322: 99:mar345image._readheader: Operator not preceded by a space
+    h['NumHigh']=self.numhigh
+                ^
+C0322:101:mar345image._readheader: Operator not preceded by a space
+    i=struct.unpack('L',l[3*4:(3+1)*4])[0]
+     ^
+C0322:103:mar345image._readheader: Operator not preceded by a space
+    if i==1:
+        ^^
+C0322:104:mar345image._readheader: Operator not preceded by a space
+      h['Format']='compressed'
+                 ^
+C0322:106:mar345image._readheader: Operator not preceded by a space
+      h['Format']='spiral'
+                 ^
+C0322:108:mar345image._readheader: Operator not preceded by a space
+      h['Format']='compressed'
+                 ^
+C0322:111:mar345image._readheader: Operator not preceded by a space
+    h['Mode']={0:'Dose', 1: 'Time'}[struct.unpack('L',l[4*4:(4+1)*4])[0]]
+             ^
+C0322:113:mar345image._readheader: Operator not preceded by a space
+    self.numpixels=struct.unpack('L',l[5*4:(5+1)*4])[0]
+                  ^
+C0322:114:mar345image._readheader: Operator not preceded by a space
+    h['NumPixels']=str(self.numpixels)
+                  ^
+C0322:116:mar345image._readheader: Operator not preceded by a space
+    h['PixelLength']=struct.unpack('L',l[6*4:(6+1)*4])[0]/1000.0
+                    ^
+C0322:117:mar345image._readheader: Operator not preceded by a space
+    h['PixelHeight']=struct.unpack('L',l[7*4:(7+1)*4])[0]/1000.0
+                    ^
+C0322:119:mar345image._readheader: Operator not preceded by a space
+    h['Wavelength']=struct.unpack('L',l[8*4:(8+1)*4])[0]/1000000.0
+                   ^
+C0322:121:mar345image._readheader: Operator not preceded by a space
+    h['Distance']=struct.unpack('L',l[9*4:(9+1)*4])[0]/1000.0
+                 ^
+C0322:123:mar345image._readheader: Operator not preceded by a space
+    h['StartPhi']=struct.unpack('L',l[10*4:11*4])[0]/1000.0
+                 ^
+C0322:124:mar345image._readheader: Operator not preceded by a space
+    h['EndPhi']=struct.unpack('L',l[11*4:12*4])[0]/1000.0
+               ^
+C0322:126:mar345image._readheader: Operator not preceded by a space
+    h['StartOmega']=struct.unpack('L',l[12*4:13*4])[0]/1000.0
+                   ^
+C0322:127:mar345image._readheader: Operator not preceded by a space
+    h['EndOmega']=struct.unpack('L',l[13*4:14*4])[0]/1000.0
+                 ^
+C0322:129:mar345image._readheader: Operator not preceded by a space
+    h['Chi']=struct.unpack('L',l[14*4:15*4])[0]/1000.0
+            ^
+C0322:130:mar345image._readheader: Operator not preceded by a space
+    h['TwoTheta']=struct.unpack('L',l[15*4:16*4])[0]/1000.0
+                 ^
+C0322:133:mar345image._readheader: Operator not preceded by a space
+    l=f.read(128)
+     ^
+C0103:133:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:136:mar345image._readheader: Operator not preceded by a space
+    l=string.strip(f.read(4096-128-64))
+     ^
+C0103:136:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:137:mar345image._readheader: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:138:mar345image._readheader: Operator not preceded by a space
+      if m=='END OF HEADER': break
+          ^^
+C0321:138:mar345image._readheader: More than one statement on a single line
+C0322:139:mar345image._readheader: Operator not preceded by a space
+      n=m.split(' ',1)
+       ^
+C0103:139:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:140:mar345image._readheader: Operator not preceded by a space
+      if n[0]=='':
+             ^^
+C0324:142:mar345image._readheader: Comma not followed by a space
+      if n[0] in ('PROGRAM','DATE','SCANNER','HIGH','MULTIPLIER','GAIN','WAVELENGTH','DISTANCE','RESOLUTION','CHI','TWOTHETA','MODE','TIME','GENERATOR','MONOCHROMATOR','REMARK'):
+                           ^^
+C0322:143:mar345image._readheader: Operator not preceded by a space
+        h[n[0]]=n[1].strip()
+               ^
+C0324:146:mar345image._readheader: Comma not followed by a space
+        (h['DIM'],h['FORMAT_TYPE'],h['NO_PIXELS'])=n[1].split()
+                 ^^
+C0324:148:mar345image._readheader: Comma not followed by a space
+      if n[0] in ('PIXEL','OFFSET','PHI','OMEGA','COUNTS','CENTER','INTENSITY','HISTOGRAM','COLLIMATOR'):
+                         ^^
+C0322:149:mar345image._readheader: Operator not preceded by a space
+        n=m.split()
+         ^
+C0103:149:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:150:mar345image._readheader: Comma not followed by a space
+        h.update( [(n[0]+'_'+n[j],n[j+1]) for j in range(1,len(n),2)] )
+                                 ^^
+C0322:152:mar345image._readheader: Operator not preceded by a space
+    self.header=h
+               ^
+R0915: 82:mar345image._readheader: Too many statements (52/50)
+W0612: 83:mar345image._readheader: Unused variable 'clip'
+W0612: 94:mar345image._readheader: Unused variable 'formatstring'
+C0111:155:mar345image.write: Missing docstring
+C0111:158:mar345image.getmax: Missing docstring
+C0322:159:mar345image.getmax: Operator not preceded by a space
+    if self.maxval==None:
+                  ^^
+C0322:160:mar345image.getmax: Operator not preceded by a space
+      max_xel=Numeric.argmax(Numeric.ravel(self.data))
+             ^
+C0322:161:mar345image.getmax: Operator not preceded by a space
+      self.maxval=Numeric.ravel(self.data)[max_xel]
+                 ^
+C0111:164:mar345image.getmin: Missing docstring
+C0322:165:mar345image.getmin: Operator not preceded by a space
+    if self.minval==None:
+                  ^^
+C0322:166:mar345image.getmin: Operator not preceded by a space
+      min_xel=Numeric.argmin(Numeric.ravel(self.data))
+             ^
+C0322:167:mar345image.getmin: Operator not preceded by a space
+      self.minval=Numeric.ravel(self.data)[min_xel]
+                 ^
+C0111:170:mar345image.getmean: Missing docstring
+C0322:171:mar345image.getmean: Operator not preceded by a space
+    if self.m==None:
+             ^^
+C0322:172:mar345image.getmean: Operator not preceded by a space
+      self.m=Numeric.sum(Numeric.ravel(self.data.astype(Numeric.Float)))/(self.dim1*self.dim2)
+            ^
+C0111:175:mar345image.getstddev: Missing docstring
+C0322:176:mar345image.getstddev: Operator not preceded by a space
+    if self.m==None:
+             ^^
+C0322:179:mar345image.getstddev: Operator not preceded by a space
+    if self.stddev==None:
+                  ^^
+C0322:180:mar345image.getstddev: Operator not preceded by a space
+      N=self.dim1*self.dim2-1
+       ^
+C0103:180:mar345image.getstddev: Invalid name "N" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:181:mar345image.getstddev: Operator not preceded by a space
+      S=Numeric.sum(Numeric.ravel((self.data.astype(Numeric.Float)-self.m)/N*(self.data.astype(Numeric.Float)-self.m)) )
+       ^
+C0103:181:mar345image.getstddev: Invalid name "S" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:182:mar345image.getstddev: Operator not preceded by a space
+      self.stddev=S/(self.dim1*self.dim2-1)
+                 ^
+C0111:185:mar345image.rebin: Missing docstring
+C0324:185:mar345image.rebin: Comma not followed by a space
+  def rebin(self,x_rebin_factor, y_rebin_factor):
+                ^^
+R0201:185:mar345image.rebin: Method could be a function
+W0613:185:mar345image.rebin: Unused argument 'x_rebin_factor'
+W0613:185:mar345image.rebin: Unused argument 'y_rebin_factor'
+W0201:113:mar345image._readheader: Attribute 'numpixels' defined outside __init__
+W0201: 98:mar345image._readheader: Attribute 'numhigh' defined outside __init__
+C0322:188: Operator not preceded by a space
+if __name__=='__main__':
+           ^^
+C0322:190: Operator not preceded by a space
+  i=mar345image()
+   ^
+C0322:192: Operator not preceded by a space
+  i2=i.toPIL16()
+    ^
+C0103:192: Invalid name "i2" (should match (([A-Z_]*)|(__.*__))$)
+
+
+Report
+======
+138 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |138    |83.64 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |16     |9.70  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |5      |3.03  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |6      |3.64  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    mar345_io (mar345image)
+    PIL 
+      \-Image (mar345image)
+    Numeric (mar345image)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |13     |NC         |NC         |7.69        |7.69     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |120    |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |4      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |146    |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|W0311      |136        |
++-----------+-----------+
+|C0322      |65         |
++-----------+-----------+
+|C0103      |17         |
++-----------+-----------+
+|C0301      |13         |
++-----------+-----------+
+|C0111      |13         |
++-----------+-----------+
+|C0324      |11         |
++-----------+-----------+
+|W0613      |2          |
++-----------+-----------+
+|W0612      |2          |
++-----------+-----------+
+|W0201      |2          |
++-----------+-----------+
+|R0201      |2          |
++-----------+-----------+
+|W0702      |1          |
++-----------+-----------+
+|W0621      |1          |
++-----------+-----------+
+|W0511      |1          |
++-----------+-----------+
+|W0402      |1          |
++-----------+-----------+
+|R0915      |1          |
++-----------+-----------+
+|R0902      |1          |
++-----------+-----------+
+|C0321      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at -9.57/10
+
