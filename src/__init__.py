@@ -7,6 +7,7 @@ import fit2dmaskimage
 from fabioimage import fabioimage
 from edfimage import edfimage
 from marccdimage import marccdimage
+from brukerimage import brukerimage
 from fit2dmaskimage import fit2dmaskimage
 
 import re, os # -> move elsewhere?

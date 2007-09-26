@@ -1,6 +1,6 @@
 ************* Module __init__
-C0301: 23: Line too long (84/80)
-C0301:121: Line too long (86/80)
+C0301: 25: Line too long (84/80)
+C0301:123: Line too long (86/80)
 C0111:  1: Missing docstring
 W0403:  2: Relative import 'tifimage'
 W0403:  2: Relative import 'adscimage'
@@ -8,49 +8,52 @@ W0403:  2: Relative import 'brukerimage'
 W0403:  3: Relative import 'marccdimage'
 W0403:  3: Relative import 'bruker100image'
 W0403:  3: Relative import 'pnmimage'
-W0403:  6: Relative import 'fabioimage'
-W0403:  7: Relative import 'edfimage'
-W0403:  8: Relative import 'marccdimage'
-W0404:  8: Reimport 'marccdimage' (imported line 3)
-C0111: 14:construct_filename: Missing docstring
-W0402: 17:construct_filename: Uses of a deprecated module 'string'
-C0322: 18:construct_filename: Operator not preceded by a space
+W0403:  4: Relative import 'fit2dmaskimage'
+W0403:  7: Relative import 'fabioimage'
+W0403:  8: Relative import 'edfimage'
+W0403:  9: Relative import 'marccdimage'
+W0404:  9: Reimport 'marccdimage' (imported line 3)
+W0403: 10: Relative import 'fit2dmaskimage'
+W0404: 10: Reimport 'fit2dmaskimage' (imported line 4)
+C0111: 16:construct_filename: Missing docstring
+W0402: 19:construct_filename: Uses of a deprecated module 'string'
+C0322: 20:construct_filename: Operator not preceded by a space
     p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
      ^
-C0103: 18:construct_filename: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 19:construct_filename: Operator not preceded by a space
+C0103: 20:construct_filename: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 21:construct_filename: Operator not preceded by a space
     m=re.match(p,oldfilename)
      ^
-C0103: 19:construct_filename: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 20:construct_filename: Operator not preceded by a space
+C0103: 21:construct_filename: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 22:construct_filename: Operator not preceded by a space
     if padding==False:
               ^^
-C0324: 23:construct_filename: Comma not followed by a space
+C0324: 25:construct_filename: Comma not followed by a space
         return m.group(1) + string.zfill(newfilenumber,len(m.group(2))) + m.group(3)
                                                       ^^
-C0111: 27:deconstruct_filename_old: Missing docstring
-C0322: 28:deconstruct_filename_old: Operator not preceded by a space
+C0111: 29:deconstruct_filename_old: Missing docstring
+C0322: 30:deconstruct_filename_old: Operator not preceded by a space
     p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
      ^
-C0103: 28:deconstruct_filename_old: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 30:deconstruct_filename_old: Operator not preceded by a space
+C0103: 30:deconstruct_filename_old: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 32:deconstruct_filename_old: Operator not preceded by a space
     m=re.match(p,filename)
      ^
-C0103: 30:deconstruct_filename_old: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 31:deconstruct_filename_old: Operator not preceded by a space
+C0103: 32:deconstruct_filename_old: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 33:deconstruct_filename_old: Operator not preceded by a space
     if m==None or m.group(2)=='':
         ^^
-C0322: 32:deconstruct_filename_old: Operator not preceded by a space
+C0322: 34:deconstruct_filename_old: Operator not preceded by a space
         number=0;
               ^
-W0106: 32:deconstruct_filename_old: Unnecessary semi-column
-C0322: 34:deconstruct_filename_old: Operator not preceded by a space
+W0106: 34:deconstruct_filename_old: Unnecessary semi-column
+C0322: 36:deconstruct_filename_old: Operator not preceded by a space
         number=int(m.group(2))
               ^
-C0322: 35:deconstruct_filename_old: Operator not preceded by a space
+C0322: 37:deconstruct_filename_old: Operator not preceded by a space
     ext=os.path.splitext(filename)
        ^
-C0322: 36:deconstruct_filename_old: Operator not preceded by a space
+C0322: 38:deconstruct_filename_old: Operator not preceded by a space
     filetype={'edf': 'edf',
             ^
               'gz': 'edf',
@@ -65,54 +68,54 @@ C0322: 36:deconstruct_filename_old: Operator not preceded by a space
               'sfrm': 'bruker100',
               m.group(2): 'bruker'
               }[ext[1][1:]]
-C0324: 49:deconstruct_filename_old: Comma not followed by a space
+C0324: 51:deconstruct_filename_old: Comma not followed by a space
     return (number,filetype)
                   ^^
-C0103: 52: Invalid name "filetypes" (should match (([A-Z_]*)|(__.*__))$)
-C0111: 64:getnum: Missing docstring
-C0103: 67:getnum: Invalid name "nl" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 69:getnum: Invalid name "c" (should match [a-z_][a-z0-9_]{2,30}$)
-C0321: 74:getnum: More than one statement on a single line
-C0111: 79:deconstruct_filename: Missing docstring
-C0324: 83:deconstruct_filename: Comma not followed by a space
+C0103: 54: Invalid name "filetypes" (should match (([A-Z_]*)|(__.*__))$)
+C0111: 66:getnum: Missing docstring
+C0103: 69:getnum: Invalid name "nl" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 71:getnum: Invalid name "c" (should match [a-z_][a-z0-9_]{2,30}$)
+C0321: 76:getnum: More than one statement on a single line
+C0111: 81:deconstruct_filename: Missing docstring
+C0324: 85:deconstruct_filename: Comma not followed by a space
     if parts[-1] in ["gz","bz2"]:
                          ^^
-C0322: 85:deconstruct_filename: Operator not preceded by a space
+C0322: 87:deconstruct_filename: Operator not preceded by a space
         compressed=True
                   ^
-W0702: 91:deconstruct_filename: No exception's type specified
-W0612: 82:deconstruct_filename: Unused variable 'compressed'
-C0111:103:extract_filenumber: Missing docstring
-C0111:106:fabio: Missing docstring
-C0103:120:fabio.openimage: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111:111:fabio.openimage: Missing docstring
-C0324:111:fabio.openimage: Comma not followed by a space
+W0702: 93:deconstruct_filename: No exception's type specified
+W0612: 84:deconstruct_filename: Unused variable 'compressed'
+C0111:105:extract_filenumber: Missing docstring
+C0111:108:fabio: Missing docstring
+C0103:122:fabio.openimage: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:113:fabio.openimage: Missing docstring
+C0324:113:fabio.openimage: Comma not followed by a space
     def openimage(self,filename=None):
                       ^^
-C0322:113:fabio.openimage: Operator not preceded by a space
+C0322:115:fabio.openimage: Operator not preceded by a space
         if filename==None:
                    ^^
-C0322:114:fabio.openimage: Operator not preceded by a space
+C0322:116:fabio.openimage: Operator not preceded by a space
             filename=self.filename.get()
                     ^
-E1101:114:fabio.openimage: Instance of 'fabio' has no 'filename' member
-C0324:116:fabio.openimage: Comma not followed by a space
+E1101:116:fabio.openimage: Instance of 'fabio' has no 'filename' member
+C0324:118:fabio.openimage: Comma not followed by a space
         (self.filenumber,self.filetype)=deconstruct_filename(filename)
                         ^^
-C0322:118:fabio.openimage: Operator not preceded by a space
+C0322:120:fabio.openimage: Operator not preceded by a space
         img=eval( self.filetype+'image.'+self.filetype+'image()')
            ^
-C0322:120:fabio.openimage: Operator not preceded by a space
+C0322:122:fabio.openimage: Operator not preceded by a space
             self.im=img.read(filename).toPIL16()
                    ^
-C0324:121:fabio.openimage: Comma not followed by a space
+C0324:123:fabio.openimage: Comma not followed by a space
             (self.im.minval,self.im.maxval,self.im.meanval)=(img.getmin(),img.getmax(\
                            ^^
                 ),img.getmean())
-C0322:123:fabio.openimage: Operator not preceded by a space
+C0322:125:fabio.openimage: Operator not preceded by a space
             self.im.header=img.getheader()
                           ^
-W0201:120:fabio.openimage: Attribute 'im' defined outside __init__
-W0201:124:fabio.openimage: Attribute 'xsize' defined outside __init__
-W0201:124:fabio.openimage: Attribute 'ysize' defined outside __init__
-R0903:106:fabio: To few public methods (1/2)
+W0201:122:fabio.openimage: Attribute 'im' defined outside __init__
+W0201:126:fabio.openimage: Attribute 'xsize' defined outside __init__
+W0201:126:fabio.openimage: Attribute 'ysize' defined outside __init__
+R0903:108:fabio: To few public methods (1/2)

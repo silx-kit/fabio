@@ -60,7 +60,8 @@ class fabioimage:
         Set up initial values
         """
         if type(data) == type("string"):
-            raise Exception("fabioimage.__init__ bad argument - data should be Numeric array")
+            raise Exception("fabioimage.__init__ bad argument - "+\
+                            "data should be Numeric array")
         self.data = data
         self.header = header
         self.header_keys = self.header.keys() # holds key ordering
@@ -117,15 +118,23 @@ class fabioimage:
         # "RGBX" 24-bit true colour, stored as (blue, green, red, pad).
         # "RGB;L" 24-bit true colour, line interleaved (first all red pixels,
         #         the all green pixels, finally all blue 
-        bm = { Numeric.UInt8   : ["F","F;8"]    ,  #  8-bit unsigned integer.
-               Numeric.Int8    : ["F","F;8S"]   ,  #  8-bit signed integer.
-               Numeric.UInt16  : ["F","F;16"]  ,  #  16-bit native unsigned integer.
-               Numeric.Int16   : ["F","F;16S"] ,  #  16-bit native signed integer.
-               Numeric.UInt32  : ["F","F;32N"]  ,  #  32-bit native unsigned integer.
-               Numeric.Int32   : ["F","F;32NS"] ,  #  32-bit native signed integer.
-               Numeric.Float32 : ["F","F;32NF"] }    #  32-bit native floating point.
+        bm = { Numeric.UInt8   : ["F", "F;8"]    ,  
+               #  8-bit unsigned integer.
+               Numeric.Int8    : ["F", "F;8S"]   ,  
+               #  8-bit signed integer.
+               Numeric.UInt16  : ["F", "F;16"]  ,  
+               #  16-bit native unsigned integer.
+               Numeric.Int16   : ["F", "F;16S"] ,  
+               #  16-bit native signed integer.
+               Numeric.UInt32  : ["F", "F;32N"]  ,  
+               #  32-bit native unsigned integer.
+               Numeric.Int32   : ["F", "F;32NS"] ,  
+               #  32-bit native signed integer.
+               Numeric.Float32 : ["F", "F;32NF"] }    
+               #  32-bit native floating point.
         # Apparently does not work...:
-             #  Numeric.Float64 : ["F","F;64NF"] }  #  64-bit native floating point
+             #  Numeric.Float64 : ["F","F;64NF"] }  
+             #  64-bit native floating point
         #names = { Numeric.UInt8 : "Numeric.UInt8",
         #          Numeric.Int8  : "Numeric.Int8" ,  
         #          Numeric.UInt16: "Numeric.UInt16",  
@@ -141,7 +150,15 @@ class fabioimage:
         except:
             raise Exception("Unknown data format in array!!!")
         try:
-            PILimage = Image.frombuffer(byteformat[0],(self.data.shape[1],self.data.shape[0]),self.data,"raw", byteformat[1], 0, 1 )
+            PILimage = Image.frombuffer(byteformat[0],
+                                        (self.data.shape[1],
+                                         self.data.shape[0]),
+                                        self.data,
+                                        "raw", 
+                                        byteformat[1], 
+                                        0,  # whats this 
+                                        1   # and this?  
+                                        )
         except:
             print byteformat
             raise 
@@ -177,40 +194,40 @@ class fabioimage:
         assert len(coords) == 4
         if len(coords) == 4:
             # fabian edfimage preference
-            if coords[0]>coords[2]:
-                coords[0:3:2]=[coords[2],coords[0]]
-            if coords[1]>coords[3]:
-                coords[1:4:2]=[coords[3],coords[1]]
+            if coords[0] > coords[2]:
+                coords[0:3:2] = [coords[2], coords[0]]
+            if coords[1] > coords[3]:
+                coords[1:4:2] = [coords[3], coords[1]]
             #in fabian: normally coordinates are given as (x,y) whereas 
             # a matrix is given as row,col 
             # also the (for whichever reason) the image is flipped upside 
             # down wrt to the matrix hence these tranformations
-            c=(self.dim2 - coords[3] - 1,
-               coords[0] ,
-               self.dim2 - coords[1] - 1,
-               coords[2])
-        return ( slice(int(c[0]), int(c[2])+1) , 
-                 slice(int(c[1]), int(c[3])+1)  )
+            fixme = (self.dim2 - coords[3] - 1,
+                     coords[0] ,
+                     self.dim2 - coords[1] - 1,
+                     coords[2])
+        return ( slice(int(fixme[0]), int(fixme[2])+1) , 
+                 slice(int(fixme[1]), int(fixme[3])+1)  )
         
 
-    def integrate_area(self, coords, floor=0):
+    def integrate_area(self, coords):
         """ 
         Sums up a region of interest 
         if len(coords) == 4 -> convert coords to slices
         if len(coords) == 2 -> use as slices
-        floor -> ?
+        floor -> ? removed as unused in the function.
         """
-        if self.data==None:
+        if self.data == None:
             # This should return NAN, not zero ?
             return 0
         if len(coords) == 4:
-            sl = self.make_slice(coords)
+            sli = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
                                   isinstance(coords[1], slice):
-            sl = coords
-        if sl == self.slice and self.area_sum is not None:
+            sli = coords
+        if sli == self.slice and self.area_sum is not None:
             return self.area_sum
-        self.slice = sl
+        self.slice = sli
         self.area_sum = Numeric.sum( 
                             Numeric.ravel( 
                                 self.data[ self.slice ].astype(Numeric.Float)))
@@ -231,21 +248,21 @@ class fabioimage:
         if self.stddev == None:
             # use data.shape in case dim1 or dim2 are wrong
             # formula changed from that found in edfimage by JPW
-            N = self.data.shape[0] * self.data.shape[1] - 1
+            Npt = self.data.shape[0] * self.data.shape[1] - 1
             diff = self.data.astype(Numeric.Float) - self.m
-            S2 = Numeric.sum( Numeric.ravel( diff*diff ) )
-            self.stddev = Numeric.sqrt(S2 / N)
+            Sumsq = Numeric.sum( Numeric.ravel( diff*diff ) )
+            self.stddev = Numeric.sqrt(Sumsq / Npt)
         return float(self.stddev)
 
-    def add(self, otherImage):
+    def add(self, other):
         """
         Add another Image - warnign, does not clip to 16 bit images by default
         """
-        if not hasattr(otherImage,'data'):
+        if not hasattr(other,'data'):
             print 'edfimage.add() called with something that does not have a data field'
-        assert self.data.shape == otherImage.data.shape , \
+        assert self.data.shape == other.data.shape , \
                   'incompatible images - Do they have the same size?'
-        self.data = self.data + otherImage.data
+        self.data = self.data + other.data
         self.resetvals()
             
       
@@ -254,27 +271,27 @@ class fabioimage:
         self.m = self.stddev = self.maxval = self.minval = None
         self.area_sum = None
   
-    def rebin(self,x_rebin_fact,y_rebin_fact):
+    def rebin(self, x_rebin_fact, y_rebin_fact):
         """ Rebin the data and adjust dims """
-        if self.data==None:
+        if self.data == None:
             raise Exception('Please read in the file you wish to rebin first')
-        (mx,ex)=math.frexp(x_rebin_fact)
-        (my,ey)=math.frexp(y_rebin_fact)
-        if (mx!=0.5 or my!=0.5):
+        (mx, ex) = math.frexp(x_rebin_fact)
+        (my, ey) = math.frexp(y_rebin_fact)
+        if (mx != 0.5 or my != 0.5):
             raise Exception('Rebin factors not power of 2 not supported (yet)')
-        if int(self.dim1/x_rebin_fact)*x_rebin_fact != self.dim1 or \
-           int(self.dim2/x_rebin_fact)*x_rebin_fact != self.dim2 :
+        if int(self.dim1 / x_rebin_fact) * x_rebin_fact != self.dim1 or \
+           int(self.dim2 / x_rebin_fact) * x_rebin_fact != self.dim2 :
             raise('image size is not divisible by rebin factor - skipping rebin')
         self.data.savespace(1) # avoid the upcasting behaviour
-        i=1
+        i = 1
         while i < x_rebin_fact:
             # FIXME - why do you divide by 2? Rebinning should increase counts?
-            self.data=((self.data[:,::2]+self.data[:,1::2])/2)
-            i=i*2
-        i=1
-        while i<y_rebin_fact:
-            self.data=((self.data[::2,:]+self.data[1::2,:])/2)
-            i=i*2
+            self.data = ((self.data[:, ::2] + self.data[:, 1::2])/2)
+            i = i * 2
+        i = 1
+        while i < y_rebin_fact:
+            self.data = ((self.data[::2, :]+self.data[1::2, :])/2)
+            i = i * 2
         self.resetvals()
         self.dim1 = self.dim1 / x_rebin_fact
         self.dim2 = self.dim2 / y_rebin_fact

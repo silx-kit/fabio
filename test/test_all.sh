@@ -7,4 +7,5 @@ $PYT testedfimage.py
 $PYT testfabioimage.py
 $PYT testfilenames.py
 $PYT testmccdimage.py
-
+$PYT testfit2dmaskimage.py
+$PYT testbrukerimage.py
