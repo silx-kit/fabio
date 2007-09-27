@@ -1,315 +1,8 @@
-************* Module marccdimage
-C0301: 22: Line too long (88/80)
-C0301: 43: Line too long (117/80)
-C0301: 45: Line too long (151/80)
-C0301: 46: Line too long (100/80)
-C0301: 47: Line too long (137/80)
-C0301: 48: Line too long (137/80)
-C0301: 49: Line too long (162/80)
-C0301: 50: Line too long (161/80)
-C0301: 51: Line too long (111/80)
-C0301: 52: Line too long (121/80)
-C0301: 53: Line too long (156/80)
-C0301: 54: Line too long (134/80)
-C0301: 55: Line too long (128/80)
-C0301: 56: Line too long (128/80)
-C0301: 57: Line too long (128/80)
-C0301: 58: Line too long (128/80)
-C0301: 59: Line too long (128/80)
-C0301: 60: Line too long (128/80)
-C0301: 61: Line too long (124/80)
-C0301: 62: Line too long (125/80)
-C0301: 63: Line too long (121/80)
-C0301: 64: Line too long (122/80)
-C0301: 65: Line too long (145/80)
-C0301: 66: Line too long (131/80)
-C0301: 67: Line too long (130/80)
-C0301: 68: Line too long (140/80)
-C0301: 69: Line too long (115/80)
-C0301: 70: Line too long (163/80)
-C0301: 71: Line too long (116/80)
-C0301: 72: Line too long (127/80)
-C0301: 73: Line too long (131/80)
-C0301: 74: Line too long (142/80)
-C0301: 75: Line too long (134/80)
-C0301: 76: Line too long (136/80)
-C0301: 77: Line too long (119/80)
-C0301: 78: Line too long (134/80)
-C0301: 79: Line too long (134/80)
-C0301: 80: Line too long (165/80)
-C0301: 81: Line too long (161/80)
-C0301: 82: Line too long (164/80)
-C0301: 83: Line too long (165/80)
-C0301: 84: Line too long (166/80)
-C0301: 85: Line too long (164/80)
-C0301: 87: Line too long (140/80)
-C0301: 88: Line too long (131/80)
-C0301: 89: Line too long (131/80)
-C0301: 90: Line too long (139/80)
-C0301: 91: Line too long (133/80)
-C0301: 92: Line too long (131/80)
-C0301: 93: Line too long (133/80)
-C0301: 94: Line too long (130/80)
-C0301: 95: Line too long (123/80)
-C0301: 96: Line too long (119/80)
-C0301: 97: Line too long (123/80)
-C0301: 98: Line too long (119/80)
-C0301: 99: Line too long (123/80)
-C0301:100: Line too long (123/80)
-C0301:101: Line too long (149/80)
-C0301:102: Line too long (128/80)
-C0301:103: Line too long (121/80)
-C0301:104: Line too long (117/80)
-C0301:105: Line too long (121/80)
-C0301:106: Line too long (117/80)
-C0301:107: Line too long (121/80)
-C0301:108: Line too long (121/80)
-C0301:109: Line too long (147/80)
-C0301:110: Line too long (124/80)
-C0301:111: Line too long (129/80)
-C0301:112: Line too long (143/80)
-C0301:113: Line too long (143/80)
-C0301:114: Line too long (142/80)
-C0301:116: Line too long (116/80)
-C0301:117: Line too long (124/80)
-C0301:118: Line too long (124/80)
-C0301:119: Line too long (125/80)
-C0301:120: Line too long (127/80)
-C0301:121: Line too long (154/80)
-C0301:122: Line too long (166/80)
-C0301:123: Line too long (156/80)
-C0301:125: Line too long (130/80)
-C0301:126: Line too long (131/80)
-C0301:127: Line too long (131/80)
-C0301:128: Line too long (132/80)
-C0301:129: Line too long (111/80)
-C0301:130: Line too long (113/80)
-C0301:131: Line too long (117/80)
-C0301:132: Line too long (110/80)
-C0301:133: Line too long (115/80)
-C0301:134: Line too long (115/80)
-C0301:136: Line too long (120/80)
-C0301:137: Line too long (131/80)
-C0301:138: Line too long (131/80)
-C0301:139: Line too long (139/80)
-C0301:140: Line too long (132/80)
-C0301:141: Line too long (140/80)
-C0301:142: Line too long (140/80)
-C0301:143: Line too long (149/80)
-C0301:144: Line too long (115/80)
-C0301:145: Line too long (116/80)
-C0301:147: Line too long (95/80)
-C0301:148: Line too long (113/80)
-C0301:149: Line too long (105/80)
-C0301:150: Line too long (126/80)
-C0301:151: Line too long (127/80)
-C0301:152: Line too long (119/80)
-C0301:153: Line too long (128/80)
-C0301:155: Line too long (131/80)
-W0511: 36: TODO : Check this against the parser approach in ImageD11/marccd.py 
-C0103: 28:marccdimage.readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 41:marccdimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 42:marccdimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 45:marccdimage._readheader: Comma not followed by a space
-        self.header['header_type'] = Numeric.fromstring(l[0:4],Numeric.UInt32)[0]  # UINT32 ; /* flag for header type (can be used as magic number) */
-                                                              ^^
-C0324: 47:marccdimage._readheader: Comma not followed by a space
-        self.header['header_major_version'] = Numeric.fromstring(l[20:24],Numeric.UInt32)[0]  # UINT32 ; /* header_major_version (n.) */
-                                                                         ^^
-C0324: 48:marccdimage._readheader: Comma not followed by a space
-        self.header['header_minor_version'] = Numeric.fromstring(l[24:28],Numeric.UInt32)[0]  # UINT32 ; /* header_minor_version (.n) */
-                                                                         ^^
-C0324: 49:marccdimage._readheader: Comma not followed by a space
-        self.header['header_byte_orde'] = Numeric.fromstring(l[28:32],Numeric.UInt32)[0]  # UINT32 r;/* BIG_ENDIAN (Motorola,MIPS); LITTLE_ENDIAN (DEC, Intel) */
-                                                                     ^^
-C0324: 50:marccdimage._readheader: Comma not followed by a space
-        self.header['data_byte_order'] = Numeric.fromstring(l[32:36],Numeric.UInt32)[0]  # UINT32 ; /* BIG_ENDIAN (Motorola,MIPS); LITTLE_ENDIAN (DEC, Intel) */
-                                                                    ^^
-C0324: 51:marccdimage._readheader: Comma not followed by a space
-        self.header['header_size'] = Numeric.fromstring(l[36:40],Numeric.UInt32)[0]  # UINT32 ; /* in bytes */
-                                                                ^^
-C0324: 52:marccdimage._readheader: Comma not followed by a space
-        self.header['frame_type'] = Numeric.fromstring(l[40:44],Numeric.UInt32)[0]  # UINT32 ; /* flag for frame type */
-                                                               ^^
-C0324: 62:marccdimage._readheader: Comma not followed by a space
-        self.header['nfast'] = Numeric.fromstring(l[80:84],Numeric.UInt32)[0]  # UINT32 ; /* number of pixels in one line */
-                                                          ^^
-C0324: 63:marccdimage._readheader: Comma not followed by a space
-        self.header['nslow'] = Numeric.fromstring(l[84:88],Numeric.UInt32)[0]  # UINT32 ; /* number of lines in image */
-                                                          ^^
-C0324: 64:marccdimage._readheader: Comma not followed by a space
-        self.header['depth'] = Numeric.fromstring(l[88:92],Numeric.UInt32)[0]  # UINT32 ; /* number of bytes per pixel */
-                                                          ^^
-C0324: 66:marccdimage._readheader: Comma not followed by a space
-        self.header['signif_bits'] = Numeric.fromstring(l[96:100],Numeric.UInt32)[0]  # UINT32 ; /* true depth of data, in bits */
-                                                                 ^^
-C0324: 69:marccdimage._readheader: Comma not followed by a space
-        self.header['sequence'] = Numeric.fromstring(l[108:112],Numeric.UInt32)[0]  # UINT32 ; /* TRUE or FALSE */
-                                                               ^^
-C0324: 70:marccdimage._readheader: Comma not followed by a space
-        self.header['nimages'] = Numeric.fromstring(l[112:116],Numeric.UInt32)[0]  # UINT32 ; /* total number of images - size of each is nfast*(nslow/nimages) */
-                                                              ^^
-C0324: 71:marccdimage._readheader: Comma not followed by a space
-        self.header['origin'] = Numeric.fromstring(l[116:120],Numeric.UInt32)[0]  # UINT32 ; /* corner of origin */
-                                                             ^^
-C0324: 72:marccdimage._readheader: Comma not followed by a space
-        self.header['orientation'] = Numeric.fromstring(l[120:124],Numeric.UInt32)[0]  # UINT32 ; /* direction of fast axis */
-                                                                  ^^
-C0324: 73:marccdimage._readheader: Comma not followed by a space
-        self.header['view_direction'] = Numeric.fromstring(l[124:128],Numeric.UInt32)[0]  # UINT32 ; /* direction to view frame */
-                                                                     ^^
-C0324: 74:marccdimage._readheader: Comma not followed by a space
-        self.header['overflow_locatio'] = Numeric.fromstring(l[128:132],Numeric.UInt32)[0]  # UINT32 n;/* FOLLOWING_HEADER, FOLLOWING_DATA */
-                                                                       ^^
-C0324: 75:marccdimage._readheader: Comma not followed by a space
-        self.header['over_8_bits'] = Numeric.fromstring(l[132:136],Numeric.UInt32)[0]  # UINT32 ; /* # of pixels with counts > 255 */
-                                                                  ^^
-C0324: 76:marccdimage._readheader: Comma not followed by a space
-        self.header['over_16_bits'] = Numeric.fromstring(l[136:140],Numeric.UInt32)[0]  # UINT32 ; /* # of pixels with count > 65535 */
-                                                                   ^^
-C0324: 77:marccdimage._readheader: Comma not followed by a space
-        self.header['multiplexed'] = Numeric.fromstring(l[140:144],Numeric.UInt32)[0]  # UINT32 ; /* multiplex flag */
-                                                                  ^^
-C0324: 78:marccdimage._readheader: Comma not followed by a space
-        self.header['nfastimages'] = Numeric.fromstring(l[144:148],Numeric.UInt32)[0]  # UINT32 ; /* # of images in fast direction */
-                                                                  ^^
-C0324: 79:marccdimage._readheader: Comma not followed by a space
-        self.header['nslowimages'] = Numeric.fromstring(l[148:152],Numeric.UInt32)[0]  # UINT32 ; /* # of images in slow direction */
-                                                                  ^^
-C0324: 80:marccdimage._readheader: Comma not followed by a space
-        self.header['background_applied'] = Numeric.fromstring(l[152:156],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
-                                                                         ^^
-C0324: 81:marccdimage._readheader: Comma not followed by a space
-        self.header['bias_applied'] = Numeric.fromstring(l[156:160],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied - hold magic number ? */
-                                                                   ^^
-C0324: 82:marccdimage._readheader: Comma not followed by a space
-        self.header['flatfield_applied'] = Numeric.fromstring(l[160:164],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
-                                                                        ^^
-C0324: 83:marccdimage._readheader: Comma not followed by a space
-        self.header['distortion_applied'] = Numeric.fromstring(l[164:168],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
-                                                                         ^^
-C0324: 87:marccdimage._readheader: Comma not followed by a space
-        self.header['xtal_to_detector'] = Numeric.fromstring(l[640:644],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*distance in millimeters */
-                                                                       ^^
-C0324: 88:marccdimage._readheader: Comma not followed by a space
-        self.header['beam_x'] = Numeric.fromstring(l[644:648],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*x beam position (pixels) */
-                                                             ^^
-C0324: 89:marccdimage._readheader: Comma not followed by a space
-        self.header['beam_y'] = Numeric.fromstring(l[648:652],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*y beam position (pixels) */
-                                                             ^^
-C0324: 90:marccdimage._readheader: Comma not followed by a space
-        self.header['integration_time'] = Numeric.fromstring(l[652:656],Numeric.Int32)[0]  #INT32 ; /* integration time in milliseconds */
-                                                                       ^^
-C0324: 91:marccdimage._readheader: Comma not followed by a space
-        self.header['exposure_time'] = Numeric.fromstring(l[656:660],Numeric.Int32)[0]  #INT32 ; /* exposure time in milliseconds */
-                                                                    ^^
-C0324: 92:marccdimage._readheader: Comma not followed by a space
-        self.header['readout_time'] = Numeric.fromstring(l[660:664],Numeric.Int32)[0]  #INT32 ; /* readout time in milliseconds */
-                                                                   ^^
-C0324: 93:marccdimage._readheader: Comma not followed by a space
-        self.header['nreads'] = Numeric.fromstring(l[664:668],Numeric.Int32)[0]  #INT32 ; /* number of readouts to get this image */
-                                                             ^^
-C0324: 94:marccdimage._readheader: Comma not followed by a space
-        self.header['start_twotheta'] = Numeric.fromstring(l[668:672],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*two_theta angle */
-                                                                     ^^
-C0324: 95:marccdimage._readheader: Comma not followed by a space
-        self.header['start_omega'] = Numeric.fromstring(l[676:680],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*omega angle */
-                                                                  ^^
-C0324: 96:marccdimage._readheader: Comma not followed by a space
-        self.header['start_chi'] = Numeric.fromstring(l[680:684],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*chi angle */
-                                                                ^^
-C0324: 97:marccdimage._readheader: Comma not followed by a space
-        self.header['start_kappa'] = Numeric.fromstring(l[684:688],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*kappa angle */
-                                                                  ^^
-C0324: 98:marccdimage._readheader: Comma not followed by a space
-        self.header['start_phi'] = Numeric.fromstring(l[688:692],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*phi angle */
-                                                                ^^
-C0324: 99:marccdimage._readheader: Comma not followed by a space
-        self.header['start_delta'] = Numeric.fromstring(l[692:696],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*delta angle */
-                                                                  ^^
-C0324:100:marccdimage._readheader: Comma not followed by a space
-        self.header['start_gamma'] = Numeric.fromstring(l[696:700],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*gamma angle */
-                                                                  ^^
-C0324:101:marccdimage._readheader: Comma not followed by a space
-        self.header['start_xtal_to_detector'] = Numeric.fromstring(l[700:704],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*distance in mm (dist in um)*/
-                                                                             ^^
-C0324:102:marccdimage._readheader: Comma not followed by a space
-        self.header['end_twotheta'] = Numeric.fromstring(l[704:708],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*two_theta angle */
-                                                                   ^^
-C0324:103:marccdimage._readheader: Comma not followed by a space
-        self.header['end_omega'] = Numeric.fromstring(l[708:712],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*omega angle */
-                                                                ^^
-C0324:104:marccdimage._readheader: Comma not followed by a space
-        self.header['end_chi'] = Numeric.fromstring(l[712:716],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*chi angle */
-                                                              ^^
-C0324:105:marccdimage._readheader: Comma not followed by a space
-        self.header['end_kappa'] = Numeric.fromstring(l[716:720],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*kappa angle */
-                                                                ^^
-C0324:106:marccdimage._readheader: Comma not followed by a space
-        self.header['end_phi'] = Numeric.fromstring(l[720:724],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*phi angle */
-                                                              ^^
-C0324:107:marccdimage._readheader: Comma not followed by a space
-        self.header['end_delta'] = Numeric.fromstring(l[724:728],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*delta angle */
-                                                                ^^
-C0324:108:marccdimage._readheader: Comma not followed by a space
-        self.header['end_gamma'] = Numeric.fromstring(l[728:732],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*gamma angle */
-                                                                ^^
-C0324:109:marccdimage._readheader: Comma not followed by a space
-        self.header['end_xtal_to_detector'] = Numeric.fromstring(l[732:736],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*distance in mm (dist in um)*/
-                                                                           ^^
-C0324:110:marccdimage._readheader: Comma not followed by a space
-        self.header['rotation_axis'] = Numeric.fromstring(l[736:740],Numeric.Int32)[0]  #INT32 ; /* active rotation axis */
-                                                                    ^^
-C0324:111:marccdimage._readheader: Comma not followed by a space
-        self.header['rotation_range'] = Numeric.fromstring(l[740:744],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation angle */
-                                                                     ^^
-C0324:112:marccdimage._readheader: Comma not followed by a space
-        self.header['detector_rotx'] = Numeric.fromstring(l[744:748],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around X */
-                                                                    ^^
-C0324:113:marccdimage._readheader: Comma not followed by a space
-        self.header['detector_roty'] = Numeric.fromstring(l[748:752],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around Y */
-                                                                    ^^
-C0324:114:marccdimage._readheader: Comma not followed by a space
-        self.header['detector_rotz'] = Numeric.fromstring(l[752:756],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around Z */
-                                                                    ^^
-C0324:116:marccdimage._readheader: Comma not followed by a space
-        self.header['detector_type'] = Numeric.fromstring(l[768:772],Numeric.Int32)[0]  #INT32 ; /* detector type */
-                                                                    ^^
-C0324:117:marccdimage._readheader: Comma not followed by a space
-        self.header['pixelsize_x'] = Numeric.fromstring(l[772:776],Numeric.Int32)[0]  #INT32 ; /* pixel size (nanometers) */
-                                                                  ^^
-C0324:118:marccdimage._readheader: Comma not followed by a space
-        self.header['pixelsize_y'] = Numeric.fromstring(l[776:780],Numeric.Int32)[0]  #INT32 ; /* pixel size (nanometers) */
-                                                                  ^^
-C0324:119:marccdimage._readheader: Comma not followed by a space
-        self.header['mean_bias'] = Numeric.fromstring(l[780:784],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*mean bias value */
-                                                                ^^
-C0324:120:marccdimage._readheader: Comma not followed by a space
-        self.header['photons_per_100adu'] = Numeric.fromstring(l[784:788],Numeric.Int32)[0]  #INT32 ; /* photons / 100 ADUs */
-                                                                         ^^
-C0324:121:marccdimage._readheader: Comma not followed by a space
-        self.header['measured_bias'] = Numeric.fromstring(l[788:792],Numeric.Int32)[0]*1000  #INT32 [MAXIMAGES]; /* 1000*mean bias value for each image*/
-                                                                    ^^
-C0324:122:marccdimage._readheader: Comma not followed by a space
-        self.header['measured_temperature'] = Numeric.fromstring(l[792:796],Numeric.Int32)[0] #INT32  [MAXIMAGES]; /* Temperature of each detector in milliKelvins */
-                                                                           ^^
-C0324:123:marccdimage._readheader: Comma not followed by a space
-        self.header['measured_pressure'] = Numeric.fromstring(l[796:800],Numeric.Int32)[0] #INT32 [MAXIMAGES] ; /* Pressure of each chamber in microTorr */
-                                                                        ^^
-C0324:128:marccdimage._readheader: Comma not followed by a space
-        self.header['source_wavelength'] = Numeric.fromstring(l[908:912],Numeric.Int32)[0]  #INT32 ; /* wavelength (femtoMeters) */
-                                                                        ^^
-R0915: 32:marccdimage._readheader: Too many statements (74/50)
-W0221:158:marccdimage.read: Arguments number differs from overridden method
-C0103:163:marccdimage.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-W0613:158:marccdimage.read: Unused argument 'verbose'
-W0221:177:marccdimage.write: Arguments number differs from overridden method
-W0611: 15: Unused import logging
 
 
 Report
 ======
-96 statements analysed.
+69 statements analysed.
 
 Duplication
 -----------
@@ -317,9 +10,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -330,13 +23,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |99     |57.56 |NC       |NC         |
+|code      |249    |77.57 |249      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |29     |16.86 |NC       |NC         |
+|docstring |43     |13.40 |43       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |36     |20.93 |NC       |NC         |
+|comment   |8      |2.49  |8        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |8      |4.65  |NC       |NC         |
+|empty     |21     |6.54  |21       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -359,13 +52,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |100.00      |0.00     |
+|method   |3      |3          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -376,43 +69,18 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |174    |NC       |NC         |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |5      |NC       |NC         |
+|warning    |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0301      |107        |
-+-----------+-----------+
-|C0324      |63         |
-+-----------+-----------+
-|C0103      |4          |
-+-----------+-----------+
-|W0221      |2          |
-+-----------+-----------+
-|W0613      |1          |
-+-----------+-----------+
-|W0611      |1          |
-+-----------+-----------+
-|W0511      |1          |
-+-----------+-----------+
-|R0915      |1          |
-+-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -8.75/10
+Your code has been rated at 10.00/10 (previous run: 10.00/10)
 

@@ -67,11 +67,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |1        |-1.00      |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |0      |1        |-1.00      |
+|warning    |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -80,5 +80,5 @@ Messages by category
 
 Global evaluation
 -----------------
-Your code has been rated at 10.00/10 (previous run: 9.50/10)
+Your code has been rated at 10.00/10 (previous run: 10.00/10)
 

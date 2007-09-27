@@ -1,0 +1,57 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module fabio.readbytestream</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.readbytestream</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/readbytestream.py">/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/readbytestream.py</a></font></td></tr></table>
+    <p><tt>Reads&nbsp;a&nbsp;bytestream<br>
+&nbsp;<br>
+Authors:&nbsp;Jon&nbsp;Wright&nbsp;&nbsp;&nbsp;&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ESRF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Risoe&nbsp;National&nbsp;Laboratory</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="Numeric.html">Numeric</a><br>
+</td><td width="25%" valign=top><a href="logging.html">logging</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-readbytestream"><strong>readbytestream</strong></a>(fil, offset, x, y, nbytespp, datatype<font color="#909090">='int'</font>, signed<font color="#909090">='n'</font>, swap<font color="#909090">='n'</font>, typeout<font color="#909090">='w'</font>)</dt><dd><tt>Reads&nbsp;in&nbsp;a&nbsp;bytestream&nbsp;from&nbsp;a&nbsp;file&nbsp;(which&nbsp;may&nbsp;be&nbsp;a&nbsp;string&nbsp;indicating<br>
+a&nbsp;filename,&nbsp;or&nbsp;an&nbsp;already&nbsp;opened&nbsp;file&nbsp;(should&nbsp;be&nbsp;"rb"))<br>
+offset&nbsp;is&nbsp;the&nbsp;position&nbsp;(in&nbsp;bytes)&nbsp;where&nbsp;the&nbsp;pixel&nbsp;data&nbsp;start<br>
+nbytespp&nbsp;=&nbsp;number&nbsp;of&nbsp;bytes&nbsp;per&nbsp;pixel<br>
+type&nbsp;can&nbsp;be&nbsp;int&nbsp;or&nbsp;float&nbsp;(4&nbsp;bytes&nbsp;pp)&nbsp;or&nbsp;double&nbsp;(8&nbsp;bytes&nbsp;pp)<br>
+signed:&nbsp;normally&nbsp;signed&nbsp;data&nbsp;'y',&nbsp;but&nbsp;'n'&nbsp;to&nbsp;try&nbsp;to&nbsp;get&nbsp;back&nbsp;the&nbsp;<br>
+right&nbsp;numbers&nbsp;when&nbsp;unsigned&nbsp;data&nbsp;are&nbsp;converted&nbsp;to&nbsp;signed&nbsp;<br>
+(python&nbsp;once&nbsp;had&nbsp;no&nbsp;unsigned&nbsp;numeric&nbsp;types.)<br>
+swap,&nbsp;normally&nbsp;do&nbsp;not&nbsp;bother,&nbsp;but&nbsp;'y'&nbsp;to&nbsp;swap&nbsp;bytes<br>
+typeout&nbsp;is&nbsp;the&nbsp;Numeric&nbsp;type&nbsp;to&nbsp;output,&nbsp;normally&nbsp;UInt16,&nbsp;<br>
+but&nbsp;more&nbsp;if&nbsp;overflows&nbsp;occurred<br>
+x&nbsp;and&nbsp;y&nbsp;are&nbsp;the&nbsp;pixel&nbsp;dimensions<br>
+&nbsp;<br>
+TODO&nbsp;:&nbsp;Read&nbsp;in&nbsp;regions&nbsp;of&nbsp;interest<br>
+&nbsp;<br>
+PLEASE&nbsp;LEAVE&nbsp;THE&nbsp;STRANGE&nbsp;INTERFACE&nbsp;ALONE&nbsp;-&nbsp;<br>
+IT&nbsp;IS&nbsp;USEFUL&nbsp;FOR&nbsp;THE&nbsp;BRUKER&nbsp;FORMAT</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>DATATYPES</strong> = {('double', 'y', 4): 'd', ('float', 'y', 4): 'f', ('int', 'n', 1): 'b', ('int', 'n', 2): 'w', ('int', 'n', 4): 'u', ('int', 'y', 1): '1', ('int', 'y', 2): 's', ('int', 'y', 4): 'i'}</td></tr></table>
+</body></html>

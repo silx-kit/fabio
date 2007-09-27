@@ -1,93 +1,15 @@
 ************* Module edfimage
-C0301: 69: Line too long (84/80)
-C0301:135: Line too long (92/80)
-C0301:177: Line too long (90/80)
-W0311:180: Bad indentation. Found 13 spaces, expected 12
-W0311:181: Bad indentation. Found 17 spaces, expected 16
-W0311:182: Bad indentation. Found 17 spaces, expected 16
-C0301:199: Line too long (96/80)
 W0511: 41: FIXME?
 W0511: 64: TODO : test for minimal attributes?
-W0511:125: FIXME
-C0103: 18: Invalid name "data_types" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 32: Invalid name "minimum_keys" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 39: Invalid name "default_values" (should match (([A-Z_]*)|(__.*__))$)
-C0324: 52:edfimage.readheader: Comma not followed by a space
-    def readheader(self,filename):
-                       ^^
-C0322: 56:edfimage.readheader: Operator not preceded by a space
-        f=self._open(filename)
-         ^
-C0103: 56:edfimage.readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 66:edfimage._readheader: Invalid name "ll" (should match [a-z_][a-z0-9_]{2,30}$)
-E0602: 69:edfimage._readheader: Undefined variable 'f'
-C0322: 72:edfimage._readheader: Operator not preceded by a space
-            ll= ll+ infile.read(1024)
-              ^
-C0103: 72:edfimage._readheader: Invalid name "ll" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 75:edfimage._readheader: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 75:edfimage._readheader: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 76:edfimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 78:edfimage._readheader: Comma not followed by a space
-                k,v = l.split( '=' , 1)
-                 ^^
-C0103: 78:edfimage._readheader: Invalid name "v" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 82:edfimage._readheader: Operator not preceded by a space
-                self.header[k]=v.lstrip().rstrip()
-                              ^
-W0221: 90:edfimage.read: Arguments number differs from overridden method
-C0103: 95:edfimage.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:102:edfimage.read: Comma not followed by a space
-            raise Exception("EDF file",str(fname)+"is corrupt, cannot read it")
-                                      ^^
-C0103:114:edfimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:123:edfimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:134:edfimage.read: Comma not followed by a space
-            print len(l),bytecode, self.bpp, self.dim2, self.dim1
-                        ^^
-C0322:136:edfimage.read: Operator not preceded by a space
-        self.bytecode=self.data.typecode()
-                     ^
-W0613: 90:edfimage.read: Unused argument 'padding'
-C0324:156:edfimage.swap_needed: Comma not followed by a space
-            if self.bpp in [2,4,8]:
-                             ^^
-W0221:163:edfimage.write: Arguments number differs from overridden method
-C0324:175:edfimage.write: Comma not followed by a space
-        bpp = len( data[0,0].tostring() )
-                         ^^
-C0324:176:edfimage.write: Comma not followed by a space
-        if bpp not in [1,2,4]:
-                        ^^
-C0322:181:edfimage.write: Operator not preceded by a space
-                 self.header['DataType']=name
-                                        ^
-C0322:192:edfimage.write: Operator not preceded by a space
-        f=_open(fname, mode="wb")
-         ^
-C0103:192:edfimage.write: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-E0602:192:edfimage.write: Undefined variable '_open'
-C0324:196:edfimage.write: Comma not followed by a space
-            out = (("%s = %s;\n") % (k,self.header[k]))
-                                      ^^
-C0324:200:edfimage.write: Comma not followed by a space
-        for k,v in self.header.iteritems():
-             ^^
-C0103:200:edfimage.write: Invalid name "v" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:203:edfimage.write: Comma not followed by a space
-            out = (("%s = %s;\n") % (k,self.header[k]))
-                                      ^^
-C0322:213:edfimage.write: Operator not preceded by a space
-        assert i%1024 == 0
-                ^
-E0602:215:edfimage.write: Undefined variable 'force_UInt16'
-R0912:163:edfimage.write: Too many branches (15/12)
-W0612:200:edfimage.write: Unused variable 'v'
+W0511:127: FIXME
+R0914:167:edfimage.write: Too many local variables (16/15)
+W0221:167:edfimage.write: Arguments number differs from overridden method
+R0912:167:edfimage.write: Too many branches (14/12)
 
 
 Report
 ======
-122 statements analysed.
+120 statements analysed.
 
 Duplication
 -----------
@@ -95,9 +17,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -108,13 +30,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |137    |66.83 |NC       |NC         |
+|code      |136    |65.07 |136      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |51     |24.88 |NC       |NC         |
+|docstring |55     |26.32 |55       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |1.46  |NC       |NC         |
+|comment   |4      |1.91  |4        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |14     |6.83  |NC       |NC         |
+|empty     |14     |6.70  |14       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -135,13 +57,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |5      |NC         |NC         |100.00      |0.00     |
+|method   |5      |5          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -152,13 +74,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |36     |NC       |NC         |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|warning    |10     |NC       |NC         |
+|warning    |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|error      |3      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -169,25 +91,11 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0103      |15         |
-+-----------+-----------+
-|C0324      |10         |
-+-----------+-----------+
-|C0322      |7          |
-+-----------+-----------+
-|C0301      |4          |
-+-----------+-----------+
 |W0511      |3          |
 +-----------+-----------+
-|W0311      |3          |
+|W0221      |1          |
 +-----------+-----------+
-|E0602      |3          |
-+-----------+-----------+
-|W0221      |2          |
-+-----------+-----------+
-|W0613      |1          |
-+-----------+-----------+
-|W0612      |1          |
+|R0914      |1          |
 +-----------+-----------+
 |R0912      |1          |
 +-----------+-----------+
@@ -196,5 +104,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 4.92/10
+Your code has been rated at 9.50/10 (previous run: 9.50/10)
 

@@ -1,96 +1,29 @@
 ************* Module fabioimage
-C0301:239: Line too long (82/80)
-C0301:262: Line too long (88/80)
-C0301:284: Line too long (81/80)
-W0511:177: FIXME - removed int cast to leave type alone
-W0511:185: FIXME - removed int cast to leave type alone
-W0511:288: FIXME - why do you divide by 2? Rebinning should increase counts?
-W0511:331: FIXME - what about seek ? 
-C0111: 29:image2array: Missing docstring
-C0103: 29:image2array: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 33:image2array: Invalid name "a" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 35:image2array: Invalid name "a" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 39:array2image: Missing docstring
-C0103: 39:array2image: Invalid name "a" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 75:fabioimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-R0902: 53:fabioimage: Too many instance attributes (13/7)
-W0102: 58:fabioimage.__init__: Dangerous default value {} as argument
-C0103: 81:fabioimage.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:121:fabioimage.toPIL16: Invalid name "bm" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:153:fabioimage.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:251:fabioimage.getstddev: Invalid name "Npt" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:253:fabioimage.getstddev: Invalid name "Sumsq" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:278:fabioimage.rebin: Invalid name "mx" (should match [a-z_][a-z0-9_]{2,30}$)
-E0602:278:fabioimage.rebin: Undefined variable 'math'
-C0103:279:fabioimage.rebin: Invalid name "my" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:279:fabioimage.rebin: Invalid name "ey" (should match [a-z_][a-z0-9_]{2,30}$)
-E0602:279:fabioimage.rebin: Undefined variable 'math'
-W0701:284:fabioimage.rebin: Raising a string exception
-W0612:278:fabioimage.rebin: Unused variable 'ex'
-W0612:279:fabioimage.rebin: Unused variable 'ey'
-C0324:301:fabioimage.write: Comma not followed by a space
-    def write(self,fname):
-                  ^^
-R0201:301:fabioimage.write: Method could be a function
-R0201:307:fabioimage.readheader: Method could be a function
-R0201:321:fabioimage.read: Method could be a function
-W0621:337:fabioimage._open: Redefining name 'os' from outer scope (line 383)
-W0404:337:fabioimage._open: Reimport 'os' (imported line 383)
-R0201:327:fabioimage._open: Method could be a function
-C0322:346: Operator not preceded by a space
-if __name__=='__main__':
-           ^^
-C0103:348: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
-C0324:350: Comma not followed by a space
-    d = Numeric.ones((1024,1024), Numeric.UInt16)
-                          ^^
-C0103:350: Invalid name "d" (should match (([A-Z_]*)|(__.*__))$)
-C0103:351: Invalid name "d" (should match (([A-Z_]*)|(__.*__))$)
-C0324:352: Comma not followed by a space
-    assert d.typecode() == Numeric.ones((1),Numeric.UInt16).typecode()
-                                           ^^
-C0103:353: Invalid name "h" (should match (([A-Z_]*)|(__.*__))$)
-C0324:354: Comma not followed by a space
-    o = fabioImage(d,h)
-                    ^^
-C0103:354: Invalid name "o" (should match (([A-Z_]*)|(__.*__))$)
-E0602:354: Undefined variable 'fabioImage'
-C0324:361: Comma not followed by a space
-    d2 = Numeric.zeros((1024,1024), Numeric.UInt16, savespace = 1 )
-                            ^^
-C0103:361: Invalid name "d2" (should match (([A-Z_]*)|(__.*__))$)
-C0103:362: Invalid name "c" (should match (([A-Z_]*)|(__.*__))$)
-C0103:363: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:366: Invalid name "o" (should match (([A-Z_]*)|(__.*__))$)
-E0602:366: Undefined variable 'fabioImage'
-C0103:374: Invalid name "npix" (should match (([A-Z_]*)|(__.*__))$)
-C0103:376: Invalid name "a1" (should match (([A-Z_]*)|(__.*__))$)
-C0103:378: Invalid name "a2" (should match (([A-Z_]*)|(__.*__))$)
-C0111:385:clean: Missing docstring
-C0324:386:clean: Comma not followed by a space
-        for name in ["testfile","testfile.gz", "testfile.bz2"]:
-                               ^^
-W0704:389:clean: Except doesn't do anything
-W0702:390:clean: No exception's type specified
-C0103:396: Invalid name "fo" (should match (([A-Z_]*)|(__.*__))$)
-W0212:396: Access to a protected member _open of a client class
-C0103:397: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
-C0103:402: Invalid name "fo" (should match (([A-Z_]*)|(__.*__))$)
-W0212:402: Access to a protected member _open of a client class
-C0103:403: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
-C0103:406: Invalid name "ft" (should match (([A-Z_]*)|(__.*__))$)
-W0212:408: Access to a protected member _open of a client class
-C0103:410: Invalid name "fo" (should match (([A-Z_]*)|(__.*__))$)
-W0212:410: Access to a protected member _open of a client class
-C0103:411: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
-C0324:417: Comma not followed by a space
-    print "Passed in",time.time()-start,"s"
-                     ^^
+W0511:200: FIXME - removed int cast to leave type alone
+W0511:208: FIXME - removed int cast to leave type alone
+W0511:305: FIXME - this is a floating point comparison, is it always exact?
+W0511:315: FIXME - why do you divide by 2? Rebinning should increase counts?
+W0511:358: FIXME - what about seek ? 
+R0902: 75:fabioimage: Too many instance attributes (13/7)
+W0102: 80:fabioimage.__init__: Dangerous default value {} as argument
+C0103:103:fabioimage.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:176:fabioimage.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
+W0612:304:fabioimage.rebin: Unused variable 'exp_y'
+W0612:303:fabioimage.rebin: Unused variable 'exp_x'
+R0201:328:fabioimage.write: Method could be a function
+R0201:334:fabioimage.readheader: Method could be a function
+R0201:348:fabioimage.read: Method could be a function
+R0201:354:fabioimage._open: Method could be a function
+W0702:420:test.clean: No exception's type specified
+W0212:427:test: Access to a protected member _open of a client class
+W0212:433:test: Access to a protected member _open of a client class
+W0212:439:test: Access to a protected member _open of a client class
+W0212:441:test: Access to a protected member _open of a client class
 
 
 Report
 ======
-194 statements analysed.
+195 statements analysed.
 
 Duplication
 -----------
@@ -111,13 +44,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |224    |58.64 |217      |+7.00      |
+|code      |227    |54.31 |227      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |64     |16.75 |62       |+2.00      |
+|docstring |92     |22.01 |92       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |66     |17.28 |58       |+8.00      |
+|comment   |66     |15.79 |66       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |28     |7.33  |28       |=          |
+|empty     |33     |7.89  |33       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -144,7 +77,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |method   |17     |17         |=          |100.00      |5.88     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |3      |3          |=          |0.00        |0.00     |
+|function |4      |4          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -155,13 +88,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |46     |77       |-31.00     |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |5      |5        |=          |
 +-----------+-------+---------+-----------+
-|warning    |16     |18       |-2.00      |
+|warning    |13     |13       |=          |
 +-----------+-------+---------+-----------+
-|error      |4      |4        |=          |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -172,44 +105,26 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0103      |32         |
-+-----------+-----------+
-|C0324      |7          |
-+-----------+-----------+
-|W0511      |4          |
+|W0511      |5          |
 +-----------+-----------+
 |W0212      |4          |
 +-----------+-----------+
 |R0201      |4          |
 +-----------+-----------+
-|E0602      |4          |
-+-----------+-----------+
-|C0301      |3          |
-+-----------+-----------+
-|C0111      |3          |
-+-----------+-----------+
 |W0612      |2          |
 +-----------+-----------+
-|W0704      |1          |
+|C0103      |2          |
 +-----------+-----------+
 |W0702      |1          |
-+-----------+-----------+
-|W0701      |1          |
-+-----------+-----------+
-|W0621      |1          |
-+-----------+-----------+
-|W0404      |1          |
 +-----------+-----------+
 |W0102      |1          |
 +-----------+-----------+
 |R0902      |1          |
-+-----------+-----------+
-|C0322      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 5.52/10 (previous run: 3.81/10)
+Your code has been rated at 8.97/10 (previous run: 8.97/10)
 

@@ -1,163 +1,19 @@
 ************* Module testfabioimage
-C0111:  1: Missing docstring
-C0111:  7:test50000: Missing docstring
-C0103: 13:test50000.setUp: Invalid name "o" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:  8:test50000.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111:  8:test50000.setUp: Missing docstring
-C0324:  9:test50000.setUp: Comma not followed by a space
-        d = Numeric.ones((1024,1024), Numeric.UInt16)
-                              ^^
-C0103:  9:test50000.setUp: Invalid name "d" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 10:test50000.setUp: Invalid name "d" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 11:test50000.setUp: Comma not followed by a space
-        assert d.typecode() == Numeric.ones((1),Numeric.UInt16).typecode()
-                                               ^^
-C0103: 12:test50000.setUp: Invalid name "h" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 13:test50000.setUp: Comma not followed by a space
-        self.o = fabioimage(d,h)
-                             ^^
-C0103: 15:test50000.testGetMax: Invalid name "testGetMax" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 15:test50000.testGetMax: Missing docstring
-C0103: 18:test50000.testGetMin: Invalid name "testGetMin" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 18:test50000.testGetMin: Missing docstring
-C0103: 21:test50000.testGetMean: Invalid name "testGetMean" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 21:test50000.testGetMean: Missing docstring
-C0111: 24:test50000.getstddev: Missing docstring
-C0111: 27:testslices: Missing docstring
-C0103: 31:testslices.setUp: Invalid name "c" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 33:testslices.setUp: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 32:testslices.setUp: Invalid name "o" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 28:testslices.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 28:testslices.setUp: Missing docstring
-C0324: 29:testslices.setUp: Comma not followed by a space
-        d2 = Numeric.zeros((1024,1024), Numeric.UInt16, savespace = 1 )
-                                ^^
-C0103: 29:testslices.setUp: Invalid name "d2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 30:testslices.setUp: Invalid name "h" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 33:testslices.setUp: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 40:testslices.testGetMax: Invalid name "testGetMax" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 40:testslices.testGetMax: Missing docstring
-C0103: 43:testslices.testGetMin: Invalid name "testGetMin" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 43:testslices.testGetMin: Missing docstring
-C0103: 46:testslices.testIntegrateArea: Invalid name "testIntegrateArea" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 46:testslices.testIntegrateArea: Missing docstring
-C0103: 48:testslices.testIntegrateArea: Invalid name "a1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 50:testslices.testIntegrateArea: Invalid name "a2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 51:testslices.testIntegrateArea: Comma not followed by a space
-        self.assertEqual(a1,a2)
-                           ^^
-C0324: 52:testslices.testIntegrateArea: Comma not followed by a space
-        self.assertEqual(a1,self.npix*100)
-                           ^^
-C0103: 55:test_open: Invalid name "test_open" (should match [a-z_][a-zA-Z0-9]+$)
-C0111: 55:test_open: Missing docstring
-C0103: 73:test_open.setUp: Invalid name "o" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 58:test_open.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 58:test_open.tearDown: Missing docstring
-C0324: 60:test_open.tearDown: Comma not followed by a space
-        for name in ["testfile","testfile.gz", "testfile.bz2"]:
-                               ^^
-W0704: 63:test_open.tearDown: Except doesn't do anything
-W0702: 64:test_open.tearDown: No exception's type specified
-C0103: 66:test_open.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 66:test_open.setUp: Missing docstring
-C0103: 75:test_open.testFlat: Invalid name "testFlat" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 75:test_open.testFlat: Missing docstring
-C0103: 76:test_open.testFlat: Invalid name "r" (should match [a-z_][a-z0-9_]{2,30}$)
-W0212: 76:test_open.testFlat: Access to a protected member _open of a client class
-C0103: 79:test_open.testGz: Invalid name "testGz" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 79:test_open.testGz: Missing docstring
-C0103: 80:test_open.testGz: Invalid name "r" (should match [a-z_][a-z0-9_]{2,30}$)
-W0212: 80:test_open.testGz: Access to a protected member _open of a client class
-C0103: 83:test_open.testBz2: Invalid name "testBz2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 83:test_open.testBz2: Missing docstring
-C0103: 84:test_open.testBz2: Invalid name "r" (should match [a-z_][a-z0-9_]{2,30}$)
-W0212: 84:test_open.testBz2: Access to a protected member _open of a client class
-C0103: 88: Invalid name "names" (should match (([A-Z_]*)|(__.*__))$)
-C0111: 98:testPILimage: Missing docstring
-C0103: 99:testPILimage.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 99:testPILimage.setUp: Missing docstring
-C0103:109:testPILimage.testPIL_1: Invalid name "testPIL_1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111:109:testPILimage.testPIL_1: Missing docstring
-C0103:111:testPILimage.testPIL_1: Invalid name "t" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:113:testPILimage.testPIL_1: Comma not followed by a space
-            for s in [(10,20), (431,1325)]:
-                         ^^
-C0103:113:testPILimage.testPIL_1: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:115:testPILimage.testPIL_1: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:116:testPILimage.testPIL_1: Invalid name "pm" (should match [a-z_][a-z0-9_]{2,30}$)
-C0323:119:testPILimage.testPIL_1: Operator not followed by a space
-                        err = name+" %d %d %f %f t=%s"%(i,j,testdata[j,i],
-                                                      ^
-                                            pm.getpixel((i,j)),
-                                            t)
-C0324:122:testPILimage.testPIL_1: Comma not followed by a space
-                        e1 = im.data[j,i] - pm.getpixel((i,j))
-                                      ^^
-C0103:122:testPILimage.testPIL_1: Invalid name "e1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:123:testPILimage.testPIL_1: Comma not followed by a space
-                        e2 = im.data[j,i] + pm.getpixel((i,j))
-                                      ^^
-C0103:123:testPILimage.testPIL_1: Invalid name "e2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:126:testPILimage.testPIL_1: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:128:testPILimage.testPIL_1: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-W0612:110:testPILimage.testPIL_1: Unused variable 'sys'
-C0103:138:testPILimage.testPIL_2: Invalid name "testPIL_2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111:138:testPILimage.testPIL_2: Missing docstring
-C0103:140:testPILimage.testPIL_2: Invalid name "t" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:142:testPILimage.testPIL_2: Comma not followed by a space
-            for s in [(10,20), (431,1325)]:
-                         ^^
-C0103:142:testPILimage.testPIL_2: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:144:testPILimage.testPIL_2: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:145:testPILimage.testPIL_2: Invalid name "pm" (should match [a-z_][a-z0-9_]{2,30}$)
-C0323:148:testPILimage.testPIL_2: Operator not followed by a space
-                        err = name+" %d %d %f %f t=%s"%(i,j,testdata[j,i],
-                                                      ^
-                                            pm.getpixel((i,j)),
-                                            t)
-C0324:151:testPILimage.testPIL_2: Comma not followed by a space
-                        e1 = im.data[j,i] - pm.getpixel((i,j))
-                                      ^^
-C0103:151:testPILimage.testPIL_2: Invalid name "e1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:152:testPILimage.testPIL_2: Comma not followed by a space
-                        e2 = im.data[j,i] + pm.getpixel((i,j))
-                                      ^^
-C0103:152:testPILimage.testPIL_2: Invalid name "e2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:154:testPILimage.testPIL_2: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:156:testPILimage.testPIL_2: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:165:testPILimage.testPIL_3: Invalid name "testPIL_3" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111:165:testPILimage.testPIL_3: Missing docstring
-C0103:167:testPILimage.testPIL_3: Invalid name "t" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:169:testPILimage.testPIL_3: Comma not followed by a space
-            for s in [(10,20), (431,1325)]:
-                         ^^
-C0103:169:testPILimage.testPIL_3: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:171:testPILimage.testPIL_3: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:172:testPILimage.testPIL_3: Invalid name "pm" (should match [a-z_][a-z0-9_]{2,30}$)
-C0323:175:testPILimage.testPIL_3: Operator not followed by a space
-                        err = name+" %d %d %f %f t=%s"%(i,j,testdata[j,i],
-                                                      ^
-                                            pm.getpixel((i,j)),
-                                            t)
-C0324:179:testPILimage.testPIL_3: Comma not followed by a space
-                        e1 = im.data[j,i] - pm.getpixel((i,j))
-                                      ^^
-C0103:179:testPILimage.testPIL_3: Invalid name "e1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:180:testPILimage.testPIL_3: Comma not followed by a space
-                        e2 = im.data[j,i] + pm.getpixel((i,j))
-                                      ^^
-C0103:180:testPILimage.testPIL_3: Invalid name "e2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:182:testPILimage.testPIL_3: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:184:testPILimage.testPIL_3: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322:194: Operator not preceded by a space
-if __name__=="__main__":
-           ^^
+C0103: 12:test50000.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 38:testslices.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 73:testopen.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 82:testopen.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 88:testopen.testFlat: Invalid name "testFlat" (should match [a-z_][a-z0-9_]{2,30}$)
+W0212: 90:testopen.testFlat: Access to a protected member _open of a client class
+W0212: 95:testopen.testgz: Access to a protected member _open of a client class
+W0212:100:testopen.testbz2: Access to a protected member _open of a client class
+C0103:116:testPILimage.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R0201:126:testPILimage.mkdata: Method could be a function
 
 
 Report
 ======
-127 statements analysed.
+90 statements analysed.
 
 Duplication
 -----------
@@ -165,9 +21,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -178,13 +34,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |156    |93.98 |NC       |NC         |
+|code      |109    |73.15 |109      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |0      |0.00  |NC       |NC         |
+|docstring |28     |18.79 |28       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |0      |0.00  |NC       |NC         |
+|comment   |1      |0.67  |1        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |10     |6.02  |NC       |NC         |
+|empty     |11     |7.38  |11       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -206,13 +62,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |0.00        |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |4      |NC         |NC         |0.00        |25.00    |
+|class    |6      |6          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |18     |NC         |NC         |0.00        |94.44    |
+|method   |19     |19         |=          |100.00      |31.58    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -223,13 +79,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |102    |NC       |NC         |
+|convention |6      |7        |-1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |6      |NC       |NC         |
+|warning    |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -240,28 +96,16 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0103      |59         |
-+-----------+-----------+
-|C0111      |23         |
-+-----------+-----------+
-|C0324      |16         |
+|C0103      |6          |
 +-----------+-----------+
 |W0212      |3          |
 +-----------+-----------+
-|C0323      |3          |
-+-----------+-----------+
-|W0704      |1          |
-+-----------+-----------+
-|W0702      |1          |
-+-----------+-----------+
-|W0612      |1          |
-+-----------+-----------+
-|C0322      |1          |
+|R0201      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 1.50/10
+Your code has been rated at 8.89/10 (previous run: 8.78/10)
 

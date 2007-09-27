@@ -1,127 +1,13 @@
 ************* Module testbrukerimage
-C0301:  8: Line too long (99/80)
-C0301: 10: Line too long (125/80)
-W0311: 25: Bad indentation. Found 2 spaces, expected 4
-W0311: 27: Bad indentation. Found 2 spaces, expected 4
-W0311: 28: Bad indentation. Found 4 spaces, expected 8
-W0311: 29: Bad indentation. Found 4 spaces, expected 8
-W0311: 30: Bad indentation. Found 4 spaces, expected 8
-W0311: 31: Bad indentation. Found 6 spaces, expected 12
-W0311: 32: Bad indentation. Found 6 spaces, expected 12
-W0311: 33: Bad indentation. Found 4 spaces, expected 8
-W0311: 34: Bad indentation. Found 4 spaces, expected 8
-W0311: 35: Bad indentation. Found 6 spaces, expected 12
-W0311: 36: Bad indentation. Found 6 spaces, expected 12
-W0311: 37: Bad indentation. Found 6 spaces, expected 12
-W0311: 38: Bad indentation. Found 4 spaces, expected 8
-W0311: 40: Bad indentation. Found 4 spaces, expected 8
-W0311: 41: Bad indentation. Found 4 spaces, expected 8
-W0311: 42: Bad indentation. Found 6 spaces, expected 12
-W0311: 43: Bad indentation. Found 4 spaces, expected 8
-W0311: 45: Bad indentation. Found 2 spaces, expected 4
-W0311: 46: Bad indentation. Found 4 spaces, expected 8
-W0311: 47: Bad indentation. Found 6 spaces, expected 12
-W0311: 48: Bad indentation. Found 4 spaces, expected 8
-W0311: 49: Bad indentation. Found 6 spaces, expected 12
-W0311: 51: Bad indentation. Found 2 spaces, expected 4
-W0311: 52: Bad indentation. Found 4 spaces, expected 8
-W0311: 53: Bad indentation. Found 4 spaces, expected 8
-W0311: 54: Bad indentation. Found 4 spaces, expected 8
-W0311: 55: Bad indentation. Found 4 spaces, expected 8
-W0311: 56: Bad indentation. Found 4 spaces, expected 8
-W0311: 77: Bad indentation. Found 2 spaces, expected 4
-C0111:  1: Missing docstring
-C0324:  4: Comma not followed by a space
-import unittest,os,Numeric
-               ^^
-C0322: 10: Operator not preceded by a space
-myheader={"FORMAT":'86', 'NPIXELB':'2','VERSION':'9','HDRBLKS':'5','NOVERFL':'4', 'NCOLS':'256','NROWS':'256','WORDORD':'0'};
-        ^
-C0103: 10: Invalid name "myheader" (should match (([A-Z_]*)|(__.*__))$)
-W0106: 10: Unnecessary semi-column
-C0324: 12: Comma not followed by a space
-myimage = Numeric.ones((256,256), Numeric.UInt16, savespace=1)*16
-                           ^^
-C0103: 12: Invalid name "myimage" (should match (([A-Z_]*)|(__.*__))$)
-C0322: 13: Operator not preceded by a space
-myimage[0,0]=0
-            ^
-C0322: 14: Operator not preceded by a space
-myimage[1,1]=32
-            ^
-C0322: 15: Operator not preceded by a space
-myimage[127:129,127:129]=65535
-                        ^
-C0322: 17: Operator not preceded by a space
-overflows=[
-         ^
-["%09d"% 4194304,("%07d"% (127*256+127))],
-["%09d"% 4194304,("%07d"% (127*256+128))],
-["%09d"% 4194304,("%07d"% (128*256+127))],
-["%09d"% 4194304,("%07d"% (128*256+128))],
-]
-C0103: 17: Invalid name "overflows" (should match (([A-Z_]*)|(__.*__))$)
-C0111: 24:testbruker: Missing docstring
-C0103: 27:testbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 27:testbruker.setUp: Missing docstring
-C0322: 28:testbruker.setUp: Operator not preceded by a space
-    f=open("image.0000",'wb')
-     ^
-C0103: 28:testbruker.setUp: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 29:testbruker.setUp: Operator not preceded by a space
-    wrb=0
-       ^
-C0324: 30:testbruker.setUp: Comma not followed by a space
-    for k,v in myheader.iteritems():
-         ^^
-C0103: 30:testbruker.setUp: Invalid name "v" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 32:testbruker.setUp: Operator not preceded by a space
-      wrb=wrb+80
-         ^
-C0322: 33:testbruker.setUp: Operator not preceded by a space
-    hdrblks=int(myheader['HDRBLKS'])
-           ^
-C0322: 37:testbruker.setUp: Operator not preceded by a space
-      wrb=wrb+80
-         ^
-C0322: 40:testbruker.setUp: Operator not preceded by a space
-    noverfl=int(myheader['NOVERFL'])
-           ^
-C0103: 41:testbruker.setUp: Invalid name "o" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 45:testbruker.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 45:testbruker.tearDown: Missing docstring
-W0704: 48:testbruker.tearDown: Except doesn't do anything
-W0702: 49:testbruker.tearDown: No exception's type specified
-C0111: 51:testbruker.test_read: Missing docstring
-C0103: 52:testbruker.test_read: Invalid name "o" (should match [a-z_][a-z0-9_]{2,30}$)
-E1102: 52:testbruker.test_read: brukerimage is not callable
-C0324: 54:testbruker.test_read: Comma not followed by a space
-    self.assertAlmostEqual( o.getmean() , 272.0,2 )
-                                               ^^
-C0111: 58:testbzipbruker: Missing docstring
-C0103: 60:testbzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 60:testbzipbruker.setUp: Missing docstring
-C0103: 63:testbzipbruker.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 63:testbzipbruker.tearDown: Missing docstring
-W0704: 65:testbzipbruker.tearDown: Except doesn't do anything
-W0702: 65:testbzipbruker.tearDown: No exception's type specified
-C0321: 64:testbzipbruker.tearDown: More than one statement on a single line
-C0111: 67:testgzipbruker: Missing docstring
-C0103: 69:testgzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 69:testgzipbruker.setUp: Missing docstring
-C0103: 72:testgzipbruker.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 72:testgzipbruker.tearDown: Missing docstring
-W0704: 74:testgzipbruker.tearDown: Except doesn't do anything
-W0702: 74:testgzipbruker.tearDown: No exception's type specified
-C0321: 73:testgzipbruker.tearDown: More than one statement on a single line
-C0322: 76: Operator not preceded by a space
-if __name__=="__main__":
-           ^^
+C0103: 39:testbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 58:testbruker.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 73:testbzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 82:testgzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
 
 
 Report
 ======
-57 statements analysed.
+47 statements analysed.
 
 Duplication
 -----------
@@ -129,9 +15,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -142,13 +28,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |60     |89.55 |NC       |NC         |
+|code      |52     |64.20 |53       |-1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |0      |0.00  |NC       |NC         |
+|docstring |20     |24.69 |20       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |4      |5.97  |NC       |NC         |
+|comment   |3      |3.70  |3        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |3      |4.48  |NC       |NC         |
+|empty     |6      |7.41  |6        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -169,13 +55,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |0.00        |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |3      |NC         |NC         |0.00        |0.00     |
+|class    |3      |3          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |7      |NC         |NC         |0.00        |85.71    |
+|method   |5      |5          |=          |100.00      |80.00    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -186,13 +72,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |44     |NC       |NC         |
+|convention |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |36     |NC       |NC         |
+|warning    |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|error      |1      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -203,32 +89,12 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0311      |29         |
-+-----------+-----------+
-|C0103      |13         |
-+-----------+-----------+
-|C0322      |12         |
-+-----------+-----------+
-|C0111      |11         |
-+-----------+-----------+
-|C0324      |4          |
-+-----------+-----------+
-|W0704      |3          |
-+-----------+-----------+
-|W0702      |3          |
-+-----------+-----------+
-|C0321      |2          |
-+-----------+-----------+
-|C0301      |2          |
-+-----------+-----------+
-|W0106      |1          |
-+-----------+-----------+
-|E1102      |1          |
+|C0103      |4          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -4.91/10
+Your code has been rated at 9.15/10 (previous run: 9.17/10)
 

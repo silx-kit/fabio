@@ -1,62 +1,13 @@
 ************* Module testedfimage
-C0111:  1: Missing docstring
-C0103: 11: Invalid name "myheader" (should match (([A-Z_]*)|(__.*__))$)
-C0324: 21: Comma not followed by a space
-myimage = Numeric.ones((256,256), Numeric.Float32, savespace = 1)*10
-                           ^^
-C0103: 21: Invalid name "myimage" (should match (([A-Z_]*)|(__.*__))$)
-C0324: 22: Comma not followed by a space
-myimage[0,0] = 0
-         ^^
-C0324: 23: Comma not followed by a space
-myimage[1,1] = 20
-         ^^
-C0324: 25: Comma not followed by a space
-assert len(myimage[0:1,0:1].tostring()) == 4,len(myimage[0:1,0:1].tostring())
-                      ^^
-C0111: 27:testflatedfs: Missing docstring
-C0103: 30:testflatedfs.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 30:testflatedfs.setUp: Missing docstring
-C0322: 31:testflatedfs.setUp: Operator not preceded by a space
-        f=open("im0000.edf","wb")
-         ^
-C0103: 31:testflatedfs.setUp: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 37:testflatedfs.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 37:testflatedfs.tearDown: Missing docstring
-W0704: 39:testflatedfs.tearDown: Except doesn't do anything
-W0702: 39:testflatedfs.tearDown: No exception's type specified
-C0321: 38:testflatedfs.tearDown: More than one statement on a single line
-C0111: 41:testflatedfs.test_read: Missing docstring
-C0103: 42:testflatedfs.test_read: Invalid name "o" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 48:testflatedfs.test_read: Comma not followed by a space
-        self.assertEqual(o.data.shape, (256,256) )
-                                           ^^
-C0111: 52:testflatedfs.test_getstats: Missing docstring
-C0103: 53:testflatedfs.test_getstats: Invalid name "o" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 59:testbzipedf: Missing docstring
-C0103: 61:testbzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 61:testbzipedf.setUp: Missing docstring
-C0103: 64:testbzipedf.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 64:testbzipedf.tearDown: Missing docstring
-W0704: 67:testbzipedf.tearDown: Except doesn't do anything
-W0702: 67:testbzipedf.tearDown: No exception's type specified
-C0321: 66:testbzipedf.tearDown: More than one statement on a single line
-C0111: 69:testgzipedf: Missing docstring
-C0103: 71:testgzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 71:testgzipedf.setUp: Missing docstring
-C0103: 74:testgzipedf.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 74:testgzipedf.tearDown: Missing docstring
-W0704: 77:testgzipedf.tearDown: Except doesn't do anything
-W0702: 77:testgzipedf.tearDown: No exception's type specified
-C0321: 76:testgzipedf.tearDown: More than one statement on a single line
-C0322: 80: Operator not preceded by a space
-if __name__=="__main__":
-           ^^
+C0103: 33:testflatedfs.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 41:testflatedfs.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 68:testbzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 77:testgzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
 
 
 Report
 ======
-56 statements analysed.
+45 statements analysed.
 
 Duplication
 -----------
@@ -64,9 +15,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -77,13 +28,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |55     |75.34 |NC       |NC         |
+|code      |48     |60.00 |50       |-2.00      |
 +----------+-------+------+---------+-----------+
-|docstring |9      |12.33 |NC       |NC         |
+|docstring |23     |28.75 |23       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |2.74  |NC       |NC         |
+|comment   |0      |0.00  |0        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |7      |9.59  |NC       |NC         |
+|empty     |9      |11.25 |9        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -104,13 +55,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |0.00        |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |3      |NC         |NC         |0.00        |0.00     |
+|class    |3      |3          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |8      |NC         |NC         |0.00        |75.00    |
+|method   |6      |6          |=          |100.00      |66.67    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -121,13 +72,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |33     |NC       |NC         |
+|convention |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |6      |NC       |NC         |
+|warning    |0      |2        |-2.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -138,24 +89,12 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0111      |12         |
-+-----------+-----------+
-|C0103      |11         |
-+-----------+-----------+
-|C0324      |5          |
-+-----------+-----------+
-|W0704      |3          |
-+-----------+-----------+
-|W0702      |3          |
-+-----------+-----------+
-|C0321      |3          |
-+-----------+-----------+
-|C0322      |2          |
+|C0103      |4          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 3.04/10
+Your code has been rated at 9.11/10 (previous run: 8.70/10)
 

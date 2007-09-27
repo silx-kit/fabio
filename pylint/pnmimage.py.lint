@@ -1,137 +1,85 @@
 ************* Module pnmimage
-W0311: 18: Bad indentation. Found 2 spaces, expected 4
-W0311: 19: Bad indentation. Found 4 spaces, expected 8
-W0311: 20: Bad indentation. Found 4 spaces, expected 8
-W0311: 21: Bad indentation. Found 4 spaces, expected 8
-W0311: 22: Bad indentation. Found 4 spaces, expected 8
-W0311: 23: Bad indentation. Found 4 spaces, expected 8
-W0311: 24: Bad indentation. Found 4 spaces, expected 8
-W0311: 26: Bad indentation. Found 2 spaces, expected 4
-W0311: 28: Bad indentation. Found 4 spaces, expected 8
-W0311: 30: Bad indentation. Found 4 spaces, expected 8
-C0301: 33: Line too long (84/80)
-W0311: 34: Bad indentation. Found 4 spaces, expected 8
-W0311: 35: Bad indentation. Found 6 spaces, expected 12
-W0311: 36: Bad indentation. Found 6 spaces, expected 12
-W0311: 37: Bad indentation. Found 6 spaces, expected 12
-W0311: 39: Bad indentation. Found 4 spaces, expected 8
-W0311: 40: Bad indentation. Found 4 spaces, expected 8
-W0311: 43: Bad indentation. Found 4 spaces, expected 8
-W0311: 44: Bad indentation. Found 4 spaces, expected 8
-W0311: 45: Bad indentation. Found 6 spaces, expected 12
-W0311: 46: Bad indentation. Found 4 spaces, expected 8
-W0311: 47: Bad indentation. Found 6 spaces, expected 12
-W0311: 48: Bad indentation. Found 4 spaces, expected 8
-W0311: 49: Bad indentation. Found 6 spaces, expected 12
-W0311: 50: Bad indentation. Found 6 spaces, expected 12
-W0311: 51: Bad indentation. Found 4 spaces, expected 8
-W0311: 52: Bad indentation. Found 6 spaces, expected 12
-W0311: 54: Bad indentation. Found 4 spaces, expected 8
-W0311: 56: Bad indentation. Found 6 spaces, expected 12
-W0311: 57: Bad indentation. Found 4 spaces, expected 8
-W0311: 58: Bad indentation. Found 6 spaces, expected 12
-W0311: 59: Bad indentation. Found 4 spaces, expected 8
-W0311: 60: Bad indentation. Found 4 spaces, expected 8
-W0311: 62: Bad indentation. Found 2 spaces, expected 4
-W0311: 63: Bad indentation. Found 4 spaces, expected 8
-W0311: 65: Bad indentation. Found 2 spaces, expected 4
-W0311: 66: Bad indentation. Found 4 spaces, expected 8
-W0311: 68: Bad indentation. Found 2 spaces, expected 4
-W0311: 69: Bad indentation. Found 4 spaces, expected 8
-W0311: 70: Bad indentation. Found 4 spaces, expected 8
-W0311: 71: Bad indentation. Found 4 spaces, expected 8
-W0311: 72: Bad indentation. Found 6 spaces, expected 12
-W0312: 73: Found indentation with tabs instead of spaces
-W0311: 74: Bad indentation. Found 6 spaces, expected 12
-C0301: 75: Line too long (81/80)
-W0312: 75: Found indentation with tabs instead of spaces
-W0311: 76: Bad indentation. Found 4 spaces, expected 8
-W0311: 78: Bad indentation. Found 2 spaces, expected 4
-W0311: 79: Bad indentation. Found 4 spaces, expected 8
-W0311: 80: Bad indentation. Found 4 spaces, expected 8
-C0301: 81: Line too long (95/80)
-W0311: 81: Bad indentation. Found 6 spaces, expected 12
-W0311: 82: Bad indentation. Found 4 spaces, expected 8
-C0301: 83: Line too long (86/80)
-W0311: 83: Bad indentation. Found 6 spaces, expected 12
-W0311: 84: Bad indentation. Found 4 spaces, expected 8
-W0311: 86: Bad indentation. Found 2 spaces, expected 4
-W0311: 87: Bad indentation. Found 4 spaces, expected 8
+C0301: 33: Line too long (88/80)
+C0301: 50: Line too long (81/80)
+C0301: 56: Line too long (83/80)
+C0301: 75: Line too long (96/80)
+C0301: 81: Line too long (101/80)
+C0301: 83: Line too long (92/80)
 W0403: 15: Relative import 'edfimage'
 C0111: 17:pnmimage: Missing docstring
 C0103: 22:pnmimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
 R0902: 17:pnmimage: Too many instance attributes (10/7)
 C0322: 19:pnmimage.__init__: Operator not preceded by a space
-    self.data=None
-             ^
-C0322: 20:pnmimage.__init__: Operator not preceded by a space
-    self.header={'Subformat':'P5'}
-               ^
-C0322: 21:pnmimage.__init__: Operator not preceded by a space
-    self.dim1=self.dim2=0
-             ^
-C0322: 22:pnmimage.__init__: Operator not preceded by a space
-    self.m=self.maxval=self.stddev=self.minval=None
-          ^
-C0322: 23:pnmimage.__init__: Operator not preceded by a space
-    self.header_keys=self.header.keys()
-                    ^
-C0322: 24:pnmimage.__init__: Operator not preceded by a space
-    self.bytecode=None
+        self.data=None
                  ^
+C0322: 20:pnmimage.__init__: Operator not preceded by a space
+        self.header={'Subformat':'P5'}
+                   ^
+C0322: 21:pnmimage.__init__: Operator not preceded by a space
+        self.dim1=self.dim2=0
+                 ^
+C0322: 22:pnmimage.__init__: Operator not preceded by a space
+        self.m=self.maxval=self.stddev=self.minval=None
+              ^
+C0322: 23:pnmimage.__init__: Operator not preceded by a space
+        self.header_keys=self.header.keys()
+                        ^
+C0322: 24:pnmimage.__init__: Operator not preceded by a space
+        self.bytecode=None
+                     ^
 C0111: 26:pnmimage.read: Missing docstring
 C0324: 26:pnmimage.read: Comma not followed by a space
-  def read(self,fname,verbose=0):
-               ^^
+    def read(self,fname,verbose=0):
+                 ^^
 C0322: 28:pnmimage.read: Operator not preceded by a space
-    f=open(fname,"rb")
-     ^
+        f=open(fname,"rb")
+         ^
 C0103: 28:pnmimage.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 30:pnmimage.read: Operator not preceded by a space
-    self.header_keys=['Subformat','Dimensions','Maxval']
-                    ^
+        self.header_keys=['Subformat','Dimensions','Maxval']
+                        ^
 C0322: 35:pnmimage.read: Operator not preceded by a space
-      l=f.readline()
-       ^
+            l=f.readline()
+             ^
 C0103: 35:pnmimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0321: 36:pnmimage.read: More than one statement on a single line
 C0103: 36:pnmimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 37:pnmimage.read: Operator not preceded by a space
-      self.header[k]=l.strip()
-                    ^
+            self.header[k]=l.strip()
+                          ^
 C0322: 39:pnmimage.read: Operator not preceded by a space
-    dims=(self.header['Dimensions'].split())
-        ^
+        dims=(self.header['Dimensions'].split())
+            ^
 C0322: 40:pnmimage.read: Operator not preceded by a space
-    self.dim1,self.dim2=int(dims[0]),int(dims[1])
-                       ^
+        self.dim1,self.dim2=int(dims[0]),int(dims[1])
+                           ^
 C0322: 43:pnmimage.read: Operator not preceded by a space
-    m=int(self.header['Maxval'])
-     ^
+        m=int(self.header['Maxval'])
+         ^
 C0103: 43:pnmimage.read: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 44:pnmimage.read: Operator not preceded by a space
-    if m<256:
-        ^
+        if m<256:
+            ^
 C0322: 45:pnmimage.read: Operator not preceded by a space
-      self.bytecode=Numeric.UInt8
-                   ^
+            self.bytecode=Numeric.UInt8
+                         ^
 C0322: 47:pnmimage.read: Operator not preceded by a space
-      self.bytecode=Numeric.UInt16
-                   ^
+            self.bytecode=Numeric.UInt16
+                         ^
 C0322: 49:pnmimage.read: Operator not preceded by a space
-      self.bytecode=Numeric.UInt32
-                   ^
+            self.bytecode=Numeric.UInt32
+                         ^
 E0602: 50:pnmimage.read: Undefined variable 'warn'
 C0322: 56:pnmimage.read: Operator not preceded by a space
-      self.data=eval('self.'+self.header['Subformat']+'dec(f,self.bytecode)')
-               ^
+            self.data=eval('self.'+self.header['Subformat']+'dec(f,self.bytecode)')
+                     ^
 E1101: 59:pnmimage.read: Instance of 'pnmimage' has no 'resetvals' member
 W0613: 26:pnmimage.read: Unused argument 'verbose'
 C0103: 62:pnmimage.P1dec: Invalid name "P1dec" (should match [a-z_][a-z0-9_]{2,30}$)
 C0111: 62:pnmimage.P1dec: Missing docstring
 C0324: 62:pnmimage.P1dec: Comma not followed by a space
-  def P1dec(self,buf,bytecode):
-                ^^
+    def P1dec(self,buf,bytecode):
+                  ^^
 E0602: 63:pnmimage.P1dec: Undefined variable 'warn'
 R0201: 62:pnmimage.P1dec: Method could be a function
 W0613: 62:pnmimage.P1dec: Unused argument 'buf'
@@ -139,8 +87,8 @@ W0613: 62:pnmimage.P1dec: Unused argument 'bytecode'
 C0103: 65:pnmimage.P3dec: Invalid name "P3dec" (should match [a-z_][a-z0-9_]{2,30}$)
 C0111: 65:pnmimage.P3dec: Missing docstring
 C0324: 65:pnmimage.P3dec: Comma not followed by a space
-  def P3dec(self,buf,bytecode):
-                ^^
+    def P3dec(self,buf,bytecode):
+                  ^^
 E0602: 66:pnmimage.P3dec: Undefined variable 'warn'
 R0201: 65:pnmimage.P3dec: Method could be a function
 W0613: 65:pnmimage.P3dec: Unused argument 'buf'
@@ -148,30 +96,30 @@ W0613: 65:pnmimage.P3dec: Unused argument 'bytecode'
 C0103: 68:pnmimage.P2dec: Invalid name "P2dec" (should match [a-z_][a-z0-9_]{2,30}$)
 C0111: 68:pnmimage.P2dec: Missing docstring
 C0324: 68:pnmimage.P2dec: Comma not followed by a space
-  def P2dec(self,buf,bytecode):
-                ^^
+    def P2dec(self,buf,bytecode):
+                  ^^
 C0322: 69:pnmimage.P2dec: Operator not preceded by a space
-    data=Numeric.zeros((self.dim2,self.dim1))
-        ^
+        data=Numeric.zeros((self.dim2,self.dim1))
+            ^
 C0322: 70:pnmimage.P2dec: Operator not preceded by a space
-    i=0
-     ^
+        i=0
+         ^
 C0103: 71:pnmimage.P2dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 73:pnmimage.P2dec: Operator not preceded by a space
-	data[i,:]=Numeric.array(l.split()).astype(bytecode)
-          ^
+                data[i,:]=Numeric.array(l.split()).astype(bytecode)
+                         ^
 C0103: 78:pnmimage.P5dec: Invalid name "P5dec" (should match [a-z_][a-z0-9_]{2,30}$)
 C0111: 78:pnmimage.P5dec: Missing docstring
 C0324: 78:pnmimage.P5dec: Comma not followed by a space
-  def P5dec(self,buf,bytecode):
-                ^^
+    def P5dec(self,buf,bytecode):
+                  ^^
 C0322: 79:pnmimage.P5dec: Operator not preceded by a space
-    l=buf.read()
-     ^
+        l=buf.read()
+         ^
 C0103: 79:pnmimage.P5dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 81:pnmimage.P5dec: Operator not preceded by a space
-      data=Numeric.reshape(Numeric.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswapped()
-          ^
+            data=Numeric.reshape(Numeric.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswapped()
+                ^
 C0111: 86:pnmimage.write: Missing docstring
 E0213: 86:pnmimage.write: Method should have "self" as first argument
 E0602: 87:pnmimage.write: Undefined variable 'warn'
@@ -189,9 +137,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -202,13 +150,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |59     |78.67 |NC       |NC         |
+|code      |59     |78.67 |59       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |10     |13.33 |NC       |NC         |
+|docstring |10     |13.33 |10       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |4      |5.33  |NC       |NC         |
+|comment   |4      |5.33  |4        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |2      |2.67  |NC       |NC         |
+|empty     |2      |2.67  |2        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -231,13 +179,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |7      |NC         |NC         |14.29       |57.14    |
+|method   |7      |7          |=          |14.29       |57.14    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -248,13 +196,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |51     |NC       |NC         |
+|convention |53     |53       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |4      |NC       |NC         |
+|refactor   |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|warning    |61     |NC       |NC         |
+|warning    |7      |7        |=          |
 +-----------+-------+---------+-----------+
-|error      |6      |NC       |NC         |
+|error      |6      |6        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -265,13 +213,13 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0311      |52         |
-+-----------+-----------+
 |C0322      |23         |
 +-----------+-----------+
 |C0103      |11         |
 +-----------+-----------+
 |C0111      |7          |
++-----------+-----------+
+|C0301      |6          |
 +-----------+-----------+
 |W0613      |5          |
 +-----------+-----------+
@@ -279,11 +227,7 @@ Messages
 +-----------+-----------+
 |E0602      |4          |
 +-----------+-----------+
-|C0301      |4          |
-+-----------+-----------+
 |R0201      |3          |
-+-----------+-----------+
-|W0312      |2          |
 +-----------+-----------+
 |W0611      |1          |
 +-----------+-----------+
@@ -302,5 +246,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -17.55/10
+Your code has been rated at -7.74/10 (previous run: -7.74/10)
 

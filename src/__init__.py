@@ -63,7 +63,7 @@ filetypes = {'edf': 'edf',
              'mar2300':'mar345',
              'sfrm': 'bruker100'
              }
-            
+
 def getnum(name):
     # try to figure out a file number
     # guess it starts at the back
@@ -100,7 +100,7 @@ def deconstruct_filename(filename):
             # unregistered type??
             raise Exception("Cannot decode "+filename)
     return num, typ
-            
+
 
 
 def extract_filenumber(filename):
@@ -110,7 +110,7 @@ class fabio:
     def __init__(self):
         self.filenumber = None
         self.filetype = None
-    
+
     def openimage(self,filename=None):
         #if a filename is supplied use that - otherwise get it from the GUI
         if filename==None:
@@ -127,7 +127,3 @@ class fabio:
             (self.xsize, self.ysize)=(img.dim1, img.dim2)
         except IOError:
             raise
- 
-
-
-

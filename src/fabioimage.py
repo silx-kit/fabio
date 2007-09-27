@@ -12,7 +12,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import Numeric
+import Numeric, math, os
 from PIL import Image
 
 
@@ -26,24 +26,46 @@ from PIL import Image
 #
 # http://effbot.org/zone/pil-numpy.htm   viewed on 20-8-2007
 
-def image2array(im):
-    if im.mode not in ("L", "F"):
+def image2array(img):
+    """
+    #
+    # utilities to convert between numerical arrays and PIL image memories
+    #
+    # fredrik lundh, october 1998
+    #
+    # fredrik@pythonware.com
+    # http://www.pythonware.com
+    #
+    # http://effbot.org/zone/pil-numpy.htm   viewed on 20-8-2007
+    """
+    if img.mode not in ("L", "F"):
         raise ValueError, "can only convert single-layer images"
-    if im.mode == "L":
-        a = Numeric.fromstring(im.tostring(), Numeric.UnsignedInt8)
+    if img.mode == "L":
+        arr = Numeric.fromstring(img.tostring(), Numeric.UnsignedInt8)
     else:
-        a = Numeric.fromstring(im.tostring(), Numeric.Float32)
-    a.shape = im.size[1], im.size[0]
-    return a
+        arr = Numeric.fromstring(img.tostring(), Numeric.Float32)
+    arr.shape = img.size[1], img.size[0]
+    return arr
 
-def array2image(a):
-    if a.typecode() == Numeric.UnsignedInt8:
+def array2image(arr):
+    """
+    #
+    # utilities to convert between numerical arrays and PIL image memories
+    #
+    # fredrik lundh, october 1998
+    #
+    # fredrik@pythonware.com
+    # http://www.pythonware.com
+    #
+    # http://effbot.org/zone/pil-numpy.htm   viewed on 20-8-2007
+    """
+    if arr.typecode() == Numeric.UnsignedInt8:
         mode = "L"
-    elif a.typecode() == Numeric.Float32:
+    elif arr.typecode() == Numeric.Float32:
         mode = "F"
     else:
         raise ValueError, "unsupported image mode"
-    return Image.fromstring(mode, (a.shape[1], a.shape[0]), a.tostring())
+    return Image.fromstring(mode, (arr.shape[1], arr.shape[0]), arr.tostring())
 
 
 
@@ -72,7 +94,7 @@ class fabioimage:
         self.bytecode = None     # Numeric typecode
         self.bpp = 2             # bytes per pixel
         # cache for image statistics
-        self.m = self.maxval = self.stddev = self.minval = None
+        self.mean = self.maxval = self.stddev = self.minval = None
         # Cache roi
         self.area_sum = None
         self.slice = None
@@ -118,23 +140,24 @@ class fabioimage:
         # "RGBX" 24-bit true colour, stored as (blue, green, red, pad).
         # "RGB;L" 24-bit true colour, line interleaved (first all red pixels,
         #         the all green pixels, finally all blue 
-        bm = { Numeric.UInt8   : ["F", "F;8"]    ,  
-               #  8-bit unsigned integer.
-               Numeric.Int8    : ["F", "F;8S"]   ,  
-               #  8-bit signed integer.
-               Numeric.UInt16  : ["F", "F;16"]  ,  
-               #  16-bit native unsigned integer.
-               Numeric.Int16   : ["F", "F;16S"] ,  
-               #  16-bit native signed integer.
-               Numeric.UInt32  : ["F", "F;32N"]  ,  
-               #  32-bit native unsigned integer.
-               Numeric.Int32   : ["F", "F;32NS"] ,  
-               #  32-bit native signed integer.
-               Numeric.Float32 : ["F", "F;32NF"] }    
-               #  32-bit native floating point.
-        # Apparently does not work...:
-             #  Numeric.Float64 : ["F","F;64NF"] }  
-             #  64-bit native floating point
+        bmap = { Numeric.UInt8   : ["F", "F;8"]    ,  
+                 #  8-bit unsigned integer.
+                 Numeric.Int8    : ["F", "F;8S"]   ,  
+                 #  8-bit signed integer.
+                 Numeric.UInt16  : ["F", "F;16"]  ,  
+                 #  16-bit native unsigned integer.
+                 Numeric.Int16   : ["F", "F;16S"] ,  
+                 #  16-bit native signed integer.
+                 Numeric.UInt32  : ["F", "F;32N"]  ,  
+                 #  32-bit native unsigned integer.
+                 Numeric.Int32   : ["F", "F;32NS"] ,  
+                 #  32-bit native signed integer.
+                 Numeric.Float32 : ["F", "F;32NF"]
+                 #  32-bit native floating point. 
+                 }
+                 # Apparently does not work...:
+                 #  Numeric.Float64 : ["F","F;64NF"] }  
+                 #  64-bit native floating point
         #names = { Numeric.UInt8 : "Numeric.UInt8",
         #          Numeric.Int8  : "Numeric.Int8" ,  
         #          Numeric.UInt16: "Numeric.UInt16",  
@@ -144,7 +167,7 @@ class fabioimage:
         #          Numeric.Float32: "Numeric.Float32" ,
         #          Numeric.Float64:"Numeric.Float64"}
         try:
-            byteformat = bm [ self.data.typecode() ]
+            byteformat = bmap [ self.data.typecode() ]
             # print "Numeric typecode",self.data.typecode(),\
             #      "name",names[self.data.typecode()],byteformat
         except:
@@ -156,8 +179,8 @@ class fabioimage:
                                         self.data,
                                         "raw", 
                                         byteformat[1], 
-                                        0,  # whats this 
-                                        1   # and this?  
+                                        0,  # stride - every line.
+                                        1   # orientation - no flip.
                                         )
         except:
             print byteformat
@@ -235,23 +258,24 @@ class fabioimage:
 
     def getmean(self):
         """ return the mean """
-        if self.m is None:
-            self.m = Numeric.sum( Numeric.ravel( self.data.astype(Numeric.Float)))
+        if self.mean is None:
+            self.mean = Numeric.sum( Numeric.ravel( 
+                    self.data.astype(Numeric.Float)))
             # use data.shape in case dim1 or dim2 are wrong
-            self.m = self.m / (self.data.shape[0]*self.data.shape[1])
-        return float(self.m)
+            self.mean = self.mean / (self.data.shape[0]*self.data.shape[1])
+        return float(self.mean)
     
     def getstddev(self):
         """ return the standard deviation """
-        if self.m == None:
+        if self.mean == None:
             self.getmean()    
         if self.stddev == None:
             # use data.shape in case dim1 or dim2 are wrong
             # formula changed from that found in edfimage by JPW
-            Npt = self.data.shape[0] * self.data.shape[1] - 1
-            diff = self.data.astype(Numeric.Float) - self.m
-            Sumsq = Numeric.sum( Numeric.ravel( diff*diff ) )
-            self.stddev = Numeric.sqrt(Sumsq / Npt)
+            npt = self.data.shape[0] * self.data.shape[1] - 1
+            diff = self.data.astype(Numeric.Float) - self.mean
+            sumsq = Numeric.sum( Numeric.ravel( diff*diff ) )
+            self.stddev = Numeric.sqrt(sumsq / npt)
         return float(self.stddev)
 
     def add(self, other):
@@ -259,7 +283,8 @@ class fabioimage:
         Add another Image - warnign, does not clip to 16 bit images by default
         """
         if not hasattr(other,'data'):
-            print 'edfimage.add() called with something that does not have a data field'
+            print 'edfimage.add() called with something that '+\
+                'does not have a data field'
         assert self.data.shape == other.data.shape , \
                   'incompatible images - Do they have the same size?'
         self.data = self.data + other.data
@@ -268,20 +293,22 @@ class fabioimage:
       
     def resetvals(self):
         """ Reset cache - call on changing data """
-        self.m = self.stddev = self.maxval = self.minval = None
+        self.mean = self.stddev = self.maxval = self.minval = None
         self.area_sum = None
   
     def rebin(self, x_rebin_fact, y_rebin_fact):
         """ Rebin the data and adjust dims """
         if self.data == None:
             raise Exception('Please read in the file you wish to rebin first')
-        (mx, ex) = math.frexp(x_rebin_fact)
-        (my, ey) = math.frexp(y_rebin_fact)
-        if (mx != 0.5 or my != 0.5):
+        (mantis_x, exp_x) = math.frexp(x_rebin_fact)
+        (mantis_y, exp_y) = math.frexp(y_rebin_fact)
+        # FIXME - this is a floating point comparison, is it always exact?
+        if (mantis_x != 0.5 or mantis_y != 0.5):
             raise Exception('Rebin factors not power of 2 not supported (yet)')
         if int(self.dim1 / x_rebin_fact) * x_rebin_fact != self.dim1 or \
            int(self.dim2 / x_rebin_fact) * x_rebin_fact != self.dim2 :
-            raise('image size is not divisible by rebin factor - skipping rebin')
+            raise('image size is not divisible by rebin factor - ' + \
+                  'skipping rebin')
         self.data.savespace(1) # avoid the upcasting behaviour
         i = 1
         while i < x_rebin_fact:
@@ -298,7 +325,7 @@ class fabioimage:
         #update header
         self.update_header()
         
-    def write(self,fname):
+    def write(self, fname):
         """
         To be overwritten - write the file
         """
@@ -334,7 +361,6 @@ class fabioimage:
             # It is already something we can use
             return fname
         if type(fname) in [type(" "), type(u" ")]:
-            import os
             if os.path.splitext(fname)[1] == ".gz":
                 import gzip
                 return gzip.GzipFile(fname, mode)
@@ -343,75 +369,83 @@ class fabioimage:
                 return bz2.BZ2File(fname, mode)
             return open(fname, mode)
 
-if __name__=='__main__':
+
+def test():
+    """
+    check some basic fabioimage functionality
+    """
     import time
     start = time.time()
     
-    d = Numeric.ones((1024,1024), Numeric.UInt16)
-    d = (d*50000).astype(Numeric.UInt16)
-    assert d.typecode() == Numeric.ones((1),Numeric.UInt16).typecode()
-    h = {"Title":"50000 everywhere"}
-    o = fabioImage(d,h)
+    dat = Numeric.ones((1024, 1024), Numeric.UInt16)
+    dat = (dat*50000).astype(Numeric.UInt16)
+    assert dat.typecode() == Numeric.ones((1), Numeric.UInt16).typecode()
+    hed = {"Title":"50000 everywhere"}
+    obj = fabioimage(dat, hed)
       
-    assert o.getmax() == 50000
-    assert o.getmin() == 50000
-    assert o.getmean() == 50000 , o.getmean()
-    assert o.getstddev() == 0.
+    assert obj.getmax() == 50000
+    assert obj.getmin() == 50000
+    assert obj.getmean() == 50000 , obj.getmean()
+    assert obj.getstddev() == 0.
       
-    d2 = Numeric.zeros((1024,1024), Numeric.UInt16, savespace = 1 )
-    c = [ 256, 256, 790, 768 ]
-    s = o.make_slice(c)
-    d2[s] = d2[s] + 100
+    dat2 = Numeric.zeros((1024, 1024), Numeric.UInt16, savespace = 1 )
+    cord = [ 256, 256, 790, 768 ]
+    slic = obj.make_slice(cord)
+    dat2[slic] = dat2[slic] + 100
       
-    o = fabioImage(d2, h)
+    obj = fabioimage(dat2, hed)
       
     # New object, so...
-    assert o.maxval is None
-    assert o.minval is None
+    assert obj.maxval is None
+    assert obj.minval is None
      
-    assert o.getmax() == 100, o.getmax()
-    assert o.getmin() == 0 , o.getmin()
-    npix = (s[0].stop-s[0].start)*(s[1].stop-s[1].start)
-    o.resetvals()
-    a1 = o.integrate_area(c) 
-    o.resetvals()
-    a2 = o.integrate_area(s)
-    assert o.integrate_area(c) == o.integrate_area(s)
-    assert o.integrate_area(c) == npix*100, o.integrate_area(c)
+    assert obj.getmax() == 100, obj.getmax()
+    assert obj.getmin() == 0 , obj.getmin()
+    npix = (slic[0].stop - slic[0].start) * (slic[1].stop - slic[1].start)
+    obj.resetvals()
+    area1 = obj.integrate_area(cord) 
+    obj.resetvals()
+    area2 = obj.integrate_area(slic)
+    assert area1 == area2
+    assert obj.integrate_area(cord) == obj.integrate_area(slic)
+    assert obj.integrate_area(cord) == npix*100, obj.integrate_area(cord)
     
 
-    import os
-
     def clean():
-        for name in ["testfile","testfile.gz", "testfile.bz2"]:
+        """ clean up the created testfiles"""
+        for name in ["testfile", "testfile.gz", "testfile.bz2"]:
             try:
                 os.remove(name)
             except:
-                pass
+                continue
+
         
     clean()
     
     open("testfile","wb").write("{ hello }")
     os.system("gzip testfile")
-    fo = o._open("testfile.gz")
-    r = fo.read()
-    assert r == "{ hello }", r+" gzipped file"
+    fout = obj._open("testfile.gz")
+    readin = fout.read()
+    assert readin == "{ hello }", readin + " gzipped file"
     
     open("testfile","wb").write("{ hello }")  
     os.system("bzip2 testfile")
-    fo = o._open("testfile.bz2")
-    r = fo.read()
-    assert r == "{ hello }", r+" bzipped file"
+    fout = obj._open("testfile.bz2")
+    readin = fout.read()
+    assert readin == "{ hello }", readin + " bzipped file"
     
-    ft = open("testfile","wb")
-    ft.write("{ hello }")
-    assert ft == o._open(ft)
-    ft.close()
-    fo = o._open("testfile")
-    r = fo.read()
-    assert r == "{ hello }", r+"plain file"
-    fo.close()
-    ft.close()
+    ftest = open("testfile","wb")
+    ftest.write("{ hello }")
+    assert ftest == obj._open(ftest)
+    ftest.close()
+    fout = obj._open("testfile")
+    readin = fout.read()
+    assert readin == "{ hello }", readin + "plain file"
+    fout.close()
+    ftest.close()
     clean()
     
-    print "Passed in",time.time()-start,"s"
+    print "Passed in", time.time() - start, "s"
+
+if __name__ == '__main__':
+    test()

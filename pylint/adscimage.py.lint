@@ -1,443 +1,294 @@
 ************* Module adscimage
-W0311: 18: Bad indentation. Found 2 spaces, expected 4
-W0311: 19: Bad indentation. Found 2 spaces, expected 4
-W0311: 20: Bad indentation. Found 2 spaces, expected 4
-W0311: 21: Bad indentation. Found 2 spaces, expected 4
-W0311: 22: Bad indentation. Found 2 spaces, expected 4
-W0311: 23: Bad indentation. Found 2 spaces, expected 4
-W0311: 25: Bad indentation. Found 2 spaces, expected 4
-W0311: 26: Bad indentation. Found 4 spaces, expected 8
-W0311: 27: Bad indentation. Found 6 spaces, expected 12
-C0301: 28: Line too long (86/80)
-W0311: 28: Bad indentation. Found 6 spaces, expected 12
-W0311: 29: Bad indentation. Found 6 spaces, expected 12
-W0311: 30: Bad indentation. Found 4 spaces, expected 8
-C0301: 31: Line too long (87/80)
-W0311: 31: Bad indentation. Found 6 spaces, expected 12
-W0311: 32: Bad indentation. Found 6 spaces, expected 12
-W0311: 34: Bad indentation. Found 2 spaces, expected 4
-W0311: 35: Bad indentation. Found 4 spaces, expected 8
-W0311: 36: Bad indentation. Found 4 spaces, expected 8
-W0311: 37: Bad indentation. Found 4 spaces, expected 8
-W0311: 38: Bad indentation. Found 4 spaces, expected 8
-W0311: 39: Bad indentation. Found 6 spaces, expected 12
-W0312: 40: Found indentation with tabs instead of spaces
-W0312: 41: Found indentation with tabs instead of spaces
-W0312: 42: Found indentation with tabs instead of spaces
-W0311: 43: Bad indentation. Found 6 spaces, expected 12
-W0311: 44: Bad indentation. Found 6 spaces, expected 12
-W0311: 45: Bad indentation. Found 4 spaces, expected 8
-W0311: 46: Bad indentation. Found 4 spaces, expected 8
-W0311: 47: Bad indentation. Found 4 spaces, expected 8
-W0311: 49: Bad indentation. Found 4 spaces, expected 8
-W0311: 50: Bad indentation. Found 4 spaces, expected 8
-W0311: 52: Bad indentation. Found 6 spaces, expected 12
-C0301: 53: Line too long (88/80)
-W0312: 53: Found indentation with tabs instead of spaces
-W0311: 54: Bad indentation. Found 6 spaces, expected 12
-C0301: 55: Line too long (82/80)
-W0312: 55: Found indentation with tabs instead of spaces
-W0311: 56: Bad indentation. Found 6 spaces, expected 12
-W0311: 57: Bad indentation. Found 6 spaces, expected 12
-W0311: 58: Bad indentation. Found 4 spaces, expected 8
-W0311: 59: Bad indentation. Found 6 spaces, expected 12
-C0301: 60: Line too long (101/80)
-W0312: 60: Found indentation with tabs instead of spaces
-W0311: 61: Bad indentation. Found 6 spaces, expected 12
-C0301: 62: Line too long (82/80)
-W0312: 62: Found indentation with tabs instead of spaces
-W0311: 63: Bad indentation. Found 6 spaces, expected 12
-W0311: 64: Bad indentation. Found 6 spaces, expected 12
-W0311: 65: Bad indentation. Found 4 spaces, expected 8
-W0311: 66: Bad indentation. Found 4 spaces, expected 8
-W0311: 68: Bad indentation. Found 2 spaces, expected 4
-W0311: 69: Bad indentation. Found 4 spaces, expected 8
-W0311: 70: Bad indentation. Found 6 spaces, expected 12
-W0311: 71: Bad indentation. Found 4 spaces, expected 8
-W0311: 73: Bad indentation. Found 2 spaces, expected 4
-W0311: 74: Bad indentation. Found 4 spaces, expected 8
-W0311: 75: Bad indentation. Found 6 spaces, expected 12
-W0311: 76: Bad indentation. Found 6 spaces, expected 12
-W0311: 77: Bad indentation. Found 4 spaces, expected 8
-W0311: 79: Bad indentation. Found 2 spaces, expected 4
-W0311: 80: Bad indentation. Found 4 spaces, expected 8
-W0311: 81: Bad indentation. Found 6 spaces, expected 12
-W0311: 82: Bad indentation. Found 6 spaces, expected 12
-W0311: 83: Bad indentation. Found 4 spaces, expected 8
-W0311: 85: Bad indentation. Found 2 spaces, expected 4
-W0311: 86: Bad indentation. Found 4 spaces, expected 8
-W0311: 87: Bad indentation. Found 6 spaces, expected 12
-W0311: 88: Bad indentation. Found 4 spaces, expected 8
-W0311: 89: Bad indentation. Found 6 spaces, expected 12
-W0312: 90: Found indentation with tabs instead of spaces
-W0311: 91: Bad indentation. Found 6 spaces, expected 12
-W0312: 92: Found indentation with tabs instead of spaces
-C0301: 93: Line too long (110/80)
-W0311: 93: Bad indentation. Found 6 spaces, expected 12
-W0311: 94: Bad indentation. Found 6 spaces, expected 12
-W0311: 95: Bad indentation. Found 4 spaces, expected 8
-W0311: 97: Bad indentation. Found 2 spaces, expected 4
-W0311: 98: Bad indentation. Found 4 spaces, expected 8
-C0301: 99: Line too long (94/80)
-W0311: 99: Bad indentation. Found 6 spaces, expected 12
-W0311:100: Bad indentation. Found 4 spaces, expected 8
-W0311:102: Bad indentation. Found 2 spaces, expected 4
-W0311:103: Bad indentation. Found 4 spaces, expected 8
-W0311:104: Bad indentation. Found 6 spaces, expected 12
-W0311:105: Bad indentation. Found 6 spaces, expected 12
-W0311:106: Bad indentation. Found 4 spaces, expected 8
-W0311:107: Bad indentation. Found 6 spaces, expected 12
-C0301:108: Line too long (120/80)
-W0311:108: Bad indentation. Found 6 spaces, expected 12
-W0311:109: Bad indentation. Found 6 spaces, expected 12
-W0311:110: Bad indentation. Found 4 spaces, expected 8
-W0311:112: Bad indentation. Found 2 spaces, expected 4
-W0311:113: Bad indentation. Found 4 spaces, expected 8
-W0311:115: Bad indentation. Found 2 spaces, expected 4
-W0311:116: Bad indentation. Found 4 spaces, expected 8
-C0301:117: Line too long (83/80)
-W0311:117: Bad indentation. Found 6 spaces, expected 12
-W0311:118: Bad indentation. Found 4 spaces, expected 8
-W0311:119: Bad indentation. Found 6 spaces, expected 12
-W0311:120: Bad indentation. Found 4 spaces, expected 8
-W0311:121: Bad indentation. Found 6 spaces, expected 12
-W0311:123: Bad indentation. Found 2 spaces, expected 4
-W0311:124: Bad indentation. Found 4 spaces, expected 8
-W0311:126: Bad indentation. Found 2 spaces, expected 4
-W0311:127: Bad indentation. Found 4 spaces, expected 8
-W0311:128: Bad indentation. Found 6 spaces, expected 12
-W0311:129: Bad indentation. Found 6 spaces, expected 12
-W0311:130: Bad indentation. Found 4 spaces, expected 8
-W0311:131: Bad indentation. Found 4 spaces, expected 8
-W0311:132: Bad indentation. Found 4 spaces, expected 8
-W0311:133: Bad indentation. Found 6 spaces, expected 12
-W0311:134: Bad indentation. Found 6 spaces, expected 12
-C0301:135: Line too long (114/80)
-W0311:135: Bad indentation. Found 4 spaces, expected 8
-W0311:136: Bad indentation. Found 6 spaces, expected 12
-W0311:137: Bad indentation. Found 6 spaces, expected 12
-W0311:138: Bad indentation. Found 4 spaces, expected 8
-W0311:139: Bad indentation. Found 4 spaces, expected 8
-W0311:140: Bad indentation. Found 4 spaces, expected 8
-W0311:141: Bad indentation. Found 6 spaces, expected 12
-W0311:142: Bad indentation. Found 6 spaces, expected 12
-W0311:143: Bad indentation. Found 4 spaces, expected 8
-W0311:144: Bad indentation. Found 4 spaces, expected 8
-W0311:145: Bad indentation. Found 6 spaces, expected 12
-W0311:146: Bad indentation. Found 6 spaces, expected 12
-W0311:147: Bad indentation. Found 4 spaces, expected 8
-W0311:148: Bad indentation. Found 4 spaces, expected 8
-W0311:149: Bad indentation. Found 4 spaces, expected 8
-W0311:151: Bad indentation. Found 4 spaces, expected 8
-W0311:152: Bad indentation. Found 4 spaces, expected 8
-W0311:153: Bad indentation. Found 4 spaces, expected 8
-W0311:154: Bad indentation. Found 4 spaces, expected 8
-W0311:156: Bad indentation. Found 2 spaces, expected 4
-W0311:157: Bad indentation. Found 4 spaces, expected 8
-W0311:158: Bad indentation. Found 4 spaces, expected 8
-W0311:159: Bad indentation. Found 4 spaces, expected 8
-W0311:160: Bad indentation. Found 4 spaces, expected 8
-W0311:161: Bad indentation. Found 6 spaces, expected 12
-W0311:162: Bad indentation. Found 6 spaces, expected 12
-W0311:163: Bad indentation. Found 6 spaces, expected 12
-W0311:164: Bad indentation. Found 4 spaces, expected 8
-W0311:165: Bad indentation. Found 4 spaces, expected 8
-W0311:166: Bad indentation. Found 4 spaces, expected 8
-W0311:167: Bad indentation. Found 4 spaces, expected 8
-W0311:168: Bad indentation. Found 6 spaces, expected 12
-W0311:169: Bad indentation. Found 4 spaces, expected 8
-W0311:170: Bad indentation. Found 6 spaces, expected 12
-W0311:171: Bad indentation. Found 4 spaces, expected 8
-W0311:174: Bad indentation. Found 2 spaces, expected 4
-W0311:175: Bad indentation. Found 2 spaces, expected 4
-W0311:176: Bad indentation. Found 2 spaces, expected 4
-W0311:177: Bad indentation. Found 2 spaces, expected 4
-W0311:178: Bad indentation. Found 4 spaces, expected 8
-W0311:179: Bad indentation. Found 4 spaces, expected 8
-W0311:180: Bad indentation. Found 4 spaces, expected 8
-W0311:181: Bad indentation. Found 4 spaces, expected 8
-C0301:182: Line too long (123/80)
-W0311:182: Bad indentation. Found 4 spaces, expected 8
-C0301:183: Line too long (100/80)
-W0311:183: Bad indentation. Found 4 spaces, expected 8
-W0311:184: Bad indentation. Found 4 spaces, expected 8
-W0311:185: Bad indentation. Found 2 spaces, expected 4
-W0311:186: Bad indentation. Found 2 spaces, expected 4
+C0301: 28: Line too long (92/80)
+C0301: 31: Line too long (93/80)
+C0301: 49: Line too long (81/80)
+C0301: 51: Line too long (81/80)
+C0301: 53: Line too long (102/80)
+C0301: 55: Line too long (97/80)
+C0301: 60: Line too long (116/80)
+C0301: 62: Line too long (97/80)
+C0301: 93: Line too long (116/80)
+C0301: 99: Line too long (100/80)
+C0301:108: Line too long (126/80)
+C0301:117: Line too long (89/80)
+C0301:135: Line too long (118/80)
+C0301:182: Line too long (126/80)
+C0301:183: Line too long (104/80)
 C0111: 17:adscimage: Missing docstring
 C0103: 99:adscimage.getmean: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
 R0902: 17:adscimage: Too many instance attributes (8/7)
 W0232: 17:adscimage: Class has no __init__ method
 C0322: 18:adscimage: Operator not preceded by a space
-  data=None
-      ^
-C0322: 19:adscimage: Operator not preceded by a space
-  header={}
+    data=None
         ^
-C0322: 20:adscimage: Operator not preceded by a space
-  dim1=dim2=0
-      ^
-C0322: 21:adscimage: Operator not preceded by a space
-  m=maxval=stddev=minval=None
-   ^
-C0322: 22:adscimage: Operator not preceded by a space
-  header_keys=[]
-             ^
-C0322: 23:adscimage: Operator not preceded by a space
-  bytecode=None
+C0322: 19:adscimage: Operator not preceded by a space
+    header={}
           ^
+C0322: 20:adscimage: Operator not preceded by a space
+    dim1=dim2=0
+        ^
+C0322: 21:adscimage: Operator not preceded by a space
+    m=maxval=stddev=minval=None
+     ^
+C0322: 22:adscimage: Operator not preceded by a space
+    header_keys=[]
+               ^
+C0322: 23:adscimage: Operator not preceded by a space
+    bytecode=None
+            ^
 C0103: 25:adscimage.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
 C0111: 25:adscimage.toPIL16: Missing docstring
 C0324: 25:adscimage.toPIL16: Comma not followed by a space
-  def toPIL16(self,filename=None):
-                  ^^
+    def toPIL16(self,filename=None):
+                    ^^
 C0322: 28:adscimage.toPIL16: Operator not preceded by a space
-      PILimage=Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1)
-              ^
+            PILimage=Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1)
+                    ^
 C0103: 28:adscimage.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 31:adscimage.toPIL16: Operator not preceded by a space
-      PILimage= Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1)
-              ^
+            PILimage= Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1)
+                    ^
 C0103: 31:adscimage.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
 C0111: 34:adscimage.read: Missing docstring
 C0324: 34:adscimage.read: Comma not followed by a space
-  def read(self,fname,verbose=0):
-               ^^
+    def read(self,fname,verbose=0):
+                 ^^
 C0322: 35:adscimage.read: Operator not preceded by a space
-    f=open(fname,"rb")
-     ^
+        f=open(fname,"rb")
+         ^
 C0103: 35:adscimage.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 36:adscimage.read: Operator not preceded by a space
-    l=f.readline()
-     ^
+        l=f.readline()
+         ^
 C0103: 36:adscimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0324: 40:adscimage.read: Comma not followed by a space
-	(k,v)=l.split('=')
-   ^^
+                (k,v)=l.split('=')
+                  ^^
 C0103: 40:adscimage.read: Invalid name "v" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 43:adscimage.read: Operator not preceded by a space
-      l=f.readline()
-       ^
+            l=f.readline()
+             ^
 C0103: 43:adscimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 46:adscimage.read: Operator not preceded by a space
-    l=f.read()
-     ^
+        l=f.read()
+         ^
 C0103: 46:adscimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0324: 49:adscimage.read: Comma not followed by a space
-    (self.dim1,self.dim2)=int(self.header['SIZE1']),int(self.header['SIZE2'])
-              ^^
+        (self.dim1,self.dim2)=int(self.header['SIZE1']),int(self.header['SIZE2'])
+                  ^^
 C0322: 53:adscimage.read: Operator not preceded by a space
-	 self.data=Numeric.reshape(Numeric.fromstring(l,Numeric.UInt16),[self.dim2, self.dim1])
-           ^
+                self.data=Numeric.reshape(Numeric.fromstring(l,Numeric.UInt16),[self.dim2, self.dim1])
+                         ^
 C0322: 56:adscimage.read: Operator not preceded by a space
-      self.bytecode=Numeric.UInt16
-                   ^
+            self.bytecode=Numeric.UInt16
+                         ^
 C0321: 57:adscimage.read: More than one statement on a single line
 C0322: 60:adscimage.read: Operator not preceded by a space
-	self.data=Numeric.reshape(Numeric.fromstring(l,Numeric.UInt16),[self.dim2, self.dim1]).byteswapped()
-          ^
+                self.data=Numeric.reshape(Numeric.fromstring(l,Numeric.UInt16),[self.dim2, self.dim1]).byteswapped()
+                         ^
 C0322: 63:adscimage.read: Operator not preceded by a space
-      self.bytecode=Numeric.UInt16
-                   ^
+            self.bytecode=Numeric.UInt16
+                         ^
 C0321: 64:adscimage.read: More than one statement on a single line
 W0612: 45:adscimage.read: Unused variable 'bin'
 C0111: 68:adscimage.getheader: Missing docstring
 C0322: 69:adscimage.getheader: Operator not preceded by a space
-    if self.header=={}:
-                  ^^
+        if self.header=={}:
+                      ^^
 C0111: 73:adscimage.getmax: Missing docstring
 C0322: 74:adscimage.getmax: Operator not preceded by a space
-    if self.maxval==None:
-                  ^^
+        if self.maxval==None:
+                      ^^
 C0322: 75:adscimage.getmax: Operator not preceded by a space
-      max_xel=Numeric.argmax(Numeric.ravel(self.data))
-             ^
+            max_xel=Numeric.argmax(Numeric.ravel(self.data))
+                   ^
 C0322: 76:adscimage.getmax: Operator not preceded by a space
-      self.maxval=Numeric.ravel(self.data)[max_xel]
-                 ^
+            self.maxval=Numeric.ravel(self.data)[max_xel]
+                       ^
 C0111: 79:adscimage.getmin: Missing docstring
 C0322: 80:adscimage.getmin: Operator not preceded by a space
-    if self.minval==None:
-                  ^^
+        if self.minval==None:
+                      ^^
 C0322: 81:adscimage.getmin: Operator not preceded by a space
-      min_xel=Numeric.argmin(Numeric.ravel(self.data))
-             ^
+            min_xel=Numeric.argmin(Numeric.ravel(self.data))
+                   ^
 C0322: 82:adscimage.getmin: Operator not preceded by a space
-      self.minval=Numeric.ravel(self.data)[min_xel]
-                 ^
+            self.minval=Numeric.ravel(self.data)[min_xel]
+                       ^
 C0111: 85:adscimage.integrate_area: Missing docstring
 C0324: 85:adscimage.integrate_area: Comma not followed by a space
-  def integrate_area(self,coords,floor=0):
-                         ^^
+    def integrate_area(self,coords,floor=0):
+                           ^^
 C0322: 89:adscimage.integrate_area: Operator not preceded by a space
-      if coords[0]>coords[2]:
-                  ^
+            if coords[0]>coords[2]:
+                        ^
 C0322: 90:adscimage.integrate_area: Operator not preceded by a space
-	coords[0:3:2]=[coords[2],coords[0]]
-              ^
+                coords[0:3:2]=[coords[2],coords[0]]
+                             ^
 C0322: 91:adscimage.integrate_area: Operator not preceded by a space
-      if coords[1]>coords[3]:
-                  ^
+            if coords[1]>coords[3]:
+                        ^
 C0322: 92:adscimage.integrate_area: Operator not preceded by a space
-	coords[1:4:2]=[coords[3],coords[1]]
-              ^
+                coords[1:4:2]=[coords[3],coords[1]]
+                             ^
 C0322: 93:adscimage.integrate_area: Operator not preceded by a space
-      S=Numeric.sum(Numeric.ravel(self.data[int(coords[0]):int(coords[2])+1,int(coords[1]):int(coords[3])+1]))
-       ^
+            S=Numeric.sum(Numeric.ravel(self.data[int(coords[0]):int(coords[2])+1,int(coords[1]):int(coords[3])+1]))
+             ^
 C0103: 93:adscimage.integrate_area: Invalid name "S" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322: 94:adscimage.integrate_area: Operator not preceded by a space
-      S=S-floor*(1+coords[2]-coords[0])*(1+coords[3]-coords[1])
-       ^
+            S=S-floor*(1+coords[2]-coords[0])*(1+coords[3]-coords[1])
+             ^
 C0103: 94:adscimage.integrate_area: Invalid name "S" (should match [a-z_][a-z0-9_]{2,30}$)
 C0111: 97:adscimage.getmean: Missing docstring
 C0322: 98:adscimage.getmean: Operator not preceded by a space
-    if self.m==None:
-             ^^
+        if self.m==None:
+                 ^^
 C0322: 99:adscimage.getmean: Operator not preceded by a space
-      self.m=Numeric.sum(Numeric.ravel(self.data.astype(Numeric.Float)))/(self.dim1*self.dim2)
-            ^
+            self.m=Numeric.sum(Numeric.ravel(self.data.astype(Numeric.Float)))/(self.dim1*self.dim2)
+                  ^
 C0111:102:adscimage.getstddev: Missing docstring
 C0322:103:adscimage.getstddev: Operator not preceded by a space
-    if self.m==None:
-             ^^
+        if self.m==None:
+                 ^^
 C0322:106:adscimage.getstddev: Operator not preceded by a space
-    if self.stddev==None:
-                  ^^
+        if self.stddev==None:
+                      ^^
 C0322:107:adscimage.getstddev: Operator not preceded by a space
-      N=self.dim1*self.dim2-1
-       ^
+            N=self.dim1*self.dim2-1
+             ^
 C0103:107:adscimage.getstddev: Invalid name "N" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322:108:adscimage.getstddev: Operator not preceded by a space
-      S=Numeric.sum(Numeric.ravel((self.data.astype(Numeric.Float)-self.m)/N*(self.data.astype(Numeric.Float)-self.m)) )
-       ^
+            S=Numeric.sum(Numeric.ravel((self.data.astype(Numeric.Float)-self.m)/N*(self.data.astype(Numeric.Float)-self.m)) )
+             ^
 C0103:108:adscimage.getstddev: Invalid name "S" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322:109:adscimage.getstddev: Operator not preceded by a space
-      self.stddev=S/(self.dim1*self.dim2-1)
-                 ^
+            self.stddev=S/(self.dim1*self.dim2-1)
+                       ^
 C0111:112:adscimage.getheader: Missing docstring
 E0102:112:adscimage.getheader: method already defined line 68
 C0111:115:adscimage.add: Missing docstring
 C0103:115:adscimage.add: Invalid name "otherImage" (should match [a-z_][a-z0-9_]{2,30}$)
 W0702:121:adscimage.add: No exception's type specified
 C0322:119:adscimage.add: Operator not preceded by a space
-      self.data=Numeric.clip(self.data+otherImage.data,0,65535)
-               ^
+            self.data=Numeric.clip(self.data+otherImage.data,0,65535)
+                     ^
 C0322:121:adscimage.add: Operator not preceded by a space
-      message='incompatible images - Do they have the same size?'
-             ^
+            message='incompatible images - Do they have the same size?'
+                   ^
 W0612:121:adscimage.add: Unused variable 'message'
 C0111:123:adscimage.resetvals: Missing docstring
 C0322:124:adscimage.resetvals: Operator not preceded by a space
-    self.m=self.stddev=self.maxval=self.minval=None
-          ^
+        self.m=self.stddev=self.maxval=self.minval=None
+              ^
 C0111:126:adscimage.rebin: Missing docstring
 C0324:126:adscimage.rebin: Comma not followed by a space
-  def rebin(self,x_rebin_fact,y_rebin_fact):
-                ^^
+    def rebin(self,x_rebin_fact,y_rebin_fact):
+                  ^^
 C0322:127:adscimage.rebin: Operator not preceded by a space
-    if self.data==None:
-                ^^
+        if self.data==None:
+                    ^^
 C0324:130:adscimage.rebin: Comma not followed by a space
-    (mx,ex)=math.frexp(x_rebin_fact)
-       ^^
+        (mx,ex)=math.frexp(x_rebin_fact)
+           ^^
 C0103:130:adscimage.rebin: Invalid name "mx" (should match [a-z_][a-z0-9_]{2,30}$)
 C0324:131:adscimage.rebin: Comma not followed by a space
-    (my,ey)=math.frexp(y_rebin_fact)
-       ^^
+        (my,ey)=math.frexp(y_rebin_fact)
+           ^^
 C0103:131:adscimage.rebin: Invalid name "my" (should match [a-z_][a-z0-9_]{2,30}$)
 C0103:131:adscimage.rebin: Invalid name "ey" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322:139:adscimage.rebin: Operator not preceded by a space
-    i=1
-     ^
+        i=1
+         ^
 C0322:140:adscimage.rebin: Operator not preceded by a space
-    while i<x_rebin_fact:
-           ^
+        while i<x_rebin_fact:
+               ^
 C0322:141:adscimage.rebin: Operator not preceded by a space
-      self.data=((self.data[:,::2]+self.data[:,1::2])/2)
-               ^
+            self.data=((self.data[:,::2]+self.data[:,1::2])/2)
+                     ^
 C0322:142:adscimage.rebin: Operator not preceded by a space
-      i=i*2
-       ^
+            i=i*2
+             ^
 C0322:143:adscimage.rebin: Operator not preceded by a space
-    i=1
-     ^
+        i=1
+         ^
 C0322:144:adscimage.rebin: Operator not preceded by a space
-    while i<y_rebin_fact:
-           ^
-C0322:145:adscimage.rebin: Operator not preceded by a space
-      self.data=((self.data[::2,:]+self.data[1::2,:])/2)
+        while i<y_rebin_fact:
                ^
+C0322:145:adscimage.rebin: Operator not preceded by a space
+            self.data=((self.data[::2,:]+self.data[1::2,:])/2)
+                     ^
 C0322:146:adscimage.rebin: Operator not preceded by a space
-      i=i*2
-       ^
+            i=i*2
+             ^
 C0322:148:adscimage.rebin: Operator not preceded by a space
-    self.dim1=self.dim1/x_rebin_fact
-             ^
+        self.dim1=self.dim1/x_rebin_fact
+                 ^
 C0322:149:adscimage.rebin: Operator not preceded by a space
-    self.dim2=self.dim2/y_rebin_fact
-             ^
+        self.dim2=self.dim2/y_rebin_fact
+                 ^
 C0322:151:adscimage.rebin: Operator not preceded by a space
-    self.header['Dim_1']=self.dim1
-                        ^
+        self.header['Dim_1']=self.dim1
+                            ^
 C0322:152:adscimage.rebin: Operator not preceded by a space
-    self.header['Dim_2']=self.dim2
-                        ^
+        self.header['Dim_2']=self.dim2
+                            ^
 C0322:153:adscimage.rebin: Operator not preceded by a space
-    self.header['col_end']=self.dim1-1
-                          ^
+        self.header['col_end']=self.dim1-1
+                              ^
 C0322:154:adscimage.rebin: Operator not preceded by a space
-    self.header['row_end']=self.dim2-1
-                          ^
+        self.header['row_end']=self.dim2-1
+                              ^
 W0612:130:adscimage.rebin: Unused variable 'ex'
 W0612:131:adscimage.rebin: Unused variable 'ey'
 C0111:156:adscimage.write: Missing docstring
 C0324:156:adscimage.write: Comma not followed by a space
-  def write(self,fname):
-                ^^
+    def write(self,fname):
+                  ^^
 C0322:157:adscimage.write: Operator not preceded by a space
-    f=open(fname,"wb")
-     ^
+        f=open(fname,"wb")
+         ^
 C0103:157:adscimage.write: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
 C0322:159:adscimage.write: Operator not preceded by a space
-    i=4
-     ^
+        i=4
+         ^
 C0324:161:adscimage.write: Comma not followed by a space
-      out = (("%s = %s;\n") % (k,self.header[k]))
-                                ^^
+            out = (("%s = %s;\n") % (k,self.header[k]))
+                                      ^^
 C0322:167:adscimage.write: Operator not preceded by a space
-    if self.header["ByteOrder"]=="LowByteFirst":
-                               ^^
+        if self.header["ByteOrder"]=="LowByteFirst":
+                                   ^^
 C0322:173: Operator not preceded by a space
 if __name__=='__main__':
            ^^
 C0324:174: Comma not followed by a space
-  import sys,os,time
-            ^^
+    import sys,os,time
+              ^^
 C0322:175: Operator not preceded by a space
-  I=adscimage()
-   ^
+    I=adscimage()
+     ^
 C0322:176: Operator not preceded by a space
-  b=time.clock()
-   ^
+    b=time.clock()
+     ^
 C0103:176: Invalid name "b" (should match (([A-Z_]*)|(__.*__))$)
 C0322:179: Operator not preceded by a space
-    r=I.toPIL16()
-     ^
+        r=I.toPIL16()
+         ^
 C0103:179: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
 C0324:180: Comma not followed by a space
-    I.rebin(2,2)
-             ^^
+        I.rebin(2,2)
+                 ^^
 C0324:182: Comma not followed by a space
-    print sys.argv[1] + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (I.getmax(),I.getmin(), I.getmean(), I.getstddev())
-                                                                                  ^^
+        print sys.argv[1] + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (I.getmax(),I.getmin(), I.getmean(), I.getstddev())
+                                                                                      ^^
 C0324:183: Comma not followed by a space
-    print 'integrated intensity (%d %d %d %d) =%.3f' % (10,20,20,40,I.integrate_area((10,20,20,40)))
-                                                          ^^
+        print 'integrated intensity (%d %d %d %d) =%.3f' % (10,20,20,40,I.integrate_area((10,20,20,40)))
+                                                              ^^
 C0322:184: Operator not preceded by a space
-    sys.argv[1:]=sys.argv[2:]
-                ^
+        sys.argv[1:]=sys.argv[2:]
+                    ^
 C0322:185: Operator not preceded by a space
-  e=time.clock()
-   ^
+    e=time.clock()
+     ^
 C0103:185: Invalid name "e" (should match (([A-Z_]*)|(__.*__))$)
 W0611:174: Unused import os
 
@@ -452,9 +303,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -465,13 +316,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |149    |87.65 |NC       |NC         |
+|code      |149    |87.65 |149      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |14     |8.24  |NC       |NC         |
+|docstring |14     |8.24  |14       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |1      |0.59  |NC       |NC         |
+|comment   |1      |0.59  |1        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |6      |3.53  |NC       |NC         |
+|empty     |6      |3.53  |6        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -492,13 +343,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |13     |NC         |NC         |0.00        |7.69     |
+|method   |13     |13         |=          |0.00        |7.69     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -509,13 +360,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |127    |NC       |NC         |
+|convention |129    |129      |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |158    |NC       |NC         |
+|warning    |7      |7        |=          |
 +-----------+-------+---------+-----------+
-|error      |1      |NC       |NC         |
+|error      |1      |1        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -526,19 +377,15 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0311      |142        |
-+-----------+-----------+
 |C0322      |63         |
 +-----------+-----------+
 |C0103      |21         |
 +-----------+-----------+
+|C0301      |15         |
++-----------+-----------+
 |C0324      |14         |
 +-----------+-----------+
 |C0111      |14         |
-+-----------+-----------+
-|C0301      |13         |
-+-----------+-----------+
-|W0312      |9          |
 +-----------+-----------+
 |W0612      |4          |
 +-----------+-----------+
@@ -559,5 +406,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -9.27/10
+Your code has been rated at 0.60/10 (previous run: 0.60/10)
 

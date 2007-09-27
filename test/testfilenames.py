@@ -1,10 +1,14 @@
 
 
+"""
+Test cases for filename deconstruction
+"""
+
 import unittest
 
 import fabio
 
-cases = [
+CASES = [
     ( 1,     'edf', "data0001.edf" ),
     ( 10001, 'edf', "data10001.edf"),
     ( 10001, 'edf', "data10001.edf.gz"),
@@ -19,14 +23,14 @@ cases = [
     ]
 
 class testfilenames(unittest.TestCase):
+    """ check the name -> number, type conversions """
     def test_many_cases(self):
-        for num,typ,name in cases:
-            fnum,ftyp = fabio.deconstruct_filename(name)
-            self.assertEqual(num,fnum)
-            self.assertEqual(ftyp,typ)
-                    
+        """ loop over CASES """
+        for num, typ, name in CASES:
+            fnum, ftyp = fabio.deconstruct_filename(name)
+            self.assertEqual(num, fnum)
+            self.assertEqual(ftyp, typ)
+
 
 if __name__ == "__main__":
     unittest.main()
-        
-        
