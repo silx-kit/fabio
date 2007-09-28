@@ -85,6 +85,7 @@ class fabioimage:
             raise Exception("fabioimage.__init__ bad argument - "+\
                             "data should be Numeric array")
         self.data = data
+        self.pilimage = None
         self.header = header
         self.header_keys = self.header.keys() # holds key ordering
         if data is not None:
@@ -106,6 +107,8 @@ class fabioimage:
         """
         if filename:
             self.read(filename)
+        if self.pilimage is not None:
+            return self.pilimage
         # >>> help(Image.frombuffer)
         # frombuffer(mode, size, data, decoder_name='raw', *args)
         # Load image from string or buffer
@@ -173,7 +176,7 @@ class fabioimage:
         except:
             raise Exception("Unknown data format in array!!!")
         try:
-            PILimage = Image.frombuffer(byteformat[0],
+            self.pilimage = Image.frombuffer(byteformat[0],
                                         (self.data.shape[1],
                                          self.data.shape[0]),
                                         self.data,
@@ -185,7 +188,7 @@ class fabioimage:
         except:
             print byteformat
             raise 
-        return PILimage
+        return self.pilimage
         
 
     def getheader(self):
@@ -331,11 +334,19 @@ class fabioimage:
         """
         raise Exception("Class has not implemented readheader method yet")
         
-    def readheader(self, file_obj):
+    def readheader(self, filename):
         """
-        To be overridden - fill in self.header 
+        Call the _readheader function...
         """
-        raise Exception("Class has not implemented readheader method yet")
+        fin = self._open(filename)
+        self._readheader(fin)
+        fin.close()
+
+    def _readheader(self, fik_obj):
+        """
+        Must be overridden in classes
+        """
+        raise Exception("Class has not implemented _readheader method yet")
 
     def update_header(self , **kwds):
         """
@@ -343,7 +354,6 @@ class fabioimage:
         by default pass in a dict of key, values.
         """
         self.header.update(kwds)
-
 
     def read(self, filename):
         """
@@ -361,12 +371,18 @@ class fabioimage:
             # It is already something we can use
             return fname
         if type(fname) in [type(" "), type(u" ")]:
+            # filename is a string
             if os.path.splitext(fname)[1] == ".gz":
                 import gzip
                 return gzip.GzipFile(fname, mode)
             if os.path.splitext(fname)[1] == '.bz2':
                 import bz2
                 return bz2.BZ2File(fname, mode)
+            #
+            # Here we return the file even though it may be bzipped or gzipped
+            # but named incorrectly...
+            #
+            # FIXME - should we fix that or complain about the daft naming?
             return open(fname, mode)
 
 

@@ -5,7 +5,8 @@
 """ Test the fit2d mask reader """
 
 
-from fabio import fit2dmaskimage, edfimage
+from fabio.fit2dmaskimage import fit2dmaskimage
+from fabio.edfimage import edfimage
 
 import unittest, Numeric
 

@@ -15,12 +15,11 @@ JPW : Use a parser in case of typos (sorry?)
 
 """
 
-import Numeric
-from fabio.fabioimage import fabioimage
 
-# Read image as generic TIF format via PIL
-from PIL import Image
+# Base this on the tifimage (as marccd seems to be tiff with a 
+# special header 
 
+from fabio.tifimage import tifimage
 
 
 # Now for the c definition (found on mar webpage)
@@ -285,7 +284,7 @@ def interpret_header(header, fmt, names):
     return hdr
 
 
-class marccdimage(fabioimage):
+class marccdimage(tifimage):
     """ Read in data in mar ccd format, also 
         MarMosaic images, including header info """
 
@@ -301,27 +300,10 @@ class marccdimage(fabioimage):
         
 
 
-    def read(self, fname):
+    def _read(self, fname):
         """
-        Read in header into self.header and
-            the data into self.data
+        inherited from tifimage
+        ... a marccd image *is a* tif image
+        just with a header
         """
-        infile = self._open(fname)
-        self._readheader(infile)
-        infile.seek(0)
-        self.data = Image.open(infile).convert("I") # 32-bit signed integers
-        (self.dim1, self.dim2) = self.data.size
-        self.data = Numeric.reshape(
-            Numeric.fromstring(self.data.tostring(),Numeric.Int32),
-            (self.dim1, self.dim2))
-        infile.close()
-        self.bpp = 4
-        self.bytecode = Numeric.Int32
-        self.resetvals()
-        return self
-
-    def write(self, fname):
-        """
-        Raise an exception as we don't know how to write this format yet
-        """
-        raise Exception("Sorry, I do not know how to write marccd yet")
+        return tifimage.read(self, fname)

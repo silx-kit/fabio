@@ -68,7 +68,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |1        |-1.00      |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -92,5 +92,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.50/10 (previous run: 9.00/10)
+Your code has been rated at 9.50/10 (previous run: 9.50/10)
 

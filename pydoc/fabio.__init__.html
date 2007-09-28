@@ -17,35 +17,9 @@
 <font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="fabio.adscimage.html">fabio.adscimage</a><br>
-<a href="fabio.bruker100image.html">fabio.bruker100image</a><br>
-</td><td width="25%" valign=top><a href="os.html">os</a><br>
-<a href="fabio.pnmimage.html">fabio.pnmimage</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
 </td><td width="25%" valign=top><a href="re.html">re</a><br>
-<a href="fabio.tifimage.html">fabio.tifimage</a><br>
-</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#ee77aa">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="fabio.__init__.html#fabio">fabio</a>
-</font></dt></dl>
- <p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#ffc8d8">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="fabio">class <strong>fabio</strong></a></font></td></tr>
-    
-<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%">Methods defined here:<br>
-<dl><dt><a name="fabio-__init__"><strong>__init__</strong></a>(self)</dt></dl>
-
-<dl><dt><a name="fabio-openimage"><strong>openimage</strong></a>(self, filename<font color="#909090">=None</font>)</dt></dl>
-
-</td></tr></table></td></tr></table><p>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -53,10 +27,11 @@
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt><a name="-construct_filename"><strong>construct_filename</strong></a>(oldfilename, newfilenumber, padding<font color="#909090">=True</font>)</dt></dl>
- <dl><dt><a name="-deconstruct_filename"><strong>deconstruct_filename</strong></a>(filename)</dt></dl>
+ <dl><dt><a name="-deconstruct_filename"><strong>deconstruct_filename</strong></a>(filename)</dt><dd><tt>Break&nbsp;up&nbsp;a&nbsp;filename&nbsp;to&nbsp;get&nbsp;image&nbsp;type&nbsp;and&nbsp;number</tt></dd></dl>
  <dl><dt><a name="-deconstruct_filename_old"><strong>deconstruct_filename_old</strong></a>(filename)</dt></dl>
  <dl><dt><a name="-extract_filenumber"><strong>extract_filenumber</strong></a>(filename)</dt></dl>
- <dl><dt><a name="-getnum"><strong>getnum</strong></a>(name)</dt></dl>
+ <dl><dt><a name="-getnum"><strong>getnum</strong></a>(name)</dt><dd><tt>#&nbsp;try&nbsp;to&nbsp;figure&nbsp;out&nbsp;a&nbsp;file&nbsp;number<br>
+#&nbsp;guess&nbsp;it&nbsp;starts&nbsp;at&nbsp;the&nbsp;back</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -64,5 +39,6 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>filetypes</strong> = {'edf': 'edf', 'img': 'adsc', 'mar2300': 'mar345', 'mccd': 'marccd', 'pbm': 'pnm', 'pgm': 'pnm', 'pnm': 'pnm', 'sfrm': 'bruker100', 'tif': 'tif', 'tiff': 'tif'}</td></tr></table>
+<td width="100%"><strong>FILETYPES</strong> = {'cor': 'edf', 'corbz2': 'edf', 'corgz': 'edf', 'edf': 'edf', 'edfbz2': 'edf', 'edfgz': 'edf', 'img': 'adsc', 'imgbz2': 'adsc', 'imggz': 'adsc', 'mar2300': 'mar345', ...}<br>
+<strong>key</strong> = 'tif'</td></tr></table>
 </body></html>

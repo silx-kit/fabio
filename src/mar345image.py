@@ -70,12 +70,6 @@ class mar345image:
         f.close()
         return self
 
-    def readheader(self,fname):
-        f=self._open(fname)
-        self._readheader(f)
-        f.close()
-        return self
-
     def getheader(self):
         return self.header
 

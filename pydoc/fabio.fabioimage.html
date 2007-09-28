@@ -1,12 +1,48 @@
 
 <!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: class fabioimage</title>
+<html><head><title>Python: module fabio.fabioimage</title>
 </head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.fabioimage</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/fabioimage.py">/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/fabioimage.py</a></font></td></tr></table>
+    <p><tt>Authors:&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Center&nbsp;for&nbsp;Fundamental&nbsp;Research:&nbsp;Metal&nbsp;Structures&nbsp;in&nbsp;Four&nbsp;Dimensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Risoe&nbsp;National&nbsp;Laboratory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frederiksborgvej&nbsp;399<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DK-4000&nbsp;Roskilde<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email:erik.knudsen@risoe.dk<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;Jon&nbsp;Wright,&nbsp;ESRF</tt></p>
 <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="PIL.Image.html">PIL.Image</a><br>
+</td><td width="25%" valign=top><a href="Numeric.html">Numeric</a><br>
+</td><td width="25%" valign=top><a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="fabio.fabioimage.html#fabioimage">fabioimage</a>
+</font></dt></dl>
+ <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><strong>fabio.fabioimage</strong> = <a name="fabio.fabioimage">class fabioimage</a></font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="fabioimage">class <strong>fabioimage</strong></a></font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>A&nbsp;common&nbsp;object&nbsp;for&nbsp;images&nbsp;in&nbsp;fable<br>
@@ -38,7 +74,7 @@ the&nbsp;latter&nbsp;are&nbsp;immutable,&nbsp;meaning&nbsp;the&nbsp;roi&nbsp;can
 
 <dl><dt><a name="fabioimage-read"><strong>read</strong></a>(self, filename)</dt><dd><tt>To&nbsp;be&nbsp;overridden&nbsp;-&nbsp;fill&nbsp;in&nbsp;self.<strong>header</strong>&nbsp;and&nbsp;self.<strong>data</strong></tt></dd></dl>
 
-<dl><dt><a name="fabioimage-readheader"><strong>readheader</strong></a>(self, file_obj)</dt><dd><tt>To&nbsp;be&nbsp;overridden&nbsp;-&nbsp;fill&nbsp;in&nbsp;self.<strong>header</strong></tt></dd></dl>
+<dl><dt><a name="fabioimage-readheader"><strong>readheader</strong></a>(self, filename)</dt><dd><tt>Call&nbsp;the&nbsp;_readheader&nbsp;function...</tt></dd></dl>
 
 <dl><dt><a name="fabioimage-rebin"><strong>rebin</strong></a>(self, x_rebin_fact, y_rebin_fact)</dt><dd><tt>Rebin&nbsp;the&nbsp;data&nbsp;and&nbsp;adjust&nbsp;dims</tt></dd></dl>
 
@@ -51,5 +87,31 @@ by&nbsp;default&nbsp;pass&nbsp;in&nbsp;a&nbsp;dict&nbsp;of&nbsp;key,&nbsp;values
 
 <dl><dt><a name="fabioimage-write"><strong>write</strong></a>(self, fname)</dt><dd><tt>To&nbsp;be&nbsp;overwritten&nbsp;-&nbsp;write&nbsp;the&nbsp;file</tt></dd></dl>
 
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-array2image"><strong>array2image</strong></a>(arr)</dt><dd><tt>#<br>
+#&nbsp;utilities&nbsp;to&nbsp;convert&nbsp;between&nbsp;numerical&nbsp;arrays&nbsp;and&nbsp;PIL&nbsp;image&nbsp;memories<br>
+#<br>
+#&nbsp;fredrik&nbsp;lundh,&nbsp;october&nbsp;1998<br>
+#<br>
+#&nbsp;fredrik@pythonware.com<br>
+#&nbsp;<a href="http://www.pythonware.com">http://www.pythonware.com</a><br>
+#<br>
+#&nbsp;<a href="http://effbot.org/zone/pil-numpy.htm">http://effbot.org/zone/pil-numpy.htm</a>&nbsp;&nbsp;&nbsp;viewed&nbsp;on&nbsp;20-8-2007</tt></dd></dl>
+ <dl><dt><a name="-image2array"><strong>image2array</strong></a>(img)</dt><dd><tt>#<br>
+#&nbsp;utilities&nbsp;to&nbsp;convert&nbsp;between&nbsp;numerical&nbsp;arrays&nbsp;and&nbsp;PIL&nbsp;image&nbsp;memories<br>
+#<br>
+#&nbsp;fredrik&nbsp;lundh,&nbsp;october&nbsp;1998<br>
+#<br>
+#&nbsp;fredrik@pythonware.com<br>
+#&nbsp;<a href="http://www.pythonware.com">http://www.pythonware.com</a><br>
+#<br>
+#&nbsp;<a href="http://effbot.org/zone/pil-numpy.htm">http://effbot.org/zone/pil-numpy.htm</a>&nbsp;&nbsp;&nbsp;viewed&nbsp;on&nbsp;20-8-2007</tt></dd></dl>
+ <dl><dt><a name="-test"><strong>test</strong></a>()</dt><dd><tt>check&nbsp;some&nbsp;basic&nbsp;<a href="#fabioimage">fabioimage</a>&nbsp;functionality</tt></dd></dl>
 </td></tr></table>
 </body></html>

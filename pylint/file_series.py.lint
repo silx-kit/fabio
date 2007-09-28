@@ -1,13 +1,14 @@
-************* Module fabio.brukerimage
-W0511:132: FIXME - this should call edfimage.write if that is wanted?
-W0511:160: FIXME: what is this? """
-W0612:111:brukerimage.read: Unused variable 'i'
-W0612:172:test: Unused variable 'res'
+************* Module fabio.file_series
+C0103: 19:file_series: Invalid name "file_series" (should match [a-z_][a-zA-Z0-9]+$)
+R0904: 19:file_series: Too many public methods (22/20)
+C0103:105:numbered_file_series: Invalid name "numbered_file_series" (should match [a-z_][a-zA-Z0-9]+$)
+R0913:111:numbered_file_series.__init__: Too many arguments (6/5)
+R0904:105:numbered_file_series: Too many public methods (22/20)
 
 
 Report
 ======
-97 statements analysed.
+39 statements analysed.
 
 Duplication
 -----------
@@ -28,22 +29,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |108    |63.91 |NC       |NC         |
+|code      |41     |37.27 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |37     |21.89 |NC       |NC         |
+|docstring |50     |45.45 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |5      |2.96  |NC       |NC         |
+|comment   |3      |2.73  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |19     |11.24 |NC       |NC         |
+|empty     |16     |14.55 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    Numeric (fabio.brukerimage)
 
 
 
@@ -55,11 +48,11 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |0.00     |
+|class    |2      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |100.00      |0.00     |
+|method   |15     |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |100.00      |0.00     |
+|function |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -70,11 +63,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |NC       |NC         |
+|convention |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |4      |NC       |NC         |
+|warning    |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -87,14 +80,16 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0612      |2          |
+|R0904      |2          |
 +-----------+-----------+
-|W0511      |2          |
+|C0103      |2          |
++-----------+-----------+
+|R0913      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.59/10
+Your code has been rated at 8.72/10
 

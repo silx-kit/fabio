@@ -1,123 +1,8 @@
-************* Module tifimage
-C0301: 27: Line too long (81/80)
-C0301: 32: Line too long (81/80)
-C0111: 16:tifimage: Missing docstring
-C0103: 52:tifimage.getmean: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-W0232: 16:tifimage: Class has no __init__ method
-C0322: 17:tifimage: Operator not preceded by a space
-    data=None
-        ^
-C0322: 18:tifimage: Operator not preceded by a space
-    header={}
-          ^
-C0322: 19:tifimage: Operator not preceded by a space
-    dim1=dim2=0
-        ^
-C0322: 20:tifimage: Operator not preceded by a space
-    m=maxval=stddev=minval=None
-     ^
-C0322: 21:tifimage: Operator not preceded by a space
-    header_keys=[]
-               ^
-C0322: 22:tifimage: Operator not preceded by a space
-    bytecode=None
-            ^
-C0103: 24:tifimage.toPIL32: Invalid name "toPIL32" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 24:tifimage.toPIL32: Missing docstring
-C0324: 24:tifimage.toPIL32: Comma not followed by a space
-    def toPIL32(self,filename=None):
-                    ^^
-C0103: 29:tifimage.toPIL32: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 34:tifimage.toPIL32: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 38:tifimage.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 38:tifimage.toPIL16: Missing docstring
-C0324: 38:tifimage.toPIL16: Comma not followed by a space
-    def toPIL16(self,filename=None):
-                    ^^
-C0111: 41:tifimage.read: Missing docstring
-C0324: 41:tifimage.read: Comma not followed by a space
-    def read(self,fname,verbose=0):
-                 ^^
-C0322: 42:tifimage.read: Operator not preceded by a space
-        self.data=Image.open(fname).convert('I')
-                 ^
-W0613: 41:tifimage.read: Unused argument 'verbose'
-C0111: 46:tifimage.write: Missing docstring
-C0111: 49:tifimage.getmean: Missing docstring
-C0322: 50:tifimage.getmean: Operator not preceded by a space
-        if self.m==None:
-                 ^^
-C0322: 51:tifimage.getmean: Operator not preceded by a space
-            l=list(self.data.getdata())
-             ^
-C0103: 51:tifimage.getmean: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 52:tifimage.getmean: Operator not preceded by a space
-            self.m=sum(l)/len(l)
-                  ^
-C0111: 55:tifimage.getmax: Missing docstring
-C0322: 56:tifimage.getmax: Operator not preceded by a space
-        if self.maxval==None or self.minval==None:
-                      ^^
-C0324: 57:tifimage.getmax: Comma not followed by a space
-            self.minval,self.maxval = self.data.getextrema()
-                       ^^
-C0111: 60:tifimage.getmin: Missing docstring
-C0322: 61:tifimage.getmin: Operator not preceded by a space
-        if self.maxval==None or self.minval==None:
-                      ^^
-C0324: 62:tifimage.getmin: Comma not followed by a space
-            self.minval,self.maxval = self.data.getextrema()
-                       ^^
-C0111: 65:tifimage.getstddev: Missing docstring
-C0322: 66:tifimage.getstddev: Operator not preceded by a space
-        if self.stddev==None:
-                      ^^
-C0322: 68:tifimage.getstddev: Operator not preceded by a space
-            N=self.dim1*self.dim2-1
-             ^
-C0103: 68:tifimage.getstddev: Invalid name "N" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 69:tifimage.getstddev: Operator not preceded by a space
-            l=list(self.data.getdata())
-             ^
-C0103: 69:tifimage.getstddev: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 70:tifimage.getstddev: Operator not preceded by a space
-            l=map(lambda i: (i-self.m)*(i-self.m),l)
-             ^
-C0103: 70:tifimage.getstddev: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-W0141: 70:tifimage.getstddev: Used builtin function 'map'
-C0322: 71:tifimage.getstddev: Operator not preceded by a space
-            S=sum(l)/N
-             ^
-C0103: 71:tifimage.getstddev: Invalid name "S" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 72:tifimage.getstddev: Operator not preceded by a space
-            self.stddev=S
-                       ^
-C0111: 75:tifimage.integrate_area: Missing docstring
-C0324: 75:tifimage.integrate_area: Comma not followed by a space
-    def integrate_area(self,coords):
-                           ^^
-C0322: 76:tifimage.integrate_area: Operator not preceded by a space
-        c=(coords[0],coords[1],coords[2]+1,coords[3]+1)
-         ^
-C0103: 76:tifimage.integrate_area: Invalid name "c" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 78:tifimage.integrate_area: Operator not preceded by a space
-        l=Numeric.array(datacrop.getdata())
-         ^
-C0103: 78:tifimage.integrate_area: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 81:tifimage.getheader: Missing docstring
-R0201: 81:tifimage.getheader: Method could be a function
-C0111: 84:tifimage.rebin: Missing docstring
-C0324: 84:tifimage.rebin: Comma not followed by a space
-    def rebin(self,x_rebin_factor, y_rebin_factor):
-                  ^^
-R0201: 84:tifimage.rebin: Method could be a function
-W0613: 84:tifimage.rebin: Unused argument 'x_rebin_factor'
-W0613: 84:tifimage.rebin: Unused argument 'y_rebin_factor'
 
 
 Report
 ======
-55 statements analysed.
+26 statements analysed.
 
 Duplication
 -----------
@@ -125,9 +10,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -138,13 +23,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |57     |78.08 |57       |=          |
+|code      |34     |49.28 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |10     |13.70 |10       |=          |
+|docstring |26     |37.68 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |4      |5.48  |4        |=          |
+|comment   |1      |1.45  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |2      |2.74  |2        |=          |
+|empty     |8      |11.59 |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -154,8 +39,8 @@ External dependencies
 ::
 
     PIL 
-      \-Image (tifimage)
-    Numeric (tifimage)
+      \-Image (fabio.tifimage)
+    Numeric (fabio.tifimage)
 
 
 
@@ -165,13 +50,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |0.00     |
+|class    |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |11     |11         |=          |0.00        |18.18    |
+|method   |3      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -182,45 +67,18 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |53     |53       |=          |
+|convention |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |2      |2        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |5      |5        |=          |
+|warning    |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0322      |20         |
-+-----------+-----------+
-|C0111      |12         |
-+-----------+-----------+
-|C0103      |12         |
-+-----------+-----------+
-|C0324      |7          |
-+-----------+-----------+
-|W0613      |3          |
-+-----------+-----------+
-|R0201      |2          |
-+-----------+-----------+
-|C0301      |2          |
-+-----------+-----------+
-|W0232      |1          |
-+-----------+-----------+
-|W0141      |1          |
-+-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -0.91/10 (previous run: -0.91/10)
+Your code has been rated at 10.00/10
 

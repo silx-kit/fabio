@@ -4,7 +4,7 @@
 Test cases for the fabioimage clas
 """
 
-from fabio import fabioimage
+from fabio.fabioimage import fabioimage
 import unittest, os, sys, Numeric, RandomArray
 
 class test50000(unittest.TestCase):

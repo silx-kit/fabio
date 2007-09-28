@@ -1,17 +1,8 @@
 
-import tifimage, adscimage, brukerimage
-import marccdimage, bruker100image, pnmimage
-import fit2dmaskimage
 
 
-from fabioimage import fabioimage
-from edfimage import edfimage
-from marccdimage import marccdimage
-from brukerimage import brukerimage
-from fit2dmaskimage import fit2dmaskimage
 
 import re, os # -> move elsewhere?
-
 
 
 def construct_filename(oldfilename, newfilenumber, padding=True):
@@ -23,7 +14,8 @@ def construct_filename(oldfilename, newfilenumber, padding=True):
     if padding==False:
         return m.group(1) + str(newfilenumber) + m.group(3)
     if m.group(2)!='':
-        return m.group(1) + string.zfill(newfilenumber,len(m.group(2))) + m.group(3)
+        return m.group(1) + string.zfill(newfilenumber,len(m.group(2))) + \
+            m.group(3)
     else:
         return oldfilename
 
@@ -36,15 +28,15 @@ def deconstruct_filename_old(filename):
     else:
         number=int(m.group(2))
     ext=os.path.splitext(filename)
-    filetype={'edf': 'edf',
-              'gz': 'edf',
-              'bz2': 'edf',
+    filetype={'edf' : 'edf',
+              'gz'  : 'edf',
+              'bz2' : 'edf',
               'pnm' : 'pnm',
               'pgm' : 'pnm',
               'pbm' : 'pnm',
-              'tif': 'tif',
+              'tif' : 'tif',
               'tiff': 'tif',
-              'img': 'adsc',
+              'img' : 'adsc',
               'mccd': 'marccd',
               'sfrm': 'bruker100',
               m.group(2): 'bruker'
@@ -52,42 +44,64 @@ def deconstruct_filename_old(filename):
     return (number,filetype)
 
 
-filetypes = {'edf': 'edf',
-             'pnm' : 'pnm',
-             'pgm' : 'pnm',
-             'pbm' : 'pnm',
-             'tif': 'tif',
-             'tiff': 'tif',
-             'img': 'adsc',
-             'mccd': 'marccd',
-             'mar2300':'mar345',
-             'sfrm': 'bruker100'
+FILETYPES = {
+    # extension XXXimage fabioclass
+    'edf'    : 'edf',
+    'cor'    : 'edf',
+    'pnm'    : 'pnm',
+    'pgm'    : 'pnm',
+    'pbm'    : 'pnm',
+    'tif'    : 'tif',
+    'tiff'   : 'tif',
+    'img'    : 'adsc',
+    'mccd'   : 'marccd',
+    'mar2300': 'mar345',
+    'sfrm'   : 'bruker100',
+    'msk'    : 'fit2dmask',
              }
 
+# Add bzipped and gzipped
+for key in FILETYPES.keys():
+    FILETYPES[key+"bz2"] = FILETYPES[key]
+    FILETYPES[key+"gz"]  = FILETYPES[key]
+
+    
+
+
 def getnum(name):
+    """
     # try to figure out a file number
     # guess it starts at the back
-    nl = []
+    """
+    num_list = []
     first = False
-    for c in name[::-1]: # this means iterate backwards through the string
-        if c.isdigit():
+    for byt in name[::-1]: # this means iterate backwards through the string
+        if byt.isdigit():
             first = True
-            nl.append(c)
+            num_list.append(byt)
             continue
-        if first: break
-    num = "".join(nl[::-1])
-    return int(num)
+        if first: 
+            break
+    num = "".join(num_list[::-1])
+    try:
+        return int(num)
+    except ValueError:
+        return 0
+        
 
 
 def deconstruct_filename(filename):
+    """
+    Break up a filename to get image type and number
+    """
     parts = os.path.split(filename)[-1].split(".")
     # loop back from end
     compressed = False
     if parts[-1] in ["gz","bz2"]:
         parts = parts[:-1]
         compressed=True
-    if parts[-1] in filetypes.keys():
-        typ = filetypes[parts[-1]]
+    if parts[-1] in FILETYPES.keys():
+        typ = FILETYPES[parts[-1]]
         try:
             num = getnum("".join(parts[:-1]))
         except:
@@ -106,24 +120,3 @@ def deconstruct_filename(filename):
 def extract_filenumber(filename):
     return deconstruct_filename(filename)[0]
 
-class fabio:
-    def __init__(self):
-        self.filenumber = None
-        self.filetype = None
-
-    def openimage(self,filename=None):
-        #if a filename is supplied use that - otherwise get it from the GUI
-        if filename==None:
-            filename=self.filename.get()
-
-        (self.filenumber,self.filetype)=deconstruct_filename(filename)
-
-        img=eval( self.filetype+'image.'+self.filetype+'image()')
-        try:
-            self.im=img.read(filename).toPIL16()
-            (self.im.minval,self.im.maxval,self.im.meanval)=(img.getmin(),img.getmax(\
-                ),img.getmean())
-            self.im.header=img.getheader()
-            (self.xsize, self.ysize)=(img.dim1, img.dim2)
-        except IOError:
-            raise

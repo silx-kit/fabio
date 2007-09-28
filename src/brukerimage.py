@@ -122,6 +122,7 @@ class brukerimage(fabioimage):
         infile.close()
 
         self.resetvals()
+        self.pilimage = None
         return self
 
    

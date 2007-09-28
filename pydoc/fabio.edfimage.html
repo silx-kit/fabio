@@ -1,12 +1,51 @@
 
 <!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: class edfimage</title>
+<html><head><title>Python: module fabio.edfimage</title>
 </head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.edfimage</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/edfimage.py">/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/edfimage.py</a></font></td></tr></table>
+    <p><tt>Authors:&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Center&nbsp;for&nbsp;Fundamental&nbsp;Research:&nbsp;Metal&nbsp;Structures&nbsp;in&nbsp;Four&nbsp;Dimensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Risoe&nbsp;National&nbsp;Laboratory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frederiksborgvej&nbsp;399<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DK-4000&nbsp;Roskilde<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email:erik.knudsen@risoe.dk<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;Jon&nbsp;Wright,&nbsp;ESRF</tt></p>
 <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="Numeric.html">Numeric</a><br>
+</td><td width="25%" valign=top><a href="logging.html">logging</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="fabio.fabioimage.html#fabioimage">fabio.fabioimage.fabioimage</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="fabio.edfimage.html#edfimage">edfimage</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><strong>fabio.edfimage</strong> = <a name="fabio.edfimage">class edfimage</a>(<a href="fabio.fabioimage.html#fabioimage">fabio.fabioimage.fabioimage</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="edfimage">class <strong>edfimage</strong></a>(<a href="fabio.fabioimage.html#fabioimage">fabio.fabioimage.fabioimage</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>Read&nbsp;and&nbsp;try&nbsp;to&nbsp;write&nbsp;the&nbsp;ESRF&nbsp;edf&nbsp;data&nbsp;format<br>&nbsp;</tt></td></tr>
@@ -14,8 +53,6 @@
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="edfimage-read"><strong>read</strong></a>(self, fname)</dt><dd><tt>Read&nbsp;in&nbsp;header&nbsp;into&nbsp;self.<strong>header</strong>&nbsp;and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;data&nbsp;&nbsp;&nbsp;into&nbsp;self.<strong>data</strong></tt></dd></dl>
-
-<dl><dt><a name="edfimage-readheader"><strong>readheader</strong></a>(self, filename)</dt><dd><tt>Read&nbsp;in&nbsp;a&nbsp;header&nbsp;in&nbsp;some&nbsp;EDF&nbsp;format</tt></dd></dl>
 
 <dl><dt><a name="edfimage-swap_needed"><strong>swap_needed</strong></a>(self)</dt><dd><tt>Decide&nbsp;if&nbsp;we&nbsp;need&nbsp;to&nbsp;byteswap</tt></dd></dl>
 
@@ -48,6 +85,8 @@ floor&nbsp;-&gt;&nbsp;?&nbsp;removed&nbsp;as&nbsp;unused&nbsp;in&nbsp;the&nbsp;f
 tuple&nbsp;(pair)&nbsp;of&nbsp;slice&nbsp;objects<br>
 the&nbsp;latter&nbsp;are&nbsp;immutable,&nbsp;meaning&nbsp;the&nbsp;roi&nbsp;can&nbsp;be&nbsp;cached</tt></dd></dl>
 
+<dl><dt><a name="edfimage-readheader"><strong>readheader</strong></a>(self, filename)</dt><dd><tt>Call&nbsp;the&nbsp;_readheader&nbsp;function...</tt></dd></dl>
+
 <dl><dt><a name="edfimage-rebin"><strong>rebin</strong></a>(self, x_rebin_fact, y_rebin_fact)</dt><dd><tt>Rebin&nbsp;the&nbsp;data&nbsp;and&nbsp;adjust&nbsp;dims</tt></dd></dl>
 
 <dl><dt><a name="edfimage-resetvals"><strong>resetvals</strong></a>(self)</dt><dd><tt>Reset&nbsp;cache&nbsp;-&nbsp;call&nbsp;on&nbsp;changing&nbsp;data</tt></dd></dl>
@@ -57,5 +96,14 @@ the&nbsp;latter&nbsp;are&nbsp;immutable,&nbsp;meaning&nbsp;the&nbsp;roi&nbsp;can
 <dl><dt><a name="edfimage-update_header"><strong>update_header</strong></a>(self, **kwds)</dt><dd><tt>update&nbsp;the&nbsp;header&nbsp;entries<br>
 by&nbsp;default&nbsp;pass&nbsp;in&nbsp;a&nbsp;dict&nbsp;of&nbsp;key,&nbsp;values.</tt></dd></dl>
 
-</td></tr></table>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>DATA_TYPES</strong> = {'DoubleValue': 'd', 'FLOAT': 'f', 'FloatValue': 'f', 'SignedByte': '1', 'SignedInteger': 'i', 'SignedLong': 'l', 'SignedShort': 's', 'UnsignedByte': 'b', 'UnsignedInteger': 'u', 'UnsignedLong': 'u', ...}<br>
+<strong>DEFAULT_VALUES</strong> = {'ByteOrder': 'LowByteFirst', 'DataType': 'FLOAT', 'HeaderID': 'EH:000001:000000:000000', 'Image': '1'}<br>
+<strong>MINIMUM_KEYS</strong> = ['HeaderID', 'Image', 'ByteOrder', 'DataType', 'Dim_1', 'Dim_2']</td></tr></table>
 </body></html>

@@ -1,123 +1,171 @@
-************* Module __init__
-C0301: 26: Line too long (84/80)
-C0301:124: Line too long (86/80)
+************* Module fabio.__init__
+W0511: 48: XXXimage fabioclass
+************* Module fabio
 C0111:  1: Missing docstring
-W0403:  2: Relative import 'tifimage'
-W0403:  2: Relative import 'adscimage'
-W0403:  2: Relative import 'brukerimage'
-W0403:  3: Relative import 'marccdimage'
-W0403:  3: Relative import 'bruker100image'
-W0403:  3: Relative import 'pnmimage'
-W0403:  4: Relative import 'fit2dmaskimage'
-W0403:  7: Relative import 'fabioimage'
-W0403:  8: Relative import 'edfimage'
-W0403:  9: Relative import 'marccdimage'
-W0404:  9: Reimport 'marccdimage' (imported line 3)
-W0403: 10: Relative import 'brukerimage'
-W0404: 10: Reimport 'brukerimage' (imported line 2)
-W0403: 11: Relative import 'fit2dmaskimage'
-W0404: 11: Reimport 'fit2dmaskimage' (imported line 4)
-C0111: 17:construct_filename: Missing docstring
-W0402: 20:construct_filename: Uses of a deprecated module 'string'
-C0322: 21:construct_filename: Operator not preceded by a space
+C0111:  8:construct_filename: Missing docstring
+W0402: 11:construct_filename: Uses of a deprecated module 'string'
+C0322: 12:construct_filename: Operator not preceded by a space
     p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
      ^
-C0103: 21:construct_filename: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 22:construct_filename: Operator not preceded by a space
+C0103: 12:construct_filename: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 13:construct_filename: Operator not preceded by a space
     m=re.match(p,oldfilename)
      ^
-C0103: 22:construct_filename: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 23:construct_filename: Operator not preceded by a space
+C0103: 13:construct_filename: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 14:construct_filename: Operator not preceded by a space
     if padding==False:
               ^^
-C0324: 26:construct_filename: Comma not followed by a space
-        return m.group(1) + string.zfill(newfilenumber,len(m.group(2))) + m.group(3)
+C0324: 17:construct_filename: Comma not followed by a space
+        return m.group(1) + string.zfill(newfilenumber,len(m.group(2))) + \
                                                       ^^
-C0111: 30:deconstruct_filename_old: Missing docstring
-C0322: 31:deconstruct_filename_old: Operator not preceded by a space
+            m.group(3)
+C0111: 22:deconstruct_filename_old: Missing docstring
+C0322: 23:deconstruct_filename_old: Operator not preceded by a space
     p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
      ^
-C0103: 31:deconstruct_filename_old: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 33:deconstruct_filename_old: Operator not preceded by a space
+C0103: 23:deconstruct_filename_old: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 25:deconstruct_filename_old: Operator not preceded by a space
     m=re.match(p,filename)
      ^
-C0103: 33:deconstruct_filename_old: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 34:deconstruct_filename_old: Operator not preceded by a space
+C0103: 25:deconstruct_filename_old: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 26:deconstruct_filename_old: Operator not preceded by a space
     if m==None or m.group(2)=='':
         ^^
-C0322: 35:deconstruct_filename_old: Operator not preceded by a space
+C0322: 27:deconstruct_filename_old: Operator not preceded by a space
         number=0;
               ^
-W0106: 35:deconstruct_filename_old: Unnecessary semi-column
-C0322: 37:deconstruct_filename_old: Operator not preceded by a space
+W0106: 27:deconstruct_filename_old: Unnecessary semi-column
+C0322: 29:deconstruct_filename_old: Operator not preceded by a space
         number=int(m.group(2))
               ^
-C0322: 38:deconstruct_filename_old: Operator not preceded by a space
+C0322: 30:deconstruct_filename_old: Operator not preceded by a space
     ext=os.path.splitext(filename)
        ^
-C0322: 39:deconstruct_filename_old: Operator not preceded by a space
-    filetype={'edf': 'edf',
+C0322: 31:deconstruct_filename_old: Operator not preceded by a space
+    filetype={'edf' : 'edf',
             ^
-              'gz': 'edf',
-              'bz2': 'edf',
+              'gz'  : 'edf',
+              'bz2' : 'edf',
               'pnm' : 'pnm',
               'pgm' : 'pnm',
               'pbm' : 'pnm',
-              'tif': 'tif',
+              'tif' : 'tif',
               'tiff': 'tif',
-              'img': 'adsc',
+              'img' : 'adsc',
               'mccd': 'marccd',
               'sfrm': 'bruker100',
               m.group(2): 'bruker'
               }[ext[1][1:]]
-C0324: 52:deconstruct_filename_old: Comma not followed by a space
+C0324: 44:deconstruct_filename_old: Comma not followed by a space
     return (number,filetype)
                   ^^
-C0103: 55: Invalid name "filetypes" (should match (([A-Z_]*)|(__.*__))$)
-C0111: 67:getnum: Missing docstring
-C0103: 70:getnum: Invalid name "nl" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 72:getnum: Invalid name "c" (should match [a-z_][a-z0-9_]{2,30}$)
-C0321: 77:getnum: More than one statement on a single line
-C0111: 82:deconstruct_filename: Missing docstring
-C0324: 86:deconstruct_filename: Comma not followed by a space
+C0324:100:deconstruct_filename: Comma not followed by a space
     if parts[-1] in ["gz","bz2"]:
                          ^^
-C0322: 88:deconstruct_filename: Operator not preceded by a space
+C0322:102:deconstruct_filename: Operator not preceded by a space
         compressed=True
                   ^
-W0702: 94:deconstruct_filename: No exception's type specified
-W0612: 85:deconstruct_filename: Unused variable 'compressed'
-C0111:106:extract_filenumber: Missing docstring
-C0111:109:fabio: Missing docstring
-C0103:123:fabio.openimage: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111:114:fabio.openimage: Missing docstring
-C0324:114:fabio.openimage: Comma not followed by a space
-    def openimage(self,filename=None):
-                      ^^
-C0322:116:fabio.openimage: Operator not preceded by a space
-        if filename==None:
-                   ^^
-C0322:117:fabio.openimage: Operator not preceded by a space
-            filename=self.filename.get()
-                    ^
-E1101:117:fabio.openimage: Instance of 'fabio' has no 'filename' member
-C0324:119:fabio.openimage: Comma not followed by a space
-        (self.filenumber,self.filetype)=deconstruct_filename(filename)
-                        ^^
-C0322:121:fabio.openimage: Operator not preceded by a space
-        img=eval( self.filetype+'image.'+self.filetype+'image()')
-           ^
-C0322:123:fabio.openimage: Operator not preceded by a space
-            self.im=img.read(filename).toPIL16()
-                   ^
-C0324:124:fabio.openimage: Comma not followed by a space
-            (self.im.minval,self.im.maxval,self.im.meanval)=(img.getmin(),img.getmax(\
-                           ^^
-                ),img.getmean())
-C0322:126:fabio.openimage: Operator not preceded by a space
-            self.im.header=img.getheader()
-                          ^
-W0201:123:fabio.openimage: Attribute 'im' defined outside __init__
-W0201:127:fabio.openimage: Attribute 'xsize' defined outside __init__
-W0201:127:fabio.openimage: Attribute 'ysize' defined outside __init__
-R0903:109:fabio: To few public methods (1/2)
+W0702:108:deconstruct_filename: No exception's type specified
+W0612: 99:deconstruct_filename: Unused variable 'compressed'
+C0111:120:extract_filenumber: Missing docstring
+
+
+Report
+======
+56 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |65     |57.52 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |29     |25.66 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |3      |2.65  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |16     |14.16 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |5      |NC         |NC         |40.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |22     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |5      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0322      |11         |
++-----------+-----------+
+|C0111      |4          |
++-----------+-----------+
+|C0103      |4          |
++-----------+-----------+
+|C0324      |3          |
++-----------+-----------+
+|W0702      |1          |
++-----------+-----------+
+|W0612      |1          |
++-----------+-----------+
+|W0511      |1          |
++-----------+-----------+
+|W0402      |1          |
++-----------+-----------+
+|W0106      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 5.18/10
+

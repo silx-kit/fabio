@@ -13,13 +13,6 @@ from fabio.fabioimage import fabioimage
 class fit2dmaskimage(fabioimage):
     """ Read and try to write Andy Hammersleys mask format """
 
-    def readheader(self, filename):
-        """
-        Read in a header
-        """
-        fin = self._open(filename)
-        self._readheader(fin)
-        fin.close()
 
     def _readheader(self, infile):
         """
@@ -76,6 +69,7 @@ class fit2dmaskimage(fabioimage):
             self.data = Numeric.where(result[:-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
         self.data = Numeric.transpose(self.data)
+        self.pilimage = None
 
 
 

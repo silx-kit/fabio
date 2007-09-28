@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 """
-
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
          Risoe National Laboratory
@@ -14,6 +13,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 import Numeric, logging
 
 from fabio.fabioimage import fabioimage
+
 
 DATA_TYPES = {  "SignedByte"     :  Numeric.Int8,
                 "UnsignedByte"   :  Numeric.UInt8,
@@ -48,14 +48,6 @@ DEFAULT_VALUES = {"HeaderID":  "EH:000001:000000:000000",
 class edfimage(fabioimage):
     """ Read and try to write the ESRF edf data format """
 
-
-    def readheader(self, filename):
-        """
-        Read in a header in some EDF format
-        """
-        fin = self._open(filename)
-        self._readheader(fin)
-        fin.close()
 
     def _readheader(self, infile):
         """
@@ -93,6 +85,8 @@ class edfimage(fabioimage):
         Read in header into self.header and
             the data   into self.data
         """
+        self.header = {}
+        self.resetvals()
         infile = self._open(fname)
         self._readheader(infile)
         # Compute image size
@@ -108,9 +102,11 @@ class edfimage(fabioimage):
             bytecode = Numeric.UInt16
             logging.warning("Defaulting type to UInt16")
         self.bpp = len(Numeric.array(0, bytecode).tostring())
+
         if self.header.has_key("Size"): # fit2d does not write this
-            if self.bpp*self.dim1*self.dim2 != self.header("Size"):
-                logging.warning("Size mismatch on reading edf file")
+            if self.bpp*self.dim1*self.dim2 != int(self.header["Size"]):
+                logging.warning("Size mismatch on reading edf file " + \
+                                    fname + " " + self.header["Size"])
         # Sorry - this was the only safe way to read old ID11 imagepro edfs
         if self.header.has_key('Image') and self.header['Image'] == '1':
             block = infile.read()
@@ -146,6 +142,8 @@ class edfimage(fabioimage):
         else:
             logging.info('using '+self.header['ByteOrder'])
         self.resetvals()
+        # ensure the PIL image is reset
+        self.pilimage = None
         return self
 
     def swap_needed(self ):

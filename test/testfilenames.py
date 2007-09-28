@@ -19,7 +19,9 @@ CASES = [
     ( 10001, 'marccd', "data10001.mccd.bz2"),
     ( 3,     'tif', "data0003.tif" ),
     ( 4,     'tif', "data0004.tiff" ),
-    ( 99,    'bruker',"sucrose101.0099")
+    ( 99,    'bruker',"sucrose101.0099"),
+    ( 2,     'fit2dmask', "fit2d.msk"),
+    ( 0,     'fit2dmask', "mymask.msk"),
     ]
 
 class testfilenames(unittest.TestCase):

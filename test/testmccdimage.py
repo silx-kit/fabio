@@ -5,7 +5,7 @@
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
-from fabio import marccdimage
+from fabio.marccdimage import marccdimage
 
 import unittest, os
 

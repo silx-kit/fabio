@@ -1,15 +1,15 @@
-************* Module edfimage
+************* Module fabio.edfimage
 W0511: 41: FIXME?
-W0511: 64: TODO : test for minimal attributes?
-W0511:127: FIXME
-R0914:167:edfimage.write: Too many local variables (16/15)
-W0221:167:edfimage.write: Arguments number differs from overridden method
-R0912:167:edfimage.write: Too many branches (14/12)
+W0511: 56: TODO : test for minimal attributes?
+W0511:123: FIXME
+R0914:165:edfimage.write: Too many local variables (16/15)
+W0221:165:edfimage.write: Arguments number differs from overridden method
+R0912:165:edfimage.write: Too many branches (14/12)
 
 
 Report
 ======
-120 statements analysed.
+119 statements analysed.
 
 Duplication
 -----------
@@ -17,9 +17,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -30,13 +30,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |136    |65.07 |136      |=          |
+|code      |136    |66.34 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |55     |26.32 |55       |=          |
+|docstring |51     |24.88 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |4      |1.91  |4        |=          |
+|comment   |4      |1.95  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |14     |6.70  |14       |=          |
+|empty     |14     |6.83  |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -45,9 +45,7 @@ External dependencies
 ---------------------
 ::
 
-    fabio 
-      \-fabioimage (edfimage)
-    Numeric (edfimage)
+    Numeric (fabio.edfimage)
 
 
 
@@ -57,13 +55,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |0.00     |
+|class    |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |5      |5          |=          |100.00      |0.00     |
+|method   |4      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -74,13 +72,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |2      |2        |=          |
+|refactor   |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |4      |4        |=          |
+|warning    |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -104,5 +102,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.50/10 (previous run: 9.50/10)
+Your code has been rated at 9.50/10
 

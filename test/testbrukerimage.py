@@ -5,7 +5,7 @@
 #built on testedfimage
 """
 import unittest, os, Numeric
-from fabio import brukerimage
+from fabio.brukerimage import brukerimage
 
 
 #this is actually a violation of the bruker format since the order of
@@ -85,6 +85,37 @@ class testgzipbruker(testbruker):
         os.system("gzip %s" % (self.filename))
         self.filename += ".gz"
         # tear down is inherited and self.filename will be removed
+
+
+
+
+# statistics come from fit2d I think
+# filename dim1 dim2 min max mean stddev
+
+TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17 
+Cr8F8140k103.0026.gz   512  512  0  145942 289.37  432.17 
+Cr8F8140k103.0026.bz2   512  512  0 145942 289.37  432.17 """
+
+
+class test_real_im(unittest.TestCase):
+    """ check some read data as for mar ccd """
+          
+    def test_read(self):
+        """ check we can read these images"""
+        for line in TESTIMAGES.split("\n"):
+            vals = line.split()
+            name = vals[0]
+            dim1, dim2 = [int(x) for x in vals[1:3]]
+            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+            obj = brukerimage()
+            obj.read(os.path.join("testimages", name))
+            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
+            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
+            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
+            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
+            self.assertEqual(dim1, obj.dim1, "dim1")
+            self.assertEqual(dim2, obj.dim2, "dim2")
+            
 
 if __name__ == "__main__":
     unittest.main()

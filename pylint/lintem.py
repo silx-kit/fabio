@@ -9,7 +9,8 @@ def lintit(infile,outfile):
     os.system("pylint %s > %s"%(infile,outfile))
 
 
-files = glob.glob("../src/*.py") + glob.glob("../test/*.py")
+files = glob.glob("../build/lib.linux-i686-2.5/fabio/*.py") + \
+        glob.glob("../test/*.py")
 
 for f in files:
     outf = os.path.split(f)[-1] + ".lint"
