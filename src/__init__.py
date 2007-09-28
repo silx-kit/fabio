@@ -62,8 +62,8 @@ FILETYPES = {
 
 # Add bzipped and gzipped
 for key in FILETYPES.keys():
-    FILETYPES[key+"bz2"] = FILETYPES[key]
-    FILETYPES[key+"gz"]  = FILETYPES[key]
+    FILETYPES[key+".bz2"] = FILETYPES[key]
+    FILETYPES[key+".gz"]  = FILETYPES[key]
 
     
 
