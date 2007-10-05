@@ -373,8 +373,15 @@ class fabioimage:
         if type(fname) in [type(" "), type(u" ")]:
             # filename is a string
             if os.path.splitext(fname)[1] == ".gz":
-                import gzip
-                return gzip.GzipFile(fname, mode)
+                # PIL uses seek and tell on gzipped which was bad!
+                # Wrap it in a cStringIO
+                import gzip, cStringIO
+                if mode[0] == 'r':
+                    return cStringIO.StringIO(
+                        gzip.GzipFile(fname).read())
+                elif mode[0] == 'w':
+                    gzip.GzipFile(fname)
+                    
             if os.path.splitext(fname)[1] == '.bz2':
                 import bz2
                 return bz2.BZ2File(fname, mode)
@@ -384,6 +391,8 @@ class fabioimage:
             #
             # FIXME - should we fix that or complain about the daft naming?
             return open(fname, mode)
+
+
 
 
 def test():
