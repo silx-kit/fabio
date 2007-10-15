@@ -42,18 +42,24 @@ class tifimage(fabioimage):
         self._readheader(infile)
         infile.seek(0)
         self.pilimage = Image.open(infile)
-        if TIFF_TO_NUMERIC.has_key(self.pilimage.mode):
+        
+        # For some odd reason the getextrema does not work on unsigned 16 bit
+        # but it does on 32 bit images, hence convert if 16 bit
+        if TIFF_TO_NUMERIC.has_key(self.pilimage.mode) and self.pilimage.mode != "I;16":
             self.data = Numeric.fromstring(
                 self.pilimage.tostring(),
                 TIFF_TO_NUMERIC[self.pilimage.mode])
             self.bpp = len(Numeric.ones(1,
                           TIFF_TO_NUMERIC[self.pilimage.mode]).tostring())
+            self.dim1, self.dim2 = self.pilimage.size
         else:
             temp = self.pilimage.convert("I") # 32 bit signed
             self.data = Numeric.fromstring(
                 temp.tostring(),
                 Numeric.Int32)
             self.bpp = 4
+            self.dim1, self.dim2 = self.pilimage.size
+            self.pilimage = temp
         
         self.dim1, self.dim2 = self.pilimage.size
         self.data.shape = (self.dim1, self.dim2)
