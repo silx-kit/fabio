@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 
 
 """
@@ -7,7 +9,7 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
          ESRF          Risoe National Laboratory
 """
 
-import Numeric, logging
+import numpy.oldnumeric as Numeric, logging
 
 DATATYPES = {
     # type  sign bytes
@@ -77,7 +79,7 @@ def readbytestream(fil,
                 infile.read(length), tin) ,(x, y)),typeout)
 
     if swap == 'y':
-        arr = arr.byteswapped()
+        arr = arr.byteswap()
 
     if opened:
         infile.close()

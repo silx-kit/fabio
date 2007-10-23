@@ -43,7 +43,7 @@ MAGIC_NUMBERS = {
 
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
-    for magic, format in MAGIC_NUMBERS.iteritems:
+    for magic, format in MAGIC_NUMBERS.iteritems():
         if byts.find(magic) == 0:
             return format
     raise Exception("Could not interpret magic string")
@@ -51,7 +51,9 @@ def do_magic(byts):
 def openimage(filename):
     """ Try to open an image """
     try:
-        filenumber, filetype = deconstruct_filename(filename)
+        file_obj = deconstruct_filename(filename)
+        filetype = file_obj.format
+        filenumber = file_obj. num
     except:
         imo = fabioimage()
         byts = imo._open(filename).read(16)

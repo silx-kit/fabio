@@ -4,7 +4,8 @@
 
 #built on testedfimage
 """
-import unittest, os, Numeric
+import unittest, os
+import numpy.oldnumeric as Numeric
 from fabio.brukerimage import brukerimage
 
 

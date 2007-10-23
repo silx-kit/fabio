@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 
 
 # Unit tests
@@ -8,7 +10,7 @@
 from fabio.fit2dmaskimage import fit2dmaskimage
 from fabio.edfimage import edfimage
 
-import unittest, Numeric
+import unittest, numpy.oldnumeric as Numeric
 
 class testfacemask(unittest.TestCase):
     """ test the picture of a face """

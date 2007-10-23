@@ -5,7 +5,7 @@
 import re, os # -> move elsewhere?
 
 
-def construct_filename(oldfilename, newfilenumber, padding=True):
+def construct_filename_old(oldfilename, newfilenumber, padding=True):
     #some code to replace the filenumber in oldfilename with newfilenumber
     #by figuring out how the files are named
     import string
@@ -66,55 +66,151 @@ for key in FILETYPES.keys():
     FILETYPES[key+".gz"]  = FILETYPES[key]
 
     
-
-
 def getnum(name):
     """
     # try to figure out a file number
     # guess it starts at the back
     """
-    num_list = []
-    first = False
-    for byt in name[::-1]: # this means iterate backwards through the string
-        if byt.isdigit():
-            first = True
-            num_list.append(byt)
-            continue
-        if first: 
-            break
-    num = "".join(num_list[::-1])
-    try:
-        return int(num)
-    except ValueError:
-        return 0
+    stem , num, post_num = numstem(name)
+    return int(num)
         
+class filename_object:
+    """
+    The 'meaning' of a filename
+    """
+    def __init__(self, stem,  
+            num = None,
+            directory = None, 
+            format = None, 
+            extension = None, 
+            postnum = None,
+            digits = 4): 
+        self.stem = stem
+        self.num = num
+        self.format = format
+        self.extension = extension
+        self.digits = digits
+        self.postnum = postnum
+        self.directory = directory
+        #print self.str()
 
+    def str(self):
+        return "stem %s, num %s format %s extension %s postnum = %s digits %s dir %s"%tuple([
+            str(x) for x in [self.stem , 
+                self.num , 
+                self.format , 
+                self.extension , 
+                self.postnum ,
+                self.digits , 
+                self.directory ] ] )
+
+        
+    def tostring(self):
+        """
+        convert yourself to a string
+        """
+        name = self.stem
+        if self.digits is not None and self.num is not None:
+            fmt = "%0"+str(self.digits)+"d"
+            name += fmt % self.num
+        if self.postnum is not None:
+            name += self.postnum
+        if self.extension is not None:
+            name += self.extension
+        if self.directory is not None:
+            name = os.path.join(self.directory, name)
+        return name
+
+
+def numstem(name):
+    """ cant see how to do without reversing strings
+    Match 1 or more digits going backwards from the end of the string
+    
+    """
+    import re
+    reg = re.compile("""(\D*)(\d\d*)(\w*)""")
+    res = reg.match(name[::-1]).groups()
+    return [ r[::-1] for r in res[::-1]]
 
 def deconstruct_filename(filename):
     """
     Break up a filename to get image type and number
     """
-    parts = os.path.split(filename)[-1].split(".")
+    direc , name = os.path.split(filename)
+    if len(direc) == 0:
+        direc = None
+    parts = os.path.split(name)[-1].split(".")
     # loop back from end
     compressed = False
+    extn = ""
+    postnum = ""
+    ndigit = 4
     if parts[-1] in ["gz","bz2"]:
+        extn = "."+parts[-1]
         parts = parts[:-1]
         compressed=True
     if parts[-1] in FILETYPES.keys():
         typ = FILETYPES[parts[-1]]
+        extn = "." + parts[-1] + extn
         try:
-            num = getnum("".join(parts[:-1]))
+            stem , numstring, postnum = numstem("".join(parts[:-1]))
+            num = int(numstring)
+            ndigit = len(numstring)
         except:
-            num = 0
+            # There is no number - hence make num be None, not 0
+            num = None
+            stem = "".join(parts[:-1])
     else:
         try:
             num = int(parts[-1])
+            ndigit = len(parts[-1])
             typ = 'bruker'
+            stem = ".".join(parts[:-1])+"."
         except:
             # unregistered type??
-            raise Exception("Cannot decode "+filename)
-    return num, typ
+            raise
+#            raise Exception("Cannot decode "+filename)
 
+    obj = filename_object( stem,  
+            num = num,
+            directory = direc, 
+            format = typ, 
+            extension = extn, 
+            postnum = postnum,
+            digits = ndigit ) 
+     
+    return obj
+
+def construct_filename(stem, num, typ, digits=4):
+    """
+    Put a filename tuple of (stem, num, typ) back together
+    """
+    obj = filename_object(stem , num=num, format=typ)
+    return obj.tostring()
+
+def next_filename(name, padding=True):
+    """ increment number """
+    obj = deconstruct_filename(name)
+    obj.num += 1
+    if not padding:
+        obj.ndigits = 0
+    return obj.tostring()
+
+def previous_filename(name, padding=True):
+    """ decrement number """
+    obj = deconstruct_filename(name)
+    obj.num -= 1
+    if not padding:
+        obj.ndigits = 0
+    return obj.tostring()
+
+def jump_filename(name, num, padding=True):
+    """ jump to number """
+    obj = deconstruct_filename(name)
+    obj.num = num
+    if not padding:
+        obj.ndigits = 0
+    return obj.tostring()
 
 
 def extract_filenumber(filename):

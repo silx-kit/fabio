@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 #!/usr/bin/env python 
 """
 
@@ -12,65 +14,14 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import Numeric, math, os
+import numpy.oldnumeric as Numeric, math, os
 from PIL import Image
 
+import numpy
 
-#
-# utilities to convert between numerical arrays and PIL image memories
-#
-# fredrik lundh, october 1998
-#
-# fredrik@pythonware.com
-# http://www.pythonware.com
-#
-# http://effbot.org/zone/pil-numpy.htm   viewed on 20-8-2007
-
-def image2array(img):
-    """
-    #
-    # utilities to convert between numerical arrays and PIL image memories
-    #
-    # fredrik lundh, october 1998
-    #
-    # fredrik@pythonware.com
-    # http://www.pythonware.com
-    #
-    # http://effbot.org/zone/pil-numpy.htm   viewed on 20-8-2007
-    """
-    if img.mode not in ("L", "F"):
-        raise ValueError, "can only convert single-layer images"
-    if img.mode == "L":
-        arr = Numeric.fromstring(img.tostring(), Numeric.UnsignedInt8)
-    else:
-        arr = Numeric.fromstring(img.tostring(), Numeric.Float32)
-    arr.shape = img.size[1], img.size[0]
-    return arr
-
-def array2image(arr):
-    """
-    #
-    # utilities to convert between numerical arrays and PIL image memories
-    #
-    # fredrik lundh, october 1998
-    #
-    # fredrik@pythonware.com
-    # http://www.pythonware.com
-    #
-    # http://effbot.org/zone/pil-numpy.htm   viewed on 20-8-2007
-    """
-    if arr.typecode() == Numeric.UnsignedInt8:
-        mode = "L"
-    elif arr.typecode() == Numeric.Float32:
-        mode = "F"
-    else:
-        raise ValueError, "unsupported image mode"
-    return Image.fromstring(mode, (arr.shape[1], arr.shape[0]), arr.tostring())
-
-
-
-
-
+# i = Image.open('lena.jpg')
+# a = numpy.asarray(i) # a is readonly
+# i = Image.fromarray(a)
 
 class fabioimage:
     """
@@ -104,92 +55,37 @@ class fabioimage:
     def toPIL16(self, filename = None):
         """
         Convert to Python Imaging Library 16 bit greyscale image
+
+        FIXME - this should be handled by the libraries now
         """
         if filename:
             self.read(filename)
         if self.pilimage is not None:
             return self.pilimage
-        # >>> help(Image.frombuffer)
-        # frombuffer(mode, size, data, decoder_name='raw', *args)
-        # Load image from string or buffer
-        # *args == raw mode, stride, orientation
-        # raw mode 
-        # The pixel layout used in the file, and is used to properly
-        # convert data to PIL's internal layout. For a summary of the
-        # available formats, see the table below.
-        #
-        # stride 
-        #  The distance in bytes between two consecutive lines in the
-        # image. If 0, the image is assumed to be packed (no padding
-        # between lines). If omitted, the stride defaults to 0.
-        #
-        # orientation 
-        # Whether the first line in the image is the top line on the
-        # screen (1), or the bottom line (-1). If omitted, the orientation
-        # defaults to 1.
-        #
-        #  mode  description
-        #  "1"   1-bit bilevel, stored with the leftmost pixel in the
-        #        most significant bit. 0 means black, 1 means white.
-        #  "1;I" 1-bit inverted bilevel, stored with the leftmost pixel
-        #        in the most significant bit. 0 means white, 1 means black.
-        #  "1;R" 1-bit reversed bilevel, stored with the leftmost pixel
-        #        in the least significant bit. 0 means black, 1 means white.
-        #  "L"   8-bit greyscale. 0 means black, 255 means white.
-        #  "L;I" 8-bit inverted greyscale. 0 means white, 255 means black.
-        #  "P"   8-bit palette-mapped image.
-        # "RGB"  24-bit true colour, stored as (red, green, blue).
-        # "BGR"  24-bit true colour, stored as (blue, green, red).
-        # "RGBX" 24-bit true colour, stored as (blue, green, red, pad).
-        # "RGB;L" 24-bit true colour, line interleaved (first all red pixels,
-        #         the all green pixels, finally all blue 
-        bmap = { Numeric.UInt8   : ["F", "F;8"]    ,  
-                 #  8-bit unsigned integer.
-                 Numeric.Int8    : ["F", "F;8S"]   ,  
-                 #  8-bit signed integer.
-                 Numeric.UInt16  : ["F", "F;16"]  ,  
-                 #  16-bit native unsigned integer.
-                 Numeric.Int16   : ["F", "F;16S"] ,  
-                 #  16-bit native signed integer.
-                 Numeric.UInt32  : ["F", "F;32N"]  ,  
-                 #  32-bit native unsigned integer.
-                 Numeric.Int32   : ["F", "F;32NS"] ,  
-                 #  32-bit native signed integer.
-                 Numeric.Float32 : ["F", "F;32NF"]
-                 #  32-bit native floating point. 
-                 }
-                 # Apparently does not work...:
-                 #  Numeric.Float64 : ["F","F;64NF"] }  
-                 #  64-bit native floating point
-        #names = { Numeric.UInt8 : "Numeric.UInt8",
-        #          Numeric.Int8  : "Numeric.Int8" ,  
-        #          Numeric.UInt16: "Numeric.UInt16",  
-        #          Numeric.Int16 :  "Numeric.Int16" ,  
-        #          Numeric.UInt32:  "Numeric.UInt32" , 
-        #          Numeric.Int32 :  "Numeric.Int32"   ,
-        #          Numeric.Float32: "Numeric.Float32" ,
-        #          Numeric.Float64:"Numeric.Float64"}
-        try:
-            byteformat = bmap [ self.data.typecode() ]
-            # print "Numeric typecode",self.data.typecode(),\
-            #      "name",names[self.data.typecode()],byteformat
-        except:
-            raise Exception("Unknown data format in array!!!")
-        try:
-            self.pilimage = Image.frombuffer(byteformat[0],
-                                        (self.data.shape[1],
-                                         self.data.shape[0]),
-                                        self.data,
-                                        "raw", 
-                                        byteformat[1], 
-                                        0,  # stride - every line.
-                                        1   # orientation - no flip.
-                                        )
-        except:
-            print byteformat
-            raise 
+        # mode map
+        size = self.data.shape[:2][::-1]
+        typmap = {
+            'float32' : "F"     ,
+            'int32'   : "F;32S" ,
+            'uint32'  : "F;32"  ,
+            'int16'   : "F;16S" ,
+            'uint16'  : "F;16"  ,
+            'int8'    : "F;8S"  ,
+            'uint8'   : "F;8"  }
+        if typmap.has_key( self.data.dtype.name ):
+            mode2 = typmap[ self.data.dtype.name ]
+            mode1 = mode2[0]
+        else:
+            raise Exception("Unknown numpy type "+str(self.data.dtype.type))
+        self.pilimage = Image.frombuffer(mode1,
+                                         size,
+                                         self.data.tostring(),
+                                         "raw",
+                                         mode2,
+                                         0,
+                                         1)
+
         return self.pilimage
-        
 
     def getheader(self):
         """ returns self.header """
@@ -312,7 +208,7 @@ class fabioimage:
            int(self.dim2 / x_rebin_fact) * x_rebin_fact != self.dim2 :
             raise('image size is not divisible by rebin factor - ' + \
                   'skipping rebin')
-        self.data.savespace(1) # avoid the upcasting behaviour
+        pass  ## self.data.savespace(1) # avoid the upcasting behaviour
         i = 1
         while i < x_rebin_fact:
             # FIXME - why do you divide by 2? Rebinning should increase counts?
@@ -373,15 +269,14 @@ class fabioimage:
         if type(fname) in [type(" "), type(u" ")]:
             # filename is a string
             if os.path.splitext(fname)[1] == ".gz":
-                # PIL uses seek and tell on gzipped which was bad!
-                # Wrap it in a cStringIO
                 import gzip, cStringIO
-                if mode[0] == 'r':
+                if mode[0] == "r":
                     return cStringIO.StringIO(
-                        gzip.GzipFile(fname).read())
-                elif mode[0] == 'w':
-                    gzip.GzipFile(fname)
-                    
+                        gzip.GzipFile(fname, mode).read())
+                elif mode[0] == "w":
+                    return gzip.GzipFile(fname, mode)
+                else:
+                    raise IOError, "Unknown mode"
             if os.path.splitext(fname)[1] == '.bz2':
                 import bz2
                 return bz2.BZ2File(fname, mode)
@@ -393,8 +288,6 @@ class fabioimage:
             return open(fname, mode)
 
 
-
-
 def test():
     """
     check some basic fabioimage functionality
@@ -404,7 +297,7 @@ def test():
     
     dat = Numeric.ones((1024, 1024), Numeric.UInt16)
     dat = (dat*50000).astype(Numeric.UInt16)
-    assert dat.typecode() == Numeric.ones((1), Numeric.UInt16).typecode()
+    assert dat.dtype.char == Numeric.ones((1), Numeric.UInt16).dtype.char
     hed = {"Title":"50000 everywhere"}
     obj = fabioimage(dat, hed)
       

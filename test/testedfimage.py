@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 
 
 """
@@ -7,7 +9,7 @@
 """
 from fabio.edfimage import edfimage
 
-import unittest, Numeric, os
+import unittest, numpy.oldnumeric as Numeric, os
 
 MYHEADER = "{\n%-1020s}\n" % (
 """Omega = 0.0 ; 

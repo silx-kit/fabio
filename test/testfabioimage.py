@@ -1,3 +1,7 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 
 
 """
@@ -5,7 +9,9 @@ Test cases for the fabioimage clas
 """
 
 from fabio.fabioimage import fabioimage
-import unittest, os, sys, Numeric, RandomArray
+import unittest, os, sys
+import numpy.oldnumeric as Numeric
+import numpy.oldnumeric.random_array as RandomArray
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -13,7 +19,7 @@ class test50000(unittest.TestCase):
         """make the image"""
         dat = Numeric.ones((1024, 1024), Numeric.UInt16)
         dat = (dat * 50000).astype(Numeric.UInt16)
-        assert dat.typecode() == Numeric.ones((1), Numeric.UInt16).typecode()
+        assert dat.dtype.char == Numeric.ones((1), Numeric.UInt16).dtype.char
         hed = {"Title":"50000 everywhere"}
         self.obj = fabioimage(dat, hed)
       
@@ -101,14 +107,14 @@ class testopen(unittest.TestCase):
         self.assertEqual( res , "{ hello }" ) 
 
 
-NAMES = { Numeric.UInt8 : "Numeric.UInt8",
-          Numeric.Int8  : "Numeric.Int8" ,  
-          Numeric.UInt16: "Numeric.UInt16",  
+NAMES = { Numeric.UInt8 :  "Numeric.UInt8",
+          Numeric.Int8  :  "Numeric.Int8" ,  
+          Numeric.UInt16:  "Numeric.UInt16",  
           Numeric.Int16 :  "Numeric.Int16" ,  
           Numeric.UInt32:  "Numeric.UInt32" , 
           Numeric.Int32 :  "Numeric.Int32"   ,
           Numeric.Float32: "Numeric.Float32" ,
-          Numeric.Float64:"Numeric.Float64"}
+          Numeric.Float64: "Numeric.Float64"}
 
 
 class testPILimage(unittest.TestCase):
@@ -123,13 +129,14 @@ class testPILimage(unittest.TestCase):
                           Numeric.Int32,
                           Numeric.Float32]
 
+
     def mkdata(self, shape, typ):
         """ generate [01] testdata """
         return (RandomArray.random(shape)).astype(typ)
 
         
     def testpil(self):
-        """ check all formats with random data"""
+
         for typ in self.okformats:
             name = NAMES[typ]
             for shape in [(10, 20), (431, 1325)]:

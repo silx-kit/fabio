@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 #!/usr/bin/env python
 """
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -10,7 +12,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
         + Jon Wright, ESRF
 """
 
-import Numeric, logging
+import numpy.oldnumeric as Numeric, logging
 
 from fabio.fabioimage import fabioimage
 
@@ -133,10 +135,10 @@ class edfimage(fabioimage):
             print len(block), bytecode, self.bpp, self.dim2, self.dim1
             raise IOError, \
               'Size spec in edf-header does not match size of image data field'
-        self.bytecode = self.data.typecode()
+        self.bytecode = self.data.dtype.char
         swap = self.swap_needed()
         if swap:
-            self.data = self.data.byteswapped()
+            self.data = self.data.byteswap()
             # Remove verbose arg - use logging and levels
             logging.info('Byteswapped from '+self.header['ByteOrder'])
         else:
@@ -178,12 +180,12 @@ class edfimage(fabioimage):
         if bpp not in [1, 2, 4]:
             logging.info("edfimage.write do you really want"+str(bpp)+\
                              "bytes per pixel??")
-        bytecode = data.typecode()
+        bytecode = data.dtype.char
         for name , code in DATA_TYPES.items():
             if code == bytecode:
                 self.header['DataType'] = name
                 break
-        dim1, dim2 = data.shape
+        dim2, dim1 = data.shape
         self.header['Dim_1'] = dim1
         self.header['Dim_2'] = dim2
         self.header['Size'] = dim1*dim2*bpp
@@ -218,7 +220,7 @@ class edfimage(fabioimage):
         outfile.write('}\n')
         if self.swap_needed():
             # data has "astype" from start of this function
-            outfile.write(data.byteswapped().tostring())
+            outfile.write(data.byteswap().tostring())
         else:
             outfile.write(data.tostring())
         outfile.close()

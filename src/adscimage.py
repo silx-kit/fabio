@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 #!/usr/bin/env python
 """
 
@@ -12,7 +14,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import Numeric, logging
+import numpy.oldnumeric as Numeric, logging
 from fabio.fabioimage import fabioimage
 
 
@@ -56,7 +58,7 @@ class adscimage(fabioimage):
             try:
                 self.data = Numeric.reshape(
                     Numeric.fromstring(binary, Numeric.UInt16), 
-                    (self.dim2, self.dim1) ).byteswapped()
+                    (self.dim2, self.dim1) ).byteswap()
             except ValueError:
                 raise IOError, 'Size spec in ADSC-header does not match '+\
                     'size of image data field'
@@ -107,7 +109,7 @@ class adscimage(fabioimage):
         if "little" in self.header["BYTE_ORDER"]:
             outf.write(self.data.astype(Numeric.UInt16).tostring())
         else:
-            outf.write(self.data.byteswapped().astype(
+            outf.write(self.data.byteswap().astype(
                     Numeric.UInt16).tostring())
         outf.close()
 

@@ -1,5 +1,5 @@
 #include <Python.h>
-#include <Numeric/arrayobject.h>
+#include <numpy/oldnumeric.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -15,7 +15,7 @@ static PyObject * mar345_io_unpack(PyObject *self, PyObject *args){
   if (!PyArg_ParseTuple(args, "Oiii", &py_file,&dim1,&dim2,&ocount))
     return NULL;
   dims[0]=dim1;dims[1]=dim2;
-  py_unpacked=(PyArrayObject*)PyArray_FromDims(2,dims,PyArray_USHORT);
+  py_unpacked=(PyArrayObject*)PyArray_FromDims(2,dims,PyArray_UINT);
   file=PyFile_AsFile(py_file);
 
   unpacked=mar345_read_data(file,ocount,dim1,dim2);
@@ -33,5 +33,8 @@ PyMODINIT_FUNC
 initmar345_io(void)
 {
   (void) Py_InitModule("mar345_io", mar345_io_Methods);
-    import_array();
+  import_array();
+
+  if(PyErr_Occurred())
+    Py_FatalError("cant initialise mar345_iomodule.c");
 }

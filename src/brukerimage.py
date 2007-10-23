@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 #!/usr/bin/env python
 """
 
@@ -13,7 +15,7 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 
 """
 
-import Numeric, logging
+import numpy.oldnumeric as Numeric, logging
 
 from fabio.fabioimage import fabioimage
 from fabio.readbytestream import readbytestream
@@ -152,7 +154,7 @@ class brukerimage(fabioimage):
         if self.header["ByteOrder"] == "LowByteFirst":
             outfile.write(self.data.astype(Numeric.UInt16).tostring())
         else:
-            outfile.write(self.data.byteswapped().astype(
+            outfile.write(self.data.byteswap().astype(
                     Numeric.UInt16).tostring())
         outfile.close()
 

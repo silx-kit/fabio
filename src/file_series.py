@@ -13,8 +13,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
-
+from fabio import filename_object
 from fabio.openimage import openimage
+        
+
+        
+
 
 class file_series(list):
     """
@@ -101,6 +105,34 @@ class file_series(list):
         """ current image in sequence """
         return openimage(self.current())
 
+    # methods which return a file_object
+
+    def first_object(self):
+        """ first image in a sequence """
+        return filename_object(self.first())
+
+    def last_object(self):
+        """ last image in a sequence """
+        return filename_object(self.last())
+
+    def next_object(self):
+        """ Return the next image """        
+        return filename_object(self.next())
+
+    def previous_object(self):
+        """ Return the previous image """        
+        return filename_object(self.previous())
+
+    def jump_object(self, num):
+        """ jump to and read image """
+        return filename_object(self.jump(num))
+
+    def current_object(self):
+        """ current image in sequence """
+        return filename_object(self.current())
+
+
+
 
 class numbered_file_series(file_series):        
     """
@@ -108,14 +140,62 @@ class numbered_file_series(file_series):
     mydata0002.edf = "mydata" + 0002 + ".edf"
     mydata0003.edf = "mydata" + 0003 + ".edf"
     """
-    def __init__(self, stem, first, last, extension, digits=4):
+    def __init__(self, stem, first, last, extension, digits = 4):
         """
         stem - first part of the name
-        
         """
         fmt = "%s%0"+str(digits)+"d%s"
         super(numbered_file_series, self).__init__(
             [ fmt % ( stem, i, extension ) for i in range(first, last + 1) ] )
+
+
+class filename_series:
+    """ Much like the others, but created from a string filename """
+    def __init__(self, filename):
+        """ create from a filename (String)"""
+        self.obj = filename_object(filename)
+
+    def next(self):
+        """ increment number """
+        self.obj.num += 1
+        return self.obj.tostring()
+
+    def previous(self):
+        """ decrement number """
+        self.obj.num -=1
+        return self.obj.tostring()
+
+    def current(self):
+        """ return current filename string"""
+        return self.obj.tostring()
+
+    def jump(self, num):
+        """ jump to a specific number """
+        self.obj.num = num       
+        return self.obj.tostring()
+
+    # image methods
+    def next_image(self):
+        return openimage(self.next())
+    def prev_image(self):
+        return openimage(self.previous())
+    def current_image(self):
+        return openimage(self.current())
+    def jump_image(self):
+        return openimage(self.jump())
+    # object methods
+    def next_object(self):
+        self.obj.num += 1
+        return self.obj
+    def previous_object(self):
+        self.obj.num -= 1
+        return self.obj
+    def current_object(self):
+        return self.obj
+    def jump_object(self, num):
+        self.obj.num = num
+        return self.obj
+
 
 
 

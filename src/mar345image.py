@@ -11,39 +11,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
          Jon Wright, ESRF, France
 """
 
-from PIL import Image
-import Numeric
+from fabioimage import fabioimage
+import numpy.oldnumeric as Numeric
 import struct
 import string
 
-class mar345image:
-    def __init__(self,filename=None):
-        self.data=None
-        self.header={}
-        self.filename = filename
-        self.dim1=self.dim2=0
-        self.m=self.maxval=self.stddev=self.minval=None
-        self.header_keys=[]
-        self.bytecode=None
-        if filename:
-            self.read(filename)
-
-    def toPIL16(self,filename=None):
-        if filename:
-            self.read(filename)
-        PILimage={
-          'f':Image.frombuffer("F",(self.dim1,self.dim2),self.data.astype(Numeric.UInt16),"raw","F;16",0,-1),
-          'w':Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1),
-          'u':Image.fromstring("F",(self.dim1,self.dim2),self.data,"raw","F;32N",0,-1),
-          }[self.bytecode]
-        return PILimage
-
-    def _open(self,fname,mode="rb"):
-        try:
-            f=open(fname,mode)
-        except:
-            raise IOError
-        return f
+class mar345image(fabioimage):
 
     def read(self,fname):
         self.filename = fname
@@ -53,12 +26,12 @@ class mar345image:
         try:
             import mar345_io
         except:
-            print 'error importing the mar345_io backend - generating empty picture'
+            print 'error importing the mar345_io backend - generating empty 1x1 picture'
             f.close()
             self.dim1=1
             self.dim2=1
-            self.bytecode='u'
-            self.data=Numeric.resize(Numeric.array([0],'u'),[1,1])
+            self.bytecode=Numeric.Int #
+            self.data=Numeric.resize(Numeric.array([0],Numeric.Int),[1,1])
             return self
 
         if 'compressed' in self.header['Format']:
@@ -69,9 +42,6 @@ class mar345image:
         self.bytecode='u'
         f.close()
         return self
-
-    def getheader(self):
-        return self.header
 
     def _readheader(self,infile=None):
         clip = '\x00'
@@ -123,7 +93,7 @@ class mar345image:
         h['Chi']=struct.unpack('L',l[14*4:15*4])[0]/1000.0
         h['TwoTheta']=struct.unpack('L',l[15*4:16*4])[0]/1000.0
 
-        #the rest of the header is ascii
+        #the rest of the header is ascii TODO: validate these values against the binaries already read
         l=f.read(128)
         if not 'mar research' in l:
             print "warning: the string \"mar research\" should be in bytes 65-76 of the header but was not"
@@ -149,40 +119,3 @@ class mar345image:
     def write(self):
         pass
 
-    def getmax(self):
-        if self.maxval==None:
-            max_xel=Numeric.argmax(Numeric.ravel(self.data))
-            self.maxval=Numeric.ravel(self.data)[max_xel]
-        return int(self.maxval)
-
-    def getmin(self):
-        if self.minval==None:
-            min_xel=Numeric.argmin(Numeric.ravel(self.data))
-            self.minval=Numeric.ravel(self.data)[min_xel]
-        return int(self.minval)
-
-    def getmean(self):
-        if self.m==None:
-            self.m=Numeric.sum(Numeric.ravel(self.data.astype(Numeric.Float)))/(self.dim1*self.dim2)
-        return float(self.m)
-
-    def getstddev(self):
-        if self.m==None:
-            self.getmean()
-            print "recalc mean"
-        if self.stddev==None:
-            N=self.dim1*self.dim2-1
-            S=Numeric.sum(Numeric.ravel((self.data.astype(Numeric.Float)-self.m)/N*(self.data.astype(Numeric.Float)-self.m)) )
-            self.stddev=S/(self.dim1*self.dim2-1)
-        return float(self.stddev)
-
-    def rebin(self,x_rebin_factor, y_rebin_factor):
-        print "rebinning not implemented - yet!"
-
-if __name__=='__main__':
-    import sys
-    i=mar345image()
-    i.read(sys.argv[1])
-    i2=i.toPIL16()
-    i2.show()
-    print i.header

@@ -13,4 +13,5 @@ $PYT testmccdimage.py
 $PYT testfit2dmaskimage.py
 $PYT testbrukerimage.py
 $PYT testadscimage.py
-
+$PYT testtifgz.py
+$PYT test_filename_steps.py

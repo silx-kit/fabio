@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 #!/usr/bin/env python
 """
 
@@ -13,7 +15,7 @@ mods for fabio by JPW
 """
 
 from PIL import Image
-import Numeric
+import numpy.oldnumeric as Numeric
 
 from fabio.fabioimage import fabioimage
 
@@ -42,10 +44,10 @@ class tifimage(fabioimage):
         self._readheader(infile)
         infile.seek(0)
         self.pilimage = Image.open(infile)
-        
         # For some odd reason the getextrema does not work on unsigned 16 bit
         # but it does on 32 bit images, hence convert if 16 bit
-        if TIFF_TO_NUMERIC.has_key(self.pilimage.mode) and self.pilimage.mode != "I;16":
+        if TIFF_TO_NUMERIC.has_key(self.pilimage.mode) and \
+                self.pilimage.mode != "I;16":
             self.data = Numeric.fromstring(
                 self.pilimage.tostring(),
                 TIFF_TO_NUMERIC[self.pilimage.mode])
@@ -60,7 +62,6 @@ class tifimage(fabioimage):
             self.bpp = 4
             self.dim1, self.dim2 = self.pilimage.size
             self.pilimage = temp
-        
         self.dim1, self.dim2 = self.pilimage.size
         self.data.shape = (self.dim1, self.dim2)
         self.resetvals()

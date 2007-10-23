@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 #!/usr/bin/env python
 """
 
@@ -5,7 +7,7 @@ Author: Andy Hammersley, ESRF
 Translation into python/fabio: Jon Wright, ESRF
 """
 
-import Numeric
+import numpy.oldnumeric as Numeric
 
 from fabio.fabioimage import fabioimage
 

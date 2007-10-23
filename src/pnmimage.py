@@ -1,3 +1,5 @@
+## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+
 #!/usr/bin/env python
 """
 
@@ -11,7 +13,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 from PIL import Image
-import Numeric
+import numpy.oldnumeric as Numeric
 import edfimage
 
 class pnmimage(edfimage.edfimage):
@@ -78,7 +80,7 @@ class pnmimage(edfimage.edfimage):
     def P5dec(self,buf,bytecode):
         l=buf.read()
         try:
-            data=Numeric.reshape(Numeric.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswapped()
+            data=Numeric.reshape(Numeric.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswap()
         except ValueError:
             raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
