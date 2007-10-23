@@ -19,6 +19,30 @@ def construct_filename_old(oldfilename, newfilenumber, padding=True):
     else:
         return oldfilename
 
+def construct_filename_erik(oldfilename, newfilenumber, padding=True):
+    #some code to replace the filenumber in oldfilename with newfilenumber
+    #by figuring out how the files are named
+    #mask the mar2300 construction
+    name=oldfilename.replace("mar2300","mar----")
+    
+    rev_oldnum=str(getnum(name))[::-1]
+    if padding:
+        rev_newnum=str(newfilenumber).zfill(len(rev_oldnum))[::-1]
+    else:
+        rev_newnum=str(newfilenumber)[::-1]
+    
+    rev_newname=name[::-1].replace(rev_oldnum,rev_newnum,1)
+    if padding and len(rev_oldnum)<len(rev_newnum):
+        #catch case when f.i. going from 9 to 10 with zero padding
+        #the result is that there is an extra 0 in front that needs to be removed
+        first=rev_newname.find(rev_newnum+"0")
+        if first>=0:
+            rev_newname=rev_newname[:first+len(rev_newnum)]+rev_newname[first+1+len(rev_newnum):]
+    return rev_newname[::-1].replace("mar----","mar2300")
+
+def construct_filename(*args, **kwds):
+    raise Exception("You probably want fabio.jump_filename")
+
 def deconstruct_filename_old(filename):
     p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
     # misses when data9999.edf -> data10000.edf
@@ -72,7 +96,10 @@ def getnum(name):
     # guess it starts at the back
     """
     stem , num, post_num = numstem(name)
-    return int(num)
+    try:
+        return int(num)
+    except ValueError:
+        return None
         
 class filename_object:
     """
@@ -129,8 +156,12 @@ def numstem(name):
     """
     import re
     reg = re.compile("""(\D*)(\d\d*)(\w*)""")
-    res = reg.match(name[::-1]).groups()
-    return [ r[::-1] for r in res[::-1]]
+    try:
+        res = reg.match(name[::-1]).groups()
+        return [ r[::-1] for r in res[::-1]]
+    except AttributeError: # no digits found
+        return [name, "", ""]
+        
 
 def deconstruct_filename(filename):
     """
@@ -181,12 +212,6 @@ def deconstruct_filename(filename):
      
     return obj
 
-def construct_filename(stem, num, typ, digits=4):
-    """
-    Put a filename tuple of (stem, num, typ) back together
-    """
-    obj = filename_object(stem , num=num, format=typ)
-    return obj.tostring()
 
 def next_filename(name, padding=True):
     """ increment number """
