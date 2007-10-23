@@ -36,6 +36,23 @@ CASES = [
     ]
 
 
+MORE_CASES=[
+    ("data0010.edf",   "data0012.edf", 10),
+    ("data1000.pnm",   "data999.pnm",1000),
+    ("data0999.pnm",   "data1000.pnm",999),
+    ("data123457.edf", "data123456.edf",123457),
+    ("d0ata000100.mccd","d0ata000012.mccd",100),
+    (os.path.join("images/sampledir","P33S670003.edf"),
+     os.path.join("images/sampledir","P33S670002.edf"),670003),
+    (os.path.join("images/P33S67","P33S670003.edf"),   
+     os.path.join("images/P33S67","P33S670002.edf"),670003),
+    ("image2301.mar2300","image2301.mar2300",2301),
+    ("image2300.mar2300","image2301.mar2300",2300),
+    ("image.0123", "image.1234",123),
+    ("mymask.msk","mymask.msk",None),
+    ("data_123.mccd.bz2", "data_001.mccd.bz2", 123)
+    ]
+
 
 class testfilenames(unittest.TestCase):
     """ check the name -> number, type conversions """
@@ -47,6 +64,18 @@ class testfilenames(unittest.TestCase):
                                                  " != obj.num="+str(obj.num))
             self.assertEqual(typ, obj.format, name)
             self.assertEqual(name, obj.tostring() , name+" "+obj.tostring())
+            
+#    def test_more_cases(self):
+#        for nname,oname,num in MORE_CASES:
+#            name=fabio.construct_filename(oname,num)
+#            self.assertEqual(name,nname)
+            
+    def test_more_cases_jump(self):
+        for nname,oname,num in MORE_CASES:
+            name=fabio.jump_filename(oname,num)
+            self.assertEqual(name,nname)            
+
+
 
 if __name__ == "__main__":
     unittest.main()
