@@ -23,5 +23,11 @@ class testgziptif(unittest.TestCase):
     def tearDown(self):
         os.remove(self.unzipped)
 
+class testtif_rect(unittest.TestCase):
+    def test1(self):
+        o1 = openimage(os.path.join("testimages",
+                                    "testmap1_0002.tif.gz"))
+        self.assertEqual(o1.data.shape, ( 100, 120 ) )
+
 if __name__ == "__main__":
     unittest.main()
