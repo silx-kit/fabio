@@ -53,17 +53,16 @@ class tifimage(fabioimage):
                 TIFF_TO_NUMERIC[self.pilimage.mode])
             self.bpp = len(Numeric.ones(1,
                           TIFF_TO_NUMERIC[self.pilimage.mode]).tostring())
-            self.dim1, self.dim2 = self.pilimage.size
         else:
             temp = self.pilimage.convert("I") # 32 bit signed
             self.data = Numeric.fromstring(
                 temp.tostring(),
                 Numeric.Int32)
             self.bpp = 4
-            self.dim1, self.dim2 = self.pilimage.size
             self.pilimage = temp
         self.dim1, self.dim2 = self.pilimage.size
-        self.data.shape = (self.dim1, self.dim2)
+        # PIL is transposed compared to Numeric?
+        self.data = Numeric.reshape( self.data, (self.dim2, self.dim1))
         self.resetvals()
         return self 
 
