@@ -27,7 +27,7 @@ class testfacemask(unittest.TestCase):
         self.assertEqual(i.dim2, j.dim2)
         self.assertEqual(i.data.shape, j.data.shape)
         diff = j.data - i.data
-        sumd  = Numeric.sum(Numeric.ravel(diff).astype(Numeric.Float32))
+        sumd  = Numeric.sum(Numeric.ravel(Numeric.absolute(diff)).astype(Numeric.Float32))
         self.assertEqual( sumd , 0 )
 
 class testclickedmask(unittest.TestCase):
