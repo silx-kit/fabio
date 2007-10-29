@@ -45,7 +45,7 @@ class fit2dmaskimage(fabioimage):
         self.bpp = len(Numeric.array(0, self.bytecode).tostring())
 
         # integer division
-        num_ints = (self.dim1 + 31)/32
+        num_ints = (self.dim1 + 31)//32
         total = self.dim2 * num_ints * 4
         data = fin.read(total)
         assert len(data) == total
@@ -53,24 +53,25 @@ class fit2dmaskimage(fabioimage):
 
         # Now to unpack it
         data = Numeric.fromstring(data, Numeric.UInt8)
-        data = Numeric.reshape(data, (num_ints*4, self.dim2))
+        data = Numeric.reshape(data, (self.dim2, num_ints*4))
 
-        result = Numeric.zeros((num_ints*4*8, self.dim2), Numeric.UInt8)
+        result = Numeric.zeros((self.dim2, num_ints*4*8), Numeric.UInt8)
 
         # Unpack using bitwise comparisons to 2**n
         bits = Numeric.ones((1), Numeric.UInt8)
         for i in range(8):
             temp =  Numeric.bitwise_and( bits, data)
-            result[i::8, :] = temp.astype(Numeric.UInt8)
+            result[:, i::8] = temp.astype(Numeric.UInt8)
             bits = bits * 2
         # Extra rows needed for packing odd dimensions
         spares = num_ints*4*8 - self.dim1
         if spares == 0:
             self.data = Numeric.where(result == 0, 0, 1)
         else:
-            self.data = Numeric.where(result[:-spares] == 0, 0, 1)
+            self.data = Numeric.where(result[:,:-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
-        self.data = Numeric.transpose(self.data)
+#        self.data = Numeric.transpose(self.data)
+        self.data = Numeric.reshape(self.data, (self.dim2, self.dim1))
         self.pilimage = None
 
 
