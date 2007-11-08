@@ -192,17 +192,29 @@ def deconstruct_filename(filename):
             num = None
             stem = "".join(parts[:-1])
     else:
-        try:
-            num = int(parts[-1])
-            ndigit = len(parts[-1])
-            typ = 'bruker'
-            stem = ".".join(parts[:-1])+"."
-        except:
-            # unregistered type??
-            raise
-#            raise Exception("Cannot decode "+filename)
+        # Probably two type left
+        if len(parts) == 1:
+            # Probably GE format stem_numb
+            parts2 = parts[0].split("_")
+            try:
+                num =  int(parts2[-1])
+                ndigit = len(parts2[-1])
+                typ = 'GE'
+                stem = "_".join(parts2[:-1])+"_"
+            except:
+                pass
+        else:
+            try:
+                num = int(parts[-1])
+                ndigit = len(parts[-1])
+                typ = 'bruker'
+                stem = ".".join(parts[:-1])+"."
+            except:
+                # unregistered type??
+                raise
+            #            raise Exception("Cannot decode "+filename)
 
-    obj = filename_object( stem,  
+    obj = filename_object( stem,
             num = num,
             directory = direc, 
             format = typ, 

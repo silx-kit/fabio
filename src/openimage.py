@@ -27,6 +27,7 @@ from fabio import fit2dmaskimage
 from fabio import brukerimage
 from fabio import bruker100image
 from fabio import pnmimage
+from fabio import GEimage
 
 
 MAGIC_NUMBERS = {
@@ -37,6 +38,7 @@ MAGIC_NUMBERS = {
     "{"                  : 'edf',
     "\r{"                : 'edf',
     "FORMAT :        86" : 'bruker', 
+    "ADEPT     "         : 'GE',
     # hint : MASK in 32 bit
     'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' : 'fit2dmask' ,
     }
@@ -53,7 +55,7 @@ def openimage(filename):
     try:
         file_obj = deconstruct_filename(filename)
         filetype = file_obj.format
-        filenumber = file_obj. num
+        filenumber = file_obj.num
     except:
         imo = fabioimage()
         byts = imo._open(filename).read(16)
@@ -61,7 +63,7 @@ def openimage(filename):
         filenumber = getnum(filename)
 
     klass_name = filetype + 'image' 
-    # print "looking for",klass_name
+    #print "looking for",klass_name
     if hasattr(fabio, klass_name):
         module = getattr(fabio, klass_name)
         if hasattr(module, klass_name):
