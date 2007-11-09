@@ -5,6 +5,7 @@ import math
 from PIL import Image
 import os
 import brukerimage
+from fabio.readbytestream import readbytestream
 
 class bruker100image(brukerimage.brukerimage):
 
@@ -30,7 +31,7 @@ class bruker100image(brukerimage.brukerimage):
 
         # We are now at the start of the image - assuming readbrukerheader worked
         size=rows*cols*npixelb
-        self.data=self.readbytestream(f,f.tell(),rows,cols,npixelb,datatype="int",signed='n',swap='n')
+        self.data=readbytestream(f,f.tell(),rows,cols,npixelb,datatype="int",signed='n',swap='n')
 
         noverfl=self.header['NOVERFL'].split() # now process the overflows
         #read the set of "underflow pixels" - these will be completely disregarded for now
