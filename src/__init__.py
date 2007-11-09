@@ -111,7 +111,7 @@ class filename_object:
             format = None, 
             extension = None, 
             postnum = None,
-            digits = 4): 
+            digits = 4):
         self.stem = stem
         self.num = num
         self.format = format
@@ -155,10 +155,15 @@ def numstem(name):
     
     """
     import re
-    reg = re.compile("""(\D*)(\d\d*)(\w*)""")
+    reg=re.compile(r"^(.*?)(-?[0-9]{0,9})(\D*)$")
+    #reg = re.compile("""(\D*)(\d\d*)(\w*)""")
     try:
-        res = reg.match(name[::-1]).groups()
-        return [ r[::-1] for r in res[::-1]]
+        res = reg.match(name).groups()
+        #res = reg.match(name[::-1]).groups()
+        #return [ r[::-1] for r in res[::-1]]
+        if len(res[0]) == len(res[1]) == 0: # Hack for file without number 
+            return [res[2],'', '']
+        return [ r for r in res]
     except AttributeError: # no digits found
         return [name, "", ""]
         
@@ -184,7 +189,7 @@ def deconstruct_filename(filename):
         typ = FILETYPES[parts[-1]]
         extn = "." + parts[-1] + extn
         try:
-            stem , numstring, postnum = numstem("".join(parts[:-1]))
+            stem , numstring, postnum = numstem(".".join(parts[:-1]))
             num = int(numstring)
             ndigit = len(numstring)
         except:
@@ -250,6 +255,8 @@ def jump_filename(name, num, padding=True):
     return obj.tostring()
 
 
-def extract_filenumber(filename):
-    return deconstruct_filename(filename)[0]
+def extract_filenumber(name):
+    """ extract file number """
+    obj = deconstruct_filename(name)
+    return obj.num
 
