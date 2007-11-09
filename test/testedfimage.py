@@ -108,7 +108,11 @@ class testedfs(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = edfimage()
-            obj.read(os.path.join("testimages", name))
+            try:
+                obj.read(os.path.join("testimages", name))
+            except:
+                print "Cannot read image",name
+                raise
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
 
