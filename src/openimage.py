@@ -38,7 +38,7 @@ MAGIC_NUMBERS = {
     "{"                  : 'edf',
     "\r{"                : 'edf',
     "FORMAT :        86" : 'bruker', 
-    "ADEPT     "         : 'GE',
+    "ADEPT"         : 'GE',
     # hint : MASK in 32 bit
     'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' : 'fit2dmask' ,
     }
