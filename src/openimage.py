@@ -28,6 +28,7 @@ from fabio import brukerimage
 from fabio import bruker100image
 from fabio import pnmimage
 from fabio import GEimage
+from fabio import OXDimage
 
 
 MAGIC_NUMBERS = {
@@ -35,10 +36,11 @@ MAGIC_NUMBERS = {
     # "\1f\8b" : 'gzipped'
     "\x4d\x4d\x00\x2a"   : 'tif' ,
     "\x49\x49\x2a\x00"   : 'tif' ,
-    "{"                  : 'edf',
+    "{"                  : ['edf','adsc'],
     "\r{"                : 'edf',
     "FORMAT :        86" : 'bruker', 
-    "ADEPT"         : 'GE',
+    "ADEPT"              : 'GE',
+    "OD"                 : 'OXD',
     # hint : MASK in 32 bit
     'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' : 'fit2dmask' ,
     }
@@ -53,14 +55,27 @@ def do_magic(byts):
 def openimage(filename):
     """ Try to open an image """
     try:
-        file_obj = deconstruct_filename(filename)
-        filetype = file_obj.format
-        filenumber = file_obj.num
-    except:
         imo = fabioimage()
         byts = imo._open(filename).read(16)
         filetype = do_magic(byts)
-        filenumber = getnum(filename)
+        if len(filetype) > 1:
+            try:
+                print 'in here!'
+                file_obj = deconstruct_filename(filename)
+                print file_obj.format
+                for format in file_obj.format:
+                    print format
+                    if format in filetype:
+                        filetype = format
+                        filenumber = file_obj.num
+            except:
+                pass
+        else:
+            filenumber = getnum(filename)
+    except:
+        file_obj = deconstruct_filename(filename)
+        filetype = file_obj.format
+        filenumber = file_obj.num
 
     klass_name = filetype + 'image' 
     #print "looking for",klass_name

@@ -77,7 +77,7 @@ FILETYPES = {
     'pbm'    : 'pnm',
     'tif'    : 'tif',
     'tiff'   : 'tif',
-    'img'    : 'adsc',
+    'img'    : ['adsc','OXD'],
     'mccd'   : 'marccd',
     'mar2300': 'mar345',
     'sfrm'   : 'bruker100',
