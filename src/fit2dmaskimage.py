@@ -71,7 +71,8 @@ class fit2dmaskimage(fabioimage):
             self.data = Numeric.where(result[:,:-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
 #        self.data = Numeric.transpose(self.data)
-        self.data = Numeric.reshape(self.data, (self.dim2, self.dim1))
+        self.data = Numeric.reshape(self.data.astype(Numeric.UInt16),
+                                    (self.dim2, self.dim1))
         self.pilimage = None
 
 

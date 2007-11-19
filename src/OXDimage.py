@@ -209,7 +209,8 @@ class OXDimage(fabioimage):
         infile.close()
 
         try:
-            self.data = Numeric.reshape(block,[self.dim2, self.dim1])
+            # avoid Int64 for x86_64 with astype
+            self.data = Numeric.reshape(block.astype(bytecode),[self.dim2, self.dim1])
         except:
             print len(block), self.dim2, self.dim1
             raise IOError, \
