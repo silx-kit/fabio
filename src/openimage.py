@@ -31,52 +31,60 @@ from fabio import GEimage
 from fabio import OXDimage
 
 
-MAGIC_NUMBERS = {
+MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
     # "\1f\8b" : 'gzipped'
-    "\x4d\x4d\x00\x2a"   : 'tif' ,
-    "\x49\x49\x2a\x00"   : 'tif' ,
-    "{"                  : ['edf','adsc'],
-    "\r{"                : 'edf',
-    "FORMAT :        86" : 'bruker', 
-    "ADEPT"              : 'GE',
-    "OD"                 : 'OXD',
+    ("FORMAT :        86" , 'bruker'), 
+    ("\x4d\x4d\x00\x2a"   , 'tif') ,
+    ("\x49\x49\x2a\x00"   , 'tif') ,
+    # ADSC must come before edf
+    ("{\nHEA"             , 'adsc'),
+    ("{"                  , 'edf'),
+    ("\r{"                , 'edf'),
+    ("ADEPT"              , 'GE'),
+    ("OD"                 , 'OXD'),
     # hint : MASK in 32 bit
-    'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' : 'fit2dmask' ,
-    }
+    ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
+    ]
 
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
-    for magic, format in MAGIC_NUMBERS.iteritems():
+    for magic, format in MAGIC_NUMBERS:
         if byts.find(magic) == 0:
             return format
+        if 0: # debugging - bruker needed 18 bytes below
+            print "m:",magic,"f:",format,
+            print "bytes:",magic,"len(bytes)",len(magic),
+            print "found:",byts.find(magic) 
+            for i in range(len(magic)):
+                print ord(magic[i]),ord(byts[i]),magic[i],byts[i]
     raise Exception("Could not interpret magic string")
 
 def openimage(filename):
     """ Try to open an image """
     try:
         imo = fabioimage()
-        byts = imo._open(filename).read(16)
+        byts = imo._open(filename).read(18)
         filetype = do_magic(byts)
-        if len(filetype) > 1:
-            try:
-                print 'in here!'
-                file_obj = deconstruct_filename(filename)
-                print file_obj.format
-                for format in file_obj.format:
-                    print format
-                    if format in filetype:
-                        filetype = format
-                        filenumber = file_obj.num
-            except:
-                pass
-        else:
-            filenumber = getnum(filename)
+        filenumber = getnum(filename)
+    except IOError:
+        # File probably does not exist
+        raise
     except:
-        file_obj = deconstruct_filename(filename)
-        filetype = file_obj.format
-        filenumber = file_obj.num
+        try:
+            file_obj = deconstruct_filename(filename)
+            if len(file_obj.format) != 1 and \
+                    type(file_obj.format) != type(["list"]):
+                # one of OXD/ ADSC - should have got in previous
+                raise Exception("openimage failed on magic bytes and name guess")
+            filetype = file_obj.format
+            filenumber = file_obj.num
+        except:
+            import traceback
+            traceback.print_exc()
+            raise Exception("Fabio could not identify "+filename)
 
+    
     klass_name = filetype + 'image' 
     #print "looking for",klass_name
     if hasattr(fabio, klass_name):

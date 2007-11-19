@@ -149,6 +149,31 @@ class testadscbz2(testadsc):
 
 
 
+from fabio.OXDimage import OXDimage
+
+class testOXD(unittest.TestCase):
+    """openimage opening adsc"""
+    fname = os.path.join("testimages","b191_1_9_1.img")
+    def setUp(self):
+        """ check file exists """
+        if not os.path.exists(self.fname):
+            raise Exception("You need " + self.fname + "for this test")
+    def testcase(self):
+        """ check we can read it"""
+        obj = openimage(self.fname)
+        obj2 = OXDimage()
+        obj2.read(self.fname)
+        self.assertEqual(obj.data[10, 10], obj2.data[10, 10])
+        self.assertEqual( type(obj), type(obj2) )
+        # etc
+
+
+class testOXD(unittest.TestCase):
+    """openimage opening adsc"""
+    fname = os.path.join("testimages","b191_1_9_1_uncompressed.img")
+
+
+
 
 
 if __name__ == "__main__":

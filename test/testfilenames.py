@@ -29,10 +29,11 @@ CASES = [
     ( None,  'fit2dmask', "mymask.msk"),
     ( 670005, 'edf' , 'S82P670005.edf'),
     ( 670005, 'edf' , 'S82P670005.edf.gz'),
-    ( 1     , 'adsc' , 'mb_LP_1_001.img' ),
-    ( 2     , 'adsc' , 'mb_LP_1_002.img.gz' ),
-    ( 3     , 'adsc' , 'mb_LP_1_003.img.bz2' ),
-    ( 3     , 'adsc' , os.path.join("data", 'mb_LP_1_003.img.bz2' )),
+    # based on only the name it can be either img or oxd
+    ( 1     , 'adsc_or_OXD' , 'mb_LP_1_001.img' ),
+    ( 2     , 'adsc_or_OXD' , 'mb_LP_1_002.img.gz' ),
+    ( 3     , 'adsc_or_OXD' , 'mb_LP_1_003.img.bz2' ),
+    ( 3     , 'adsc_or_OXD' , os.path.join("data", 'mb_LP_1_003.img.bz2' )),
     ]
 
 
@@ -62,7 +63,7 @@ class testfilenames(unittest.TestCase):
             obj = fabio.deconstruct_filename(name)
             self.assertEqual(num, obj.num , name+" num="+str(num)+\
                                                  " != obj.num="+str(obj.num))
-            self.assertEqual(typ, obj.format, name)
+            self.assertEqual(typ, obj.format, name + str(obj.format))
             self.assertEqual(name, obj.tostring() , name+" "+obj.tostring())
             
 #    def test_more_cases(self):

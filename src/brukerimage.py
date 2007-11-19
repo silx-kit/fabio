@@ -26,6 +26,9 @@ class brukerimage(fabioimage):
     Read and eventually write ID11 bruker (eg smart6500) images
     """
 
+    # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
+    __headerstring__ = ""
+
     def _readheader(self, infile):
         """
         the bruker format uses 80 char lines in key : value format
@@ -35,6 +38,7 @@ class brukerimage(fabioimage):
         otherwise it wont contain whole key: value pairs
         """
         lump = infile.read(512 * 5)
+        self.__headerstring__ += lump
         i = 80
         self.header = {}
         while i < 512 * 5:
@@ -53,6 +57,7 @@ class brukerimage(fabioimage):
         nhdrblks = int(self.header['HDRBLKS'])  
         # Now read in the rest of the header blocks, appending 
         rest = infile.read(512 * (nhdrblks - 5))
+        self.__headerstring__ += rest        
         lump = lump[i - 80: 512] + rest
         i = 80
         j = 512 * nhdrblks

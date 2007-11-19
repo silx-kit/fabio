@@ -31,5 +31,19 @@ class testOXD(unittest.TestCase):
             self.assertEqual(dim2, obj.dim2, "dim2")
 
 
+from fabio.openimage import openimage
+
+class testOXD_same(unittest.TestCase):
+    def setUp(self):
+        self.f1 = os.path.join("testimages","b191_1_9_1.img")
+        self.f2 = os.path.join("testimages","b191_1_9_1_uncompressed.img")
+    def test_same(self):
+        o1 = openimage(self.f1)
+        o2 = openimage(self.f2)
+        for attr in ["getmin","getmax","getmean","getstddev"]:
+            a1 = getattr(o1,attr)()
+            a2 = getattr(o2,attr)()
+            self.assertEqual(a1,a2,attr)
+
 if __name__ == "__main__":
     unittest.main()

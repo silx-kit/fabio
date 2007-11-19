@@ -5,83 +5,26 @@
 import re, os # -> move elsewhere?
 
 
-def construct_filename_old(oldfilename, newfilenumber, padding=True):
-    #some code to replace the filenumber in oldfilename with newfilenumber
-    #by figuring out how the files are named
-    import string
-    p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
-    m=re.match(p,oldfilename)
-    if padding==False:
-        return m.group(1) + str(newfilenumber) + m.group(3)
-    if m.group(2)!='':
-        return m.group(1) + string.zfill(newfilenumber,len(m.group(2))) + \
-            m.group(3)
-    else:
-        return oldfilename
-
-def construct_filename_erik(oldfilename, newfilenumber, padding=True):
-    #some code to replace the filenumber in oldfilename with newfilenumber
-    #by figuring out how the files are named
-    #mask the mar2300 construction
-    name=oldfilename.replace("mar2300","mar----")
-    
-    rev_oldnum=str(getnum(name))[::-1]
-    if padding:
-        rev_newnum=str(newfilenumber).zfill(len(rev_oldnum))[::-1]
-    else:
-        rev_newnum=str(newfilenumber)[::-1]
-    
-    rev_newname=name[::-1].replace(rev_oldnum,rev_newnum,1)
-    if padding and len(rev_oldnum)<len(rev_newnum):
-        #catch case when f.i. going from 9 to 10 with zero padding
-        #the result is that there is an extra 0 in front that needs to be removed
-        first=rev_newname.find(rev_newnum+"0")
-        if first>=0:
-            rev_newname=rev_newname[:first+len(rev_newnum)]+rev_newname[first+1+len(rev_newnum):]
-    return rev_newname[::-1].replace("mar----","mar2300")
-
 def construct_filename(*args, **kwds):
     raise Exception("You probably want fabio.jump_filename")
 
-def deconstruct_filename_old(filename):
-    p=re.compile(r"^(.*?)(-?[0-9]{0,4})(\D*)$")
-    # misses when data9999.edf -> data10000.edf
-    m=re.match(p,filename)
-    if m==None or m.group(2)=='':
-        number=0;
-    else:
-        number=int(m.group(2))
-    ext=os.path.splitext(filename)
-    filetype={'edf' : 'edf',
-              'gz'  : 'edf',
-              'bz2' : 'edf',
-              'pnm' : 'pnm',
-              'pgm' : 'pnm',
-              'pbm' : 'pnm',
-              'tif' : 'tif',
-              'tiff': 'tif',
-              'img' : 'adsc',
-              'mccd': 'marccd',
-              'sfrm': 'bruker100',
-              m.group(2): 'bruker'
-              }[ext[1][1:]]
-    return (number,filetype)
 
 
 FILETYPES = {
     # extension XXXimage fabioclass
-    'edf'    : 'edf',
-    'cor'    : 'edf',
-    'pnm'    : 'pnm',
-    'pgm'    : 'pnm',
-    'pbm'    : 'pnm',
-    'tif'    : 'tif',
-    'tiff'   : 'tif',
+    # type consistency - always use a list if one case is
+    'edf'    : ['edf'],
+    'cor'    : ['edf'],
+    'pnm'    : ['pnm'],
+    'pgm'    : ['pnm'],
+    'pbm'    : ['pnm'],
+    'tif'    : ['tif'],
+    'tiff'   : ['tif'],
     'img'    : ['adsc','OXD'],
-    'mccd'   : 'marccd',
-    'mar2300': 'mar345',
-    'sfrm'   : 'bruker100',
-    'msk'    : 'fit2dmask',
+    'mccd'   : ['marccd'],
+    'mar2300': ['mar345'],
+    'sfrm'   : ['bruker100'],
+    'msk'    : ['fit2dmask'],
              }
 
 # Add bzipped and gzipped
@@ -115,6 +58,8 @@ class filename_object:
         self.stem = stem
         self.num = num
         self.format = format
+        if type(format) == type(["list"]):
+            self.format = "_or_".join(format)
         self.extension = extension
         self.digits = digits
         self.postnum = postnum
