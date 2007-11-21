@@ -41,6 +41,7 @@ MAGIC_NUMBERS = [
     ("{\nHEA"             , 'adsc'),
     ("{"                  , 'edf'),
     ("\r{"                , 'edf'),
+    ("\n{"                , 'edf'),
     ("ADEPT"              , 'GE'),
     ("OD"                 , 'OXD'),
     # hint : MASK in 32 bit
