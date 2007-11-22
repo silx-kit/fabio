@@ -63,7 +63,6 @@ class mar345image(fabioimage):
         h['NumHigh']=self.numhigh
         #Image format
         i=struct.unpack('L',l[3*4:(3+1)*4])[0]
-        print i
         if i==1:
             h['Format']='compressed'
         elif i==2:

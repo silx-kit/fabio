@@ -36,5 +36,5 @@ initmar345_io(void)
   import_array();
 
   if(PyErr_Occurred())
-    Py_FatalError("cant initialise mar345_iomodule.c");
+    Py_FatalError("cannot initialize mar345_iomodule.c");
 }
