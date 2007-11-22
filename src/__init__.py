@@ -58,8 +58,6 @@ class filename_object:
         self.stem = stem
         self.num = num
         self.format = format
-        if type(format) == type(["list"]):
-            self.format = "_or_".join(format)
         self.extension = extension
         self.digits = digits
         self.postnum = postnum
@@ -111,7 +109,6 @@ def numstem(name):
         return [ r for r in res]
     except AttributeError: # no digits found
         return [name, "", ""]
-        
 
 def deconstruct_filename(filename):
     """
@@ -149,7 +146,7 @@ def deconstruct_filename(filename):
             try:
                 num =  int(parts2[-1])
                 ndigit = len(parts2[-1])
-                typ = 'GE'
+                typ = ['GE']
                 stem = "_".join(parts2[:-1])+"_"
             except:
                 pass
@@ -157,13 +154,12 @@ def deconstruct_filename(filename):
             try:
                 num = int(parts[-1])
                 ndigit = len(parts[-1])
-                typ = 'bruker'
+                typ = ['bruker']
                 stem = ".".join(parts[:-1])+"."
             except:
                 # unregistered type??
                 raise
             #            raise Exception("Cannot decode "+filename)
-
     obj = filename_object( stem,
             num = num,
             directory = direc, 

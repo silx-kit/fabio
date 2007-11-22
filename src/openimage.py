@@ -44,6 +44,8 @@ MAGIC_NUMBERS = [
     ("\n{"                , 'edf'),
     ("ADEPT"              , 'GE'),
     ("OD"                 , 'OXD'),
+    ('\x2d\x04'           , 'mar345'),
+    ('\x04\x2d'           , 'mar345'),#some machines may need byteswapping
     # hint : MASK in 32 bit
     ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
     ]
@@ -85,8 +87,7 @@ def openimage(filename):
             traceback.print_exc()
             raise Exception("Fabio could not identify "+filename)
 
-    
-    klass_name = filetype + 'image' 
+    klass_name = "".join(filetype) + 'image' 
     #print "looking for",klass_name
     if hasattr(fabio, klass_name):
         module = getattr(fabio, klass_name)
