@@ -45,9 +45,9 @@ MORE_CASES=[
     ("d0ata000100.mccd","d0ata000012.mccd",100),
     (os.path.join("images/sampledir","P33S670003.edf"),
      os.path.join("images/sampledir","P33S670002.edf"),670003),
-    (os.path.join("images/P33S67","P33S670003.edf"),   
+    (os.path.join("images/P33S67","P33S670003.edf"),
      os.path.join("images/P33S67","P33S670002.edf"),670003),
-    ("image2301.mar2300","image2301.mar2300",2301),
+    ("image2301.mar2300","image2300.mar2300",2301),
     ("image2300.mar2300","image2301.mar2300",2300),
     ("image.0123", "image.1234",123),
     ("mymask.msk","mymask.msk",None),
@@ -63,7 +63,7 @@ class testfilenames(unittest.TestCase):
             obj = fabio.deconstruct_filename(name)
             self.assertEqual(num, obj.num , name+" num="+str(num)+\
                                                  " != obj.num="+str(obj.num))
-            self.assertEqual(typ, obj.format, name + str(obj.format))
+            self.assertEqual(typ, "_or_".join(obj.format), name +" "+"_or_".join(obj.format))
             self.assertEqual(name, obj.tostring() , name+" "+obj.tostring())
             
 #    def test_more_cases(self):
@@ -74,7 +74,7 @@ class testfilenames(unittest.TestCase):
     def test_more_cases_jump(self):
         for nname,oname,num in MORE_CASES:
             name=fabio.jump_filename(oname,num)
-            self.assertEqual(name,nname)            
+            self.assertEqual(name,nname)
 
 
 
