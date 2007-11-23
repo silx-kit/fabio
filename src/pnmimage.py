@@ -37,15 +37,15 @@ class pnmimage(fabioimage.fabioimage):
         #1st line contains the pnm image sub format
         #2nd line contains the image pixel dimension
         #3rd line contains the maximum pixel value (at least for grayscale - check this)
-        self.header_keys=['Subformat','Dimensions','Maxval']
+        self.header_keys=['SUBFORMAT','DIMENSIONS','MAXVAL']
         
         l=f.readline().strip()
         if l not in SUBFORMATS:
             raise IOError, ('unknown subformat of pnm: %s' % l)
         else:
-            self.header['Subformat']=l
+            self.header['SUBFORMAT']=l
             
-        if self.header['Subformat']=='P7':
+        if self.header['SUBFORMAT']=='P7':
             self.header_keys=P7HEADERITEMS
             #this one has a special header
             while 'ENDHDR' not in l:
@@ -63,11 +63,11 @@ class pnmimage(fabioimage.fabioimage):
                 self.header[k]=l.strip()
 
         #set the dimensions
-        dims=(self.header['Dimensions'].split())
+        dims=(self.header['DIMENSIONS'].split())
         self.dim1,self.dim2=int(dims[0]),int(dims[1])
         #figure out how many bytes are used to store the data
         #case construct here!
-        m=int(self.header['Maxval'])
+        m=int(self.header['MAXVAL'])
         if m<256:
             self.bytecode=Numeric.UInt8
         elif m<65536:
@@ -87,7 +87,7 @@ class pnmimage(fabioimage.fabioimage):
         #read the image data
         try:
             #let the Subformat header field pick the right decoder
-            self.data=eval('self.'+self.header['Subformat']+'dec(infile,self.bytecode)')
+            self.data=eval('self.'+self.header['SUBFORMAT']+'dec(infile,self.bytecode)')
         except ValueError:
             raise IOError
         self.resetvals()
