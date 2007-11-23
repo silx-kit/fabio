@@ -183,7 +183,7 @@ class OXDimage(fabioimage):
                 self.bpp = len(Numeric.array(0, bytecode).tostring())
                 ReadBytes = self.header['OL'] * self.bpp 
                 over_long = infile.read(ReadBytes)
-                block = Numeric.fromstring(over_long,bytecode)
+                over_long = Numeric.fromstring(over_long,bytecode)
             block = diffs.copy()
             old_val = 0
             js = 0
