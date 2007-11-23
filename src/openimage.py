@@ -36,7 +36,7 @@ MAGIC_NUMBERS = [
     # "\1f\8b" : 'gzipped'
     ("FORMAT :        86" , 'bruker'), 
     ("\x4d\x4d\x00\x2a"   , 'tif') ,
-    ("\x49\x49\x2a\x00"   , 'tif') ,
+    ("\x49\x49\x2a\x00\xcc"   , 'tif') ,
     # ADSC must come before edf
     ("{\nHEA"             , 'adsc'),
     ("{"                  , 'edf'),

@@ -29,11 +29,11 @@ class tifimage(fabioimage):
     Images in TIF format
     Wraps PIL
     """
-    def _readheader(self, filename):
+    def _readheader(self, infile):
         """
         Don't know how to read tiff tags yet...
         """
-        self.header = { "filename" : filename }
+        self.header = { "filename" : infile.name }
 
     def read(self, fname):
         """
