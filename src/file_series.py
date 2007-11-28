@@ -140,12 +140,18 @@ class numbered_file_series(file_series):
     mydata0002.edf = "mydata" + 0002 + ".edf"
     mydata0003.edf = "mydata" + 0003 + ".edf"
     """
-    def __init__(self, stem, first, last, extension, digits = 4, step = 1):
+    def __init__(self, stem, first, last, extension, digits = 4, padding='Y', step = 1):
         """
         stem - first part of the name
         step - in case of every nth file
+        padding - possibility for specifying that numbers are not padded
+                  with zeroes up to digits
         """
-        fmt = "%s%0"+str(digits)+"d%s"
+        if padding == 'Y':
+            fmt = "%s%0"+str(digits)+"d%s"
+        else:
+            fmt = "%s%i%s"
+            
         super(numbered_file_series, self).__init__(
             [ fmt % ( stem, i, extension ) for i in range(first,
                                                           last + 1,
