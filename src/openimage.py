@@ -65,6 +65,21 @@ def do_magic(byts):
 
 def openimage(filename):
     """ Try to open an image """
+    obj = _openimage(filename)
+    obj.read(filename)
+    return obj
+
+
+def openheader(filename):
+    """ return only the header"""
+    obj = _openimage(filename)
+    obj.readheader(filename)
+    return obj
+
+
+def _openimage(filename):
+    """ determine which format for a filename
+    and return appropriate class """
     try:
         imo = fabioimage()
         byts = imo._open(filename).read(18)
@@ -98,8 +113,8 @@ def openimage(filename):
     else:
         raise Exception("Filetype not known " + filename + " " +
                         klass_name)
-    obj = klass()
-    obj.read(filename)
+    obj = klass()    
+    # skip the read for read header
     return obj
 
         

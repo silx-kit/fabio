@@ -20,3 +20,4 @@ $PYT testmccdimage.py
 $PYT testopenimage.py
 $PYT testOXDimage.py
 $PYT testtifgz.py
+$PYT testopenheader.py

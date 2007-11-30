@@ -33,7 +33,10 @@ class tifimage(fabioimage):
         """
         Don't know how to read tiff tags yet...
         """
-        self.header = { "filename" : infile.name }
+        try:
+            self.header = { "filename" : infile.name }
+        except:
+            pass
 
     def read(self, fname):
         """

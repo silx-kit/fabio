@@ -268,6 +268,7 @@ class fabioimage:
             return fname
         if type(fname) in [type(" "), type(u" ")]:
             # filename is a string
+            self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
                 import gzip, cStringIO
                 if mode[0] == "r":
