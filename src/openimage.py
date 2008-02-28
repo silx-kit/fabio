@@ -29,6 +29,7 @@ from fabio import bruker100image
 from fabio import pnmimage
 from fabio import GEimage
 from fabio import OXDimage
+from fabio import fit2dspreadsheetimage
 
 
 MAGIC_NUMBERS = [

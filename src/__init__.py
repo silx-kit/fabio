@@ -25,6 +25,7 @@ FILETYPES = {
     'mar2300': ['mar345'],
     'sfrm'   : ['bruker100'],
     'msk'    : ['fit2dmask'],
+    'spr'    : ['fit2dspreadsheet'],
              }
 
 # Add bzipped and gzipped
