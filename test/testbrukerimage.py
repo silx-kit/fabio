@@ -5,7 +5,7 @@
 #built on testedfimage
 """
 import unittest, os
-import numpy.oldnumeric as Numeric
+import numpy as N
 from fabio.brukerimage import brukerimage
 
 
@@ -21,7 +21,7 @@ MYHEADER = {"FORMAT":'86',
             'NROWS':'256',
             'WORDORD':'0'}
 
-MYIMAGE = Numeric.ones((256, 256), Numeric.UInt16, savespace  = 1) * 16
+MYIMAGE = N.ones((256, 256), N.uint16, savespace  = 1) * 16
 MYIMAGE[0, 0] = 0
 MYIMAGE[1, 1] = 32
 MYIMAGE[127:129, 127:129] = 65535

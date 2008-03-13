@@ -1,6 +1,6 @@
 ## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
-import numpy.oldnumeric as Numeric
+import numpy as N
 import math
 from PIL import Image
 import os
@@ -39,15 +39,15 @@ class bruker100image(brukerimage.brukerimage):
         k=0
 
         while k<2:#for the time being things - are done in 16 bits
-            datatype={'1' : Numeric.UInt8, '2' : Numeric.UInt16, '4' : Numeric.UInt32 }[("%d" % 2**k)]
-            ar=Numeric.array(Numeric.fromstring(f.read(int(noverfl[k])*(2**k)),datatype),Numeric.UInt16)
+            datatype={'1' : N.uint8, '2' : N.uint16, '4' : N.uint32 }[("%d" % 2**k)]
+            ar=N.array(N.fromstring(f.read(int(noverfl[k])*(2**k)),datatype),N.uint16)
             #insert the the overflow pixels in the image array:
             #this is probably a memory intensive way of doing this - might be done in a more clever way
             lim=2**(8*k)-1
             #generate an array comprising of the indices into data.ravel() where its value equals lim.
-            M=Numeric.compress(Numeric.equal(data.ravel(),lim),Numeric.arange(rows*cols))
+            M=N.compress(N.equal(data.ravel(),lim),N.arange(rows*cols))
             #now put values from ar into those indices
-            Numeric.put(data.ravel(),M,ar)
+            N.put(data.ravel(),M,ar)
 
             padding=16*int(math.ceil(int(noverfl[k])*(2**k)/16.)) - int(noverfl[k])*(2**k)
             f.seek(padding,1)

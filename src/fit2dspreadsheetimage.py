@@ -5,7 +5,7 @@ Read the fit2d ascii image output
         + Jon Wright, ESRF
 """
 
-import numpy.oldnumeric as Numeric, logging
+import numpy as N, logging
 
 from fabio.fabioimage import fabioimage
 
@@ -49,9 +49,9 @@ class fit2dspreadsheetimage(fabioimage):
         except:
             raise Exception("file", str(fname) + \
                                 "is corrupt, cannot read it")
-        bytecode = Numeric.Float32
+        bytecode = N.float32
 
-        self.bpp = len(Numeric.array(0, bytecode).tostring())
+        self.bpp = len(N.array(0, bytecode).tostring())
 
         #now read the data into the array
         if 1:
@@ -64,7 +64,7 @@ class fit2dspreadsheetimage(fabioimage):
                         vals.append([float(x) for x in line.split()])
                     except:
                         pass
-                self.data = Numeric.array(vals)
+                self.data = N.array(vals)
                 assert self.data.shape ==( self.dim2, self.dim1)
 
             except:

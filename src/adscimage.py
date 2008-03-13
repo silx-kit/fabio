@@ -14,7 +14,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy.oldnumeric as Numeric, logging
+import numpy as N, logging
 from fabio.fabioimage import fabioimage
 
 
@@ -46,23 +46,23 @@ class adscimage(fabioimage):
         self.dim2 = int(self.header['SIZE2'])
         if 'little' in self.header['BYTE_ORDER']:
             try:
-                self.data = Numeric.reshape(
-                    Numeric.fromstring(binary, Numeric.UInt16), 
+                self.data = N.reshape(
+                    N.fromstring(binary, N.uint16), 
                     (self.dim2, self.dim1) )
             except ValueError:
                 raise IOError, 'Size spec in ADSC-header does not match '+\
                     'size of image data field'
-            self.bytecode = Numeric.UInt16
+            self.bytecode = N.uint16
             logging.info("adscimage read in using low byte first (x386-order)")
         else:
             try:
-                self.data = Numeric.reshape(
-                    Numeric.fromstring(binary, Numeric.UInt16), 
+                self.data = N.reshape(
+                    N.fromstring(binary, N.uint16), 
                     (self.dim2, self.dim1) ).byteswap()
             except ValueError:
                 raise IOError, 'Size spec in ADSC-header does not match '+\
                     'size of image data field'
-            self.bytecode = Numeric.UInt16
+            self.bytecode = N.uint16
             logging.info('adscimage using high byte first (network order)')
         self.resetvals()
         return self
@@ -107,10 +107,10 @@ class adscimage(fabioimage):
         # BYTE_ORDER=big_endian;
         # TYPE=unsigned_short;
         if "little" in self.header["BYTE_ORDER"]:
-            outf.write(self.data.astype(Numeric.UInt16).tostring())
+            outf.write(self.data.astype(N.uint16).tostring())
         else:
             outf.write(self.data.byteswap().astype(
-                    Numeric.UInt16).tostring())
+                    N.uint16).tostring())
         outf.close()
 
 

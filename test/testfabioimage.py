@@ -10,16 +10,16 @@ Test cases for the fabioimage clas
 
 from fabio.fabioimage import fabioimage
 import unittest, os, sys
-import numpy.oldnumeric as Numeric
-import numpy.oldnumeric.random_array as RandomArray
+import numpy as N
+import numpy.random as RandomArray
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
     def setUp(self):
         """make the image"""
-        dat = Numeric.ones((1024, 1024), Numeric.UInt16)
-        dat = (dat * 50000).astype(Numeric.UInt16)
-        assert dat.dtype.char == Numeric.ones((1), Numeric.UInt16).dtype.char
+        dat = N.ones((1024, 1024), N.uint16)
+        dat = (dat * 50000).astype(N.uint16)
+        assert dat.dtype.char == N.ones((1), N.uint16).dtype.char
         hed = {"Title":"50000 everywhere"}
         self.obj = fabioimage(dat, hed)
       
@@ -43,7 +43,7 @@ class testslices(unittest.TestCase):
     """check slicing"""
     def setUp(self):
         """make test data"""
-        dat2 = Numeric.zeros((1024, 1024), Numeric.UInt16, savespace = 1 )
+        dat2 = N.zeros((1024, 1024), N.uint16, savespace = 1 )
         hed = {"Title":"zeros and 100"}
         self.cord = [ 256, 256, 790, 768 ]
         self.obj = fabioimage(dat2, hed)
@@ -107,27 +107,27 @@ class testopen(unittest.TestCase):
         self.assertEqual( res , "{ hello }" ) 
 
 
-NAMES = { Numeric.UInt8 :  "Numeric.UInt8",
-          Numeric.Int8  :  "Numeric.Int8" ,  
-          Numeric.UInt16:  "Numeric.UInt16",  
-          Numeric.Int16 :  "Numeric.Int16" ,  
-          Numeric.UInt32:  "Numeric.UInt32" , 
-          Numeric.Int32 :  "Numeric.Int32"   ,
-          Numeric.Float32: "Numeric.Float32" ,
-          Numeric.Float64: "Numeric.Float64"}
+NAMES = { N.uint8 :  "N.uint8",
+          N.int8  :  "N.int8" ,  
+          N.uint16:  "N.uint16",  
+          N.int16 :  "N.int16" ,  
+          N.uint32:  "N.uint32" , 
+          N.int32 :  "N.int32"   ,
+          N.float32: "N.float32" ,
+          N.float64: "N.float64"}
 
 
 class testPILimage(unittest.TestCase):
     """ check PIL creation"""
     def setUp(self):
         """ list of working numeric types"""
-        self.okformats = [Numeric.UInt8,
-                          Numeric.Int8,
-                          Numeric.UInt16,
-                          Numeric.Int16,
-                          Numeric.UInt32,
-                          Numeric.Int32,
-                          Numeric.Float32]
+        self.okformats = [N.uint8,
+                          N.int8,
+                          N.uint16,
+                          N.int16,
+                          N.uint32,
+                          N.int32,
+                          N.float32]
 
 
     def mkdata(self, shape, typ):
@@ -167,7 +167,7 @@ class testPILimage2(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive and big"""
-        return (RandomArray.random(shape) * sys.maxint / 10).astype(typ)
+        return (RandomArry.random(shape) * sys.maxint / 10).astype(typ)
 
 class testPILimage3(testPILimage):
     """ check with different numbers"""

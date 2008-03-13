@@ -14,7 +14,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy.oldnumeric as Numeric, math, os
+import numpy as N, math, os
 from PIL import Image
 
 import numpy
@@ -26,7 +26,7 @@ import numpy
 class fabioimage:
     """
     A common object for images in fable
-    Contains a Numeric array (.data) and dict of meta data (.header)
+    Contains a numpy array (.data) and dict of meta data (.header)
     """
     def __init__(self, data = None , header = {}):
         """
@@ -34,7 +34,7 @@ class fabioimage:
         """
         if type(data) == type("string"):
             raise Exception("fabioimage.__init__ bad argument - "+\
-                            "data should be Numeric array")
+                            "data should be numpy array")
         self.data = data
         self.pilimage = None
         self.header = header
@@ -43,7 +43,7 @@ class fabioimage:
             self.dim1, self.dim2 = data.shape
         else:
             self.dim1 = self.dim2 = 0
-        self.bytecode = None     # Numeric typecode
+        self.bytecode = None     # numpy typecode
         self.bpp = 2             # bytes per pixel
         # cache for image statistics
         self.mean = self.maxval = self.stddev = self.minval = None
@@ -94,16 +94,15 @@ class fabioimage:
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:
-            self.maxval = Numeric.maximum.reduce(
-                                  Numeric.ravel(self.data))
+            self.maxval = N.maximum.reduce(
+                                  N.ravel(self.data))
         # FIXME - removed int cast to leave type alone
         return self.maxval
   
     def getmin(self):    
         """ Find min value in self.data, caching for the future """
         if self.minval is None:
-            self.minval = Numeric.minimum.reduce(
-                                  Numeric.ravel(self.data))
+            self.minval = N.min(N.ravel(self.data))
         # FIXME - removed int cast to leave type alone
         return self.minval
 
@@ -150,16 +149,16 @@ class fabioimage:
         if sli == self.slice and self.area_sum is not None:
             return self.area_sum
         self.slice = sli
-        self.area_sum = Numeric.sum( 
-                            Numeric.ravel( 
-                                self.data[ self.slice ].astype(Numeric.Float)))
+        self.area_sum = N.sum( 
+                            N.ravel( 
+                                self.data[ self.slice ].astype(N.float)))
         return self.area_sum
 
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = Numeric.sum( Numeric.ravel( 
-                    self.data.astype(Numeric.Float)))
+            self.mean = N.sum( N.ravel( 
+                    self.data.astype(N.float)))
             # use data.shape in case dim1 or dim2 are wrong
             self.mean = self.mean / (self.data.shape[0]*self.data.shape[1])
         return float(self.mean)
@@ -172,9 +171,9 @@ class fabioimage:
             # use data.shape in case dim1 or dim2 are wrong
             # formula changed from that found in edfimage by JPW
             npt = self.data.shape[0] * self.data.shape[1] - 1
-            diff = self.data.astype(Numeric.Float) - self.mean
-            sumsq = Numeric.sum( Numeric.ravel( diff*diff ) )
-            self.stddev = Numeric.sqrt(sumsq / npt)
+            diff = self.data.astype(N.float) - self.mean
+            sumsq = N.sum( N.ravel( diff*diff ) )
+            self.stddev = N.sqrt(sumsq / npt)
         return float(self.stddev)
 
     def add(self, other):
@@ -296,9 +295,9 @@ def test():
     import time
     start = time.time()
     
-    dat = Numeric.ones((1024, 1024), Numeric.UInt16)
-    dat = (dat*50000).astype(Numeric.UInt16)
-    assert dat.dtype.char == Numeric.ones((1), Numeric.UInt16).dtype.char
+    dat = N.ones((1024, 1024), N.uint16)
+    dat = (dat*50000).astype(N.uint16)
+    assert dat.dtype.char == N.ones((1), N.uint16).dtype.char
     hed = {"Title":"50000 everywhere"}
     obj = fabioimage(dat, hed)
       
@@ -307,7 +306,7 @@ def test():
     assert obj.getmean() == 50000 , obj.getmean()
     assert obj.getstddev() == 0.
       
-    dat2 = Numeric.zeros((1024, 1024), Numeric.UInt16, savespace = 1 )
+    dat2 = N.zeros((1024, 1024), N.uint16, savespace = 1 )
     cord = [ 256, 256, 790, 768 ]
     slic = obj.make_slice(cord)
     dat2[slic] = dat2[slic] + 100

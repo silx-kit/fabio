@@ -9,7 +9,7 @@
 """
 from fabio.edfimage import edfimage
 
-import unittest, numpy.oldnumeric as Numeric, os
+import unittest, numpy as N, os
 
 MYHEADER = "{\n%-1020s}\n" % (
 """Omega = 0.0 ; 
@@ -21,7 +21,7 @@ Image = 1;
 History-1 = something=something else;
 \n\n""")
 
-MYIMAGE = Numeric.ones((256, 256), Numeric.Float32, savespace = 1)*10
+MYIMAGE = N.ones((256, 256), N.float32, savespace = 1)*10
 MYIMAGE[0, 0] = 0
 MYIMAGE[1, 1] = 20
 
@@ -52,7 +52,7 @@ class testflatedfs(unittest.TestCase):
         self.assertEqual(obj.dim1 , 256)
         self.assertEqual(obj.dim2 , 256)
         self.assertEqual(obj.bpp , 4 )
-        self.assertEqual(obj.bytecode, Numeric.Float32)
+        self.assertEqual(obj.bytecode, N.float32)
         self.assertEqual(obj.data.shape, (256, 256) )
         self.assertEqual(obj.header['History-1'],
                          "something=something else" )

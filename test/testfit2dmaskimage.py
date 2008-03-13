@@ -10,7 +10,7 @@
 from fabio.fit2dmaskimage import fit2dmaskimage
 from fabio.edfimage import edfimage
 
-import unittest, numpy.oldnumeric as Numeric
+import unittest, numpy as N
 
 class testfacemask(unittest.TestCase):
     """ test the picture of a face """
@@ -27,7 +27,7 @@ class testfacemask(unittest.TestCase):
         self.assertEqual(i.dim2, j.dim2)
         self.assertEqual(i.data.shape, j.data.shape)
         diff = j.data - i.data
-        sumd  = Numeric.sum(Numeric.ravel(Numeric.absolute(diff)).astype(Numeric.Float32))
+        sumd  = N.sum(N.ravel(N.absolute(diff)).astype(N.float32))
         self.assertEqual( sumd , 0 )
 
 class testclickedmask(unittest.TestCase):
@@ -42,7 +42,7 @@ class testclickedmask(unittest.TestCase):
         self.assertEqual(i.dim1 , 1024)
         self.assertEqual(i.dim2 , 1024)
         self.assertEqual(i.bpp , 1 )
-        self.assertEqual(i.bytecode, Numeric.UInt8)
+        self.assertEqual(i.bytecode, N.uint8)
         self.assertEqual(i.data.shape, (1024, 1024) )
 
     def test_getmatch(self):
@@ -55,7 +55,7 @@ class testclickedmask(unittest.TestCase):
         diff = j.data - i.data
         self.assertEqual(i.getmax(), 1)
         self.assertEqual(i.getmin(), 0)
-        sumd  = Numeric.sum(Numeric.ravel(diff).astype(Numeric.Float32))
+        sumd  = N.sum(N.ravel(diff).astype(N.float32))
         self.assertEqual( sumd , 0 )
 
     

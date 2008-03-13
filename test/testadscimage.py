@@ -10,7 +10,7 @@
 from fabio.adscimage import adscimage
 from fabio.edfimage import edfimage
 import unittest, os
-import numpy.oldnumeric as Numeric
+import numpy as N
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
@@ -37,8 +37,8 @@ class testmatch(unittest.TestCase):
         im2 = adscimage()
         im2.read("testimages/mb_LP_1_001.img")
         diff = (im1.data - im2.data).ravel()
-        self.assertAlmostEqual(Numeric.maximum.reduce(diff), 0, 2)
-        self.assertAlmostEqual(Numeric.minimum.reduce(diff), 0, 2)
+        self.assertAlmostEqual(N.max(diff), 0, 2)
+        self.assertAlmostEqual(N.min(diff), 0, 2)
 
 class testflatmccdsadsc(unittest.TestCase):
     """

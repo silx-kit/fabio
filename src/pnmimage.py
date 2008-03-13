@@ -13,7 +13,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 from PIL import Image
-import numpy.oldnumeric as Numeric
+import numpy as N
 from fabio import fabioimage
 
 SUBFORMATS=['P1','P2','P3','P4','P5','P6','P7']
@@ -69,11 +69,11 @@ class pnmimage(fabioimage.fabioimage):
         #case construct here!
         m=int(self.header['MAXVAL'])
         if m<256:
-            self.bytecode=Numeric.UInt8
+            self.bytecode=N.uint8
         elif m<65536:
-            self.bytecode=Numeric.UInt16
+            self.bytecode=N.uint16
         elif m<2147483648L:
-            self.bytecode=Numeric.UInt32
+            self.bytecode=N.uint32
             warn('32-bit pixels are not really supported by the netpgm standard')
         else:
             raise IOError, 'could not figure out what kind of pixels you have'
@@ -94,11 +94,11 @@ class pnmimage(fabioimage.fabioimage):
         return self
 
     def P1dec(self,buf,bytecode):
-        data=Numeric.zeros((self.dim2,self.dim1))
+        data=N.zeros((self.dim2,self.dim1))
         i=0
         for l in buf.readlines():
             try:
-                data[i,:]=Numeric.array(l.split()).astype(bytecode)
+                data[i,:]=N.array(l.split()).astype(bytecode)
             except ValueError:
                 raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
@@ -107,11 +107,11 @@ class pnmimage(fabioimage.fabioimage):
         warn('single bit (pbm) images are not supported - yet')
 
     def P2dec(self,buf,bytecode):
-        data=Numeric.zeros((self.dim2,self.dim1))
+        data=N.zeros((self.dim2,self.dim1))
         i=0
         for l in buf.readlines():
             try:
-                data[i,:]=Numeric.array(l.split()).astype(bytecode)
+                data[i,:]=N.array(l.split()).astype(bytecode)
             except ValueError:
                 raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
@@ -119,7 +119,7 @@ class pnmimage(fabioimage.fabioimage):
     def P5dec(self,buf,bytecode):
         l=buf.read()
         try:
-            data=Numeric.reshape(Numeric.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswap()
+            data=N.reshape(N.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswap()
         except ValueError:
             raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data

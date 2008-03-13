@@ -15,11 +15,11 @@ mods for fabio by JPW
 """
 
 from PIL import Image
-import numpy.oldnumeric as Numeric
+import numpy as N
 
 from fabio.fabioimage import fabioimage
 
-TIFF_TO_NUMERIC = { "I;16": Numeric.Int16 ,
+TIFF_TO_NUMERIC = { "I;16": N.int16 ,
                    
                     }
                     
@@ -41,7 +41,7 @@ class tifimage(fabioimage):
     def read(self, fname):
         """
         The fabian read was reading a PIL image
-        We convert this to a Numeric (numpy) array
+        We convert this to a numpy array
         """
         infile = self._open(fname)
         self._readheader(infile)
@@ -51,21 +51,21 @@ class tifimage(fabioimage):
         # but it does on 32 bit images, hence convert if 16 bit
         if TIFF_TO_NUMERIC.has_key(self.pilimage.mode) and \
                 self.pilimage.mode != "I;16":
-            self.data = Numeric.fromstring(
+            self.data = N.fromstring(
                 self.pilimage.tostring(),
                 TIFF_TO_NUMERIC[self.pilimage.mode])
-            self.bpp = len(Numeric.ones(1,
+            self.bpp = len(N.ones(1,
                           TIFF_TO_NUMERIC[self.pilimage.mode]).tostring())
         else:
             temp = self.pilimage.convert("I") # 32 bit signed
-            self.data = Numeric.fromstring(
+            self.data = N.fromstring(
                 temp.tostring(),
-                Numeric.Int32)
+                N.int32)
             self.bpp = 4
             self.pilimage = temp
         self.dim1, self.dim2 = self.pilimage.size
-        # PIL is transposed compared to Numeric?
-        self.data = Numeric.reshape( self.data, (self.dim2, self.dim1))
+        # PIL is transposed compared to numpy?
+        self.data = N.reshape( self.data, (self.dim2, self.dim1))
         self.resetvals()
         return self 
 

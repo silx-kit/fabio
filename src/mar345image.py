@@ -12,7 +12,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 from fabioimage import fabioimage
-import numpy.oldnumeric as Numeric
+import numpy as N
 import struct
 import string
 
@@ -30,8 +30,8 @@ class mar345image(fabioimage):
             f.close()
             self.dim1=1
             self.dim2=1
-            self.bytecode=Numeric.Int #
-            self.data=Numeric.resize(Numeric.array([0],Numeric.Int),[1,1])
+            self.bytecode=N.int #
+            self.data=N.resize(N.array([0],N.int),[1,1])
             return self
 
         if 'compressed' in self.header['Format']:

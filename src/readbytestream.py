@@ -9,18 +9,18 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
          ESRF          Risoe National Laboratory
 """
 
-import numpy.oldnumeric as Numeric, logging
+import numpy as N, logging
 
 DATATYPES = {
     # type  sign bytes
-    ("int", 'n', 1) : Numeric.UInt8,
-    ("int", 'n', 2) : Numeric.UInt16,
-    ("int", 'n', 4) : Numeric.UInt32,
-    ("int", 'y', 1) : Numeric.Int8,
-    ("int", 'y', 2) : Numeric.Int16,
-    ("int", 'y', 4) : Numeric.Int32,
-    ('float','y',4) : Numeric.Float32, # does this occur in bruker?
-    ('double','y',4): Numeric.Float64
+    ("int", 'n', 1) : N.uint8,
+    ("int", 'n', 2) : N.uint16,
+    ("int", 'n', 4) : N.uint32,
+    ("int", 'y', 1) : N.int8,
+    ("int", 'y', 2) : N.int16,
+    ("int", 'y', 4) : N.int32,
+    ('float','y',4) : N.float32, # does this occur in bruker?
+    ('double','y',4): N.float64
     }
 
 
@@ -32,7 +32,7 @@ def readbytestream(fil,
                    datatype='int',
                    signed='n',
                    swap='n',
-                   typeout=Numeric.UInt16):
+                   typeout=N.uint16):
     """
     Reads in a bytestream from a file (which may be a string indicating
     a filename, or an already opened file (should be "rb"))
@@ -43,7 +43,7 @@ def readbytestream(fil,
     right numbers when unsigned data are converted to signed 
     (python once had no unsigned numeric types.)
     swap, normally do not bother, but 'y' to swap bytes
-    typeout is the Numeric type to output, normally UInt16, 
+    typeout is the numpy type to output, normally uint16, 
     but more if overflows occurred
     x and y are the pixel dimensions
     
@@ -74,8 +74,8 @@ def readbytestream(fil,
 
     infile.seek(offset)
 
-    arr = Numeric.array(Numeric.reshape(
-            Numeric.fromstring(
+    arr = N.array(N.reshape(
+            N.fromstring(
                 infile.read(length), tin) ,(x, y)),typeout)
 
     if swap == 'y':

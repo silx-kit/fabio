@@ -15,7 +15,7 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 
 """
 
-import numpy.oldnumeric as Numeric, logging
+import numpy as N, logging
 
 from fabio.fabioimage import fabioimage
 from fabio.readbytestream import readbytestream
@@ -110,8 +110,8 @@ class brukerimage(fabioimage):
         #handle overflows
         nov = int(self.header['NOVERFL'])
         if nov > 0:   # Read in the overflows
-            # need at least Int32 sized data I guess - can reach 2^21
-            self.data = self.data.astype(Numeric.UInt32)
+            # need at least int32 sized data I guess - can reach 2^21
+            self.data = self.data.astype(N.uint32)
             # 16 character overflows:
             #      9 characters of intensity
             #      7 character position
@@ -157,10 +157,10 @@ class brukerimage(fabioimage):
         outfile.write(out)
         outfile.write('}\n')
         if self.header["ByteOrder"] == "LowByteFirst":
-            outfile.write(self.data.astype(Numeric.UInt16).tostring())
+            outfile.write(self.data.astype(N.uint16).tostring())
         else:
             outfile.write(self.data.byteswap().astype(
-                    Numeric.UInt16).tostring())
+                    N.uint16).tostring())
         outfile.close()
 
     def write2(self, fname):
