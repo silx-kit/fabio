@@ -6,9 +6,12 @@
 # --http-user=username
 # --http-password=password
 
-#cd testimages
 
-#unzip ../fabio_testimages.zip
+wget http://downloads.sourceforge.net/fable/fabio_testimages.zip
+
+cd testimages
+
+unzip ../fabio_testimages.zip
 
 for name in $(ls *.bz2 ) ; do
     bunzip2 -k $name
