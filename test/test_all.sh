@@ -16,8 +16,9 @@ $PYT test_filename_steps.py
 $PYT test_file_series.py
 $PYT testfit2dmaskimage.py
 $PYT testGEimage.py
+$PYT testmar345image.py
 $PYT testmccdimage.py
+$PYT testopenheader.py
 $PYT testopenimage.py
 $PYT testOXDimage.py
 $PYT testtifgz.py
-$PYT testopenheader.py

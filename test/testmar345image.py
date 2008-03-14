@@ -9,10 +9,12 @@
 from fabio.mar345image import mar345image
 import unittest, os
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """example.mar2300 2300 2300 0 999999 180.15 4122.67"""
+TESTIMAGES = """example.mar2300 2300 2300 0 999999 180.15 4122.67
+example.mar2300.bz2 2300 2300 0 999999 180.15 4122.67
+example.mar2300.gz  2300 2300 0 999999 180.15 4122.67"""
 
 
-class testGE(unittest.TestCase):
+class testMAR345(unittest.TestCase):
     def test_read(self):
         for line in TESTIMAGES.split("\n"):
             vals = line.split()
