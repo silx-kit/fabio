@@ -1,4 +1,4 @@
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
+# Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
 #!/usr/bin/env python
 """
@@ -135,7 +135,7 @@ class edfimage(fabioimage):
             print len(block), bytecode, self.bpp, self.dim2, self.dim1
             raise IOError, \
               'Size spec in edf-header does not match size of image data field'
-        self.bytecode = self.data.dtype.char
+        self.bytecode = self.data.dtype.type
         swap = self.swap_needed()
         if swap:
             self.data = self.data.byteswap()
@@ -180,7 +180,7 @@ class edfimage(fabioimage):
         if bpp not in [1, 2, 4]:
             logging.info("edfimage.write do you really want"+str(bpp)+\
                              "bytes per pixel??")
-        bytecode = data.dtype.char
+        bytecode = data.dtype.type
         for name , code in DATA_TYPES.items():
             if code == bytecode:
                 self.header['DataType'] = name

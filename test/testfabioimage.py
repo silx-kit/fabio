@@ -43,7 +43,7 @@ class testslices(unittest.TestCase):
     """check slicing"""
     def setUp(self):
         """make test data"""
-        dat2 = N.zeros((1024, 1024), N.uint16, savespace = 1 )
+        dat2 = N.zeros((1024, 1024), N.uint16 )
         hed = {"Title":"zeros and 100"}
         self.cord = [ 256, 256, 790, 768 ]
         self.obj = fabioimage(dat2, hed)
@@ -167,7 +167,7 @@ class testPILimage2(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive and big"""
-        return (RandomArry.random(shape) * sys.maxint / 10).astype(typ)
+        return (RandomArray.random(shape) * sys.maxint / 10).astype(typ)
 
 class testPILimage3(testPILimage):
     """ check with different numbers"""

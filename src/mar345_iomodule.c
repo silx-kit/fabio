@@ -1,5 +1,5 @@
 #include <Python.h>
-#include <numpy/oldnumeric.h>
+#include <numpy/arrayobject.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -15,13 +15,17 @@ static PyObject * mar345_io_unpack(PyObject *self, PyObject *args){
   if (!PyArg_ParseTuple(args, "Oiii", &py_file,&dim1,&dim2,&ocount))
     return NULL;
   dims[0]=dim1;dims[1]=dim2;
-  py_unpacked=(PyArrayObject*)PyArray_FromDims(2,dims,PyArray_UINT);
+
   file=PyFile_AsFile(py_file);
 
+  /* Space is malloc'ed in here */
   unpacked=mar345_read_data(file,ocount,dim1,dim2);
-  //memcpy(py_unpacked->data,unpacked,dim1*dim2*2);
-  py_unpacked->data=(void *)unpacked;
-  PyArray_Return(py_unpacked);
+  
+  /* memcpy(py_unpacked->data,unpacked,dim1*dim2*2); would also need a free */
+  
+  py_unpacked=(PyArrayObject*)PyArray_SimpleNewFromData(2, dims, NPY_UINT, (void *)unpacked);
+
+  return Py_BuildValue ("O", PyArray_Return(py_unpacked));
 }
 
 static PyMethodDef mar345_io_Methods[] = {

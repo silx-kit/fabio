@@ -21,7 +21,7 @@ Image = 1;
 History-1 = something=something else;
 \n\n""")
 
-MYIMAGE = N.ones((256, 256), N.float32, savespace = 1)*10
+MYIMAGE = N.ones((256, 256), N.float32)*10
 MYIMAGE[0, 0] = 0
 MYIMAGE[1, 1] = 20
 
