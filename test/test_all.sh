@@ -22,3 +22,5 @@ $PYT testopenheader.py
 $PYT testopenimage.py
 $PYT testOXDimage.py
 $PYT testtifgz.py
+
+$PYT test_all_images.py > `hostname`_benchmark

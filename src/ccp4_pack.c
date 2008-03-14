@@ -48,8 +48,9 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
   if (!odata)
     return NULL;
   pfail_nonzero (orecords-fread(odata,64,orecords,file));
+  /* there is no stdout in a gui, sorry
   printf("have %d overflows in %d recs\n",ocount,orecords);
-  
+  */ 
   /* now after they have been read find the CCP4.....string and compare to dim1*/
   c=cbuffer;
   while((*c)!=EOF){

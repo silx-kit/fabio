@@ -29,6 +29,7 @@ class tifimage(fabioimage):
     Images in TIF format
     Wraps PIL
     """
+    _need_a_seek_to_read = True
     def _readheader(self, infile):
         """
         Don't know how to read tiff tags yet...

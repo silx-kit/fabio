@@ -493,6 +493,6 @@ class GEimage(fabioimage):
             raise IOError, \
               'Size spec in GE-header does not match size of image data field'
 
-        self.bytecode = self.data.dtype.char
+        self.bytecode = self.data.dtype.type
         self.pilimage = None
         return self

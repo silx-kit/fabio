@@ -2,13 +2,13 @@
 
 
 #
-wget "http://teamsites.risoe.dk/totalcryst/File exchange/fabio_testimages.zip"
+#wget "http://teamsites.risoe.dk/totalcryst/File exchange/fabio_testimages.zip"
 # --http-user=username
 # --http-password=password
 
-cd testimages
+#cd testimages
 
-unzip ../fabio_testimages.zip
+#unzip ../fabio_testimages.zip
 
 for name in $(ls *.bz2 ) ; do
     bunzip2 -k $name

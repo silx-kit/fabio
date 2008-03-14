@@ -28,6 +28,10 @@ class fabioimage:
     A common object for images in fable
     Contains a numpy array (.data) and dict of meta data (.header)
     """
+    
+    _need_a_seek_to_read = False
+    _need_a_real_file = False
+
     def __init__(self, data = None , header = {}):
         """
         Set up initial values
@@ -255,24 +259,42 @@ class fabioimage:
         if type(fname) in [type(" "), type(u" ")]:
             # filename is a string
             self.header["filename"] = fname
+    
             if os.path.splitext(fname)[1] == ".gz":
-                import gzip, cStringIO
-                if mode[0] == "r":
+                import gzip
+                if self._need_a_real_file:
+                    # mar345 needs a real (C) file pointer
+                    buf = gzip.GzipFile(fname, mode).read()
+                    fobj = os.tmpfile()
+                    fobj.write(buf)
+                    fobj.seek(0)
+                    return fobj
+                if self._need_a_seek_to_read and mode[0] == "r":
+                    # we are reading .tif.gz and PIL seeks
+                    import cStringIO
                     return cStringIO.StringIO(
                         gzip.GzipFile(fname, mode).read())
-                elif mode[0] == "w":
-                    return gzip.GzipFile(fname, mode)
                 else:
-                    raise IOError, "Unknown mode"
+                    return gzip.GzipFile(fname, mode)
             if os.path.splitext(fname)[1] == '.bz2':
                 import bz2
-                return bz2.BZ2File(fname, mode)
+                if self._need_a_real_file:
+                    # mar345 needs a real (C) file pointer
+                    buf = bz2.BZ2File(fname, mode).read()
+                    fobj = os.tmpfile()
+                    fobj.write(buf)
+                    fobj.seek(0)
+                    return fobj
+                else:
+                    # bz2 has a seek
+                    return bz2.BZ2File(fname, mode)
             #
             # Here we return the file even though it may be bzipped or gzipped
             # but named incorrectly...
             #
             # FIXME - should we fix that or complain about the daft naming?
             return open(fname, mode)
+
 
 
 def test():

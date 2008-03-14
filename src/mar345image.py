@@ -17,7 +17,7 @@ import struct
 import string
 
 class mar345image(fabioimage):
-
+    _need_a_real_file = True
     def read(self,fname):
         self.filename = fname
         f=self._open(self.filename,"rb")
