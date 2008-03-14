@@ -287,7 +287,7 @@ class fabioimage:
                     return fobj
                 else:
                     # bz2 has a seek
-                    return bz2.BZ2File(fname, mode)
+                    return bz2.BZ2File(fname, mode, buffering=9*1024*1024)
             #
             # Here we return the file even though it may be bzipped or gzipped
             # but named incorrectly...
