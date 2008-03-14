@@ -94,16 +94,13 @@ class fabioimage:
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:
-            self.maxval = N.maximum.reduce(
-                                  N.ravel(self.data))
-        # FIXME - removed int cast to leave type alone
+            self.maxval = N.max(self.data)
         return self.maxval
   
     def getmin(self):    
         """ Find min value in self.data, caching for the future """
         if self.minval is None:
-            self.minval = N.min(N.ravel(self.data))
-        # FIXME - removed int cast to leave type alone
+            self.minval = N.min(self.data)
         return self.minval
 
     def make_slice(self, coords):
@@ -157,23 +154,13 @@ class fabioimage:
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = N.sum( N.ravel( 
-                    self.data.astype(N.float)))
-            # use data.shape in case dim1 or dim2 are wrong
-            self.mean = self.mean / (self.data.shape[0]*self.data.shape[1])
+            self.mean = N.mean(self.data) 
         return float(self.mean)
     
     def getstddev(self):
         """ return the standard deviation """
-        if self.mean == None:
-            self.getmean()    
         if self.stddev == None:
-            # use data.shape in case dim1 or dim2 are wrong
-            # formula changed from that found in edfimage by JPW
-            npt = self.data.shape[0] * self.data.shape[1] - 1
-            diff = self.data.astype(N.float) - self.mean
-            sumsq = N.sum( N.ravel( diff*diff ) )
-            self.stddev = N.sqrt(sumsq / npt)
+            self.stddev = N.std(self.data)
         return float(self.stddev)
 
     def add(self, other):
