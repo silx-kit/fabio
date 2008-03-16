@@ -2,6 +2,9 @@
 
 
 
+
+
+
 import re, os # -> move elsewhere?
 
 
@@ -33,6 +36,28 @@ for key in FILETYPES.keys():
     FILETYPES[key+".bz2"] = FILETYPES[key]
     FILETYPES[key+".gz"]  = FILETYPES[key]
 
+
+# Compressors
+
+COMPRESSORS = {
+    '.bz2' : None,
+    '.gz' : None
+    }
+
+try:
+    lines = os.popen("gzip -h 2>&1").read()
+    if "sage" in lines:
+        COMPRESSORS['.gz'] = 'gzip -dc '
+except:
+    pass
+try:
+    lines = os.popen("bzip2 -h 2>&1").read()
+    if "sage" in lines:
+        COMPRESSORS['.bz2'] = 'bzip2 -dc '
+except:
+    pass
+
+# print COMPRESSORS
     
 def getnum(name):
     """

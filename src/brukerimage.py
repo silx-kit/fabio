@@ -1,3 +1,4 @@
+
 ## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
 #!/usr/bin/env python
@@ -27,7 +28,10 @@ class brukerimage(fabioimage):
     """
 
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
+    
     __headerstring__ = ""
+    
+    _need_a_seek_to_read = True
 
     def _readheader(self, infile):
         """

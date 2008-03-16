@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 """
@@ -23,6 +24,9 @@ import numpy as N, logging
 from fabio.fabioimage import fabioimage
 
 class GEimage(fabioimage):
+
+    _need_a_seek_to_read = True
+
     def _readheader(self,infile):
         
         infile.seek(0)

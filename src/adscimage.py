@@ -1,3 +1,4 @@
+
 ## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
 #!/usr/bin/env python
@@ -20,6 +21,8 @@ from fabio.fabioimage import fabioimage
 
 class adscimage(fabioimage):
     """ Read an image in ADSC format (quite similar to edf?) """
+
+    _need_a_seek_to_read = True
 
 
     def read(self, fname):

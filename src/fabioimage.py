@@ -1,3 +1,7 @@
+
+
+
+
 ## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
 #!/usr/bin/env python 
@@ -14,9 +18,9 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy as N, math, os
+import numpy as N, math, os, cStringIO, gzip, bz2
 from PIL import Image
-
+import fabio
 import numpy
 
 # i = Image.open('lena.jpg')
@@ -247,6 +251,7 @@ class fabioimage:
         """
         raise Exception("Class has not implemented read method yet")
 
+
     def _open(self, fname, mode="rb"):
         """
         Try to handle compressed files, streams, shared memory etc
@@ -259,41 +264,44 @@ class fabioimage:
         if type(fname) in [type(" "), type(u" ")]:
             # filename is a string
             self.header["filename"] = fname
-    
             if os.path.splitext(fname)[1] == ".gz":
-                import gzip
-                if self._need_a_real_file:
-                    # mar345 needs a real (C) file pointer
-                    buf = gzip.GzipFile(fname, mode).read()
-                    fobj = os.tmpfile()
-                    fobj.write(buf)
-                    fobj.seek(0)
-                    return fobj
-                if self._need_a_seek_to_read and mode[0] == "r":
-                    # we are reading .tif.gz and PIL seeks
-                    import cStringIO
-                    return cStringIO.StringIO(
-                        gzip.GzipFile(fname, mode).read())
-                else:
-                    return gzip.GzipFile(fname, mode)
+                return self._compressed_stream(fname, 
+                                       fabio.COMPRESSORS['.gz'], 
+                                       gzip.GzipFile,
+                                       mode)
             if os.path.splitext(fname)[1] == '.bz2':
-                import bz2
-                if self._need_a_real_file:
-                    # mar345 needs a real (C) file pointer
-                    buf = bz2.BZ2File(fname, mode).read()
-                    fobj = os.tmpfile()
-                    fobj.write(buf)
-                    fobj.seek(0)
-                    return fobj
-                else:
-                    # bz2 has a seek
-                    return bz2.BZ2File(fname, mode, buffering=9*1024*1024)
+                return self._compressed_stream(fname, 
+                                       fabio.COMPRESSORS['.bz2'], 
+                                       bz2.BZ2File,
+                                       mode)
             #
             # Here we return the file even though it may be bzipped or gzipped
             # but named incorrectly...
             #
             # FIXME - should we fix that or complain about the daft naming?
             return open(fname, mode)
+
+    def _compressed_stream(self, 
+                           fname, 
+                           system_uncompress, 
+                           python_uncompress, 
+                           mode = 'rb'): 
+        """
+        Try to transparently handle gzip / bzip without always getting python 
+        performance
+        """
+        if system_uncompress is None or mode[0] is not 'r':
+            return python_uncompress(fname, mode)
+        if self._need_a_real_file and mode[0] == "r":
+            fo = os.popen("%s %s"%(system_uncompress, fname), 'r', 2**20)
+            fobj = os.tmpfile()
+            fobj.write(fo.read())
+            fo.close()
+            fobj.seek(0)
+            return fobj
+        if mode[0] == "r": # Wrap in cStringIO to allow seeking
+            fo = os.popen("%s %s"%(system_uncompress, fname), 'r', 2**20)
+            return cStringIO.StringIO(fo.read())
 
 
 

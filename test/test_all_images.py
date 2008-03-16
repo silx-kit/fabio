@@ -1,5 +1,6 @@
 
 
+
 import glob, os, time, fabio.openimage, gzip, bz2
 
 times = {}
@@ -42,7 +43,7 @@ for im in images:
     # Now check for a fabio slowdown effect    
     if im[-3:] == '.gz':
         start = time.clock()
-        os.system("gzip -cd %s | wc -c"%(im))
+        the_file = os.popen("gzip -cd %s"%(im)).read()
         times[im].append( time.clock()-start )  
         nt += 1; ns -= 1
         start = time.clock()
@@ -51,7 +52,7 @@ for im in images:
         nt += 1; ns -= 1
     if im[-4:] == '.bz2':
         start = time.clock()
-        os.system("bzcat -cd %s | wc -c"%(im))
+        the_file = os.popen("bunzip2 -cd %s"%(im)).read()
         times[im].append( time.clock()-start )
         nt += 1 ; ns -= 1
         start = time.clock()
