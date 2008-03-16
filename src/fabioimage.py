@@ -293,14 +293,14 @@ class fabioimage:
         if system_uncompress is None or mode[0] is not 'r':
             return python_uncompress(fname, mode)
         if self._need_a_real_file and mode[0] == "r":
-            fo = os.popen("%s %s"%(system_uncompress, fname), 'r', 2**20)
+            fo = os.popen("%s %s"%(system_uncompress, fname), 'rb')
             fobj = os.tmpfile()
             fobj.write(fo.read())
             fo.close()
             fobj.seek(0)
             return fobj
         if mode[0] == "r": # Wrap in cStringIO to allow seeking
-            fo = os.popen("%s %s"%(system_uncompress, fname), 'r', 2**20)
+            fo = os.popen("%s %s"%(system_uncompress, fname), 'rb')
             return cStringIO.StringIO(fo.read())
 
 
