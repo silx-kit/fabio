@@ -15,7 +15,9 @@ unzip ../fabio_testimages.zip
 
 for name in $(ls *.bz2 ) ; do
     bunzip2 -k $name
+    sleep 1
     gzip ${name%.bz2}
+    sleep 1
     bunzip2 -k $name
 done
 

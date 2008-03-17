@@ -7,7 +7,7 @@ void *mar345_read_data(FILE *file, unsigned int ocount, unsigned int dim1, unsig
 
 static PyObject * mar345_io_unpack(PyObject *self, PyObject *args){
   const int dim1,dim2,ocount;
-  int dims[2];
+  npy_intp dims[2];
   PyArrayObject *py_unpacked;
   PyObject *py_file;
   int *unpacked;
