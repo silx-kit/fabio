@@ -228,9 +228,13 @@ class fabioimage:
         """
         Call the _readheader function...
         """
+        # Override the needs asserting that all headers can be read via python modules
+        save_state = self._need_a_real_file , self._need_a_seek_to_read
+        self._need_a_real_file , self._need_a_seek_to_read = False, False
         fin = self._open(filename)
         self._readheader(fin)
         fin.close()
+        self._need_a_real_file , self._need_a_seek_to_read = save_state
 
     def _readheader(self, fik_obj):
         """
