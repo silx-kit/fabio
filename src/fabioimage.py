@@ -18,7 +18,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy as N, math, os, cStringIO, gzip, bz2
+import numpy as N, math, os, sys, cStringIO, gzip, bz2
 from PIL import Image
 import fabio
 import numpy
@@ -290,18 +290,20 @@ class fabioimage:
         Try to transparently handle gzip / bzip without always getting python 
         performance
         """
-        if system_uncompress is None or mode[0] is not 'r':
-            return python_uncompress(fname, mode)
-        if self._need_a_real_file and mode[0] == "r":
-            fo = os.popen("%s %s"%(system_uncompress, fname), 'rb')
+        # assert that python modules are always OK based on performance benchmark
+        # Try to fix the way we are using them?
+        if self._need_a_real_file and mode[0] == "r":  
+            fo = python_uncompress(fname, mode)
             fobj = os.tmpfile()
             fobj.write(fo.read())
             fo.close()
             fobj.seek(0)
             return fobj
-        if mode[0] == "r": # Wrap in cStringIO to allow seeking
-            fo = os.popen("%s %s"%(system_uncompress, fname), 'rb')
+        if self._need_a_seek_to_read and mode[0] == "r":
+            fo = python_uncompress(fname, mode)
             return cStringIO.StringIO(fo.read())
+        return python_uncompress(fname, mode)
+       
 
 
 
