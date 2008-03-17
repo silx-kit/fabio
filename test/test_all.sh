@@ -24,4 +24,5 @@ $PYT testOXDimage.py
 $PYT testtifgz.py
 
 $PYT test_all_images.py > `hostname`_benchmark
+$PYT benchheader.py > `hostname`_benchheaders
 
