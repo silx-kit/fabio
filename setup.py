@@ -20,7 +20,7 @@ mar345_backend = Extension('mar345_io',
 
 # See the distutils docs...
 setup(name='fabio',
-      version="0.0.1",
+      version="0.0.3",
       description='Image IO for fable',
       ext_modules=[mar345_backend],
       packages = ["fabio"] ,
