@@ -20,9 +20,12 @@ npts = int(1e6)
 data = [ random.random() for i in range(npts) ]
 sdata = struct.pack( "d"*npts, *tuple(data) )
 open("prof.dat","wb").write(sdata)
+open("prof2.dat","wb").write(" "*npts*8)
 
 os.system("gzip -c prof.dat > prof.dat.gz")
 os.system("bzip2 -c prof.dat > prof.dat.bz2")
+os.system("gzip -c prof2.dat > prof2.dat.gz")
+os.system("bzip2 -c prof2.dat > prof2.dat.bz2")
 
 print "Done setup"
 sys.stdout.flush()
@@ -67,23 +70,51 @@ del p
 
 
 import timeit
+cl = ["ret = gzip.GzipFile(      'prof.dat.gz ','rb').read()",
+      "ret = os.popen(  'gzip -dc prof.dat.gz ','rb').read()",
+      "ret = bz2.BZ2File(        'prof.dat.bz2','rb').read()",
+      "ret = os.popen( 'bzip2 -dc prof.dat.bz2','rb').read()",
+      "ret = gzip.GzipFile(     'prof2.dat.gz ','rb').read()",
+      "ret = os.popen( 'gzip -dc prof2.dat.gz ','rb').read()",
+      "ret = bz2.BZ2File(       'prof2.dat.bz2','rb').read()",
+      "ret = os.popen('bzip2 -dc prof2.dat.bz2','rb').read()",
+    ]
+if sys.platform != "win32":
+    cl.append("ret = os.popen(  'gzip -dc prof.dat.gz ','rb',2**20).read()")
+    cl.append("ret = os.popen( 'bzip2 -dc prof.dat.bz2','rb',2**20).read()")
+    cl.append("ret = os.popen( 'gzip -dc prof2.dat.gz ','rb',2**20).read()")
+    cl.append("ret = os.popen(' bzip2 -dc pro2.dat.bz2','rb',2**20).read()")
 
-for s in ["ret = gzip.GzipFile('prof.dat.gz','rb').read()",
-          "ret = os.popen('gzip -dc prof.dat.gz','rb').read()",
-          "ret = os.popen('gzip -dc prof.dat.gz','rb',2**20).read()",
-          "ret = bz2.BZ2File('prof.dat.bz2','rb').read()",
-          "ret = os.popen('bzip2 -dc prof.dat.bz2','rb').read()",
-          "ret = os.popen('bzip2 -dc prof.dat.bz2','rb',2**20).read()",
-          ]:
-
+for s in cl:
     t = timeit.Timer(s,setup="import os, gzip, bz2")
-    print s,":", t.timeit(10)/10
+    print s,":", t.timeit(5)/5
 
 # Finally - shell version
 
-print "Time shell bzip2"
-sys.stdout.flush()
-os.system("time bzip2 -cd prof.dat.bz2 > /dev/null")
-print "Time shell gzip"
-sys.stdout.flush()
-os.system("time gzip -cd prof.dat.gz > /dev/null")
+if sys.platform == 'win32':
+    start = time.time()
+    os.system("gzip -cd prof.dat.gz > junk")
+    print "gzip takes",time.time()-start,"seconds via shell"
+    start = time.time()
+    os.system("bzip2 -cd prof.dat.bz2 > junk")
+    print "bzip2 takes",time.time()-start,"seconds via shell"
+    start = time.time()
+    os.system("gzip -cd prof2.dat.gz > junk")
+    print "gzip takes",time.time()-start,"seconds via shell"
+    start = time.time()
+    os.system("bzip2 -cd prof2.dat.bz2 > junk")
+    print "bzip2 takes",time.time()-start,"seconds via shell"
+    os.remove("junk")
+else:
+    print "Time shell gzip"
+    sys.stdout.flush()
+    os.system("time gzip -cd prof.dat.gz > /dev/null")
+    print "Time shell bzip2"
+    sys.stdout.flush()
+    os.system("time bzip2 -cd prof.dat.bz2 > /dev/null")
+    sys.stdout.flush()
+    os.system("time gzip -cd prof2.dat.gz > /dev/null")
+    print "Time shell bzip2"
+    sys.stdout.flush()
+    os.system("time bzip2 -cd prof2.dat.bz2 > /dev/null")
+
