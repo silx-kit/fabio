@@ -1,7 +1,7 @@
 
 
 
-import glob, os, time, fabio.openimage, gzip, bz2, cProfile, pstats
+import glob, os, time, fabio.openimage, gzip, bz2, cProfile, pstats, sys
 
 times = {}
 images = []
@@ -12,6 +12,17 @@ for fname in glob.glob(os.path.join("testimages","*")):
 
 images.sort()
 
+def shellbench(cmd, im):
+    """
+    The shell appears to be lying about it's performance. It claims 
+    zero time to gunzip a file when it actually takes 200 ms. This is 
+    cheating via a cache I suspect. We shall try to avoid this problem
+    """ 
+    if sys.platform != "win32":
+        os.system("touch "+im)
+        start = time.time()
+        the_file = os.popen(cmd + " " +im,"rb").read()
+        return time.time()-start
 
 print "I/O 1  : Time to read the image"
 print "I/O 2  : Time to read the image (repeat"
@@ -42,18 +53,14 @@ for im in images:
     nt = 3 ; ns = 2
     # Now check for a fabio slowdown effect    
     if im[-3:] == '.gz':
-        start = time.clock()
-        the_file = os.popen("gzip -cd %s"%(im),"rb").read()
-        times[im].append( time.clock()-start )  
+        times[im].append(shellbench("gzip -cd ",im))
         nt += 1; ns -= 1
         start = time.clock()
         the_file = gzip.GzipFile(im,"rb").read()
         times[im].append( time.clock()-start )  
         nt += 1; ns -= 1
     if im[-4:] == '.bz2':
-        start = time.clock()
-        the_file = os.popen("bunzip2 -cd %s"%(im),"rb").read()
-        times[im].append( time.clock()-start )
+        times[im].append(shellbench("bzip2 -cd ",im))
         nt += 1 ; ns -= 1
         start = time.clock()
         the_file = bz2.BZ2File(im,"rb").read()

@@ -16,7 +16,7 @@ class fit2dspreadsheetimage(fabioimage):
     """
     Read a fit2d ascii format
     """
-    _need_a_real_file = True
+
     def _readheader(self, infile):
         """
 

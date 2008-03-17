@@ -10,7 +10,7 @@ class testgziptif(unittest.TestCase):
                                    "oPPA_5grains_0001.tif.gz")
         self.unzipped = os.path.join("testimages",
                                      "oPPA_5grains_0001.tif")
-        os.system("gunzip -c %s > %s" % (self.zipped, self.unzipped))
+        os.system("gunzip -dc %s > %s" % (self.zipped, self.unzipped))
         assert os.path.exists(self.zipped)
         assert os.path.exists(self.unzipped)        
     
@@ -21,7 +21,9 @@ class testgziptif(unittest.TestCase):
         self.assertEqual(o2.data[0,0],10)
 
     def tearDown(self):
-        os.remove(self.unzipped)
+        """Please dont - JPW is benchmarking on it """
+        pass
+        # os.remove(self.unzipped)
 
 class testtif_rect(unittest.TestCase):
     def test1(self):

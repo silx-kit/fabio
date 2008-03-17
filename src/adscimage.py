@@ -22,9 +22,6 @@ from fabio.fabioimage import fabioimage
 class adscimage(fabioimage):
     """ Read an image in ADSC format (quite similar to edf?) """
 
-    _need_a_seek_to_read = True
-
-
     def read(self, fname):
         """ read in the file """
         infile = self._open(fname, "rb")
