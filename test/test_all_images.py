@@ -20,9 +20,10 @@ def shellbench(cmd, im):
     """ 
     if sys.platform != "win32":
         os.system("touch "+im)
-        start = time.time()
-        the_file = os.popen(cmd + " " +im,"rb").read()
-        return time.time()-start
+    start = time.time()
+    the_file = os.popen(cmd + " " +im,"rb").read()
+    return time.time()-start
+    
 
 print "I/O 1  : Time to read the image"
 print "I/O 2  : Time to read the image (repeat"
@@ -68,8 +69,11 @@ for im in images:
         nt += 1; ns -= 1
     # Speed ratings in megabytes per second (for fabio)
     MB = len(the_file) / 1024.0 / 1024.0
-
-    print ("%.4f "*nt + " "*7*ns)%tuple(times[im]),"%8.3f"%(MB), im
+    try:
+        print ("%.4f "*nt + " "*7*ns)%tuple(times[im]),"%8.3f"%(MB), im
+    except:
+        print times[im],MB, im
+        raise
 
     cProfile.run("fabio.openimage.openimage(im)","stats")
     p = pstats.Stats("stats",stream = open("profile.txt","a"))
