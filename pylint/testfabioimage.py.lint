@@ -1,19 +1,20 @@
 ************* Module testfabioimage
-C0103: 12:test50000.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 38:testslices.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 73:testopen.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 82:testopen.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 88:testopen.testFlat: Invalid name "testFlat" (should match [a-z_][a-z0-9_]{2,30}$)
-W0212: 90:testopen.testFlat: Access to a protected member _open of a client class
-W0212: 95:testopen.testgz: Access to a protected member _open of a client class
-W0212:100:testopen.testbz2: Access to a protected member _open of a client class
-C0103:116:testPILimage.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-R0201:126:testPILimage.mkdata: Method could be a function
+C0103: 18:test50000.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 44:testslices.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 79:testopen.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 88:testopen.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 94:testopen.testFlat: Invalid name "testFlat" (should match [a-z_][a-z0-9_]{2,30}$)
+W0212: 96:testopen.testFlat: Access to a protected member _open of a client class
+W0212:101:testopen.testgz: Access to a protected member _open of a client class
+W0212:106:testopen.testbz2: Access to a protected member _open of a client class
+C0103:122:testPILimage.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R0201:133:testPILimage.mkdata: Method could be a function
+C0111:138:testPILimage.testpil: Missing docstring
 
 
 Report
 ======
-90 statements analysed.
+92 statements analysed.
 
 Duplication
 -----------
@@ -34,13 +35,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |109    |73.15 |109      |=          |
+|code      |111    |71.61 |109      |+2.00      |
 +----------+-------+------+---------+-----------+
-|docstring |28     |18.79 |28       |=          |
+|docstring |27     |17.42 |28       |-1.00      |
 +----------+-------+------+---------+-----------+
-|comment   |1      |0.67  |1        |=          |
+|comment   |3      |1.94  |1        |+2.00      |
 +----------+-------+------+---------+-----------+
-|empty     |11     |7.38  |11       |=          |
+|empty     |14     |9.03  |11       |+3.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -51,8 +52,8 @@ External dependencies
 
     fabio 
       \-fabioimage (testfabioimage)
-    Numeric (testfabioimage)
-    RandomArray (testfabioimage)
+    numpy (testfabioimage)
+      \-random (testfabioimage)
 
 
 
@@ -66,7 +67,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |6      |6          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |19     |19         |=          |100.00      |31.58    |
+|method   |19     |19         |=          |94.74       |31.58    |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -79,7 +80,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |6      |6        |=          |
+|convention |7      |6        |+1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
@@ -102,10 +103,12 @@ Messages
 +-----------+-----------+
 |R0201      |1          |
 +-----------+-----------+
+|C0111      |1          |
++-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.89/10 (previous run: 8.89/10)
+Your code has been rated at 8.80/10 (previous run: 8.89/10)
 

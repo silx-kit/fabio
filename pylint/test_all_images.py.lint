@@ -1,0 +1,136 @@
+************* Module test_all_images
+C0111:  1: Missing docstring
+C0103:  6: Invalid name "times" (should match (([A-Z_]*)|(__.*__))$)
+C0103:  7: Invalid name "images" (should match (([A-Z_]*)|(__.*__))$)
+W0621: 23:shellbench: Redefining name 'start' from outer scope (line 37)
+W0621: 15:shellbench: Redefining name 'im' from outer scope (line 35)
+W0621: 24:shellbench: Redefining name 'the_file' from outer scope (line 38)
+C0103: 15:shellbench: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+W0612: 24:shellbench: Unused variable 'the_file'
+C0324: 50: Comma not followed by a space
+        print "Problem with",im
+                            ^^
+C0321: 54: More than one statement on a single line
+C0324: 57: Comma not followed by a space
+        times[im].append(shellbench("gzip -cd ",im))
+                                               ^^
+C0321: 58: More than one statement on a single line
+C0321: 62: More than one statement on a single line
+C0324: 64: Comma not followed by a space
+        times[im].append(shellbench("bzip2 -cd ",im))
+                                                ^^
+C0321: 65: More than one statement on a single line
+C0321: 69: More than one statement on a single line
+C0324: 73: Comma not followed by a space
+        print ("%.4f "*nt + " "*7*ns)%tuple(times[im]),"%8.3f"%(MB), im
+                                                      ^^
+C0324: 75: Comma not followed by a space
+        print times[im],MB, im
+                       ^^
+C0324: 79: Comma not followed by a space
+    p = pstats.Stats("stats",stream = open("profile.txt","a"))
+                            ^^
+
+
+Report
+======
+61 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |54     |75.00 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |9      |12.50 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |1      |1.39  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |8      |11.11 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-openimage (test_all_images)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |15     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |4      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0324      |6          |
++-----------+-----------+
+|C0321      |5          |
++-----------+-----------+
+|W0621      |3          |
++-----------+-----------+
+|C0103      |3          |
++-----------+-----------+
+|W0612      |1          |
++-----------+-----------+
+|C0111      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 6.89/10
+

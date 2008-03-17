@@ -1,101 +1,101 @@
-************* Module fabio.fabian_mar_header
+************* Module fabian_mar_header
 C0301:  5: Line too long (85/80)
 C0301: 26: Line too long (99/80)
-C0301: 27: Line too long (136/80)
-C0301: 28: Line too long (136/80)
-C0301: 29: Line too long (161/80)
-C0301: 30: Line too long (160/80)
-C0301: 31: Line too long (110/80)
-C0301: 32: Line too long (120/80)
-C0301: 33: Line too long (155/80)
-C0301: 34: Line too long (133/80)
-C0301: 35: Line too long (127/80)
-C0301: 36: Line too long (127/80)
-C0301: 37: Line too long (127/80)
-C0301: 38: Line too long (127/80)
-C0301: 39: Line too long (127/80)
-C0301: 40: Line too long (127/80)
-C0301: 41: Line too long (123/80)
-C0301: 42: Line too long (124/80)
-C0301: 43: Line too long (120/80)
-C0301: 44: Line too long (121/80)
-C0301: 45: Line too long (144/80)
-C0301: 46: Line too long (130/80)
-C0301: 47: Line too long (129/80)
-C0301: 48: Line too long (139/80)
-C0301: 49: Line too long (114/80)
-C0301: 50: Line too long (162/80)
-C0301: 51: Line too long (115/80)
-C0301: 52: Line too long (126/80)
-C0301: 53: Line too long (130/80)
-C0301: 54: Line too long (141/80)
-C0301: 55: Line too long (133/80)
-C0301: 56: Line too long (135/80)
-C0301: 57: Line too long (118/80)
-C0301: 58: Line too long (133/80)
-C0301: 59: Line too long (133/80)
-C0301: 60: Line too long (164/80)
-C0301: 61: Line too long (160/80)
-C0301: 62: Line too long (163/80)
-C0301: 63: Line too long (164/80)
-C0301: 64: Line too long (165/80)
-C0301: 65: Line too long (163/80)
-C0301: 67: Line too long (139/80)
-C0301: 68: Line too long (130/80)
-C0301: 69: Line too long (130/80)
-C0301: 70: Line too long (138/80)
-C0301: 71: Line too long (132/80)
-C0301: 72: Line too long (130/80)
-C0301: 73: Line too long (132/80)
-C0301: 74: Line too long (129/80)
-C0301: 75: Line too long (122/80)
-C0301: 76: Line too long (118/80)
-C0301: 77: Line too long (122/80)
-C0301: 78: Line too long (118/80)
-C0301: 79: Line too long (122/80)
-C0301: 80: Line too long (122/80)
-C0301: 81: Line too long (148/80)
-C0301: 82: Line too long (127/80)
-C0301: 83: Line too long (120/80)
-C0301: 84: Line too long (116/80)
-C0301: 85: Line too long (120/80)
-C0301: 86: Line too long (116/80)
-C0301: 87: Line too long (120/80)
-C0301: 88: Line too long (120/80)
-C0301: 89: Line too long (146/80)
-C0301: 90: Line too long (123/80)
-C0301: 91: Line too long (128/80)
-C0301: 92: Line too long (142/80)
-C0301: 93: Line too long (142/80)
-C0301: 94: Line too long (142/80)
-C0301: 96: Line too long (116/80)
-C0301: 97: Line too long (124/80)
-C0301: 98: Line too long (124/80)
-C0301: 99: Line too long (124/80)
-C0301:100: Line too long (126/80)
-C0301:101: Line too long (153/80)
-C0301:102: Line too long (165/80)
-C0301:103: Line too long (155/80)
-C0301:105: Line too long (129/80)
-C0301:106: Line too long (130/80)
-C0301:107: Line too long (130/80)
-C0301:108: Line too long (131/80)
-C0301:109: Line too long (110/80)
-C0301:110: Line too long (112/80)
-C0301:111: Line too long (116/80)
-C0301:112: Line too long (109/80)
-C0301:113: Line too long (114/80)
-C0301:114: Line too long (114/80)
-C0301:116: Line too long (119/80)
-C0301:117: Line too long (130/80)
-C0301:118: Line too long (130/80)
-C0301:119: Line too long (138/80)
-C0301:120: Line too long (131/80)
-C0301:121: Line too long (139/80)
-C0301:122: Line too long (139/80)
-C0301:123: Line too long (148/80)
-C0301:124: Line too long (114/80)
-C0301:125: Line too long (115/80)
+C0301: 27: Line too long (124/80)
+C0301: 28: Line too long (124/80)
+C0301: 29: Line too long (149/80)
+C0301: 30: Line too long (148/80)
+C0301: 31: Line too long (98/80)
+C0301: 32: Line too long (108/80)
+C0301: 33: Line too long (143/80)
+C0301: 34: Line too long (121/80)
+C0301: 35: Line too long (115/80)
+C0301: 36: Line too long (115/80)
+C0301: 37: Line too long (115/80)
+C0301: 38: Line too long (115/80)
+C0301: 39: Line too long (115/80)
+C0301: 40: Line too long (115/80)
+C0301: 41: Line too long (111/80)
+C0301: 42: Line too long (112/80)
+C0301: 43: Line too long (108/80)
+C0301: 44: Line too long (109/80)
+C0301: 45: Line too long (132/80)
+C0301: 46: Line too long (118/80)
+C0301: 47: Line too long (117/80)
+C0301: 48: Line too long (127/80)
+C0301: 49: Line too long (102/80)
+C0301: 50: Line too long (150/80)
+C0301: 51: Line too long (103/80)
+C0301: 52: Line too long (114/80)
+C0301: 53: Line too long (118/80)
+C0301: 54: Line too long (129/80)
+C0301: 55: Line too long (121/80)
+C0301: 56: Line too long (123/80)
+C0301: 57: Line too long (106/80)
+C0301: 58: Line too long (121/80)
+C0301: 59: Line too long (121/80)
+C0301: 60: Line too long (152/80)
+C0301: 61: Line too long (148/80)
+C0301: 62: Line too long (151/80)
+C0301: 63: Line too long (152/80)
+C0301: 64: Line too long (153/80)
+C0301: 65: Line too long (151/80)
+C0301: 67: Line too long (127/80)
+C0301: 68: Line too long (118/80)
+C0301: 69: Line too long (118/80)
+C0301: 70: Line too long (126/80)
+C0301: 71: Line too long (120/80)
+C0301: 72: Line too long (118/80)
+C0301: 73: Line too long (120/80)
+C0301: 74: Line too long (117/80)
+C0301: 75: Line too long (110/80)
+C0301: 76: Line too long (106/80)
+C0301: 77: Line too long (110/80)
+C0301: 78: Line too long (106/80)
+C0301: 79: Line too long (110/80)
+C0301: 80: Line too long (110/80)
+C0301: 81: Line too long (136/80)
+C0301: 82: Line too long (115/80)
+C0301: 83: Line too long (108/80)
+C0301: 84: Line too long (104/80)
+C0301: 85: Line too long (108/80)
+C0301: 86: Line too long (104/80)
+C0301: 87: Line too long (108/80)
+C0301: 88: Line too long (108/80)
+C0301: 89: Line too long (134/80)
+C0301: 90: Line too long (111/80)
+C0301: 91: Line too long (116/80)
+C0301: 92: Line too long (130/80)
+C0301: 93: Line too long (130/80)
+C0301: 94: Line too long (130/80)
+C0301: 96: Line too long (104/80)
+C0301: 97: Line too long (112/80)
+C0301: 98: Line too long (112/80)
+C0301: 99: Line too long (112/80)
+C0301:100: Line too long (114/80)
+C0301:101: Line too long (141/80)
+C0301:102: Line too long (153/80)
+C0301:103: Line too long (143/80)
+C0301:105: Line too long (117/80)
+C0301:106: Line too long (118/80)
+C0301:107: Line too long (118/80)
+C0301:108: Line too long (119/80)
+C0301:109: Line too long (98/80)
+C0301:110: Line too long (100/80)
+C0301:111: Line too long (104/80)
+C0301:112: Line too long (97/80)
+C0301:113: Line too long (102/80)
+C0301:114: Line too long (102/80)
+C0301:116: Line too long (107/80)
+C0301:117: Line too long (118/80)
+C0301:118: Line too long (118/80)
+C0301:119: Line too long (126/80)
+C0301:120: Line too long (119/80)
+C0301:121: Line too long (127/80)
+C0301:122: Line too long (127/80)
+C0301:123: Line too long (136/80)
+C0301:124: Line too long (102/80)
+C0301:125: Line too long (103/80)
 C0301:127: Line too long (94/80)
 C0301:128: Line too long (112/80)
 C0301:129: Line too long (105/80)
@@ -108,318 +108,318 @@ C0111: 11:obselete: Missing docstring
 W0232: 11:obselete: Class has no __init__ method
 C0103: 18:obselete._readheader_fabian: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
 C0103: 19:obselete._readheader_fabian: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-E0602: 24:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 24:obselete._readheader_fabian: Undefined variable 'Numeric'
+E0602: 24:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 24:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 27:obselete._readheader_fabian: Comma not followed by a space
-        self.header['header_major_version'] = Numeric.fromstring(l[20:24],Numeric.UInt32)[0]  # UINT32 ; /* header_major_version (n.) */
-                                                                         ^^
-E0602: 27:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 27:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['header_major_version'] = N.fromstring(l[20:24],N.uint32)[0]  # UINT32 ; /* header_major_version (n.) */
+                                                                   ^^
+E0602: 27:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 27:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 28:obselete._readheader_fabian: Comma not followed by a space
-        self.header['header_minor_version'] = Numeric.fromstring(l[24:28],Numeric.UInt32)[0]  # UINT32 ; /* header_minor_version (.n) */
-                                                                         ^^
-E0602: 28:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 28:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['header_minor_version'] = N.fromstring(l[24:28],N.uint32)[0]  # UINT32 ; /* header_minor_version (.n) */
+                                                                   ^^
+E0602: 28:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 28:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 29:obselete._readheader_fabian: Comma not followed by a space
-        self.header['header_byte_orde'] = Numeric.fromstring(l[28:32],Numeric.UInt32)[0]  # UINT32 r;/* BIG_ENDIAN (Motorola,MIPS); LITTLE_ENDIAN (DEC, Intel) */
-                                                                     ^^
-E0602: 29:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 29:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['header_byte_orde'] = N.fromstring(l[28:32],N.uint32)[0]  # UINT32 r;/* BIG_ENDIAN (Motorola,MIPS); LITTLE_ENDIAN (DEC, Intel) */
+                                                               ^^
+E0602: 29:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 29:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 30:obselete._readheader_fabian: Comma not followed by a space
-        self.header['data_byte_order'] = Numeric.fromstring(l[32:36],Numeric.UInt32)[0]  # UINT32 ; /* BIG_ENDIAN (Motorola,MIPS); LITTLE_ENDIAN (DEC, Intel) */
-                                                                    ^^
-E0602: 30:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 30:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['data_byte_order'] = N.fromstring(l[32:36],N.uint32)[0]  # UINT32 ; /* BIG_ENDIAN (Motorola,MIPS); LITTLE_ENDIAN (DEC, Intel) */
+                                                              ^^
+E0602: 30:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 30:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 31:obselete._readheader_fabian: Comma not followed by a space
-        self.header['header_size'] = Numeric.fromstring(l[36:40],Numeric.UInt32)[0]  # UINT32 ; /* in bytes */
-                                                                ^^
-E0602: 31:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 31:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['header_size'] = N.fromstring(l[36:40],N.uint32)[0]  # UINT32 ; /* in bytes */
+                                                          ^^
+E0602: 31:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 31:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 32:obselete._readheader_fabian: Comma not followed by a space
-        self.header['frame_type'] = Numeric.fromstring(l[40:44],Numeric.UInt32)[0]  # UINT32 ; /* flag for frame type */
-                                                               ^^
-E0602: 32:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 32:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['frame_type'] = N.fromstring(l[40:44],N.uint32)[0]  # UINT32 ; /* flag for frame type */
+                                                         ^^
+E0602: 32:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 32:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 42:obselete._readheader_fabian: Comma not followed by a space
-        self.header['nfast'] = Numeric.fromstring(l[80:84],Numeric.UInt32)[0]  # UINT32 ; /* number of pixels in one line */
-                                                          ^^
-E0602: 42:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 42:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['nfast'] = N.fromstring(l[80:84],N.uint32)[0]  # UINT32 ; /* number of pixels in one line */
+                                                    ^^
+E0602: 42:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 42:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 43:obselete._readheader_fabian: Comma not followed by a space
-        self.header['nslow'] = Numeric.fromstring(l[84:88],Numeric.UInt32)[0]  # UINT32 ; /* number of lines in image */
-                                                          ^^
-E0602: 43:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 43:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['nslow'] = N.fromstring(l[84:88],N.uint32)[0]  # UINT32 ; /* number of lines in image */
+                                                    ^^
+E0602: 43:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 43:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 44:obselete._readheader_fabian: Comma not followed by a space
-        self.header['depth'] = Numeric.fromstring(l[88:92],Numeric.UInt32)[0]  # UINT32 ; /* number of bytes per pixel */
-                                                          ^^
-E0602: 44:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 44:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['depth'] = N.fromstring(l[88:92],N.uint32)[0]  # UINT32 ; /* number of bytes per pixel */
+                                                    ^^
+E0602: 44:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 44:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 46:obselete._readheader_fabian: Comma not followed by a space
-        self.header['signif_bits'] = Numeric.fromstring(l[96:100],Numeric.UInt32)[0]  # UINT32 ; /* true depth of data, in bits */
-                                                                 ^^
-E0602: 46:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 46:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['signif_bits'] = N.fromstring(l[96:100],N.uint32)[0]  # UINT32 ; /* true depth of data, in bits */
+                                                           ^^
+E0602: 46:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 46:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 49:obselete._readheader_fabian: Comma not followed by a space
-        self.header['sequence'] = Numeric.fromstring(l[108:112],Numeric.UInt32)[0]  # UINT32 ; /* TRUE or FALSE */
-                                                               ^^
-E0602: 49:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 49:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['sequence'] = N.fromstring(l[108:112],N.uint32)[0]  # UINT32 ; /* TRUE or FALSE */
+                                                         ^^
+E0602: 49:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 49:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 50:obselete._readheader_fabian: Comma not followed by a space
-        self.header['nimages'] = Numeric.fromstring(l[112:116],Numeric.UInt32)[0]  # UINT32 ; /* total number of images - size of each is nfast*(nslow/nimages) */
-                                                              ^^
-E0602: 50:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 50:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['nimages'] = N.fromstring(l[112:116],N.uint32)[0]  # UINT32 ; /* total number of images - size of each is nfast*(nslow/nimages) */
+                                                        ^^
+E0602: 50:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 50:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 51:obselete._readheader_fabian: Comma not followed by a space
-        self.header['origin'] = Numeric.fromstring(l[116:120],Numeric.UInt32)[0]  # UINT32 ; /* corner of origin */
-                                                             ^^
-E0602: 51:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 51:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['origin'] = N.fromstring(l[116:120],N.uint32)[0]  # UINT32 ; /* corner of origin */
+                                                       ^^
+E0602: 51:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 51:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 52:obselete._readheader_fabian: Comma not followed by a space
-        self.header['orientation'] = Numeric.fromstring(l[120:124],Numeric.UInt32)[0]  # UINT32 ; /* direction of fast axis */
-                                                                  ^^
-E0602: 52:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 52:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['orientation'] = N.fromstring(l[120:124],N.uint32)[0]  # UINT32 ; /* direction of fast axis */
+                                                            ^^
+E0602: 52:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 52:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 53:obselete._readheader_fabian: Comma not followed by a space
-        self.header['view_direction'] = Numeric.fromstring(l[124:128],Numeric.UInt32)[0]  # UINT32 ; /* direction to view frame */
-                                                                     ^^
-E0602: 53:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 53:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['view_direction'] = N.fromstring(l[124:128],N.uint32)[0]  # UINT32 ; /* direction to view frame */
+                                                               ^^
+E0602: 53:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 53:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 54:obselete._readheader_fabian: Comma not followed by a space
-        self.header['overflow_locatio'] = Numeric.fromstring(l[128:132],Numeric.UInt32)[0]  # UINT32 n;/* FOLLOWING_HEADER, FOLLOWING_DATA */
-                                                                       ^^
-E0602: 54:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 54:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['overflow_locatio'] = N.fromstring(l[128:132],N.uint32)[0]  # UINT32 n;/* FOLLOWING_HEADER, FOLLOWING_DATA */
+                                                                 ^^
+E0602: 54:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 54:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 55:obselete._readheader_fabian: Comma not followed by a space
-        self.header['over_8_bits'] = Numeric.fromstring(l[132:136],Numeric.UInt32)[0]  # UINT32 ; /* # of pixels with counts > 255 */
-                                                                  ^^
-E0602: 55:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 55:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['over_8_bits'] = N.fromstring(l[132:136],N.uint32)[0]  # UINT32 ; /* # of pixels with counts > 255 */
+                                                            ^^
+E0602: 55:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 55:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 56:obselete._readheader_fabian: Comma not followed by a space
-        self.header['over_16_bits'] = Numeric.fromstring(l[136:140],Numeric.UInt32)[0]  # UINT32 ; /* # of pixels with count > 65535 */
-                                                                   ^^
-E0602: 56:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 56:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['over_16_bits'] = N.fromstring(l[136:140],N.uint32)[0]  # UINT32 ; /* # of pixels with count > 65535 */
+                                                             ^^
+E0602: 56:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 56:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 57:obselete._readheader_fabian: Comma not followed by a space
-        self.header['multiplexed'] = Numeric.fromstring(l[140:144],Numeric.UInt32)[0]  # UINT32 ; /* multiplex flag */
-                                                                  ^^
-E0602: 57:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 57:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['multiplexed'] = N.fromstring(l[140:144],N.uint32)[0]  # UINT32 ; /* multiplex flag */
+                                                            ^^
+E0602: 57:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 57:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 58:obselete._readheader_fabian: Comma not followed by a space
-        self.header['nfastimages'] = Numeric.fromstring(l[144:148],Numeric.UInt32)[0]  # UINT32 ; /* # of images in fast direction */
-                                                                  ^^
-E0602: 58:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 58:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['nfastimages'] = N.fromstring(l[144:148],N.uint32)[0]  # UINT32 ; /* # of images in fast direction */
+                                                            ^^
+E0602: 58:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 58:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 59:obselete._readheader_fabian: Comma not followed by a space
-        self.header['nslowimages'] = Numeric.fromstring(l[148:152],Numeric.UInt32)[0]  # UINT32 ; /* # of images in slow direction */
-                                                                  ^^
-E0602: 59:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 59:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['nslowimages'] = N.fromstring(l[148:152],N.uint32)[0]  # UINT32 ; /* # of images in slow direction */
+                                                            ^^
+E0602: 59:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 59:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 60:obselete._readheader_fabian: Comma not followed by a space
-        self.header['background_applied'] = Numeric.fromstring(l[152:156],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
-                                                                         ^^
-E0602: 60:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 60:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['background_applied'] = N.fromstring(l[152:156],N.uint32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
+                                                                   ^^
+E0602: 60:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 60:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 61:obselete._readheader_fabian: Comma not followed by a space
-        self.header['bias_applied'] = Numeric.fromstring(l[156:160],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied - hold magic number ? */
-                                                                   ^^
-E0602: 61:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 61:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['bias_applied'] = N.fromstring(l[156:160],N.uint32)[0]  # UINT32 ; /* flags correction has been applied - hold magic number ? */
+                                                             ^^
+E0602: 61:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 61:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 62:obselete._readheader_fabian: Comma not followed by a space
-        self.header['flatfield_applied'] = Numeric.fromstring(l[160:164],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
-                                                                        ^^
-E0602: 62:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 62:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['flatfield_applied'] = N.fromstring(l[160:164],N.uint32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
+                                                                  ^^
+E0602: 62:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 62:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 63:obselete._readheader_fabian: Comma not followed by a space
-        self.header['distortion_applied'] = Numeric.fromstring(l[164:168],Numeric.UInt32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
-                                                                         ^^
-E0602: 63:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 63:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['distortion_applied'] = N.fromstring(l[164:168],N.uint32)[0]  # UINT32 ; /* flags correction has been applied hold magic number ? */
+                                                                   ^^
+E0602: 63:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 63:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 67:obselete._readheader_fabian: Comma not followed by a space
-        self.header['xtal_to_detector'] = Numeric.fromstring(l[640:644],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*distance in millimeters */
-                                                                       ^^
-E0602: 67:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 67:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['xtal_to_detector'] = N.fromstring(l[640:644],N.int32)[0]*1000  #INT32 ; /* 1000*distance in millimeters */
+                                                                 ^^
+E0602: 67:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 67:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 68:obselete._readheader_fabian: Comma not followed by a space
-        self.header['beam_x'] = Numeric.fromstring(l[644:648],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*x beam position (pixels) */
-                                                             ^^
-E0602: 68:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 68:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['beam_x'] = N.fromstring(l[644:648],N.int32)[0]*1000  #INT32 ; /* 1000*x beam position (pixels) */
+                                                       ^^
+E0602: 68:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 68:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 69:obselete._readheader_fabian: Comma not followed by a space
-        self.header['beam_y'] = Numeric.fromstring(l[648:652],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*y beam position (pixels) */
-                                                             ^^
-E0602: 69:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 69:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['beam_y'] = N.fromstring(l[648:652],N.int32)[0]*1000  #INT32 ; /* 1000*y beam position (pixels) */
+                                                       ^^
+E0602: 69:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 69:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 70:obselete._readheader_fabian: Comma not followed by a space
-        self.header['integration_time'] = Numeric.fromstring(l[652:656],Numeric.Int32)[0]  #INT32 ; /* integration time in milliseconds */
-                                                                       ^^
-E0602: 70:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 70:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['integration_time'] = N.fromstring(l[652:656],N.int32)[0]  #INT32 ; /* integration time in milliseconds */
+                                                                 ^^
+E0602: 70:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 70:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 71:obselete._readheader_fabian: Comma not followed by a space
-        self.header['exposure_time'] = Numeric.fromstring(l[656:660],Numeric.Int32)[0]  #INT32 ; /* exposure time in milliseconds */
-                                                                    ^^
-E0602: 71:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 71:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['exposure_time'] = N.fromstring(l[656:660],N.int32)[0]  #INT32 ; /* exposure time in milliseconds */
+                                                              ^^
+E0602: 71:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 71:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 72:obselete._readheader_fabian: Comma not followed by a space
-        self.header['readout_time'] = Numeric.fromstring(l[660:664],Numeric.Int32)[0]  #INT32 ; /* readout time in milliseconds */
-                                                                   ^^
-E0602: 72:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 72:obselete._readheader_fabian: Undefined variable 'Numeric'
-C0324: 73:obselete._readheader_fabian: Comma not followed by a space
-        self.header['nreads'] = Numeric.fromstring(l[664:668],Numeric.Int32)[0]  #INT32 ; /* number of readouts to get this image */
+        self.header['readout_time'] = N.fromstring(l[660:664],N.int32)[0]  #INT32 ; /* readout time in milliseconds */
                                                              ^^
-E0602: 73:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 73:obselete._readheader_fabian: Undefined variable 'Numeric'
+E0602: 72:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 72:obselete._readheader_fabian: Undefined variable 'N'
+C0324: 73:obselete._readheader_fabian: Comma not followed by a space
+        self.header['nreads'] = N.fromstring(l[664:668],N.int32)[0]  #INT32 ; /* number of readouts to get this image */
+                                                       ^^
+E0602: 73:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 73:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 74:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_twotheta'] = Numeric.fromstring(l[668:672],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*two_theta angle */
-                                                                     ^^
-E0602: 74:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 74:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_twotheta'] = N.fromstring(l[668:672],N.int32)[0]*1000  #INT32 ; /* 1000*two_theta angle */
+                                                               ^^
+E0602: 74:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 74:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 75:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_omega'] = Numeric.fromstring(l[676:680],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*omega angle */
-                                                                  ^^
-E0602: 75:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 75:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_omega'] = N.fromstring(l[676:680],N.int32)[0]*1000  #INT32 ; /* 1000*omega angle */
+                                                            ^^
+E0602: 75:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 75:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 76:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_chi'] = Numeric.fromstring(l[680:684],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*chi angle */
-                                                                ^^
-E0602: 76:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 76:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_chi'] = N.fromstring(l[680:684],N.int32)[0]*1000  #INT32 ; /* 1000*chi angle */
+                                                          ^^
+E0602: 76:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 76:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 77:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_kappa'] = Numeric.fromstring(l[684:688],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*kappa angle */
-                                                                  ^^
-E0602: 77:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 77:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_kappa'] = N.fromstring(l[684:688],N.int32)[0]*1000  #INT32 ; /* 1000*kappa angle */
+                                                            ^^
+E0602: 77:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 77:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 78:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_phi'] = Numeric.fromstring(l[688:692],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*phi angle */
-                                                                ^^
-E0602: 78:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 78:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_phi'] = N.fromstring(l[688:692],N.int32)[0]*1000  #INT32 ; /* 1000*phi angle */
+                                                          ^^
+E0602: 78:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 78:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 79:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_delta'] = Numeric.fromstring(l[692:696],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*delta angle */
-                                                                  ^^
-E0602: 79:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 79:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_delta'] = N.fromstring(l[692:696],N.int32)[0]*1000  #INT32 ; /* 1000*delta angle */
+                                                            ^^
+E0602: 79:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 79:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 80:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_gamma'] = Numeric.fromstring(l[696:700],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*gamma angle */
-                                                                  ^^
-E0602: 80:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 80:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_gamma'] = N.fromstring(l[696:700],N.int32)[0]*1000  #INT32 ; /* 1000*gamma angle */
+                                                            ^^
+E0602: 80:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 80:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 81:obselete._readheader_fabian: Comma not followed by a space
-        self.header['start_xtal_to_detector'] = Numeric.fromstring(l[700:704],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*distance in mm (dist in um)*/
-                                                                             ^^
-E0602: 81:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 81:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['start_xtal_to_detector'] = N.fromstring(l[700:704],N.int32)[0]*1000  #INT32 ; /* 1000*distance in mm (dist in um)*/
+                                                                       ^^
+E0602: 81:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 81:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 82:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_twotheta'] = Numeric.fromstring(l[704:708],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*two_theta angle */
-                                                                   ^^
-E0602: 82:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 82:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['end_twotheta'] = N.fromstring(l[704:708],N.int32)[0]*1000  #INT32 ; /* 1000*two_theta angle */
+                                                             ^^
+E0602: 82:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 82:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 83:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_omega'] = Numeric.fromstring(l[708:712],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*omega angle */
-                                                                ^^
-E0602: 83:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 83:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['end_omega'] = N.fromstring(l[708:712],N.int32)[0]*1000  #INT32 ; /* 1000*omega angle */
+                                                          ^^
+E0602: 83:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 83:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 84:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_chi'] = Numeric.fromstring(l[712:716],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*chi angle */
-                                                              ^^
-E0602: 84:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 84:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['end_chi'] = N.fromstring(l[712:716],N.int32)[0]*1000  #INT32 ; /* 1000*chi angle */
+                                                        ^^
+E0602: 84:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 84:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 85:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_kappa'] = Numeric.fromstring(l[716:720],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*kappa angle */
-                                                                ^^
-E0602: 85:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 85:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['end_kappa'] = N.fromstring(l[716:720],N.int32)[0]*1000  #INT32 ; /* 1000*kappa angle */
+                                                          ^^
+E0602: 85:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 85:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 86:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_phi'] = Numeric.fromstring(l[720:724],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*phi angle */
-                                                              ^^
-E0602: 86:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 86:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['end_phi'] = N.fromstring(l[720:724],N.int32)[0]*1000  #INT32 ; /* 1000*phi angle */
+                                                        ^^
+E0602: 86:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 86:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 87:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_delta'] = Numeric.fromstring(l[724:728],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*delta angle */
-                                                                ^^
-E0602: 87:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 87:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['end_delta'] = N.fromstring(l[724:728],N.int32)[0]*1000  #INT32 ; /* 1000*delta angle */
+                                                          ^^
+E0602: 87:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 87:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 88:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_gamma'] = Numeric.fromstring(l[728:732],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*gamma angle */
-                                                                ^^
-E0602: 88:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 88:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['end_gamma'] = N.fromstring(l[728:732],N.int32)[0]*1000  #INT32 ; /* 1000*gamma angle */
+                                                          ^^
+E0602: 88:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 88:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 89:obselete._readheader_fabian: Comma not followed by a space
-        self.header['end_xtal_to_detector'] = Numeric.fromstring(l[732:736],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*distance in mm (dist in um)*/
-                                                                           ^^
-E0602: 89:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 89:obselete._readheader_fabian: Undefined variable 'Numeric'
-C0324: 90:obselete._readheader_fabian: Comma not followed by a space
-        self.header['rotation_axis'] = Numeric.fromstring(l[736:740],Numeric.Int32)[0]  #INT32 ; /* active rotation axis */
-                                                                    ^^
-E0602: 90:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 90:obselete._readheader_fabian: Undefined variable 'Numeric'
-C0324: 91:obselete._readheader_fabian: Comma not followed by a space
-        self.header['rotation_range'] = Numeric.fromstring(l[740:744],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation angle */
+        self.header['end_xtal_to_detector'] = N.fromstring(l[732:736],N.int32)[0]*1000  #INT32 ; /* 1000*distance in mm (dist in um)*/
                                                                      ^^
-E0602: 91:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 91:obselete._readheader_fabian: Undefined variable 'Numeric'
+E0602: 89:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 89:obselete._readheader_fabian: Undefined variable 'N'
+C0324: 90:obselete._readheader_fabian: Comma not followed by a space
+        self.header['rotation_axis'] = N.fromstring(l[736:740],N.int32)[0]  #INT32 ; /* active rotation axis */
+                                                              ^^
+E0602: 90:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 90:obselete._readheader_fabian: Undefined variable 'N'
+C0324: 91:obselete._readheader_fabian: Comma not followed by a space
+        self.header['rotation_range'] = N.fromstring(l[740:744],N.int32)[0]*1000  #INT32 ; /* 1000*rotation angle */
+                                                               ^^
+E0602: 91:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 91:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 92:obselete._readheader_fabian: Comma not followed by a space
-        self.header['detector_rotx'] = Numeric.fromstring(l[744:748],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around X */
-                                                                    ^^
-E0602: 92:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 92:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['detector_rotx'] = N.fromstring(l[744:748],N.int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around X */
+                                                              ^^
+E0602: 92:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 92:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 93:obselete._readheader_fabian: Comma not followed by a space
-        self.header['detector_roty'] = Numeric.fromstring(l[748:752],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around Y */
-                                                                    ^^
-E0602: 93:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 93:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['detector_roty'] = N.fromstring(l[748:752],N.int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around Y */
+                                                              ^^
+E0602: 93:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 93:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 94:obselete._readheader_fabian: Comma not followed by a space
-        self.header['detector_rotz'] = Numeric.fromstring(l[752:756],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around Z */
-                                                                    ^^
-E0602: 94:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 94:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['detector_rotz'] = N.fromstring(l[752:756],N.int32)[0]*1000  #INT32 ; /* 1000*rotation of detector around Z */
+                                                              ^^
+E0602: 94:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 94:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 96:obselete._readheader_fabian: Comma not followed by a space
-        self.header['detector_type'] = Numeric.fromstring(l[768:772],Numeric.Int32)[0]  #INT32 ; /* detector type */
-                                                                    ^^
-E0602: 96:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 96:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['detector_type'] = N.fromstring(l[768:772],N.int32)[0]  #INT32 ; /* detector type */
+                                                              ^^
+E0602: 96:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 96:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 97:obselete._readheader_fabian: Comma not followed by a space
-        self.header['pixelsize_x'] = Numeric.fromstring(l[772:776],Numeric.Int32)[0]  #INT32 ; /* pixel size (nanometers) */
-                                                                  ^^
-E0602: 97:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 97:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['pixelsize_x'] = N.fromstring(l[772:776],N.int32)[0]  #INT32 ; /* pixel size (nanometers) */
+                                                            ^^
+E0602: 97:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 97:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 98:obselete._readheader_fabian: Comma not followed by a space
-        self.header['pixelsize_y'] = Numeric.fromstring(l[776:780],Numeric.Int32)[0]  #INT32 ; /* pixel size (nanometers) */
-                                                                  ^^
-E0602: 98:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 98:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['pixelsize_y'] = N.fromstring(l[776:780],N.int32)[0]  #INT32 ; /* pixel size (nanometers) */
+                                                            ^^
+E0602: 98:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 98:obselete._readheader_fabian: Undefined variable 'N'
 C0324: 99:obselete._readheader_fabian: Comma not followed by a space
-        self.header['mean_bias'] = Numeric.fromstring(l[780:784],Numeric.Int32)[0]*1000  #INT32 ; /* 1000*mean bias value */
-                                                                ^^
-E0602: 99:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602: 99:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['mean_bias'] = N.fromstring(l[780:784],N.int32)[0]*1000  #INT32 ; /* 1000*mean bias value */
+                                                          ^^
+E0602: 99:obselete._readheader_fabian: Undefined variable 'N'
+E0602: 99:obselete._readheader_fabian: Undefined variable 'N'
 C0324:100:obselete._readheader_fabian: Comma not followed by a space
-        self.header['photons_per_100adu'] = Numeric.fromstring(l[784:788],Numeric.Int32)[0]  #INT32 ; /* photons / 100 ADUs */
-                                                                         ^^
-E0602:100:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602:100:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['photons_per_100adu'] = N.fromstring(l[784:788],N.int32)[0]  #INT32 ; /* photons / 100 ADUs */
+                                                                   ^^
+E0602:100:obselete._readheader_fabian: Undefined variable 'N'
+E0602:100:obselete._readheader_fabian: Undefined variable 'N'
 C0324:101:obselete._readheader_fabian: Comma not followed by a space
-        self.header['measured_bias'] = Numeric.fromstring(l[788:792],Numeric.Int32)[0]*1000  #INT32 [MAXIMAGES]; /* 1000*mean bias value for each image*/
-                                                                    ^^
-E0602:101:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602:101:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['measured_bias'] = N.fromstring(l[788:792],N.int32)[0]*1000  #INT32 [MAXIMAGES]; /* 1000*mean bias value for each image*/
+                                                              ^^
+E0602:101:obselete._readheader_fabian: Undefined variable 'N'
+E0602:101:obselete._readheader_fabian: Undefined variable 'N'
 C0324:102:obselete._readheader_fabian: Comma not followed by a space
-        self.header['measured_temperature'] = Numeric.fromstring(l[792:796],Numeric.Int32)[0] #INT32  [MAXIMAGES]; /* Temperature of each detector in milliKelvins */
-                                                                           ^^
-E0602:102:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602:102:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['measured_temperature'] = N.fromstring(l[792:796],N.int32)[0] #INT32  [MAXIMAGES]; /* Temperature of each detector in milliKelvins */
+                                                                     ^^
+E0602:102:obselete._readheader_fabian: Undefined variable 'N'
+E0602:102:obselete._readheader_fabian: Undefined variable 'N'
 C0324:103:obselete._readheader_fabian: Comma not followed by a space
-        self.header['measured_pressure'] = Numeric.fromstring(l[796:800],Numeric.Int32)[0] #INT32 [MAXIMAGES] ; /* Pressure of each chamber in microTorr */
-                                                                        ^^
-E0602:103:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602:103:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['measured_pressure'] = N.fromstring(l[796:800],N.int32)[0] #INT32 [MAXIMAGES] ; /* Pressure of each chamber in microTorr */
+                                                                  ^^
+E0602:103:obselete._readheader_fabian: Undefined variable 'N'
+E0602:103:obselete._readheader_fabian: Undefined variable 'N'
 C0324:108:obselete._readheader_fabian: Comma not followed by a space
-        self.header['source_wavelength'] = Numeric.fromstring(l[908:912],Numeric.Int32)[0]  #INT32 ; /* wavelength (femtoMeters) */
-                                                                        ^^
-E0602:108:obselete._readheader_fabian: Undefined variable 'Numeric'
-E0602:108:obselete._readheader_fabian: Undefined variable 'Numeric'
+        self.header['source_wavelength'] = N.fromstring(l[908:912],N.int32)[0]  #INT32 ; /* wavelength (femtoMeters) */
+                                                                  ^^
+E0602:108:obselete._readheader_fabian: Undefined variable 'N'
+E0602:108:obselete._readheader_fabian: Undefined variable 'N'
 R0915: 12:obselete._readheader_fabian: Too many statements (74/50)
 W0201: 16:obselete._readheader_fabian: Attribute 'header' defined outside __init__
 R0903: 11:obselete: To few public methods (0/2)
@@ -435,9 +435,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -448,13 +448,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |77     |60.63 |NC       |NC         |
+|code      |77     |60.63 |77       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |10     |7.87  |NC       |NC         |
+|docstring |10     |7.87  |10       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |35     |27.56 |NC       |NC         |
+|comment   |35     |27.56 |35       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |5      |3.94  |NC       |NC         |
+|empty     |5      |3.94  |5        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -465,13 +465,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |1      |NC         |NC         |100.00      |0.00     |
+|method   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -482,13 +482,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |170    |NC       |NC         |
+|convention |170    |170      |=          |
 +-----------+-------+---------+-----------+
-|refactor   |2      |NC       |NC         |
+|refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |126    |NC       |NC         |
+|error      |126    |126      |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -522,5 +522,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -97.20/10
+Your code has been rated at -97.20/10 (previous run: -97.20/10)
 

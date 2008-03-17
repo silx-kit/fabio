@@ -1,6 +1,6 @@
-************* Module fabio.adscimage
-W0511: 89: FIXME ??? - made padding match header bytes keyword            
-W0612:122:test: Unused variable 'rim'
+************* Module adscimage
+W0511: 91: FIXME ??? - made padding match header bytes keyword            
+W0612:124:test: Unused variable 'rim'
 
 
 Report
@@ -13,9 +13,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -26,13 +26,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |84     |66.67 |NC       |NC         |
+|code      |84     |65.62 |84       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |24     |19.05 |NC       |NC         |
+|docstring |24     |18.75 |24       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |8      |6.35  |NC       |NC         |
+|comment   |9      |7.03  |8        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |10     |7.94  |NC       |NC         |
+|empty     |11     |8.59  |10       |+1.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -41,7 +41,9 @@ External dependencies
 ---------------------
 ::
 
-    Numeric (fabio.adscimage)
+    fabio 
+      \-fabioimage (adscimage)
+    numpy (adscimage)
 
 
 
@@ -51,13 +53,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |NC         |NC         |100.00      |0.00     |
+|method   |3      |3          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |100.00      |0.00     |
+|function |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -68,13 +70,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |NC       |NC         |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -94,5 +96,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.73/10
+Your code has been rated at 9.73/10 (previous run: 9.73/10)
 

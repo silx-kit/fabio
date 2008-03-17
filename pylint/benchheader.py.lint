@@ -1,14 +1,17 @@
-************* Module testbrukerimage
-C0103: 40:testbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 59:testbruker.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 74:testbzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 83:testgzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:101:test_real_im: Invalid name "test_real_im" (should match [a-z_][a-zA-Z0-9]+$)
+************* Module benchheader
+C0111:  1: Missing docstring
+C0103:  4: Invalid name "images" (should match (([A-Z_]*)|(__.*__))$)
+C0323: 10: Operator not followed by a space
+    s  = "ret = fabio.openimage.openheader(r\"%s\")"%(im)
+                                                    ^
+C0323: 13: Operator not followed by a space
+    print "%10.6f"%(t.timeit(10)/10.0), im
+                  ^
 
 
 Report
 ======
-64 statements analysed.
+10 statements analysed.
 
 Duplication
 -----------
@@ -16,9 +19,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -29,24 +32,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |71     |63.39 |70       |+1.00      |
+|code      |11     |64.71 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |22     |19.64 |22       |=          |
+|docstring |1      |5.88  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |5      |4.46  |5        |=          |
+|comment   |0      |0.00  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |14     |12.50 |14       |=          |
+|empty     |5      |29.41 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-brukerimage (testbrukerimage)
-    numpy (testbrukerimage)
 
 
 
@@ -56,13 +49,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |4      |4          |=          |100.00      |25.00    |
+|class    |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |6      |6          |=          |100.00      |66.67    |
+|method   |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -73,13 +66,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |5        |=          |
+|convention |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -90,12 +83,16 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0103      |5          |
+|C0323      |2          |
++-----------+-----------+
+|C0111      |1          |
++-----------+-----------+
+|C0103      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.22/10 (previous run: 9.21/10)
+Your code has been rated at 6.00/10
 

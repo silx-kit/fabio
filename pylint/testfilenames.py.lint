@@ -1,8 +1,38 @@
+************* Module testfilenames
+C0301: 66: Line too long (93/80)
+C0322: 40: Operator not preceded by a space
+MORE_CASES=[
+          ^
+    ("data0010.edf",   "data0012.edf", 10),
+    ("data1000.pnm",   "data999.pnm",1000),
+    ("data0999.pnm",   "data1000.pnm",999),
+    ("data123457.edf", "data123456.edf",123457),
+    ("d0ata000100.mccd","d0ata000012.mccd",100),
+    (os.path.join("images/sampledir","P33S670003.edf"),
+     os.path.join("images/sampledir","P33S670002.edf"),670003),
+    (os.path.join("images/P33S67","P33S670003.edf"),
+     os.path.join("images/P33S67","P33S670002.edf"),670003),
+    ("image2301.mar2300","image2300.mar2300",2301),
+    ("image2300.mar2300","image2301.mar2300",2300),
+    ("image.0123", "image.1234",123),
+    ("mymask.msk","mymask.msk",None),
+    ("data_123.mccd.bz2", "data_001.mccd.bz2", 123)
+    ]
+C0111: 74:testfilenames.test_more_cases_jump: Missing docstring
+C0324: 75:testfilenames.test_more_cases_jump: Comma not followed by a space
+        for nname,oname,num in MORE_CASES:
+                 ^^
+C0322: 76:testfilenames.test_more_cases_jump: Operator not preceded by a space
+            name=fabio.jump_filename(oname,num)
+                ^
+C0324: 77:testfilenames.test_more_cases_jump: Comma not followed by a space
+            self.assertEqual(name,nname)
+                                 ^^
 
 
 Report
 ======
-11 statements analysed.
+17 statements analysed.
 
 Duplication
 -----------
@@ -23,13 +53,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |25     |69.44 |25       |=          |
+|code      |57     |73.08 |25       |+32.00     |
 +----------+-------+------+---------+-----------+
-|docstring |5      |13.89 |5        |=          |
+|docstring |6      |7.69  |5        |+1.00      |
 +----------+-------+------+---------+-----------+
-|comment   |0      |0.00  |0        |=          |
+|comment   |5      |6.41  |0        |+5.00      |
 +----------+-------+------+---------+-----------+
-|empty     |6      |16.67 |6        |=          |
+|empty     |10     |12.82 |6        |+4.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -52,7 +82,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |1      |1          |=          |100.00      |0.00     |
+|method   |2      |1          |+1.00      |50.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -65,7 +95,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |6      |0        |+6.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -76,7 +106,24 @@ Messages by category
 
 
 
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0324      |2          |
++-----------+-----------+
+|C0322      |2          |
++-----------+-----------+
+|C0301      |1          |
++-----------+-----------+
+|C0111      |1          |
++-----------+-----------+
+
+
+
 Global evaluation
 -----------------
-Your code has been rated at 10.00/10 (previous run: 10.00/10)
+Your code has been rated at 6.47/10 (previous run: 10.00/10)
 

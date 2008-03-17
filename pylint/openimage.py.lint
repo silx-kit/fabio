@@ -1,21 +1,36 @@
-************* Module fabio.openimage
-W0702: 56:openimage: No exception's type specified
-W0212: 57:openimage: Access to a protected member _open of a client class
-W0612: 54:openimage: Unused variable 'filenumber'
+************* Module openimage
+C0301: 98: Line too long (81/80)
+C0324: 60:do_magic: Comma not followed by a space
+            print "m:",magic,"f:",format,
+                      ^^
+C0324: 61:do_magic: Comma not followed by a space
+            print "bytes:",magic,"len(bytes)",len(magic),
+                          ^^
+C0324: 62:do_magic: Comma not followed by a space
+            print "found:",byts.find(magic)
+                          ^^
+C0324: 64:do_magic: Comma not followed by a space
+                print ord(magic[i]),ord(byts[i]),magic[i],byts[i]
+                                   ^^
+W0212: 86:_openimage: Access to a protected member _open of a client class
+W0612: 88:_openimage: Unused variable 'filenumber'
 W0611: 26: Unused import fit2dmaskimage
 W0611: 28: Unused import bruker100image
+W0611: 23: Unused import tifimage
 W0611: 22: Unused import adscimage
 W0611: 25: Unused import mar345image
+W0611: 32: Unused import fit2dspreadsheetimage
 W0611: 29: Unused import pnmimage
 W0611: 24: Unused import marccdimage
 W0611: 21: Unused import edfimage
-W0611: 23: Unused import tifimage
+W0611: 31: Unused import OXDimage
+W0611: 30: Unused import GEimage
 W0611: 27: Unused import brukerimage
 
 
 Report
 ======
-35 statements analysed.
+60 statements analysed.
 
 Duplication
 -----------
@@ -36,14 +51,35 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |41     |55.41 |41       |=          |
+|code      |79     |68.70 |41       |+38.00     |
 +----------+-------+------+---------+-----------+
-|docstring |20     |27.03 |20       |=          |
+|docstring |19     |16.52 |20       |-1.00      |
 +----------+-------+------+---------+-----------+
-|comment   |3      |4.05  |3        |=          |
+|comment   |4      |3.48  |3        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |10     |13.51 |10       |=          |
+|empty     |13     |11.30 |10       |+3.00      |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (openimage)
+      \-fit2dmaskimage (openimage)
+      \-fit2dspreadsheetimage (openimage)
+      \-fabioimage (openimage)
+      \-edfimage (openimage)
+      \-tifimage (openimage)
+      \-OXDimage (openimage)
+      \-adscimage (openimage)
+      \-mar345image (openimage)
+      \-bruker100image (openimage)
+      \-pnmimage (openimage)
+      \-GEimage (openimage)
+      \-marccdimage (openimage)
+      \-brukerimage (openimage)
 
 
 
@@ -59,7 +95,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |method   |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |2      |2          |=          |100.00      |0.00     |
+|function |4      |2          |+2.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -70,11 +106,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |5      |0        |+5.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |12     |12       |=          |
+|warning    |14     |12       |+2.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |1        |-1.00      |
 +-----------+-------+---------+-----------+
@@ -87,18 +123,20 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0611      |9          |
+|W0611      |12         |
 +-----------+-----------+
-|W0702      |1          |
+|C0324      |4          |
 +-----------+-----------+
 |W0612      |1          |
 +-----------+-----------+
 |W0212      |1          |
++-----------+-----------+
+|C0301      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.57/10 (previous run: 5.14/10)
+Your code has been rated at 6.83/10 (previous run: 5.14/10)
 

@@ -1,0 +1,125 @@
+************* Module testOXDimage
+C0111: 16:testOXD: Missing docstring
+C0111: 17:testOXD.test_read: Missing docstring
+C0103: 36:testOXD_same: Invalid name "testOXD_same" (should match [a-z_][a-zA-Z0-9]+$)
+C0111: 36:testOXD_same: Missing docstring
+C0103: 38:testOXD_same.setUp: Invalid name "f1" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 39:testOXD_same.setUp: Invalid name "f2" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 37:testOXD_same.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 37:testOXD_same.setUp: Missing docstring
+C0111: 40:testOXD_same.test_same: Missing docstring
+C0103: 41:testOXD_same.test_same: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 42:testOXD_same.test_same: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324: 43:testOXD_same.test_same: Comma not followed by a space
+        for attr in ["getmin","getmax","getmean","getstddev"]:
+                             ^^
+C0324: 44:testOXD_same.test_same: Comma not followed by a space
+            a1 = getattr(o1,attr)()
+                           ^^
+C0103: 44:testOXD_same.test_same: Invalid name "a1" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324: 45:testOXD_same.test_same: Comma not followed by a space
+            a2 = getattr(o2,attr)()
+                           ^^
+C0103: 45:testOXD_same.test_same: Invalid name "a2" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324: 46:testOXD_same.test_same: Comma not followed by a space
+            self.assertEqual(a1,a2,attr)
+                               ^^
+
+
+Report
+======
+32 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |33     |70.21 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |5      |10.64 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |0      |0.00  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |9      |19.15 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-OXDimage (testOXDimage)
+      \-openimage (testOXDimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |NC         |NC         |0.00        |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |NC         |NC         |0.00        |33.33    |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |17     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0103      |8          |
++-----------+-----------+
+|C0111      |5          |
++-----------+-----------+
+|C0324      |4          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 4.69/10
+

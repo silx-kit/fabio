@@ -23,13 +23,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |42     |72.41 |42       |=          |
+|code      |42     |70.00 |42       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |6      |10.34 |6        |=          |
+|docstring |6      |10.00 |6        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |1      |1.72  |1        |=          |
+|comment   |2      |3.33  |1        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |9      |15.52 |9        |=          |
+|empty     |10     |16.67 |9        |+1.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -41,7 +41,7 @@ External dependencies
     fabio 
       \-fit2dmaskimage (testfit2dmaskimage)
       \-edfimage (testfit2dmaskimage)
-    Numeric (testfit2dmaskimage)
+    numpy (testfit2dmaskimage)
 
 
 

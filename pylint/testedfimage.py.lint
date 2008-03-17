@@ -1,14 +1,17 @@
 ************* Module testedfimage
-W0511: 98: FIXME: upload to sourceforge and add a setUp with wget?
-C0103: 33:testflatedfs.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 41:testflatedfs.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 68:testbzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 77:testgzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+W0511:100: FIXME: upload to sourceforge and add a setUp with wget?
+C0103: 35:testflatedfs.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 43:testflatedfs.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 70:testbzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 79:testgzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:114:testedfs.test_read: Comma not followed by a space
+                print "Cannot read image",name
+                                         ^^
 
 
 Report
 ======
-61 statements analysed.
+64 statements analysed.
 
 Duplication
 -----------
@@ -29,13 +32,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |66     |55.46 |66       |=          |
+|code      |69     |55.20 |66       |+3.00      |
 +----------+-------+------+---------+-----------+
-|docstring |28     |23.53 |28       |=          |
+|docstring |28     |22.40 |28       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |1.68  |2        |=          |
+|comment   |3      |2.40  |2        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |23     |19.33 |23       |=          |
+|empty     |25     |20.00 |23       |+2.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -46,7 +49,7 @@ External dependencies
 
     fabio 
       \-edfimage (testedfimage)
-    Numeric (testedfimage)
+    numpy (testedfimage)
 
 
 
@@ -73,7 +76,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |4      |4        |=          |
+|convention |5      |4        |+1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -94,10 +97,12 @@ Messages
 +-----------+-----------+
 |W0511      |1          |
 +-----------+-----------+
+|C0324      |1          |
++-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.18/10 (previous run: 9.18/10)
+Your code has been rated at 9.06/10 (previous run: 9.18/10)
 

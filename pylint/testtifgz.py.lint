@@ -1,0 +1,117 @@
+************* Module testtifgz
+C0111:  1: Missing docstring
+C0111:  7:testgziptif: Missing docstring
+C0103:  8:testgziptif.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:  8:testgziptif.setUp: Missing docstring
+C0111: 17:testgziptif.test1: Missing docstring
+C0103: 18:testgziptif.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 19:testgziptif.test1: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324: 20:testgziptif.test1: Comma not followed by a space
+        self.assertEqual(o1.data[0,0],10)
+                                  ^^
+C0324: 21:testgziptif.test1: Comma not followed by a space
+        self.assertEqual(o2.data[0,0],10)
+                                  ^^
+C0103: 23:testgziptif.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 28:testtif_rect: Invalid name "testtif_rect" (should match [a-z_][a-zA-Z0-9]+$)
+C0111: 28:testtif_rect: Missing docstring
+C0111: 29:testtif_rect.test1: Missing docstring
+C0103: 30:testtif_rect.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
+
+
+Report
+======
+22 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |21     |67.74 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |4      |12.90 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |1      |3.23  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |5      |16.13 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-openimage (testtifgz)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |NC         |NC         |0.00        |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |NC         |NC         |25.00       |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |14     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0111      |6          |
++-----------+-----------+
+|C0103      |6          |
++-----------+-----------+
+|C0324      |2          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 3.64/10
+

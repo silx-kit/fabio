@@ -5,11 +5,13 @@ C0103: 41:testopenmccd.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]
 C0103: 71:testmask.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
 C0103:100:testbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
 C0103:128:testadsc.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:157:testOXD.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+E0102:171:testOXD: class already defined line 154
 
 
 Report
 ======
-84 statements analysed.
+98 statements analysed.
 
 Duplication
 -----------
@@ -30,13 +32,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |85     |63.43 |85       |=          |
+|code      |99     |63.46 |85       |+14.00     |
 +----------+-------+------+---------+-----------+
-|docstring |25     |18.66 |25       |=          |
+|docstring |29     |18.59 |25       |+4.00      |
 +----------+-------+------+---------+-----------+
 |comment   |0      |0.00  |0        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |24     |17.91 |24       |=          |
+|empty     |28     |17.95 |24       |+4.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -48,6 +50,7 @@ External dependencies
     fabio 
       \-fit2dmaskimage (testopenimage)
       \-edfimage (testopenimage)
+      \-OXDimage (testopenimage)
       \-adscimage (testopenimage)
       \-marccdimage (testopenimage)
       \-openimage (testopenimage)
@@ -63,9 +66,9 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |15     |15         |=          |100.00      |0.00     |
+|class    |17     |15         |+2.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |10     |10         |=          |100.00      |50.00    |
+|method   |12     |10         |+2.00      |100.00      |50.00    |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -78,13 +81,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |6      |6        |=          |
+|convention |7      |6        |+1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |warning    |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |1      |0        |+1.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -95,7 +98,9 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0103      |5          |
+|C0103      |6          |
++-----------+-----------+
+|E0102      |1          |
 +-----------+-----------+
 |C0111      |1          |
 +-----------+-----------+
@@ -104,5 +109,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.29/10 (previous run: 9.29/10)
+Your code has been rated at 8.78/10 (previous run: 9.29/10)
 

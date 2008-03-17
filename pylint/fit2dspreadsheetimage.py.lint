@@ -1,0 +1,134 @@
+************* Module fit2dspreadsheetimage
+W0511: 23: TODO : test for minimal attributes?
+C0103: 28:fit2dspreadsheetimage._readheader: Invalid name "xd" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 29:fit2dspreadsheetimage._readheader: Invalid name "yd" (should match [a-z_][a-z0-9_]{2,30}$)
+W0621: 79:fit2dspreadsheetimage.read: Redefining name 'start' from outer scope (line 91)
+W0621: 78:fit2dspreadsheetimage.read: Redefining name 'time' from outer scope (line 90)
+W0704: 65:fit2dspreadsheetimage.read: Except doesn't do anything
+W0702: 66:fit2dspreadsheetimage.read: No exception's type specified
+C0323: 68:fit2dspreadsheetimage.read: Operator not followed by a space
+                assert self.data.shape ==( self.dim2, self.dim1)
+                                       ^^
+W0404: 78:fit2dspreadsheetimage.read: Reimport 'time' (imported line 90)
+C0323: 81:fit2dspreadsheetimage.read: Operator not followed by a space
+            assert self.data.shape ==( self.dim2, self.dim1)
+                                   ^^
+C0322: 89: Operator not preceded by a space
+if __name__=="__main__":
+           ^^
+C0103: 91: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
+C0103: 92: Invalid name "im" (should match (([A-Z_]*)|(__.*__))$)
+W0611:  8: Unused import logging
+
+
+Report
+======
+56 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |60     |65.93 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |16     |17.58 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |2      |2.20  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |13     |14.29 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-fabioimage (fit2dspreadsheetimage)
+    numpy (fit2dspreadsheetimage)
+    matplotlib 
+      \-pylab (fit2dspreadsheetimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |7      |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |7      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0103      |4          |
++-----------+-----------+
+|W0621      |2          |
++-----------+-----------+
+|C0323      |2          |
++-----------+-----------+
+|W0704      |1          |
++-----------+-----------+
+|W0702      |1          |
++-----------+-----------+
+|W0611      |1          |
++-----------+-----------+
+|W0511      |1          |
++-----------+-----------+
+|W0404      |1          |
++-----------+-----------+
+|C0322      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 7.50/10
+

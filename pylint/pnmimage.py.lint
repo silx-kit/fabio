@@ -1,136 +1,201 @@
-************* Module fabio.pnmimage
-C0301: 33: Line too long (88/80)
-C0301: 50: Line too long (81/80)
+************* Module pnmimage
+C0301: 39: Line too long (88/80)
 C0301: 56: Line too long (83/80)
-C0301: 75: Line too long (96/80)
-C0301: 81: Line too long (101/80)
-C0301: 83: Line too long (92/80)
-W0403: 15: Relative import 'edfimage'
-C0111: 17:pnmimage: Missing docstring
-C0103: 22:pnmimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-R0902: 17:pnmimage: Too many instance attributes (10/7)
-W0231: 18:pnmimage.__init__: __init__ method from base class 'edfimage' is not called
-C0322: 19:pnmimage.__init__: Operator not preceded by a space
+C0301: 77: Line too long (81/80)
+C0301: 90: Line too long (88/80)
+C0301:103: Line too long (96/80)
+C0301:116: Line too long (96/80)
+C0301:122: Line too long (86/80)
+C0301:124: Line too long (92/80)
+C0322: 19: Operator not preceded by a space
+SUBFORMATS=['P1','P2','P3','P4','P5','P6','P7']
+          ^
+C0322: 21: Operator not preceded by a space
+HEADERITEMS=['SUBFORMAT','DIMENSIONS','MAXVAL']
+           ^
+C0322: 22: Operator not preceded by a space
+P7HEADERITEMS=['WIDTH','HEIGHT','DEPTH','MAXVAL','TUPLTYPE','ENDHDR']
+             ^
+C0103: 22: Invalid name "P7HEADERITEMS" (should match (([A-Z_]*)|(__.*__))$)
+C0111: 24:pnmimage: Missing docstring
+C0103: 31:pnmimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+R0902: 24:pnmimage: Too many instance attributes (10/7)
+W0231: 25:pnmimage.__init__: __init__ method from base class 'fabioimage' is not called
+C0322: 28:pnmimage.__init__: Operator not preceded by a space
         self.data=None
                  ^
-C0322: 20:pnmimage.__init__: Operator not preceded by a space
+C0322: 29:pnmimage.__init__: Operator not preceded by a space
         self.header={'Subformat':'P5'}
                    ^
-C0322: 21:pnmimage.__init__: Operator not preceded by a space
+C0322: 30:pnmimage.__init__: Operator not preceded by a space
         self.dim1=self.dim2=0
                  ^
-C0322: 22:pnmimage.__init__: Operator not preceded by a space
+C0322: 31:pnmimage.__init__: Operator not preceded by a space
         self.m=self.maxval=self.stddev=self.minval=None
               ^
-C0322: 23:pnmimage.__init__: Operator not preceded by a space
+C0322: 32:pnmimage.__init__: Operator not preceded by a space
         self.header_keys=self.header.keys()
                         ^
-C0322: 24:pnmimage.__init__: Operator not preceded by a space
+C0322: 33:pnmimage.__init__: Operator not preceded by a space
         self.bytecode=None
                      ^
-C0111: 26:pnmimage.read: Missing docstring
-W0221: 26:pnmimage.read: Arguments number differs from overridden method
-C0324: 26:pnmimage.read: Comma not followed by a space
-    def read(self,fname,verbose=0):
-                 ^^
-C0322: 28:pnmimage.read: Operator not preceded by a space
-        f=open(fname,"rb")
-         ^
-C0103: 28:pnmimage.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 30:pnmimage.read: Operator not preceded by a space
-        self.header_keys=['Subformat','Dimensions','Maxval']
+C0111: 35:pnmimage._readheader: Missing docstring
+C0103: 35:pnmimage._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324: 35:pnmimage._readheader: Comma not followed by a space
+    def _readheader(self,f):
+                        ^^
+C0322: 40:pnmimage._readheader: Operator not preceded by a space
+        self.header_keys=['SUBFORMAT','DIMENSIONS','MAXVAL']
                         ^
-C0322: 35:pnmimage.read: Operator not preceded by a space
-            l=f.readline()
-             ^
-C0103: 35:pnmimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0321: 36:pnmimage.read: More than one statement on a single line
-C0103: 36:pnmimage.read: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 37:pnmimage.read: Operator not preceded by a space
-            self.header[k]=l.strip()
-                          ^
-C0322: 39:pnmimage.read: Operator not preceded by a space
-        dims=(self.header['Dimensions'].split())
+C0322: 42:pnmimage._readheader: Operator not preceded by a space
+        l=f.readline().strip()
+         ^
+C0103: 42:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 46:pnmimage._readheader: Operator not preceded by a space
+            self.header['SUBFORMAT']=l
+                                    ^
+C0322: 48:pnmimage._readheader: Operator not preceded by a space
+        if self.header['SUBFORMAT']=='P7':
+                                   ^^
+C0322: 49:pnmimage._readheader: Operator not preceded by a space
+            self.header_keys=P7HEADERITEMS
+                            ^
+C0322: 52:pnmimage._readheader: Operator not preceded by a space
+                l=f.readline()
+                 ^
+C0103: 52:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0321: 53:pnmimage._readheader: More than one statement on a single line
+C0103: 53:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 54:pnmimage._readheader: Operator not preceded by a space
+                s=l.lsplit(' ',1)
+                 ^
+C0103: 54:pnmimage._readheader: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 57:pnmimage._readheader: Operator not preceded by a space
+                self.self.header[s[0]]=s[1]
+                                      ^
+E1101: 57:pnmimage._readheader: Instance of 'pnmimage' has no 'self' member
+C0322: 59:pnmimage._readheader: Operator not preceded by a space
+            self.header_keys=HEADERITEMS
+                            ^
+C0322: 61:pnmimage._readheader: Operator not preceded by a space
+                l=f.readline()
+                 ^
+C0103: 61:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0321: 62:pnmimage._readheader: More than one statement on a single line
+C0103: 62:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 63:pnmimage._readheader: Operator not preceded by a space
+                self.header[k]=l.strip()
+                              ^
+C0322: 66:pnmimage._readheader: Operator not preceded by a space
+        dims=(self.header['DIMENSIONS'].split())
             ^
-C0322: 40:pnmimage.read: Operator not preceded by a space
+C0322: 67:pnmimage._readheader: Operator not preceded by a space
         self.dim1,self.dim2=int(dims[0]),int(dims[1])
                            ^
-C0322: 43:pnmimage.read: Operator not preceded by a space
-        m=int(self.header['Maxval'])
+C0322: 70:pnmimage._readheader: Operator not preceded by a space
+        m=int(self.header['MAXVAL'])
          ^
-C0103: 43:pnmimage.read: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 44:pnmimage.read: Operator not preceded by a space
+C0103: 70:pnmimage._readheader: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322: 71:pnmimage._readheader: Operator not preceded by a space
         if m<256:
             ^
-C0322: 45:pnmimage.read: Operator not preceded by a space
-            self.bytecode=Numeric.UInt8
+C0322: 72:pnmimage._readheader: Operator not preceded by a space
+            self.bytecode=N.uint8
                          ^
-C0322: 47:pnmimage.read: Operator not preceded by a space
-            self.bytecode=Numeric.UInt16
+C0322: 74:pnmimage._readheader: Operator not preceded by a space
+            self.bytecode=N.uint16
                          ^
-C0322: 49:pnmimage.read: Operator not preceded by a space
-            self.bytecode=Numeric.UInt32
+C0322: 76:pnmimage._readheader: Operator not preceded by a space
+            self.bytecode=N.uint32
                          ^
-E0602: 50:pnmimage.read: Undefined variable 'warn'
-C0322: 56:pnmimage.read: Operator not preceded by a space
-            self.data=eval('self.'+self.header['Subformat']+'dec(f,self.bytecode)')
+E0602: 77:pnmimage._readheader: Undefined variable 'warn'
+R0912: 35:pnmimage._readheader: Too many branches (13/12)
+C0111: 81:pnmimage.read: Missing docstring
+W0221: 81:pnmimage.read: Arguments number differs from overridden method
+C0324: 81:pnmimage.read: Comma not followed by a space
+    def read(self,fname,verbose=0):
+                 ^^
+C0322: 90:pnmimage.read: Operator not preceded by a space
+            self.data=eval('self.'+self.header['SUBFORMAT']+'dec(infile,self.bytecode)')
                      ^
-W0613: 26:pnmimage.read: Unused argument 'verbose'
-C0103: 62:pnmimage.P1dec: Invalid name "P1dec" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 62:pnmimage.P1dec: Missing docstring
-C0324: 62:pnmimage.P1dec: Comma not followed by a space
+W0613: 81:pnmimage.read: Unused argument 'verbose'
+C0103: 96:pnmimage.P1dec: Invalid name "P1dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 96:pnmimage.P1dec: Missing docstring
+C0324: 96:pnmimage.P1dec: Comma not followed by a space
     def P1dec(self,buf,bytecode):
                   ^^
-E0602: 63:pnmimage.P1dec: Undefined variable 'warn'
-R0201: 62:pnmimage.P1dec: Method could be a function
-W0613: 62:pnmimage.P1dec: Unused argument 'buf'
-W0613: 62:pnmimage.P1dec: Unused argument 'bytecode'
-C0103: 65:pnmimage.P3dec: Invalid name "P3dec" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 65:pnmimage.P3dec: Missing docstring
-C0324: 65:pnmimage.P3dec: Comma not followed by a space
-    def P3dec(self,buf,bytecode):
-                  ^^
-E0602: 66:pnmimage.P3dec: Undefined variable 'warn'
-R0201: 65:pnmimage.P3dec: Method could be a function
-W0613: 65:pnmimage.P3dec: Unused argument 'buf'
-W0613: 65:pnmimage.P3dec: Unused argument 'bytecode'
-C0103: 68:pnmimage.P2dec: Invalid name "P2dec" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 68:pnmimage.P2dec: Missing docstring
-C0324: 68:pnmimage.P2dec: Comma not followed by a space
-    def P2dec(self,buf,bytecode):
-                  ^^
-C0322: 69:pnmimage.P2dec: Operator not preceded by a space
-        data=Numeric.zeros((self.dim2,self.dim1))
+C0322: 97:pnmimage.P1dec: Operator not preceded by a space
+        data=N.zeros((self.dim2,self.dim1))
             ^
-C0322: 70:pnmimage.P2dec: Operator not preceded by a space
+C0322: 98:pnmimage.P1dec: Operator not preceded by a space
         i=0
          ^
-C0103: 71:pnmimage.P2dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 73:pnmimage.P2dec: Operator not preceded by a space
-                data[i,:]=Numeric.array(l.split()).astype(bytecode)
+C0103: 99:pnmimage.P1dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:101:pnmimage.P1dec: Operator not preceded by a space
+                data[i,:]=N.array(l.split()).astype(bytecode)
                          ^
-C0103: 78:pnmimage.P5dec: Invalid name "P5dec" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 78:pnmimage.P5dec: Missing docstring
-C0324: 78:pnmimage.P5dec: Comma not followed by a space
+C0103:106:pnmimage.P4dec: Invalid name "P4dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:106:pnmimage.P4dec: Missing docstring
+C0324:106:pnmimage.P4dec: Comma not followed by a space
+    def P4dec(self,buf,bytecode):
+                  ^^
+E0602:107:pnmimage.P4dec: Undefined variable 'warn'
+R0201:106:pnmimage.P4dec: Method could be a function
+W0613:106:pnmimage.P4dec: Unused argument 'buf'
+W0613:106:pnmimage.P4dec: Unused argument 'bytecode'
+C0103:109:pnmimage.P2dec: Invalid name "P2dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:109:pnmimage.P2dec: Missing docstring
+C0324:109:pnmimage.P2dec: Comma not followed by a space
+    def P2dec(self,buf,bytecode):
+                  ^^
+C0322:110:pnmimage.P2dec: Operator not preceded by a space
+        data=N.zeros((self.dim2,self.dim1))
+            ^
+C0322:111:pnmimage.P2dec: Operator not preceded by a space
+        i=0
+         ^
+C0103:112:pnmimage.P2dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:114:pnmimage.P2dec: Operator not preceded by a space
+                data[i,:]=N.array(l.split()).astype(bytecode)
+                         ^
+C0103:119:pnmimage.P5dec: Invalid name "P5dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:119:pnmimage.P5dec: Missing docstring
+C0324:119:pnmimage.P5dec: Comma not followed by a space
     def P5dec(self,buf,bytecode):
                   ^^
-C0322: 79:pnmimage.P5dec: Operator not preceded by a space
+C0322:120:pnmimage.P5dec: Operator not preceded by a space
         l=buf.read()
          ^
-C0103: 79:pnmimage.P5dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 81:pnmimage.P5dec: Operator not preceded by a space
-            data=Numeric.reshape(Numeric.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswapped()
+C0103:120:pnmimage.P5dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0322:122:pnmimage.P5dec: Operator not preceded by a space
+            data=N.reshape(N.fromstring(l,bytecode),[self.dim2, self.dim1]).byteswap()
                 ^
-C0111: 86:pnmimage.write: Missing docstring
-E0213: 86:pnmimage.write: Method should have "self" as first argument
-W0221: 86:pnmimage.write: Arguments number differs from overridden method
-E0602: 87:pnmimage.write: Undefined variable 'warn'
-W0611: 13: Unused import Image
+C0103:127:pnmimage.P3dec: Invalid name "P3dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:127:pnmimage.P3dec: Missing docstring
+C0324:127:pnmimage.P3dec: Comma not followed by a space
+    def P3dec(self,buf,bytecode):
+                  ^^
+C0103:131:pnmimage.P6dec: Invalid name "P6dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:131:pnmimage.P6dec: Missing docstring
+C0324:131:pnmimage.P6dec: Comma not followed by a space
+    def P6dec(self,buf,bytecode):
+                  ^^
+C0103:135:pnmimage.P7dec: Invalid name "P7dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111:135:pnmimage.P7dec: Missing docstring
+C0324:135:pnmimage.P7dec: Comma not followed by a space
+    def P7dec(self,buf,bytecode):
+                  ^^
+C0111:139:pnmimage.write: Missing docstring
+E0213:139:pnmimage.write: Method should have "self" as first argument
+W0221:139:pnmimage.write: Arguments number differs from overridden method
+E0602:140:pnmimage.write: Undefined variable 'warn'
+R0904: 24:pnmimage: Too many public methods (22/20)
+W0611: 15: Unused import Image
 
 
 Report
 ======
-53 statements analysed.
+89 statements analysed.
 
 Duplication
 -----------
@@ -138,9 +203,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -151,13 +216,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |59     |78.67 |NC       |NC         |
+|code      |97     |82.20 |59       |+38.00     |
 +----------+-------+------+---------+-----------+
-|docstring |10     |13.33 |NC       |NC         |
+|docstring |10     |8.47  |10       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |4      |5.33  |NC       |NC         |
+|comment   |8      |6.78  |4        |+4.00      |
 +----------+-------+------+---------+-----------+
-|empty     |2      |2.67  |NC       |NC         |
+|empty     |3      |2.54  |2        |+1.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -166,9 +231,11 @@ External dependencies
 ---------------------
 ::
 
+    numpy (pnmimage)
+    fabio 
+      \-fabioimage (pnmimage)
     PIL 
-      \-Image (fabio.pnmimage)
-    Numeric (fabio.pnmimage)
+      \-Image (pnmimage)
 
 
 
@@ -178,13 +245,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |7      |NC         |NC         |14.29       |57.14    |
+|method   |11     |7          |+4.00      |9.09        |63.64    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -195,13 +262,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |53     |NC       |NC         |
+|convention |86     |53       |+33.00     |
 +-----------+-------+---------+-----------+
-|refactor   |3      |NC       |NC         |
+|refactor   |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|warning    |10     |NC       |NC         |
+|warning    |7      |7        |=          |
 +-----------+-------+---------+-----------+
-|error      |5      |NC       |NC         |
+|error      |5      |6        |-1.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -212,40 +279,44 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0322      |23         |
+|C0322      |36         |
 +-----------+-----------+
-|C0103      |11         |
+|C0103      |20         |
 +-----------+-----------+
-|C0111      |7          |
+|C0111      |11         |
 +-----------+-----------+
-|C0301      |6          |
+|C0324      |9          |
 +-----------+-----------+
-|W0613      |5          |
+|C0301      |8          |
 +-----------+-----------+
-|C0324      |5          |
+|W0613      |3          |
 +-----------+-----------+
-|E0602      |4          |
+|E0602      |3          |
 +-----------+-----------+
 |W0221      |2          |
 +-----------+-----------+
-|R0201      |2          |
+|C0321      |2          |
 +-----------+-----------+
 |W0611      |1          |
 +-----------+-----------+
-|W0403      |1          |
-+-----------+-----------+
 |W0231      |1          |
++-----------+-----------+
+|R0912      |1          |
++-----------+-----------+
+|R0904      |1          |
 +-----------+-----------+
 |R0902      |1          |
 +-----------+-----------+
-|E0213      |1          |
+|R0201      |1          |
 +-----------+-----------+
-|C0321      |1          |
+|E1101      |1          |
++-----------+-----------+
+|E0213      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -7.17/10
+Your code has been rated at -3.71/10 (previous run: -7.74/10)
 

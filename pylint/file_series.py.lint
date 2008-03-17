@@ -1,14 +1,27 @@
-************* Module fabio.file_series
-C0103: 19:file_series: Invalid name "file_series" (should match [a-z_][a-zA-Z0-9]+$)
-R0904: 19:file_series: Too many public methods (22/20)
-C0103:105:numbered_file_series: Invalid name "numbered_file_series" (should match [a-z_][a-zA-Z0-9]+$)
-R0913:111:numbered_file_series.__init__: Too many arguments (6/5)
-R0904:105:numbered_file_series: Too many public methods (22/20)
+************* Module file_series
+C0301:143: Line too long (88/80)
+C0103: 23:file_series: Invalid name "file_series" (should match [a-z_][a-zA-Z0-9]+$)
+R0904: 23:file_series: Too many public methods (28/20)
+C0103:137:numbered_file_series: Invalid name "numbered_file_series" (should match [a-z_][a-zA-Z0-9]+$)
+R0913:143:numbered_file_series.__init__: Too many arguments (8/5)
+R0904:137:numbered_file_series: Too many public methods (28/20)
+C0103:161:filename_series: Invalid name "filename_series" (should match [a-z_][a-zA-Z0-9]+$)
+C0323:174:filename_series.previous: Operator not followed by a space
+        self.obj.num -=1
+                     ^^
+C0111:187:filename_series.next_image: Missing docstring
+C0111:189:filename_series.prev_image: Missing docstring
+C0111:191:filename_series.current_image: Missing docstring
+C0111:193:filename_series.jump_image: Missing docstring
+C0111:196:filename_series.next_object: Missing docstring
+C0111:199:filename_series.previous_object: Missing docstring
+C0111:202:filename_series.current_object: Missing docstring
+C0111:204:filename_series.jump_object: Missing docstring
 
 
 Report
 ======
-39 statements analysed.
+87 statements analysed.
 
 Duplication
 -----------
@@ -16,9 +29,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -29,14 +42,23 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |41     |37.27 |NC       |NC         |
+|code      |92     |49.73 |41       |+51.00     |
 +----------+-------+------+---------+-----------+
-|docstring |50     |45.45 |NC       |NC         |
+|docstring |64     |34.59 |50       |+14.00     |
 +----------+-------+------+---------+-----------+
-|comment   |3      |2.73  |NC       |NC         |
+|comment   |5      |2.70  |3        |+2.00      |
 +----------+-------+------+---------+-----------+
-|empty     |16     |14.55 |NC       |NC         |
+|empty     |24     |12.97 |16       |+8.00      |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (file_series)
+      \-openimage (file_series)
 
 
 
@@ -46,13 +68,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |100.00      |100.00   |
+|class    |3      |2          |+1.00      |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |15     |NC         |NC         |100.00      |0.00     |
+|method   |34     |15         |+19.00     |76.47       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -63,13 +85,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |2      |NC       |NC         |
+|convention |13     |2        |+11.00     |
 +-----------+-------+---------+-----------+
-|refactor   |3      |NC       |NC         |
+|refactor   |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|warning    |0      |NC       |NC         |
+|warning    |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -80,16 +102,22 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
+|C0111      |8          |
++-----------+-----------+
+|C0103      |3          |
++-----------+-----------+
 |R0904      |2          |
 +-----------+-----------+
-|C0103      |2          |
-+-----------+-----------+
 |R0913      |1          |
++-----------+-----------+
+|C0323      |1          |
++-----------+-----------+
+|C0301      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.72/10
+Your code has been rated at 8.16/10 (previous run: 8.72/10)
 

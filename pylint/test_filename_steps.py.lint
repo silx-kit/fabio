@@ -1,0 +1,120 @@
+************* Module test_filename_steps
+C0111:  1: Missing docstring
+C0103:  5:test_next: Invalid name "test_next" (should match [a-z_][a-zA-Z0-9]+$)
+C0111:  5:test_next: Missing docstring
+C0111:  6:test_next.test_next1: Missing docstring
+C0103: 14:test_prev: Invalid name "test_prev" (should match [a-z_][a-zA-Z0-9]+$)
+C0111: 14:test_prev: Missing docstring
+C0111: 15:test_prev.test_prev1: Missing docstring
+C0103: 23:test_jump: Invalid name "test_jump" (should match [a-z_][a-zA-Z0-9]+$)
+C0111: 23:test_jump: Missing docstring
+C0111: 24:test_jump.test_jump1: Missing docstring
+C0324: 25:test_jump.test_jump1: Comma not followed by a space
+        for name, res, num in [ [ "data0001.edf", "data99993.edf" ,99993 ],
+                                                                  ^^
+                [ "bob1.edf", "bob0.edf", 0 ],
+                [ "1.edf", "123456.edf" , 123456],
+                [ "mydata001.mar2300.gz", "mydata003.mar2300.gz", 3 ],
+                ]:
+C0322: 33: Operator not preceded by a space
+if __name__=="__main__":
+           ^^
+
+
+Report
+======
+16 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |28     |90.32 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |0      |0.00  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |0      |0.00  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |3      |9.68  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (test_filename_steps)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |3      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |12     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0111      |7          |
++-----------+-----------+
+|C0103      |3          |
++-----------+-----------+
+|C0324      |1          |
++-----------+-----------+
+|C0322      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 2.50/10
+

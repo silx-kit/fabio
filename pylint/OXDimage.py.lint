@@ -1,0 +1,297 @@
+************* Module OXDimage
+C0301: 66: Line too long (95/80)
+C0301: 67: Line too long (84/80)
+C0301: 68: Line too long (86/80)
+C0301: 69: Line too long (86/80)
+C0301: 70: Line too long (95/80)
+C0301: 71: Line too long (95/80)
+C0301: 72: Line too long (104/80)
+C0301: 73: Line too long (104/80)
+C0301: 75: Line too long (95/80)
+C0301: 76: Line too long (88/80)
+C0301: 77: Line too long (88/80)
+C0301: 85: Line too long (82/80)
+C0301:109: Line too long (85/80)
+C0301:110: Line too long (85/80)
+C0301:112: Line too long (82/80)
+C0301:113: Line too long (82/80)
+C0301:114: Line too long (81/80)
+C0301:118: Line too long (88/80)
+C0301:119: Line too long (88/80)
+C0301:120: Line too long (88/80)
+C0301:127: Line too long (83/80)
+C0301:129: Line too long (82/80)
+C0301:138: Line too long (85/80)
+C0103:  1: Invalid name "OXDimage" (should match (([a-z_][a-z0-9_]*)|([a-z][a-zA-Z0-9]+))$)
+C0103: 26:OXDimage: Invalid name "OXDimage" (should match [a-z_][a-zA-Z0-9]+$)
+C0111: 26:OXDimage: Missing docstring
+C0111: 27:OXDimage._readheader: Missing docstring
+C0324: 27:OXDimage._readheader: Comma not followed by a space
+    def _readheader(self,infile):
+                        ^^
+C0324: 54:OXDimage._readheader: Comma not followed by a space
+        self.header['Binning in x'] =  N.fromstring(block[0:2],N.uint16)[0]
+                                                              ^^
+C0324: 55:OXDimage._readheader: Comma not followed by a space
+        self.header['Binning in y'] =  N.fromstring(block[2:4],N.uint16)[0]
+                                                              ^^
+C0324: 56:OXDimage._readheader: Comma not followed by a space
+        self.header['Detector size x'] =  N.fromstring(block[22:24],N.uint16)[0]
+                                                                   ^^
+C0324: 57:OXDimage._readheader: Comma not followed by a space
+        self.header['Detector size y'] =  N.fromstring(block[24:26],N.uint16)[0]
+                                                                   ^^
+C0324: 58:OXDimage._readheader: Comma not followed by a space
+        self.header['Pixels in x'] =  N.fromstring(block[26:28],N.uint16)[0]
+                                                               ^^
+C0324: 59:OXDimage._readheader: Comma not followed by a space
+        self.header['Pixels in y'] =  N.fromstring(block[28:30],N.uint16)[0]
+                                                               ^^
+C0324: 60:OXDimage._readheader: Comma not followed by a space
+        self.header['No of pixels'] =  N.fromstring(block[36:40],N.uint32)[0]
+                                                                ^^
+C0324: 64:OXDimage._readheader: Comma not followed by a space
+        self.header['Gain'] =  N.fromstring(block[56:64],N.float)[0]
+                                                        ^^
+C0324: 65:OXDimage._readheader: Comma not followed by a space
+        self.header['Overflows flag'] =  N.fromstring(block[464:466],N.int16)[0]
+                                                                    ^^
+C0324: 66:OXDimage._readheader: Comma not followed by a space
+        self.header['Overflow after remeasure flag'] =  N.fromstring(block[466:468],N.int16)[0]
+                                                                                   ^^
+C0324: 67:OXDimage._readheader: Comma not followed by a space
+        self.header['Overflow threshold'] =  N.fromstring(block[472:476],N.int32)[0]
+                                                                        ^^
+C0324: 68:OXDimage._readheader: Comma not followed by a space
+        self.header['Exposure time in sec'] =  N.fromstring(block[480:488],N.float)[0]
+                                                                          ^^
+C0324: 69:OXDimage._readheader: Comma not followed by a space
+        self.header['Overflow time in sec'] =  N.fromstring(block[488:496],N.float)[0]
+                                                                          ^^
+C0324: 70:OXDimage._readheader: Comma not followed by a space
+        self.header['Monitor counts of raw image 1'] =  N.fromstring(block[528:532],N.int32)[0]
+                                                                                   ^^
+C0324: 71:OXDimage._readheader: Comma not followed by a space
+        self.header['Monitor counts of raw image 2'] =  N.fromstring(block[532:536],N.int32)[0]
+                                                                                   ^^
+C0324: 72:OXDimage._readheader: Comma not followed by a space
+        self.header['Monitor counts of overflow raw image 1'] =  N.fromstring(block[536:540],N.int32)[0]
+                                                                                            ^^
+C0324: 73:OXDimage._readheader: Comma not followed by a space
+        self.header['Monitor counts of overflow raw image 2'] =  N.fromstring(block[540:544],N.int32)[0]
+                                                                                            ^^
+C0324: 74:OXDimage._readheader: Comma not followed by a space
+        self.header['Unwarping'] =  N.fromstring(block[544:548],N.int32)[0]
+                                                               ^^
+C0324: 75:OXDimage._readheader: Comma not followed by a space
+        self.header['Detector type'] =  DETECTOR_TYPES[N.fromstring(block[548:552],N.int32)[0]]
+                                                                                  ^^
+C0324: 76:OXDimage._readheader: Comma not followed by a space
+        self.header['Real pixel size x (mm)'] =  N.fromstring(block[568:576],N.float)[0]
+                                                                            ^^
+C0324: 77:OXDimage._readheader: Comma not followed by a space
+        self.header['Real pixel size y (mm)'] =  N.fromstring(block[576:584],N.float)[0]
+                                                                            ^^
+C0324: 86:OXDimage._readheader: Comma not followed by a space
+        start_angles_step = N.fromstring(block[284:304],N.int32)
+                                                       ^^
+C0324: 87:OXDimage._readheader: Comma not followed by a space
+        end_angles_step = N.fromstring(block[324:344],N.int32)
+                                                     ^^
+C0324: 88:OXDimage._readheader: Comma not followed by a space
+        step2rad = N.fromstring(block[368:408],N.float)
+                                              ^^
+C0324:102:OXDimage._readheader: Comma not followed by a space
+        zero_correction_soft_step = N.fromstring(block[512:532],N.int32)
+                                                               ^^
+C0324:109:OXDimage._readheader: Comma not followed by a space
+        self.header['Beam rot in deg (e2)'] = N.fromstring(block[552:560],N.float)[0]
+                                                                         ^^
+C0324:110:OXDimage._readheader: Comma not followed by a space
+        self.header['Beam rot in deg (e3)'] = N.fromstring(block[560:568],N.float)[0]
+                                                                         ^^
+C0324:112:OXDimage._readheader: Comma not followed by a space
+        self.header['Wavelength alpha1'] = N.fromstring(block[568:576],N.float)[0]
+                                                                      ^^
+C0324:113:OXDimage._readheader: Comma not followed by a space
+        self.header['Wavelength alpha2'] = N.fromstring(block[576:584],N.float)[0]
+                                                                      ^^
+C0324:114:OXDimage._readheader: Comma not followed by a space
+        self.header['Wavelength alpha'] = N.fromstring(block[584:592],N.float)[0]
+                                                                     ^^
+C0324:115:OXDimage._readheader: Comma not followed by a space
+        self.header['Wavelength beta'] = N.fromstring(block[592:600],N.float)[0]
+                                                                    ^^
+C0324:118:OXDimage._readheader: Comma not followed by a space
+        self.header['Detector tilt e1 in deg'] = N.fromstring(block[640:648],N.float)[0]
+                                                                            ^^
+C0324:119:OXDimage._readheader: Comma not followed by a space
+        self.header['Detector tilt e2 in deg'] = N.fromstring(block[648:656],N.float)[0]
+                                                                            ^^
+C0324:120:OXDimage._readheader: Comma not followed by a space
+        self.header['Detector tilt e3 in deg'] = N.fromstring(block[656:664],N.float)[0]
+                                                                            ^^
+C0324:124:OXDimage._readheader: Comma not followed by a space
+        self.header['Beam center x'] = N.fromstring(block[664:672],N.float)[0]
+                                                                  ^^
+C0324:125:OXDimage._readheader: Comma not followed by a space
+        self.header['Beam center y'] = N.fromstring(block[672:680],N.float)[0]
+                                                                  ^^
+C0324:127:OXDimage._readheader: Comma not followed by a space
+        self.header['Alpha angle in deg'] = N.fromstring(block[672:680],N.float)[0]
+                                                                       ^^
+C0324:129:OXDimage._readheader: Comma not followed by a space
+        self.header['Beta angle in deg'] = N.fromstring(block[672:680],N.float)[0]
+                                                                      ^^
+C0324:132:OXDimage._readheader: Comma not followed by a space
+        self.header['Distance in mm'] = N.fromstring(block[712:720],N.float)[0]
+                                                                   ^^
+C0324:135:OXDimage._readheader: Comma not followed by a space
+        self.header['Stat: Min '] = N.fromstring(block[0:4],N.int32)[0]
+                                                           ^^
+C0324:136:OXDimage._readheader: Comma not followed by a space
+        self.header['Stat: Max '] = N.fromstring(block[4:8],N.int32)[0]
+                                                           ^^
+C0324:137:OXDimage._readheader: Comma not followed by a space
+        self.header['Stat: Average '] =  N.fromstring(block[24:32],N.float)[0]
+                                                                  ^^
+C0324:138:OXDimage._readheader: Comma not followed by a space
+        self.header['Stat: Stddev '] =  N.sqrt(N.fromstring(block[32:40],N.float)[0])
+                                                                        ^^
+C0324:139:OXDimage._readheader: Comma not followed by a space
+        self.header['Stat: Skewness '] =  N.fromstring(block[40:48],N.float)[0]
+                                                                   ^^
+R0915: 27:OXDimage._readheader: Too many statements (83/50)
+C0103:169:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:171:OXDimage.read: Comma not followed by a space
+            diffs = N.fromstring(diffs,bytecode)
+                                      ^^
+C0103:178:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:180:OXDimage.read: Comma not followed by a space
+                over_short = N.fromstring(over_short,bytecode)
+                                                    ^^
+C0103:184:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:186:OXDimage.read: Comma not followed by a space
+                over_long = N.fromstring(over_long,bytecode)
+                                                  ^^
+C0103:189:OXDimage.read: Invalid name "js" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:190:OXDimage.read: Invalid name "jl" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:193:OXDimage.read: Invalid name "d" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:195:OXDimage.read: Invalid name "d" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:196:OXDimage.read: Invalid name "js" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:198:OXDimage.read: Invalid name "d" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:199:OXDimage.read: Invalid name "jl" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:205:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:206:OXDimage.read: Comma not followed by a space
+            block = N.fromstring(infile.read(ReadBytes),bytecode)
+                                                       ^^
+C0324:213:OXDimage.read: Comma not followed by a space
+            self.data = N.reshape(block.astype(bytecode),[self.dim2, self.dim1])
+                                                        ^^
+R0915:145:OXDimage.read: Too many statements (56/50)
+W0611: 17: Unused import logging
+
+
+Report
+======
+142 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |151    |79.06 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |19     |9.95  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |15     |7.85  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |6      |3.14  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-fabioimage (OXDimage)
+    numpy (OXDimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |NC         |NC         |50.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |88     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |2      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|C0324      |50         |
++-----------+-----------+
+|C0301      |23         |
++-----------+-----------+
+|C0103      |13         |
++-----------+-----------+
+|R0915      |2          |
++-----------+-----------+
+|C0111      |2          |
++-----------+-----------+
+|W0611      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 3.59/10
+

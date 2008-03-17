@@ -1,13 +1,13 @@
-************* Module fabio.brukerimage
-W0511:132: FIXME - this should call edfimage.write if that is wanted?
-W0511:160: FIXME: what is this? """
-W0612:111:brukerimage.read: Unused variable 'i'
-W0612:172:test: Unused variable 'res'
+************* Module brukerimage
+W0511:142: FIXME - this should call edfimage.write if that is wanted?
+W0511:170: FIXME: what is this? """
+W0612:121:brukerimage.read: Unused variable 'i'
+W0612:182:test: Unused variable 'res'
 
 
 Report
 ======
-97 statements analysed.
+100 statements analysed.
 
 Duplication
 -----------
@@ -15,9 +15,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -28,13 +28,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |108    |63.91 |NC       |NC         |
+|code      |111    |62.36 |108      |+3.00      |
 +----------+-------+------+---------+-----------+
-|docstring |37     |21.89 |NC       |NC         |
+|docstring |37     |20.79 |37       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |5      |2.96  |NC       |NC         |
+|comment   |7      |3.93  |5        |+2.00      |
 +----------+-------+------+---------+-----------+
-|empty     |19     |11.24 |NC       |NC         |
+|empty     |23     |12.92 |19       |+4.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -43,7 +43,10 @@ External dependencies
 ---------------------
 ::
 
-    Numeric (fabio.brukerimage)
+    fabio 
+      \-readbytestream (brukerimage)
+      \-fabioimage (brukerimage)
+    numpy (brukerimage)
 
 
 
@@ -53,13 +56,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |100.00      |0.00     |
+|method   |4      |4          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |100.00      |0.00     |
+|function |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -70,13 +73,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |NC       |NC         |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |4      |NC       |NC         |
+|warning    |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -96,5 +99,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.59/10
+Your code has been rated at 9.60/10 (previous run: 9.59/10)
 
