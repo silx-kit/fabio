@@ -25,7 +25,7 @@ from fabio.fabioimage import fabioimage
 
 class GEimage(fabioimage):
 
-    _need_a_seek_to_read = True
+#    _need_a_seek_to_read = True
 
     def _readheader(self,infile):
         
@@ -465,7 +465,7 @@ class GEimage(fabioimage):
         """
         self.header = {}
         self.resetvals()
-        infile = self._open(fname)
+        infile = self._open(fname, "rb")
         self._readheader(infile)
         # Compute image size
         try:

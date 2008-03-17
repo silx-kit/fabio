@@ -65,6 +65,6 @@ for im in images:
     print ("%.4f "*nt + " "*7*ns)%tuple(times[im]),"%8.3f"%(MB), im
 
     cProfile.run("fabio.openimage.openimage(im)","stats")
-    p = pstats.Stats("stats")
+    p = pstats.Stats("stats",stream = open("profile.txt","a"))
     p.strip_dirs().sort_stats(-1).print_stats()
     

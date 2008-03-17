@@ -89,7 +89,7 @@ class edfimage(fabioimage):
         """
         self.header = {}
         self.resetvals()
-        infile = self._open(fname)
+        infile = self._open(fname,"rb")
         self._readheader(infile)
         # Compute image size
         try:
