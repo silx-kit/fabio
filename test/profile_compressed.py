@@ -93,28 +93,37 @@ for s in cl:
 
 if sys.platform == 'win32':
     start = time.time()
-    os.system("gzip -cd prof.dat.gz > junk")
-    print "gzip takes",time.time()-start,"seconds via shell"
+    s = "gzip -cd prof.dat.gz > junk"
+    os.system(s)
+    print s,":",time.time()-start,"seconds via shell"
     start = time.time()
-    os.system("bzip2 -cd prof.dat.bz2 > junk")
-    print "bzip2 takes",time.time()-start,"seconds via shell"
+    s  = "bzip2 -cd prof.dat.bz2 > junk"
+    os.system(s)
+    print s,":",time.time()-start,"seconds via shell"
     start = time.time()
-    os.system("gzip -cd prof2.dat.gz > junk")
-    print "gzip takes",time.time()-start,"seconds via shell"
+    s = "gzip -cd prof2.dat.gz > junk"
+    os.system(s)
+    print s,":",time.time()-start,"seconds via shell"
     start = time.time()
-    os.system("bzip2 -cd prof2.dat.bz2 > junk")
-    print "bzip2 takes",time.time()-start,"seconds via shell"
+    s = "bzip2 -cd prof2.dat.bz2 > junk"
+    os.system(s)
+    print s,":",time.time()-start,"seconds via shell"
     os.remove("junk")
 else:
-    print "Time shell gzip"
     sys.stdout.flush()
-    os.system("time gzip -cd prof.dat.gz > /dev/null")
-    print "Time shell bzip2"
+    s = "time gzip -cd prof.dat.gz > /dev/null"
+    print "Time shell gzip:",s
+    os.system(s)
     sys.stdout.flush()
-    os.system("time bzip2 -cd prof.dat.bz2 > /dev/null")
+    s = "time bzip2 -cd prof.dat.bz2 > /dev/null"
+    print "Time shell bzip2:",s
+    os.system(s)
     sys.stdout.flush()
-    os.system("time gzip -cd prof2.dat.gz > /dev/null")
-    print "Time shell bzip2"
+    s = "time gzip -cd prof2.dat.gz > /dev/null"
+    print "Time shell gzip:",s
+    os.system(s)
     sys.stdout.flush()
-    os.system("time bzip2 -cd prof2.dat.bz2 > /dev/null")
+    s = "time bzip2 -cd prof2.dat.bz2 > /dev/null"
+    print "Time shell bzip2:",s
+    os.system(s)
 
