@@ -19,7 +19,7 @@ print "Fabio  : Time for fabio to read the image"
 print "Shell  : Time for shell to do decompression"
 print "Python : Time for python to do decompression\n"
 
-print "I/O 1  I/O 2  Fabio  Shell  Python"
+print "I/O 1  I/O 2  Fabio  Shell  Python   Size/MB"
 for im in images:
     # Network/disk io time first
     start = time.clock()
@@ -47,7 +47,7 @@ for im in images:
         times[im].append( time.clock()-start )  
         nt += 1; ns -= 1
         start = time.clock()
-        the_file = gzip.GzipFile(im).read()
+        the_file = gzip.GzipFile(im).read(1024*1024*20)
         times[im].append( time.clock()-start )  
         nt += 1; ns -= 1
     if im[-4:] == '.bz2':
@@ -56,11 +56,11 @@ for im in images:
         times[im].append( time.clock()-start )
         nt += 1 ; ns -= 1
         start = time.clock()
-        the_file = bz2.BZ2File(im).read()
+        the_file = bz2.BZ2File(im).read(1024*1024*20)
         times[im].append( time.clock()-start )  
         nt += 1; ns -= 1
-    # Speed ratings in megabytes per second
-    len(the_file) / 1024 / 1024
+    # Speed ratings in megabytes per second (for fabio)
+    MB = len(the_file) / 1024.0 / 1024.0
 
-    print ("%.4f "*nt + " "*7*ns)%tuple(times[im]), im
+    print ("%.4f "*nt + " "*7*ns)%tuple(times[im]),"%8.3f"%(MB), im
     
