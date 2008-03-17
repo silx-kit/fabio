@@ -1,6 +1,6 @@
 
 cd ..
-export PYT=fable.python
+export PYT=python2.5
 $PYT setup.py build
 export PYTHONPATH=../build/lib.linux-i686-2.5
 cd test
