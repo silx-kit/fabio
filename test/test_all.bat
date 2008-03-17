@@ -22,4 +22,5 @@ cd test
 %PYT% testtifgz.py
 
 %PYT% test_all_images.py > win32_benchmark
+%PYT% benchheader.py > win32_benchheaders
 :END
