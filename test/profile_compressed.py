@@ -70,20 +70,20 @@ del p
 
 
 import timeit
-cl = ["ret = gzip.GzipFile(      'prof.dat.gz ','rb').read()",
-      "ret = os.popen(  'gzip -dc prof.dat.gz ','rb').read()",
+cl = ["ret = gzip.GzipFile(      'prof.dat.gz' ,'rb').read()",
+      "ret = os.popen(  'gzip -dc prof.dat.gz' ,'rb').read()",
       "ret = bz2.BZ2File(        'prof.dat.bz2','rb').read()",
       "ret = os.popen( 'bzip2 -dc prof.dat.bz2','rb').read()",
-      "ret = gzip.GzipFile(     'prof2.dat.gz ','rb').read()",
-      "ret = os.popen( 'gzip -dc prof2.dat.gz ','rb').read()",
+      "ret = gzip.GzipFile(     'prof2.dat.gz' ,'rb').read()",
+      "ret = os.popen( 'gzip -dc prof2.dat.gz' ,'rb').read()",
       "ret = bz2.BZ2File(       'prof2.dat.bz2','rb').read()",
       "ret = os.popen('bzip2 -dc prof2.dat.bz2','rb').read()",
     ]
 if sys.platform != "win32":
-    cl.append("ret = os.popen(  'gzip -dc prof.dat.gz ','rb',2**20).read()")
+    cl.append("ret = os.popen(  'gzip -dc prof.dat.gz' ,'rb',2**20).read()")
     cl.append("ret = os.popen( 'bzip2 -dc prof.dat.bz2','rb',2**20).read()")
-    cl.append("ret = os.popen( 'gzip -dc prof2.dat.gz ','rb',2**20).read()")
-    cl.append("ret = os.popen(' bzip2 -dc pro2.dat.bz2','rb',2**20).read()")
+    cl.append("ret = os.popen( 'gzip -dc prof2.dat.gz' ,'rb',2**20).read()")
+    cl.append("ret = os.popen(' bzip2 -dc prof2.dat.bz2','rb',2**20).read()")
 
 for s in cl:
     t = timeit.Timer(s,setup="import os, gzip, bz2")
