@@ -1,7 +1,11 @@
 
 
 
-import glob, os, time, fabio.openimage, gzip, bz2, cProfile, pstats, sys
+import glob, os, time, fabio.openimage, gzip, bz2,  pstats, sys
+try:
+    import  cProfile
+except:
+    import  profile as cProfile 
 
 times = {}
 images = []
@@ -76,6 +80,9 @@ for im in images:
         raise
 
     cProfile.run("fabio.openimage.openimage(im)","stats")
-    p = pstats.Stats("stats",stream = open("profile.txt","a"))
+    p = pstats.Stats("stats")
+    # Hack around python2.4 
+    s = sys.stdout
+    sys.stdout = open("profile.txt","a")
     p.strip_dirs().sort_stats(-1).print_stats()
-    
+    sys.stdout = s

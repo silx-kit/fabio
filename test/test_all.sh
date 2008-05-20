@@ -1,8 +1,8 @@
 
 cd ..
-export PYT=python2.5
+export PYT=python
 $PYT setup.py build
-export PYTHONPATH=../build/lib.linux-i686-2.5
+export PYTHONPATH=../build/lib.linux-i686-2.4
 cd test
 
 # ls *.py | awk '{print "$PYT",$1}'
