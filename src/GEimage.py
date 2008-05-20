@@ -38,9 +38,9 @@ class GEimage(fabioimage):
         #   = means byte order is native
         
         self.header['HeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
-        self.header['HeaderSizeInBytes'] = N.fromstring(infile.read(4),N.uint32)[0]
+        self.header['HeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
         self.header['UserHeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
-        self.header['UserHeaderSizeInBytes'] = N.fromstring(infile.read(4),N.uint32)[0]
+        self.header['UserHeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
         
         self.header['NumberOfFrames'] = N.fromstring(infile.read(2),N.uint16)[0]
         self.header['NumberOfRowsInFrame'] = N.fromstring(infile.read(2),N.uint16)[0]
