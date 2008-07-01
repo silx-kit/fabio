@@ -159,7 +159,9 @@ class brukerimage(fabioimage):
         out = (4096-i)*' '
         outfile.write(out)
         outfile.write('}\n')
-        if self.header["ByteOrder"] == "LowByteFirst":
+        # Assumes a short-circuiting if / or ...
+        if not self.header.has_key("ByteOrder") or \
+               self.header["ByteOrder"] == "LowByteFirst":
             outfile.write(self.data.astype(N.uint16).tostring())
         else:
             outfile.write(self.data.byteswap().astype(
