@@ -36,7 +36,8 @@ MINIMUM_KEYS = ['HeaderID',
                 'ByteOrder',
                 'DataType',
                 'Dim_1',
-                'Dim_2']
+                'Dim_2',
+                'Size'] # Size is thought to be essential for writing at least
 
 DEFAULT_VALUES = {"HeaderID":  "EH:000001:000000:000000",
                   "Image":   "1",
@@ -57,15 +58,16 @@ class edfimage(fabioimage):
 
         TODO : test for minimal attributes?
         """
-        block = infile.read(1024)
+        BLOCKSIZE = 512
+        block = infile.read(BLOCKSIZE)
         if block[:4].find("{") < 0 :
             # This does not look like an edf file
             logging.warning("no opening {. Corrupt header of EDF file " + \
                             str(infile.name))
 
         while '}' not in block:
-            block = block + infile.read(1024)
-            if len(block) > 1024*20:
+            block = block + infile.read(BLOCKSIZE)
+            if len(block) > BLOCKSIZE*20:
                 raise Exception("Runaway header in EDF file")
         start , end = block.find("{")+1, block.find("}")
         for line in block[start:end].split(';'):
@@ -198,7 +200,7 @@ class edfimage(fabioimage):
         outfile.write('{\n') # Header start
         i = 4          # 2 so far, 2 to come at the end
         for k in self.header_keys:
-            out = (("%s = %s;\n") % (k, self.header[k]))
+            out = (("% 20s = %s ;\n") % (k, self.header[k]))
             i = i + len(out)
             outfile.write(out)
         # if additional items in the header just write them out in the
