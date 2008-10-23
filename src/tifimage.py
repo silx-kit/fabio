@@ -40,6 +40,16 @@ class tifimage(fabioimage):
         except:
             pass
 
+    def _readheader(self,infile):
+        # read the first 32 bytes to determine size
+        header = N.fromstring(infile.read(64),N.uint16)
+        self.dim1 = int(header[9])
+        self.dim2 = int(header[15])
+        self.nbits = int(header[21]) # number of bits
+
+        pass
+
+
     def read(self, fname):
         """
         The fabian read was reading a PIL image
@@ -48,7 +58,40 @@ class tifimage(fabioimage):
         infile = self._open(fname,"rb")
         self._readheader(infile)
         infile.seek(0)
-        self.pilimage = Image.open(infile)
+        try:
+            self.pilimage = Image.open(infile)
+        except:
+            infile.seek(0)
+            raw_data = infile.read()
+            header_bytes = len(raw_data) - (self.dim1*self.dim2*self.nbits)/8
+            if self.nbits == 16: # Probably uint16
+                print 'WARNING USING FIT2D 16 BIT TIFF READING - EXPERIMENTAL'
+                self.pilimage = Image.frombuffer("F",
+                                         (self.dim1,self.dim2),
+                                         raw_data[header_bytes:],
+                                         "raw",
+                                         "I;16",
+                                         0, 1)
+                self.bpp = 2
+                self.data = N.fromstring(raw_data[header_bytes:],
+                                         N.uint16)
+
+            elif self.nbits == 32: # Probably uint16
+                print 'WARNING USING FIT2D 32 BIT FLOAT TIFF READING - EXPERIMENTAL'
+                self.pilimage = Image.frombuffer("F",
+                                         (self.dim1,self.dim2),
+                                         raw_data[header_bytes:],
+                                         "raw",
+                                         "F",
+                                         0, 1)
+                self.bpp = 4
+                self.data = N.fromstring(raw_data[header_bytes:],
+                                               N.float32)
+                self.data = N.reshape( self.data, (self.dim2, self.dim1))
+                self.resetvals()
+                return self
+
+            
         # For some odd reason the getextrema does not work on unsigned 16 bit
         # but it does on 32 bit images, hence convert if 16 bit
         if TIFF_TO_NUMERIC.has_key(self.pilimage.mode) and \
