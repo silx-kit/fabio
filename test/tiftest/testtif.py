@@ -2,8 +2,8 @@
 
 import glob, os, fabio.openimage, libtiff3ctypes
 
-
-fl = glob.glob( os.path.join("libtiffpic","*.tif"))
+fl = ['fit2d.tif']
+fl += glob.glob( os.path.join("libtiffpic","*.tif"))
 fl += glob.glob( os.path.join("libtiffpic","depth","*.tif"))
 
 passed=0
