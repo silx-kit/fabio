@@ -40,7 +40,7 @@ class tifimage(fabioimage):
         except:
             pass
 
-    def _readheader(self,infile):
+
         # read the first 32 bytes to determine size
         header = N.fromstring(infile.read(64),N.uint16)
         self.dim1 = int(header[9])
