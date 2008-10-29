@@ -1,12 +1,4 @@
-
-
-
-
-
-
-
 import re, os # -> move elsewhere?
-
 
 def construct_filename(*args, **kwds):
     raise Exception("You probably want fabio.jump_filename")
@@ -183,8 +175,14 @@ def deconstruct_filename(filename):
                 typ = ['bruker']
                 stem = ".".join(parts[:-1])+"."
             except:
-                # unregistered type??
-                raise
+                typ = None
+                extn = "." + parts[-1] + extn
+                try:
+                    stem , numstring, postnum = numstem(".".join(parts[:-1]))
+                    num = int(numstring)
+                    ndigit = len(numstring)
+                except:
+                    raise
             #            raise Exception("Cannot decode "+filename)
     obj = filename_object( stem,
             num = num,

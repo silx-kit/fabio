@@ -91,7 +91,7 @@ class fabioimage:
                                          "raw",
                                          mode2,
                                          0,
-                                         1)
+                                         -1)
 
         return self.pilimage
 
