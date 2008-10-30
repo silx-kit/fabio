@@ -47,8 +47,6 @@ class tifimage(fabioimage):
         self.dim2 = int(header[15])
         self.nbits = int(header[21]) # number of bits
 
-        pass
-
 
     def read(self, fname):
         """
