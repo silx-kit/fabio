@@ -36,7 +36,7 @@ class fabioimage:
     _need_a_seek_to_read = False
     _need_a_real_file = False
 
-    def __init__(self, data = None , header = {}):
+    def __init__(self, data = None , header = None):
         """
         Set up initial values
         """
@@ -45,7 +45,10 @@ class fabioimage:
                             "data should be numpy array")
         self.data = data
         self.pilimage = None
-        self.header = header
+        if header is None:
+            self.header = {}
+        else:
+            self.header = header
         self.header_keys = self.header.keys() # holds key ordering
         if data is not None:
             self.dim1, self.dim2 = data.shape
