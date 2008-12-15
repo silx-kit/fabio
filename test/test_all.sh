@@ -7,6 +7,7 @@ cd test
 
 # ls *.py | awk '{print "$PYT",$1}'
 
+$PYT testheadernotsingleton.py
 $PYT testadscimage.py
 $PYT testbrukerimage.py
 $PYT testedfimage.py

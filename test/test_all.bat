@@ -4,7 +4,7 @@ set PYT=c:\python25\python
 set PYTHONPATH=..\build\lib.win32-2.5
 cd test
 
-
+%PYT% testheadernotsingleton.py
 %PYT% testadscimage.py
 %PYT% testbrukerimage.py
 %PYT% testedfimage.py
