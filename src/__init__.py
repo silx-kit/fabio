@@ -1,3 +1,4 @@
+
 import re, os # -> move elsewhere?
 
 def construct_filename(*args, **kwds):
@@ -6,7 +7,7 @@ def construct_filename(*args, **kwds):
 
 
 FILETYPES = {
-    # extension XXXimage fabioclass
+    # extension NNNimage fabioclass
     # type consistency - always use a list if one case is
     'edf'    : ['edf'],
     'cor'    : ['edf'],
@@ -31,23 +32,27 @@ for key in FILETYPES.keys():
 
 # Compressors
 
-COMPRESSORS = {
-    '.bz2' : None,
-    '.gz' : None
-    }
+COMPRESSORS = {}
 
 try:
     lines = os.popen("gzip -h 2>&1").read()
+    # Looking for "usage"
     if "sage" in lines:
         COMPRESSORS['.gz'] = 'gzip -dc '
+    else:
+        COMPRESSORS['.gz'] = None
 except:
-    pass
+    COMPRESSORS['.gz'] = None
+
 try:
     lines = os.popen("bzip2 -h 2>&1").read()
+    # Looking for "usage" 
     if "sage" in lines:
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
+    else:
+        COMPRESSORS['.bz2'] = None
 except:
-    pass
+    COMPRESSORS['.bz2'] = None
 
 # print COMPRESSORS
     
@@ -83,14 +88,17 @@ class filename_object:
         #print self.str()
 
     def str(self):
-        return "stem %s, num %s format %s extension %s postnum = %s digits %s dir %s"%tuple([
-            str(x) for x in [self.stem , 
-                self.num , 
-                self.format , 
-                self.extension , 
-                self.postnum ,
-                self.digits , 
-                self.directory ] ] )
+        """ Return a string representation """
+        fmt = "stem %s, num %s format %s extension %s " + \
+                "postnum = %s digits %s dir %s" 
+        return fmt % tuple([str(x) for x in [
+                    self.stem , 
+                    self.num , 
+                    self.format , 
+                    self.extension , 
+                    self.postnum ,
+                    self.digits , 
+                    self.directory ] ] )
 
         
     def tostring(self):
@@ -113,17 +121,15 @@ class filename_object:
 def numstem(name):
     """ cant see how to do without reversing strings
     Match 1 or more digits going backwards from the end of the string
-    
     """
-    import re
-    reg=re.compile(r"^(.*?)(-?[0-9]{0,9})(\D*)$")
+    reg = re.compile(r"^(.*?)(-?[0-9]{0,9})(\D*)$")
     #reg = re.compile("""(\D*)(\d\d*)(\w*)""")
     try:
         res = reg.match(name).groups()
         #res = reg.match(name[::-1]).groups()
         #return [ r[::-1] for r in res[::-1]]
         if len(res[0]) == len(res[1]) == 0: # Hack for file without number 
-            return [res[2],'', '']
+            return [res[2], '', '']
         return [ r for r in res]
     except AttributeError: # no digits found
         return [name, "", ""]
@@ -141,10 +147,10 @@ def deconstruct_filename(filename):
     extn = ""
     postnum = ""
     ndigit = 4
-    if parts[-1] in ["gz","bz2"]:
+    if parts[-1] in ["gz", "bz2"]:
         extn = "."+parts[-1]
         parts = parts[:-1]
-        compressed=True
+        compressed = True
     if parts[-1] in FILETYPES.keys():
         typ = FILETYPES[parts[-1]]
         extn = "." + parts[-1] + extn
@@ -195,12 +201,12 @@ def deconstruct_filename(filename):
     return obj
 
 
-def next_filename(name, padding=True):
+def next_filename(name, padding = True):
     """ increment number """
     obj = deconstruct_filename(name)
     obj.num += 1
     if not padding:
-        obj.ndigits = 0
+        obj.digits = 0
     return obj.tostring()
 
 def previous_filename(name, padding=True):
@@ -208,7 +214,7 @@ def previous_filename(name, padding=True):
     obj = deconstruct_filename(name)
     obj.num -= 1
     if not padding:
-        obj.ndigits = 0
+        obj.digits = 0
     return obj.tostring()
 
 def jump_filename(name, num, padding=True):
@@ -216,7 +222,7 @@ def jump_filename(name, num, padding=True):
     obj = deconstruct_filename(name)
     obj.num = num
     if not padding:
-        obj.ndigits = 0
+        obj.digits = 0
     return obj.tostring()
 
 

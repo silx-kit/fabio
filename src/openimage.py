@@ -57,11 +57,11 @@ def do_magic(byts):
         if byts.find(magic) == 0:
             return format
         if 0: # debugging - bruker needed 18 bytes below
-            print "m:",magic,"f:",format,
-            print "bytes:",magic,"len(bytes)",len(magic),
-            print "found:",byts.find(magic) 
+            print "m:", magic, "f:", format,
+            print "bytes:", magic, "len(bytes)", len(magic),
+            print "found:", byts.find(magic) 
             for i in range(len(magic)):
-                print ord(magic[i]),ord(byts[i]),magic[i],byts[i]
+                print ord(magic[i]), ord(byts[i]), magic[i], byts[i]
     raise Exception("Could not interpret magic string")
 
 def openimage(filename):
@@ -79,13 +79,15 @@ def openheader(filename):
 
 
 def _openimage(filename):
-    """ determine which format for a filename
-    and return appropriate class """
+    """ 
+    determine which format for a filename
+    and return appropriate class which can be used for opening the image
+    """
     try:
         imo = fabioimage()
         byts = imo._open(filename).read(18)
         filetype = do_magic(byts)
-        filenumber = getnum(filename)
+        #UNUSED filenumber = getnum(filename)
     except IOError:
         # File probably does not exist
         raise
@@ -95,9 +97,9 @@ def _openimage(filename):
             if len(file_obj.format) != 1 and \
                     type(file_obj.format) != type(["list"]):
                 # one of OXD/ ADSC - should have got in previous
-                raise Exception("openimage failed on magic bytes and name guess")
+                raise Exception("openimage failed on magic bytes & name guess")
             filetype = file_obj.format
-            filenumber = file_obj.num
+            #UNUSED filenumber = file_obj.num
         except:
             import traceback
             traceback.print_exc()

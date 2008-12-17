@@ -140,7 +140,8 @@ class numbered_file_series(file_series):
     mydata0002.edf = "mydata" + 0002 + ".edf"
     mydata0003.edf = "mydata" + 0003 + ".edf"
     """
-    def __init__(self, stem, first, last, extension, digits = 4, padding='Y', step = 1):
+    def __init__(self, stem, first, last, extension, 
+                 digits = 4, padding='Y', step = 1):
         """
         stem - first part of the name
         step - in case of every nth file
@@ -171,7 +172,7 @@ class filename_series:
 
     def previous(self):
         """ decrement number """
-        self.obj.num -=1
+        self.obj.num -= 1
         return self.obj.tostring()
 
     def current(self):
@@ -185,23 +186,31 @@ class filename_series:
 
     # image methods
     def next_image(self):
+        """ returns the next image as a fabioimage """
         return openimage(self.next())
     def prev_image(self):
+        """ returns the previos image as a fabioimage """
         return openimage(self.previous())
     def current_image(self):
+        """ returns the current image as a fabioimage"""
         return openimage(self.current())
-    def jump_image(self):
-        return openimage(self.jump())
+    def jump_image(self, num):
+        """ returns the image number as a fabioimage"""
+        return openimage(self.jump(num))
     # object methods
     def next_object(self):
+        """ returns the next filename as a fabio.filename_object"""
         self.obj.num += 1
         return self.obj
     def previous_object(self):
+        """ returns the previous filename as a fabio.filename_object"""
         self.obj.num -= 1
         return self.obj
     def current_object(self):
+        """ returns the current filename as a fabio.filename_object"""
         return self.obj
     def jump_object(self, num):
+        """ returns the filename num as a fabio.filename_object"""
         self.obj.num = num
         return self.obj
 

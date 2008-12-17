@@ -5,7 +5,7 @@ Read the fit2d ascii image output
         + Jon Wright, ESRF
 """
 
-import numpy as N, logging
+import numpy
 
 from fabio.fabioimage import fabioimage
 
@@ -25,13 +25,13 @@ class fit2dspreadsheetimage(fabioimage):
         line = infile.readline()
         try:
             items = line.split()
-            xd = int(items[0])
-            yd = int(items[1])
+            xdim = int(items[0])
+            ydim = int(items[1])
         except:
             raise
         self.header['title'] = line
-        self.header['Dim_1'] = xd
-        self.header['Dim_2'] = yd
+        self.header['Dim_1'] = xdim
+        self.header['Dim_2'] = ydim
         
     def read(self, fname):
         """
@@ -49,50 +49,37 @@ class fit2dspreadsheetimage(fabioimage):
         except:
             raise Exception("file", str(fname) + \
                                 "is corrupt, cannot read it")
-        bytecode = N.float32
+        bytecode = numpy.float32
 
-        self.bpp = len(N.array(0, bytecode).tostring())
+        self.bpp = len(numpy.array(0, bytecode).tostring())
 
         #now read the data into the array
-        if 1:
-#            import time
-#            start = time.time()
-            try:
-                vals = []
-                for line in infile.readlines():
-                    try:
-                        vals.append([float(x) for x in line.split()])
-                    except:
-                        pass
-                self.data = N.array(vals)
-                assert self.data.shape ==( self.dim2, self.dim1)
+        try:
+            vals = []
+            for line in infile.readlines():
+                try:
+                    vals.append([float(x) for x in line.split()])
+                except:
+                    pass
+            self.data = numpy.array(vals)
+            assert self.data.shape == ( self.dim2, self.dim1 )
 
-            except:
-                raise IOError, "Error reading ascii"
-#            print time.time()-start
-        if 0:
-            # numpy version - it is slower(!)
-            infile.seek(0)
-            infile.readline()
-            from numpy import loadtxt
-            import time
-            start = time.time()
-            self.data = loadtxt( infile )
-            assert self.data.shape ==( self.dim2, self.dim1)
-            print time.time()-start
+        except:
+            raise IOError, "Error reading ascii"
+
         self.resetvals()
         # ensure the PIL image is reset
         self.pilimage = None
         return self
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     import sys, time
     start = time.time()
-    im = fit2dspreadsheetimage()
-    im.read(sys.argv[1])
-    print time.time()-start
-    print im.dim1, im.dim2, im.data.shape
+    img = fit2dspreadsheetimage()
+    img.read(sys.argv[1] )
+    print time.time() - start
+    print img.dim1, img.dim2, img.data.shape
     from matplotlib.pylab import imshow, show
-    imshow(im.data.T)
+    imshow(img.data.T)
     show()
