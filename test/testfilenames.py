@@ -37,7 +37,7 @@ CASES = [
     ]
 
 
-MORE_CASES=[
+MORE_CASES = [
     ("data0010.edf",   "data0012.edf", 10),
     ("data1000.pnm",   "data999.pnm",1000),
     ("data0999.pnm",   "data1000.pnm",999),
@@ -63,7 +63,8 @@ class testfilenames(unittest.TestCase):
             obj = fabio.deconstruct_filename(name)
             self.assertEqual(num, obj.num , name+" num="+str(num)+\
                                                  " != obj.num="+str(obj.num))
-            self.assertEqual(typ, "_or_".join(obj.format), name +" "+"_or_".join(obj.format))
+            self.assertEqual(typ, "_or_".join(obj.format), 
+                                 name +" "+"_or_".join(obj.format))
             self.assertEqual(name, obj.tostring() , name+" "+obj.tostring())
             
 #    def test_more_cases(self):
@@ -72,9 +73,9 @@ class testfilenames(unittest.TestCase):
 #            self.assertEqual(name,nname)
             
     def test_more_cases_jump(self):
-        for nname,oname,num in MORE_CASES:
-            name=fabio.jump_filename(oname,num)
-            self.assertEqual(name,nname)
+        for nname, oname, num in MORE_CASES:
+            name = fabio.jump_filename(oname, num)
+            self.assertEqual(name, nname)
 
 
 

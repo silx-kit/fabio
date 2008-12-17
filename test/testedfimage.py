@@ -111,7 +111,7 @@ class testedfs(unittest.TestCase):
             try:
                 obj.read(os.path.join("testimages", name))
             except:
-                print "Cannot read image",name
+                print "Cannot read image", name
                 raise
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")

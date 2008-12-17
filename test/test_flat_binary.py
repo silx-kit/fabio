@@ -29,12 +29,12 @@ class test_flat_binary(unittest.TestCase):
                 else:
                     print "**** Passed", filename
             except:
-                print "failed for",filename
+                print "failed for", filename
                 nfail += 1
         assert nfail == 0, str(nfail)+" failures out of "+str(len(self.filenames))        
     def tearDown(self):
         for filename in self.filenames:
             os.remove(filename)
 
-if __name__=="__main__":
+if __name__ =="__main__":
     unittest.main()

@@ -168,7 +168,7 @@ class testOXD(unittest.TestCase):
         # etc
 
 
-class testOXD(unittest.TestCase):
+class testOXDUNC(testOXD):
     """openimage opening adsc"""
     fname = os.path.join("testimages","b191_1_9_1_uncompressed.img")
 
