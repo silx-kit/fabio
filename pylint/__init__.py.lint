@@ -1,44 +1,16 @@
 ************* Module __init__
-C0301: 94: Line too long (93/80)
-W0511: 17: XXXimage fabioclass
 C0111:  1: Missing docstring
-C0111: 11:construct_filename: Missing docstring
-W0704: 51: Except doesn't do anything
-W0702: 52: No exception's type specified
+C0111:  4:construct_filename: Missing docstring
+W0702: 45: No exception's type specified
+C0103: 38: Invalid name "lines" (should match (([A-Z_]*)|(__.*__))$)
+W0702: 55: No exception's type specified
 C0103: 48: Invalid name "lines" (should match (([A-Z_]*)|(__.*__))$)
-W0704: 57: Except doesn't do anything
-W0702: 58: No exception's type specified
-C0103: 54: Invalid name "lines" (should match (([A-Z_]*)|(__.*__))$)
-W0612: 67:getnum: Unused variable 'stem'
-W0612: 67:getnum: Unused variable 'post_num'
-C0103: 73:filename_object: Invalid name "filename_object" (should match [a-z_][a-zA-Z0-9]+$)
-R0913: 77:filename_object.__init__: Too many arguments (8/5)
-C0111: 93:filename_object.str: Missing docstring
-C0323: 94:filename_object.str: Operator not followed by a space
-        return "stem %s, num %s format %s extension %s postnum = %s digits %s dir %s"%tuple([
-                                                                                     ^
-            str(x) for x in [self.stem ,
-                self.num ,
-                self.format ,
-                self.extension ,
-                self.postnum ,
-                self.digits ,
-                self.directory ] ] )
-W0621:126:numstem: Redefining name 're' from outer scope (line 8)
-W0404:126:numstem: Reimport 're' (imported line 8)
-C0322:127:numstem: Operator not preceded by a space
-    reg=re.compile(r"^(.*?)(-?[0-9]{0,9})(\D*)$")
-       ^
-C0324:134:numstem: Comma not followed by a space
-            return [res[2],'', '']
-                          ^^
-C0324:152:deconstruct_filename: Comma not followed by a space
-    if parts[-1] in ["gz","bz2"]:
-                         ^^
-C0322:155:deconstruct_filename: Operator not preceded by a space
-        compressed=True
-                  ^
-W0702:165:deconstruct_filename: No exception's type specified
-W0704:177:deconstruct_filename: Except doesn't do anything
-W0702:178:deconstruct_filename: No exception's type specified
-W0612:148:deconstruct_filename: Unused variable 'compressed'
+W0612: 64:getnum: Unused variable 'stem'
+W0612: 64:getnum: Unused variable 'post_num'
+C0103: 70:filename_object: Invalid name "filename_object" (should match [a-z_][a-zA-Z0-9]+$)
+R0913: 74:filename_object.__init__: Too many arguments (8/5)
+W0702:163:deconstruct_filename: No exception's type specified
+W0704:175:deconstruct_filename: Except doesn't do anything
+W0702:176:deconstruct_filename: No exception's type specified
+W0702:184:deconstruct_filename: No exception's type specified
+W0612:146:deconstruct_filename: Unused variable 'compressed'

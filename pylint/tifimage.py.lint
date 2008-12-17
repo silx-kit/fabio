@@ -1,11 +1,15 @@
 ************* Module tifimage
-W0704: 40:tifimage._readheader: Except doesn't do anything
-W0702: 41:tifimage._readheader: No exception's type specified
+W0142: 37:tifimage.__init__: Used * or ** magic
+W0702: 46:tifimage._readheader: No exception's type specified
+E1103: 65:tifimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+W0702: 69:tifimage.read: No exception's type specified
+E1103: 69:tifimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+E1103: 70:tifimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
 
 
 Report
 ======
-30 statements analysed.
+53 statements analysed.
 
 Duplication
 -----------
@@ -26,13 +30,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |40     |51.28 |34       |+6.00      |
+|code      |73     |59.35 |73       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |26     |33.33 |26       |=          |
+|docstring |32     |26.02 |32       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |3.85  |1        |+2.00      |
+|comment   |5      |4.07  |5        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |9      |11.54 |8        |+1.00      |
+|empty     |13     |10.57 |13       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -59,7 +63,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |100.00      |0.00     |
+|method   |4      |4          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -76,9 +80,9 @@ Messages by category
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |0        |+2.00      |
+|warning    |3      |2        |+1.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -89,14 +93,16 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0704      |1          |
+|E1103      |3          |
 +-----------+-----------+
-|W0702      |1          |
+|W0702      |2          |
++-----------+-----------+
+|W0142      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.33/10 (previous run: 10.00/10)
+Your code has been rated at 6.60/10 (previous run: 6.79/10)
 

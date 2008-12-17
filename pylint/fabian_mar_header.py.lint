@@ -422,7 +422,7 @@ E0602:108:obselete._readheader_fabian: Undefined variable 'N'
 E0602:108:obselete._readheader_fabian: Undefined variable 'N'
 R0915: 12:obselete._readheader_fabian: Too many statements (74/50)
 W0201: 16:obselete._readheader_fabian: Attribute 'header' defined outside __init__
-R0903: 11:obselete: To few public methods (0/2)
+R0903: 11:obselete: Too few public methods (0/2)
 
 
 Report

@@ -1,5 +1,10 @@
 ************* Module adscimage
 W0511: 91: FIXME ??? - made padding match header bytes keyword            
+E1103: 34:adscimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+E1103: 38:adscimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+E1103: 40:adscimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E1103: 41:adscimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E1103: 42:adscimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
 W0612:124:test: Unused variable 'rim'
 
 
@@ -30,9 +35,9 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |docstring |24     |18.75 |24       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |9      |7.03  |8        |+1.00      |
+|comment   |9      |7.03  |9        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |11     |8.59  |10       |+1.00      |
+|empty     |11     |8.59  |11       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -76,7 +81,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |5      |0        |+5.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -87,6 +92,8 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
+|E1103      |5          |
++-----------+-----------+
 |W0612      |1          |
 +-----------+-----------+
 |W0511      |1          |
@@ -96,5 +103,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.73/10 (previous run: 9.73/10)
+Your code has been rated at 6.30/10 (previous run: 9.73/10)
 

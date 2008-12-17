@@ -1,11 +1,24 @@
-************* Module readbytestream
-W0511: 50: TODO : Read in regions of interest
-R0913: 27:readbytestream: Too many arguments (9/5)
+************* Module test_flat_binary
+C0301: 34: Line too long (90/80)
+C0111:  1: Missing docstring
+C0103:  7:test_flat_binary: Invalid name "test_flat_binary" (should match [a-z_][a-zA-Z0-9]+$)
+C0111:  7:test_flat_binary: Missing docstring
+C0103: 15:test_flat_binary.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 15:test_flat_binary.setUp: Missing docstring
+C0103: 17:test_flat_binary.setUp: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 22:test_flat_binary.test_openimage: Missing docstring
+W0702: 32:test_flat_binary.test_openimage: No exception's type specified
+C0103: 26:test_flat_binary.test_openimage: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 35:test_flat_binary.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 35:test_flat_binary.tearDown: Missing docstring
+C0323: 39: Operator not followed by a space
+if __name__ =="__main__":
+            ^^
 
 
 Report
 ======
-24 statements analysed.
+25 statements analysed.
 
 Duplication
 -----------
@@ -26,13 +39,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |45     |55.56 |45       |=          |
+|code      |27     |77.14 |27       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |25     |30.86 |25       |=          |
+|docstring |4      |11.43 |4        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |3.70  |3        |=          |
+|comment   |0      |0.00  |0        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |8      |9.88  |8        |=          |
+|empty     |4      |11.43 |4        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -41,7 +54,8 @@ External dependencies
 ---------------------
 ::
 
-    numpy (readbytestream)
+    fabio 
+      \-openimage (test_flat_binary)
 
 
 
@@ -51,13 +65,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0.00        |0.00     |
+|method   |3      |3          |=          |0.00        |66.67    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |100.00      |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -68,9 +82,9 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |12     |13       |-1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
@@ -85,14 +99,20 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0511      |1          |
+|C0111      |5          |
 +-----------+-----------+
-|R0913      |1          |
+|C0103      |5          |
++-----------+-----------+
+|W0702      |1          |
++-----------+-----------+
+|C0323      |1          |
++-----------+-----------+
+|C0301      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.17/10 (previous run: 9.17/10)
+Your code has been rated at 4.80/10 (previous run: 4.40/10)
 

@@ -76,7 +76,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |warning    |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |1        |-1.00      |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -96,5 +96,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.17/10 (previous run: 7.78/10)
+Your code has been rated at 9.17/10 (previous run: 9.17/10)
 

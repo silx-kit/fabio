@@ -1,29 +1,14 @@
 ************* Module fit2dspreadsheetimage
 W0511: 23: TODO : test for minimal attributes?
-C0103: 28:fit2dspreadsheetimage._readheader: Invalid name "xd" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 29:fit2dspreadsheetimage._readheader: Invalid name "yd" (should match [a-z_][a-z0-9_]{2,30}$)
-W0621: 79:fit2dspreadsheetimage.read: Redefining name 'start' from outer scope (line 91)
-W0621: 78:fit2dspreadsheetimage.read: Redefining name 'time' from outer scope (line 90)
-W0704: 65:fit2dspreadsheetimage.read: Except doesn't do anything
-W0702: 66:fit2dspreadsheetimage.read: No exception's type specified
-C0323: 68:fit2dspreadsheetimage.read: Operator not followed by a space
-                assert self.data.shape ==( self.dim2, self.dim1)
-                                       ^^
-W0404: 78:fit2dspreadsheetimage.read: Reimport 'time' (imported line 90)
-C0323: 81:fit2dspreadsheetimage.read: Operator not followed by a space
-            assert self.data.shape ==( self.dim2, self.dim1)
-                                   ^^
-C0322: 89: Operator not preceded by a space
-if __name__=="__main__":
-           ^^
-C0103: 91: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 92: Invalid name "im" (should match (([A-Z_]*)|(__.*__))$)
-W0611:  8: Unused import logging
+W0704: 62:fit2dspreadsheetimage.read: Except doesn't do anything
+W0702: 63:fit2dspreadsheetimage.read: No exception's type specified
+C0103: 78: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
+C0103: 79: Invalid name "img" (should match (([A-Z_]*)|(__.*__))$)
 
 
 Report
 ======
-56 statements analysed.
+46 statements analysed.
 
 Duplication
 -----------
@@ -31,9 +16,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -44,13 +29,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |60     |65.93 |NC       |NC         |
+|code      |50     |62.50 |50       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |16     |17.58 |NC       |NC         |
+|docstring |16     |20.00 |16       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |2.20  |NC       |NC         |
+|comment   |1      |1.25  |1        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |13     |14.29 |NC       |NC         |
+|empty     |13     |16.25 |13       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -73,13 +58,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |100.00      |0.00     |
+|method   |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -90,13 +75,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |7      |NC       |NC         |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |7      |NC       |NC         |
+|warning    |3      |4        |-1.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -107,28 +92,18 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0103      |4          |
-+-----------+-----------+
-|W0621      |2          |
-+-----------+-----------+
-|C0323      |2          |
+|C0103      |2          |
 +-----------+-----------+
 |W0704      |1          |
 +-----------+-----------+
 |W0702      |1          |
 +-----------+-----------+
-|W0611      |1          |
-+-----------+-----------+
 |W0511      |1          |
-+-----------+-----------+
-|W0404      |1          |
-+-----------+-----------+
-|C0322      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.50/10
+Your code has been rated at 8.91/10 (previous run: 8.70/10)
 

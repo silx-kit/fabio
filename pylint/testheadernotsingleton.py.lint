@@ -1,11 +1,12 @@
-************* Module readbytestream
-W0511: 50: TODO : Read in regions of interest
-R0913: 27:readbytestream: Too many arguments (9/5)
+************* Module testheadernotsingleton
+C0111:  1: Missing docstring
+C0111:  5:testheadernotsingleton: Missing docstring
+C0111:  6:testheadernotsingleton.testheader: Missing docstring
 
 
 Report
 ======
-24 statements analysed.
+16 statements analysed.
 
 Duplication
 -----------
@@ -26,13 +27,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |45     |55.56 |45       |=          |
+|code      |17     |89.47 |16       |+1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |25     |30.86 |25       |=          |
+|docstring |0      |0.00  |0        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |3.70  |3        |=          |
+|comment   |0      |0.00  |0        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |8      |9.88  |8        |=          |
+|empty     |2      |10.53 |2        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -41,7 +42,8 @@ External dependencies
 ---------------------
 ::
 
-    numpy (readbytestream)
+    fabio 
+      \-openimage (testheadernotsingleton)
 
 
 
@@ -51,13 +53,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0.00        |0.00     |
+|method   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |100.00      |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -68,11 +70,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |3      |8        |-5.00      |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |1      |1        |=          |
+|warning    |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -85,14 +87,12 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0511      |1          |
-+-----------+-----------+
-|R0913      |1          |
+|C0111      |3          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.17/10 (previous run: 9.17/10)
+Your code has been rated at 8.12/10 (previous run: 5.00/10)
 

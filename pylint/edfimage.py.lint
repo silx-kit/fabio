@@ -1,15 +1,18 @@
 ************* Module edfimage
-W0511: 43: FIXME?
-W0511: 58: TODO : test for minimal attributes?
-W0511:125: FIXME
-R0914:167:edfimage.write: Too many local variables (16/15)
-W0221:167:edfimage.write: Arguments number differs from overridden method
-R0912:167:edfimage.write: Too many branches (14/12)
+W0511: 44: FIXME?
+W0511: 59: TODO : test for minimal attributes?
+W0511:127: FIXME
+C0103: 61:edfimage._readheader: Invalid name "BLOCKSIZE" (should match [a-z_][a-z0-9_]{2,30}$)
+E1103:116:edfimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E1103:129:edfimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+R0914:169:edfimage.write: Too many local variables (16/15)
+W0221:169:edfimage.write: Arguments number differs from overridden method
+R0912:169:edfimage.write: Too many branches (14/12)
 
 
 Report
 ======
-119 statements analysed.
+120 statements analysed.
 
 Duplication
 -----------
@@ -30,13 +33,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |136    |65.70 |136      |=          |
+|code      |137    |65.55 |136      |+1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |51     |24.64 |51       |=          |
+|docstring |52     |24.88 |51       |+1.00      |
 +----------+-------+------+---------+-----------+
-|comment   |5      |2.42  |4        |+1.00      |
+|comment   |5      |2.39  |5        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |15     |7.25  |14       |+1.00      |
+|empty     |15     |7.18  |15       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -74,13 +77,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |1      |0        |+1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
 |warning    |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |2      |0        |+2.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -93,16 +96,20 @@ Messages
 +===========+===========+
 |W0511      |3          |
 +-----------+-----------+
+|E1103      |2          |
++-----------+-----------+
 |W0221      |1          |
 +-----------+-----------+
 |R0914      |1          |
 +-----------+-----------+
 |R0912      |1          |
 +-----------+-----------+
+|C0103      |1          |
++-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.50/10 (previous run: 9.50/10)
+Your code has been rated at 8.58/10 (previous run: 9.50/10)
 

@@ -4,9 +4,6 @@ C0103: 35:testflatedfs.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]
 C0103: 43:testflatedfs.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
 C0103: 70:testbzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
 C0103: 79:testgzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:114:testedfs.test_read: Comma not followed by a space
-                print "Cannot read image",name
-                                         ^^
 
 
 Report
@@ -32,13 +29,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |69     |55.20 |66       |+3.00      |
+|code      |69     |55.20 |69       |=          |
 +----------+-------+------+---------+-----------+
 |docstring |28     |22.40 |28       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |2.40  |2        |+1.00      |
+|comment   |3      |2.40  |3        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |25     |20.00 |23       |+2.00      |
+|empty     |25     |20.00 |25       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -76,7 +73,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |4        |+1.00      |
+|convention |4      |5        |-1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -97,12 +94,10 @@ Messages
 +-----------+-----------+
 |W0511      |1          |
 +-----------+-----------+
-|C0324      |1          |
-+-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.06/10 (previous run: 9.18/10)
+Your code has been rated at 9.22/10 (previous run: 9.06/10)
 

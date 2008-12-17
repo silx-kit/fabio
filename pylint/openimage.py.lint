@@ -1,19 +1,5 @@
 ************* Module openimage
-C0301: 98: Line too long (81/80)
-C0324: 60:do_magic: Comma not followed by a space
-            print "m:",magic,"f:",format,
-                      ^^
-C0324: 61:do_magic: Comma not followed by a space
-            print "bytes:",magic,"len(bytes)",len(magic),
-                          ^^
-C0324: 62:do_magic: Comma not followed by a space
-            print "found:",byts.find(magic)
-                          ^^
-C0324: 64:do_magic: Comma not followed by a space
-                print ord(magic[i]),ord(byts[i]),magic[i],byts[i]
-                                   ^^
-W0212: 86:_openimage: Access to a protected member _open of a client class
-W0612: 88:_openimage: Unused variable 'filenumber'
+W0212: 88:_openimage: Access to a protected member _open of a client class
 W0611: 26: Unused import fit2dmaskimage
 W0611: 28: Unused import bruker100image
 W0611: 23: Unused import tifimage
@@ -24,13 +10,14 @@ W0611: 29: Unused import pnmimage
 W0611: 24: Unused import marccdimage
 W0611: 21: Unused import edfimage
 W0611: 31: Unused import OXDimage
+W0611: 17: Unused import getnum
 W0611: 30: Unused import GEimage
 W0611: 27: Unused import brukerimage
 
 
 Report
 ======
-60 statements analysed.
+58 statements analysed.
 
 Duplication
 -----------
@@ -51,13 +38,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |79     |68.70 |41       |+38.00     |
+|code      |77     |66.96 |77       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |19     |16.52 |20       |-1.00      |
+|docstring |21     |18.26 |21       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |4      |3.48  |3        |+1.00      |
+|comment   |4      |3.48  |4        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |13     |11.30 |10       |+3.00      |
+|empty     |13     |11.30 |13       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -95,7 +82,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |method   |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |4      |2          |+2.00      |100.00      |0.00     |
+|function |4      |4          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -106,13 +93,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |0        |+5.00      |
+|convention |0      |1        |-1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |14     |12       |+2.00      |
+|warning    |14     |14       |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |1        |-1.00      |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -123,20 +110,14 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|W0611      |12         |
-+-----------+-----------+
-|C0324      |4          |
-+-----------+-----------+
-|W0612      |1          |
+|W0611      |13         |
 +-----------+-----------+
 |W0212      |1          |
-+-----------+-----------+
-|C0301      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.83/10 (previous run: 5.14/10)
+Your code has been rated at 7.59/10 (previous run: 7.41/10)
 

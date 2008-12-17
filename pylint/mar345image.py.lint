@@ -1,187 +1,71 @@
 ************* Module mar345image
-C0301: 29: Line too long (88/80)
-C0301: 40: Line too long (87/80)
-C0301: 78: Line too long (96/80)
-C0301:105: Line too long (107/80)
-C0301:112: Line too long (184/80)
-C0301:118: Line too long (111/80)
-W0511: 60: TODO: turn this into a real check
-W0511:102: TODO: validate these values against the binaries already read
-W0403: 14: Relative import 'fabioimage'
-W0402: 17: Uses of a deprecated module 'string'
-C0111: 19:mar345image: Missing docstring
-R0902: 19:mar345image: Too many instance attributes (8/7)
-W0232: 19:mar345image: Class has no __init__ method
-C0111: 21:mar345image.read: Missing docstring
-C0324: 21:mar345image.read: Comma not followed by a space
-    def read(self,fname):
-                 ^^
-C0322: 23:mar345image.read: Operator not preceded by a space
-        f=self._open(self.filename,"rb")
-         ^
-C0103: 23:mar345image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-E1101: 23:mar345image.read: Instance of 'mar345image' has no '_open' member
-W0702: 29:mar345image.read: No exception's type specified
-C0322: 31:mar345image.read: Operator not preceded by a space
-            self.dim1=1
-                     ^
-C0322: 32:mar345image.read: Operator not preceded by a space
-            self.dim2=1
-                     ^
-C0322: 33:mar345image.read: Operator not preceded by a space
-            self.bytecode=N.int #
-                         ^
-C0322: 34:mar345image.read: Operator not preceded by a space
-            self.data=N.resize(N.array([0],N.int),[1,1])
-                     ^
-C0322: 38:mar345image.read: Operator not preceded by a space
-            self.data=mar345_io.unpack(f,self.dim1,self.dim2,self.numhigh)
-                     ^
-C0322: 42:mar345image.read: Operator not preceded by a space
-        self.bytecode='u'
-                     ^
-C0111: 46:mar345image._readheader: Missing docstring
-C0324: 46:mar345image._readheader: Comma not followed by a space
-    def _readheader(self,infile=None):
-                        ^^
-C0322: 49:mar345image._readheader: Operator not preceded by a space
-        f=infile
-         ^
-C0103: 49:mar345image._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 50:mar345image._readheader: Operator not preceded by a space
-        h={}
-         ^
-C0103: 50:mar345image._readheader: Invalid name "h" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 53:mar345image._readheader: Operator not preceded by a space
-        l=f.read(64)
-         ^
-C0103: 53:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 62:mar345image._readheader: Operator not preceded by a space
-            fs='I'
-              ^
-C0103: 62:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 64:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 66:mar345image._readheader: Operator not preceded by a space
-        self.dim1=self.dim2=int(struct.unpack(fs,l[4:8])[0])
-                 ^
-C0322: 68:mar345image._readheader: Operator not preceded by a space
-        self.numhigh=struct.unpack(fs,l[2*4:(2+1)*4])[0]
-                    ^
-C0322: 69:mar345image._readheader: Operator not preceded by a space
-        h['NumHigh']=self.numhigh
-                    ^
-C0322: 71:mar345image._readheader: Operator not preceded by a space
-        i=struct.unpack(fs,l[3*4:(3+1)*4])[0]
-         ^
-C0322: 72:mar345image._readheader: Operator not preceded by a space
-        if i==1:
-            ^^
-C0322: 73:mar345image._readheader: Operator not preceded by a space
-            h['Format']='compressed'
-                       ^
-C0322: 75:mar345image._readheader: Operator not preceded by a space
-            h['Format']='spiral'
-                       ^
-C0322: 77:mar345image._readheader: Operator not preceded by a space
-            h['Format']='compressed'
-                       ^
-C0322: 80:mar345image._readheader: Operator not preceded by a space
-        h['Mode']={0:'Dose', 1: 'Time'}[struct.unpack(fs,l[4*4:(4+1)*4])[0]]
-                 ^
-C0322: 82:mar345image._readheader: Operator not preceded by a space
-        self.numpixels=struct.unpack(fs,l[5*4:(5+1)*4])[0]
-                      ^
-C0322: 83:mar345image._readheader: Operator not preceded by a space
-        h['NumPixels']=str(self.numpixels)
-                      ^
-C0322: 85:mar345image._readheader: Operator not preceded by a space
-        h['PixelLength']=struct.unpack(fs,l[6*4:(6+1)*4])[0]/1000.0
-                        ^
-C0322: 86:mar345image._readheader: Operator not preceded by a space
-        h['PixelHeight']=struct.unpack(fs,l[7*4:(7+1)*4])[0]/1000.0
-                        ^
-C0322: 88:mar345image._readheader: Operator not preceded by a space
-        h['Wavelength']=struct.unpack(fs,l[8*4:(8+1)*4])[0]/1000000.0
-                       ^
-C0322: 90:mar345image._readheader: Operator not preceded by a space
-        h['Distance']=struct.unpack(fs,l[9*4:(9+1)*4])[0]/1000.0
-                     ^
-C0322: 92:mar345image._readheader: Operator not preceded by a space
-        h['StartPhi']=struct.unpack(fs,l[10*4:11*4])[0]/1000.0
-                     ^
-C0322: 93:mar345image._readheader: Operator not preceded by a space
-        h['EndPhi']=struct.unpack(fs,l[11*4:12*4])[0]/1000.0
-                   ^
-C0322: 95:mar345image._readheader: Operator not preceded by a space
-        h['StartOmega']=struct.unpack(fs,l[12*4:13*4])[0]/1000.0
-                       ^
-C0322: 96:mar345image._readheader: Operator not preceded by a space
-        h['EndOmega']=struct.unpack(fs,l[13*4:14*4])[0]/1000.0
-                     ^
-C0322: 98:mar345image._readheader: Operator not preceded by a space
-        h['Chi']=struct.unpack(fs,l[14*4:15*4])[0]/1000.0
-                ^
-C0322: 99:mar345image._readheader: Operator not preceded by a space
-        h['TwoTheta']=struct.unpack(fs,l[15*4:16*4])[0]/1000.0
-                     ^
-C0322:103:mar345image._readheader: Operator not preceded by a space
-        l=f.read(128)
-         ^
-C0103:103:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322:106:mar345image._readheader: Operator not preceded by a space
-        l=string.strip(f.read(4096-128-64))
-         ^
-C0103:106:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:107:mar345image._readheader: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322:108:mar345image._readheader: Operator not preceded by a space
-            if m=='END OF HEADER': break
-                ^^
-C0321:108:mar345image._readheader: More than one statement on a single line
-C0322:109:mar345image._readheader: Operator not preceded by a space
-            n=m.split(' ',1)
-             ^
-C0103:109:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322:110:mar345image._readheader: Operator not preceded by a space
-            if n[0]=='':
-                   ^^
-C0324:112:mar345image._readheader: Comma not followed by a space
-            if n[0] in ('PROGRAM','DATE','SCANNER','HIGH','MULTIPLIER','GAIN','WAVELENGTH','DISTANCE','RESOLUTION','CHI','TWOTHETA','MODE','TIME','GENERATOR','MONOCHROMATOR','REMARK'):
-                                 ^^
-C0322:113:mar345image._readheader: Operator not preceded by a space
-                h[n[0]]=n[1].strip()
-                       ^
-C0324:116:mar345image._readheader: Comma not followed by a space
-                (h['DIM'],h['FORMAT_TYPE'],h['NO_PIXELS'])=n[1].split()
-                         ^^
-C0324:118:mar345image._readheader: Comma not followed by a space
-            if n[0] in ('PIXEL','OFFSET','PHI','OMEGA','COUNTS','CENTER','INTENSITY','HISTOGRAM','COLLIMATOR'):
-                               ^^
-C0322:119:mar345image._readheader: Operator not preceded by a space
-                n=m.split()
-                 ^
-C0103:119:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324:120:mar345image._readheader: Comma not followed by a space
+W0511: 63: TODO: turn this into a real check
+W0511:106: TODO: validate these values against the binaries already read
+W0402: 15: Uses of a deprecated module 'string'
+C0111: 17:mar345image: Missing docstring
+R0902: 17:mar345image: Too many instance attributes (8/7)
+C0103: 22:mar345image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+W0702: 28:mar345image.read: No exception's type specified
+E1103: 30:mar345image.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+E1103: 44:mar345image.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+C0103: 52:mar345image._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 53:mar345image._readheader: Invalid name "h" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 56:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 65:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 67:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324: 89:mar345image._readheader: Comma not followed by a space
+        h['PixelLength'] = struct.unpack(fs,l[6*4:(6+1)*4])[0]/1000.0
+                                           ^^
+C0324: 90:mar345image._readheader: Comma not followed by a space
+        h['PixelHeight'] = struct.unpack(fs,l[7*4:(7+1)*4])[0]/1000.0
+                                           ^^
+C0324: 92:mar345image._readheader: Comma not followed by a space
+        h['Wavelength'] = struct.unpack(fs,l[8*4:(8+1)*4])[0]/1000000.0
+                                          ^^
+C0324: 94:mar345image._readheader: Comma not followed by a space
+        h['Distance'] = struct.unpack(fs,l[9*4:(9+1)*4])[0]/1000.0
+                                        ^^
+C0324: 96:mar345image._readheader: Comma not followed by a space
+        h['StartPhi'] = struct.unpack(fs,l[10*4:11*4])[0]/1000.0
+                                        ^^
+C0324: 97:mar345image._readheader: Comma not followed by a space
+        h['EndPhi'] = struct.unpack(fs,l[11*4:12*4])[0]/1000.0
+                                      ^^
+C0324: 99:mar345image._readheader: Comma not followed by a space
+        h['StartOmega'] = struct.unpack(fs,l[12*4:13*4])[0]/1000.0
+                                          ^^
+C0324:100:mar345image._readheader: Comma not followed by a space
+        h['EndOmega'] = struct.unpack(fs,l[13*4:14*4])[0]/1000.0
+                                        ^^
+C0324:102:mar345image._readheader: Comma not followed by a space
+        h['Chi'] = struct.unpack(fs,l[14*4:15*4])[0]/1000.0
+                                   ^^
+C0324:103:mar345image._readheader: Comma not followed by a space
+        h['TwoTheta'] = struct.unpack(fs,l[15*4:16*4])[0]/1000.0
+                                        ^^
+C0103:107:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:111:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:112:mar345image._readheader: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C0321:113:mar345image._readheader: More than one statement on a single line
+C0324:114:mar345image._readheader: Comma not followed by a space
+            n = m.split(' ',1)
+                           ^^
+C0103:114:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103:128:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C0324:129:mar345image._readheader: Comma not followed by a space
                 h.update( [(n[0]+'_'+n[j],n[j+1]) for j in range(1,len(n),2)] )
                                          ^^
-C0322:122:mar345image._readheader: Operator not preceded by a space
-        self.header=h
-                   ^
-R0915: 46:mar345image._readheader: Too many statements (52/50)
-W0612: 47:mar345image._readheader: Unused variable 'clip'
-C0111:125:mar345image.write: Missing docstring
-W0201: 82:mar345image._readheader: Attribute 'numpixels' defined outside __init__
-W0201: 68:mar345image._readheader: Attribute 'numhigh' defined outside __init__
-W0201: 22:mar345image.read: Attribute 'filename' defined outside __init__
-W0201: 32:mar345image.read: Attribute 'dim2' defined outside __init__
-W0201:122:mar345image._readheader: Attribute 'header' defined outside __init__
-W0201: 31:mar345image.read: Attribute 'dim1' defined outside __init__
-W0201: 33:mar345image.read: Attribute 'bytecode' defined outside __init__
-W0201: 34:mar345image.read: Attribute 'data' defined outside __init__
+R0915: 47:mar345image._readheader: Too many statements (51/50)
+C0111:134:mar345image.write: Missing docstring
+W0221:134:mar345image.write: Arguments number differs from overridden method
+W0201: 86:mar345image._readheader: Attribute 'numpixels' defined outside __init__
+W0201: 71:mar345image._readheader: Attribute 'numhigh' defined outside __init__
+W0201: 21:mar345image.read: Attribute 'filename' defined outside __init__
 
 
 Report
 ======
-80 statements analysed.
+77 statements analysed.
 
 Duplication
 -----------
@@ -202,13 +86,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |80     |74.77 |133      |-53.00     |
+|code      |77     |66.38 |78       |-1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |12     |11.21 |16       |-4.00      |
+|docstring |22     |18.97 |20       |+2.00      |
 +----------+-------+------+---------+-----------+
-|comment   |10     |9.35  |5        |+5.00      |
+|comment   |12     |10.34 |10       |+2.00      |
 +----------+-------+------+---------+-----------+
-|empty     |5      |4.67  |6        |-1.00      |
+|empty     |5      |4.31  |5        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -218,7 +102,7 @@ External dependencies
 ::
 
     mar345_io (mar345image)
-     
+    fabio 
       \-fabioimage (mar345image)
     numpy (mar345image)
 
@@ -234,7 +118,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |12         |-9.00      |0.00        |0.00     |
+|method   |3      |3          |=          |66.67       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -247,13 +131,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |68     |117      |-49.00     |
+|convention |26     |28       |-2.00      |
 +-----------+-------+---------+-----------+
-|refactor   |2      |4        |-2.00      |
+|refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|warning    |15     |10       |+5.00      |
+|warning    |8      |9        |-1.00      |
 +-----------+-------+---------+-----------+
-|error      |1      |0        |+1.00      |
+|error      |2      |2        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -264,35 +148,27 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0322      |40         |
+|C0324      |12         |
 +-----------+-----------+
 |C0103      |11         |
 +-----------+-----------+
-|W0201      |8          |
-+-----------+-----------+
-|C0324      |6          |
-+-----------+-----------+
-|C0301      |6          |
-+-----------+-----------+
-|C0111      |4          |
+|W0201      |3          |
 +-----------+-----------+
 |W0511      |2          |
 +-----------+-----------+
+|E1103      |2          |
++-----------+-----------+
+|C0111      |2          |
++-----------+-----------+
 |W0702      |1          |
-+-----------+-----------+
-|W0612      |1          |
-+-----------+-----------+
-|W0403      |1          |
 +-----------+-----------+
 |W0402      |1          |
 +-----------+-----------+
-|W0232      |1          |
+|W0221      |1          |
 +-----------+-----------+
 |R0915      |1          |
 +-----------+-----------+
 |R0902      |1          |
-+-----------+-----------+
-|E1101      |1          |
 +-----------+-----------+
 |C0321      |1          |
 +-----------+-----------+
@@ -301,5 +177,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -1.25/10 (previous run: 0.15/10)
+Your code has been rated at 4.03/10 (previous run: 3.72/10)
 

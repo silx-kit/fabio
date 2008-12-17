@@ -1,7 +1,7 @@
 ************* Module GEimage
-C0301: 41: Line too long (83/80)
+C0301: 41: Line too long (88/80)
 C0301: 42: Line too long (83/80)
-C0301: 43: Line too long (87/80)
+C0301: 43: Line too long (92/80)
 C0301: 46: Line too long (85/80)
 C0301: 47: Line too long (85/80)
 C0301: 65: Line too long (86/80)
@@ -61,14 +61,14 @@ C0324: 40:GEimage._readheader: Comma not followed by a space
         self.header['HeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
                                                                   ^^
 C0324: 41:GEimage._readheader: Comma not followed by a space
-        self.header['HeaderSizeInBytes'] = N.fromstring(infile.read(4),N.uint32)[0]
-                                                                      ^^
+        self.header['HeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
+                                                                          ^^
 C0324: 42:GEimage._readheader: Comma not followed by a space
         self.header['UserHeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
                                                                       ^^
 C0324: 43:GEimage._readheader: Comma not followed by a space
-        self.header['UserHeaderSizeInBytes'] = N.fromstring(infile.read(4),N.uint32)[0]
-                                                                          ^^
+        self.header['UserHeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
+                                                                              ^^
 C0324: 45:GEimage._readheader: Comma not followed by a space
         self.header['NumberOfFrames'] = N.fromstring(infile.read(2),N.uint16)[0]
                                                                    ^^
@@ -81,10 +81,14 @@ C0324: 47:GEimage._readheader: Comma not followed by a space
 C0324: 48:GEimage._readheader: Comma not followed by a space
         self.header['BitsPerPixel'] = N.fromstring(infile.read(2),N.uint16)[0]
                                                                  ^^
+E1103:483:GEimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+E1103:484:GEimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
 C0103:486:GEimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
+E1103:487:GEimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
 C0324:488:GEimage.read: Comma not followed by a space
         block = N.fromstring(block,N.uint16)
                                   ^^
+E1103:490:GEimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
 C0324:493:GEimage.read: Comma not followed by a space
             self.data = N.reshape(block,[self.dim2, self.dim1])
                                        ^^
@@ -103,9 +107,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -116,13 +120,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |50     |10.27 |NC       |NC         |
+|code      |50     |10.27 |50       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |24     |4.93  |NC       |NC         |
+|docstring |24     |4.93  |24       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |267    |54.83 |NC       |NC         |
+|comment   |267    |54.83 |267      |=          |
 +----------+-------+------+---------+-----------+
-|empty     |146    |29.98 |NC       |NC         |
+|empty     |146    |29.98 |146      |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -143,13 +147,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |100.00   |
+|module   |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |100.00   |
+|class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |50.00       |0.00     |
+|method   |2      |2          |=          |50.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -160,13 +164,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |66     |NC       |NC         |
+|convention |66     |66       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |NC       |NC         |
+|warning    |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |4      |0        |+4.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -183,6 +187,8 @@ Messages
 +-----------+-----------+
 |C0103      |5          |
 +-----------+-----------+
+|E1103      |4          |
++-----------+-----------+
 |W0201      |2          |
 +-----------+-----------+
 |C0111      |2          |
@@ -196,5 +202,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -4.89/10
+Your code has been rated at -9.15/10 (previous run: -4.89/10)
 

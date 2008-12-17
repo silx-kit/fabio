@@ -1,0 +1,131 @@
+************* Module oldtifimage
+C0301: 80: Line too long (84/80)
+W0704: 40:tifimage._readheader: Except doesn't do anything
+W0702: 41:tifimage._readheader: No exception's type specified
+C0111: 43:tifimage._readheader: Missing docstring
+E0102: 43:tifimage._readheader: method already defined line 34
+C0324: 43:tifimage._readheader: Comma not followed by a space
+    def _readheader(self,infile):
+                        ^^
+C0324: 45:tifimage._readheader: Comma not followed by a space
+        header = N.fromstring(infile.read(64),N.uint16)
+                                             ^^
+W0107: 50:tifimage._readheader: Unnecessary pass statement
+E1103: 60:tifimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+W0702: 64:tifimage.read: No exception's type specified
+E1103: 64:tifimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+E1103: 65:tifimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+W0201: 48:tifimage._readheader: Attribute 'nbits' defined outside __init__
+
+
+Report
+======
+52 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |72     |61.54 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |30     |25.64 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |4      |3.42  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |11     |9.40  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (oldtifimage)
+    fabio 
+      \-fabioimage (oldtifimage)
+    PIL 
+      \-Image (oldtifimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |NC         |NC         |75.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |4      |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |5      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |4      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+-----------+
+|message id |occurences |
++===========+===========+
+|E1103      |3          |
++-----------+-----------+
+|W0702      |2          |
++-----------+-----------+
+|C0324      |2          |
++-----------+-----------+
+|W0704      |1          |
++-----------+-----------+
+|W0201      |1          |
++-----------+-----------+
+|W0107      |1          |
++-----------+-----------+
+|E0102      |1          |
++-----------+-----------+
+|C0301      |1          |
++-----------+-----------+
+|C0111      |1          |
++-----------+-----------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 4.42/10
+

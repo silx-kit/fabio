@@ -1,155 +1,23 @@
 ************* Module bruker100image
-C0301: 15: Line too long (92/80)
-C0301: 18: Line too long (93/80)
-C0301: 30: Line too long (96/80)
-C0301: 32: Line too long (81/80)
-C0301: 34: Line too long (97/80)
-C0301: 37: Line too long (90/80)
-C0301: 42: Line too long (84/80)
-C0301: 43: Line too long (86/80)
-C0301: 45: Line too long (103/80)
-C0301: 47: Line too long (102/80)
-C0301: 52: Line too long (90/80)
-C0301: 72: Line too long (126/80)
-C0301: 73: Line too long (104/80)
+W0511: 12: FIXME - why is this different for bruker100images?
 C0111:  1: Missing docstring
-W0403:  7: Relative import 'brukerimage'
-C0111: 10:bruker100image: Missing docstring
-W0232: 10:bruker100image: Class has no __init__ method
-C0103: 12:bruker100image.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 12:bruker100image.toPIL16: Missing docstring
-C0324: 12:bruker100image.toPIL16: Comma not followed by a space
-    def toPIL16(self,filename=None):
-                    ^^
-C0322: 15:bruker100image.toPIL16: Operator not preceded by a space
-            PILimage=Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1)
-                    ^
+C0111:  9:bruker100image: Missing docstring
+C0103: 11:bruker100image.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 11:bruker100image.toPIL16: Missing docstring
 C0103: 15:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 18:bruker100image.toPIL16: Operator not preceded by a space
-            PILimage= Image.frombuffer("F",(self.dim1,self.dim2),self.data,"raw","F;16",0,-1)
-                    ^
-C0103: 18:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 21:bruker100image.read: Missing docstring
-R0914: 21:bruker100image.read: Too many local variables (16/15)
-C0324: 21:bruker100image.read: Comma not followed by a space
-    def read(self,fname,verbose=0):
-                 ^^
-C0322: 22:bruker100image.read: Operator not preceded by a space
-        f=open(fname,"rb")
-         ^
-C0103: 22:bruker100image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-E1101: 24:bruker100image.read: Instance of 'bruker100image' has no '_readheader' member
-C0323: 28:bruker100image.read: Operator not followed by a space
-        rows   =int(self.header['NROWS'])
-               ^
-E1101: 28:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-C0323: 29:bruker100image.read: Operator not followed by a space
-        cols   =int(self.header['NCOLS'])
-               ^
-E1101: 29:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-C0322: 30:bruker100image.read: Operator not preceded by a space
-        npixelb=int(self.header['NPIXELB'][0])   # you had to read the Bruker docs to know this!
-               ^
-E1101: 30:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-C0322: 33:bruker100image.read: Operator not preceded by a space
-        size=rows*cols*npixelb
-            ^
-C0322: 34:bruker100image.read: Operator not preceded by a space
-        self.data=readbytestream(f,f.tell(),rows,cols,npixelb,datatype="int",signed='n',swap='n')
-                 ^
-C0322: 36:bruker100image.read: Operator not preceded by a space
-        noverfl=self.header['NOVERFL'].split() # now process the overflows
-               ^
-E1101: 36:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-C0322: 38:bruker100image.read: Operator not preceded by a space
-        data=self.data
-            ^
-C0322: 39:bruker100image.read: Operator not preceded by a space
-        k=0
-         ^
-C0322: 41:bruker100image.read: Operator not preceded by a space
-        while k<2:#for the time being things - are done in 16 bits
-               ^
-C0322: 42:bruker100image.read: Operator not preceded by a space
-            datatype={'1' : N.uint8, '2' : N.uint16, '4' : N.uint32 }[("%d" % 2**k)]
-                    ^
-C0322: 43:bruker100image.read: Operator not preceded by a space
-            ar=N.array(N.fromstring(f.read(int(noverfl[k])*(2**k)),datatype),N.uint16)
-              ^
-C0103: 43:bruker100image.read: Invalid name "ar" (should match [a-z_][a-z0-9_]{2,30}$)
-C0322: 46:bruker100image.read: Operator not preceded by a space
-            lim=2**(8*k)-1
-               ^
-C0322: 48:bruker100image.read: Operator not preceded by a space
-            M=N.compress(N.equal(data.ravel(),lim),N.arange(rows*cols))
-             ^
-C0103: 48:bruker100image.read: Invalid name "M" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 50:bruker100image.read: Comma not followed by a space
-            N.put(data.ravel(),M,ar)
-                              ^^
-C0322: 52:bruker100image.read: Operator not preceded by a space
-            padding=16*int(math.ceil(int(noverfl[k])*(2**k)/16.)) - int(noverfl[k])*(2**k)
-                   ^
-C0324: 53:bruker100image.read: Comma not followed by a space
-            f.seek(padding,1)
-                          ^^
-C0322: 55:bruker100image.read: Operator not preceded by a space
-            k=k+1
-             ^
-C0324: 59:bruker100image.read: Comma not followed by a space
-        (self.dim1,self.dim2)=(rows,cols)
-                  ^^
-E1101: 61:bruker100image.read: Instance of 'bruker100image' has no 'resetvals' member
-W0613: 21:bruker100image.read: Unused argument 'verbose'
-W0612: 33:bruker100image.read: Unused variable 'size'
-W0201: 59:bruker100image.read: Attribute 'dim2' defined outside __init__
-W0201: 59:bruker100image.read: Attribute 'dim1' defined outside __init__
-W0201: 34:bruker100image.read: Attribute 'data' defined outside __init__
-C0322: 64: Operator not preceded by a space
-if __name__=='__main__':
-           ^^
-C0324: 65: Comma not followed by a space
-    import sys,time
-              ^^
-C0322: 66: Operator not preceded by a space
-    I=bruker100image()
-     ^
-C0322: 67: Operator not preceded by a space
-    b=time.clock()
-     ^
-C0103: 67: Invalid name "b" (should match (([A-Z_]*)|(__.*__))$)
-C0322: 70: Operator not preceded by a space
-        r=I.toPIL16()
-         ^
-C0103: 70: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
-C0324: 71: Comma not followed by a space
-        I.rebin(2,2)
-                 ^^
-E1101: 71: Instance of 'bruker100image' has no 'rebin' member
-C0324: 72: Comma not followed by a space
-        print sys.argv[1] + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (I.getmax(),I.getmin(), I.getmean(), I.getstddev())
-                                                                                      ^^
-E1101: 72: Instance of 'bruker100image' has no 'getmax' member
-E1101: 72: Instance of 'bruker100image' has no 'getmin' member
-E1101: 72: Instance of 'bruker100image' has no 'getmean' member
-E1101: 72: Instance of 'bruker100image' has no 'getstddev' member
-C0324: 73: Comma not followed by a space
-        print 'integrated intensity (%d %d %d %d) =%.3f' % (10,20,20,40,I.integrate_area((10,20,20,40)))
-                                                              ^^
-E1101: 73: Instance of 'bruker100image' has no 'integrate_area' member
-C0322: 74: Operator not preceded by a space
-        sys.argv[1:]=sys.argv[2:]
-                    ^
-C0322: 75: Operator not preceded by a space
-    e=time.clock()
-     ^
-C0103: 75: Invalid name "e" (should match (([A-Z_]*)|(__.*__))$)
-W0611:  6: Unused import os
+C0103: 22:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
+C0111: 29:bruker100image.read: Missing docstring
+C0103: 30:bruker100image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 57:bruker100image.read: Invalid name "ar" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 65:bruker100image.read: Invalid name "M" (should match [a-z_][a-z0-9_]{2,30}$)
+C0103: 84: Invalid name "b" (should match (([A-Z_]*)|(__.*__))$)
+C0103: 87: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
+C0103: 94: Invalid name "e" (should match (([A-Z_]*)|(__.*__))$)
 
 
 Report
 ======
-55 statements analysed.
+53 statements analysed.
 
 Duplication
 -----------
@@ -170,13 +38,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |56     |90.32 |55       |+1.00      |
+|code      |63     |77.78 |64       |-1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |1      |1.61  |1        |=          |
+|docstring |7      |8.64  |7        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |4.84  |2        |+1.00      |
+|comment   |8      |9.88  |7        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |2      |3.23  |1        |+1.00      |
+|empty     |3      |3.70  |3        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -185,11 +53,10 @@ External dependencies
 ---------------------
 ::
 
-     
-      \-brukerimage (bruker100image)
     numpy (bruker100image)
     fabio 
       \-readbytestream (bruker100image)
+      \-brukerimage (bruker100image)
     PIL 
       \-Image (bruker100image)
 
@@ -218,13 +85,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |59     |60       |-1.00      |
+|convention |13     |13       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |8      |8        |=          |
+|warning    |1      |2        |-1.00      |
 +-----------+-------+---------+-----------+
-|error      |12     |13       |-1.00      |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -235,38 +102,16 @@ Messages
 +-----------+-----------+
 |message id |occurences |
 +===========+===========+
-|C0322      |22         |
-+-----------+-----------+
-|C0301      |13         |
-+-----------+-----------+
-|E1101      |12         |
-+-----------+-----------+
-|C0324      |9          |
-+-----------+-----------+
 |C0103      |9          |
 +-----------+-----------+
 |C0111      |4          |
 +-----------+-----------+
-|W0201      |3          |
-+-----------+-----------+
-|C0323      |2          |
-+-----------+-----------+
-|W0613      |1          |
-+-----------+-----------+
-|W0612      |1          |
-+-----------+-----------+
-|W0611      |1          |
-+-----------+-----------+
-|W0403      |1          |
-+-----------+-----------+
-|W0232      |1          |
-+-----------+-----------+
-|R0914      |1          |
+|W0511      |1          |
 +-----------+-----------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -13.27/10 (previous run: -14.81/10)
+Your code has been rated at 7.36/10 (previous run: 7.22/10)
 
