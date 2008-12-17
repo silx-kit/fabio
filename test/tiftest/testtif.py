@@ -1,6 +1,6 @@
 
 
-import glob, os, fabio.openimage, libtiff3ctypes
+import glob, os, fabio.openimage, libtiff3ctypes, traceback
 
 fl = ['fit2d.tif']
 fl += glob.glob( os.path.join("libtiffpic","*.tif"))
@@ -23,6 +23,7 @@ for f in fl:
 print passed, failed, passed+failed
 passed=0
 failed=0
+print "******************************"
 
 # Now with libtiff
 for f in fl:
@@ -34,6 +35,7 @@ for f in fl:
     except:
         print "Failed for",f
         failed += 1
+        traceback.print_exc()
 
 
 

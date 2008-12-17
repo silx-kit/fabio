@@ -10,6 +10,8 @@ import ctypes
 import logging     # Logging module
 import platform    # Platform discovery
 
+
+
 class Tiff3Error(Exception):
     pass
 
@@ -126,27 +128,40 @@ def test_read_tags(filename):
 
 
 def GetTiffData(tif, tlib, tags=None):
-    log=logging.getLogger("LibTiff3.GetTiffData")
+
     if tags==None:
         tags=GetTiffTags(tif, tlib)
 
-    w,h = tags["ImageWidth"], tags["ImageLength"]
+
         
     data=[]
     # TODO: We should try to put this into a numpy or PIL
     #       style buffer directly
+    if tlib.TIFFIsTiled(tif):
+        return _readtiled( tags, tif, tlib )
+    else:
+        return _readstrips( tags, tif ,tlib )
+
+def _readtiled(tags, til, tlib):
+    return []
+
+def _readstrips(tags, tif, tlib):
+    log = logging.getLogger("_readstrips")
+    w,h = tags["ImageWidth"], tags["ImageLength"]
+    data = []
+    # print "strip size",tlib.TIFFStripSize(tif) 
     buffer=(ctypes.c_ubyte * tlib.TIFFStripSize(tif) )()
     pbuffer=ctypes.pointer(buffer)
     if tlib.TIFFSetDirectory(tif,0) == 0:
         raise Tiff3Error("unable to set directory")
     for strip in range(tlib.TIFFNumberOfStrips(tif)):
         cc=tlib.TIFFReadEncodedStrip(tif, strip, pbuffer, -1)
+        if cc == -1:
+            print "there was an error"
         data+=list(pbuffer.contents)[:cc]
-        
     if len(data) != w*h:
         log.warning("short read %d bytes out of %d expected"%(
                 len(data), w*h))
-
     return data
 
 
