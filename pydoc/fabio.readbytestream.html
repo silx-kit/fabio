@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.readbytestream</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/readbytestream.py">/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/readbytestream.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/python2.5/site-packages/fabio/readbytestream.py">/usr/lib/python2.5/site-packages/fabio/readbytestream.py</a></font></td></tr></table>
     <p><tt>Reads&nbsp;a&nbsp;bytestream<br>
 &nbsp;<br>
 Authors:&nbsp;Jon&nbsp;Wright&nbsp;&nbsp;&nbsp;&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
@@ -20,7 +20,7 @@ Authors:&nbsp;Jon&nbsp;Wright&nbsp;&nbsp;&nbsp;&nbsp;Henning&nbsp;O.&nbsp;Sorens
 <font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="Numeric.html">Numeric</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
 </td><td width="25%" valign=top><a href="logging.html">logging</a><br>
 </td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -29,7 +29,7 @@ Authors:&nbsp;Jon&nbsp;Wright&nbsp;&nbsp;&nbsp;&nbsp;Henning&nbsp;O.&nbsp;Sorens
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-readbytestream"><strong>readbytestream</strong></a>(fil, offset, x, y, nbytespp, datatype<font color="#909090">='int'</font>, signed<font color="#909090">='n'</font>, swap<font color="#909090">='n'</font>, typeout<font color="#909090">='w'</font>)</dt><dd><tt>Reads&nbsp;in&nbsp;a&nbsp;bytestream&nbsp;from&nbsp;a&nbsp;file&nbsp;(which&nbsp;may&nbsp;be&nbsp;a&nbsp;string&nbsp;indicating<br>
+<td width="100%"><dl><dt><a name="-readbytestream"><strong>readbytestream</strong></a>(fil, offset, x, y, nbytespp, datatype<font color="#909090">='int'</font>, signed<font color="#909090">='n'</font>, swap<font color="#909090">='n'</font>, typeout<font color="#909090">=&lt;type 'numpy.uint16'&gt;</font>)</dt><dd><tt>Reads&nbsp;in&nbsp;a&nbsp;bytestream&nbsp;from&nbsp;a&nbsp;file&nbsp;(which&nbsp;may&nbsp;be&nbsp;a&nbsp;string&nbsp;indicating<br>
 a&nbsp;filename,&nbsp;or&nbsp;an&nbsp;already&nbsp;opened&nbsp;file&nbsp;(should&nbsp;be&nbsp;"rb"))<br>
 offset&nbsp;is&nbsp;the&nbsp;position&nbsp;(in&nbsp;bytes)&nbsp;where&nbsp;the&nbsp;pixel&nbsp;data&nbsp;start<br>
 nbytespp&nbsp;=&nbsp;number&nbsp;of&nbsp;bytes&nbsp;per&nbsp;pixel<br>
@@ -38,7 +38,7 @@ signed:&nbsp;normally&nbsp;signed&nbsp;data&nbsp;'y',&nbsp;but&nbsp;'n'&nbsp;to&
 right&nbsp;numbers&nbsp;when&nbsp;unsigned&nbsp;data&nbsp;are&nbsp;converted&nbsp;to&nbsp;signed&nbsp;<br>
 (python&nbsp;once&nbsp;had&nbsp;no&nbsp;unsigned&nbsp;numeric&nbsp;types.)<br>
 swap,&nbsp;normally&nbsp;do&nbsp;not&nbsp;bother,&nbsp;but&nbsp;'y'&nbsp;to&nbsp;swap&nbsp;bytes<br>
-typeout&nbsp;is&nbsp;the&nbsp;Numeric&nbsp;type&nbsp;to&nbsp;output,&nbsp;normally&nbsp;UInt16,&nbsp;<br>
+typeout&nbsp;is&nbsp;the&nbsp;numpy&nbsp;type&nbsp;to&nbsp;output,&nbsp;normally&nbsp;uint16,&nbsp;<br>
 but&nbsp;more&nbsp;if&nbsp;overflows&nbsp;occurred<br>
 x&nbsp;and&nbsp;y&nbsp;are&nbsp;the&nbsp;pixel&nbsp;dimensions<br>
 &nbsp;<br>
@@ -53,5 +53,5 @@ IT&nbsp;IS&nbsp;USEFUL&nbsp;FOR&nbsp;THE&nbsp;BRUKER&nbsp;FORMAT</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>DATATYPES</strong> = {('double', 'y', 4): 'd', ('float', 'y', 4): 'f', ('int', 'n', 1): 'b', ('int', 'n', 2): 'w', ('int', 'n', 4): 'u', ('int', 'y', 1): '1', ('int', 'y', 2): 's', ('int', 'y', 4): 'i'}</td></tr></table>
+<td width="100%"><strong>DATATYPES</strong> = {('double', 'y', 4): &lt;type 'numpy.float64'&gt;, ('float', 'y', 4): &lt;type 'numpy.float32'&gt;, ('int', 'n', 1): &lt;type 'numpy.uint8'&gt;, ('int', 'n', 2): &lt;type 'numpy.uint16'&gt;, ('int', 'n', 4): &lt;type 'numpy.uint32'&gt;, ('int', 'y', 1): &lt;type 'numpy.int8'&gt;, ('int', 'y', 2): &lt;type 'numpy.int16'&gt;, ('int', 'y', 4): &lt;type 'numpy.int32'&gt;}</td></tr></table>
 </body></html>

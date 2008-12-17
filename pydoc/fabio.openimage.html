@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.openimage</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/openimage.py">/home/wright/workspace/fabio/build/lib.linux-i686-2.5/fabio/openimage.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/python2.5/site-packages/fabio/openimage.py">/usr/lib/python2.5/site-packages/fabio/openimage.py</a></font></td></tr></table>
     <p><tt>Authors:&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Center&nbsp;for&nbsp;Fundamental&nbsp;Research:&nbsp;Metal&nbsp;Structures&nbsp;in&nbsp;Four&nbsp;Dimensions<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Risoe&nbsp;National&nbsp;Laboratory<br>
@@ -24,13 +24,16 @@ mods&nbsp;for&nbsp;fabio&nbsp;by&nbsp;JPW</tt></p>
 <font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="fabio.adscimage.html">fabio.adscimage</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="fabio.GEimage.html">fabio.GEimage</a><br>
+<a href="fabio.OXDimage.html">fabio.OXDimage</a><br>
+<a href="fabio.adscimage.html">fabio.adscimage</a><br>
 <a href="fabio.bruker100image.html">fabio.bruker100image</a><br>
-<a href="fabio.brukerimage.html">fabio.brukerimage</a><br>
-</td><td width="25%" valign=top><a href="fabio.edfimage.html">fabio.edfimage</a><br>
+</td><td width="25%" valign=top><a href="fabio.brukerimage.html">fabio.brukerimage</a><br>
+<a href="fabio.edfimage.html">fabio.edfimage</a><br>
 <a href="fabio.html">fabio</a><br>
 <a href="fabio.fit2dmaskimage.html">fabio.fit2dmaskimage</a><br>
-</td><td width="25%" valign=top><a href="fabio.mar345image.html">fabio.mar345image</a><br>
+</td><td width="25%" valign=top><a href="fabio.fit2dspreadsheetimage.html">fabio.fit2dspreadsheetimage</a><br>
+<a href="fabio.mar345image.html">fabio.mar345image</a><br>
 <a href="fabio.marccdimage.html">fabio.marccdimage</a><br>
 <a href="fabio.pnmimage.html">fabio.pnmimage</a><br>
 </td><td width="25%" valign=top><a href="fabio.tifimage.html">fabio.tifimage</a><br>
@@ -42,6 +45,7 @@ mods&nbsp;for&nbsp;fabio&nbsp;by&nbsp;JPW</tt></p>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt><a name="-do_magic"><strong>do_magic</strong></a>(byts)</dt><dd><tt>Try&nbsp;to&nbsp;interpret&nbsp;the&nbsp;bytes&nbsp;starting&nbsp;the&nbsp;file&nbsp;as&nbsp;a&nbsp;magic&nbsp;number</tt></dd></dl>
+ <dl><dt><a name="-openheader"><strong>openheader</strong></a>(filename)</dt><dd><tt>return&nbsp;only&nbsp;the&nbsp;header</tt></dd></dl>
  <dl><dt><a name="-openimage"><strong>openimage</strong></a>(filename)</dt><dd><tt>Try&nbsp;to&nbsp;open&nbsp;an&nbsp;image</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -50,5 +54,5 @@ mods&nbsp;for&nbsp;fabio&nbsp;by&nbsp;JPW</tt></p>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>MAGIC_NUMBERS</strong> = {'<font color="#c040c0">\r</font>{': 'edf', 'FORMAT :        86': 'bruker', 'II*<font color="#c040c0">\x00</font>': 'tif', 'M<font color="#c040c0">\x00\x00\x00</font>A<font color="#c040c0">\x00\x00\x00</font>S<font color="#c040c0">\x00\x00\x00</font>K<font color="#c040c0">\x00\x00\x00</font>': 'fit2dmask', 'MM<font color="#c040c0">\x00</font>*': 'tif', '{': 'edf'}</td></tr></table>
+<td width="100%"><strong>MAGIC_NUMBERS</strong> = [('FORMAT :        86', 'bruker'), ('MM<font color="#c040c0">\x00</font>*', 'tif'), ('II*<font color="#c040c0">\x00\xcc</font>', 'tif'), ('{<font color="#c040c0">\n</font>HEA', 'adsc'), ('{', 'edf'), ('<font color="#c040c0">\r</font>{', 'edf'), ('<font color="#c040c0">\n</font>{', 'edf'), ('ADEPT', 'GE'), ('OD', 'OXD'), ('-<font color="#c040c0">\x04</font>', 'mar345'), ('<font color="#c040c0">\x04</font>-', 'mar345'), ('M<font color="#c040c0">\x00\x00\x00</font>A<font color="#c040c0">\x00\x00\x00</font>S<font color="#c040c0">\x00\x00\x00</font>K<font color="#c040c0">\x00\x00\x00</font>', 'fit2dmask')]</td></tr></table>
 </body></html>
