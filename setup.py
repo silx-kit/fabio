@@ -25,6 +25,7 @@ setup(name='fabio',
       author_email = "fable-talk@lists.sourceforge.net",
       description='Image IO for fable',
       url = "http://fable.wiki.sourceforge.net/fabio",
+      download_url = "http://sourceforge.net/project/showfiles.php?group_id=82044&package_id=248946",
       ext_modules=[mar345_backend],
       packages = ["fabio"] ,
       package_dir = {"fabio": "src" } )
