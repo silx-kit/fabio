@@ -20,8 +20,11 @@ mar345_backend = Extension('mar345_io',
 
 # See the distutils docs...
 setup(name='fabio',
-      version="0.0.3",
+      version="0.0.4",
+      author = "Henning Sorensen, Erik Knudsen and Jon Wright",
+      author_email = "fable-talk@lists.sourceforge.net",
       description='Image IO for fable',
+      url = "http://fable.wiki.sourceforge.net/fabio",
       ext_modules=[mar345_backend],
       packages = ["fabio"] ,
       package_dir = {"fabio": "src" } )
