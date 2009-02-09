@@ -61,7 +61,7 @@ class fit2dspreadsheetimage(fabioimage):
                     vals.append([float(x) for x in line.split()])
                 except:
                     pass
-            self.data = numpy.array(vals)
+            self.data = numpy.array(vals).astype( bytecode )
             assert self.data.shape == ( self.dim2, self.dim1 )
 
         except:
