@@ -12,23 +12,23 @@ Authors: Henning O. Sorensen & Erik Knudsen
         + Jon Wright, ESRF
 """
 
-import numpy as N, logging
+import numpy as np, logging
 
 from fabio.fabioimage import fabioimage
 
 
-DATA_TYPES = {  "SignedByte"     :  N.int8,
-                "UnsignedByte"   :  N.uint8,
-                "SignedShort"    :  N.int16,
-                "UnsignedShort"  :  N.uint16,
-                "UnsignedShortInteger" : N.uint16,
-                "SignedInteger"  :  N.int32,
-                "UnsignedInteger":  N.uint32,
-                "SignedLong"     :  N.int,
-                "UnsignedLong"   :  N.uint,
-                "FloatValue"     :  N.float32,
-                "FLOAT"          :  N.float32, # fit2d
-                "DoubleValue"    :  N.float
+DATA_TYPES = {  "SignedByte"     :  np.int8,
+                "UnsignedByte"   :  np.uint8,
+                "SignedShort"    :  np.int16,
+                "UnsignedShort"  :  np.uint16,
+                "UnsignedShortInteger" : np.uint16,
+                "SignedInteger"  :  np.int32,
+                "UnsignedInteger":  np.uint32,
+                "SignedLong"     :  np.int,
+                "UnsignedLong"   :  np.uint,
+                "FloatValue"     :  np.float32,
+                "FLOAT"          :  np.float32, # fit2d
+                "DoubleValue"    :  np.float
                 }
 
 MINIMUM_KEYS = ['HeaderID',
@@ -103,9 +103,9 @@ class edfimage(fabioimage):
         try:
             bytecode  = DATA_TYPES[self.header['DataType']]
         except KeyError:
-            bytecode = N.uint16
+            bytecode = np.uint16
             logging.warning("Defaulting type to uint16")
-        self.bpp = len(N.array(0, bytecode).tostring())
+        self.bpp = len(np.array(0, bytecode).tostring())
 
         if self.header.has_key("Size"): # fit2d does not write this
             if self.bpp*self.dim1*self.dim2 != int(self.header["Size"]):
@@ -130,8 +130,8 @@ class edfimage(fabioimage):
 
         #now read the data into the array
         try:
-            self.data = N.reshape(
-                N.fromstring(block, bytecode ),
+            self.data = np.reshape(
+                np.fromstring(block, bytecode ),
                 [self.dim2, self.dim1])
         except:
             print len(block), bytecode, self.bpp, self.dim2, self.dim1
@@ -154,11 +154,11 @@ class edfimage(fabioimage):
         """
         Decide if we need to byteswap
         """
-        if ('Low'  in self.header['ByteOrder'] and N.little_endian ) or \
-           ('High' in self.header['ByteOrder'] and not N.little_endian ):
+        if ('Low'  in self.header['ByteOrder'] and np.little_endian ) or \
+           ('High' in self.header['ByteOrder'] and not np.little_endian ):
             return False
-        if ('High'  in self.header['ByteOrder'] and N.little_endian ) or \
-           ('Low' in self.header['ByteOrder'] and not N.little_endian ):
+        if ('High'  in self.header['ByteOrder'] and np.little_endian ) or \
+           ('Low' in self.header['ByteOrder'] and not np.little_endian ):
             if self.bpp in [2, 4, 8]:
                 return True
             else:
@@ -166,12 +166,23 @@ class edfimage(fabioimage):
 
 
 
-    def write(self, fname, force_type = N.uint16 ):
+    def _fixheader(self):
+        """ put some rubbish in to allow writing"""
+        self.header['Dim_2'], self.header['Dim_1'] = self.data.shape
+        self.bpp = len(self.data[0,0].tostring())
+        self.header['Size'] = len(self.data.tostring())
+        for k in MINIMUM_KEYS:
+            if k not in self.header:
+                self.header[k] = DEFAULT_VALUES[k]
+
+
+    def write(self, fname, force_type = np.uint16 ):
         """
         Try to write a file
         check we can write zipped also
         mimics that fabian was writing uint16 (we sometimes want floats)
         """
+        self._fixheader()
         # Fabian was forcing uint16 - make this a default
         if force_type is not None:
             data = self.data.astype(force_type)

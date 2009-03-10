@@ -64,10 +64,23 @@ def do_magic(byts):
                 print ord(magic[i]), ord(byts[i]), magic[i], byts[i]
     raise Exception("Could not interpret magic string")
 
+
 def openimage(filename):
     """ Try to open an image """
-    obj = _openimage(filename)
-    obj.read(filename)
+    import fabio
+    if isinstance( filename, fabio.filename_object):
+        try:
+            obj = _openimage(filename.tostring())
+            obj.read(filename.tostring())
+        except:
+            # multiframe file
+            #print "DEBUG: multiframe file, start # %d"%(
+            #    filename.num)
+            obj = _openimage(filename.stem)
+            obj.read(filename.stem, frame = filename.num)
+    else:
+        obj = _openimage(filename)
+        obj.read(filename)
     return obj
 
 

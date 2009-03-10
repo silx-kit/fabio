@@ -14,8 +14,45 @@ Authors: Henning O. Sorensen & Erik Knudsen
         + Jon Wright, ESRF
 """
 from fabio import filename_object
+import fabio
 from fabio.openimage import openimage
         
+
+def new_file_series( first_object, first = None, last = None, step = 1 ):
+    """
+    Created from a fabio image
+    first and last are file numbers
+    """
+    im = first_object
+    nimages = 0
+    # for counting images
+    if None in (first, last):
+        step = 0
+        total = 1
+    else:
+        total = last - first
+        
+    yield im
+    while nimages < total:
+        nimages += step
+        try:
+            newim = im.next()
+            im = newim
+        except:
+            import traceback
+            traceback.print_exc()
+
+            # Skip bad images
+            print "Got a problem here"
+            try:
+                im.filename = fabio.next_filename( im.filename )
+            except:
+                im.filename = fabio.next_filename( im.sequencefilename )
+            yield None
+        yield im
+
+
+
 
         
 
