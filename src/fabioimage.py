@@ -18,9 +18,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy, math, os, cStringIO, gzip, bz2
+import numpy as N, math, os, sys, cStringIO, gzip, bz2
 from PIL import Image
 import fabio
+import numpy
 
 # i = Image.open('lena.jpg')
 # a = numpy.asarray(i) # a is readonly
@@ -35,7 +36,7 @@ class fabioimage:
     _need_a_seek_to_read = False
     _need_a_real_file = False
 
-    def __init__(self, data = None , header = None):
+    def __init__(self, data = None , header = {}):
         """
         Set up initial values
         """
@@ -44,10 +45,7 @@ class fabioimage:
                             "data should be numpy array")
         self.data = data
         self.pilimage = None
-        if header is None:
-            self.header = {}
-        else:
-            self.header = header
+        self.header = header
         self.header_keys = self.header.keys() # holds key ordering
         if data is not None:
             self.dim1, self.dim2 = data.shape
@@ -60,6 +58,27 @@ class fabioimage:
         # Cache roi
         self.area_sum = None
         self.slice = None
+        # New for multiframe files
+        self.nframes = 1
+        self.currentframe = 0
+        self.filename = None
+        
+    def getframe(self, num):
+        """ returns the file numbered 'num' in the series as a fabioimage """
+        if self.nframes == 1:
+            # single image per file
+            return fabio.openimage( fabio.jump_filename( self.filename, num ) )
+        raise Exception("getframe out of range")
+
+    def previous(self):
+        """ returns the previous file in the series as a fabioimage """
+        return fabio.openimage.openimage(
+            fabio.previous_filename( self.filename ) )
+
+    def next(self):
+        """ returns the next file in the series as a fabioimage """
+        return fabio.openimage.openimage(
+            fabio.next_filename( self.filename ) )
 
   
     def toPIL16(self, filename = None):
@@ -67,7 +86,6 @@ class fabioimage:
         Convert to Python Imaging Library 16 bit greyscale image
 
         FIXME - this should be handled by the libraries now
-        TODO  - som objects are over-riding this method, why?
         """
         if filename:
             self.read(filename)
@@ -105,13 +123,13 @@ class fabioimage:
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:
-            self.maxval = numpy.max(self.data)
+            self.maxval = N.max(self.data)
         return self.maxval
   
     def getmin(self):    
         """ Find min value in self.data, caching for the future """
         if self.minval is None:
-            self.minval = numpy.min(self.data)
+            self.minval = N.min(self.data)
         return self.minval
 
     def make_slice(self, coords):
@@ -157,21 +175,21 @@ class fabioimage:
         if sli == self.slice and self.area_sum is not None:
             return self.area_sum
         self.slice = sli
-        self.area_sum = numpy.sum( 
-                            numpy.ravel( 
-                                self.data[ self.slice ].astype(numpy.float)))
+        self.area_sum = N.sum( 
+                            N.ravel( 
+                                self.data[ self.slice ].astype(N.float)))
         return self.area_sum
 
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = numpy.mean(self.data) 
+            self.mean = N.mean(self.data) 
         return float(self.mean)
     
     def getstddev(self):
         """ return the standard deviation """
         if self.stddev == None:
-            self.stddev = numpy.std(self.data)
+            self.stddev = N.std(self.data)
         return float(self.stddev)
 
     def add(self, other):
@@ -203,9 +221,9 @@ class fabioimage:
             raise Exception('Rebin factors not power of 2 not supported (yet)')
         if int(self.dim1 / x_rebin_fact) * x_rebin_fact != self.dim1 or \
            int(self.dim2 / x_rebin_fact) * x_rebin_fact != self.dim2 :
-            raise Exception('image size is not divisible by rebin factor - ' +
-                            'skipping rebin')
-        # pass  ## self.data.savespace(1) # avoid the upcasting behaviour
+            raise('image size is not divisible by rebin factor - ' + \
+                  'skipping rebin')
+        pass  ## self.data.savespace(1) # avoid the upcasting behaviour
         i = 1
         while i < x_rebin_fact:
             # FIXME - why do you divide by 2? Rebinning should increase counts?
@@ -231,8 +249,7 @@ class fabioimage:
         """
         Call the _readheader function...
         """
-        # Override the needs asserting that all headers can be read via 
-        # python modules
+        # Override the needs asserting that all headers can be read via python modules
         save_state = self._need_a_real_file , self._need_a_seek_to_read
         self._need_a_real_file , self._need_a_seek_to_read = False, False
         fin = self._open(filename)
@@ -266,6 +283,10 @@ class fabioimage:
         Return an object which can be used for "read" and "write" 
         ... FIXME - what about seek ? 
         """
+        self.filename = fname
+        if hasattr(fname, "read") and hasattr(fname, "write"):
+            # It is already something we can use
+            return fname
         if type(fname) in [type(" "), type(u" ")]:
             # filename is a string
             self.header["filename"] = fname
@@ -285,10 +306,6 @@ class fabioimage:
             #
             # FIXME - should we fix that or complain about the daft naming?
             return open(fname, mode)
-        if hasattr(fname, "read") and hasattr(fname, "write"):
-            # It is already something we can use
-            return fname
-
 
     def _compressed_stream(self, 
                            fname, 
@@ -299,8 +316,7 @@ class fabioimage:
         Try to transparently handle gzip / bzip without always getting python 
         performance
         """
-        # assert that python modules are always OK based on performance 
-        # benchmark
+        # assert that python modules are always OK based on performance benchmark
         # Try to fix the way we are using them?
         if self._need_a_real_file and mode[0] == "r":  
             fo = python_uncompress(fname, mode)
@@ -324,9 +340,9 @@ def test():
     import time
     start = time.time()
     
-    dat = numpy.ones((1024, 1024), numpy.uint16)
-    dat = (dat*50000).astype(numpy.uint16)
-    assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
+    dat = N.ones((1024, 1024), N.uint16)
+    dat = (dat*50000).astype(N.uint16)
+    assert dat.dtype.char == N.ones((1), N.uint16).dtype.char
     hed = {"Title":"50000 everywhere"}
     obj = fabioimage(dat, hed)
       
@@ -335,7 +351,7 @@ def test():
     assert obj.getmean() == 50000 , obj.getmean()
     assert obj.getstddev() == 0.
       
-    dat2 = numpy.zeros((1024, 1024), numpy.uint16, savespace = 1 )
+    dat2 = N.zeros((1024, 1024), N.uint16, savespace = 1 )
     cord = [ 256, 256, 790, 768 ]
     slic = obj.make_slice(cord)
     dat2[slic] = dat2[slic] + 100
