@@ -67,7 +67,8 @@ class fabioimage:
         """ returns the file numbered 'num' in the series as a fabioimage """
         if self.nframes == 1:
             # single image per file
-            return fabio.openimage( fabio.jump_filename( self.filename, num ) )
+            return fabio.openimage.openimage(
+                fabio.jump_filename( self.filename, num ) )
         raise Exception("getframe out of range")
 
     def previous(self):
