@@ -14,7 +14,7 @@ mods for fabio by JPW
 
 """
 
-from PIL import Image
+import Image
 import numpy , logging
 
 from fabio.fabioimage import fabioimage

@@ -2,7 +2,7 @@
 
 import numpy as N
 import math
-from PIL import Image
+import Image
 from fabio import brukerimage
 from fabio.readbytestream import readbytestream
 

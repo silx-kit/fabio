@@ -12,7 +12,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-from PIL import Image
+import Image
 import numpy as N
 from fabio import fabioimage
 
