@@ -20,7 +20,7 @@ mar345_backend = Extension('mar345_io',
 
 # See the distutils docs...
 setup(name='fabio',
-      version="0.0.4",
+      version="0.0.5",
       author = "Henning Sorensen, Erik Knudsen and Jon Wright",
       author_email = "fable-talk@lists.sourceforge.net",
       description='Image IO for fable',
