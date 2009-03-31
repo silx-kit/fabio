@@ -70,7 +70,7 @@ class tifimage(fabioimage):
             raw_data = infile.read()
             header_bytes = len(raw_data) - (self.dim1*self.dim2*self.nbits)/8
             if self.nbits == 16: # Probably uint16
-                logging.warn('USING FIT2D 16 BIT TIFF READING - EXPERIMENTAL')
+#                logging.warn('USING FIT2D 16 BIT TIFF READING - EXPERIMENTAL')
                 self.pilimage = Image.frombuffer("F",
                                          (self.dim1,self.dim2),
                                          raw_data[header_bytes:],
@@ -82,8 +82,8 @@ class tifimage(fabioimage):
                                          numpy.uint16)
 
             elif self.nbits == 32: # Probably uint16
-                logging.warn('USING FIT2D 32 BIT FLOAT TIFF READING -' + 
-                             ' EXPERIMENTAL')
+#                logging.warn('USING FIT2D 32 BIT FLOAT TIFF READING -' + 
+#                             ' EXPERIMENTAL')
                 self.pilimage = Image.frombuffer("F",
                                          (self.dim1,self.dim2),
                                          raw_data[header_bytes:],

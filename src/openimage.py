@@ -107,6 +107,8 @@ def _openimage(filename):
     except:
         try:
             file_obj = deconstruct_filename(filename)
+            if file_obj == None:
+                raise Exception
             if len(file_obj.format) != 1 and \
                     type(file_obj.format) != type(["list"]):
                 # one of OXD/ ADSC - should have got in previous
@@ -114,8 +116,8 @@ def _openimage(filename):
             filetype = file_obj.format
             #UNUSED filenumber = file_obj.num
         except:
-            import traceback
-            traceback.print_exc()
+            #import traceback
+            #traceback.print_exc()
             raise Exception("Fabio could not identify "+filename)
 
     klass_name = "".join(filetype) + 'image' 
