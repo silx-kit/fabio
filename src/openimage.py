@@ -29,6 +29,7 @@ from fabio import bruker100image
 from fabio import pnmimage
 from fabio import GEimage
 from fabio import OXDimage
+from fabio import dm3image
 from fabio import fit2dspreadsheetimage
 
 
@@ -49,6 +50,7 @@ MAGIC_NUMBERS = [
     ('\x04\x2d'           , 'mar345'),#some machines may need byteswapping
     # hint : MASK in 32 bit
     ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
+    ('\x00\x00\x00\x03'   , 'dm3')
     ]
 
 def do_magic(byts):
@@ -121,11 +123,12 @@ def _openimage(filename):
             raise Exception("Fabio could not identify "+filename)
 
     klass_name = "".join(filetype) + 'image' 
-    #print "looking for",klass_name
+    print "looking for",klass_name
     if hasattr(fabio, klass_name):
         module = getattr(fabio, klass_name)
         if hasattr(module, klass_name):
             klass  = getattr(module, klass_name)
+            print klass
         else:
             raise Exception("Module " + module + "has no image class")
     else:
