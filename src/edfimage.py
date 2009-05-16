@@ -214,7 +214,7 @@ class edfimage(fabioimage):
             # We remove the extra whitespace on the key names to
             # avoiding making headers greater then 4 kb unless they already
             # were too big
-            out = ((" %s = %s ;\n") % (k, self.header[k]))
+            out = (("%-14s = %s ;\n") % (k, self.header[k]))
             i = i + len(out)
             outfile.write(out)
         # if additional items in the header just write them out in the
@@ -234,9 +234,12 @@ class edfimage(fabioimage):
         i = i + len(out)
         assert i % 1024 == 0
         outfile.write('}\n')
+        # print "Byteswapping?",
         if self.swap_needed():
+            # print "did a swap"
             # data has "astype" from start of this function
             outfile.write(data.byteswap().tostring())
         else:
+            # print "did not"
             outfile.write(data.tostring())
         outfile.close()
