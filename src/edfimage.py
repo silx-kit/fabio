@@ -211,7 +211,10 @@ class edfimage(fabioimage):
         outfile.write('{\n') # Header start
         i = 4          # 2 so far, 2 to come at the end
         for k in self.header_keys:
-            out = (("% 20s = %s ;\n") % (k, self.header[k]))
+            # We remove the extra whitespace on the key names to
+            # avoiding making headers greater then 4 kb unless they already
+            # were too big
+            out = ((" %s = %s ;\n") % (k, self.header[k]))
             i = i + len(out)
             outfile.write(out)
         # if additional items in the header just write them out in the

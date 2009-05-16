@@ -123,12 +123,12 @@ def _openimage(filename):
             raise Exception("Fabio could not identify "+filename)
 
     klass_name = "".join(filetype) + 'image' 
-    print "looking for",klass_name
+    # print "looking for",klass_name
     if hasattr(fabio, klass_name):
         module = getattr(fabio, klass_name)
         if hasattr(module, klass_name):
             klass  = getattr(module, klass_name)
-            print klass
+            # print klass
         else:
             raise Exception("Module " + module + "has no image class")
     else:
