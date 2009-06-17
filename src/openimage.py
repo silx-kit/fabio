@@ -30,6 +30,7 @@ from fabio import pnmimage
 from fabio import GEimage
 from fabio import OXDimage
 from fabio import dm3image
+from fabio import HiPiCimage
 from fabio import fit2dspreadsheetimage
 
 
@@ -46,6 +47,7 @@ MAGIC_NUMBERS = [
     ("\n{"                , 'edf'),
     ("ADEPT"              , 'GE'),
     ("OD"                 , 'OXD'),
+    ("IM"                 , 'HiPiC'),
     ('\x2d\x04'           , 'mar345'),
     ('\x04\x2d'           , 'mar345'),#some machines may need byteswapping
     # hint : MASK in 32 bit
@@ -102,6 +104,7 @@ def _openimage(filename):
         imo = fabioimage()
         byts = imo._open(filename).read(18)
         filetype = do_magic(byts)
+	print filetype
         #UNUSED filenumber = getnum(filename)
     except IOError:
         # File probably does not exist
