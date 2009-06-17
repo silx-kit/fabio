@@ -110,14 +110,24 @@ class fabioimage:
             mode1 = mode2[0]
         else:
             raise Exception("Unknown numpy type "+str(self.data.dtype.type))
-        self.pilimage = Image.frombuffer(mode1,
-                                         size,
-                                         self.data.tostring(),
-                                         "raw",
-                                         mode2,
-                                         0,
-                                         1)
-
+        # hack for byteswapping for PIL in MacOS
+        if os.uname()[0] == 'Darwin':
+            self.pilimage = Image.frombuffer(mode1,
+                                             size,
+                                             self.data.byteswap().tostring(),
+                                             "raw",
+                                             mode2,
+                                             0,
+                                             1)
+        else:
+            self.pilimage = Image.frombuffer(mode1,
+                                             size,
+                                             self.data.tostring(),
+                                             "raw",
+                                             mode2,
+                                             0,
+                                             1)
+            
         return self.pilimage
 
     def getheader(self):
