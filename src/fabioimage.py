@@ -111,7 +111,11 @@ class fabioimage:
         else:
             raise Exception("Unknown numpy type "+str(self.data.dtype.type))
         # hack for byteswapping for PIL in MacOS
-        if os.uname()[0] == 'Darwin':
+        try: 
+            machine = os.uname()[0]
+        except:
+            machine = 'Win'
+        if machine == 'Darwin':
             self.pilimage = Image.frombuffer(mode1,
                                              size,
                                              self.data.byteswap().tostring(),
