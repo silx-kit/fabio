@@ -1,4 +1,8 @@
-#include <stdint.h>
+#ifndef _MSC_VER
+#include <stdint.h> 
+#else
+#include "stdint.h" 
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
