@@ -272,7 +272,7 @@ class GEimage(fabio.fabioimage.fabioimage):
         """
         Get the next image in a series as a fabio image
         """
-        if self.currentframe < self.nframes:
+        if self.currentframe < self.nframes and self.nframes > 1:
             return self.getframe( self.currentframe + 1 )
         else:
             newobj = GEimage()
