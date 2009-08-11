@@ -104,7 +104,7 @@ def _openimage(filename):
         imo = fabioimage()
         byts = imo._open(filename).read(18)
         filetype = do_magic(byts)
-	print filetype
+#	print filetype
         #UNUSED filenumber = getnum(filename)
     except IOError:
         # File probably does not exist
