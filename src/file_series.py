@@ -18,7 +18,7 @@ import fabio
 from fabio.openimage import openimage
         
 
-def new_file_series( first_object, first = None, last = None, step = 1 ):
+def new_file_series0( first_object, first = None, last = None, step = 1 ):
     """
     Created from a fabio image
     first and last are file numbers
@@ -47,13 +47,70 @@ def new_file_series( first_object, first = None, last = None, step = 1 ):
             try:
                 im.filename = fabio.next_filename( im.filename )
             except:
+                # KE: This will not work and will throw an exception
+                # fabio.next_filename doesn't understand %nnnn on the end
                 im.filename = fabio.next_filename( im.sequencefilename )
             yield None
         yield im
 
 
 
-
+def new_file_series( first_object, nimages = 0, step = 1, traceback = False ):
+    """
+    A generator function that creates a file series starting from a a fabioimage.
+    Iterates through all images in a file (if more than 1), then proceeds to
+    the next file as determined by fabio.next_filename.
+    
+    first_object: the starting fabioimage, which will be the first one yielded
+      in the sequence
+    nimages:  the maximum number of images to consider
+    step: step size, will yield the first and every step'th image until nimages
+      is reached.  (e.g. nimages = 5, step = 2 will yield 3 images (0, 2, 4) 
+    traceback: if True causes it to print a traceback in the event of an
+      exception (missing image, etc.).  Otherwise the calling routine can handle
+      the exception as it chooses 
+    yields: the next fabioimage in the series.
+      In the event there is an exception, it yields the sys.exec_info for the
+      exception instead.  sys.exec_info is a tuple:
+        ( exceptionType, exceptionValue, exceptionTraceback )
+      from which all the exception information can be obtained.
+      Suggested usage:
+        for obj in new_file_series( ... ):
+          if not isinstance( obj, fabio.fabioimage.fabioimage ):
+            # deal with errors like missing images, non readable files, etc
+            # e.g.
+            traceback.print_exception(obj[0], obj[1], obj[2])
+    """
+    im = first_object
+    nprocessed = 0
+    abort = False
+    if nimages > 0:
+        yield im
+        nprocessed += 1
+    while nprocessed < nimages:
+        try:
+            newim = im.next()
+            im = newim
+            retVal = im
+        except Exception, ex:
+            import sys
+            retVal = sys.exc_info()
+            if(traceback):
+                import traceback
+                traceback.print_exc()
+                # Skip bad images
+                print "Got a problem here: next() failed"
+            # Skip bad images
+            try:
+                im.filename = fabio.next_filename( im.filename )
+            except:
+                pass
+        if nprocessed % step == 0:
+            yield retVal
+            # Avoid cyclic references with exc_info ?
+            retVal = None
+            if abort: break
+        nprocessed += 1
         
 
 
