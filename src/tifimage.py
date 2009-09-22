@@ -125,6 +125,19 @@ class tifimage(fabioimage):
         ... at least try ...
         """
         if self.pilimage is None:
-            self.toPIL16()
+            if self.data.dtype != numpy.dtype('uint16'):
+                # Use toPIL16 if you which to save a non 16 bit image 
+                # Odd, but this is how it apparently works
+                self.toPIL16()
+            else:
+                # to save 16 bit tif we have to use "I;16" not "F;16"
+                size = self.data.shape[:2][::-1]
+                self.pilimage = Image.frombuffer('I',
+                                                 size,
+                                                 self.data.tostring(),
+                                                 "raw",
+                                                 'I;16',
+                                                 0,1)
+            
         self.pilimage.save(fname, "TIFF")
         
