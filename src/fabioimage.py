@@ -110,27 +110,23 @@ class fabioimage:
             mode1 = mode2[0]
         else:
             raise Exception("Unknown numpy type "+str(self.data.dtype.type))
+        # 
         # hack for byteswapping for PIL in MacOS
-        try: 
-            machine = os.uname()[0]
-        except:
-            machine = 'Win'
-        if machine == 'Darwin':
-            self.pilimage = Image.frombuffer(mode1,
-                                             size,
-                                             self.data.byteswap().tostring(),
-                                             "raw",
-                                             mode2,
-                                             0,
-                                             1)
+        testval = N.array((1, 0), N.uint8).view(N.uint16)[0]
+        if  testval == 1:
+            dats = self.data.tostring()
+        elif testval == 256:
+            dats = self.data.byteswap().tostring()
         else:
-            self.pilimage = Image.frombuffer(mode1,
-                                             size,
-                                             self.data.tostring(),
-                                             "raw",
-                                             mode2,
-                                             0,
-                                             1)
+            raise Exception("Endian unknown in fabioimage.toPIL16")
+
+        self.pilimage = Image.frombuffer(mode1,
+                                         size,
+                                         dats,
+                                         "raw",
+                                         mode2,
+                                         0,
+                                         1)
             
         return self.pilimage
 
