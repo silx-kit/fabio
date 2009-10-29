@@ -30,6 +30,7 @@ setup(name='fabio',
       url = "http://fable.wiki.sourceforge.net/fabio",
       download_url = "http://sourceforge.net/project/showfiles.php?group_id=82044&package_id=248946",
       ext_modules=[mar345_backend,cf_backend],
+      packages = ["fabio"],
       package_dir = {"fabio": "src" } 
       )
 
