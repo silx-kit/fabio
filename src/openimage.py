@@ -31,6 +31,7 @@ from fabio import GEimage
 from fabio import OXDimage
 from fabio import dm3image
 from fabio import HiPiCimage
+from fabio import pilatusimage
 from fabio import fit2dspreadsheetimage
 
 
@@ -39,6 +40,11 @@ MAGIC_NUMBERS = [
     # "\1f\8b" : 'gzipped'
     ("FORMAT :        86" , 'bruker'), 
     ("\x4d\x4d\x00\x2a"   , 'tif') ,
+    # The marCCD and Pilatus formats are both standard tif with a header
+    # hopefully these byte patterns are unique for the formats
+    # If not the image will be read, but the is missing 
+    ("\x49\x49\x2a\x00\x08\x00"   , 'marccd') ,
+    ("\x49\x49\x2a\x00\x82\x00"   , 'pilatus') ,
     ("\x49\x49\x2a\x00"   , 'tif') ,
     # ADSC must come before edf
     ("{\nHEA"             , 'adsc'),
@@ -124,7 +130,6 @@ def _openimage(filename):
             #import traceback
             #traceback.print_exc()
             raise Exception("Fabio could not identify "+filename)
-
     klass_name = "".join(filetype) + 'image' 
     # print "looking for",klass_name
     if hasattr(fabio, klass_name):
