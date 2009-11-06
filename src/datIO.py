@@ -39,6 +39,9 @@ class fabiodata:
     """
     raise Exception("Class has not implemented read method yet")
 
+  #import stuff from Jon's columnfile things
+
+
 class columnfile (fabiodata):
  
   def read(self,fname):
@@ -48,7 +51,7 @@ class columnfile (fabiodata):
     except:
       raise Exception("columnfile: file" + str(fname) + "not found.")
     try:
-      (self.data,self.clabels)=cf_io.read_ascii(infile)
+      (self.data,self.clabels)=cf_io.read(infile)
     except:
       raise Exception("columnfile: read error, file " + str(fname) + " possibly corrupt" )        
     self.dims=self.data.shape

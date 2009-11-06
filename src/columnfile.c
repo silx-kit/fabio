@@ -38,11 +38,11 @@ void inline cf_free( cf_data *p){
 
 int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
 #if HAVE_ZLIB_H
-  if (FLAGS && CF_COMPRESSION){
+  if (FLAGS & CF_GZ_COMP){
     gzFile gzfp=gzopen(fname,"wbh");
     if (gzfp==NULL) return -1;
     int status=-1;
-    if (FLAGS && CF_BINARY){
+    if (FLAGS && CF_BIN){
       status=cf_write_bin_gz(gzfp,cf_handle);
     }else{
       status=cf_write_ascii_gz(gzfp,cf_handle);
@@ -56,66 +56,54 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
     FILE *fp=fopen(fname,"wb");
     if (fp==NULL) return -1;
     int status=-1;
-    if (FLAGS && CF_BINARY){
+    if (FLAGS && CF_BIN){
       /*status=cf_write_bin(fp,cf_handle);
         */
     }else{
-      status=cf_write_ascii(fp,cf_handle);
+      status=cf_write_ascii(fp,cf_handle,0);
     }
     fclose(fp);
     return status;
   }
 }
 
-int cf_write_ascii(FILE *fp, void *cf_handle){
+int cf_write_ascii(void *fp, void *cf_handle, unsigned int FLAGS){/*{{{*/
   int r,c;
   cf_data *cf_=(cf_data *) cf_handle;
-  fprintf(fp,"#");
-  for (c=0;c<cf_->ncols;c++){
-    fprintf(fp," %s",cf_->clabels[c]);
-  }
-  fprintf(fp,"\n");
-  for (r=0;r<cf_->nrows;r++){
-    for (c=0;c<cf_->ncols;c++){
-      fprintf(fp," %g",cf_->data[c][r]);
-    }
-    fprintf(fp,"\n");
-  }
-  return 0;
-}
-
 #if HAVE_ZLIB_H
-int cf_write_ascii_gz(gzFile fp, void *cf_handle){
-  int r,c;
-  cf_data *cf_=(cf_data *) cf_handle;
-  gzprintf(fp,"#");
-  for (i=0;i<cf_->ncols;i++){
-    gzprintf(fp," %s",cf_->clabels[i]);
-  }
-  gzprintf(fp,"\n");
-  for (r=0;r<cf_->nrows;r++){
+  if (FLAGS & CF_GZ_COMP){
+    gzprintf((gzFile)fp,"#");
     for (i=0;i<cf_->ncols;i++){
-      gzprintf(fp," %g",cf_->data[i][r]);
+      gzprintf((gzFile)fp," %s",cf_->clabels[i]);
     }
-    gzprintf(fp,"\n");
-  }
-  return 0;
-#endif
-
-/*    
-gzFile gzfp=gzopen(fname,"wbh");
-    if (gzFile==NULL) return -1;
-    gzprintf("# ");
-    for (i=0;i<ncols;i++)
-      gzprintf("%s ",cf_->clabels[i]);
-    gzprintf("\n");
-    for (r=0;r<0;
+    gzprintf((gzFile)fp,"\n");
+    for (r=0;r<cf_->nrows;r++){
+      for (i=0;i<cf_->ncols;i++){
+        gzprintf((gzFile)fp," %g",cf_->data[i][r]);
+      }
+      gzprintf((gzFile)fp,"\n");
+    }
+    return 0;
   }else{
-    FILE *fp=fopen(fname,"wb");
+#endif
+    fprintf((FILE *)fp,"#");
+    for (c=0;c<cf_->ncols;c++){
+      fprintf((FILE *)fp," %s",cf_->clabels[c]);
+    }
+    fprintf((FILE *)fp,"\n");
+    for (r=0;r<cf_->nrows;r++){
+      for (c=0;c<cf_->ncols;c++){
+        fprintf((FILE *)fp," %g",cf_->data[c][r]);
+      }
+      fprintf((FILE *)fp,"\n");
+    }
+    return 0;
+#if HAVE_ZLIB_H
   }
-*/
+#endif
+}/*}}}*/
 
-void *cf_read_ascii(FILE *fp, void *dest){
+void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   /*read the first line and figure out how many columns we have*/
   char line[2048];
   int i,r;
@@ -127,7 +115,15 @@ void *cf_read_ascii(FILE *fp, void *dest){
   char *p;
 
   /*read the first line into buffer*/
-  fgets(line,2048,fp);
+#if HAVE_ZLIB_H
+  if (FLAGS & CF_GZ_COMP){
+    if ((gzgets((gzFile )fp,line,2048))==Z_NULL) {fprintf(stderr,"zlib io error in %s \n",__FILE__);return NULL;}
+  }else{
+    if((fgets(line,2048,(FILE *)fp))==NULL){fprintf(stderr,"io-error in %s\n",__FILE__);return NULL;}
+  }
+#else
+  if((fgets(line,2048,(FILE *)fp))==NULL){fprintf(stderr,"io-error in %s\n",__FILE__);return NULL;}
+#endif
 
   /*initially allocate room for 32 columns - if that is not enough should reallocate*/
   clabels= malloc(CF_INIT_COLS* sizeof(char*));
@@ -147,13 +143,17 @@ void *cf_read_ascii(FILE *fp, void *dest){
     else p=line;
     while (*p!='\0' || *p!='\n' || p<line+2048){
       if( is_ws(*p) && !is_ws(*(p+1)) && *(p+1)!='\0') {
+        if(ncols==nc_alloc){
+          clabels=realloc(clabels,sizeof(char *));
+          *(clabels+ncols)=malloc(CF_HEADER_ITEM*sizeof(char));
+          nc_alloc++;
+        }
         sscanf(p,"%s",*(clabels+ncols));
         ncols++;
       }
       p++;
     }
   }
-
   /*alloc a number of rows*/
   data=malloc(nr_alloc*sizeof(double*));
   for (dp=data;dp<data+nr_alloc;dp++){
@@ -162,9 +162,19 @@ void *cf_read_ascii(FILE *fp, void *dest){
 
   r=0;
   do {
-    fgets(line,2048,fp);
-    if (feof(fp)) break;
-    
+#if HAVE_ZLIB_H
+  if (FLAGS & CF_GZ_COMP){
+    if ((gzgets((gzFile )fp,line,2048))==Z_NULL) {fprintf(stderr,"zlib io error reading file at %s\n",__LINE__);return -1;}
+    if(gzeof((gzFile)fp)) break;
+  }else{
+    i=fgets(line,2048,(FILE *)fp);
+    if (feof((FILE *)fp)) break;
+  }
+#else
+  i=fgets(line,2048,fp);
+  if (feof(fp)) break;
+#endif
+
     i=0;  
     p=line;
 
@@ -201,4 +211,10 @@ void *cf_read_ascii(FILE *fp, void *dest){
   ((cf_data *) dest_local)->data=data;
 
   return (void *) dest_local;
+}/*}}}*/
+
+
+void *cf_read_bin(void *fp, void *dest, unsigned int FLAGS){
+  return NULL;
+
 }

@@ -9,7 +9,8 @@
 #define CF_INIT_COLS 32
 #define CF_HEADER_ITEM 128
 
-enum {CF_COMPRESSION=1,CF_BINARY=2} CF_FLAGS;
+
+enum {CF_GZ_COMP=1,CF_BIN=2} CF_FLAGS;
 
 #define repeat16_inc(name,offset) \
   *((name)+(offset)),*((name)+(offset)+1),*((name)+(offset)+2),*((name)+(offset)+3),*((name)+(offset)+4), \
@@ -40,11 +41,11 @@ typedef struct cf_data{
   char **clabels;
 } cf_data;
 
-void * cf_read_ascii(FILE *fp, void *dest);
-void * cf_read_bin(FILE *fp, void *dest);
+void * cf_read_ascii(void *fp, void *dest, unsigned int FLAGS);
+void * cf_read_bin(void *fp, void *dest, unsigned int FLAGS);
 int cf_write(char *fname, void *cf_handle, unsigned int FLAGS);
-int cf_write_bin(FILE *fp, void *cf_handle);
-int cf_write_ascii(FILE *fp, void *cf_handle);
+int cf_write_bin(void *fp, void *cf_handle);
+int cf_write_ascii(void *fp, void *cf_handle,unsigned int FLAGS);
 
 
 
