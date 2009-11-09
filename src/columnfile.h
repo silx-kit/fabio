@@ -10,7 +10,9 @@
 #define CF_HEADER_ITEM 128
 
 
-enum {CF_GZ_COMP=1,CF_BIN=2} CF_FLAGS;
+#define CF_GZ_COMP 1
+#define CF_BIN 2
+
 
 #define repeat16_inc(name,offset) \
   *((name)+(offset)),*((name)+(offset)+1),*((name)+(offset)+2),*((name)+(offset)+3),*((name)+(offset)+4), \
