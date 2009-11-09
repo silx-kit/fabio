@@ -172,7 +172,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   }
 #else
   i=fgets(line,2048,fp);
-  if (feof(fp)) break;
+  if (feof((FILE *)fp)) break;
 #endif
 
     i=0;  

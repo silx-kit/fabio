@@ -27,7 +27,7 @@ static PyObject *cf_read(PyObject *self, PyObject *args, PyObject *keywds){
   if (strchr(mode,'z')){
     flags|=CF_GZ_COMP;
   }
-  if strchr(mode,'b'){
+  if(strchr(mode,'b')){
     cf__=(cf_data *) cf_read_bin(file,NULL,flags);
   }else if (strchr(mode,'a')) {
     cf__=(cf_data *) cf_read_ascii(file,NULL,flags);
