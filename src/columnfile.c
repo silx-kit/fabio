@@ -8,9 +8,13 @@
 #include <zlib.h>
 #endif
 
+
+
 #include "columnfile.h"
 
 static char hdr_ctl[]="# %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s";
+
+
 
 int compression_yes(char *fname){
   /*should we use compression*/
@@ -21,7 +25,7 @@ int compression_yes(char *fname){
   return 0;
 }
 
-void inline cf_free( cf_data *p){
+void cf_free( cf_data *p){
   int i;
   if (p!=NULL){
     for (i=0;i<p->nralloc;i++){
@@ -37,11 +41,12 @@ void inline cf_free( cf_data *p){
 }
 
 int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
+  int status;
 #if HAVE_ZLIB_H
   if (FLAGS & CF_GZ_COMP){
     gzFile gzfp=gzopen(fname,"wbh");
     if (gzfp==NULL) return -1;
-    int status=-1;
+    status=-1;
     if (FLAGS && CF_BIN){
       status=cf_write_bin_gz(gzfp,cf_handle);
     }else{
@@ -55,7 +60,7 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
 #endif
     FILE *fp=fopen(fname,"wb");
     if (fp==NULL) return -1;
-    int status=-1;
+    status=-1;
     if (FLAGS && CF_BIN){
       /*status=cf_write_bin(fp,cf_handle);
         */
@@ -113,6 +118,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   char **clabels,**cp;
   double **data,**dp;
   char *p;
+  cf_data *dest_local;
 
   /*read the first line into buffer*/
 #if HAVE_ZLIB_H
@@ -198,7 +204,6 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
     }
   } while (1);
 
-  cf_data *dest_local;
   if (dest==NULL){
     dest_local=malloc(sizeof(cf_data));
   }else{
