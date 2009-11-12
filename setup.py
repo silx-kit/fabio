@@ -29,9 +29,10 @@ setup(name='fabio',
       description='Image IO for fable',
       url = "http://fable.wiki.sourceforge.net/fabio",
       download_url = "http://sourceforge.net/project/showfiles.php?group_id=82044&package_id=248946",
+      ext_package = "fabio",   # Puts extensions in the ImageD11 directory
       ext_modules=[mar345_backend,cf_backend],
       packages = ["fabio"],
-      package_dir = {"fabio": "src" } 
+      package_dir = {"fabio": "fabio" } 
       )
 
       
