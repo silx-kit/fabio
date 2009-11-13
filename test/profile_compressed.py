@@ -31,7 +31,7 @@ sys.stdout.flush()
 def tst(fobj, fname):
     """test"""
     fo = fobj(fname, "rb")
-    ret = fo.read()
+    fo.read()
     return
 
 
@@ -53,7 +53,7 @@ del p
 def tstsys(cmd):
     """ test system"""
     fo = os.popen(cmd,"rb")
-    ret = fo.read()
+    fo.read()
     return
 
 print "System gzip"
