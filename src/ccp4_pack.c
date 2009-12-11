@@ -48,7 +48,7 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
   char *c,cbuffer[64]="";
   unsigned int *unpacked_array;
   
-  odata=malloc(64*8*orecords);
+  odata=(int*)malloc(64*8*orecords);
   if (!odata)
     return NULL;
   pfail_nonzero (orecords-fread(odata,64,orecords,file));
@@ -86,7 +86,7 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
       c++;
   }
   /* allocate memory for the arrays*/
-  unpacked_array=malloc(sizeof(unsigned int)*dim1*dim2);
+  unpacked_array=(unsigned int*) malloc(sizeof(unsigned int)*dim1*dim2);
   if (!unpacked_array)
     return NULL;
   /*relay to whichever version of ccp4_unpack is appropriate*/

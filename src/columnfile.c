@@ -111,6 +111,7 @@ int cf_write_ascii(void *fp, void *cf_handle, unsigned int FLAGS){/*{{{*/
 void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   /*read the first line and figure out how many columns we have*/
   char line[2048];
+  char *fi; /* returned by fgets */
   int i,r;
   int nr_alloc=CF_INIT_ROWS;
   int nc_alloc=CF_INIT_COLS;
@@ -132,7 +133,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
 #endif
 
   /*initially allocate room for 32 columns - if that is not enough should reallocate*/
-  clabels= malloc(CF_INIT_COLS* sizeof(char*));
+  clabels=(char**) malloc(CF_INIT_COLS* sizeof(char*));
   for (cp=clabels;cp<clabels+CF_INIT_COLS;cp++){
     *cp=(char *)malloc(CF_HEADER_ITEM*sizeof(char));
   }
@@ -150,8 +151,8 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
     while (*p!='\0' || *p!='\n' || p<line+2048){
       if( is_ws(*p) && !is_ws(*(p+1)) && *(p+1)!='\0') {
         if(ncols==nc_alloc){
-          clabels=realloc(clabels,sizeof(char *));
-          *(clabels+ncols)=malloc(CF_HEADER_ITEM*sizeof(char));
+          clabels=(char**)realloc(clabels,sizeof(char *));
+          *(clabels+ncols)=(char*)malloc(CF_HEADER_ITEM*sizeof(char));
           nc_alloc++;
         }
         sscanf(p,"%s",*(clabels+ncols));
@@ -161,9 +162,9 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
     }
   }
   /*alloc a number of rows*/
-  data=malloc(nr_alloc*sizeof(double*));
+  data=(double**)malloc(nr_alloc*sizeof(double*));
   for (dp=data;dp<data+nr_alloc;dp++){
-    *dp=malloc(ncols*sizeof(double));
+    *dp=(double*)malloc(ncols*sizeof(double));
   }
 
   r=0;
@@ -173,11 +174,11 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
     if ((gzgets((gzFile )fp,line,2048))==Z_NULL) {fprintf(stderr,"zlib io error reading file at %s\n",__LINE__);return -1;}
     if(gzeof((gzFile)fp)) break;
   }else{
-    i=fgets(line,2048,(FILE *)fp);
+    fi=fgets(line,2048,(FILE *)fp);
     if (feof((FILE *)fp)) break;
   }
 #else
-  i=fgets(line,2048,fp);
+  fi=fgets(line,2048,(FILE *)fp);
   if (feof((FILE *)fp)) break;
 #endif
 
@@ -197,17 +198,17 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
     if (r==nr_alloc){
       /*we need to expand the data buffer*/
       nr_alloc+=nr_alloc;
-      data=realloc(data,nr_alloc*sizeof(double*));
+      data=(double**)realloc(data,nr_alloc*sizeof(double*));
       for (dp=data+r;dp<data+nr_alloc;dp++){
-        *dp=malloc(ncols*sizeof(double));
+        *dp=(double*)malloc(ncols*sizeof(double));
       }
     }
   } while (1);
 
   if (dest==NULL){
-    dest_local=malloc(sizeof(cf_data));
+    dest_local=(cf_data*)malloc(sizeof(cf_data));
   }else{
-    dest_local=dest;
+    dest_local=(cf_data*)dest;
   }
   ((cf_data *) dest_local)->ncols=ncols;
   ((cf_data *) dest_local)->nrows=r;

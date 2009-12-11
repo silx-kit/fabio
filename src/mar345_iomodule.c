@@ -2,11 +2,12 @@
 #include <numpy/arrayobject.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-void *mar345_read_data(FILE *file, unsigned int ocount, unsigned int dim1, unsigned int dim2);
+/* The args are int in ccp4_pack.c, not unsigned */
+void *mar345_read_data(FILE *file, int ocount, int dim1, int dim2);
 
 static PyObject * mar345_io_unpack(PyObject *self, PyObject *args){
-  const int dim1,dim2,ocount;
+  /* not a const int dim1, dim2 since passed by address  to parse tuple ?!? */
+  int dim1,dim2,ocount;
   npy_intp dims[2];
   PyArrayObject *py_unpacked;
   PyObject *py_file;
@@ -19,7 +20,7 @@ static PyObject * mar345_io_unpack(PyObject *self, PyObject *args){
   file=PyFile_AsFile(py_file);
 
   /* Space is malloc'ed in here */
-  unpacked=mar345_read_data(file,ocount,dim1,dim2);
+  unpacked=(int*)mar345_read_data(file,ocount,dim1,dim2);
   
   /* memcpy(py_unpacked->data,unpacked,dim1*dim2*2); would also need a free */
   

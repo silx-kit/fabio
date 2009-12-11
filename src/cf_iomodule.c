@@ -14,7 +14,8 @@ static PyObject *cf_read(PyObject *self, PyObject *args, PyObject *keywds){
   const char mode[]="a ";
   unsigned int flags=0;
 
-  const int dim1,dim2,ocount;
+  /* perhaps not const */
+  int dim1,dim2,ocount;
   int dims[2];
   int i;
   FILE *file;
@@ -33,7 +34,7 @@ static PyObject *cf_read(PyObject *self, PyObject *args, PyObject *keywds){
     cf__=(cf_data *) cf_read_ascii(file,NULL,flags);
   }else{
     fprintf(stderr,"unrecognized mode for columnfile %s (assuming ascii)\n",mode);
-    cf__= cf_read_ascii(file,NULL,flags);
+    cf__= (cf_data *)cf_read_ascii(file,NULL,flags);
   }
   /*check for failure to read*/
   if (cf__==NULL){
@@ -49,8 +50,8 @@ static PyObject *cf_read(PyObject *self, PyObject *args, PyObject *keywds){
   }
   clabels=(PyListObject *)PyList_New(0);
   for (i=0;i<cf__->ncols;i++){
-    str = PyString_FromString(cf__->clabels[i]);
-    if (PyList_Append(clabels,str)){
+    str = (PyStringObject*)PyString_FromString(cf__->clabels[i]);
+    if (PyList_Append((PyObject*)clabels,(PyObject*)str)){
       fprintf(stderr,"cannot insert column label %d\n",i);
     }
   }

@@ -48,6 +48,7 @@ void * cf_read_bin(void *fp, void *dest, unsigned int FLAGS);
 int cf_write(char *fname, void *cf_handle, unsigned int FLAGS);
 int cf_write_bin(void *fp, void *cf_handle);
 int cf_write_ascii(void *fp, void *cf_handle,unsigned int FLAGS);
+void cf_free( cf_data *cf_handle);
 
 
 
