@@ -34,10 +34,11 @@ class pilatusimage(tifimage):
         """
 #        infile = open(infile)
         hstr = infile.read(4096)
-        hstr = hstr[hstr.index('#'):]
+        # well not very pretty - but seems to find start of 
+        # header information
+        hstr = hstr[hstr.index('# '):]
         hstr = hstr[:hstr.index('\x00')]
         hstr = hstr.split('#')
-        
         go_on = True
         while go_on:
             try:
@@ -49,6 +50,7 @@ class pilatusimage(tifimage):
         self.header = {}
         
         for line in hstr:
+            print line
             line = line[1:line.index('\r\n')]
             if line.find(':') > -1:
                 dump = line.split(':')
