@@ -50,7 +50,6 @@ class pilatusimage(tifimage):
         self.header = {}
         
         for line in hstr:
-            print line
             line = line[1:line.index('\r\n')]
             if line.find(':') > -1:
                 dump = line.split(':')
