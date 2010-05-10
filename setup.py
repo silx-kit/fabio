@@ -13,12 +13,12 @@ from distutils.core import  Extension
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
 
-mar345_backend = Extension('fabio.mar345_io',
+mar345_backend = Extension('mar345_io',
                            include_dirs = get_numpy_include_dirs(),
                            sources = ['src/mar345_iomodule.c',
                                       'src/ccp4_pack.c'])
 
-cf_backend = Extension('fabio.cf_io',include_dirs = get_numpy_include_dirs(),
+cf_backend = Extension('cf_io',include_dirs = get_numpy_include_dirs(),
       sources=['src/cf_iomodule.c','src/columnfile.c'])
 
 # See the distutils docs...
@@ -29,8 +29,8 @@ setup(name='fabio',
       description='Image IO for fable',
       url = "http://fable.wiki.sourceforge.net/fabio",
       download_url = "http://sourceforge.net/project/showfiles.php?group_id=82044&package_id=248946",
-      ext_package = "fabio",   # Puts extensions in the ImageD11 directory
-      ext_modules=[mar345_backend,cf_backend],
+      ext_package = "fabio",   
+      ext_modules=[mar345_backend, cf_backend],
       packages = ["fabio"],
       package_dir = {"fabio": "fabio" } 
       )
