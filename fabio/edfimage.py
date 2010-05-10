@@ -107,22 +107,50 @@ class edfimage(fabioimage):
             logging.warning("Defaulting type to uint16")
         self.bpp = len(np.array(0, bytecode).tostring())
 
-        if self.header.has_key("Size"): # fit2d does not write this
-            if self.bpp*self.dim1*self.dim2 != int(self.header["Size"]):
-                logging.warning("Size mismatch on reading edf file " + \
-                                    fname + " " + self.header["Size"])
-        # Sorry - this was the only safe way to read old ID11 imagepro edfs
+        # Sorry - this was a safe way to read old ID11 imagepro edfs
+        # assumes corrupted headers are shorter, they could be longer
         if self.header.has_key('Image') and self.header['Image'] == '1':
+            # This is starting from a multiple of 512
             block = infile.read()
         else:
             # oh dear
             raise Exception("Could be a multi-image file")
+
+
         expected_size =  self.dim1 * self.dim2 * self.bpp
+
         if len(block) != expected_size:
-            # probably header overspill
-            logging.warning("Read too many bytes, got "+str(len(block))+\
+            # The binary which has been read in does not match the size 
+            # expected. Two cases are known:
+            ####    1 extra byte (\0) at the end of the header (ImagePro)
+            ####    Padding to 512 bytes, image is at the beginning 
+            # These overlap in the case of an image of, eg:
+            #       1024x1024-1 == 825x1271
+            # To distinguish, we look for a header key:
+            padded = False
+            nbytesread = len(block)
+            if self.header.has_key("EDF_BinarySize"):
+                if int( self.header["EDF_BinarySize"] ) == nbytesread:
+                    padded = True
+            if self.header.has_key("Size"):
+                if int( self.header["Size"] ) == nbytesread:
+                    padded = True
+            if padded:    
+                block = block[:expected_size]
+                if self.header.has_key("EDF_BlockBoundary"):
+                    chunksize = int(self.header["EDF_BlockBoundary"])
+                else:
+                    chunksize = 512
+                if nbytesread % chunksize != 0:
+                    # Unexpected padding
+                    logging.warning("EDF file is strangely padded, size " +
+                            str(nbytesread) + " is not multiple of "+
+                            str(chunksize)  + ", please verify your image")
+            else: # perhaps not padded                
+                # probably header overspill (\0)
+                logging.warning("Read too many bytes, got "+str(len(block))+\
                                 " want "+ str(expected_size))
-            block = block[-expected_size:]
+                block = block[-expected_size:]
         if len(block) < expected_size:
             # FIXME
             logging.warning("Padded")
