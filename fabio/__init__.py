@@ -16,19 +16,20 @@ FILETYPES = {
     'pbm'    : ['pnm'],
     'tif'    : ['tif'],
     'tiff'   : ['tif'],
-    'img'    : ['adsc','OXD','HiPiC'],
+    'img'    : ['adsc', 'OXD', 'HiPiC'],
     'mccd'   : ['marccd'],
     'mar2300': ['mar345'],
     'sfrm'   : ['bruker100'],
     'msk'    : ['fit2dmask'],
     'spr'    : ['fit2dspreadsheet'],
     'dm3'    : ['dm3'],
+    'kcd'    : ['kcd'],
              }
 
 # Add bzipped and gzipped
 for key in FILETYPES.keys():
-    FILETYPES[key+".bz2"] = FILETYPES[key]
-    FILETYPES[key+".gz"]  = FILETYPES[key]
+    FILETYPES[key + ".bz2"] = FILETYPES[key]
+    FILETYPES[key + ".gz"] = FILETYPES[key]
 
 
 # Compressors
@@ -56,7 +57,7 @@ except:
     COMPRESSORS['.bz2'] = None
 
 # print COMPRESSORS
-    
+
 def getnum(name):
     """
     # try to figure out a file number
@@ -67,18 +68,18 @@ def getnum(name):
         return int(num)
     except ValueError:
         return None
-        
+
 class filename_object:
     """
     The 'meaning' of a filename
     """
-    def __init__(self, stem,  
-            num = None,
-            directory = None, 
-            format = None, 
-            extension = None, 
-            postnum = None,
-            digits = 4):
+    def __init__(self, stem,
+            num=None,
+            directory=None,
+            format=None,
+            extension=None,
+            postnum=None,
+            digits=4):
         self.stem = stem
         self.num = num
         self.format = format
@@ -91,24 +92,24 @@ class filename_object:
     def str(self):
         """ Return a string representation """
         fmt = "stem %s, num %s format %s extension %s " + \
-                "postnum = %s digits %s dir %s" 
+                "postnum = %s digits %s dir %s"
         return fmt % tuple([str(x) for x in [
-                    self.stem , 
-                    self.num , 
-                    self.format , 
-                    self.extension , 
+                    self.stem ,
+                    self.num ,
+                    self.format ,
+                    self.extension ,
                     self.postnum ,
-                    self.digits , 
-                    self.directory ] ] )
+                    self.digits ,
+                    self.directory ] ])
 
-        
+
     def tostring(self):
         """
         convert yourself to a string
         """
         name = self.stem
         if self.digits is not None and self.num is not None:
-            fmt = "%0"+str(self.digits)+"d"
+            fmt = "%0" + str(self.digits) + "d"
             name += fmt % self.num
         if self.postnum is not None:
             name += self.postnum
@@ -149,7 +150,7 @@ def deconstruct_filename(filename):
     postnum = ""
     ndigit = 4
     if parts[-1] in ["gz", "bz2"]:
-        extn = "."+parts[-1]
+        extn = "." + parts[-1]
         parts = parts[:-1]
         compressed = True
     if parts[-1] in FILETYPES.keys():
@@ -169,10 +170,10 @@ def deconstruct_filename(filename):
             # Probably GE format stem_numb
             parts2 = parts[0].split("_")
             try:
-                num =  int(parts2[-1])
+                num = int(parts2[-1])
                 ndigit = len(parts2[-1])
                 typ = ['GE']
-                stem = "_".join(parts2[:-1])+"_"
+                stem = "_".join(parts2[:-1]) + "_"
             except:
                 pass
         else:
@@ -180,7 +181,7 @@ def deconstruct_filename(filename):
                 num = int(parts[-1])
                 ndigit = len(parts[-1])
                 typ = ['bruker']
-                stem = ".".join(parts[:-1])+"."
+                stem = ".".join(parts[:-1]) + "."
             except:
                 typ = None
                 extn = "." + parts[-1] + extn
@@ -191,18 +192,18 @@ def deconstruct_filename(filename):
                 except:
                     raise
             #            raise Exception("Cannot decode "+filename)
-    obj = filename_object( stem,
-            num = num,
-            directory = direc, 
-            format = typ, 
-            extension = extn, 
-            postnum = postnum,
-            digits = ndigit ) 
-     
+    obj = filename_object(stem,
+            num=num,
+            directory=direc,
+            format=typ,
+            extension=extn,
+            postnum=postnum,
+            digits=ndigit)
+
     return obj
 
 
-def next_filename(name, padding = True):
+def next_filename(name, padding=True):
     """ increment number """
     obj = deconstruct_filename(name)
     obj.num += 1
