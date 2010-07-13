@@ -24,6 +24,7 @@ FILETYPES = {
     'spr'    : ['fit2dspreadsheet'],
     'dm3'    : ['dm3'],
     'kcd'    : ['kcd'],
+    'cbf'    : ['cbf'],
              }
 
 # Add bzipped and gzipped

@@ -34,6 +34,7 @@ from fabio import HiPiCimage
 from fabio import pilatusimage
 from fabio import fit2dspreadsheetimage
 from fabio import kcdimage
+from fabio import cbfimage
 
 
 MAGIC_NUMBERS = [
