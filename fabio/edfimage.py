@@ -68,12 +68,12 @@ class edfimage(fabioimage):
 
         while '}' not in block:
             block = block + infile.read(BLOCKSIZE)
-            if len(block) > BLOCKSIZE*20:
+            if len(block) > BLOCKSIZE * 20:
                 raise Exception("Runaway header in EDF file")
-        start , end = block.find("{")+1, block.find("}")
+        start , end = block.find("{") + 1, block.find("}")
         for line in block[start:end].split(';'):
             if '=' in line:
-                key, val = line.split( '=' , 1)
+                key, val = line.split('=' , 1)
                 # Users cannot type in significant whitespace
                 key = key.rstrip().lstrip()
                 self.header_keys.append(key)
@@ -82,8 +82,8 @@ class edfimage(fabioimage):
         for item in MINIMUM_KEYS:
             if item not in self.header_keys:
                 missing.append(item)
-        if len(missing)>0:
-            logging.debug("EDF file misses the keys "+" ".join(missing))
+        if len(missing) > 0:
+            logging.debug("EDF file misses the keys " + " ".join(missing))
 
     def read(self, fname):
         """
@@ -92,7 +92,7 @@ class edfimage(fabioimage):
         """
         self.header = {}
         self.resetvals()
-        infile = self._open(fname,"rb")
+        infile = self._open(fname, "rb")
         self._readheader(infile)
         # Compute image size
         try:
@@ -102,7 +102,7 @@ class edfimage(fabioimage):
             raise Exception("EDF file", str(fname) + \
                                 "is corrupt, cannot read it")
         try:
-            bytecode  = DATA_TYPES[self.header['DataType']]
+            bytecode = DATA_TYPES[self.header['DataType']]
         except KeyError:
             bytecode = np.uint16
             logging.warning("Defaulting type to uint16")
@@ -110,15 +110,10 @@ class edfimage(fabioimage):
 
         # Sorry - this was a safe way to read old ID11 imagepro edfs
         # assumes corrupted headers are shorter, they could be longer
-        if self.header.has_key('Image') and self.header['Image'] == '1':
-            # This is starting from a multiple of 512
-            block = infile.read()
-        else:
-            # oh dear
-            raise Exception("Could be a multi-image file")
-
-
-        expected_size =  self.dim1 * self.dim2 * self.bpp
+        if self.header.has_key('Image') and self.header['Image'] != '1':
+            logging.warning("Could be a multi-image file")
+        block = infile.read()
+        expected_size = self.dim1 * self.dim2 * self.bpp
 
         if len(block) != expected_size:
             # The binary which has been read in does not match the size 
@@ -131,12 +126,12 @@ class edfimage(fabioimage):
             padded = False
             nbytesread = len(block)
             if self.header.has_key("EDF_BinarySize"):
-                if int( self.header["EDF_BinarySize"] ) == nbytesread:
+                if int(self.header["EDF_BinarySize"]) == nbytesread:
                     padded = True
             if self.header.has_key("Size"):
-                if int( self.header["Size"] ) == nbytesread:
+                if int(self.header["Size"]) == nbytesread:
                     padded = True
-            if padded:    
+            if padded:
                 block = block[:expected_size]
                 if self.header.has_key("EDF_BlockBoundary"):
                     chunksize = int(self.header["EDF_BlockBoundary"])
@@ -145,12 +140,12 @@ class edfimage(fabioimage):
                 if nbytesread % chunksize != 0:
                     # Unexpected padding
                     logging.warning("EDF file is strangely padded, size " +
-                            str(nbytesread) + " is not multiple of "+
-                            str(chunksize)  + ", please verify your image")
+                            str(nbytesread) + " is not multiple of " +
+                            str(chunksize) + ", please verify your image")
             else: # perhaps not padded                
                 # probably header overspill (\0)
-                logging.warning("Read too many bytes, got "+str(len(block))+\
-                                " want "+ str(expected_size))
+                logging.warning("Read too many bytes, got " + str(len(block)) + \
+                                " want " + str(expected_size))
                 block = block[-expected_size:]
         if len(block) < expected_size:
             # FIXME
@@ -160,7 +155,7 @@ class edfimage(fabioimage):
         #now read the data into the array
         try:
             self.data = np.reshape(
-                np.fromstring(block, bytecode ),
+                np.fromstring(block, bytecode),
                 [self.dim2, self.dim1])
         except:
             print len(block), bytecode, self.bpp, self.dim2, self.dim1
@@ -171,23 +166,23 @@ class edfimage(fabioimage):
         if swap:
             self.data = self.data.byteswap()
             # Remove verbose arg - use logging and levels
-            logging.info('Byteswapped from '+self.header['ByteOrder'])
+            logging.info('Byteswapped from ' + self.header['ByteOrder'])
         else:
-            logging.info('using '+self.header['ByteOrder'])
+            logging.info('using ' + self.header['ByteOrder'])
         self.resetvals()
         # ensure the PIL image is reset
         self.pilimage = None
         return self
 
-    def swap_needed(self ):
+    def swap_needed(self):
         """
         Decide if we need to byteswap
         """
-        if ('Low'  in self.header['ByteOrder'] and np.little_endian ) or \
-           ('High' in self.header['ByteOrder'] and not np.little_endian ):
+        if ('Low'  in self.header['ByteOrder'] and np.little_endian) or \
+           ('High' in self.header['ByteOrder'] and not np.little_endian):
             return False
-        if ('High'  in self.header['ByteOrder'] and np.little_endian ) or \
-           ('Low' in self.header['ByteOrder'] and not np.little_endian ):
+        if ('High'  in self.header['ByteOrder'] and np.little_endian) or \
+           ('Low' in self.header['ByteOrder'] and not np.little_endian):
             if self.bpp in [2, 4, 8]:
                 return True
             else:
@@ -198,14 +193,14 @@ class edfimage(fabioimage):
     def _fixheader(self):
         """ put some rubbish in to allow writing"""
         self.header['Dim_2'], self.header['Dim_1'] = self.data.shape
-        self.bpp = len(self.data[0,0].tostring())
+        self.bpp = len(self.data[0, 0].tostring())
         self.header['Size'] = len(self.data.tostring())
         for k in MINIMUM_KEYS:
             if k not in self.header:
                 self.header[k] = DEFAULT_VALUES[k]
 
 
-    def write(self, fname, force_type = np.uint16 ):
+    def write(self, fname, force_type=np.uint16):
         """
         Try to write a file
         check we can write zipped also
@@ -218,9 +213,9 @@ class edfimage(fabioimage):
         else:
             data = self.data
         # Update header values to match the function local data object
-        bpp = len( data[0, 0].tostring() )
+        bpp = len(data[0, 0].tostring())
         if bpp not in [1, 2, 4]:
-            logging.info("edfimage.write do you really want"+str(bpp)+\
+            logging.info("edfimage.write do you really want" + str(bpp) + \
                              "bytes per pixel??")
         bytecode = data.dtype.type
         for name , code in DATA_TYPES.items():
@@ -230,10 +225,10 @@ class edfimage(fabioimage):
         dim2, dim1 = data.shape
         self.header['Dim_1'] = dim1
         self.header['Dim_2'] = dim2
-        self.header['Size'] = dim1*dim2*bpp
+        self.header['Size'] = dim1 * dim2 * bpp
         # checks for consistency:
         if bpp != self.bpp :
-            logging.debug("Array upcasted? now "+str(bpp)+" was "+str(self.bpp))
+            logging.debug("Array upcasted? now " + str(bpp) + " was " + str(self.bpp))
         if dim1 != self.dim1 or dim2 != self.dim2 :
             logging.debug("corrupted image dimensions")
         outfile = self._open(fname, mode="wb")
@@ -255,9 +250,9 @@ class edfimage(fabioimage):
             i = i + len(out)
             outfile.write(out)
         if i < 4096:
-            out = (4096-i)*' '
+            out = (4096 - i) * ' '
         else:
-            out = (1024 - i%1024)*' '  # Should make a total
+            out = (1024 - i % 1024) * ' '  # Should make a total
             logging.warning("EDF Header is greater than 4096 bytes")
         outfile.write(out)
         i = i + len(out)
