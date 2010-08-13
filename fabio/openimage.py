@@ -113,7 +113,11 @@ def _openimage(filename):
         imo = fabioimage()
         byts = imo._open(filename).read(18)
         filetype = do_magic(byts)
-#	print filetype
+	# print filetype
+        if filetype == "marccd" and filename.find("mccd") == -1:
+            # Cannot see a way around this. Need to find something
+            # to distinguish mccd from regular tif...
+            filetype = "tif"
         #UNUSED filenumber = getnum(filename)
     except IOError:
         # File probably does not exist
