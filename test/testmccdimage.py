@@ -6,8 +6,8 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 from fabio.marccdimage import marccdimage
-
-import unittest, os
+from fabio.tifimage import tifimage
+import unittest, os, numpy as np
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
@@ -17,6 +17,34 @@ corkcont2_H_0089.mccd.gz 2048 2048  0  354  7.2611 14.639
 somedata_0001.mccd 1024 1024  0  20721  128.37 136.23
 somedata_0001.mccd.bz2 1024 1024  0  20721  128.37 136.23
 somedata_0001.mccd.gz 1024 1024  0  20721  128.37 136.23"""
+
+class testnormaltifok(unittest.TestCase):
+    """
+    check we can read normal tifs as well as mccd
+    """
+    imdata = None
+    def setUp(self):
+        """
+        create an image 
+        """
+        self.imdata = np.zeros((24,24),np.uint16)
+        self.imdata[ 12:14, 15:17 ] = 42
+        obj = tifimage( self.imdata, { } )
+        obj.write( 'tifimagewrite_test0000.tif' )
+    def tearDown(self):
+        # leave the test image in place for debugging, it is small
+        return
+    def test_read_openimage(self):
+        from fabio.openimage import openimage
+        obj = openimage( 'tifimagewrite_test0000.tif' )
+        if obj.data.astype(int).tostring() != self.imdata.astype(int).tostring():
+            print type(self.imdata), self.imdata.dtype
+            print type(obj.data), obj.data.dtype
+            print obj.data - self.imdata
+        self.assertEqual( obj.data.astype(int).tostring(), 
+                          self.imdata.astype(int).tostring() )
+
+        
 
 
 class testflatmccds(unittest.TestCase):
