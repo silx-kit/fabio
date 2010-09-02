@@ -60,6 +60,7 @@ class cbfimage(fabioimage):
         if fname is not None: #load the file)
             self.read(fname)
 
+
     def _readheader(self, inStream):
         """
         Read in a header in some CBF format from a string representing the binary stuff
@@ -156,6 +157,7 @@ class cbfimage(fabioimage):
         Read in header into self.header and
             the data   into self.data
         """
+        self.filename = fname
         self.header = {}
         self.resetvals()
         self.cif.loadCIF(fname, _bKeepComment=True)
