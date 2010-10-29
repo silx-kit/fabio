@@ -20,7 +20,8 @@ from fabio.fabioimage import fabioimage
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
 1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
 2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
-3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)'}
+3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
+4: 'Unknown Oxford diffraction detector'}
 
 
 class OXDimage(fabioimage):
