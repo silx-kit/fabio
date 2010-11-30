@@ -93,6 +93,104 @@ class cbfimage(fabioimage):
         if len(missing) > 0:
             logging.debug("CBF file misses the keys " + " ".join(missing))
 
+
+    @staticmethod
+    def analyseWeave(stream, size):
+        """
+        Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
+
+        @return list of NParrays
+        """
+        logging.debug("CBF decompression using Weave")
+        from scipy import weave
+        from scipy.weave import converters
+        dataIn = np.fromstring(stream, dtype="uint8")
+        n = dataIn.size
+        dataOut = np.zeros(size, dtype="int64")
+        codeC = """
+unsigned char key = 0x80;
+int   j = 0;
+for (int i=0; i< n; i++){
+    if (j>=size){
+    //printf("i= %i<%i, j=%i < size= %i %i\\n",i,n,j,size,dataIn(i));
+        break;
+   }
+   if (dataIn(i) == key){
+       if ( (dataIn(i+1)==0) and (dataIn(i+2)==key) ){
+           if ( (dataIn(i+3)==0) and (dataIn(i+4)==0) and (dataIn(i+5)==0) and (dataIn(i+6)==key) )  {
+                // 64 bits mode
+                char tmp = dataIn(i+14) ;
+                dataOut(j) = (long(tmp)<<56) | (long(dataIn(i+13))<<48) | (long(dataIn(i+12))<<40) | (long(dataIn(i+11))<<32) | (long(dataIn(i+10))<<24) | (long(dataIn(i+9))<<16) | (long(dataIn(i+8))<<8) | (long(dataIn(i+7)));
+//                printf("64 bit int at pos %i, %i, value=%ld \\n",i,j,dataOut(j));
+                i+=14;
+                j+=1;
+            }else{
+                // 32 bits mode
+                char tmp = dataIn(i+6) ;
+                dataOut(j) = (long(tmp)<<24) | (long(dataIn(i+5))<<16) | (long(dataIn(i+4))<<8) | (long(dataIn(i+3)));
+//                printf("32 bit int at pos %i, %i, value=%ld was %i %i %i %i %i %i %i\\n",i,j,dataOut(j),dataIn(i),dataIn(i+1),dataIn(i+2),dataIn(i+3),dataIn(i+4),dataIn(i+5),dataIn(i+6));
+//                printf("%ld %ld %ld %ld\\n",(long(tmp)<<24) , (long(dataIn(i+5))<<16) , (long(dataIn(i+4))<<8) ,long(dataIn(i+3)));
+                i+=6;
+                j+=1;
+            }
+       }else{
+            // 16 bit mode
+            char tmp = dataIn(i+2);
+            dataOut(j) = (long(tmp)<<8) | (long (dataIn(i+1)));
+ //           printf("16 bit int at pos %i, %i, value=%ld was %i %i %i\\n",i,j,dataOut(j),dataIn(i),dataIn(i+1),dataIn(i+2));
+            i+=2;
+            j+=1;
+       }
+   }else{
+       // 8 bit mode
+       char tmp = dataIn(i) ;
+       dataOut(j)= long(tmp) ;
+       j++;
+   } 
+}
+return_val=0;
+      """
+        rc = weave.inline(codeC, ["dataIn", "dataOut", "n", "size" ], verbose=2, type_converters=converters.blitz)
+        return dataOut
+
+    @staticmethod
+    def analyse(stream):
+        """
+        Analyze a stream of char with any length of exception: 
+                    2, 4, or 8 bytes integers
+
+        @return list of NParrays
+        """
+        logging.debug("CBF decompression using Numpy")
+        listnpa = []
+        key16 = "\x80"
+        key32 = "\x00\x80"
+        key64 = "\x00\x00\x00\x80"
+        shift = 1
+        while True:
+            idx = stream.find(key16)
+            if idx == -1:
+                listnpa.append(np.fromstring(stream, dtype="int8"))
+                break
+            listnpa.append(np.fromstring(stream[:idx], dtype="int8"))
+
+            if stream[idx + 1:idx + 3] == key32:
+                if stream[idx + 3:idx + 7] == key64:
+#                        long int 64 bits
+                    listnpa.append(np.fromstring(stream[idx + 7:idx + 15],
+                                                 dtype="int64"))
+                    shift = 15
+                else: #32 bit int
+                    listnpa.append(np.fromstring(stream[idx + 3:idx + 7],
+                                                 dtype="int32"))
+                    shift = 7
+            else: #int16 
+                listnpa.append(np.fromstring(stream[idx + 1:idx + 3],
+                                             dtype="int16"))
+                shift = 3
+            stream = stream[idx + shift:]
+        return  listnpa
+
     def _readbinary_byte_offset(self, inStream):
         """
         Read in a binary part of an x-CBF_BYTE_OFFSET compressed image 
@@ -103,50 +201,19 @@ class cbfimage(fabioimage):
         @rtype: numpy array
         """
 
-        def analyse(stream):
-            """
-            Analyze a stream of char with any length of exception: 
-                        2, 4, or 8 bytes integers
-
-            @return list of NParrays
-            """
-            listnpa = []
-            key16 = "\x80"
-            key32 = "\x00\x80"
-            key64 = "\x00\x00\x00\x80"
-#            idx = 0
-            shift = 1
-#            position = 0
-            while True:
-#                lns = len(stream)
-                idx = stream.find(key16)
-                if idx == -1:
-                    listnpa.append(np.fromstring(stream, dtype="int8"))
-                    break
-                listnpa.append(np.fromstring(stream[:idx], dtype="int8"))
-#                position += listnpa[-1].size
-
-                if stream[idx + 1:idx + 3] == key32:
-                    if stream[idx + 3:idx + 7] == key64:
-                        listnpa.append(np.fromstring(stream[idx + 7:idx + 15],
-                                                     dtype="int64"))
-                        shift = 15
-                    else: #32 bit int
-                        listnpa.append(np.fromstring(stream[idx + 3:idx + 7],
-                                                     dtype="int32"))
-                        shift = 7
-                else: #int16 
-                    listnpa.append(np.fromstring(stream[idx + 1:idx + 3],
-                                                 dtype="int16"))
-                    shift = 3
-                stream = stream[idx + shift:]
-            return  listnpa
-
-
         starter = "\x0c\x1a\x04\xd5"
         startPos = inStream.find(starter) + 4
         data = inStream[ startPos: startPos + int(self.header["X-Binary-Size"])]
-        myData = np.hstack(analyse(data)).cumsum()
+        try:
+            import scipy.weave
+        except ImportError:
+            myData = np.hstack(cbfimage.analyse(data)).cumsum()
+        else:
+            try:
+                myData = cbfimage.analyseWeave(data, size=self.dim1 * self.dim2).cumsum()
+            except:
+                myData = np.hstack(cbfimage.analyse(data)).cumsum()
+
 
         assert len(myData) == self.dim1 * self.dim2
         return myData
