@@ -212,8 +212,8 @@ return_val=0;
             try:
                 myData = cbfimage.analyseWeave(data, size=self.dim1 * self.dim2).cumsum()
             except:
+                logging.warning("Error in scipy.weave part: Falling back to Numpy implementation")
                 myData = np.hstack(cbfimage.analyse(data)).cumsum()
-
 
         assert len(myData) == self.dim1 * self.dim2
         return myData
