@@ -247,7 +247,7 @@ return_val=0;
         try:
             import byte_offset
         except ImportError:
-            logging.warning("Error in scipy.weave part: Falling back to Numpy implementation")
+            logging.warning("Error in byte_offset part: Falling back to Numpy implementation")
             myData = cbfimage.analyseNumpy(data, size=self.dim1 * self.dim2)
         else:
             myData = byte_offset.analyseCython(data, size=self.dim1 * self.dim2)
