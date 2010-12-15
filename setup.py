@@ -1,5 +1,5 @@
-
-
+#!/usr/bin/env python
+#coding: utf8
 
 """
 Setup script for python distutils package and fabio
@@ -9,10 +9,6 @@ Added Erik Knudsen's mar 345 code
 from setuptools import setup, find_packages
 from distutils.core import  Extension
 
-try:
-    from Cython.Distutils import build_ext
-except:
-    build_ext = None
 
 # for numpy
 from numpy.distutils.misc_util import get_numpy_include_dirs
@@ -29,7 +25,7 @@ cf_backend = Extension('cf_io', include_dirs=get_numpy_include_dirs(),
 
 byteOffset_backend = Extension("byte_offset",
                        include_dirs=get_numpy_include_dirs(),
-                           sources=['src/byte_offset.pyx'])
+                           sources=['src/byte_offset.c'])
 
 # See the distutils docs...
 setup(name='fabio',
@@ -40,7 +36,7 @@ setup(name='fabio',
       url="http://fable.wiki.sourceforge.net/fabio",
       download_url="http://sourceforge.net/project/showfiles.php?group_id=82044&package_id=248946",
       ext_package="fabio",
-      cmdclass = {'build_ext': build_ext},
+#      cmdclass = {'build_ext': build_ext},
       ext_modules=[mar345_backend, cf_backend, byteOffset_backend ],
       packages=["fabio"],
       package_dir={"fabio": "fabio" }
