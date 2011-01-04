@@ -37,7 +37,7 @@ import threading
 import logging
 import urllib2
 import bz2
-import zlib
+import gzip
 
 
 class UtilsTest(object):
@@ -53,13 +53,21 @@ class UtilsTest(object):
                                     sys.version_info[0], sys.version_info[1])
     fabio_home = os.path.join(os.path.dirname(test_home),
                                         "build", architecture)
-#    logging.info(fabio_home)
+    logging.info("Fabio Home is: " + fabio_home)
+    if "fabio" in sys.modules:
+        logging.info("Fabio module is from  %s" % sys.modules["fabio"])
     if not os.path.isdir(fabio_home):
         logging.warning("Building Fabio to %s" % fabio_home)
         p = subprocess.Popen([sys.executable, "setup.py", "build"],
                          shell=False, cwd=os.path.dirname(test_home))
-        p.wait()
+        logging.info("subprocess ended with rc= %s" % p.wait())
+
+    if "fabio" in sys.modules:
+        logging.info("Fabio module is from  %s" % sys.modules["fabio"])
+
     sys.path.insert(1, fabio_home)
+    import fabio
+    logging.info("Fabio loaded from %s" % fabio.__file__)
 
 #    @classmethod
 #    def build_sources(cls, _strOptions=""):
@@ -130,19 +138,13 @@ Otherwise please try to download the images manually from
 
             if imagename.endswith(".bz2"):
                 decompressed = bz2.decompress(data)
-                bzipped2 = data
-                gzipped = zlib.compress(decompressed)
                 basename = fullimagename[:-4]
             elif imagename.endswith(".gz"):
-                decompressed = zlib.decompress(data)
+                decompressed = gzip.open(fullimagename).read()
                 basename = fullimagename[:-3]
-                bzipped2 = bz2.compress(decompressed)
-                gzipped = data
             else:
                 decompressed = data
                 basename = fullimagename
-                gzipped = zlib.compress(decompressed)
-                bzipped2 = bz2.compress(decompressed)
 
             gzipname = basename + ".gz"
             bzip2name = basename + ".bz2"
@@ -155,13 +157,13 @@ Otherwise please try to download the images manually from
                     data to disk at %s" % cls.image_home)
             if gzipname != fullimagename:
                 try:
-                    open(gzipname, "wb").write(gzipped)
+                    gzip.open(gzipname, "wb").write(decompressed)
                 except IOError:
                     raise IOError("unable to write gzipped \
                     data to disk at %s" % cls.image_home)
             if bzip2name != fullimagename:
                 try:
-                    open(bzip2name, "wb").write(bzipped2)
+                    bz2.BZ2File.open(bzip2name, "wb").write(decompressed)
                 except IOError:
                     raise IOError("unable to write bzipped2 \
                     data to disk at %s" % cls.image_home)
