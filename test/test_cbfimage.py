@@ -7,9 +7,6 @@ Unit tests for CBF images based on references images taken from:
 http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 
 """
-
-from fabio.openimage import openimage
-from fabio.cbfimage import cbfimage
 import unittest
 import os, time
 import logging
@@ -17,12 +14,16 @@ import sys
 
 for idx, opts in enumerate(sys.argv[:]):
     if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.DEBUG)
         sys.argv.pop(idx)
 try:
     logging.debug("tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
+
+from utilstest import UtilsTest
+from fabio.openimage import openimage
+from fabio.cbfimage import cbfimage
 
 class test_cbfimage_reader(unittest.TestCase):
     """ test cbf image reader """
@@ -33,8 +34,12 @@ class test_cbfimage_reader(unittest.TestCase):
         self.edf_filename = os.path.join(testimgdir, "run2_1_00148.edf")
         self.cbf_filename = os.path.join(testimgdir, "run2_1_00148.cbf")
 
-#    def setUp(self):
-#        """ initialise"""
+    def setUp(self):
+        """Download images"""
+
+        UtilsTest.getimage(os.path.basename(self.edf_filename + ".bz2"))
+        UtilsTest.getimage(os.path.basename(self.cbf_filename))
+
     def runTest(self):
         self.test_read()
         self.test_byte_offset()
@@ -65,12 +70,12 @@ class test_cbfimage_reader(unittest.TestCase):
         tNumpy = time.time() - startTime
         logging.info("Timing for Numpy method : %.3fs" % tNumpy)
 
-        startTime = time.time()
-        weaveRes = cbfimage.analyseWeave(data, size=cbf.dim1 * cbf.dim2)
-        tWeave = time.time() - startTime
-        delta = abs(numpyRes - weaveRes).max()
-        self.assertAlmostEqual(0, delta)
-        logging.info("Timing for Weave method : %.3fs, max delta=%s" % (tWeave, delta))
+#        startTime = time.time()
+#        weaveRes = cbfimage.analyseWeave(data, size=cbf.dim1 * cbf.dim2)
+#        tWeave = time.time() - startTime
+#        delta = abs(numpyRes - weaveRes).max()
+#        self.assertAlmostEqual(0, delta)
+#        logging.info("Timing for Weave method : %.3fs, max delta=%s" % (tWeave, delta))
 
         startTime = time.time()
         pythonRes = cbfimage.analysePython(data, size=cbf.dim1 * cbf.dim2)
