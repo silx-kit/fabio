@@ -28,12 +28,14 @@ from fabio.openimage import openimage
 
 class test_cbfimage_reader(unittest.TestCase):
     """ test cbf image reader """
+
     def __init__(self, methodName):
         "Constructor of the class"
-        unittest.TestCase.__init__(self, "runTest")
+        unittest.TestCase.__init__(self, methodName)
         testimgdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testimages")
         self.edf_filename = os.path.join(testimgdir, "run2_1_00148.edf")
         self.cbf_filename = os.path.join(testimgdir, "run2_1_00148.cbf")
+
 
     def setUp(self):
         """Download images"""
@@ -41,10 +43,6 @@ class test_cbfimage_reader(unittest.TestCase):
         UtilsTest.getimage(os.path.basename(self.edf_filename + ".bz2"))
         UtilsTest.getimage(os.path.basename(self.cbf_filename))
 
-    def runTest(self):
-        self.test_read()
-        self.test_byte_offset()
-#        pass   
 
     def test_read(self):
         """ check whole reader"""
@@ -57,7 +55,6 @@ class test_cbfimage_reader(unittest.TestCase):
 
         self.assertAlmostEqual(0, (cbf.data - edf.data).max())
         logging.info("Reading CBF took %.3fs whereas the same EDF took %.3fs" % (times[1] - times[0], times[2] - times[1]))
-
 
     def test_byte_offset(self):
         """ check byte offset algorythm"""
@@ -93,5 +90,15 @@ class test_cbfimage_reader(unittest.TestCase):
         logging.info("Timing for Cython method : %.3fs, max delta= %s" % (tCython, delta))
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_suite_all_cbf():
+    testSuite = unittest.TestSuite()
+    testSuite.addTest(test_cbfimage_reader("test_read"))
+    testSuite.addTest(test_cbfimage_reader("test_byte_offset"))
+    return testSuite
+
+if __name__ == '__main__':
+
+    mysuite = test_suite_all_cbf()
+    runner = unittest.TextTestRunner()
+    runner.run(mysuite)
+

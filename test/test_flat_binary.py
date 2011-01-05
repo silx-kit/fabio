@@ -1,6 +1,19 @@
 
+import unittest
+import os
+import logging
+import sys
 
-import unittest, os
+for idx, opts in enumerate(sys.argv[:]):
+    if opts in ["-d", "--debug"]:
+        logging.basicConfig(level=logging.DEBUG)
+        sys.argv.pop(idx)
+try:
+    logging.debug("tests loaded from file: %s" % __file__)
+except:
+    __file__ = os.getcwd()
+
+from utilstest import UtilsTest
 import fabio.openimage
 
 
@@ -11,30 +24,39 @@ class test_flat_binary(unittest.TestCase):
         "bad_news_1234",
         "empty_files_suck_1234.edf",
         "notRUBY_1234.dat"]
-    
+
     def setUp(self):
         for filename in self.filenames:
-            f = open(filename,"wb")
+            f = open(filename, "wb")
             # A 2048 by 2048 blank image
-            f.write("\0x0"*2048*2048*2)
+            f.write("\0x0" * 2048 * 2048 * 2)
         f.close()
-        
+
     def test_openimage(self):
         nfail = 0
         for filename in self.filenames:
             try:
-                im = fabio.openimage.openimage( filename )
-                if im.data.tostring() != "\0x0"*2048*2048*2:
+                im = fabio.openimage.openimage(filename)
+                if im.data.tostring() != "\0x0" * 2048 * 2048 * 2:
                     nfail += 1
                 else:
-                    print "**** Passed", filename
+                    logging.info("**** Passed: %s" % filename)
             except:
-                print "failed for", filename
+                logging.warning("failed for: %s" % filename)
                 nfail += 1
-        assert nfail == 0, str(nfail)+" failures out of "+str(len(self.filenames))        
+        self.assertEqual(nfail, 0, " %s failures out of %s" % (nfail, len(self.filenames)))
+
     def tearDown(self):
         for filename in self.filenames:
             os.remove(filename)
 
-if __name__ =="__main__":
-    unittest.main()
+def test_suite_all_flat():
+    testSuite = unittest.TestSuite()
+
+    testSuite.addTest(test_flat_binary("test_openimage"))
+    return testSuite
+
+if __name__ == '__main__':
+    mysuite = test_suite_all_flat()
+    runner = unittest.TextTestRunner()
+    runner.run(mysuite)

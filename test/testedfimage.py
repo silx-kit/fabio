@@ -140,14 +140,26 @@ class testedfs(unittest.TestCase):
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
 
+def test_suite_all_edf():
+    testSuite = unittest.TestSuite()
+    testSuite.addTest(testflatedfs("test_read"))
+    testSuite.addTest(testflatedfs("test_getstats"))
+    testSuite.addTest(testbzipedf("test_read"))
+    testSuite.addTest(testbzipedf("test_getstats"))
+    testSuite.addTest(testgzipedf("test_read"))
+    testSuite.addTest(testgzipedf("test_getstats"))
+    testSuite.addTest(testedfs("test_read"))
+    return testSuite
+
+if __name__ == '__main__':
+
+    mysuite = test_suite_all_edf()
+    runner = unittest.TextTestRunner()
+    runner.run(mysuite)
 
 
 
 
-
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 

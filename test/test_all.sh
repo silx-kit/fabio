@@ -1,8 +1,11 @@
 
+echo "Deprecated !!!"
+exit 0
+
 cd ..
 export PYT=python
 $PYT setup.py build
-export PYTHONPATH=../build/lib.linux-i686-2.4
+export PYTHONPATH=../build/lib.linux-x86_64-2.6
 cd test
 
 # ls *.py | awk '{print "$PYT",$1}'
