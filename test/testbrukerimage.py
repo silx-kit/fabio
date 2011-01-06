@@ -51,31 +51,27 @@ OVERFLOWS = [
 
 class testbruker(unittest.TestCase):
     """basic test"""
-    filename = 'image.0000'
+    filename = 'testimages/image.0000'
 
     def setUp(self):
         """ Generate a test bruker image """
-        fout = open("image.0000", 'wb')
-        wrb = 0
-        for key, val in MYHEADER.iteritems():
-            fout.write(("%-7s" % key) + ':' + ("%-72s" % val))
-            wrb = wrb + 80
-        hdrblks = int(MYHEADER['HDRBLKS'])
-        while (wrb < hdrblks * 512):
-            fout.write("\x1a\x04")
-            fout.write('.'*78)
-            wrb = wrb + 80
-        fout.write(MYIMAGE.tostring())
+        if not os.path.isfile(self.filename):
+            fout = open(self.filename, 'wb')
+            wrb = 0
+            for key, val in MYHEADER.iteritems():
+                fout.write(("%-7s" % key) + ':' + ("%-72s" % val))
+                wrb = wrb + 80
+            hdrblks = int(MYHEADER['HDRBLKS'])
+            while (wrb < hdrblks * 512):
+                fout.write("\x1a\x04")
+                fout.write('.'*78)
+                wrb = wrb + 80
+            fout.write(MYIMAGE.tostring())
 
-        noverfl = int(MYHEADER['NOVERFL'])
-        for ovf in OVERFLOWS:
-            fout.write(ovf[0] + ovf[1])
-        fout.write('.' * (512 - (16 * noverfl) % 512))
-
-    def tearDown(self):
-        """ clean up """
-        if os.path.exists(self.filename):
-            os.remove(self.filename)
+            noverfl = int(MYHEADER['NOVERFL'])
+            for ovf in OVERFLOWS:
+                fout.write(ovf[0] + ovf[1])
+            fout.write('.' * (512 - (16 * noverfl) % 512))
 
     def test_read(self):
         """ see if we can read the test image """
@@ -90,18 +86,18 @@ class testbzipbruker(testbruker):
     def setUp(self):
         """ create the image """
         testbruker.setUp(self)
-        os.system("bzip2 %s" % (self.filename))
-        self.filename += ".bz2"
-        # tear down is inherited and self.filename will be removed
+        if not os.path.isfile(self.filename + ".bz2"):
+            os.system("bzip2 %s" % (self.filename))
+            self.filename += ".bz2"
 
 class testgzipbruker(testbruker):
     """ test for a gzipped image """
     def setUp(self):
         """ Create the image """
         testbruker.setUp(self)
-        os.system("gzip %s" % (self.filename))
-        self.filename += ".gz"
-        # tear down is inherited and self.filename will be removed
+        if not os.path.isfile(self.filename + ".gz"):
+            os.system("gzip %s" % (self.filename))
+            self.filename += ".gz"
 
 
 

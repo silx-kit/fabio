@@ -39,6 +39,7 @@ from testmccdimage          import test_suite_all_mccd
 from testopenheader         import test_suite_all_openheader
 from testopenimage          import test_suite_all_openimage
 from testOXDimage           import test_suite_all_OXD
+from testkcdimage           import test_suite_all_kcd
 
 def test_suite_all():
     testSuite = unittest.TestSuite()
@@ -46,7 +47,7 @@ def test_suite_all():
     testSuite.addTest(test_suite_all_filenames())
     testSuite.addTest(test_suite_all_series())
     testSuite.addTest(test_suite_all_steps())
-    testSuite.addTest(test_suite_all_flat())
+#    testSuite.addTest(test_suite_all_flat())
     testSuite.addTest(test_suite_all_adsc())
     testSuite.addTest(test_suite_all_edf())
     testSuite.addTest(test_suite_all_cbf())
@@ -59,7 +60,7 @@ def test_suite_all():
     testSuite.addTest(test_suite_all_openheader())
     testSuite.addTest(test_suite_all_openimage())
     testSuite.addTest(test_suite_all_OXD())
-
+    testSuite.addTest(test_suite_all_kcd())
     return testSuite
 
 if __name__ == '__main__':

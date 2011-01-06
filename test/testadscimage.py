@@ -49,11 +49,10 @@ class testmatch(unittest.TestCase):
         im2 = adscimage()
         im2.read("testimages/mb_LP_1_001.img")
         diff = (im1.data.astype("int32") - im2.data.astype("int32")).ravel()
-        logging.info("type: %s %s shape %s %s " % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape))
-        logging.info("im1 min %s %s max %s %s " % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max()))
-        logging.info("delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean()))
+        logging.debug("type: %s %s shape %s %s " % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape))
+        logging.debug("im1 min %s %s max %s %s " % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max()))
+        logging.debug("delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean()))
         self.assertAlmostEqual(N.max(diff), 0, 2)
-        self.assertAlmostEqual(N.min(diff), 0, 2)
 
 class testflatmccdsadsc(unittest.TestCase):
     """
