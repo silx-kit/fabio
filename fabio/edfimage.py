@@ -27,6 +27,7 @@ DATA_TYPES = {  "SignedByte"     :  np.int8,
                 "SignedLong"     :  np.int32,
                 "UnsignedLong"   :  np.uint32,
                 "FloatValue"     :  np.float32,
+                "FLOATVALUE"     :  np.float32,                
                 "FLOAT"          :  np.float32, # fit2d
                 "Float"          :  np.float32, # fit2d
                 "DoubleValue"    :  np.float
