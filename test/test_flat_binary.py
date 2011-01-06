@@ -33,6 +33,10 @@ class test_flat_binary(unittest.TestCase):
         f.close()
 
     def test_openimage(self):
+        """
+        test the opening of "junk" empty images ...
+        JK: I wonder if this test makes sense !
+        """
         nfail = 0
         for filename in self.filenames:
             try:

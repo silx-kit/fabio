@@ -1,22 +1,38 @@
-
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
 """
 #bruker Unit tests
 
 #built on testedfimage
 """
-import unittest, os
-import numpy as N
+
+import unittest
+import os
+import logging
+import sys
+
+for idx, opts in enumerate(sys.argv[:]):
+    if opts in ["-d", "--debug"]:
+        logging.basicConfig(level=logging.DEBUG)
+        sys.argv.pop(idx)
+try:
+    logging.debug("tests loaded from file: %s" % __file__)
+except:
+    __file__ = os.getcwd()
+
+from utilstest import UtilsTest
 from fabio.brukerimage import brukerimage
+import numpy as N
 
 
 #this is actually a violation of the bruker format since the order of
 # the header items is specified
 #in the standard, whereas the order of a python dictionary is not
-MYHEADER = {"FORMAT":'86', 
+MYHEADER = {"FORMAT":'86',
             'NPIXELB':'2',
             'VERSION':'9',
             'HDRBLKS':'5',
-            'NOVERFL':'4', 
+            'NOVERFL':'4',
             'NCOLS':'256',
             'NROWS':'256',
             'WORDORD':'0'}
@@ -54,7 +70,7 @@ class testbruker(unittest.TestCase):
         noverfl = int(MYHEADER['NOVERFL'])
         for ovf in OVERFLOWS:
             fout.write(ovf[0] + ovf[1])
-        fout.write('.' * (512 - (16* noverfl)% 512))
+        fout.write('.' * (512 - (16 * noverfl) % 512))
 
     def tearDown(self):
         """ clean up """
@@ -65,9 +81,9 @@ class testbruker(unittest.TestCase):
         """ see if we can read the test image """
         obj = brukerimage()
         obj.read(self.filename)
-        self.assertAlmostEqual( obj.getmean() , 272.0, 2 )
-        self.assertEqual( obj.getmin() ,   0 )
-        self.assertEqual( obj.getmax() ,  4194304 )
+        self.assertAlmostEqual(obj.getmean() , 272.0, 2)
+        self.assertEqual(obj.getmin() , 0)
+        self.assertEqual(obj.getmax() , 4194304)
 
 class testbzipbruker(testbruker):
     """ test for a bzipped image """
@@ -99,10 +115,15 @@ Cr8F8140k103.0026.bz2   512  512  0 145942 289.37  432.17 """
 
 
 class test_real_im(unittest.TestCase):
-    """ check some read data as for mar ccd """
-          
+    """ check some read data from bruker detector"""
+    def setUp(self):
+        """
+        download images
+        """
+        UtilsTest.getimage("Cr8F8140k103.0026.bz2")
+
     def test_read(self):
-        """ check we can read these images"""
+        """ check we can read bruker images"""
         for line in TESTIMAGES.split("\n"):
             vals = line.split()
             name = vals[0]
@@ -116,7 +137,16 @@ class test_real_im(unittest.TestCase):
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
-            
 
-if __name__ == "__main__":
-    unittest.main()
+def test_suite_all_bruker():
+    testSuite = unittest.TestSuite()
+    testSuite.addTest(testbruker("test_read"))
+    testSuite.addTest(testbzipbruker("test_read"))
+    testSuite.addTest(testgzipbruker("test_read"))
+    testSuite.addTest(test_real_im("test_read"))
+    return testSuite
+
+if __name__ == '__main__':
+    mysuite = test_suite_all_bruker()
+    runner = unittest.TextTestRunner()
+    runner.run(mysuite)

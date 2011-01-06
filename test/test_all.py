@@ -22,14 +22,23 @@ except:
 from utilstest import UtilsTest
 
 
-from testfabioimage import test_suite_all_fabio
-from testedfimage import test_suite_all_edf
-from testcbfimage import test_suite_all_cbf
-from testfilenames import test_suite_all_filenames
-from test_file_series import test_suite_all_series
-from test_filename_steps import test_suite_all_steps
-from test_flat_binary import test_suite_all_flat
-from testadscimage import test_suite_all_adsc
+from testfabioimage         import test_suite_all_fabio
+from testedfimage           import test_suite_all_edf
+from testcbfimage           import test_suite_all_cbf
+from testfilenames          import test_suite_all_filenames
+from test_file_series       import test_suite_all_series
+from test_filename_steps    import test_suite_all_steps
+from test_flat_binary       import test_suite_all_flat
+from testadscimage          import test_suite_all_adsc
+from testfit2dmaskimage     import test_suite_all_fit2d
+from testGEimage            import test_suite_all_GE
+from testheadernotsingleton import test_suite_all_header
+from testmar345image        import test_suite_all_mar345
+from testbrukerimage        import test_suite_all_bruker
+from testmccdimage          import test_suite_all_mccd
+from testopenheader         import test_suite_all_openheader
+from testopenimage          import test_suite_all_openimage
+from testOXDimage           import test_suite_all_OXD
 
 def test_suite_all():
     testSuite = unittest.TestSuite()
@@ -41,6 +50,16 @@ def test_suite_all():
     testSuite.addTest(test_suite_all_adsc())
     testSuite.addTest(test_suite_all_edf())
     testSuite.addTest(test_suite_all_cbf())
+    testSuite.addTest(test_suite_all_fit2d())
+    testSuite.addTest(test_suite_all_GE())
+    testSuite.addTest(test_suite_all_header())
+    testSuite.addTest(test_suite_all_mar345())
+    testSuite.addTest(test_suite_all_bruker())
+    testSuite.addTest(test_suite_all_mccd())
+    testSuite.addTest(test_suite_all_openheader())
+    testSuite.addTest(test_suite_all_openimage())
+    testSuite.addTest(test_suite_all_OXD())
+
     return testSuite
 
 if __name__ == '__main__':

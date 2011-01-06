@@ -38,16 +38,12 @@ mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38 """
 class testmatch(unittest.TestCase):
     """ check the fit2d conversion to edf gives same numbers """
     def setUp(self):
-        """ make the image """
+        """ Download images """
         UtilsTest.getimage("mb_LP_1_001.img.bz2")
         UtilsTest.getimage("mb_LP_1_001.edf.bz2")
-        if not os.path.exists("testimages/mb_LP_1_001.img"):
-            raise Exception("Get testimages/mb_LP_1_001.img")
-        if not os.path.exists("testimages/mb_LP_1_001.edf"):
-            raise Exception("make testimages/mb_LP_1_001.edf")
 
     def testsame(self):
-        """match to edf"""
+        """test ADSC image match to EDF"""
         im1 = edfimage()
         im1.read("testimages/mb_LP_1_001.edf")
         im2 = adscimage()
@@ -61,11 +57,9 @@ class testmatch(unittest.TestCase):
 
 class testflatmccdsadsc(unittest.TestCase):
     """
-    Read some test images on jon's disk
-    FIXME: upload to sourceforge and add a setUp with wget?
     """
     def test_read(self):
-        """ check we can read these images"""
+        """ check we can read flat ADSC images"""
         for line in TESTIMAGES.split("\n"):
             vals = line.split()
             name = vals[0]

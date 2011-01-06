@@ -1,27 +1,56 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+"""
+# Unit tests
+"""
 
+import unittest
+import os
+import logging
+import sys
 
-import unittest, os
+for idx, opts in enumerate(sys.argv[:]):
+    if opts in ["-d", "--debug"]:
+        logging.basicConfig(level=logging.DEBUG)
+        sys.argv.pop(idx)
+try:
+    logging.debug("tests loaded from file: %s" % __file__)
+except:
+    __file__ = os.getcwd()
 
-
+from utilstest import UtilsTest
 from fabio.openimage import openheader
 
 NAMES = [
-    os.path.join("testimages","F2K_Seb_Lyso0675_header_only.edf.gz"),
-    os.path.join("testimages","F2K_Seb_Lyso0675_header_only.edf.bz2"),
-    os.path.join("testimages","F2K_Seb_Lyso0675_header_only.edf")
+    os.path.join("testimages", "F2K_Seb_Lyso0675_header_only.edf.gz"),
+    os.path.join("testimages", "F2K_Seb_Lyso0675_header_only.edf.bz2"),
+    os.path.join("testimages", "F2K_Seb_Lyso0675_header_only.edf")
     ]
 
 
 class test1(unittest.TestCase):
     """openheader opening edf"""
+    def setUp(self):
+        UtilsTest.getimage("F2K_Seb_Lyso0675_header_only.edf.bz2")
+
     def testcase(self):
-        """ check we can read it"""
+        """ check openheader can read edf headers"""
         for name in NAMES:
             obj = openheader(name)
             self.assertEqual(obj.header["title"],
                              "ESPIA FRELON Image",
-                             "Error on "+name)
+                             "Error on " + name)
 
-if __name__ == "__main__":
-    unittest.main()
-                         
+
+
+def test_suite_all_openheader():
+    testSuite = unittest.TestSuite()
+    testSuite.addTest(test1("testcase"))
+    return testSuite
+
+if __name__ == '__main__':
+    mysuite = test_suite_all_openheader()
+    runner = unittest.TextTestRunner()
+    runner.run(mysuite)
+
+

@@ -69,17 +69,6 @@ class UtilsTest(object):
     import fabio
     logging.info("Fabio loaded from %s" % fabio.__file__)
 
-#    @classmethod
-#    def build_sources(cls, _strOptions=""):
-#        """
-#        Runs the setup.py to build Fabio
-#
-#        @param _strOptions: options to be passed to setup.py (beside build)
-#        @type _strOptions: python string
-#        """
-#
-#        subprocess.Popen([sys.executable, "setup.py", "build", _strOptions],
-#                         shell=False, cwd=os.path.dirname(cls.test_home))
 
     @classmethod
     def timeoutDuringDownload(cls):
@@ -163,7 +152,7 @@ Otherwise please try to download the images manually from
                     data to disk at %s" % cls.image_home)
             if bzip2name != fullimagename:
                 try:
-                    bz2.BZ2File.open(bzip2name, "wb").write(decompressed)
+                    bz2.BZ2File(bzip2name, "wb").write(decompressed)
                 except IOError:
                     raise IOError("unable to write bzipped2 \
                     data to disk at %s" % cls.image_home)
