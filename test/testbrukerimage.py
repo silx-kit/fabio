@@ -88,7 +88,7 @@ class testbzipbruker(testbruker):
         """ create the image """
         testbruker.setUp(self)
         if not os.path.isfile(self.filename + ".bz2"):
-            os.system("bzip2 %s" % (self.filename))
+            bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
             self.filename += ".bz2"
 
 class testgzipbruker(testbruker):
