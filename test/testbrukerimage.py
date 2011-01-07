@@ -10,6 +10,7 @@ import unittest
 import os
 import logging
 import sys
+import gzip, bz2
 
 for idx, opts in enumerate(sys.argv[:]):
     if opts in ["-d", "--debug"]:
@@ -96,7 +97,8 @@ class testgzipbruker(testbruker):
         """ Create the image """
         testbruker.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
-            os.system("gzip %s" % (self.filename))
+            gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
+#            os.system("gzip %s" % (self.filename))
             self.filename += ".gz"
 
 

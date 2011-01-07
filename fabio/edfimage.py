@@ -27,10 +27,10 @@ DATA_TYPES = {  "SignedByte"     :  np.int8,
                 "SignedLong"     :  np.int32,
                 "UnsignedLong"   :  np.uint32,
                 "FloatValue"     :  np.float32,
-                "FLOATVALUE"     :  np.float32,                
+                "FLOATVALUE"     :  np.float32,
                 "FLOAT"          :  np.float32, # fit2d
                 "Float"          :  np.float32, # fit2d
-                "DoubleValue"    :  np.float
+                "DoubleValue"    :  np.float64
                 }
 
 MINIMUM_KEYS = ['HeaderID',
@@ -111,8 +111,9 @@ class edfimage(fabioimage):
 
         # Sorry - this was a safe way to read old ID11 imagepro edfs
         # assumes corrupted headers are shorter, they could be longer
-        if self.header.has_key('Image') and self.header['Image'] != '1':
+        if self.header.has_key('Image') and self.header['Image'] not in ["0", '1']:
             logging.warning("Could be a multi-image file")
+
         block = infile.read()
         expected_size = self.dim1 * self.dim2 * self.bpp
 

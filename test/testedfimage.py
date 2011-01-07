@@ -13,6 +13,7 @@
 import unittest, numpy as N, os
 import logging
 import sys
+import gzip, bz2
 
 for idx, opts in enumerate(sys.argv[:]):
     if opts in ["-d", "--debug"]:
@@ -46,20 +47,21 @@ assert len(MYIMAGE[0:1, 0:1].tostring()) == 4, \
 
 class testflatedfs(unittest.TestCase):
     """ test some flat images """
-    filename = "im0000.edf"
+    filename = "testimages/im0000.edf"
 
     def setUp(self):
         """ initialise"""
-        outf = open(self.filename, "wb")
-        assert len(MYHEADER) % 1024 == 0
-        outf.write(MYHEADER)
-        outf.write(MYIMAGE.tostring())
-        outf.close()
+        if not os.path.isfile(self.filename):
+            outf = open(self.filename, "wb")
+            assert len(MYHEADER) % 1024 == 0
+            outf.write(MYHEADER)
+            outf.write(MYIMAGE.tostring())
+            outf.close()
 
-    def tearDown(self):
-        """ clean up """
-        if os.path.exists(self.filename):
-            os.remove(self.filename)
+#    def tearDown(self):
+#        """ clean up """
+#        if os.path.exists(self.filename):
+#            os.remove(self.filename)
 
     def test_read(self):
         """ check readable"""
@@ -86,7 +88,8 @@ class testbzipedf(testflatedfs):
     def setUp(self):
         """set it up"""
         testflatedfs.setUp(self)
-        os.system("bzip2 %s" % (self.filename))
+        if not os.path.isfile(self.filename + ".bz2"):
+                    bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
         self.filename += ".bz2"
         # self.filename will be the file to be removed
 
@@ -95,7 +98,9 @@ class testgzipedf(testflatedfs):
     def setUp(self):
         """ set it up """
         testflatedfs.setUp(self)
-        os.system("gzip %s" % (self.filename))
+        if not os.path.isfile(self.filename + ".gz"):
+                    gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
+#        os.system("gzip %s" % (self.filename))
         self.filename += ".gz"
         # self.filename will be the file to be removed
 

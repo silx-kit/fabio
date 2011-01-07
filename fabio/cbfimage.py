@@ -193,6 +193,7 @@ return_val=0;
         rc = weave.inline(codeC, ["dataIn", "dataOut", "n", "size" ], verbose=2, type_converters=converters.blitz)
         return dataOut
 
+
     @staticmethod
     def analyseNumpy(stream, size=None):
         """
@@ -230,6 +231,7 @@ return_val=0;
                 shift = 3
             stream = stream[idx + shift:]
         return  (np.hstack(listnpa)).astype("int64").cumsum()
+
 
     def _readbinary_byte_offset(self, inStream):
         """

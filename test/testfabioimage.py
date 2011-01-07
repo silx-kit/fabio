@@ -15,7 +15,7 @@ import unittest, os, sys
 import numpy as N
 import numpy.random as RandomArray
 import logging
-
+import gzip, bz2
 
 for idx, opts in enumerate(sys.argv[:]):
     if opts in ["-d", "--debug"]:
@@ -91,35 +91,30 @@ class testslices(unittest.TestCase):
 
 class testopen(unittest.TestCase):
     """check opening compressed files"""
-
+    testfile = "testimages/testfile"
     def setUp(self):
         """ create test files"""
-        open("testfile", "wb").write("{ hello }")
-        os.system("gzip testfile")
-        open("testfile", "wb").write("{ hello }")
-        os.system("bzip2 testfile")
-        open("testfile", "wb").write("{ hello }")
+        if not os.path.isfile(self.testfile):
+            open(self.testfile, "wb").write("{ hello }")
+        if not os.path.isfile(self.testfile + ".gz"):
+            gzip.open(self.testfile + ".gz", "wb").write("{ hello }")
+        if not os.path.isfile(self.testfile + ".bz2"):
+            bz2.BZ2File(self.testfile + ".bz2", "wb").write("{ hello }")
         self.obj = fabioimage()
-
-    def tearDown(self):
-        """clean up"""
-        for name in ["testfile", "testfile.gz", "testfile.bz2"]:
-            if os.path.exists(name):
-                os.remove(name)
 
     def testFlat(self):
         """ no compression"""
-        res = self.obj._open("testfile").read()
+        res = self.obj._open(self.testfile).read()
         self.assertEqual(res , "{ hello }")
 
     def testgz(self):
         """ gzipped """
-        res = self.obj._open("testfile.gz").read()
+        res = self.obj._open(self.testfile + ".gz").read()
         self.assertEqual(res , "{ hello }")
 
     def testbz2(self):
         """ bzipped"""
-        res = self.obj._open("testfile.bz2").read()
+        res = self.obj._open(self.testfile + ".bz2").read()
         self.assertEqual(res , "{ hello }")
 
 

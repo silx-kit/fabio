@@ -40,6 +40,7 @@ from testopenheader         import test_suite_all_openheader
 from testopenimage          import test_suite_all_openimage
 from testOXDimage           import test_suite_all_OXD
 from testkcdimage           import test_suite_all_kcd
+from testtifgz              import test_suite_all_tiff
 
 def test_suite_all():
     testSuite = unittest.TestSuite()
@@ -61,6 +62,7 @@ def test_suite_all():
     testSuite.addTest(test_suite_all_openimage())
     testSuite.addTest(test_suite_all_OXD())
     testSuite.addTest(test_suite_all_kcd())
+    testSuite.addTest(test_suite_all_tiff())
     return testSuite
 
 if __name__ == '__main__':

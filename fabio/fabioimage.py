@@ -32,16 +32,16 @@ class fabioimage:
     A common object for images in fable
     Contains a numpy array (.data) and dict of meta data (.header)
     """
-    
+
     _need_a_seek_to_read = False
     _need_a_real_file = False
 
-    def __init__(self, data = None , header = None):
+    def __init__(self, data=None , header=None):
         """
         Set up initial values
         """
         if type(data) == type("string"):
-            raise Exception("fabioimage.__init__ bad argument - "+\
+            raise Exception("fabioimage.__init__ bad argument - " + \
                             "data should be numpy array")
         self.data = data
         self.pilimage = None
@@ -65,27 +65,27 @@ class fabioimage:
         self.nframes = 1
         self.currentframe = 0
         self.filename = None
-        
+
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if self.nframes == 1:
             # single image per file
             return fabio.openimage.openimage(
-                fabio.jump_filename( self.filename, num ) )
+                fabio.jump_filename(self.filename, num))
         raise Exception("getframe out of range")
 
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
         return fabio.openimage.openimage(
-            fabio.previous_filename( self.filename ) )
+            fabio.previous_filename(self.filename))
 
     def next(self):
         """ returns the next file in the series as a fabioimage """
         return fabio.openimage.openimage(
-            fabio.next_filename( self.filename ) )
+            fabio.next_filename(self.filename))
 
-  
-    def toPIL16(self, filename = None):
+
+    def toPIL16(self, filename=None):
         """
         Convert to Python Imaging Library 16 bit greyscale image
 
@@ -105,11 +105,11 @@ class fabioimage:
             'uint16'  : "F;16"  ,
             'int8'    : "F;8S"  ,
             'uint8'   : "F;8"  }
-        if typmap.has_key( self.data.dtype.name ):
+        if typmap.has_key(self.data.dtype.name):
             mode2 = typmap[ self.data.dtype.name ]
             mode1 = mode2[0]
         else:
-            raise Exception("Unknown numpy type "+str(self.data.dtype.type))
+            raise Exception("Unknown numpy type " + str(self.data.dtype.type))
         # 
         # hack for byteswapping for PIL in MacOS
         testval = N.array((1, 0), N.uint8).view(N.uint16)[0]
@@ -127,20 +127,20 @@ class fabioimage:
                                          mode2,
                                          0,
                                          1)
-            
+
         return self.pilimage
 
     def getheader(self):
         """ returns self.header """
         return self.header
-  
+
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:
             self.maxval = N.max(self.data)
         return self.maxval
-  
-    def getmin(self):    
+
+    def getmin(self):
         """ Find min value in self.data, caching for the future """
         if self.minval is None:
             self.minval = N.min(self.data)
@@ -167,9 +167,9 @@ class fabioimage:
                      coords[0] ,
                      self.dim2 - coords[1] - 1,
                      coords[2])
-        return ( slice(int(fixme[0]), int(fixme[2])+1) , 
-                 slice(int(fixme[1]), int(fixme[3])+1)  )
-        
+        return (slice(int(fixme[0]), int(fixme[2]) + 1) ,
+                 slice(int(fixme[1]), int(fixme[3]) + 1))
+
 
     def integrate_area(self, coords):
         """ 
@@ -189,17 +189,17 @@ class fabioimage:
         if sli == self.slice and self.area_sum is not None:
             return self.area_sum
         self.slice = sli
-        self.area_sum = N.sum( 
-                            N.ravel( 
+        self.area_sum = N.sum(
+                            N.ravel(
                                 self.data[ self.slice ].astype(N.float)))
         return self.area_sum
 
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = N.mean(self.data) 
+            self.mean = N.mean(self.data)
         return float(self.mean)
-    
+
     def getstddev(self):
         """ return the standard deviation """
         if self.stddev == None:
@@ -210,20 +210,20 @@ class fabioimage:
         """
         Add another Image - warnign, does not clip to 16 bit images by default
         """
-        if not hasattr(other,'data'):
-            print 'edfimage.add() called with something that '+\
+        if not hasattr(other, 'data'):
+            print 'edfimage.add() called with something that ' + \
                 'does not have a data field'
         assert self.data.shape == other.data.shape , \
                   'incompatible images - Do they have the same size?'
         self.data = self.data + other.data
         self.resetvals()
-            
-      
+
+
     def resetvals(self):
         """ Reset cache - call on changing data """
         self.mean = self.stddev = self.maxval = self.minval = None
         self.area_sum = None
-  
+
     def rebin(self, x_rebin_fact, y_rebin_fact):
         """ Rebin the data and adjust dims """
         if self.data == None:
@@ -241,24 +241,24 @@ class fabioimage:
         i = 1
         while i < x_rebin_fact:
             # FIXME - why do you divide by 2? Rebinning should increase counts?
-            self.data = ((self.data[:, ::2] + self.data[:, 1::2])/2)
+            self.data = ((self.data[:, ::2] + self.data[:, 1::2]) / 2)
             i = i * 2
         i = 1
         while i < y_rebin_fact:
-            self.data = ((self.data[::2, :]+self.data[1::2, :])/2)
+            self.data = ((self.data[::2, :] + self.data[1::2, :]) / 2)
             i = i * 2
         self.resetvals()
         self.dim1 = self.dim1 / x_rebin_fact
         self.dim2 = self.dim2 / y_rebin_fact
         #update header
         self.update_header()
-        
+
     def write(self, fname):
         """
         To be overwritten - write the file
         """
         raise Exception("Class has not implemented readheader method yet")
-        
+
     def readheader(self, filename):
         """
         Call the _readheader function...
@@ -305,13 +305,13 @@ class fabioimage:
             # filename is a string
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
-                return self._compressed_stream(fname, 
-                                       fabio.COMPRESSORS['.gz'], 
+                return self._compressed_stream(fname,
+                                       fabio.COMPRESSORS['.gz'],
                                        gzip.GzipFile,
                                        mode)
             if os.path.splitext(fname)[1] == '.bz2':
-                return self._compressed_stream(fname, 
-                                       fabio.COMPRESSORS['.bz2'], 
+                return self._compressed_stream(fname,
+                                       fabio.COMPRESSORS['.bz2'],
                                        bz2.BZ2File,
                                        mode)
             #
@@ -321,18 +321,18 @@ class fabioimage:
             # FIXME - should we fix that or complain about the daft naming?
             return open(fname, mode)
 
-    def _compressed_stream(self, 
-                           fname, 
-                           system_uncompress, 
-                           python_uncompress, 
-                           mode = 'rb'): 
+    def _compressed_stream(self,
+                           fname,
+                           system_uncompress,
+                           python_uncompress,
+                           mode='rb'):
         """
         Try to transparently handle gzip / bzip without always getting python 
         performance
         """
         # assert that python modules are always OK based on performance benchmark
         # Try to fix the way we are using them?
-        if self._need_a_real_file and mode[0] == "r":  
+        if self._need_a_real_file and mode[0] == "r":
             fo = python_uncompress(fname, mode)
             fobj = os.tmpfile()
             fobj.write(fo.read())
@@ -343,7 +343,7 @@ class fabioimage:
             fo = python_uncompress(fname, mode)
             return cStringIO.StringIO(fo.read())
         return python_uncompress(fname, mode)
-       
+
 
 
 
@@ -353,40 +353,40 @@ def test():
     """
     import time
     start = time.time()
-    
+
     dat = N.ones((1024, 1024), N.uint16)
-    dat = (dat*50000).astype(N.uint16)
+    dat = (dat * 50000).astype(N.uint16)
     assert dat.dtype.char == N.ones((1), N.uint16).dtype.char
     hed = {"Title":"50000 everywhere"}
     obj = fabioimage(dat, hed)
-      
+
     assert obj.getmax() == 50000
     assert obj.getmin() == 50000
     assert obj.getmean() == 50000 , obj.getmean()
     assert obj.getstddev() == 0.
-      
-    dat2 = N.zeros((1024, 1024), N.uint16, savespace = 1 )
+
+    dat2 = N.zeros((1024, 1024), N.uint16, savespace=1)
     cord = [ 256, 256, 790, 768 ]
     slic = obj.make_slice(cord)
     dat2[slic] = dat2[slic] + 100
-      
+
     obj = fabioimage(dat2, hed)
-      
+
     # New object, so...
     assert obj.maxval is None
     assert obj.minval is None
-     
+
     assert obj.getmax() == 100, obj.getmax()
     assert obj.getmin() == 0 , obj.getmin()
     npix = (slic[0].stop - slic[0].start) * (slic[1].stop - slic[1].start)
     obj.resetvals()
-    area1 = obj.integrate_area(cord) 
+    area1 = obj.integrate_area(cord)
     obj.resetvals()
     area2 = obj.integrate_area(slic)
     assert area1 == area2
     assert obj.integrate_area(cord) == obj.integrate_area(slic)
-    assert obj.integrate_area(cord) == npix*100, obj.integrate_area(cord)
-    
+    assert obj.integrate_area(cord) == npix * 100, obj.integrate_area(cord)
+
 
     def clean():
         """ clean up the created testfiles"""
@@ -396,22 +396,21 @@ def test():
             except:
                 continue
 
-        
+
     clean()
-    
-    open("testfile","wb").write("{ hello }")
-    os.system("gzip testfile")
+
+    gzip.open("testfile.gz", "wb").write("{ hello }")
     fout = obj._open("testfile.gz")
     readin = fout.read()
     assert readin == "{ hello }", readin + " gzipped file"
-    
-    open("testfile","wb").write("{ hello }")  
-    os.system("bzip2 testfile")
+
+
+    bz2.BZ2File("testfilebz", "wb").write("{ hello }")
     fout = obj._open("testfile.bz2")
     readin = fout.read()
     assert readin == "{ hello }", readin + " bzipped file"
-    
-    ftest = open("testfile","wb")
+
+    ftest = open("testfile", "wb")
     ftest.write("{ hello }")
     assert ftest == obj._open(ftest)
     ftest.close()
@@ -421,7 +420,7 @@ def test():
     fout.close()
     ftest.close()
     clean()
-    
+
     print "Passed in", time.time() - start, "s"
 
 if __name__ == '__main__':

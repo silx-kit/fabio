@@ -2,22 +2,28 @@
 
 
 
-import glob, os
+import os, subprocess, sys, distutils.util
 
-def lintit(infile,outfile):
-    print infile,outfile
-    os.system("pylint %s > %s"%(infile,outfile))
+def lintit(infile, outfile):
+#    print infile, outfile
+    process = subprocess.Popen(["pylint", infile], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    rc = process.wait()
+    if rc == 0:
+        open(outfile, "wb").write(process.stdout.read())
+    else:
+        print ("Error in running pylint on %s" % infile)
 
-
-files = glob.glob("../build/lib.linux-i686-2.5/fabio/*.py") + \
-        glob.glob("../test/*.py")
+arch = "lib.%s-%i.%i" % (distutils.util.get_platform(), sys.version_info[0], sys.version_info[1])
+installDir = os.path.abspath(os.path.join("..", "build", arch, "fabio"))
+testDir = os.path.abspath(os.path.join("..", "test"))
+files = [ os.path.join(installDir, i) for i in os.listdir(installDir) if i.endswith(".py") ] + \
+        [ os.path.join(testDir, i) for i in os.listdir(testDir) if i.endswith(".py") ]
 
 for f in files:
+#    print f
     outf = os.path.split(f)[-1] + ".lint"
     if not os.path.exists(outf) :
-        lintit(f,outf)
-        continue
-    if os.stat(f).st_mtime > os.stat(outf).st_mtime:
-        lintit(f,outf)
-        continue
-
+        lintit(f, outf)
+    elif os.stat(f).st_mtime > os.stat(outf).st_mtime:
+        lintit(f, outf)
+    lintit(f, outf)
