@@ -4656,11 +4656,11 @@ bad:
     }
     #if 1
         static CYTHON_INLINE float __Pyx_c_absf(__pyx_t_float_complex z) {
-          #if HAVE_HYPOT
-            return hypotf(z.real, z.imag);
-          #else
+//          #if HAVE_HYPOT
+//            return hypotf(z.real, z.imag);
+//          #else
             return sqrtf(z.real*z.real + z.imag*z.imag);
-          #endif
+//          #endif
         }
         static CYTHON_INLINE __pyx_t_float_complex __Pyx_c_powf(__pyx_t_float_complex a, __pyx_t_float_complex b) {
             __pyx_t_float_complex z;
@@ -4776,11 +4776,11 @@ bad:
     }
     #if 1
         static CYTHON_INLINE double __Pyx_c_abs(__pyx_t_double_complex z) {
-          #if HAVE_HYPOT
-            return hypot(z.real, z.imag);
-          #else
+//          #if HAVE_HYPOT
+//            return hypot(z.real, z.imag);
+//          #else
             return sqrt(z.real*z.real + z.imag*z.imag);
-          #endif
+//          #endif
         }
         static CYTHON_INLINE __pyx_t_double_complex __Pyx_c_pow(__pyx_t_double_complex a, __pyx_t_double_complex b) {
             __pyx_t_double_complex z;
