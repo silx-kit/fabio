@@ -202,11 +202,15 @@ class edfimage(fabioimage):
                 self.header[k] = DEFAULT_VALUES[k]
 
 
-    def write(self, fname, force_type=np.uint16):
+    def write(self, fname, force_type=None):
         """
         Try to write a file
         check we can write zipped also
         mimics that fabian was writing uint16 (we sometimes want floats)
+        
+        @param force_type: can be numpy.uint16 or simply "float"
+        @return: None
+        
         """
         self._fixheader()
         # Fabian was forcing uint16 - make this a default

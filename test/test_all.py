@@ -10,10 +10,16 @@ import os
 import logging
 import sys
 
-for idx, opts in enumerate(sys.argv[:]):
+force_build = False
+
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
+
 try:
     logging.debug("tests loaded from file: %s" % __file__)
 except:
@@ -21,6 +27,8 @@ except:
 
 from utilstest import UtilsTest
 
+if force_build:
+    UtilsTest.forceBuild()
 
 from testfabioimage         import test_suite_all_fabio
 from testedfimage           import test_suite_all_edf
