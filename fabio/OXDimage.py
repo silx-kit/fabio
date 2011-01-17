@@ -219,8 +219,10 @@ class OXDimage(fabioimage):
         print "BYTECODE", bytecode
         try:
             # avoid int64 for x86_64 with astype
-            #self.data = N.reshape(block.astype(bytecode),[self.dim2, self.dim1])
-            self.data = N.reshape(block,[self.dim2, self.dim1])
+            bytecode = N.int32
+
+            self.data = N.reshape(block.astype(bytecode),[self.dim2, self.dim1])
+            #self.data = N.reshape(block,[self.dim2, self.dim1])
         except:
             print len(block), self.dim2, self.dim1
             raise IOError, \
