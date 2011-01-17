@@ -189,13 +189,19 @@ class OXDimage(fabioimage):
             old_val = 0
             js = 0
             jl = 0
+            print 'OVER_SHORT: ', block.dtype
+            
             for i in range(self.dim1*self.dim2):
                 if diffs[i] < 127:
+                    #print 'DIFF < 127:' , diffs[i] 
                     d = diffs[i]
                 elif diffs[i] == 127:
+                    #print 'DIFF == 127:' , diffs[i] 
                     d = over_short[js]
+                    #print 'd ' , d
                     js = js + 1
                 elif diffs[i] == 128:
+                    #print 'DIFF == 128:' , diffs[i] 
                     d = over_long[jl]
                     jl = jl + 1
                 old_val  = old_val + d
@@ -206,12 +212,15 @@ class OXDimage(fabioimage):
             ReadBytes = self.dim1 * self.dim2 * self.bpp 
             block = N.fromstring(infile.read(ReadBytes),bytecode)
         
+        print 'OVER_SHORT2: ', block.dtype
+        print (block < 0).sum()
         #
         infile.close()
-
+        print "BYTECODE", bytecode
         try:
             # avoid int64 for x86_64 with astype
-            self.data = N.reshape(block.astype(bytecode),[self.dim2, self.dim1])
+            #self.data = N.reshape(block.astype(bytecode),[self.dim2, self.dim1])
+            self.data = N.reshape(block,[self.dim2, self.dim1])
         except:
             print len(block), self.dim2, self.dim1
             raise IOError, \
