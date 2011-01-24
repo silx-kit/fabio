@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>fabio.mar345image</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="fabio-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="fabio-module.html">Package&nbsp;fabio</a> ::
+        Module&nbsp;mar345image
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="fabio.mar345image-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="fabio.mar345image-module.html">Module fabio.mar345image</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/env python</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-docstring">Authors: Henning O. Sorensen &amp; Erik Knudsen</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-docstring">         Center for Fundamental Research: Metal Structures in Four Dimensions</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-docstring">         Risoe National Laboratory</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-docstring">         Frederiksborgvej 399</tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-docstring">         DK-4000 Roskilde</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-docstring">         email:erik.knudsen@risoe.dk</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-docstring">          +</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-docstring">         Jon Wright, ESRF, France</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package fabio=fabio-module.html"><a title="fabio" class="py-name" href="#" onclick="return doclink('link-0', 'fabio', 'link-0');">fabio</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module fabio.fabioimage=fabio.fabioimage-module.html,Class fabio.fabioimage.fabioimage=fabio.fabioimage.fabioimage-class.html"><a title="fabio.fabioimage
+fabio.fabioimage.fabioimage" class="py-name" href="#" onclick="return doclink('link-1', 'fabioimage', 'link-1');">fabioimage</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name"><a title="fabio.fabioimage
+fabio.fabioimage.fabioimage" class="py-name" href="#" onclick="return doclink('link-2', 'fabioimage', 'link-1');">fabioimage</a></tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">numpy</tt><tt class="py-op">,</tt> <tt class="py-name">struct</tt><tt class="py-op">,</tt> <tt class="py-name">string</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"> </tt>
+<a name="mar345image"></a><div id="mar345image-def"><a name="L17"></a><tt class="py-lineno"> 17</tt> <a class="py-toggle" href="#" id="mar345image-toggle" onclick="return toggle('mar345image');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="fabio.mar345image.mar345image-class.html">mar345image</a><tt class="py-op">(</tt><tt class="py-base-class">fabioimage</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="mar345image-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="mar345image-expanded"><a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line">    <tt id="link-3" class="py-name" targets="Variable fabio.fabioimage.fabioimage._need_a_real_file=fabio.fabioimage.fabioimage-class.html#_need_a_real_file,Variable fabio.mar345image.mar345image._need_a_real_file=fabio.mar345image.mar345image-class.html#_need_a_real_file"><a title="fabio.fabioimage.fabioimage._need_a_real_file
+fabio.mar345image.mar345image._need_a_real_file" class="py-name" href="#" onclick="return doclink('link-3', '_need_a_real_file', 'link-3');">_need_a_real_file</a></tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="mar345image.read"></a><div id="mar345image.read-def"><a name="L19"></a><tt class="py-lineno"> 19</tt> <a class="py-toggle" href="#" id="mar345image.read-toggle" onclick="return toggle('mar345image.read');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="fabio.mar345image.mar345image-class.html#read">read</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">fname</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="mar345image.read-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="mar345image.read-expanded"><a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line">        <tt class="py-docstring">""" Read a mar345 image"""</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt> <tt class="py-op">=</tt> <tt class="py-name">fname</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line">        <tt class="py-name">f</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method fabio.fabioimage.fabioimage._open()=fabio.fabioimage.fabioimage-class.html#_open"><a title="fabio.fabioimage.fabioimage._open" class="py-name" href="#" onclick="return doclink('link-4', '_open', 'link-4');">_open</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt><tt class="py-op">,</tt> <tt class="py-string">"rb"</tt><tt class="py-op">)</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method fabio.GEimage.GEimage._readheader()=fabio.GEimage.GEimage-class.html#_readheader,Method fabio.GEimage_old.GEimage._readheader()=fabio.GEimage_old.GEimage-class.html#_readheader,Method fabio.HiPiCimage.HiPiCimage._readheader()=fabio.HiPiCimage.HiPiCimage-class.html#_readheader,Method fabio.OXDimage.OXDimage._readheader()=fabio.OXDimage.OXDimage-class.html#_readheader,Method fabio.adscimage.adscimage._readheader()=fabio.adscimage.adscimage-class.html#_readheader,Method fabio.brukerimage.brukerimage._readheader()=fabio.brukerimage.brukerimage-class.html#_readheader,Method fabio.cbfimage.cbfimage._readheader()=fabio.cbfimage.cbfimage-class.html#_readheader,Method fabio.dm3image.dm3image._readheader()=fabio.dm3image.dm3image-class.html#_readheader,Method fabio.edfimage.edfimage._readheader()=fabio.edfimage.edfimage-class.html#_readheader,Method fabio.fabioimage.fabioimage._readheader()=fabio.fabioimage.fabioimage-class.html#_readheader,Method fabio.fit2dmaskimage.fit2dmaskimage._readheader()=fabio.fit2dmaskimage.fit2dmaskimage-class.html#_readheader,Method fabio.fit2dspreadsheetimage.fit2dspreadsheetimage._readheader()=fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#_readheader,Method fabio.kcdimage.kcdimage._readheader()=fabio.kcdimage.kcdimage-class.html#_readheader,Method fabio.mar345image.mar345image._readheader()=fabio.mar345image.mar345image-class.html#_readheader,Method fabio.marccdimage.marccdimage._readheader()=fabio.marccdimage.marccdimage-class.html#_readheader,Method fabio.pilatusimage.pilatusimage._readheader()=fabio.pilatusimage.pilatusimage-class.html#_readheader,Method fabio.pnmimage.pnmimage._readheader()=fabio.pnmimage.pnmimage-class.html#_readheader,Method fabio.tifimage.tifimage._readheader()=fabio.tifimage.tifimage-class.html#_readheader"><a title="fabio.GEimage.GEimage._readheader
+fabio.GEimage_old.GEimage._readheader
+fabio.HiPiCimage.HiPiCimage._readheader
+fabio.OXDimage.OXDimage._readheader
+fabio.adscimage.adscimage._readheader
+fabio.brukerimage.brukerimage._readheader
+fabio.cbfimage.cbfimage._readheader
+fabio.dm3image.dm3image._readheader
+fabio.edfimage.edfimage._readheader
+fabio.fabioimage.fabioimage._readheader
+fabio.fit2dmaskimage.fit2dmaskimage._readheader
+fabio.fit2dspreadsheetimage.fit2dspreadsheetimage._readheader
+fabio.kcdimage.kcdimage._readheader
+fabio.mar345image.mar345image._readheader
+fabio.marccdimage.marccdimage._readheader
+fabio.pilatusimage.pilatusimage._readheader
+fabio.pnmimage.pnmimage._readheader
+fabio.tifimage.tifimage._readheader" class="py-name" href="#" onclick="return doclink('link-5', '_readheader', 'link-5');">_readheader</a></tt><tt class="py-op">(</tt><tt class="py-name">f</tt><tt class="py-op">)</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">            <tt class="py-keyword">import</tt> <tt class="py-name">mar345_io</tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt class="py-string">'error importing the mar345_io backend - '</tt> <tt class="py-op">+</tt> \ </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">                <tt class="py-string">'generating empty 1x1 picture'</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line">            <tt class="py-name">f</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim1</tt> <tt class="py-op">=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim2</tt> <tt class="py-op">=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bytecode</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">int</tt> <tt class="py-comment">#</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">resize</tt><tt class="py-op">(</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">int</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-op">)</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">self</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-string">'compressed'</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt><tt class="py-op">[</tt><tt class="py-string">'Format'</tt><tt class="py-op">]</tt><tt class="py-op">:</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-name">mar345_io</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">f</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim1</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim2</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">numhigh</tt><tt class="py-op">)</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt class="py-string">"error: cannot handle these formats yet "</tt> <tt class="py-op">+</tt> \ </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">                <tt class="py-string">"due to lack of documentation"</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">            <tt class="py-keyword">return</tt> <tt class="py-name">None</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bytecode</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">uint</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line">        <tt class="py-name">f</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt> </tt>
+</div><a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"> </tt>
+<a name="mar345image._readheader"></a><div id="mar345image._readheader-def"><a name="L47"></a><tt class="py-lineno"> 47</tt> <a class="py-toggle" href="#" id="mar345image._readheader-toggle" onclick="return toggle('mar345image._readheader');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="fabio.mar345image.mar345image-class.html#_readheader">_readheader</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">infile</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="mar345image._readheader-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="mar345image._readheader-expanded"><a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">        <tt class="py-docstring">""" Read a mar345 image header """</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">        <tt class="py-comment"># clip was not used anywhere - commented out</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">        <tt class="py-comment"># clip = '\x00'</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line">        <tt class="py-comment">#using a couple of local variables inside this function</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line">        <tt class="py-name">f</tt> <tt class="py-op">=</tt> <tt class="py-name">infile</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line">        <tt class="py-name">h</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line">        <tt class="py-comment">#header is 4096 bytes long</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">        <tt class="py-name">l</tt> <tt class="py-op">=</tt> <tt class="py-name">f</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Method fabio.GEimage.GEimage.read()=fabio.GEimage.GEimage-class.html#read,Method fabio.GEimage_old.GEimage.read()=fabio.GEimage_old.GEimage-class.html#read,Method fabio.HiPiCimage.HiPiCimage.read()=fabio.HiPiCimage.HiPiCimage-class.html#read,Method fabio.OXDimage.OXDimage.read()=fabio.OXDimage.OXDimage-class.html#read,Method fabio.adscimage.adscimage.read()=fabio.adscimage.adscimage-class.html#read,Method fabio.bruker100image.bruker100image.read()=fabio.bruker100image.bruker100image-class.html#read,Method fabio.brukerimage.brukerimage.read()=fabio.brukerimage.brukerimage-class.html#read,Method fabio.cbfimage.cbfimage.read()=fabio.cbfimage.cbfimage-class.html#read,Method fabio.datIO.columnfile.read()=fabio.datIO.columnfile-class.html#read,Method fabio.datIO.fabiodata.read()=fabio.datIO.fabiodata-class.html#read,Method fabio.dm3image.dm3image.read()=fabio.dm3image.dm3image-class.html#read,Method fabio.edfimage.edfimage.read()=fabio.edfimage.edfimage-class.html#read,Method fabio.fabioimage.fabioimage.read()=fabio.fabioimage.fabioimage-class.html#read,Method fabio.fit2dmaskimage.fit2dmaskimage.read()=fabio.fit2dmaskimage.fit2dmaskimage-class.html#read,Method fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read()=fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#read,Method fabio.kcdimage.kcdimage.read()=fabio.kcdimage.kcdimage-class.html#read,Method fabio.mar345image.mar345image.read()=fabio.mar345image.mar345image-class.html#read,Method fabio.pnmimage.pnmimage.read()=fabio.pnmimage.pnmimage-class.html#read,Method fabio.tifimage.tifimage.read()=fabio.tifimage.tifimage-class.html#read"><a title="fabio.GEimage.GEimage.read
+fabio.GEimage_old.GEimage.read
+fabio.HiPiCimage.HiPiCimage.read
+fabio.OXDimage.OXDimage.read
+fabio.adscimage.adscimage.read
+fabio.bruker100image.bruker100image.read
+fabio.brukerimage.brukerimage.read
+fabio.cbfimage.cbfimage.read
+fabio.datIO.columnfile.read
+fabio.datIO.fabiodata.read
+fabio.dm3image.dm3image.read
+fabio.edfimage.edfimage.read
+fabio.fabioimage.fabioimage.read
+fabio.fit2dmaskimage.fit2dmaskimage.read
+fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read
+fabio.kcdimage.kcdimage.read
+fabio.mar345image.mar345image.read
+fabio.pnmimage.pnmimage.read
+fabio.tifimage.tifimage.read" class="py-name" href="#" onclick="return doclink('link-6', 'read', 'link-6');">read</a></tt><tt class="py-op">(</tt><tt class="py-number">64</tt><tt class="py-op">)</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">        <tt class="py-comment">#the contents of the mar345 header is taken to be as</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">        <tt class="py-comment"># described in</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line">        <tt class="py-comment"># http://www.mar-usa.com/support/downloads/mar345_formats.pdf</tt> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">        <tt class="py-comment">#the first 64 bytes are 4-byte integers (but in the CBFlib</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">        <tt class="py-comment"># example image it seems to 128 bytes?)</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">        <tt class="py-comment">#first 4-byte integer is a marker to check endianness</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-comment"># TODO: turn this into a real check</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt> <tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">:</tt><tt class="py-number">4</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-string">'1234'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line">            <tt class="py-name">fs</tt> <tt class="py-op">=</tt> <tt class="py-string">'I'</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-comment"># unsigned integer, was using unsigned long (64 bit?)</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-name">fs</tt> <tt class="py-op">=</tt> <tt class="py-string">'i'</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-comment">#image dimensions</tt> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim1</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim2</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt> <tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-number">8</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-comment">#number of high intensity pixels</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">numhigh</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt> <tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">2</tt> <tt class="py-op">*</tt> <tt class="py-number">4</tt> <tt class="py-op">:</tt> <tt class="py-op">(</tt><tt class="py-number">2</tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> <tt class="py-op">*</tt> <tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'NumHigh'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">numhigh</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-comment">#Image format</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">        <tt class="py-name">i</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt> <tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">3</tt> <tt class="py-op">*</tt> <tt class="py-number">4</tt> <tt class="py-op">:</tt> <tt class="py-op">(</tt> <tt class="py-number">3</tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt> <tt class="py-op">)</tt> <tt class="py-op">*</tt> <tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">i</tt> <tt class="py-op">==</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">            <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'Format'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-string">'compressed'</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line">        <tt class="py-keyword">elif</tt> <tt class="py-name">i</tt> <tt class="py-op">==</tt> <tt class="py-number">2</tt><tt class="py-op">:</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line">            <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'Format'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-string">'spiral'</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">            <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'Format'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-string">'compressed'</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt class="py-string">"warning: image format could not be detetermined"</tt> <tt class="py-op">+</tt>\ </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">                <tt class="py-string">"- assuming compressed mar345"</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-comment">#collection mode</tt> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'Mode'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-number">0</tt><tt class="py-op">:</tt><tt class="py-string">'Dose'</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> <tt class="py-string">'Time'</tt><tt class="py-op">}</tt><tt class="py-op">[</tt><tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt> <tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">4</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-op">(</tt><tt class="py-number">4</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">        <tt class="py-comment">#total number of pixels</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">numpixels</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt> <tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">5</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-op">(</tt><tt class="py-number">5</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'NumPixels'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt id="link-7" class="py-name" targets="Method fabio.filename_object.str()=fabio.filename_object-class.html#str"><a title="fabio.filename_object.str" class="py-name" href="#" onclick="return doclink('link-7', 'str', 'link-7');">str</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">numpixels</tt><tt class="py-op">)</tt> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">        <tt class="py-comment">#pixel dimensions (length,height) in mm</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'PixelLength'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">6</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-op">(</tt><tt class="py-number">6</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'PixelHeight'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-op">(</tt><tt class="py-number">7</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line">        <tt class="py-comment">#x-ray wavelength in AA</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'Wavelength'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">8</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-op">(</tt><tt class="py-number">8</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000000.0</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">        <tt class="py-comment">#used distance</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'Distance'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">9</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-op">(</tt><tt class="py-number">9</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">)</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line">        <tt class="py-comment">#starting and ending phi</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'StartPhi'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">10</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-number">11</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'EndPhi'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">11</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-number">12</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">        <tt class="py-comment">#starting and ending omega</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'StartOmega'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">12</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-number">13</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'EndOmega'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">13</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-number">14</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">        <tt class="py-comment">#Chi and Twotheta angles</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'Chi'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">14</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-number">15</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'TwoTheta'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt class="py-name">unpack</tt><tt class="py-op">(</tt><tt class="py-name">fs</tt><tt class="py-op">,</tt><tt class="py-name">l</tt><tt class="py-op">[</tt><tt class="py-number">15</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">:</tt><tt class="py-number">16</tt><tt class="py-op">*</tt><tt class="py-number">4</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">/</tt><tt class="py-number">1000.0</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line"> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">        <tt class="py-comment">#the rest of the header is ascii</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line">        <tt class="py-comment"># TODO: validate these values against the binaries already read</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">        <tt class="py-name">l</tt> <tt class="py-op">=</tt> <tt class="py-name">f</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="fabio.GEimage.GEimage.read
+fabio.GEimage_old.GEimage.read
+fabio.HiPiCimage.HiPiCimage.read
+fabio.OXDimage.OXDimage.read
+fabio.adscimage.adscimage.read
+fabio.bruker100image.bruker100image.read
+fabio.brukerimage.brukerimage.read
+fabio.cbfimage.cbfimage.read
+fabio.datIO.columnfile.read
+fabio.datIO.fabiodata.read
+fabio.dm3image.dm3image.read
+fabio.edfimage.edfimage.read
+fabio.fabioimage.fabioimage.read
+fabio.fit2dmaskimage.fit2dmaskimage.read
+fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read
+fabio.kcdimage.kcdimage.read
+fabio.mar345image.mar345image.read
+fabio.pnmimage.pnmimage.read
+fabio.tifimage.tifimage.read" class="py-name" href="#" onclick="return doclink('link-8', 'read', 'link-6');">read</a></tt><tt class="py-op">(</tt><tt class="py-number">128</tt><tt class="py-op">)</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-string">'mar research'</tt> <tt class="py-keyword">in</tt> <tt class="py-name">l</tt><tt class="py-op">:</tt> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">            <tt class="py-keyword">print</tt> <tt class="py-string">"warning: the string \"mar research\" should be in "</tt><tt class="py-op">+</tt>\ </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">                <tt class="py-string">"bytes 65-76 of the header but was not"</tt> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">        <tt class="py-name">l</tt> <tt class="py-op">=</tt> <tt class="py-name">string</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-name">f</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name"><a title="fabio.GEimage.GEimage.read
+fabio.GEimage_old.GEimage.read
+fabio.HiPiCimage.HiPiCimage.read
+fabio.OXDimage.OXDimage.read
+fabio.adscimage.adscimage.read
+fabio.bruker100image.bruker100image.read
+fabio.brukerimage.brukerimage.read
+fabio.cbfimage.cbfimage.read
+fabio.datIO.columnfile.read
+fabio.datIO.fabiodata.read
+fabio.dm3image.dm3image.read
+fabio.edfimage.edfimage.read
+fabio.fabioimage.fabioimage.read
+fabio.fit2dmaskimage.fit2dmaskimage.read
+fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read
+fabio.kcdimage.kcdimage.read
+fabio.mar345image.mar345image.read
+fabio.pnmimage.pnmimage.read
+fabio.tifimage.tifimage.read" class="py-name" href="#" onclick="return doclink('link-9', 'read', 'link-6');">read</a></tt><tt class="py-op">(</tt><tt class="py-number">4096</tt><tt class="py-op">-</tt><tt class="py-number">128</tt><tt class="py-op">-</tt><tt class="py-number">64</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">m</tt> <tt class="py-keyword">in</tt> <tt class="py-name">l</tt><tt class="py-op">.</tt><tt class="py-name">splitlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">m</tt> <tt class="py-op">==</tt> <tt class="py-string">'END OF HEADER'</tt><tt class="py-op">:</tt> <tt class="py-keyword">break</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">            <tt class="py-name">n</tt> <tt class="py-op">=</tt> <tt class="py-name">m</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">' '</tt><tt class="py-op">,</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-string">''</tt><tt class="py-op">:</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-keyword">in</tt> <tt class="py-op">(</tt><tt class="py-string">'PROGRAM'</tt><tt class="py-op">,</tt> <tt class="py-string">'DATE'</tt><tt class="py-op">,</tt> <tt class="py-string">'SCANNER'</tt><tt class="py-op">,</tt> <tt class="py-string">'HIGH'</tt><tt class="py-op">,</tt> <tt class="py-string">'MULTIPLIER'</tt><tt class="py-op">,</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line">                        <tt class="py-string">'GAIN'</tt><tt class="py-op">,</tt> <tt class="py-string">'WAVELENGTH'</tt><tt class="py-op">,</tt> <tt class="py-string">'DISTANCE'</tt><tt class="py-op">,</tt> <tt class="py-string">'RESOLUTION'</tt><tt class="py-op">,</tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">                        <tt class="py-string">'CHI'</tt><tt class="py-op">,</tt> <tt class="py-string">'TWOTHETA'</tt><tt class="py-op">,</tt> <tt class="py-string">'MODE'</tt><tt class="py-op">,</tt> <tt class="py-string">'TIME'</tt><tt class="py-op">,</tt> <tt class="py-string">'GENERATOR'</tt><tt class="py-op">,</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">                        <tt class="py-string">'MONOCHROMATOR'</tt><tt class="py-op">,</tt> <tt class="py-string">'REMARK'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">                <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-keyword">in</tt> <tt class="py-op">(</tt><tt class="py-string">'FORMAT'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">                <tt class="py-op">(</tt><tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'DIM'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'FORMAT_TYPE'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">h</tt><tt class="py-op">[</tt><tt class="py-string">'NO_PIXELS'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">=</tt> <tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-keyword">in</tt> <tt class="py-op">(</tt><tt class="py-string">'PIXEL'</tt><tt class="py-op">,</tt> <tt class="py-string">'OFFSET'</tt><tt class="py-op">,</tt> <tt class="py-string">'PHI'</tt><tt class="py-op">,</tt> <tt class="py-string">'OMEGA'</tt><tt class="py-op">,</tt> <tt class="py-string">'COUNTS'</tt><tt class="py-op">,</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">                        <tt class="py-string">'CENTER'</tt><tt class="py-op">,</tt> <tt class="py-string">'INTENSITY'</tt><tt class="py-op">,</tt> <tt class="py-string">'HISTOGRAM'</tt><tt class="py-op">,</tt> <tt class="py-string">'COLLIMATOR'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line">                <tt class="py-name">n</tt> <tt class="py-op">=</tt> <tt class="py-name">m</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">                <tt class="py-name">h</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt> <tt class="py-op">[</tt><tt class="py-op">(</tt><tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">+</tt><tt class="py-string">'_'</tt><tt class="py-op">+</tt><tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-name">j</tt><tt class="py-op">]</tt><tt class="py-op">,</tt><tt class="py-name">n</tt><tt class="py-op">[</tt><tt class="py-name">j</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-keyword">for</tt> <tt class="py-name">j</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">,</tt><tt id="link-10" class="py-name" targets="Method fabio.file_series.file_series.len()=fabio.file_series.file_series-class.html#len"><a title="fabio.file_series.file_series.len" class="py-name" href="#" onclick="return doclink('link-10', 'len', 'link-10');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">n</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-number">2</tt><tt class="py-op">)</tt><tt class="py-op">]</tt> <tt class="py-op">)</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt> <tt class="py-op">=</tt> <tt class="py-name">h</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">h</tt> </tt>
+</div><a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"> </tt>
+<a name="mar345image.write"></a><div id="mar345image.write-def"><a name="L134"></a><tt class="py-lineno">134</tt> <a class="py-toggle" href="#" id="mar345image.write-toggle" onclick="return toggle('mar345image.write');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="fabio.mar345image.mar345image-class.html#write">write</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="mar345image.write-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="mar345image.write-expanded"><a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div></div><a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="fabio-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Mon Jan 24 12:30:08 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

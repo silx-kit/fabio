@@ -1,0 +1,38 @@
+<html><head><title>Epydoc Redirect Page</title>
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="pragma" content="no-cache" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+<!--
+var pages = ["fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-c", "fabio.file_series.numbered_file_series-c", "fabio.bruker100image.bruker100image-c", "fabio.fit2dmaskimage.fit2dmaskimage-c", "fabio.file_series.filename_series-c", "fabio.fabian_mar_header.obselete-c", "fabio.pilatusimage.pilatusimage-c", "fabio.brukerimage.brukerimage-c", "fabio.file_series.file_series-c", "fabio.mar345image.mar345image-c", "fabio.marccdimage.marccdimage-c", "fabio.fit2dspreadsheetimage-m", "fabio.HiPiCimage.HiPiCimage-c", "fabio.fabioimage.fabioimage-c", "fabio.GEimage_old.GEimage-c", "fabio.adscimage.adscimage-c", "fabio.fabian_mar_header-m", "fabio.OXDimage.OXDimage-c", "fabio.cbfimage.cbfimage-c", "fabio.dm3image.dm3image-c", "fabio.edfimage.edfimage-c", "fabio.kcdimage.kcdimage-c", "fabio.pnmimage.pnmimage-c", "fabio.tifimage.tifimage-c", "fabio.datIO.columnfile-c", "fabio.GEimage.GEimage-c", "fabio.datIO.fabiodata-c", "fabio.filename_object-c", "fabio.bruker100image-m", "fabio.fit2dmaskimage-m", "fabio.readbytestream-m", "fabio.pilatusimage-m", "fabio.cbfimage.CIF-c", "fabio.GEimage_old-m", "fabio.brukerimage-m", "fabio.file_series-m", "fabio.mar345image-m", "fabio.marccdimage-m", "fabio.HiPiCimage-m", "fabio.fabioimage-m", "fabio.adscimage-m", "fabio.openimage-m", "fabio.OXDimage-m", "fabio.cbfimage-m", "fabio.dm3image-m", "fabio.edfimage-m", "fabio.kcdimage-m", "fabio.pnmimage-m", "fabio.tifimage-m", "fabio.GEimage-m", "fabio.datIO-m", "fabio-m"];
+var dottedName = get_anchor();
+if (dottedName) {
+    var target = redirect_url(dottedName);
+    if (target) window.location.replace(target);
+}
+// -->
+</script>
+
+<h3>Epydoc Auto-redirect page</h3>
+
+<p>When javascript is enabled, this page will redirect URLs of
+the form <tt>redirect.html#<i>dotted.name</i></tt> to the
+documentation for the object with the given fully-qualified
+dotted name.</p>
+<p><a id="message"> &nbsp; </a></p>
+
+<script type="text/javascript">
+<!--
+if (dottedName) {
+    var msg = document.getElementById("message");
+    msg.innerHTML = "No documentation found for <tt>"+
+                    dottedName+"</tt>";
+}
+// -->
+</script>
+
+</body>
+</html>

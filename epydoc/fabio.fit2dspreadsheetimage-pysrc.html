@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>fabio.fit2dspreadsheetimage</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="fabio-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="fabio-module.html">Package&nbsp;fabio</a> ::
+        Module&nbsp;fit2dspreadsheetimage
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="fabio.fit2dspreadsheetimage-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="fabio.fit2dspreadsheetimage-module.html">Module fabio.fit2dspreadsheetimage</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-docstring">Read the fit2d ascii image output</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-docstring">        + Jon Wright, ESRF</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">numpy</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package fabio=fabio-module.html"><a title="fabio" class="py-name" href="#" onclick="return doclink('link-0', 'fabio', 'link-0');">fabio</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module fabio.fabioimage=fabio.fabioimage-module.html,Class fabio.fabioimage.fabioimage=fabio.fabioimage.fabioimage-class.html"><a title="fabio.fabioimage
+fabio.fabioimage.fabioimage" class="py-name" href="#" onclick="return doclink('link-1', 'fabioimage', 'link-1');">fabioimage</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name"><a title="fabio.fabioimage
+fabio.fabioimage.fabioimage" class="py-name" href="#" onclick="return doclink('link-2', 'fabioimage', 'link-1');">fabioimage</a></tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"> </tt>
+<a name="fit2dspreadsheetimage"></a><div id="fit2dspreadsheetimage-def"><a name="L15"></a><tt class="py-lineno">15</tt> <a class="py-toggle" href="#" id="fit2dspreadsheetimage-toggle" onclick="return toggle('fit2dspreadsheetimage');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html">fit2dspreadsheetimage</a><tt class="py-op">(</tt><tt class="py-base-class">fabioimage</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="fit2dspreadsheetimage-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="fit2dspreadsheetimage-expanded"><a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt class="py-docstring">    Read a fit2d ascii format</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"> </tt>
+<a name="fit2dspreadsheetimage._readheader"></a><div id="fit2dspreadsheetimage._readheader-def"><a name="L20"></a><tt class="py-lineno">20</tt> <a class="py-toggle" href="#" id="fit2dspreadsheetimage._readheader-toggle" onclick="return toggle('fit2dspreadsheetimage._readheader');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#_readheader">_readheader</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">infile</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="fit2dspreadsheetimage._readheader-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="fit2dspreadsheetimage._readheader-expanded"><a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-docstring">        TODO : test for minimal attributes?</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line">        <tt class="py-name">line</tt> <tt class="py-op">=</tt> <tt class="py-name">infile</tt><tt class="py-op">.</tt><tt class="py-name">readline</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line">            <tt class="py-name">items</tt> <tt class="py-op">=</tt> <tt class="py-name">line</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">            <tt class="py-name">xdim</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">items</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">            <tt class="py-name">ydim</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">items</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt><tt class="py-op">[</tt><tt class="py-string">'title'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">line</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt><tt class="py-op">[</tt><tt class="py-string">'Dim_1'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">xdim</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt><tt class="py-op">[</tt><tt class="py-string">'Dim_2'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">ydim</tt> </tt>
+</div><a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">         </tt>
+<a name="fit2dspreadsheetimage.read"></a><div id="fit2dspreadsheetimage.read-def"><a name="L36"></a><tt class="py-lineno">36</tt> <a class="py-toggle" href="#" id="fit2dspreadsheetimage.read-toggle" onclick="return toggle('fit2dspreadsheetimage.read');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#read">read</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">fname</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="fit2dspreadsheetimage.read-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="fit2dspreadsheetimage.read-expanded"><a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line"><tt class="py-docstring">        Read in header into self.header and</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line"><tt class="py-docstring">            the data   into self.data</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Method fabio.fabioimage.fabioimage.resetvals()=fabio.fabioimage.fabioimage-class.html#resetvals"><a title="fabio.fabioimage.fabioimage.resetvals" class="py-name" href="#" onclick="return doclink('link-3', 'resetvals', 'link-3');">resetvals</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">        <tt class="py-name">infile</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method fabio.fabioimage.fabioimage._open()=fabio.fabioimage.fabioimage-class.html#_open"><a title="fabio.fabioimage.fabioimage._open" class="py-name" href="#" onclick="return doclink('link-4', '_open', 'link-4');">_open</a></tt><tt class="py-op">(</tt><tt class="py-name">fname</tt><tt class="py-op">)</tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-5" class="py-name" targets="Method fabio.GEimage.GEimage._readheader()=fabio.GEimage.GEimage-class.html#_readheader,Method fabio.GEimage_old.GEimage._readheader()=fabio.GEimage_old.GEimage-class.html#_readheader,Method fabio.HiPiCimage.HiPiCimage._readheader()=fabio.HiPiCimage.HiPiCimage-class.html#_readheader,Method fabio.OXDimage.OXDimage._readheader()=fabio.OXDimage.OXDimage-class.html#_readheader,Method fabio.adscimage.adscimage._readheader()=fabio.adscimage.adscimage-class.html#_readheader,Method fabio.brukerimage.brukerimage._readheader()=fabio.brukerimage.brukerimage-class.html#_readheader,Method fabio.cbfimage.cbfimage._readheader()=fabio.cbfimage.cbfimage-class.html#_readheader,Method fabio.dm3image.dm3image._readheader()=fabio.dm3image.dm3image-class.html#_readheader,Method fabio.edfimage.edfimage._readheader()=fabio.edfimage.edfimage-class.html#_readheader,Method fabio.fabioimage.fabioimage._readheader()=fabio.fabioimage.fabioimage-class.html#_readheader,Method fabio.fit2dmaskimage.fit2dmaskimage._readheader()=fabio.fit2dmaskimage.fit2dmaskimage-class.html#_readheader,Method fabio.fit2dspreadsheetimage.fit2dspreadsheetimage._readheader()=fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#_readheader,Method fabio.kcdimage.kcdimage._readheader()=fabio.kcdimage.kcdimage-class.html#_readheader,Method fabio.mar345image.mar345image._readheader()=fabio.mar345image.mar345image-class.html#_readheader,Method fabio.marccdimage.marccdimage._readheader()=fabio.marccdimage.marccdimage-class.html#_readheader,Method fabio.pilatusimage.pilatusimage._readheader()=fabio.pilatusimage.pilatusimage-class.html#_readheader,Method fabio.pnmimage.pnmimage._readheader()=fabio.pnmimage.pnmimage-class.html#_readheader,Method fabio.tifimage.tifimage._readheader()=fabio.tifimage.tifimage-class.html#_readheader"><a title="fabio.GEimage.GEimage._readheader
+fabio.GEimage_old.GEimage._readheader
+fabio.HiPiCimage.HiPiCimage._readheader
+fabio.OXDimage.OXDimage._readheader
+fabio.adscimage.adscimage._readheader
+fabio.brukerimage.brukerimage._readheader
+fabio.cbfimage.cbfimage._readheader
+fabio.dm3image.dm3image._readheader
+fabio.edfimage.edfimage._readheader
+fabio.fabioimage.fabioimage._readheader
+fabio.fit2dmaskimage.fit2dmaskimage._readheader
+fabio.fit2dspreadsheetimage.fit2dspreadsheetimage._readheader
+fabio.kcdimage.kcdimage._readheader
+fabio.mar345image.mar345image._readheader
+fabio.marccdimage.marccdimage._readheader
+fabio.pilatusimage.pilatusimage._readheader
+fabio.pnmimage.pnmimage._readheader
+fabio.tifimage.tifimage._readheader" class="py-name" href="#" onclick="return doclink('link-5', '_readheader', 'link-5');">_readheader</a></tt><tt class="py-op">(</tt><tt class="py-name">infile</tt><tt class="py-op">)</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">        <tt class="py-comment"># Compute image size</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim1</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt><tt class="py-op">[</tt><tt class="py-string">'Dim_1'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim2</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">header</tt><tt class="py-op">[</tt><tt class="py-string">'Dim_2'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">Exception</tt><tt class="py-op">(</tt><tt class="py-string">"file"</tt><tt class="py-op">,</tt> <tt id="link-6" class="py-name" targets="Method fabio.filename_object.str()=fabio.filename_object-class.html#str"><a title="fabio.filename_object.str" class="py-name" href="#" onclick="return doclink('link-6', 'str', 'link-6');">str</a></tt><tt class="py-op">(</tt><tt class="py-name">fname</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> \ </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">                                <tt class="py-string">"is corrupt, cannot read it"</tt><tt class="py-op">)</tt> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">        <tt class="py-name">bytecode</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">float32</tt> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line"> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">bpp</tt> <tt class="py-op">=</tt> <tt id="link-7" class="py-name" targets="Method fabio.file_series.file_series.len()=fabio.file_series.file_series-class.html#len"><a title="fabio.file_series.file_series.len" class="py-name" href="#" onclick="return doclink('link-7', 'len', 'link-7');">len</a></tt><tt class="py-op">(</tt><tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-number">0</tt><tt class="py-op">,</tt> <tt class="py-name">bytecode</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Method fabio.filename_object.tostring()=fabio.filename_object-class.html#tostring"><a title="fabio.filename_object.tostring" class="py-name" href="#" onclick="return doclink('link-8', 'tostring', 'link-8');">tostring</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line"> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">        <tt class="py-comment">#now read the data into the array</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">        <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">            <tt class="py-name">vals</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-op">]</tt> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">line</tt> <tt class="py-keyword">in</tt> <tt class="py-name">infile</tt><tt class="py-op">.</tt><tt class="py-name">readlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">                <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">                    <tt class="py-name">vals</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-name">float</tt><tt class="py-op">(</tt><tt class="py-name">x</tt><tt class="py-op">)</tt> <tt class="py-keyword">for</tt> <tt class="py-name">x</tt> <tt class="py-keyword">in</tt> <tt class="py-name">line</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">                <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">                    <tt class="py-keyword">pass</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-name">numpy</tt><tt class="py-op">.</tt><tt class="py-name">array</tt><tt class="py-op">(</tt><tt class="py-name">vals</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">astype</tt><tt class="py-op">(</tt> <tt class="py-name">bytecode</tt> <tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">            <tt class="py-keyword">assert</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">data</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt> <tt class="py-op">==</tt> <tt class="py-op">(</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim2</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dim1</tt> <tt class="py-op">)</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line"> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">        <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">            <tt class="py-keyword">raise</tt> <tt class="py-name">IOError</tt><tt class="py-op">,</tt> <tt class="py-string">"Error reading ascii"</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line"> </tt>
+<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name"><a title="fabio.fabioimage.fabioimage.resetvals" class="py-name" href="#" onclick="return doclink('link-9', 'resetvals', 'link-3');">resetvals</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">        <tt class="py-comment"># ensure the PIL image is reset</tt> </tt>
+<a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pilimage</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="L73"></a><tt class="py-lineno">73</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt> </tt>
+</div></div><a name="L74"></a><tt class="py-lineno">74</tt>  <tt class="py-line"> </tt>
+<a name="L75"></a><tt class="py-lineno">75</tt>  <tt class="py-line"> </tt>
+<a name="L76"></a><tt class="py-lineno">76</tt>  <tt class="py-line"><tt class="py-keyword">if</tt> <tt class="py-name">__name__</tt> <tt class="py-op">==</tt> <tt class="py-string">"__main__"</tt><tt class="py-op">:</tt> </tt>
+<a name="L77"></a><tt class="py-lineno">77</tt>  <tt class="py-line">    <tt class="py-keyword">import</tt> <tt class="py-name">sys</tt><tt class="py-op">,</tt> <tt class="py-name">time</tt> </tt>
+<a name="L78"></a><tt class="py-lineno">78</tt>  <tt class="py-line">    <tt class="py-name">start</tt> <tt class="py-op">=</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L79"></a><tt class="py-lineno">79</tt>  <tt class="py-line">    <tt class="py-name">img</tt> <tt class="py-op">=</tt> <tt id="link-10" class="py-name" targets="Module fabio.fit2dspreadsheetimage=fabio.fit2dspreadsheetimage-module.html,Class fabio.fit2dspreadsheetimage.fit2dspreadsheetimage=fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html"><a title="fabio.fit2dspreadsheetimage
+fabio.fit2dspreadsheetimage.fit2dspreadsheetimage" class="py-name" href="#" onclick="return doclink('link-10', 'fit2dspreadsheetimage', 'link-10');">fit2dspreadsheetimage</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L80"></a><tt class="py-lineno">80</tt>  <tt class="py-line">    <tt class="py-name">img</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method fabio.GEimage.GEimage.read()=fabio.GEimage.GEimage-class.html#read,Method fabio.GEimage_old.GEimage.read()=fabio.GEimage_old.GEimage-class.html#read,Method fabio.HiPiCimage.HiPiCimage.read()=fabio.HiPiCimage.HiPiCimage-class.html#read,Method fabio.OXDimage.OXDimage.read()=fabio.OXDimage.OXDimage-class.html#read,Method fabio.adscimage.adscimage.read()=fabio.adscimage.adscimage-class.html#read,Method fabio.bruker100image.bruker100image.read()=fabio.bruker100image.bruker100image-class.html#read,Method fabio.brukerimage.brukerimage.read()=fabio.brukerimage.brukerimage-class.html#read,Method fabio.cbfimage.cbfimage.read()=fabio.cbfimage.cbfimage-class.html#read,Method fabio.datIO.columnfile.read()=fabio.datIO.columnfile-class.html#read,Method fabio.datIO.fabiodata.read()=fabio.datIO.fabiodata-class.html#read,Method fabio.dm3image.dm3image.read()=fabio.dm3image.dm3image-class.html#read,Method fabio.edfimage.edfimage.read()=fabio.edfimage.edfimage-class.html#read,Method fabio.fabioimage.fabioimage.read()=fabio.fabioimage.fabioimage-class.html#read,Method fabio.fit2dmaskimage.fit2dmaskimage.read()=fabio.fit2dmaskimage.fit2dmaskimage-class.html#read,Method fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read()=fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#read,Method fabio.kcdimage.kcdimage.read()=fabio.kcdimage.kcdimage-class.html#read,Method fabio.mar345image.mar345image.read()=fabio.mar345image.mar345image-class.html#read,Method fabio.pnmimage.pnmimage.read()=fabio.pnmimage.pnmimage-class.html#read,Method fabio.tifimage.tifimage.read()=fabio.tifimage.tifimage-class.html#read"><a title="fabio.GEimage.GEimage.read
+fabio.GEimage_old.GEimage.read
+fabio.HiPiCimage.HiPiCimage.read
+fabio.OXDimage.OXDimage.read
+fabio.adscimage.adscimage.read
+fabio.bruker100image.bruker100image.read
+fabio.brukerimage.brukerimage.read
+fabio.cbfimage.cbfimage.read
+fabio.datIO.columnfile.read
+fabio.datIO.fabiodata.read
+fabio.dm3image.dm3image.read
+fabio.edfimage.edfimage.read
+fabio.fabioimage.fabioimage.read
+fabio.fit2dmaskimage.fit2dmaskimage.read
+fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read
+fabio.kcdimage.kcdimage.read
+fabio.mar345image.mar345image.read
+fabio.pnmimage.pnmimage.read
+fabio.tifimage.tifimage.read" class="py-name" href="#" onclick="return doclink('link-11', 'read', 'link-11');">read</a></tt><tt class="py-op">(</tt><tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">argv</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-op">)</tt> </tt>
+<a name="L81"></a><tt class="py-lineno">81</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-name">time</tt><tt class="py-op">.</tt><tt class="py-name">time</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">-</tt> <tt class="py-name">start</tt> </tt>
+<a name="L82"></a><tt class="py-lineno">82</tt>  <tt class="py-line">    <tt class="py-keyword">print</tt> <tt class="py-name">img</tt><tt class="py-op">.</tt><tt class="py-name">dim1</tt><tt class="py-op">,</tt> <tt class="py-name">img</tt><tt class="py-op">.</tt><tt class="py-name">dim2</tt><tt class="py-op">,</tt> <tt class="py-name">img</tt><tt class="py-op">.</tt><tt class="py-name">data</tt><tt class="py-op">.</tt><tt class="py-name">shape</tt> </tt>
+<a name="L83"></a><tt class="py-lineno">83</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt class="py-name">matplotlib</tt><tt class="py-op">.</tt><tt class="py-name">pylab</tt> <tt class="py-keyword">import</tt> <tt class="py-name">imshow</tt><tt class="py-op">,</tt> <tt class="py-name">show</tt> </tt>
+<a name="L84"></a><tt class="py-lineno">84</tt>  <tt class="py-line">    <tt class="py-name">imshow</tt><tt class="py-op">(</tt><tt class="py-name">img</tt><tt class="py-op">.</tt><tt class="py-name">data</tt><tt class="py-op">.</tt><tt class="py-name">T</tt><tt class="py-op">)</tt> </tt>
+<a name="L85"></a><tt class="py-lineno">85</tt>  <tt class="py-line">    <tt class="py-name">show</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L86"></a><tt class="py-lineno">86</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="fabio-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Mon Jan 24 12:30:07 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
