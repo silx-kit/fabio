@@ -1,17 +1,16 @@
-************* Module testGEimage
-C:  1: Invalid name "testGEimage" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
-W: 20: No exception type(s) specified
-W: 18: Specify string format arguments as logging function parameters
-F: 22: Unable to import 'utilstest'
-C: 31:testGE: Invalid name "testGE" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 31:testGE: Missing docstring
-C: 40:testGE.test_read: Missing docstring
-C: 57:test_suite_all_GE: Missing docstring
+************* Module kcdimage
+W: 11: Uses of a deprecated module 'string'
+C: 44:kcdimage: Invalid name "kcdimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 64:kcdimage._readheader: Specify string format arguments as logging function parameters
+W: 76:kcdimage._readheader: No exception type(s) specified
+E:118:kcdimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+E:119:kcdimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E:121:kcdimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
 
 
 Report
 ======
-39 statements analysed.
+77 statements analysed.
 
 Duplication
 -----------
@@ -19,9 +18,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
 
 
@@ -32,13 +31,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |41     |67.21 |NC       |NC         |
+|code      |80     |58.39 |80       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |8      |13.11 |NC       |NC         |
+|docstring |25     |18.25 |25       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.28  |NC       |NC         |
+|comment   |13     |9.49  |13       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |10     |16.39 |NC       |NC         |
+|empty     |19     |13.87 |19       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -48,8 +47,8 @@ External dependencies
 ::
 
     fabio 
-      \-GEimage 
-        \-GEimage (testGEimage)
+      \-fabioimage 
+        \-fabioimage (kcdimage)
 
 
 
@@ -59,13 +58,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |100.00   |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |100.00   |
+|class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |50.00       |0.00     |
+|method   |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -76,13 +75,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |NC       |NC         |
+|convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -93,21 +92,21 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0111      |3           |
-+-----------+------------+
-|C0103      |2           |
+|E1103      |3           |
 +-----------+------------+
 |W6501      |1           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
-|F0401      |1           |
+|W0402      |1           |
++-----------+------------+
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.21/10
-That's pretty good. Good work mate.
+Your code has been rated at 7.53/10 (previous run: 7.53/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

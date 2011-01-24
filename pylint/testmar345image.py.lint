@@ -1,12 +1,16 @@
 ************* Module testmar345image
-C0111: 17:testMAR345: Missing docstring
-C0111: 18:testMAR345.test_read: Missing docstring
-W0612: 22:testMAR345.test_read: Unused variable 'dim2'
+W: 21: No exception type(s) specified
+W: 19: Specify string format arguments as logging function parameters
+F: 23: Unable to import 'utilstest'
+C: 32:testMAR345: Invalid name "testMAR345" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 32:testMAR345: Missing docstring
+W: 46:testMAR345.test_read: Unused variable 'dim2'
+C: 60:test_suite_all_mar345: Missing docstring
 
 
 Report
 ======
-20 statements analysed.
+40 statements analysed.
 
 Duplication
 -----------
@@ -14,9 +18,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -27,13 +31,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |22     |59.46 |22       |=          |
+|code      |42     |63.64 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |5      |13.51 |5        |=          |
+|docstring |11     |16.67 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |0      |0.00  |0        |=          |
+|comment   |3      |4.55  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |10     |27.03 |10       |=          |
+|empty     |10     |15.15 |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -43,7 +47,8 @@ External dependencies
 ::
 
     fabio 
-      \-mar345image (testmar345image)
+      \-mar345image 
+        \-mar345image (testmar345image)
 
 
 
@@ -53,13 +58,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |0.00     |
+|class    |1      |NC         |NC         |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |1      |1          |=          |0.00        |0.00     |
+|method   |2      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -70,13 +75,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |2      |2        |=          |
+|convention |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |1      |1        |=          |
+|warning    |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -84,17 +89,26 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0111      |2          |
-+-----------+-----------+
-|W0612      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |2           |
++-----------+------------+
+|W6501      |1           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0612      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.50/10 (previous run: 8.50/10)
+Your code has been rated at 8.50/10
+That's pretty good. Good work mate.
 

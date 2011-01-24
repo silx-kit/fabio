@@ -1,34 +1,28 @@
 ************* Module testOXDimage
-C0111: 16:testOXD: Missing docstring
-C0111: 17:testOXD.test_read: Missing docstring
-C0103: 36:testOXD_same: Invalid name "testOXD_same" (should match [a-z_][a-zA-Z0-9]+$)
-C0111: 36:testOXD_same: Missing docstring
-C0103: 38:testOXD_same.setUp: Invalid name "f1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 39:testOXD_same.setUp: Invalid name "f2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 37:testOXD_same.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 37:testOXD_same.setUp: Missing docstring
-C0111: 40:testOXD_same.test_same: Missing docstring
-C0103: 41:testOXD_same.test_same: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 42:testOXD_same.test_same: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 43:testOXD_same.test_same: Comma not followed by a space
-        for attr in ["getmin","getmax","getmean","getstddev"]:
-                             ^^
-C0324: 44:testOXD_same.test_same: Comma not followed by a space
-            a1 = getattr(o1,attr)()
-                           ^^
-C0103: 44:testOXD_same.test_same: Invalid name "a1" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 45:testOXD_same.test_same: Comma not followed by a space
-            a2 = getattr(o2,attr)()
-                           ^^
-C0103: 45:testOXD_same.test_same: Invalid name "a2" (should match [a-z_][a-z0-9_]{2,30}$)
-C0324: 46:testOXD_same.test_same: Comma not followed by a space
-            self.assertEqual(a1,a2,attr)
-                               ^^
+C:  1: Invalid name "testOXDimage" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
+F: 12: Unable to import 'testopenimage'
+W: 21: No exception type(s) specified
+W: 19: Specify string format arguments as logging function parameters
+F: 23: Unable to import 'utilstest'
+C: 32:testOXD: Invalid name "testOXD" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 32:testOXD: Missing docstring
+C: 33:testOXD.setUp: Missing docstring
+C: 56:testOXD_same: Invalid name "testOXD_same" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 56:testOXD_same: Missing docstring
+C: 60:testOXD_same.setUp: Invalid name "f1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 61:testOXD_same.setUp: Invalid name "f2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 57:testOXD_same.setUp: Missing docstring
+C: 64:testOXD_same.test_same: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 65:testOXD_same.test_same: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 67:testOXD_same.test_same: Invalid name "a1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 68:testOXD_same.test_same: Invalid name "a2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 72:test_suite_all_OXD: Missing docstring
+W: 12: Unused import testOXDUNC
 
 
 Report
 ======
-32 statements analysed.
+56 statements analysed.
 
 Duplication
 -----------
@@ -36,9 +30,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -49,13 +43,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |33     |70.21 |33       |=          |
+|code      |58     |76.32 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |5      |10.64 |5        |=          |
+|docstring |7      |9.21  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |0      |0.00  |0        |=          |
+|comment   |3      |3.95  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |9      |19.15 |9        |=          |
+|empty     |8      |10.53 |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -65,8 +59,10 @@ External dependencies
 ::
 
     fabio 
-      \-OXDimage (testOXDimage)
-      \-openimage (testOXDimage)
+      \-OXDimage 
+      | \-OXDimage (testOXDimage)
+      \-openimage 
+        \-openimage (testOXDimage)
 
 
 
@@ -76,13 +72,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |0.00        |50.00    |
+|class    |2      |NC         |NC         |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |0.00        |33.33    |
+|method   |4      |NC         |NC         |50.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -93,13 +89,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |17     |17       |=          |
+|convention |14     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -107,19 +103,26 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0103      |8          |
-+-----------+-----------+
-|C0111      |5          |
-+-----------+-----------+
-|C0324      |4          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |9           |
++-----------+------------+
+|C0111      |5           |
++-----------+------------+
+|F0401      |2           |
++-----------+------------+
+|W6501      |1           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0611      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 4.69/10 (previous run: 4.69/10)
+Your code has been rated at 6.96/10
+This is okay-ish, but I'm sure you can do better.
 

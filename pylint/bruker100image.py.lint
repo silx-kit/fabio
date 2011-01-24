@@ -1,23 +1,20 @@
 ************* Module bruker100image
-W0511: 12: FIXME - why is this different for bruker100images?
-C0111:  1: Missing docstring
-C0111:  9:bruker100image: Missing docstring
-C0103: 11:bruker100image.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 11:bruker100image.toPIL16: Missing docstring
-C0103: 15:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 22:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C0111: 29:bruker100image.read: Missing docstring
-C0103: 30:bruker100image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 57:bruker100image.read: Invalid name "ar" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 65:bruker100image.read: Invalid name "M" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 84: Invalid name "b" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 87: Invalid name "r" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 94: Invalid name "e" (should match (([A-Z_]*)|(__.*__))$)
+W: 12: FIXME - why is this different for bruker100images?
+C:  1: Missing docstring
+C:  9:bruker100image: Invalid name "bruker100image" (should match [A-Z_][a-zA-Z0-9]+$)
+C:  9:bruker100image: Missing docstring
+C: 11:bruker100image.toPIL16: Missing docstring
+C: 15:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 22:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 29:bruker100image.read: Missing docstring
+C: 30:bruker100image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 57:bruker100image.read: Invalid name "ar" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 65:bruker100image.read: Invalid name "M" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 
 
 Report
 ======
-53 statements analysed.
+54 statements analysed.
 
 Duplication
 -----------
@@ -38,13 +35,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |63     |77.78 |64       |-1.00      |
+|code      |63     |72.41 |63       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |7      |8.64  |7        |=          |
+|docstring |7      |8.05  |7        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |8      |9.88  |7        |+1.00      |
+|comment   |8      |9.20  |8        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |3      |3.70  |3        |=          |
+|empty     |9      |10.34 |9        |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -53,12 +50,10 @@ External dependencies
 ---------------------
 ::
 
-    numpy (bruker100image)
     fabio 
-      \-readbytestream (bruker100image)
       \-brukerimage (bruker100image)
-    PIL 
-      \-Image (bruker100image)
+      \-readbytestream 
+        \-readbytestream (bruker100image)
 
 
 
@@ -70,9 +65,9 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |0.00     |
+|class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |0.00        |50.00    |
+|method   |2      |2          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -85,11 +80,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |13     |13       |=          |
+|convention |10     |10       |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |1      |2        |-1.00      |
+|warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -99,19 +94,20 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0103      |9          |
-+-----------+-----------+
-|C0111      |4          |
-+-----------+-----------+
-|W0511      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |6           |
++-----------+------------+
+|C0111      |4           |
++-----------+------------+
+|W0511      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.36/10 (previous run: 7.22/10)
+Your code has been rated at 7.96/10 (previous run: 7.96/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

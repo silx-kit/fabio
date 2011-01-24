@@ -1,38 +1,15 @@
 ************* Module profile_compressed
-W0702: 11: No exception's type specified
-C0103: 18: Invalid name "npts" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 19: Invalid name "data" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 20: Invalid name "sdata" (should match (([A-Z_]*)|(__.*__))$)
-W0142: 20: Used * or ** magic
-C0103: 33:tst: Invalid name "fo" (should match [a-z_][a-z0-9_]{2,30}$)
-W0612: 34:tst: Unused variable 'ret'
-C0103: 40: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 42: Invalid name "p" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 49: Invalid name "p" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 55:tstsys: Invalid name "fo" (should match [a-z_][a-z0-9_]{2,30}$)
-W0612: 56:tstsys: Unused variable 'ret'
-C0103: 61: Invalid name "p" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 67: Invalid name "p" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 74: Invalid name "cl" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 97: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
-C0103: 98: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:101: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
-C0103:102: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:105: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
-C0103:106: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:109: Invalid name "start" (should match (([A-Z_]*)|(__.*__))$)
-C0103:110: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:116: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:120: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:124: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-C0103:128: Invalid name "s" (should match (([A-Z_]*)|(__.*__))$)
-W0611:  6: Unused import bz2
-W0611:  6: Unused import gzip
+W: 11: No exception type(s) specified
+W: 20: Used * or ** magic
+C: 33:tst: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 55:tstsys: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:  6: Unused import bz2
+W:  6: Unused import gzip
 
 
 Report
 ======
-91 statements analysed.
+92 statements analysed.
 
 Duplication
 -----------
@@ -40,9 +17,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -53,13 +30,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |88     |72.73 |88       |=          |
+|code      |88     |72.73 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |17     |14.05 |17       |=          |
+|docstring |17     |14.05 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |1      |0.83  |1        |=          |
+|comment   |1      |0.83  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |15     |12.40 |15       |=          |
+|empty     |15     |12.40 |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -70,13 +47,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0.00        |0.00     |
+|class    |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0.00        |0.00     |
+|method   |0      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |2      |2          |=          |100.00      |0.00     |
+|function |2      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -87,13 +64,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |23     |27       |-4.00      |
+|convention |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |6      |6        |=          |
+|warning    |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -101,23 +78,22 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0103      |23         |
-+-----------+-----------+
-|W0612      |2          |
-+-----------+-----------+
-|W0611      |2          |
-+-----------+-----------+
-|W0702      |1          |
-+-----------+-----------+
-|W0142      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W0611      |2           |
++-----------+------------+
+|C0103      |2           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0142      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.81/10 (previous run: 6.37/10)
+Your code has been rated at 9.35/10
+So close to being perfect...
 

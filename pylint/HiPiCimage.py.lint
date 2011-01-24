@@ -1,0 +1,135 @@
+************* Module HiPiCimage
+C: 29:HiPiCimage._readheader: Invalid name "Image_tag" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 31:HiPiCimage._readheader: Comma not followed by a space
+        Comment_len = np.fromstring(infile.read(2),np.uint16)
+                                                  ^^
+C: 31:HiPiCimage._readheader: Invalid name "Comment_len" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 32:HiPiCimage._readheader: Comma not followed by a space
+        Dim_1 = np.fromstring(infile.read(2),np.uint16)[0]
+                                            ^^
+C: 32:HiPiCimage._readheader: Invalid name "Dim_1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 33:HiPiCimage._readheader: Comma not followed by a space
+        Dim_2 = np.fromstring(infile.read(2),np.uint16)[0]
+                                            ^^
+C: 33:HiPiCimage._readheader: Invalid name "Dim_2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 34:HiPiCimage._readheader: Comma not followed by a space
+        Dim_1_offset = np.fromstring(infile.read(2),np.uint16)[0]
+                                                   ^^
+C: 34:HiPiCimage._readheader: Invalid name "Dim_1_offset" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 35:HiPiCimage._readheader: Comma not followed by a space
+        Dim_2_offset = np.fromstring(infile.read(2),np.uint16)[0]
+                                                   ^^
+C: 35:HiPiCimage._readheader: Invalid name "Dim_2_offset" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 36:HiPiCimage._readheader: Comma not followed by a space
+        HeaderType  = np.fromstring(infile.read(2),np.uint16)[0]
+                                                  ^^
+C: 36:HiPiCimage._readheader: Invalid name "HeaderType" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 37:HiPiCimage._readheader: Invalid name "Dump" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 38:HiPiCimage._readheader: Invalid name "Comment" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 49:HiPiCimage._readheader: Invalid name "Comment_split" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 36:HiPiCimage._readheader: Unused variable 'HeaderType'
+W: 37:HiPiCimage._readheader: Unused variable 'Dump'
+E: 82:HiPiCimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E: 83:HiPiCimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+
+
+Report
+======
+56 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |60     |59.41 |60       |=          |
++----------+-------+------+---------+-----------+
+|docstring |23     |22.77 |23       |=          |
++----------+-------+------+---------+-----------+
+|comment   |8      |7.92  |8        |=          |
++----------+-------+------+---------+-----------+
+|empty     |10     |9.90  |10       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-fabioimage 
+        \-fabioimage (HiPiCimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |2          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |16     |16       |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |2      |2        |=          |
++-----------+-------+---------+-----------+
+|error      |2      |2        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |10          |
++-----------+------------+
+|C0324      |6           |
++-----------+------------+
+|W0612      |2           |
++-----------+------------+
+|E1103      |2           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 5.00/10 (previous run: 5.00/10)
+Just the bare minimum. Give it a bit more polish. 
+

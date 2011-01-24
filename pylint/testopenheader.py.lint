@@ -1,10 +1,15 @@
 ************* Module testopenheader
-C0111:  1: Missing docstring
+W: 19: No exception type(s) specified
+W: 17: Specify string format arguments as logging function parameters
+F: 21: Unable to import 'utilstest'
+C: 31:test1: Invalid name "test1" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 33:test1.setUp: Missing docstring
+C: 46:test_suite_all_openheader: Missing docstring
 
 
 Report
 ======
-10 statements analysed.
+30 statements analysed.
 
 Duplication
 -----------
@@ -12,9 +17,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -25,13 +30,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |15     |65.22 |15       |=          |
+|code      |35     |70.00 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |4      |17.39 |4        |=          |
+|docstring |7      |14.00 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |0      |0.00  |0        |=          |
+|comment   |2      |4.00  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |4      |17.39 |4        |=          |
+|empty     |6      |12.00 |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -41,7 +46,8 @@ External dependencies
 ::
 
     fabio 
-      \-openimage (testopenheader)
+      \-openimage 
+        \-openheader (testopenheader)
 
 
 
@@ -51,13 +57,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |0.00     |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |1      |1          |=          |100.00      |0.00     |
+|method   |2      |NC         |NC         |50.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -68,13 +74,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -82,15 +88,24 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0111      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |2           |
++-----------+------------+
+|W6501      |1           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.00/10 (previous run: 9.00/10)
+Your code has been rated at 8.33/10
+That's pretty good. Good work mate.
 

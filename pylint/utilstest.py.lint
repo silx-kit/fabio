@@ -1,21 +1,26 @@
-************* Module testedfimage
-W: 92: Bad indentation. Found 20 spaces, expected 12
-W:102: Bad indentation. Found 20 spaces, expected 12
-W:121: FIXME: upload to sourceforge and add a setUp with wget?
-W: 25: No exception type(s) specified
-W: 23: Specify string format arguments as logging function parameters
-F: 27: Unable to import 'utilstest'
-C: 48:testflatedfs: Invalid name "testflatedfs" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 86:testbzipedf: Invalid name "testbzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 96:testgzipedf: Invalid name "testgzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
-C:118:testedfs: Invalid name "testedfs" (should match [A-Z_][a-zA-Z0-9]+$)
-C:123:testedfs.setUp: Missing docstring
-C:148:test_suite_all_edf: Missing docstring
+************* Module utilstest
+W: 87: Bad indentation. Found 12 spaces, expected 8
+W: 91: Bad indentation. Found 12 spaces, expected 8
+C:  1: Missing docstring
+W: 58:UtilsTest: Specify string format arguments as logging function parameters
+W: 60:UtilsTest: Specify string format arguments as logging function parameters
+W: 63:UtilsTest: Specify string format arguments as logging function parameters
+W: 66:UtilsTest: Specify string format arguments as logging function parameters
+W: 70:UtilsTest: Specify string format arguments as logging function parameters
+W: 78:UtilsTest.forceBuild: Specify string format arguments as logging function parameters
+C: 79:UtilsTest.forceBuild: Invalid name "p" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 81:UtilsTest.forceBuild: Specify string format arguments as logging function parameters
+W:102:UtilsTest.getimage: Specify string format arguments as logging function parameters
+W:105:UtilsTest.getimage: Specify string format arguments as logging function parameters
+W:117:UtilsTest.getimage: Specify string format arguments as logging function parameters
+W:125:UtilsTest.getimage: Specify string format arguments as logging function parameters
+R: 98:UtilsTest.getimage: Too many branches (16/15)
+R: 98:UtilsTest.getimage: Too many statements (52/50)
 
 
 Report
 ======
-91 statements analysed.
+88 statements analysed.
 
 Duplication
 -----------
@@ -36,13 +41,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |95     |59.38 |95       |=          |
+|code      |116    |68.24 |110      |+6.00      |
 +----------+-------+------+---------+-----------+
-|docstring |27     |16.88 |27       |=          |
+|docstring |16     |9.41  |13       |+3.00      |
 +----------+-------+------+---------+-----------+
-|comment   |9      |5.62  |9        |=          |
+|comment   |26     |15.29 |26       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |29     |18.12 |29       |=          |
+|empty     |12     |7.06  |9        |+3.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -51,9 +56,7 @@ External dependencies
 ---------------------
 ::
 
-    fabio 
-      \-edfimage 
-        \-edfimage (testedfimage)
+    fabio (utilstest)
 
 
 
@@ -63,13 +66,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |4      |4          |=          |100.00      |100.00   |
+|class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |7      |7          |=          |85.71       |0.00     |
+|method   |3      |2          |+1.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -80,11 +83,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |6      |6        |=          |
+|convention |2      |1        |+1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|warning    |5      |5        |=          |
+|warning    |13     |11       |+2.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -97,25 +100,23 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |4           |
+|W6501      |11          |
 +-----------+------------+
 |W0311      |2           |
 +-----------+------------+
-|C0111      |2           |
+|R0915      |1           |
 +-----------+------------+
-|W6501      |1           |
+|R0912      |1           |
 +-----------+------------+
-|W0702      |1           |
+|C0111      |1           |
 +-----------+------------+
-|W0511      |1           |
-+-----------+------------+
-|F0401      |1           |
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.79/10 (previous run: 8.79/10)
+Your code has been rated at 8.07/10 (previous run: 8.33/10)
 That's pretty good. Good work mate.
 

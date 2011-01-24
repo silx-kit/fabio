@@ -1,26 +1,29 @@
-************* Module testtifgz
-W: 22: No exception type(s) specified
-W: 20: Specify string format arguments as logging function parameters
-F: 24: Unable to import 'utilstest'
-C: 28:testgziptif: Invalid name "testgziptif" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 28:testgziptif: Missing docstring
-C: 29:testgziptif.setUp: Missing docstring
-C: 39:testgziptif.test1: Missing docstring
-C: 40:testgziptif.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 41:testgziptif.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 46:testtif_rect: Invalid name "testtif_rect" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 46:testtif_rect: Missing docstring
-C: 47:testtif_rect.setUp: Missing docstring
-C: 50:testtif_rect.test1: Missing docstring
-C: 51:testtif_rect.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 56:test_suite_all_tiff: Missing docstring
-W: 13: Unused import bz2
-W: 13: Unused import gzip
+************* Module cbfimage
+C: 49:cbfimage: Invalid name "cbfimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C:147:cbfimage.analyseWeave: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:193:cbfimage.analyseWeave: Invalid name "rc" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:147:cbfimage.analyseWeave: Unused variable 'n'
+W:193:cbfimage.analyseWeave: Unused variable 'rc'
+W:198:cbfimage.analyseNumpy: Unused argument 'size'
+F:250:cbfimage._readbinary_byte_offset: Unable to import 'byte_offset'
+R: 49:cbfimage: Too many public methods (21/20)
+C:435:CIF._parseCIF: Invalid name "f1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:442:CIF._parseCIF: More than one statement on a single line
+C:517:CIF._splitCIF: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:447:CIF._splitCIF: Too many branches (18/15)
+R:447:CIF._splitCIF: Too many statements (53/50)
+R:525:CIF._analyseOneLoop: Too many branches (16/15)
+C:632:CIF._cif2str: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:634:CIF._cif2str: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:620:CIF._cif2str: Too many branches (21/15)
+C:786:CIF.LoopHasKey: Invalid name "LoopHasKey" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:310:CIF: Too many public methods (22/20)
+W: 25: Unused import time
 
 
 Report
 ======
-42 statements analysed.
+428 statements analysed.
 
 Duplication
 -----------
@@ -41,13 +44,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |42     |71.19 |42       |=          |
+|code      |503    |64.74 |503      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |8      |13.56 |8        |=          |
+|docstring |173    |22.27 |173      |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.39  |2        |=          |
+|comment   |15     |1.93  |15       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |7      |11.86 |7        |=          |
+|empty     |86     |11.07 |86       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -57,8 +60,8 @@ External dependencies
 ::
 
     fabio 
-      \-openimage 
-        \-openimage (testtifgz)
+      \-fabioimage 
+        \-fabioimage (cbfimage)
 
 
 
@@ -70,11 +73,11 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |0.00        |100.00   |
+|class    |2      |2          |=          |100.00      |50.00    |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |4          |=          |0.00        |0.00     |
+|method   |21     |21         |=          |100.00      |4.76     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -85,9 +88,9 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |12     |12       |=          |
+|convention |9      |9        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |6      |6        |=          |
 +-----------+-------+---------+-----------+
 |warning    |4      |4        |=          |
 +-----------+-------+---------+-----------+
@@ -102,23 +105,29 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0111      |7           |
+|C0103      |8           |
 +-----------+------------+
-|C0103      |5           |
+|R0912      |3           |
 +-----------+------------+
-|W0611      |2           |
+|W0612      |2           |
 +-----------+------------+
-|W6501      |1           |
+|R0904      |2           |
 +-----------+------------+
-|W0702      |1           |
+|W0613      |1           |
++-----------+------------+
+|W0611      |1           |
++-----------+------------+
+|R0915      |1           |
 +-----------+------------+
 |F0401      |1           |
++-----------+------------+
+|C0321      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.19/10 (previous run: 6.19/10)
-This is okay-ish, but I'm sure you can do better.
+Your code has been rated at 9.56/10 (previous run: 9.56/10)
+So close to being perfect...
 

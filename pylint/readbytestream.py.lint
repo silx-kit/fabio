@@ -1,11 +1,10 @@
 ************* Module readbytestream
-W0511: 50: TODO : Read in regions of interest
-R0913: 27:readbytestream: Too many arguments (9/5)
+W: 50: TODO : Read in regions of interest
 
 
 Report
 ======
-24 statements analysed.
+25 statements analysed.
 
 Duplication
 -----------
@@ -37,14 +36,6 @@ Raw metrics
 
 
 
-External dependencies
----------------------
-::
-
-    numpy (readbytestream)
-
-
-
 Statistics by type
 ------------------
 
@@ -70,7 +61,7 @@ Messages by category
 +===========+=======+=========+===========+
 |convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
@@ -82,17 +73,16 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|W0511      |1          |
-+-----------+-----------+
-|R0913      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W0511      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.17/10 (previous run: 9.17/10)
+Your code has been rated at 9.60/10 (previous run: 9.60/10)
+So close to being perfect...
 

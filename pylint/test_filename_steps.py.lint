@@ -1,29 +1,25 @@
 ************* Module test_filename_steps
-C0111:  1: Missing docstring
-C0103:  5:test_next: Invalid name "test_next" (should match [a-z_][a-zA-Z0-9]+$)
-C0111:  5:test_next: Missing docstring
-C0111:  6:test_next.test_next1: Missing docstring
-C0103: 14:test_prev: Invalid name "test_prev" (should match [a-z_][a-zA-Z0-9]+$)
-C0111: 14:test_prev: Missing docstring
-C0111: 15:test_prev.test_prev1: Missing docstring
-C0103: 23:test_jump: Invalid name "test_jump" (should match [a-z_][a-zA-Z0-9]+$)
-C0111: 23:test_jump: Missing docstring
-C0111: 24:test_jump.test_jump1: Missing docstring
-C0324: 25:test_jump.test_jump1: Comma not followed by a space
-        for name, res, num in [ [ "data0001.edf", "data99993.edf" ,99993 ],
-                                                                  ^^
-                [ "bob1.edf", "bob0.edf", 0 ],
-                [ "1.edf", "123456.edf" , 123456],
-                [ "mydata001.mar2300.gz", "mydata003.mar2300.gz", 3 ],
-                ]:
-C0322: 33: Operator not preceded by a space
-if __name__=="__main__":
-           ^^
+C:  1: Missing docstring
+W: 13: No exception type(s) specified
+W: 11: Specify string format arguments as logging function parameters
+F: 15: Unable to import 'utilstest'
+C: 19:test_next: Invalid name "test_next" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 19:test_next: Missing docstring
+W: 21:test_next.test_next1: Redefining built-in 'next'
+C: 20:test_next.test_next1: Missing docstring
+C: 28:test_prev: Invalid name "test_prev" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 28:test_prev: Missing docstring
+C: 29:test_prev.test_prev1: Missing docstring
+C: 37:test_jump: Invalid name "test_jump" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 37:test_jump: Missing docstring
+C: 38:test_jump.test_jump1: Missing docstring
+C: 47:test_suite_all_steps: Missing docstring
+W: 15: Unused import UtilsTest
 
 
 Report
 ======
-16 statements analysed.
+33 statements analysed.
 
 Duplication
 -----------
@@ -31,9 +27,9 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
 
 
@@ -44,13 +40,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |28     |90.32 |28       |=          |
+|code      |45     |90.00 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |0      |0.00  |0        |=          |
+|docstring |0      |0.00  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |0      |0.00  |0        |=          |
+|comment   |2      |4.00  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |3      |9.68  |3        |=          |
+|empty     |3      |6.00  |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -69,13 +65,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
+|module   |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |3      |3          |=          |0.00        |100.00   |
+|class    |3      |NC         |NC         |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |0.00        |0.00     |
+|method   |3      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -86,13 +82,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |12     |12       |=          |
+|convention |11     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -100,21 +96,28 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0111      |7          |
-+-----------+-----------+
-|C0103      |3          |
-+-----------+-----------+
-|C0324      |1          |
-+-----------+-----------+
-|C0322      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |8           |
++-----------+------------+
+|C0103      |3           |
++-----------+------------+
+|W6501      |1           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0622      |1           |
++-----------+------------+
+|W0611      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 2.50/10 (previous run: 2.50/10)
+Your code has been rated at 5.45/10
+Just the bare minimum. Give it a bit more polish. 
 

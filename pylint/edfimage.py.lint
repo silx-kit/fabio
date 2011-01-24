@@ -1,18 +1,36 @@
 ************* Module edfimage
-W0511: 44: FIXME?
-W0511: 59: TODO : test for minimal attributes?
-W0511:127: FIXME
-C0103: 61:edfimage._readheader: Invalid name "BLOCKSIZE" (should match [a-z_][a-z0-9_]{2,30}$)
-E1103:116:edfimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
-E1103:129:edfimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-R0914:169:edfimage.write: Too many local variables (16/15)
-W0221:169:edfimage.write: Arguments number differs from overridden method
-R0912:169:edfimage.write: Too many branches (14/12)
+W: 46: FIXME?
+W: 61: TODO : test for minimal attributes?
+W:153: FIXME
+C: 53:edfimage: Invalid name "edfimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 63:edfimage._readheader: Invalid name "BLOCKSIZE" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E:117:edfimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E:155:edfimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+R: 89:edfimage.read: Too many branches (17/15)
+R: 89:edfimage.read: Too many statements (57/50)
+W:205:edfimage.write: Arguments number differs from overridden method
 
 
 Report
 ======
-120 statements analysed.
+143 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |159    |59.77 |159      |=          |
++----------+-------+------+---------+-----------+
+|docstring |59     |22.18 |55       |+4.00      |
++----------+-------+------+---------+-----------+
+|comment   |15     |5.64  |15       |=          |
++----------+-------+------+---------+-----------+
+|empty     |33     |12.41 |33       |=          |
++----------+-------+------+---------+-----------+
+
+
 
 Duplication
 -----------
@@ -27,30 +45,13 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |137    |65.55 |136      |+1.00      |
-+----------+-------+------+---------+-----------+
-|docstring |52     |24.88 |51       |+1.00      |
-+----------+-------+------+---------+-----------+
-|comment   |5      |2.39  |5        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |15     |7.18  |15       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
     fabio 
-      \-fabioimage (edfimage)
-    numpy (edfimage)
+      \-fabioimage 
+        \-fabioimage (edfimage)
 
 
 
@@ -62,9 +63,9 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |4          |=          |100.00      |0.00     |
+|method   |5      |5          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -77,13 +78,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |0        |+1.00      |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
 |warning    |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|error      |2      |0        |+2.00      |
+|error      |2      |2        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -91,25 +92,26 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|W0511      |3          |
-+-----------+-----------+
-|E1103      |2          |
-+-----------+-----------+
-|W0221      |1          |
-+-----------+-----------+
-|R0914      |1          |
-+-----------+-----------+
-|R0912      |1          |
-+-----------+-----------+
-|C0103      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W0511      |3           |
++-----------+------------+
+|E1103      |2           |
++-----------+------------+
+|C0103      |2           |
++-----------+------------+
+|W0221      |1           |
++-----------+------------+
+|R0915      |1           |
++-----------+------------+
+|R0912      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.58/10 (previous run: 9.50/10)
+Your code has been rated at 8.74/10 (previous run: 8.74/10)
+That's pretty good. Good work mate.
 

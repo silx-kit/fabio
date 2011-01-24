@@ -1,16 +1,111 @@
 ************* Module __init__
-C0111:  1: Missing docstring
-C0111:  4:construct_filename: Missing docstring
-W0702: 45: No exception's type specified
-C0103: 38: Invalid name "lines" (should match (([A-Z_]*)|(__.*__))$)
-W0702: 55: No exception's type specified
-C0103: 48: Invalid name "lines" (should match (([A-Z_]*)|(__.*__))$)
-W0612: 64:getnum: Unused variable 'stem'
-W0612: 64:getnum: Unused variable 'post_num'
-C0103: 70:filename_object: Invalid name "filename_object" (should match [a-z_][a-zA-Z0-9]+$)
-R0913: 74:filename_object.__init__: Too many arguments (8/5)
-W0702:163:deconstruct_filename: No exception's type specified
-W0704:175:deconstruct_filename: Except doesn't do anything
-W0702:176:deconstruct_filename: No exception's type specified
-W0702:184:deconstruct_filename: No exception's type specified
-W0612:146:deconstruct_filename: Unused variable 'compressed'
+C:  1: Missing docstring
+C:  4:construct_filename: Missing docstring
+W:  4:construct_filename: Unused argument 'args'
+W:  4:construct_filename: Unused argument 'kwds'
+W: 48: No exception type(s) specified
+W: 58: No exception type(s) specified
+W: 67:getnum: Unused variable 'stem'
+W: 67:getnum: Unused variable 'post_num'
+C: 73:filename_object: Invalid name "filename_object" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 80:filename_object.__init__: Redefining built-in 'format'
+W:166:deconstruct_filename: No exception type(s) specified
+W:179:deconstruct_filename: No exception type(s) specified
+W:187:deconstruct_filename: No exception type(s) specified
+W:149:deconstruct_filename: Unused variable 'compressed'
+
+
+Report
+======
+130 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |155    |68.89 |155      |=          |
++----------+-------+------+---------+-----------+
+|docstring |38     |16.89 |38       |=          |
++----------+-------+------+---------+-----------+
+|comment   |6      |2.67  |6        |=          |
++----------+-------+------+---------+-----------+
+|empty     |26     |11.56 |26       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |8      |8          |=          |87.50       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |3      |3        |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |11     |11       |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W0702      |5           |
++-----------+------------+
+|W0612      |3           |
++-----------+------------+
+|W0613      |2           |
++-----------+------------+
+|C0111      |2           |
++-----------+------------+
+|W0622      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.92/10 (previous run: 8.92/10)
+That's pretty good. Good work mate.
+

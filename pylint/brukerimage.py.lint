@@ -1,23 +1,41 @@
 ************* Module brukerimage
-W0511:142: FIXME - this should call edfimage.write if that is wanted?
-W0511:172: FIXME: what is this? """
-E1103:107:brukerimage.read: Instance of 'str' has no 'tell' member (but some types could not be inferred)
-E1103:122:brukerimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
-E1103:132:brukerimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-W0612:121:brukerimage.read: Unused variable 'i'
-E1103:153:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
-E1103:158:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
-E1103:160:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
-E1103:161:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
-E1103:165:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
-E1103:167:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
-E1103:169:brukerimage.write: Instance of 'str' has no 'close' member (but some types could not be inferred)
-W0612:184:test: Unused variable 'res'
+W:142: FIXME - this should call edfimage.write if that is wanted?
+W:172: FIXME: what is this? """
+C: 25:brukerimage: Invalid name "brukerimage" (should match [A-Z_][a-zA-Z0-9]+$)
+E:107:brukerimage.read: Instance of 'str' has no 'tell' member (but some types could not be inferred)
+E:122:brukerimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E:132:brukerimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+W:121:brukerimage.read: Unused variable 'i'
+E:153:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
+E:158:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
+E:160:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
+E:161:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
+E:165:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
+E:167:brukerimage.write: Instance of 'str' has no 'write' member (but some types could not be inferred)
+E:169:brukerimage.write: Instance of 'str' has no 'close' member (but some types could not be inferred)
+W:184:test: Unused variable 'res'
 
 
 Report
 ======
-100 statements analysed.
+102 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |112    |58.64 |112      |=          |
++----------+-------+------+---------+-----------+
+|docstring |37     |19.37 |37       |=          |
++----------+-------+------+---------+-----------+
+|comment   |7      |3.66  |7        |=          |
++----------+-------+------+---------+-----------+
+|empty     |35     |18.32 |35       |=          |
++----------+-------+------+---------+-----------+
+
+
 
 Duplication
 -----------
@@ -32,31 +50,15 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |112    |62.57 |111      |+1.00      |
-+----------+-------+------+---------+-----------+
-|docstring |37     |20.67 |37       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |7      |3.91  |7        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |23     |12.85 |23       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
     fabio 
-      \-readbytestream (brukerimage)
-      \-fabioimage (brukerimage)
-    numpy (brukerimage)
+      \-fabioimage 
+      | \-fabioimage (brukerimage)
+      \-readbytestream 
+        \-readbytestream (brukerimage)
 
 
 
@@ -68,7 +70,7 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
 |method   |4      |4          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -83,13 +85,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |warning    |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|error      |10     |0        |+10.00     |
+|error      |10     |10       |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -97,19 +99,22 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|E1103      |10         |
-+-----------+-----------+
-|W0612      |2          |
-+-----------+-----------+
-|W0511      |2          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|E1103      |10          |
++-----------+------------+
+|W0612      |2           |
++-----------+------------+
+|W0511      |2           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 4.60/10 (previous run: 9.60/10)
+Your code has been rated at 4.61/10 (previous run: 4.61/10)
+A little more work would make it acceptable.
 

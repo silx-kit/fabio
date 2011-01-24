@@ -1,14 +1,17 @@
 ************* Module testbrukerimage
-C0103: 40:testbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 59:testbruker.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 74:testbzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 83:testgzipbruker.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:101:test_real_im: Invalid name "test_real_im" (should match [a-z_][a-zA-Z0-9]+$)
+W: 22: No exception type(s) specified
+W: 20: Specify string format arguments as logging function parameters
+F: 24: Unable to import 'utilstest'
+C: 53:testbruker: Invalid name "testbruker" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 85:testbzipbruker: Invalid name "testbzipbruker" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 94:testgzipbruker: Invalid name "testgzipbruker" (should match [A-Z_][a-zA-Z0-9]+$)
+C:115:test_real_im: Invalid name "test_real_im" (should match [A-Z_][a-zA-Z0-9]+$)
+C:139:test_suite_all_bruker: Missing docstring
 
 
 Report
 ======
-64 statements analysed.
+88 statements analysed.
 
 Duplication
 -----------
@@ -29,13 +32,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |71     |63.39 |71       |=          |
+|code      |95     |68.35 |95       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |22     |19.64 |22       |=          |
+|docstring |24     |17.27 |24       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |5      |4.46  |5        |=          |
+|comment   |7      |5.04  |7        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |14     |12.50 |14       |=          |
+|empty     |13     |9.35  |13       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -45,8 +48,8 @@ External dependencies
 ::
 
     fabio 
-      \-brukerimage (testbrukerimage)
-    numpy (testbrukerimage)
+      \-brukerimage 
+        \-brukerimage (testbrukerimage)
 
 
 
@@ -58,11 +61,11 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |4      |4          |=          |100.00      |25.00    |
+|class    |4      |4          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |6      |6          |=          |100.00      |66.67    |
+|method   |6      |6          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -77,7 +80,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |2      |3        |-1.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -87,15 +90,24 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0103      |5          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |4           |
++-----------+------------+
+|W6501      |1           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.22/10 (previous run: 9.22/10)
+Your code has been rated at 9.20/10 (previous run: 9.09/10)
+So close to being perfect...
 

@@ -1,24 +1,19 @@
 ************* Module testadscimage
-W0511: 46: FIXME: upload to sourceforge and add a setUp with wget?
-C0103: 26:testmatch.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+W: 23: No exception type(s) specified
+W: 21: Specify string format arguments as logging function parameters
+F: 25: Unable to import 'utilstest'
+C: 38:testmatch: Invalid name "testmatch" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 52:testmatch.testsame: Specify string format arguments as logging function parameters
+W: 53:testmatch.testsame: Specify string format arguments as logging function parameters
+W: 54:testmatch.testsame: Specify string format arguments as logging function parameters
+C: 57:testflatmccdsadsc: Invalid name "testflatmccdsadsc" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 57:testflatmccdsadsc: Empty docstring
+C: 81:test_suite_all_adsc: Missing docstring
 
 
 Report
 ======
-36 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
+54 statements analysed.
 
 Raw metrics
 -----------
@@ -26,14 +21,27 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |39     |54.93 |39       |=          |
+|code      |57     |64.04 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |13     |18.31 |13       |=          |
+|docstring |13     |14.61 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |3      |4.23  |3        |=          |
+|comment   |4      |4.49  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |16     |22.54 |16       |=          |
+|empty     |15     |16.85 |NC       |NC         |
 +----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -42,9 +50,10 @@ External dependencies
 ::
 
     fabio 
-      \-adscimage (testadscimage)
-      \-edfimage (testadscimage)
-    numpy (testadscimage)
+      \-adscimage 
+      | \-adscimage (testadscimage)
+      \-edfimage 
+        \-edfimage (testadscimage)
 
 
 
@@ -54,13 +63,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |100.00      |0.00     |
+|class    |2      |NC         |NC         |50.00       |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |100.00      |33.33    |
+|method   |3      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -71,13 +80,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |1      |1        |=          |
+|warning    |5      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -85,17 +94,26 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|W0511      |1          |
-+-----------+-----------+
-|C0103      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W6501      |4           |
++-----------+------------+
+|C0103      |2           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|C0112      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.44/10 (previous run: 9.44/10)
+Your code has been rated at 8.33/10
+That's pretty good. Good work mate.
 

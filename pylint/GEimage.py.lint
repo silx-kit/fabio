@@ -1,105 +1,26 @@
 ************* Module GEimage
-C0301: 41: Line too long (88/80)
-C0301: 42: Line too long (83/80)
-C0301: 43: Line too long (92/80)
-C0301: 46: Line too long (85/80)
-C0301: 47: Line too long (85/80)
-C0301: 65: Line too long (86/80)
-C0301: 68: Line too long (92/80)
-C0301: 71: Line too long (112/80)
-C0301: 74: Line too long (112/80)
-C0301: 89: Line too long (82/80)
-C0301:104: Line too long (82/80)
-C0301:107: Line too long (82/80)
-C0301:113: Line too long (88/80)
-C0301:116: Line too long (98/80)
-C0301:119: Line too long (102/80)
-C0301:122: Line too long (82/80)
-C0301:129: Line too long (96/80)
-C0301:132: Line too long (100/80)
-C0301:135: Line too long (96/80)
-C0301:156: Line too long (88/80)
-C0301:159: Line too long (102/80)
-C0301:168: Line too long (94/80)
-C0301:219: Line too long (88/80)
-C0301:222: Line too long (84/80)
-C0301:225: Line too long (90/80)
-C0301:228: Line too long (90/80)
-C0301:231: Line too long (86/80)
-C0301:237: Line too long (106/80)
-C0301:240: Line too long (102/80)
-C0301:246: Line too long (98/80)
-C0301:252: Line too long (92/80)
-C0301:272: Line too long (86/80)
-C0301:293: Line too long (84/80)
-C0301:299: Line too long (82/80)
-C0301:302: Line too long (82/80)
-C0301:305: Line too long (82/80)
-C0301:308: Line too long (82/80)
-C0301:311: Line too long (102/80)
-C0301:314: Line too long (98/80)
-C0301:320: Line too long (84/80)
-C0301:352: Line too long (92/80)
-C0301:355: Line too long (88/80)
-C0301:358: Line too long (84/80)
-C0301:361: Line too long (90/80)
-C0301:381: Line too long (100/80)
-C0301:384: Line too long (96/80)
-C0301:449: Line too long (82/80)
-C0301:484: Line too long (92/80)
-C0103:  1: Invalid name "GEimage" (should match (([a-z_][a-z0-9_]*)|([a-z][a-zA-Z0-9]+))$)
-C0103: 26:GEimage: Invalid name "GEimage" (should match [a-z_][a-zA-Z0-9]+$)
-C0111: 26:GEimage: Missing docstring
-C0103: 34:GEimage._readheader: Invalid name "ImageFormat" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103: 53:GEimage._readheader: Invalid name "DUTID" (should match [a-z_][a-z0-9_]{2,30}$)
-R0902: 26:GEimage: Too many instance attributes (9/7)
-C0111: 29:GEimage._readheader: Missing docstring
-C0324: 29:GEimage._readheader: Comma not followed by a space
-    def _readheader(self,infile):
-                        ^^
-C0324: 40:GEimage._readheader: Comma not followed by a space
-        self.header['HeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
-                                                                  ^^
-C0324: 41:GEimage._readheader: Comma not followed by a space
-        self.header['HeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
-                                                                          ^^
-C0324: 42:GEimage._readheader: Comma not followed by a space
-        self.header['UserHeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
-                                                                      ^^
-C0324: 43:GEimage._readheader: Comma not followed by a space
-        self.header['UserHeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
-                                                                              ^^
-C0324: 45:GEimage._readheader: Comma not followed by a space
-        self.header['NumberOfFrames'] = N.fromstring(infile.read(2),N.uint16)[0]
-                                                                   ^^
-C0324: 46:GEimage._readheader: Comma not followed by a space
-        self.header['NumberOfRowsInFrame'] = N.fromstring(infile.read(2),N.uint16)[0]
-                                                                        ^^
-C0324: 47:GEimage._readheader: Comma not followed by a space
-        self.header['NumberOfColsInFrame'] = N.fromstring(infile.read(2),N.uint16)[0]
-                                                                        ^^
-C0324: 48:GEimage._readheader: Comma not followed by a space
-        self.header['BitsPerPixel'] = N.fromstring(infile.read(2),N.uint16)[0]
-                                                                 ^^
-E1103:483:GEimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
-E1103:484:GEimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
-C0103:486:GEimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
-E1103:487:GEimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
-C0324:488:GEimage.read: Comma not followed by a space
-        block = N.fromstring(block,N.uint16)
-                                  ^^
-E1103:490:GEimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-C0324:493:GEimage.read: Comma not followed by a space
-            self.data = N.reshape(block,[self.dim2, self.dim1])
-                                       ^^
-W0201: 34:GEimage._readheader: Attribute 'ImageFormat' defined outside __init__
-W0201: 53:GEimage._readheader: Attribute 'DUTID' defined outside __init__
-W0611: 23: Unused import logging
+C:  1: Missing docstring
+C:179:GEimage: Missing docstring
+W:189:GEimage._readheader: Redefining built-in 'format'
+W:196:GEimage.read: Arguments number differs from overridden method
+E:208:GEimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+C:214:GEimage._makeframename: Operator not followed by a space
+        self.filename = "%s$%04d"%( self.sequencefilename,
+                                 ^
+                                   self.currentframe )
+W:249:GEimage.write: Arguments number differs from overridden method
+W:249:GEimage.write: Unused argument 'force_type'
+W:266:GEimage.getframe: Access to a protected member _open of a client class
+W:267:GEimage.getframe: Access to a protected member _readframe of a client class
+E:268:GEimage.getframe: Instance of 'str' has no 'close' member (but some types could not be inferred)
+W:204:GEimage.read: Attribute 'sequencefilename' defined outside __init__
+C:296:demo: Missing docstring
+W:325:demo: Unreachable code
 
 
 Report
 ======
-47 statements analysed.
+90 statements analysed.
 
 Duplication
 -----------
@@ -120,13 +41,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |50     |10.27 |50       |=          |
+|code      |258    |81.65 |258      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |24     |4.93  |24       |=          |
+|docstring |24     |7.59  |24       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |267    |54.83 |267      |=          |
+|comment   |13     |4.11  |13       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |146    |29.98 |146      |=          |
+|empty     |21     |6.65  |21       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -135,9 +56,8 @@ External dependencies
 ---------------------
 ::
 
-    fabio 
+    fabio (GEimage)
       \-fabioimage (GEimage)
-    numpy (GEimage)
 
 
 
@@ -147,13 +67,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |100.00   |
+|module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |100.00   |
+|class    |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |50.00       |0.00     |
+|method   |8      |8          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -164,13 +84,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |66     |66       |=          |
+|convention |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |3        |=          |
+|warning    |8      |8        |=          |
 +-----------+-------+---------+-----------+
-|error      |4      |0        |+4.00      |
+|error      |2      |2        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -178,29 +98,32 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|C0301      |48         |
-+-----------+-----------+
-|C0324      |11         |
-+-----------+-----------+
-|C0103      |5          |
-+-----------+-----------+
-|E1103      |4          |
-+-----------+-----------+
-|W0201      |2          |
-+-----------+-----------+
-|C0111      |2          |
-+-----------+-----------+
-|W0611      |1          |
-+-----------+-----------+
-|R0902      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |3           |
++-----------+------------+
+|W0221      |2           |
++-----------+------------+
+|W0212      |2           |
++-----------+------------+
+|E1103      |2           |
++-----------+------------+
+|W0622      |1           |
++-----------+------------+
+|W0613      |1           |
++-----------+------------+
+|W0201      |1           |
++-----------+------------+
+|W0101      |1           |
++-----------+------------+
+|C0323      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -9.15/10 (previous run: -4.89/10)
+Your code has been rated at 7.56/10 (previous run: 7.56/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

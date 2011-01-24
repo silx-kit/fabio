@@ -1,35 +1,14 @@
-************* Module testmccdimage
-W: 21: No exception type(s) specified
-W: 19: Specify string format arguments as logging function parameters
-F: 23: Unable to import 'utilstest'
-C: 38:testnormaltifok: Invalid name "testnormaltifok" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 55:testnormaltifok.test_read_openimage: Missing docstring
-C: 68:testflatmccds: Invalid name "testflatmccds" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 68:testflatmccds: Missing docstring
-C: 69:testflatmccds.setUp: Missing docstring
-C: 93:test_suite_all_mccd: Missing docstring
+************* Module testkcdimage
+W: 22: No exception type(s) specified
+W: 20: Specify string format arguments as logging function parameters
+F: 24: Unable to import 'utilstest'
+C: 31:testkcd: Invalid name "testkcd" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 68:test_suite_all_kcd: Missing docstring
 
 
 Report
 ======
-62 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |68     |68.00 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|docstring |13     |13.00 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|comment   |4      |4.00  |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|empty     |15     |15.00 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-
-
+52 statements analysed.
 
 Duplication
 -----------
@@ -44,17 +23,34 @@ Duplication
 
 
 
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |52     |73.24 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |9      |12.68 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |2      |2.82  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |8      |11.27 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
 External dependencies
 ---------------------
 ::
 
     fabio 
-      \-marccdimage 
-      | \-marccdimage (testmccdimage)
+      \-edfimage 
+      | \-edfimage (testkcdimage)
+      \-kcdimage 
+      | \-kcdimage (testkcdimage)
       \-openimage 
-      | \-openimage (testmccdimage)
-      \-tifimage 
-        \-tifimage (testmccdimage)
+        \-openimage (testkcdimage)
 
 
 
@@ -66,9 +62,9 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |50.00       |100.00   |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |5      |NC         |NC         |60.00       |0.00     |
+|method   |3      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -81,7 +77,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |6      |NC       |NC         |
+|convention |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |refactor   |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -98,21 +94,21 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0111      |4           |
-+-----------+------------+
-|C0103      |2           |
-+-----------+------------+
 |W6501      |1           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
+|C0111      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.71/10
-That's pretty good. Good work mate.
+Your code has been rated at 9.23/10
+So close to being perfect...
 

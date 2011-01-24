@@ -1,30 +1,53 @@
 ************* Module fabioimage
-W0511: 69: FIXME - this should be handled by the libraries now
-W0511: 70: TODO  - som objects are over-riding this method, why?
-W0511:201: FIXME - this is a floating point comparison, is it always exact?
-W0511:211: FIXME - why do you divide by 2? Rebinning should increase counts?
-W0511:267: FIXME - what about seek ? 
-W0511:286: FIXME - should we fix that or complain about the daft naming?
-R0902: 29:fabioimage: Too many instance attributes (16/7)
-C0103: 65:fabioimage.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
-W0612:200:fabioimage.rebin: Unused variable 'exp_y'
-W0612:199:fabioimage.rebin: Unused variable 'exp_x'
-R0201:224:fabioimage.write: Method could be a function
-R0201:243:fabioimage._readheader: Method could be a function
-R0201:256:fabioimage.read: Method could be a function
-C0103:306:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-z0-9_]{2,30}$)
-C0103:313:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-z0-9_]{2,30}$)
-W0613:293:fabioimage._compressed_stream: Unused argument 'system_uncompress'
-W0702:367:test.clean: No exception's type specified
-W0212:374:test: Access to a protected member _open of a client class
-W0212:380:test: Access to a protected member _open of a client class
-W0212:386:test: Access to a protected member _open of a client class
-W0212:388:test: Access to a protected member _open of a client class
+W: 92: FIXME - this should be handled by the libraries now
+W:233: FIXME - this is a floating point comparison, is it always exact?
+W:243: FIXME - why do you divide by 2? Rebinning should increase counts?
+W:298: FIXME - what about seek ? 
+W:321: FIXME - should we fix that or complain about the daft naming?
+W: 24: Reimport 'numpy' (imported line 21)
+C: 30:fabioimage: Invalid name "fabioimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W:238:fabioimage.rebin: Raising a string exception
+W:240:fabioimage.rebin: Unnecessary pass statement
+W:232:fabioimage.rebin: Unused variable 'exp_y'
+W:231:fabioimage.rebin: Unused variable 'exp_x'
+R:256:fabioimage.write: Method could be a function
+W:256:fabioimage.write: Unused argument 'fname'
+R:274:fabioimage._readheader: Method could be a function
+W:274:fabioimage._readheader: Unused argument 'fik_obj'
+R:287:fabioimage.read: Method could be a function
+W:287:fabioimage.read: Unused argument 'filename'
+C:336:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:343:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:326:fabioimage._compressed_stream: Unused argument 'system_uncompress'
+W:397:test.clean: No exception type(s) specified
+W:403:test: Access to a protected member _open of a client class
+W:409:test: Access to a protected member _open of a client class
+W:415:test: Access to a protected member _open of a client class
+W:417:test: Access to a protected member _open of a client class
+W: 21: Unused import sys
+W: 24: Unused import numpy
 
 
 Report
 ======
-199 statements analysed.
+219 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |249    |61.63 |249      |=          |
++----------+-------+------+---------+-----------+
+|docstring |89     |22.03 |89       |=          |
++----------+-------+------+---------+-----------+
+|comment   |17     |4.21  |17       |=          |
++----------+-------+------+---------+-----------+
+|empty     |49     |12.13 |49       |=          |
++----------+-------+------+---------+-----------+
+
+
 
 Duplication
 -----------
@@ -39,31 +62,11 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |227    |62.02 |227      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |87     |23.77 |87       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |18     |4.92  |18       |=          |
-+----------+-------+------+---------+-----------+
-|empty     |34     |9.29  |33       |+1.00      |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
-    numpy (fabioimage)
     fabio (fabioimage)
-    PIL 
-      \-Image (fabioimage)
 
 
 
@@ -75,9 +78,9 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |19     |19         |=          |100.00      |5.26     |
+|method   |22     |22         |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -92,9 +95,9 @@ Messages by category
 +===========+=======+=========+===========+
 |convention |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |4      |4        |=          |
+|refactor   |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|warning    |14     |14       |=          |
+|warning    |21     |21       |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -104,29 +107,36 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|W0511      |6          |
-+-----------+-----------+
-|W0212      |4          |
-+-----------+-----------+
-|R0201      |3          |
-+-----------+-----------+
-|C0103      |3          |
-+-----------+-----------+
-|W0612      |2          |
-+-----------+-----------+
-|W0702      |1          |
-+-----------+-----------+
-|W0613      |1          |
-+-----------+-----------+
-|R0902      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W0511      |5           |
++-----------+------------+
+|W0613      |4           |
++-----------+------------+
+|W0212      |4           |
++-----------+------------+
+|R0201      |3           |
++-----------+------------+
+|C0103      |3           |
++-----------+------------+
+|W0612      |2           |
++-----------+------------+
+|W0611      |2           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0701      |1           |
++-----------+------------+
+|W0404      |1           |
++-----------+------------+
+|W0107      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.94/10 (previous run: 8.94/10)
+Your code has been rated at 8.77/10 (previous run: 8.77/10)
+That's pretty good. Good work mate.
 

@@ -1,23 +1,49 @@
 ************* Module openimage
-W0212: 88:_openimage: Access to a protected member _open of a client class
-W0611: 26: Unused import fit2dmaskimage
-W0611: 28: Unused import bruker100image
-W0611: 23: Unused import tifimage
-W0611: 22: Unused import adscimage
-W0611: 25: Unused import mar345image
-W0611: 32: Unused import fit2dspreadsheetimage
-W0611: 29: Unused import pnmimage
-W0611: 24: Unused import marccdimage
-W0611: 21: Unused import edfimage
-W0611: 31: Unused import OXDimage
-W0611: 17: Unused import getnum
-W0611: 30: Unused import GEimage
-W0611: 27: Unused import brukerimage
+W: 69:do_magic: Redefining built-in 'format'
+W: 83:openimage: Redefining name 'fabio' from outer scope (line 16)
+W: 83:openimage: Reimport 'fabio' (imported line 16)
+W: 92:openimage: No exception type(s) specified
+W:114:_openimage: Access to a protected member _open of a client class
+W: 26: Unused import fit2dmaskimage
+W: 36: Unused import kcdimage
+W: 28: Unused import bruker100image
+W: 34: Unused import pilatusimage
+W: 33: Unused import HiPiCimage
+W: 22: Unused import adscimage
+W: 25: Unused import mar345image
+W: 35: Unused import fit2dspreadsheetimage
+W: 29: Unused import pnmimage
+W: 32: Unused import dm3image
+W: 24: Unused import marccdimage
+W: 30: Unused import GEimage
+W: 37: Unused import cbfimage
+W: 21: Unused import edfimage
+W: 31: Unused import OXDimage
+W: 17: Unused import getnum
+W: 23: Unused import tifimage
+W: 27: Unused import brukerimage
 
 
 Report
 ======
-58 statements analysed.
+76 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |98     |63.23 |98       |=          |
++----------+-------+------+---------+-----------+
+|docstring |21     |13.55 |21       |=          |
++----------+-------+------+---------+-----------+
+|comment   |11     |7.10  |11       |=          |
++----------+-------+------+---------+-----------+
+|empty     |25     |16.13 |25       |=          |
++----------+-------+------+---------+-----------+
+
+
 
 Duplication
 -----------
@@ -32,41 +58,32 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |77     |66.96 |77       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |21     |18.26 |21       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |4      |3.48  |4        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |13     |11.30 |13       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
     fabio (openimage)
-      \-fit2dmaskimage (openimage)
-      \-fit2dspreadsheetimage (openimage)
-      \-fabioimage (openimage)
-      \-edfimage (openimage)
-      \-tifimage (openimage)
+      \-GEimage (openimage)
+      \-HiPiCimage (openimage)
       \-OXDimage (openimage)
       \-adscimage (openimage)
-      \-mar345image (openimage)
       \-bruker100image (openimage)
-      \-pnmimage (openimage)
-      \-GEimage (openimage)
-      \-marccdimage (openimage)
       \-brukerimage (openimage)
+      \-cbfimage (openimage)
+      \-deconstruct_filename (openimage)
+      \-dm3image (openimage)
+      \-edfimage (openimage)
+      \-fabioimage 
+      | \-fabioimage (openimage)
+      \-fit2dmaskimage (openimage)
+      \-fit2dspreadsheetimage (openimage)
+      \-getnum (openimage)
+      \-kcdimage (openimage)
+      \-mar345image (openimage)
+      \-marccdimage (openimage)
+      \-pilatusimage (openimage)
+      \-pnmimage (openimage)
+      \-tifimage (openimage)
 
 
 
@@ -97,7 +114,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |14     |14       |=          |
+|warning    |23     |23       |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -107,17 +124,26 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|W0611      |13         |
-+-----------+-----------+
-|W0212      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W0611      |18          |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0622      |1           |
++-----------+------------+
+|W0621      |1           |
++-----------+------------+
+|W0404      |1           |
++-----------+------------+
+|W0212      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.59/10 (previous run: 7.59/10)
+Your code has been rated at 6.97/10 (previous run: 6.97/10)
+This is okay-ish, but I'm sure you can do better.
 

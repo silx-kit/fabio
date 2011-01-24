@@ -1,16 +1,33 @@
 ************* Module adscimage
-W0511: 91: FIXME ??? - made padding match header bytes keyword            
-E1103: 34:adscimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
-E1103: 38:adscimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-E1103: 40:adscimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
-E1103: 41:adscimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
-E1103: 42:adscimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-W0612:124:test: Unused variable 'rim'
+W: 91: FIXME ??? - made padding match header bytes keyword            
+C: 22:adscimage: Invalid name "adscimage" (should match [A-Z_][a-zA-Z0-9]+$)
+E: 34:adscimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+E: 38:adscimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+E: 40:adscimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E: 41:adscimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+E: 42:adscimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
 
 
 Report
 ======
-73 statements analysed.
+76 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |83     |62.41 |83       |=          |
++----------+-------+------+---------+-----------+
+|docstring |24     |18.05 |24       |=          |
++----------+-------+------+---------+-----------+
+|comment   |9      |6.77  |9        |=          |
++----------+-------+------+---------+-----------+
+|empty     |17     |12.78 |17       |=          |
++----------+-------+------+---------+-----------+
+
+
 
 Duplication
 -----------
@@ -25,30 +42,13 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |84     |65.62 |84       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |24     |18.75 |24       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |9      |7.03  |9        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |11     |8.59  |11       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
     fabio 
-      \-fabioimage (adscimage)
-    numpy (adscimage)
+      \-fabioimage 
+        \-fabioimage (adscimage)
 
 
 
@@ -60,7 +60,7 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
 |method   |3      |3          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -75,13 +75,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |2        |=          |
+|warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|error      |5      |0        |+5.00      |
+|error      |5      |5        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -89,19 +89,20 @@ Messages by category
 Messages
 --------
 
-+-----------+-----------+
-|message id |occurences |
-+===========+===========+
-|E1103      |5          |
-+-----------+-----------+
-|W0612      |1          |
-+-----------+-----------+
-|W0511      |1          |
-+-----------+-----------+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|E1103      |5           |
++-----------+------------+
+|W0511      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.30/10 (previous run: 9.73/10)
+Your code has been rated at 6.45/10 (previous run: 6.45/10)
+This is okay-ish, but I'm sure you can do better.
 

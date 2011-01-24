@@ -1,0 +1,153 @@
+************* Module GEimage_old
+C:  1: Invalid name "GEimage_old" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
+C: 26:GEimage: Missing docstring
+C: 34:GEimage._readheader: Invalid name "ImageFormat" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 53:GEimage._readheader: Invalid name "DUTID" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 29:GEimage._readheader: Missing docstring
+C: 29:GEimage._readheader: Comma not followed by a space
+    def _readheader(self,infile):
+                        ^^
+C: 40:GEimage._readheader: Comma not followed by a space
+        self.header['HeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
+                                                                  ^^
+C: 41:GEimage._readheader: Comma not followed by a space
+        self.header['HeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
+                                                                          ^^
+C: 42:GEimage._readheader: Comma not followed by a space
+        self.header['UserHeaderVersion'] = N.fromstring(infile.read(2),N.uint16)[0]
+                                                                      ^^
+C: 43:GEimage._readheader: Comma not followed by a space
+        self.header['UserHeaderSizeInBytes'] = int(N.fromstring(infile.read(4),N.uint32)[0])
+                                                                              ^^
+C: 45:GEimage._readheader: Comma not followed by a space
+        self.header['NumberOfFrames'] = N.fromstring(infile.read(2),N.uint16)[0]
+                                                                   ^^
+C: 46:GEimage._readheader: Comma not followed by a space
+        self.header['NumberOfRowsInFrame'] = N.fromstring(infile.read(2),N.uint16)[0]
+                                                                        ^^
+C: 47:GEimage._readheader: Comma not followed by a space
+        self.header['NumberOfColsInFrame'] = N.fromstring(infile.read(2),N.uint16)[0]
+                                                                        ^^
+C: 48:GEimage._readheader: Comma not followed by a space
+        self.header['BitsPerPixel'] = N.fromstring(infile.read(2),N.uint16)[0]
+                                                                 ^^
+E:483:GEimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+E:484:GEimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
+C:486:GEimage.read: Invalid name "ReadBytes" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E:487:GEimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
+C:488:GEimage.read: Comma not followed by a space
+        block = N.fromstring(block,N.uint16)
+                                  ^^
+E:490:GEimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+C:493:GEimage.read: Comma not followed by a space
+            self.data = N.reshape(block,[self.dim2, self.dim1])
+                                       ^^
+W: 34:GEimage._readheader: Attribute 'ImageFormat' defined outside __init__
+W: 53:GEimage._readheader: Attribute 'DUTID' defined outside __init__
+W: 23: Unused import logging
+
+
+Report
+======
+49 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |50     |10.25 |50       |=          |
++----------+-------+------+---------+-----------+
+|docstring |24     |4.92  |24       |=          |
++----------+-------+------+---------+-----------+
+|comment   |267    |54.71 |267      |=          |
++----------+-------+------+---------+-----------+
+|empty     |147    |30.12 |147      |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-fabioimage 
+        \-fabioimage (GEimage_old)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |2          |=          |50.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |17     |17       |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |3      |3        |=          |
++-----------+-------+---------+-----------+
+|error      |4      |4        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0324      |11          |
++-----------+------------+
+|E1103      |4           |
++-----------+------------+
+|C0103      |4           |
++-----------+------------+
+|W0201      |2           |
++-----------+------------+
+|C0111      |2           |
++-----------+------------+
+|W0611      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 1.84/10 (previous run: 1.84/10)
+Come on! You can't be proud of this code
+
