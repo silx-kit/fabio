@@ -30,7 +30,7 @@ python setup.py install
 most likely you will need to do this with root privileges (e.g. put sudo in front of the command).
 The newest development version can be obtained by checking it out from the subversion (SVN) repository. Do
 
-svn checkout https://svn.sourceforge.net/svnroot/fable/fabio/ fabio
+svn checkout https://svn.sourceforge.net/svnroot/fable/ fabio
 cd fabio/trunk
 sudo python setup.py install
 
