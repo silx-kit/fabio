@@ -1,5 +1,5 @@
 
-<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html><head><title>Python: module fabio.file_series</title>
 </head><body bgcolor="#f0f0f8">
 
@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="fabio.html"><font color="#ffffff">fabio</font></a>.file_series</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/python2.5/site-packages/fabio/file_series.py">/usr/lib/python2.5/site-packages/fabio/file_series.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/pymodules/python2.6/fabio/file_series.py">/usr/lib/pymodules/python2.6/fabio/file_series.py</a></font></td></tr></table>
     <p><tt>Authors:&nbsp;Henning&nbsp;O.&nbsp;Sorensen&nbsp;&amp;&nbsp;Erik&nbsp;Knudsen<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Center&nbsp;for&nbsp;Fundamental&nbsp;Research:&nbsp;Metal&nbsp;Structures&nbsp;in&nbsp;Four&nbsp;Dimensions<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Risoe&nbsp;National&nbsp;Laboratory<br>
@@ -18,6 +18,14 @@
 &nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;Jon&nbsp;Wright,&nbsp;ESRF</tt></p>
 <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="fabio.html">fabio</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -139,8 +147,6 @@ Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd
 
 <dl><dt><a name="file_series-__gt__"><strong>__gt__</strong></a>(...)</dt><dd><tt>x.<a href="#file_series-__gt__">__gt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;y</tt></dd></dl>
 
-<dl><dt><a name="file_series-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#file_series-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
-
 <dl><dt><a name="file_series-__iadd__"><strong>__iadd__</strong></a>(...)</dt><dd><tt>x.<a href="#file_series-__iadd__">__iadd__</a>(y)&nbsp;&lt;==&gt;&nbsp;x+=y</tt></dd></dl>
 
 <dl><dt><a name="file_series-__imul__"><strong>__imul__</strong></a>(...)</dt><dd><tt>x.<a href="#file_series-__imul__">__imul__</a>(y)&nbsp;&lt;==&gt;&nbsp;x*=y</tt></dd></dl>
@@ -169,19 +175,24 @@ Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd
 &nbsp;<br>
 Use&nbsp;&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
 
+<dl><dt><a name="file_series-__sizeof__"><strong>__sizeof__</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-__sizeof__">__sizeof__</a>()&nbsp;--&nbsp;size&nbsp;of&nbsp;L&nbsp;in&nbsp;memory,&nbsp;in&nbsp;bytes</tt></dd></dl>
+
 <dl><dt><a name="file_series-append"><strong>append</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-append">append</a>(object)&nbsp;--&nbsp;append&nbsp;object&nbsp;to&nbsp;end</tt></dd></dl>
 
 <dl><dt><a name="file_series-count"><strong>count</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-count">count</a>(value)&nbsp;-&gt;&nbsp;integer&nbsp;--&nbsp;return&nbsp;number&nbsp;of&nbsp;occurrences&nbsp;of&nbsp;value</tt></dd></dl>
 
 <dl><dt><a name="file_series-extend"><strong>extend</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-extend">extend</a>(iterable)&nbsp;--&nbsp;extend&nbsp;<a href="__builtin__.html#list">list</a>&nbsp;by&nbsp;appending&nbsp;elements&nbsp;from&nbsp;the&nbsp;iterable</tt></dd></dl>
 
-<dl><dt><a name="file_series-index"><strong>index</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-index">index</a>(value,&nbsp;[start,&nbsp;[stop]])&nbsp;-&gt;&nbsp;integer&nbsp;--&nbsp;return&nbsp;first&nbsp;index&nbsp;of&nbsp;value</tt></dd></dl>
+<dl><dt><a name="file_series-index"><strong>index</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-index">index</a>(value,&nbsp;[start,&nbsp;[stop]])&nbsp;-&gt;&nbsp;integer&nbsp;--&nbsp;return&nbsp;first&nbsp;index&nbsp;of&nbsp;value.<br>
+Raises&nbsp;ValueError&nbsp;if&nbsp;the&nbsp;value&nbsp;is&nbsp;not&nbsp;present.</tt></dd></dl>
 
 <dl><dt><a name="file_series-insert"><strong>insert</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-insert">insert</a>(index,&nbsp;object)&nbsp;--&nbsp;insert&nbsp;object&nbsp;before&nbsp;index</tt></dd></dl>
 
-<dl><dt><a name="file_series-pop"><strong>pop</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-pop">pop</a>([index])&nbsp;-&gt;&nbsp;item&nbsp;--&nbsp;remove&nbsp;and&nbsp;return&nbsp;item&nbsp;at&nbsp;index&nbsp;(default&nbsp;last)</tt></dd></dl>
+<dl><dt><a name="file_series-pop"><strong>pop</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-pop">pop</a>([index])&nbsp;-&gt;&nbsp;item&nbsp;--&nbsp;remove&nbsp;and&nbsp;return&nbsp;item&nbsp;at&nbsp;index&nbsp;(default&nbsp;last).<br>
+Raises&nbsp;IndexError&nbsp;if&nbsp;<a href="__builtin__.html#list">list</a>&nbsp;is&nbsp;empty&nbsp;or&nbsp;index&nbsp;is&nbsp;out&nbsp;of&nbsp;range.</tt></dd></dl>
 
-<dl><dt><a name="file_series-remove"><strong>remove</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-remove">remove</a>(value)&nbsp;--&nbsp;remove&nbsp;first&nbsp;occurrence&nbsp;of&nbsp;value</tt></dd></dl>
+<dl><dt><a name="file_series-remove"><strong>remove</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-remove">remove</a>(value)&nbsp;--&nbsp;remove&nbsp;first&nbsp;occurrence&nbsp;of&nbsp;value.<br>
+Raises&nbsp;ValueError&nbsp;if&nbsp;the&nbsp;value&nbsp;is&nbsp;not&nbsp;present.</tt></dd></dl>
 
 <dl><dt><a name="file_series-reverse"><strong>reverse</strong></a>(...)</dt><dd><tt>L.<a href="#file_series-reverse">reverse</a>()&nbsp;--&nbsp;reverse&nbsp;*IN&nbsp;PLACE*</tt></dd></dl>
 
@@ -190,7 +201,9 @@ cmp(x,&nbsp;y)&nbsp;-&gt;&nbsp;-1,&nbsp;0,&nbsp;1</tt></dd></dl>
 
 <hr>
 Data and other attributes inherited from <a href="__builtin__.html#list">__builtin__.list</a>:<br>
-<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object at 0x8145c40&gt;<dd><tt>T.<a href="#file_series-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+<dl><dt><strong>__hash__</strong> = None</dl>
+
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#file_series-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
 
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -326,8 +339,6 @@ Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd
 
 <dl><dt><a name="numbered_file_series-__gt__"><strong>__gt__</strong></a>(...)</dt><dd><tt>x.<a href="#numbered_file_series-__gt__">__gt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;y</tt></dd></dl>
 
-<dl><dt><a name="numbered_file_series-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#numbered_file_series-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
-
 <dl><dt><a name="numbered_file_series-__iadd__"><strong>__iadd__</strong></a>(...)</dt><dd><tt>x.<a href="#numbered_file_series-__iadd__">__iadd__</a>(y)&nbsp;&lt;==&gt;&nbsp;x+=y</tt></dd></dl>
 
 <dl><dt><a name="numbered_file_series-__imul__"><strong>__imul__</strong></a>(...)</dt><dd><tt>x.<a href="#numbered_file_series-__imul__">__imul__</a>(y)&nbsp;&lt;==&gt;&nbsp;x*=y</tt></dd></dl>
@@ -356,19 +367,24 @@ Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd
 &nbsp;<br>
 Use&nbsp;&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
 
+<dl><dt><a name="numbered_file_series-__sizeof__"><strong>__sizeof__</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-__sizeof__">__sizeof__</a>()&nbsp;--&nbsp;size&nbsp;of&nbsp;L&nbsp;in&nbsp;memory,&nbsp;in&nbsp;bytes</tt></dd></dl>
+
 <dl><dt><a name="numbered_file_series-append"><strong>append</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-append">append</a>(object)&nbsp;--&nbsp;append&nbsp;object&nbsp;to&nbsp;end</tt></dd></dl>
 
 <dl><dt><a name="numbered_file_series-count"><strong>count</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-count">count</a>(value)&nbsp;-&gt;&nbsp;integer&nbsp;--&nbsp;return&nbsp;number&nbsp;of&nbsp;occurrences&nbsp;of&nbsp;value</tt></dd></dl>
 
 <dl><dt><a name="numbered_file_series-extend"><strong>extend</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-extend">extend</a>(iterable)&nbsp;--&nbsp;extend&nbsp;<a href="__builtin__.html#list">list</a>&nbsp;by&nbsp;appending&nbsp;elements&nbsp;from&nbsp;the&nbsp;iterable</tt></dd></dl>
 
-<dl><dt><a name="numbered_file_series-index"><strong>index</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-index">index</a>(value,&nbsp;[start,&nbsp;[stop]])&nbsp;-&gt;&nbsp;integer&nbsp;--&nbsp;return&nbsp;first&nbsp;index&nbsp;of&nbsp;value</tt></dd></dl>
+<dl><dt><a name="numbered_file_series-index"><strong>index</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-index">index</a>(value,&nbsp;[start,&nbsp;[stop]])&nbsp;-&gt;&nbsp;integer&nbsp;--&nbsp;return&nbsp;first&nbsp;index&nbsp;of&nbsp;value.<br>
+Raises&nbsp;ValueError&nbsp;if&nbsp;the&nbsp;value&nbsp;is&nbsp;not&nbsp;present.</tt></dd></dl>
 
 <dl><dt><a name="numbered_file_series-insert"><strong>insert</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-insert">insert</a>(index,&nbsp;object)&nbsp;--&nbsp;insert&nbsp;object&nbsp;before&nbsp;index</tt></dd></dl>
 
-<dl><dt><a name="numbered_file_series-pop"><strong>pop</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-pop">pop</a>([index])&nbsp;-&gt;&nbsp;item&nbsp;--&nbsp;remove&nbsp;and&nbsp;return&nbsp;item&nbsp;at&nbsp;index&nbsp;(default&nbsp;last)</tt></dd></dl>
+<dl><dt><a name="numbered_file_series-pop"><strong>pop</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-pop">pop</a>([index])&nbsp;-&gt;&nbsp;item&nbsp;--&nbsp;remove&nbsp;and&nbsp;return&nbsp;item&nbsp;at&nbsp;index&nbsp;(default&nbsp;last).<br>
+Raises&nbsp;IndexError&nbsp;if&nbsp;<a href="__builtin__.html#list">list</a>&nbsp;is&nbsp;empty&nbsp;or&nbsp;index&nbsp;is&nbsp;out&nbsp;of&nbsp;range.</tt></dd></dl>
 
-<dl><dt><a name="numbered_file_series-remove"><strong>remove</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-remove">remove</a>(value)&nbsp;--&nbsp;remove&nbsp;first&nbsp;occurrence&nbsp;of&nbsp;value</tt></dd></dl>
+<dl><dt><a name="numbered_file_series-remove"><strong>remove</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-remove">remove</a>(value)&nbsp;--&nbsp;remove&nbsp;first&nbsp;occurrence&nbsp;of&nbsp;value.<br>
+Raises&nbsp;ValueError&nbsp;if&nbsp;the&nbsp;value&nbsp;is&nbsp;not&nbsp;present.</tt></dd></dl>
 
 <dl><dt><a name="numbered_file_series-reverse"><strong>reverse</strong></a>(...)</dt><dd><tt>L.<a href="#numbered_file_series-reverse">reverse</a>()&nbsp;--&nbsp;reverse&nbsp;*IN&nbsp;PLACE*</tt></dd></dl>
 
@@ -377,7 +393,41 @@ cmp(x,&nbsp;y)&nbsp;-&gt;&nbsp;-1,&nbsp;0,&nbsp;1</tt></dd></dl>
 
 <hr>
 Data and other attributes inherited from <a href="__builtin__.html#list">__builtin__.list</a>:<br>
-<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object at 0x8145c40&gt;<dd><tt>T.<a href="#numbered_file_series-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+<dl><dt><strong>__hash__</strong> = None</dl>
 
-</td></tr></table></td></tr></table>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#numbered_file_series-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-new_file_series"><strong>new_file_series</strong></a>(first_object, nimages<font color="#909090">=0</font>, step<font color="#909090">=1</font>, traceback<font color="#909090">=False</font>)</dt><dd><tt>A&nbsp;generator&nbsp;function&nbsp;that&nbsp;creates&nbsp;a&nbsp;file&nbsp;series&nbsp;starting&nbsp;from&nbsp;a&nbsp;a&nbsp;fabioimage.<br>
+Iterates&nbsp;through&nbsp;all&nbsp;images&nbsp;in&nbsp;a&nbsp;file&nbsp;(if&nbsp;more&nbsp;than&nbsp;1),&nbsp;then&nbsp;proceeds&nbsp;to<br>
+the&nbsp;next&nbsp;file&nbsp;as&nbsp;determined&nbsp;by&nbsp;fabio.next_filename.<br>
+&nbsp;<br>
+first_object:&nbsp;the&nbsp;starting&nbsp;fabioimage,&nbsp;which&nbsp;will&nbsp;be&nbsp;the&nbsp;first&nbsp;one&nbsp;yielded<br>
+&nbsp;&nbsp;in&nbsp;the&nbsp;sequence<br>
+nimages:&nbsp;&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;images&nbsp;to&nbsp;consider<br>
+step:&nbsp;step&nbsp;size,&nbsp;will&nbsp;yield&nbsp;the&nbsp;first&nbsp;and&nbsp;every&nbsp;step'th&nbsp;image&nbsp;until&nbsp;nimages<br>
+&nbsp;&nbsp;is&nbsp;reached.&nbsp;&nbsp;(e.g.&nbsp;nimages&nbsp;=&nbsp;5,&nbsp;step&nbsp;=&nbsp;2&nbsp;will&nbsp;yield&nbsp;3&nbsp;images&nbsp;(0,&nbsp;2,&nbsp;4)&nbsp;<br>
+traceback:&nbsp;if&nbsp;True&nbsp;causes&nbsp;it&nbsp;to&nbsp;print&nbsp;a&nbsp;traceback&nbsp;in&nbsp;the&nbsp;event&nbsp;of&nbsp;an<br>
+&nbsp;&nbsp;exception&nbsp;(missing&nbsp;image,&nbsp;etc.).&nbsp;&nbsp;Otherwise&nbsp;the&nbsp;calling&nbsp;routine&nbsp;can&nbsp;handle<br>
+&nbsp;&nbsp;the&nbsp;exception&nbsp;as&nbsp;it&nbsp;chooses&nbsp;<br>
+yields:&nbsp;the&nbsp;next&nbsp;fabioimage&nbsp;in&nbsp;the&nbsp;series.<br>
+&nbsp;&nbsp;In&nbsp;the&nbsp;event&nbsp;there&nbsp;is&nbsp;an&nbsp;exception,&nbsp;it&nbsp;yields&nbsp;the&nbsp;sys.exec_info&nbsp;for&nbsp;the<br>
+&nbsp;&nbsp;exception&nbsp;instead.&nbsp;&nbsp;sys.exec_info&nbsp;is&nbsp;a&nbsp;tuple:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;exceptionType,&nbsp;exceptionValue,&nbsp;exceptionTraceback&nbsp;)<br>
+&nbsp;&nbsp;from&nbsp;which&nbsp;all&nbsp;the&nbsp;exception&nbsp;information&nbsp;can&nbsp;be&nbsp;obtained.<br>
+&nbsp;&nbsp;Suggested&nbsp;usage:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;obj&nbsp;in&nbsp;<a href="#-new_file_series">new_file_series</a>(&nbsp;...&nbsp;):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;not&nbsp;isinstance(&nbsp;obj,&nbsp;fabio.fabioimage.fabioimage&nbsp;):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;deal&nbsp;with&nbsp;errors&nbsp;like&nbsp;missing&nbsp;images,&nbsp;non&nbsp;readable&nbsp;files,&nbsp;etc<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;e.g.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;traceback.print_exception(obj[0],&nbsp;obj[1],&nbsp;obj[2])</tt></dd></dl>
+ <dl><dt><a name="-new_file_series0"><strong>new_file_series0</strong></a>(first_object, first<font color="#909090">=None</font>, last<font color="#909090">=None</font>, step<font color="#909090">=1</font>)</dt><dd><tt>Created&nbsp;from&nbsp;a&nbsp;fabio&nbsp;image<br>
+first&nbsp;and&nbsp;last&nbsp;are&nbsp;file&nbsp;numbers</tt></dd></dl>
+</td></tr></table>
 </body></html>
