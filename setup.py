@@ -6,7 +6,11 @@ Setup script for python distutils package and fabio
 
 Added Erik Knudsen's mar 345 code
 """
-from setuptools import setup, find_packages
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+    
 from distutils.core import  Extension
 
 
@@ -30,7 +34,8 @@ byteOffset_backend = Extension("byte_offset",
 # See the distutils docs...
 setup(name='fabio',
       version="0.0.6",
-      author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau and Jerome Kieffer",
+      author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau and \
+      Jerome Kieffer",
       author_email="fable-talk@lists.sourceforge.net",
       description='Image IO for fable',
       url="http://fable.wiki.sourceforge.net/fabio",
