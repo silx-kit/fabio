@@ -8,7 +8,7 @@
 #    Copyright (C) 2010 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
-#    Principal authors: Jerome KIEFFER (jerome.kieffer@esrf.fr)
+#    Principal authors: Jérôme KIEFFER (jerome.kieffer@esrf.fr)
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the Lesser GNU General Public License as
@@ -68,6 +68,18 @@ class UtilsTest(object):
     sys.path.insert(1, fabio_home)
     import fabio
     logging.info("Fabio loaded from %s" % fabio.__file__)
+
+
+    @classmethod
+    def forceBuild(cls):
+        """
+        force the recompilation of Fabio
+        """
+        logging.info("Building Fabio to %s" % cls.fabio_home)
+        p = subprocess.Popen([sys.executable, "setup.py", "build"],
+                         shell=False, cwd=os.path.dirname(cls.test_home))
+        logging.info("subprocess ended with rc= %s" % p.wait())
+
 
 
     @classmethod
