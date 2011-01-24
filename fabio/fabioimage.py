@@ -1,10 +1,8 @@
-
-
+#!/usr/bin/env python 
 
 
 ## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
-#!/usr/bin/env python 
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -18,10 +16,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy as N, math, os, sys, cStringIO, gzip, bz2
+import numpy as N, math, os, cStringIO, gzip, bz2
 import Image
 import fabio
-import numpy
+
 
 # i = Image.open('lena.jpg')
 # a = numpy.asarray(i) # a is readonly
