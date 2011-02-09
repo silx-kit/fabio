@@ -15,6 +15,7 @@ import numpy as np, logging
 
 from fabio.fabioimage import fabioimage
 
+
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"     :  np.int8,
                 "UnsignedByte"   :  np.uint8,
@@ -62,13 +63,16 @@ class edfimage(fabioimage):
     def __init__(self, data=None , header=None):
         fabioimage.__init__(self, data, header)
         #Dictionary containing the header-KEY -> header-Key as EDF keys are supposed to be key insensitive 
-        self.dictCapsHeader = {}
-        self.listHeaders = []
-        self.listData = []
+        self.frameCapsHeader = []
+        self.framesHeaders = []
+        self.framesData = []
+        self.framesListHeader = []
+        self.framesDims = []
+        self.framesSize = []
+        self.framesBpp = []
 
 
-
-    def _readHeaders(self, infile):
+    def _readHeader(self, infile):
         """
         Read in a header in some EDF format from an already open file
         
@@ -91,6 +95,20 @@ class edfimage(fabioimage):
                 return
         start = block.find("{") + 1
         end = block.find("}")
+
+        # Now it is essential to go to the start of the binary part
+        if end >= len(block) - 2:
+            block = block + infile.read(BLOCKSIZE)
+        if block[end, end + 3] == "}\r\n":
+            offset = len(block) - end + 3
+        elif block[end, end + 2] == "}\n":
+            offset = len(block) - end + 2
+        else:
+            logging.error("Unable to locate start of the binary section")
+            offset = None
+        if offset is not None:
+            infile.seek(-offset)
+
         return block[start:end]
 
 
@@ -113,10 +131,70 @@ class edfimage(fabioimage):
                 header_keys.append(key)
         missing = []
         for item in MINIMUM_KEYS:
-            if item not in self.dictCapsHeader:
+            if item not in self.frameCapsHeader:
                 missing.append(item)
         if len(missing) > 0:
             logging.warning("EDF file misses the keys: " + " ".join(missing))
+        self.frameCapsHeader.append(dictCapsHeader)
+        self.framesHeaders.append(header)
+        self.framesListHeader.append(header_keys)
+
+        # Compute image size
+        size = None
+        calcsize = 1
+        if "SIZE" in dictCapsHeader:
+            try:
+                size = int(header[dictCapsHeader["SIZE"]])
+            except ValueError:
+                logging.warning("Unable to convert to integer : %s %s " % (dictCapsHeader["SIZE"], header[dictCapsHeader["SIZE"]]))
+        if "DIM_1" in dictCapsHeader:
+            try:
+                dim1 = int(header[dictCapsHeader['DIM_1']])
+            except ValueError:
+                logging.error("Unable to convert to integer Dim_1: %s %s"(dictCapsHeader["DIM_1"], header[dictCapsHeader["DIM_1"]]))
+            else:
+                calcsize *= dim1
+        else:
+            logging.error("No Dim_1 in headers !!!")
+        if "DIM_2" in dictCapsHeader:
+            try:
+                dim2 = int(header[dictCapsHeader['DIM_2']])
+            except ValueError:
+                logging.error("Unable to convert to integer Dim_3: %s %s"(dictCapsHeader["DIM_2"], header[dictCapsHeader["DIM_2"]]))
+            else:
+                calcsize *= dim2
+        else:
+            logging.error("No Dim_2 in headers !!!")
+        if "DIM_3" in dictCapsHeader:
+            try:
+                dim3 = int(header[dictCapsHeader['DIM_3']])
+            except ValueError:
+                logging.error("Unable to convert to integer Dim_3: %s %s"(dictCapsHeader["DIM_3"], header[dictCapsHeader["DIM_3"]]))
+                dim3 = None
+            else:
+                calcsize *= dim3
+        else:
+            logging.debug("No Dim_3 -> it is a 2D image")
+
+        if "DATATYPE" in dictCapsHeader:
+            bytecode = DATA_TYPES[header[dictCapsHeader['DATATYPE']]]
+        else:
+            bytecode = np.uint16
+            logging.warning("Defaulting type to uint16")
+        bpp = len(np.array(0, bytecode).tostring())
+        calcsize *= bpp
+        if (size is None):
+            size = calcsize
+        elif (size != calcsize):
+            if ("COMPRESSION" in dictCapsHeader) and (header[dictCapsHeader['COMPRESSION']].upper().startwith("NO")):
+                logging.error("Mismatch between the expected size %s and the calculated one %s" % (size, calcsize))
+        if dim3 is None:
+            self.framesSize.append((dim1, dim2))
+        else:
+            self.framesSize.append((dim1, dim2, dim3))
+        self.framesBpp.append(bpp)
+        self.framesSize.append(size)
+        return size
 
 
     def read(self, fname):
@@ -129,32 +207,19 @@ class edfimage(fabioimage):
         infile = self._open(fname, "rb")
         bContinue = True
         while bContinue:
-            block = _readHeaders(infile)
+            block = self._readHeader(infile)
             if block is None:
                 bContinue = False
                 break
-            self._parsefile(infile)
-        self._readheader(infile)
-        # Compute image size
-        try:
-            self.dim1 = int(self.header['Dim_1'])
-            self.dim2 = int(self.header['Dim_2'])
-            if "Dim_3" in self.header:
-                self.dim3 = int(self.header['Dim_3'])
-        except:
-            raise Exception("EDF file", str(fname) + \
-                                "is corrupt, cannot read it")
-        try:
-            bytecode = DATA_TYPES[self.header['DataType']]
-        except KeyError:
-            bytecode = np.uint16
-            logging.warning("Defaulting type to uint16")
-        self.bpp = len(np.array(0, bytecode).tostring())
+            size = self._parsefile(infile)
+            datablock = infile.read(size)
+            if len(datablock) != size:
+                logging.warning("Non complete datablock: got %s, expected %s" % (len(datablock), size))
+                bContinue = False
+                break
 
-        # Sorry - this was a safe way to read old ID11 imagepro edfs
-        # assumes corrupted headers are shorter, they could be longer
-        if self.header.has_key('Image') and self.header['Image'] not in ["0", '1']:
-            logging.warning("Could be a multi-image file")
+
+
 
         block = infile.read()
         expected_size = self.dim1 * self.dim2 * self.bpp
@@ -247,13 +312,13 @@ class edfimage(fabioimage):
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if num in xrange(self.nframes):
-            newImage = edfimage(data=self.listData[num],
-                                  header=self.listHeaders[num])
+            newImage = edfimage(data=self.framesData[num],
+                                  header=self.framesHeaders[num])
             newImage.nframes = self.nframes
             newImage.currentframe = num
             newImage.fname = self.fname
-            newImage.listData = self.listHeaders
-            newImage.listHeader = self.listHeaders
+            newImage.framesData = self.framesHeaders
+            newImage.listHeader = self.framesHeaders
         else:
             logging.error("Cannot access frame: %s" % num)
             raise Exception("getframe out of range: %s" % num)
@@ -269,14 +334,6 @@ class edfimage(fabioimage):
         """ returns the next file in the series as a fabioimage """
         newFrameId = self.currentframe + 1
         return self.getframe(newFrameId)
-
-
-    def setListHeader(self, listHeader):
-        self.listHeaders = listHeader
-
-
-    def setListData(self, listData):
-        self.listData = listData
 
 
     def write(self, fname, force_type=None):
