@@ -25,7 +25,7 @@ import fabio
 # a = numpy.asarray(i) # a is readonly
 # i = Image.fromarray(a)
 
-class fabioimage:
+class fabioimage(object):
     """
     A common object for images in fable
     Contains a numpy array (.data) and dict of meta data (.header)

@@ -1,5 +1,3 @@
-# Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
 #!/usr/bin/env python
 """
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -10,13 +8,14 @@ Authors: Henning O. Sorensen & Erik Knudsen
          email:erik.knudsen@risoe.dk
 
         + Jon Wright, ESRF
+        + Jerome Kieffer, ESRF
 """
 
 import numpy as np, logging
 
 from fabio.fabioimage import fabioimage
 
-
+BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"     :  np.int8,
                 "UnsignedByte"   :  np.uint8,
                 "SignedShort"    :  np.int16,
@@ -33,13 +32,13 @@ DATA_TYPES = {  "SignedByte"     :  np.int8,
                 "DoubleValue"    :  np.float64
                 }
 
-MINIMUM_KEYS = ['HeaderID',
-                'Image',
-                'ByteOrder',
-                'DataType',
-                'Dim_1',
-                'Dim_2',
-                'Size'] # Size is thought to be essential for writing at least
+MINIMUM_KEYS = ['HEADERID',
+                'IMAGE',
+                'BYTEORDER',
+                'DATATYPE',
+                'DIM_1',
+                'DIM_2',
+                'SIZE'] # Size is thought to be essential for writing at least
 
 DEFAULT_VALUES = {"HeaderID":  "EH:000001:000000:000000",
                   "Image":   "1",
@@ -47,44 +46,78 @@ DEFAULT_VALUES = {"HeaderID":  "EH:000001:000000:000000",
                   "DataType": "FLOAT"
                   }
 
-
+STATIC_HEADER_ELEMENTS = ("HeaderID", "Image", "ByteOrder", "DataType",
+                        "Dim_1", "Dim_2", "Dim_3",
+                        "Offset_1", "Offset_2", "Offset_3",
+                        "Size")
+STATIC_HEADER_ELEMENTS_CAPS = ("HEADERID", "IMAGE", "BYTEORDER", "DATATYPE",
+                             "DIM_1", "DIM_2", "DIM_3",
+                             "OFFSET_1", "OFFSET_2", "OFFSET_3",
+                             "SIZE")
 
 
 class edfimage(fabioimage):
     """ Read and try to write the ESRF edf data format """
 
+    def __init__(self, data=None , header=None):
+        fabioimage.__init__(self, data, header)
+        #Dictionary containing the header-KEY -> header-Key as EDF keys are supposed to be key insensitive 
+        self.dictCapsHeader = {}
+        self.listHeaders = []
+        self.listData = []
 
-    def _readheader(self, infile):
+
+
+    def _readHeaders(self, infile):
         """
         Read in a header in some EDF format from an already open file
-
-        TODO : test for minimal attributes?
+        
+        @param infile: file object open in read mode
+        @return: string (or None if no header was found. 
         """
-        BLOCKSIZE = 512
+
         block = infile.read(BLOCKSIZE)
+        if len(block) < BLOCKSIZE:
+            return
         if block[:4].find("{") < 0 :
             # This does not look like an edf file
             logging.warning("no opening {. Corrupt header of EDF file " + \
                             str(infile.name))
-
+            return
         while '}' not in block:
             block = block + infile.read(BLOCKSIZE)
             if len(block) > BLOCKSIZE * 20:
-                raise Exception("Runaway header in EDF file")
-        start , end = block.find("{") + 1, block.find("}")
-        for line in block[start:end].split(';'):
+                logging.warning("Runaway header in EDF file")
+                return
+        start = block.find("{") + 1
+        end = block.find("}")
+        return block[start:end]
+
+
+    def _parseheader(self, block):
+        """
+        Parse the header in some EDF format from an already open file
+
+        @param block: string representing the header block
+        @type block: string, should be full ascii
+        @return: size of the binary blob
+        """
+        header = {}
+        dictCapsHeader = {}
+        header_keys = []
+        for line in block.split(';'):
             if '=' in line:
                 key, val = line.split('=' , 1)
-                # Users cannot type in significant whitespace
-                key = key.rstrip().lstrip()
-                self.header_keys.append(key)
-                self.header[key] = val.lstrip().rstrip()
+                header[key.strip()] = val.strip()
+                dictCapsHeader[key.upper()] = key
+                header_keys.append(key)
         missing = []
         for item in MINIMUM_KEYS:
-            if item not in self.header_keys:
+            if item not in self.dictCapsHeader:
                 missing.append(item)
         if len(missing) > 0:
-            logging.debug("EDF file misses the keys " + " ".join(missing))
+            logging.warning("EDF file misses the keys: " + " ".join(missing))
+
 
     def read(self, fname):
         """
@@ -94,11 +127,20 @@ class edfimage(fabioimage):
         self.header = {}
         self.resetvals()
         infile = self._open(fname, "rb")
+        bContinue = True
+        while bContinue:
+            block = _readHeaders(infile)
+            if block is None:
+                bContinue = False
+                break
+            self._parsefile(infile)
         self._readheader(infile)
         # Compute image size
         try:
             self.dim1 = int(self.header['Dim_1'])
             self.dim2 = int(self.header['Dim_2'])
+            if "Dim_3" in self.header:
+                self.dim3 = int(self.header['Dim_3'])
         except:
             raise Exception("EDF file", str(fname) + \
                                 "is corrupt, cannot read it")
@@ -176,6 +218,7 @@ class edfimage(fabioimage):
         self.pilimage = None
         return self
 
+
     def swap_needed(self):
         """
         Decide if we need to byteswap
@@ -191,7 +234,6 @@ class edfimage(fabioimage):
                 return False
 
 
-
     def _fixheader(self):
         """ put some rubbish in to allow writing"""
         self.header['Dim_2'], self.header['Dim_1'] = self.data.shape
@@ -200,6 +242,41 @@ class edfimage(fabioimage):
         for k in MINIMUM_KEYS:
             if k not in self.header:
                 self.header[k] = DEFAULT_VALUES[k]
+
+
+    def getframe(self, num):
+        """ returns the file numbered 'num' in the series as a fabioimage """
+        if num in xrange(self.nframes):
+            newImage = edfimage(data=self.listData[num],
+                                  header=self.listHeaders[num])
+            newImage.nframes = self.nframes
+            newImage.currentframe = num
+            newImage.fname = self.fname
+            newImage.listData = self.listHeaders
+            newImage.listHeader = self.listHeaders
+        else:
+            logging.error("Cannot access frame: %s" % num)
+            raise Exception("getframe out of range: %s" % num)
+
+
+    def previous(self):
+        """ returns the previous file in the series as a fabioimage """
+        newFrameId = self.currentframe - 1
+        return self.getframe(newFrameId)
+
+
+    def next(self):
+        """ returns the next file in the series as a fabioimage """
+        newFrameId = self.currentframe + 1
+        return self.getframe(newFrameId)
+
+
+    def setListHeader(self, listHeader):
+        self.listHeaders = listHeader
+
+
+    def setListData(self, listData):
+        self.listData = listData
 
 
     def write(self, fname, force_type=None):

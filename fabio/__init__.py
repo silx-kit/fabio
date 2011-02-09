@@ -1,7 +1,7 @@
 
 import re, os # -> move elsewhere?
 
-version = "0.0.6"
+version = "0.0.7"
 
 def construct_filename(*args, **kwds):
     raise Exception("You probably want fabio.jump_filename")
