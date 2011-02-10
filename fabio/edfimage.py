@@ -367,6 +367,7 @@ class edfimage(fabioimage):
         else:
                 rawData = self.framesRawData[self.currentframe]
         dims = self.framesDims[self.currentframe]
+        dims.reverse()
         logging.debug(self.filename)
         logging.debug(str(self.header))
         logging.debug(str(self.dictCapsHeader))

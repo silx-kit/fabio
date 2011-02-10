@@ -125,7 +125,7 @@ class testedfs(unittest.TestCase):
     """
     def setUp(self):
         UtilsTest.getimage("F2K_Seb_Lyso0675.edf.bz2")
-
+        UtilsTest.getimage("id13_badPadding.edf.bz2")
 
     def test_read(self):
         """ check we can read these images"""
