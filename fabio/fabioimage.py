@@ -299,8 +299,7 @@ class fabioimage(object):
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
             return fname
-        if type(fname) in [type(" "), type(u" ")]:
-            # filename is a string
+        if isinstance(fname, (str, unicode)):
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
                 return self._compressed_stream(fname,

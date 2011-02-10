@@ -83,6 +83,9 @@ class testflatedfs(unittest.TestCase):
         self.assertEqual(obj.getmin() , 0)
         self.assertEqual(obj.getmax() , 20)
 
+
+
+
 class testbzipedf(testflatedfs):
     """ same for bzipped versions """
     def setUp(self):
@@ -112,8 +115,8 @@ class testgzipedf(testflatedfs):
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """F2K_Seb_Lyso0675.edf 2048 2048 982 17467 1504.3 217.61
 F2K_Seb_Lyso0675.edf.bz2 2048 2048 982 17467 1504.3 217.61
-F2K_Seb_Lyso0675.edf.gz 2048 2048 982 17467 1504.3 217.61"""
-
+F2K_Seb_Lyso0675.edf.gz 2048 2048 982 17467 1504.3 217.61
+id13_badPadding.edf 512 512 85.0 61947.0 275.62 583.37 """
 
 class testedfs(unittest.TestCase):
     """
@@ -137,13 +140,12 @@ class testedfs(unittest.TestCase):
             except:
                 print "Cannot read image", name
                 raise
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
-
-            self.assertAlmostEqual(mean, obj.getmean(), 1, "getmean")
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertAlmostEqual(mini, obj.getmin(), 2, "testedfs: %s getmin()" % name)
+            self.assertAlmostEqual(maxi, obj.getmax(), 2, "testedfs: %s getmax" % name)
+            self.assertAlmostEqual(mean, obj.getmean(), 1, "testedfs: %s getmean" % name)
+            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name)
+            self.assertEqual(dim1, obj.dim1, "testedfs: %s dim1" % name)
+            self.assertEqual(dim2, obj.dim2, "testedfs: %s dim2" % name)
 
 def test_suite_all_edf():
     testSuite = unittest.TestSuite()
