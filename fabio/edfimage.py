@@ -12,26 +12,38 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 import numpy as np, logging
-
+import gz, compress
 from fabio.fabioimage import fabioimage
 
 
 BLOCKSIZE = 512
-DATA_TYPES = {  "SignedByte"     :  np.int8,
-                "UnsignedByte"   :  np.uint8,
-                "SignedShort"    :  np.int16,
-                "UnsignedShort"  :  np.uint16,
+DATA_TYPES = {  "SignedByte"    :  np.int8,
+                "Signed8"       :  np.int8,
+                "UnsignedByte"  :  np.uint8,
+                "Unsigned8"     :  np.uint8,
+                "SignedShort"   :  np.int16,
+                "Signed16"      :  np.int16,
+                "UnsignedShort" :  np.uint16,
+                "Unsigned16"    :  np.uint16,
                 "UnsignedShortInteger" : np.uint16,
-                "SignedInteger"  :  np.int32,
+                "SignedInteger" :  np.int32,
+                "Signed32"      :  np.int32,
                 "UnsignedInteger":  np.uint32,
-                "SignedLong"     :  np.int32,
-                "UnsignedLong"   :  np.uint32,
-                "FloatValue"     :  np.float32,
-                "FLOATVALUE"     :  np.float32,
-                "FLOAT"          :  np.float32, # fit2d
-                "Float"          :  np.float32, # fit2d
-                "DoubleValue"    :  np.float64
+                "Unsigned32"    :  np.uint32,
+                "SignedLong"    :  np.int32,
+                "UnsignedLong"  :  np.uint32,
+                "Signed64"      :  np.int64,
+                "Unsigned64"    :  np.uint64,
+                "FloatValue"    :  np.float32,
+                "FLOATVALUE"    :  np.float32,
+                "FLOAT"         :  np.float32, # fit2d
+                "Float"         :  np.float32, # fit2d
+                "FloatIEEE32"   :  np.float32,
+                "DoubleValue"   :  np.float64,
+                "FloatIEEE32"   :  np.float64
                 }
+
+COMPRESSION_SCHEME = ("None", "ZCompression", "GZCompression")
 
 MINIMUM_KEYS = ['HEADERID',
                 'IMAGE',
@@ -65,7 +77,7 @@ class edfimage(fabioimage):
         #Dictionary containing the header-KEY -> header-Key as EDF keys are supposed to be key insensitive 
         self.frameCapsHeader = []
         self.framesHeaders = []
-        self.framesData = []
+        self.framesRawData = []
         self.framesListHeader = []
         self.framesDims = []
         self.framesSize = []
@@ -142,6 +154,7 @@ class edfimage(fabioimage):
         # Compute image size
         size = None
         calcsize = 1
+        listDims = []
         if "SIZE" in dictCapsHeader:
             try:
                 size = int(header[dictCapsHeader["SIZE"]])
@@ -154,6 +167,7 @@ class edfimage(fabioimage):
                 logging.error("Unable to convert to integer Dim_1: %s %s"(dictCapsHeader["DIM_1"], header[dictCapsHeader["DIM_1"]]))
             else:
                 calcsize *= dim1
+                listDims.append(dim1)
         else:
             logging.error("No Dim_1 in headers !!!")
         if "DIM_2" in dictCapsHeader:
@@ -163,18 +177,27 @@ class edfimage(fabioimage):
                 logging.error("Unable to convert to integer Dim_3: %s %s"(dictCapsHeader["DIM_2"], header[dictCapsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
+                listDims.append(dim2)
         else:
             logging.error("No Dim_2 in headers !!!")
-        if "DIM_3" in dictCapsHeader:
-            try:
-                dim3 = int(header[dictCapsHeader['DIM_3']])
-            except ValueError:
-                logging.error("Unable to convert to integer Dim_3: %s %s"(dictCapsHeader["DIM_3"], header[dictCapsHeader["DIM_3"]]))
-                dim3 = None
+        iDim = 3
+        while iDim is not None:
+            strDim = "DIM_%i" % iDim
+            if strDim in dictCapsHeader:
+                try:
+                    dim3 = int(header[dictCapsHeader[strDim]])
+                except ValueError:
+                    logging.error("Unable to convert to integer %s: %s %s"
+                                  % (strDim, dictCapsHeader[strDim], header[dictCapsHeader[strDim]]))
+                    dim3 = None
+                    iDim = None
+                else:
+                    calcsize *= dim3
+                    listDims.append(dim3)
+                    iDim += 1
             else:
-                calcsize *= dim3
-        else:
-            logging.debug("No Dim_3 -> it is a 2D image")
+                logging.debug("No Dim_3 -> it is a 2D image")
+                iDim = None
 
         if "DATATYPE" in dictCapsHeader:
             bytecode = DATA_TYPES[header[dictCapsHeader['DATATYPE']]]
@@ -217,49 +240,52 @@ class edfimage(fabioimage):
                 logging.warning("Non complete datablock: got %s, expected %s" % (len(datablock), size))
                 bContinue = False
                 break
+            self.framesRawData.append(datablock)
+#            On the fly image decompression
+            self.framesData.append(None)
 
 
 
-
-        block = infile.read()
-        expected_size = self.dim1 * self.dim2 * self.bpp
-
-        if len(block) != expected_size:
-            # The binary which has been read in does not match the size 
-            # expected. Two cases are known:
-            ####    1 extra byte (\0) at the end of the header (ImagePro)
-            ####    Padding to 512 bytes, image is at the beginning 
-            # These overlap in the case of an image of, eg:
-            #       1024x1024-1 == 825x1271
-            # To distinguish, we look for a header key:
-            padded = False
-            nbytesread = len(block)
-            if self.header.has_key("EDF_BinarySize"):
-                if int(self.header["EDF_BinarySize"]) == nbytesread:
-                    padded = True
-            if self.header.has_key("Size"):
-                if int(self.header["Size"]) == nbytesread:
-                    padded = True
-            if padded:
-                block = block[:expected_size]
-                if self.header.has_key("EDF_BlockBoundary"):
-                    chunksize = int(self.header["EDF_BlockBoundary"])
-                else:
-                    chunksize = 512
-                if nbytesread % chunksize != 0:
-                    # Unexpected padding
-                    logging.warning("EDF file is strangely padded, size " +
-                            str(nbytesread) + " is not multiple of " +
-                            str(chunksize) + ", please verify your image")
-            else: # perhaps not padded                
-                # probably header overspill (\0)
-                logging.warning("Read too many bytes, got " + str(len(block)) + \
-                                " want " + str(expected_size))
-                block = block[-expected_size:]
-        if len(block) < expected_size:
-            # FIXME
-            logging.warning("Padded")
-        infile.close()
+#
+#        block = infile.read()
+#        expected_size = self.dim1 * self.dim2 * self.bpp
+#
+#        if len(block) != expected_size:
+#            # The binary which has been read in does not match the size 
+#            # expected. Two cases are known:
+#            ####    1 extra byte (\0) at the end of the header (ImagePro)
+#            ####    Padding to 512 bytes, image is at the beginning 
+#            # These overlap in the case of an image of, eg:
+#            #       1024x1024-1 == 825x1271
+#            # To distinguish, we look for a header key:
+#            padded = False
+#            nbytesread = len(block)
+#            if self.header.has_key("EDF_BinarySize"):
+#                if int(self.header["EDF_BinarySize"]) == nbytesread:
+#                    padded = True
+#            if self.header.has_key("Size"):
+#                if int(self.header["Size"]) == nbytesread:
+#                    padded = True
+#            if padded:
+#                block = block[:expected_size]
+#                if self.header.has_key("EDF_BlockBoundary"):
+#                    chunksize = int(self.header["EDF_BlockBoundary"])
+#                else:
+#                    chunksize = 512
+#                if nbytesread % chunksize != 0:
+#                    # Unexpected padding
+#                    logging.warning("EDF file is strangely padded, size " +
+#                            str(nbytesread) + " is not multiple of " +
+#                            str(chunksize) + ", please verify your image")
+#            else: # perhaps not padded                
+#                # probably header overspill (\0)
+#                logging.warning("Read too many bytes, got " + str(len(block)) + \
+#                                " want " + str(expected_size))
+#                block = block[-expected_size:]
+#        if len(block) < expected_size:
+#            # FIXME
+#            logging.warning("Padded")
+#        infile.close()
 
         #now read the data into the array
         try:
@@ -308,16 +334,47 @@ class edfimage(fabioimage):
             if k not in self.header:
                 self.header[k] = DEFAULT_VALUES[k]
 
+    @staticmethod
+    def unpack(rawData, dims, type=np.uint16, compression=None):
+        """
+        Unpack a binary blob according to the spec given in the header
+        @param rawData: string but in fact a binary blob
+        @type rawData: string
+        @param dims: list (tuple) of dimention of the "image"
+        @type dims: 2- or 3-tuple of integers
+        @param headers: all other headers
+        @type headers: dictionary
+        @return: dataset as numpy.ndarray
+        """
+        if compression is not None:
+            rawData = zlib
+        data = np.reshape(
+                np.fromstring(block, bytecode),
+                [self.dim2, self.dim1])
 
+        return data
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if num in xrange(self.nframes):
-            newImage = edfimage(data=self.framesData[num],
-                                  header=self.framesHeaders[num])
+            rawData = self.framesRawData[num]
+            header = self.framesHeaders[num]
+            dictCaps = self.frameCapsHeader[num]
+            if data is None:
+                if "COMPRESSION" in dictCaps:
+                    compression = header[dictCaps["COMPRESSION"]]
+                else:
+                    compression = None
+                dtype =
+                byteorder =
+                data = edfimage.unpack(rawData, self.framesDims[num], compression=compression)
+                self.framesData[num] = data
+            newImage = edfimage(data=data,
+                                  header=header)
             newImage.nframes = self.nframes
             newImage.currentframe = num
             newImage.fname = self.fname
-            newImage.framesData = self.framesHeaders
+            newImage.framesRawData = self.framesRawData
+            newImage.framesData = self.framesData
             newImage.listHeader = self.framesHeaders
         else:
             logging.error("Cannot access frame: %s" % num)
