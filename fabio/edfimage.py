@@ -1,5 +1,9 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 """
+
+License: GPLv2+
+
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
          Risoe National Laboratory
@@ -8,7 +12,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
          email:erik.knudsen@risoe.dk
 
         + Jon Wright, ESRF
-        + Jerome Kieffer, ESRF
+        
+2011-02-11: Mostly rewritten by Jérôme Kieffer (Jerome.Kieffer@esrf.eu) 
+            European Synchrotron Radiation Facility
+            Grenoble (France)
+
 """
 
 import numpy as np, logging
@@ -39,11 +47,23 @@ DATA_TYPES = {  "SignedByte"    :  np.int8,
                 "FLOAT"         :  np.float32, # fit2d
                 "Float"         :  np.float32, # fit2d
                 "FloatIEEE32"   :  np.float32,
+                "Float32"       :  np.float32,
                 "DoubleValue"   :  np.float64,
-                "FloatIEEE32"   :  np.float64
+                "FloatIEEE64"   :  np.float64,
+                "DoubleIEEE64"  :  np.float64
                 }
 
-COMPRESSION_SCHEME = ("None", "ZCompression", "GZCompression")
+NUMPY_EDF_DTYPE = {"int8"       :"Signed8",
+                   "int16"      :"Signed16",
+                   "int32"      :"Signed32",
+                   "int64"      :"Signed64",
+                   "uint8"      :"Unsigned8",
+                   "uint16"     :"Unsigned16",
+                   "uint32"     :"Unsigned32",
+                   "uint64"     :"Unsigned64",
+                   "float32"    :"FloatIEEE32",
+                   "float64"    :"DoubleIEEE64"
+             }
 
 MINIMUM_KEYS = ['HEADERID',
                 'IMAGE',
@@ -53,20 +73,6 @@ MINIMUM_KEYS = ['HEADERID',
                 'DIM_2',
                 'SIZE'] # Size is thought to be essential for writing at least
 
-DEFAULT_VALUES = {"HeaderID":  "EH:000001:000000:000000",
-                  "Image":   "1",
-                  "ByteOrder":  "LowByteFirst", # FIXME?
-                  "DataType": "FLOAT"
-                  }
-
-STATIC_HEADER_ELEMENTS = ("HeaderID", "Image", "ByteOrder", "DataType",
-                        "Dim_1", "Dim_2", "Dim_3",
-                        "Offset_1", "Offset_2", "Offset_3",
-                        "Size")
-STATIC_HEADER_ELEMENTS_CAPS = ("HEADERID", "IMAGE", "BYTEORDER", "DATATYPE",
-                             "DIM_1", "DIM_2", "DIM_3",
-                             "OFFSET_1", "OFFSET_2", "OFFSET_3",
-                             "SIZE")
 
 
 class edfimage(fabioimage):
@@ -85,8 +91,8 @@ class edfimage(fabioimage):
         self.framesSize = []
         self.framesBpp = []
 
-
-    def _readHeaderBlock(self, infile):
+    @staticmethod
+    def _readHeaderBlock(infile):
         """
         Read in a header in some EDF format from an already open file
         
@@ -158,7 +164,7 @@ class edfimage(fabioimage):
             try:
                 dim1 = int(header[dictCapsHeader['DIM_1']])
             except ValueError:
-                logging.error("Unable to convert to integer Dim_1: %s %s"(dictCapsHeader["DIM_1"], header[dictCapsHeader["DIM_1"]]))
+                logging.error("Unable to convert to integer Dim_1: %s %s" % (dictCapsHeader["DIM_1"], header[dictCapsHeader["DIM_1"]]))
             else:
                 calcsize *= dim1
                 listDims.append(dim1)
@@ -168,7 +174,7 @@ class edfimage(fabioimage):
             try:
                 dim2 = int(header[dictCapsHeader['DIM_2']])
             except ValueError:
-                logging.error("Unable to convert to integer Dim_3: %s %s"(dictCapsHeader["DIM_2"], header[dictCapsHeader["DIM_2"]]))
+                logging.error("Unable to convert to integer Dim_3: %s %s" % (dictCapsHeader["DIM_2"], header[dictCapsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
                 listDims.append(dim2)
@@ -295,15 +301,6 @@ class edfimage(fabioimage):
                 return False
 
 
-    def _fixheader(self):
-        """ put some rubbish in to allow writing"""
-        self.header['Dim_2'], self.header['Dim_1'] = self.data.shape
-        self.bpp = len(self.data[0, 0].tostring())
-        self.header['Size'] = len(self.data.tostring())
-        for k in MINIMUM_KEYS:
-            if k not in self.header:
-                self.header[k] = DEFAULT_VALUES[k]
-
     def unpack(self):
         """
         Unpack a binary blob according to the specification given in the header
@@ -353,15 +350,15 @@ class edfimage(fabioimage):
                 logging.warning("Unknown compression scheme %s" % compression)
                 rawData = self.framesRawData[self.currentframe]
         else:
-                rawData = self.framesRawData[self.currentframe]
+            rawData = self.framesRawData[self.currentframe]
 
         expected = bpp * size
         obtained = len(rawData)
         if expected > obtained:
-            logging.error("Compressed data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
+            logging.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
             rawData += "\x00" * (expected - obtained)
         elif expected < len(rawData):
-            logging.warning("Compressed data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+            logging.warning("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
             rawData = rawData[:expected]
         if self.swap_needed():
             data = np.fromstring(rawData, bytecode).byteswap().reshape(tuple(dims))
@@ -431,64 +428,77 @@ class edfimage(fabioimage):
         @return: None
         
         """
-        self._fixheader()
-        # Fabian was forcing uint16 - make this a default
-        if force_type is not None:
-            data = self.data.astype(force_type)
-        else:
-            data = self.data
-        # Update header values to match the function local data object
-        bpp = len(data[0, 0].tostring())
-        if bpp not in [1, 2, 4]:
-            logging.info("edfimage.write do you really want" + str(bpp) + \
-                             "bytes per pixel??")
-        bytecode = data.dtype.type
-        for name , code in DATA_TYPES.items():
-            if code == bytecode:
-                self.header['DataType'] = name
-                break
-        dim2, dim1 = data.shape
-        self.header['Dim_1'] = dim1
-        self.header['Dim_2'] = dim2
-        self.header['Size'] = dim1 * dim2 * bpp
-        # checks for consistency:
-        if bpp != self.bpp :
-            logging.debug("Array upcasted? now " + str(bpp) + " was " + str(self.bpp))
-        if dim1 != self.dim1 or dim2 != self.dim2 :
-            logging.debug("corrupted image dimensions")
+        frame = 0
         outfile = self._open(fname, mode="wb")
-        outfile.write('{\n') # Header start
-        i = 4          # 2 so far, 2 to come at the end
-        for k in self.header_keys:
-            # We remove the extra whitespace on the key names to
-            # avoiding making headers greater then 4 kb unless they already
-            # were too big
-            out = (("%-14s = %s ;\n") % (k, self.header[k]))
-            i = i + len(out)
-            outfile.write(out)
-        # if additional items in the header just write them out in the
-        # order they happen to be in
-        for key, val in self.header.iteritems():
-            if key in self.header_keys:
-                continue
-            out = (("%s = %s;\n") % (key, val))
-            i = i + len(out)
-            outfile.write(out)
-        if i < 4096:
-            out = (4096 - i) * ' '
-        else:
-            out = (1024 - i % 1024) * ' '  # Should make a total
-            logging.warning("EDF Header is greater than 4096 bytes")
-        outfile.write(out)
-        i = i + len(out)
-        assert i % 1024 == 0
-        outfile.write('}\n')
-        # print "Byteswapping?",
-        if self.swap_needed():
-            # print "did a swap"
-            # data has "astype" from start of this function
-            outfile.write(data.byteswap().tostring())
-        else:
-            # print "did not"
+        for header, header_keys, data, capsHeader in zip(self.framesHeaders, self.framesListHeader, self.framesData, self.framesCapsHeader):
+            if data is None:
+                data = self.getframe(frame).data
+            frame += 1
+            if force_type is not None:
+                data = data.astype(force_type)
+            listHeader = ["{\n"]
+#        First of all clean up the headers:
+            for i in capsHeader:
+                if "DIM_" in i:
+                    header.pop(capsHeader[i])
+                    header_keys.remove(capsHeader[i])
+            for KEY in ["SIZE", "EDF_DATABLOCKID", "EDF_BINARYSIZE", "EDF_HEADERSIZE", "BYTEORDER", "DATATYPE", "HEADERID", "IMAGE"]:
+                if KEY in capsHeader:
+                    header.pop(capsHeader[KEY])
+                    header_keys.remove(capsHeader[KEY])
+#            Then update static headers freshly deleted
+            header_keys.insert(0, "Size")
+            header["Size"] = len(data.tostring())
+            header_keys.insert(0, "HeaderID")
+            header["HeaderID"] = "EH:%06d:000000:000000" % frame
+            header_keys.insert(0, "Image")
+            header["Image"] = str(frame)
+
+            dims = list(data.shape)
+            nbdim = len(dims)
+            for i in dims:
+                key = "Dim_%i" % nbdim
+                header[key] = i
+                header_keys.insert(0, key)
+                nbdim -= 1
+            header_keys.insert(0, "DataType")
+            header["DataType"] = NUMPY_EDF_DTYPE[str(np.dtype(data.dtype))]
+            header_keys.insert(0, "ByteOrder")
+            if np.little_endian:
+                header["ByteOrder"] = "LowByteFirst"
+            else:
+                header["ByteOrder"] = "HighByteFirst"
+            approxHeaderSize = 100
+            for key in header:
+                approxHeaderSize += 7 + len(key) + len(str(header[key]))
+            approxHeaderSize = BLOCKSIZE * (approxHeaderSize // BLOCKSIZE + 1)
+            header_keys.insert(0, "EDF_HeaderSize")
+            header["EDF_HeaderSize"] = str(BLOCKSIZE * (approxHeaderSize // BLOCKSIZE + 1))
+            header_keys.insert(0, "EDF_BinarySize")
+            header["EDF_BinarySize"] = len(data.tostring())
+            header_keys.insert(0, "EDF_DataBlockID")
+            header["EDF_DataBlockID"] = "%i.Image.Psd" % frame
+            preciseSize = 4 #2 before {\n 2 after }\n
+            for key in header_keys:
+                line = "%s = %s ;\n" % (key, header[key])
+                preciseSize += len(line)
+                listHeader.append(line)
+            if preciseSize > approxHeaderSize:
+                logging.error("I expected the header block only at %s in fact it is %s" % (approxHeaderSize, preciseSize))
+                for  idx, line in enumerate(listHeader[:]):
+                    if line.startswith("EDF_HeaderSize"):
+                        headerSize = BLOCKSIZE * (preciseSize // BLOCKSIZE + 1)
+                        newline = "EDF_HeaderSize = %s ;\n" % headerSize
+                        delta = len(newline) - len(line)
+                        if (preciseSize // BLOCKSIZE) != ((preciseSize + delta) // BLOCKSIZE):
+                            headerSize = BLOCKSIZE * ((preciseSize + delta) // BLOCKSIZE + 1)
+                            newline = "EDF_HeaderSize = %s ;\n" % headerSize
+                        preciseSize = preciseSize + delta
+                        listHeader[idx] = newline
+                        break
+            else:
+                headerSize = approxHeaderSize
+            listHeader.append(" "*(headerSize - preciseSize) + "}\n")
+            outfile.writelines(listHeader)
             outfile.write(data.tostring())
         outfile.close()
