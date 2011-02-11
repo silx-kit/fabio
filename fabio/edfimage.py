@@ -13,7 +13,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 import numpy as np, logging
 from fabio.fabioimage import fabioimage
-import gzip, bz2, zlib, os
+import gzip, bz2, zlib, os, StringIO
 
 
 BLOCKSIZE = 512
@@ -258,6 +258,15 @@ class edfimage(fabioimage):
             the data   into self.data
         """
         self.header = {}
+        self.dictCapsHeader = {}
+        self.framesCapsHeader = []
+        self.framesHeaders = []
+        self.framesRawData = []
+        self.framesData = []
+        self.framesListHeader = []
+        self.framesDims = []
+        self.framesSize = []
+        self.framesBpp = []
         self.resetvals()
         self.filename = fname
         infile = self._open(fname, "rb")
@@ -270,66 +279,6 @@ class edfimage(fabioimage):
         # ensure the PIL image is reset
         self.pilimage = None
         return self
-
-#
-#        block = infile.read()
-#        expected_size = self.dim1 * self.dim2 * self.bpp
-#
-#        if len(block) != expected_size:
-#            # The binary which has been read in does not match the size 
-#            # expected. Two cases are known:
-#            ####    1 extra byte (\0) at the end of the header (ImagePro)
-#            ####    Padding to 512 bytes, image is at the beginning 
-#            # These overlap in the case of an image of, eg:
-#            #       1024x1024-1 == 825x1271
-#            # To distinguish, we look for a header key:
-#            padded = False
-#            nbytesread = len(block)
-#            if self.header.has_key("EDF_BinarySize"):
-#                if int(self.header["EDF_BinarySize"]) == nbytesread:
-#                    padded = True
-#            if self.header.has_key("Size"):
-#                if int(self.header["Size"]) == nbytesread:
-#                    padded = True
-#            if padded:
-#                block = block[:expected_size]
-#                if self.header.has_key("EDF_BlockBoundary"):
-#                    chunksize = int(self.header["EDF_BlockBoundary"])
-#                else:
-#                    chunksize = 512
-#                if nbytesread % chunksize != 0:
-#                    # Unexpected padding
-#                    logging.warning("EDF file is strangely padded, size " +
-#                            str(nbytesread) + " is not multiple of " +
-#                            str(chunksize) + ", please verify your image")
-#            else: # perhaps not padded                
-#                # probably header overspill (\0)
-#                logging.warning("Read too many bytes, got " + str(len(block)) + \
-#                                " want " + str(expected_size))
-#                block = block[-expected_size:]
-#        if len(block) < expected_size:
-#            # FIXME
-#            logging.warning("Padded")
-#        infile.close()
-
-        #now read the data into the array
-#        try:
-#            self.data = np.reshape(
-#                np.fromstring(block, bytecode),
-#                [self.dim2, self.dim1])
-#        except:
-#            print len(block), bytecode, self.bpp, self.dim2, self.dim1
-#            raise IOError, \
-#              'Size spec in edf-header does not match size of image data field'
-#        self.bytecode = self.data.dtype.type
-#        swap = self.swap_needed()
-#        if swap:
-#            self.data = self.data.byteswap()
-#            # Remove verbose arg - use logging and levels
-#            logging.info('Byteswapped from ' + self.header['ByteOrder'])
-#        else:
-#            logging.info('using ' + self.header['ByteOrder'])
-
 
     def swap_needed(self):
         """
@@ -361,24 +310,59 @@ class edfimage(fabioimage):
 
         @return: dataset as numpy.ndarray
         """
-        if ("COMPRESSION" in self.dictCapsHeader) and \
-           (self.header[self.dictCapsHeader["COMPRESSION"]].upper() != "NONE"):
-                rawData = zlib.decompress(self.framesRawData[self.currentframe])
-        else:
-                rawData = self.framesRawData[self.currentframe]
-        dims = self.framesDims[self.currentframe]
-        dims.reverse()
-        logging.debug(self.filename)
-        logging.debug(str(self.header))
-        logging.debug(str(self.dictCapsHeader))
-        logging.debug(str(self.framesDims))
 
         if "DATATYPE" in self.dictCapsHeader:
             bytecode = DATA_TYPES[self.header[self.dictCapsHeader["DATATYPE"]]]
         else:
             bytecode = np.uint16
+        dims = self.framesDims[self.currentframe]
+        dims.reverse()
+        size = 1
+        for i in dims:
+            size *= i
+        bpp = len(np.array(0, dtype=bytecode).tostring())
 
+        if ("COMPRESSION" in self.dictCapsHeader):
+            compression = self.header[self.dictCapsHeader["COMPRESSION"]].upper()
+            if "OFFSET" in compression :
+                try:
+                    import byte_offset
+                except ImportError:
+                    logging.error("Unimplemented compression scheme:  %s" % compression)
+                else:
+                    myData = byte_offset.analyseCython(self.framesRawData[self.currentframe], size=size)
+                    rawData = myData.astype(bytecode).tostring()
+            elif compression == "NONE":
+                rawData = self.framesRawData[self.currentframe]
+            elif "GZIP" in compression:
+                fileobj = StringIO.StringIO(self.framesRawData[self.currentframe])
+                try:
+                    rawData = gzip.GzipFile(fileobj=fileobj).read()
+                except IOError:
+                    logging.warning("Encounter the python-gzip bug with trailing garbage")
+                    #This is as an ugly hack against a bug in Python gzip
+                    import subprocess
+                    sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                    rawData, err = sub.communicate(input=self.framesRawData[self.currentframe])
+                    logging.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
+            elif "BZ" in compression :
+                rawData = bz2.decompress(self.framesRawData[self.currentframe])
+            elif "Z" in compression :
+                rawData = zlib.decompress(self.framesRawData[self.currentframe])
+            else:
+                logging.warning("Unknown compression scheme %s" % compression)
+                rawData = self.framesRawData[self.currentframe]
+        else:
+                rawData = self.framesRawData[self.currentframe]
 
+        expected = bpp * size
+        obtained = len(rawData)
+        if expected > obtained:
+            logging.error("Compressed data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
+            rawData += "\x00" * (expected - obtained)
+        elif expected < len(rawData):
+            logging.warning("Compressed data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+            rawData = rawData[:expected]
         if self.swap_needed():
             data = np.fromstring(rawData, bytecode).byteswap().reshape(tuple(dims))
         else:
@@ -393,7 +377,7 @@ class edfimage(fabioimage):
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if num in xrange(self.nframes):
-            rawData = self.framesRawData[num]
+#            rawData = self.framesRawData[num]
             header = self.framesHeaders[num]
             dictCaps = self.framesCapsHeader[num]
             newImage = edfimage(data=self.framesData[num], header=header)
@@ -407,26 +391,34 @@ class edfimage(fabioimage):
             newImage.framesHeaders = self.framesHeaders
             newImage.framesListHeader = self.framesListHeader
             newImage.framesDims = self.framesDims
-            newImage.dim1, newImage.dim2 = tuple(newImage.framesDim[num][:2])
+            newImage.dim1, newImage.dim2 = tuple(newImage.framesDims[num][:2])
             newImage.framesSize = self.framesSize
             if newImage.data is None:
-                data = newImage.unpack(rawData)
+                data = newImage.unpack()
                 self.framesData[num] = data
+            return newImage
         else:
             logging.error("Cannot access frame: %s" % num)
             raise ValueError("edfimage.getframe: index out of range: %s" % num)
 
 
+
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
-        newFrameId = self.currentframe - 1
-        return self.getframe(newFrameId)
+        if self.nframes == 1:
+            return fabioimage.previous(self)
+        else:
+            newFrameId = self.currentframe - 1
+            return self.getframe(newFrameId)
 
 
     def next(self):
         """ returns the next file in the series as a fabioimage """
-        newFrameId = self.currentframe + 1
-        return self.getframe(newFrameId)
+        if self.nframes == 1:
+            return fabioimage.previous(self)
+        else:
+            newFrameId = self.currentframe + 1
+            return self.getframe(newFrameId)
 
 
     def write(self, fname, force_type=None):

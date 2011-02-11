@@ -120,8 +120,7 @@ id13_badPadding.edf 512 512 85.0 61947.0 275.62 583.37 """
 
 class testedfs(unittest.TestCase):
     """
-    Read some test images on jon's disk
-    FIXME: upload to sourceforge and add a setUp with wget?
+    Read some test images 
     """
     def setUp(self):
         UtilsTest.getimage("F2K_Seb_Lyso0675.edf.bz2")
@@ -147,6 +146,77 @@ class testedfs(unittest.TestCase):
             self.assertEqual(dim1, obj.dim1, "testedfs: %s dim1" % name)
             self.assertEqual(dim2, obj.dim2, "testedfs: %s dim2" % name)
 
+class testedfcompresseddata(unittest.TestCase):
+    """
+    Read some test images with their data-block compressed.
+    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
+    """
+    def setUp(self):
+        UtilsTest.getimage("edfGzip_U16.edf.bz2")
+        UtilsTest.getimage("edfCompressed_U16.edf.bz2")
+        UtilsTest.getimage("edfUncompressed_U16.edf.bz2")
+
+    def test_read(self):
+        """ check we can read these images"""
+        ref = edfimage()
+        gzipped = edfimage()
+        compressed = edfimage()
+        refFile = "edfUncompressed_U16.edf"
+        gzippedFile = "edfGzip_U16.edf"
+        compressedFile = "edfCompressed_U16.edf"
+        try:
+            ref.read(os.path.join("testimages", refFile))
+        except:
+            raise RuntimeError("Cannot read image Uncompressed image %s" % refFile)
+        try:
+            gzipped.read(os.path.join("testimages", gzippedFile))
+        except:
+            raise RuntimeError("Cannot read image gzippedFile image %s" % gzippedFile)
+        try:
+            compressed.read(os.path.join("testimages", compressedFile))
+        except:
+            raise RuntimeError("Cannot read image compressedFile image %s" % compressedFile)
+        self.assertEqual((ref.data - gzipped.data).max(), 0, "Gzipped data block is correct")
+        self.assertEqual((ref.data - compressed.data).max(), 0, "Zlib compressed data block is correct")
+
+class testedfmultiframe(unittest.TestCase):
+    """
+    Read some test images with their data-block compressed.
+    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
+    """
+    def setUp(self):
+        UtilsTest.getimage("MultiFrame.edf.bz2")
+        UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
+        UtilsTest.getimage("MultiFrame-Frame1.edf.bz2")
+
+    def test_read(self):
+        """ check we can read these images"""
+        ref = edfimage()
+        frame0 = edfimage()
+        frame1 = edfimage()
+        refFile = "MultiFrame.edf"
+        Frame0File = "MultiFrame-Frame0.edf"
+        Frame1File = "MultiFrame-Frame1.edf"
+        try:
+            ref.read(os.path.join("testimages", refFile))
+        except:
+            raise RuntimeError("Cannot read image refFile image %s" % refFile)
+        try:
+            frame0.read(os.path.join("testimages", Frame0File))
+        except:
+            raise RuntimeError("Cannot read image Frame0File image %s" % Frame0File)
+        try:
+            frame1.read(os.path.join("testimages", Frame1File))
+        except:
+            raise RuntimeError("Cannot read image Frame1File image %s" % Frame1File)
+
+        self.assertEqual((ref.data - frame0.data).max(), 0, "Same data for frame 0")
+        #self.assertEqual(ref.header, frame0.header, "same header for frame 0")
+        ref.next()
+        self.assertEqual((ref.data - frame1.data).max(), 0, "Same data for frame 1")
+        #self.assertEqual(ref.header, frame1.header, "same header for frame 1")
+
+
 def test_suite_all_edf():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testflatedfs("test_read"))
@@ -156,6 +226,8 @@ def test_suite_all_edf():
     testSuite.addTest(testgzipedf("test_read"))
     testSuite.addTest(testgzipedf("test_getstats"))
     testSuite.addTest(testedfs("test_read"))
+    testSuite.addTest(testedfcompresseddata("test_read"))
+    testSuite.addTest(testedfmultiframe("test_read"))
     return testSuite
 
 if __name__ == '__main__':
