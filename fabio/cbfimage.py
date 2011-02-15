@@ -356,7 +356,8 @@ class CIF(dict):
                 infile = open(_strFilename, "rb")
             else:
                 raise RuntimeError("CIF.loadCIF: No such file to open: %s" % _strFilename)
-        elif isinstance(_strFilename, file):
+        #elif isinstance(_strFilename, file, bz2.BZ2File, ):
+        elif "read" in dir(_strFilename):
             infile = _strFilename
         else:
             raise RuntimeError("CIF.loadCIF: what is %s type %s" % (_strFilename, type(_strFilename)))
@@ -396,8 +397,9 @@ class CIF(dict):
         @return: a string containing the raw data
         @rtype: string
         """
-        if not isinstance(_instream, file):
-            raise RuntimeError("CIF._readCIF(instream): I expected instream to be an opened file")
+        if not "readlines" in dir(_instream):
+            raise RuntimeError("CIF._readCIF(instream): I expected instream to be an opened file,\
+             here I got %s type %s" % (_instream, type(_instream)))
         lLinesRead = _instream.readlines()
         sText = ""
         for sLine in lLinesRead:

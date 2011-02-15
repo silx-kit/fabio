@@ -384,11 +384,11 @@ class edfimage(fabioimage):
 
         block = infile.read(BLOCKSIZE)
         if len(block) < BLOCKSIZE:
+            logging.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
             return
-        if block.find("{") < 0 :
+        if (block.find("{") < 0) :
             # This does not look like an edf file
-            logging.warning("no opening {. Corrupt header of EDF file " + \
-                            str(infile.name))
+            logging.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
             return
         while '}' not in block:
             block = block + infile.read(BLOCKSIZE)
