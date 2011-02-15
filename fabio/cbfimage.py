@@ -67,15 +67,27 @@ class cbfimage(fabioimage):
         """
         Read in a header in some CBF format from a string representing binary stuff
         
-        @param inStream: the binary image (without any CIF decorators)
-        @type inStream: python string.
+        @param inStream: file containing the Cif Binary part.
+        @type inStream: opened file.
         """
+        self.cif.loadCIF(inStream, _bKeepComment=True)
+
+#        backport contents of the CIF data to the headers
+        for key in self.cif:
+            if key != "_array_data.data":
+                self.header_keys.append(key)
+                self.header[key] = self.cif[key].strip(" \"\n\r\t")
+
+        if not "_array_data.data" in self.cif:
+            raise Exception("cbfimage: CBF file %s is corrupt, cannot find data block with '_array_data.data' key" % self.fname)
+
+        inStream2 = self.cif["_array_data.data"]
         sep = "\r\n"
-        iSepPos = inStream.find(sep)
+        iSepPos = inStream2.find(sep)
         if iSepPos < 0 or iSepPos > 80:
             sep = "\n" #switch back to unix representation
 
-        lines = inStream.split(sep)
+        lines = inStream2.split(sep)
         for oneLine in lines[1:]:
             if len(oneLine) < 10:
                 break
@@ -92,6 +104,43 @@ class cbfimage(fabioimage):
                 missing.append(item)
         if len(missing) > 0:
             logging.debug("CBF file misses the keys " + " ".join(missing))
+
+
+    def read(self, fname):
+        """
+        Read in header into self.header and
+            the data   into self.data
+        """
+        self.filename = fname
+        self.header = {}
+        self.resetvals()
+
+        infile = self._open(fname, "rb")
+        self._readheader(infile)
+        # Compute image size
+        try:
+            self.dim1 = int(self.header['X-Binary-Size-Fastest-Dimension'])
+            self.dim2 = int(self.header['X-Binary-Size-Second-Dimension'])
+        except:
+            raise Exception(IOError, "CBF file %s is corrupt, no dimensions in it" % fname)
+        try:
+            bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
+            self.bpp = len(np.array(0, bytecode).tostring())
+        except KeyError:
+            bytecode = np.int32
+            self.bpp = 32
+            logging.warning("Defaulting type to int32")
+        if self.header["conversions"] == "x-CBF_BYTE_OFFSET":
+            self.data = self._readbinary_byte_offset(self.cif["_array_data.data"]).astype(bytecode).reshape((self.dim2, self.dim1))
+        else:
+            raise Exception(IOError, "Compression scheme not yet supported, please contact FABIO development team")
+
+        self.bytecode = self.data.dtype.type
+        self.resetvals()
+#        # ensure the PIL image is reset
+        self.pilimage = None
+        return self
+
 
 
     @staticmethod
@@ -259,51 +308,6 @@ return_val=0;
 
 
 
-    def read(self, fname):
-        """
-        Read in header into self.header and
-            the data   into self.data
-        """
-        self.filename = fname
-        self.header = {}
-        self.resetvals()
-        self.cif.loadCIF(fname, _bKeepComment=True)
-
-#        backport contents of the CIF data to the headers
-        for key in self.cif:
-            if key != "_array_data.data":
-                self.header_keys.append(key)
-                self.header[key] = self.cif[key].strip(" \"\n\r\t")
-
-
-
-        if not "_array_data.data" in self.cif:
-            raise Exception("CBF file %s is corrupt, cannot find data block with '_array_data.data' key" % fname)
-        self._readheader(self.cif["_array_data.data"])
-        # Compute image size
-        try:
-            self.dim1 = int(self.header['X-Binary-Size-Fastest-Dimension'])
-            self.dim2 = int(self.header['X-Binary-Size-Second-Dimension'])
-        except:
-            raise Exception(IOError, "CBF file %s is corrupt, no dimensions in it" % fname)
-        try:
-            bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
-            self.bpp = len(np.array(0, bytecode).tostring())
-        except KeyError:
-            bytecode = np.int32
-            self.bpp = 32
-            logging.warning("Defaulting type to int32")
-        if self.header["conversions"] == "x-CBF_BYTE_OFFSET":
-            self.data = self._readbinary_byte_offset(self.cif["_array_data.data"]).astype(bytecode).reshape((self.dim2, self.dim1))
-        else:
-            raise Exception(IOError, "Compression scheme not yet supported, please contact FABIO development team")
-
-
-        self.bytecode = self.data.dtype.type
-        self.resetvals()
-#        # ensure the PIL image is reset
-        self.pilimage = None
-        return self
 
 
 
@@ -321,8 +325,8 @@ class CIF(dict):
         """
         Constructor of the class.
 
-        @param _strFilename: the name of the file to open
-        @type  _strFilename: string
+        @param _strFilename: the name of the file to open 
+        @type  _strFilename: filename (str) or file object
         """
         dict.__init__(self)
         if _strFilename is not None: #load the file)
@@ -346,13 +350,21 @@ class CIF(dict):
         @type  _strFilename: string
         @return the 
         """
-        if not os.path.isfile(_strFilename):
-            print "I cannot find the file %s" % _strFilename
-            raise
-        if _bKeepComment:
-            self._parseCIF(open(_strFilename, "rb").read())
+
+        if isinstance(_strFilename, (str, unicode)):
+            if os.path.isfile(_strFilename):
+                infile = open(_strFilename, "rb")
+            else:
+                raise RuntimeError("CIF.loadCIF: No such file to open: %s" % _strFilename)
+        elif isinstance(_strFilename, file):
+            infile = _strFilename
         else:
-            self._parseCIF(CIF._readCIF(_strFilename))
+            raise RuntimeError("CIF.loadCIF: what is %s type %s" % (_strFilename, type(_strFilename)))
+        if _bKeepComment:
+            self._parseCIF(infile.read())
+        else:
+            self._parseCIF(CIF._readCIF(infile))
+
 
     @staticmethod
     def isAscii(_strIn):
@@ -371,22 +383,22 @@ class CIF(dict):
                 break
         return bIsAcii
 
+
     @staticmethod
-    def _readCIF(_strFilename):
+    def _readCIF(_instream):
         """
         -Check if the filename containing the CIF data exists 
         -read the cif file
         -removes the comments 
         
-        @param _strFilename: the name of the CIF file
-        @type _strFilename: string
+        @param _instream: the file containing the CIF data
+        @type _instream: open file in read mode
         @return: a string containing the raw data
         @rtype: string
         """
-        if not os.path.isfile(_strFilename):
-            print "I cannot find the file %s" % _strFilename
-            raise
-        lLinesRead = open(_strFilename, "rb").readlines()
+        if not isinstance(_instream, file):
+            raise RuntimeError("CIF._readCIF(instream): I expected instream to be an opened file")
+        lLinesRead = _instream.readlines()
         sText = ""
         for sLine in lLinesRead:
             iPos = sLine.find("#")
@@ -442,6 +454,7 @@ class CIF(dict):
             if len(lFields[i + 1]) == 0 : lFields[i + 1] = "?"
             if lFields[i][0] == "_" and lFields[i + 1][0] != "_":
                 self[lFields[i]] = lFields[i + 1]
+
 
     @staticmethod
     def _splitCIF(sText):
@@ -520,6 +533,7 @@ class CIF(dict):
                 sText1 = sText[len(f):].strip()
                 sText = sText1
         return lFields
+
 
     @staticmethod
     def _analyseOneLoop(lFields, iStart):
@@ -614,9 +628,6 @@ class CIF(dict):
                                                              _strFilename)
 
 
-
-
-
     def _cif2str(self, _strFilename):
         """converts a cif dictionnary to a string according to the CIF syntax
         @param _strFilename: the name of the filename to be appended in the 
@@ -685,6 +696,7 @@ class CIF(dict):
         #print sCifText
         return sCifText
 
+
     def exists(self, sKey):
         """
         Check if the key exists in the CIF and is non empty.
@@ -700,6 +712,7 @@ class CIF(dict):
                 if self[sKey][0] not in ["?", "."]:
                     bExists = True
         return bExists
+
 
     def existsInLoop(self, sKey):
         """
@@ -719,6 +732,7 @@ class CIF(dict):
                     if j == sKey:
                         bExists = True
         return bExists
+
 
     def loadCHIPLOT(self, _strFilename):
         """

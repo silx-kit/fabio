@@ -15,16 +15,27 @@ import logging
 import sys
 import gzip, bz2
 
+force_build = False
+
+
 for idx, opts in enumerate(sys.argv[:]):
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
         sys.argv.pop(idx)
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
+
 try:
     logging.debug("tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
+
+if force_build:
+    UtilsTest.forceBuild()
+
 from fabio.edfimage import edfimage
 
 
