@@ -35,7 +35,7 @@ from fabio import pilatusimage
 from fabio import fit2dspreadsheetimage
 from fabio import kcdimage
 from fabio import cbfimage
-
+from fabio import xsdimage
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -61,7 +61,8 @@ MAGIC_NUMBERS = [
     # hint : MASK in 32 bit
     ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
     ('\x00\x00\x00\x03'   , 'dm3'),
-    ("No"                 , "kcd")
+    ("No"                 , "kcd"),
+    ("<"                  , "xsd")
     ]
 
 def do_magic(byts):
