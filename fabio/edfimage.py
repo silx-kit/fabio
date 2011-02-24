@@ -415,6 +415,7 @@ class edfimage(fabioimage):
         """
         Read all headers in a file and populate self.header
         data is not yet populated
+        @type infile: file object open in read mode
         """
         self.nframes = 0
         self.frames = []

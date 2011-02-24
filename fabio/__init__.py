@@ -27,6 +27,8 @@ FILETYPES = {
     'dm3'    : ['dm3'],
     'kcd'    : ['kcd'],
     'cbf'    : ['cbf'],
+    'xml'    : ["xsd"],
+    'xsd'    : ["xsd"],
              }
 
 # Add bzipped and gzipped

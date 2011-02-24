@@ -9,16 +9,26 @@ import os
 import logging
 import sys
 
+force_build = False
+
 for idx, opts in enumerate(sys.argv[:]):
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
         sys.argv.pop(idx)
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
+
 try:
     logging.debug("tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
+
+if force_build:
+    UtilsTest.forceBuild()
+
 from fabio.openimage import openheader
 
 NAMES = [
@@ -37,6 +47,7 @@ class test1(unittest.TestCase):
         """ check openheader can read edf headers"""
         for name in NAMES:
             obj = openheader(name)
+            logging.debug(" %s obj = %s" % (name, obj.header))
             self.assertEqual(obj.header["title"],
                              "ESPIA FRELON Image",
                              "Error on " + name)
