@@ -78,7 +78,7 @@ class Frame(object):
     """
     A class representing a single frame in an EDF file
     """
-    def __init__(self, header={}, data=None, number=None):
+    def __init__(self, data=None, header={}, number=None):
         if header is None:
             self.header = {}
         else:
@@ -285,6 +285,14 @@ class Frame(object):
             data = self.getData().astype(force_type)
         else:
             data = self.getData()
+
+        for key in self.header:
+            KEY = key.upper()
+            if KEY not in self.capsHeader:
+                self.capsHeader[KEY] = key
+            if key not in self.header_keys:
+                self.header_keys.append(key)
+
         header = self.header.copy()
         header_keys = self.header_keys[:]
         capsHeader = self.capsHeader.copy()
@@ -341,9 +349,10 @@ class Frame(object):
             header["EDF_DataBlockID"] = "%i.Image.Psd" % self.iFrame
         preciseSize = 4 #2 before {\n 2 after }\n
         for key in header_keys:
-            line = "%s = %s ;\n" % (key, header[key])
+            line = str("%s = %s ;\n" % (key, header[key]))
             preciseSize += len(line)
             listHeader.append(line)
+#            print type(line), line
         if preciseSize > approxHeaderSize:
             logging.error("I expected the header block only at %s in fact it is %s" % (approxHeaderSize, preciseSize))
             for  idx, line in enumerate(listHeader[:]):
