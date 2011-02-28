@@ -78,18 +78,33 @@ class Frame(object):
     """
     A class representing a single frame in an EDF file
     """
-    def __init__(self, data=None, header={}, number=None):
+    def __init__(self, data=None, header=None, header_keys=None, number=None):
         if header is None:
             self.header = {}
         else:
             self.header = dict(header)
-        self.header_keys = self.header.keys()
+
+        if header_keys is None:
+            self.header_keys = self.header.keys()
+        else:
+            self.header_keys = header_keys[:]
+            for key in header_keys:
+                if key not in self.header:
+                    logging.warning("Header key %s, in header_keys is not in header dictionary, poping !!!" % key)
+                    self.header_keys.remove(key)
+
         self.capsHeader = {}
         for key in self.header_keys:
-            self.capsHeader[str(key).upper()] = key
+            try:
+                self.capsHeader[key.upper()] = key
+            except AttributeError:
+                logging.warning("Header key %s is not a string" % key)
+
         self.rawData = None
         self.data = data
         self.dims = []
+        self.dim1 = 0
+        self.dim2 = 0
         self.size = None
         self.bpp = None
         self.bytecode = None
@@ -180,6 +195,10 @@ class Frame(object):
             if ("COMPRESSION" in self.capsHeader) and (self.header[self.capsHeader['COMPRESSION']].upper().startswith("NO")):
                 logging.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
                 self.size = calcsize
+
+        for i, n in enumerate(self.dims):
+            exec "self.dim%i=%i" % (i + 1, n)
+
         return self.size
 
 
@@ -206,6 +225,9 @@ class Frame(object):
         """
         if self.data is not None:
             return self.data
+        if self.rawData is None:
+            return self.data
+
         if self.bytecode is None:
             if "DATATYPE" in self.capsHeader:
                 self.bytecode = DATA_TYPES[self.header[self.capsHeader["DATATYPE"]]]
@@ -376,11 +398,14 @@ class Frame(object):
 class edfimage(fabioimage):
     """ Read and try to write the ESRF edf data format """
 
-    def __init__(self, data=None , header=None):
+    def __init__(self, data=None , header=None, header_keys=None):
+        self.currentframe = 0
         fabioimage.__init__(self, data, header)
-        #Dictionary containing the header-KEY -> header-Key as EDF keys are supposed to be key insensitive
-        self.capsHeader = {}
-        self.frames = [Frame(data=data, header=header, number=0)]
+        frame = Frame(data=data, header=header,
+                      header_keys=header_keys ,
+                      number=self.currentframe)
+        self.frames = [frame]
+
 
     @staticmethod
     def _readHeaderBlock(infile):
@@ -454,12 +479,6 @@ class edfimage(fabioimage):
                 logging.info("EDF file %s frame %i misses mandatory keys: %s " % (self.filename, i, " ".join(missing)))
 
         self.currentframe = 0
-        self.header = self.frames[0].header
-        self.capsHeader = self.frames[0].capsHeader
-        self.header_keys = self.frames[0].header_keys
-        for i, n in enumerate(self.frames[0].dims):
-            exec "self.dim%i=%i" % (i + 1, n)
-        self.bpp = self.frames[0].bpp
 
 
     def read(self, fname):
@@ -467,8 +486,6 @@ class edfimage(fabioimage):
         Read in header into self.header and
             the data   into self.data
         """
-        self.header = {}
-        self.capsHeader = {}
         self.resetvals()
         self.filename = fname
 
@@ -476,7 +493,7 @@ class edfimage(fabioimage):
         self._readheader(infile)
         if self.data is None:
             self.data = self.unpack()
-            self.bytecode = self.data.dtype.type
+#            self.bytecode = self.data.dtype.type
         self.resetvals()
         # ensure the PIL image is reset
         self.pilimage = None
@@ -510,14 +527,11 @@ class edfimage(fabioimage):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if num in xrange(self.nframes):
             frame = self.frames[num]
-            newImage = edfimage(data=frame.getData(), header=frame.header)
+            newImage = edfimage(data=frame.getData(), header=frame.header, header_keys=frame.header_keys)
             newImage.frames = self.frames
-            newImage.capsHeader = frame.capsHeader
-            newImage.header_keys = frame.header_keys
             newImage.nframes = self.nframes
             newImage.currentframe = num
             newImage.filename = self.filename
-            newImage.dim1, newImage.dim2 = tuple(frame.dims[:2])
             return newImage
         else:
             logging.error("Cannot access frame: %s" % num)
@@ -542,6 +556,7 @@ class edfimage(fabioimage):
             return self.getframe(newFrameId)
 
 
+
     def write(self, fname, force_type=None):
         """
         Try to write a file
@@ -557,3 +572,167 @@ class edfimage(fabioimage):
             frame.iFrame = i
             outfile.write(frame.getEdfBlock())
         outfile.close()
+
+################################################################################
+# Properties definition for header, data, header_keys and capsHeader 
+################################################################################
+
+    def getHeader(self):
+        """
+        Getter for the headers. used by the property header,
+        """
+        return self.frames[self.currentframe].header
+    def setHeader(self, _dictHeader):
+        """
+        Enforces the propagation of the header to the list of frames
+        """
+        try:
+            self.frames[self.currentframe].header = _dictHeader
+        except AttributeError:
+            self.frames = [Frame(header=_dictHeader)]
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame(header=_dictHeader))
+    def delHeader(self):
+        """
+        Deleter for edf header
+        """
+        self.frames[self.currentframe].header = {}
+    header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
+
+    def getHeaderKeys(self):
+        """
+        Getter for edf header_keys
+        """
+        return self.frames[self.currentframe].header_keys
+    def setHeaderKeys(self, _listtHeader):
+        """
+        Enforces the propagation of the header_keys to the list of frames
+        @param _listtHeader: list of the (ordered) keys in the header
+        @type _listtHeader: python list
+        """
+        try:
+            self.frames[self.currentframe].header_keys = _listtHeader
+        except AttributeError:
+            self.frames = [Frame(header_keys=_listtHeader)]
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame(header_keys=_listtHeader))
+    def delHeaderKeys(self):
+        """
+        Deleter for edf header_keys
+        """
+        self.frames[self.currentframe].header_keys = []
+    header_keys = property(getHeaderKeys, setHeaderKeys, delHeaderKeys, "property: header_keys of EDF file")
+
+    def getData(self):
+        """
+        getter for edf Data
+        @return: data for current frame  
+        @rtype: numpy.ndarray
+        """
+        data = None
+        try:
+            data = self.frames[self.currentframe].data
+        except AttributeError:
+            self.frames = [Frame()]
+            data = self.frames[self.currentframe].data
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame())
+                data = self.frames[self.currentframe].data
+        return data
+
+    def setData(self, _data):
+        """
+        Enforces the propagation of the header_keys to the list of frames
+        @param _data: numpy array representing data 
+        """
+        try:
+            self.frames[self.currentframe].data = _data
+        except AttributeError:
+            self.frames = [Frame(data=_data)]
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame(data=_data))
+    def delData(self):
+        """
+        deleter for edf Data
+        """
+        self.frames[self.currentframe].data = None
+    data = property(getData, setData, delData, "property: data of EDF file")
+
+    def getCapsHeader(self):
+        """
+        getter for edf headers keys in upper case 
+        @return: data for current frame  
+        @rtype: dict
+        """
+        return self.frames[self.currentframe].capsHeader
+    def setCapsHeader(self, _data):
+        """
+        Enforces the propagation of the header_keys to the list of frames
+        @param _data: numpy array representing data 
+        """
+        self.frames[self.currentframe].capsHeader = _data
+    def delCapsHeader(self):
+        """
+        deleter for edf capsHeader
+        """
+        self.frames[self.currentframe].capsHeader = {}
+    capsHeader = property(getCapsHeader, setCapsHeader, delCapsHeader, "property: capsHeader of EDF file, i.e. the keys of the header in UPPER case.")
+
+    def getDim1(self):
+        return self.frames[self.currentframe].dim1
+    def setDim1(self, _iVal):
+        try:
+            self.frames[self.currentframe].dim1 = _iVal
+        except AttributeError:
+            self.frames = [Frame()]
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame())
+                self.frames[self.currentframe].dim1 = _iVal
+    dim1 = property(getDim1, setDim1)
+    def getDim2(self):
+        return self.frames[self.currentframe].dim2
+    def setDim2(self, _iVal):
+        try:
+            self.frames[self.currentframe].dim2 = _iVal
+        except AttributeError:
+            self.frames = [Frame()]
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame())
+                self.frames[self.currentframe].dim2 = _iVal
+    dim2 = property(getDim2, setDim2)
+
+    def getDims(self):
+        return self.frames[self.currentframe].dims
+    dims = property(getDims)
+    def getByteCode(self):
+        return self.frames[self.currentframe].bytecode
+    def setByteCode(self, _iVal):
+        try:
+            self.frames[self.currentframe].bytecode = _iVal
+        except AttributeError:
+            self.frames = [Frame()]
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame())
+                self.frames[self.currentframe].bytecode = _iVal
+
+    bytecode = property(getByteCode, setByteCode)
+    def getBpp(self):
+        return self.frames[self.currentframe].bpp
+    def setBpp(self, _iVal):
+        try:
+            self.frames[self.currentframe].bpp = _iVal
+        except AttributeError:
+            self.frames = [Frame()]
+        except IndexError:
+            if self.currentframe < len(self.frames):
+                self.frames.append(Frame())
+                self.frames[self.currentframe].bpp = _iVal
+    bpp = property(getBpp, setBpp)
+
