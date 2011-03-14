@@ -54,13 +54,13 @@ DATA_TYPES = {  "SignedByte"    :  np.int8,
                 "DoubleIEEE64"  :  np.float64
                 }
 
-NUMPY_EDF_DTYPE = {"int8"       :"Signed8",
-                   "int16"      :"Signed16",
-                   "int32"      :"Signed32",
+NUMPY_EDF_DTYPE = {"int8"       :"SignedByte",
+                   "int16"      :"SignedShort",
+                   "int32"      :"SignedInteger",
                    "int64"      :"Signed64",
-                   "uint8"      :"Unsigned8",
-                   "uint16"     :"Unsigned16",
-                   "uint32"     :"Unsigned32",
+                   "uint8"      :"UnsignedByte",
+                   "uint16"     :"UnsignedShort",
+                   "uint32"     :"UnsignedInteger",
                    "uint64"     :"Unsigned64",
                    "float32"    :"FloatValue",
                    "float64"    :"DoubleValue"
