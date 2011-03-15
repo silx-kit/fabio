@@ -1,12 +1,12 @@
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
 import numpy as N
 import math
 import Image
-import brukerimage
+from brukerimage import brukerimage
 import readbytestream
 
 class bruker100image(brukerimage):
+
 
     def toPIL16(self, filename=None):
         # FIXME - why is this different for bruker100images?
