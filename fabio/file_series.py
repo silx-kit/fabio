@@ -1,7 +1,5 @@
-
-
-
 #!/usr/bin/env python
+
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -13,12 +11,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
-from fabio import filename_object
-import fabio
-from fabio.openimage import openimage
-        
+from fabioutils import filename_object, next_filename
+#import fabioutils
+from openimage import openimage
 
-def new_file_series0( first_object, first = None, last = None, step = 1 ):
+
+def new_file_series0(first_object, first=None, last=None, step=1):
     """
     Created from a fabio image
     first and last are file numbers
@@ -31,7 +29,7 @@ def new_file_series0( first_object, first = None, last = None, step = 1 ):
         total = 1
     else:
         total = last - first
-        
+
     yield im
     while nimages < total:
         nimages += step
@@ -45,17 +43,17 @@ def new_file_series0( first_object, first = None, last = None, step = 1 ):
             # Skip bad images
             print "Got a problem here"
             try:
-                im.filename = fabio.next_filename( im.filename )
+                im.filename = next_filename(im.filename)
             except:
                 # KE: This will not work and will throw an exception
                 # fabio.next_filename doesn't understand %nnnn on the end
-                im.filename = fabio.next_filename( im.sequencefilename )
+                im.filename = next_filename(im.sequencefilename)
             yield None
         yield im
 
 
 
-def new_file_series( first_object, nimages = 0, step = 1, traceback = False ):
+def new_file_series(first_object, nimages=0, step=1, traceback=False):
     """
     A generator function that creates a file series starting from a a fabioimage.
     Iterates through all images in a file (if more than 1), then proceeds to
@@ -102,7 +100,7 @@ def new_file_series( first_object, nimages = 0, step = 1, traceback = False ):
                 print "Got a problem here: next() failed"
             # Skip bad images
             try:
-                im.filename = fabio.next_filename( im.filename )
+                im.filename = next_filename(im.filename)
             except:
                 pass
         if nprocessed % step == 0:
@@ -111,7 +109,7 @@ def new_file_series( first_object, nimages = 0, step = 1, traceback = False ):
             retVal = None
             if abort: break
         nprocessed += 1
-        
+
 
 
 class file_series(list):
@@ -133,17 +131,17 @@ class file_series(list):
         """
         arg should be a list of strings which are filenames
         """
-        super(file_series, self).__init__( list_of_strings )
+        super(file_series, self).__init__(list_of_strings)
         # track current position in list
         self._current = 0
-        
+
 
     # methods which return a filename
-    
+
     def first(self):
         """ first image in series """
         return self[0]
-    
+
     def last(self):
         """ last in series """
         return self[-1]
@@ -184,11 +182,11 @@ class file_series(list):
         return openimage(self.last())
 
     def next_image(self):
-        """ Return the next image """        
+        """ Return the next image """
         return openimage(self.next())
 
     def previous_image(self):
-        """ Return the previous image """        
+        """ Return the previous image """
         return openimage(self.previous())
 
     def jump_image(self, num):
@@ -210,11 +208,11 @@ class file_series(list):
         return filename_object(self.last())
 
     def next_object(self):
-        """ Return the next image """        
+        """ Return the next image """
         return filename_object(self.next())
 
     def previous_object(self):
-        """ Return the previous image """        
+        """ Return the previous image """
         return filename_object(self.previous())
 
     def jump_object(self, num):
@@ -228,14 +226,14 @@ class file_series(list):
 
 
 
-class numbered_file_series(file_series):        
+class numbered_file_series(file_series):
     """
     mydata0001.edf = "mydata" + 0001 + ".edf"
     mydata0002.edf = "mydata" + 0002 + ".edf"
     mydata0003.edf = "mydata" + 0003 + ".edf"
     """
-    def __init__(self, stem, first, last, extension, 
-                 digits = 4, padding='Y', step = 1):
+    def __init__(self, stem, first, last, extension,
+                 digits=4, padding='Y', step=1):
         """
         stem - first part of the name
         step - in case of every nth file
@@ -243,14 +241,14 @@ class numbered_file_series(file_series):
                   with zeroes up to digits
         """
         if padding == 'Y':
-            fmt = "%s%0"+str(digits)+"d%s"
+            fmt = "%s%0" + str(digits) + "d%s"
         else:
             fmt = "%s%i%s"
-            
+
         super(numbered_file_series, self).__init__(
-            [ fmt % ( stem, i, extension ) for i in range(first,
+            [ fmt % (stem, i, extension) for i in range(first,
                                                           last + 1,
-                                                          step) ] )
+                                                          step) ])
 
 
 class filename_series:
@@ -275,7 +273,7 @@ class filename_series:
 
     def jump(self, num):
         """ jump to a specific number """
-        self.obj.num = num       
+        self.obj.num = num
         return self.obj.tostring()
 
     # image methods

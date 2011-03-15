@@ -15,7 +15,7 @@ Information about the file format from Masakatzu Kobayashi is highly appreciated
 
 import numpy as np, logging
 
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 
 class HiPiCimage(fabioimage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
@@ -28,12 +28,12 @@ class HiPiCimage(fabioimage):
         """
         Image_tag = infile.read(2)
         print Image_tag
-        Comment_len = np.fromstring(infile.read(2),np.uint16)
-        Dim_1 = np.fromstring(infile.read(2),np.uint16)[0]
-        Dim_2 = np.fromstring(infile.read(2),np.uint16)[0]
-        Dim_1_offset = np.fromstring(infile.read(2),np.uint16)[0]
-        Dim_2_offset = np.fromstring(infile.read(2),np.uint16)[0]
-        HeaderType  = np.fromstring(infile.read(2),np.uint16)[0]
+        Comment_len = np.fromstring(infile.read(2), np.uint16)
+        Dim_1 = np.fromstring(infile.read(2), np.uint16)[0]
+        Dim_2 = np.fromstring(infile.read(2), np.uint16)[0]
+        Dim_1_offset = np.fromstring(infile.read(2), np.uint16)[0]
+        Dim_2_offset = np.fromstring(infile.read(2), np.uint16)[0]
+        HeaderType = np.fromstring(infile.read(2), np.uint16)[0]
         Dump = infile.read(50)
         Comment = infile.read(Comment_len)
         self.header['Image_tag'] = Image_tag
@@ -52,7 +52,7 @@ class HiPiCimage(fabioimage):
             topsplit = topcomment.split(',')
             for line in topsplit:
                 if '=' in line:
-                    key, val = line.split( '=' , 1)
+                    key, val = line.split('=' , 1)
                     # Users cannot type in significant whitespace
                     key = key.rstrip().lstrip()
                     self.header_keys.append(key)
@@ -66,7 +66,7 @@ class HiPiCimage(fabioimage):
         """
         self.header = {}
         self.resetvals()
-        infile = self._open(fname,"rb")
+        infile = self._open(fname, "rb")
         self._readheader(infile)
         # Compute image size
         try:
@@ -75,7 +75,7 @@ class HiPiCimage(fabioimage):
         except:
             raise Exception("HiPic file", str(fname) + \
                                 "is corrupt, cannot read it")
-        bytecode  = np.uint16
+        bytecode = np.uint16
         self.bpp = len(np.array(0, bytecode).tostring())
 
         # Read image data
@@ -85,21 +85,21 @@ class HiPiCimage(fabioimage):
         #now read the data into the array
         try:
             self.data = np.reshape(
-                np.fromstring(block, bytecode ),
+                np.fromstring(block, bytecode),
                 [self.dim2, self.dim1])
         except:
             print len(block), bytecode, self.bpp, self.dim2, self.dim1
             raise IOError, \
               'Size spec in HiPic-header does not match size of image data field'
         self.bytecode = self.data.dtype.type
-        
+
         # Sometimes these files are not saved as 12 bit,
         # But as 16 bit after bg subtraction - which results 
         # negative values saved as 16bit. Therefore values higher 
         # 4095 is really negative values
-        if self.data.max()  > 4095:
+        if self.data.max() > 4095:
             gt12bit = self.data > 4095
-            self.data = self.data - gt12bit*(2**16-1)
+            self.data = self.data - gt12bit * (2 ** 16 - 1)
 
         # ensure the PIL image is reset
         self.pilimage = None

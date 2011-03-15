@@ -20,7 +20,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 import numpy as np, logging
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 import gzip, bz2, zlib, os, StringIO
 
 

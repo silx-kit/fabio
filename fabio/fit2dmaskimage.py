@@ -7,9 +7,9 @@ Author: Andy Hammersley, ESRF
 Translation into python/fabio: Jon Wright, ESRF
 """
 
-import numpy 
+import numpy
 
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 
 
 class fit2dmaskimage(fabioimage):
@@ -22,9 +22,9 @@ class fit2dmaskimage(fabioimage):
         """
         # 1024 bytes gives 256x32 bit integers
         header = infile.read(1024)
-        for i, j in [ ("M",  0),
-                      ("A",  4),
-                      ("S",  8),
+        for i, j in [ ("M", 0),
+                      ("A", 4),
+                      ("S", 8),
                       ("K", 12)  ]:
             if header[j] != i:
                 raise Exception("Not a fit2d mask file")
@@ -33,7 +33,7 @@ class fit2dmaskimage(fabioimage):
         self.dim2 = fit2dhdr[5]
 
 
-    def read(self, fname ):
+    def read(self, fname):
         """
         Read in header into self.header and
             the data   into self.data
@@ -45,7 +45,7 @@ class fit2dmaskimage(fabioimage):
         self.bpp = len(numpy.array(0, self.bytecode).tostring())
 
         # integer division
-        num_ints = (self.dim1 + 31)//32
+        num_ints = (self.dim1 + 31) // 32
         total = self.dim2 * num_ints * 4
         data = fin.read(total)
         assert len(data) == total
@@ -53,18 +53,18 @@ class fit2dmaskimage(fabioimage):
 
         # Now to unpack it
         data = numpy.fromstring(data, numpy.uint8)
-        data = numpy.reshape(data, (self.dim2, num_ints*4))
+        data = numpy.reshape(data, (self.dim2, num_ints * 4))
 
-        result = numpy.zeros((self.dim2, num_ints*4*8), numpy.uint8)
+        result = numpy.zeros((self.dim2, num_ints * 4 * 8), numpy.uint8)
 
         # Unpack using bitwise comparisons to 2**n
         bits = numpy.ones((1), numpy.uint8)
         for i in range(8):
-            temp =  numpy.bitwise_and( bits, data)
+            temp = numpy.bitwise_and(bits, data)
             result[:, i::8] = temp.astype(numpy.uint8)
             bits = bits * 2
         # Extra rows needed for packing odd dimensions
-        spares = num_ints*4*8 - self.dim1
+        spares = num_ints * 4 * 8 - self.dim1
         if spares == 0:
             self.data = numpy.where(result == 0, 0, 1)
         else:
@@ -77,7 +77,7 @@ class fit2dmaskimage(fabioimage):
 
 
 
-    def write(self, fname ):
+    def write(self, fname):
         """
         Try to write a file
         check we can write zipped also

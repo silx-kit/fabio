@@ -9,23 +9,10 @@ Based on the edfimage.py parser.
 
 import numpy as np, logging
 import os, string
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 
 
-DATA_TYPES = { # "SignedByte"     :  np.int8,
-               # "UnsignedByte"   :  np.uint8,
-               # "SignedShort"    :  np.int16,
-                "u16"  :  np.uint16,
-               # "UnsignedShortInteger" : np.uint16,
-               # "SignedInteger"  :  np.int32,
-               # "UnsignedInteger":  np.uint32,
-               # "SignedLong"     :  np.int32,
-               # "UnsignedLong"   :  np.uint32,
-               # "FloatValue"     :  np.float32,
-               # "FLOAT"          :  np.float32, # fit2d
-               # "Float"          :  np.float32, # fit2d
-               # "DoubleValue"    :  np.float
-                }
+DATA_TYPES = {"u16"  :  np.uint16 }
 
 MINIMUM_KEYS = [
                 'ByteOrder',
@@ -34,9 +21,7 @@ MINIMUM_KEYS = [
                 'Y dimension',
                 'Number of readouts']
 
-DEFAULT_VALUES = {
-                  "Data type": "u16"
-                  }
+DEFAULT_VALUES = { "Data type": "u16" }
 
 
 

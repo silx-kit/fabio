@@ -18,8 +18,8 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 
 import numpy as N, logging
 
-from fabio.fabioimage import fabioimage
-from fabio.readbytestream import readbytestream
+from fabioimage import fabioimage
+from readbytestream import readbytestream
 
 
 class brukerimage(fabioimage):
@@ -28,9 +28,9 @@ class brukerimage(fabioimage):
     """
 
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
-    
+
     __headerstring__ = ""
-    
+
 
     def _readheader(self, infile):
         """
@@ -45,11 +45,11 @@ class brukerimage(fabioimage):
         i = 80
         self.header = {}
         while i < 512 * 5:
-            if lump[i-80: i].find(":") > 0:
-                key, val = lump[i-80: i].split(":", 1)
+            if lump[i - 80: i].find(":") > 0:
+                key, val = lump[i - 80: i].split(":", 1)
                 key = key.strip()         # remove the whitespace (why?)
                 val = val.strip()
-                if self.header.has_key(key):  
+                if self.header.has_key(key):
                     # append lines if key already there
                     self.header[key] = self.header[key] + '\n' + val
                 else:
@@ -57,15 +57,15 @@ class brukerimage(fabioimage):
                     self.header_keys.append(key)
             i = i + 80                  # next 80 characters
         # we must have read this in the first 512 bytes.
-        nhdrblks = int(self.header['HDRBLKS'])  
+        nhdrblks = int(self.header['HDRBLKS'])
         # Now read in the rest of the header blocks, appending 
         rest = infile.read(512 * (nhdrblks - 5))
-        self.__headerstring__ += rest        
+        self.__headerstring__ += rest
         lump = lump[i - 80: 512] + rest
         i = 80
         j = 512 * nhdrblks
         while i < j :
-            if lump[i-80: i].find(":") > 0: # as for first 512 bytes of header
+            if lump[i - 80: i].find(":") > 0: # as for first 512 bytes of header
                 key, val = lump[i - 80: i].split(":", 1)
                 key = key.strip()
                 val = val.strip()
@@ -76,10 +76,10 @@ class brukerimage(fabioimage):
                     self.header_keys.append(key)
             i = i + 80
         # make a (new) header item called "datastart"
-        self.header['datastart'] = infile.tell()       
+        self.header['datastart'] = infile.tell()
         #set the image dimensions
-        self.dim1   = int(self.header['NROWS'])
-        self.dim2   = int(self.header['NCOLS'])
+        self.dim1 = int(self.header['NROWS'])
+        self.dim2 = int(self.header['NCOLS'])
 
     def read(self, fname):
         """
@@ -96,7 +96,7 @@ class brukerimage(fabioimage):
 
         try:
             # you had to read the Bruker docs to know this!
-            npixelb = int(self.header['NPIXELB'])  
+            npixelb = int(self.header['NPIXELB'])
         except:
             errmsg = "length " + str(len(self.header['NPIXELB'])) + "\n"
             for byt in self.header['NPIXELB']:
@@ -123,9 +123,9 @@ class brukerimage(fabioimage):
                 intensity = int(ovfl[0: 9])
                 position = int(ovfl[9: 16])
                 # relies on python style modulo being always +
-                row = position % rows  
+                row = position % rows
                 # relies on truncation down
-                col = position / rows     
+                col = position / rows
                 #print "Overflow ", r, c, intensity, position,\
                 #    self.data[r,c],self.data[c,r]
                 self.data[col, row] = intensity
@@ -135,7 +135,7 @@ class brukerimage(fabioimage):
         self.pilimage = None
         return self
 
-   
+
     def write(self, fname):
         """
         Writes the image as EDF
@@ -156,7 +156,7 @@ class brukerimage(fabioimage):
             out = (("%s = %s;\n") % (k, self.header[k]))
             i = i + len(out)
             outfile.write(out)
-        out = (4096-i)*' '
+        out = (4096 - i) * ' '
         outfile.write(out)
         outfile.write('}\n')
         # Assumes a short-circuiting if / or ...
@@ -184,15 +184,15 @@ def test():
         res = img.toPIL16()
         img.rebin(2, 2)
         print filename + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
-            img.getmax(),img.getmin(), img.getmean(), img.getstddev())
+            img.getmax(), img.getmin(), img.getmean(), img.getstddev())
         print 'integrated intensity (%d %d %d %d) =%.3f' % (
             10, 20, 20, 40, img.integrate_area((10, 20, 20, 40)))
     end = time.clock()
     print (end - start)
 
 
- 
+
 if __name__ == '__main__':
     test()
- 
- 
+
+

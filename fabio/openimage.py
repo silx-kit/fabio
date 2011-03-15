@@ -12,30 +12,27 @@ Authors: Henning O. Sorensen & Erik Knudsen
 mods for fabio by JPW
 
 """
-
-import fabio
-from fabio import deconstruct_filename, getnum
-from fabio.fabioimage import fabioimage
-
-
-from fabio import edfimage
-from fabio import adscimage
-from fabio import tifimage
-from fabio import marccdimage
-from fabio import mar345image
-from fabio import fit2dmaskimage
-from fabio import brukerimage
-from fabio import bruker100image
-from fabio import pnmimage
-from fabio import GEimage
-from fabio import OXDimage
-from fabio import dm3image
-from fabio import HiPiCimage
-from fabio import pilatusimage
-from fabio import fit2dspreadsheetimage
-from fabio import kcdimage
-from fabio import cbfimage
-from fabio import xsdimage
+import sys
+from fabioutils  import deconstruct_filename, getnum, filename_object
+from fabioimage import fabioimage
+import edfimage
+import adscimage
+import tifimage
+import marccdimage
+import mar345image
+import fit2dmaskimage
+import brukerimage
+import bruker100image
+import pnmimage
+import GEimage
+import OXDimage
+import dm3image
+import HiPiCimage
+import pilatusimage
+import fit2dspreadsheetimage
+import kcdimage
+import cbfimage
+import xsdimage
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -81,8 +78,7 @@ def do_magic(byts):
 
 def openimage(filename):
     """ Try to open an image """
-    import fabio
-    if isinstance(filename, fabio.filename_object):
+    if isinstance(filename, filename_object):
         try:
             obj = _openimage(filename.tostring())
             obj.read(filename.tostring())
@@ -139,17 +135,21 @@ def _openimage(filename):
             #traceback.print_exc()
             raise Exception("Fabio could not identify " + filename)
     klass_name = "".join(filetype) + 'image'
-    # print "looking for",klass_name
-    if hasattr(fabio, klass_name):
-        module = getattr(fabio, klass_name)
+#    print "looking for %s in" % klass_name
+#    for i in sys.modules:
+#        if klass_name in i:
+#            print "%s\t%s" % (i, sys.modules[i])
+    module = sys.modules.get("fabio." + klass_name, None)
+#    if hasattr(__init__, klass_name):
+#        module = getattr(__init__, klass_name)
+    if module is not None:
         if hasattr(module, klass_name):
             klass = getattr(module, klass_name)
-            # print klass
+                # print klass
         else:
-            raise Exception("Module " + module + "has no image class")
+            raise Exception("Module %s has no image class" % module)
     else:
-        raise Exception("Filetype not known " + filename + " " +
-                        klass_name)
+        raise Exception("Filetype not known %s %s" % (filename, klass_name))
     obj = klass()
     # skip the read for read header
     return obj

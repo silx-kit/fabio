@@ -17,12 +17,12 @@ mods for fabio by JPW
 import Image
 import numpy , logging
 
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 
 TIFF_TO_NUMERIC = { "I;16": numpy.int16 ,
-                   
+
                     }
-                    
+
 
 class tifimage(fabioimage):
     """
@@ -52,7 +52,7 @@ class tifimage(fabioimage):
         self.dim2 = int(header[15])
         # nbits is not a fabioimage attribute...
         self.nbits = int(header[21]) # number of bits
-        
+
 
 
     def read(self, fname):
@@ -60,7 +60,7 @@ class tifimage(fabioimage):
         The fabian read was reading a PIL image
         We convert this to a numpy array
         """
-        infile = self._open(fname,"rb")
+        infile = self._open(fname, "rb")
         self._readheader(infile)
         infile.seek(0)
         try:
@@ -68,11 +68,11 @@ class tifimage(fabioimage):
         except:
             infile.seek(0)
             raw_data = infile.read()
-            header_bytes = len(raw_data) - (self.dim1*self.dim2*self.nbits)/8
+            header_bytes = len(raw_data) - (self.dim1 * self.dim2 * self.nbits) / 8
             if self.nbits == 16: # Probably uint16
 #                logging.warn('USING FIT2D 16 BIT TIFF READING - EXPERIMENTAL')
                 self.pilimage = Image.frombuffer("F",
-                                         (self.dim1,self.dim2),
+                                         (self.dim1, self.dim2),
                                          raw_data[header_bytes:],
                                          "raw",
                                          "I;16",
@@ -85,7 +85,7 @@ class tifimage(fabioimage):
 #                logging.warn('USING FIT2D 32 BIT FLOAT TIFF READING -' + 
 #                             ' EXPERIMENTAL')
                 self.pilimage = Image.frombuffer("F",
-                                         (self.dim1,self.dim2),
+                                         (self.dim1, self.dim2),
                                          raw_data[header_bytes:],
                                          "raw",
                                          "F",
@@ -93,11 +93,11 @@ class tifimage(fabioimage):
                 self.bpp = 4
                 self.data = numpy.fromstring(raw_data[header_bytes:],
                                                numpy.float32)
-                self.data = numpy.reshape( self.data, (self.dim2, self.dim1))
+                self.data = numpy.reshape(self.data, (self.dim2, self.dim1))
                 self.resetvals()
                 return self
 
-            
+
         # For some odd reason the getextrema does not work on unsigned 16 bit
         # but it does on 32 bit images, hence convert if 16 bit
         if TIFF_TO_NUMERIC.has_key(self.pilimage.mode) and \
@@ -116,9 +116,9 @@ class tifimage(fabioimage):
             self.pilimage = temp
         self.dim1, self.dim2 = self.pilimage.size
         # PIL is transposed compared to numpy?
-        self.data = numpy.reshape( self.data, (self.dim2, self.dim1))
+        self.data = numpy.reshape(self.data, (self.dim2, self.dim1))
         self.resetvals()
-        return self 
+        return self
 
     def write(self, fname):
         """
@@ -137,7 +137,7 @@ class tifimage(fabioimage):
                                                  self.data.tostring(),
                                                  "raw",
                                                  'I;16',
-                                                 0,1)
-            
+                                                 0, 1)
+
         self.pilimage.save(fname, "TIFF")
-        
+

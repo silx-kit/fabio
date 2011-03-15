@@ -16,7 +16,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 import numpy as N, logging
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 
 
 class adscimage(fabioimage):

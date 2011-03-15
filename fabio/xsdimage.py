@@ -13,7 +13,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import os, logging, struct
 import numpy as np
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 import base64, hashlib
 from lxml import etree
 

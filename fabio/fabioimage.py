@@ -18,7 +18,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 import numpy as N, math, os, cStringIO, gzip, bz2
 import Image
-import fabio
+import fabioutils
 
 
 # i = Image.open('lena.jpg')
@@ -68,18 +68,21 @@ class fabioimage(object):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if self.nframes == 1:
             # single image per file
-            return fabio.openimage.openimage(
+            import openimage
+            return openimage.openimage(
                 fabio.jump_filename(self.filename, num))
         raise Exception("getframe out of range")
 
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
+        import openimage
         return fabio.openimage.openimage(
             fabio.previous_filename(self.filename))
 
     def next(self):
         """ returns the next file in the series as a fabioimage """
-        return fabio.openimage.openimage(
+        import openimage
+        return openimage.openimage(
             fabio.next_filename(self.filename))
 
 
@@ -303,12 +306,12 @@ class fabioimage(object):
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
                 return self._compressed_stream(fname,
-                                       fabio.COMPRESSORS['.gz'],
+                                       fabioutils.COMPRESSORS['.gz'],
                                        gzip.GzipFile,
                                        mode)
             if os.path.splitext(fname)[1] == '.bz2':
                 return self._compressed_stream(fname,
-                                       fabio.COMPRESSORS['.bz2'],
+                                       fabioutils.COMPRESSORS['.bz2'],
                                        bz2.BZ2File,
                                        mode)
             #

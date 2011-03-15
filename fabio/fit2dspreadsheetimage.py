@@ -7,7 +7,7 @@ Read the fit2d ascii image output
 
 import numpy
 
-from fabio.fabioimage import fabioimage
+from fabioimage import fabioimage
 
 
 
@@ -32,7 +32,7 @@ class fit2dspreadsheetimage(fabioimage):
         self.header['title'] = line
         self.header['Dim_1'] = xdim
         self.header['Dim_2'] = ydim
-        
+
     def read(self, fname):
         """
         Read in header into self.header and
@@ -61,8 +61,8 @@ class fit2dspreadsheetimage(fabioimage):
                     vals.append([float(x) for x in line.split()])
                 except:
                     pass
-            self.data = numpy.array(vals).astype( bytecode )
-            assert self.data.shape == ( self.dim2, self.dim1 )
+            self.data = numpy.array(vals).astype(bytecode)
+            assert self.data.shape == (self.dim2, self.dim1)
 
         except:
             raise IOError, "Error reading ascii"
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     import sys, time
     start = time.time()
     img = fit2dspreadsheetimage()
-    img.read(sys.argv[1] )
+    img.read(sys.argv[1])
     print time.time() - start
     print img.dim1, img.dim2, img.data.shape
     from matplotlib.pylab import imshow, show

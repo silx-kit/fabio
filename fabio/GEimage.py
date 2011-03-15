@@ -14,7 +14,8 @@
 
 import numpy as np
 import struct, logging
-import fabio, fabio.fabioimage
+from fabioimage import fabioimage
+from fabioutils import next_filename, previous_filename
 
 GE_HEADER_INFO = [
     # Name, length in bytes, format for struct (None means string)
@@ -176,24 +177,24 @@ GE_HEADER_INFO = [
     ]
 
 
-class GEimage(fabio.fabioimage.fabioimage):
+class GEimage(fabioimage):
 
     _need_a_seek_to_read = True
-    
-    def _readheader( self, infile):
+
+    def _readheader(self, infile):
         """ Read a GE image header """
-    
+
         infile.seek(0)
 
         self.header = {}
         for name, nbytes, format in GE_HEADER_INFO:
             if format is None:
-                self.header[ name ] = infile.read( nbytes )
+                self.header[ name ] = infile.read(nbytes)
             else:
-                self.header[ name ] = struct.unpack( format,
-                                                     infile.read( nbytes ))[0]
+                self.header[ name ] = struct.unpack(format,
+                                                     infile.read(nbytes))[0]
 
-    def read( self, fname, frame = 0):
+    def read(self, fname, frame=0):
         """
         Read in header into self.header and
         the data   into self.data
@@ -204,15 +205,15 @@ class GEimage(fabio.fabioimage.fabioimage):
         self.sequencefilename = fname
         self._readheader(infile)
         self.nframes = self.header['NumberOfFrames']
-        self._readframe( infile, frame )
+        self._readframe(infile, frame)
         infile.close()
         return self
 
-    def _makeframename( self ):
+    def _makeframename(self):
         """ The thing to be printed for the user to represent a frame inside
         a file """
-        self.filename = "%s$%04d"%( self.sequencefilename,
-                                   self.currentframe )
+        self.filename = "%s$%04d" % (self.sequencefilename,
+                                   self.currentframe)
 
     def _readframe(self, filepointer, img_num):
         """
@@ -225,28 +226,28 @@ class GEimage(fabio.fabioimage.fabioimage):
             raise Exception("Bad image number")
         imgstart = self.header['StandardHeaderSizeInBytes'] + \
                    self.header['UserHeaderSizeInBytes'] + \
-                   img_num*self.header['NumberOfRowsInFrame'] * \
+                   img_num * self.header['NumberOfRowsInFrame'] * \
                    self.header['NumberOfColsInFrame'] * \
                    self.header['ImageDepthInBits'] / 8
         # whence = 0 means seek from start of file
-        filepointer.seek( imgstart, 0 )
-        
+        filepointer.seek(imgstart, 0)
+
         self.bpp = self.header['ImageDepthInBits'] / 8 # hopefully 2        
         imglength = self.header['NumberOfRowsInFrame'] * \
                     self.header['NumberOfColsInFrame'] * self.bpp
         if self.bpp != 2:
             logging.warning("Using uint16 for GE but seems to be wrong")
-            
+
         # Guessing it is always unsigned int?
-        self.data = np.fromstring( filepointer.read( imglength ), np.uint16)
-        self.data.shape = ( self.header['NumberOfRowsInFrame'],
-                            self.header['NumberOfColsInFrame'] )
+        self.data = np.fromstring(filepointer.read(imglength), np.uint16)
+        self.data.shape = (self.header['NumberOfRowsInFrame'],
+                            self.header['NumberOfColsInFrame'])
         self.dim2 , self.dim1 = self.data.shape
-        self.currentframe = int( img_num )
-        self._makeframename( )
+        self.currentframe = int(img_num)
+        self._makeframename()
 
 
-    def write(self, fname, force_type= np.uint16):
+    def write(self, fname, force_type=np.uint16):
         """ Not yet implemented"""
         raise Exception("Write is not implemented")
 
@@ -260,24 +261,24 @@ class GEimage(fabio.fabioimage.fabioimage):
         newheader = {}
         for k in self.header.keys():
             newheader[k] = self.header[k]
-        frame = GEimage( header = newheader )
+        frame = GEimage(header=newheader)
         frame.nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
-        frame._readframe( infile, num )
+        frame._readframe(infile, num)
         infile.close()
         return frame
-    
+
     def next(self):
         """
         Get the next image in a series as a fabio image
         """
         if self.currentframe < (self.nframes - 1) and self.nframes > 1:
-            return self.getframe( self.currentframe + 1 )
+            return self.getframe(self.currentframe + 1)
         else:
             newobj = GEimage()
-            newobj.read( fabio.next_filename(
-                self.sequencefilename ) )
+            newobj.read(next_filename(
+                self.sequencefilename))
             return newobj
 
     def previous(self):
@@ -285,18 +286,18 @@ class GEimage(fabio.fabioimage.fabioimage):
         Get the previous image in a series as a fabio image
         """
         if self.currentframe > 0:
-            return self.getframe( self.currentframe - 1 )
+            return self.getframe(self.currentframe - 1)
         else:
             newobj = GEimage()
-            newobj.read( fabio.previous_filename(
-                self.sequencefilename ) )
+            newobj.read(previous_filename(
+                self.sequencefilename))
             return newobj
-        
-        
+
+
 def demo():
     import sys, time
 
-    if len(sys.argv)<2:
+    if len(sys.argv) < 2:
         print "USAGE: GE_script.py <GEaSi_raw_image_file>"
         sys.exit()
 
@@ -304,14 +305,14 @@ def demo():
 
     print "init read_GEaSi_data class and load header.."
     sequence1 = GEimage()
-    sequence1.read( image_file )
-        
+    sequence1.read(image_file)
+
     print "TimeBetweenFramesInMicrosecs = ",
     print sequence1.header['TimeBetweenFramesInMicrosecs']
     print "AcquisitionTime = ",
     print sequence1.header['AcquisitionTime']
 
-    
+
     print "Mean = ", sequence1.data.ravel().mean()
 
     while 1:
@@ -319,13 +320,13 @@ def demo():
         try:
             sequence1 = sequence1.next()
             print sequence1.currentframe, sequence1.data.ravel().mean(), \
-                  time.time()-start
+                  time.time() - start
         except:
             raise
             break
 
-        
 
-   
+
+
 if __name__ == '__main__':
     demo()
