@@ -19,12 +19,12 @@ JPW : Use a parser in case of typos (sorry?)
 # Base this on the tifimage (as marccd seems to be tiff with a 
 # special header 
 
-from fabio.tifimage import tifimage
+from tifimage import tifimage
 
 
 # Now for the c definition (found on mar webpage)
 # The following string is therefore copyrighted by Mar I guess
-        
+
 CDEFINITION = """
 typedef struct frame_header_type {
          /* File/header format parameters (256 bytes) */
@@ -228,9 +228,9 @@ def make_format(c_def_string):
     names = []
     expected = 0
     for line in lines:
-        if line.find(";")==-1:
+        if line.find(";") == -1:
             continue
-        decl  = line.split(";")[0].lstrip().rstrip()
+        decl = line.split(";")[0].lstrip().rstrip()
         try:
             [typ, name] = decl.split()
         except ValueError:
@@ -251,9 +251,9 @@ def make_format(c_def_string):
         else:
             times = 1
         try:
-            fmt   += C_TO_STRUCT[typ]*times
-            names += [name]*times
-            expected += C_SIZES[typ]*times
+            fmt += C_TO_STRUCT[typ] * times
+            names += [name] * times
+            expected += C_SIZES[typ] * times
         except KeyError:
             continue
     return names, fmt
@@ -270,7 +270,7 @@ def interpret_header(header, fmt, names):
     i = 0
     for name in names:
         if hdr.has_key(name):
-            if type(values[i]) == type("string"): 
+            if type(values[i]) == type("string"):
                 hdr[name] = hdr[name] + values[i]
             else:
                 try:
@@ -296,8 +296,8 @@ class marccdimage(tifimage):
         """
         infile.seek(1024)
         hstr = infile.read(3072)
-        self.header = interpret_header( hstr, HEADER_FORMAT, HEADER_NAMES )
-        
+        self.header = interpret_header(hstr, HEADER_FORMAT, HEADER_NAMES)
+
 
 
     def _read(self, fname):
