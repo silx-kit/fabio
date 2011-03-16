@@ -4,6 +4,11 @@ FabIO
 FabIO is an I/O library for diffraction images written in python. It combines the functionalities which evolved in Fabian and ImageD11.
 The design specification can be viewed at: PyImageIO.
 
+Changelog from FabIO-0.0.6 to FabIO-0.0.7:
+- Support for mutli-frames EDF files
+- Support for XML images/2D arrays used in EDNA 
+- new method: fabio.open(filename) that is an alias for fabio.openimage.openimage(filename)
+ 
 Changelog from FabIO-0.0.4 to FabIO-0.0.6:
 - Support for CBF files from Pilatus detectors
 - Support for KCD files from Nonius Kappa CCD images 
@@ -15,13 +20,13 @@ fabio can be downloaded from the fable download page on sourceforge.net. Present
 http://sourceforge.net/projects/fable/files/fabio/
 
 e.g.
-tar xvzf fabio-0.0.6.tar.gz
+tar xvzf fabio-0.0.7.tar.gz
 or
-unzip fabio-0.0.6.zip
+unzip fabio-0.0.7.zip
 
-all files are unpacked into the directory fabio-0.0.6. To install these do
+all files are unpacked into the directory fabio-0.0.7. To install these do
 
-cd fabio-0.0.6
+cd fabio-0.0.7
 
 and install fabio with
 
@@ -36,11 +41,11 @@ sudo python setup.py install
 
 If you are using MS Windows you also download a binary version packaged as executable installation files. Dependant on your python version open either
 
-fabio-0.0.6.win32-py2.4.exe
+fabio-0.0.7.win32-py2.4.exe
 
 or
 
-fabio-0.0.6.win32-py2.5.exe
+fabio-0.0.7.win32-py2.5.exe
 
 Dependencies
 ============
