@@ -15,7 +15,11 @@ import os, logging, struct
 import numpy as np
 from fabioimage import fabioimage
 import base64, hashlib
-from lxml import etree
+try:
+    from lxml import etree
+except ImportError:
+    logging.warning("lxml library is probably not part of your python installation: disabling xsdimage format")
+    etree = None
 
 class xsdimage(fabioimage):
     """ 
@@ -116,7 +120,8 @@ class xsdimage(fabioimage):
             for j in i.xpath("//value"):
                 self.md5 = j.text
 
-
+if etree is None:
+    xsdimage = None
 
 
 

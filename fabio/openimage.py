@@ -1,5 +1,3 @@
-
-
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -12,7 +10,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 mods for fabio by JPW
 
 """
-import sys
+import sys, logging
 from fabioutils  import deconstruct_filename, getnum, filename_object
 from fabioimage import fabioimage
 import edfimage

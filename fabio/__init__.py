@@ -1,4 +1,5 @@
 version = "0.0.7"
+
 import fabioimage
 import openimage
 from fabioutils import filename_object, COMPRESSORS, jump_filename, \
