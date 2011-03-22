@@ -257,12 +257,26 @@ class Frame(object):
                 try:
                     rawData = gzip.GzipFile(fileobj=fileobj).read()
                 except IOError:
-                    logging.warning("Encounter the python-gzip bug with trailing garbage")
-                    #This is as an ugly hack against a bug in Python gzip
-                    import subprocess
-                    sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-                    rawData, err = sub.communicate(input=self.rawData)
-                    logging.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
+                    logging.warning("Encounter the python-gzip bug with trailing garbage, trying subprocess gzip")
+                    try:
+                        #This is as an ugly hack against a bug in Python gzip
+                        import subprocess
+                        sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                        rawData, err = sub.communicate(input=self.rawData)
+                        logging.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
+                    except:
+                        logging.warning("Unable to use the subprocess gzip. is gzip available? ")
+                        for i in range(1, 513):
+                            try:
+                                fileobj = StringIO.StringIO(self.rawData[:-i])
+                                rawData = gzip.GzipFile(fileobj=fileobj).read()
+                            except IOError:
+                                logging.debug("trying with %s bytes less, doesn't work" % i)
+                            else:
+                                break
+                        else:
+                            logging.error("I am totally unable to read this gzipped compressed data block, giving up")
+
                 self.size = uncompressed_size
             elif "BZ" in compression :
                 rawData = bz2.decompress(self.rawData)
