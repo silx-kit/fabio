@@ -581,10 +581,11 @@ class edfimage(fabioimage):
         @return: None
         
         """
+
         outfile = self._open(fname, mode="wb")
         for i, frame in enumerate(self.frames):
             frame.iFrame = i
-            outfile.write(frame.getEdfBlock())
+            outfile.write(frame.getEdfBlock(force_type=force_type))
         outfile.close()
 
 ################################################################################
