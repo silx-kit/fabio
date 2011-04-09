@@ -564,7 +564,7 @@ class edfimage(fabioimage):
     def next(self):
         """ returns the next file in the series as a fabioimage """
         if self.nframes == 1:
-            return fabioimage.previous(self)
+            return fabioimage.next(self)
         else:
             newFrameId = self.currentframe + 1
             return self.getframe(newFrameId)

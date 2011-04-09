@@ -76,14 +76,14 @@ class fabioimage(object):
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
         import openimage
-        return fabio.openimage.openimage(
-            fabio.previous_filename(self.filename))
+        return openimage.openimage(
+            fabioutils.previous_filename(self.filename))
 
     def next(self):
         """ returns the next file in the series as a fabioimage """
         import openimage
         return openimage.openimage(
-            fabio.next_filename(self.filename))
+            fabioutils.next_filename(self.filename))
 
 
     def toPIL16(self, filename=None):
