@@ -455,7 +455,11 @@ class edfimage(fabioimage):
             logging.error("Unable to locate start of the binary section")
             offset = None
         if offset is not None:
-            infile.seek(offset, os.SEEK_CUR)
+            try:
+                infile.seek(offset, os.SEEK_CUR)
+            except TypeError: #JK20110407 bugfix specific to MacOSX
+                pos = infile.tell()
+                infile.seek(pos + offset)
         return block[start:end]
 
 
@@ -539,7 +543,11 @@ class edfimage(fabioimage):
 
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a fabioimage """
-        if num in xrange(self.nframes):
+        if self.nframes == 1:
+            logging.debug("Single frame EDF; having fabioimage default behavour: %s" % num)
+            fabioimage.getframe(self, num)
+        elif num in xrange(self.nframes):
+            logging.debug("Multi frame EDF; having edfimage specific behavour: %s/%s" % (num, self.nframes))
             frame = self.frames[num]
             newImage = edfimage(data=frame.getData(), header=frame.header, header_keys=frame.header_keys)
             newImage.frames = self.frames
@@ -548,8 +556,9 @@ class edfimage(fabioimage):
             newImage.filename = self.filename
             return newImage
         else:
-            logging.error("Cannot access frame: %s" % num)
-            raise ValueError("edfimage.getframe: index out of range: %s" % num)
+            txt = "Cannot access frame: %s/%s" % (num, self.nframes)
+            logging.error(txt)
+            raise ValueError("edfimage.getframe:" + txt)
 
 
     def previous(self):
