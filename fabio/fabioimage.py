@@ -70,7 +70,7 @@ class fabioimage(object):
             # single image per file
             import openimage
             return openimage.openimage(
-                fabio.jump_filename(self.filename, num))
+                fabioutils.jump_filename(self.filename, num))
         raise Exception("getframe out of range")
 
     def previous(self):

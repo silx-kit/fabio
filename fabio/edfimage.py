@@ -545,7 +545,7 @@ class edfimage(fabioimage):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if self.nframes == 1:
             logging.debug("Single frame EDF; having fabioimage default behavour: %s" % num)
-            fabioimage.getframe(self, num)
+            return fabioimage.getframe(self, num)
         elif num in xrange(self.nframes):
             logging.debug("Multi frame EDF; having edfimage specific behavour: %s/%s" % (num, self.nframes))
             frame = self.frames[num]
