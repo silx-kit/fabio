@@ -1,8 +1,5 @@
 #!/usr/bin/env python 
 
-
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -12,18 +9,29 @@ Authors: Henning O. Sorensen & Erik Knudsen
          DK-4000 Roskilde
          email:erik.knudsen@risoe.dk
          
-         and Jon Wright, ESRF
+         and Jon Wright, Jerome Kieffer: ESRF
 
 """
 
-import numpy as N, math, os, cStringIO, gzip, bz2
+import numpy, math, os, gzip, bz2, StringIO
 import Image
 import fabioutils
 
 
-# i = Image.open('lena.jpg')
-# a = numpy.asarray(i) # a is readonly
-# i = Image.fromarray(a)
+class fabioStream(StringIO.StringIO):
+    """ 
+    just an interface providing the name anf mode property to a StringIO
+    
+    BugFix for MacOSX
+    """
+    def __init__(self, data, fname=None, mode="r"):
+        StringIO.StringIO.__init__(self, data)
+        if fname == None:
+            self.name = "fabioStream"
+        else:
+            self.name = fname
+        self.mode = mode
+
 
 class fabioimage(object):
     """
@@ -85,7 +93,6 @@ class fabioimage(object):
         return openimage.openimage(
             fabioutils.next_filename(self.filename))
 
-
     def toPIL16(self, filename=None):
         """
         Convert to Python Imaging Library 16 bit greyscale image
@@ -113,7 +120,7 @@ class fabioimage(object):
             raise Exception("Unknown numpy type " + str(self.data.dtype.type))
         # 
         # hack for byteswapping for PIL in MacOS
-        testval = N.array((1, 0), N.uint8).view(N.uint16)[0]
+        testval = numpy.array((1, 0), numpy.uint8).view(numpy.uint16)[0]
         if  testval == 1:
             dats = self.data.tostring()
         elif testval == 256:
@@ -138,13 +145,13 @@ class fabioimage(object):
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:
-            self.maxval = N.max(self.data)
+            self.maxval = numpy.max(self.data)
         return self.maxval
 
     def getmin(self):
         """ Find min value in self.data, caching for the future """
         if self.minval is None:
-            self.minval = N.min(self.data)
+            self.minval = numpy.min(self.data)
         return self.minval
 
     def make_slice(self, coords):
@@ -190,21 +197,21 @@ class fabioimage(object):
         if sli == self.slice and self.area_sum is not None:
             return self.area_sum
         self.slice = sli
-        self.area_sum = N.sum(
-                            N.ravel(
-                                self.data[ self.slice ].astype(N.float)))
+        self.area_sum = numpy.sum(
+                            numpy.ravel(
+                                self.data[ self.slice ].astype(numpy.float)))
         return self.area_sum
 
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = N.mean(self.data)
+            self.mean = numpy.mean(self.data)
         return float(self.mean)
 
     def getstddev(self):
         """ return the standard deviation """
         if self.stddev == None:
-            self.stddev = N.std(self.data)
+            self.stddev = numpy.std(self.data)
         return float(self.stddev)
 
     def add(self, other):
@@ -225,32 +232,47 @@ class fabioimage(object):
         self.mean = self.stddev = self.maxval = self.minval = None
         self.area_sum = None
 
-    def rebin(self, x_rebin_fact, y_rebin_fact):
-        """ Rebin the data and adjust dims """
+    def rebin(self, x_rebin_fact, y_rebin_fact, keep_I=True):
+        """ 
+        Rebin the data and adjust dims 
+        @param x_rebin_fact: x binning factor
+        @param y_rebin_fact: y binning factor
+        @param keep_I: shall the signal increase ?
+        @type x_rebin_fact: int
+        @type y_rebin_fact: int
+        @type keep_I: boolean
+
+        
+        """
         if self.data == None:
             raise Exception('Please read in the file you wish to rebin first')
-        (mantis_x, exp_x) = math.frexp(x_rebin_fact)
-        (mantis_y, exp_y) = math.frexp(y_rebin_fact)
-        # FIXME - this is a floating point comparison, is it always exact?
-        if (mantis_x != 0.5 or mantis_y != 0.5):
-            raise Exception('Rebin factors not power of 2 not supported (yet)')
-        if int(self.dim1 / x_rebin_fact) * x_rebin_fact != self.dim1 or \
-           int(self.dim2 / x_rebin_fact) * x_rebin_fact != self.dim2 :
+
+        if (self.dim1 % x_rebin_fact != 0) or (self.dim2 % y_rebin_fact != 0):
             raise('image size is not divisible by rebin factor - ' + \
                   'skipping rebin')
-        pass  ## self.data.savespace(1) # avoid the upcasting behaviour
-        i = 1
-        while i < x_rebin_fact:
-            # FIXME - why do you divide by 2? Rebinning should increase counts?
-            self.data = ((self.data[:, ::2] + self.data[:, 1::2]) / 2)
-            i = i * 2
-        i = 1
-        while i < y_rebin_fact:
-            self.data = ((self.data[::2, :] + self.data[1::2, :]) / 2)
-            i = i * 2
+        else:
+            dataIn = self.data.astype("float64")
+            shapeIn = self.data.shape
+            shapeOut = (shapeIn[0] / y_rebin_fact, shapeIn[1] / x_rebin_fact)
+            binsize = y_rebin_fact * x_rebin_fact
+            if binsize < 50: #method faster for small binning (4x4)
+                out = numpy.zeros(shapeOut, dtype="float64")
+                for j in range(x_rebin_fact):
+                    for i in range(y_rebin_fact):
+                        out += dataIn[i::y_rebin_fact, j::x_rebin_fact]
+            else: #method faster for large binning (8x8)
+                temp = self.data.astype("float64")
+                temp.shape = (shapeOut[0], y_rebin_fact, shapeOut[1], x_rebin_fact)
+                out = temp.sum(axis=3).sum(axis=1)
         self.resetvals()
+        if keep_I:
+            self.data = (out / (y_rebin_fact * x_rebin_fact)).astype(self.data.dtype)
+        else:
+            self.data = out.astype(self.data.dtype)
+
         self.dim1 = self.dim1 / x_rebin_fact
         self.dim2 = self.dim2 / y_rebin_fact
+
         #update header
         self.update_header()
 
@@ -298,6 +320,7 @@ class fabioimage(object):
         Return an object which can be used for "read" and "write" 
         ... FIXME - what about seek ? 
         """
+        fileObject = None
         self.filename = fname
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
@@ -305,12 +328,12 @@ class fabioimage(object):
         if isinstance(fname, (str, unicode)):
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
-                return self._compressed_stream(fname,
+                fileObject = self._compressed_stream(fname,
                                        fabioutils.COMPRESSORS['.gz'],
                                        gzip.GzipFile,
                                        mode)
-            if os.path.splitext(fname)[1] == '.bz2':
-                return self._compressed_stream(fname,
+            elif os.path.splitext(fname)[1] == '.bz2':
+                fileObject = self._compressed_stream(fname,
                                        fabioutils.COMPRESSORS['.bz2'],
                                        bz2.BZ2File,
                                        mode)
@@ -319,7 +342,12 @@ class fabioimage(object):
             # but named incorrectly...
             #
             # FIXME - should we fix that or complain about the daft naming?
-            return open(fname, mode)
+            else:
+                fileObject = open(fname, mode)
+            if "name" not in dir(fileObject):
+                    fileObject.name = fname
+
+        return fileObject
 
     def _compressed_stream(self,
                            fname,
@@ -332,19 +360,19 @@ class fabioimage(object):
         """
         # assert that python modules are always OK based on performance benchmark
         # Try to fix the way we are using them?
+        fobj = None
         if self._need_a_real_file and mode[0] == "r":
             fo = python_uncompress(fname, mode)
             fobj = os.tmpfile()
             fobj.write(fo.read())
             fo.close()
             fobj.seek(0)
-            return fobj
-        if self._need_a_seek_to_read and mode[0] == "r":
+        elif self._need_a_seek_to_read and mode[0] == "r":
             fo = python_uncompress(fname, mode)
-            return cStringIO.StringIO(fo.read())
-        return python_uncompress(fname, mode)
-
-
+            fobj = fabioStream(fo.read(), fname, mode)
+        else:
+            fobj = python_uncompress(fname, mode)
+        return fobj
 
 
 def test():
@@ -354,9 +382,9 @@ def test():
     import time
     start = time.time()
 
-    dat = N.ones((1024, 1024), N.uint16)
-    dat = (dat * 50000).astype(N.uint16)
-    assert dat.dtype.char == N.ones((1), N.uint16).dtype.char
+    dat = numpy.ones((1024, 1024), numpy.uint16)
+    dat = (dat * 50000).astype(numpy.uint16)
+    assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
     hed = {"Title":"50000 everywhere"}
     obj = fabioimage(dat, hed)
 
@@ -365,7 +393,7 @@ def test():
     assert obj.getmean() == 50000 , obj.getmean()
     assert obj.getstddev() == 0.
 
-    dat2 = N.zeros((1024, 1024), N.uint16, savespace=1)
+    dat2 = numpy.zeros((1024, 1024), numpy.uint16, savespace=1)
     cord = [ 256, 256, 790, 768 ]
     slic = obj.make_slice(cord)
     dat2[slic] = dat2[slic] + 100

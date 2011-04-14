@@ -12,30 +12,39 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 """
 
 import unittest, os, sys
-import numpy as N
+import numpy
 import numpy.random as RandomArray
 import logging
 import gzip, bz2
+force_build = False
+
 
 for idx, opts in enumerate(sys.argv[:]):
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
         sys.argv.pop(idx)
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
+
 try:
     logging.debug("tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
+
+if force_build:
+    UtilsTest.forceBuild()
 from fabio.fabioimage import fabioimage
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
     def setUp(self):
         """make the image"""
-        dat = N.ones((1024, 1024), N.uint16)
-        dat = (dat * 50000).astype(N.uint16)
-        assert dat.dtype.char == N.ones((1), N.uint16).dtype.char
+        dat = numpy.ones((1024, 1024), numpy.uint16)
+        dat = (dat * 50000).astype(numpy.uint16)
+        assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
         hed = {"Title":"50000 everywhere"}
         self.obj = fabioimage(dat, hed)
 
@@ -59,7 +68,7 @@ class testslices(unittest.TestCase):
     """check slicing"""
     def setUp(self):
         """make test data"""
-        dat2 = N.zeros((1024, 1024), N.uint16)
+        dat2 = numpy.zeros((1024, 1024), numpy.uint16)
         hed = {"Title":"zeros and 100"}
         self.cord = [ 256, 256, 790, 768 ]
         self.obj = fabioimage(dat2, hed)
@@ -87,6 +96,14 @@ class testslices(unittest.TestCase):
         area2 = self.obj.integrate_area(self.slic)
         self.assertEqual(area1, area2)
         self.assertEqual(area1, self.npix * 100)
+
+    def testRebin(self):
+        """Test the rebin method"""
+        big = numpy.arange(64).reshape((8, 8))
+        res = numpy.array([[13, 17], [45, 49]])
+        fabimg = fabioimage(data=big, header={})
+        fabimg.rebin(4, 4)
+        self.assertEqual(abs(res - fabimg.data).max(), 0, "data are the same after rebin")
 
 
 class testopen(unittest.TestCase):
@@ -118,27 +135,27 @@ class testopen(unittest.TestCase):
         self.assertEqual(res , "{ hello }")
 
 
-NAMES = { N.uint8 :  "N.uint8",
-          N.int8  :  "N.int8" ,
-          N.uint16:  "N.uint16",
-          N.int16 :  "N.int16" ,
-          N.uint32:  "N.uint32" ,
-          N.int32 :  "N.int32"   ,
-          N.float32: "N.float32" ,
-          N.float64: "N.float64"}
+NAMES = { numpy.uint8 :  "numpy.uint8",
+          numpy.int8  :  "numpy.int8" ,
+          numpy.uint16:  "numpy.uint16",
+          numpy.int16 :  "numpy.int16" ,
+          numpy.uint32:  "numpy.uint32" ,
+          numpy.int32 :  "numpy.int32"   ,
+          numpy.float32: "numpy.float32" ,
+          numpy.float64: "numpy.float64"}
 
 
 class testPILimage(unittest.TestCase):
     """ check PIL creation"""
     def setUp(self):
         """ list of working numeric types"""
-        self.okformats = [N.uint8,
-                          N.int8,
-                          N.uint16,
-                          N.int16,
-                          N.uint32,
-                          N.int32,
-                          N.float32]
+        self.okformats = [numpy.uint8,
+                          numpy.int8,
+                          numpy.uint16,
+                          numpy.int16,
+                          numpy.uint32,
+                          numpy.int32,
+                          numpy.float32]
 
 
     def mkdata(self, shape, typ):
@@ -197,6 +214,7 @@ def test_suite_all_fabio():
     testSuite.addTest(testslices("testgetmax"))
     testSuite.addTest(testslices("testgetmin"))
     testSuite.addTest(testslices("testintegratearea"))
+    testSuite.addTest(testslices("testRebin"))
 
     testSuite.addTest(testopen("testFlat"))
     testSuite.addTest(testopen("testgz"))

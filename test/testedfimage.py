@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*- 
 
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
-
-
 """
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
-import unittest, numpy as N, os
+import unittest, numpy, os
 import logging
 import sys
 import gzip, bz2
@@ -49,7 +45,7 @@ Image = 1;
 History-1 = something=something else;
 \n\n""")
 
-MYIMAGE = N.ones((256, 256), N.float32) * 10
+MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
 MYIMAGE[0, 0] = 0
 MYIMAGE[1, 1] = 20
 
@@ -81,7 +77,7 @@ class testflatedfs(unittest.TestCase):
         self.assertEqual(obj.dim1 , 256)
         self.assertEqual(obj.dim2 , 256)
         self.assertEqual(obj.bpp , 4)
-        self.assertEqual(obj.bytecode, N.float32)
+        self.assertEqual(obj.bytecode, numpy.float32)
         self.assertEqual(obj.data.shape, (256, 256))
         self.assertEqual(obj.header['History-1'],
                          "something=something else")
@@ -160,6 +156,15 @@ class testedfs(unittest.TestCase):
             self.assertEqual(dim1, obj.dim1, "testedfs: %s dim1" % name)
             self.assertEqual(dim2, obj.dim2, "testedfs: %s dim2" % name)
 
+    def test_rebin(self):
+        """test the rebin of edfdata"""
+        f = edfimage()
+        f.read(os.path.join("testimages", "F2K_Seb_Lyso0675.edf"))
+        f.rebin(1024, 1024)
+        self.assertEqual(abs(numpy.array([[1547, 1439], [1536, 1494]]) - f.data).max(), 0, "data are the same after rebin")
+
+
+
 class testedfcompresseddata(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
@@ -202,33 +207,63 @@ class testedfmultiframe(unittest.TestCase):
         UtilsTest.getimage("MultiFrame.edf.bz2")
         UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
         UtilsTest.getimage("MultiFrame-Frame1.edf.bz2")
+        self.ref = edfimage()
+        self.frame0 = edfimage()
+        self.frame1 = edfimage()
+        self.refFile = "MultiFrame.edf"
+        self.Frame0File = "MultiFrame-Frame0.edf"
+        self.Frame1File = "MultiFrame-Frame1.edf"
+        try:
+            self.ref.read(os.path.join("testimages", self.refFile))
+        except:
+            raise RuntimeError("Cannot read image refFile image %s" % self.refFile)
+        try:
+            self.frame0.read(os.path.join("testimages", self.Frame0File))
+        except:
+            raise RuntimeError("Cannot read image Frame0File image %s" % self.Frame0File)
+        try:
+            self.frame1.read(os.path.join("testimages", self.Frame1File))
+        except:
+            raise RuntimeError("Cannot read image Frame1File image %s" % self.Frame1File)
 
-    def test_read(self):
-        """ check we can read these images"""
-        ref = edfimage()
-        frame0 = edfimage()
-        frame1 = edfimage()
-        refFile = "MultiFrame.edf"
-        Frame0File = "MultiFrame-Frame0.edf"
-        Frame1File = "MultiFrame-Frame1.edf"
-        try:
-            ref.read(os.path.join("testimages", refFile))
-        except:
-            raise RuntimeError("Cannot read image refFile image %s" % refFile)
-        try:
-            frame0.read(os.path.join("testimages", Frame0File))
-        except:
-            raise RuntimeError("Cannot read image Frame0File image %s" % Frame0File)
-        try:
-            frame1.read(os.path.join("testimages", Frame1File))
-        except:
-            raise RuntimeError("Cannot read image Frame1File image %s" % Frame1File)
+    def test_getFrame_multi(self):
+        """testedfmultiframe.test_getFrame_multi"""
+        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_multi: Same data for frame 0")
+        f1_multi = self.ref.getframe(1)
+#        logging.warning("f1_multi.header=%s\nf1_multi.data=  %s" % (f1_multi.header, f1_multi.data))
+        self.assertEqual((f1_multi.data - self.frame1.data).max(), 0, "getFrame_multi: Same data for frame 1")
 
-        self.assertEqual((ref.data - frame0.data).max(), 0, "Same data for frame 0")
-        #self.assertEqual(ref.header, frame0.header, "same header for frame 0")
-        ref.next()
-        self.assertEqual((ref.data - frame1.data).max(), 0, "Same data for frame 1")
-        #self.assertEqual(ref.header, frame1.header, "same header for frame 1")
+    def test_getFrame_mono(self):
+        "testedfmultiframe.test_getFrame_mono"
+        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_mono: Same data for frame 0")
+        f1_mono = self.frame0.getframe(1)
+        self.assertEqual((f1_mono.data - self.frame1.data).max(), 0, "getFrame_mono: Same data for frame 1")
+
+    def test_next_multi(self):
+        """testedfmultiframe.test_getFrame_mono"""
+        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_multi: Same data for frame 0")
+        next = self.ref.next()
+        self.assertEqual((next.data - self.frame1.data).max(), 0, "next_multi: Same data for frame 1")
+
+    def text_next_mono(self):
+        "testedfmultiframe.text_next_mono"
+        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_mono: Same data for frame 0")
+        next = self.frame0.next()
+        self.assertEqual((next.data - self.frame1.data).max(), 0, "next_mono: Same data for frame 1")
+
+    def test_previous_multi(self):
+        """testedfmultiframe.test_previous_multi"""
+        f1 = self.ref.getframe(1)
+        self.assertEqual((f1.data - self.frame1.data).max(), 0, "previous_multi: Same data for frame 1")
+        f0 = f1.previous()
+        self.assertEqual((f0.data - self.frame1.data).max(), 0, "previous_multi: Same data for frame 0")
+
+    def text_previous_mono(self):
+        "testedfmultiframe.text_previous_mono"
+        f1 = self.ref.getframe(1)
+        self.assertEqual((f1.data - self.frame1.data).max(), 0, "previous_mono: Same data for frame 1")
+        prev = self.frame1.previous()
+        self.assertEqual((prev.data - self.frame0.data).max(), 0, "previous_mono: Same data for frame 0")
 
 
 def test_suite_all_edf():
@@ -240,8 +275,15 @@ def test_suite_all_edf():
     testSuite.addTest(testgzipedf("test_read"))
     testSuite.addTest(testgzipedf("test_getstats"))
     testSuite.addTest(testedfs("test_read"))
+    testSuite.addTest(testedfs("test_rebin"))
     testSuite.addTest(testedfcompresseddata("test_read"))
-    testSuite.addTest(testedfmultiframe("test_read"))
+    testSuite.addTest(testedfmultiframe("test_getFrame_multi"))
+    testSuite.addTest(testedfmultiframe("test_getFrame_mono"))
+    testSuite.addTest(testedfmultiframe("test_next_multi"))
+    testSuite.addTest(testedfmultiframe("text_next_mono"))
+    testSuite.addTest(testedfmultiframe("test_previous_multi"))
+    testSuite.addTest(testedfmultiframe("text_previous_mono"))
+
     return testSuite
 
 if __name__ == '__main__':
