@@ -424,7 +424,23 @@ class edfimage(fabioimage):
 
     def __init__(self, data=None , header=None, header_keys=None, frames=None):
         self.currentframe = 0
-        fabioimage.__init__(self, data, header)
+        try:
+            dim = len(data.shape)
+        except:
+            data = None
+            dim = 0
+        if dim == 2:
+            fabioimage.__init__(self, data, header)
+        elif dim == 1 :
+            data.shape = (0, len(data))
+            fabioimage.__init__(self, data, header)
+        elif dim == 3 :
+            fabioimage.__init__(self, data[0, :, :], header)
+        elif dim == 4 :
+            fabioimage.__init__(self, data[0, 0, :, :], header)
+        elif dim == 5 :
+            fabioimage.__init__(self, data[0, 0, 0, :, :], header)
+
         if frames is None:
             frame = Frame(data=data, header=header,
                           header_keys=header_keys ,
@@ -609,14 +625,17 @@ class edfimage(fabioimage):
         outfile.close()
 
 
-    def appendFrame(self, frame):
+    def appendFrame(self, frame=None, data=None, header=None):
         """
         Method used add a frame to an EDF file
         @param frame: frame to append to edf image 
         @type frame: instance of Frame
         @return: None
         """
-        self.__frames.append(frame)
+        if isinstance(frame, Frame):
+            self.__frames.append(frame)
+        else:
+            self.__frames.append(Frame(data, header))
 
 
     def deleteFrame(self, frameNb=None):
