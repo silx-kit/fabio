@@ -320,10 +320,12 @@ class Frame(object):
     data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
 
 
-    def getEdfBlock(self, force_type=None):
+    def getEdfBlock(self, force_type=None, fit2dMode=False):
         """
         @param force_type: type of the dataset to be enforced like "float64" or "uint16"
         @type force_type: string or numpy.dtype
+        @param fit2dMode: enforce compatibility with fit2d and starts countimg number of images at 1 
+        @type fit2dMode: boolean
         @return: ascii header block 
         @rtype: python string with the concatenation of the ascii header and the binary data block
         """
@@ -331,7 +333,7 @@ class Frame(object):
             data = self.data.astype(force_type)
         else:
             data = self.data
-
+        fit2dMode = bool(fit2dMode)
         for key in self.header:
             KEY = key.upper()
             if KEY not in self.capsHeader:
@@ -364,9 +366,9 @@ class Frame(object):
         header_keys.insert(0, "Size")
         header["Size"] = len(data.tostring())
         header_keys.insert(0, "HeaderID")
-        header["HeaderID"] = "EH:%06d:000000:000000" % self.iFrame
+        header["HeaderID"] = "EH:%06d:000000:000000" % (self.iFrame + fit2dMode)
         header_keys.insert(0, "Image")
-        header["Image"] = str(self.iFrame)
+        header["Image"] = str(self.iFrame + fit2dMode)
 
         dims = list(data.shape)
         nbdim = len(dims)
@@ -392,7 +394,7 @@ class Frame(object):
         header["EDF_BinarySize"] = len(data.tostring())
         header_keys.insert(0, "EDF_DataBlockID")
         if not "EDF_DataBlockID" in header:
-            header["EDF_DataBlockID"] = "%i.Image.Psd" % self.iFrame
+            header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
         preciseSize = 4 #2 before {\n 2 after }\n
         for key in header_keys:
             line = str("%s = %s ;\n" % (key, header[key]))
@@ -607,7 +609,7 @@ class edfimage(fabioimage):
         return newImage
 
 
-    def write(self, fname, force_type=None):
+    def write(self, fname, force_type=None, fit2dMode=False):
         """
         Try to write a file
         check we can write zipped also
@@ -621,7 +623,7 @@ class edfimage(fabioimage):
         outfile = self._open(fname, mode="wb")
         for i, frame in enumerate(self.__frames):
             frame.iFrame = i
-            outfile.write(frame.getEdfBlock(force_type=force_type))
+            outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
         outfile.close()
 
 
