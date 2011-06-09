@@ -32,10 +32,16 @@ class pilatusimage(tifimage):
         Parser based approach
         Gets all entries
         """
+
+        self.header = {}
+
 #        infile = open(infile)
         hstr = infile.read(4096)
         # well not very pretty - but seems to find start of 
         # header information
+        if (hstr.find('# ')==-1):
+          return self.header
+
         hstr = hstr[hstr.index('# '):]
         hstr = hstr[:hstr.index('\x00')]
         hstr = hstr.split('#')
@@ -47,7 +53,6 @@ class pilatusimage(tifimage):
                 go_on = False
 
 
-        self.header = {}
         
         for line in hstr:
             line = line[1:line.index('\r\n')]
