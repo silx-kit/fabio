@@ -19,10 +19,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
+import gzip, bz2, zlib, os, StringIO
 import numpy as np, logging
 from fabioimage import fabioimage
-import gzip, bz2, zlib, os, StringIO
-
+from fabioutils import isAscii
 
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"    :  np.int8,
@@ -397,7 +397,16 @@ class Frame(object):
             header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
         preciseSize = 4 #2 before {\n 2 after }\n
         for key in header_keys:
-            line = str("%s = %s ;\n" % (key, header[key]))
+            #Escape keys or values that are no ascii
+            strKey = str(key)
+            if not isAscii(strKey, listExcluded=["}", "{"]):
+                continue
+                logging.warning("Non ascii key %s, skipping" % strKey)
+            strValue = str(header[key])
+            if not isAscii(strValue, listExcluded=["}", "{"]):
+                logging.warning("Non ascii value %s, skipping" % strValue)
+                continue
+            line = strKey + " = " + strValue + " ;\n"
             preciseSize += len(line)
             listHeader.append(line)
 #            print type(line), line

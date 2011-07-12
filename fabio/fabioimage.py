@@ -13,19 +13,20 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy, math, os, gzip, bz2, StringIO
+import numpy, os, gzip, bz2, StringIO
 import Image
 import fabioutils
 
 
 class fabioStream(StringIO.StringIO):
     """ 
-    just an interface providing the name anf mode property to a StringIO
+    just an interface providing the name and mode property to a StringIO
     
     BugFix for MacOSX
     """
     def __init__(self, data, fname=None, mode="r"):
         StringIO.StringIO.__init__(self, data)
+        self.closed = False
         if fname == None:
             self.name = "fabioStream"
         else:
@@ -248,7 +249,7 @@ class fabioimage(object):
             raise Exception('Please read in the file you wish to rebin first')
 
         if (self.dim1 % x_rebin_fact != 0) or (self.dim2 % y_rebin_fact != 0):
-            raise('image size is not divisible by rebin factor - ' + \
+            raise RuntimeError('image size is not divisible by rebin factor - ' + \
                   'skipping rebin')
         else:
             dataIn = self.data.astype("float64")

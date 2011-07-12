@@ -234,3 +234,22 @@ def extract_filenumber(name):
     """ extract file number """
     obj = deconstruct_filename(name)
     return obj.num
+
+def isAscii(name, listExcluded=None):
+    """
+    @param name: string to check
+    @param listExcluded: list of char or string excluded.
+    @return: True of False whether  name is pure ascii or not
+    """
+    isascii = None
+    try:
+        name.decode("ascii")
+    except UnicodeDecodeError:
+        isascii = False
+    else:
+        if listExcluded:
+            isascii = not(any(bad in  name for bad in listExcluded))
+        else:
+            isascii = True
+
+    return isascii
