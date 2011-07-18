@@ -33,7 +33,7 @@ byteOffset_backend = Extension("byte_offset",
 
 # See the distutils docs...
 setup(name='fabio',
-      version="0.0.7",
+      version="0.0.8",
       author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau and \
       Jerome Kieffer",
       author_email="fable-talk@lists.sourceforge.net",

@@ -48,6 +48,8 @@ class UtilsTest(object):
     url_base = "http://downloads.sourceforge.net/fable"
     test_home = os.path.dirname(__file__)
     image_home = os.path.join(test_home, "testimages")
+    if not os.path.isdir(image_home):
+        os.makedirs(image_home)
     platform = distutils.util.get_platform()
     architecture = "lib.%s-%i.%i" % (platform,
                                     sys.version_info[0], sys.version_info[1])
