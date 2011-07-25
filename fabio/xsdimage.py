@@ -110,14 +110,16 @@ class xsdimage(fabioimage):
             self.dtype = i.text
         self.coding = None
         for i in xml.xpath("//coding"):
-            for j in i.xpath("//value"):
+            j = i.find("value")
+            if j is not None:
                 self.coding = j.text
         self.rawData = None
         for i in xml.xpath("//data"):
             self.rawData = i.text
         self.md5 = None
         for i in xml.xpath("//md5sum"):
-            for j in i.xpath("//value"):
+            j = i.find("value")
+            if j is not None:
                 self.md5 = j.text
 
 if etree is None:
