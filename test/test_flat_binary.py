@@ -1,20 +1,27 @@
 
-import unittest
-import os
-import logging
-import sys
+import unittest, sys, os, logging
+logger = logging.getLogger("test_flat_binary")
+force_build = False
 
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
-import fabio.openimage
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
 
 
 class test_flat_binary(unittest.TestCase):
@@ -40,13 +47,13 @@ class test_flat_binary(unittest.TestCase):
         nfail = 0
         for filename in self.filenames:
             try:
-                im = fabio.openimage.openimage(filename)
+                im = fabio.open(filename)
                 if im.data.tostring() != "\0x0" * 2048 * 2048 * 2:
                     nfail += 1
                 else:
-                    logging.info("**** Passed: %s" % filename)
+                    logger.info("**** Passed: %s" % filename)
             except:
-                logging.warning("failed for: %s" % filename)
+                logger.warning("failed for: %s" % filename)
                 nfail += 1
         self.assertEqual(nfail, 0, " %s failures out of %s" % (nfail, len(self.filenames)))
 

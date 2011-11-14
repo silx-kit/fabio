@@ -51,20 +51,20 @@ class bruker100image(brukerimage):
         k = 0
 
         while k < 2:#for the time being things - are done in 16 bits
-            datatype = {'1' : N.uint8,
-                        '2' : N.uint16,
-                        '4' : N.uint32 }[("%d" % 2 ** k)]
-            ar = N.array(N.fromstring(f.read(int(noverfl[k]) * (2 ** k)),
-                                        datatype), N.uint16)
+            datatype = {'1' : numpy.uint8,
+                        '2' : numpy.uint16,
+                        '4' : numpy.uint32 }[("%d" % 2 ** k)]
+            ar = numpy.array(numpy.fromstring(f.read(int(noverfl[k]) * (2 ** k)),
+                                        datatype), numpy.uint16)
             #insert the the overflow pixels in the image array:
             #this is probably a memory intensive way of doing this - 
             # might be done in a more clever way
             lim = 2 ** (8 * k) - 1
             #generate an array comprising of the indices into data.ravel() 
             # where its value equals lim.
-            M = N.compress(N.equal(data.ravel(), lim), N.arange(rows * cols))
+            M = numpy.compress(numpy.equal(data.ravel(), lim), numpy.arange(rows * cols))
             #now put values from ar into those indices
-            N.put(data.ravel(), M, ar)
+            numpy.put(data.ravel(), M, ar)
             padding = 16 * int(math.ceil(int(noverfl[k]) * (2 ** k) / 16.)) - \
                          int(noverfl[k]) * (2 ** k)
             f.seek(padding, 1)

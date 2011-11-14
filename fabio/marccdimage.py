@@ -20,7 +20,8 @@ JPW : Use a parser in case of typos (sorry?)
 # special header 
 
 from tifimage import tifimage
-
+import logging
+logger = logging.getLogger("marccdimage")
 
 # Now for the c definition (found on mar webpage)
 # The following string is therefore copyrighted by Mar I guess
@@ -234,9 +235,8 @@ def make_format(c_def_string):
         try:
             [typ, name] = decl.split()
         except ValueError:
-            #print "skipping:",line
+            logger.debug("skipping: %s" , line)
             continue
-        #        print "type:",type,"  name:",name
 
         if name.find("[") > -1:
             # repeated ... times
@@ -245,9 +245,9 @@ def make_format(c_def_string):
                 num = num.replace("MAXIMAGES", str(MAXIMAGES))
                 num = num.replace("sizeof(INT32)", "4")
                 times = eval(num)
-            except:
-                print "Please decode", decl
-                raise
+            except Exception as error:
+                logger.error("%s Please decode %s", error, decl)
+                raise error
         else:
             times = 1
         try:

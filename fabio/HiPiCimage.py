@@ -13,8 +13,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
 Information about the file format from Masakatzu Kobayashi is highly appreciated
 """
 
-import numpy as np, logging
-
+import numpy, logging
+logger = logging.getLogger("HiPiCimage")
 from fabioimage import fabioimage
 
 class HiPiCimage(fabioimage):
@@ -28,12 +28,12 @@ class HiPiCimage(fabioimage):
         """
         Image_tag = infile.read(2)
         print Image_tag
-        Comment_len = np.fromstring(infile.read(2), np.uint16)
-        Dim_1 = np.fromstring(infile.read(2), np.uint16)[0]
-        Dim_2 = np.fromstring(infile.read(2), np.uint16)[0]
-        Dim_1_offset = np.fromstring(infile.read(2), np.uint16)[0]
-        Dim_2_offset = np.fromstring(infile.read(2), np.uint16)[0]
-        HeaderType = np.fromstring(infile.read(2), np.uint16)[0]
+        Comment_len = numpy.fromstring(infile.read(2), numpy.uint16)
+        Dim_1 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        Dim_2 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        Dim_1_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        Dim_2_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        HeaderType = numpy.fromstring(infile.read(2), numpy.uint16)[0]
         Dump = infile.read(50)
         Comment = infile.read(Comment_len)
         self.header['Image_tag'] = Image_tag
@@ -75,8 +75,8 @@ class HiPiCimage(fabioimage):
         except:
             raise Exception("HiPic file", str(fname) + \
                                 "is corrupt, cannot read it")
-        bytecode = np.uint16
-        self.bpp = len(np.array(0, bytecode).tostring())
+        bytecode = numpy.uint16
+        self.bpp = len(numpy.array(0, bytecode).tostring())
 
         # Read image data
         block = infile.read(self.dim1 * self.dim2 * self.bpp)
@@ -84,8 +84,8 @@ class HiPiCimage(fabioimage):
 
         #now read the data into the array
         try:
-            self.data = np.reshape(
-                np.fromstring(block, bytecode),
+            self.data = numpy.reshape(
+                numpy.fromstring(block, bytecode),
                 [self.dim2, self.dim1])
         except:
             print len(block), bytecode, self.bpp, self.dim2, self.dim1

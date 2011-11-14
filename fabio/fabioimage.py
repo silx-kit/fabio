@@ -146,13 +146,13 @@ class fabioimage(object):
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:
-            self.maxval = numpy.max(self.data)
+            self.maxval = self.data.max()
         return self.maxval
 
     def getmin(self):
         """ Find min value in self.data, caching for the future """
         if self.minval is None:
-            self.minval = numpy.min(self.data)
+            self.minval = self.data.min()
         return self.minval
 
     def make_slice(self, coords):
@@ -206,14 +206,14 @@ class fabioimage(object):
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = numpy.mean(self.data)
-        return float(self.mean)
+            self.mean = self.data.mean(dtype=numpy.double)
+        return self.mean
 
     def getstddev(self):
         """ return the standard deviation """
         if self.stddev == None:
-            self.stddev = numpy.std(self.data)
-        return float(self.stddev)
+            self.stddev = self.data.std(dtype=numpy.double)
+        return self.stddev
 
     def add(self, other):
         """

@@ -5,28 +5,35 @@
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
+import unittest, sys, os, logging
+logger = logging.getLogger("testmar345image")
+force_build = False
 
-import unittest
-import os
-import logging
-import sys
-
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
 from fabio.mar345image import mar345image
 
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """example.mar2300 2300 2300 0 999999 180.15 4122.67
-example.mar2300.bz2 2300 2300 0 999999 180.15 4122.67
-example.mar2300.gz  2300 2300 0 999999 180.15 4122.67"""
+TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67
+                example.mar2300.bz2 2300 2300 0 999999 180.15 4122.67
+                example.mar2300.gz  2300 2300 0 999999 180.15 4122.67"""
 
 
 class testMAR345(unittest.TestCase):
@@ -34,13 +41,13 @@ class testMAR345(unittest.TestCase):
         """
         download images
         """
-        UtilsTest.getimage("example.mar2300.bz2")
+        self.mar = UtilsTest.getimage("example.mar2300.bz2")[:-4]
 
     def test_read(self):
         """
         Test the reading of Mar345 images 
         """
-        for line in TESTIMAGES.split("\n"):
+        for line in TESTIMAGES.split(os.linesep):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]

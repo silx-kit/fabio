@@ -13,9 +13,16 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 from fabioimage import fabioimage
 import numpy, struct, string
+import logging
+logger = logging.getLogger("mar345image")
 
 class mar345image(fabioimage):
     _need_a_real_file = True
+    def __init__(self, *args, **kwargs):
+        fabioimage.__init__(self, *args, **kwargs)
+        self.numhigh = None
+        self.numpixels = None
+
     def read(self, fname):
         """ Read a mar345 image"""
         self.filename = fname
@@ -23,10 +30,10 @@ class mar345image(fabioimage):
         self._readheader(f)
 
         try:
-            import mar345_io
-        except:
-            print 'error importing the mar345_io backend - ' + \
-                'generating empty 1x1 picture'
+            import mar345_io #IGNORE:F0401
+        except ImportError as error:
+            logger.error('%s importing the mar345_io backend \
+- generating empty 1x1 picture' % error)
             f.close()
             self.dim1 = 1
             self.dim2 = 1
@@ -37,8 +44,8 @@ class mar345image(fabioimage):
         if 'compressed' in self.header['Format']:
             self.data = mar345_io.unpack(f, self.dim1, self.dim2, self.numhigh)
         else:
-            print "error: cannot handle these formats yet " + \
-                "due to lack of documentation"
+            logger.error("cannot handle these formats yet " + \
+                "due to lack of documentation")
             return None
         self.bytecode = numpy.uint
         f.close()
@@ -78,8 +85,8 @@ class mar345image(fabioimage):
             h['Format'] = 'spiral'
         else:
             h['Format'] = 'compressed'
-            print "warning: image format could not be detetermined" + \
-                "- assuming compressed mar345"
+            logger.warning("image format could not be detetermined" + \
+                "- assuming compressed mar345")
         #collection mode
         h['Mode'] = {0:'Dose', 1: 'Time'}[struct.unpack(fs, l[4 * 4:(4 + 1) * 4])[0]]
         #total number of pixels
@@ -106,8 +113,8 @@ class mar345image(fabioimage):
         # TODO: validate these values against the binaries already read
         l = f.read(128)
         if not 'mar research' in l:
-            print "warning: the string \"mar research\" should be in " + \
-                "bytes 65-76 of the header but was not"
+            logger.warning("the string \"mar research\" should be in " + \
+                "bytes 65-76 of the header but was not")
         l = string.strip(f.read(4096 - 128 - 64))
         for m in l.splitlines():
             if m == 'END OF HEADER': break
@@ -131,6 +138,7 @@ class mar345image(fabioimage):
         self.header = h
         return h
 
-    def write(self):
-        pass
+    def write(self, fname):
+        logger.warning("write method not (yet?) implemented !!!!")
+
 

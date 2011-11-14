@@ -20,7 +20,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import numpy as N, logging
+import numpy
 from fabioimage import fabioimage
 
 class GEimage(fabioimage):
@@ -37,15 +37,15 @@ class GEimage(fabioimage):
         # ULONG  --> "=L"
         #   = means byte order is native
 
-        self.header['HeaderVersion'] = N.fromstring(infile.read(2), N.uint16)[0]
-        self.header['HeaderSizeInBytes'] = int(N.fromstring(infile.read(4), N.uint32)[0])
-        self.header['UserHeaderVersion'] = N.fromstring(infile.read(2), N.uint16)[0]
-        self.header['UserHeaderSizeInBytes'] = int(N.fromstring(infile.read(4), N.uint32)[0])
+        self.header['HeaderVersion'] = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        self.header['HeaderSizeInBytes'] = int(numpy.fromstring(infile.read(4), numpy.uint32)[0])
+        self.header['UserHeaderVersion'] = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        self.header['UserHeaderSizeInBytes'] = int(numpy.fromstring(infile.read(4), numpy.uint32)[0])
 
-        self.header['NumberOfFrames'] = N.fromstring(infile.read(2), N.uint16)[0]
-        self.header['NumberOfRowsInFrame'] = N.fromstring(infile.read(2), N.uint16)[0]
-        self.header['NumberOfColsInFrame'] = N.fromstring(infile.read(2), N.uint16)[0]
-        self.header['BitsPerPixel'] = N.fromstring(infile.read(2), N.uint16)[0]
+        self.header['NumberOfFrames'] = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        self.header['NumberOfRowsInFrame'] = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        self.header['NumberOfColsInFrame'] = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        self.header['BitsPerPixel'] = numpy.fromstring(infile.read(2), numpy.uint16)[0]
 
         self.header['AcquisitionDate'] = infile.read(20)
         self.header['AcquisitionTime'] = infile.read(20)
@@ -485,12 +485,12 @@ class GEimage(fabioimage):
 
         ReadBytes = self.dim1 * self.dim2 * (self.bpp / 8)
         block = infile.read(ReadBytes)
-        block = N.fromstring(block, N.uint16)
+        block = numpy.fromstring(block, numpy.uint16)
 
         infile.close()
 
         try:
-            self.data = N.reshape(block, [self.dim2, self.dim1])
+            self.data = numpy.reshape(block, [self.dim2, self.dim1])
         except:
             print len(block), self.dim2, self.dim1
             raise IOError, \

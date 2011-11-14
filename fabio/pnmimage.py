@@ -12,8 +12,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import Image
-import numpy as N
+import numpy, logging
+logger = logging.getLogger("pnmimage")
 from fabioimage import fabioimage
 
 SUBFORMATS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
@@ -22,7 +22,8 @@ HEADERITEMS = ['SUBFORMAT', 'DIMENSIONS', 'MAXVAL']
 P7HEADERITEMS = ['WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR']
 
 class pnmimage(fabioimage):
-    def __init__(self):
+    def __init__(self, *arg, **kwargs):
+        fabioimage.__init__(self, *arg, **kwargs)
         fun = getattr(fabioimage, '__init__', lambda x: None)
         fun(self)
         self.data = None
@@ -54,7 +55,7 @@ class pnmimage(fabioimage):
                 s = l.lsplit(' ', 1)
                 if s[0] not in P7HEADERITEMS:
                     raise IOError, ('Illegal pam (netpnm p7) headeritem %s' % s[0])
-                self.self.header[s[0]] = s[1]
+                self.header[s[0]] = s[1]
         else:
             self.header_keys = HEADERITEMS
             for k in self.header_keys[1:]:
@@ -69,12 +70,12 @@ class pnmimage(fabioimage):
         #case construct here!
         m = int(self.header['MAXVAL'])
         if m < 256:
-            self.bytecode = N.uint8
+            self.bytecode = numpy.uint8
         elif m < 65536:
-            self.bytecode = N.uint16
+            self.bytecode = numpy.uint16
         elif m < 2147483648L:
-            self.bytecode = N.uint32
-            warn('32-bit pixels are not really supported by the netpgm standard')
+            self.bytecode = numpy.uint32
+            logger.warning('32-bit pixels are not really supported by the netpgm standard')
         else:
             raise IOError, 'could not figure out what kind of pixels you have'
 
@@ -94,24 +95,24 @@ class pnmimage(fabioimage):
         return self
 
     def P1dec(self, buf, bytecode):
-        data = N.zeros((self.dim2, self.dim1))
+        data = numpy.zeros((self.dim2, self.dim1))
         i = 0
         for l in buf.readlines():
             try:
-                data[i, :] = N.array(l.split()).astype(bytecode)
+                data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
                 raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
 
     def P4dec(self, buf, bytecode):
-        warn('single bit (pbm) images are not supported - yet')
+        logger.warning('single bit (pbm) images are not supported - yet')
 
     def P2dec(self, buf, bytecode):
-        data = N.zeros((self.dim2, self.dim1))
+        data = numpy.zeros((self.dim2, self.dim1))
         i = 0
         for l in buf.readlines():
             try:
-                data[i, :] = N.array(l.split()).astype(bytecode)
+                data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
                 raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
@@ -119,7 +120,7 @@ class pnmimage(fabioimage):
     def P5dec(self, buf, bytecode):
         l = buf.read()
         try:
-            data = N.reshape(N.fromstring(l, bytecode), [self.dim2, self.dim1]).byteswap()
+            data = numpy.reshape(numpy.fromstring(l, bytecode), [self.dim2, self.dim1]).byteswap()
         except ValueError:
             raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
@@ -136,5 +137,5 @@ class pnmimage(fabioimage):
         #decode pam images, i.e. call one of the other decoders
         pass
 
-    def write(filename):
-        warn('write pnm images is not implemented yet.')
+    def write(self, filename):
+        logger.warning('write pnm images is not implemented yet.')

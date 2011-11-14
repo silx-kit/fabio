@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf8 -*-
 """
 # Unit tests
@@ -6,23 +6,30 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest
-import os
-import logging
-import sys
-import shutil
+import unittest, sys, os, logging
+logger = logging.getLogger("testheadernotsingleton")
+force_build = False
 
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
-from fabio.openimage import openimage
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
+import shutil
 
 class testheadernotsingleton(unittest.TestCase):
 
@@ -30,19 +37,17 @@ class testheadernotsingleton(unittest.TestCase):
         """
         download images
         """
-        UtilsTest.getimage("mb_LP_1_001.img.bz2")
+        self.file1 = UtilsTest.getimage("mb_LP_1_001.img.bz2")[:-4]
 
 
     def testheader(self):
-        file1 = os.path.join("testimages", "mb_LP_1_001.img")
-        file2 = os.path.join("testimages", "mb_LP_1_002.img")
-        self.assertTrue(os.path.exists(file1))
+        file2 = self.file1.replace("mb_LP_1_001.img", "mb_LP_1_002.img")
+        self.assertTrue(os.path.exists(self.file1))
         if not os.path.exists(file2):
-            shutil.copy(file1, file2)
-        image1 = openimage(file1)
-        image2 = openimage(file2)
-        # print i1.header, i2.header
-        self.assertEqual(image1.header['filename'] , file1)
+            shutil.copy(self.file1, file2)
+        image1 = fabio.open(self.file1)
+        image2 = fabio.open(file2)
+        self.assertEqual(image1.header['filename'] , self.file1)
         self.assertEqual(image2.header['filename'] , file2)
         self.assertNotEqual(image1.header['filename'] ,
                              image2.header['filename'])

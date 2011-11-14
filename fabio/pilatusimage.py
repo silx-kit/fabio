@@ -39,8 +39,8 @@ class pilatusimage(tifimage):
         hstr = infile.read(4096)
         # well not very pretty - but seems to find start of 
         # header information
-        if (hstr.find('# ')==-1):
-          return self.header
+        if (hstr.find('# ') == -1):
+            return self.header
 
         hstr = hstr[hstr.index('# '):]
         hstr = hstr[:hstr.index('\x00')]
@@ -53,7 +53,7 @@ class pilatusimage(tifimage):
                 go_on = False
 
 
-        
+
         for line in hstr:
             line = line[1:line.index('\r\n')]
             if line.find(':') > -1:
@@ -68,9 +68,9 @@ class pilatusimage(tifimage):
             elif line.find(',') > -1:
                 dump = line.split(',')
                 self.header[dump[0]] = dump[1]
-                
+
         return self.header
-        
+
 
 
     def _read(self, fname):

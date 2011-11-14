@@ -12,8 +12,9 @@
 # modifications by Jon Wright for style, pychecker and fabio
 # 
 
-import numpy as np
+import numpy
 import struct, logging
+logger = logging.getLogger("GEimage")
 from fabioimage import fabioimage
 from fabioutils import next_filename, previous_filename
 
@@ -239,7 +240,7 @@ class GEimage(fabioimage):
             logging.warning("Using uint16 for GE but seems to be wrong")
 
         # Guessing it is always unsigned int?
-        self.data = np.fromstring(filepointer.read(imglength), np.uint16)
+        self.data = numpy.fromstring(filepointer.read(imglength), numpy.uint16)
         self.data.shape = (self.header['NumberOfRowsInFrame'],
                             self.header['NumberOfColsInFrame'])
         self.dim2 , self.dim1 = self.data.shape
@@ -247,7 +248,7 @@ class GEimage(fabioimage):
         self._makeframename()
 
 
-    def write(self, fname, force_type=np.uint16):
+    def write(self, fname, force_type=numpy.uint16):
         """ Not yet implemented"""
         raise Exception("Write is not implemented")
 

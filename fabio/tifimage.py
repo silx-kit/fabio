@@ -19,6 +19,7 @@ __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 
 import time, logging, struct
+logger = logging.getLogger("tifimage")
 import Image
 import numpy
 from fabioimage import fabioimage
@@ -95,7 +96,7 @@ class tifimage(fabioimage):
 #            self.dim1 = int(self.header['ImageWidth'])
 #            self.dim2 = int(self.header['ImageLength'])
 #        except (KeyError):
-#            logging.warning("image dimensions could not be determined from header tags, trying to go on anyway")
+#            logger.warning("image dimensions could not be determined from header tags, trying to go on anyway")
 #         read the first 32 bytes to determine size
         header = numpy.fromstring(infile.read(64), numpy.uint16)
         self.dim1 = int(header[9])
@@ -115,7 +116,7 @@ class tifimage(fabioimage):
             try:
                 self.data = tiffIO.getImage(0)
             except IOError:
-                logging.warning("Unable to read %s with TiffIO" % fname)
+                logger.warning("Unable to read %s with TiffIO" % fname)
             else:
                 infile.seek(0)
                 self.lib = "TiffIO"
@@ -126,7 +127,7 @@ class tifimage(fabioimage):
                 infile.seek(0)
                 self.pilimage = Image.open(infile)
             except:
-                logging.error("Error in opening %s  with PIL" % fname)
+                logger.error("Error in opening %s  with PIL" % fname)
                 self.lib = None
                 infile.seek(0)
             else:
@@ -161,7 +162,7 @@ class Tiff_header(object):
         elif string[:4] == 'MM\x00\x2a':
             self.byteorder = BIG_ENDIAN
         else:
-            logging.warning("Warning: This does not appear to be a tiff file")
+            logger.warning("Warning: This does not appear to be a tiff file")
         #the next two bytes contains the offset of the oth IFD
         offset_first_ifd = struct.unpack_from("h", string[4:])[0]
         self.ifd = [Image_File_Directory()]
@@ -221,7 +222,7 @@ class Image_File_Directory_entry(object):
         self.tag_type = tag_type
         self.val = None
         if (count <= 0):
-            logging.warning("Tag # %s has an invalid count: %s. Tag is ignored" % (tag, count))
+            logger.warning("Tag # %s has an invalid count: %s. Tag is ignored" % (tag, count))
             return
         if(count * TYPESIZES[tag_type] <= 4):
             self.val_offset = 8
@@ -262,4 +263,4 @@ class Image_File_Directory_entry(object):
             if  self.val_offset != None:
                 self.val = struct.unpack_from("d", full_string[self.val_offset:])[0]
         else:
-            logging.warning("unrecognized type of strInputentry self: %s tag: %s type: %s TYPE: %s" % (self, baseline_tiff_tags[self.tag], self.tag_type, TYPES[tag_type]))
+            logger.warning("unrecognized type of strInputentry self: %s tag: %s type: %s TYPE: %s" % (self, baseline_tiff_tags[self.tag], self.tag_type, TYPES[tag_type]))

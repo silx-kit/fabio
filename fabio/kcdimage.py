@@ -7,12 +7,12 @@ kcd images are 2D images written by the old KappaCCD diffractometer built by Non
 Based on the edfimage.py parser.
 """
 
-import numpy as np, logging
+import numpy, logging
 import os, string
 from fabioimage import fabioimage
+logger = logging.getLogger("kcdimage")
 
-
-DATA_TYPES = {"u16"  :  np.uint16 }
+DATA_TYPES = {"u16"  :  numpy.uint16 }
 
 MINIMUM_KEYS = [
                 'ByteOrder',
@@ -46,7 +46,7 @@ class kcdimage(fabioimage):
 
         if asciiHeader is False:
             # This does not look like an edf file
-            logging.warning("First line of %s does not seam to be ascii text!" % infile.name)
+            logger.warning("First line of %s does not seam to be ascii text!" % infile.name)
         endOfHeaders = False
         while not endOfHeaders:
             oneLine = infile.readline()
@@ -68,7 +68,7 @@ class kcdimage(fabioimage):
             if item not in self.header_keys:
                 missing.append(item)
         if len(missing) > 0:
-            logging.debug("KCD file misses the keys " + " ".join(missing))
+            logger.debug("KCD file misses the keys " + " ".join(missing))
 
 
     def read(self, fname):
@@ -88,15 +88,15 @@ class kcdimage(fabioimage):
             raise Exception("KCD file %s is corrupt, cannot read it" % fname)
         try:
             bytecode = DATA_TYPES[self.header['Data type']]
-            self.bpp = len(np.array(0, bytecode).tostring())
+            self.bpp = len(numpy.array(0, bytecode).tostring())
         except KeyError:
-            bytecode = np.uint16
+            bytecode = numpy.uint16
             self.bpp = 2
-            logging.warning("Defaulting type to uint16")
+            logger.warning("Defaulting type to uint16")
         try:
             nbReadOut = int(self.header['Number of readouts'])
         except KeyError:
-            logging.warning("Defaulting number of ReadOut to 1")
+            logger.warning("Defaulting number of ReadOut to 1")
             nbReadOut = 1
         fileSize = os.stat(fname)[6]
         expected_size = self.dim1 * self.dim2 * self.bpp * nbReadOut
@@ -106,10 +106,10 @@ class kcdimage(fabioimage):
         infile.close()
 
         #now read the data into the array
-        self.data = np.zeros((self.dim2, self.dim1))
+        self.data = numpy.zeros((self.dim2, self.dim1))
         try:
             for i in range(nbReadOut):
-                self.data += np.reshape(np.fromstring(
+                self.data += numpy.reshape(numpy.fromstring(
                     block[i * expected_size / nbReadOut:(i + 1) * expected_size / nbReadOut], bytecode),
                     [self.dim2, self.dim1])
         except:

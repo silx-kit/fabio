@@ -1,42 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*- 
-
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
-
-
 """
 Test cases for the fabioimage class
 
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 """
-
-import unittest, os, sys
-import numpy
-import numpy.random as RandomArray
-import logging
-import gzip, bz2
+import unittest, sys, os, logging
+logger = logging.getLogger("testfabioimage")
 force_build = False
 
-
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
     elif opts in ["-f", "--force"]:
         force_build = True
         sys.argv.pop(sys.argv.index(opts))
-
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
-
 if force_build:
     UtilsTest.forceBuild()
+import fabio
 from fabio.fabioimage import fabioimage
+import numpy
+import gzip, bz2
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -160,7 +154,7 @@ class testPILimage(unittest.TestCase):
 
     def mkdata(self, shape, typ):
         """ generate [01] testdata """
-        return (RandomArray.random(shape)).astype(typ)
+        return (numpy.random.random(shape)).astype(typ)
 
 
     def testpil(self):
@@ -195,13 +189,13 @@ class testPILimage2(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive and big"""
-        return (RandomArray.random(shape) * sys.maxint / 10).astype(typ)
+        return (numpy.random.random(shape) * sys.maxint / 10).astype(typ)
 
 class testPILimage3(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive, negative and big"""
-        return ((RandomArray.random(shape) - 0.5) * sys.maxint / 10).astype(typ)
+        return ((numpy.random.random(shape) - 0.5) * sys.maxint / 10).astype(typ)
 
 def test_suite_all_fabio():
     testSuite = unittest.TestSuite()

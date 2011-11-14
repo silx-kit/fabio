@@ -11,14 +11,14 @@ __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import os, logging, struct
-import numpy as np
+import logging, numpy
+logger = logging.getLogger("xsdimage")
 from fabioimage import fabioimage
 import base64, hashlib
 try:
     from lxml import etree
 except ImportError:
-    logging.warning("lxml library is probably not part of your python installation: disabling xsdimage format")
+    logger.warning("lxml library is probably not part of your python installation: disabling xsdimage format")
     etree = None
 
 class xsdimage(fabioimage):
@@ -34,7 +34,11 @@ class xsdimage(fabioimage):
         """
         fabioimage.__init__(self, data=data, header=header)
         self.dims = []
+        self.size = None
         self.coding = None
+        self.dtype = None
+        self.rawData = None
+        self.md5 = None
         if fname is not None:
             self.filename = fname
             self.read(fname)
@@ -53,12 +57,12 @@ class xsdimage(fabioimage):
         except:
             raise IOError("XSD file %s is corrupt, no dimensions in it" % fname)
         try:
-            self.bytecode = np.dtype(self.dtype).type
-            self.bpp = len(np.array(0, self.bytecode).tostring())
+            self.bytecode = numpy.dtype(self.dtype).type
+            self.bpp = len(numpy.array(0, self.bytecode).tostring())
         except TypeError:
-            self.bytecode = np.int32
+            self.bytecode = numpy.int32
             self.bpp = 32
-            logging.warning("Defaulting type to int32")
+            logger.warning("Defaulting type to int32")
 
         exp_size = 1
         for i in self.dims:
@@ -73,14 +77,14 @@ class xsdimage(fabioimage):
         elif self.coding == "base16":
             decData = base64.b16decode(self.rawData)
         else:
-            logging.warning("Unable to recognize the encoding of the data !!! got %s, expected base64, base32 or base16, I assume it is base64 " % self.coding)
+            logger.warning("Unable to recognize the encoding of the data !!! got %s, expected base64, base32 or base16, I assume it is base64 " % self.coding)
             decData = base64.b64decode(self.rawData)
         if self.md5:
             assert  hashlib.md5(decData).hexdigest() == self.md5
 
 
-        self.data = np.fromstring(decData, dtype=self.bytecode).reshape(tuple(self.dims))
-        if not np.little_endian: #by default little endian
+        self.data = numpy.fromstring(decData, dtype=self.bytecode).reshape(tuple(self.dims))
+        if not numpy.little_endian: #by default little endian
             self.data.byteswap(inplace=True)
         self.resetvals()
 #        # ensure the PIL image is reset
@@ -98,13 +102,13 @@ class xsdimage(fabioimage):
         for i in xml.xpath("//shape"):
             try:
                 self.dims.append(int(i.text))
-            except ValueError:
-                logging.warning("Shape: Unable to convert %s to integer in %s" % (i.text, i))
+            except ValueError as error:
+                logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
         for i in xml.xpath("//size"):
             try:
                 self.size = int(i.text)
-            except:
-                logging.warning("Size: Unable to convert %s to integer in %s" % (i.text, i))
+            except Exception as error:#IGNORE:W0703
+                logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
         self.dtype = None
         for i in xml.xpath("//dtype"):
             self.dtype = i.text

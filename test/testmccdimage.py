@@ -6,34 +6,41 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest
-import os
-import logging
-import sys
+import unittest, sys, os, logging
+logger = logging.getLogger("testmccdimage")
+force_build = False
 
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
-
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
 from fabio.marccdimage import marccdimage
 from fabio.tifimage import tifimage
-import numpy as np
+import numpy
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """corkcont2_H_0089.mccd  2048 2048  0  354  7.2611 14.639
-corkcont2_H_0089.mccd.bz2 2048 2048  0  354  7.2611 14.639
-corkcont2_H_0089.mccd.gz 2048 2048  0  354  7.2611 14.639
-somedata_0001.mccd 1024 1024  0  20721  128.37 136.23
-somedata_0001.mccd.bz2 1024 1024  0  20721  128.37 136.23
-somedata_0001.mccd.gz 1024 1024  0  20721  128.37 136.23"""
+TESTIMAGES = """corkcont2_H_0089.mccd      2048 2048  0  354    7.2611 14.639
+                corkcont2_H_0089.mccd.bz2  2048 2048  0  354    7.2611 14.639
+                corkcont2_H_0089.mccd.gz   2048 2048  0  354    7.2611 14.639
+                somedata_0001.mccd         1024 1024  0  20721  128.37 136.23
+                somedata_0001.mccd.bz2     1024 1024  0  20721  128.37 136.23
+                somedata_0001.mccd.gz      1024 1024  0  20721  128.37 136.23"""
 
 class testnormaltifok(unittest.TestCase):
     """
@@ -45,20 +52,18 @@ class testnormaltifok(unittest.TestCase):
         """
         create an image 
         """
-        self.imdata = np.zeros((24, 24), np.uint16)
+        self.imdata = numpy.zeros((24, 24), numpy.uint16)
         self.imdata[ 12:14, 15:17 ] = 42
         obj = tifimage(self.imdata, { })
         obj.write(self.image)
-    def tearDown(self):
-        "leave the test image in place for debugging, it is small"
-        return
+
     def test_read_openimage(self):
         from fabio.openimage import openimage
         obj = openimage(self.image)
         if obj.data.astype(int).tostring() != self.imdata.astype(int).tostring():
-            print type(self.imdata), self.imdata.dtype
-            print type(obj.data), obj.data.dtype
-            print obj.data - self.imdata
+            logger.info("%s %s" % (type(self.imdata), self.imdata.dtype))
+            logger.info("%s %s" % (type(obj.data), obj.data.dtype))
+            logger.info("%s %s" % (obj.data - self.imdata))
         self.assertEqual(obj.data.astype(int).tostring(),
                           self.imdata.astype(int).tostring())
 

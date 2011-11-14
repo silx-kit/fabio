@@ -6,26 +6,32 @@
 #built on testedfimage
 """
 
-import unittest
-import os
-import logging
-import sys
-import gzip, bz2
+import unittest, sys, os, logging
+logger = logging.getLogger("testbrukerimage")
+force_build = False
 
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
 from fabio.brukerimage import brukerimage
-import numpy as N
-
-
+import numpy
+import bz2, gzip
 #this is actually a violation of the bruker format since the order of
 # the header items is specified
 #in the standard, whereas the order of a python dictionary is not
@@ -38,7 +44,7 @@ MYHEADER = {"FORMAT":'86',
             'NROWS':'256',
             'WORDORD':'0'}
 
-MYIMAGE = N.ones((256, 256), N.uint16) * 16
+MYIMAGE = numpy.ones((256, 256), numpy.uint16) * 16
 MYIMAGE[0, 0] = 0
 MYIMAGE[1, 1] = 32
 MYIMAGE[127:129, 127:129] = 65535

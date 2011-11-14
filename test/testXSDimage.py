@@ -6,33 +6,37 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest, os
+import unittest
+import os
 import logging
 import sys
+logger = logging.getLogger("testXSDimage")
 force_build = False
-for idx, opts in enumerate(sys.argv[:]):
+
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
-    if opts in ["-f", "--force"]:
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
         force_build = True
         sys.argv.pop(sys.argv.index(opts))
-
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
-import numpy as np
 from utilstest import UtilsTest
 if force_build:
     UtilsTest.forceBuild()
+import fabio
 from fabio.xsdimage import xsdimage
-from fabio.openimage import openimage
-
+import numpy
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0 
-TESTIMAGES = """XSDataImage.xml  512 512 86 61204 511.63 667.11
-XSDataImageInv.xml  512 512  -0.2814 0.22705039 2.81e-08 0.010"""
+TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15
+                XSDataImageInv.xml  512 512  -0.2814 0.22705039 2.81e-08  0.010"""
 
 
 class testXSD(unittest.TestCase):
@@ -54,23 +58,23 @@ class testXSD(unittest.TestCase):
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
-#            print stddev, obj.getstddev()
+            logger.info("%s %s %s" % (name, stddev, obj.getstddev()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
 
     def test_same(self):
         """ test if an image is the same as the EDF equivalent"""
-        xsd = openimage(os.path.join("testimages", "XSDataImage.edf"))
-        edf = openimage(os.path.join("testimages", "XSDataImage.xml"))
+        xsd = fabio.open(os.path.join("testimages", "XSDataImage.edf"))
+        edf = fabio.open(os.path.join("testimages", "XSDataImage.xml"))
         self.assertAlmostEqual(0, abs(xsd.data - edf.data).max(), 1, "images are the same")
 
     def test_invert(self):
         """ Tests that 2 matrixes are invert """
-        m1 = openimage(os.path.join("testimages", "XSDataImage.xml"))
-        m2 = openimage(os.path.join("testimages", "XSDataImageInv.xml"))
+        m1 = fabio.open(os.path.join("testimages", "XSDataImage.xml"))
+        m2 = fabio.open(os.path.join("testimages", "XSDataImageInv.xml"))
         self.assertAlmostEqual(
-        abs((np.matrix(m1.data) * np.matrix(m2.data)) - np.identity(m1.data.shape[0])).max(),
+        abs((numpy.matrix(m1.data) * numpy.matrix(m2.data)) - numpy.identity(m1.data.shape[0])).max(),
         0, 3, "matrices are invert of each other")
 
 

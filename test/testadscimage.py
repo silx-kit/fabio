@@ -8,21 +8,30 @@
 
 Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 """
-import unittest, os
-import numpy as N
-import logging
-import sys
 
-for idx, opts in enumerate(sys.argv[:]):
+import unittest, sys, os, logging
+logger = logging.getLogger("testadscimage")
+force_build = False
+
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
 from fabio.adscimage import adscimage
 from fabio.edfimage import edfimage
 
@@ -36,23 +45,26 @@ mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38 """
 
 
 class testmatch(unittest.TestCase):
-    """ check the fit2d conversion to edf gives same numbers """
+    """ 
+    check the ??fit2d?? conversion to edf gives same numbers 
+    """
     def setUp(self):
         """ Download images """
-        UtilsTest.getimage("mb_LP_1_001.img.bz2")
-        UtilsTest.getimage("mb_LP_1_001.edf.bz2")
+        self.fn_adsc = UtilsTest.getimage("mb_LP_1_001.img.bz2")[:-4]
+        self.fn_edf = UtilsTest.getimage("mb_LP_1_001.edf.bz2")[:-4]
 
     def testsame(self):
         """test ADSC image match to EDF"""
         im1 = edfimage()
-        im1.read("testimages/mb_LP_1_001.edf")
+        im1.read(self.fn_edf)
         im2 = adscimage()
-        im2.read("testimages/mb_LP_1_001.img")
-        diff = (im1.data.astype("int32") - im2.data.astype("int32")).ravel()
-        logging.debug("type: %s %s shape %s %s " % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape))
-        logging.debug("im1 min %s %s max %s %s " % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max()))
-        logging.debug("delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean()))
-        self.assertAlmostEqual(N.max(diff), 0, 2)
+        im2.read(self.fn_adsc)
+        diff = (im1.data.astype("float32") - im2.data.astype("float32"))
+        logger.debug("type: %s %s shape %s %s " % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape))
+        logger.debug("im1 min %s %s max %s %s " % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max()))
+        logger.debug("delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean()))
+        self.assertEqual(abs(diff).max(), 0.0, "asdc data == edf data")
+
 
 class testflatmccdsadsc(unittest.TestCase):
     """

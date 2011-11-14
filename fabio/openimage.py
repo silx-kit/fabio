@@ -11,6 +11,7 @@ mods for fabio by JPW
 
 """
 import sys, logging
+logger = logging.getLogger("openimage")
 from fabioutils  import deconstruct_filename, getnum, filename_object
 from fabioimage import fabioimage
 import edfimage
@@ -66,11 +67,11 @@ def do_magic(byts):
         if byts.find(magic) == 0:
             return format
         if 0: # debugging - bruker needed 18 bytes below
-            print "m:", magic, "f:", format,
-            print "bytes:", magic, "len(bytes)", len(magic),
-            print "found:", byts.find(magic)
+            logger.debug("m: %s f: %s", magic, format)
+            logger.debug("bytes: %s len(bytes) %s", magic, len(magic))
+            logger.debug("found: %s", byts.find(magic))
             for i in range(len(magic)):
-                print ord(magic[i]), ord(byts[i]), magic[i], byts[i]
+                logger.debug("%s %s %s %s ", ord(magic[i]), ord(byts[i]), magic[i], byts[i])
     raise Exception("Could not interpret magic string")
 
 
@@ -82,7 +83,7 @@ def openimage(filename):
             obj.read(filename.tostring())
         except:
             # multiframe file
-            #print "DEBUG: multiframe file, start # %d"%(
+            #logger.debug( "DEBUG: multiframe file, start # %d"%(
             #    filename.num)
             obj = _openimage(filename.stem)
             obj.read(filename.stem, frame=filename.num)
@@ -108,15 +109,13 @@ def _openimage(filename):
         imo = fabioimage()
         byts = imo._open(filename).read(18)
         filetype = do_magic(byts)
-	# print filetype
         if filetype == "marccd" and filename.find("mccd") == -1:
             # Cannot see a way around this. Need to find something
             # to distinguish mccd from regular tif...
             filetype = "tif"
-        #UNUSED filenumber = getnum(filename)
-    except IOError:
-        # File probably does not exist
-        raise
+    except IOError as error:
+        logger.error("%s: File probably does not exist", error)
+        raise error
     except:
         try:
             file_obj = deconstruct_filename(filename)
@@ -133,17 +132,10 @@ def _openimage(filename):
             #traceback.print_exc()
             raise Exception("Fabio could not identify " + filename)
     klass_name = "".join(filetype) + 'image'
-#    print "looking for %s in" % klass_name
-#    for i in sys.modules:
-#        if klass_name in i:
-#            print "%s\t%s" % (i, sys.modules[i])
     module = sys.modules.get("fabio." + klass_name, None)
-#    if hasattr(__init__, klass_name):
-#        module = getattr(__init__, klass_name)
     if module is not None:
         if hasattr(module, klass_name):
             klass = getattr(module, klass_name)
-                # print klass
         else:
             raise Exception("Module %s has no image class" % module)
     else:

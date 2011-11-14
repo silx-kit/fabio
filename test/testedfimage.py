@@ -6,36 +6,39 @@
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
-import unittest, numpy, os
-import logging
-import sys
-import gzip, bz2
-
+import unittest, sys, os, logging
+logger = logging.getLogger("testedfimage")
 force_build = False
 
-
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
     elif opts in ["-f", "--force"]:
         force_build = True
         sys.argv.pop(sys.argv.index(opts))
-
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
-
 if force_build:
     UtilsTest.forceBuild()
-
+import fabio
 from fabio.edfimage import edfimage
+import numpy
+import gzip, bz2
 
 
-MYHEADER = "{\n%-1020s}\n" % (
+
+class testflatedfs(unittest.TestCase):
+    """ test some flat images """
+    filename = "testimages/im0000.edf"
+    MYHEADER = "{\n%-1020s}\n" % (
 """Omega = 0.0 ; 
 Dim_1 = 256 ;
 Dim_2 = 256 ;
@@ -45,30 +48,22 @@ Image = 1;
 History-1 = something=something else;
 \n\n""")
 
-MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
-MYIMAGE[0, 0] = 0
-MYIMAGE[1, 1] = 20
+    MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
+    MYIMAGE[0, 0] = 0
+    MYIMAGE[1, 1] = 20
 
-assert len(MYIMAGE[0:1, 0:1].tostring()) == 4, \
+    assert len(MYIMAGE[0:1, 0:1].tostring()) == 4, \
     len(MYIMAGE[0:1, 0:1].tostring())
 
-class testflatedfs(unittest.TestCase):
-    """ test some flat images """
-    filename = "testimages/im0000.edf"
-
     def setUp(self):
-        """ initialise"""
+        """ initialize"""
         if not os.path.isfile(self.filename):
             outf = open(self.filename, "wb")
-            assert len(MYHEADER) % 1024 == 0
-            outf.write(MYHEADER)
-            outf.write(MYIMAGE.tostring())
+            assert len(self.MYHEADER) % 1024 == 0
+            outf.write(self.MYHEADER)
+            outf.write(self.MYIMAGE.tostring())
             outf.close()
 
-#    def tearDown(self):
-#        """ clean up """
-#        if os.path.exists(self.filename):
-#            os.remove(self.filename)
 
     def test_read(self):
         """ check readable"""
@@ -101,7 +96,6 @@ class testbzipedf(testflatedfs):
         if not os.path.isfile(self.filename + ".bz2"):
                     bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
         self.filename += ".bz2"
-        # self.filename will be the file to be removed
 
 class testgzipedf(testflatedfs):
     """ same for gzipped versions """
@@ -110,9 +104,7 @@ class testgzipedf(testflatedfs):
         testflatedfs.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
                     gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
-#        os.system("gzip %s" % (self.filename))
         self.filename += ".gz"
-        # self.filename will be the file to be removed
 
 
 
@@ -120,10 +112,10 @@ class testgzipedf(testflatedfs):
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """F2K_Seb_Lyso0675.edf 2048 2048 982 17467 1504.3 217.61
-F2K_Seb_Lyso0675.edf.bz2 2048 2048 982 17467 1504.3 217.61
-F2K_Seb_Lyso0675.edf.gz 2048 2048 982 17467 1504.3 217.61
-id13_badPadding.edf 512 512 85.0 61947.0 275.62 583.37 """
+TESTIMAGES = """F2K_Seb_Lyso0675.edf     2048 2048 982 17467 1504.29  217.61
+                F2K_Seb_Lyso0675.edf.bz2 2048 2048 982 17467 1504.29  217.61
+                F2K_Seb_Lyso0675.edf.gz  2048 2048 982 17467 1504.29  217.61
+                id13_badPadding.edf      512  512  85  61947 275.62   583.44 """
 
 class testedfs(unittest.TestCase):
     """
@@ -148,11 +140,10 @@ class testedfs(unittest.TestCase):
                 raise
             self.assertAlmostEqual(mini, obj.getmin(), 2, "testedfs: %s getmin()" % name)
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "testedfs: %s getmax" % name)
-            self.assertAlmostEqual(mean, obj.getmean(), 1, "testedfs: %s getmean" % name)
-            #There is a change in behavour in mean and std between python 2.6 and 2.7
-            # python 2.7 does data.astype("float").std() whereas python2.6 works with int 
-            logging.debug("StDev: exp=%s, obt=%s" % (stddev, obj.getstddev()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 0, "testedfs: %s getstddev" % name)
+            logger.info("%s Mean: exp=%s, obt=%s" % (name, mean, obj.getmean()))
+            self.assertAlmostEqual(mean, obj.getmean(), 2, "testedfs: %s getmean" % name)
+            logger.info("%s StdDev:  exp=%s, obt=%s" % (name, stddev, obj.getstddev()))
+            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name)
             self.assertEqual(dim1, obj.dim1, "testedfs: %s dim1" % name)
             self.assertEqual(dim2, obj.dim2, "testedfs: %s dim2" % name)
 
@@ -198,6 +189,7 @@ class testedfcompresseddata(unittest.TestCase):
         self.assertEqual((ref.data - gzipped.data).max(), 0, "Gzipped data block is correct")
         self.assertEqual((ref.data - compressed.data).max(), 0, "Zlib compressed data block is correct")
 
+
 class testedfmultiframe(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
@@ -230,7 +222,7 @@ class testedfmultiframe(unittest.TestCase):
         """testedfmultiframe.test_getFrame_multi"""
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_multi: Same data for frame 0")
         f1_multi = self.ref.getframe(1)
-#        logging.warning("f1_multi.header=%s\nf1_multi.data=  %s" % (f1_multi.header, f1_multi.data))
+#        logger.warning("f1_multi.header=%s\nf1_multi.data=  %s" % (f1_multi.header, f1_multi.data))
         self.assertEqual((f1_multi.data - self.frame1.data).max(), 0, "getFrame_multi: Same data for frame 1")
 
     def test_getFrame_mono(self):
@@ -283,19 +275,9 @@ def test_suite_all_edf():
     testSuite.addTest(testedfmultiframe("text_next_mono"))
     testSuite.addTest(testedfmultiframe("test_previous_multi"))
     testSuite.addTest(testedfmultiframe("text_previous_mono"))
-
     return testSuite
 
 if __name__ == '__main__':
-
     mysuite = test_suite_all_edf()
     runner = unittest.TextTestRunner()
     runner.run(mysuite)
-
-
-
-
-
-
-
-

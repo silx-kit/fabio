@@ -58,7 +58,6 @@ try:
 except:
     COMPRESSORS['.bz2'] = None
 
-# print COMPRESSORS
 
 def getnum(name):
     """
@@ -89,7 +88,6 @@ class filename_object:
         self.digits = digits
         self.postnum = postnum
         self.directory = directory
-        #print self.str()
 
     def str(self):
         """ Return a string representation """

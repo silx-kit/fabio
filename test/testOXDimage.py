@@ -6,27 +6,34 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest, os
-import logging
-import sys
-from testopenimage import testOXDUNC
+import unittest, sys, os, logging
+logger = logging.getLogger("testOXDimage")
+force_build = False
 
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
 from fabio.OXDimage import OXDimage
-from fabio.openimage import openimage
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0 
 TESTIMAGES = """b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526
-b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526"""
+                b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526"""
 
 
 class testOXD(unittest.TestCase):
@@ -55,14 +62,12 @@ class testOXD(unittest.TestCase):
 
 class testOXD_same(unittest.TestCase):
     def setUp(self):
-        UtilsTest.getimage("b191_1_9_1.img.bz2")
-        UtilsTest.getimage("b191_1_9_1_uncompressed.img.bz2")
-        self.f1 = os.path.join("testimages", "b191_1_9_1.img")
-        self.f2 = os.path.join("testimages", "b191_1_9_1_uncompressed.img")
+        self.f1 = UtilsTest.getimage("b191_1_9_1.img.bz2")[:-4]
+        self.f2 = UtilsTest.getimage("b191_1_9_1_uncompressed.img.bz2")[:-4]
     def test_same(self):
         """test if images are actually the same"""
-        o1 = openimage(self.f1)
-        o2 = openimage(self.f2)
+        o1 = fabio.open(self.f1)
+        o2 = fabio.open(self.f2)
         for attr in ["getmin", "getmax", "getmean", "getstddev"]:
             a1 = getattr(o1, attr)()
             a2 = getattr(o2, attr)()

@@ -29,16 +29,13 @@ __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import os
-import sys
-import subprocess
+import os, imp, sys, subprocess, threading
 import distutils.util
-import threading
 import logging
 import urllib2
 import bz2
 import gzip
-
+logger = logging.getLogger("fabio.utilstest")
 
 class UtilsTest(object):
     """
@@ -47,6 +44,7 @@ class UtilsTest(object):
     timeout = 60        #timeout in seconds for downloading images
     url_base = "http://downloads.sourceforge.net/fable"
     test_home = os.path.dirname(__file__)
+    name = "fabio"
     image_home = os.path.join(test_home, "testimages")
     if not os.path.isdir(image_home):
         os.makedirs(image_home)
@@ -55,42 +53,43 @@ class UtilsTest(object):
                                     sys.version_info[0], sys.version_info[1])
     fabio_home = os.path.join(os.path.dirname(test_home),
                                         "build", architecture)
-    logging.info("Fabio Home is: " + fabio_home)
+    logger.info("Fabio Home is: " + fabio_home)
     if "fabio" in sys.modules:
-        logging.info("Fabio module is from  %s" % sys.modules["fabio"])
+        logger.info("Fabio module was already loaded from  %s" % sys.modules["fabio"])
+        fabio = None
+        sys.modules.pop("fabio")
     if not os.path.isdir(fabio_home):
-        logging.warning("Building Fabio to %s" % fabio_home)
+        logger.warning("Building Fabio to %s" % fabio_home)
         p = subprocess.Popen([sys.executable, "setup.py", "build"],
                          shell=False, cwd=os.path.dirname(test_home))
-        logging.info("subprocess ended with rc= %s" % p.wait())
+        logger.info("subprocess ended with rc= %s" % p.wait())
 
-    if "fabio" in sys.modules:
-        logging.info("Fabio module is from  %s" % sys.modules["fabio"])
-
-    sys.path.insert(1, fabio_home)
-    import fabio
-    logging.info("Fabio loaded from %s" % fabio.__file__)
-
+    fabio = imp.load_module(*((name,) + imp.find_module(name, [fabio_home])))
+    sys.modules[name] = fabio
+    logging.info("pyFAI loaded from %s" % fabio.__file__)
 
     @classmethod
     def forceBuild(cls):
         """
         force the recompilation of Fabio
         """
-        logging.info("Building Fabio to %s" % cls.fabio_home)
+        logger.info("Building Fabio to %s" % cls.fabio_home)
         p = subprocess.Popen([sys.executable, "setup.py", "build"],
                          shell=False, cwd=os.path.dirname(cls.test_home))
-        logging.info("subprocess ended with rc= %s" % p.wait())
+        logger.info("subprocess ended with rc= %s" % p.wait())
+        fabio = imp.load_module(*((cls.name,) + imp.find_module(cls.name, [cls.fabio_home])))
+        sys.modules[cls.name] = fabio
+        logger.info("fabio loaded from %s" % fabio.__file__)
 
 
 
     @classmethod
     def timeoutDuringDownload(cls):
-            """
-            Function called after a timeout in the download part ... 
-            just raise an Exception.
-            """
-            raise RuntimeError("""Could not automatically download test images!
+        """
+        Function called after a timeout in the download part ... 
+        just raise an Exception.
+        """
+        raise RuntimeError("""Could not automatically download test images!
 If you are behind a firewall, please set the environment variable http_proxy.
 Otherwise please try to download the images manually from
 """ + cls.url_base)
@@ -100,11 +99,12 @@ Otherwise please try to download the images manually from
     def getimage(cls, imagename):
         """
         Downloads the requested image
+        @return:  path of the image, locally
         """
-        logging.info("UtilsTest.getimage('%s')" % imagename)
+        logger.info("UtilsTest.getimage('%s')" % imagename)
         fullimagename = os.path.join(cls.image_home, imagename)
         if not os.path.isfile(fullimagename):
-            logging.info("Trying to download image %s, timeout set to %ss"
+            logger.info("Trying to download image %s, timeout set to %ss"
                           % (imagename, cls.timeout))
             if "http_proxy" in os.environ:
                 dictProxies = {'http': os.environ["http_proxy"]}
@@ -116,7 +116,7 @@ Otherwise please try to download the images manually from
 #           Nota: since python2.6 there is a timeout in the urllib2
             timer = threading.Timer(cls.timeout + 1, cls.timeoutDuringDownload)
             timer.start()
-            logging.info("wget %s/%s" % (cls.url_base, imagename))
+            logger.info("wget %s/%s" % (cls.url_base, imagename))
             if sys.version > (2, 6):
                 data = opener("%s/%s" % (cls.url_base, imagename),
                               data=None, timeout=cls.timeout).read()
@@ -124,7 +124,7 @@ Otherwise please try to download the images manually from
                 data = opener("%s/%s" % (cls.url_base, imagename),
                               data=None).read()
             timer.cancel()
-            logging.info("Image %s successfully downloaded." % imagename)
+            logger.info("Image %s successfully downloaded." % imagename)
 
             try:
                 open(fullimagename, "wb").write(data)
@@ -170,6 +170,7 @@ Otherwise please try to download the images manually from
                 except IOError:
                     raise IOError("unable to write bzipped2 \
                     data to disk at %s" % cls.image_home)
+        return fullimagename
 
 
 

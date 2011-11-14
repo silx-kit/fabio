@@ -6,26 +6,34 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest, os
-import logging
-import sys
+import unittest, sys, os, logging
+logger = logging.getLogger("testfit2dmaskdfimage")
+force_build = False
 
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-f", "--force"]:
+        force_build = True
+        sys.argv.pop(sys.argv.index(opts))
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
-
+if force_build:
+    UtilsTest.forceBuild()
+import fabio
 from fabio.GEimage import GEimage
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """GE_aSI_detector_image_1529  2048 2048 1515 16353 1833.0311 56.9124
-GE_aSI_detector_image_1529.gz  2048 2048 1515 16353 1833.0311 56.9124
-GE_aSI_detector_image_1529.bz2  2048 2048 1515 16353 1833.0311 56.9124"""
+TESTIMAGES = """GE_aSI_detector_image_1529      2048 2048 1515 16353 1833.0311 56.9124
+                GE_aSI_detector_image_1529.gz   2048 2048 1515 16353 1833.0311 56.9124
+                GE_aSI_detector_image_1529.bz2  2048 2048 1515 16353 1833.0311 56.9124"""
 
 
 class testGE(unittest.TestCase):
@@ -46,10 +54,10 @@ class testGE(unittest.TestCase):
             obj = GEimage()
             obj.read(os.path.join("testimages", name))
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
+            self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin")
+            self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
+            self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean")
+            self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev")
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
 

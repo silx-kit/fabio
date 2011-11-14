@@ -13,8 +13,8 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 
 """
 
-import numpy as N, logging
-
+import numpy, logging
+logger = logging.getLogger("brukerimage")
 from fabioimage import fabioimage
 from readbytestream import readbytestream
 
@@ -98,7 +98,7 @@ class brukerimage(fabioimage):
             errmsg = "length " + str(len(self.header['NPIXELB'])) + "\n"
             for byt in self.header['NPIXELB']:
                 errmsg += "char: " + str(byt) + " " + str(ord(byt)) + "\n"
-            logging.warning(errmsg)
+            logger.warning(errmsg)
             raise
 
         self.data = readbytestream(infile, infile.tell(),
@@ -111,7 +111,7 @@ class brukerimage(fabioimage):
         nov = int(self.header['NOVERFL'])
         if nov > 0:   # Read in the overflows
             # need at least int32 sized data I guess - can reach 2^21
-            self.data = self.data.astype(N.uint32)
+            self.data = self.data.astype(numpy.uint32)
             # 16 character overflows:
             #      9 characters of intensity
             #      7 character position
@@ -141,7 +141,7 @@ class brukerimage(fabioimage):
                 obj.write(fname)
                 or maybe something like: edfimage.write(self, fname)
         """
-        logging.warning("***warning***: call to unifinished " + \
+        logger.warning("***warning***: call to unifinished " + \
                 "brukerimage.write. This will write the file" + \
                             fname + "as an edf-file")
 
@@ -159,10 +159,10 @@ class brukerimage(fabioimage):
         # Assumes a short-circuiting if / or ...
         if not self.header.has_key("ByteOrder") or \
                self.header["ByteOrder"] == "LowByteFirst":
-            outfile.write(self.data.astype(N.uint16).tostring())
+            outfile.write(self.data.astype(numpy.uint16).tostring())
         else:
             outfile.write(self.data.byteswap().astype(
-                    N.uint16).tostring())
+                    numpy.uint16).tostring())
         outfile.close()
 
     def write2(self, fname):

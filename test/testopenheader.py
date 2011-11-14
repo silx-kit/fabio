@@ -4,53 +4,46 @@
 # Unit tests
 """
 
-import unittest
-import os
-import logging
-import sys
-
+import unittest, sys, os, logging
+logger = logging.getLogger("testopenheader")
 force_build = False
 
-for idx, opts in enumerate(sys.argv[:]):
+for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
         logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(idx)
+        sys.argv.pop(sys.argv.index(opts))
+    elif opts in ["-i", "--info"]:
+        logging.basicConfig(level=logging.INFO)
+        sys.argv.pop(sys.argv.index(opts))
     elif opts in ["-f", "--force"]:
         force_build = True
         sys.argv.pop(sys.argv.index(opts))
-
 try:
-    logging.debug("tests loaded from file: %s" % __file__)
+    logger.debug("Tests loaded from file: %s" % __file__)
 except:
     __file__ = os.getcwd()
 
 from utilstest import UtilsTest
-
 if force_build:
     UtilsTest.forceBuild()
-
+import fabio
 from fabio.openimage import openheader
-
-NAMES = [
-    os.path.join("testimages", "F2K_Seb_Lyso0675_header_only.edf.gz"),
-    os.path.join("testimages", "F2K_Seb_Lyso0675_header_only.edf.bz2"),
-    os.path.join("testimages", "F2K_Seb_Lyso0675_header_only.edf")
-    ]
 
 
 class test1(unittest.TestCase):
     """openheader opening edf"""
     def setUp(self):
-        UtilsTest.getimage("F2K_Seb_Lyso0675_header_only.edf.bz2")
+        self.name = UtilsTest.getimage("F2K_Seb_Lyso0675_header_only.edf.bz2")[:-4]
 
     def testcase(self):
         """ check openheader can read edf headers"""
-        for name in NAMES:
+        for ext in ["", ".bz2", ".gz"]:
+            name = self.name + ext
             obj = openheader(name)
-            logging.debug(" %s obj = %s" % (name, obj.header))
+            logger.debug(" %s obj = %s" % (name, obj.header))
             self.assertEqual(obj.header["title"],
                              "ESPIA FRELON Image",
-                             "Error on " + name)
+                             "Error on file %s" % name)
 
 
 

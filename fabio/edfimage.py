@@ -20,38 +20,39 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 import gzip, bz2, zlib, os, StringIO
-import numpy as np, logging
+import numpy, logging
+logger = logging.getLogger("edfimage")
 from fabioimage import fabioimage
 from fabioutils import isAscii
 
 BLOCKSIZE = 512
-DATA_TYPES = {  "SignedByte"    :  np.int8,
-                "Signed8"       :  np.int8,
-                "UnsignedByte"  :  np.uint8,
-                "Unsigned8"     :  np.uint8,
-                "SignedShort"   :  np.int16,
-                "Signed16"      :  np.int16,
-                "UnsignedShort" :  np.uint16,
-                "Unsigned16"    :  np.uint16,
-                "UnsignedShortInteger" : np.uint16,
-                "SignedInteger" :  np.int32,
-                "Signed32"      :  np.int32,
-                "UnsignedInteger":  np.uint32,
-                "Unsigned32"    :  np.uint32,
-                "SignedLong"    :  np.int32,
-                "UnsignedLong"  :  np.uint32,
-                "Signed64"      :  np.int64,
-                "Unsigned64"    :  np.uint64,
-                "FloatValue"    :  np.float32,
-                "FLOATVALUE"    :  np.float32,
-                "FLOAT"         :  np.float32, # fit2d
-                "Float"         :  np.float32, # fit2d
-                "FloatIEEE32"   :  np.float32,
-                "Float32"       :  np.float32,
-                "Double"        :  np.float64,
-                "DoubleValue"   :  np.float64,
-                "FloatIEEE64"   :  np.float64,
-                "DoubleIEEE64"  :  np.float64
+DATA_TYPES = {  "SignedByte"    :  numpy.int8,
+                "Signed8"       :  numpy.int8,
+                "UnsignedByte"  :  numpy.uint8,
+                "Unsigned8"     :  numpy.uint8,
+                "SignedShort"   :  numpy.int16,
+                "Signed16"      :  numpy.int16,
+                "UnsignedShort" :  numpy.uint16,
+                "Unsigned16"    :  numpy.uint16,
+                "UnsignedShortInteger" : numpy.uint16,
+                "SignedInteger" :  numpy.int32,
+                "Signed32"      :  numpy.int32,
+                "UnsignedInteger":  numpy.uint32,
+                "Unsigned32"    :  numpy.uint32,
+                "SignedLong"    :  numpy.int32,
+                "UnsignedLong"  :  numpy.uint32,
+                "Signed64"      :  numpy.int64,
+                "Unsigned64"    :  numpy.uint64,
+                "FloatValue"    :  numpy.float32,
+                "FLOATVALUE"    :  numpy.float32,
+                "FLOAT"         :  numpy.float32, # fit2d
+                "Float"         :  numpy.float32, # fit2d
+                "FloatIEEE32"   :  numpy.float32,
+                "Float32"       :  numpy.float32,
+                "Double"        :  numpy.float64,
+                "DoubleValue"   :  numpy.float64,
+                "FloatIEEE64"   :  numpy.float64,
+                "DoubleIEEE64"  :  numpy.float64
                 }
 
 NUMPY_EDF_DTYPE = {"int8"       :"SignedByte",
@@ -95,7 +96,7 @@ class Frame(object):
             self.header_keys = header_keys[:]
             for key in header_keys:
                 if key not in self.header:
-                    logging.warning("Header key %s, in header_keys is not in header dictionary, poping !!!" % key)
+                    logger.warning("Header key %s, in header_keys is not in header dictionary, poping !!!" % key)
                     self.header_keys.remove(key)
 
         self.capsHeader = {}
@@ -103,7 +104,7 @@ class Frame(object):
             try:
                 self.capsHeader[key.upper()] = key
             except AttributeError:
-                logging.warning("Header key %s is not a string" % key)
+                logger.warning("Header key %s is not a string" % key)
 
         self.rawData = None
         self._data = data
@@ -147,27 +148,27 @@ class Frame(object):
             try:
                 self.size = int(self.header[self.capsHeader["SIZE"]])
             except ValueError:
-                logging.warning("Unable to convert to integer : %s %s " % (self.capsHeader["SIZE"], self.header[self.capsHeader["SIZE"]]))
+                logger.warning("Unable to convert to integer : %s %s " % (self.capsHeader["SIZE"], self.header[self.capsHeader["SIZE"]]))
         if "DIM_1" in self.capsHeader:
             try:
                 dim1 = int(self.header[self.capsHeader['DIM_1']])
             except ValueError:
-                logging.error("Unable to convert to integer Dim_1: %s %s" % (self.capsHeader["DIM_1"], self.header[self.capsHeader["DIM_1"]]))
+                logger.error("Unable to convert to integer Dim_1: %s %s" % (self.capsHeader["DIM_1"], self.header[self.capsHeader["DIM_1"]]))
             else:
                 calcsize *= dim1
                 self.dims.append(dim1)
         else:
-            logging.error("No Dim_1 in headers !!!")
+            logger.error("No Dim_1 in headers !!!")
         if "DIM_2" in self.capsHeader:
             try:
                 dim2 = int(self.header[self.capsHeader['DIM_2']])
             except ValueError:
-                logging.error("Unable to convert to integer Dim_3: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
+                logger.error("Unable to convert to integer Dim_3: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
                 self.dims.append(dim2)
         else:
-            logging.error("No Dim_2 in headers !!!")
+            logger.error("No Dim_2 in headers !!!")
         iDim = 3
         while iDim is not None:
             strDim = "DIM_%i" % iDim
@@ -175,7 +176,7 @@ class Frame(object):
                 try:
                     dim3 = int(self.header[self.capsHeader[strDim]])
                 except ValueError:
-                    logging.error("Unable to convert to integer %s: %s %s"
+                    logger.error("Unable to convert to integer %s: %s %s"
                                   % (strDim, self.capsHeader[strDim], self.header[self.capsHeader[strDim]]))
                     dim3 = None
                     iDim = None
@@ -184,21 +185,21 @@ class Frame(object):
                     self.dims.append(dim3)
                     iDim += 1
             else:
-                logging.debug("No Dim_3 -> it is a 2D image")
+                logger.debug("No Dim_3 -> it is a 2D image")
                 iDim = None
         if self.bytecode is None:
             if "DATATYPE" in self.capsHeader:
                 self.bytecode = DATA_TYPES[self.header[self.capsHeader['DATATYPE']]]
             else:
-                self.bytecode = np.uint16
-                logging.warning("Defaulting type to uint16")
-        self.bpp = len(np.array(0, self.bytecode).tostring())
+                self.bytecode = numpy.uint16
+                logger.warning("Defaulting type to uint16")
+        self.bpp = len(numpy.array(0, self.bytecode).tostring())
         calcsize *= self.bpp
         if (self.size is None):
             self.size = calcsize
         elif (self.size != calcsize):
             if ("COMPRESSION" in self.capsHeader) and (self.header[self.capsHeader['COMPRESSION']].upper().startswith("NO")):
-                logging.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
+                logger.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
                 self.size = calcsize
 
         for i, n in enumerate(self.dims):
@@ -211,11 +212,11 @@ class Frame(object):
         """
         Decide if we need to byteswap
         """
-        if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and np.little_endian) or \
-           ('High' in self.header[self.capsHeader['BYTEORDER']] and not np.little_endian):
+        if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+           ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             return False
-        if ('High'  in self.header[self.capsHeader['BYTEORDER']] and np.little_endian) or \
-           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not np.little_endian):
+        if ('High'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             if self.bpp in [2, 4, 8]:
                 return True
             else:
@@ -238,7 +239,7 @@ class Frame(object):
                 if "DATATYPE" in self.capsHeader:
                     self.bytecode = DATA_TYPES[self.header[self.capsHeader["DATATYPE"]]]
                 else:
-                    self.bytecode = np.uint16
+                    self.bytecode = numpy.uint16
             dims = self.dims[:]
             dims.reverse()
 
@@ -249,9 +250,9 @@ class Frame(object):
                     uncompressed_size *= i
                 if "OFFSET" in compression :
                     try:
-                        import byte_offset
-                    except ImportError:
-                        logging.error("Unimplemented compression scheme:  %s" % compression)
+                        import byte_offset#IGNORE:F0401
+                    except ImportError as error:
+                        logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
                         myData = byte_offset.analyseCython(self.rawData, size=uncompressed_size)
                         rawData = myData.astype(self.bytecode).tostring()
@@ -263,25 +264,25 @@ class Frame(object):
                     try:
                         rawData = gzip.GzipFile(fileobj=fileobj).read()
                     except IOError:
-                        logging.warning("Encounter the python-gzip bug with trailing garbage, trying subprocess gzip")
+                        logger.warning("Encounter the python-gzip bug with trailing garbage, trying subprocess gzip")
                         try:
                             #This is as an ugly hack against a bug in Python gzip
                             import subprocess
                             sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
                             rawData, err = sub.communicate(input=self.rawData)
-                            logging.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
-                        except:
-                            logging.warning("Unable to use the subprocess gzip. is gzip available? ")
+                            logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
+                        except Exception as error: #IGNORE:W0703
+                            logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
                             for i in range(1, 513):
                                 try:
                                     fileobj = StringIO.StringIO(self.rawData[:-i])
                                     rawData = gzip.GzipFile(fileobj=fileobj).read()
                                 except IOError:
-                                    logging.debug("trying with %s bytes less, doesn't work" % i)
+                                    logger.debug("trying with %s bytes less, doesn't work" % i)
                                 else:
                                     break
                             else:
-                                logging.error("I am totally unable to read this gzipped compressed data block, giving up")
+                                logger.error("I am totally unable to read this gzipped compressed data block, giving up")
 
                     self.size = uncompressed_size
                 elif "BZ" in compression :
@@ -291,7 +292,7 @@ class Frame(object):
                     rawData = zlib.decompress(self.rawData)
                     self.size = uncompressed_size
                 else:
-                    logging.warning("Unknown compression scheme %s" % compression)
+                    logger.warning("Unknown compression scheme %s" % compression)
                     rawData = self.rawData
 
             else:
@@ -300,16 +301,16 @@ class Frame(object):
             expected = self.size
             obtained = len(rawData)
             if expected > obtained:
-                logging.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
+                logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
                 rawData += "\x00" * (expected - obtained)
             elif expected < len(rawData):
-                logging.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+                logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
-    #        logging.debug("dims = %s, bpp = %s, expected= %s obtained = %s" % (dims, self.bpp, expected, obtained))
+    #        logger.debug("dims = %s, bpp = %s, expected= %s obtained = %s" % (dims, self.bpp, expected, obtained))
             if self.swap_needed():
-                data = np.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
+                data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
             else:
-                data = np.fromstring(rawData, self.bytecode).reshape(tuple(dims))
+                data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
             self._data = data
             self.rawData = None #no need to keep garbage in memory
             self.bytecode = data.dtype.type
@@ -378,9 +379,9 @@ class Frame(object):
             header_keys.insert(0, key)
             nbdim -= 1
         header_keys.insert(0, "DataType")
-        header["DataType"] = NUMPY_EDF_DTYPE[str(np.dtype(data.dtype))]
+        header["DataType"] = NUMPY_EDF_DTYPE[str(numpy.dtype(data.dtype))]
         header_keys.insert(0, "ByteOrder")
-        if np.little_endian:
+        if numpy.little_endian:
             header["ByteOrder"] = "LowByteFirst"
         else:
             header["ByteOrder"] = "HighByteFirst"
@@ -400,18 +401,18 @@ class Frame(object):
             #Escape keys or values that are no ascii
             strKey = str(key)
             if not isAscii(strKey, listExcluded=["}", "{"]):
+                logger.warning("Non ascii key %s, skipping" % strKey)
                 continue
-                logging.warning("Non ascii key %s, skipping" % strKey)
             strValue = str(header[key])
             if not isAscii(strValue, listExcluded=["}", "{"]):
-                logging.warning("Non ascii value %s, skipping" % strValue)
+                logger.warning("Non ascii value %s, skipping" % strValue)
                 continue
             line = strKey + " = " + strValue + " ;\n"
             preciseSize += len(line)
             listHeader.append(line)
 #            print type(line), line
         if preciseSize > approxHeaderSize:
-            logging.error("I expected the header block only at %s in fact it is %s" % (approxHeaderSize, preciseSize))
+            logger.error("I expected the header block only at %s in fact it is %s" % (approxHeaderSize, preciseSize))
             for  idx, line in enumerate(listHeader[:]):
                 if line.startswith("EDF_HeaderSize"):
                     headerSize = BLOCKSIZE * (preciseSize // BLOCKSIZE + 1)
@@ -437,7 +438,8 @@ class edfimage(fabioimage):
         self.currentframe = 0
         try:
             dim = len(data.shape)
-        except:
+        except Exception as error: #IGNORE:W0703
+            logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
             data = None
             dim = 0
         if dim == 2:
@@ -471,16 +473,16 @@ class edfimage(fabioimage):
 
         block = infile.read(BLOCKSIZE)
         if len(block) < BLOCKSIZE:
-            logging.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
+            logger.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
             return
         if (block.find("{") < 0) :
             # This does not look like an edf file
-            logging.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
+            logger.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
             return
         while '}' not in block:
             block = block + infile.read(BLOCKSIZE)
             if len(block) > BLOCKSIZE * 20:
-                logging.warning("Runaway header in EDF file")
+                logger.warning("Runaway header in EDF file")
                 return
         start = block.find("{") + 1
         end = block.find("}")
@@ -491,7 +493,7 @@ class edfimage(fabioimage):
         elif block[end: end + 2] == "}\n":
             offset = end + 2 - len(block)
         else:
-            logging.error("Unable to locate start of the binary section")
+            logger.error("Unable to locate start of the binary section")
             offset = None
         if offset is not None:
             try:
@@ -521,7 +523,7 @@ class edfimage(fabioimage):
             size = frame.parseheader(block)
             frame.rawData = infile.read(size)
             if len(frame.rawData) != size:
-                logging.warning("Non complete datablock: got %s, expected %s" % (len(frame.rawData), size))
+                logger.warning("Non complete datablock: got %s, expected %s" % (len(frame.rawData), size))
                 bContinue = False
                 break
 
@@ -531,7 +533,7 @@ class edfimage(fabioimage):
                 if item not in frame.capsHeader:
                     missing.append(item)
             if len(missing) > 0:
-                logging.info("EDF file %s frame %i misses mandatory keys: %s " % (self.filename, i, " ".join(missing)))
+                logger.info("EDF file %s frame %i misses mandatory keys: %s " % (self.filename, i, " ".join(missing)))
 
         self.currentframe = 0
 
@@ -558,11 +560,11 @@ class edfimage(fabioimage):
         """
         Decide if we need to byteswap
         """
-        if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and np.little_endian) or \
-           ('High' in self.header[self.capsHeader['BYTEORDER']] and not np.little_endian):
+        if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+           ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             return False
-        if ('High'  in self.header[self.capsHeader['BYTEORDER']] and np.little_endian) or \
-           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not np.little_endian):
+        if ('High'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             if self.bpp in [2, 4, 8]:
                 return True
             else:
@@ -582,16 +584,16 @@ class edfimage(fabioimage):
         """ returns the file numbered 'num' in the series as a fabioimage """
         newImage = None
         if self.nframes == 1:
-            logging.debug("Single frame EDF; having fabioimage default behavour: %s" % num)
+            logger.debug("Single frame EDF; having fabioimage default behavour: %s" % num)
             newImage = fabioimage.getframe(self, num)
         elif num in xrange(self.nframes):
-            logging.debug("Multi frame EDF; having edfimage specific behavour: %s/%s" % (num, self.nframes))
+            logger.debug("Multi frame EDF; having edfimage specific behavour: %s/%s" % (num, self.nframes))
             newImage = edfimage(frames=self.__frames)
             newImage.currentframe = num
             newImage.filename = self.filename
         else:
             txt = "Cannot access frame: %s/%s" % (num, self.nframes)
-            logging.error(txt)
+            logger.error(txt)
             raise ValueError("edfimage.getframe:" + txt)
         return newImage
 
@@ -675,7 +677,7 @@ class edfimage(fabioimage):
         Setter for number of frames ... should do nothing. Here just to avoid bugs  
         """
         if val != len(self.__frames):
-            logging.warning("trying to set the number of frames ")
+            logger.warning("trying to set the number of frames ")
     nframes = property(getNbFrames, setNbFrames, "property: number of frames in EDF file")
 
 
@@ -743,7 +745,7 @@ class edfimage(fabioimage):
             if self.currentframe < len(self.__frames):
                 self.__frames.append(Frame())
                 npaData = self.__frames[self.currentframe].data
-#        logging.warning("Data of %s, currentframe=%s  is type %s" % (id(self), self.currentframe, type(npaData)))
+#        logger.warning("Data of %s, currentframe=%s  is type %s" % (id(self), self.currentframe, type(npaData)))
         return npaData
 
     def setData(self, _data):

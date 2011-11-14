@@ -9,7 +9,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
          
          and Jon Wright, ESRF
 """
-#import numpy
 
 class fabiodata(object):
     """
