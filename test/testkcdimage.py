@@ -37,15 +37,15 @@ from fabio.openimage    import openimage
 
 class testkcd(unittest.TestCase):
     """basic test"""
-    kcdfilename = 'i01f0001.kcd.bz2'
-    edffilename = 'i01f0001.edf.bz2'
+    kcdfilename = 'i01f0001.kcd'
+    edffilename = 'i01f0001.edf'
     results = """i01f0001.kcd   625 576  96  66814.0 195.3862972   243.58150990245315"""
 
 
     def setUp(self):
         """Download files"""
-        self.kcdfilename = UtilsTest.getimage(self.kcdfilename)[:-4]
-        self.edffilename = UtilsTest.getimage(self.edffilename)[:-4]
+        self.kcdfilename = UtilsTest.getimage(self.kcdfilename)
+        self.edffilename = UtilsTest.getimage(self.edffilename)
 
     def test_read(self):
         """ check we can read kcd images"""
