@@ -32,9 +32,13 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 import os, imp, sys, subprocess, threading
 import distutils.util
 import logging
-import urllib2
 import bz2
 import gzip
+if sys.version_info >= (3, 0):
+    import urllib as urllib2
+else:
+    import urllib2
+
 logger = logging.getLogger("fabio.utilstest")
 
 class UtilsTest(object):
