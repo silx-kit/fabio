@@ -1,31 +1,23 @@
 ************* Module testfilenames
-W: 21: No exception type(s) specified
-W: 19: Specify string format arguments as logging function parameters
-F: 23: Unable to import 'utilstest'
-C: 74:testfilenames: Invalid name "testfilenames" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 87:testfilenames.test_more_cases: Missing docstring
-E: 89:testfilenames.test_more_cases: Assigning to function call which doesn't return
-C: 92:testfilenames.test_more_cases_jump: Missing docstring
-C: 98:test_suite_all_filenames: Missing docstring
-W: 23: Unused import UtilsTest
+C: 61: Line too long (83/80)
+C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 14: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 29: No exception type(s) specified
+F: 31: Unable to import 'utilstest'
+C: 83:testfilenames: Invalid name "testfilenames" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 96:testfilenames.test_more_cases: Missing docstring
+E: 98:testfilenames.test_more_cases: Module 'fabio' has no 'construct_filename' member
+C:101:testfilenames.test_more_cases_jump: Missing docstring
+R: 83:testfilenames: Too many public methods (48/20)
+C:107:test_suite_all_filenames: Missing docstring
+C:108:test_suite_all_filenames: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C:118: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C:119: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 
 
 Report
 ======
-37 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
-
-
+48 statements analysed.
 
 Raw metrics
 -----------
@@ -33,22 +25,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |78     |78.79 |NC       |NC         |
+|code      |88     |80.73 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |9      |9.09  |NC       |NC         |
+|docstring |9      |8.26  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |3      |3.03  |NC       |NC         |
+|comment   |3      |2.75  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |9      |9.09  |NC       |NC         |
+|empty     |9      |8.26  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testfilenames)
 
 
 
@@ -69,17 +53,30 @@ Statistics by type
 
 
 
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |4      |NC       |NC         |
+|convention |10     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |3      |NC       |NC         |
+|warning    |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |error      |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -92,25 +89,24 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0111      |3           |
+|C0103      |6           |
 +-----------+------------+
-|W6501      |1           |
+|C0111      |3           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
-|W0611      |1           |
+|R0904      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
-|E1111      |1           |
+|E1101      |1           |
 +-----------+------------+
-|C0103      |1           |
+|C0301      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.76/10
-This is okay-ish, but I'm sure you can do better.
+Your code has been rated at 6.46/10
 

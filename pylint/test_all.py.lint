@@ -1,33 +1,73 @@
 ************* Module test_all
-W: 26: No exception type(s) specified
-W: 24: Specify string format arguments as logging function parameters
-F: 28: Unable to import 'utilstest'
-F: 33: Unable to import 'testfabioimage'
-F: 34: Unable to import 'testedfimage'
-F: 35: Unable to import 'testcbfimage'
-F: 36: Unable to import 'testfilenames'
-F: 37: Unable to import 'test_file_series'
-F: 38: Unable to import 'test_filename_steps'
-F: 39: Unable to import 'test_flat_binary'
-F: 40: Unable to import 'testadscimage'
-F: 41: Unable to import 'testfit2dmaskimage'
-F: 42: Unable to import 'testGEimage'
-F: 43: Unable to import 'testheadernotsingleton'
-F: 44: Unable to import 'testmar345image'
-F: 45: Unable to import 'testbrukerimage'
-F: 46: Unable to import 'testmccdimage'
-F: 47: Unable to import 'testopenheader'
-F: 48: Unable to import 'testopenimage'
-F: 49: Unable to import 'testOXDimage'
-F: 50: Unable to import 'testkcdimage'
-F: 51: Unable to import 'testtifgz'
-C: 53:test_suite_all: Missing docstring
-W: 39: Unused import test_suite_all_flat
+C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 14: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 29: No exception type(s) specified
+F: 31: Unable to import 'utilstest'
+F: 37: Unable to import 'testfabioimage'
+F: 38: Unable to import 'testedfimage'
+F: 39: Unable to import 'testcbfimage'
+F: 40: Unable to import 'testfilenames'
+F: 41: Unable to import 'test_file_series'
+F: 42: Unable to import 'test_filename_steps'
+F: 43: Unable to import 'test_flat_binary'
+F: 44: Unable to import 'testadscimage'
+F: 45: Unable to import 'testfit2dmaskimage'
+F: 46: Unable to import 'testGEimage'
+F: 47: Unable to import 'testheadernotsingleton'
+F: 48: Unable to import 'testmar345image'
+F: 49: Unable to import 'testbrukerimage'
+F: 50: Unable to import 'testmccdimage'
+F: 51: Unable to import 'testopenheader'
+F: 52: Unable to import 'testopenimage'
+F: 53: Unable to import 'testOXDimage'
+F: 54: Unable to import 'testkcdimage'
+F: 55: Unable to import 'testtifimage'
+F: 56: Unable to import 'testXSDimage'
+C: 58:test_suite_all: Missing docstring
+C: 59:test_suite_all: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 84: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 85: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 43: Unused import test_suite_all_flat
+W: 34: Unused import fabio
 
 
 Report
 ======
-63 statements analysed.
+71 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |71     |87.65 |34       |+37.00     |
++----------+-------+------+---------+-----------+
+|docstring |3      |3.70  |3        |=          |
++----------+-------+------+---------+-----------+
+|comment   |2      |2.47  |62       |-60.00     |
++----------+-------+------+---------+-----------+
+|empty     |5      |6.17  |5        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -42,51 +82,17 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |64     |87.67 |58       |+6.00      |
-+----------+-------+------+---------+-----------+
-|docstring |3      |4.11  |3        |=          |
-+----------+-------+------+---------+-----------+
-|comment   |2      |2.74  |2        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |4      |5.48  |5        |-1.00      |
-+----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |6      |5        |+1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |4        |-1.00      |
+|warning    |3      |2        |+1.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -99,13 +105,13 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|F0401      |20          |
+|F0401      |21          |
 +-----------+------------+
-|W6501      |1           |
+|C0103      |5           |
++-----------+------------+
+|W0611      |2           |
 +-----------+------------+
 |W0702      |1           |
-+-----------+------------+
-|W0611      |1           |
 +-----------+------------+
 |C0111      |1           |
 +-----------+------------+
@@ -114,6 +120,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.37/10 (previous run: 9.12/10)
-So close to being perfect...
+Your code has been rated at 8.73/10 (previous run: 7.94/10)
 

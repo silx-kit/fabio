@@ -1,0 +1,127 @@
+************* Module testXSDimage
+C: 39: Line too long (82/80)
+C: 70: Line too long (91/80)
+C: 77: Line too long (102/80)
+C: 84: Line too long (103/80)
+C:  1: Invalid name "testXSDimage" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
+C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 14: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 29: No exception type(s) specified
+F: 31: Unable to import 'utilstest'
+C: 42:testXSD: Missing docstring
+C: 42:testXSD: Invalid name "testXSD" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 43:testXSD.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 74:testXSD.test_invert: Invalid name "m1" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 75:testXSD.test_invert: Invalid name "m2" (should match [a-z_][a-z0-9_]{2,30}$)
+E: 77:testXSD.test_invert: Module 'numpy' has no 'identity' member
+R: 42:testXSD: Too many public methods (48/20)
+C: 81:test_suite_all_XSD: Missing docstring
+C: 81:test_suite_all_XSD: Invalid name "test_suite_all_XSD" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 82:test_suite_all_XSD: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 93: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 94: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+
+
+Report
+======
+68 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |72     |80.00 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |8      |8.89  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |2      |2.22  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |8      |8.89  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |NC         |NC         |100.00      |25.00    |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (testXSDimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |17     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |11          |
++-----------+------------+
+|C0301      |4           |
++-----------+------------+
+|C0111      |2           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|E1101      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 6.47/10
+

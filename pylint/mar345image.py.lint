@@ -1,71 +1,46 @@
 ************* Module mar345image
-W: 63: TODO: turn this into a real check
-W:106: TODO: validate these values against the binaries already read
+C: 91: Line too long (85/80)
+C:136: Line too long (86/80)
+W: 70: TODO: turn this into a real check
+W:113: TODO: validate these values against the binaries already read
+F: 14: Unable to import 'fabioimage'
 W: 15: Uses of a deprecated module 'string'
-C: 17:mar345image: Invalid name "mar345image" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 17:mar345image: Missing docstring
-C: 22:mar345image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 28:mar345image.read: No exception type(s) specified
-F: 26:mar345image.read: Unable to import 'mar345_io'
-E: 30:mar345image.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-E: 44:mar345image.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-C: 52:mar345image._readheader: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 53:mar345image._readheader: Invalid name "h" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 56:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 65:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 67:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 89:mar345image._readheader: Comma not followed by a space
-        h['PixelLength'] = struct.unpack(fs,l[6*4:(6+1)*4])[0]/1000.0
-                                           ^^
-C: 90:mar345image._readheader: Comma not followed by a space
-        h['PixelHeight'] = struct.unpack(fs,l[7*4:(7+1)*4])[0]/1000.0
-                                           ^^
-C: 92:mar345image._readheader: Comma not followed by a space
-        h['Wavelength'] = struct.unpack(fs,l[8*4:(8+1)*4])[0]/1000000.0
-                                          ^^
-C: 94:mar345image._readheader: Comma not followed by a space
-        h['Distance'] = struct.unpack(fs,l[9*4:(9+1)*4])[0]/1000.0
-                                        ^^
-C: 96:mar345image._readheader: Comma not followed by a space
-        h['StartPhi'] = struct.unpack(fs,l[10*4:11*4])[0]/1000.0
-                                        ^^
-C: 97:mar345image._readheader: Comma not followed by a space
-        h['EndPhi'] = struct.unpack(fs,l[11*4:12*4])[0]/1000.0
-                                      ^^
-C: 99:mar345image._readheader: Comma not followed by a space
-        h['StartOmega'] = struct.unpack(fs,l[12*4:13*4])[0]/1000.0
-                                          ^^
-C:100:mar345image._readheader: Comma not followed by a space
-        h['EndOmega'] = struct.unpack(fs,l[13*4:14*4])[0]/1000.0
-                                        ^^
-C:102:mar345image._readheader: Comma not followed by a space
-        h['Chi'] = struct.unpack(fs,l[14*4:15*4])[0]/1000.0
-                                   ^^
-C:103:mar345image._readheader: Comma not followed by a space
-        h['TwoTheta'] = struct.unpack(fs,l[15*4:16*4])[0]/1000.0
-                                        ^^
-C:107:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:111:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:112:mar345image._readheader: Invalid name "m" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:113:mar345image._readheader: More than one statement on a single line
-C:114:mar345image._readheader: Comma not followed by a space
-            n = m.split(' ',1)
-                           ^^
-C:114:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:128:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:129:mar345image._readheader: Comma not followed by a space
-                h.update( [(n[0]+'_'+n[j],n[j+1]) for j in range(1,len(n),2)] )
-                                         ^^
-R: 47:mar345image._readheader: Too many statements (51/50)
-C:134:mar345image.write: Missing docstring
-W:134:mar345image.write: Arguments number differs from overridden method
-W: 86:mar345image._readheader: Attribute 'numpixels' defined outside __init__
-W: 71:mar345image._readheader: Attribute 'numhigh' defined outside __init__
+C: 17: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 19:mar345image: Too many instance attributes (8/7)
+C: 19:mar345image: Missing docstring
+C: 19:mar345image: Invalid name "mar345image" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 29:mar345image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+E: 29:mar345image.read: Instance of 'mar345image' has no '_open' member
+F: 33:mar345image.read: Unable to import 'mar345_io'
+E: 41:mar345image.read: Module 'numpy' has no 'resize' member
+E: 41:mar345image.read: Module 'numpy' has no 'array' member
+E: 50:mar345image.read: Module 'numpy' has no 'uint' member
+C: 59:mar345image._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 60:mar345image._readheader: Invalid name "h" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 63:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 72:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 74:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
+C:114:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C:118:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C:119:mar345image._readheader: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C:120:mar345image._readheader: More than one statement on a single line
+C:121:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C:135:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 54:mar345image._readheader: Too many statements (51/50)
+C:141:mar345image.write: Missing docstring
+R:141:mar345image.write: Method could be a function
+W:141:mar345image.write: Unused argument 'fname'
+W: 28:mar345image.read: Attribute 'filename' defined outside __init__
+W: 76:mar345image._readheader: Attribute 'dim2' defined outside __init__
+W:138:mar345image._readheader: Attribute 'header' defined outside __init__
+W: 76:mar345image._readheader: Attribute 'dim1' defined outside __init__
+W: 50:mar345image.read: Attribute 'bytecode' defined outside __init__
+W: 45:mar345image.read: Attribute 'data' defined outside __init__
 
 
 Report
 ======
-79 statements analysed.
+86 statements analysed.
 
 Raw metrics
 -----------
@@ -73,37 +48,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |77     |59.23 |77       |=          |
+|code      |86     |62.32 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |22     |16.92 |22       |=          |
+|docstring |20     |14.49 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |12     |9.23  |12       |=          |
+|comment   |12     |8.70  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |19     |14.62 |19       |=          |
+|empty     |20     |14.49 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-fabioimage 
-        \-fabioimage (mar345image)
 
 
 
@@ -113,14 +65,35 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |100.00   |
+|class    |1      |NC         |NC         |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |66.67       |0.00     |
+|method   |4      |NC         |NC         |75.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (mar345image)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -130,13 +103,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |27     |27       |=          |
+|convention |18     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |7      |7        |=          |
+|warning    |10     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |2      |2        |=          |
+|error      |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -147,27 +120,29 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0324      |12          |
+|C0103      |13          |
 +-----------+------------+
-|C0103      |12          |
+|W0201      |6           |
++-----------+------------+
+|E1101      |4           |
 +-----------+------------+
 |W0511      |2           |
 +-----------+------------+
-|W0201      |2           |
+|F0401      |2           |
 +-----------+------------+
-|E1103      |2           |
+|C0301      |2           |
 +-----------+------------+
 |C0111      |2           |
 +-----------+------------+
-|W0702      |1           |
+|W0613      |1           |
 +-----------+------------+
 |W0402      |1           |
 +-----------+------------+
-|W0221      |1           |
-+-----------+------------+
 |R0915      |1           |
 +-----------+------------+
-|F0401      |1           |
+|R0902      |1           |
++-----------+------------+
+|R0201      |1           |
 +-----------+------------+
 |C0321      |1           |
 +-----------+------------+
@@ -176,6 +151,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 4.30/10 (previous run: 4.30/10)
-A little more work would make it acceptable.
+Your code has been rated at 4.07/10
 

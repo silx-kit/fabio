@@ -1,42 +1,218 @@
 ************* Module cbfimage
-C: 49:cbfimage: Invalid name "cbfimage" (should match [A-Z_][a-zA-Z0-9]+$)
-C:147:cbfimage.analyseWeave: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:193:cbfimage.analyseWeave: Invalid name "rc" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:147:cbfimage.analyseWeave: Unused variable 'n'
-W:193:cbfimage.analyseWeave: Unused variable 'rc'
-W:198:cbfimage.analyseNumpy: Unused argument 'size'
-F:250:cbfimage._readbinary_byte_offset: Unable to import 'byte_offset'
-R: 49:cbfimage: Too many public methods (21/20)
-C:435:CIF._parseCIF: Invalid name "f1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:442:CIF._parseCIF: More than one statement on a single line
-C:517:CIF._splitCIF: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:447:CIF._splitCIF: Too many branches (18/15)
-R:447:CIF._splitCIF: Too many statements (53/50)
-R:525:CIF._analyseOneLoop: Too many branches (16/15)
-C:632:CIF._cif2str: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:634:CIF._cif2str: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:620:CIF._cif2str: Too many branches (21/15)
-C:786:CIF.LoopHasKey: Invalid name "LoopHasKey" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:310:CIF: Too many public methods (22/20)
-W: 25: Unused import time
+C:  7: Line too long (81/80)
+C: 83: Line too long (128/80)
+C:126: Line too long (91/80)
+C:135: Line too long (131/80)
+C:137: Line too long (115/80)
+C:243: Line too long (114/80)
+C:302: Line too long (93/80)
+C:359: Line too long (90/80)
+C:364: Line too long (102/80)
+C:402: Line too long (98/80)
+C:413: Line too long (115/80)
+C:417: Line too long (114/80)
+C:610: Line too long (93/80)
+C:611: Line too long (93/80)
+C:612: Line too long (93/80)
+C:682: Line too long (83/80)
+C:688: Line too long (87/80)
+C:754: Line too long (84/80)
+C:790: Line too long (99/80)
+C:792: Line too long (91/80)
+C: 23: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+F: 25: Unable to import 'fabioimage'
+E: 28: Module 'numpy' has no 'int8' member
+E: 29: Module 'numpy' has no 'int16' member
+E: 30: Module 'numpy' has no 'int32' member
+R: 50:cbfimage: Too many instance attributes (9/7)
+C: 50:cbfimage: Invalid name "cbfimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 67:cbfimage._readheader: Invalid name "inStream" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 67:cbfimage._readheader: Invalid name "inStream" (should match [a-z_][a-z0-9_]{2,30}$)
+E: 79:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
+E: 83:cbfimage._readheader: Instance of 'cbfimage' has no 'fname' member
+C: 85:cbfimage._readheader: Invalid name "inStream2" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 87:cbfimage._readheader: Invalid name "iSepPos" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 92:cbfimage._readheader: Invalid name "oneLine" (should match [a-z_][a-z0-9_]{2,30}$)
+E:100:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
+E:104:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
+E:117:cbfimage.read: Instance of 'cbfimage' has no 'resetvals' member
+E:119:cbfimage.read: Instance of 'cbfimage' has no '_open' member
+E:129:cbfimage.read: Module 'numpy' has no 'array' member
+E:131:cbfimage.read: Module 'numpy' has no 'int32' member
+E:140:cbfimage.read: Instance of 'cbfimage' has no 'resetvals' member
+C:148:cbfimage.analysePython: Invalid name "analysePython" (should match [a-z_][a-z0-9_]{2,30}$)
+C:161:cbfimage.analysePython: Invalid name "dataOut" (should match [a-z_][a-z0-9_]{2,30}$)
+E:161:cbfimage.analysePython: Module 'numpy' has no 'zeros' member
+E:161:cbfimage.analysePython: Module 'numpy' has no 'int64' member
+C:187:cbfimage.analyseWeave: Invalid name "analyseWeave" (should match [a-z_][a-z0-9_]{2,30}$)
+C:196:cbfimage.analyseWeave: Invalid name "dataIn" (should match [a-z_][a-z0-9_]{2,30}$)
+E:196:cbfimage.analyseWeave: Module 'numpy' has no 'fromstring' member
+C:197:cbfimage.analyseWeave: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C:198:cbfimage.analyseWeave: Invalid name "dataOut" (should match [a-z_][a-z0-9_]{2,30}$)
+E:198:cbfimage.analyseWeave: Module 'numpy' has no 'zeros' member
+C:199:cbfimage.analyseWeave: Invalid name "codeC" (should match [a-z_][a-z0-9_]{2,30}$)
+C:243:cbfimage.analyseWeave: Invalid name "rc" (should match [a-z_][a-z0-9_]{2,30}$)
+W:197:cbfimage.analyseWeave: Unused variable 'n'
+W:243:cbfimage.analyseWeave: Unused variable 'rc'
+C:248:cbfimage.analyseNumpy: Invalid name "analyseNumpy" (should match [a-z_][a-z0-9_]{2,30}$)
+E:264:cbfimage.analyseNumpy: Module 'numpy' has no 'fromstring' member
+E:266:cbfimage.analyseNumpy: Module 'numpy' has no 'fromstring' member
+E:271:cbfimage.analyseNumpy: Module 'numpy' has no 'fromstring' member
+E:275:cbfimage.analyseNumpy: Module 'numpy' has no 'fromstring' member
+E:279:cbfimage.analyseNumpy: Module 'numpy' has no 'fromstring' member
+E:283:cbfimage.analyseNumpy: Module 'numpy' has no 'hstack' member
+W:248:cbfimage.analyseNumpy: Unused argument 'size'
+C:286:cbfimage._readbinary_byte_offset: Invalid name "inStream" (should match [a-z_][a-z0-9_]{2,30}$)
+C:286:cbfimage._readbinary_byte_offset: Invalid name "inStream" (should match [a-z_][a-z0-9_]{2,30}$)
+C:297:cbfimage._readbinary_byte_offset: Invalid name "startPos" (should match [a-z_][a-z0-9_]{2,30}$)
+F:300:cbfimage._readbinary_byte_offset: Unable to import 'byte_offset'
+C:303:cbfimage._readbinary_byte_offset: Invalid name "myData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:305:cbfimage._readbinary_byte_offset: Invalid name "myData" (should match [a-z_][a-z0-9_]{2,30}$)
+W:142:cbfimage.read: Attribute 'pilimage' defined outside __init__
+W:132:cbfimage.read: Attribute 'bpp' defined outside __init__
+W:115:cbfimage.read: Attribute 'filename' defined outside __init__
+W:124:cbfimage.read: Attribute 'dim2' defined outside __init__
+W:116:cbfimage.read: Attribute 'header' defined outside __init__
+W:123:cbfimage.read: Attribute 'dim1' defined outside __init__
+W:139:cbfimage.read: Attribute 'bytecode' defined outside __init__
+W:135:cbfimage.read: Attribute 'data' defined outside __init__
+C:325:CIF.__init__: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:325:CIF.__init__: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:336:CIF.readCIF: Invalid name "readCIF" (should match [a-z_][a-z0-9_]{2,30}$)
+C:336:CIF.readCIF: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:336:CIF.readCIF: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:346:CIF.loadCIF: Invalid name "loadCIF" (should match [a-z_][a-z0-9_]{2,30}$)
+C:346:CIF.loadCIF: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:346:CIF.loadCIF: Invalid name "_bKeepComment" (should match [a-z_][a-z0-9_]{2,30}$)
+C:346:CIF.loadCIF: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:346:CIF.loadCIF: Invalid name "_bKeepComment" (should match [a-z_][a-z0-9_]{2,30}$)
+C:372:CIF.isAscii: Invalid name "isAscii" (should match [a-z_][a-z0-9_]{2,30}$)
+C:372:CIF.isAscii: Invalid name "_strIn" (should match [a-z_][a-z0-9_]{2,30}$)
+C:372:CIF.isAscii: Invalid name "_strIn" (should match [a-z_][a-z0-9_]{2,30}$)
+C:381:CIF.isAscii: Invalid name "bIsAcii" (should match [a-z_][a-z0-9_]{2,30}$)
+C:384:CIF.isAscii: Invalid name "bIsAcii" (should match [a-z_][a-z0-9_]{2,30}$)
+C:390:CIF._readCIF: Invalid name "_readCIF" (should match [a-z_][a-z0-9_]{2,30}$)
+C:404:CIF._readCIF: Invalid name "lLinesRead" (should match [a-z_][a-z0-9_]{2,30}$)
+C:405:CIF._readCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:406:CIF._readCIF: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:407:CIF._readCIF: Invalid name "iPos" (should match [a-z_][a-z0-9_]{2,30}$)
+C:410:CIF._readCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:415:CIF._readCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:421:CIF._parseCIF: Invalid name "_parseCIF" (should match [a-z_][a-z0-9_]{2,30}$)
+C:421:CIF._parseCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:421:CIF._parseCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:437:CIF._parseCIF: Invalid name "lFields" (should match [a-z_][a-z0-9_]{2,30}$)
+C:450:CIF._parseCIF: Invalid name "f1" (should match [a-z_][a-z0-9_]{2,30}$)
+C:451:CIF._parseCIF: Invalid name "lFields" (should match [a-z_][a-z0-9_]{2,30}$)
+C:457:CIF._parseCIF: More than one statement on a single line
+C:463:CIF._splitCIF: Invalid name "_splitCIF" (should match [a-z_][a-z0-9_]{2,30}$)
+C:463:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:463:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:472:CIF._splitCIF: Invalid name "lFields" (should match [a-z_][a-z0-9_]{2,30}$)
+C:478:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:485:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:486:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:491:CIF._splitCIF: Invalid name "sText1" (should match [a-z_][a-z0-9_]{2,30}$)
+C:492:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:493:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:497:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:505:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:506:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:512:CIF._splitCIF: Invalid name "sText1" (should match [a-z_][a-z0-9_]{2,30}$)
+C:513:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:514:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:524:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:529:CIF._splitCIF: Invalid name "sText1" (should match [a-z_][a-z0-9_]{2,30}$)
+C:530:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:531:CIF._splitCIF: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:533:CIF._splitCIF: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C:536:CIF._splitCIF: Invalid name "sText1" (should match [a-z_][a-z0-9_]{2,30}$)
+C:537:CIF._splitCIF: Invalid name "sText" (should match [a-z_][a-z0-9_]{2,30}$)
+R:463:CIF._splitCIF: Too many branches (18/12)
+R:463:CIF._splitCIF: Too many statements (53/50)
+C:542:CIF._analyseOneLoop: Invalid name "_analyseOneLoop" (should match [a-z_][a-z0-9_]{2,30}$)
+C:542:CIF._analyseOneLoop: Invalid name "lFields" (should match [a-z_][a-z0-9_]{2,30}$)
+C:542:CIF._analyseOneLoop: Invalid name "iStart" (should match [a-z_][a-z0-9_]{2,30}$)
+C:542:CIF._analyseOneLoop: Invalid name "lFields" (should match [a-z_][a-z0-9_]{2,30}$)
+C:542:CIF._analyseOneLoop: Invalid name "iStart" (should match [a-z_][a-z0-9_]{2,30}$)
+C:558:CIF._analyseOneLoop: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+C:564:CIF._analyseOneLoop: Invalid name "bFinished" (should match [a-z_][a-z0-9_]{2,30}$)
+R:542:CIF._analyseOneLoop: Too many branches (16/12)
+C:614:CIF.saveCIF: Invalid name "saveCIF" (should match [a-z_][a-z0-9_]{2,30}$)
+C:614:CIF.saveCIF: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:614:CIF.saveCIF: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:621:CIF.saveCIF: Invalid name "fFile" (should match [a-z_][a-z0-9_]{2,30}$)
+C:634:CIF._cif2str: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:634:CIF._cif2str: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:642:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:644:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:646:CIF._cif2str: Invalid name "t" (should match [a-z_][a-z0-9_]{2,30}$)
+C:648:CIF._cif2str: Invalid name "t" (should match [a-z_][a-z0-9_]{2,30}$)
+C:649:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:651:CIF._cif2str: Invalid name "lKeys" (should match [a-z_][a-z0-9_]{2,30}$)
+C:653:CIF._cif2str: Invalid name "sKey" (should match [a-z_][a-z0-9_]{2,30}$)
+C:656:CIF._cif2str: Invalid name "sValue" (should match [a-z_][a-z0-9_]{2,30}$)
+C:658:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:661:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:663:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:666:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:668:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:670:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:673:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:674:CIF._cif2str: Invalid name "lKeys" (should match [a-z_][a-z0-9_]{2,30}$)
+C:675:CIF._cif2str: Invalid name "llData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:676:CIF._cif2str: Invalid name "sKey" (should match [a-z_][a-z0-9_]{2,30}$)
+C:677:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:678:CIF._cif2str: Invalid name "lData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:679:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:681:CIF._cif2str: Invalid name "sRawValue" (should match [a-z_][a-z0-9_]{2,30}$)
+C:683:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:685:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:686:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:693:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:694:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:696:CIF._cif2str: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:697:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+C:698:CIF._cif2str: Invalid name "sCifText" (should match [a-z_][a-z0-9_]{2,30}$)
+R:634:CIF._cif2str: Too many branches (21/12)
+C:703:CIF.exists: Invalid name "sKey" (should match [a-z_][a-z0-9_]{2,30}$)
+C:703:CIF.exists: Invalid name "sKey" (should match [a-z_][a-z0-9_]{2,30}$)
+C:712:CIF.exists: Invalid name "bExists" (should match [a-z_][a-z0-9_]{2,30}$)
+C:716:CIF.exists: Invalid name "bExists" (should match [a-z_][a-z0-9_]{2,30}$)
+C:720:CIF.existsInLoop: Invalid name "existsInLoop" (should match [a-z_][a-z0-9_]{2,30}$)
+C:720:CIF.existsInLoop: Invalid name "sKey" (should match [a-z_][a-z0-9_]{2,30}$)
+C:720:CIF.existsInLoop: Invalid name "sKey" (should match [a-z_][a-z0-9_]{2,30}$)
+C:731:CIF.existsInLoop: Invalid name "bExists" (should match [a-z_][a-z0-9_]{2,30}$)
+C:736:CIF.existsInLoop: Invalid name "bExists" (should match [a-z_][a-z0-9_]{2,30}$)
+C:740:CIF.loadCHIPLOT: Invalid name "loadCHIPLOT" (should match [a-z_][a-z0-9_]{2,30}$)
+C:740:CIF.loadCHIPLOT: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:740:CIF.loadCHIPLOT: Invalid name "_strFilename" (should match [a-z_][a-z0-9_]{2,30}$)
+C:753:CIF.loadCHIPLOT: Invalid name "lInFile" (should match [a-z_][a-z0-9_]{2,30}$)
+C:758:CIF.loadCHIPLOT: Invalid name "iLenData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:760:CIF.loadCHIPLOT: Invalid name "iLenData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:761:CIF.loadCHIPLOT: Invalid name "lOneLoop" (should match [a-z_][a-z0-9_]{2,30}$)
+C:763:CIF.loadCHIPLOT: Invalid name "f2ThetaMin" (should match [a-z_][a-z0-9_]{2,30}$)
+C:765:CIF.loadCHIPLOT: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:768:CIF.loadCHIPLOT: Invalid name "f2ThetaMax" (should match [a-z_][a-z0-9_]{2,30}$)
+C:769:CIF.loadCHIPLOT: Invalid name "limitsOK" (should match [a-z_][a-z0-9_]{2,30}$)
+C:772:CIF.loadCHIPLOT: Invalid name "limitsOK" (should match [a-z_][a-z0-9_]{2,30}$)
+C:773:CIF.loadCHIPLOT: Invalid name "f2ThetaMin" (should match [a-z_][a-z0-9_]{2,30}$)
+C:774:CIF.loadCHIPLOT: Invalid name "f2ThetaMax" (should match [a-z_][a-z0-9_]{2,30}$)
+C:776:CIF.loadCHIPLOT: Invalid name "sLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C:777:CIF.loadCHIPLOT: Invalid name "sCleaned" (should match [a-z_][a-z0-9_]{2,30}$)
+C:781:CIF.loadCHIPLOT: Invalid name "f2Theta" (should match [a-z_][a-z0-9_]{2,30}$)
+C:783:CIF.loadCHIPLOT: Invalid name "f2ThetaMin" (should match [a-z_][a-z0-9_]{2,30}$)
+C:785:CIF.loadCHIPLOT: Invalid name "f2ThetaMax" (should match [a-z_][a-z0-9_]{2,30}$)
+C:788:CIF.loadCHIPLOT: Invalid name "iLenData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:794:CIF.loadCHIPLOT: Invalid name "f2ThetaMax" (should match [a-z_][a-z0-9_]{2,30}$)
+C:795:CIF.loadCHIPLOT: Invalid name "f2ThetaMin" (should match [a-z_][a-z0-9_]{2,30}$)
+C:803:CIF.LoopHasKey: Invalid name "LoopHasKey" (should match [a-z_][a-z0-9_]{2,30}$)
+R:315:CIF: Too many public methods (25/20)
 
 
 Report
 ======
-428 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
+434 statements analysed.
 
 Raw metrics
 -----------
@@ -44,24 +220,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |503    |64.74 |503      |=          |
+|code      |514    |64.74 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |173    |22.27 |173      |=          |
+|docstring |173    |21.79 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |15     |1.93  |15       |=          |
+|comment   |15     |1.89  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |86     |11.07 |86       |=          |
+|empty     |92     |11.59 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-fabioimage 
-        \-fabioimage (cbfimage)
 
 
 
@@ -71,14 +237,35 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |100.00      |50.00    |
+|class    |2      |NC         |NC         |100.00      |50.00    |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |21     |21         |=          |100.00      |4.76     |
+|method   |21     |NC         |NC         |100.00      |66.67    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (cbfimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -88,13 +275,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |9      |9        |=          |
+|convention |168    |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |6      |6        |=          |
+|refactor   |6      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |4      |4        |=          |
+|warning    |11     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |22     |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -105,21 +292,27 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |8           |
+|C0103      |147         |
++-----------+------------+
+|E1101      |22          |
++-----------+------------+
+|C0301      |20          |
++-----------+------------+
+|W0201      |8           |
 +-----------+------------+
 |R0912      |3           |
 +-----------+------------+
 |W0612      |2           |
 +-----------+------------+
-|R0904      |2           |
+|F0401      |2           |
 +-----------+------------+
 |W0613      |1           |
 +-----------+------------+
-|W0611      |1           |
-+-----------+------------+
 |R0915      |1           |
 +-----------+------------+
-|F0401      |1           |
+|R0904      |1           |
++-----------+------------+
+|R0902      |1           |
 +-----------+------------+
 |C0321      |1           |
 +-----------+------------+
@@ -128,6 +321,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.56/10 (previous run: 9.56/10)
-So close to being perfect...
+Your code has been rated at 3.20/10
 

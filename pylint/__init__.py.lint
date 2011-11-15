@@ -1,23 +1,50 @@
 ************* Module __init__
+W:  8: Redefining built-in 'open'
 C:  1: Missing docstring
-C:  4:construct_filename: Missing docstring
-W:  4:construct_filename: Unused argument 'args'
-W:  4:construct_filename: Unused argument 'kwds'
-W: 48: No exception type(s) specified
-W: 58: No exception type(s) specified
-W: 67:getnum: Unused variable 'stem'
-W: 67:getnum: Unused variable 'post_num'
-C: 73:filename_object: Invalid name "filename_object" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 80:filename_object.__init__: Redefining built-in 'format'
-W:166:deconstruct_filename: No exception type(s) specified
-W:179:deconstruct_filename: No exception type(s) specified
-W:187:deconstruct_filename: No exception type(s) specified
-W:149:deconstruct_filename: Unused variable 'compressed'
+C:  1: Invalid name "version" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+F:  3: Unable to import 'fabioimage'
+F:  4: Unable to import 'openimage'
+F:  5: Unable to import 'fabioutils'
+F:  8: Unable to import 'openimage'
 
 
 Report
 ======
-130 statements analysed.
+6 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |7      |87.50 |1        |+6.00      |
++----------+-------+------+---------+-----------+
+|docstring |0      |0.00  |0        |=          |
++----------+-------+------+---------+-----------+
+|comment   |0      |0.00  |0        |=          |
++----------+-------+------+---------+-----------+
+|empty     |1      |12.50 |0        |+1.00      |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -32,51 +59,17 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |155    |68.89 |155      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |38     |16.89 |38       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |6      |2.67  |6        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |26     |11.56 |26       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |8      |8          |=          |87.50       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |3      |3        |=          |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |11     |11       |=          |
+|warning    |1      |0        |+1.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -89,15 +82,11 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W0702      |5           |
-+-----------+------------+
-|W0612      |3           |
-+-----------+------------+
-|W0613      |2           |
-+-----------+------------+
-|C0111      |2           |
+|F0401      |4           |
 +-----------+------------+
 |W0622      |1           |
++-----------+------------+
+|C0111      |1           |
 +-----------+------------+
 |C0103      |1           |
 +-----------+------------+
@@ -106,6 +95,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.92/10 (previous run: 8.92/10)
-That's pretty good. Good work mate.
+Your code has been rated at 5.00/10 (previous run: 0.00/10)
 

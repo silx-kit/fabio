@@ -1,0 +1,119 @@
+************* Module testfit2dmaskimage
+C: 14: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 15: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 30: No exception type(s) specified
+F: 32: Unable to import 'utilstest'
+C: 39:testfacemask: Invalid name "testfacemask" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 42:testfacemask.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 39:testfacemask: Too many public methods (46/20)
+C: 63:testclickedmask: Invalid name "testclickedmask" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 66:testclickedmask.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+E: 80:testclickedmask.test_read: Module 'numpy' has no 'uint8' member
+R: 63:testclickedmask: Too many public methods (47/20)
+C: 99:test_suite_all_fit2d: Missing docstring
+C:100:test_suite_all_fit2d: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C:107: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C:108: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+
+
+Report
+======
+70 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |70     |67.31 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |15     |14.42 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |4      |3.85  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |15     |14.42 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |NC         |NC         |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |5      |NC         |NC         |100.00      |40.00    |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (testfit2dmaskimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |10     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |2      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |9           |
++-----------+------------+
+|R0904      |2           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|E1101      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 7.43/10
+

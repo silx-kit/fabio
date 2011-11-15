@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>fabio.TiffIO</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="fabio-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="fabio-module.html">Package&nbsp;fabio</a> ::
+        Module&nbsp;TiffIO
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="fabio.TiffIO-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module TiffIO</h1><p class="nomargin-top"><span class="codelink"><a href="fabio.TiffIO-pysrc.html">source&nbsp;code</a></span></p>
+<hr />
+<div class="fields">      <p><strong>Author:</strong>
+        V.A. Sole - ESRF Data Analysis
+      </p>
+</div><!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.TiffIO.TiffIO-class.html" class="summary-name">TiffIO</a>
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__revision__"></a><span class="summary-name">__revision__</span> = <code title="1422">1422</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="logging.getLogger(&quot;TiffIO&quot;)">logging.getLogger(&quot;TiffIO&quot;)</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="ALLOW_MULTIPLE_STRIPS"></a><span class="summary-name">ALLOW_MULTIPLE_STRIPS</span> = <code title="False">False</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.TiffIO-module.html#TAG_ID" class="summary-name">TAG_ID</a> = <code title="{256: 'NumberOfColumns',
+ 257: 'NumberOfRows',
+ 258: 'BitsPerSample',
+ 259: 'Compression',
+ 262: 'PhotometricInterpretation',
+ 270: 'ImageDescription',
+ 273: 'StripOffsets',
+ 278: 'RowsPerStrip',
+..."><code class="variable-group">{</code>256<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">NumberOfColumns</code><code class="variable-quote">'</code><code class="variable-op">, </code>257<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">NumberOfRows</code><code class="variable-quote">'</code><code class="variable-op">, </code>258<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">B</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_NUMBER_OF_COLUMNS"></a><span class="summary-name">TAG_NUMBER_OF_COLUMNS</span> = <code title="256">256</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_NUMBER_OF_ROWS"></a><span class="summary-name">TAG_NUMBER_OF_ROWS</span> = <code title="257">257</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_BITS_PER_SAMPLE"></a><span class="summary-name">TAG_BITS_PER_SAMPLE</span> = <code title="258">258</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_PHOTOMETRIC_INTERPRETATION"></a><span class="summary-name">TAG_PHOTOMETRIC_INTERPRETATION</span> = <code title="262">262</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_COMPRESSION"></a><span class="summary-name">TAG_COMPRESSION</span> = <code title="259">259</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_IMAGE_DESCRIPTION"></a><span class="summary-name">TAG_IMAGE_DESCRIPTION</span> = <code title="270">270</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_STRIP_OFFSETS"></a><span class="summary-name">TAG_STRIP_OFFSETS</span> = <code title="273">273</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_ROWS_PER_STRIP"></a><span class="summary-name">TAG_ROWS_PER_STRIP</span> = <code title="278">278</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_STRIP_BYTE_COUNTS"></a><span class="summary-name">TAG_STRIP_BYTE_COUNTS</span> = <code title="279">279</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_SOFTWARE"></a><span class="summary-name">TAG_SOFTWARE</span> = <code title="305">305</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_DATE"></a><span class="summary-name">TAG_DATE</span> = <code title="306">306</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="TAG_SAMPLE_FORMAT"></a><span class="summary-name">TAG_SAMPLE_FORMAT</span> = <code title="339">339</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.TiffIO-module.html#FIELD_TYPE" class="summary-name">FIELD_TYPE</a> = <code title="{1: ('BYTE', 'B'),
+ 2: ('ASCII', 's'),
+ 3: ('SHORT', 'H'),
+ 4: ('LONG', 'I'),
+ 5: ('RATIONAL', 'II'),
+ 6: ('SBYTE', 'b'),
+ 7: ('UNDEFINED', 'B'),
+ 8: ('SSHORT', 'h'),
+..."><code class="variable-group">{</code>1<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">BYTE</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">B</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">, </code>2<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">ASCII</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">s</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">, </code>3<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">SHORT</code><code class="variable-quote">'</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.TiffIO-module.html#FIELD_TYPE_OUT" class="summary-name">FIELD_TYPE_OUT</a> = <code title="{'B': 1,
+ 'H': 3,
+ 'I': 4,
+ 'II': 5,
+ 'b': 6,
+ 'd': 12,
+ 'f': 11,
+ 'h': 8,
+..."><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">B</code><code class="variable-quote">'</code><code class="variable-op">: </code>1<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">H</code><code class="variable-quote">'</code><code class="variable-op">: </code>3<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">I</code><code class="variable-quote">'</code><code class="variable-op">: </code>4<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">II</code><code class="variable-quote">'</code><code class="variable-op">: </code>5<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">b</code><code class="variable-quote">'</code><code class="variable-op">: </code>6<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">d</code><code class="variable-quote">'</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SAMPLE_FORMAT_UINT"></a><span class="summary-name">SAMPLE_FORMAT_UINT</span> = <code title="1">1</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SAMPLE_FORMAT_INT"></a><span class="summary-name">SAMPLE_FORMAT_INT</span> = <code title="2">2</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SAMPLE_FORMAT_FLOAT"></a><span class="summary-name">SAMPLE_FORMAT_FLOAT</span> = <code title="3">3</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SAMPLE_FORMAT_VOID"></a><span class="summary-name">SAMPLE_FORMAT_VOID</span> = <code title="4">4</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SAMPLE_FORMAT_COMPLEXINT"></a><span class="summary-name">SAMPLE_FORMAT_COMPLEXINT</span> = <code title="5">5</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="SAMPLE_FORMAT_COMPLEXIEEEFP"></a><span class="summary-name">SAMPLE_FORMAT_COMPLEXIEEEFP</span> = <code title="6">6</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'fabio'"><code class="variable-quote">'</code><code class="variable-string">fabio</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="TAG_ID"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">TAG_ID</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code>256<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">NumberOfColumns</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ 257<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">NumberOfRows</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ 258<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">BitsPerSample</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ 259<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Compression</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ 262<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">PhotometricInterpretation</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ 270<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">ImageDescription</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ 273<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">StripOffsets</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ 278<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">RowsPerStrip</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="FIELD_TYPE"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">FIELD_TYPE</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code>1<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">BYTE</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">B</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+ 2<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">ASCII</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">s</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+ 3<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">SHORT</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">H</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+ 4<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">LONG</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">I</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+ 5<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">RATIONAL</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">II</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+ 6<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">SBYTE</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">b</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+ 7<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">UNDEFINED</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">B</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+ 8<code class="variable-op">: </code><code class="variable-group">(</code><code class="variable-quote">'</code><code class="variable-string">SSHORT</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">h</code><code class="variable-quote">'</code><code class="variable-group">)</code><code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="FIELD_TYPE_OUT"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">FIELD_TYPE_OUT</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">B</code><code class="variable-quote">'</code><code class="variable-op">: </code>1<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">H</code><code class="variable-quote">'</code><code class="variable-op">: </code>3<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">I</code><code class="variable-quote">'</code><code class="variable-op">: </code>4<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">II</code><code class="variable-quote">'</code><code class="variable-op">: </code>5<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">b</code><code class="variable-quote">'</code><code class="variable-op">: </code>6<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">d</code><code class="variable-quote">'</code><code class="variable-op">: </code>12<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">f</code><code class="variable-quote">'</code><code class="variable-op">: </code>11<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">h</code><code class="variable-quote">'</code><code class="variable-op">: </code>8<code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="fabio-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Tue Nov 15 22:45:05 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

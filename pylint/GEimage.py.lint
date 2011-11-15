@@ -1,39 +1,26 @@
 ************* Module GEimage
 C:  1: Missing docstring
-C:179:GEimage: Missing docstring
-W:189:GEimage._readheader: Redefining built-in 'format'
-W:196:GEimage.read: Arguments number differs from overridden method
-E:208:GEimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
-C:214:GEimage._makeframename: Operator not followed by a space
-        self.filename = "%s$%04d"%( self.sequencefilename,
-                                 ^
-                                   self.currentframe )
-W:249:GEimage.write: Arguments number differs from overridden method
-W:249:GEimage.write: Unused argument 'force_type'
-W:266:GEimage.getframe: Access to a protected member _open of a client class
-W:267:GEimage.getframe: Access to a protected member _readframe of a client class
-E:268:GEimage.getframe: Instance of 'str' has no 'close' member (but some types could not be inferred)
-W:204:GEimage.read: Attribute 'sequencefilename' defined outside __init__
-C:296:demo: Missing docstring
-W:325:demo: Unreachable code
+C: 17: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+F: 19: Unable to import 'fabioutils'
+R:181:GEimage: Too many instance attributes (9/7)
+C:181:GEimage: Missing docstring
+W:191:GEimage._readheader: Redefining built-in 'format'
+W:198:GEimage.read: Arguments number differs from overridden method
+E:243:GEimage._readframe: Module 'numpy' has no 'fromstring' member
+E:243:GEimage._readframe: Module 'numpy' has no 'uint16' member
+W:251:GEimage.write: Arguments number differs from overridden method
+E:251:GEimage.write: Module 'numpy' has no 'uint16' member
+W:251:GEimage.write: Unused argument 'force_type'
+W:268:GEimage.getframe: Access to a protected member _open of a client class
+W:269:GEimage.getframe: Access to a protected member _readframe of a client class
+W:267:GEimage.getframe: Attribute 'sequencefilename' defined outside __init__
+C:298:demo: Missing docstring
+W:327:demo: Unreachable code
 
 
 Report
 ======
-90 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
+93 statements analysed.
 
 Raw metrics
 -----------
@@ -41,23 +28,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |258    |81.65 |258      |=          |
+|code      |260    |81.76 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |24     |7.59  |24       |=          |
+|docstring |24     |7.55  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |13     |4.11  |13       |=          |
+|comment   |13     |4.09  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |21     |6.65  |21       |=          |
+|empty     |21     |6.60  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (GEimage)
-      \-fabioimage (GEimage)
 
 
 
@@ -67,14 +45,37 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
+|module   |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |0.00     |
+|class    |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |8      |8          |=          |100.00      |0.00     |
+|method   |8      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
+|function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabioimage 
+      \-fabioimage (GEimage)
+    numpy (GEimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -84,13 +85,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |4      |4        |=          |
+|convention |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |8      |8        |=          |
+|warning    |8      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |2      |2        |=          |
+|error      |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -101,13 +102,13 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
+|E1101      |3           |
++-----------+------------+
 |C0111      |3           |
 +-----------+------------+
 |W0221      |2           |
 +-----------+------------+
 |W0212      |2           |
-+-----------+------------+
-|E1103      |2           |
 +-----------+------------+
 |W0622      |1           |
 +-----------+------------+
@@ -117,13 +118,16 @@ Messages
 +-----------+------------+
 |W0101      |1           |
 +-----------+------------+
-|C0323      |1           |
+|R0902      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.56/10 (previous run: 7.56/10)
-If you commit now, people should not be making nasty comments about you on c.l.py
+Your code has been rated at 6.99/10
 

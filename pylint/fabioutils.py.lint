@@ -1,0 +1,118 @@
+************* Module fabioutils
+C:  1: Missing docstring
+C:  3:construct_filename: Missing docstring
+W:  3:construct_filename: Unused argument 'args'
+W:  3:construct_filename: Unused argument 'kwds'
+W: 49: No exception type(s) specified
+C: 42: Invalid name "lines" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 59: No exception type(s) specified
+C: 52: Invalid name "lines" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 67:getnum: Unused variable 'stem'
+W: 67:getnum: Unused variable 'post_num'
+C: 73:filename_object: Invalid name "filename_object" (should match [A-Z_][a-zA-Z0-9]+$)
+R: 77:filename_object.__init__: Too many arguments (8/5)
+W: 80:filename_object.__init__: Redefining built-in 'format'
+W:165:deconstruct_filename: No exception type(s) specified
+W:178:deconstruct_filename: No exception type(s) specified
+W:186:deconstruct_filename: No exception type(s) specified
+W:148:deconstruct_filename: Unused variable 'compressed'
+C:236:isAscii: Invalid name "isAscii" (should match [a-z_][a-z0-9_]{2,30}$)
+C:236:isAscii: Invalid name "listExcluded" (should match [a-z_][a-z0-9_]{2,30}$)
+C:236:isAscii: Invalid name "listExcluded" (should match [a-z_][a-z0-9_]{2,30}$)
+
+
+Report
+======
+141 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |166    |68.88 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |45     |18.67 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |5      |2.07  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |25     |10.37 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |9      |NC         |NC         |88.89       |11.11    |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |8      |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |11     |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |6           |
++-----------+------------+
+|W0702      |5           |
++-----------+------------+
+|W0612      |3           |
++-----------+------------+
+|W0613      |2           |
++-----------+------------+
+|C0111      |2           |
++-----------+------------+
+|W0622      |1           |
++-----------+------------+
+|R0913      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.58/10
+

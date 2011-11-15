@@ -1,17 +1,58 @@
 ************* Module test_file_series
-W: 18: No exception type(s) specified
-W: 16: Specify string format arguments as logging function parameters
-F: 20: Unable to import 'utilstest'
-C: 23:testrandomseries: Invalid name "testrandomseries" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 41:testedfnumbered: Invalid name "testedfnumbered" (should match [A-Z_][a-zA-Z0-9]+$)
-R: 41:testedfnumbered: Too many public methods (23/20)
-C: 92:test_suite_all_series: Missing docstring
-W: 20: Unused import UtilsTest
+C: 12: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 13: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 28: No exception type(s) specified
+F: 30: Unable to import 'utilstest'
+C: 37:testrandomseries: Invalid name "testrandomseries" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 39:testrandomseries.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 37:testrandomseries: Too many public methods (48/20)
+C: 55:testedfnumbered: Invalid name "testedfnumbered" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 59:testedfnumbered.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 55:testedfnumbered: Too many public methods (52/20)
+C:106:test_suite_all_series: Missing docstring
+C:107:test_suite_all_series: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C:125: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C:126: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 33: Unused import fabio
 
 
 Report
 ======
-67 statements analysed.
+82 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |81     |72.32 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |20     |17.86 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |2      |1.79  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |9      |8.04  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |NC         |NC         |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |12     |NC         |NC         |100.00      |16.67    |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -26,62 +67,17 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |67     |67.68 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|docstring |20     |20.20 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|comment   |2      |2.02  |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|empty     |10     |10.10 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-file_series 
-        \-file_series (test_file_series)
-        \-numbered_file_series (test_file_series)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |12     |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |3      |NC       |NC         |
+|convention |10     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |3      |NC       |NC         |
+|warning    |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -94,15 +90,13 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |2           |
+|C0103      |9           |
 +-----------+------------+
-|W6501      |1           |
+|R0904      |2           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
 |W0611      |1           |
-+-----------+------------+
-|R0904      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
@@ -113,6 +107,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.96/10
-That's pretty good. Good work mate.
+Your code has been rated at 8.29/10
 

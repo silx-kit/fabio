@@ -1,29 +1,49 @@
 ************* Module kcdimage
+C:  6: Line too long (97/80)
+C: 49: Line too long (92/80)
+C:113: Line too long (104/80)
 W: 11: Uses of a deprecated module 'string'
-C: 44:kcdimage: Invalid name "kcdimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 64:kcdimage._readheader: Specify string format arguments as logging function parameters
-W: 76:kcdimage._readheader: No exception type(s) specified
-E:118:kcdimage.read: Instance of 'str' has no 'seek' member (but some types could not be inferred)
-E:119:kcdimage.read: Instance of 'str' has no 'read' member (but some types could not be inferred)
-E:121:kcdimage.read: Instance of 'str' has no 'close' member (but some types could not be inferred)
+F: 12: Unable to import 'fabioimage'
+C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+E: 15: Module 'numpy' has no 'uint16' member
+W: 29:kcdimage: Class has no __init__ method
+C: 29:kcdimage: Invalid name "kcdimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 39:kcdimage._readheader: Invalid name "oneLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 41:kcdimage._readheader: Invalid name "asciiHeader" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 42:kcdimage._readheader: Invalid name "oneChar" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 44:kcdimage._readheader: Invalid name "asciiHeader" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 50:kcdimage._readheader: Invalid name "endOfHeaders" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 52:kcdimage._readheader: Invalid name "oneLine" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 54:kcdimage._readheader: Invalid name "endOfHeaders" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 57:kcdimage._readheader: Invalid name "oneLine" (should match [a-z_][a-z0-9_]{2,30}$)
+W: 61:kcdimage._readheader: No exception type(s) specified
+C: 61:kcdimage._readheader: Invalid name "endOfHeaders" (should match [a-z_][a-z0-9_]{2,30}$)
+E: 64:kcdimage._readheader: Instance of 'kcdimage' has no 'header_keys' member
+E: 68:kcdimage._readheader: Instance of 'kcdimage' has no 'header_keys' member
+E: 80:kcdimage.read: Instance of 'kcdimage' has no 'resetvals' member
+E: 81:kcdimage.read: Instance of 'kcdimage' has no '_open' member
+E: 91:kcdimage.read: Module 'numpy' has no 'array' member
+E: 93:kcdimage.read: Module 'numpy' has no 'uint16' member
+C: 97:kcdimage.read: Invalid name "nbReadOut" (should match [a-z_][a-z0-9_]{2,30}$)
+C:100:kcdimage.read: Invalid name "nbReadOut" (should match [a-z_][a-z0-9_]{2,30}$)
+C:101:kcdimage.read: Invalid name "fileSize" (should match [a-z_][a-z0-9_]{2,30}$)
+E:109:kcdimage.read: Module 'numpy' has no 'zeros' member
+E:112:kcdimage.read: Module 'numpy' has no 'reshape' member
+E:112:kcdimage.read: Module 'numpy' has no 'fromstring' member
+E:120:kcdimage.read: Instance of 'kcdimage' has no 'resetvals' member
+R: 29:kcdimage: Too few public methods (1/2)
+W:122:kcdimage.read: Attribute 'pilimage' defined outside __init__
+W: 94:kcdimage.read: Attribute 'bpp' defined outside __init__
+W: 86:kcdimage.read: Attribute 'dim2' defined outside __init__
+W: 79:kcdimage.read: Attribute 'header' defined outside __init__
+W: 85:kcdimage.read: Attribute 'dim1' defined outside __init__
+W:119:kcdimage.read: Attribute 'bytecode' defined outside __init__
+W:109:kcdimage.read: Attribute 'data' defined outside __init__
 
 
 Report
 ======
-77 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
+79 statements analysed.
 
 Raw metrics
 -----------
@@ -31,24 +51,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |80     |58.39 |80       |=          |
+|code      |79     |64.75 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |25     |18.25 |25       |=          |
+|docstring |23     |18.85 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |13     |9.49  |13       |=          |
+|comment   |2      |1.64  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |19     |13.87 |19       |=          |
+|empty     |18     |14.75 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-fabioimage 
-        \-fabioimage (kcdimage)
 
 
 
@@ -58,14 +68,35 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |100.00      |0.00     |
+|method   |2      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (kcdimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -75,13 +106,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |17     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |3      |3        |=          |
+|warning    |10     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |3      |3        |=          |
+|error      |11     |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -92,21 +123,28 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|E1103      |3           |
+|C0103      |14          |
 +-----------+------------+
-|W6501      |1           |
+|E1101      |11          |
++-----------+------------+
+|W0201      |7           |
++-----------+------------+
+|C0301      |3           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
 |W0402      |1           |
 +-----------+------------+
-|C0103      |1           |
+|W0232      |1           |
++-----------+------------+
+|R0903      |1           |
++-----------+------------+
+|F0401      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.53/10 (previous run: 7.53/10)
-If you commit now, people should not be making nasty comments about you on c.l.py
+Your code has been rated at -0.51/10
 

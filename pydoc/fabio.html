@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>fabio</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/pymodules/python2.6/fabio/__init__.py">/usr/lib/pymodules/python2.6/fabio/__init__.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/lib/python2.7/dist-packages/fabio/__init__.py">/usr/lib/python2.7/dist-packages/fabio/__init__.py</a><br><a href="http://docs.python.org/library/fabio">Module Docs</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -21,17 +21,20 @@
 <a href="fabio.GEimage_old.html">GEimage_old</a><br>
 <a href="fabio.HiPiCimage.html">HiPiCimage</a><br>
 <a href="fabio.OXDimage.html">OXDimage</a><br>
+<a href="fabio.TiffIO.html">TiffIO</a><br>
 <a href="fabio.adscimage.html">adscimage</a><br>
 <a href="fabio.bruker100image.html">bruker100image</a><br>
 <a href="fabio.brukerimage.html">brukerimage</a><br>
-</td><td width="25%" valign=top><a href="fabio.cbfimage.html">cbfimage</a><br>
+</td><td width="25%" valign=top><a href="fabio.byte_offset.html">byte_offset</a><br>
+<a href="fabio.cbfimage.html">cbfimage</a><br>
 <a href="fabio.cf_io.html">cf_io</a><br>
 <a href="fabio.datIO.html">datIO</a><br>
 <a href="fabio.dm3image.html">dm3image</a><br>
 <a href="fabio.edfimage.html">edfimage</a><br>
 <a href="fabio.fabian_mar_header.html">fabian_mar_header</a><br>
 <a href="fabio.fabioimage.html">fabioimage</a><br>
-</td><td width="25%" valign=top><a href="fabio.file_series.html">file_series</a><br>
+</td><td width="25%" valign=top><a href="fabio.fabioutils.html">fabioutils</a><br>
+<a href="fabio.file_series.html">file_series</a><br>
 <a href="fabio.fit2dmaskimage.html">fit2dmaskimage</a><br>
 <a href="fabio.fit2dspreadsheetimage.html">fit2dspreadsheetimage</a><br>
 <a href="fabio.kcdimage.html">kcdimage</a><br>
@@ -43,50 +46,8 @@
 <a href="fabio.pnmimage.html">pnmimage</a><br>
 <a href="fabio.readbytestream.html">readbytestream</a><br>
 <a href="fabio.tifimage.html">tifimage</a><br>
+<a href="fabio.xsdimage.html">xsdimage</a><br>
 </td></tr></table></td></tr></table><p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#ee77aa">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="fabio.html#filename_object">filename_object</a>
-</font></dt></dl>
- <p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#ffc8d8">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="filename_object">class <strong>filename_object</strong></a></font></td></tr>
-    
-<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt>The&nbsp;'meaning'&nbsp;of&nbsp;a&nbsp;filename<br>&nbsp;</tt></td></tr>
-<tr><td>&nbsp;</td>
-<td width="100%">Methods defined here:<br>
-<dl><dt><a name="filename_object-__init__"><strong>__init__</strong></a>(self, stem, num<font color="#909090">=None</font>, directory<font color="#909090">=None</font>, format<font color="#909090">=None</font>, extension<font color="#909090">=None</font>, postnum<font color="#909090">=None</font>, digits<font color="#909090">=4</font>)</dt></dl>
-
-<dl><dt><a name="filename_object-str"><strong>str</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;string&nbsp;representation</tt></dd></dl>
-
-<dl><dt><a name="filename_object-tostring"><strong>tostring</strong></a>(self)</dt><dd><tt>convert&nbsp;yourself&nbsp;to&nbsp;a&nbsp;string</tt></dd></dl>
-
-</td></tr></table></td></tr></table><p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#eeaa77">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-construct_filename"><strong>construct_filename</strong></a>(*args, **kwds)</dt></dl>
- <dl><dt><a name="-deconstruct_filename"><strong>deconstruct_filename</strong></a>(filename)</dt><dd><tt>Break&nbsp;up&nbsp;a&nbsp;filename&nbsp;to&nbsp;get&nbsp;image&nbsp;type&nbsp;and&nbsp;number</tt></dd></dl>
- <dl><dt><a name="-extract_filenumber"><strong>extract_filenumber</strong></a>(name)</dt><dd><tt>extract&nbsp;file&nbsp;number</tt></dd></dl>
- <dl><dt><a name="-getnum"><strong>getnum</strong></a>(name)</dt><dd><tt>#&nbsp;try&nbsp;to&nbsp;figure&nbsp;out&nbsp;a&nbsp;file&nbsp;number<br>
-#&nbsp;guess&nbsp;it&nbsp;starts&nbsp;at&nbsp;the&nbsp;back</tt></dd></dl>
- <dl><dt><a name="-jump_filename"><strong>jump_filename</strong></a>(name, num, padding<font color="#909090">=True</font>)</dt><dd><tt>jump&nbsp;to&nbsp;number</tt></dd></dl>
- <dl><dt><a name="-next_filename"><strong>next_filename</strong></a>(name, padding<font color="#909090">=True</font>)</dt><dd><tt>increment&nbsp;number</tt></dd></dl>
- <dl><dt><a name="-numstem"><strong>numstem</strong></a>(name)</dt><dd><tt>cant&nbsp;see&nbsp;how&nbsp;to&nbsp;do&nbsp;without&nbsp;reversing&nbsp;strings<br>
-Match&nbsp;1&nbsp;or&nbsp;more&nbsp;digits&nbsp;going&nbsp;backwards&nbsp;from&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string</tt></dd></dl>
- <dl><dt><a name="-previous_filename"><strong>previous_filename</strong></a>(name, padding<font color="#909090">=True</font>)</dt><dd><tt>decrement&nbsp;number</tt></dd></dl>
-</td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -94,7 +55,5 @@ Match&nbsp;1&nbsp;or&nbsp;more&nbsp;digits&nbsp;going&nbsp;backwards&nbsp;from&n
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>COMPRESSORS</strong> = {'.bz2': 'bzip2 -dc ', '.gz': 'gzip -dc '}<br>
-<strong>FILETYPES</strong> = {'cbf': ['cbf'], 'cbf.bz2': ['cbf'], 'cbf.gz': ['cbf'], 'cor': ['edf'], 'cor.bz2': ['edf'], 'cor.gz': ['edf'], 'dm3': ['dm3'], 'dm3.bz2': ['dm3'], 'dm3.gz': ['dm3'], 'edf': ['edf'], ...}<br>
-<strong>key</strong> = 'cbf'<br>
-<strong>lines</strong> = "bzip2, a block-sorting file compressor.  Version...s, so `-v -4' means the same as -v4 or -4v, &amp;c.<font color="#c040c0">\n\n</font>"</td></tr></table>
+<strong>version</strong> = '0.0.8'</td></tr></table>
 </body></html>

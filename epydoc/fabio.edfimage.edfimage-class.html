@@ -58,6 +58,8 @@
 <!-- ==================== CLASS DESCRIPTION ==================== -->
 <h1 class="epydoc">Class edfimage</h1><p class="nomargin-top"><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage">source&nbsp;code</a></span></p>
 <pre class="base-tree">
+           object --+    
+                    |    
 <a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a> --+
                         |
                        <strong class="uidshort">edfimage</strong>
@@ -83,6 +85,27 @@
     </table>
   </td>
 </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">header</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">header_keys</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">frames</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Set up initial values</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
 <tr class="private">
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
@@ -91,7 +114,8 @@
         <tr>
           <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#_readheader" class="summary-sig-name" onclick="show_private();">_readheader</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">infile</span>)</span><br />
-      Read in a header in some EDF format from an already open file</td>
+      Read all headers in a file and populate self.header data is not yet 
+      populated</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage._readheader">source&nbsp;code</a></span>
             
@@ -136,16 +160,69 @@
       
     </td>
   </tr>
-<tr class="private">
+<tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="_fixheader"></a><span class="summary-sig-name">_fixheader</span>(<span class="summary-sig-arg">self</span>)</span><br />
-      put some rubbish in to allow writing</td>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#unpack" class="summary-sig-name">unpack</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Unpack a binary blob according to the specification given in the 
+      header and return the dataset</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage._fixheader">source&nbsp;code</a></span>
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.unpack">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getframe" class="summary-sig-name">getframe</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">num</span>)</span><br />
+      returns the file numbered 'num' in the series as a fabioimage</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getframe">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#previous" class="summary-sig-name">previous</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      returns the previous file in the series as a fabioimage</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.previous">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#next" class="summary-sig-name">next</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      returns the next file in the series as a fabioimage</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.next">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -161,7 +238,8 @@
         <tr>
           <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#write" class="summary-sig-name">write</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">fname</span>,
-        <span class="summary-sig-arg">force_type</span>=<span class="summary-sig-default">None</span>)</span><br />
+        <span class="summary-sig-arg">force_type</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">fit2dMode</span>=<span class="summary-sig-default">False</span>)</span><br />
       Try to write a file check we can write zipped also mimics that fabian
       was writing uint16 (we sometimes want floats)</td>
           <td align="right" valign="top">
@@ -173,12 +251,439 @@
       
     </td>
   </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#appendFrame" class="summary-sig-name">appendFrame</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">frame</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">data</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">header</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Method used add a frame to an EDF file</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.appendFrame">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#deleteFrame" class="summary-sig-name">deleteFrame</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">frameNb</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Method used to remove a frame from an EDF image.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.deleteFrame">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getNbFrames"></a><span class="summary-sig-name">getNbFrames</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Getter for number of frames</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getNbFrames">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setNbFrames" class="summary-sig-name">setNbFrames</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">val</span>)</span><br />
+      Setter for number of frames ...</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setNbFrames">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getHeader" class="summary-sig-name">getHeader</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      Getter for the headers.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setHeader"></a><span class="summary-sig-name">setHeader</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_dictHeader</span>)</span><br />
+      Enforces the propagation of the header to the list of frames</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="delHeader"></a><span class="summary-sig-name">delHeader</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Deleter for edf header</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.delHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getHeaderKeys"></a><span class="summary-sig-name">getHeaderKeys</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Getter for edf header_keys</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getHeaderKeys">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setHeaderKeys" class="summary-sig-name">setHeaderKeys</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_listtHeader</span>)</span><br />
+      Enforces the propagation of the header_keys to the list of frames</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setHeaderKeys">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="delHeaderKeys"></a><span class="summary-sig-name">delHeaderKeys</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Deleter for edf header_keys</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.delHeaderKeys">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">numpy.ndarray</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getData" class="summary-sig-name">getData</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      getter for edf Data</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setData" class="summary-sig-name">setData</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_data</span>)</span><br />
+      Enforces the propagation of the data to the list of frames</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="delData"></a><span class="summary-sig-name">delData</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      deleter for edf Data</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.delData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">dict</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getCapsHeader" class="summary-sig-name">getCapsHeader</a>(<span class="summary-sig-arg">self</span>)</span><br />
+      getter for edf headers keys in upper case</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getCapsHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setCapsHeader" class="summary-sig-name">setCapsHeader</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_data</span>)</span><br />
+      Enforces the propagation of the header_keys to the list of frames</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setCapsHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="delCapsHeader"></a><span class="summary-sig-name">delCapsHeader</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      deleter for edf capsHeader</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.delCapsHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getDim1"></a><span class="summary-sig-name">getDim1</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getDim1">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setDim1"></a><span class="summary-sig-name">setDim1</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setDim1">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getDim2"></a><span class="summary-sig-name">getDim2</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getDim2">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setDim2"></a><span class="summary-sig-name">setDim2</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setDim2">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getDims"></a><span class="summary-sig-name">getDims</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getDims">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getByteCode"></a><span class="summary-sig-name">getByteCode</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getByteCode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setByteCode"></a><span class="summary-sig-name">setByteCode</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setByteCode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getBpp"></a><span class="summary-sig-name">getBpp</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getBpp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setBpp"></a><span class="summary-sig-name">setBpp</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setBpp">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
   <tr>
     <td colspan="2" class="summary">
     <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a></code></b>:
-      <code><a href="fabio.fabioimage.fabioimage-class.html#__init__">__init__</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#add">add</a></code>,
-      <code><a href="fabio.fabioimage.fabioimage-class.html#getframe">getframe</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getheader">getheader</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getmax">getmax</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getmean">getmean</a></code>,
@@ -186,8 +691,6 @@
       <code><a href="fabio.fabioimage.fabioimage-class.html#getstddev">getstddev</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#integrate_area">integrate_area</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#make_slice">make_slice</a></code>,
-      <code><a href="fabio.fabioimage.fabioimage-class.html#next">next</a></code>,
-      <code><a href="fabio.fabioimage.fabioimage-class.html#previous">previous</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#readheader">readheader</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#rebin">rebin</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#resetvals">resetvals</a></code>,
@@ -198,6 +701,55 @@
       <code><a href="fabio.fabioimage.fabioimage-class.html#_compressed_stream" onclick="show_private();">_compressed_stream</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#_open" onclick="show_private();">_open</a></code>
       </p></div>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__delattr__</code>,
+      <code>__format__</code>,
+      <code>__getattribute__</code>,
+      <code>__hash__</code>,
+      <code>__new__</code>,
+      <code>__reduce__</code>,
+      <code>__reduce_ex__</code>,
+      <code>__repr__</code>,
+      <code>__setattr__</code>,
+      <code>__sizeof__</code>,
+      <code>__str__</code>,
+      <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#_readHeaderBlock" class="summary-sig-name" onclick="show_private();">_readHeaderBlock</a>(<span class="summary-sig-arg">infile</span>)</span><br />
+      Read in a header in some EDF format from an already open file</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage._readHeaderBlock">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
     </td>
   </tr>
 </table>
@@ -227,6 +779,106 @@
     </td>
   </tr>
 </table>
+<!-- ==================== PROPERTIES ==================== -->
+<a name="section-Properties"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Properties</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Properties"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#nframes" class="summary-name">nframes</a><br />
+      Getter for number of frames
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#header" class="summary-name">header</a><br />
+      property: header of EDF file
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#header_keys" class="summary-name">header_keys</a><br />
+      property: header_keys of EDF file
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#data" class="summary-name">data</a><br />
+      property: data of EDF file
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#capsHeader" class="summary-name">capsHeader</a><br />
+      property: capsHeader of EDF file, i.e.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#dim1" class="summary-name">dim1</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#dim2" class="summary-name">dim2</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#dims" class="summary-name">dims</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#bytecode" class="summary-name">bytecode</a>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.edfimage.edfimage-class.html#bpp" class="summary-name">bpp</a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
+      <code>__class__</code>
+      </p>
+    </td>
+  </tr>
+</table>
 <!-- ==================== METHOD DETAILS ==================== -->
 <a name="section-MethodDetails"></a>
 <table class="details" border="1" cellpadding="3"
@@ -245,6 +897,60 @@
   </td>
 </tr>
 </table>
+<a name="__init__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">data</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">header</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">header_keys</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">frames</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">(Constructor)</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.__init__">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Set up initial values</p>
+  <dl class="fields">
+    <dt>Overrides:
+        object.__init__
+        <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_readHeaderBlock"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_readHeaderBlock</span>(<span class="sig-arg">infile</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage._readHeaderBlock">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Read in a header in some EDF format from an already open file</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>infile</code></strong> - file object open in read mode</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>string (or None if no header was found.</dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="_readheader"></a>
 <div class="private">
 <table class="details" border="1" cellpadding="3"
@@ -260,9 +966,13 @@
     </td>
   </tr></table>
   
-  <p>Read in a header in some EDF format from an already open file</p>
-  <p>TODO : test for minimal attributes?</p>
+  <p>Read all headers in a file and populate self.header data is not yet 
+  populated</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>infile</code></strong> (file object open in read mode)</li>
+    </ul></dd>
     <dt>Overrides:
         <a href="fabio.fabioimage.fabioimage-class.html#_readheader" onclick="show_private();">fabioimage.fabioimage._readheader</a>
     </dt>
@@ -297,6 +1007,95 @@ Read in header into self.header and
   </dl>
 </td></tr></table>
 </div>
+<a name="unpack"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">unpack</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.unpack">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Unpack a binary blob according to the specification given in the 
+  header and return the dataset</p>
+  <dl class="fields">
+    <dt>Returns:</dt>
+        <dd>dataset as numpy.ndarray</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getframe"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getframe</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">num</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getframe">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>returns the file numbered 'num' in the series as a fabioimage</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="fabio.fabioimage.fabioimage-class.html#getframe">fabioimage.fabioimage.getframe</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="previous"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">previous</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.previous">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>returns the previous file in the series as a fabioimage</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="fabio.fabioimage.fabioimage-class.html#previous">fabioimage.fabioimage.previous</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="next"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">next</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.next">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>returns the next file in the series as a fabioimage</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="fabio.fabioimage.fabioimage-class.html#next">fabioimage.fabioimage.next</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
 <a name="write"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -306,7 +1105,8 @@ Read in header into self.header and
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">write</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">fname</span>,
-        <span class="sig-arg">force_type</span>=<span class="sig-default">None</span>)</span>
+        <span class="sig-arg">force_type</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">fit2dMode</span>=<span class="sig-default">False</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.write">source&nbsp;code</a></span>&nbsp;
@@ -325,6 +1125,443 @@ Read in header into self.header and
     <dt>Overrides:
         <a href="fabio.fabioimage.fabioimage-class.html#write">fabioimage.fabioimage.write</a>
     </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="appendFrame"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">appendFrame</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">frame</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">data</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">header</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.appendFrame">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Method used add a frame to an EDF file</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>frame</code></strong> (instance of Frame) - frame to append to edf image</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="deleteFrame"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">deleteFrame</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">frameNb</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.deleteFrame">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Method used to remove a frame from an EDF image. by default the last 
+  one is removed.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>frameNb</code></strong> (integer) - frame number to remove, by  default the last.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>None</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setNbFrames"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setNbFrames</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">val</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setNbFrames">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Setter for number of frames ... should do nothing. Here just to avoid 
+  bugs</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="getHeader"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getHeader</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getHeader">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Getter for the headers. used by the property header,</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="setHeaderKeys"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setHeaderKeys</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">_listtHeader</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setHeaderKeys">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Enforces the propagation of the header_keys to the list of frames</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>_listtHeader</code></strong> (python list) - list of the (ordered) keys in the header</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getData"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getData</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getData">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>getter for edf Data</p>
+  <dl class="fields">
+    <dt>Returns: numpy.ndarray</dt>
+        <dd>data for current frame</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setData"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setData</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">_data</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setData">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Enforces the propagation of the data to the list of frames</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>_data</code></strong> - numpy array representing data</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getCapsHeader"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getCapsHeader</span>(<span class="sig-arg">self</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.getCapsHeader">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>getter for edf headers keys in upper case</p>
+  <dl class="fields">
+    <dt>Returns: dict</dt>
+        <dd>data for current frame</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setCapsHeader"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setCapsHeader</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">_data</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.setCapsHeader">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Enforces the propagation of the header_keys to the list of frames</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>_data</code></strong> - numpy array representing data</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="nframes"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">nframes</h3>
+  <p>Getter for number of frames</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getNbFrames" class="summary-sig-name">getNbFrames</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Getter for number of frames
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setNbFrames" class="summary-sig-name">setNbFrames</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">val</span>)</span>
+        - Setter for number of frames ...
+    </dd>
+    <dt>Delete Method:</dt>
+    <dd class="value"><table><tr><td><pre class="variable">
+<code class="variable-quote">'</code><code class="variable-string">property: number of frames in EDF file</code><code class="variable-quote">'</code>
+</pre></td></tr></table>
+
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="header"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">header</h3>
+  <p>property: header of EDF file</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getHeader" class="summary-sig-name">getHeader</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Getter for the headers.
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setHeader" class="summary-sig-name">setHeader</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_dictHeader</span>)</span>
+        - Enforces the propagation of the header to the list of frames
+    </dd>
+    <dt>Delete Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#delHeader" class="summary-sig-name">delHeader</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Deleter for edf header
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="header_keys"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">header_keys</h3>
+  <p>property: header_keys of EDF file</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getHeaderKeys" class="summary-sig-name">getHeaderKeys</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Getter for edf header_keys
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setHeaderKeys" class="summary-sig-name">setHeaderKeys</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_listtHeader</span>)</span>
+        - Enforces the propagation of the header_keys to the list of frames
+    </dd>
+    <dt>Delete Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#delHeaderKeys" class="summary-sig-name">delHeaderKeys</a>(<span class="summary-sig-arg">self</span>)</span>
+        - Deleter for edf header_keys
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="data"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">data</h3>
+  <p>property: data of EDF file</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getData" class="summary-sig-name">getData</a>(<span class="summary-sig-arg">self</span>)</span>
+        - getter for edf Data
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setData" class="summary-sig-name">setData</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_data</span>)</span>
+        - Enforces the propagation of the data to the list of frames
+    </dd>
+    <dt>Delete Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#delData" class="summary-sig-name">delData</a>(<span class="summary-sig-arg">self</span>)</span>
+        - deleter for edf Data
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="capsHeader"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">capsHeader</h3>
+  <p>property: capsHeader of EDF file, i.e. the keys of the header in UPPER
+  case.</p>
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getCapsHeader" class="summary-sig-name">getCapsHeader</a>(<span class="summary-sig-arg">self</span>)</span>
+        - getter for edf headers keys in upper case
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setCapsHeader" class="summary-sig-name">setCapsHeader</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_data</span>)</span>
+        - Enforces the propagation of the header_keys to the list of frames
+    </dd>
+    <dt>Delete Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#delCapsHeader" class="summary-sig-name">delCapsHeader</a>(<span class="summary-sig-arg">self</span>)</span>
+        - deleter for edf capsHeader
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="dim1"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">dim1</h3>
+  
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getDim1" class="summary-sig-name">getDim1</a>(<span class="summary-sig-arg">self</span>)</span>
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setDim1" class="summary-sig-name">setDim1</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span>
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="dim2"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">dim2</h3>
+  
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getDim2" class="summary-sig-name">getDim2</a>(<span class="summary-sig-arg">self</span>)</span>
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setDim2" class="summary-sig-name">setDim2</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span>
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="dims"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">dims</h3>
+  
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getDims" class="summary-sig-name">getDims</a>(<span class="summary-sig-arg">self</span>)</span>
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="bytecode"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">bytecode</h3>
+  
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getByteCode" class="summary-sig-name">getByteCode</a>(<span class="summary-sig-arg">self</span>)</span>
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setByteCode" class="summary-sig-name">setByteCode</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span>
+    </dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="bpp"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">bpp</h3>
+  
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#getBpp" class="summary-sig-name">getBpp</a>(<span class="summary-sig-arg">self</span>)</span>
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#setBpp" class="summary-sig-name">setBpp</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">_iVal</span>)</span>
+    </dd>
   </dl>
 </td></tr></table>
 </div>
@@ -355,7 +1592,7 @@ Read in header into self.header and
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Jan 24 12:30:07 2011
+    Generated by Epydoc 3.0.1 on Tue Nov 15 22:45:05 2011
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

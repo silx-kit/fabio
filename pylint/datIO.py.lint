@@ -1,72 +1,16 @@
 ************* Module datIO
-W: 15: Bad indentation. Found 2 spaces, expected 4
-W: 21: Bad indentation. Found 2 spaces, expected 4
-W: 22: Bad indentation. Found 4 spaces, expected 8
-W: 25: Bad indentation. Found 4 spaces, expected 8
-W: 28: Bad indentation. Found 4 spaces, expected 8
-W: 29: Bad indentation. Found 4 spaces, expected 8
-W: 30: Bad indentation. Found 6 spaces, expected 12
-W: 31: Bad indentation. Found 4 spaces, expected 8
-W: 32: Bad indentation. Found 4 spaces, expected 8
-W: 33: Bad indentation. Found 4 spaces, expected 8
-W: 34: Bad indentation. Found 6 spaces, expected 12
-W: 36: Bad indentation. Found 2 spaces, expected 4
-W: 37: Bad indentation. Found 4 spaces, expected 8
-W: 40: Bad indentation. Found 4 spaces, expected 8
-W: 47: Bad indentation. Found 2 spaces, expected 4
-W: 48: Bad indentation. Found 4 spaces, expected 8
-W: 49: Bad indentation. Found 4 spaces, expected 8
-W: 50: Bad indentation. Found 6 spaces, expected 12
-W: 51: Bad indentation. Found 4 spaces, expected 8
-W: 52: Bad indentation. Found 6 spaces, expected 12
-W: 53: Bad indentation. Found 4 spaces, expected 8
-W: 54: Bad indentation. Found 6 spaces, expected 12
-W: 55: Bad indentation. Found 4 spaces, expected 8
-W: 56: Bad indentation. Found 6 spaces, expected 12
-W: 57: Bad indentation. Found 4 spaces, expected 8
-W: 58: Bad indentation. Found 4 spaces, expected 8
+W: 25: Bad indentation. Found 16 spaces, expected 12
+C: 55: Line too long (95/80)
 C:  1: Invalid name "datIO" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
-C: 14:fabiodata: Invalid name "fabiodata" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 21:fabiodata.__init__: Comma not followed by a space
-  def __init__(self,data=None,clabels=None,rlabels=None,fname=None):
-                   ^^
-C: 28:fabiodata.__init__: Operator not preceded by a space
-    self.data=data
-             ^
-C: 30:fabiodata.__init__: Operator not preceded by a space
-      self.dims=self.data.shape
-               ^
-C: 31:fabiodata.__init__: Operator not preceded by a space
-    self.clabels=clabels
-                ^
-C: 32:fabiodata.__init__: Operator not preceded by a space
-    self.rlabels=rlabels
-                ^
-C: 36:fabiodata.read: Comma not followed by a space
-  def read(self,fname=None):
-               ^^
-R: 36:fabiodata.read: Method could be a function
-W: 36:fabiodata.read: Unused argument 'fname'
-R: 14:fabiodata: Too few public methods (1/2)
-C: 45:columnfile: Invalid name "columnfile" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 45:columnfile: Missing docstring
-C: 47:columnfile.read: Missing docstring
-W: 47:columnfile.read: Signature differs from overridden method
-C: 47:columnfile.read: Comma not followed by a space
-  def read(self,fname):
-               ^^
-F: 48:columnfile.read: Unable to import 'cf_io'
-C: 50:columnfile.read: Operator not preceded by a space
-      infile=open(fname,'rb')
-            ^
-C: 54:columnfile.read: Comma not followed by a space
-      (self.data,self.clabels)=cf_io.read(infile)
-                ^^
-C: 57:columnfile.read: Operator not preceded by a space
-    self.dims=self.data.shape
-             ^
-R: 45:columnfile: Too few public methods (1/2)
-W: 12: Unused import numpy
+C: 13:fabiodata: Invalid name "fabiodata" (should match [A-Z_][a-zA-Z0-9]+$)
+R: 35:fabiodata.read: Method could be a function
+W: 35:fabiodata.read: Unused argument 'fname'
+R: 13:fabiodata: Too few public methods (1/2)
+C: 44:columnfile: Missing docstring
+C: 44:columnfile: Invalid name "columnfile" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 46:columnfile.read: Signature differs from overridden method
+F: 47:columnfile.read: Unable to import 'cf_io'
+R: 44:columnfile: Too few public methods (1/2)
 
 
 Report
@@ -79,27 +23,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |28     |46.67 |28       |=          |
+|code      |27     |45.00 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |22     |36.67 |22       |=          |
+|docstring |22     |36.67 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.33  |2        |=          |
+|comment   |2      |3.33  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |8      |13.33 |8        |=          |
+|empty     |9      |15.00 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -109,14 +40,27 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |100.00   |
+|module   |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |50.00       |100.00   |
+|class    |2      |NC         |NC         |50.00       |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |66.67       |0.00     |
+|method   |3      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -126,13 +70,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |15     |15       |=          |
+|convention |5      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |3      |3        |=          |
+|refactor   |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |29     |29       |=          |
+|warning    |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -143,21 +87,13 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W0311      |26          |
-+-----------+------------+
-|C0322      |6           |
-+-----------+------------+
-|C0324      |4           |
-+-----------+------------+
 |C0103      |3           |
 +-----------+------------+
 |R0903      |2           |
 +-----------+------------+
-|C0111      |2           |
-+-----------+------------+
 |W0613      |1           |
 +-----------+------------+
-|W0611      |1           |
+|W0311      |1           |
 +-----------+------------+
 |W0222      |1           |
 +-----------+------------+
@@ -165,11 +101,14 @@ Messages
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
+|C0301      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -7.41/10 (previous run: -7.41/10)
-You have to do something quick !
+Your code has been rated at 5.93/10
 

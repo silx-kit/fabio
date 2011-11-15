@@ -1,17 +1,61 @@
 ************* Module testGEimage
+C: 34: Line too long (86/80)
+C: 36: Line too long (89/80)
 C:  1: Invalid name "testGEimage" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
-W: 20: No exception type(s) specified
-W: 18: Specify string format arguments as logging function parameters
-F: 22: Unable to import 'utilstest'
-C: 31:testGE: Invalid name "testGE" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 31:testGE: Missing docstring
-C: 40:testGE.test_read: Missing docstring
-C: 57:test_suite_all_GE: Missing docstring
+C: 10: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 11: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 26: No exception type(s) specified
+F: 28: Unable to import 'utilstest'
+C: 39:testGE: Missing docstring
+C: 39:testGE: Invalid name "testGE" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 41:testGE.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 48:testGE.test_read: Missing docstring
+R: 39:testGE: Too many public methods (46/20)
+C: 65:test_suite_all_GE: Missing docstring
+C: 65:test_suite_all_GE: Invalid name "test_suite_all_GE" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 66:test_suite_all_GE: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 71: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 72: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 31: Unused import fabio
 
 
 Report
 ======
-39 statements analysed.
+49 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |50     |71.43 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |8      |11.43 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |2      |2.86  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |10     |14.29 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |NC         |NC         |50.00       |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -26,59 +70,15 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |41     |67.21 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|docstring |8      |13.11 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|comment   |2      |3.28  |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|empty     |10     |16.39 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-GEimage 
-        \-GEimage (testGEimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |50.00       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |NC       |NC         |
+|convention |14     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |warning    |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -93,13 +93,17 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
+|C0103      |9           |
++-----------+------------+
 |C0111      |3           |
 +-----------+------------+
-|C0103      |2           |
-+-----------+------------+
-|W6501      |1           |
+|C0301      |2           |
 +-----------+------------+
 |W0702      |1           |
++-----------+------------+
+|W0611      |1           |
++-----------+------------+
+|R0904      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
@@ -108,6 +112,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.21/10
-That's pretty good. Good work mate.
+Your code has been rated at 6.53/10
 

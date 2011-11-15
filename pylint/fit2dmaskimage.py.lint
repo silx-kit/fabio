@@ -1,23 +1,38 @@
 ************* Module fit2dmaskimage
+F: 12: Unable to import 'fabioimage'
+W: 15:fit2dmaskimage: Class has no __init__ method
 C: 15:fit2dmaskimage: Invalid name "fit2dmaskimage" (should match [A-Z_][a-zA-Z0-9]+$)
+E: 31:fit2dmaskimage._readheader: Module 'numpy' has no 'fromstring' member
+E: 31:fit2dmaskimage._readheader: Module 'numpy' has no 'int32' member
+E: 41:fit2dmaskimage.read: Instance of 'fit2dmaskimage' has no '_open' member
+E: 44:fit2dmaskimage.read: Module 'numpy' has no 'uint8' member
+E: 45:fit2dmaskimage.read: Module 'numpy' has no 'array' member
+E: 55:fit2dmaskimage.read: Module 'numpy' has no 'fromstring' member
+E: 55:fit2dmaskimage.read: Module 'numpy' has no 'uint8' member
+E: 56:fit2dmaskimage.read: Module 'numpy' has no 'reshape' member
+E: 58:fit2dmaskimage.read: Module 'numpy' has no 'zeros' member
+E: 58:fit2dmaskimage.read: Module 'numpy' has no 'uint8' member
+E: 61:fit2dmaskimage.read: Module 'numpy' has no 'ones' member
+E: 61:fit2dmaskimage.read: Module 'numpy' has no 'uint8' member
+E: 63:fit2dmaskimage.read: Module 'numpy' has no 'bitwise_and' member
+E: 64:fit2dmaskimage.read: Module 'numpy' has no 'uint8' member
+E: 69:fit2dmaskimage.read: Module 'numpy' has no 'where' member
+E: 71:fit2dmaskimage.read: Module 'numpy' has no 'where' member
+E: 74:fit2dmaskimage.read: Module 'numpy' has no 'reshape' member
+E: 74:fit2dmaskimage.read: Module 'numpy' has no 'uint16' member
+R: 80:fit2dmaskimage.write: Method could be a function
+W: 80:fit2dmaskimage.write: Unused argument 'fname'
+W: 76:fit2dmaskimage.read: Attribute 'pilimage' defined outside __init__
+W: 33:fit2dmaskimage._readheader: Attribute 'dim2' defined outside __init__
+W: 45:fit2dmaskimage.read: Attribute 'bpp' defined outside __init__
+W: 32:fit2dmaskimage._readheader: Attribute 'dim1' defined outside __init__
+W: 44:fit2dmaskimage.read: Attribute 'bytecode' defined outside __init__
+W: 74:fit2dmaskimage.read: Attribute 'data' defined outside __init__
 
 
 Report
 ======
-37 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
+38 statements analysed.
 
 Raw metrics
 -----------
@@ -25,24 +40,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |43     |52.44 |43       |=          |
+|code      |43     |52.44 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |18     |21.95 |18       |=          |
+|docstring |18     |21.95 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |7      |8.54  |7        |=          |
+|comment   |7      |8.54  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |14     |17.07 |14       |=          |
+|empty     |14     |17.07 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-fabioimage 
-        \-fabioimage (fit2dmaskimage)
 
 
 
@@ -52,14 +57,35 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |100.00      |0.00     |
+|method   |3      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (fit2dmaskimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -69,13 +95,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |8      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |18     |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -86,6 +112,18 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
+|E1101      |18          |
++-----------+------------+
+|W0201      |6           |
++-----------+------------+
+|W0613      |1           |
++-----------+------------+
+|W0232      |1           |
++-----------+------------+
+|R0201      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
 |C0103      |1           |
 +-----------+------------+
 
@@ -93,6 +131,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.73/10 (previous run: 9.73/10)
-So close to being perfect...
+Your code has been rated at -16.32/10
 

@@ -1,19 +1,27 @@
 ************* Module testadscimage
-W: 23: No exception type(s) specified
-W: 21: Specify string format arguments as logging function parameters
-F: 25: Unable to import 'utilstest'
-C: 38:testmatch: Invalid name "testmatch" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 52:testmatch.testsame: Specify string format arguments as logging function parameters
-W: 53:testmatch.testsame: Specify string format arguments as logging function parameters
-W: 54:testmatch.testsame: Specify string format arguments as logging function parameters
-C: 57:testflatmccdsadsc: Invalid name "testflatmccdsadsc" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 57:testflatmccdsadsc: Empty docstring
-C: 81:test_suite_all_adsc: Missing docstring
+C: 63: Line too long (115/80)
+C: 64: Line too long (115/80)
+C: 65: Line too long (91/80)
+C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 14: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 29: No exception type(s) specified
+F: 31: Unable to import 'utilstest'
+C: 47:testmatch: Invalid name "testmatch" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 51:testmatch.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 47:testmatch: Too many public methods (46/20)
+C: 69:testflatmccdsadsc: Empty docstring
+C: 69:testflatmccdsadsc: Invalid name "testflatmccdsadsc" (should match [A-Z_][a-zA-Z0-9]+$)
+R: 69:testflatmccdsadsc: Too many public methods (46/20)
+C: 93:test_suite_all_adsc: Missing docstring
+C: 94:test_suite_all_adsc: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C:100: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C:101: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 34: Unused import fabio
 
 
 Report
 ======
-54 statements analysed.
+63 statements analysed.
 
 Raw metrics
 -----------
@@ -21,14 +29,31 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |57     |64.04 |NC       |NC         |
+|code      |65     |63.73 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |13     |14.61 |NC       |NC         |
+|docstring |15     |14.71 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |4      |4.49  |NC       |NC         |
+|comment   |4      |3.92  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |15     |16.85 |NC       |NC         |
+|empty     |18     |17.65 |NC       |NC         |
 +----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |NC         |NC         |50.00       |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |NC         |NC         |100.00      |33.33    |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -45,46 +70,17 @@ Duplication
 
 
 
-External dependencies
----------------------
-::
-
-    fabio 
-      \-adscimage 
-      | \-adscimage (testadscimage)
-      \-edfimage 
-        \-edfimage (testadscimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |50.00       |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |4      |NC       |NC         |
+|convention |13     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |5      |NC       |NC         |
+|warning    |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -97,11 +93,15 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W6501      |4           |
+|C0103      |8           |
 +-----------+------------+
-|C0103      |2           |
+|C0301      |3           |
++-----------+------------+
+|R0904      |2           |
 +-----------+------------+
 |W0702      |1           |
++-----------+------------+
+|W0611      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
@@ -114,6 +114,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.33/10
-That's pretty good. Good work mate.
+Your code has been rated at 7.30/10
 

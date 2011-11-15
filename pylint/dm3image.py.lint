@@ -1,143 +1,92 @@
 ************* Module dm3image
-C: 46:dm3image: Invalid name "dm3image" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 50:dm3image._readheader: Missing docstring
-W: 50:dm3image._readheader: Arguments number differs from overridden method
-E: 51:dm3image._readheader: Instance of 'str' has no 'seek' member (but some types could not be inferred)
-C: 52:dm3image._readheader: Comma not followed by a space
-        file_format    = self.readbytes(4,n.uint32)[0] # should be 3
-                                         ^^
-C: 54:dm3image._readheader: Comma not followed by a space
-        self.bytes_in_file  = self.readbytes(4,n.uint32)[0]
-                                              ^^
-C: 55:dm3image._readheader: Comma not followed by a space
-        self.byte_order     = self.readbytes(4,n.uint32)[0] # 0 = big, 1= little
-                                              ^^
-C: 57:dm3image._readheader: Comma not followed by a space
-        print 'Bytes in file : ' ,self.bytes_in_file
-                                 ^^
-C: 67:dm3image.read: Missing docstring
-C: 67:dm3image.read: Comma not followed by a space
-    def read(self,fname):
-                 ^^
-C: 77:dm3image.read: More than one statement on a single line
-C: 92:dm3image.read: Comma not followed by a space
-            self.data = self.header['Data'].reshape(self.dim1,self.dim2)
-                                                             ^^
-W: 94:dm3image.readbytes: Redefining built-in 'format'
-C: 94:dm3image.readbytes: Missing docstring
-E: 95:dm3image.readbytes: Instance of 'str' has no 'read' member (but some types could not be inferred)
-C: 97:dm3image.readbytes: Comma not followed by a space
-            data = n.fromstring(raw,format)
-                                   ^^
-C:106:dm3image.read_tag_group: Missing docstring
-C:108:dm3image.read_tag_group: Comma not followed by a space
-        self.grouptag_is_sorted = self.readbytes(1,n.uint8)[0]
-                                                  ^^
-C:109:dm3image.read_tag_group: Comma not followed by a space
-        self.grouptag_is_open   =  self.readbytes(1,n.uint8)[0]
-                                                   ^^
-C:110:dm3image.read_tag_group: Comma not followed by a space
-        self.grouptag_no_tags = self.readbytes(4,n.uint32)[0]
-                                                ^^
-C:115:dm3image.read_tag_entry: Missing docstring
-C:117:dm3image.read_tag_entry: Comma not followed by a space
-        self.tag_is_data = self.readbytes(1,n.uint8)[0]
-                                           ^^
-C:118:dm3image.read_tag_entry: Comma not followed by a space
-        self.tag_label_length = self.readbytes(2,n.uint16)[0]
-                                                ^^
-E:122:dm3image.read_tag_entry: Instance of 'str' has no 'read' member (but some types could not be inferred)
-W:156:dm3image.read_tag_type: Redefining built-in 'format'
-C:132:dm3image.read_tag_type: Missing docstring
-E:133:dm3image.read_tag_type: Instance of 'str' has no 'read' member (but some types could not be inferred)
-C:135:dm3image.read_tag_type: Comma not followed by a space
-        self.tag_data_type = self.readbytes(4,n.uint32)[0]
-                                             ^^
-C:137:dm3image.read_tag_type: Comma not followed by a space
-        self.tag_encoded_type = self.readbytes(4,n.uint32)[0]
-                                                ^^
-C:146:dm3image.read_tag_type: Comma not followed by a space
-            self.data_type = self.readbytes(4,n.uint32)[0]
-                                             ^^
-C:147:dm3image.read_tag_type: Comma not followed by a space
-            self.no_data_elements = self.readbytes(4,n.uint32)[0]
-                                                    ^^
-E:150:dm3image.read_tag_type: Instance of 'str' has no 'read' member (but some types could not be inferred)
-C:164:dm3image.read_tag_type: Comma not followed by a space
-            self.tag_encoded_type = self.readbytes(4,n.uint32)[0]
-                                                    ^^
-C:168:dm3image.read_tag_type: Comma not followed by a space
-                struct_name_length = self.readbytes(4,n.int32)[0]
-                                                     ^^
-C:169:dm3image.read_tag_type: Comma not followed by a space
-                struct_number_fields = self.readbytes(4,n.int32)[0]
-                                                       ^^
-C:174:dm3image.read_tag_type: Comma not followed by a space
-                    field_info.append([self.readbytes(4,n.int32)[0],self.readbytes(4,n.int32)[0]])
-                                                       ^^
-C:176:dm3image.read_tag_type: Comma not followed by a space
-                self.no_data_elements = self.readbytes(4,n.int32)[0]
-                                                        ^^
-E:182:dm3image.read_tag_type: Instance of 'str' has no 'read' member (but some types could not be inferred)
-C:188:dm3image.read_tag_type: Comma not followed by a space
-            struct_name_length = self.readbytes(4,n.int32)[0]
-                                                 ^^
-C:189:dm3image.read_tag_type: Comma not followed by a space
-            struct_number_fields = self.readbytes(4,n.int32)[0]
-                                                   ^^
-C:194:dm3image.read_tag_type: Comma not followed by a space
-                field_info.append([self.readbytes(4,n.int32)[0],self.readbytes(4,n.int32)[0]])
-                                                   ^^
-C:199:dm3image.read_tag_type: Comma not followed by a space
-                field_data = field_data + self.readbytes(field_info[i][0],None,swap=False) + ' '
-                                                                         ^^
-C:200:dm3image.read_tag_type: Operator not followed by a space
-                field_data = field_data + '%i  ' %self.readbytes(DATA_BYTES[field_info[i][1]],
-                                                 ^
-                                                                 DATA_TYPES[field_info[i][1]],
-                                                                 swap=self.swap)[0]
-W:168:dm3image.read_tag_type: Unused variable 'struct_name_length'
-W:150:dm3image.read_tag_type: Unused variable 'dump'
-C:205:dm3image.read_data: Missing docstring
-C:206:dm3image.read_data: Comma not followed by a space
-        self.encoded_datatype = n.fromstring(self.infile.read(4),n.uint32).byteswap()
-                                                                ^^
-E:206:dm3image.read_data: Instance of 'str' has no 'read' member (but some types could not be inferred)
-W: 55:dm3image._readheader: Attribute 'byte_order' defined outside __init__
-W:206:dm3image.read_data: Attribute 'encoded_datatype' defined outside __init__
-W:147:dm3image.read_tag_type: Attribute 'no_data_elements' defined outside __init__
-W:146:dm3image.read_tag_type: Attribute 'data_type' defined outside __init__
-W:108:dm3image.read_tag_group: Attribute 'grouptag_is_sorted' defined outside __init__
-W:109:dm3image.read_tag_group: Attribute 'grouptag_is_open' defined outside __init__
-W:137:dm3image.read_tag_type: Attribute 'tag_encoded_type' defined outside __init__
-W:135:dm3image.read_tag_type: Attribute 'tag_data_type' defined outside __init__
-W: 61:dm3image._readheader: Attribute 'swap' defined outside __init__
-W:117:dm3image.read_tag_entry: Attribute 'tag_is_data' defined outside __init__
-W:110:dm3image.read_tag_group: Attribute 'grouptag_no_tags' defined outside __init__
-W: 54:dm3image._readheader: Attribute 'bytes_in_file' defined outside __init__
-W: 70:dm3image.read: Attribute 'infile' defined outside __init__
-W:118:dm3image.read_tag_entry: Attribute 'tag_label_length' defined outside __init__
-W: 72:dm3image.read: Attribute 'go_on' defined outside __init__
-R: 46:dm3image: Too many public methods (23/20)
-W: 12: Unused import logging
+C: 54: Line too long (81/80)
+C: 57: Line too long (85/80)
+C:118: Line too long (91/80)
+C:135: Line too long (107/80)
+C:137: Line too long (91/80)
+C:153: Line too long (87/80)
+C:169: Line too long (101/80)
+C:173: Line too long (109/80)
+C:189: Line too long (97/80)
+C:193: Line too long (105/80)
+C:198: Line too long (98/80)
+C:199: Line too long (95/80)
+C:200: Line too long (94/80)
+C:201: Line too long (83/80)
+C:205: Line too long (94/80)
+F: 13: Unable to import 'fabioimage'
+E: 15: Module 'numpy' has no 'int16' member
+E: 16: Module 'numpy' has no 'uint16' member
+E: 17: Module 'numpy' has no 'int32' member
+E: 18: Module 'numpy' has no 'uint32' member
+E: 19: Module 'numpy' has no 'float32' member
+E: 21: Module 'numpy' has no 'int8' member
+R: 45:dm3image: Too many instance attributes (19/7)
+W: 45:dm3image: Class has no __init__ method
+C: 45:dm3image: Invalid name "dm3image" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 49:dm3image._readheader: Missing docstring
+E: 51:dm3image._readheader: Module 'numpy' has no 'uint32' member
+E: 53:dm3image._readheader: Module 'numpy' has no 'uint32' member
+E: 54:dm3image._readheader: Module 'numpy' has no 'uint32' member
+C: 66:dm3image.read: Missing docstring
+E: 68:dm3image.read: Instance of 'dm3image' has no 'resetvals' member
+E: 69:dm3image.read: Instance of 'dm3image' has no '_open' member
+C: 76:dm3image.read: More than one statement on a single line
+W: 93:dm3image.readbytes: Redefining built-in 'format'
+C: 93:dm3image.readbytes: Missing docstring
+E: 96:dm3image.readbytes: Module 'numpy' has no 'fromstring' member
+C:105:dm3image.read_tag_group: Missing docstring
+E:107:dm3image.read_tag_group: Module 'numpy' has no 'uint8' member
+E:108:dm3image.read_tag_group: Module 'numpy' has no 'uint8' member
+E:109:dm3image.read_tag_group: Module 'numpy' has no 'uint32' member
+C:114:dm3image.read_tag_entry: Missing docstring
+E:116:dm3image.read_tag_entry: Module 'numpy' has no 'uint8' member
+E:117:dm3image.read_tag_entry: Module 'numpy' has no 'uint16' member
+W:155:dm3image.read_tag_type: Redefining built-in 'format'
+C:131:dm3image.read_tag_type: Missing docstring
+E:134:dm3image.read_tag_type: Module 'numpy' has no 'uint32' member
+E:136:dm3image.read_tag_type: Module 'numpy' has no 'uint32' member
+E:145:dm3image.read_tag_type: Module 'numpy' has no 'uint32' member
+E:146:dm3image.read_tag_type: Module 'numpy' has no 'uint32' member
+E:163:dm3image.read_tag_type: Module 'numpy' has no 'uint32' member
+E:167:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:168:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:173:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:173:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:175:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:187:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:188:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:193:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+E:193:dm3image.read_tag_type: Module 'numpy' has no 'int32' member
+W:167:dm3image.read_tag_type: Unused variable 'struct_name_length'
+W:149:dm3image.read_tag_type: Unused variable 'dump'
+C:204:dm3image.read_data: Missing docstring
+E:205:dm3image.read_data: Module 'numpy' has no 'fromstring' member
+E:205:dm3image.read_data: Module 'numpy' has no 'uint32' member
+W: 54:dm3image._readheader: Attribute 'byte_order' defined outside __init__
+W:205:dm3image.read_data: Attribute 'encoded_datatype' defined outside __init__
+W:175:dm3image.read_tag_type: Attribute 'no_data_elements' defined outside __init__
+W:145:dm3image.read_tag_type: Attribute 'data_type' defined outside __init__
+W:107:dm3image.read_tag_group: Attribute 'grouptag_is_sorted' defined outside __init__
+W:108:dm3image.read_tag_group: Attribute 'grouptag_is_open' defined outside __init__
+W:163:dm3image.read_tag_type: Attribute 'tag_encoded_type' defined outside __init__
+W:134:dm3image.read_tag_type: Attribute 'tag_data_type' defined outside __init__
+W: 88:dm3image.read: Attribute 'dim2' defined outside __init__
+W: 67:dm3image.read: Attribute 'header' defined outside __init__
+W: 87:dm3image.read: Attribute 'dim1' defined outside __init__
+W: 62:dm3image._readheader: Attribute 'swap' defined outside __init__
+W:116:dm3image.read_tag_entry: Attribute 'tag_is_data' defined outside __init__
+W:109:dm3image.read_tag_group: Attribute 'grouptag_no_tags' defined outside __init__
+W: 53:dm3image._readheader: Attribute 'bytes_in_file' defined outside __init__
+W: 91:dm3image.read: Attribute 'data' defined outside __init__
+W: 69:dm3image.read: Attribute 'infile' defined outside __init__
+W:117:dm3image.read_tag_entry: Attribute 'tag_label_length' defined outside __init__
+W: 81:dm3image.read: Attribute 'go_on' defined outside __init__
 
 
 Report
 ======
-106 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
+107 statements analysed.
 
 Raw metrics
 -----------
@@ -145,24 +94,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |134    |70.53 |134      |=          |
+|code      |134    |70.53 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |14     |7.37  |14       |=          |
+|docstring |14     |7.37  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |10     |5.26  |10       |=          |
+|comment   |10     |5.26  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |32     |16.84 |32       |=          |
+|empty     |32     |16.84 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-fabioimage 
-        \-fabioimage (dm3image)
 
 
 
@@ -172,14 +111,35 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |7      |7          |=          |0.00        |0.00     |
+|method   |7      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (dm3image)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
 
 
 
@@ -189,13 +149,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |36     |36       |=          |
+|convention |24     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |21     |21       |=          |
+|warning    |24     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |7      |7        |=          |
+|error      |33     |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -206,11 +166,11 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0324      |26          |
+|E1101      |33          |
 +-----------+------------+
-|W0201      |15          |
+|W0201      |19          |
 +-----------+------------+
-|E1103      |7           |
+|C0301      |15          |
 +-----------+------------+
 |C0111      |7           |
 +-----------+------------+
@@ -218,13 +178,11 @@ Messages
 +-----------+------------+
 |W0612      |2           |
 +-----------+------------+
-|W0611      |1           |
+|W0232      |1           |
 +-----------+------------+
-|W0221      |1           |
+|R0902      |1           |
 +-----------+------------+
-|R0904      |1           |
-+-----------+------------+
-|C0323      |1           |
+|F0401      |1           |
 +-----------+------------+
 |C0321      |1           |
 +-----------+------------+
@@ -235,6 +193,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 1.23/10 (previous run: 1.23/10)
-Come on! You can't be proud of this code
+Your code has been rated at -10.00/10
 

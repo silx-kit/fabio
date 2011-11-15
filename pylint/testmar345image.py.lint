@@ -1,16 +1,57 @@
 ************* Module testmar345image
-W: 21: No exception type(s) specified
-W: 19: Specify string format arguments as logging function parameters
-F: 23: Unable to import 'utilstest'
-C: 32:testMAR345: Invalid name "testMAR345" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 32:testMAR345: Missing docstring
-W: 46:testMAR345.test_read: Unused variable 'dim2'
-C: 60:test_suite_all_mar345: Missing docstring
+C:  9: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 10: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 25: No exception type(s) specified
+F: 27: Unable to import 'utilstest'
+C: 39:testMAR345: Missing docstring
+C: 39:testMAR345: Invalid name "testMAR345" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 40:testMAR345.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+W: 53:testMAR345.test_read: Unused variable 'dim2'
+R: 39:testMAR345: Too many public methods (46/20)
+C: 67:test_suite_all_mar345: Missing docstring
+C: 68:test_suite_all_mar345: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 73: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 74: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 30: Unused import fabio
 
 
 Report
 ======
-40 statements analysed.
+49 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |50     |68.49 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |11     |15.07 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |3      |4.11  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |9      |12.33 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |NC         |NC         |100.00      |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -25,59 +66,15 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |42     |63.64 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|docstring |11     |16.67 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|comment   |3      |4.55  |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|empty     |10     |15.15 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-mar345image 
-        \-mar345image (testmar345image)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |3      |NC       |NC         |
+|convention |9      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |warning    |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -92,23 +89,24 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0111      |2           |
+|C0103      |7           |
 +-----------+------------+
-|W6501      |1           |
+|C0111      |2           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
 |W0612      |1           |
 +-----------+------------+
-|F0401      |1           |
+|W0611      |1           |
 +-----------+------------+
-|C0103      |1           |
+|R0904      |1           |
++-----------+------------+
+|F0401      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.50/10
-That's pretty good. Good work mate.
+Your code has been rated at 7.35/10
 

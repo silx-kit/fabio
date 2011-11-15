@@ -1,121 +1,65 @@
 ************* Module testedfimage
-W: 92: Bad indentation. Found 20 spaces, expected 12
-W:102: Bad indentation. Found 20 spaces, expected 12
-W:121: FIXME: upload to sourceforge and add a setUp with wget?
-W: 25: No exception type(s) specified
-W: 23: Specify string format arguments as logging function parameters
-F: 27: Unable to import 'utilstest'
-C: 48:testflatedfs: Invalid name "testflatedfs" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 86:testbzipedf: Invalid name "testbzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 96:testgzipedf: Invalid name "testgzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
-C:118:testedfs: Invalid name "testedfs" (should match [A-Z_][a-zA-Z0-9]+$)
-C:123:testedfs.setUp: Missing docstring
-C:148:test_suite_all_edf: Missing docstring
-
-
-Report
-======
-91 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |95     |59.38 |95       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |27     |16.88 |27       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |9      |5.62  |9        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |29     |18.12 |29       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-edfimage 
-        \-edfimage (testedfimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |4      |4          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |7      |7          |=          |85.71       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |6      |6        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |5      |5        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0103      |4           |
-+-----------+------------+
-|W0311      |2           |
-+-----------+------------+
-|C0111      |2           |
-+-----------+------------+
-|W6501      |1           |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|W0511      |1           |
-+-----------+------------+
-|F0401      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 8.79/10 (previous run: 8.79/10)
-That's pretty good. Good work mate.
-
+C: 97: Line too long (101/80)
+W: 97: Bad indentation. Found 20 spaces, expected 12
+C:106: Line too long (98/80)
+W:106: Bad indentation. Found 20 spaces, expected 12
+C:141: Line too long (89/80)
+C:142: Line too long (87/80)
+C:144: Line too long (89/80)
+C:145: Line too long (87/80)
+C:146: Line too long (95/80)
+C:155: Line too long (123/80)
+C:180: Line too long (83/80)
+C:184: Line too long (86/80)
+C:188: Line too long (92/80)
+C:189: Line too long (93/80)
+C:190: Line too long (104/80)
+C:211: Line too long (83/80)
+C:215: Line too long (89/80)
+C:219: Line too long (89/80)
+C:223: Line too long (110/80)
+C:225: Line too long (100/80)
+C:226: Line too long (110/80)
+C:230: Line too long (109/80)
+C:232: Line too long (108/80)
+C:236: Line too long (106/80)
+C:238: Line too long (102/80)
+C:242: Line too long (105/80)
+C:244: Line too long (101/80)
+C:249: Line too long (104/80)
+C:251: Line too long (104/80)
+C:256: Line too long (103/80)
+C:258: Line too long (105/80)
+C: 10: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 11: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 26: No exception type(s) specified
+F: 28: Unable to import 'utilstest'
+C: 38:testflatedfs: Invalid name "testflatedfs" (should match [A-Z_][a-zA-Z0-9]+$)
+E: 51:testflatedfs: Module 'numpy' has no 'ones' member
+E: 51:testflatedfs: Module 'numpy' has no 'float32' member
+C: 58:testflatedfs.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+E: 75:testflatedfs.test_read: Module 'numpy' has no 'float32' member
+R: 38:testflatedfs: Too many public methods (47/20)
+C: 91:testbzipedf: Invalid name "testbzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 93:testbzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 91:testbzipedf: Too many public methods (47/20)
+C:100:testgzipedf: Invalid name "testgzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
+C:102:testgzipedf.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+R:100:testgzipedf: Too many public methods (47/20)
+C:120:testedfs: Invalid name "testedfs" (should match [A-Z_][a-zA-Z0-9]+$)
+C:124:testedfs.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C:152:testedfs.test_rebin: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+E:155:testedfs.test_rebin: Module 'numpy' has no 'array' member
+R:120:testedfs: Too many public methods (47/20)
+C:159:testedfcompresseddata: Invalid name "testedfcompresseddata" (should match [A-Z_][a-zA-Z0-9]+$)
+C:164:testedfcompresseddata.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C:174:testedfcompresseddata.test_read: Invalid name "refFile" (should match [a-z_][a-z0-9_]{2,30}$)
+C:175:testedfcompresseddata.test_read: Invalid name "gzippedFile" (should match [a-z_][a-z0-9_]{2,30}$)
+C:176:testedfcompresseddata.test_read: Invalid name "compressedFile" (should match [a-z_][a-z0-9_]{2,30}$)
+R:159:testedfcompresseddata: Too many public methods (46/20)
+C:193:testedfmultiframe: Invalid name "testedfmultiframe" (should match [A-Z_][a-zA-Z0-9]+$)
+C:206:testedfmultiframe.setUp: Invalid name "Frame0File" (should match [a-z_][a-z0-9_]{2,30}$)
+C:205:testedfmultiframe.setUp: Invalid name "refFile" (should match [a-z_][a-z0-9_]{2,30}$)
+C:207:testedfmultiframe.setUp: Invalid name "Frame1File" (should match [a-z_][a-z0-9_]{2,30}$)
+C:198:testedfmultiframe.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C:221:testedfmultiframe.test_getFrame_multi: Invalid name "test_getFrame_multi" (should match [a-z_][a-z0-9_]{2,30}$)

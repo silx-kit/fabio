@@ -1,10 +1,70 @@
 ************* Module readbytestream
 W: 50: TODO : Read in regions of interest
+C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+E: 16: Module 'numpy' has no 'uint8' member
+E: 17: Module 'numpy' has no 'uint16' member
+E: 18: Module 'numpy' has no 'uint32' member
+E: 19: Module 'numpy' has no 'int8' member
+E: 20: Module 'numpy' has no 'int16' member
+E: 21: Module 'numpy' has no 'int32' member
+E: 22: Module 'numpy' has no 'float32' member
+E: 23: Module 'numpy' has no 'float64' member
+R: 27:readbytestream: Too many arguments (9/5)
+C: 27:readbytestream: Invalid name "x" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 27:readbytestream: Invalid name "y" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 29:readbytestream: Invalid name "x" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 30:readbytestream: Invalid name "y" (should match [a-z_][a-z0-9_]{2,30}$)
+E: 35:readbytestream: Module 'numpy' has no 'uint16' member
+E: 77:readbytestream: Module 'numpy' has no 'array' member
+E: 77:readbytestream: Module 'numpy' has no 'reshape' member
+E: 78:readbytestream: Module 'numpy' has no 'fromstring' member
 
 
 Report
 ======
-25 statements analysed.
+27 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |46     |56.10 |45       |+1.00      |
++----------+-------+------+---------+-----------+
+|docstring |25     |30.49 |25       |=          |
++----------+-------+------+---------+-----------+
+|comment   |3      |3.66  |3        |=          |
++----------+-------+------+---------+-----------+
+|empty     |8      |9.76  |8        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (readbytestream)
+
+
 
 Duplication
 -----------
@@ -19,53 +79,19 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |45     |55.56 |45       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |25     |30.86 |25       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |3      |3.70  |3        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |8      |9.88  |8        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |5      |4        |+1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
 |warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |12     |12       |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -76,13 +102,18 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
+|E1101      |12          |
++-----------+------------+
+|C0103      |5           |
++-----------+------------+
 |W0511      |1           |
++-----------+------------+
+|R0913      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.60/10 (previous run: 9.60/10)
-So close to being perfect...
+Your code has been rated at -14.81/10 (previous run: -15.38/10)
 
