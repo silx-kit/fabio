@@ -1,7 +1,10 @@
 FabIO 
 =====
 FabIO is an I/O library for images produced by 2D X-ray detectors and written in python.
-Fabio support images detectors from a dozen of companies (including Mar, Dectris, ADSC, ...) for a total of 20 different file formats.  
+FabIO support images detectors from a dozen of companies (including Mar, Dectris, ADSC, Hamamatsu, Oxford, ...), 
+for a total of 20 different file formats (like CBF, EDF, TIFF, ...) and offers an unified interface to their 
+headers (as a python dictionary) and datasets (as a numpy ndarray of integers or floats)
+  
 
 
 Changelog
@@ -11,7 +14,7 @@ From FabIO-0.0.7 to FabIO-0.0.8:
 - Clean-up of the code & bug fixes 
 
 From FabIO-0.0.6 to FabIO-0.0.7:
-- Support for mutli-frames EDF files
+- Support for multi-frames EDF files
 - Support for XML images/2D arrays used in EDNA 
 - new method: fabio.open(filename) that is an alias for fabio.openimage.openimage(filename)
  
@@ -164,10 +167,10 @@ Known file formats
 * Bruker
   o brukerimage
   o bruker100image
-  o kcdimage (Nonius KappaCCD diffractometer)
+  o kcdimage: Nonius KappaCCD diffractometer
 * Mar Research
   o marccd (fileformat derived from Tiff)
-  o mar345image imaging plate
+  o mar345 imaging plate
 * Dectris 
   o cbfimage (implements a fast byte offset decompression scheme in python/cython)
   o pilatusimage (fileformat derived from Tiff)
