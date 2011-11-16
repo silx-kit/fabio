@@ -251,7 +251,7 @@ class Frame(object):
                 if "OFFSET" in compression :
                     try:
                         import byte_offset#IGNORE:F0401
-                    except ImportError as error:
+                    except ImportError, error:
                         logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
                         myData = byte_offset.analyseCython(self.rawData, size=uncompressed_size)
@@ -271,7 +271,7 @@ class Frame(object):
                             sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
                             rawData, err = sub.communicate(input=self.rawData)
                             logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
-                        except Exception as error: #IGNORE:W0703
+                        except Exception, error: #IGNORE:W0703
                             logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
                             for i in range(1, 513):
                                 try:
@@ -438,7 +438,7 @@ class edfimage(fabioimage):
         self.currentframe = 0
         try:
             dim = len(data.shape)
-        except Exception as error: #IGNORE:W0703
+        except Exception, error: #IGNORE:W0703
             logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
             data = None
             dim = 0

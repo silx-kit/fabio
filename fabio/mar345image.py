@@ -31,9 +31,8 @@ class mar345image(fabioimage):
 
         try:
             import mar345_io #IGNORE:F0401
-        except ImportError as error:
-            logger.error('%s importing the mar345_io backend \
-- generating empty 1x1 picture' % error)
+        except ImportError, error:
+            logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
             f.close()
             self.dim1 = 1
             self.dim2 = 1

@@ -245,7 +245,7 @@ def make_format(c_def_string):
                 num = num.replace("MAXIMAGES", str(MAXIMAGES))
                 num = num.replace("sizeof(INT32)", "4")
                 times = eval(num)
-            except Exception as error:
+            except Exception, error:
                 logger.error("%s Please decode %s", error, decl)
                 raise error
         else:

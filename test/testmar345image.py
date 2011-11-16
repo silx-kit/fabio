@@ -47,8 +47,8 @@ class testMAR345(unittest.TestCase):
         """
         Test the reading of Mar345 images 
         """
-        for line in TESTIMAGES.split(os.linesep):
-            vals = line.split()
+        for line in TESTIMAGES.split('\n'):
+            vals = line.strip().split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]

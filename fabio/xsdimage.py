@@ -102,12 +102,12 @@ class xsdimage(fabioimage):
         for i in xml.xpath("//shape"):
             try:
                 self.dims.append(int(i.text))
-            except ValueError as error:
+            except ValueError, error:
                 logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
         for i in xml.xpath("//size"):
             try:
                 self.size = int(i.text)
-            except Exception as error:#IGNORE:W0703
+            except Exception, error:#IGNORE:W0703
                 logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
         self.dtype = None
         for i in xml.xpath("//dtype"):

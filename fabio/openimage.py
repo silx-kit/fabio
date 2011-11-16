@@ -113,7 +113,7 @@ def _openimage(filename):
             # Cannot see a way around this. Need to find something
             # to distinguish mccd from regular tif...
             filetype = "tif"
-    except IOError as error:
+    except IOError, error:
         logger.error("%s: File probably does not exist", error)
         raise error
     except:

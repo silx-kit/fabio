@@ -39,7 +39,7 @@ if sys.version_info >= (3, 0):
 else:
     import urllib2
 
-logger = logging.getLogger("fabio.utilstest")
+logger = logging.getLogger("utilstest")
 
 class UtilsTest(object):
     """
@@ -47,7 +47,7 @@ class UtilsTest(object):
     """
     timeout = 60        #timeout in seconds for downloading images
     url_base = "http://downloads.sourceforge.net/fable"
-    test_home = os.path.dirname(__file__)
+    test_home = os.path.dirname(os.path.abspath(__file__))
     name = "fabio"
     image_home = os.path.join(test_home, "testimages")
     if not os.path.isdir(image_home):
