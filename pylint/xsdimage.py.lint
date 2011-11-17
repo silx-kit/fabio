@@ -1,45 +1,26 @@
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
+
 ************* Module xsdimage
-C: 21: Line too long (110/80)
-C: 80: Line too long (158/80)
-C: 86: Line too long (92/80)
-C:106: Line too long (102/80)
-C:111: Line too long (101/80)
-C: 15: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 F: 16: Unable to import 'fabioimage'
-C: 22: Invalid name "etree" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-R: 24:xsdimage: Too many instance attributes (14/7)
 C: 24:xsdimage: Invalid name "xsdimage" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 40:xsdimage.__init__: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
 C: 46:xsdimage.read: Empty docstring
 E: 50:xsdimage.read: Instance of 'xsdimage' has no 'resetvals' member
 E: 52:xsdimage.read: Instance of 'xsdimage' has no '_open' member
-E: 60:xsdimage.read: Module 'numpy' has no 'dtype' member
-E: 61:xsdimage.read: Module 'numpy' has no 'array' member
-E: 63:xsdimage.read: Module 'numpy' has no 'int32' member
-C: 72:xsdimage.read: Invalid name "decData" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 74:xsdimage.read: Invalid name "decData" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 76:xsdimage.read: Invalid name "decData" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 78:xsdimage.read: Invalid name "decData" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 81:xsdimage.read: Invalid name "decData" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 83:xsdimage.read: Module 'hashlib' has no 'md5' member
-E: 86:xsdimage.read: Module 'numpy' has no 'fromstring' member
-E: 87:xsdimage.read: Module 'numpy' has no 'little_endian' member
 E: 89:xsdimage.read: Instance of 'xsdimage' has no 'resetvals' member
 W:110:xsdimage._readheader: Catch "Exception"
-R: 24:xsdimage: Too few public methods (1/2)
 W: 91:xsdimage.read: Attribute 'pilimage' defined outside __init__
 W: 49:xsdimage.read: Attribute 'header' defined outside __init__
 W: 86:xsdimage.read: Attribute 'data' defined outside __init__
 W: 56:xsdimage.read: Attribute 'dim2' defined outside __init__
 W: 56:xsdimage.read: Attribute 'dim1' defined outside __init__
-W: 64:xsdimage.read: Attribute 'bpp' defined outside __init__
-W: 63:xsdimage.read: Attribute 'bytecode' defined outside __init__
-C:130: Invalid name "xsdimage" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 61:xsdimage.read: Attribute 'bpp' defined outside __init__
+W: 60:xsdimage.read: Attribute 'bytecode' defined outside __init__
+R: 24:xsdimage: Too few public methods (1/2)
 
 
 Report
 ======
-95 statements analysed.
+94 statements analysed.
 
 Raw metrics
 -----------
@@ -47,7 +28,7 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |96     |73.85 |90       |+6.00      |
+|code      |96     |73.85 |96       |=          |
 +----------+-------+------+---------+-----------+
 |docstring |22     |16.92 |22       |=          |
 +----------+-------+------+---------+-----------+
@@ -55,31 +36,6 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |empty     |10     |7.69  |10       |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |66.67       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (xsdimage)
 
 
 
@@ -96,19 +52,36 @@ Duplication
 
 
 
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |66.67       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |16     |14       |+2.00      |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |2      |1        |+1.00      |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |8      |10       |-2.00      |
+|warning    |8      |8        |=          |
 +-----------+-------+---------+-----------+
-|error      |9      |5        |+4.00      |
+|error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -119,28 +92,25 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |10          |
-+-----------+------------+
-|E1101      |9           |
-+-----------+------------+
 |W0201      |7           |
 +-----------+------------+
-|C0301      |5           |
+|E1101      |3           |
 +-----------+------------+
 |W0703      |1           |
 +-----------+------------+
 |R0903      |1           |
 +-----------+------------+
-|R0902      |1           |
-+-----------+------------+
 |F0401      |1           |
 +-----------+------------+
 |C0112      |1           |
++-----------+------------+
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 2.53/10 (previous run: 4.38/10)
+Your code has been rated at 7.23/10 (previous run: 7.23/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

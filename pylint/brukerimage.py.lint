@@ -1,26 +1,25 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module brukerimage
 W:139: FIXME - this should call edfimage.write if that is wanted?
 W:169: FIXME: what is this? """
-C: 17: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 F: 18: Unable to import 'fabioimage'
 F: 19: Unable to import 'readbytestream'
-W: 22:brukerimage: Class has no __init__ method
 C: 22:brukerimage: Invalid name "brukerimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 22:brukerimage: Class has no __init__ method
 E: 54:brukerimage._readheader: Instance of 'brukerimage' has no 'header_keys' member
 E: 73:brukerimage._readheader: Instance of 'brukerimage' has no 'header_keys' member
 E: 85:brukerimage.read: Instance of 'brukerimage' has no '_open' member
-E:114:brukerimage.read: Module 'numpy' has no 'uint32' member
 E:131:brukerimage.read: Instance of 'brukerimage' has no 'resetvals' member
 W:118:brukerimage.read: Unused variable 'i'
 E:149:brukerimage.write: Instance of 'brukerimage' has no '_open' member
 E:152:brukerimage.write: Instance of 'brukerimage' has no 'header_keys' member
-E:162:brukerimage.write: Module 'numpy' has no 'uint16' member
-E:165:brukerimage.write: Module 'numpy' has no 'uint16' member
 W:132:brukerimage.read: Attribute 'pilimage' defined outside __init__
 W: 79:brukerimage._readheader: Attribute 'dim2' defined outside __init__
 W: 43:brukerimage._readheader: Attribute 'header' defined outside __init__
 W: 78:brukerimage._readheader: Attribute 'dim1' defined outside __init__
-W:114:brukerimage.read: Attribute 'data' defined outside __init__
+W:104:brukerimage.read: Attribute 'data' defined outside __init__
 E:181:test: Instance of 'brukerimage' has no 'toPIL16' member
 E:182:test: Instance of 'brukerimage' has no 'rebin' member
 E:184:test: Instance of 'brukerimage' has no 'getmax' member
@@ -33,7 +32,20 @@ W:181:test: Unused variable 'res'
 
 Report
 ======
-104 statements analysed.
+103 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -41,13 +53,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |113    |59.79 |NC       |NC         |
+|code      |113    |59.79 |113      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |37     |19.58 |NC       |NC         |
+|docstring |37     |19.58 |37       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |6      |3.17  |NC       |NC         |
+|comment   |6      |3.17  |6        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |33     |17.46 |NC       |NC         |
+|empty     |33     |17.46 |33       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -58,35 +70,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |100.00   |
+|class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |100.00      |0.00     |
+|method   |4      |4          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |100.00      |0.00     |
+|function |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (brukerimage)
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -96,13 +87,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |2      |NC       |NC         |
+|convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |10     |NC       |NC         |
+|warning    |10     |10       |=          |
 +-----------+-------+---------+-----------+
-|error      |16     |NC       |NC         |
+|error      |13     |13       |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -113,7 +104,7 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|E1101      |16          |
+|E1101      |13          |
 +-----------+------------+
 |W0201      |5           |
 +-----------+------------+
@@ -123,14 +114,15 @@ Messages
 +-----------+------------+
 |F0401      |2           |
 +-----------+------------+
-|C0103      |2           |
-+-----------+------------+
 |W0232      |1           |
++-----------+------------+
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 1.15/10
+Your code has been rated at 2.62/10 (previous run: 2.62/10)
+Hum... Needs work.
 

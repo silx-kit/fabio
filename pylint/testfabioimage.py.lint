@@ -1,67 +1,46 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testfabioimage
-C:100: Line too long (90/80)
-C:198: Line too long (81/80)
-C:  9: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 10: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 25: No exception type(s) specified
 F: 27: Unable to import 'utilstest'
 C: 35:test50000: Invalid name "test50000" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 37:test50000.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 39:test50000.setUp: Module 'numpy' has no 'ones' member
-E: 39:test50000.setUp: Module 'numpy' has no 'uint16' member
-E: 40:test50000.setUp: Module 'numpy' has no 'uint16' member
-E: 41:test50000.setUp: Module 'numpy' has no 'ones' member
-E: 41:test50000.setUp: Module 'numpy' has no 'uint16' member
-R: 35:test50000: Too many public methods (49/20)
 C: 61:testslices: Invalid name "testslices" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 63:testslices.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 65:testslices.setUp: Module 'numpy' has no 'zeros' member
-E: 65:testslices.setUp: Module 'numpy' has no 'uint16' member
-C: 94:testslices.testRebin: Invalid name "testRebin" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 96:testslices.testRebin: Module 'numpy' has no 'arange' member
-E: 97:testslices.testRebin: Module 'numpy' has no 'array' member
-R: 61:testslices: Too many public methods (49/20)
 C:103:testopen: Invalid name "testopen" (should match [A-Z_][a-zA-Z0-9]+$)
-C:106:testopen.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C:116:testopen.testFlat: Invalid name "testFlat" (should match [a-z_][a-z0-9_]{2,30}$)
 W:118:testopen.testFlat: Access to a protected member _open of a client class
 W:123:testopen.testgz: Access to a protected member _open of a client class
 W:128:testopen.testbz2: Access to a protected member _open of a client class
-R:103:testopen: Too many public methods (48/20)
-E:132: Module 'numpy' has no 'uint8' member
-E:133: Module 'numpy' has no 'int8' member
-E:134: Module 'numpy' has no 'uint16' member
-E:135: Module 'numpy' has no 'int16' member
-E:136: Module 'numpy' has no 'uint32' member
-E:137: Module 'numpy' has no 'int32' member
-E:138: Module 'numpy' has no 'float32' member
-E:139: Module 'numpy' has no 'float64' member
 C:142:testPILimage: Invalid name "testPILimage" (should match [A-Z_][a-zA-Z0-9]+$)
-C:144:testPILimage.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-E:146:testPILimage.setUp: Module 'numpy' has no 'uint8' member
-E:147:testPILimage.setUp: Module 'numpy' has no 'int8' member
-E:148:testPILimage.setUp: Module 'numpy' has no 'uint16' member
-E:149:testPILimage.setUp: Module 'numpy' has no 'int16' member
-E:150:testPILimage.setUp: Module 'numpy' has no 'uint32' member
-E:151:testPILimage.setUp: Module 'numpy' has no 'int32' member
-E:152:testPILimage.setUp: Module 'numpy' has no 'float32' member
 R:155:testPILimage.mkdata: Method could be a function
 C:160:testPILimage.testpil: Missing docstring
-R:142:testPILimage: Too many public methods (47/20)
 C:188:testPILimage2: Invalid name "testPILimage2" (should match [A-Z_][a-zA-Z0-9]+$)
-R:188:testPILimage2: Too many public methods (47/20)
 C:194:testPILimage3: Invalid name "testPILimage3" (should match [A-Z_][a-zA-Z0-9]+$)
-R:194:testPILimage3: Too many public methods (47/20)
 C:200:test_suite_all_fabio: Missing docstring
-C:201:test_suite_all_fabio: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C:225: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:226: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 30: Unused import fabio
 
 
 Report
 ======
-136 statements analysed.
+135 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -69,14 +48,24 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |154    |78.97 |NC       |NC         |
+|code      |154    |78.97 |154      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |29     |14.87 |NC       |NC         |
+|docstring |29     |14.87 |29       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |1.54  |NC       |NC         |
+|comment   |3      |1.54  |3        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |9      |4.62  |NC       |NC         |
+|empty     |9      |4.62  |9        |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testfabioimage)
+      \-fabioimage 
+        \-fabioimage (testfabioimage)
 
 
 
@@ -86,35 +75,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |6      |NC         |NC         |100.00      |100.00   |
+|class    |6      |6          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |19     |NC         |NC         |94.74       |31.58    |
+|method   |19     |19         |=          |94.74       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
+|function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (testfabioimage)
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -124,13 +92,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |21     |NC       |NC         |
+|convention |8      |8        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |7      |NC       |NC         |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |5      |NC       |NC         |
+|warning    |5      |5        |=          |
 +-----------+-------+---------+-----------+
-|error      |24     |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -141,15 +109,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|E1101      |24          |
-+-----------+------------+
-|C0103      |17          |
-+-----------+------------+
-|R0904      |6           |
+|C0103      |6           |
 +-----------+------------+
 |W0212      |3           |
-+-----------+------------+
-|C0301      |2           |
 +-----------+------------+
 |C0111      |2           |
 +-----------+------------+
@@ -166,5 +128,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -1.25/10
+Your code has been rated at 8.96/10 (previous run: 8.96/10)
+That's pretty good. Good work mate.
 

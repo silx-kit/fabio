@@ -1,6 +1,7 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module test_all
-C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 14: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 29: No exception type(s) specified
 F: 31: Unable to import 'utilstest'
 F: 37: Unable to import 'testfabioimage'
@@ -24,16 +25,13 @@ F: 54: Unable to import 'testkcdimage'
 F: 55: Unable to import 'testtifimage'
 F: 56: Unable to import 'testXSDimage'
 C: 58:test_suite_all: Missing docstring
-C: 59:test_suite_all: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 84: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 85: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 43: Unused import test_suite_all_flat
 W: 34: Unused import fabio
 
 
 Report
 ======
-71 statements analysed.
+70 statements analysed.
 
 Raw metrics
 -----------
@@ -41,31 +39,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |71     |87.65 |34       |+37.00     |
+|code      |71     |87.65 |71       |=          |
 +----------+-------+------+---------+-----------+
 |docstring |3      |3.70  |3        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |2.47  |62       |-60.00     |
+|comment   |2      |2.47  |2        |=          |
 +----------+-------+------+---------+-----------+
 |empty     |5      |6.17  |5        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -82,17 +63,42 @@ Duplication
 
 
 
+External dependencies
+---------------------
+::
+
+    fabio (test_all)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
 Messages by category
 --------------------
 
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |6      |5        |+1.00      |
+|convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |2        |+1.00      |
+|warning    |3      |3        |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -107,8 +113,6 @@ Messages
 +===========+============+
 |F0401      |21          |
 +-----------+------------+
-|C0103      |5           |
-+-----------+------------+
 |W0611      |2           |
 +-----------+------------+
 |W0702      |1           |
@@ -120,5 +124,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.73/10 (previous run: 7.94/10)
+Your code has been rated at 9.43/10 (previous run: 9.43/10)
+So close to being perfect...
 

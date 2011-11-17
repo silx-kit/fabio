@@ -1,4 +1,108 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module utilstest
-C: 62: Line too long (86/80)
-C: 84: Line too long (93/80)
 C:  1: Missing docstring
+W: 71:UtilsTest: Used * or ** magic
+W: 73:UtilsTest: Specify string format arguments as logging function parameters
+C: 81:UtilsTest.forceBuild: Invalid name "p" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:103:UtilsTest.getimage: Too many branches (16/15)
+R:103:UtilsTest.getimage: Too many statements (52/50)
+
+
+Report
+======
+95 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |124    |70.06 |124      |=          |
++----------+-------+------+---------+-----------+
+|docstring |17     |9.60  |17       |=          |
++----------+-------+------+---------+-----------+
+|comment   |26     |14.69 |26       |=          |
++----------+-------+------+---------+-----------+
+|empty     |10     |5.65  |10       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |2      |2        |=          |
++-----------+-------+---------+-----------+
+|refactor   |2      |2        |=          |
++-----------+-------+---------+-----------+
+|warning    |2      |2        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W6501      |1           |
++-----------+------------+
+|W0142      |1           |
++-----------+------------+
+|R0915      |1           |
++-----------+------------+
+|R0912      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 9.37/10 (previous run: 9.37/10)
+So close to being perfect...
+

@@ -1,86 +1,14 @@
 ************* Module GEimage_old
-C: 40: Line too long (88/80)
-C: 41: Line too long (97/80)
-C: 42: Line too long (92/80)
-C: 43: Line too long (101/80)
-C: 45: Line too long (89/80)
-C: 46: Line too long (94/80)
-C: 47: Line too long (94/80)
-C: 48: Line too long (87/80)
-C: 65: Line too long (86/80)
-C: 68: Line too long (92/80)
-C: 71: Line too long (112/80)
-C: 74: Line too long (112/80)
-C: 89: Line too long (82/80)
-C:104: Line too long (82/80)
-C:107: Line too long (82/80)
-C:113: Line too long (88/80)
-C:116: Line too long (98/80)
-C:119: Line too long (102/80)
-C:122: Line too long (82/80)
-C:129: Line too long (96/80)
-C:132: Line too long (100/80)
-C:135: Line too long (96/80)
-C:156: Line too long (88/80)
-C:159: Line too long (102/80)
-C:168: Line too long (94/80)
-C:219: Line too long (88/80)
-C:222: Line too long (84/80)
-C:225: Line too long (90/80)
-C:228: Line too long (90/80)
-C:231: Line too long (86/80)
-C:237: Line too long (106/80)
-C:240: Line too long (102/80)
-C:246: Line too long (98/80)
-C:252: Line too long (92/80)
-C:272: Line too long (86/80)
-C:293: Line too long (84/80)
-C:299: Line too long (82/80)
-C:302: Line too long (82/80)
-C:305: Line too long (82/80)
-C:308: Line too long (82/80)
-C:311: Line too long (102/80)
-C:314: Line too long (98/80)
-C:320: Line too long (84/80)
-C:352: Line too long (92/80)
-C:355: Line too long (88/80)
-C:358: Line too long (84/80)
-C:361: Line too long (90/80)
-C:381: Line too long (100/80)
-C:384: Line too long (96/80)
-C:449: Line too long (82/80)
-C:484: Line too long (92/80)
 C:  1: Invalid name "GEimage_old" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
 F: 24: Unable to import 'fabioimage'
-R: 26:GEimage: Too many instance attributes (9/7)
-W: 26:GEimage: Class has no __init__ method
 C: 26:GEimage: Missing docstring
-C: 34:GEimage._readheader: Invalid name "ImageFormat" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 53:GEimage._readheader: Invalid name "DUTID" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 34:GEimage._readheader: Invalid name "ImageFormat" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 53:GEimage._readheader: Invalid name "DUTID" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 26:GEimage: Class has no __init__ method
 C: 29:GEimage._readheader: Missing docstring
-E: 40:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 40:GEimage._readheader: Module 'numpy' has no 'uint16' member
-E: 41:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 41:GEimage._readheader: Module 'numpy' has no 'uint32' member
-E: 42:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 42:GEimage._readheader: Module 'numpy' has no 'uint16' member
-E: 43:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 43:GEimage._readheader: Module 'numpy' has no 'uint32' member
-E: 45:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 45:GEimage._readheader: Module 'numpy' has no 'uint16' member
-E: 46:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 46:GEimage._readheader: Module 'numpy' has no 'uint16' member
-E: 47:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 47:GEimage._readheader: Module 'numpy' has no 'uint16' member
-E: 48:GEimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 48:GEimage._readheader: Module 'numpy' has no 'uint16' member
 E:466:GEimage.read: Instance of 'GEimage' has no 'resetvals' member
 E:467:GEimage.read: Instance of 'GEimage' has no '_open' member
-C:486:GEimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
-E:488:GEimage.read: Module 'numpy' has no 'fromstring' member
-E:488:GEimage.read: Module 'numpy' has no 'uint16' member
-E:493:GEimage.read: Module 'numpy' has no 'reshape' member
-R: 26:GEimage: Too few public methods (1/2)
+C:486:GEimage.read: Invalid name "ReadBytes" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 W:500:GEimage.read: Attribute 'pilimage' defined outside __init__
 W:473:GEimage.read: Attribute 'bpp' defined outside __init__
 W:472:GEimage.read: Attribute 'dim2' defined outside __init__
@@ -90,11 +18,12 @@ W: 34:GEimage._readheader: Attribute 'ImageFormat' defined outside __init__
 W:493:GEimage.read: Attribute 'data' defined outside __init__
 W: 53:GEimage._readheader: Attribute 'DUTID' defined outside __init__
 W:499:GEimage.read: Attribute 'bytecode' defined outside __init__
+R: 26:GEimage: Too few public methods (1/2)
 
 
 Report
 ======
-50 statements analysed.
+49 statements analysed.
 
 Raw metrics
 -----------
@@ -102,39 +31,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |50     |10.25 |NC       |NC         |
+|code      |50     |10.25 |50       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |24     |4.92  |NC       |NC         |
+|docstring |24     |4.92  |24       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |267    |54.71 |NC       |NC         |
+|comment   |267    |54.71 |267      |=          |
 +----------+-------+------+---------+-----------+
-|empty     |147    |30.12 |NC       |NC         |
+|empty     |147    |30.12 |147      |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |50.00       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (GEimage_old)
 
 
 
@@ -144,10 +48,27 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |2          |=          |50.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -157,13 +78,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |57     |NC       |NC         |
+|convention |6      |6        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |2      |NC       |NC         |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |10     |NC       |NC         |
+|warning    |10     |10       |=          |
 +-----------+-------+---------+-----------+
-|error      |21     |NC       |NC         |
+|error      |2      |2        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -174,21 +95,17 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0301      |51          |
-+-----------+------------+
-|E1101      |21          |
-+-----------+------------+
 |W0201      |9           |
 +-----------+------------+
 |C0103      |4           |
++-----------+------------+
+|E1101      |2           |
 +-----------+------------+
 |C0111      |2           |
 +-----------+------------+
 |W0232      |1           |
 +-----------+------------+
 |R0903      |1           |
-+-----------+------------+
-|R0902      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
@@ -197,5 +114,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -24.80/10
+Your code has been rated at 4.49/10 (previous run: 4.49/10)
+A little more work would make it acceptable.
 

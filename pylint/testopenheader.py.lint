@@ -1,22 +1,18 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testopenheader
-C: 36: Line too long (83/80)
-C:  8: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:  9: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 24: No exception type(s) specified
 F: 26: Unable to import 'utilstest'
 C: 33:test1: Invalid name "test1" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 35:test1.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 33:test1: Too many public methods (46/20)
+C: 35:test1.setUp: Missing docstring
 C: 50:test_suite_all_openheader: Missing docstring
-C: 51:test_suite_all_openheader: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 56: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 57: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 29: Unused import fabio
 
 
 Report
 ======
-40 statements analysed.
+39 statements analysed.
 
 Raw metrics
 -----------
@@ -24,31 +20,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |40     |72.73 |NC       |NC         |
+|code      |40     |72.73 |40       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |7      |12.73 |NC       |NC         |
+|docstring |7      |12.73 |7        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.64  |NC       |NC         |
+|comment   |2      |3.64  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |6      |10.91 |NC       |NC         |
+|empty     |6      |10.91 |6        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |100.00      |50.00    |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -58,10 +37,37 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testopenheader)
+      \-openimage 
+        \-openheader (testopenheader)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |2          |=          |50.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -71,13 +77,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |9      |NC       |NC         |
+|convention |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -88,24 +94,21 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |7           |
+|C0111      |2           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
 |W0611      |1           |
 +-----------+------------+
-|R0904      |1           |
-+-----------+------------+
 |F0401      |1           |
 +-----------+------------+
-|C0301      |1           |
-+-----------+------------+
-|C0111      |1           |
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.00/10
+Your code has been rated at 8.72/10 (previous run: 8.72/10)
+That's pretty good. Good work mate.
 

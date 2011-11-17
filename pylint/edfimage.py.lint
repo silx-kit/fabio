@@ -1,115 +1,158 @@
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module edfimage
-C: 79: Line too long (91/80)
-C: 99: Line too long (113/80)
-C:151: Line too long (137/80)
-C:156: Line too long (141/80)
-C:166: Line too long (141/80)
-C:180: Line too long (108/80)
-C:192: Line too long (84/80)
-C:201: Line too long (125/80)
-C:202: Line too long (118/80)
-C:215: Line too long (93/80)
-C:216: Line too long (93/80)
-C:218: Line too long (94/80)
-C:219: Line too long (92/80)
-C:240: Line too long (88/80)
-C:247: Line too long (81/80)
-C:255: Line too long (105/80)
-C:257: Line too long (96/80)
-C:267: Line too long (117/80)
-C:269: Line too long (81/80)
-C:271: Line too long (143/80)
-C:273: Line too long (136/80)
-C:275: Line too long (113/80)
-C:278: Line too long (82/80)
-C:279: Line too long (83/80)
-C:281: Line too long (95/80)
-C:285: Line too long (121/80)
-C:295: Line too long (81/80)
-C:304: Line too long (104/80)
-C:307: Line too long (113/80)
-C:309: Line too long (115/80)
-C:311: Line too long (95/80)
-C:313: Line too long (84/80)
-C:321: Line too long (104/80)
-C:355: Line too long (110/80)
-C:363: Line too long (85/80)
-C:393: Line too long (87/80)
-C:398: Line too long (82/80)
-C:415: Line too long (117/80)
-C:421: Line too long (90/80)
-C:422: Line too long (89/80)
-C:442: Line too long (92/80)
-C:476: Line too long (95/80)
-C:480: Line too long (87/80)
-C:526: Line too long (106/80)
-C:536: Line too long (118/80)
-C:563: Line too long (93/80)
-C:564: Line too long (93/80)
-C:566: Line too long (94/80)
-C:567: Line too long (92/80)
-C:587: Line too long (90/80)
-C:590: Line too long (107/80)
-C:637: Line too long (88/80)
-C:681: Line too long (90/80)
-C:705: Line too long (86/80)
-C:730: Line too long (108/80)
-C:748: Line too long (113/80)
-C:788: Line too long (150/80)
-C: 24: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 F: 26: Unable to import 'fabioutils'
-E: 29: Module 'numpy' has no 'int8' member
-E: 30: Module 'numpy' has no 'int8' member
-E: 31: Module 'numpy' has no 'uint8' member
-E: 32: Module 'numpy' has no 'uint8' member
-E: 33: Module 'numpy' has no 'int16' member
-E: 34: Module 'numpy' has no 'int16' member
-E: 35: Module 'numpy' has no 'uint16' member
-E: 36: Module 'numpy' has no 'uint16' member
-E: 37: Module 'numpy' has no 'uint16' member
-E: 38: Module 'numpy' has no 'int32' member
-E: 39: Module 'numpy' has no 'int32' member
-E: 40: Module 'numpy' has no 'uint32' member
-E: 41: Module 'numpy' has no 'uint32' member
-E: 42: Module 'numpy' has no 'int32' member
-E: 43: Module 'numpy' has no 'uint32' member
-E: 44: Module 'numpy' has no 'int64' member
-E: 45: Module 'numpy' has no 'uint64' member
-E: 46: Module 'numpy' has no 'float32' member
-E: 47: Module 'numpy' has no 'float32' member
-E: 48: Module 'numpy' has no 'float32' member
-E: 49: Module 'numpy' has no 'float32' member
-E: 50: Module 'numpy' has no 'float32' member
-E: 51: Module 'numpy' has no 'float32' member
-E: 52: Module 'numpy' has no 'float64' member
-E: 53: Module 'numpy' has no 'float64' member
-E: 54: Module 'numpy' has no 'float64' member
-E: 55: Module 'numpy' has no 'float64' member
-R: 83:Frame: Too many instance attributes (12/7)
-C:118:Frame.__init__: Invalid name "iFrame" (should match [a-z_][a-z0-9_]{2,30}$)
-C:109:Frame.__init__: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:102:Frame.__init__: Invalid name "capsHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:172:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:174:Frame.parseheader: Invalid name "strDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:182:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:186:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:189:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-E:194:Frame.parseheader: Module 'numpy' has no 'uint16' member
-E:196:Frame.parseheader: Module 'numpy' has no 'array' member
-C:205:Frame.parseheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C:205:Frame.parseheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 W:206:Frame.parseheader: Use of the exec statement
-R:122:Frame.parseheader: Too many branches (24/12)
+R:122:Frame.parseheader: Too many branches (24/15)
 R:122:Frame.parseheader: Too many statements (69/50)
-E:215:Frame.swap_needed: Module 'numpy' has no 'little_endian' member
-E:216:Frame.swap_needed: Module 'numpy' has no 'little_endian' member
-E:218:Frame.swap_needed: Module 'numpy' has no 'little_endian' member
-E:219:Frame.swap_needed: Module 'numpy' has no 'little_endian' member
-R:226:Frame.getData: Too many local variables (16/15)
-C:226:Frame.getData: Invalid name "getData" (should match [a-z_][a-z0-9_]{2,30}$)
-E:242:Frame.getData: Module 'numpy' has no 'uint16' member
 F:253:Frame.getData: Unable to import 'byte_offset'
-C:257:Frame.getData: Invalid name "myData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:258:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:261:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:265:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
 W:274:Frame.getData: Catch "Exception"
+R:226:Frame.getData: Too many branches (27/15)
+R:226:Frame.getData: Too many statements (77/50)
+C:339:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:355:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:324:Frame.getEdfBlock: Too many branches (24/15)
+R:324:Frame.getEdfBlock: Too many statements (82/50)
+C:434:edfimage: Invalid name "edfimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W:449:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
+W:451:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
+W:453:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
+W:455:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
+W:441:edfimage.__init__: Catch "Exception"
+W:623:edfimage.write: Arguments number differs from overridden method
+C:790:edfimage.getDim1: Missing docstring
+C:792:edfimage.setDim1: Missing docstring
+C:802:edfimage.getDim2: Missing docstring
+C:804:edfimage.setDim2: Missing docstring
+C:815:edfimage.getDims: Missing docstring
+C:818:edfimage.getByteCode: Missing docstring
+C:820:edfimage.setByteCode: Missing docstring
+C:831:edfimage.getBpp: Missing docstring
+C:833:edfimage.setBpp: Missing docstring
+R:434:edfimage: Too many public methods (45/20)
+
+
+Report
+======
+525 statements analysed.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |558    |68.05 |558      |=          |
++----------+-------+------+---------+-----------+
+|docstring |185    |22.56 |185      |=          |
++----------+-------+------+---------+-----------+
+|comment   |11     |1.34  |11       |=          |
++----------+-------+------+---------+-----------+
+|empty     |66     |8.05  |66       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabioimage 
+      \-fabioimage (edfimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |100.00      |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|method   |41     |41         |=          |78.05       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |13     |13       |=          |
++-----------+-------+---------+-----------+
+|refactor   |7      |7        |=          |
++-----------+-------+---------+-----------+
+|warning    |8      |8        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |9           |
++-----------+------------+
+|W0233      |4           |
++-----------+------------+
+|C0103      |4           |
++-----------+------------+
+|R0915      |3           |
++-----------+------------+
+|R0912      |3           |
++-----------+------------+
+|W0703      |2           |
++-----------+------------+
+|F0401      |2           |
++-----------+------------+
+|W0221      |1           |
++-----------+------------+
+|W0122      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 9.47/10 (previous run: 9.47/10)
+So close to being perfect...
+

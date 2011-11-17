@@ -1,6 +1,7 @@
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module openimage
-C: 74: Line too long (92/80)
-C: 14: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 F: 15: Unable to import 'fabioutils'
 F: 16: Unable to import 'fabioimage'
 F: 17: Unable to import 'edfimage'
@@ -37,8 +38,8 @@ W: 28: Unused import dm3image
 W: 34: Unused import xsdimage
 W: 20: Unused import marccdimage
 W: 26: Unused import GEimage
-W: 33: Unused import cbfimage
 W: 17: Unused import edfimage
+W: 33: Unused import cbfimage
 W: 27: Unused import OXDimage
 W: 15: Unused import getnum
 W: 19: Unused import tifimage
@@ -47,7 +48,20 @@ W: 23: Unused import brukerimage
 
 Report
 ======
-79 statements analysed.
+78 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -55,13 +69,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |102    |69.39 |NC       |NC         |
+|code      |102    |69.39 |102      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |19     |12.93 |NC       |NC         |
+|docstring |19     |12.93 |19       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |11     |7.48  |NC       |NC         |
+|comment   |11     |7.48  |11       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |15     |10.20 |NC       |NC         |
+|empty     |15     |10.20 |15       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -72,27 +86,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |0      |NC         |NC         |0           |0        |
+|class    |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |0      |NC         |NC         |0           |0        |
+|method   |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |4      |NC         |NC         |100.00      |0.00     |
+|function |4      |4          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -102,13 +103,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |2      |NC       |NC         |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |22     |NC       |NC         |
+|warning    |22     |22       |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -129,14 +130,11 @@ Messages
 +-----------+------------+
 |W0212      |1           |
 +-----------+------------+
-|C0301      |1           |
-+-----------+------------+
-|C0103      |1           |
-+-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.96/10
+Your code has been rated at 7.18/10 (previous run: 7.18/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

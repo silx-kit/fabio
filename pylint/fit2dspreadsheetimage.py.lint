@@ -1,29 +1,24 @@
 ************* Module fit2dspreadsheetimage
 W: 23: TODO : test for minimal attributes?
 F: 10: Unable to import 'fabioimage'
-W: 15:fit2dspreadsheetimage: Class has no __init__ method
 C: 15:fit2dspreadsheetimage: Invalid name "fit2dspreadsheetimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 15:fit2dspreadsheetimage: Class has no __init__ method
 E: 42:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no 'resetvals' member
 E: 43:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no '_open' member
-E: 52:fit2dspreadsheetimage.read: Module 'numpy' has no 'float32' member
-E: 54:fit2dspreadsheetimage.read: Module 'numpy' has no 'array' member
 W: 63:fit2dspreadsheetimage.read: No exception type(s) specified
-E: 64:fit2dspreadsheetimage.read: Module 'numpy' has no 'array' member
 E: 70:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no 'resetvals' member
-R: 15:fit2dspreadsheetimage: Too few public methods (1/2)
 W: 72:fit2dspreadsheetimage.read: Attribute 'pilimage' defined outside __init__
 W: 54:fit2dspreadsheetimage.read: Attribute 'bpp' defined outside __init__
 W: 48:fit2dspreadsheetimage.read: Attribute 'dim2' defined outside __init__
 W: 41:fit2dspreadsheetimage.read: Attribute 'header' defined outside __init__
 W: 47:fit2dspreadsheetimage.read: Attribute 'dim1' defined outside __init__
 W: 64:fit2dspreadsheetimage.read: Attribute 'data' defined outside __init__
-C: 78: Invalid name "start" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 79: Invalid name "img" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 15:fit2dspreadsheetimage: Too few public methods (1/2)
 
 
 Report
 ======
-51 statements analysed.
+50 statements analysed.
 
 Raw metrics
 -----------
@@ -31,31 +26,27 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |50     |60.98 |NC       |NC         |
+|code      |50     |60.98 |50       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |16     |19.51 |NC       |NC         |
+|docstring |16     |19.51 |16       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |1      |1.22  |NC       |NC         |
+|comment   |1      |1.22  |1        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |15     |18.29 |NC       |NC         |
+|empty     |15     |18.29 |15       |=          |
 +----------+-------+------+---------+-----------+
 
 
 
-Statistics by type
-------------------
+Duplication
+-----------
 
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
 
@@ -67,20 +58,23 @@ External dependencies
       \-pylab 
         \-imshow (fit2dspreadsheetimage)
         \-show (fit2dspreadsheetimage)
-    numpy (fit2dspreadsheetimage)
 
 
 
-Duplication
------------
+Statistics by type
+------------------
 
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |2          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -90,13 +84,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |3      |NC       |NC         |
+|convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |9      |NC       |NC         |
+|warning    |9      |9        |=          |
 +-----------+-------+---------+-----------+
-|error      |6      |NC       |NC         |
+|error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -109,9 +103,7 @@ Messages
 +===========+============+
 |W0201      |6           |
 +-----------+------------+
-|E1101      |6           |
-+-----------+------------+
-|C0103      |3           |
+|E1101      |3           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
@@ -123,10 +115,13 @@ Messages
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
+|C0103      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 1.57/10
+Your code has been rated at 4.80/10 (previous run: 4.80/10)
+A little more work would make it acceptable.
 

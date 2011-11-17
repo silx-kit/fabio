@@ -1,61 +1,46 @@
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module tifimage
-C:  9: Line too long (81/80)
-C: 38: Line too long (167/80)
-C: 99: Line too long (112/80)
-C:136: Line too long (108/80)
-C:137: Line too long (97/80)
-C:138: Line too long (102/80)
-C:153: Line too long (100/80)
-C:193: Line too long (85/80)
-C:203: Line too long (89/80)
-C:225: Line too long (94/80)
-C:250: Line too long (88/80)
-C:253: Line too long (84/80)
-C:258: Line too long (84/80)
-C:264: Line too long (84/80)
-C:266: Line too long (170/80)
-C: 22: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-E: 28: Module 'numpy' has no 'uint16' member
-E: 29: Module 'numpy' has no 'float32' member
-E: 31: Module 'numpy' has no 'int32' member
-E: 32: Module 'numpy' has no 'uint8' member
-C: 42: Invalid name "baseline_tiff_tags" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 42: Duplicate key 296 in dictionary
-R: 71:tifimage: Too many instance attributes (9/7)
 C: 71:tifimage: Invalid name "tifimage" (should match [A-Z_][a-zA-Z0-9]+$)
-E:101:tifimage._readheader: Module 'numpy' has no 'fromstring' member
-E:101:tifimage._readheader: Module 'numpy' has no 'uint16' member
-C:114:tifimage.read: Invalid name "tiffIO" (should match [a-z_][a-z0-9_]{2,30}$)
 W:130:tifimage.read: No exception type(s) specified
-E:136:tifimage.read: Module 'numpy' has no 'fromstring' member
-E:138:tifimage.read: Module 'numpy' has no 'fromstring' member
-E:138:tifimage.read: Module 'numpy' has no 'float32' member
-E:141:tifimage.read: Module 'numpy' has no 'zeros' member
-C:152:tifimage.write: Invalid name "tiffIO" (should match [a-z_][a-z0-9_]{2,30}$)
-C:158:Tiff_header: Missing docstring
 C:158:Tiff_header: Invalid name "Tiff_header" (should match [A-Z_][a-zA-Z0-9]+$)
+C:158:Tiff_header: Missing docstring
 R:158:Tiff_header: Too few public methods (0/2)
-C:182:Image_File_Directory: Missing docstring
 C:182:Image_File_Directory: Invalid name "Image_File_Directory" (should match [A-Z_][a-zA-Z0-9]+$)
-W:183:Image_File_Directory.__init__: Unused argument 'instring'
+C:182:Image_File_Directory: Missing docstring
 C:188:Image_File_Directory.unpack: Missing docstring
 C:189:Image_File_Directory.unpack: More than one statement on a single line
-C:191:Image_File_Directory.unpack: Invalid name "strInput" (should match [a-z_][a-z0-9_]{2,30}$)
-C:195:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
-C:199:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
+C:195:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:199:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 R:182:Image_File_Directory: Too few public methods (1/2)
-C:206:Image_File_Directory_entry: Missing docstring
 C:206:Image_File_Directory_entry: Invalid name "Image_File_Directory_entry" (should match [A-Z_][a-zA-Z0-9]+$)
+C:206:Image_File_Directory_entry: Missing docstring
 C:214:Image_File_Directory_entry.unpack: Missing docstring
-C:214:Image_File_Directory_entry.unpack: Invalid name "strInput" (should match [a-z_][a-z0-9_]{2,30}$)
-C:214:Image_File_Directory_entry.unpack: Invalid name "strInput" (should match [a-z_][a-z0-9_]{2,30}$)
 C:235:Image_File_Directory_entry.extract_data: Missing docstring
-R:235:Image_File_Directory_entry.extract_data: Too many branches (15/12)
 
 
 Report
 ======
-153 statements analysed.
+152 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -63,7 +48,7 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |183    |72.62 |182      |+1.00      |
+|code      |183    |72.62 |183      |=          |
 +----------+-------+------+---------+-----------+
 |docstring |33     |13.10 |33       |=          |
 +----------+-------+------+---------+-----------+
@@ -71,6 +56,17 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |empty     |18     |7.14  |18       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    TiffIO 
+      \-TiffIO (tifimage)
+    fabioimage 
+      \-fabioimage (tifimage)
 
 
 
@@ -86,33 +82,8 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |method   |10     |10         |=          |70.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0           |0        |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    TiffIO 
-      \-TiffIO (tifimage)
-    fabioimage 
-      \-fabioimage (tifimage)
-    numpy (tifimage)
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -122,13 +93,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |35     |34       |+1.00      |
+|convention |13     |13       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |4      |4        |=          |
+|refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |7        |-4.00      |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |10     |10       |=          |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -139,25 +110,15 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0301      |15          |
-+-----------+------------+
-|C0103      |13          |
-+-----------+------------+
-|E1101      |10          |
-+-----------+------------+
 |C0111      |6           |
++-----------+------------+
+|C0103      |6           |
 +-----------+------------+
 |R0903      |2           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
-|W0613      |1           |
-+-----------+------------+
 |W0109      |1           |
-+-----------+------------+
-|R0912      |1           |
-+-----------+------------+
-|R0902      |1           |
 +-----------+------------+
 |C0321      |1           |
 +-----------+------------+
@@ -166,5 +127,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 3.99/10 (previous run: 3.75/10)
+Your code has been rated at 8.88/10 (previous run: 8.88/10)
+That's pretty good. Good work mate.
 

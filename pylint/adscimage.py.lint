@@ -1,9 +1,11 @@
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module adscimage
 W: 91: FIXME ??? - made padding match header bytes keyword            
 F: 19: Unable to import 'fabioimage'
-C: 20: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-W: 22:adscimage: Class has no __init__ method
 C: 22:adscimage: Invalid name "adscimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 22:adscimage: Class has no __init__ method
 E: 27:adscimage.read: Instance of 'adscimage' has no '_open' member
 E: 34:adscimage.read: Instance of 'adscimage' has no 'header' member
 E: 39:adscimage.read: Instance of 'adscimage' has no '_open' member
@@ -11,14 +13,6 @@ E: 40:adscimage.read: Instance of 'adscimage' has no 'header' member
 E: 45:adscimage.read: Instance of 'adscimage' has no 'header' member
 E: 46:adscimage.read: Instance of 'adscimage' has no 'header' member
 E: 47:adscimage.read: Instance of 'adscimage' has no 'header' member
-E: 49:adscimage.read: Module 'numpy' has no 'reshape' member
-E: 50:adscimage.read: Module 'numpy' has no 'fromstring' member
-E: 50:adscimage.read: Module 'numpy' has no 'uint16' member
-E: 55:adscimage.read: Module 'numpy' has no 'uint16' member
-E: 59:adscimage.read: Module 'numpy' has no 'reshape' member
-E: 60:adscimage.read: Module 'numpy' has no 'fromstring' member
-E: 60:adscimage.read: Module 'numpy' has no 'uint16' member
-E: 65:adscimage.read: Module 'numpy' has no 'uint16' member
 E: 67:adscimage.read: Instance of 'adscimage' has no 'resetvals' member
 E: 78:adscimage._readheader: Instance of 'adscimage' has no 'header_keys' member
 E: 79:adscimage._readheader: Instance of 'adscimage' has no 'header' member
@@ -27,12 +21,10 @@ E: 90:adscimage.write: Instance of 'adscimage' has no 'header' member
 E: 93:adscimage.write: Instance of 'adscimage' has no 'header' member
 E: 94:adscimage.write: Instance of 'adscimage' has no 'header' member
 E:109:adscimage.write: Instance of 'adscimage' has no 'header' member
-E:110:adscimage.write: Module 'numpy' has no 'uint16' member
-E:113:adscimage.write: Module 'numpy' has no 'uint16' member
 W: 46:adscimage.read: Attribute 'dim2' defined outside __init__
 W: 45:adscimage.read: Attribute 'dim1' defined outside __init__
-W: 59:adscimage.read: Attribute 'data' defined outside __init__
-W: 65:adscimage.read: Attribute 'bytecode' defined outside __init__
+W: 49:adscimage.read: Attribute 'data' defined outside __init__
+W: 55:adscimage.read: Attribute 'bytecode' defined outside __init__
 E:125:test: Instance of 'adscimage' has no 'rebin' member
 E:128:test: Instance of 'adscimage' has no 'getmax' member
 E:128:test: Instance of 'adscimage' has no 'getmin' member
@@ -43,7 +35,7 @@ E:130:test: Instance of 'adscimage' has no 'integrate_area' member
 
 Report
 ======
-78 statements analysed.
+77 statements analysed.
 
 Raw metrics
 -----------
@@ -51,39 +43,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |84     |63.16 |NC       |NC         |
+|code      |84     |63.16 |84       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |24     |18.05 |NC       |NC         |
+|docstring |24     |18.05 |24       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |9      |6.77  |NC       |NC         |
+|comment   |9      |6.77  |9        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |16     |12.03 |NC       |NC         |
+|empty     |16     |12.03 |16       |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (adscimage)
 
 
 
@@ -93,10 +60,27 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -106,13 +90,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |2      |NC       |NC         |
+|convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |6      |NC       |NC         |
+|warning    |6      |6        |=          |
 +-----------+-------+---------+-----------+
-|error      |31     |NC       |NC         |
+|error      |21     |21       |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -123,11 +107,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|E1101      |31          |
+|E1101      |21          |
 +-----------+------------+
 |W0201      |4           |
-+-----------+------------+
-|C0103      |2           |
 +-----------+------------+
 |W0511      |1           |
 +-----------+------------+
@@ -135,10 +117,13 @@ Messages
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
+|C0103      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -10.90/10
+Your code has been rated at -4.55/10 (previous run: -4.55/10)
+You have to do something quick !
 

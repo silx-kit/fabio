@@ -1,23 +1,23 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testmar345image
-C:  9: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 10: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 25: No exception type(s) specified
 F: 27: Unable to import 'utilstest'
-C: 39:testMAR345: Missing docstring
 C: 39:testMAR345: Invalid name "testMAR345" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 40:testMAR345.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 39:testMAR345: Missing docstring
 W: 53:testMAR345.test_read: Unused variable 'dim2'
-R: 39:testMAR345: Too many public methods (46/20)
 C: 67:test_suite_all_mar345: Missing docstring
-C: 68:test_suite_all_mar345: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 73: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 74: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 30: Unused import fabio
 
 
 Report
 ======
-49 statements analysed.
+48 statements analysed.
 
 Raw metrics
 -----------
@@ -25,31 +25,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |50     |68.49 |NC       |NC         |
+|code      |50     |68.49 |50       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |11     |15.07 |NC       |NC         |
+|docstring |11     |15.07 |11       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |4.11  |NC       |NC         |
+|comment   |3      |4.11  |3        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |9      |12.33 |NC       |NC         |
+|empty     |9      |12.33 |9        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |100.00      |50.00    |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -59,10 +42,37 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testmar345image)
+      \-mar345image 
+        \-mar345image (testmar345image)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |2          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -72,13 +82,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |9      |NC       |NC         |
+|convention |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |NC       |NC         |
+|warning    |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -89,8 +99,6 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |7           |
-+-----------+------------+
 |C0111      |2           |
 +-----------+------------+
 |W0702      |1           |
@@ -99,14 +107,15 @@ Messages
 +-----------+------------+
 |W0611      |1           |
 +-----------+------------+
-|R0904      |1           |
-+-----------+------------+
 |F0401      |1           |
++-----------+------------+
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.35/10
+Your code has been rated at 8.75/10 (previous run: 8.75/10)
+That's pretty good. Good work mate.
 

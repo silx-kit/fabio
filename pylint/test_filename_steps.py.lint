@@ -1,31 +1,26 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module test_filename_steps
 C:  1: Missing docstring
-C:  5: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:  6: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 21: No exception type(s) specified
 F: 23: Unable to import 'utilstest'
-C: 28:test_next: Missing docstring
 C: 28:test_next: Invalid name "test_next" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 28:test_next: Missing docstring
 W: 30:test_next.test_next1: Redefining built-in 'next'
 C: 29:test_next.test_next1: Missing docstring
-R: 28:test_next: Too many public methods (46/20)
-C: 37:test_prev: Missing docstring
 C: 37:test_prev: Invalid name "test_prev" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 37:test_prev: Missing docstring
 C: 38:test_prev.test_prev1: Missing docstring
-R: 37:test_prev: Too many public methods (46/20)
-C: 46:test_jump: Missing docstring
 C: 46:test_jump: Invalid name "test_jump" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 46:test_jump: Missing docstring
 C: 47:test_jump.test_jump1: Missing docstring
-R: 46:test_jump: Too many public methods (46/20)
 C: 56:test_suite_all_steps: Missing docstring
-C: 57:test_suite_all_steps: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 65: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 66: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 
 
 Report
 ======
-44 statements analysed.
+43 statements analysed.
 
 Raw metrics
 -----------
@@ -33,31 +28,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |55     |91.67 |NC       |NC         |
+|code      |55     |91.67 |55       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |0      |0.00  |NC       |NC         |
+|docstring |0      |0.00  |0        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.33  |NC       |NC         |
+|comment   |2      |3.33  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |3      |5.00  |NC       |NC         |
+|empty     |3      |5.00  |3        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |3      |NC         |NC         |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -67,10 +45,35 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (test_filename_steps)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |3      |3          |=          |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -80,13 +83,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |16     |NC       |NC         |
+|convention |11     |11       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |3      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -99,9 +102,7 @@ Messages
 +===========+============+
 |C0111      |8           |
 +-----------+------------+
-|C0103      |8           |
-+-----------+------------+
-|R0904      |3           |
+|C0103      |3           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
@@ -114,5 +115,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 5.23/10
+Your code has been rated at 6.98/10 (previous run: 6.98/10)
+This is okay-ish, but I'm sure you can do better.
 

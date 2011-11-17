@@ -1,41 +1,48 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testtifimage
-C: 13: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 14: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 29: No exception type(s) specified
 F: 31: Unable to import 'utilstest'
 F: 35: Unable to import 'testtifgz'
-C: 37:testtifimage_pilatus: Missing docstring
 C: 37:testtifimage_pilatus: Invalid name "testtifimage_pilatus" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 38:testtifimage_pilatus.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 53:testtifimage_pilatus.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 54:testtifimage_pilatus.test1: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 37:testtifimage_pilatus: Too many public methods (46/20)
-C: 57:testtifimage_packbits: Missing docstring
+C: 37:testtifimage_pilatus: Missing docstring
+C: 38:testtifimage_pilatus.setUp: Missing docstring
+C: 53:testtifimage_pilatus.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 54:testtifimage_pilatus.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C: 57:testtifimage_packbits: Invalid name "testtifimage_packbits" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 58:testtifimage_packbits.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 73:testtifimage_packbits.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 74:testtifimage_packbits.test1: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 57:testtifimage_packbits: Too many public methods (46/20)
-C: 77:testtifimage_fit2d: Missing docstring
+C: 57:testtifimage_packbits: Missing docstring
+C: 58:testtifimage_packbits.setUp: Missing docstring
+C: 73:testtifimage_packbits.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 74:testtifimage_packbits.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C: 77:testtifimage_fit2d: Invalid name "testtifimage_fit2d" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 78:testtifimage_fit2d.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 93:testtifimage_fit2d.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 94:testtifimage_fit2d.test1: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 77:testtifimage_fit2d: Too many public methods (46/20)
+C: 77:testtifimage_fit2d: Missing docstring
+C: 78:testtifimage_fit2d.setUp: Missing docstring
+C: 93:testtifimage_fit2d.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 94:testtifimage_fit2d.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C: 97:testtifimage_a0009: Invalid name "testtifimage_a0009" (should match [A-Z_][a-zA-Z0-9]+$)
-C:105:testtifimage_a0009.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C:116:testtifimage_a0009.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-C:117:testtifimage_a0009.test1: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 97:testtifimage_a0009: Too many public methods (46/20)
+C:105:testtifimage_a0009.setUp: Missing docstring
+C:116:testtifimage_a0009.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:117:testtifimage_a0009.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:121:test_suite_all_tiffimage: Missing docstring
-C:122:test_suite_all_tiffimage: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C:132: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:133: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 
 
 Report
 ======
-86 statements analysed.
+85 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -43,14 +50,22 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |85     |67.46 |NC       |NC         |
+|code      |85     |67.46 |85       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |30     |23.81 |NC       |NC         |
+|docstring |30     |23.81 |30       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |1.59  |NC       |NC         |
+|comment   |2      |1.59  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |9      |7.14  |NC       |NC         |
+|empty     |9      |7.14  |9        |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testtifimage)
 
 
 
@@ -60,27 +75,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |4      |NC         |NC         |25.00       |100.00   |
+|class    |4      |4          |=          |25.00       |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |8      |NC         |NC         |100.00      |50.00    |
+|method   |8      |8          |=          |50.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
+|function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -90,13 +92,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |25     |NC       |NC         |
+|convention |20     |20       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |4      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |1      |NC       |NC         |
+|warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -107,11 +109,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |21          |
+|C0103      |12          |
 +-----------+------------+
-|R0904      |4           |
-+-----------+------------+
-|C0111      |4           |
+|C0111      |8           |
 +-----------+------------+
 |F0401      |2           |
 +-----------+------------+
@@ -122,5 +122,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 6.51/10
+Your code has been rated at 7.53/10 (previous run: 7.53/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

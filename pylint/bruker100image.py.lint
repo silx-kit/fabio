@@ -1,19 +1,16 @@
 ************* Module bruker100image
-C: 57: Line too long (81/80)
-C: 65: Line too long (89/80)
 W: 12: FIXME - why is this different for bruker100images?
 C:  1: Missing docstring
 F:  5: Unable to import 'brukerimage'
 F:  6: Unable to import 'readbytestream'
-W:  8:bruker100image: Class has no __init__ method
-C:  8:bruker100image: Missing docstring
 C:  8:bruker100image: Invalid name "bruker100image" (should match [A-Z_][a-zA-Z0-9]+$)
+C:  8:bruker100image: Missing docstring
+W:  8:bruker100image: Class has no __init__ method
 C: 11:bruker100image.toPIL16: Missing docstring
-C: 11:bruker100image.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 15:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 22:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 15:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 22:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C: 29:bruker100image.read: Missing docstring
-C: 30:bruker100image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 30:bruker100image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 E: 32:bruker100image.read: Instance of 'bruker100image' has no '_readheader' member
 E: 36:bruker100image.read: Instance of 'bruker100image' has no 'header' member
 E: 37:bruker100image.read: Instance of 'bruker100image' has no 'header' member
@@ -22,11 +19,11 @@ E: 47:bruker100image.read: Instance of 'bruker100image' has no 'header' member
 E: 54:bruker100image.read: Undefined variable 'numpy'
 E: 55:bruker100image.read: Undefined variable 'numpy'
 E: 56:bruker100image.read: Undefined variable 'numpy'
-C: 57:bruker100image.read: Invalid name "ar" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 57:bruker100image.read: Invalid name "ar" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 E: 57:bruker100image.read: Undefined variable 'numpy'
 E: 57:bruker100image.read: Undefined variable 'numpy'
 E: 58:bruker100image.read: Undefined variable 'numpy'
-C: 65:bruker100image.read: Invalid name "M" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 65:bruker100image.read: Invalid name "M" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 E: 65:bruker100image.read: Undefined variable 'numpy'
 E: 65:bruker100image.read: Undefined variable 'numpy'
 E: 65:bruker100image.read: Undefined variable 'numpy'
@@ -35,21 +32,31 @@ E: 78:bruker100image.read: Instance of 'bruker100image' has no 'resetvals' membe
 W: 76:bruker100image.read: Attribute 'dim2' defined outside __init__
 W: 76:bruker100image.read: Attribute 'dim1' defined outside __init__
 W: 44:bruker100image.read: Attribute 'data' defined outside __init__
-C: 84: Invalid name "b" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 87: Invalid name "r" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 E: 88: Instance of 'bruker100image' has no 'rebin' member
 E: 90: Instance of 'bruker100image' has no 'getmax' member
 E: 90: Instance of 'bruker100image' has no 'getmin' member
 E: 90: Instance of 'bruker100image' has no 'getmean' member
 E: 90: Instance of 'bruker100image' has no 'getstddev' member
 E: 92: Instance of 'bruker100image' has no 'integrate_area' member
-C: 94: Invalid name "e" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W:  2: Unused import N
 
 
 Report
 ======
-55 statements analysed.
+54 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -57,13 +64,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |63     |72.41 |NC       |NC         |
+|code      |63     |72.41 |63       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |7      |8.05  |NC       |NC         |
+|docstring |7      |8.05  |7        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |7      |8.05  |NC       |NC         |
+|comment   |7      |8.05  |7        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |10     |11.49 |NC       |NC         |
+|empty     |10     |11.49 |10       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -74,35 +81,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |0.00        |0.00     |
+|module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |0.00        |100.00   |
+|class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |0.00        |50.00    |
+|method   |2      |2          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0           |0        |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (bruker100image)
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -112,13 +98,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |16     |NC       |NC         |
+|convention |10     |10       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |6      |NC       |NC         |
+|warning    |6      |6        |=          |
 +-----------+-------+---------+-----------+
-|error      |22     |NC       |NC         |
+|error      |22     |22       |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -133,15 +119,13 @@ Messages
 +-----------+------------+
 |E0602      |10          |
 +-----------+------------+
-|C0103      |10          |
+|C0103      |6           |
 +-----------+------------+
 |C0111      |4           |
 +-----------+------------+
 |W0201      |3           |
 +-----------+------------+
 |F0401      |2           |
-+-----------+------------+
-|C0301      |2           |
 +-----------+------------+
 |W0611      |1           |
 +-----------+------------+
@@ -154,5 +138,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -14.00/10
+Your code has been rated at -13.33/10 (previous run: -13.33/10)
+You have to do something quick !
 

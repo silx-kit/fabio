@@ -1,13 +1,13 @@
 ************* Module datIO
 W: 25: Bad indentation. Found 16 spaces, expected 12
-C: 55: Line too long (95/80)
 C:  1: Invalid name "datIO" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
 C: 13:fabiodata: Invalid name "fabiodata" (should match [A-Z_][a-zA-Z0-9]+$)
 R: 35:fabiodata.read: Method could be a function
 W: 35:fabiodata.read: Unused argument 'fname'
 R: 13:fabiodata: Too few public methods (1/2)
-C: 44:columnfile: Missing docstring
 C: 44:columnfile: Invalid name "columnfile" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 44:columnfile: Missing docstring
+C: 46:columnfile.read: Missing docstring
 W: 46:columnfile.read: Signature differs from overridden method
 F: 47:columnfile.read: Unable to import 'cf_io'
 R: 44:columnfile: Too few public methods (1/2)
@@ -15,7 +15,7 @@ R: 44:columnfile: Too few public methods (1/2)
 
 Report
 ======
-27 statements analysed.
+26 statements analysed.
 
 Raw metrics
 -----------
@@ -23,31 +23,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |27     |45.00 |NC       |NC         |
+|code      |27     |45.00 |27       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |22     |36.67 |NC       |NC         |
+|docstring |22     |36.67 |22       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.33  |NC       |NC         |
+|comment   |2      |3.33  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |9      |15.00 |NC       |NC         |
+|empty     |9      |15.00 |9        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |50.00       |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -57,10 +40,27 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |50.00       |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |66.67       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -70,13 +70,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |NC       |NC         |
+|convention |5      |5        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |3      |NC       |NC         |
+|refactor   |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |NC       |NC         |
+|warning    |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -91,6 +91,8 @@ Messages
 +-----------+------------+
 |R0903      |2           |
 +-----------+------------+
+|C0111      |2           |
++-----------+------------+
 |W0613      |1           |
 +-----------+------------+
 |W0311      |1           |
@@ -101,14 +103,11 @@ Messages
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
-|C0301      |1           |
-+-----------+------------+
-|C0111      |1           |
-+-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 5.93/10
+Your code has been rated at 5.77/10 (previous run: 5.77/10)
+Just the bare minimum. Give it a bit more polish. 
 

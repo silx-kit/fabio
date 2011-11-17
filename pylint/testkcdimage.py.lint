@@ -1,23 +1,19 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testkcdimage
-C: 42: Line too long (88/80)
-C: 66: Line too long (81/80)
-C: 10: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 11: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 26: No exception type(s) specified
 F: 28: Unable to import 'utilstest'
 C: 38:testkcd: Invalid name "testkcd" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 45:testkcd.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 38:testkcd: Too many public methods (47/20)
 C: 74:test_suite_all_kcd: Missing docstring
-C: 75:test_suite_all_kcd: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 81: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 82: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 33: Unused import edfimage
 
 
 Report
 ======
-59 statements analysed.
+58 statements analysed.
 
 Raw metrics
 -----------
@@ -25,31 +21,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |58     |75.32 |NC       |NC         |
+|code      |58     |75.32 |58       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |9      |11.69 |NC       |NC         |
+|docstring |9      |11.69 |9        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |2.60  |NC       |NC         |
+|comment   |2      |2.60  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |8      |10.39 |NC       |NC         |
+|empty     |8      |10.39 |8        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |NC         |NC         |100.00      |33.33    |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -59,10 +38,41 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testkcdimage)
+      \-edfimage 
+      | \-edfimage (testkcdimage)
+      \-kcdimage 
+      | \-kcdimage (testkcdimage)
+      \-openimage 
+        \-openimage (testkcdimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -72,13 +82,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |10     |NC       |NC         |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -89,24 +99,21 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |7           |
-+-----------+------------+
-|C0301      |2           |
-+-----------+------------+
 |W0702      |1           |
 +-----------+------------+
 |W0611      |1           |
 +-----------+------------+
-|R0904      |1           |
-+-----------+------------+
 |F0401      |1           |
 +-----------+------------+
 |C0111      |1           |
++-----------+------------+
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.80/10
+Your code has been rated at 9.31/10 (previous run: 9.31/10)
+So close to being perfect...
 

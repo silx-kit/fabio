@@ -1,31 +1,40 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testtifgz
-C: 10: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 11: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 26: No exception type(s) specified
 F: 28: Unable to import 'utilstest'
-C: 34:testgziptif: Missing docstring
 C: 34:testgziptif: Invalid name "testgziptif" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 35:testgziptif.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 34:testgziptif: Missing docstring
+C: 35:testgziptif.setUp: Missing docstring
 C: 41:testgziptif.test1: Missing docstring
-C: 42:testgziptif.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 43:testgziptif.test1: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 34:testgziptif: Too many public methods (46/20)
-C: 48:testtif_rect: Missing docstring
+C: 42:testgziptif.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 43:testgziptif.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C: 48:testtif_rect: Invalid name "testtif_rect" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 50:testtif_rect.setUp: Invalid name "fn" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 49:testtif_rect.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 48:testtif_rect: Missing docstring
+C: 50:testtif_rect.setUp: Invalid name "fn" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 49:testtif_rect.setUp: Missing docstring
 C: 52:testtif_rect.test1: Missing docstring
-C: 54:testtif_rect.test1: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 48:testtif_rect: Too many public methods (46/20)
+C: 54:testtif_rect.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C: 58:test_suite_all_tiff: Missing docstring
-C: 59:test_suite_all_tiff: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 65: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 66: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 
 
 Report
 ======
-49 statements analysed.
+48 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -33,14 +42,22 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |48     |78.69 |NC       |NC         |
+|code      |48     |78.69 |48       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |5      |8.20  |NC       |NC         |
+|docstring |5      |8.20  |5        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.28  |NC       |NC         |
+|comment   |2      |3.28  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |6      |9.84  |NC       |NC         |
+|empty     |6      |9.84  |6        |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testtifgz)
 
 
 
@@ -50,27 +67,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |0.00        |100.00   |
+|class    |2      |2          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |50.00       |50.00    |
+|method   |4      |4          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
+|function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -80,13 +84,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |18     |NC       |NC         |
+|convention |13     |13       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |2      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |1      |NC       |NC         |
+|warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -97,11 +101,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |13          |
+|C0111      |7           |
 +-----------+------------+
-|C0111      |5           |
-+-----------+------------+
-|R0904      |2           |
+|C0103      |6           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
@@ -112,5 +114,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 5.71/10
+Your code has been rated at 7.08/10 (previous run: 7.08/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

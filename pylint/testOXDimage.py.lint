@@ -1,33 +1,32 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testOXDimage
 C:  1: Invalid name "testOXDimage" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
-C: 10: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 11: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 26: No exception type(s) specified
 F: 28: Unable to import 'utilstest'
-C: 39:testOXD: Missing docstring
 C: 39:testOXD: Invalid name "testOXD" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 40:testOXD.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 39:testOXD: Too many public methods (46/20)
-C: 63:testOXD_same: Missing docstring
+C: 39:testOXD: Missing docstring
+C: 40:testOXD.setUp: Missing docstring
 C: 63:testOXD_same: Invalid name "testOXD_same" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 65:testOXD_same.setUp: Invalid name "f1" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 66:testOXD_same.setUp: Invalid name "f2" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 64:testOXD_same.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 69:testOXD_same.test_same: Invalid name "o1" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 70:testOXD_same.test_same: Invalid name "o2" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 72:testOXD_same.test_same: Invalid name "a1" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 73:testOXD_same.test_same: Invalid name "a2" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 63:testOXD_same: Too many public methods (46/20)
+C: 63:testOXD_same: Missing docstring
+C: 65:testOXD_same.setUp: Invalid name "f1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 66:testOXD_same.setUp: Invalid name "f2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 64:testOXD_same.setUp: Missing docstring
+C: 69:testOXD_same.test_same: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 70:testOXD_same.test_same: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 72:testOXD_same.test_same: Invalid name "a1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 73:testOXD_same.test_same: Invalid name "a2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C: 77:test_suite_all_OXD: Missing docstring
-C: 77:test_suite_all_OXD: Invalid name "test_suite_all_OXD" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 78:test_suite_all_OXD: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 84: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 85: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 
 
 Report
 ======
-62 statements analysed.
+61 statements analysed.
 
 Raw metrics
 -----------
@@ -35,31 +34,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |63     |77.78 |NC       |NC         |
+|code      |63     |77.78 |63       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |7      |8.64  |NC       |NC         |
+|docstring |7      |8.64  |7        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |3.70  |NC       |NC         |
+|comment   |3      |3.70  |3        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |8      |9.88  |NC       |NC         |
+|empty     |8      |9.88  |8        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |100.00      |50.00    |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -69,10 +51,37 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
+|nb duplicated lines      |0     |0        |=          |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
+|percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testOXDimage)
+      \-OXDimage 
+        \-OXDimage (testOXDimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |4          |=          |50.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -82,13 +91,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |20     |NC       |NC         |
+|convention |14     |14       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |2      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |1      |NC       |NC         |
+|warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -99,11 +108,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |17          |
+|C0103      |9           |
 +-----------+------------+
-|C0111      |3           |
-+-----------+------------+
-|R0904      |2           |
+|C0111      |5           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
@@ -114,5 +121,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 6.29/10
+Your code has been rated at 7.54/10 (previous run: 7.54/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 

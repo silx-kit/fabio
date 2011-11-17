@@ -1,29 +1,37 @@
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
+
 ************* Module testmccdimage
-C: 63: Line too long (81/80)
-C: 10: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 11: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 26: No exception type(s) specified
 F: 28: Unable to import 'utilstest'
 C: 45:testnormaltifok: Invalid name "testnormaltifok" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 51:testnormaltifok.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 55:testnormaltifok.setUp: Module 'numpy' has no 'zeros' member
-E: 55:testnormaltifok.setUp: Module 'numpy' has no 'uint16' member
 C: 60:testnormaltifok.test_read_openimage: Missing docstring
-R: 45:testnormaltifok: Too many public methods (46/20)
-C: 73:testflatmccds: Missing docstring
 C: 73:testflatmccds: Invalid name "testflatmccds" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 74:testflatmccds.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 73:testflatmccds: Too many public methods (46/20)
+C: 73:testflatmccds: Missing docstring
+C: 74:testflatmccds.setUp: Missing docstring
 C: 98:test_suite_all_mccd: Missing docstring
-C: 99:test_suite_all_mccd: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C:105: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:106: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 31: Unused import fabio
 
 
 Report
 ======
-69 statements analysed.
+68 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -31,14 +39,28 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |75     |71.43 |NC       |NC         |
+|code      |75     |71.43 |75       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |12     |11.43 |NC       |NC         |
+|docstring |12     |11.43 |12       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |4      |3.81  |NC       |NC         |
+|comment   |4      |3.81  |4        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |14     |13.33 |NC       |NC         |
+|empty     |14     |13.33 |14       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testmccdimage)
+      \-marccdimage 
+      | \-marccdimage (testmccdimage)
+      \-openimage 
+      | \-openimage (testmccdimage)
+      \-tifimage 
+        \-tifimage (testmccdimage)
 
 
 
@@ -48,35 +70,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |50.00       |100.00   |
+|class    |2      |2          |=          |50.00       |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |75.00       |50.00    |
+|method   |4      |4          |=          |50.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
+|function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (testmccdimage)
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -86,13 +87,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |13     |NC       |NC         |
+|convention |6      |6        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |2      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |2      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -103,13 +104,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |9           |
+|C0111      |4           |
 +-----------+------------+
-|C0111      |3           |
-+-----------+------------+
-|R0904      |2           |
-+-----------+------------+
-|E1101      |2           |
+|C0103      |2           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
@@ -117,12 +114,11 @@ Messages
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
-|C0301      |1           |
-+-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.09/10
+Your code has been rated at 8.82/10 (previous run: 8.82/10)
+That's pretty good. Good work mate.
 

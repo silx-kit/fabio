@@ -1,29 +1,40 @@
+Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
+
 ************* Module file_series
 F: 16: Unable to import 'openimage'
-C: 24:new_file_series0: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 24:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 W: 40:new_file_series0: No exception type(s) specified
-C: 38:new_file_series0: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 38:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 W: 50:new_file_series0: No exception type(s) specified
-C: 82:new_file_series: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 82:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 W: 93:new_file_series: Catch "Exception"
-C: 91:new_file_series: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 92:new_file_series: Invalid name "retVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 95:new_file_series: Invalid name "retVal" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 91:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 W:105:new_file_series: No exception type(s) specified
-C:109:new_file_series: Invalid name "retVal" (should match [a-z_][a-z0-9_]{2,30}$)
 C:110:new_file_series: More than one statement on a single line
 W: 93:new_file_series: Unused variable 'ex'
 C:115:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
 R:115:file_series: Too many public methods (28/20)
 C:229:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
-R:235:numbered_file_series.__init__: Too many arguments (8/5)
 R:229:numbered_file_series: Too many public methods (28/20)
 C:254:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
 
 
 Report
 ======
-140 statements analysed.
+139 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -31,31 +42,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |145    |50.70 |NC       |NC         |
+|code      |145    |50.70 |145      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |101    |35.31 |NC       |NC         |
+|docstring |101    |35.31 |101      |=          |
 +----------+-------+------+---------+-----------+
-|comment   |7      |2.45  |NC       |NC         |
+|comment   |7      |2.45  |7        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |33     |11.54 |NC       |NC         |
+|empty     |33     |11.54 |33       |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |3      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |34     |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |2      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -69,16 +63,20 @@ External dependencies
 
 
 
-Duplication
------------
+Statistics by type
+------------------
 
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |3      |3          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |34     |34         |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |2      |2          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -88,13 +86,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |11     |NC       |NC         |
+|convention |8      |8        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |3      |NC       |NC         |
+|refactor   |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|warning    |5      |NC       |NC         |
+|warning    |5      |5        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -105,7 +103,7 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |10          |
+|C0103      |7           |
 +-----------+------------+
 |W0702      |3           |
 +-----------+------------+
@@ -114,8 +112,6 @@ Messages
 |W0703      |1           |
 +-----------+------------+
 |W0612      |1           |
-+-----------+------------+
-|R0913      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
@@ -126,5 +122,6 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.64/10
+Your code has been rated at 8.92/10 (previous run: 8.92/10)
+That's pretty good. Good work mate.
 

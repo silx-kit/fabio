@@ -1,53 +1,47 @@
 ************* Module HiPiCimage
-C: 93: Line too long (81/80)
-C: 17: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 F: 18: Unable to import 'fabioimage'
 W: 20:HiPiCimage: Class has no __init__ method
-R: 24:HiPiCimage._readheader: Too many local variables (17/15)
-C: 29:HiPiCimage._readheader: Invalid name "Image_tag" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 31:HiPiCimage._readheader: Invalid name "Comment_len" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 31:HiPiCimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 31:HiPiCimage._readheader: Module 'numpy' has no 'uint16' member
-C: 32:HiPiCimage._readheader: Invalid name "Dim_1" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 32:HiPiCimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 32:HiPiCimage._readheader: Module 'numpy' has no 'uint16' member
-C: 33:HiPiCimage._readheader: Invalid name "Dim_2" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 33:HiPiCimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 33:HiPiCimage._readheader: Module 'numpy' has no 'uint16' member
-C: 34:HiPiCimage._readheader: Invalid name "Dim_1_offset" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 34:HiPiCimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 34:HiPiCimage._readheader: Module 'numpy' has no 'uint16' member
-C: 35:HiPiCimage._readheader: Invalid name "Dim_2_offset" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 35:HiPiCimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 35:HiPiCimage._readheader: Module 'numpy' has no 'uint16' member
-C: 36:HiPiCimage._readheader: Invalid name "HeaderType" (should match [a-z_][a-z0-9_]{2,30}$)
-E: 36:HiPiCimage._readheader: Module 'numpy' has no 'fromstring' member
-E: 36:HiPiCimage._readheader: Module 'numpy' has no 'uint16' member
-C: 37:HiPiCimage._readheader: Invalid name "Dump" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 38:HiPiCimage._readheader: Invalid name "Comment" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 49:HiPiCimage._readheader: Invalid name "Comment_split" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 29:HiPiCimage._readheader: Invalid name "Image_tag" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 31:HiPiCimage._readheader: Invalid name "Comment_len" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 32:HiPiCimage._readheader: Invalid name "Dim_1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 33:HiPiCimage._readheader: Invalid name "Dim_2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 34:HiPiCimage._readheader: Invalid name "Dim_1_offset" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 35:HiPiCimage._readheader: Invalid name "Dim_2_offset" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 36:HiPiCimage._readheader: Invalid name "HeaderType" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 37:HiPiCimage._readheader: Invalid name "Dump" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 38:HiPiCimage._readheader: Invalid name "Comment" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 49:HiPiCimage._readheader: Invalid name "Comment_split" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 E: 58:HiPiCimage._readheader: Instance of 'HiPiCimage' has no 'header_keys' member
 W: 36:HiPiCimage._readheader: Unused variable 'HeaderType'
 W: 37:HiPiCimage._readheader: Unused variable 'Dump'
 E: 68:HiPiCimage.read: Instance of 'HiPiCimage' has no 'resetvals' member
 E: 69:HiPiCimage.read: Instance of 'HiPiCimage' has no '_open' member
-E: 78:HiPiCimage.read: Module 'numpy' has no 'uint16' member
-E: 79:HiPiCimage.read: Module 'numpy' has no 'array' member
-E: 87:HiPiCimage.read: Module 'numpy' has no 'reshape' member
-E: 88:HiPiCimage.read: Module 'numpy' has no 'fromstring' member
-R: 20:HiPiCimage: Too few public methods (1/2)
 W:105:HiPiCimage.read: Attribute 'pilimage' defined outside __init__
 W: 79:HiPiCimage.read: Attribute 'bpp' defined outside __init__
 W: 74:HiPiCimage.read: Attribute 'dim2' defined outside __init__
 W: 67:HiPiCimage.read: Attribute 'header' defined outside __init__
 W: 73:HiPiCimage.read: Attribute 'dim1' defined outside __init__
 W: 94:HiPiCimage.read: Attribute 'bytecode' defined outside __init__
-W:102:HiPiCimage.read: Attribute 'data' defined outside __init__
+W: 87:HiPiCimage.read: Attribute 'data' defined outside __init__
+R: 20:HiPiCimage: Too few public methods (1/2)
 
 
 Report
 ======
-58 statements analysed.
+57 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -55,13 +49,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |61     |59.80 |NC       |NC         |
+|code      |61     |59.80 |61       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |23     |22.55 |NC       |NC         |
+|docstring |23     |22.55 |23       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |8      |7.84  |NC       |NC         |
+|comment   |8      |7.84  |8        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |10     |9.80  |NC       |NC         |
+|empty     |10     |9.80  |10       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -72,35 +66,14 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |0.00     |
+|class    |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |NC         |NC         |100.00      |0.00     |
+|method   |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0           |0        |
+|function |0      |0          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (HiPiCimage)
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -110,13 +83,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |12     |NC       |NC         |
+|convention |10     |10       |=          |
 +-----------+-------+---------+-----------+
-|refactor   |2      |NC       |NC         |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |10     |NC       |NC         |
+|warning    |10     |10       |=          |
 +-----------+-------+---------+-----------+
-|error      |19     |NC       |NC         |
+|error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -127,28 +100,25 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|E1101      |19          |
-+-----------+------------+
-|C0103      |11          |
+|C0103      |10          |
 +-----------+------------+
 |W0201      |7           |
++-----------+------------+
+|E1101      |3           |
 +-----------+------------+
 |W0612      |2           |
 +-----------+------------+
 |W0232      |1           |
 +-----------+------------+
-|R0914      |1           |
-+-----------+------------+
 |R0903      |1           |
 +-----------+------------+
 |F0401      |1           |
-+-----------+------------+
-|C0301      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -10.52/10
+Your code has been rated at 3.68/10 (previous run: 3.68/10)
+Wouldn't you be a bit lazy?
 
