@@ -1,0 +1,5 @@
+python-fabio (0.0.8-1) unstable; urgency=low
+
+  * Initial release (Closes: #649008)  
+
+ -- Jerome Kieffer <jerome.kieffer@esrf.fr>  Fri, 18 Nov 2011 16:19:20 +0100
