@@ -99,7 +99,7 @@ License: LGPL-3.0+
  On Debian systems, the complete text of the GNU Lesser General
  Public License version 3 can be found in "/usr/share/common-licenses/LGPL-3".
 
-File: src/stdint.h
+Files: src/stdint.h
 Copyright: 22006-2008 Alexander Chemeris
 License: BSD     
  Redistribution and use in source and binary forms, with or without
