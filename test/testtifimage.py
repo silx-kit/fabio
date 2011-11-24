@@ -36,62 +36,51 @@ from testtifgz import testtif_rect, testgziptif
 
 class testtifimage_pilatus(unittest.TestCase):
     def setUp(self):
-        UtilsTest.getimage("pilatus2M.tif.bz2")
-        UtilsTest.getimage("pilatus2M.edf.bz2")
+        self.fn = {}
+        for i in ["pilatus2M.tif", "pilatus2M.edf"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
 
-        self.tif = os.path.join("testimages",
-                                   "pilatus2M.tif")
-        self.edf = os.path.join("testimages",
-                                     "pilatus2M.edf")
-        assert os.path.exists(self.tif)
-        assert os.path.exists(self.edf)
 
     def test1(self):
         """
         Testing pilatus tif bug
         """
-        o1 = fabio.open(self.tif).data
-        o2 = fabio.open(self.edf).data
+        o1 = fabio.open(self.fn["pilatus2M.tif"]).data
+        o2 = fabio.open(self.fn["pilatus2M.edf"]).data
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 class testtifimage_packbits(unittest.TestCase):
     def setUp(self):
-        UtilsTest.getimage("oPPA_5grains_0001.tif.bz2")
-        UtilsTest.getimage("oPPA_5grains_0001.edf.bz2")
-
-        self.tif = os.path.join("testimages",
-                                   "oPPA_5grains_0001.tif")
-        self.edf = os.path.join("testimages",
-                                     "oPPA_5grains_0001.edf")
-        assert os.path.exists(self.tif)
-        assert os.path.exists(self.edf)
+        self.fn = {}
+        for i in ["oPPA_5grains_0001.tif", "oPPA_5grains_0001.edf"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
 
     def test1(self):
         """
         Testing packbit comressed data tif bug
         """
-        o1 = fabio.open(self.tif).data
-        o2 = fabio.open(self.edf).data
+        o1 = fabio.open(self.fn["oPPA_5grains_0001.tif"]).data
+        o2 = fabio.open(self.fn["oPPA_5grains_0001.edf"]).data
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 class testtifimage_fit2d(unittest.TestCase):
     def setUp(self):
-        UtilsTest.getimage("fit2d.tif.bz2")
-        UtilsTest.getimage("fit2d.edf.bz2")
-
-        self.tif = os.path.join("testimages",
-                                   "fit2d.tif")
-        self.edf = os.path.join("testimages",
-                                     "fit2d.edf")
-        assert os.path.exists(self.tif)
-        assert os.path.exists(self.edf)
+        self.fn = {}
+        for i in ["fit2d.tif", "fit2d.edf"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
 
     def test1(self):
         """
         Testing packbit comressed data tif bug
         """
-        o1 = fabio.open(self.tif).data
-        o2 = fabio.open(self.edf).data
+        o1 = fabio.open(self.fn["fit2d.tif"]).data
+        o2 = fabio.open(self.fn["fit2d.edf"]).data
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 class testtifimage_a0009(unittest.TestCase):
@@ -103,18 +92,18 @@ identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field,
 
     """
     def setUp(self):
-        self.tif = UtilsTest.getimage("a0009.tif.bz2")[:-4]
-        self.edf = UtilsTest.getimage("a0009.edf.bz2")[:-4]
-        logger.warning("files %s %s ", self.tif, self.edf)
-        assert os.path.exists(self.tif)
-        assert os.path.exists(self.edf)
+        self.fn = {}
+        for i in ["a0009.tif", "a0009.edf"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
 
     def test1(self):
         """
         Testing packbit comressed data tif bug
         """
-        o1 = fabio.open(self.tif).data
-        o2 = fabio.open(self.edf).data
+        o1 = fabio.open(self.fn["a0009.tif"]).data
+        o2 = fabio.open(self.fn["a0009.edf"]).data
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 

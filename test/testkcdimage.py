@@ -44,8 +44,11 @@ class testkcd(unittest.TestCase):
 
     def setUp(self):
         """Download files"""
-        self.kcdfilename = UtilsTest.getimage(self.kcdfilename)
-        self.edffilename = UtilsTest.getimage(self.edffilename)
+        self.fn = {}
+        for i in ["i01f0001.kcd", "i01f0001.edf"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
 
     def test_read(self):
         """ check we can read kcd images"""
@@ -53,7 +56,7 @@ class testkcd(unittest.TestCase):
         name = vals[0]
         dim1, dim2 = [int(x) for x in vals[1:3]]
         mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
-        obj = openimage(os.path.join("testimages", name))
+        obj = openimage(self.fn[self.kcdfilename])
         self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin")
         self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
         self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean")
@@ -65,8 +68,8 @@ class testkcd(unittest.TestCase):
     def test_same(self):
         """ see if we can read kcd images and if they are the same as the EDF """
         kcd = kcdimage()
-        kcd.read(self.kcdfilename)
-        edf = fabio.open(self.edffilename)
+        kcd.read(self.fn[self.kcdfilename])
+        edf = fabio.open(self.fn[self.edffilename])
         diff = (kcd.data.astype("int32") - edf.data.astype("int32"))
         self.assertAlmostEqual(abs(diff).sum(dtype=int), 0, 4)
 

@@ -41,9 +41,9 @@ TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15
 
 class testXSD(unittest.TestCase):
     def setUp(self):
-        UtilsTest.getimage("XSDataImage.edf")
-        UtilsTest.getimage("XSDataImage.xml")
-        UtilsTest.getimage("XSDataImageInv.xml")
+        self.fn = {}
+        for i in ["XSDataImage.edf", "XSDataImage.xml", "XSDataImageInv.xml"]:
+            self.fn[i] = UtilsTest.getimage(i)
 
     def test_read(self):
         "Test reading of XSD images"
@@ -53,7 +53,7 @@ class testXSD(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = xsdimage()
-            obj.read(os.path.join("testimages", name))
+            obj.read(self.fn[name])
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
@@ -65,14 +65,14 @@ class testXSD(unittest.TestCase):
 
     def test_same(self):
         """ test if an image is the same as the EDF equivalent"""
-        xsd = fabio.open(os.path.join("testimages", "XSDataImage.edf"))
-        edf = fabio.open(os.path.join("testimages", "XSDataImage.xml"))
+        xsd = fabio.open(self.fn["XSDataImage.xml"])
+        edf = fabio.open(self.fn["XSDataImage.edf"])
         self.assertAlmostEqual(0, abs(xsd.data - edf.data).max(), 1, "images are the same")
 
     def test_invert(self):
         """ Tests that 2 matrixes are invert """
-        m1 = fabio.open(os.path.join("testimages", "XSDataImage.xml"))
-        m2 = fabio.open(os.path.join("testimages", "XSDataImageInv.xml"))
+        m1 = fabio.open(self.fn["XSDataImage.xml"])
+        m2 = fabio.open(self.fn["XSDataImageInv.xml"])
         self.assertAlmostEqual(
         abs((numpy.matrix(m1.data) * numpy.matrix(m2.data)) - numpy.identity(m1.data.shape[0])).max(),
         0, 3, "matrices are invert of each other")

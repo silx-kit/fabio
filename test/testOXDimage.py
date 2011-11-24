@@ -38,8 +38,11 @@ TESTIMAGES = """b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526
 
 class testOXD(unittest.TestCase):
     def setUp(self):
-        UtilsTest.getimage("b191_1_9_1.img.bz2")
-        UtilsTest.getimage("b191_1_9_1_uncompressed.img.bz2")
+        self.fn = {}
+        for i in ["b191_1_9_1.img", "b191_1_9_1_uncompressed.img"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
 
     def test_read(self):
         "Test reading of compressed OXD images"
@@ -49,7 +52,7 @@ class testOXD(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = OXDimage()
-            obj.read(os.path.join("testimages", name))
+            obj.read(self.fn[name])
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
@@ -62,12 +65,15 @@ class testOXD(unittest.TestCase):
 
 class testOXD_same(unittest.TestCase):
     def setUp(self):
-        self.f1 = UtilsTest.getimage("b191_1_9_1.img.bz2")[:-4]
-        self.f2 = UtilsTest.getimage("b191_1_9_1_uncompressed.img.bz2")[:-4]
+        self.fn = {}
+        for i in ["b191_1_9_1.img", "b191_1_9_1_uncompressed.img"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
     def test_same(self):
         """test if images are actually the same"""
-        o1 = fabio.open(self.f1)
-        o2 = fabio.open(self.f2)
+        o1 = fabio.open(self.fn["b191_1_9_1.img"])
+        o2 = fabio.open(self.fn["b191_1_9_1_uncompressed.img"])
         for attr in ["getmin", "getmax", "getmean", "getstddev"]:
             a1 = getattr(o1, attr)()
             a2 = getattr(o2, attr)()

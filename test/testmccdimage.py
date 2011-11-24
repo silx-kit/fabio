@@ -72,8 +72,13 @@ class testnormaltifok(unittest.TestCase):
 
 class testflatmccds(unittest.TestCase):
     def setUp(self):
-        UtilsTest.getimage("corkcont2_H_0089.mccd.bz2")
-        UtilsTest.getimage("somedata_0001.mccd.bz2")
+        self.fn = {}
+        for i in ["corkcont2_H_0089.mccd", "somedata_0001.mccd"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+            self.fn[i + ".bz2"] = self.fn[i] + ".bz2"
+            self.fn[i + ".gz"] = self.fn[i] + ".gz"
+        for i in self.fn:
+            assert os.path.exists(self.fn[i])
 
     def test_read(self):
         """ check we can read MarCCD images"""
@@ -83,7 +88,7 @@ class testflatmccds(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = marccdimage()
-            obj.read(os.path.join("testimages", name))
+            obj.read(self.fn[name])
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
