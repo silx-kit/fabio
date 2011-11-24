@@ -22,7 +22,7 @@ logger = logging.getLogger("adscimage")
 class adscimage(fabioimage):
     """ Read an image in ADSC format (quite similar to edf?) """
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """ read in the file """
         infile = self._open(fname, "rb")
         try:

@@ -26,7 +26,7 @@ class bruker100image(brukerimage):
                                         "F;16", 0, -1)
             return PILimage
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         f = open(fname, "rb")
         try:
             self._readheader(f)

@@ -457,7 +457,7 @@ class GEimage(fabioimage):
 
 
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
             the data   into self.data

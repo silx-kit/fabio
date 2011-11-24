@@ -104,7 +104,7 @@ class tifimage(fabioimage):
 #         nbits is not a fabioimage attribute...
         self.nbits = int(header[21]) # number of bits
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Wrapper for TiffIO.
         """

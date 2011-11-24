@@ -78,7 +78,7 @@ class brukerimage(fabioimage):
         self.dim1 = int(self.header['NROWS'])
         self.dim2 = int(self.header['NCOLS'])
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in and unpack the pixels (including overflow table
         """

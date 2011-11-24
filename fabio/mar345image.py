@@ -23,7 +23,7 @@ class mar345image(fabioimage):
         self.numhigh = None
         self.numpixels = None
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """ Read a mar345 image"""
         self.filename = fname
         f = self._open(self.filename, "rb")

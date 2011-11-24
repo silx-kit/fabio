@@ -63,7 +63,7 @@ class dm3image(fabioimage):
         else:
             raise ValueError
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         self.header = {}
         self.resetvals()
         self.infile = self._open(fname, "rb")

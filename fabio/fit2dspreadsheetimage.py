@@ -33,7 +33,7 @@ class fit2dspreadsheetimage(fabioimage):
         self.header['Dim_1'] = xdim
         self.header['Dim_2'] = ydim
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
             the data   into self.data

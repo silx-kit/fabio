@@ -144,7 +144,7 @@ class OXDimage(fabioimage):
         block = infile.read(256)
         self.header['Flood field image'] = block[99:126]
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
             the data   into self.data

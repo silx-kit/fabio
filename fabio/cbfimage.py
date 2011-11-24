@@ -107,7 +107,7 @@ class cbfimage(fabioimage):
             logger.debug("CBF file misses the keys " + " ".join(missing))
 
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
             the data   into self.data

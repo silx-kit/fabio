@@ -53,7 +53,9 @@ MAGIC_NUMBERS = [
     ("OD"                 , 'OXD'),
     ("IM"                 , 'HiPiC'),
     ('\x2d\x04'           , 'mar345'),
+    ('\xd2\x04'           , 'mar345'),
     ('\x04\x2d'           , 'mar345'), #some machines may need byteswapping
+    ('\x04\xd2'           , 'mar345'),
     # hint : MASK in 32 bit
     ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
     ('\x00\x00\x00\x03'   , 'dm3'),
@@ -75,12 +77,12 @@ def do_magic(byts):
     raise Exception("Could not interpret magic string")
 
 
-def openimage(filename):
+def openimage(filename, frame=None):
     """ Try to open an image """
     if isinstance(filename, filename_object):
         try:
             obj = _openimage(filename.tostring())
-            obj.read(filename.tostring())
+            obj = obj.read(filename.tostring(), frame)
         except:
             # multiframe file
             #logger.debug( "DEBUG: multiframe file, start # %d"%(
@@ -89,7 +91,7 @@ def openimage(filename):
             obj.read(filename.stem, frame=filename.num)
     else:
         obj = _openimage(filename)
-        obj.read(filename)
+        obj = obj.read(filename, frame)
     return obj
 
 
@@ -120,16 +122,18 @@ def _openimage(filename):
         try:
             file_obj = deconstruct_filename(filename)
             if file_obj == None:
-                raise Exception
-            if len(file_obj.format) != 1 and \
-                    type(file_obj.format) != type(["list"]):
+                raise Exception("Unable to deconstruct filename")
+            if (file_obj.format is not None) and\
+                len(file_obj.format) != 1 and \
+                type(file_obj.format) != type(["list"]):
                 # one of OXD/ ADSC - should have got in previous
                 raise Exception("openimage failed on magic bytes & name guess")
             filetype = file_obj.format
             #UNUSED filenumber = file_obj.num
-        except:
-            #import traceback
-            #traceback.print_exc()
+        except Exception, error:
+            logger.error(error)
+            import traceback
+            traceback.print_exc()
             raise Exception("Fabio could not identify " + filename)
     klass_name = "".join(filetype) + 'image'
     module = sys.modules.get("fabio." + klass_name, None)

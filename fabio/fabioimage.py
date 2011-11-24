@@ -308,12 +308,12 @@ class fabioimage(object):
         """
         self.header.update(kwds)
 
-    def read(self, filename):
+    def read(self, filename, frame=None):
         """
         To be overridden - fill in self.header and self.data
         """
         raise Exception("Class has not implemented read method yet")
-
+        return self
 
     def _open(self, fname, mode="rb"):
         """

@@ -43,7 +43,7 @@ class fabiodata(object):
 
 class columnfile (fabiodata):
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         import cf_io
         try:
             infile = open(fname, 'rb')

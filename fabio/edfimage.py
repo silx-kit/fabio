@@ -538,7 +538,7 @@ class edfimage(fabioimage):
         self.currentframe = 0
 
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
             the data   into self.data
@@ -548,9 +548,14 @@ class edfimage(fabioimage):
 
         infile = self._open(fname, "rb")
         self._readheader(infile)
-        if self.data is None:
-            self.data = self.unpack()
-#            self.bytecode = self.data.dtype.type
+        if frame is None:
+            if self.data is None:
+                self.data = self.unpack()
+    #            self.bytecode = self.data.dtype.type
+        elif frame < self.nframes:
+            self = self.getframe(frame)
+        else:
+            logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
         self.resetvals()
         # ensure the PIL image is reset
         self.pilimage = None

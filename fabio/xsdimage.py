@@ -43,7 +43,7 @@ class xsdimage(fabioimage):
             self.filename = fname
             self.read(fname)
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         """
         self.header = {}

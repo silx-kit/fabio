@@ -196,7 +196,7 @@ class testedfmultiframe(unittest.TestCase):
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
     """
     def setUp(self):
-        UtilsTest.getimage("MultiFrame.edf.bz2")
+        self.multiFrameFilename = UtilsTest.getimage("MultiFrame.edf.bz2")[:-4]
         UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
         UtilsTest.getimage("MultiFrame-Frame1.edf.bz2")
         self.ref = edfimage()
@@ -250,13 +250,18 @@ class testedfmultiframe(unittest.TestCase):
         f0 = f1.previous()
         self.assertEqual((f0.data - self.frame1.data).max(), 0, "previous_multi: Same data for frame 0")
 
-    def text_previous_mono(self):
-        "testedfmultiframe.text_previous_mono"
+    def test_previous_mono(self):
+        "testedfmultiframe.test_previous_mono"
         f1 = self.ref.getframe(1)
         self.assertEqual((f1.data - self.frame1.data).max(), 0, "previous_mono: Same data for frame 1")
         prev = self.frame1.previous()
         self.assertEqual((prev.data - self.frame0.data).max(), 0, "previous_mono: Same data for frame 0")
 
+    def  test_openimage_multiframes(self):
+        "test if openimage can directly read first or second frame of a multi-frame"
+        self.assertEqual((fabio.open(self.multiFrameFilename).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for default ")
+        self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
+        self.assertEqual((fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(), 0, "openimage_multiframes: Same data for frame 1")
 
 def test_suite_all_edf():
     testSuite = unittest.TestSuite()
@@ -274,7 +279,7 @@ def test_suite_all_edf():
     testSuite.addTest(testedfmultiframe("test_next_multi"))
     testSuite.addTest(testedfmultiframe("text_next_mono"))
     testSuite.addTest(testedfmultiframe("test_previous_multi"))
-    testSuite.addTest(testedfmultiframe("text_previous_mono"))
+    testSuite.addTest(testedfmultiframe("test_openimage_multiframes"))
     return testSuite
 
 if __name__ == '__main__':

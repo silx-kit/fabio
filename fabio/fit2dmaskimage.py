@@ -33,7 +33,7 @@ class fit2dmaskimage(fabioimage):
         self.dim2 = fit2dhdr[5]
 
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
             the data   into self.data
@@ -74,6 +74,7 @@ class fit2dmaskimage(fabioimage):
         self.data = numpy.reshape(self.data.astype(numpy.uint16),
                                     (self.dim2, self.dim1))
         self.pilimage = None
+        return self
 
 
 

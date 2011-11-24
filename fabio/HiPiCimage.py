@@ -59,7 +59,7 @@ class HiPiCimage(fabioimage):
                     self.header[key] = val.lstrip().rstrip()
                     self.header[key] = val.lstrip('"').rstrip('"')
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
             the data   into self.data
