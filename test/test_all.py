@@ -40,7 +40,7 @@ from testcbfimage           import test_suite_all_cbf
 from testfilenames          import test_suite_all_filenames
 from test_file_series       import test_suite_all_series
 from test_filename_steps    import test_suite_all_steps
-from test_flat_binary       import test_suite_all_flat
+#from test_flat_binary       import test_suite_all_flat
 from testadscimage          import test_suite_all_adsc
 from testfit2dmaskimage     import test_suite_all_fit2d
 from testGEimage            import test_suite_all_GE

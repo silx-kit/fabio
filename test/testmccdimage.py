@@ -47,7 +47,7 @@ class testnormaltifok(unittest.TestCase):
     check we can read normal tifs as well as mccd
     """
     imdata = None
-    image = 'testimages/tifimagewrite_test0000.tif'
+    image = os.path.join(UtilsTest.test_home, "testimages", "tifimagewrite_test0000.tif")
     def setUp(self):
         """
         create an image 

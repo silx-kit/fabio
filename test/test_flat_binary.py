@@ -39,7 +39,7 @@ class test_flat_binary(unittest.TestCase):
             f.write("\0x0" * 2048 * 2048 * 2)
         f.close()
 
-    def test_openimage(self):
+    def NOtest_openimage(self):
         """
         test the opening of "junk" empty images ...
         JK: I wonder if this test makes sense !
@@ -61,11 +61,11 @@ class test_flat_binary(unittest.TestCase):
         for filename in self.filenames:
             os.remove(filename)
 
-def test_suite_all_flat():
-    testSuite = unittest.TestSuite()
-
-    testSuite.addTest(test_flat_binary("test_openimage"))
-    return testSuite
+#def test_suite_all_flat():
+#    testSuite = unittest.TestSuite()
+#
+#    testSuite.addTest(test_flat_binary("test_openimage"))
+#    return testSuite
 
 if __name__ == '__main__':
     mysuite = test_suite_all_flat()

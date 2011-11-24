@@ -39,8 +39,8 @@ from fabio.edfimage import edfimage
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """mb_LP_1_001.img 3072 3072 0.0000 65535. 120.33 147.38 
-mb_LP_1_001.img.gz  3072 3072 0.0000 65535.  120.33 147.38 
-mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38 """
+                mb_LP_1_001.img.gz  3072 3072 0.0000 65535.  120.33 147.38 
+                mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38 """
 
 
 
@@ -69,6 +69,10 @@ class testmatch(unittest.TestCase):
 class testflatmccdsadsc(unittest.TestCase):
     """
     """
+    def setUp(self):
+        """ Download images """
+        self.im_dir = os.path.dirname(UtilsTest.getimage("mb_LP_1_001.img.bz2"))
+
     def test_read(self):
         """ check we can read flat ADSC images"""
         for line in TESTIMAGES.split("\n"):
@@ -77,7 +81,7 @@ class testflatmccdsadsc(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = adscimage()
-            obj.read(os.path.join("testimages", name))
+            obj.read(os.path.join(self.im_dir, name))
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")

@@ -199,9 +199,13 @@ def deconstruct_filename(filename):
             extension=extn,
             postnum=postnum,
             digits=ndigit)
-
     return obj
 
+def construct_filename(filename, frame):
+    "Try to construct the filename for a given frame"
+    fo = deconstruct_filename(filename)
+    fo.num = frame
+    return fo.tostring()
 
 def next_filename(name, padding=True):
     """ increment number """

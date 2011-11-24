@@ -102,7 +102,7 @@ class testslices(unittest.TestCase):
 
 class testopen(unittest.TestCase):
     """check opening compressed files"""
-    testfile = "testimages/testfile"
+    testfile = os.path.join(UtilsTest.test_home, "testimages", "testfile")
     def setUp(self):
         """ create test files"""
         if not os.path.isfile(self.testfile):

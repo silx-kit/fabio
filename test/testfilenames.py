@@ -108,7 +108,7 @@ def test_suite_all_filenames():
     testSuite = unittest.TestSuite()
 
     testSuite.addTest(testfilenames("test_many_cases"))
-#    testSuite.addTest(testfilenames("test_more_cases"))
+    testSuite.addTest(testfilenames("test_more_cases"))
     testSuite.addTest(testfilenames("test_more_cases_jump"))
 
     return testSuite

@@ -53,7 +53,7 @@ class testMAR345(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = mar345image()
-            obj.read(os.path.join("testimages", name))
+            obj.read(os.path.join(os.path.dirname(self.mar), name))
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")

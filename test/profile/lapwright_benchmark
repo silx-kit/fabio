@@ -1,0 +1,54 @@
+I/O 1  : Time to read the image
+I/O 2  : Time to read the image (repeat
+Fabio  : Time for fabio to read the image
+Shell  : Time for shell to do decompression
+Python : Time for python to do decompression
+
+I/O 1  I/O 2  Fabio  Shell  Python   Size/MB
+0.0000 0.0000 0.0000                   0.508 testimages/Cr8F8140k103.0026
+0.0000 0.0000 0.0600 0.0363 0.0300     0.508 testimages/Cr8F8140k103.0026.bz2
+0.0000 0.0000 0.0100 0.0111 0.0100     0.508 testimages/Cr8F8140k103.0026.gz
+0.0100 0.0100 0.0200                   8.003 testimages/F2K_Seb_Lyso0675.edf
+0.0100 0.0000 0.7300 0.7201 0.6900     8.003 testimages/F2K_Seb_Lyso0675.edf.bz2
+0.0100 0.0000 0.1600 0.1851 0.1500     8.003 testimages/F2K_Seb_Lyso0675.edf.gz
+0.0100 0.0100 0.0200                   8.008 testimages/GE_aSI_detector_image_1529
+0.0100 0.0000 0.6200 0.6092 0.4900     8.008 testimages/GE_aSI_detector_image_1529.bz2
+0.0000 0.0100 0.1200 0.1191 0.1200     8.008 testimages/GE_aSI_detector_image_1529.gz
+0.0100 0.0000 0.4100                   0.256 testimages/b191_1_9_1.img
+0.0000 0.0000 0.4700 0.0305 0.0300     0.256 testimages/b191_1_9_1.img.bz2
+0.0000 0.0000 0.4600 0.0071 0.0100     0.256 testimages/b191_1_9_1.img.gz
+0.0000 0.0000 0.0100                   1.005 testimages/b191_1_9_1_uncompressed.img
+0.0000 0.0000 0.1200 0.0655 0.0600     1.005 testimages/b191_1_9_1_uncompressed.img.bz2
+0.0000 0.0000 0.0400 0.0341 0.0100     1.005 testimages/b191_1_9_1_uncompressed.img.gz
+0.0200 0.0000 0.1300                   8.004 testimages/corkcont2_H_0089.mccd
+0.0000 0.0000 0.4200 0.3214 0.2900     8.004 testimages/corkcont2_H_0089.mccd.bz2
+0.0000 0.0000 0.1800 0.0977 0.0900     8.004 testimages/corkcont2_H_0089.mccd.gz
+0.0000 0.0000 0.1800                   3.471 testimages/example.mar2300
+0.0100 0.0000 0.7600 0.4990 0.5800     3.471 testimages/example.mar2300.bz2
+0.0100 0.0000 0.3000 0.0672 0.0500     3.471 testimages/example.mar2300.gz
+0.0000 0.0000 0.0000                   0.215 testimages/face.edf
+0.0000 0.0000 0.0000 0.0109 0.0000     0.215 testimages/face.edf.bz2
+0.0000 0.0000 0.0000 0.0098 0.0000     0.215 testimages/face.edf.gz
+0.0000 0.0000 0.0100                   0.008 testimages/face.msk
+0.0000 0.0000 0.0100 0.0089 0.0000     0.008 testimages/face.msk.bz2
+0.0000 0.0000 0.0100 0.0084 0.0000     0.008 testimages/face.msk.gz
+0.0000 0.0100 0.0100                   4.001 testimages/fit2d_click.edf
+0.0000 0.0000 0.0300 0.0498 0.0200     4.001 testimages/fit2d_click.edf.bz2
+0.0000 0.0000 0.0400 0.0433 0.0300     4.001 testimages/fit2d_click.edf.gz
+0.0000 0.0000 0.1100                   0.126 testimages/fit2d_click.msk
+0.0000 0.0000 0.1100 0.0184 0.0000     0.126 testimages/fit2d_click.msk.bz2
+0.0000 0.0000 0.1300 0.0117 0.0000     0.126 testimages/fit2d_click.msk.gz
+0.0400 0.0400 0.0800                  36.001 testimages/mb_LP_1_001.edf
+0.0200 0.0200 0.1100                  18.000 testimages/mb_LP_1_001.img
+0.0100 0.0000 1.9300 1.3436 1.1800    18.000 testimages/mb_LP_1_001.img.bz2
+0.0100 0.0100 0.4200 0.3263 0.2600    18.000 testimages/mb_LP_1_001.img.gz
+0.0200 0.0000 0.1400                   8.067 testimages/oPPA_5grains_0001.tif
+0.0000 0.0000 0.3800 0.2985 0.2300     8.067 testimages/oPPA_5grains_0001.tif.bz2
+0.0000 0.0000 0.1600 0.0624 0.0600     8.067 testimages/oPPA_5grains_0001.tif.gz
+0.0100 0.0000 0.0200                   2.004 testimages/somedata_0001.mccd
+0.0000 0.0000 0.1800 0.1373 0.1200     2.004 testimages/somedata_0001.mccd.bz2
+0.0000 0.0000 0.0400 0.0466 0.0300     2.004 testimages/somedata_0001.mccd.gz
+0.0000 0.0000 0.0100                   0.023 testimages/testmap1_0002.tif
+0.0000 0.0000 0.0000 0.0080 0.0000     0.023 testimages/testmap1_0002.tif.bz2
+0.0000 0.0000 0.0000 0.0078 0.0000     0.023 testimages/testmap1_0002.tif.gz
+0.0000 0.0000 1.0200 0.1523 0.1200     9.141 testimages/testspr.spr.gz

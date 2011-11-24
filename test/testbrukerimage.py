@@ -58,7 +58,7 @@ OVERFLOWS = [
 
 class testbruker(unittest.TestCase):
     """basic test"""
-    filename = 'testimages/image.0000'
+    filename = os.path.join(UtilsTest.test_home, "testimages", "image.0000")
 
     def setUp(self):
         """ Generate a test bruker image """
@@ -71,7 +71,7 @@ class testbruker(unittest.TestCase):
             hdrblks = int(MYHEADER['HDRBLKS'])
             while (wrb < hdrblks * 512):
                 fout.write("\x1a\x04")
-                fout.write('.'*78)
+                fout.write('.' * 78)
                 wrb = wrb + 80
             fout.write(MYIMAGE.tostring())
 
@@ -114,8 +114,8 @@ class testgzipbruker(testbruker):
 # filename dim1 dim2 min max mean stddev
 
 TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17 
-Cr8F8140k103.0026.gz   512  512  0  145942 289.37  432.17 
-Cr8F8140k103.0026.bz2   512  512  0 145942 289.37  432.17 """
+                Cr8F8140k103.0026.gz   512  512  0  145942 289.37  432.17 
+                Cr8F8140k103.0026.bz2   512  512  0 145942 289.37  432.17 """
 
 
 class test_real_im(unittest.TestCase):
@@ -124,7 +124,7 @@ class test_real_im(unittest.TestCase):
         """
         download images
         """
-        UtilsTest.getimage("Cr8F8140k103.0026.bz2")
+        self.im_dir = os.path.dirname(UtilsTest.getimage("Cr8F8140k103.0026.bz2"))
 
     def test_read(self):
         """ check we can read bruker images"""
@@ -134,7 +134,7 @@ class test_real_im(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = brukerimage()
-            obj.read(os.path.join("testimages", name))
+            obj.read(os.path.join(self.im_dir, name))
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")

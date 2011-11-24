@@ -37,7 +37,7 @@ import gzip, bz2
 
 class testflatedfs(unittest.TestCase):
     """ test some flat images """
-    filename = "testimages/im0000.edf"
+    filename = os.path.join(UtilsTest.test_home, "testimages", "im0000.edf")
     MYHEADER = "{\n%-1020s}\n" % (
 """Omega = 0.0 ; 
 Dim_1 = 256 ;
@@ -122,7 +122,7 @@ class testedfs(unittest.TestCase):
     Read some test images 
     """
     def setUp(self):
-        UtilsTest.getimage("F2K_Seb_Lyso0675.edf.bz2")
+        self.im_dir = os.path.dirname(UtilsTest.getimage("F2K_Seb_Lyso0675.edf.bz2"))
         UtilsTest.getimage("id13_badPadding.edf.bz2")
 
     def test_read(self):
@@ -134,7 +134,7 @@ class testedfs(unittest.TestCase):
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = edfimage()
             try:
-                obj.read(os.path.join("testimages", name))
+                obj.read(os.path.join(self.im_dir, name))
             except:
                 print "Cannot read image", name
                 raise
@@ -150,7 +150,7 @@ class testedfs(unittest.TestCase):
     def test_rebin(self):
         """test the rebin of edfdata"""
         f = edfimage()
-        f.read(os.path.join("testimages", "F2K_Seb_Lyso0675.edf"))
+        f.read(os.path.join(self.im_dir, "F2K_Seb_Lyso0675.edf"))
         f.rebin(1024, 1024)
         self.assertEqual(abs(numpy.array([[1547, 1439], [1536, 1494]]) - f.data).max(), 0, "data are the same after rebin")
 
@@ -162,7 +162,7 @@ class testedfcompresseddata(unittest.TestCase):
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
     """
     def setUp(self):
-        UtilsTest.getimage("edfGzip_U16.edf.bz2")
+        self.im_dir = os.path.dirname(UtilsTest.getimage("edfGzip_U16.edf.bz2"))
         UtilsTest.getimage("edfCompressed_U16.edf.bz2")
         UtilsTest.getimage("edfUncompressed_U16.edf.bz2")
 
@@ -175,15 +175,15 @@ class testedfcompresseddata(unittest.TestCase):
         gzippedFile = "edfGzip_U16.edf"
         compressedFile = "edfCompressed_U16.edf"
         try:
-            ref.read(os.path.join("testimages", refFile))
+            ref.read(os.path.join(self.im_dir, refFile))
         except:
             raise RuntimeError("Cannot read image Uncompressed image %s" % refFile)
         try:
-            gzipped.read(os.path.join("testimages", gzippedFile))
+            gzipped.read(os.path.join(self.im_dir, gzippedFile))
         except:
             raise RuntimeError("Cannot read image gzippedFile image %s" % gzippedFile)
         try:
-            compressed.read(os.path.join("testimages", compressedFile))
+            compressed.read(os.path.join(self.im_dir, compressedFile))
         except:
             raise RuntimeError("Cannot read image compressedFile image %s" % compressedFile)
         self.assertEqual((ref.data - gzipped.data).max(), 0, "Gzipped data block is correct")
@@ -197,24 +197,21 @@ class testedfmultiframe(unittest.TestCase):
     """
     def setUp(self):
         self.multiFrameFilename = UtilsTest.getimage("MultiFrame.edf.bz2")[:-4]
-        UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
-        UtilsTest.getimage("MultiFrame-Frame1.edf.bz2")
+        self.Frame0Filename = UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")[:-4]
+        self.Frame1Filename = UtilsTest.getimage("MultiFrame-Frame1.edf.bz2")[:-4]
         self.ref = edfimage()
         self.frame0 = edfimage()
         self.frame1 = edfimage()
-        self.refFile = "MultiFrame.edf"
-        self.Frame0File = "MultiFrame-Frame0.edf"
-        self.Frame1File = "MultiFrame-Frame1.edf"
         try:
-            self.ref.read(os.path.join("testimages", self.refFile))
+            self.ref.read(self.multiFrameFilename)
         except:
             raise RuntimeError("Cannot read image refFile image %s" % self.refFile)
         try:
-            self.frame0.read(os.path.join("testimages", self.Frame0File))
+            self.frame0.read(self.Frame0Filename)
         except:
             raise RuntimeError("Cannot read image Frame0File image %s" % self.Frame0File)
         try:
-            self.frame1.read(os.path.join("testimages", self.Frame1File))
+            self.frame1.read(self.Frame1Filename)
         except:
             raise RuntimeError("Cannot read image Frame1File image %s" % self.Frame1File)
 

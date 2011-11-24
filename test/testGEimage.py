@@ -42,7 +42,7 @@ class testGE(unittest.TestCase):
         """
         download images
         """
-        UtilsTest.getimage("GE_aSI_detector_image_1529.bz2")
+        self.GE = UtilsTest.getimage("GE_aSI_detector_image_1529.bz2")
 
 
     def test_read(self):
@@ -52,7 +52,7 @@ class testGE(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = GEimage()
-            obj.read(os.path.join("testimages", name))
+            obj.read(os.path.join(os.path.dirname(self.GE), name))
 
             self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
