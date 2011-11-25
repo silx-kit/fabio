@@ -9,7 +9,7 @@ XS-Python-Version: >= 2.5
 Package: python-fabio
 Architecture: any
 Depends: ${misc:Depends}, ${python:Depends}, ${shlibs:Depends}, python-imaging, python-numpy
-Recommends: python-numpy-ext, python-matplotlib
+Recommends: python-numpy-ext, python-matplotlib, python-lxml, python-h5py
 Suggests: pymca
 Description: I/O library for images produced by 2D X-ray detector
  FabIO is an I/O library for images produced by 2D X-ray detectors and written
