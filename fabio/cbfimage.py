@@ -51,14 +51,14 @@ class cbfimage(fabioimage):
     """ 
     Read the Cif Binary File data format 
     """
-    def __init__(self, fname=None):
+    def __init__(self, data=None , header=None, fname=None):
         """
         Constructor of the class CIF Binary File reader.
 
         @param _strFilename: the name of the file to open
         @type  _strFilename: string
         """
-        fabioimage.__init__(self)
+        fabioimage.__init__(self, data, header)
         self.cif = CIF()
         if fname is not None: #load the file)
             self.read(fname)
