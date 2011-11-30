@@ -111,21 +111,25 @@ class tifimage(fabioimage):
         infile = self._open(fname, "rb")
         self._readheader(infile)
         infile.seek(0)
-        self.lib=None
+        self.lib = None
         try:
             tiffIO = TiffIO(infile)
             if tiffIO.getNumberOfImages() > 0:
-                try:
-                    self.data = tiffIO.getImage(0)
-                except IOError:
-                    logger.warning("Unable to read %s with TiffIO" % fname)
-                else:
-                    infile.seek(0)
-                    self.lib = "TiffIO"
-                    self.header = tiffIO.getInfo(0)
-                    self.dim2, self.dim1 = self.data.shape
-        except:
-            logger.warning("Unable to read %s with TiffIO, trying PIL" % fname)        
+                #No support for now of multi-frame tiff images
+                self.data = tiffIO.getImage(0)
+                self.header = tiffIO.getInfo(0)
+        except Exception, error:
+            logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
+        else:
+            if self.data.ndim == 2:
+                self.dim2, self.dim1 = self.data.shape
+            elif self.data.ndim == 3:
+                self.dim2, self.dim1, ncol = self.data.shape
+                logger.warning("Third dimension is the color")
+            else:
+                logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
+            self.lib = "TiffIO"
+
         if self.lib is None:
             try:
                 infile.seek(0)
@@ -135,6 +139,7 @@ class tifimage(fabioimage):
                 self.lib = None
                 infile.seek(0)
             else:
+                self.lib = "PIL"
                 self.dim1, self.dim2 = self.pilimage.size
                 if self.pilimage.mode in PIL_TO_NUMPY:
                     self.data = numpy.fromstring(self.pilimage.tostring(), PIL_TO_NUMPY[self.pilimage.mode])
