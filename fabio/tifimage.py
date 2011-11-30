@@ -111,17 +111,21 @@ class tifimage(fabioimage):
         infile = self._open(fname, "rb")
         self._readheader(infile)
         infile.seek(0)
-        tiffIO = TiffIO(infile)
-        if tiffIO.getNumberOfImages() > 0:
-            try:
-                self.data = tiffIO.getImage(0)
-            except IOError:
-                logger.warning("Unable to read %s with TiffIO" % fname)
-            else:
-                infile.seek(0)
-                self.lib = "TiffIO"
-                self.header = tiffIO.getInfo(0)
-                self.dim2, self.dim1 = self.data.shape
+        self.lib=None
+        try:
+            tiffIO = TiffIO(infile)
+            if tiffIO.getNumberOfImages() > 0:
+                try:
+                    self.data = tiffIO.getImage(0)
+                except IOError:
+                    logger.warning("Unable to read %s with TiffIO" % fname)
+                else:
+                    infile.seek(0)
+                    self.lib = "TiffIO"
+                    self.header = tiffIO.getInfo(0)
+                    self.dim2, self.dim1 = self.data.shape
+        except:
+            logger.warning("Unable to read %s with TiffIO, trying PIL" % fname)        
         if self.lib is None:
             try:
                 infile.seek(0)
