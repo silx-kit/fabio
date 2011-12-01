@@ -12,7 +12,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
          and Jon Wright, Jerome Kieffer: ESRF
 
 """
-
+import logging
+logger = logging.getLogger("fabioimage")
 import numpy, os, gzip, bz2, StringIO
 import Image
 import fabioutils
@@ -66,6 +67,7 @@ class fabioimage(object):
         # cache for image statistics
         self.mean = self.maxval = self.stddev = self.minval = None
         # Cache roi
+        self.roi = None
         self.area_sum = None
         self.slice = None
         # New for multiframe files
@@ -195,12 +197,15 @@ class fabioimage(object):
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
                                   isinstance(coords[1], slice):
             sli = coords
+
         if sli == self.slice and self.area_sum is not None:
-            return self.area_sum
-        self.slice = sli
-        self.area_sum = numpy.sum(
-                            numpy.ravel(
-                                self.data[ self.slice ].astype(numpy.float)))
+            pass
+        elif sli == self.slice and self.roi is not None:
+            self.area_sum = self.roi.sum(dtype=numpy.float)
+        else:
+            self.slice = sli
+            self.roi = self.data[ self.slice ]
+            self.area_sum = self.roi.sum(dtype=numpy.float)
         return self.area_sum
 
     def getmean(self):
@@ -231,7 +236,7 @@ class fabioimage(object):
     def resetvals(self):
         """ Reset cache - call on changing data """
         self.mean = self.stddev = self.maxval = self.minval = None
-        self.area_sum = None
+        self.roi = self.slice = self.area_sum = None
 
     def rebin(self, x_rebin_fact, y_rebin_fact, keep_I=True):
         """ 
@@ -314,6 +319,23 @@ class fabioimage(object):
         """
         raise Exception("Class has not implemented read method yet")
         return self
+
+    def readROI(self, filename, frame=None, coords=None):
+        """
+        Method reading Region of Interest.
+        This implementation is the trivial one, just doing read and crop
+        """
+        self.read(filename, frame)
+        if len(coord) == 4:
+            self.slice = self.make_slice(coords)
+        elif len(coords) == 2 and isinstance(coords[0], slice) and \
+                                  isinstance(coords[1], slice):
+            self.slice = coords
+        else:
+            logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)
+        self.roi = self.data[ self.slice ]
+        return self.roi
+
 
     def _open(self, fname, mode="rb"):
         """

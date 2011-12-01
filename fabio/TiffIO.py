@@ -16,7 +16,7 @@
 #
 #############################################################################*/
 __author__ = "V.A. Sole - ESRF Data Analysis"
-__revision__ = 1447
+__revision__ = 1448
 
 import sys
 import os
@@ -671,11 +671,10 @@ class TiffIO:
                 else:
                     if 1:
                         #use numpy
-                        readout = numpy.fromstring(fd.read(nBytes), dtype)
                         if self._swap:
-                            image[rowStart:rowEnd, :] = readout.byteswap()
+                            readout = numpy.fromstring(fd.read(nBytes), dtype).byteswap()
                         else:
-                            image[rowStart:rowEnd, :] = readout
+                            readout = numpy.fromstring(fd.read(nBytes), dtype)
                         if hasattr(nBits, 'index'):
                             readout.shape = -1, nColumns, len(nBits)
                         elif colormap is not None:
@@ -683,6 +682,7 @@ class TiffIO:
                             readout.shape = -1, nColumns, 3
                         else:
                             readout.shape = -1, nColumns
+                        image[rowStart:rowEnd, :] = readout
                     else:
                         #using struct
                         readout = numpy.array(struct.unpack(st+"%df" % int(nBytes/4), fd.read(nBytes)),
