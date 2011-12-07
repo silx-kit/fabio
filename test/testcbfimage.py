@@ -32,6 +32,7 @@ if force_build:
     UtilsTest.forceBuild()
 import fabio
 from fabio.cbfimage import cbfimage
+from fabio.compression import decByteOffet_numpy, decByteOffet_cython
 import time
 
 class test_cbfimage_reader(unittest.TestCase):
@@ -71,7 +72,7 @@ class test_cbfimage_reader(unittest.TestCase):
         startPos = cbf.cif["_array_data.data"].find(starter) + 4
         data = cbf.cif["_array_data.data"][ startPos: startPos + int(cbf.header["X-Binary-Size"])]
         startTime = time.time()
-        numpyRes = cbfimage.analyseNumpy(data, size=cbf.dim1 * cbf.dim2)
+        numpyRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
         tNumpy = time.time() - startTime
         logger.info("Timing for Numpy method : %.3fs" % tNumpy)
 
@@ -83,15 +84,14 @@ class test_cbfimage_reader(unittest.TestCase):
 #        logger.info("Timing for Weave method : %.3fs, max delta=%s" % (tWeave, delta))
 
         startTime = time.time()
-        pythonRes = cbfimage.analysePython(data, size=cbf.dim1 * cbf.dim2)
+        pythonRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
         tPython = time.time() - startTime
         delta = abs(numpyRes - pythonRes).max()
         self.assertAlmostEqual(0, delta)
         logger.info("Timing for Python method : %.3fs, max delta= %s" % (tPython, delta))
 
-        from fabio.byte_offset import analyseCython
         startTime = time.time()
-        cythonRes = analyseCython(stream=data, size=cbf.dim1 * cbf.dim2)
+        cythonRes = decByteOffet_cython(stream=data, size=cbf.dim1 * cbf.dim2)
         tCython = time.time() - startTime
         delta = abs(numpyRes - cythonRes).max()
         self.assertAlmostEqual(0, delta)

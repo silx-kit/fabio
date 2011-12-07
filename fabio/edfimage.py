@@ -19,11 +19,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import gzip, bz2, zlib, os, StringIO
-import numpy, logging
+import os, logging
 logger = logging.getLogger("edfimage")
+import numpy
 from fabioimage import fabioimage
 from fabioutils import isAscii
+from compression import decBzip2, decGzip, decZlib
 
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"    :  numpy.int8,
@@ -260,36 +261,13 @@ class Frame(object):
                 elif compression == "NONE":
                     rawData = self.rawData
                 elif "GZIP" in compression:
-                    fileobj = StringIO.StringIO(self.rawData)
-                    try:
-                        rawData = gzip.GzipFile(fileobj=fileobj).read()
-                    except IOError:
-                        logger.warning("Encounter the python-gzip bug with trailing garbage, trying subprocess gzip")
-                        try:
-                            #This is as an ugly hack against a bug in Python gzip
-                            import subprocess
-                            sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-                            rawData, err = sub.communicate(input=self.rawData)
-                            logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
-                        except Exception, error: #IGNORE:W0703
-                            logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
-                            for i in range(1, 513):
-                                try:
-                                    fileobj = StringIO.StringIO(self.rawData[:-i])
-                                    rawData = gzip.GzipFile(fileobj=fileobj).read()
-                                except IOError:
-                                    logger.debug("trying with %s bytes less, doesn't work" % i)
-                                else:
-                                    break
-                            else:
-                                logger.error("I am totally unable to read this gzipped compressed data block, giving up")
-
+                    rawData = decGzip(self.rawData)
                     self.size = uncompressed_size
                 elif "BZ" in compression :
-                    rawData = bz2.decompress(self.rawData)
+                    rawData = decBz2(self.rawData)
                     self.size = uncompressed_size
                 elif "Z" in compression :
-                    rawData = zlib.decompress(self.rawData)
+                    rawData = decZlib(self.rawData)
                     self.size = uncompressed_size
                 else:
                     logger.warning("Unknown compression scheme %s" % compression)
@@ -306,7 +284,6 @@ class Frame(object):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
-    #        logger.debug("dims = %s, bpp = %s, expected= %s obtained = %s" % (dims, self.bpp, expected, obtained))
             if self.swap_needed():
                 data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
             else:
