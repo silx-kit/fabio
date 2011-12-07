@@ -268,7 +268,7 @@ def compByteOffet_numpy(data):
     start = 0
     binary_blob = ""
     for stop in exceptions:
-        if stop - start > 1:
+        if stop - start > 0:
             binary_blob += delta[start:stop].astype("int8").tostring()
         exc = delta[stop]
         if (exc > 2147483647) or (exc < -2147483647): #2**31-1

@@ -1,6 +1,5 @@
-# coding: utf8
 """
-Authors:      Jérôme Kieffer, ESRF 
+Authors:      Jerome Kieffer, ESRF 
 Email:        jerome.kieffer@esrf.eu
 
 Cif Binary Files images are 2D images written by the Pilatus detector and others.
@@ -23,7 +22,7 @@ import numpy
 import cython
 
 @cython.boundscheck(False)
-def analyseCython(char * stream, int size):
+def analyseCython(char * stream, size=None):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
     @param stream: string representing the compressed data
@@ -59,10 +58,15 @@ def analyseCython(char * stream, int size):
     cdef char               key8 = 0x80
     cdef char               key0 = 0x00
     cdef numpy.ndarray[ long long  , ndim = 1] dataOut
-    dataOut = numpy.zeros(size, dtype=numpy.int64)
+    cdef int csize
+    if size is None:
+        csize = < int > len(stream)
+    else:
+        csize = < int > size
+    dataOut = numpy.zeros(csize, dtype=numpy.int64)
 
     with nogil:
-        while (j < size):
+        while (j < csize):
             if (stream[i] == key8):
                 if ((stream[i + 1] == key0) and (stream[i + 2] == key8)):
                     if (stream[i + 3] == key0) and (stream[i + 4] == key0) and (stream[i + 5] == key0) and (stream[i + 6] == key8):
@@ -116,4 +120,4 @@ def analyseCython(char * stream, int size):
             dataOut[j] = last
             j += 1
 
-    return dataOut
+    return dataOut[:j + 1]
