@@ -22,13 +22,14 @@ import numpy
 import cython
 
 @cython.boundscheck(False)
-def analyseCython(char * stream, size=None):
+def analyseCython(bytes stream not None, size=None):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
     @param stream: string representing the compressed data
     @param size: the size of the output array (of longInts)
     @return : int64 ndArrays 
     """
+
     cdef int                i = 0
     cdef int                j = 0
     cdef long long          last = 0
@@ -52,33 +53,31 @@ def analyseCython(char * stream, size=None):
     cdef long long          tmp64f = 0
     cdef long long          tmp64g = 0
 
-
-
-
     cdef char               key8 = 0x80
     cdef char               key0 = 0x00
-    cdef numpy.ndarray[ long long  , ndim = 1] dataOut
+
     cdef int csize
+    cdef int lenStream = < int > len(stream)
+    cdef char * cstream = stream
     if size is None:
-        csize = < int > len(stream)
+        csize = lenStream
     else:
         csize = < int > size
-    dataOut = numpy.zeros(csize, dtype=numpy.int64)
-
+    cdef numpy.ndarray[ long long  , ndim = 1] dataOut = numpy.zeros(csize, dtype=numpy.int64)
     with nogil:
-        while (j < csize):
-            if (stream[i] == key8):
-                if ((stream[i + 1] == key0) and (stream[i + 2] == key8)):
-                    if (stream[i + 3] == key0) and (stream[i + 4] == key0) and (stream[i + 5] == key0) and (stream[i + 6] == key8):
+        while (i < lenStream) and (j < csize):
+            if (cstream[i] == key8):
+                if ((cstream[i + 1] == key0) and (cstream[i + 2] == key8)):
+                    if (cstream[i + 3] == key0) and (cstream[i + 4] == key0) and (cstream[i + 5] == key0) and (cstream[i + 6] == key8):
                         #Retrieve the interesting Bytes of data
-                        tmp8 = stream[i + 14]
-                        utmp8a = stream[i + 13]
-                        utmp8b = stream[i + 12]
-                        utmp8c = stream[i + 11]
-                        utmp8d = stream[i + 10]
-                        utmp8e = stream[i + 9]
-                        utmp8f = stream[i + 8]
-                        utmp8g = stream[i + 7]
+                        tmp8 = cstream[i + 14]
+                        utmp8a = cstream[i + 13]
+                        utmp8b = cstream[i + 12]
+                        utmp8c = cstream[i + 11]
+                        utmp8d = cstream[i + 10]
+                        utmp8e = cstream[i + 9]
+                        utmp8f = cstream[i + 8]
+                        utmp8g = cstream[i + 7]
                         # cast them  in 64 bit
                         tmp64 = tmp8
                         tmp64a = utmp8a
@@ -92,10 +91,10 @@ def analyseCython(char * stream, size=None):
                         i += 15
                     else:
                         #Retrieve the interesting Bytes of data
-                        tmp8 = stream[i + 6]
-                        utmp8a = stream[i + 5]
-                        utmp8b = stream[i + 4]
-                        utmp8c = stream[i + 3]
+                        tmp8 = cstream[i + 6]
+                        utmp8a = cstream[i + 5]
+                        utmp8b = cstream[i + 4]
+                        utmp8c = cstream[i + 3]
                         # cast them  in 64 bit
                         tmp64 = tmp8
                         tmp64a = utmp8a
@@ -105,19 +104,18 @@ def analyseCython(char * stream, size=None):
                         current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c);
                         i += 7
                 else:
-                    tmp8 = stream[i + 2];
-                    utmp8a = stream[i + 1]
+                    tmp8 = cstream[i + 2];
+                    utmp8a = cstream[i + 1]
                     # cast them  in 64 bit
                     tmp64 = tmp8
                     tmp64a = utmp8a
                     current = (tmp64 << 8) | (tmp64a);
                     i += 3
             else:
-                tmp8 = stream[i]
+                tmp8 = cstream[i]
                 current = tmp8
                 i += 1
             last += current
             dataOut[j] = last
             j += 1
-
-    return dataOut[:j + 1]
+    return dataOut[:j]

@@ -57,11 +57,15 @@ class testbyteoffset(unittest.TestCase):
 
     def testSC(self):
         """test that datasets are unchanged after various comression/decompressions"""
-        ds = numpy.array([0, 128])
+
         obt_np = compression.decByteOffet_numpy(compression.compByteOffet_numpy(self.ds))
         self.assertEqual(abs(self.ds - obt_np).max(), 0.0, "numpy algo")
         obt_cy = compression.decByteOffet_cython(compression.compByteOffet_numpy(self.ds))
-        self.assertEqual(abs(self.ds - obt_cy).max(), 0.0, "numpy algo")
+        self.assertEqual(abs(self.ds - obt_cy).max(), 0.0, "cython algo")
+        obt_cy2 = compression.decByteOffet_cython(compression.compByteOffet_numpy(self.ds), self.ds.size)
+        self.assertEqual(abs(self.ds - obt_cy2).max(), 0.0, "cython algo_orig")
+        obt_we = compression.decByteOffet_weave(compression.compByteOffet_numpy(self.ds), self.ds.size)
+        self.assertEqual(abs(self.ds - obt_we).max(), 0.0, "weave algo")
 
 
 

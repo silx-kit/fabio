@@ -23,7 +23,7 @@ import os, logging, struct
 logger = logging.getLogger("cbfimage")
 import numpy
 from fabioimage import fabioimage
-from compression import decByteOffet_python, decByteOffet_weave, decByteOffet_numpy, md5sum
+from compression import decByteOffet_python, decByteOffet_weave, decByteOffet_numpy, md5sum, compByteOffet_numpy
 #import time
 
 DATA_TYPES = { "signed 8-bit integer"   : numpy.int8,
@@ -189,8 +189,8 @@ class cbfimage(fabioimage):
                         "X-Binary-Element-Byte-Order: LITTLE_ENDIAN" ,
                         "Content-MD5: %s" % md5sum(binary_blob),
                         "X-Binary-Number-of-Elements: %s" % (self.dim1 * self.dim2),
-                        "X-Binary-Size-Fastest-Dimension: %d" % self.dim1,
-                        "X-Binary-Size-Second-Dimension: %d" % self.dim2,
+                        "X-Binary-Size-Fastest-Dimension: %d" % self.dim2,
+                        "X-Binary-Size-Second-Dimension: %d" % self.dim1,
                         "X-Binary-Size-Padding: %d" % 1,
                         "",
                         STARTER + binary_blob,
@@ -198,10 +198,31 @@ class cbfimage(fabioimage):
                         "--CIF-BINARY-FORMAT-SECTION----"
                         ]
 
+        if "_array_data.header_contents" not in self.header:
+            nonCifHeaders = []
+        else:
+            nonCifHeaders = [i.strip()[2:] for i in self.header["_array_data.header_contents"].split("\n") if i.find("# ") >= 0]
+
+        for key in self.header:
+            if (key not in self.header_keys):
+                self.header_keys.append(key)
         for key in self.header_keys:
             if key.startswith("_") :
                 if key not in self.cif or self.cif[key] != self.header[key]:
                     self.cif[key] = self.header[key]
+            elif key.startswith("X-Binary-"):
+                pass
+            elif key.startswith("Content-"):
+                pass
+            elif key.startswith("conversions"):
+                pass
+            elif key.startswith("filename"):
+                pass
+            elif key in self.header:
+                nonCifHeaders.append("%s %s" % (key, self.header[key]))
+        if len(nonCifHeaders) > 0:
+            self.cif["_array_data.header_contents"] = "\r\n".join(["# %s" % i for i in nonCifHeaders])
+
         self.cif["_array_data.data"] = "\r\n".join(binary_block)
         self.cif.saveCIF(fname, linesep="\r\n")
 
