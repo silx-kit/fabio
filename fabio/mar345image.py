@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#coding: utf8 
+from __future__ import with_statement
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -8,13 +10,15 @@ Authors: Henning O. Sorensen & Erik Knudsen
          DK-4000 Roskilde
          email:erik.knudsen@risoe.dk
           +
-         Jon Wright, ESRF, France
+         Jon Wright, Jerome Kieffer, Gael Goret ESRF, France
 """
 
 from fabioimage import fabioimage
-import numpy, struct, string
+from __init__ import version
+import numpy, struct, string, time
 import logging
 logger = logging.getLogger("mar345image")
+
 
 class mar345image(fabioimage):
     _need_a_real_file = True
@@ -138,6 +142,117 @@ class mar345image(fabioimage):
         return h
 
     def write(self, fname):
-        logger.warning("write method not (yet?) implemented !!!!")
+        with  self._open(fname, mode="wb") as outfile:
+            outfile.write(self._writeheader())
+        try:
+            from mar345_IO import compress_pck
+        except ImportError, error:
+            logger.error("Unable to import mar345_IO to write compressed dataset")
+        else:
+            compress_pck(self.data, fname)
 
+
+    def _writeheader(self, linesep="\n"):
+        """
+        @param linesep: end of line separator
+        @return string/bytes containing the mar345 header
+        """
+
+        lnsep = len(linesep)
+
+
+        self.header["HIGH"] = nb_overflow_pixels(self.data)
+
+        binheader = numpy.zeros(16, "int32")
+        binheader[:4] = numpy.array([1234, self.dim1, self.header["HIGH"], 1])
+        binheader[4] = (self.header.get("MODE", "TIME") == "TIME")
+        binheader[5] = self.dim1 * self.dim2
+        binheader[6] = int(self.header.get("PIXEL_LENGTH", 1))
+        binheader[7] = int(self.header.get("PIXEL_HEIGHT", 1))
+        binheader[8] = int(float(self.header.get("WAVELENGTH", 1)) * 1e6)
+        binheader[9] = int(float(self.header.get("DISTANCE", 1)) * 1e3)
+        binheader[10] = int(float(self.header.get("PHI_START", 1)) * 1e3)
+        binheader[11] = int(float(self.header.get("PHI_END", 1)) * 1e3)
+        binheader[12] = int(float(self.header.get("OMEGA_START", 1)) * 1e3)
+        binheader[13] = int(float(self.header.get("OMEGA_END", 1)) * 1e3)
+        binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
+        binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
+        lstOut = [binheader.tostring() + 'mar research'.ljust(64 - lnsep)]
+        lstout.append("PROGRAM".ljust(15) + ("FabIO Version %s" % (version)).ljust(49 - lnsep))
+        lstout.append("DATE".ljust(15) + time.ctime().ljust(49 - lnsep))
+        lstout.append("HIGH" + str(value).ljust(49 - lnsep))
+        key = "SCANNER"
+        if key in self.header:
+            lstout.append(key.ljust(15) + self.header[key].ljust(49 - lnsep))
+        key = "FORMAT_TYPE"
+        if key in self.header:
+            lstout.append("FORMAT".ljust(15) + "%s %s %s" % (self.dim1, self.header[key], self.dim1 * self.dim2).ljust(49 - lnsep))
+        key = "HIGH"
+        if key in self.header:
+            lstout.append(key.ljust(15) + self.header[key].ljust(49 - lnsep))
+        key = "PIXEL"
+        if key in self.header:
+            lstout.append(key.ljust(15) + self.header[key].ljust(49 - lnsep))
+        """
+PIXEL          LENGTH 150  HEIGHT 150
+
+OFFSET         ROFF 5.000  TOFF 0.000
+
+MULTIPLIER     1.000GAIN           1.000
+
+WAVELENGTH     1.08000
+
+DISTANCE       240.000
+
+RESOLUTION     1.761
+
+PHI            START 0.000  END 1.000  OSC 1
+
+OMEGA          START 0.000  END 0.000  OSC 0
+
+CHI            0.000
+
+TWOTHETA       0.000
+
+CENTER         X 1150.000  Y 1150.000
+
+MODE           TIME
+
+TIME           20.00
+
+COUNTS         START 19.35 END 19.29  NMEAS 9
+
+COUNTS         MIN 19.27  MAX 19.38
+
+COUNTS         AVE 19.30  SIG 0.03
+
+INTENSITY      MIN 1  MAX 249051  AVE 207.8  SIG 951.09
+
+HISTOGRAM      START 0  END 2023  MAX 28307
+
+GENERATOR      ROTATINGANODE  kV 10.0  mA 20.0
+
+MONOCHROMATOR  GRAPHITE  POLAR 0.000
+
+COLLIMATOR     WIDTH 0.30  HEIGHT 0.30
+
+REMARK
+
+END OF HEADER
+        """
+
+        return linesep.join(lstOut)
+
+
+def strpad(str_in, size_out, eol=True):
+        size_in = len(str_in)
+        if eol:
+            str_out = str_in + ' ' * (size_out - size_in - 1) + '\n'
+        else:
+            str_out = str_in + ' ' * (size_out - size_in)
+        return str_out
+
+def nb_overflow_pixels(data):
+    mask = data >= 65535
+    return len(data[mask])
 
