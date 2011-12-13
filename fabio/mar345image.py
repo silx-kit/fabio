@@ -14,11 +14,9 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 from fabioimage import fabioimage
-from __init__ import version
-import numpy, struct, string, time
+import numpy, struct, string, time, sys
 import logging
 logger = logging.getLogger("mar345image")
-
 
 class mar345image(fabioimage):
     _need_a_real_file = True
@@ -152,12 +150,15 @@ class mar345image(fabioimage):
             compress_pck(self.data, fname)
 
 
-    def _writeheader(self, linesep="\n"):
+    def _writeheader(self, linesep="\n", size=4096):
         """
         @param linesep: end of line separator
         @return string/bytes containing the mar345 header
         """
-
+        try:
+            version = sys.modules["fabio"].version
+        except:
+            version = "0.0.9"
         lnsep = len(linesep)
 
 
@@ -177,80 +178,109 @@ class mar345image(fabioimage):
         binheader[13] = int(float(self.header.get("OMEGA_END", 1)) * 1e3)
         binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
-        lstOut = [binheader.tostring() + 'mar research'.ljust(64 - lnsep)]
+        lstout = [binheader.tostring() + 'mar research'.ljust(64 - lnsep)]
+
         lstout.append("PROGRAM".ljust(15) + ("FabIO Version %s" % (version)).ljust(49 - lnsep))
         lstout.append("DATE".ljust(15) + time.ctime().ljust(49 - lnsep))
-        lstout.append("HIGH" + str(value).ljust(49 - lnsep))
-        key = "SCANNER"
-        if key in self.header:
-            lstout.append(key.ljust(15) + self.header[key].ljust(49 - lnsep))
-        key = "FORMAT_TYPE"
-        if key in self.header:
-            lstout.append("FORMAT".ljust(15) + "%s %s %s" % (self.dim1, self.header[key], self.dim1 * self.dim2).ljust(49 - lnsep))
         key = "HIGH"
         if key in self.header:
-            lstout.append(key.ljust(15) + self.header[key].ljust(49 - lnsep))
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "SCANNER"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "FORMAT_TYPE"
+        if key in self.header:
+            lstout.append("FORMAT".ljust(15) + "%s  %s %s" % (self.dim1, self.header[key], self.dim1 * self.dim2).ljust(49 - lnsep))
+        key = "HIGH"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
         key = "PIXEL"
         if key in self.header:
-            lstout.append(key.ljust(15) + self.header[key].ljust(49 - lnsep))
-        """
-PIXEL          LENGTH 150  HEIGHT 150
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key1 = "OFFSET_ROFF"
+        key2 = "OFFSET_TOFF"
+        if key1 in self.header and key2 in self.header:
+             lstout.append("OFFSET".ljust(15) + "ROFF %s  TOFF %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+        key = "MULTIPLIER"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "GAIN"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "WAVELENGTH"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "DISTANCE"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key1 = "PHI_START"
+        key2 = "PHI_END"
+        key3 = "PHI_OSC"
+        if (key1 in self.header) and (key2 in self.header) and (key3 in self.header):
+            lstout.append("PHI".ljust(15) + "START %s  END %s  OSC %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+        key1 = "OMEGA_START"
+        key2 = "OMEGA_END"
+        key3 = "OMEGA_OSC"
+        if (key1 in self.header) and (key2 in self.header) and (key3 in self.header):
+            lstout.append("OMEGA".ljust(15) + "START %s  END %s  OSC %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+        key = "CHI"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "TWOTHETA"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key1 = "CENTER_X"
+        key2 = "CENTER_Y"
+        if (key1 in self.header) and (key2 in self.header):
+             lstout.append("CENTER".ljust(15) + "X %s  Y %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+        key = "MODE"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "TIME"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key1 = "COUNTS_START"
+        key2 = "COUNTS_END"
+        key3 = "COUNTS_NMEAS"
+        if key1 in self.header and key2 in self.header and key3 in self.header:
+            lstout.append("COUNTS".ljust(15) + "START %s  END %s  NMEAS %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+        key1 = "COUNTS_MIN"
+        key2 = "COUNTS_MAX"
+        if key1 in self.header and key2 in self.header:
+             lstout.append("COUNTS".ljust(15) + "MIN %s  MAX %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+        key1 = "COUNTS_AVE"
+        key2 = "COUNTS_SIG"
+        if key1 in self.header and key2 in self.header:
+             lstout.append("COUNTS".ljust(15) + "AVE %s  SIG %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+        key1 = "INTENSITY_MIN"
+        key2 = "INTENSITY_MAX"
+        key3 = "INTENSITY_AVE"
+        key4 = "INTENSITY_SIG"
+        if key1 in self.header and key2 in self.header and key3 in self.header and key4 in self.header:
+            lstout.append("INTENSITY".ljust(15) + "MIN %s  MAX %s  AVE %s  SIG %s" % (self.header[key1], self.header[key2], self.header[key3], self.header[key4]).ljust(49 - lnsep))
+        key1 = "HISTOGRAM_START"
+        key2 = "HISTOGRAM_END"
+        key3 = "HISTOGRAM_MAX"
+        if key1 in self.header and key2 in self.header and key3 in self.header:
+            lstout.append("HISTOGRAM".ljust(15) + "START %s  END %s  MAX %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+        key = "GENERATOR"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "MONOCHROMATOR"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key1 = "COLLIMATOR_WIDTH"
+        key2 = "COLLIMATOR_HEIGHT"
+        if key1 in self.header and key2 in self.header:
+             lstout.append("COLLIMATOR".ljust(15) + "WIDTH %s  HEIGHT %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+        key = "REMARK"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "END OF HEADER"
+        if key in self.header:
+            lstout.append(key.ljust(64 - lnsep))
 
-OFFSET         ROFF 5.000  TOFF 0.000
-
-MULTIPLIER     1.000GAIN           1.000
-
-WAVELENGTH     1.08000
-
-DISTANCE       240.000
-
-RESOLUTION     1.761
-
-PHI            START 0.000  END 1.000  OSC 1
-
-OMEGA          START 0.000  END 0.000  OSC 0
-
-CHI            0.000
-
-TWOTHETA       0.000
-
-CENTER         X 1150.000  Y 1150.000
-
-MODE           TIME
-
-TIME           20.00
-
-COUNTS         START 19.35 END 19.29  NMEAS 9
-
-COUNTS         MIN 19.27  MAX 19.38
-
-COUNTS         AVE 19.30  SIG 0.03
-
-INTENSITY      MIN 1  MAX 249051  AVE 207.8  SIG 951.09
-
-HISTOGRAM      START 0  END 2023  MAX 28307
-
-GENERATOR      ROTATINGANODE  kV 10.0  mA 20.0
-
-MONOCHROMATOR  GRAPHITE  POLAR 0.000
-
-COLLIMATOR     WIDTH 0.30  HEIGHT 0.30
-
-REMARK
-
-END OF HEADER
-        """
-
-        return linesep.join(lstOut)
-
-
-def strpad(str_in, size_out, eol=True):
-        size_in = len(str_in)
-        if eol:
-            str_out = str_in + ' ' * (size_out - size_in - 1) + '\n'
-        else:
-            str_out = str_in + ' ' * (size_out - size_in)
-        return str_out
+        return "%4096s" % (linesep.join(lstout))
 
 def nb_overflow_pixels(data):
     mask = data >= 65535
