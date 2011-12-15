@@ -118,10 +118,12 @@ class mar345image(fabioimage):
                 "bytes 65-76 of the header but was not")
         l = string.strip(f.read(4096 - 128 - 64))
         for m in l.splitlines():
-            if m == 'END OF HEADER': break
+            if m == 'END OF HEADER':
+                break
             n = m.split(' ', 1)
             if n[0] == '':
                 continue
+            logger.debug("reading: %s %s", n[0], n[1])
             if n[0] in ('PROGRAM', 'DATE', 'SCANNER', 'HIGH', 'MULTIPLIER',
                         'GAIN', 'WAVELENGTH', 'DISTANCE', 'RESOLUTION',
                         'CHI', 'TWOTHETA', 'MODE', 'TIME', 'GENERATOR',
@@ -142,6 +144,7 @@ class mar345image(fabioimage):
     def write(self, fname):
         with  self._open(fname, mode="wb") as outfile:
             outfile.write(self._writeheader())
+            outfile.write(self._high_intensity_pixel_records())
         try:
             from mar345_IO import compress_pck
         except ImportError, error:
@@ -165,7 +168,7 @@ class mar345image(fabioimage):
         self.header["HIGH"] = nb_overflow_pixels(self.data)
 
         binheader = numpy.zeros(16, "int32")
-        binheader[:4] = numpy.array([1234, self.dim1, self.header["HIGH"], 1])
+        binheader[:4] = numpy.array([1234, self.dim1, int(self.header["HIGH"]), 1])
         binheader[4] = (self.header.get("MODE", "TIME") == "TIME")
         binheader[5] = self.dim1 * self.dim2
         binheader[6] = int(self.header.get("PIXEL_LENGTH", 1))
@@ -182,15 +185,12 @@ class mar345image(fabioimage):
 
         lstout.append("PROGRAM".ljust(15) + ("FabIO Version %s" % (version)).ljust(49 - lnsep))
         lstout.append("DATE".ljust(15) + time.ctime().ljust(49 - lnsep))
-        key = "HIGH"
-        if key in self.header:
-            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
         key = "SCANNER"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
         key = "FORMAT_TYPE"
         if key in self.header:
-            lstout.append("FORMAT".ljust(15) + "%s  %s %s" % (self.dim1, self.header[key], self.dim1 * self.dim2).ljust(49 - lnsep))
+            lstout.append("FORMAT".ljust(15) + ("%s  %s %s" % (self.dim1, self.header[key], self.dim1 * self.dim2)).ljust(49 - lnsep))
         key = "HIGH"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -200,7 +200,7 @@ class mar345image(fabioimage):
         key1 = "OFFSET_ROFF"
         key2 = "OFFSET_TOFF"
         if key1 in self.header and key2 in self.header:
-             lstout.append("OFFSET".ljust(15) + "ROFF %s  TOFF %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+             lstout.append("OFFSET".ljust(15) + ("ROFF %s  TOFF %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key = "MULTIPLIER"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -217,12 +217,12 @@ class mar345image(fabioimage):
         key2 = "PHI_END"
         key3 = "PHI_OSC"
         if (key1 in self.header) and (key2 in self.header) and (key3 in self.header):
-            lstout.append("PHI".ljust(15) + "START %s  END %s  OSC %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+            lstout.append("PHI".ljust(15) + ("START %s  END %s  OSC %s" % (self.header[key1], self.header[key2], self.header[key3])).ljust(49 - lnsep))
         key1 = "OMEGA_START"
         key2 = "OMEGA_END"
         key3 = "OMEGA_OSC"
         if (key1 in self.header) and (key2 in self.header) and (key3 in self.header):
-            lstout.append("OMEGA".ljust(15) + "START %s  END %s  OSC %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+            lstout.append("OMEGA".ljust(15) + ("START %s  END %s  OSC %s" % (self.header[key1], self.header[key2], self.header[key3])).ljust(49 - lnsep))
         key = "CHI"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -232,7 +232,7 @@ class mar345image(fabioimage):
         key1 = "CENTER_X"
         key2 = "CENTER_Y"
         if (key1 in self.header) and (key2 in self.header):
-             lstout.append("CENTER".ljust(15) + "X %s  Y %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+             lstout.append("CENTER".ljust(15) + ("X %s  Y %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key = "MODE"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -243,26 +243,26 @@ class mar345image(fabioimage):
         key2 = "COUNTS_END"
         key3 = "COUNTS_NMEAS"
         if key1 in self.header and key2 in self.header and key3 in self.header:
-            lstout.append("COUNTS".ljust(15) + "START %s  END %s  NMEAS %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+            lstout.append("COUNTS".ljust(15) + ("START %s  END %s  NMEAS %s" % (self.header[key1], self.header[key2], self.header[key3])).ljust(49 - lnsep))
         key1 = "COUNTS_MIN"
         key2 = "COUNTS_MAX"
         if key1 in self.header and key2 in self.header:
-             lstout.append("COUNTS".ljust(15) + "MIN %s  MAX %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+             lstout.append("COUNTS".ljust(15) + ("MIN %s  MAX %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key1 = "COUNTS_AVE"
         key2 = "COUNTS_SIG"
         if key1 in self.header and key2 in self.header:
-             lstout.append("COUNTS".ljust(15) + "AVE %s  SIG %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+             lstout.append("COUNTS".ljust(15) + ("AVE %s  SIG %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key1 = "INTENSITY_MIN"
         key2 = "INTENSITY_MAX"
         key3 = "INTENSITY_AVE"
         key4 = "INTENSITY_SIG"
         if key1 in self.header and key2 in self.header and key3 in self.header and key4 in self.header:
-            lstout.append("INTENSITY".ljust(15) + "MIN %s  MAX %s  AVE %s  SIG %s" % (self.header[key1], self.header[key2], self.header[key3], self.header[key4]).ljust(49 - lnsep))
+            lstout.append("INTENSITY".ljust(15) + ("MIN %s  MAX %s  AVE %s  SIG %s" % (self.header[key1], self.header[key2], self.header[key3], self.header[key4])).ljust(49 - lnsep))
         key1 = "HISTOGRAM_START"
         key2 = "HISTOGRAM_END"
         key3 = "HISTOGRAM_MAX"
         if key1 in self.header and key2 in self.header and key3 in self.header:
-            lstout.append("HISTOGRAM".ljust(15) + "START %s  END %s  MAX %s" % (self.header[key1], self.header[key2], self.header[key3]).ljust(49 - lnsep))
+            lstout.append("HISTOGRAM".ljust(15) + ("START %s  END %s  MAX %s" % (self.header[key1], self.header[key2], self.header[key3])).ljust(49 - lnsep))
         key = "GENERATOR"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -272,17 +272,36 @@ class mar345image(fabioimage):
         key1 = "COLLIMATOR_WIDTH"
         key2 = "COLLIMATOR_HEIGHT"
         if key1 in self.header and key2 in self.header:
-             lstout.append("COLLIMATOR".ljust(15) + "WIDTH %s  HEIGHT %s" % (self.header[key1], self.header[key2]).ljust(49 - lnsep))
+             lstout.append("COLLIMATOR".ljust(15) + ("WIDTH %s  HEIGHT %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key = "REMARK"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
-        key = "END OF HEADER"
-        if key in self.header:
+        else:
             lstout.append(key.ljust(64 - lnsep))
+        key = "END OF HEADER"
+        lstout.append(key)
 
-        return "%4096s" % (linesep.join(lstout))
+        return linesep.join(lstout).ljust(size)
+
+    def _high_intensity_pixel_records(self):
+        flt_data = self.data.flatten()
+        pix_location = numpy.where(flt_data > 65535)[0]
+        records = [numpy.zeros(8, "int32")]
+        record_number = 0
+        pix_num = 0
+        for i in pix_location:
+            if pix_num <= 6:
+                records[record_number][pix_num] = i
+                records[record_number][pix_num + 1] = flt_data[i]
+                pix_num += 2
+            else:
+                records += [numpy.zeros(8, "int32")]
+                record_number += 1
+                pix_num = 0
+        return numpy.array(records).tostring()
+
 
 def nb_overflow_pixels(data):
-    mask = data >= 65535
+    mask = data > 65535
     return len(data[mask])
 
