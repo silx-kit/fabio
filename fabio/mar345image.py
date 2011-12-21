@@ -153,7 +153,7 @@ class mar345image(fabioimage):
             compress_pck(self.data, fname)
 
 
-    def _writeheader(self, linesep="\n", size=4096):
+    def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
         """
         @param linesep: end of line separator
         @return string/bytes containing the mar345 header
@@ -211,6 +211,9 @@ class mar345image(fabioimage):
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
         key = "DISTANCE"
+        if key in self.header:
+            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key = "RESOLUTION"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
         key1 = "PHI_START"
@@ -282,7 +285,8 @@ class mar345image(fabioimage):
         lstout.append(key)
 
         return linesep.join(lstout).ljust(size)
-
+        
+	
     def _high_intensity_pixel_records(self):
         flt_data = self.data.flatten()
         pix_location = numpy.where(flt_data > 65535)[0]
@@ -291,17 +295,19 @@ class mar345image(fabioimage):
         pix_num = 0
         for i in pix_location:
             if pix_num <= 6:
-                records[record_number][pix_num] = i
+                records[record_number][pix_num] = i+1
                 records[record_number][pix_num + 1] = flt_data[i]
                 pix_num += 2
             else:
                 records += [numpy.zeros(8, "int32")]
                 record_number += 1
-                pix_num = 0
-        return numpy.array(records).tostring()
-
-
+                records[record_number][0] = i+1
+                records[record_number][1] = flt_data[i]
+                pix_num = 2
+                
+        return numpy.array(records,"int32").tostring()
+        
 def nb_overflow_pixels(data):
-    mask = data > 65535
-    return len(data[mask])
-
+    return (data > 65535).sum()
+    
+    
