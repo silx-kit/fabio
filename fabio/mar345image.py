@@ -311,7 +311,7 @@ class mar345image(fabioimage):
         pix_location = numpy.where(flt_data > 65535)[0]
         nb_pix = pix_location.size
         tmp = numpy.zeros((nb_pix,2), dtype = "int32")
-        tmp[:,0]=pix_location
+        tmp[:,0]=pix_location+1
         tmp[:,1]=flt_data[pix_location]
         if nb_pix%4==0:
         	tmp2=tmp
