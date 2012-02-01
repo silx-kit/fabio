@@ -164,9 +164,7 @@ class mar345image(fabioimage):
             version = "0.0.9"
         lnsep = len(linesep)
 
-
-        self.header["HIGH"] = nb_overflow_pixels(self.data)
-
+        self.header["HIGH"] = self.nb_overflow_pixels()
         binheader = numpy.zeros(16, "int32")
         binheader[:4] = numpy.array([1234, self.dim1, int(self.header["HIGH"]), 1])
         binheader[4] = (self.header.get("MODE", "TIME") == "TIME")
@@ -194,9 +192,10 @@ class mar345image(fabioimage):
         key = "HIGH"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
-        key = "PIXEL"
-        if key in self.header:
-            lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
+        key1 = "PIXEL_LENGTH"
+        key2 = "PIXEL_HEIGHT"
+        if (key1 in self.header) and (key2 in self.header):
+            lstout.append("PIXEL".ljust(15) + ("LENGTH %s  HEIGHT %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key1 = "OFFSET_ROFF"
         key2 = "OFFSET_TOFF"
         if key1 in self.header and key2 in self.header:
@@ -283,44 +282,22 @@ class mar345image(fabioimage):
             lstout.append(key.ljust(64 - lnsep))
         key = "END OF HEADER"
         lstout.append(key)
-
         return linesep.join(lstout).ljust(size)
-        
-	
-    def deprecated_high_intensity_pixel_records(self):
-        flt_data = self.data.flatten()
-        pix_location = numpy.where(flt_data > 65535)[0]
-        records = [numpy.zeros(8, "int32")]
-        record_number = 0
-        pix_num = 0
-        for i in pix_location:
-            if pix_num <= 6:
-                records[record_number][pix_num] = i+1
-                records[record_number][pix_num + 1] = flt_data[i]
-                pix_num += 2
-            else:
-                records += [numpy.zeros(8, "int32")]
-                record_number += 1
-                records[record_number][0] = i+1
-                records[record_number][1] = flt_data[i]
-                pix_num = 2
-        return numpy.array(records,"int32").tostring()
+
 
     def _high_intensity_pixel_records(self):
         flt_data = self.data.flatten()
         pix_location = numpy.where(flt_data > 65535)[0]
         nb_pix = pix_location.size
-        tmp = numpy.zeros((nb_pix,2), dtype = "int32")
-        tmp[:,0]=pix_location+1
-        tmp[:,1]=flt_data[pix_location]
-        if nb_pix%4==0:
-        	tmp2=tmp
-       	else:
-       		tmp2 = numpy.zeros(((nb_pix//4+1)*4,2),dtype="int32")
-       		tmp2[:nb_pix,:]=tmp
-        return tmp2.tostring()
-        
-def nb_overflow_pixels(data):
-    return (data > 65535).sum()
-    
-    
+        if nb_pix % 8 == 0:
+            tmp = numpy.zeros((nb_pix, 2), dtype="int32")
+        else:
+            tmp = numpy.zeros(((nb_pix // 8 + 1) * 8, 2), dtype="int32")
+        tmp[:nb_pix, 0] = pix_location + 1
+        tmp[:nb_pix, 1] = flt_data[pix_location]
+        return tmp.tostring()
+
+    def nb_overflow_pixels(self):
+        return (self.data > 65535).sum()
+
+
