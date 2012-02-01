@@ -287,7 +287,7 @@ class mar345image(fabioimage):
         return linesep.join(lstout).ljust(size)
         
 	
-    def _high_intensity_pixel_records(self):
+    def deprecated_high_intensity_pixel_records(self):
         flt_data = self.data.flatten()
         pix_location = numpy.where(flt_data > 65535)[0]
         records = [numpy.zeros(8, "int32")]
@@ -304,8 +304,21 @@ class mar345image(fabioimage):
                 records[record_number][0] = i+1
                 records[record_number][1] = flt_data[i]
                 pix_num = 2
-                
         return numpy.array(records,"int32").tostring()
+
+    def _high_intensity_pixel_records(self):
+        flt_data = self.data.flatten()
+        pix_location = numpy.where(flt_data > 65535)[0]
+        nb_pix = pix_location.size
+        tmp = numpy.zeros((nb_pix,2), dtype = "int32")
+        tmp[:,0]=pix_location
+        tmp[:,1]=flt_data[pix_location]
+        if nb_pix%4==0:
+        	tmp2=tmp
+       	else:
+       		tmp2 = numpy.zeros(((nb_pix//4+1)*4,2),dtype="int32")
+       		tmp2[:nb_pix,:]=tmp
+        return tmp2.tostring()
         
 def nb_overflow_pixels(data):
     return (data > 65535).sum()
