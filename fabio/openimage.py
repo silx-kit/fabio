@@ -32,6 +32,7 @@ import fit2dspreadsheetimage
 import kcdimage
 import cbfimage
 import xsdimage
+import binaryimage
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
