@@ -295,3 +295,56 @@ def compByteOffet_numpy(data):
     return binary_blob
 
 
+def decTY1(raw_8, raw_16=None, raw_32=None):
+    """
+    Modified byte offset decompressor used in Oxford Diffraction images
+    @param raw_8,raw_16,raw_32: strings containing raw data with integer of the given size
+    @return numpy.ndarray 
+    """
+    data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
+    data -= 127
+    if raw_32 is not None:
+        bytecode = "int32"
+        int32 = numpy.fromstring(raw_32, dtype="int32").astype(int)
+        exception32 = numpy.nonzero(data == 128)
+        if raw_16:
+            int16 = numpy.fromstring(raw_16, dtype="int16").astype(int)
+            exception16 = numpy.nonzero(data == 127)
+    elif raw_16 is not None:
+        int16 = numpy.fromstring(raw_16, dtype="int16").astype(int)
+        exception16 = numpy.nonzero(data == 127)
+        bytecode = "int16"
+    else:
+        bytecode = "uint8"
+    if raw_16:
+        data[exception16] = int16
+    if raw_32:
+        data[exception32] = int32
+    return data.cumsum().astype(bytecode)
+
+
+decKM4CCD = decTY1
+
+def compTY1(data):
+    """
+    Modified byte offset compressor used in Oxford Diffraction images
+    
+    @param data numpy.ndarray
+    @return  raw_8,raw_16,raw_32: strings containing raw data with integer of the given size 
+    """
+    fdata = data.flatten()
+    diff = numpy.zeros_like(fdata)
+    diff[0] = fdata[0]
+    diff[1:] = fdata[1:] - fdata[:-1]
+    adiff = abs(diff)
+    exception32 = (adiff > 32767)#2**15-1
+    exception16 = (adiff >= 127) - exception32 #2**7-1)
+    we16 = numpy.where(exception16)
+    we32 = numpy.where(exception32)
+    raw_16 = diff[we16].astype("int16").tostring()
+    raw_32 = diff[we32].astype("int32").tostring()
+    diff[we16] = 127
+    diff[we32] = 128
+    diff += 127
+    raw_8 = diff.astype("uint8").tostring()
+    return  raw_8, raw_16, raw_32

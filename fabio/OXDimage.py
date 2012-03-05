@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#coding: utf8
 
 """
 Reads Oxford Diffraction Sapphire 3 images
@@ -11,12 +12,15 @@ Authors: Henning O. Sorensen & Erik Knudsen
          email:erik.knudsen@risoe.dk
 
         + Jon Wright, ESRF
+        + Gaël Goret, ESRF
+        + Jérôme Kieffer, ESRF
 
 """
 
 import numpy, logging
 logger = logging.getLogger("OXDimage")
 from fabioimage import fabioimage
+from compression import decTY1
 
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
 1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
@@ -166,68 +170,30 @@ class OXDimage(fabioimage):
         #
         if self.header['Compression'] == 'TY1':
             #Compressed with the KM4CCD compression
-            bytecode = numpy.uint8
-            self.bpp = len(numpy.array(0, bytecode).tostring())
-            ReadBytes = self.dim1 * self.dim2 * self.bpp
-            diffs = infile.read(ReadBytes)
-            diffs = numpy.fromstring(diffs, bytecode)
-            offset = -127
-            diffs = diffs.astype(numpy.int32) + offset
-
+            raw8 = infile.read(self.dim1 * self.dim2)
+            raw16 = None
+            raw32 = None
             if self.header['OI'] > 0:
-                bytecode = numpy.int16
-                self.bpp = len(numpy.array(0, bytecode).tostring())
-                ReadBytes = self.header['OI'] * self.bpp
-                over_short = infile.read(ReadBytes)
-                over_short = numpy.fromstring(over_short, bytecode)
+                raw16 = infile.read(self.header['OI'] * 2)
             if self.header['OL'] > 0:
-                bytecode = numpy.int32
-                self.bpp = len(numpy.array(0, bytecode).tostring())
-                ReadBytes = self.header['OL'] * self.bpp
-                over_long = infile.read(ReadBytes)
-                over_long = numpy.fromstring(over_long, bytecode)
-            block = diffs.copy()
-            old_val = 0
-            js = 0
-            jl = 0
-            logger.warning('OVER_SHORT: %s', block.dtype)
+                raw32 = infile.read(self.header['OL'] * 4)
 
-            for i in range(self.dim1 * self.dim2):
-                if diffs[i] < 127:
-                    #print 'DIFF < 127:' , diffs[i] 
-                    d = diffs[i]
-                elif diffs[i] == 127:
-                    #print 'DIFF == 127:' , diffs[i] 
-                    d = over_short[js]
-                    #print 'd ' , d
-                    js = js + 1
-                elif diffs[i] == 128:
-                    #print 'DIFF == 128:' , diffs[i] 
-                    d = over_long[jl]
-                    jl = jl + 1
-                old_val = old_val + d
-                block[i] = old_val
+            block = decTY1(raw8, raw16, raw32)
+            bytecode = block.dtype
+
         else:
             bytecode = numpy.int32
             self.bpp = len(numpy.array(0, bytecode).tostring())
             ReadBytes = self.dim1 * self.dim2 * self.bpp
             block = numpy.fromstring(infile.read(ReadBytes), bytecode)
 
-        logger.warning('OVER_SHORT2: %s', block.dtype)
-        logger.warning("%s" % (block < 0).sum())
-        #
+        logger.debug('OVER_SHORT2: %s', block.dtype)
+        logger.debug("%s" % (block < 0).sum())
         infile.close()
-        logger.warning("BYTECODE: %s", bytecode)
-        try:
-            # avoid int64 for x86_64 with astype
-            bytecode = numpy.int32
-
-            self.data = numpy.reshape(block.astype(bytecode), [self.dim2, self.dim1])
-            #self.data = numpy.reshape(block,[self.dim2, self.dim1])
-        except:
-            print len(block), self.dim2, self.dim1
-            raise IOError('Size spec in OD-header does not match size of image data field')
-
+        logger.debug("BYTECODE: %s", bytecode)
+        self.data = block.reshape((self.dim2, self.dim1))
         self.bytecode = self.data.dtype.type
         self.pilimage = None
         return self
+
+
