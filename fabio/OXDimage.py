@@ -30,7 +30,7 @@ DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
 3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
 4: 'Unknown Oxford diffraction detector'}
 
-DEFAULT_HEADERS = {'Header Version':  'Unknown Oxford diffraction detector',
+DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
                    'Compression': "TY1",
                    'Header Size In Bytes': 5120,
                    "ASCII Section size in Byte": 256,
@@ -229,6 +229,10 @@ class OXDimage(fabioimage):
             if key not in self.header_keys:
                 self.header_keys.append(key)
                 self.header[key] = DEFAULT_HEADERS[key]
+                
+        if "NX" not in self.header.keys() or "NY" not in self.header.keys():
+			self.header['NX'] = self.dim1
+			self.header['NY'] = self.dim2
         ascii_headers = [self.header['Header Version'],
                        "COMPRESSION=%s (%5.1f)" % (self.header["Compression"], self.getCompressionRatio()),
                        "NX=%4i NY=%4i OI=%7i OL=%7i " % (self.header["NX"], self.header["NY"], self.header["OI"], self.header["OL"]),
