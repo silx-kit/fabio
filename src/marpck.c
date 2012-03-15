@@ -82,18 +82,14 @@ int 		nc=0,i;
 
 	sprintf(str, PACKIDENTIFIER, x, y);
 
-	printf(" address = 0x%x\n", &img[0]);
 	if ( fd < 0 && fp == NULL ) {
-		printf("I should not be here ...\n");
 		return 0;
 	}
-	printf("I should be here ...\n");
 
 	/* Buffered I/O */
 	if ( fp != NULL ) {
 		if ( fwrite( str, sizeof(char), strlen( str ), fp ) != strlen( str ) ) 
 		{
-			printf("1");
 			return( 0 );
 		}
 	}
@@ -101,10 +97,6 @@ int 		nc=0,i;
 		/* Unbuffered I/O */
 		if( write(fd, str, strlen(str) ) == -1 )
 		{
-			printf("fd = %d str = <%s> strlen = %d\n", fd, str, strlen(str));
-			printf("2\n");
-			printf("2\n");
-			printf("2\n");
 			return( 0 );
 		}
 	}
@@ -148,7 +140,6 @@ int 		nc=0,i;
 		diffs += packsiz;
 	     }
 	}
-	printf(" Everything went fine");
 
 	if ( pack_chunk(NULL, 0, 0, fd, fp) == 0 );
 		return( 1 );

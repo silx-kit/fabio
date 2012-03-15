@@ -176,5 +176,19 @@ Otherwise please try to download the images manually from
                     data to disk at %s" % cls.image_home)
         return fullimagename
 
-
-
+    @staticmethod
+    def recursive_delete(strDirname):
+        """
+        Delete everything reachable from the directory named in "top",
+        assuming there are no symbolic links.
+        CAUTION:  This is dangerous!  For example, if top == '/', it
+        could delete all your disk files.
+        @param strDirname: top directory to delete
+        @type strDirname: string 
+        """
+        for root, dirs, files in os.walk(strDirname, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        os.rmdir(strDirname)

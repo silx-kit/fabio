@@ -19,11 +19,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-import os, logging
+import os, logging, types
 logger = logging.getLogger("edfimage")
 import numpy
 from fabioimage import fabioimage
-from fabioutils import isAscii
+from fabioutils import isAscii, toAscii
 from compression import decBzip2, decGzip, decZlib
 
 BLOCKSIZE = 512
@@ -412,7 +412,6 @@ class edfimage(fabioimage):
     """ Read and try to write the ESRF edf data format """
 
     def __init__(self, data=None , header=None, header_keys=None, frames=None):
-        fabioimage.__init__(self, data, header)
         self.currentframe = 0
         try:
             dim = len(data.shape)
@@ -420,6 +419,7 @@ class edfimage(fabioimage):
             logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
             data = None
             dim = 0
+            fabioimage.__init__(self, data, header)
         if dim == 2:
             fabioimage.__init__(self, data, header)
         elif dim == 1 :
@@ -433,12 +433,24 @@ class edfimage(fabioimage):
             fabioimage.__init__(self, data[0, 0, 0, :, :], header)
 
         if frames is None:
-            frame = Frame(data=data, header=header,
+            frame = Frame(data=self.data, header=self.header,
                           header_keys=header_keys ,
                           number=self.currentframe)
             self.__frames = [frame]
         else:
             self.__frames = frames
+
+    @staticmethod
+    def checkHeader(header=None):
+        """
+        Empty for fabioimage but may be populated by others classes
+        """
+        if type(header) != types.DictionaryType:
+            return {}
+        new = {}
+        for key, value in header.items():
+                new[toAscii(key, ";{}")] = toAscii(value, ";{}")
+        return new
 
     @staticmethod
     def _readHeaderBlock(infile):

@@ -1,6 +1,7 @@
 import cython
 cimport numpy
 import numpy
+# cStringIO
 import os
 from libc.stdio cimport FILE
 cdef extern from "numpy/arrayobject.h":
@@ -57,9 +58,7 @@ def compress_pck(numpy.ndarray inputArray not None, filename not None):
     assert inputArray.ndim == 2
     dim0 = inputArray.shape[0]
     dim1 = inputArray.shape[1]
-    print '0x%x' % inputArray.ctypes.data
     cdef numpy.ndarray[NP_WORD, ndim = 1] data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
-    print '0x%x' % data.ctypes.data
     cdef WORD * cdata
     cdata = < WORD *> data.data
     if os.path.exists(filename):
@@ -68,8 +67,8 @@ def compress_pck(numpy.ndarray inputArray not None, filename not None):
         fd = os.open(filename, os.O_CREAT | os.O_WRONLY)
     print fd, dim1, dim0
     ret = Putmar345Data(cdata, dim1, dim0, fd, NULL)
-    print "ret code", ret
     os.close(fd)
+    return s.getvalue()
 
 
 def uncompress_pck(filename not None, dim1=None, dim2=None, overflowPix=None):
@@ -123,11 +122,6 @@ def uncompress_pck(filename not None, dim1=None, dim2=None, overflowPix=None):
     cdef FILE * cFile = < FILE *> PyFile_AsFile(inFile)
     with nogil:
         ret = Getmar345Data(cFile, cdata)
-    print "ret code", ret
-
-#    cdef numpy.ndarray[NP_U32, ndim = 2] data = numpy.zeros((cdim2, cdim1), dtype=numpy.uint32)
-#    data.data = < char *> mar345_read_data(< FILE *> PyFile_AsFile(inFile), chigh, cdim1, cdim2)
-
     inFile.close()
     return data
 

@@ -12,11 +12,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
          and Jon Wright, Jerome Kieffer: ESRF
 
 """
-import logging
+import os, gzip, bz2, StringIO, types, logging, sys
 logger = logging.getLogger("fabioimage")
-import numpy, os, gzip, bz2, StringIO
+import numpy
 import Image
-import fabioutils
+import fabioutils, converters
 
 
 class fabioStream(StringIO.StringIO):
@@ -48,18 +48,19 @@ class fabioimage(object):
         """
         Set up initial values
         """
-        if type(data) == type("string"):
+        self._classname = None
+        if type(data) in types.StringTypes:
             raise Exception("fabioimage.__init__ bad argument - " + \
                             "data should be numpy array")
-        self.data = data
+        self.data = self.checkData(data)
         self.pilimage = None
         if header is None:
             self.header = {}
         else:
-            self.header = header
+            self.header = self.checkHeader(header)
         self.header_keys = self.header.keys() # holds key ordering
-        if data is not None:
-            self.dim1, self.dim2 = data.shape
+        if self.data is not None:
+            self.dim1, self.dim2 = self.data.shape
         else:
             self.dim1 = self.dim2 = 0
         self.bytecode = None     # numpy typecode
@@ -74,6 +75,34 @@ class fabioimage(object):
         self.nframes = 1
         self.currentframe = 0
         self.filename = None
+
+    @staticmethod
+    def checkHeader(header=None):
+        """
+        Empty for fabioimage but may be populated by others classes
+        """
+        if header is None:
+            return {}
+        else:
+            return header
+
+    @staticmethod
+    def checkData(data=None):
+        """
+        Empty for fabioimage but may be populated by others classes, especially for format accepting only integers
+        """
+        return data
+
+
+    def getclassname(self):
+        """
+        Retrieves the name of the class
+        @return: the name of the class 
+        """
+        if self._classname is None:
+             self._classname = str(self.__class__).replace("<class '", "").replace("'>", "").split(".")[-1]
+        return self._classname
+    classname = property(getclassname)
 
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a fabioimage """
@@ -222,11 +251,11 @@ class fabioimage(object):
 
     def add(self, other):
         """
-        Add another Image - warnign, does not clip to 16 bit images by default
+        Add another Image - warning, does not clip to 16 bit images by default
         """
         if not hasattr(other, 'data'):
-            print 'edfimage.add() called with something that ' + \
-                'does not have a data field'
+            logger.warning('edfimage.add() called with something that ' + \
+                'does not have a data field')
         assert self.data.shape == other.data.shape , \
                   'incompatible images - Do they have the same size?'
         self.data = self.data + other.data
@@ -287,6 +316,7 @@ class fabioimage(object):
         To be overwritten - write the file
         """
         raise Exception("Class has not implemented readheader method yet")
+    save = write
 
     def readheader(self, filename):
         """
@@ -319,6 +349,7 @@ class fabioimage(object):
         """
         raise Exception("Class has not implemented read method yet")
         return self
+    load = read
 
     def readROI(self, filename, frame=None, coords=None):
         """
@@ -397,6 +428,51 @@ class fabioimage(object):
             fobj = python_uncompress(fname, mode)
         return fobj
 
+    def convert(self, dest):
+        """
+        Convert a fabioimage object into another fabioimage object (with possible conversions)
+        @param dest: destination type "EDF", "edfimage" or the class itself 
+        """
+        if type(dest) in types.StringTypes:
+            dest = dest.lower()
+            modules = []
+            for val  in fabioutils.FILETYPES.values():
+                modules += [i + "image" for i in val if i not in modules]
+            klass = None
+            module = None
+            klass_name = None
+            for klass_name in modules:
+                if  klass_name.startswith(dest):
+                    try:
+                        module = sys.modules["fabio." + klass_name]
+                    except KeyError:
+                        try:
+                            module = __import__(klass_name)
+                        except:
+                            logger.error("Failed to import %s", klass_name)
+                        else:
+                            logger.debug("imported %simage", klass_name)
+                    if module is not None:
+                        break
+            if module is not None:
+                if hasattr(module, klass_name):
+                    klass = getattr(module, klass_name)
+                else:
+                    logger.error("Module %s has no image class" % module)
+        elif isinstance(dest, self.__class__):
+           klass = dest.__class__
+        elif ("__new__" in dir(dest)) and isinstance(dest(), fabioimage):
+           klass = dest
+        else:
+            logger.warning("Unrecognized destination format: %s " % dest)
+            return self
+        if klass is None:
+            logger.warning("Unrecognized destination format: %s " % dest)
+            return self
+        other = klass() #temporary instance (to be overwritten)
+        other = klass(data=converters.convert_data(self.classname, other.classname, self.data),
+                    header=converters.convert_header(self.classname, other.classname, self.header))
+        return other
 
 def test():
     """

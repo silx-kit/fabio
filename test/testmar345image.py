@@ -5,7 +5,7 @@
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
-import unittest, sys, os, logging
+import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testmar345image")
 force_build = False
 
@@ -42,6 +42,9 @@ class testMAR345(unittest.TestCase):
         download images
         """
         self.mar = UtilsTest.getimage("example.mar2300.bz2")[:-4]
+        self.tempdir = tempfile.mkdtemp()
+    def tearDown(self):
+        UtilsTest.recursive_delete(self.tempdir)
 
     def test_read(self):
         """
@@ -61,12 +64,30 @@ class testMAR345(unittest.TestCase):
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(obj.dim1, obj.dim2, "dim2!=dim1")
+    def test_write(self):
+        "Test writing with self consistency at the fabio level"
+        for line in TESTIMAGES.split("\n"):
+            vals = line.split()
+            name = vals[0]
+            obj = mar345image()
+            obj.read(os.path.join(os.path.dirname(self.mar), name))
+            obj.write(os.path.join(self.tempdir, name))
+            other = mar345image()
+            other.read(os.path.join(self.tempdir, name))
+            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+            for key in obj.header:
+                if key == "filename":
+                    continue
+                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
 
 
 
 def test_suite_all_mar345():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testMAR345("test_read"))
+    testSuite.addTest(testMAR345("test_write"))
+
     return testSuite
 
 if __name__ == '__main__':

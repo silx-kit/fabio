@@ -139,3 +139,10 @@ class pnmimage(fabioimage):
 
     def write(self, filename):
         logger.warning('write pnm images is not implemented yet.')
+
+    @staticmethod
+    def checkData(data=None):
+        if data is None:
+            return None
+        else:
+            return data.astype(int)

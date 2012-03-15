@@ -116,7 +116,11 @@ class mar345image(fabioimage):
         if not 'mar research' in l:
             logger.warning("the string \"mar research\" should be in " + \
                 "bytes 65-76 of the header but was not")
-        l = string.strip(f.read(4096 - 128 - 64))
+            start = 128
+        else:
+            start = l.index('mar research')
+            f.seek(64 + start)
+        l = string.strip(f.read(4096 - start - 64))
         for m in l.splitlines():
             if m == 'END OF HEADER':
                 break
@@ -180,9 +184,8 @@ class mar345image(fabioimage):
         binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
         lstout = [binheader.tostring() + 'mar research'.ljust(64 - lnsep)]
-
-        lstout.append("PROGRAM".ljust(15) + ("FabIO Version %s" % (version)).ljust(49 - lnsep))
-        lstout.append("DATE".ljust(15) + time.ctime().ljust(49 - lnsep))
+        lstout.append("PROGRAM".ljust(15) + (str(self.header.get("PROGRAM", "FabIO Version %s" % (version))).ljust(49 - lnsep)))
+        lstout.append("DATE".ljust(15) + (str(self.header.get("PROGRAM", time.ctime()))).ljust(49 - lnsep))
         key = "SCANNER"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -300,4 +303,10 @@ class mar345image(fabioimage):
     def nb_overflow_pixels(self):
         return (self.data > 65535).sum()
 
+    @staticmethod
+    def checkData(data=None):
+        if data is None:
+            return None
+        else:
+            return data.astype(int)
 

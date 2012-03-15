@@ -59,6 +59,13 @@ class cbfimage(fabioimage):
         if fname is not None: #load the file)
             self.read(fname)
 
+    @staticmethod
+    def checkData(data=None):
+        if data is None:
+            return None
+        else:
+            return data.astype(int)
+
 
     def _readheader(self, inStream):
         """
@@ -189,8 +196,8 @@ class cbfimage(fabioimage):
                         "X-Binary-Element-Byte-Order: LITTLE_ENDIAN" ,
                         "Content-MD5: %s" % md5sum(binary_blob),
                         "X-Binary-Number-of-Elements: %s" % (self.dim1 * self.dim2),
-                        "X-Binary-Size-Fastest-Dimension: %d" % self.dim2,
-                        "X-Binary-Size-Second-Dimension: %d" % self.dim1,
+                        "X-Binary-Size-Fastest-Dimension: %d" % self.dim1,
+                        "X-Binary-Size-Second-Dimension: %d" % self.dim2,
                         "X-Binary-Size-Padding: %d" % 1,
                         "",
                         STARTER + binary_blob,

@@ -123,3 +123,9 @@ class kcdimage(fabioimage):
         return self
 
 
+    @staticmethod
+    def checkData(data=None):
+        if data is None:
+            return None
+        else:
+            return data.astype(int)

@@ -43,6 +43,7 @@ DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
                    }
 
 class OXDimage(fabioimage):
+
     def _readheader(self, infile):
 
         infile.seek(0)
@@ -229,7 +230,7 @@ class OXDimage(fabioimage):
             if key not in self.header_keys:
                 self.header_keys.append(key)
                 self.header[key] = DEFAULT_HEADERS[key]
-                
+
         if "NX" not in self.header.keys() or "NY" not in self.header.keys():
 			self.header['NX'] = self.dim1
 			self.header['NY'] = self.dim2
@@ -377,6 +378,13 @@ class OXDimage(fabioimage):
 
     def getCompressionRatio(self):
         return 100.0 * (self.data.size + 2 * self.header["OI"] + 4 * self.header["OL"]) / (self.data.size * 4)
+
+    @staticmethod
+    def checkData(data=None):
+        if data is None:
+            return None
+        else:
+            return data.astype(int)
 
 class Section(object):
     def __init__(self, size, dictHeader):

@@ -1,4 +1,5 @@
-import re, os
+import re, os, logging
+logger = logging.getLogger("fabioutils")
 
 def construct_filename(*args, **kwds):
     raise Exception("You probably want fabio.jump_filename")
@@ -37,6 +38,10 @@ for key in FILETYPES.keys():
 # Compressors
 
 COMPRESSORS = {}
+
+
+dictAscii = {None:[chr(i) for i in range(32, 127)],
+           }
 
 try:
     lines = os.popen("gzip -h 2>&1").read()
@@ -253,5 +258,24 @@ def isAscii(name, listExcluded=None):
             isascii = not(any(bad in  name for bad in listExcluded))
         else:
             isascii = True
-
     return isascii
+
+def toAscii(name, excluded=None):
+    """
+    @param name: string to check
+    @param excluded: tuple of char or string excluded (not list: they are mutable).
+    @return: the name with all non valid char removed
+    """
+    if excluded not in dictAscii:
+        ascii = dictAscii[None][:]
+        for i in excluded:
+            if i in ascii:
+                ascii.remove(i)
+            else:
+                logger.error("toAscii: % not in ascii table" % i)
+        dictAscii[excluded] = ascii
+    else:
+        ascii = dictAscii[excluded]
+    out = [i for i in str(name) if i in ascii]
+    return "".join(out)
+

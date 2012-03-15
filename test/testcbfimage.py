@@ -8,7 +8,7 @@ Unit tests for CBF images based on references images taken from:
 http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 
 """
-import unittest, sys, os, logging
+import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testcbfimage")
 force_build = False
 
@@ -51,6 +51,9 @@ class test_cbfimage_reader(unittest.TestCase):
 
         UtilsTest.getimage(os.path.basename(self.edf_filename + ".bz2"))
         UtilsTest.getimage(os.path.basename(self.cbf_filename))
+        self.tempdir = tempfile.mkdtemp()
+    def tearDown(self):
+        UtilsTest.recursive_delete(self.tempdir)
 
 
     def test_read(self):
@@ -64,6 +67,21 @@ class test_cbfimage_reader(unittest.TestCase):
 
         self.assertAlmostEqual(0, abs(cbf.data - edf.data).max())
         logger.info("Reading CBF took %.3fs whereas the same EDF took %.3fs" % (times[1] - times[0], times[2] - times[1]))
+
+    def test_write(self):
+        "Rest writing with self consistency at the fabio level"
+        name = os.path.basename(self.cbf_filename)
+        obj = cbfimage()
+        obj.read(self.cbf_filename)
+        obj.write(os.path.join(self.tempdir, name))
+        other = cbfimage()
+        other.read(os.path.join(self.tempdir, name))
+        self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+        for key in obj.header:
+            if key in[ "filename", "X-Binary-Size-Padding"]:
+                continue
+            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
 
     def test_byte_offset(self):
         """ check byte offset algorythm"""
@@ -82,13 +100,13 @@ class test_cbfimage_reader(unittest.TestCase):
 #        delta = abs(numpyRes - weaveRes).max()
 #        self.assertAlmostEqual(0, delta)
 #        logger.info("Timing for Weave method : %.3fs, max delta=%s" % (tWeave, delta))
-
-        startTime = time.time()
-        pythonRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
-        tPython = time.time() - startTime
-        delta = abs(numpyRes - pythonRes).max()
-        self.assertAlmostEqual(0, delta)
-        logger.info("Timing for Python method : %.3fs, max delta= %s" % (tPython, delta))
+#
+#        startTime = time.time()
+#        pythonRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
+#        tPython = time.time() - startTime
+#        delta = abs(numpyRes - pythonRes).max()
+#        self.assertAlmostEqual(0, delta)
+#        logger.info("Timing for Python method : %.3fs, max delta= %s" % (tPython, delta))
 
         startTime = time.time()
         cythonRes = decByteOffet_cython(stream=data, size=cbf.dim1 * cbf.dim2)
@@ -101,6 +119,7 @@ class test_cbfimage_reader(unittest.TestCase):
 def test_suite_all_cbf():
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_cbfimage_reader("test_read"))
+    testSuite.addTest(test_cbfimage_reader("test_write"))
     testSuite.addTest(test_cbfimage_reader("test_byte_offset"))
     return testSuite
 

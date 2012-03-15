@@ -6,9 +6,10 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
-import unittest, sys, os, logging
+import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testOXDimage")
 force_build = False
+
 
 for opts in sys.argv[:]:
     if opts in ["-d", "--debug"]:
@@ -31,6 +32,7 @@ if force_build:
 import fabio
 from fabio.OXDimage import OXDimage
 
+
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0 
 TESTIMAGES = """b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526
                 b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526"""
@@ -43,7 +45,9 @@ class testOXD(unittest.TestCase):
             self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
         for i in self.fn:
             assert os.path.exists(self.fn[i])
-
+        self.tempdir = tempfile.mkdtemp()
+    def tearDown(self):
+        UtilsTest.recursive_delete(self.tempdir)
     def test_read(self):
         "Test reading of compressed OXD images"
         for line in TESTIMAGES.split("\n"):
@@ -60,8 +64,22 @@ class testOXD(unittest.TestCase):
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
-
-
+    def test_write(self):
+        "Test writing with self consistency at the fabio level"
+        for line in TESTIMAGES.split("\n"):
+            vals = line.split()
+            name = vals[0]
+            obj = OXDimage()
+            obj.read(self.fn[name])
+            obj.write(os.path.join(self.tempdir, name))
+            other = OXDimage()
+            other.read(os.path.join(self.tempdir, name))
+            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+            for key in obj.header:
+                if key == "filename":
+                    continue
+                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
 
 class testOXD_same(unittest.TestCase):
     def setUp(self):
@@ -83,6 +101,7 @@ class testOXD_same(unittest.TestCase):
 def test_suite_all_OXD():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testOXD("test_read"))
+    testSuite.addTest(testOXD("test_write"))
     testSuite.addTest(testOXD_same("test_same"))
     return testSuite
 
