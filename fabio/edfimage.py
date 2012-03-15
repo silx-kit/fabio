@@ -412,6 +412,7 @@ class edfimage(fabioimage):
     """ Read and try to write the ESRF edf data format """
 
     def __init__(self, data=None , header=None, header_keys=None, frames=None):
+        fabioimage.__init__(self, data, header)
         self.currentframe = 0
         try:
             dim = len(data.shape)
