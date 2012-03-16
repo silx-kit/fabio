@@ -1,5 +1,4 @@
-
-import numpy as N
+import numpy
 import math
 import Image
 from brukerimage import brukerimage

@@ -1,10 +1,21 @@
+"""
+New Cython version of mar345_io for preparing the migration to Python3
+
+Compressor & decompressor for "pack" algorithm by JPA, binding to CCP4 libraries 
+
+Warning: decompressor not yet production ready (mainstream still uses mar345_io)
+"""
+
+__authors__ = ["Jerome Kieffer", "gael.goret@esrf.fr"]
+__contact__ = "jerome.kieffer@esrf.eu"
+__license__ = "LGPLv3+"
+__copyright__ = "2012, European Synchrotron Radiation Facility, Grenoble, France"
+
 import cython
 cimport numpy
 import numpy
 import os,tempfile
 from libc.stdio cimport FILE
-#cdef extern from "stdio.h": 
-#    FILE* fdopen(int fildes, const char *type) 
 ctypedef int LONG
 ctypedef short int WORD
 ctypedef char BYTE
@@ -18,17 +29,11 @@ cdef extern from "fileobject.h":
     ctypedef class __builtin__.file [object PyFileObject]:
         pass
 
-#cdef extern from "ccp4_pack.h":
-#     void * mar345_read_data(FILE * file, int ocount, int dim1, int dim2) nogil
 cdef extern from "pack_c.h":
      void pack_wordimage_c(WORD*, int , int , char*) nogil
-#     void readpack_word_c(WORD *img, char *filename) nogil
-#     void pack_wordimage_copen(WORD*, int , int , FILE *)nogil
      void unpack_word(FILE *packfile, int x, int y, WORD *img)nogil
 
-@cython.cdivision(True)
 @cython.boundscheck(False)
-@cython.wraparound(False)
 def compress_pck(numpy.ndarray inputArray not None):
     """
     @param inputArray: numpy array as input
@@ -54,9 +59,7 @@ def compress_pck(numpy.ndarray inputArray not None):
     os.remove(name)
     return output
 
-@cython.cdivision(True)
 @cython.boundscheck(False)
-@cython.wraparound(False)
 def uncompress_pck(inFile not None, dim1=None, dim2=None, overflowPix=None):
     """
     Unpack a mar345 compressed image

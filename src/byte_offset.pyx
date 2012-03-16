@@ -11,10 +11,10 @@ $ cython byte_offset.pyx
 
 """
 
-__author__ = "Jérôme Kieffer"
+__author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
-__license__ = "GPLv3+"
-__copyright__ = "2010, European Synchrotron Radiation Facility, Grenoble, France"
+__license__ = "LGPLv3+"
+__copyright__ = "2010-2012, European Synchrotron Radiation Facility, Grenoble, France"
 
 
 cimport numpy
