@@ -30,11 +30,12 @@ cf_backend = Extension('cf_io', include_dirs=get_numpy_include_dirs(),
 byteOffset_backend = Extension("byte_offset",
                        include_dirs=get_numpy_include_dirs(),
                            sources=['src/byte_offset.c'])
+
 ccp4pack_backend = Extension('mar345_IO',
                            include_dirs=get_numpy_include_dirs(),
                            sources=['src/mar345_IO.c',
-                                    'src/marpck.c',
-                                    'src/ccp4_pack.c'
+                                    'src/ccp4_pack.c',
+                                    'src/pack_c.c',
                                       ])
 
 # See the distutils docs...

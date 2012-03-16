@@ -79,7 +79,7 @@ class testMAR345(unittest.TestCase):
                 if key == "filename":
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
-                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
+                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s: [%s|%s]" % (key, obj.header[key], other.header[key]))
 
 
 

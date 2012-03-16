@@ -44,6 +44,7 @@ class mar345image(fabioimage):
 
         if 'compressed' in self.header['Format']:
             self.data = mar345_io.unpack(f, self.dim1, self.dim2, self.numhigh)
+#            self.data = mar345_IO.uncompress_pck(f, self.dim1, self.dim2, self.numhigh)
         else:
             logger.error("cannot handle these formats yet " + \
                 "due to lack of documentation")
@@ -146,17 +147,19 @@ class mar345image(fabioimage):
         return h
 
     def write(self, fname):
-        with  self._open(fname, mode="wb") as outfile:
-            outfile.write(self._writeheader())
-            outfile.write(self._high_intensity_pixel_records())
         try:
             from mar345_IO import compress_pck
         except ImportError, error:
             logger.error("Unable to import mar345_IO to write compressed dataset")
         else:
-            compress_pck(self.data, fname)
-
-
+            try:
+                outfile = self._open(fname, mode="wb")
+                outfile.write(self._writeheader())
+                outfile.write(self._high_intensity_pixel_records())
+                outfile.write(compress_pck(self.data))
+                outfile.close()
+            except Exception, error:
+                logger.error("Error in writing file %s: %s" % (fname, error))
     def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
         """
         @param linesep: end of line separator
@@ -168,7 +171,7 @@ class mar345image(fabioimage):
             version = "0.0.9"
         lnsep = len(linesep)
 
-        self.header["HIGH"] = self.nb_overflow_pixels()
+        self.header["HIGH"] = str(self.nb_overflow_pixels())
         binheader = numpy.zeros(16, "int32")
         binheader[:4] = numpy.array([1234, self.dim1, int(self.header["HIGH"]), 1])
         binheader[4] = (self.header.get("MODE", "TIME") == "TIME")
@@ -185,7 +188,7 @@ class mar345image(fabioimage):
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
         lstout = [binheader.tostring() + 'mar research'.ljust(64 - lnsep)]
         lstout.append("PROGRAM".ljust(15) + (str(self.header.get("PROGRAM", "FabIO Version %s" % (version))).ljust(49 - lnsep)))
-        lstout.append("DATE".ljust(15) + (str(self.header.get("PROGRAM", time.ctime()))).ljust(49 - lnsep))
+        lstout.append("DATE".ljust(15) + (str(self.header.get("DATE", time.ctime()))).ljust(49 - lnsep))
         key = "SCANNER"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -308,5 +311,11 @@ class mar345image(fabioimage):
         if data is None:
             return None
         else:
-            return data.astype(int)
+#            enforce square image 
+            shape = data.shape
+            assert len(shape) == 2, "image has 2 dimensions"
+            mshape = max(shape)
+            z = numpy.zeros((mshape, mshape), dtype=int)
+            z[:shape[0], :shape[1]] = data
+            return z
 

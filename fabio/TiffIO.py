@@ -1,8 +1,8 @@
 #/*##########################################################################
-# Copyright (C) 2011 European Synchrotron Radiation Facility
+# Copyright (C) 2012 European Synchrotron Radiation Facility
 #
 # This file is part of the PyMca X-ray Fluorescence Toolkit developed at
-# the ESRF by the Beamline Instrumentation Software Support (BLISS) group.
+# the ESRF by the Software group.
 #
 # This file is free software; you can redistribute it and/or modify it 
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,7 @@
 #
 #############################################################################*/
 __author__ = "V.A. Sole - ESRF Data Analysis"
-__revision__ = 1448
+__revision__ = 1501
 
 import sys
 import os
@@ -93,8 +93,8 @@ SAMPLE_FORMAT_COMPLEXIEEEFP = 6
 
 
 
-class TiffIO:
-    def __init__(self, filename, mode=None, cache_length=20):
+class TiffIO(object):
+    def __init__(self, filename, mode=None, cache_length=20, mono_output=False):
         if mode is None:
             mode = 'rb'
         if 'b' not in mode:
@@ -115,6 +115,7 @@ class TiffIO:
 
         self._initInternalVariables(fd)            
         self._maxImageCacheLength = cache_length
+        self._forceMonoOutput = mono_output
 
     def _initInternalVariables(self, fd=None):
         if fd is None:
@@ -445,6 +446,19 @@ class TiffIO:
         if close:
             self.__makeSureFileIsClosed()
 
+        if self._forceMonoOutput and (interpretation > 1):
+            #color image but asked monochrome output
+            nBits = 32
+            colormap = None
+            sampleFormat = SAMPLE_FORMAT_FLOAT
+            interpretation = 1
+            #we cannot rely on any cache in this case
+            useInfoCache = False
+            if DEBUG:
+                print("FORCED MONO")
+        else:
+            useInfoCache = True
+
         info = {}
         info["nRows"] = nRows
         info["nColumns"] = nColumns
@@ -481,11 +495,12 @@ class TiffIO:
                 infoDict[key] = value
         info['info'] = infoDict
 
-        self._imageInfoCacheIndex.insert(0,nImage)
-        self._imageInfoCache.insert(0, info)
-        if len(self._imageInfoCacheIndex) > self._maxImageCacheLength:
-            self._imageInfoCacheIndex = self._imageInfoCacheIndex[:self._maxImageCacheLength]
-            self._imageInfoCache = self._imageInfoCache[:self._maxImageCacheLength]
+        if (self._maxImageCacheLength > 0) and useInfoCache:
+            self._imageInfoCacheIndex.insert(0,nImage)
+            self._imageInfoCache.insert(0, info)
+            if len(self._imageInfoCacheIndex) > self._maxImageCacheLength:
+                self._imageInfoCacheIndex = self._imageInfoCacheIndex[:self._maxImageCacheLength]
+                self._imageInfoCache = self._imageInfoCache[:self._maxImageCacheLength]
         return info
 
     def _readImage(self, nImage, **kw):
@@ -503,7 +518,17 @@ class TiffIO:
             return self._imageDataCache[self._imageDataCacheIndex.index(nImage)]
 
         self.__makeSureFileIsOpen()
-        info = self._readInfo(nImage, close=False)
+        if self._forceMonoOutput:
+            oldMono = True
+        else:
+            oldMono = False
+        try:
+            self._forceMonoOutput = False
+            info = self._readInfo(nImage, close=False)
+            self._forceMonoOutput = oldMono
+        except:
+            self._forceMonoOutput = oldMono
+            raise
         compression = info['compression']
         compression_type = info['compression_type']
         if compression:
@@ -698,12 +723,22 @@ class TiffIO:
                 rowStart += nRowsToRead
         if close:
             self.__makeSureFileIsClosed()
+
+        if len(image.shape) == 3:
+            #color image
+            if self._forceMonoOutput:
+                #color image, convert to monochrome
+                image = (image[:,:,0] * 0.114 +\
+                         image[:,:,1] * 0.587 +\
+                         image[:,:,2] * 0.299).astype(numpy.float32)
+            
         if (rowMin == 0) and (rowMax == (nRows-1)):
             self._imageDataCacheIndex.insert(0,nImage)
             self._imageDataCache.insert(0, image)
             if len(self._imageDataCacheIndex) > self._maxImageCacheLength:
                 self._imageDataCacheIndex = self._imageDataCacheIndex[:self._maxImageCacheLength]
                 self._imageDataCache = self._imageDataCache[:self._maxImageCacheLength]
+            
         return image
 
     def writeImage(self, image0, info=None, software=None, date=None):
@@ -855,6 +890,18 @@ class TiffIO:
                 descriptionLength = len(description)
             if sys.version >= '3.0':
                 description = bytes(description, 'utf-8')
+            elif type(description) != type(""):
+                try:
+                    description = description.decode('utf-8')
+                except UnicodeDecodeError:
+                    try:
+                        description = description.decode('latin-1')
+                    except UnicodeDecodeError:
+                        description = "%s" % description
+                if sys.version > '2.6':
+                    description=description.encode('utf-8', errors="ignore")
+                description = "%s" % description
+            descriptionLength = len(description)
             imageDescription = struct.pack("%ds" % descriptionLength, description)
             nDirectoryEntries += 1
 

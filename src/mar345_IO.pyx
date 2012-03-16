@@ -1,88 +1,73 @@
 import cython
 cimport numpy
 import numpy
-# cStringIO
-import os
+import os,tempfile
 from libc.stdio cimport FILE
-cdef extern from "numpy/arrayobject.h":
-    ctypedef int intp
-    ctypedef extern class numpy.ndarray [object PyArrayObject]:
-        cdef char * data
-        cdef int nd
-        cdef intp * dimensions
-        cdef intp * strides
-        cdef int flags
-
+#cdef extern from "stdio.h": 
+#    FILE* fdopen(int fildes, const char *type) 
 ctypedef int LONG
 ctypedef short int WORD
 ctypedef char BYTE
 ctypedef numpy.uint16_t NP_WORD
 ctypedef numpy.uint32_t NP_U32
-# Idiom for accessing Python files.
-# First, declare the Python macro to access files:
 cdef extern from "Python.h":
     ctypedef struct FILE
     FILE * PyFile_AsFile(object)
     void  fprintf(FILE * f, char * s, char * s)
-# Next, enter the builtin file class into the namespace:
 cdef extern from "fileobject.h":
     ctypedef class __builtin__.file [object PyFileObject]:
         pass
-        #FILE * f_fp
 
-cdef extern from "marpck.h":
-# Function: Putmar345Data (ex put_pck)
-# Arguments:
-# 1.)	16-bit image array
-# 2.)	No. of pixels in horizontal direction (x)
-# 3.)	No. of pixels in vertical   direction (y)
-# 4.)	File descriptor for unbuffered I/O (-1 for unused)
-# 5.)	File pointer    for buffered   I/O (NULL for unused)
-    int Putmar345Data   (WORD * , int, int, int, FILE *)nogil
-    int Getmar345Data   (FILE * , WORD *)nogil
+#cdef extern from "ccp4_pack.h":
+#     void * mar345_read_data(FILE * file, int ocount, int dim1, int dim2) nogil
+cdef extern from "pack_c.h":
+     void pack_wordimage_c(WORD*, int , int , char*) nogil
+#     void readpack_word_c(WORD *img, char *filename) nogil
+#     void pack_wordimage_copen(WORD*, int , int , FILE *)nogil
+     void unpack_word(FILE *packfile, int x, int y, WORD *img)nogil
 
-cdef extern from "ccp4_pack.h":
-     void * mar345_read_data(FILE * file, int ocount, int dim1, int dim2)nogil
-
-
-#@cython.cdivision(True)
-#@cython.boundscheck(False)
-#@cython.wraparound(False)
-def compress_pck(numpy.ndarray inputArray not None, filename not None):
+@cython.cdivision(True)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def compress_pck(numpy.ndarray inputArray not None):
     """
-    @param inputArray:
-    @param filename: 
+    @param inputArray: numpy array as input
+    @param filename: file to write data to 
     """
     cdef long  size = inputArray.size
-    cdef int dim0, dim1, i, j, fd
-    assert inputArray.ndim == 2
+    cdef int dim0, dim1, i, j, fd, ret
+    cdef char* name
+    assert inputArray.ndim == 2, "shape is 2D"
     dim0 = inputArray.shape[0]
     dim1 = inputArray.shape[1]
     cdef numpy.ndarray[NP_WORD, ndim = 1] data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
     cdef WORD * cdata
     cdata = < WORD *> data.data
-    if os.path.exists(filename):
-        fd = os.open(filename, os.O_APPEND | os.O_WRONLY)
-    else:
-        fd = os.open(filename, os.O_CREAT | os.O_WRONLY)
-    print fd, dim1, dim0
-    ret = Putmar345Data(cdata, dim1, dim0, fd, NULL)
+    (fd,fname) = tempfile.mkstemp()
+    name = <char*>  fname
+    with nogil:
+        pack_wordimage_c(cdata, dim1, dim0, name)
+    with open(name,"rb") as f:
+        f.seek(0)
+        output = f.read()
     os.close(fd)
-    return s.getvalue()
+    os.remove(name)
+    return output
 
-
-def uncompress_pck(filename not None, dim1=None, dim2=None, overflowPix=None):
+@cython.cdivision(True)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def uncompress_pck(inFile not None, dim1=None, dim2=None, overflowPix=None):
     """
     Unpack a mar345 compressed image
     
-    @param filename: name of the file
+    @param inFile: opened python file
     @param dim1,dim2: optional parameters size
     @param overflowPix: optional parameters: number of overflowed pixels 
     
     @return : ndarray of 2D with the right size
     """
     cdef int cdim1, cdim2, chigh
-    inFile = open(filename, "r")
     if dim1 is None or dim2 is None:
         raw = inFile.read()
         key1 = "CCP4 packed image, X: "
@@ -106,8 +91,7 @@ def uncompress_pck(filename not None, dim1=None, dim2=None, overflowPix=None):
         end = raw.find("END OF HEADER")
         start = raw[:end].find("HIGH")
         hiLine = raw[start:end]
-        print hiLine
-        hiLine = hiLine[:hiLine.find("\n")]
+        hiLine = hiLine.split("\n")[0]
         word = hiLine.split()
         if len(word) > 1:
             chigh = int(word[1])
@@ -116,13 +100,16 @@ def uncompress_pck(filename not None, dim1=None, dim2=None, overflowPix=None):
             chigh = 0
     else:
         chigh = < int > overflowPix
-
+#    inFile.close()
     cdef numpy.ndarray[NP_WORD, ndim = 2] data = numpy.zeros((cdim2, cdim1), dtype=numpy.uint16)
     cdata = < WORD * > data.data
+#    inFile.seek(0)
     cdef FILE * cFile = < FILE *> PyFile_AsFile(inFile)
+
     with nogil:
-        ret = Getmar345Data(cFile, cdata)
-    inFile.close()
+#        cdata = mar345_read_data(cFile, chigh, cdim1, cdim2) 
+        unpack_word(cFile, cdim1, cdim2,cdata)
+    print("Warning ... this is under development code; I would not trust it")
     return data
 
 

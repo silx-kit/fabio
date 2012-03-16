@@ -44,7 +44,7 @@ def convert_data(input, output, data):
     @param input,output: input/output format like "cbfimage"
     @param data(ndarray): the actual dataset to be transformed
     """
-    return CONVERSION_DATA.get((input, output), lambda data:data)(header)
+    return CONVERSION_DATA.get((input, output), lambda data:data)(data)
 
 def convert_header(input, output, header):
     """

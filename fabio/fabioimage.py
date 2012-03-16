@@ -316,7 +316,10 @@ class fabioimage(object):
         To be overwritten - write the file
         """
         raise Exception("Class has not implemented readheader method yet")
-    save = write
+
+    def save(self, fname):
+        'wrapper for write'
+        self.write(fname)
 
     def readheader(self, filename):
         """
@@ -349,7 +352,10 @@ class fabioimage(object):
         """
         raise Exception("Class has not implemented read method yet")
         return self
-    load = read
+
+    def load(self, *arg, **kwarg):
+        "Wrapper for read"
+        return self.read(*arg, **kwarg)
 
     def readROI(self, filename, frame=None, coords=None):
         """
