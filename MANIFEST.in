@@ -1,12 +1,12 @@
 include README.TXT
 include stdeb.cfg
-recursive-exclude fabio.egg-info/ *
-recursive-exclude debian/ *
-recursive-include src/ *.c *.h *.pyx 
-recursive-include test/ *.py
-recursive-exclude pylint/ *
-recursive-exclude pydoc/ *
-recursive-exclude epydoc/ *
-recursive-exclude build/ *
-recursive-exclude dist/ *
+recursive-exclude fabio.egg-info *
+recursive-exclude debian *
+recursive-include src *.c *.h *.pyx 
+recursive-include test *.py
+recursive-exclude pylint *
+recursive-exclude pydoc *
+recursive-exclude epydoc *
+recursive-exclude build *
+recursive-exclude dist *
 recursive-exclude test/tiftest *
