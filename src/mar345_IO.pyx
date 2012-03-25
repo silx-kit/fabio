@@ -3,7 +3,11 @@ New Cython version of mar345_io for preparing the migration to Python3
 
 Compressor & decompressor for "pack" algorithm by JPA, binding to CCP4 libraries 
 
-Warning: decompressor not yet production ready (mainstream still uses mar345_io)
+Warning: decompressor is just a cython porting of mar345_io, but in cython so python3 compliant.
+
+Future: make those algorithm actually generate strings not go via files;
+        it will allow a broader use of the algorith 
+
 """
 
 __authors__ = ["Jerome Kieffer", "gael.goret@esrf.fr"]
@@ -19,20 +23,16 @@ from libc.stdio cimport FILE
 ctypedef int LONG
 ctypedef short int WORD
 ctypedef char BYTE
-ctypedef numpy.uint16_t NP_WORD
-ctypedef numpy.uint32_t NP_U32
 cdef extern from "Python.h":
-    ctypedef struct FILE
     FILE * PyFile_AsFile(object)
-    void  fprintf(FILE * f, char * s, char * s)
-cdef extern from "fileobject.h":
-    ctypedef class __builtin__.file [object PyFileObject]:
-        pass
 
 cdef extern from "pack_c.h":
      void pack_wordimage_c(WORD*, int , int , char*) nogil
-     void unpack_word(FILE *packfile, int x, int y, WORD *img)nogil
+     void unpack_word(FILE *packfile, int x, int y, WORD *img) nogil
 
+cdef extern from "ccp4_pack.h":
+    void* mar345_read_data(FILE *file, int ocount, int dim1, int dim2) nogil
+    
 @cython.boundscheck(False)
 def compress_pck(numpy.ndarray inputArray not None):
     """
@@ -45,7 +45,7 @@ def compress_pck(numpy.ndarray inputArray not None):
     assert inputArray.ndim == 2, "shape is 2D"
     dim0 = inputArray.shape[0]
     dim1 = inputArray.shape[1]
-    cdef numpy.ndarray[NP_WORD, ndim = 1] data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
+    cdef numpy.ndarray[numpy.uint16_t, ndim = 1] data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
     cdef WORD * cdata
     cdata = < WORD *> data.data
     (fd,fname) = tempfile.mkstemp()
@@ -103,18 +103,9 @@ def uncompress_pck(inFile not None, dim1=None, dim2=None, overflowPix=None):
             chigh = 0
     else:
         chigh = < int > overflowPix
-#    inFile.close()
-    cdef numpy.ndarray[NP_WORD, ndim = 2] data = numpy.zeros((cdim2, cdim1), dtype=numpy.uint16)
-    cdata = < WORD * > data.data
-#    inFile.seek(0)
+    cdef numpy.ndarray[numpy.uint32_t, ndim = 2] data = numpy.zeros((cdim2, cdim1), dtype=numpy.uint32)
     cdef FILE * cFile = < FILE *> PyFile_AsFile(inFile)
-
     with nogil:
-#        cdata = mar345_read_data(cFile, chigh, cdim1, cdim2) 
-        unpack_word(cFile, cdim1, cdim2,cdata)
-    print("Warning ... this is under development code; I would not trust it")
+        data.data = <char *> mar345_read_data(cFile, chigh, cdim1, cdim2) 
     return data
-
-
-
 

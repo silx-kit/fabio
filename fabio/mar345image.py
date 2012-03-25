@@ -32,7 +32,7 @@ class mar345image(fabioimage):
         self._readheader(f)
 
         try:
-            import mar345_io #IGNORE:F0401
+            import mar345_IO
         except ImportError, error:
             logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
             f.close()
@@ -43,8 +43,7 @@ class mar345image(fabioimage):
             return self
 
         if 'compressed' in self.header['Format']:
-            self.data = mar345_io.unpack(f, self.dim1, self.dim2, self.numhigh)
-#            self.data = mar345_IO.uncompress_pck(f, self.dim1, self.dim2, self.numhigh)
+            self.data = mar345_IO.uncompress_pck(f, self.dim1, self.dim2, self.numhigh)
         else:
             logger.error("cannot handle these formats yet " + \
                 "due to lack of documentation")
@@ -69,11 +68,11 @@ class mar345image(fabioimage):
         #the first 64 bytes are 4-byte integers (but in the CBFlib
         # example image it seems to 128 bytes?)
         #first 4-byte integer is a marker to check endianness
-        # TODO: turn this into a real check
-        if (l[0:4] == '1234'):
-            fs = 'I'
-        # unsigned integer, was using unsigned long (64 bit?)
-        fs = 'i'
+        if struct.unpack("<i", l[0:4])[0] == 1234:
+            fs = '<i'
+        else:
+            fs = '>i'
+
         #image dimensions
         self.dim1 = self.dim2 = int(struct.unpack(fs, l[4:8])[0])
         #number of high intensity pixels
@@ -205,7 +204,7 @@ class mar345image(fabioimage):
         key1 = "OFFSET_ROFF"
         key2 = "OFFSET_TOFF"
         if key1 in self.header and key2 in self.header:
-             lstout.append("OFFSET".ljust(15) + ("ROFF %s  TOFF %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
+            lstout.append("OFFSET".ljust(15) + ("ROFF %s  TOFF %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key = "MULTIPLIER"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -240,7 +239,7 @@ class mar345image(fabioimage):
         key1 = "CENTER_X"
         key2 = "CENTER_Y"
         if (key1 in self.header) and (key2 in self.header):
-             lstout.append("CENTER".ljust(15) + ("X %s  Y %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
+            lstout.append("CENTER".ljust(15) + ("X %s  Y %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key = "MODE"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
@@ -255,11 +254,11 @@ class mar345image(fabioimage):
         key1 = "COUNTS_MIN"
         key2 = "COUNTS_MAX"
         if key1 in self.header and key2 in self.header:
-             lstout.append("COUNTS".ljust(15) + ("MIN %s  MAX %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
+            lstout.append("COUNTS".ljust(15) + ("MIN %s  MAX %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key1 = "COUNTS_AVE"
         key2 = "COUNTS_SIG"
         if key1 in self.header and key2 in self.header:
-             lstout.append("COUNTS".ljust(15) + ("AVE %s  SIG %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
+            lstout.append("COUNTS".ljust(15) + ("AVE %s  SIG %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key1 = "INTENSITY_MIN"
         key2 = "INTENSITY_MAX"
         key3 = "INTENSITY_AVE"
@@ -280,7 +279,7 @@ class mar345image(fabioimage):
         key1 = "COLLIMATOR_WIDTH"
         key2 = "COLLIMATOR_HEIGHT"
         if key1 in self.header and key2 in self.header:
-             lstout.append("COLLIMATOR".ljust(15) + ("WIDTH %s  HEIGHT %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
+            lstout.append("COLLIMATOR".ljust(15) + ("WIDTH %s  HEIGHT %s" % (self.header[key1], self.header[key2])).ljust(49 - lnsep))
         key = "REMARK"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))

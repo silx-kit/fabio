@@ -58,10 +58,10 @@ class testMAR345(unittest.TestCase):
             obj = mar345image()
             obj.read(os.path.join(os.path.dirname(self.mar), name))
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
+            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
+            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
+            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
+            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(obj.dim1, obj.dim2, "dim2!=dim1")
     def test_write(self):

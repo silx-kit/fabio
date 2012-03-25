@@ -12,9 +12,7 @@ from numpy.distutils.misc_util import get_numpy_include_dirs
 
 mar345_ext = Extension("mar345_IO",
                     include_dirs=get_numpy_include_dirs(),
-                    sources=["pack_c.c", 'mar345_IO.c'])
-#                    extra_compile_args=['-fopenmp'],
-#                    extra_link_args=['-fopenmp'])
+                    sources=["pack_c.c", 'mar345_IO.c', "ccp4_pack.c"])
 
 
 setup(name='mar345_IO',
