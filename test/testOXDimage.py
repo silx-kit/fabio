@@ -95,14 +95,27 @@ class testOXD_same(unittest.TestCase):
         for attr in ["getmin", "getmax", "getmean", "getstddev"]:
             a1 = getattr(o1, attr)()
             a2 = getattr(o2, attr)()
-            self.assertEqual(a1, a2, attr)
+            self.assertEqual(a1, a2, "testing %s: %s | %s" % (attr, a1, a2))
 
+class testOXD_big(unittest.TestCase):
+    """class to test bugs if OI is large (lot of exceptions 16 bits)"""
+    def setUp(self):
+        self.fn = {}
+        for i in ["d80_60s.img", "d80_60s.edf"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+        for i in self.fn:
+            self.assertTrue(os.path.exists(self.fn[i]), self.fn[i])
+    def test_same(self):
+#        print self.fn
+        df = [fabio.open(i).data for i in self.fn.values()]
+        self.assertEqual(abs(df[0] - df[1]).max(), 0, "Data are the same")
 
 def test_suite_all_OXD():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testOXD("test_read"))
     testSuite.addTest(testOXD("test_write"))
     testSuite.addTest(testOXD_same("test_same"))
+    testSuite.addTest(testOXD_big("test_same"))
     return testSuite
 
 if __name__ == '__main__':

@@ -202,7 +202,11 @@ class OXDimage(fabioimage):
                 raw16 = infile.read(self.header['OI'] * 2)
             if self.header['OL'] > 0:
                 raw32 = infile.read(self.header['OL'] * 4)
-
+            #DEBUG stuff ... 
+            self.raw8 = raw8
+            self.raw16 = raw16
+            self.raw32 = raw32
+            #END DEBUG
             block = decTY1(raw8, raw16, raw32)
             bytecode = block.dtype
 

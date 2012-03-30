@@ -304,25 +304,25 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
     data -= 127
     if raw_32 is not None:
-        bytecode = "int32"
         int32 = numpy.fromstring(raw_32, dtype="int32").astype(int)
         exception32 = numpy.nonzero(data == 128)
-        if raw_16:
-            int16 = numpy.fromstring(raw_16, dtype="int16").astype(int)
-            exception16 = numpy.nonzero(data == 127)
-    elif raw_16 is not None:
+    if raw_16 is not None:
         int16 = numpy.fromstring(raw_16, dtype="int16").astype(int)
         exception16 = numpy.nonzero(data == 127)
-        bytecode = "int16"
-    else:
-        bytecode = "uint8"
-    if raw_16:
         data[exception16] = int16
     if raw_32:
         data[exception32] = int32
-    return data.cumsum().astype(bytecode)
-
-
+    summed = data.cumsum()
+    smax = summed.max()
+    if (smax > (2 ** 31 - 1)):
+        bytecode = "int64"
+    elif (smax > (2 ** 15 - 1)):
+        bytecode = "int32"
+    elif (smax > (2 ** 7 - 1)):
+        bytecode = "int16"
+    else:
+        bytecode = "int8"
+    return summed.astype(bytecode)
 decKM4CCD = decTY1
 
 def compTY1(data):
