@@ -19,10 +19,10 @@ from numpy.distutils.misc_util import get_numpy_include_dirs
 
 
 
-mar345_backend = Extension('mar345_io',
-                           include_dirs=get_numpy_include_dirs(),
-                           sources=['src/mar345_iomodule.c',
-                                      'src/ccp4_pack.c'])
+#mar345_backend = Extension('mar345_io',
+#                           include_dirs=get_numpy_include_dirs(),
+#                           sources=['src/mar345_iomodule.c',
+#                                      'src/ccp4_pack.c'])
 
 cf_backend = Extension('cf_io', include_dirs=get_numpy_include_dirs(),
       sources=['src/cf_iomodule.c', 'src/columnfile.c'])
@@ -31,7 +31,7 @@ byteOffset_backend = Extension("byte_offset",
                        include_dirs=get_numpy_include_dirs(),
                            sources=['src/byte_offset.c'])
 
-ccp4pack_backend = Extension('mar345_IO',
+mar345_backend = Extension('mar345_IO',
                            include_dirs=get_numpy_include_dirs(),
                            sources=['src/mar345_IO.c',
                                     'src/ccp4_pack.c',
@@ -48,7 +48,7 @@ setup(name='fabio',
       download_url="http://sourceforge.net/projects/fable/files/fabio/0.0.9",
       ext_package="fabio",
 #      cmdclass = {'build_ext': build_ext},
-      ext_modules=[mar345_backend, cf_backend, byteOffset_backend, ccp4pack_backend ],
+      ext_modules=[mar345_backend, cf_backend, byteOffset_backend],
       packages=["fabio"],
       package_dir={"fabio": "fabio" },
       test_suite="test"
