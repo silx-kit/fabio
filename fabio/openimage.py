@@ -82,16 +82,24 @@ def openimage(filename, frame=None):
     """ Try to open an image """
     if isinstance(filename, filename_object):
         try:
+            logging.debug("Attempting to open %s"%(filename.tostring()))
             obj = _openimage(filename.tostring())
+            logging.debug("Attempting to read frame %d from %s"%(frame,
+                filename.tostring()))
             obj = obj.read(filename.tostring(), frame)
         except:
             # multiframe file
             #logger.debug( "DEBUG: multiframe file, start # %d"%(
             #    filename.num)
+            logging.debug("Exception, trying name %s"%(filename.stem))
             obj = _openimage(filename.stem)
+            logging.debug("Reading frame %d from %s"%(filename.num,
+                filename.stem))
             obj.read(filename.stem, frame=filename.num)
     else:
+        logging.debug("Attempting to open %s"%(filename))
         obj = _openimage(filename)
+        logging.debug("Attempting to read frame %d from %s"%(frame, filename))
         obj = obj.read(filename, frame)
     return obj
 
