@@ -3,14 +3,14 @@ New Cython version of mar345_io for preparing the migration to Python3
 
 Compressor & decompressor for "pack" algorithm by JPA, binding to CCP4 libraries 
 
-Warning: decompressor is just a cython porting of mar345_io, but in cython so python3 compliant.
+Warning: decompressor is just a cython porting of mar345_io, but in cython so (soon) python3 compliant.
 
 Future: make those algorithm actually generate strings not go via files;
-        it will allow a broader use of the algorith 
+        it will allow a broader use of the algorithm. 
 
 """
 
-__authors__ = ["Jerome Kieffer", "gael.goret@esrf.fr"]
+__authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "2012, European Synchrotron Radiation Facility, Grenoble, France"
