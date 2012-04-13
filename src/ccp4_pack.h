@@ -50,6 +50,7 @@ static const unsigned long CCP4_PCK_MASK_32[]={0x00,
 #define pfail_nonzero(a) if ((a)) return NULL;
 
 void *mar345_read_data(FILE *file, int ocount, int dim1, int dim2);
+void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2);
 void *ccp4_unpack(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
 void *ccp4_unpack_v2(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
 
