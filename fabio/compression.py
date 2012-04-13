@@ -12,7 +12,9 @@ __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
-import os, logging, struct, hashlib, base64, StringIO
+import os, logging, struct, hashlib, base64, StringIO, sys
+if sys.version_info >= (3,):
+    str = bytes
 logger = logging.getLogger("compression")
 import numpy
 
@@ -348,3 +350,39 @@ def compTY1(data):
     diff += 127
     raw_8 = diff.astype("uint8").tostring()
     return  raw_8, raw_16, raw_32
+
+def decPCK(stream, dim1=None, dim2=None, overflowPix=None):
+    """
+    Modified CCP4  pck decompressor used in MAR345 images
+    
+    @param stream: string or file 
+    @return numpy.ndarray (square array) 
+    """
+
+    try:
+        from mar345_IO import uncompress_pck
+    except ImportError, error:
+        raise RuntimeError("Unable to import mar345_IO to read compressed dataset")
+    if "seek" in dir(stream):
+        stream.seek(0)
+        raw = stream.read()
+    else:
+        raw = str(stream)
+
+    return uncompress_pck(raw, dim1, dim2, overflowPix)
+
+
+def compPCK(data):
+    """
+    Modified CCP4  pck compressor used in MAR345 images
+    
+    @param data numpy.ndarray (square array)
+    @return  compressed stream 
+    """
+    try:
+        from mar345_IO import compress_pck
+    except ImportError, error:
+        raise RuntimeError("Unable to import mar345_IO to write compressed dataset")
+    return compress_pck(data)
+
+

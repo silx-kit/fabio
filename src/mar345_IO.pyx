@@ -59,19 +59,19 @@ def compress_pck(numpy.ndarray inputArray not None):
     return output
 
 @cython.boundscheck(False)
-def uncompress_pck(inFile not None, dim1=None, dim2=None, overflowPix=None):
+def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None):
     """
     Unpack a mar345 compressed image
     
-    @param inFile: opened python file
+    @param raw: input string (bytes in python3)
     @param dim1,dim2: optional parameters size
     @param overflowPix: optional parameters: number of overflowed pixels 
     
     @return : ndarray of 2D with the right size
     """
-    cdef int cdim1, cdim2, chigh, end
+    cdef int cdim1, cdim2, chigh
+    end=None
     if dim1 is None or dim2 is None:
-        raw = inFile.read()
         key1 = "CCP4 packed image, X: "
         key2 = "CCP4 packed image V2, X: "
         start = raw.find(key2)
@@ -84,12 +84,9 @@ def uncompress_pck(inFile not None, dim1=None, dim2=None, overflowPix=None):
         cdim1 = < int > int(sizes[:4])
         cdim2 = < int > int(sizes[-4:])
     else:
-        raw = None
         cdim1 = < int > dim1
         cdim2 = < int > dim2
     if overflowPix is None:
-        if raw is None:
-            raw = inFile.read()
         end = raw.find("END OF HEADER")
         start = raw[:end].find("HIGH")
         hiLine = raw[start:end]
@@ -103,25 +100,11 @@ def uncompress_pck(inFile not None, dim1=None, dim2=None, overflowPix=None):
     else:
         chigh = < int > overflowPix
     cdef numpy.ndarray[numpy.uint32_t, ndim = 2] data = numpy.zeros((cdim2, cdim1), dtype=numpy.uint32)   
-############################################################################
-# former way of doing it ...
-############################################################################
-#    cdef FILE * cFile = < FILE *> PyFile_AsFile(inFile)
-#    t0=time.time()
-#    with nogil:
-#        data.data = <char *> mar345_read_data(cFile, chigh, cdim1, cdim2)
-#    print("file interface: %.3f"%(time.time()-t0))
-#    print data
-    if not raw:
-        inFile.seek(0)
-        raw = inFile.read()
+    if not end:
         end = raw.find("END OF HEADER")
+    if end !=-1:
         raw = raw[end+14:].lstrip()
-    else:
-        if not end:
-            end = raw.find("END OF HEADER")
-        raw = raw[end+14:].lstrip()
-    cdef char* instream = < char*> raw
+    cdef char* instream = <char*> raw
     with nogil:
         data.data = <char *> mar345_read_data_string(instream, chigh, cdim1, cdim2)
     return data

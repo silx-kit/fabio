@@ -17,6 +17,7 @@ from fabioimage import fabioimage
 import numpy, struct, string, time, sys
 import logging
 logger = logging.getLogger("mar345image")
+from compression import compPCK, decPCK
 
 class mar345image(fabioimage):
     _need_a_real_file = True
@@ -30,20 +31,18 @@ class mar345image(fabioimage):
         self.filename = fname
         f = self._open(self.filename, "rb")
         self._readheader(f)
-
-        try:
-            import mar345_IO
-        except ImportError, error:
-            logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
-            f.close()
-            self.dim1 = 1
-            self.dim2 = 1
-            self.bytecode = numpy.int #
-            self.data = numpy.resize(numpy.array([0], numpy.int), [1, 1])
-            return self
-
         if 'compressed' in self.header['Format']:
-            self.data = mar345_IO.uncompress_pck(f, self.dim1, self.dim2, self.numhigh)
+            try:
+                self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
+            except Exception, error:
+                logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
+                f.close()
+                self.dim1 = 1
+                self.dim2 = 1
+                self.bytecode = numpy.int #
+                self.data = numpy.resize(numpy.array([0], numpy.int), [1, 1])
+                return self
+
         else:
             logger.error("cannot handle these formats yet " + \
                 "due to lack of documentation")
@@ -147,18 +146,14 @@ class mar345image(fabioimage):
 
     def write(self, fname):
         try:
-            from mar345_IO import compress_pck
-        except ImportError, error:
-            logger.error("Unable to import mar345_IO to write compressed dataset")
-        else:
-            try:
-                outfile = self._open(fname, mode="wb")
-                outfile.write(self._writeheader())
-                outfile.write(self._high_intensity_pixel_records())
-                outfile.write(compress_pck(self.data))
-                outfile.close()
-            except Exception, error:
-                logger.error("Error in writing file %s: %s" % (fname, error))
+            outfile = self._open(fname, mode="wb")
+            outfile.write(self._writeheader())
+            outfile.write(self._high_intensity_pixel_records())
+            outfile.write(compPCK(self.data))
+            outfile.close()
+        except Exception, error:
+            logger.error("Error in writing file %s: %s" % (fname, error))
+
     def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
         """
         @param linesep: end of line separator
