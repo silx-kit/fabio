@@ -15,7 +15,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
 import os, gzip, bz2, StringIO, types, logging, sys
 logger = logging.getLogger("fabioimage")
 import numpy
-import Image
+try:
+    import Image
+except ImportError:
+    logger.warning("PIL is not installed ... trying to do without")
+    Image = None
 import fabioutils, converters
 
 
@@ -131,6 +135,8 @@ class fabioimage(object):
 
         FIXME - this should be handled by the libraries now
         """
+        if not Image:
+            raise RuntimeError("PIL is not installed !!! ")
         if filename:
             self.read(filename)
         if self.pilimage is not None:

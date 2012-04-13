@@ -20,7 +20,11 @@ __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 
 import time, logging, struct
 logger = logging.getLogger("tifimage")
-import Image
+try:
+    import Image
+except ImportError:
+    logger.warning("PIL is not installed ... trying to do without")
+    Image = None
 import numpy
 from fabioimage import fabioimage
 from TiffIO     import TiffIO
@@ -130,22 +134,27 @@ class tifimage(fabioimage):
                 logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
             self.lib = "TiffIO"
 
-        if self.lib is None:
-            try:
-                infile.seek(0)
-                self.pilimage = Image.open(infile)
-            except:
-                logger.error("Error in opening %s  with PIL" % fname)
+        if (self.lib is None):
+            if Image:
+                try:
+                    infile.seek(0)
+                    self.pilimage = Image.open(infile)
+                except Exception:
+                    logger.error("Error in opening %s  with PIL" % fname)
+                    self.lib = None
+                    infile.seek(0)
+                else:
+                    self.lib = "PIL"
+                    self.dim1, self.dim2 = self.pilimage.size
+                    if self.pilimage.mode in PIL_TO_NUMPY:
+                        self.data = numpy.fromstring(self.pilimage.tostring(), PIL_TO_NUMPY[self.pilimage.mode])
+                    else: #probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
+                        self.data = numpy.fromstring(self.pilimage.convert("F").tostring(), numpy.float32)
+                    self.data.shape = (self.dim2, self.dim1)
+            else:
+                logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
                 self.lib = None
                 infile.seek(0)
-            else:
-                self.lib = "PIL"
-                self.dim1, self.dim2 = self.pilimage.size
-                if self.pilimage.mode in PIL_TO_NUMPY:
-                    self.data = numpy.fromstring(self.pilimage.tostring(), PIL_TO_NUMPY[self.pilimage.mode])
-                else: #probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
-                    self.data = numpy.fromstring(self.pilimage.convert("F").tostring(), numpy.float32)
-                self.data.shape = (self.dim2, self.dim1)
 
         self.bpp = len(numpy.zeros(1, dtype=self.data.dtype).tostring())
         self.bytecode = self.data.dtype.name

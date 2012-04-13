@@ -1,6 +1,13 @@
 import numpy
 import math
-import Image
+import logging
+logger = logging.getLogger("bruker100image")
+try:
+    import Image
+except ImportError:
+    logger.warning("PIL is not installed ... trying to do without")
+    Image = None
+
 from brukerimage import brukerimage
 import readbytestream
 
@@ -8,22 +15,17 @@ class bruker100image(brukerimage):
 
 
     def toPIL16(self, filename=None):
-        # FIXME - why is this different for bruker100images?
+        if not Image:
+            raise RuntimeError("PIL is not installed !!! ")
+
         if filename:
             self.read(filename)
-            PILimage = Image.frombuffer("F",
+        PILimage = Image.frombuffer("F",
                                         (self.dim1, self.dim2),
                                         self.data,
                                         "raw",
                                         "F;16", 0, -1)
-            return PILimage
-        else:
-            PILimage = Image.frombuffer("F",
-                                        (self.dim1, self.dim2),
-                                        self.data,
-                                        "raw",
-                                        "F;16", 0, -1)
-            return PILimage
+        return PILimage
 
     def read(self, fname, frame=None):
         f = open(fname, "rb")
