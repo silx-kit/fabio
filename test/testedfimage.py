@@ -205,7 +205,7 @@ class testedfmultiframe(unittest.TestCase):
         try:
             self.ref.read(self.multiFrameFilename)
         except:
-            raise RuntimeError("Cannot read image refFile image %s" % self.refFile)
+            raise RuntimeError("Cannot read image multiFrameFilename image %s" % self.multiFrameFilename)
         try:
             self.frame0.read(self.Frame0Filename)
         except:
