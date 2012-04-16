@@ -24,6 +24,12 @@ import numpy
 from fabioimage import fabioimage
 from compression import decTY1, compTY1
 
+try:
+    from numpy import rad2deg, deg2rad
+except ImportError: #naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)
+    rad2deg = lambda x: 180.0 * x / numpy.pi
+    deg2rad = lambda x: x * numpy.pi / 180.
+
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
 1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
 2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
@@ -112,7 +118,7 @@ class OXDimage(fabioimage):
         start_angles_step = numpy.fromstring(block[284:304], numpy.int32)
         end_angles_step = numpy.fromstring(block[324:344], numpy.int32)
         step2rad = numpy.fromstring(block[368:408], numpy.float)
-        step_angles_deg = numpy.rad2deg(step2rad)
+        step_angles_deg = rad2deg(step2rad)
         # calc angles
         start_angles_deg = start_angles_step * step_angles_deg
         end_angles_deg = end_angles_step * step_angles_deg
@@ -293,7 +299,7 @@ class OXDimage(fabioimage):
         # Angles are in steps due to stepper motors - conversion factor RAD
         # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
         if self.header.get('Omega step in deg', None):
-            KM.setData(None, 368, numpy.float64, numpy.deg2rad(self.header["Omega step in deg"]))
+            KM.setData(None, 368, numpy.float64, deg2rad(self.header["Omega step in deg"]))
             if self.header.get('Omega start in deg', None):
                 KM.setData(None, 284, numpy.int32, self.header["Omega start in deg"] / self.header["Omega step in deg"])
             if self.header.get('Omega end in deg', None):
@@ -302,7 +308,7 @@ class OXDimage(fabioimage):
                 KM.setData(None, 512, numpy.int32, self.header['Omega zero corr. in deg'] / self.header["Omega step in deg"])
 
         if self.header.get('Theta step in deg', None):
-            KM.setData(None, 368 + 8, numpy.float64, numpy.deg2rad(self.header["Theta step in deg"]))
+            KM.setData(None, 368 + 8, numpy.float64, deg2rad(self.header["Theta step in deg"]))
             if self.header.get('Theta start in deg', None):
                 KM.setData(None, 284 + 4, numpy.int32, self.header["Theta start in deg"] / self.header["Theta step in deg"])
             if self.header.get('Theta end in deg', None):
@@ -311,7 +317,7 @@ class OXDimage(fabioimage):
                 KM.setData(None, 512 + 4, numpy.int32, self.header['Theta zero corr. in deg'] / self.header["Theta step in deg"])
 
         if self.header.get('Kappa step in deg', None):
-            KM.setData(None, 368 + 16, numpy.float64, numpy.deg2rad(self.header["Kappa step in deg"]))
+            KM.setData(None, 368 + 16, numpy.float64, deg2rad(self.header["Kappa step in deg"]))
             if self.header.get('Kappa start in deg', None):
                 KM.setData(None, 284 + 8, numpy.int32, self.header["Kappa start in deg"] / self.header["Kappa step in deg"])
             if self.header.get('Kappa end in deg', None):
@@ -320,7 +326,7 @@ class OXDimage(fabioimage):
                 KM.setData(None, 512 + 8, numpy.int32, self.header['Kappa zero corr. in deg'] / self.header["Kappa step in deg"])
 
         if self.header.get('Phi step in deg', None):
-            KM.setData(None, 368 + 24, numpy.float64, numpy.deg2rad(self.header["Phi step in deg"]))
+            KM.setData(None, 368 + 24, numpy.float64, deg2rad(self.header["Phi step in deg"]))
             if self.header.get('Phi start in deg', None):
                 KM.setData(None, 284 + 12, numpy.int32, self.header["Phi start in deg"] / self.header["Phi step in deg"])
             if self.header.get('Phi end in deg', None):
@@ -419,7 +425,7 @@ class Section(object):
         else:
             value = default
         if value is None:
-            value = "\x00"*self.getSize(type)
+            value = "\x00" * self.getSize(type)
         else:
             value = numpy.array(value).astype(type).tostring()
         self.lstChr[offset:offset + self.getSize(type)] = value
