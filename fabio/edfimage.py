@@ -204,7 +204,7 @@ class Frame(object):
                 self.size = calcsize
 
         for i, n in enumerate(self.dims):
-            exec "self.dim%i=%i" % (i + 1, n)
+            setattr(self, "dim%i" % (i + 1), n)
 
         return self.size
 
@@ -264,7 +264,7 @@ class Frame(object):
                     rawData = decGzip(self.rawData)
                     self.size = uncompressed_size
                 elif "BZ" in compression :
-                    rawData = decBz2(self.rawData)
+                    rawData = decBzip2(self.rawData)
                     self.size = uncompressed_size
                 elif "Z" in compression :
                     rawData = decZlib(self.rawData)
@@ -449,7 +449,7 @@ class edfimage(fabioimage):
             return {}
         new = {}
         for key, value in header.items():
-                new[toAscii(key, ";{}")] = toAscii(value, ";{}")
+            new[toAscii(key, ";{}")] = toAscii(value, ";{}")
         return new
 
     @staticmethod

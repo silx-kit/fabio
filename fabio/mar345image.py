@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding: utf8 
 from __future__ import with_statement
-"""
+__doc__ = """
 
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -14,7 +14,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 
 from fabioimage import fabioimage
-import numpy, struct, string, time, sys
+import numpy, struct, time, sys
 import logging
 logger = logging.getLogger("mar345image")
 from compression import compPCK, decPCK
@@ -119,7 +119,7 @@ class mar345image(fabioimage):
         else:
             start = l.index('mar research')
             f.seek(64 + start)
-        l = string.strip(f.read(4096 - start - 64))
+        l = f.read(4096 - start - 64).strip()
         for m in l.splitlines():
             if m == 'END OF HEADER':
                 break
@@ -145,6 +145,8 @@ class mar345image(fabioimage):
         return h
 
     def write(self, fname):
+        """Try to write mar345 file. This is still in beta version.
+        It uses CCP4 (LGPL) PCK1 algo from JPA"""
         try:
             outfile = self._open(fname, mode="wb")
             outfile.write(self._writeheader())
@@ -161,7 +163,7 @@ class mar345image(fabioimage):
         """
         try:
             version = sys.modules["fabio"].version
-        except:
+        except (KeyError, AttributeError):
             version = "0.0.9"
         lnsep = len(linesep)
 

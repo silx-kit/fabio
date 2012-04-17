@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#coding: utf8
 """
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -22,7 +23,7 @@ class fabiodata(object):
         set up initial values
         """
         if type(data) == type("string"):
-                raise Exception("fabioimage.__init__ bad argument - " + \
+            raise Exception("fabioimage.__init__ bad argument - " + \
                                 "data should be numpy array")
         self.data = data
         if (self.data):
@@ -32,7 +33,7 @@ class fabiodata(object):
         if (fname):
             self.read(fname)
 
-    def read(self, fname=None):
+    def read(self, fname=None, frame=None):
         """
         To be overridden by format specific subclasses
         """
@@ -41,8 +42,8 @@ class fabiodata(object):
 #import stuff from Jon's columnfile things
 
 
-class columnfile (fabiodata):
-
+class columnfile(fabiodata):
+    "Concrete fabiodata class"
     def read(self, fname, frame=None):
         import cf_io
         try:

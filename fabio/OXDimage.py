@@ -2,7 +2,7 @@
 #coding: utf8
 
 from __future__ import with_statement
-"""
+__doc__ = """
 Reads Oxford Diffraction Sapphire 3 images
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -49,7 +49,9 @@ DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
                    }
 
 class OXDimage(fabioimage):
-
+    """
+    Oxford Diffraction Sapphire 3 images reader/writer class
+    """
     def _readheader(self, infile):
 
         infile.seek(0)
@@ -377,6 +379,9 @@ class OXDimage(fabioimage):
 
 
     def write(self, fname):
+        """Write Oxford diffraction images: this is still beta
+        @param fname: output filename 
+        """
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2
         self.header["OL"] = len(datablock32) / 4
@@ -387,6 +392,7 @@ class OXDimage(fabioimage):
             outfile.write(datablock32)
 
     def getCompressionRatio(self):
+        "calculate the compression factor obtained vs raw data"
         return 100.0 * (self.data.size + 2 * self.header["OI"] + 4 * self.header["OL"]) / (self.data.size * 4)
 
     @staticmethod
@@ -397,6 +403,9 @@ class OXDimage(fabioimage):
             return data.astype(int)
 
 class Section(object):
+    """
+    Small helper class for writing binary headers
+    """
     def __init__(self, size, dictHeader):
         """
         @param size: size of the header section in bytes
@@ -408,15 +417,17 @@ class Section(object):
         self._dictSize = {}
     def __repr__(self):
         return "".join(self.lstChr)
-    def getSize(self, type):
-        if not type in self._dictSize:
-            self._dictSize[type] = len(numpy.zeros(1, dtype=type).tostring())
-        return self._dictSize[type]
-    def setData(self, key, offset, type, default=None):
+
+    def getSize(self, dtype):
+        if not dtype in self._dictSize:
+            self._dictSize[dtype] = len(numpy.zeros(1, dtype=dtype).tostring())
+        return self._dictSize[dtype]
+
+    def setData(self, key, offset, dtype, default=None):
         """
         @param offset: int, starting position in the section
         @param key: name of the header key
-        @param type: type of the data to insert (defines the size!)
+        @param dtype: type of the data to insert (defines the size!)
         """
         if key in self.header:
             value = self.header[key]
@@ -425,7 +436,7 @@ class Section(object):
         else:
             value = default
         if value is None:
-            value = "\x00" * self.getSize(type)
+            value = "\x00" * self.getSize(dtype)
         else:
-            value = numpy.array(value).astype(type).tostring()
-        self.lstChr[offset:offset + self.getSize(type)] = value
+            value = numpy.array(value).astype(dtype).tostring()
+        self.lstChr[offset:offset + self.getSize(dtype)] = value

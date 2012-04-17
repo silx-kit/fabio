@@ -324,9 +324,8 @@ def demo():
             sequence1 = sequence1.next()
             print sequence1.currentframe, sequence1.data.ravel().mean(), \
                   time.time() - start
-        except:
-            raise
-            break
+        except Exception, ex:
+            raise ex
 
 
 

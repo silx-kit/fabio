@@ -11,9 +11,8 @@ __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import os, types, logging, sys
+import types, logging
 logger = logging.getLogger("converter")
-import numpy
 
 def convert_data_integer(data):
     """
@@ -38,18 +37,18 @@ CONVERSION_DATA = {
                    ("edfimage", "pnmimage"): convert_data_integer,
                    }
 
-def convert_data(input, output, data):
+def convert_data(inp, outp, data):
     """
     Return data converted to the output format ... over-simplistic implementation for the moment ...
-    @param input,output: input/output format like "cbfimage"
+    @param inp,outp: input/output format like "cbfimage"
     @param data(ndarray): the actual dataset to be transformed
     """
-    return CONVERSION_DATA.get((input, output), lambda data:data)(data)
+    return CONVERSION_DATA.get((inp, outp), lambda data:data)(data)
 
-def convert_header(input, output, header):
+def convert_header(inp, outp, header):
     """
     return header converted to the output format
-    @param input,output: input/output format like "cbfimage"
+    @param inp,outp: input/output format like "cbfimage"
     @param header(dict):the actual set of headers to be transformed 
     """
-    return CONVERSION_HEADER.get((input, output), lambda header:header)(header)
+    return CONVERSION_HEADER.get((inp, outp), lambda header:header)(header)

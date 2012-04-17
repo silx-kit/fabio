@@ -104,7 +104,7 @@ class fabioimage(object):
         @return: the name of the class 
         """
         if self._classname is None:
-             self._classname = str(self.__class__).replace("<class '", "").replace("'>", "").split(".")[-1]
+            self._classname = str(self.__class__).replace("<class '", "").replace("'>", "").split(".")[-1]
         return self._classname
     classname = property(getclassname)
 
@@ -357,7 +357,7 @@ class fabioimage(object):
         To be overridden - fill in self.header and self.data
         """
         raise Exception("Class has not implemented read method yet")
-        return self
+#        return self
 
     def load(self, *arg, **kwarg):
         "Wrapper for read"
@@ -411,7 +411,7 @@ class fabioimage(object):
             else:
                 fileObject = open(fname, mode)
             if "name" not in dir(fileObject):
-                    fileObject.name = fname
+                fileObject.name = fname
 
         return fileObject
 
@@ -472,9 +472,9 @@ class fabioimage(object):
                 else:
                     logger.error("Module %s has no image class" % module)
         elif isinstance(dest, self.__class__):
-           klass = dest.__class__
+            klass = dest.__class__
         elif ("__new__" in dir(dest)) and isinstance(dest(), fabioimage):
-           klass = dest
+            klass = dest
         else:
             logger.warning("Unrecognized destination format: %s " % dest)
             return self

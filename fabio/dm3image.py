@@ -8,9 +8,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
-
+import logging
 import numpy
 from fabioimage import fabioimage
+logger = logging.getLogger("dm3image")
 
 DATA_TYPES = {  2     :  numpy.int16,
                 4     :  numpy.uint16,
@@ -44,7 +45,19 @@ DATA_BYTES = {  2     :  2,
 
 class dm3image(fabioimage):
     """ Read and try to write the dm3 data format """
-
+    def __init__(self, *args, **kwargs):
+        fabioimage.__init__(self, *args, **kwargs)
+        self.encoded_datatype = None
+        self.no_data_elements = None
+        self.grouptag_is_sorted = None
+        self.grouptag_is_open = None
+        self.tag_encoded_type = None
+        self.tag_data_type = None
+        self.tag_is_data = None
+        self.grouptag_no_tags = None
+        self.bytes_in_file = None
+        self.tag_label_length = None
+        self.go_on = None
 
     def _readheader(self):
         self.infile.seek(0)
@@ -107,16 +120,16 @@ class dm3image(fabioimage):
         self.grouptag_is_sorted = self.readbytes(1, numpy.uint8)[0]
         self.grouptag_is_open = self.readbytes(1, numpy.uint8)[0]
         self.grouptag_no_tags = self.readbytes(4, numpy.uint32)[0]
-        #print 'TagGroup is sorted? ',self.grouptag_is_sorted
-        #print 'TagGroup is open? ',self.grouptag_is_open
-        #print 'no of tags in TagGroup', self.grouptag_no_tags
+        logger.debug('TagGroup is sorted? %s', self.grouptag_is_sorted)
+        logger.debug('TagGroup is open? %s', self.grouptag_is_open)
+        logger.debug('no of tags in TagGroup %s', self.grouptag_no_tags)
 
     def read_tag_entry(self):
 
         self.tag_is_data = self.readbytes(1, numpy.uint8)[0]
         self.tag_label_length = self.readbytes(2, numpy.uint16)[0]
-        #print 'does Tag have data ?' , self.tag_is_data, ' -  20 = Tag group , 21 = data '
-        #print 'length of tag_label ', self.tag_label_length
+        logger.debug('does Tag have data ? %s  -  20 = Tag group , 21 = data ', self.tag_is_data)
+        logger.debug('length of tag_label ', self.tag_label_length)
         if self.tag_label_length != 0:
             tag_label = self.infile.read(self.tag_label_length)
         else:
@@ -125,16 +138,16 @@ class dm3image(fabioimage):
         if self.tag_is_data == 21:
             # This is data
             self.header[tag_label] = self.read_tag_type()
-            #print self.header[tag_label]
+            logger.debug("%s: %s", tag_label, self.header[tag_label])
 
 
     def read_tag_type(self):
         if self.infile.read(4) != '%%%%':
             raise IOError
         self.tag_data_type = self.readbytes(4, numpy.uint32)[0]
-        #print 'data is of type :', self.tag_data_type , '  - 1 = simple, 2= string, 3 = array, >3 structs'
+        logger.debug('data is of type : %s  - 1 = simple, 2= string, 3 = array, >3 structs', self.tag_data_type)
         self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
-        # print 'encode type: ', self.tag_encoded_type, DATA_TYPES[ self.tag_encoded_type] 
+        logger.debug('encode type: %s %s', self.tag_encoded_type, DATA_TYPES[ self.tag_encoded_type])
         if self.tag_data_type == 1:
             # simple type
             return self.readbytes(DATA_BYTES[ self.tag_encoded_type],
@@ -145,12 +158,12 @@ class dm3image(fabioimage):
             self.data_type = self.readbytes(4, numpy.uint32)[0]
             self.no_data_elements = self.readbytes(4, numpy.uint32)[0]
             if self.data_type == 10:
-                #print 'skip bytes', self.no_data_elements
+                logger.debug('skip bytes %s', self.no_data_elements)
                 dump = self.infile.read(self.no_data_elements)
                 return None
 
-            # print 'Data are stored as a simple a array -'
-            # print '%i data elemets stored as ' %self.no_data_elements, self.data_type
+            logger.debug('Data are stored as a simple a array -')
+            logger.debug('%s data elemets stored as %s', self.no_data_elements, self.data_type)
             read_no_bytes = DATA_BYTES[self.data_type] * self.no_data_elements
             format = DATA_TYPES[self.data_type]
             return self.readbytes(read_no_bytes, format, swap=self.swap)
@@ -161,7 +174,7 @@ class dm3image(fabioimage):
         #print self.tag_encoded_type , self.tag_data_type 
         if self.tag_encoded_type == 20 and self.tag_data_type > 3 :
             self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
-            #print 'found array - new tag_encoded_type', self.tag_encoded_type
+            logger.debug('found array - new tag_encoded_type %s', self.tag_encoded_type)
             if self.tag_encoded_type == 15:            # struct type
                  ###type = self.readbytes(4,numpy.int32)
                 struct_name_length = self.readbytes(4, numpy.int32)[0]
@@ -177,7 +190,7 @@ class dm3image(fabioimage):
                 bytes_in_struct = 0
                 for i in range(struct_number_fields):
                     bytes_in_struct += DATA_BYTES[field_info[i][1]]
-                #print 'skip bytes', self.no_data_elements* bytes_in_struct
+                logger.debug('skip bytes %s', self.no_data_elements * bytes_in_struct)
                 dump = self.infile.read(self.no_data_elements * bytes_in_struct)
                 return None
 

@@ -46,7 +46,6 @@ TYPESIZES = {0:0, 1:1, 2:1, 3:2, 4:4, 5:8, 6:1, 7:1, 8:2, 9:4, 10:8, 11:4, 12:8}
 baseline_tiff_tags = {
   256:'ImageWidth',
   257:'ImageLength',
-  296:'ResolutionUnit',
   306:'DateTime',
   315:'Artist',
   258:'BitsPerSample',

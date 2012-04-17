@@ -1,9 +1,12 @@
+#!/usr/bin/env python
+#coding: utf8
+
+"""
+General purpose utilities functions for fabio
+"""
+
 import re, os, logging
 logger = logging.getLogger("fabioutils")
-
-def construct_filename(*args, **kwds):
-    raise Exception("You probably want fabio.jump_filename")
-
 
 
 FILETYPES = {

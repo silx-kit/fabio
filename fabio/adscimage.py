@@ -1,7 +1,5 @@
-
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
 #!/usr/bin/env python
+#coding: utf8
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -21,6 +19,8 @@ logger = logging.getLogger("adscimage")
 
 class adscimage(fabioimage):
     """ Read an image in ADSC format (quite similar to edf?) """
+    def __init__(self, *args, **kwargs):
+        fabioimage.__init__(self, *args, **kwargs)
 
     def read(self, fname, frame=None):
         """ read in the file """

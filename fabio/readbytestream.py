@@ -1,6 +1,5 @@
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
-
+#!/usr/bin/env python
+#coding: utf8
 
 """
 Reads a bytestream

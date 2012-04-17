@@ -11,8 +11,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
+import logging, sys
+logger = logging.getLogger("fileseries")
+import traceback as pytraceback
+
 from fabioutils import filename_object, next_filename
-#import fabioutils
+
 from openimage import openimage
 
 
@@ -36,17 +40,17 @@ def new_file_series0(first_object, first=None, last=None, step=1):
         try:
             newim = im.next()
             im = newim
-        except:
-            import traceback
-            traceback.print_exc()
+        except Exception, error:
+            pytraceback.print_exc()
 
             # Skip bad images
-            print "Got a problem here"
+            logger.warning("Got a problem here: %s", error)
             try:
                 im.filename = next_filename(im.filename)
-            except:
+            except Exception, error:
                 # KE: This will not work and will throw an exception
                 # fabio.next_filename doesn't understand %nnnn on the end
+                logger.warning("Got another problem here: %s", error)
                 im.filename = next_filename(im.sequencefilename)
             yield None
         yield im
@@ -91,18 +95,16 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             im = newim
             retVal = im
         except Exception, ex:
-            import sys
             retVal = sys.exc_info()
             if(traceback):
-                import traceback
-                traceback.print_exc()
+                pytraceback.print_exc()
                 # Skip bad images
-                print "Got a problem here: next() failed"
+                logger.warning("Got a problem here: next() failed %s", ex)
             # Skip bad images
             try:
                 im.filename = next_filename(im.filename)
-            except:
-                pass
+            except Exception, ex:
+                logger.warning("Got another problem here: next_filename(im.filename) %s", ex)
         if nprocessed % step == 0:
             yield retVal
             # Avoid cyclic references with exc_info ?

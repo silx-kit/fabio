@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#coding: utf8
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -49,10 +50,8 @@ class pilatusimage(tifimage):
         while go_on:
             try:
                 hstr.remove('')
-            except:
+            except Exception:
                 go_on = False
-
-
 
         for line in hstr:
             line = line[1:line.index('\r\n')]

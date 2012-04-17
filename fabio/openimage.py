@@ -66,11 +66,11 @@ MAGIC_NUMBERS = [
 
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
-    for magic, format in MAGIC_NUMBERS:
+    for magic, format_type in MAGIC_NUMBERS:
         if byts.find(magic) == 0:
-            return format
+            return format_type
         if 0: # debugging - bruker needed 18 bytes below
-            logger.debug("m: %s f: %s", magic, format)
+            logger.debug("m: %s f: %s", magic, format_type)
             logger.debug("bytes: %s len(bytes) %s", magic, len(magic))
             logger.debug("found: %s", byts.find(magic))
             for i in range(len(magic)):
@@ -87,14 +87,13 @@ def openimage(filename, frame=None):
             logger.debug("Attempting to read frame %s from %s" % (frame,
                 filename.tostring()))
             obj = obj.read(filename.tostring(), frame)
-        except:
+        except Exception, ex:
             # multiframe file
             #logger.debug( "DEBUG: multiframe file, start # %d"%(
             #    filename.num)
-            logger.debug("Exception, trying name %s" % (filename.stem))
+            logger.debug("Exception %s, trying name %s" % (ex, filename.stem))
             obj = _openimage(filename.stem)
-            logger.debug("Reading frame %s from %s" % (filename.num,
-                filename.stem))
+            logger.debug("Reading frame %s from %s" % (filename.num, filename.stem))
             obj.read(filename.stem, frame=filename.num)
     else:
         logger.debug("Attempting to open %s" % (filename))
