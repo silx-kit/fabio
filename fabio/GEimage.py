@@ -195,11 +195,13 @@ class GEimage(fabioimage):
                 self.header[ name ] = struct.unpack(format,
                                                      infile.read(nbytes))[0]
 
-    def read(self, fname, frame=0):
+    def read(self, fname, frame=None):
         """
         Read in header into self.header and
         the data   into self.data
         """
+        if frame is None:
+            frame = 0
         self.header = {}
         self.resetvals()
         infile = self._open(fname, "rb")
