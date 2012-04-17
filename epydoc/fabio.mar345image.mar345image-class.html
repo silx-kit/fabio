@@ -109,7 +109,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="fabio.mar345image.mar345image-class.html#read" class="summary-sig-name">read</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">fname</span>)</span><br />
+        <span class="summary-sig-arg">fname</span>,
+        <span class="summary-sig-arg">frame</span>=<span class="summary-sig-default">None</span>)</span><br />
       Read a mar345 image</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image.read">source&nbsp;code</a></span>
@@ -146,9 +147,59 @@
         <tr>
           <td><span class="summary-sig"><a href="fabio.mar345image.mar345image-class.html#write" class="summary-sig-name">write</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">fname</span>)</span><br />
-      To be overwritten - write the file</td>
+      Try to write mar345 file.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image.write">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.mar345image.mar345image-class.html#_writeheader" class="summary-sig-name" onclick="show_private();">_writeheader</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">linesep</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">\n</code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">size</span>=<span class="summary-sig-default">4096</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image._writeheader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_high_intensity_pixel_records"></a><span class="summary-sig-name">_high_intensity_pixel_records</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image._high_intensity_pixel_records">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="nb_overflow_pixels"></a><span class="summary-sig-name">nb_overflow_pixels</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image.nb_overflow_pixels">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -160,6 +211,8 @@
     <td colspan="2" class="summary">
     <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a></code></b>:
       <code><a href="fabio.fabioimage.fabioimage-class.html#add">add</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#convert">convert</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#getclassname">getclassname</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getframe">getframe</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getheader">getheader</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getmax">getmax</a></code>,
@@ -167,12 +220,15 @@
       <code><a href="fabio.fabioimage.fabioimage-class.html#getmin">getmin</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getstddev">getstddev</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#integrate_area">integrate_area</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#load">load</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#make_slice">make_slice</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#next">next</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#previous">previous</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#readROI">readROI</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#readheader">readheader</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#rebin">rebin</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#resetvals">resetvals</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#save">save</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#toPIL16">toPIL16</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#update_header">update_header</a></code>
       </p>
@@ -193,6 +249,49 @@
       <code>__sizeof__</code>,
       <code>__str__</code>,
       <code>__subclasshook__</code>
+      </p>
+    </td>
+  </tr>
+</table>
+<!-- ==================== STATIC METHODS ==================== -->
+<a name="section-StaticMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Static Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-StaticMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.mar345image.mar345image-class.html#checkData" class="summary-sig-name">checkData</a>(<span class="summary-sig-arg">data</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Empty for fabioimage but may be populated by others classes, 
+      especially for format accepting only integers</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image.checkData">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a></code></b>:
+      <code><a href="fabio.fabioimage.fabioimage-class.html#checkHeader">checkHeader</a></code>
       </p>
     </td>
   </tr>
@@ -248,6 +347,9 @@
 </tr>
   <tr>
     <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a></code></b>:
+      <code><a href="fabio.fabioimage.fabioimage-class.html#classname">classname</a></code>
+      </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__class__</code>
       </p>
@@ -306,7 +408,8 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">read</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">fname</span>)</span>
+        <span class="sig-arg">fname</span>,
+        <span class="sig-arg">frame</span>=<span class="sig-default">None</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image.read">source&nbsp;code</a></span>&nbsp;
@@ -359,10 +462,61 @@
     </td>
   </tr></table>
   
-  <p>To be overwritten - write the file</p>
+  <p>Try to write mar345 file. This is still in beta version. It uses CCP4 
+  (LGPL) PCK1 algo from JPA</p>
   <dl class="fields">
     <dt>Overrides:
         <a href="fabio.fabioimage.fabioimage-class.html#write">fabioimage.fabioimage.write</a>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_writeheader"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_writeheader</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">linesep</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">\n</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">size</span>=<span class="sig-default">4096</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image._writeheader">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>linesep</code></strong> - end of line separator @return string/bytes containing the mar345 
+          header</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="checkData"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">checkData</span>(<span class="sig-arg">data</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.mar345image-pysrc.html#mar345image.checkData">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Empty for fabioimage but may be populated by others classes, 
+  especially for format accepting only integers</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="fabio.fabioimage.fabioimage-class.html#checkData">fabioimage.fabioimage.checkData</a>
         <dd><em class="note">(inherited documentation)</em></dd>
     </dt>
   </dl>
@@ -395,7 +549,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Nov 15 22:45:05 2011
+    Generated by Epydoc 3.0.1 on Tue Apr 17 11:30:30 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -68,6 +68,8 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
          email:erik.knudsen@risoe.dk
 
         + Jon Wright, ESRF
+        + Ga&#235;l Goret, ESRF
+        + J&#233;r&#244;me Kieffer, ESRF
 
 </pre>
 
@@ -92,7 +94,16 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a href="fabio.OXDimage.OXDimage-class.html" class="summary-name">OXDimage</a>
+        <a href="fabio.OXDimage.OXDimage-class.html" class="summary-name">OXDimage</a><br />
+      Oxford Diffraction Sapphire 3 images reader/writer class
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.OXDimage.Section-class.html" class="summary-name">Section</a><br />
+      Small helper class for writing binary headers
     </td>
   </tr>
 </table>
@@ -117,7 +128,36 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
+        <a href="fabio.OXDimage-module.html#__doc__" class="summary-name">__doc__</a> = <code title="&quot;&quot;&quot;
+Reads Oxford Diffraction Sapphire 3 images
+
+Authors: Henning O. Sorensen &amp; Erik Knudsen
+         Center for Fundamental Research: Metal Structures in Four Dim\
+ensions
+         Risoe National Laboratory
+         Frederiksborgvej 399
+...">&quot;<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
         <a name="logger"></a><span class="summary-name">logger</span> = <code title="logging.getLogger(&quot;OXDimage&quot;)">logging.getLogger(&quot;OXDimage&quot;)</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="rad2deg"></a><span class="summary-name">rad2deg</span> = <code title="&lt;ufunc 'rad2deg'&gt;">&lt;ufunc 'rad2deg'&gt;</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="deg2rad"></a><span class="summary-name">deg2rad</span> = <code title="&lt;ufunc 'deg2rad'&gt;">&lt;ufunc 'deg2rad'&gt;</code>
     </td>
   </tr>
 <tr>
@@ -129,6 +169,21 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
  2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
  3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
  4: 'Unknown Oxford diffraction detector'}"><code class="variable-group">{</code>0<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12m</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.OXDimage-module.html#DEFAULT_HEADERS" class="summary-name">DEFAULT_HEADERS</a> = <code title="{'ASCII Section size in Byte': 256,
+ 'Compression': 'TY1',
+ 'General Section size in Byte': 512,
+ 'Header Size In Bytes': 5120,
+ 'Header Version': 'OD SAPPHIRE  3.0',
+ 'History Section in Byte': 2048,
+ 'KM4 Section size in Byte': 1024,
+ 'NSUPPLEMENT': 0,
+..."><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">ASCII Section size in Byte</code><code class="variable-quote">'</code><code class="variable-op">: </code>256<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">Compres</code><code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 <tr>
@@ -157,6 +212,32 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
   </td>
 </tr>
 </table>
+<a name="__doc__"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">__doc__</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+&quot;&quot;&quot;
+Reads Oxford Diffraction Sapphire 3 images
+
+Authors: Henning O. Sorensen &amp; Erik Knudsen
+         Center for Fundamental Research: Metal Structures in Four Dim<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ensions
+         Risoe National Laboratory
+         Frederiksborgvej 399
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="DETECTOR_TYPES"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -174,6 +255,32 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
  2<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  3<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  4<code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Unknown Oxford diffraction detector</code><code class="variable-quote">'</code><code class="variable-group">}</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="DEFAULT_HEADERS"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">DEFAULT_HEADERS</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">ASCII Section size in Byte</code><code class="variable-quote">'</code><code class="variable-op">: </code>256<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">Compression</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">TY1</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">General Section size in Byte</code><code class="variable-quote">'</code><code class="variable-op">: </code>512<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">Header Size In Bytes</code><code class="variable-quote">'</code><code class="variable-op">: </code>5120<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">Header Version</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">OD SAPPHIRE  3.0</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">History Section in Byte</code><code class="variable-quote">'</code><code class="variable-op">: </code>2048<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">KM4 Section size in Byte</code><code class="variable-quote">'</code><code class="variable-op">: </code>1024<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">NSUPPLEMENT</code><code class="variable-quote">'</code><code class="variable-op">: </code>0<code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
   </dl>
@@ -206,7 +313,7 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Nov 15 22:45:05 2011
+    Generated by Epydoc 3.0.1 on Tue Apr 17 11:30:30 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

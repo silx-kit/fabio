@@ -81,14 +81,21 @@
 fabio.tifimage.tifimage" class="py-name" href="#" onclick="return doclink('link-0', 'tifimage', 'link-0');">tifimage</a></tt> <tt class="py-keyword">import</tt> <tt id="link-1" class="py-name"><a title="fabio.tifimage
 fabio.tifimage.tifimage" class="py-name" href="#" onclick="return doclink('link-1', 'tifimage', 'link-0');">tifimage</a></tt> </tt>
 <a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">logging</tt> </tt>
-<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt id="link-2" class="py-name" targets="Variable fabio.GEimage.logger=fabio.GEimage-module.html#logger,Variable fabio.HiPiCimage.logger=fabio.HiPiCimage-module.html#logger,Variable fabio.OXDimage.logger=fabio.OXDimage-module.html#logger,Variable fabio.TiffIO.logger=fabio.TiffIO-module.html#logger,Variable fabio.adscimage.logger=fabio.adscimage-module.html#logger,Variable fabio.brukerimage.logger=fabio.brukerimage-module.html#logger,Variable fabio.cbfimage.logger=fabio.cbfimage-module.html#logger,Variable fabio.edfimage.logger=fabio.edfimage-module.html#logger,Variable fabio.kcdimage.logger=fabio.kcdimage-module.html#logger,Variable fabio.mar345image.logger=fabio.mar345image-module.html#logger,Variable fabio.marccdimage.logger=fabio.marccdimage-module.html#logger,Variable fabio.openimage.logger=fabio.openimage-module.html#logger,Variable fabio.pnmimage.logger=fabio.pnmimage-module.html#logger,Variable fabio.readbytestream.logger=fabio.readbytestream-module.html#logger,Variable fabio.tifimage.logger=fabio.tifimage-module.html#logger,Variable fabio.xsdimage.logger=fabio.xsdimage-module.html#logger"><a title="fabio.GEimage.logger
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt id="link-2" class="py-name" targets="Variable fabio.GEimage.logger=fabio.GEimage-module.html#logger,Variable fabio.HiPiCimage.logger=fabio.HiPiCimage-module.html#logger,Variable fabio.OXDimage.logger=fabio.OXDimage-module.html#logger,Variable fabio.adscimage.logger=fabio.adscimage-module.html#logger,Variable fabio.binaryimage.logger=fabio.binaryimage-module.html#logger,Variable fabio.bruker100image.logger=fabio.bruker100image-module.html#logger,Variable fabio.brukerimage.logger=fabio.brukerimage-module.html#logger,Variable fabio.cbfimage.logger=fabio.cbfimage-module.html#logger,Variable fabio.compression.logger=fabio.compression-module.html#logger,Variable fabio.converters.logger=fabio.converters-module.html#logger,Variable fabio.dm3image.logger=fabio.dm3image-module.html#logger,Variable fabio.edfimage.logger=fabio.edfimage-module.html#logger,Variable fabio.fabioimage.logger=fabio.fabioimage-module.html#logger,Variable fabio.fabioutils.logger=fabio.fabioutils-module.html#logger,Variable fabio.file_series.logger=fabio.file_series-module.html#logger,Variable fabio.kcdimage.logger=fabio.kcdimage-module.html#logger,Variable fabio.mar345image.logger=fabio.mar345image-module.html#logger,Variable fabio.marccdimage.logger=fabio.marccdimage-module.html#logger,Variable fabio.openimage.logger=fabio.openimage-module.html#logger,Variable fabio.pnmimage.logger=fabio.pnmimage-module.html#logger,Variable fabio.readbytestream.logger=fabio.readbytestream-module.html#logger,Variable fabio.tifimage.logger=fabio.tifimage-module.html#logger,Variable fabio.xsdimage.logger=fabio.xsdimage-module.html#logger"><a title="fabio.GEimage.logger
 fabio.HiPiCimage.logger
 fabio.OXDimage.logger
-fabio.TiffIO.logger
 fabio.adscimage.logger
+fabio.binaryimage.logger
+fabio.bruker100image.logger
 fabio.brukerimage.logger
 fabio.cbfimage.logger
+fabio.compression.logger
+fabio.converters.logger
+fabio.dm3image.logger
 fabio.edfimage.logger
+fabio.fabioimage.logger
+fabio.fabioutils.logger
+fabio.file_series.logger
 fabio.kcdimage.logger
 fabio.mar345image.logger
 fabio.marccdimage.logger
@@ -313,11 +320,18 @@ fabio.xsdimage.logger" class="py-name" href="#" onclick="return doclink('link-2'
 <a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line">            <tt id="link-9" class="py-name"><a title="fabio.GEimage.logger
 fabio.HiPiCimage.logger
 fabio.OXDimage.logger
-fabio.TiffIO.logger
 fabio.adscimage.logger
+fabio.binaryimage.logger
+fabio.bruker100image.logger
 fabio.brukerimage.logger
 fabio.cbfimage.logger
+fabio.compression.logger
+fabio.converters.logger
+fabio.dm3image.logger
 fabio.edfimage.logger
+fabio.fabioimage.logger
+fabio.fabioutils.logger
+fabio.file_series.logger
 fabio.kcdimage.logger
 fabio.mar345image.logger
 fabio.marccdimage.logger
@@ -332,18 +346,26 @@ fabio.xsdimage.logger" class="py-name" href="#" onclick="return doclink('link-9'
 <a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">            <tt class="py-comment"># repeated ... times</tt> </tt>
 <a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
 <a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">                <tt class="py-name">num</tt> <tt class="py-op">=</tt> <tt class="py-name">name</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">"["</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">split</tt><tt class="py-op">(</tt><tt class="py-string">"]"</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> </tt>
-<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line">                <tt class="py-name">num</tt> <tt class="py-op">=</tt> <tt class="py-name">num</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"MAXIMAGES"</tt><tt class="py-op">,</tt> <tt id="link-10" class="py-name" targets="Method fabio.fabioutils.filename_object.str()=fabio.fabioutils.filename_object-class.html#str"><a title="fabio.fabioutils.filename_object.str" class="py-name" href="#" onclick="return doclink('link-10', 'str', 'link-10');">str</a></tt><tt class="py-op">(</tt><tt id="link-11" class="py-name"><a title="fabio.marccdimage.MAXIMAGES" class="py-name" href="#" onclick="return doclink('link-11', 'MAXIMAGES', 'link-6');">MAXIMAGES</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line">                <tt class="py-name">num</tt> <tt class="py-op">=</tt> <tt class="py-name">num</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"MAXIMAGES"</tt><tt class="py-op">,</tt> <tt id="link-10" class="py-name" targets="Method fabio.fabioutils.filename_object.str()=fabio.fabioutils.filename_object-class.html#str,Class str=str-class.html"><a title="fabio.fabioutils.filename_object.str
+str" class="py-name" href="#" onclick="return doclink('link-10', 'str', 'link-10');">str</a></tt><tt class="py-op">(</tt><tt id="link-11" class="py-name"><a title="fabio.marccdimage.MAXIMAGES" class="py-name" href="#" onclick="return doclink('link-11', 'MAXIMAGES', 'link-6');">MAXIMAGES</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
 <a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line">                <tt class="py-name">num</tt> <tt class="py-op">=</tt> <tt class="py-name">num</tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">"sizeof(INT32)"</tt><tt class="py-op">,</tt> <tt class="py-string">"4"</tt><tt class="py-op">)</tt> </tt>
 <a name="L247"></a><tt class="py-lineno">247</tt>  <tt class="py-line">                <tt class="py-name">times</tt> <tt class="py-op">=</tt> <tt class="py-name">eval</tt><tt class="py-op">(</tt><tt class="py-name">num</tt><tt class="py-op">)</tt> </tt>
-<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt> <tt class="py-name">Exception</tt> <tt class="py-keyword">as</tt> <tt class="py-name">error</tt><tt class="py-op">:</tt> </tt>
+<a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt> <tt class="py-name">Exception</tt><tt class="py-op">,</tt> <tt class="py-name">error</tt><tt class="py-op">:</tt> </tt>
 <a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line">                <tt id="link-12" class="py-name"><a title="fabio.GEimage.logger
 fabio.HiPiCimage.logger
 fabio.OXDimage.logger
-fabio.TiffIO.logger
 fabio.adscimage.logger
+fabio.binaryimage.logger
+fabio.bruker100image.logger
 fabio.brukerimage.logger
 fabio.cbfimage.logger
+fabio.compression.logger
+fabio.converters.logger
+fabio.dm3image.logger
 fabio.edfimage.logger
+fabio.fabioimage.logger
+fabio.fabioutils.logger
+fabio.file_series.logger
 fabio.kcdimage.logger
 fabio.mar345image.logger
 fabio.marccdimage.logger
@@ -370,24 +392,23 @@ fabio.xsdimage.logger" class="py-name" href="#" onclick="return doclink('link-12
 </div><div id="interpret_header-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="interpret_header-expanded"><a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
 <a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line"><tt class="py-docstring">    given a format and header interpret it</tt> </tt>
 <a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
-<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">    <tt class="py-name">values</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Method fabio.edfimage.edfimage.unpack()=fabio.edfimage.edfimage-class.html#unpack,Function fabio.mar345_io.unpack()=fabio.mar345_io-module.html#unpack,Method fabio.tifimage.Image_File_Directory.unpack()=fabio.tifimage.Image_File_Directory-class.html#unpack,Method fabio.tifimage.Image_File_Directory_entry.unpack()=fabio.tifimage.Image_File_Directory_entry-class.html#unpack"><a title="fabio.edfimage.edfimage.unpack
-fabio.mar345_io.unpack
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">    <tt class="py-name">values</tt> <tt class="py-op">=</tt> <tt class="py-name">struct</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name" targets="Method fabio.edfimage.edfimage.unpack()=fabio.edfimage.edfimage-class.html#unpack,Method fabio.tifimage.Image_File_Directory.unpack()=fabio.tifimage.Image_File_Directory-class.html#unpack,Method fabio.tifimage.Image_File_Directory_entry.unpack()=fabio.tifimage.Image_File_Directory_entry-class.html#unpack"><a title="fabio.edfimage.edfimage.unpack
 fabio.tifimage.Image_File_Directory.unpack
 fabio.tifimage.Image_File_Directory_entry.unpack" class="py-name" href="#" onclick="return doclink('link-19', 'unpack', 'link-19');">unpack</a></tt><tt class="py-op">(</tt><tt class="py-name">fmt</tt><tt class="py-op">,</tt> <tt id="link-20" class="py-name" targets="Variable fabio.edfimage.edfimage.header=fabio.edfimage.edfimage-class.html#header"><a title="fabio.edfimage.edfimage.header" class="py-name" href="#" onclick="return doclink('link-20', 'header', 'link-20');">header</a></tt><tt class="py-op">)</tt> </tt>
 <a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line">    <tt class="py-name">hdr</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt> </tt>
-<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line">    <tt class="py-name">i</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line">    <tt id="link-21" class="py-name" targets="Variable fabio.fabioutils.i=fabio.fabioutils-module.html#i"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-21', 'i', 'link-21');">i</a></tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
 <a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">name</tt> <tt class="py-keyword">in</tt> <tt class="py-name">names</tt><tt class="py-op">:</tt> </tt>
 <a name="L272"></a><tt class="py-lineno">272</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">hdr</tt><tt class="py-op">.</tt><tt class="py-name">has_key</tt><tt class="py-op">(</tt><tt class="py-name">name</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-string">"string"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
-<a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line">                <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">+</tt> <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
+<a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-name">values</tt><tt class="py-op">[</tt><tt id="link-22" class="py-name"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-22', 'i', 'link-21');">i</a></tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-name">type</tt><tt class="py-op">(</tt><tt class="py-string">"string"</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line">                <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">+</tt> <tt class="py-name">values</tt><tt class="py-op">[</tt><tt id="link-23" class="py-name"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-23', 'i', 'link-21');">i</a></tt><tt class="py-op">]</tt> </tt>
 <a name="L275"></a><tt class="py-lineno">275</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
 <a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line">                <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
-<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line">                    <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line">                    <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">values</tt><tt class="py-op">[</tt><tt id="link-24" class="py-name"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-24', 'i', 'link-21');">i</a></tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
 <a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line">                <tt class="py-keyword">except</tt> <tt class="py-name">AttributeError</tt><tt class="py-op">:</tt> </tt>
-<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line">                    <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line">                    <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-name">values</tt><tt class="py-op">[</tt><tt id="link-25" class="py-name"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-25', 'i', 'link-21');">i</a></tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
 <a name="L280"></a><tt class="py-lineno">280</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
-<a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">            <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">values</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
-<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line">        <tt class="py-name">i</tt> <tt class="py-op">=</tt> <tt class="py-name">i</tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt> </tt>
+<a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line">            <tt class="py-name">hdr</tt><tt class="py-op">[</tt><tt class="py-name">name</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">values</tt><tt class="py-op">[</tt><tt id="link-26" class="py-name"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-26', 'i', 'link-21');">i</a></tt><tt class="py-op">]</tt> </tt>
+<a name="L282"></a><tt class="py-lineno">282</tt>  <tt class="py-line">        <tt id="link-27" class="py-name"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-27', 'i', 'link-21');">i</a></tt> <tt class="py-op">=</tt> <tt id="link-28" class="py-name"><a title="fabio.fabioutils.i" class="py-name" href="#" onclick="return doclink('link-28', 'i', 'link-21');">i</a></tt> <tt class="py-op">+</tt> <tt class="py-number">1</tt> </tt>
 <a name="L283"></a><tt class="py-lineno">283</tt>  <tt class="py-line"> </tt>
 <a name="L284"></a><tt class="py-lineno">284</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">hdr</tt> </tt>
 </div><a name="L285"></a><tt class="py-lineno">285</tt>  <tt class="py-line"> </tt>
@@ -403,11 +424,12 @@ fabio.tifimage.Image_File_Directory_entry.unpack" class="py-name" href="#" oncli
 <a name="L295"></a><tt class="py-lineno">295</tt>  <tt class="py-line"><tt class="py-docstring">        Gets all entries</tt> </tt>
 <a name="L296"></a><tt class="py-lineno">296</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
 <a name="L297"></a><tt class="py-lineno">297</tt>  <tt class="py-line">        <tt class="py-name">infile</tt><tt class="py-op">.</tt><tt class="py-name">seek</tt><tt class="py-op">(</tt><tt class="py-number">1024</tt><tt class="py-op">)</tt> </tt>
-<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line">        <tt class="py-name">hstr</tt> <tt class="py-op">=</tt> <tt class="py-name">infile</tt><tt class="py-op">.</tt><tt id="link-21" class="py-name" targets="Method fabio.GEimage.GEimage.read()=fabio.GEimage.GEimage-class.html#read,Method fabio.GEimage_old.GEimage.read()=fabio.GEimage_old.GEimage-class.html#read,Method fabio.HiPiCimage.HiPiCimage.read()=fabio.HiPiCimage.HiPiCimage-class.html#read,Method fabio.OXDimage.OXDimage.read()=fabio.OXDimage.OXDimage-class.html#read,Method fabio.adscimage.adscimage.read()=fabio.adscimage.adscimage-class.html#read,Method fabio.bruker100image.bruker100image.read()=fabio.bruker100image.bruker100image-class.html#read,Method fabio.brukerimage.brukerimage.read()=fabio.brukerimage.brukerimage-class.html#read,Method fabio.cbfimage.cbfimage.read()=fabio.cbfimage.cbfimage-class.html#read,Function fabio.cf_io.read()=fabio.cf_io-module.html#read,Method fabio.datIO.columnfile.read()=fabio.datIO.columnfile-class.html#read,Method fabio.datIO.fabiodata.read()=fabio.datIO.fabiodata-class.html#read,Method fabio.dm3image.dm3image.read()=fabio.dm3image.dm3image-class.html#read,Method fabio.edfimage.edfimage.read()=fabio.edfimage.edfimage-class.html#read,Method fabio.fabioimage.fabioimage.read()=fabio.fabioimage.fabioimage-class.html#read,Method fabio.fit2dmaskimage.fit2dmaskimage.read()=fabio.fit2dmaskimage.fit2dmaskimage-class.html#read,Method fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read()=fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#read,Method fabio.kcdimage.kcdimage.read()=fabio.kcdimage.kcdimage-class.html#read,Method fabio.mar345image.mar345image.read()=fabio.mar345image.mar345image-class.html#read,Method fabio.pnmimage.pnmimage.read()=fabio.pnmimage.pnmimage-class.html#read,Method fabio.tifimage.tifimage.read()=fabio.tifimage.tifimage-class.html#read,Method fabio.xsdimage.xsdimage.read()=fabio.xsdimage.xsdimage-class.html#read"><a title="fabio.GEimage.GEimage.read
+<a name="L298"></a><tt class="py-lineno">298</tt>  <tt class="py-line">        <tt class="py-name">hstr</tt> <tt class="py-op">=</tt> <tt class="py-name">infile</tt><tt class="py-op">.</tt><tt id="link-29" class="py-name" targets="Method fabio.GEimage.GEimage.read()=fabio.GEimage.GEimage-class.html#read,Method fabio.GEimage_old.GEimage.read()=fabio.GEimage_old.GEimage-class.html#read,Method fabio.HiPiCimage.HiPiCimage.read()=fabio.HiPiCimage.HiPiCimage-class.html#read,Method fabio.OXDimage.OXDimage.read()=fabio.OXDimage.OXDimage-class.html#read,Method fabio.adscimage.adscimage.read()=fabio.adscimage.adscimage-class.html#read,Method fabio.binaryimage.binaryimage.read()=fabio.binaryimage.binaryimage-class.html#read,Method fabio.bruker100image.bruker100image.read()=fabio.bruker100image.bruker100image-class.html#read,Method fabio.brukerimage.brukerimage.read()=fabio.brukerimage.brukerimage-class.html#read,Method fabio.cbfimage.cbfimage.read()=fabio.cbfimage.cbfimage-class.html#read,Function fabio.cf_io.read()=fabio.cf_io-module.html#read,Method fabio.datIO.columnfile.read()=fabio.datIO.columnfile-class.html#read,Method fabio.datIO.fabiodata.read()=fabio.datIO.fabiodata-class.html#read,Method fabio.dm3image.dm3image.read()=fabio.dm3image.dm3image-class.html#read,Method fabio.edfimage.edfimage.read()=fabio.edfimage.edfimage-class.html#read,Method fabio.fabioimage.fabioimage.read()=fabio.fabioimage.fabioimage-class.html#read,Method fabio.fit2dmaskimage.fit2dmaskimage.read()=fabio.fit2dmaskimage.fit2dmaskimage-class.html#read,Method fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read()=fabio.fit2dspreadsheetimage.fit2dspreadsheetimage-class.html#read,Method fabio.kcdimage.kcdimage.read()=fabio.kcdimage.kcdimage-class.html#read,Method fabio.mar345image.mar345image.read()=fabio.mar345image.mar345image-class.html#read,Method fabio.pnmimage.pnmimage.read()=fabio.pnmimage.pnmimage-class.html#read,Method fabio.tifimage.tifimage.read()=fabio.tifimage.tifimage-class.html#read,Method fabio.xsdimage.xsdimage.read()=fabio.xsdimage.xsdimage-class.html#read"><a title="fabio.GEimage.GEimage.read
 fabio.GEimage_old.GEimage.read
 fabio.HiPiCimage.HiPiCimage.read
 fabio.OXDimage.OXDimage.read
 fabio.adscimage.adscimage.read
+fabio.binaryimage.binaryimage.read
 fabio.bruker100image.bruker100image.read
 fabio.brukerimage.brukerimage.read
 fabio.cbfimage.cbfimage.read
@@ -423,8 +445,8 @@ fabio.kcdimage.kcdimage.read
 fabio.mar345image.mar345image.read
 fabio.pnmimage.pnmimage.read
 fabio.tifimage.tifimage.read
-fabio.xsdimage.xsdimage.read" class="py-name" href="#" onclick="return doclink('link-21', 'read', 'link-21');">read</a></tt><tt class="py-op">(</tt><tt class="py-number">3072</tt><tt class="py-op">)</tt> </tt>
-<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name"><a title="fabio.edfimage.edfimage.header" class="py-name" href="#" onclick="return doclink('link-22', 'header', 'link-20');">header</a></tt> <tt class="py-op">=</tt> <tt id="link-23" class="py-name" targets="Function fabio.marccdimage.interpret_header()=fabio.marccdimage-module.html#interpret_header"><a title="fabio.marccdimage.interpret_header" class="py-name" href="#" onclick="return doclink('link-23', 'interpret_header', 'link-23');">interpret_header</a></tt><tt class="py-op">(</tt><tt class="py-name">hstr</tt><tt class="py-op">,</tt> <tt id="link-24" class="py-name"><a title="fabio.marccdimage.HEADER_FORMAT" class="py-name" href="#" onclick="return doclink('link-24', 'HEADER_FORMAT', 'link-16');">HEADER_FORMAT</a></tt><tt class="py-op">,</tt> <tt id="link-25" class="py-name"><a title="fabio.marccdimage.HEADER_NAMES" class="py-name" href="#" onclick="return doclink('link-25', 'HEADER_NAMES', 'link-15');">HEADER_NAMES</a></tt><tt class="py-op">)</tt> </tt>
+fabio.xsdimage.xsdimage.read" class="py-name" href="#" onclick="return doclink('link-29', 'read', 'link-29');">read</a></tt><tt class="py-op">(</tt><tt class="py-number">3072</tt><tt class="py-op">)</tt> </tt>
+<a name="L299"></a><tt class="py-lineno">299</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name"><a title="fabio.edfimage.edfimage.header" class="py-name" href="#" onclick="return doclink('link-30', 'header', 'link-20');">header</a></tt> <tt class="py-op">=</tt> <tt id="link-31" class="py-name" targets="Function fabio.marccdimage.interpret_header()=fabio.marccdimage-module.html#interpret_header"><a title="fabio.marccdimage.interpret_header" class="py-name" href="#" onclick="return doclink('link-31', 'interpret_header', 'link-31');">interpret_header</a></tt><tt class="py-op">(</tt><tt class="py-name">hstr</tt><tt class="py-op">,</tt> <tt id="link-32" class="py-name"><a title="fabio.marccdimage.HEADER_FORMAT" class="py-name" href="#" onclick="return doclink('link-32', 'HEADER_FORMAT', 'link-16');">HEADER_FORMAT</a></tt><tt class="py-op">,</tt> <tt id="link-33" class="py-name"><a title="fabio.marccdimage.HEADER_NAMES" class="py-name" href="#" onclick="return doclink('link-33', 'HEADER_NAMES', 'link-15');">HEADER_NAMES</a></tt><tt class="py-op">)</tt> </tt>
 </div><a name="L300"></a><tt class="py-lineno">300</tt>  <tt class="py-line"> </tt>
 <a name="L301"></a><tt class="py-lineno">301</tt>  <tt class="py-line"> </tt>
 <a name="L302"></a><tt class="py-lineno">302</tt>  <tt class="py-line"> </tt>
@@ -434,12 +456,13 @@ fabio.xsdimage.xsdimage.read" class="py-name" href="#" onclick="return doclink('
 <a name="L306"></a><tt class="py-lineno">306</tt>  <tt class="py-line"><tt class="py-docstring">        ... a marccd image *is a* tif image</tt> </tt>
 <a name="L307"></a><tt class="py-lineno">307</tt>  <tt class="py-line"><tt class="py-docstring">        just with a header</tt> </tt>
 <a name="L308"></a><tt class="py-lineno">308</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
-<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-26" class="py-name"><a title="fabio.tifimage
-fabio.tifimage.tifimage" class="py-name" href="#" onclick="return doclink('link-26', 'tifimage', 'link-0');">tifimage</a></tt><tt class="py-op">.</tt><tt id="link-27" class="py-name"><a title="fabio.GEimage.GEimage.read
+<a name="L309"></a><tt class="py-lineno">309</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt id="link-34" class="py-name"><a title="fabio.tifimage
+fabio.tifimage.tifimage" class="py-name" href="#" onclick="return doclink('link-34', 'tifimage', 'link-0');">tifimage</a></tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="fabio.GEimage.GEimage.read
 fabio.GEimage_old.GEimage.read
 fabio.HiPiCimage.HiPiCimage.read
 fabio.OXDimage.OXDimage.read
 fabio.adscimage.adscimage.read
+fabio.binaryimage.binaryimage.read
 fabio.bruker100image.bruker100image.read
 fabio.brukerimage.brukerimage.read
 fabio.cbfimage.cbfimage.read
@@ -455,7 +478,7 @@ fabio.kcdimage.kcdimage.read
 fabio.mar345image.mar345image.read
 fabio.pnmimage.pnmimage.read
 fabio.tifimage.tifimage.read
-fabio.xsdimage.xsdimage.read" class="py-name" href="#" onclick="return doclink('link-27', 'read', 'link-21');">read</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">fname</tt><tt class="py-op">)</tt> </tt>
+fabio.xsdimage.xsdimage.read" class="py-name" href="#" onclick="return doclink('link-35', 'read', 'link-29');">read</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">fname</tt><tt class="py-op">)</tt> </tt>
 </div></div><a name="L310"></a><tt class="py-lineno">310</tt>  <tt class="py-line"> </tt><script type="text/javascript">
 <!--
 expandto(location.href);
@@ -489,7 +512,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Nov 15 22:45:05 2011
+    Generated by Epydoc 3.0.1 on Tue Apr 17 11:30:31 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

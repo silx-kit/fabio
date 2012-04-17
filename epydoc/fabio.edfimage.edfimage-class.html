@@ -132,7 +132,8 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#read" class="summary-sig-name">read</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">fname</span>)</span><br />
+        <span class="summary-sig-arg">fname</span>,
+        <span class="summary-sig-arg">frame</span>=<span class="summary-sig-default">None</span>)</span><br />
       Read in header into self.header and...</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.read">source&nbsp;code</a></span>
@@ -684,16 +685,21 @@
     <td colspan="2" class="summary">
     <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a></code></b>:
       <code><a href="fabio.fabioimage.fabioimage-class.html#add">add</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#convert">convert</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#getclassname">getclassname</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getheader">getheader</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getmax">getmax</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getmean">getmean</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getmin">getmin</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#getstddev">getstddev</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#integrate_area">integrate_area</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#load">load</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#make_slice">make_slice</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#readROI">readROI</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#readheader">readheader</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#rebin">rebin</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#resetvals">resetvals</a></code>,
+      <code><a href="fabio.fabioimage.fabioimage-class.html#save">save</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#toPIL16">toPIL16</a></code>,
       <code><a href="fabio.fabioimage.fabioimage-class.html#update_header">update_header</a></code>
       </p>
@@ -735,6 +741,23 @@
     </table>
   </td>
 </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.edfimage.edfimage-class.html#checkHeader" class="summary-sig-name">checkHeader</a>(<span class="summary-sig-arg">header</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Empty for fabioimage but may be populated by others classes</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.checkHeader">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
 <tr class="private">
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
@@ -750,6 +773,13 @@
         </tr>
       </table>
       
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a></code></b>:
+      <code><a href="fabio.fabioimage.fabioimage-class.html#checkData">checkData</a></code>
+      </p>
     </td>
   </tr>
 </table>
@@ -873,6 +903,9 @@
   </tr>
   <tr>
     <td colspan="2" class="summary">
+    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.fabioimage.fabioimage-class.html">fabioimage.fabioimage</a></code></b>:
+      <code><a href="fabio.fabioimage.fabioimage-class.html#classname">classname</a></code>
+      </p>
     <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
       <code>__class__</code>
       </p>
@@ -921,6 +954,29 @@
     <dt>Overrides:
         object.__init__
         <dd><em class="note">(inherited documentation)</em></dd>
+    </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="checkHeader"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">checkHeader</span>(<span class="sig-arg">header</span>=<span class="sig-default">None</span>)</span>
+    <br /><em class="fname">Static Method</em>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.checkHeader">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Empty for fabioimage but may be populated by others classes</p>
+  <dl class="fields">
+    <dt>Overrides:
+        <a href="fabio.fabioimage.fabioimage-class.html#checkHeader">fabioimage.fabioimage.checkHeader</a>
     </dt>
   </dl>
 </td></tr></table>
@@ -987,7 +1043,8 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">read</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">fname</span>)</span>
+        <span class="sig-arg">fname</span>,
+        <span class="sig-arg">frame</span>=<span class="sig-default">None</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="fabio.edfimage-pysrc.html#edfimage.read">source&nbsp;code</a></span>&nbsp;
@@ -1592,7 +1649,7 @@ Read in header into self.header and
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Nov 15 22:45:05 2011
+    Generated by Epydoc 3.0.1 on Tue Apr 17 11:30:30 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

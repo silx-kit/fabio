@@ -56,6 +56,8 @@
 </table>
 <!-- ==================== MODULE DESCRIPTION ==================== -->
 <h1 class="epydoc">Module fabioutils</h1><p class="nomargin-top"><span class="codelink"><a href="fabio.fabioutils-pysrc.html">source&nbsp;code</a></span></p>
+<p>General purpose utilities functions for fabio</p>
+
 <!-- ==================== CLASSES ==================== -->
 <a name="section-Classes"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -105,23 +107,6 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="construct_filename"></a><span class="summary-sig-name">construct_filename</span>(<span class="summary-sig-arg">*args</span>,
-        <span class="summary-sig-arg">**kwds</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fabio.fabioutils-pysrc.html#construct_filename">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a name="getnum"></a><span class="summary-sig-name">getnum</span>(<span class="summary-sig-arg">name</span>)</span><br />
       # try to figure out a file number # guess it starts at the back</td>
           <td align="right" valign="top">
@@ -161,6 +146,24 @@
       Break up a filename to get image type and number</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.fabioutils-pysrc.html#deconstruct_filename">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="construct_filename"></a><span class="summary-sig-name">construct_filename</span>(<span class="summary-sig-arg">filename</span>,
+        <span class="summary-sig-arg">frame</span>)</span><br />
+      Try to construct the filename for a given frame</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.fabioutils-pysrc.html#construct_filename">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -259,6 +262,25 @@
       
     </td>
   </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="fabio.fabioutils-module.html#toAscii" class="summary-sig-name">toAscii</a>(<span class="summary-sig-arg">name</span>,
+        <span class="summary-sig-arg">excluded</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Returns:
+      the name with all non valid char removed</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.fabioutils-pysrc.html#toAscii">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
 </table>
 <!-- ==================== VARIABLES ==================== -->
 <a name="section-Variables"></a>
@@ -277,6 +299,13 @@
     </table>
   </td>
 </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="logger"></a><span class="summary-name">logger</span> = <code title="logging.getLogger(&quot;fabioutils&quot;)">logging.getLogger(&quot;fabioutils&quot;)</code>
+    </td>
+  </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
@@ -303,6 +332,21 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
+        <a href="fabio.fabioutils-module.html#dictAscii" class="summary-name">dictAscii</a> = <code title="{None: [' ',
+        '!',
+        '&quot;',
+        '#',
+        '$',
+        '%',
+        '&amp;',
+        '\'',
+..."><code class="variable-group">{</code>None<code class="variable-op">: </code><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string"> </code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">!</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&quot;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">#</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">$</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">%</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">&amp;</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">\'</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
         <a href="fabio.fabioutils-module.html#lines" class="summary-name">lines</a> = <code title="'''bzip2, a block-sorting file compressor.  Version 1.0.5, 10-Dec-2007\
 .
 
@@ -319,6 +363,13 @@
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
         <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="'fabio'"><code class="variable-quote">'</code><code class="variable-string">fabio</code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="i"></a><span class="summary-name">i</span> = <code title="126">126</code>
     </td>
   </tr>
 <tr>
@@ -374,6 +425,33 @@
   </dl>
 </td></tr></table>
 </div>
+<a name="toAscii"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">toAscii</span>(<span class="sig-arg">name</span>,
+        <span class="sig-arg">excluded</span>=<span class="sig-default">None</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="fabio.fabioutils-pysrc.html#toAscii">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>name</code></strong> - string to check</li>
+        <li><strong class="pname"><code>excluded</code></strong> - tuple of char or string excluded (not list: they are mutable).</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the name with all non valid char removed</dd>
+  </dl>
+</td></tr></table>
+</div>
 <br />
 <!-- ==================== VARIABLES DETAILS ==================== -->
 <a name="section-VariablesDetails"></a>
@@ -413,6 +491,32 @@
  <code class="variable-quote">'</code><code class="variable-string">cor.gz</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">edf</code><code class="variable-quote">'</code><code class="variable-group">]</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">dm3</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">dm3</code><code class="variable-quote">'</code><code class="variable-group">]</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">dm3.bz2</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string">dm3</code><code class="variable-quote">'</code><code class="variable-group">]</code><code class="variable-op">,</code>
+<code class="variable-ellipsis">...</code>
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="dictAscii"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">dictAscii</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+<code class="variable-group">{</code>None<code class="variable-op">: </code><code class="variable-group">[</code><code class="variable-quote">'</code><code class="variable-string"> </code><code class="variable-quote">'</code><code class="variable-op">,</code>
+        <code class="variable-quote">'</code><code class="variable-string">!</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+        <code class="variable-quote">'</code><code class="variable-string">&quot;</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+        <code class="variable-quote">'</code><code class="variable-string">#</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+        <code class="variable-quote">'</code><code class="variable-string">$</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+        <code class="variable-quote">'</code><code class="variable-string">%</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+        <code class="variable-quote">'</code><code class="variable-string">&amp;</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+        <code class="variable-quote">'</code><code class="variable-string">\'</code><code class="variable-quote">'</code><code class="variable-op">,</code>
 <code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
@@ -472,7 +576,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Nov 15 22:45:05 2011
+    Generated by Epydoc 3.0.1 on Tue Apr 17 11:30:30 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
