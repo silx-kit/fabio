@@ -10,3 +10,5 @@ recursive-exclude epydoc *
 recursive-exclude build *
 recursive-exclude dist *
 recursive-exclude test/tiftest *
+recursive-exclude test/testimages *
+

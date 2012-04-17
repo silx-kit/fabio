@@ -9,6 +9,15 @@ headers (as a python dictionary) and datasets (as a numpy ndarray of integers or
 
 Changelog
 =========
+From FabIO-0.0.8 to FabIO-0.1.0:
+- OXD reader improved and writer implemented
+- Mar345 reader improved and writer implemented
+- CBF writer implemented 
+- Clean-up of the code & bug fixes 
+- Move towards python3
+- Make PIL optional dependency  
+Python3 is not yet tested but some blocking points have been identified and some fixed. 
+
 From FabIO-0.0.7 to FabIO-0.0.8:
 - Support for Tiff using TiffIO module from V.A.Solé
 - Clean-up of the code & bug fixes 
@@ -30,13 +39,13 @@ fabio can be downloaded from the fable download page on sourceforge.net. Present
 http://sourceforge.net/projects/fable/files/fabio/
 
 e.g.
-tar xvzf fabio-0.0.8.tar.gz
+tar xvzf fabio-0.1.0.tar.gz
 or
-unzip fabio-0.0.7.zip
+unzip fabio-0.1.0.zip
 
-all files are unpacked into the directory fabio-0.0.8. To install these do
+all files are unpacked into the directory fabio-0.1.0. To install these do
 
-cd fabio-0.0.8
+cd fabio-0.1.0
 
 and install fabio with
 
@@ -49,26 +58,31 @@ svn checkout https://svn.sourceforge.net/svnroot/fable/ fabio
 cd fabio/trunk
 sudo python setup.py install
 
-If you are using MS Windows you also download a binary version packaged as executable installation files. Dependant on your python version open either
+If you are using MS Windows you also download a binary version packaged as executable installation files. 
+Dependent on your python version open either:
 
-fabio-0.0.8.win32-py2.6.exe
-
-or
-
-fabio-0.0.8.win32-py2.7.exe
+fabio-0.1.0.win32-py2.6.msi or fabio-0.1.0.win32-py2.6.msi or fabio-0.0.8.win32-py2.7.msi
 
 
 Dependencies
 ============
-Python 2.5 or later (but not yet python 3.0)
+Python 2.5 or later (we are workin on python 3.x)
 For full functionality of fabio the following modules need to be installed.
+* numpy - http://www.numpy.org
 
+Optional dependency
 * PIL (python imaging library) - http://www.pythonware.com
-* numpy - http://www.numpy.org 
+* lxml (library for reading XSDimages) 
 
 Ubuntu and Debian Like linux distributions:
 -------------------------------------------
-To use fabio on Ubuntu (a linux distribution based on Debian) the needed python modules can be installed either through the Synaptic Package Manager (found in System -> Administration) or using apt-get on from the command line in a terminal.
+
+Fabio is included in latest development versions of Debian, it can be installed by apt-get:
+sudo apt-get install python-fabio
+
+If fabio is not yet available for you flavor of linux, you will need to install it from the sources:
+To install the needed python modules can be installed either through the Synaptic Package Manager (found in System -> Administration) 
+or using apt-get on from the command line in a terminal.
 The extra ubuntu packages needed are:
 
 * python-imaging
@@ -79,7 +93,6 @@ The extra ubuntu packages needed are:
 using apt-get these can be installed as:
 
 sudo apt-get install python-imaging python-imaging-tk python-numpy
-
 
 using Synaptic Package Manager:
 

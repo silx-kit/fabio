@@ -36,7 +36,7 @@ version = [eval(l.split("=")[1])
 # See the distutils docs...
 setup(name='fabio',
       version=version,
-      author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau and Jérôme Kieffer",
+      author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer and Gael Goret",
       author_email="fable-talk@lists.sourceforge.net",
       description='Image IO for fable',
       url="http://fable.wiki.sourceforge.net/fabio",
@@ -47,5 +47,3 @@ setup(name='fabio',
       package_dir={"fabio": "fabio" },
       test_suite="test"
       )
-
-
