@@ -1,40 +1,61 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testtifgz
-W: 26: No exception type(s) specified
-F: 28: Unable to import 'utilstest'
-C: 34:testgziptif: Invalid name "testgziptif" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 34:testgziptif: Missing docstring
-C: 35:testgziptif.setUp: Missing docstring
-C: 41:testgziptif.test1: Missing docstring
-C: 42:testgziptif.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 43:testgziptif.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 48:testtif_rect: Invalid name "testtif_rect" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 48:testtif_rect: Missing docstring
-C: 50:testtif_rect.setUp: Invalid name "fn" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 49:testtif_rect.setUp: Missing docstring
-C: 52:testtif_rect.test1: Missing docstring
-C: 54:testtif_rect.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 58:test_suite_all_tiff: Missing docstring
+W: 25,0: No exception type(s) specified
+F: 28,0: Unable to import 'utilstest'
+C: 34,0:testgziptif: Invalid name "testgziptif" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 34,0:testgziptif: Missing docstring
+C: 41,4:testgziptif.test1: Missing docstring
+C: 42,8:testgziptif.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 43,8:testgziptif.test1: Invalid name "o2" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 48,0:testtif_rect: Invalid name "testtif_rect" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 50,8:testtif_rect.setUp: Invalid name "fn" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 48,0:testtif_rect: Missing docstring
+C: 52,4:testtif_rect.test1: Missing docstring
+C: 54,12:testtif_rect.test1: Invalid name "o1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 58,0:test_suite_all_tiff: Missing docstring
 
 
 Report
 ======
-48 statements analysed.
+49 statements analysed.
 
-Duplication
------------
+Messages by category
+--------------------
 
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |11     |11       |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |1      |1        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
 
 
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |6           |
++-----------+------------+
+|C0111      |5           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 7.55/10 (previous run: 7.55/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 
 Raw metrics
 -----------
@@ -53,14 +74,6 @@ Raw metrics
 
 
 
-External dependencies
----------------------
-::
-
-    fabio (testtifgz)
-
-
-
 Statistics by type
 ------------------
 
@@ -71,49 +84,31 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |2      |2          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |4          |=          |0.00        |0.00     |
+|method   |4      |4          |=          |50.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
 
-Messages by category
---------------------
+External dependencies
+---------------------
+::
 
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |13     |13       |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |1      |1        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
+    fabio (testtifgz)
 
 
 
-Messages
---------
+Duplication
+-----------
 
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0111      |7           |
-+-----------+------------+
-|C0103      |6           |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|F0401      |1           |
-+-----------+------------+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
-
-Global evaluation
------------------
-Your code has been rated at 7.08/10 (previous run: 7.08/10)
-If you commit now, people should not be making nasty comments about you on c.l.py
 

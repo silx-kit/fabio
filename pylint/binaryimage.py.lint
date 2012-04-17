@@ -1,15 +1,22 @@
-************* Module marccdimage
-F: 22,0: Unable to import 'tifimage'
-W:230,4:make_format: Unused variable 'expected'
-C:287,0:marccdimage: Invalid name "marccdimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W:287,0:marccdimage: Class has no __init__ method
-R:287,0:marccdimage: Too few public methods (0/2)
-W:299,8:marccdimage._readheader: Attribute 'header' defined outside __init__
+************* Module binaryimage
+W:  4,0: Redefining built-in '__doc__'
+C:  1,0: Missing docstring
+F: 20,0: Unable to import 'fabioimage'
+C: 24,0:binaryimage: Invalid name "binaryimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 59,8:binaryimage.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 75,34:binaryimage.estimate_offset_value: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R: 73,4:binaryimage.estimate_offset_value: Method could be a function
+C: 83,4:binaryimage.write: Missing docstring
+W: 57,8:binaryimage.read: Attribute 'dim2' defined outside __init__
+W: 56,8:binaryimage.read: Attribute 'dim1' defined outside __init__
+W: 70,8:binaryimage.read: Attribute 'data' defined outside __init__
+W: 58,8:binaryimage.read: Attribute 'bytecode' defined outside __init__
+W: 55,8:binaryimage.read: Attribute 'filename' defined outside __init__
 
 
 Report
 ======
-63 statements analysed.
+46 statements analysed.
 
 Messages by category
 --------------------
@@ -17,11 +24,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |5      |5        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |3        |=          |
+|warning    |6      |6        |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -34,25 +41,25 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W0612      |1           |
+|W0201      |5           |
 +-----------+------------+
-|W0232      |1           |
+|C0103      |3           |
 +-----------+------------+
-|W0201      |1           |
+|C0111      |2           |
 +-----------+------------+
-|R0903      |1           |
+|W0622      |1           |
++-----------+------------+
+|R0201      |1           |
 +-----------+------------+
 |F0401      |1           |
-+-----------+------------+
-|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.21/10 (previous run: 9.21/10)
-So close to being perfect...
+Your code has been rated at 7.39/10 (previous run: 7.39/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 
 Raw metrics
 -----------
@@ -60,14 +67,22 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |236    |76.87 |236      |=          |
+|code      |56     |66.67 |56       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |41     |13.36 |41       |=          |
+|docstring |19     |22.62 |19       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |9      |2.93  |9        |=          |
+|comment   |2      |2.38  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |21     |6.84  |21       |=          |
+|empty     |7      |8.33  |7        |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (binaryimage)
 
 
 
@@ -90,13 +105,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |100.00      |0.00     |
+|method   |5      |5          |=          |80.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |2      |2          |=          |100.00      |0.00     |
+|function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 

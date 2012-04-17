@@ -1,48 +1,102 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-
 ************* Module cbfimage
-F: 25: Unable to import 'fabioimage'
-C: 50:cbfimage: Invalid name "cbfimage" (should match [A-Z_][a-zA-Z0-9]+$)
-E: 79:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
-E: 83:cbfimage._readheader: Instance of 'cbfimage' has no 'fname' member
-E:100:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
-E:104:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
-E:117:cbfimage.read: Instance of 'cbfimage' has no 'resetvals' member
-E:119:cbfimage.read: Instance of 'cbfimage' has no '_open' member
-E:140:cbfimage.read: Instance of 'cbfimage' has no 'resetvals' member
-C:197:cbfimage.analyseWeave: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:243:cbfimage.analyseWeave: Invalid name "rc" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:197:cbfimage.analyseWeave: Unused variable 'n'
-W:243:cbfimage.analyseWeave: Unused variable 'rc'
-W:248:cbfimage.analyseNumpy: Unused argument 'size'
-F:300:cbfimage._readbinary_byte_offset: Unable to import 'byte_offset'
-W:142:cbfimage.read: Attribute 'pilimage' defined outside __init__
-W:129:cbfimage.read: Attribute 'bpp' defined outside __init__
-W:115:cbfimage.read: Attribute 'filename' defined outside __init__
-W:124:cbfimage.read: Attribute 'dim2' defined outside __init__
-W:116:cbfimage.read: Attribute 'header' defined outside __init__
-W:123:cbfimage.read: Attribute 'dim1' defined outside __init__
-W:139:cbfimage.read: Attribute 'bytecode' defined outside __init__
-W:135:cbfimage.read: Attribute 'data' defined outside __init__
-C:450:CIF._parseCIF: Invalid name "f1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:457:CIF._parseCIF: More than one statement on a single line
-C:533:CIF._splitCIF: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:463:CIF._splitCIF: Too many branches (18/15)
-R:463:CIF._splitCIF: Too many statements (53/50)
-R:542:CIF._analyseOneLoop: Too many branches (16/15)
-C:646:CIF._cif2str: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:648:CIF._cif2str: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:634:CIF._cif2str: Too many branches (21/15)
-C:803:CIF.LoopHasKey: Invalid name "LoopHasKey" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:315:CIF: Too many public methods (22/20)
+F: 25,0: Unable to import 'fabioimage'
+F: 26,0: Unable to import 'compression'
+C: 46,0:cbfimage: Invalid name "cbfimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 63,4:cbfimage.checkData: Missing docstring
+E: 82,16:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
+E: 86,117:cbfimage._readheader: Instance of 'cbfimage' has no 'fname' member
+E:103,12:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
+E:107,27:cbfimage._readheader: Instance of 'cbfimage' has no 'header_keys' member
+E:120,8:cbfimage.read: Instance of 'cbfimage' has no 'resetvals' member
+E:122,17:cbfimage.read: Instance of 'cbfimage' has no '_open' member
+E:143,8:cbfimage.read: Instance of 'cbfimage' has no 'resetvals' member
+W:113,26:cbfimage.read: Unused argument 'frame'
+F:162,12:cbfimage._readbinary_byte_offset: Unable to import 'byte_offset'
+E:214,27:cbfimage.write: Instance of 'cbfimage' has no 'header_keys' member
+E:215,16:cbfimage.write: Instance of 'cbfimage' has no 'header_keys' member
+E:216,19:cbfimage.write: Instance of 'cbfimage' has no 'header_keys' member
+W:145,8:cbfimage.read: Attribute 'pilimage' defined outside __init__
+W:135,12:cbfimage.read: Attribute 'bpp' defined outside __init__
+W:118,8:cbfimage.read: Attribute 'filename' defined outside __init__
+W:127,12:cbfimage.read: Attribute 'dim2' defined outside __init__
+W:119,8:cbfimage.read: Attribute 'header' defined outside __init__
+W:126,12:cbfimage.read: Attribute 'dim1' defined outside __init__
+W:142,8:cbfimage.read: Attribute 'bytecode' defined outside __init__
+W:138,12:cbfimage.read: Attribute 'data' defined outside __init__
+C:381,16:CIF._parseCIF: Invalid name "f1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:388,42:CIF._parseCIF: More than one statement on a single line
+C:463,16:CIF._splitCIF: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:393,4:CIF._splitCIF: Too many branches (18/15)
+R:393,4:CIF._splitCIF: Too many statements (53/50)
+R:472,4:CIF._analyseOneLoop: Too many branches (16/15)
+C:575,12:CIF.tostring: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:577,12:CIF.tostring: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:579,12:CIF.tostring: Invalid name "t" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:564,4:CIF.tostring: Too many branches (25/15)
+R:564,4:CIF.tostring: Too many statements (58/50)
+C:740,4:CIF.LoopHasKey: Invalid name "LoopHasKey" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:239,0:CIF: Too many public methods (22/20)
+W: 26,0: Unused import decByteOffet_python
+W: 26,0: Unused import decByteOffet_weave
+W: 22,0: Unused import struct
 
 
 Report
 ======
-433 statements analysed.
+434 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |9      |9        |=          |
++-----------+-------+---------+-----------+
+|refactor   |6      |6        |=          |
++-----------+-------+---------+-----------+
+|warning    |12     |12       |=          |
++-----------+-------+---------+-----------+
+|error      |10     |10       |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|E1101      |10          |
++-----------+------------+
+|W0201      |8           |
++-----------+------------+
+|C0103      |7           |
++-----------+------------+
+|W0611      |3           |
++-----------+------------+
+|R0912      |3           |
++-----------+------------+
+|F0401      |3           |
++-----------+------------+
+|R0915      |2           |
++-----------+------------+
+|W0613      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|C0321      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.23/10 (previous run: 8.23/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -50,14 +104,31 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |514    |64.74 |514      |=          |
+|code      |461    |63.76 |461      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |173    |21.79 |173      |=          |
+|docstring |169    |23.37 |169      |=          |
 +----------+-------+------+---------+-----------+
-|comment   |15     |1.89  |15       |=          |
+|comment   |17     |2.35  |17       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |92     |11.59 |92       |=          |
+|empty     |76     |10.51 |76       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |100.00      |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|method   |22     |22         |=          |95.45       |4.55     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -74,71 +145,11 @@ Duplication
 
 
 
-Statistics by type
-------------------
+External dependencies
+---------------------
+::
 
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |100.00      |50.00    |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |21     |21         |=          |100.00      |4.76     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
+    numpy (cbfimage)
 
 
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |9      |9        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |5      |5        |=          |
-+-----------+-------+---------+-----------+
-|warning    |11     |11       |=          |
-+-----------+-------+---------+-----------+
-|error      |7      |7        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|W0201      |8           |
-+-----------+------------+
-|C0103      |8           |
-+-----------+------------+
-|E1101      |7           |
-+-----------+------------+
-|R0912      |3           |
-+-----------+------------+
-|W0612      |2           |
-+-----------+------------+
-|F0401      |2           |
-+-----------+------------+
-|W0613      |1           |
-+-----------+------------+
-|R0915      |1           |
-+-----------+------------+
-|R0904      |1           |
-+-----------+------------+
-|C0321      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 8.61/10 (previous run: 8.61/10)
-That's pretty good. Good work mate.
 

@@ -1,73 +1,25 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-
 ************* Module xsdimage
-F: 16: Unable to import 'fabioimage'
-C: 24:xsdimage: Invalid name "xsdimage" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 46:xsdimage.read: Empty docstring
-E: 50:xsdimage.read: Instance of 'xsdimage' has no 'resetvals' member
-E: 52:xsdimage.read: Instance of 'xsdimage' has no '_open' member
-E: 89:xsdimage.read: Instance of 'xsdimage' has no 'resetvals' member
-W:110:xsdimage._readheader: Catch "Exception"
-W: 91:xsdimage.read: Attribute 'pilimage' defined outside __init__
-W: 49:xsdimage.read: Attribute 'header' defined outside __init__
-W: 86:xsdimage.read: Attribute 'data' defined outside __init__
-W: 56:xsdimage.read: Attribute 'dim2' defined outside __init__
-W: 56:xsdimage.read: Attribute 'dim1' defined outside __init__
-W: 61:xsdimage.read: Attribute 'bpp' defined outside __init__
-W: 60:xsdimage.read: Attribute 'bytecode' defined outside __init__
-R: 24:xsdimage: Too few public methods (1/2)
+F: 16,0: Unable to import 'fabioimage'
+C: 24,0:xsdimage: Invalid name "xsdimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 46,4:xsdimage.read: Empty docstring
+E: 50,8:xsdimage.read: Instance of 'xsdimage' has no 'resetvals' member
+E: 52,17:xsdimage.read: Instance of 'xsdimage' has no '_open' member
+E: 89,8:xsdimage.read: Instance of 'xsdimage' has no 'resetvals' member
+W: 46,26:xsdimage.read: Unused argument 'frame'
+W:110,19:xsdimage._readheader: Catching too general exception Exception
+R: 24,0:xsdimage: Too few public methods (1/2)
+W: 91,8:xsdimage.read: Attribute 'pilimage' defined outside __init__
+W: 49,8:xsdimage.read: Attribute 'header' defined outside __init__
+W: 86,8:xsdimage.read: Attribute 'data' defined outside __init__
+W: 56,23:xsdimage.read: Attribute 'dim2' defined outside __init__
+W: 56,12:xsdimage.read: Attribute 'dim1' defined outside __init__
+W: 64,12:xsdimage.read: Attribute 'bpp' defined outside __init__
+W: 63,12:xsdimage.read: Attribute 'bytecode' defined outside __init__
 
 
 Report
 ======
-94 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |96     |73.85 |96       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |22     |16.92 |22       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |2      |1.54  |2        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |10     |7.69  |10       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |66.67       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+95 statements analysed.
 
 Messages by category
 --------------------
@@ -79,7 +31,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |8      |8        |=          |
+|warning    |9      |9        |=          |
 +-----------+-------+---------+-----------+
 |error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
@@ -98,6 +50,8 @@ Messages
 +-----------+------------+
 |W0703      |1           |
 +-----------+------------+
+|W0613      |1           |
++-----------+------------+
 |R0903      |1           |
 +-----------+------------+
 |F0401      |1           |
@@ -111,6 +65,61 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 7.23/10 (previous run: 7.23/10)
+Your code has been rated at 7.16/10 (previous run: 7.16/10)
 If you commit now, people should not be making nasty comments about you on c.l.py
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |96     |73.85 |96       |=          |
++----------+-------+------+---------+-----------+
+|docstring |22     |16.92 |22       |=          |
++----------+-------+------+---------+-----------+
+|comment   |2      |1.54  |2        |=          |
++----------+-------+------+---------+-----------+
+|empty     |10     |7.69  |10       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |66.67       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (xsdimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 

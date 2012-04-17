@@ -5,7 +5,7 @@ from __future__ import with_statement
 __author__ = "Jerome Kieffer"
 __email__ = "jerome.kieffer@esrf.fr"
 __doc__ = "This runs pylint on all modules from fabio package"
-__date__ = "20111117"
+__date__ = "20120416"
 __status__ = "production"
 __licence__ = "GPL"
 
@@ -14,8 +14,10 @@ import numpy
 import Image
 
 arch = "lib.%s-%i.%i" % (distutils.util.get_platform(), sys.version_info[0], sys.version_info[1])
-installDir = os.path.abspath(os.path.join("..", "build", arch, "fabio"))
-testDir = os.path.abspath(os.path.join("..", "test"))
+pylint_dir = os.path.dirname(os.path.abspath(__file__))
+fabio_root = os.path.dirname(pylint_dir)
+installDir = os.path.abspath(os.path.join(fabio_root, "build", arch, "fabio"))
+testDir = os.path.abspath(os.path.join(fabio_root, "test"))
 sys.path.append(testDir)
 import utilstest
 env = {"PYTHONPAH":":".join([installDir, testDir, os.path.dirname(numpy.__file__), os.path.dirname(Image.__file__)])}
@@ -35,7 +37,7 @@ files = [ os.path.join(installDir, i) for i in os.listdir(installDir) if i.endsw
         [ os.path.join(testDir, i) for i in os.listdir(testDir) if i.endswith(".py") ]
 
 for f in files:
-    outf = os.path.split(f)[-1] + ".lint"
+    outf = os.path.join(pylint_dir, os.path.basename(f) + ".lint")
     if not os.path.exists(outf) :
         lintit(f, outf)
     elif os.stat(f).st_mtime > os.stat(outf).st_mtime:

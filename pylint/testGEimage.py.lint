@@ -1,36 +1,59 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testGEimage
-C:  1: Invalid name "testGEimage" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
-W: 26: No exception type(s) specified
-F: 28: Unable to import 'utilstest'
-C: 39:testGE: Invalid name "testGE" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 39:testGE: Missing docstring
-C: 48:testGE.test_read: Missing docstring
-C: 65:test_suite_all_GE: Missing docstring
-W: 31: Unused import fabio
+C:  1,0: Invalid name "testGEimage" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
+W: 25,0: No exception type(s) specified
+F: 28,0: Unable to import 'utilstest'
+C: 39,0:testGE: Invalid name "testGE" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 45,8:testGE.setUp: Invalid name "GE" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 39,0:testGE: Missing docstring
+C: 48,4:testGE.test_read: Missing docstring
+C: 65,0:test_suite_all_GE: Missing docstring
+W: 31,0: Unused import fabio
 
 
 Report
 ======
-48 statements analysed.
+49 statements analysed.
 
-Duplication
------------
+Messages by category
+--------------------
 
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |6      |6        |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |2      |2        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
 
 
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |3           |
++-----------+------------+
+|C0103      |3           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0611      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.37/10 (previous run: 8.37/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -46,16 +69,6 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |empty     |10     |14.29 |10       |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testGEimage)
-      \-GEimage 
-        \-GEimage (testGEimage)
 
 
 
@@ -76,44 +89,26 @@ Statistics by type
 
 
 
-Messages by category
---------------------
+Duplication
+-----------
 
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |5      |5        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |2      |2        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
 
-Messages
---------
+External dependencies
+---------------------
+::
 
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0111      |3           |
-+-----------+------------+
-|C0103      |2           |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|W0611      |1           |
-+-----------+------------+
-|F0401      |1           |
-+-----------+------------+
+    fabio (testGEimage)
+      \-GEimage 
+        \-GEimage (testGEimage)
 
 
-
-Global evaluation
------------------
-Your code has been rated at 8.54/10 (previous run: 8.54/10)
-That's pretty good. Good work mate.
 

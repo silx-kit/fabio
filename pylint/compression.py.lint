@@ -1,15 +1,23 @@
-************* Module marccdimage
-F: 22,0: Unable to import 'tifimage'
-W:230,4:make_format: Unused variable 'expected'
-C:287,0:marccdimage: Invalid name "marccdimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W:287,0:marccdimage: Class has no __init__ method
-R:287,0:marccdimage: Too few public methods (0/2)
-W:299,8:marccdimage._readheader: Attribute 'header' defined outside __init__
+************* Module compression
+W: 17,4: Redefining built-in 'str'
+C: 46,0:endianness: Missing docstring
+C: 53,0:decGzip: Missing docstring
+W: 67,15:decGzip: Catching too general exception Exception
+C:143,4:decByteOffet_weave: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:189,4:decByteOffet_weave: Invalid name "rc" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:143,4:decByteOffet_weave: Unused variable 'n'
+W:196,31:decByteOffet_numpy: Unused argument 'size'
+W:244,24:decByteOffet_cython: Unused variable 'error'
+F:363,8:decPCK: Unable to import 'mar345_IO'
+W:364,24:decPCK: Unused variable 'error'
+F:383,8:compPCK: Unable to import 'mar345_IO'
+W:384,24:compPCK: Unused variable 'error'
+W: 15,0: Unused import os
 
 
 Report
 ======
-63 statements analysed.
+219 statements analysed.
 
 Messages by category
 --------------------
@@ -17,11 +25,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |3        |=          |
+|warning    |8      |8        |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -34,24 +42,28 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W0612      |1           |
+|W0612      |4           |
 +-----------+------------+
-|W0232      |1           |
+|F0401      |2           |
 +-----------+------------+
-|W0201      |1           |
+|C0111      |2           |
 +-----------+------------+
-|R0903      |1           |
+|C0103      |2           |
 +-----------+------------+
-|F0401      |1           |
+|W0703      |1           |
 +-----------+------------+
-|C0103      |1           |
+|W0622      |1           |
++-----------+------------+
+|W0613      |1           |
++-----------+------------+
+|W0611      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.21/10 (previous run: 9.21/10)
+Your code has been rated at 9.45/10 (previous run: 9.45/10)
 So close to being perfect...
 
 Raw metrics
@@ -60,14 +72,25 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |236    |76.87 |236      |=          |
+|code      |280    |73.30 |280      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |41     |13.36 |41       |=          |
+|docstring |70     |18.32 |70       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |9      |2.93  |9        |=          |
+|comment   |2      |0.52  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |21     |6.84  |21       |=          |
+|empty     |30     |7.85  |30       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-byte_offset 
+        \-analyseCython (compression)
+    numpy (compression)
 
 
 
@@ -92,11 +115,11 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
+|class    |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |100.00      |0.00     |
+|method   |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
-|function |2      |2          |=          |100.00      |0.00     |
+|function |14     |14         |=          |85.71       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 

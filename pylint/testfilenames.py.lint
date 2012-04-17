@@ -1,35 +1,54 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-
 ************* Module testfilenames
-W: 29: No exception type(s) specified
-F: 31: Unable to import 'utilstest'
-C: 83:testfilenames: Invalid name "testfilenames" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 96:testfilenames.test_more_cases: Missing docstring
-E: 98:testfilenames.test_more_cases: Module 'fabio' has no 'construct_filename' member
-C:101:testfilenames.test_more_cases_jump: Missing docstring
-C:107:test_suite_all_filenames: Missing docstring
+W: 28,0: No exception type(s) specified
+F: 31,0: Unable to import 'utilstest'
+C: 83,0:testfilenames: Invalid name "testfilenames" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 96,4:testfilenames.test_more_cases: Missing docstring
+C:101,4:testfilenames.test_more_cases_jump: Missing docstring
+C:107,0:test_suite_all_filenames: Missing docstring
 
 
 Report
 ======
-47 statements analysed.
+49 statements analysed.
 
-Duplication
------------
+Messages by category
+--------------------
 
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |4      |4        |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |1      |1        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
 
 
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |3           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.98/10 (previous run: 8.98/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -37,22 +56,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |88     |80.73 |88       |=          |
+|code      |89     |81.65 |89       |=          |
 +----------+-------+------+---------+-----------+
 |docstring |9      |8.26  |9        |=          |
 +----------+-------+------+---------+-----------+
 |comment   |3      |2.75  |3        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |9      |8.26  |9        |=          |
+|empty     |8      |7.34  |8        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testfilenames)
 
 
 
@@ -73,44 +84,24 @@ Statistics by type
 
 
 
-Messages by category
---------------------
+External dependencies
+---------------------
+::
 
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |4      |4        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |1      |1        |=          |
-+-----------+-------+---------+-----------+
-|error      |1      |1        |=          |
-+-----------+-------+---------+-----------+
+    fabio (testfilenames)
 
 
 
-Messages
---------
+Duplication
+-----------
 
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0111      |3           |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|F0401      |1           |
-+-----------+------------+
-|E1101      |1           |
-+-----------+------------+
-|C0103      |1           |
-+-----------+------------+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
-
-Global evaluation
------------------
-Your code has been rated at 7.87/10 (previous run: 7.87/10)
-If you commit now, people should not be making nasty comments about you on c.l.py
 

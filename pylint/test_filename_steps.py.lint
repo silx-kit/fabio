@@ -1,81 +1,23 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module test_filename_steps
-C:  1: Missing docstring
-W: 21: No exception type(s) specified
-F: 23: Unable to import 'utilstest'
-C: 28:test_next: Invalid name "test_next" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 28:test_next: Missing docstring
-W: 30:test_next.test_next1: Redefining built-in 'next'
-C: 29:test_next.test_next1: Missing docstring
-C: 37:test_prev: Invalid name "test_prev" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 37:test_prev: Missing docstring
-C: 38:test_prev.test_prev1: Missing docstring
-C: 46:test_jump: Invalid name "test_jump" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 46:test_jump: Missing docstring
-C: 47:test_jump.test_jump1: Missing docstring
-C: 56:test_suite_all_steps: Missing docstring
+C:  1,0: Missing docstring
+W: 20,0: No exception type(s) specified
+F: 23,0: Unable to import 'utilstest'
+C: 28,0:test_next: Invalid name "test_next" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 28,0:test_next: Missing docstring
+W: 30,18:test_next.test_next1: Redefining built-in 'next'
+C: 29,4:test_next.test_next1: Missing docstring
+C: 37,0:test_prev: Invalid name "test_prev" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 37,0:test_prev: Missing docstring
+C: 38,4:test_prev.test_prev1: Missing docstring
+C: 46,0:test_jump: Invalid name "test_jump" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 46,0:test_jump: Missing docstring
+C: 47,4:test_jump.test_jump1: Missing docstring
+C: 56,0:test_suite_all_steps: Missing docstring
 
 
 Report
 ======
-43 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |55     |91.67 |55       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |0      |0.00  |0        |=          |
-+----------+-------+------+---------+-----------+
-|comment   |2      |3.33  |2        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |3      |5.00  |3        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (test_filename_steps)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |3      |3          |=          |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+44 statements analysed.
 
 Messages by category
 --------------------
@@ -115,6 +57,61 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 6.98/10 (previous run: 6.98/10)
-This is okay-ish, but I'm sure you can do better.
+Your code has been rated at 7.05/10 (previous run: 7.05/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |55     |91.67 |55       |=          |
++----------+-------+------+---------+-----------+
+|docstring |0      |0.00  |0        |=          |
++----------+-------+------+---------+-----------+
+|comment   |2      |3.33  |2        |=          |
++----------+-------+------+---------+-----------+
+|empty     |3      |5.00  |3        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |3      |3          |=          |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (test_filename_steps)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 

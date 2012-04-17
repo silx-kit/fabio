@@ -1,54 +1,124 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module openimage
-F: 15: Unable to import 'fabioutils'
-F: 16: Unable to import 'fabioimage'
-F: 17: Unable to import 'edfimage'
-F: 18: Unable to import 'adscimage'
-F: 19: Unable to import 'tifimage'
-F: 20: Unable to import 'marccdimage'
-F: 21: Unable to import 'mar345image'
-F: 22: Unable to import 'fit2dmaskimage'
-F: 23: Unable to import 'brukerimage'
-F: 24: Unable to import 'bruker100image'
-F: 25: Unable to import 'pnmimage'
-F: 26: Unable to import 'GEimage'
-F: 27: Unable to import 'OXDimage'
-F: 28: Unable to import 'dm3image'
-F: 29: Unable to import 'HiPiCimage'
-F: 30: Unable to import 'pilatusimage'
-F: 31: Unable to import 'fit2dspreadsheetimage'
-F: 32: Unable to import 'kcdimage'
-F: 33: Unable to import 'cbfimage'
-F: 34: Unable to import 'xsdimage'
-W: 66:do_magic: Redefining built-in 'format'
-W: 88:openimage: No exception type(s) specified
-W:110:_openimage: Access to a protected member _open of a client class
-W: 32: Unused import kcdimage
-W: 24: Unused import bruker100image
-W: 22: Unused import fit2dmaskimage
-W: 30: Unused import pilatusimage
-W: 29: Unused import HiPiCimage
-W: 18: Unused import adscimage
-W: 21: Unused import mar345image
-W: 31: Unused import fit2dspreadsheetimage
-W: 25: Unused import pnmimage
-W: 28: Unused import dm3image
-W: 34: Unused import xsdimage
-W: 20: Unused import marccdimage
-W: 26: Unused import GEimage
-W: 17: Unused import edfimage
-W: 33: Unused import cbfimage
-W: 27: Unused import OXDimage
-W: 15: Unused import getnum
-W: 19: Unused import tifimage
-W: 23: Unused import brukerimage
+F: 15,0: Unable to import 'fabioutils'
+F: 16,0: Unable to import 'fabioimage'
+F: 17,0: Unable to import 'edfimage'
+F: 18,0: Unable to import 'adscimage'
+F: 19,0: Unable to import 'tifimage'
+F: 20,0: Unable to import 'marccdimage'
+F: 21,0: Unable to import 'mar345image'
+F: 22,0: Unable to import 'fit2dmaskimage'
+F: 23,0: Unable to import 'brukerimage'
+F: 24,0: Unable to import 'bruker100image'
+F: 25,0: Unable to import 'pnmimage'
+F: 26,0: Unable to import 'GEimage'
+F: 27,0: Unable to import 'OXDimage'
+F: 28,0: Unable to import 'dm3image'
+F: 29,0: Unable to import 'HiPiCimage'
+F: 30,0: Unable to import 'pilatusimage'
+F: 31,0: Unable to import 'fit2dspreadsheetimage'
+F: 32,0: Unable to import 'kcdimage'
+F: 33,0: Unable to import 'cbfimage'
+F: 34,0: Unable to import 'xsdimage'
+F: 35,0: Unable to import 'binaryimage'
+W: 90,15:openimage: Catching too general exception Exception
+W:120,15:_openimage: Access to a protected member _open of a client class
+W: 32,0: Unused import kcdimage
+W: 24,0: Unused import bruker100image
+W: 22,0: Unused import fit2dmaskimage
+W: 35,0: Unused import binaryimage
+W: 30,0: Unused import pilatusimage
+W: 29,0: Unused import HiPiCimage
+W: 18,0: Unused import adscimage
+W: 21,0: Unused import mar345image
+W: 31,0: Unused import fit2dspreadsheetimage
+W: 25,0: Unused import pnmimage
+W: 28,0: Unused import dm3image
+W: 34,0: Unused import xsdimage
+W: 20,0: Unused import marccdimage
+W: 26,0: Unused import GEimage
+W: 33,0: Unused import cbfimage
+W: 17,0: Unused import edfimage
+W: 27,0: Unused import OXDimage
+W: 19,0: Unused import tifimage
+W: 23,0: Unused import brukerimage
 
 
 Report
 ======
-78 statements analysed.
+89 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |0      |0        |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |21     |21       |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|F0401      |21          |
++-----------+------------+
+|W0611      |19          |
++-----------+------------+
+|W0703      |1           |
++-----------+------------+
+|W0212      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 7.64/10 (previous run: 7.64/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |116    |72.96 |116      |=          |
++----------+-------+------+---------+-----------+
+|docstring |19     |11.95 |19       |=          |
++----------+-------+------+---------+-----------+
+|comment   |10     |6.29  |10       |=          |
++----------+-------+------+---------+-----------+
+|empty     |14     |8.81  |14       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|function |4      |4          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -62,79 +132,4 @@ Duplication
 +-------------------------+------+---------+-----------+
 
 
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |102    |69.39 |102      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |19     |12.93 |19       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |11     |7.48  |11       |=          |
-+----------+-------+------+---------+-----------+
-|empty     |15     |10.20 |15       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |4      |4          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |22     |22       |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|F0401      |20          |
-+-----------+------------+
-|W0611      |19          |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|W0622      |1           |
-+-----------+------------+
-|W0212      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 7.18/10 (previous run: 7.18/10)
-If you commit now, people should not be making nasty comments about you on c.l.py
 

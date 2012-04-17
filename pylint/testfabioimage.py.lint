@@ -1,90 +1,24 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testfabioimage
-W: 25: No exception type(s) specified
-F: 27: Unable to import 'utilstest'
-C: 35:test50000: Invalid name "test50000" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 61:testslices: Invalid name "testslices" (should match [A-Z_][a-zA-Z0-9]+$)
-C:103:testopen: Invalid name "testopen" (should match [A-Z_][a-zA-Z0-9]+$)
-W:118:testopen.testFlat: Access to a protected member _open of a client class
-W:123:testopen.testgz: Access to a protected member _open of a client class
-W:128:testopen.testbz2: Access to a protected member _open of a client class
-C:142:testPILimage: Invalid name "testPILimage" (should match [A-Z_][a-zA-Z0-9]+$)
-R:155:testPILimage.mkdata: Method could be a function
-C:160:testPILimage.testpil: Missing docstring
-C:188:testPILimage2: Invalid name "testPILimage2" (should match [A-Z_][a-zA-Z0-9]+$)
-C:194:testPILimage3: Invalid name "testPILimage3" (should match [A-Z_][a-zA-Z0-9]+$)
-C:200:test_suite_all_fabio: Missing docstring
-W: 30: Unused import fabio
+W: 24,0: No exception type(s) specified
+F: 27,0: Unable to import 'utilstest'
+C: 35,0:test50000: Invalid name "test50000" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 61,0:testslices: Invalid name "testslices" (should match [A-Z_][a-zA-Z0-9]+$)
+C:103,0:testopen: Invalid name "testopen" (should match [A-Z_][a-zA-Z0-9]+$)
+W:118,14:testopen.testFlat: Access to a protected member _open of a client class
+W:123,14:testopen.testgz: Access to a protected member _open of a client class
+W:128,14:testopen.testbz2: Access to a protected member _open of a client class
+C:142,0:testPILimage: Invalid name "testPILimage" (should match [A-Z_][a-zA-Z0-9]+$)
+R:155,4:testPILimage.mkdata: Method could be a function
+C:160,4:testPILimage.testpil: Missing docstring
+C:188,0:testPILimage2: Invalid name "testPILimage2" (should match [A-Z_][a-zA-Z0-9]+$)
+C:194,0:testPILimage3: Invalid name "testPILimage3" (should match [A-Z_][a-zA-Z0-9]+$)
+C:200,0:test_suite_all_fabio: Missing docstring
+W: 30,0: Unused import fabio
 
 
 Report
 ======
-135 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |154    |78.97 |154      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |29     |14.87 |29       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |3      |1.54  |3        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |9      |4.62  |9        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testfabioimage)
-      \-fabioimage 
-        \-fabioimage (testfabioimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |6      |6          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |19     |19         |=          |94.74       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+136 statements analysed.
 
 Messages by category
 --------------------
@@ -128,6 +62,64 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.96/10 (previous run: 8.96/10)
+Your code has been rated at 8.97/10 (previous run: 8.97/10)
 That's pretty good. Good work mate.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |154    |78.97 |154      |=          |
++----------+-------+------+---------+-----------+
+|docstring |29     |14.87 |29       |=          |
++----------+-------+------+---------+-----------+
+|comment   |3      |1.54  |3        |=          |
++----------+-------+------+---------+-----------+
+|empty     |9      |4.62  |9        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testfabioimage)
+      \-fabioimage 
+        \-fabioimage (testfabioimage)
+    numpy (testfabioimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |6      |6          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |19     |19         |=          |94.74       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 

@@ -1,42 +1,72 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testopenimage
-W: 25: No exception type(s) specified
-F: 27: Unable to import 'utilstest'
-F: 32: Unable to import 'utilstest'
-C: 41:testopenedf: Invalid name "testopenedf" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 44:testopenedf.setUp: Missing docstring
-C: 58:testedfgz: Invalid name "testedfgz" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 63:testedfbz2: Invalid name "testedfbz2" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 69:testopenmccd: Invalid name "testopenmccd" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 72:testopenmccd.setUp: Missing docstring
-C: 85:testmccdgz: Invalid name "testmccdgz" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 90:testmccdbz2: Invalid name "testmccdbz2" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 98:testmask: Invalid name "testmask" (should match [A-Z_][a-zA-Z0-9]+$)
-C:116:testmaskgz: Invalid name "testmaskgz" (should match [A-Z_][a-zA-Z0-9]+$)
-C:120:testmaskbz2: Invalid name "testmaskbz2" (should match [A-Z_][a-zA-Z0-9]+$)
-C:128:testbruker: Invalid name "testbruker" (should match [A-Z_][a-zA-Z0-9]+$)
-C:131:testbruker.setUp: Missing docstring
-C:143:testbrukergz: Invalid name "testbrukergz" (should match [A-Z_][a-zA-Z0-9]+$)
-C:147:testbrukerbz2: Invalid name "testbrukerbz2" (should match [A-Z_][a-zA-Z0-9]+$)
-C:154:testadsc: Invalid name "testadsc" (should match [A-Z_][a-zA-Z0-9]+$)
-C:157:testadsc.setUp: Missing docstring
-C:169:testadscgz: Invalid name "testadscgz" (should match [A-Z_][a-zA-Z0-9]+$)
-C:173:testadscbz2: Invalid name "testadscbz2" (should match [A-Z_][a-zA-Z0-9]+$)
-C:181:testOXD: Invalid name "testOXD" (should match [A-Z_][a-zA-Z0-9]+$)
-C:184:testOXD.setUp: Missing docstring
-C:197:testOXDUNC: Invalid name "testOXDUNC" (should match [A-Z_][a-zA-Z0-9]+$)
-C:200:testOXDUNC.setUp: Missing docstring
-C:204:test_suite_all_openimage: Missing docstring
-W: 30: Unused import fabio
+W: 24,0: No exception type(s) specified
+F: 27,0: Unable to import 'utilstest'
+F: 32,0: Unable to import 'utilstest'
+C: 41,0:testopenedf: Invalid name "testopenedf" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 58,0:testedfgz: Invalid name "testedfgz" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 63,0:testedfbz2: Invalid name "testedfbz2" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 69,0:testopenmccd: Invalid name "testopenmccd" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 85,0:testmccdgz: Invalid name "testmccdgz" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 90,0:testmccdbz2: Invalid name "testmccdbz2" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 98,0:testmask: Invalid name "testmask" (should match [A-Z_][a-zA-Z0-9]+$)
+C:116,0:testmaskgz: Invalid name "testmaskgz" (should match [A-Z_][a-zA-Z0-9]+$)
+C:120,0:testmaskbz2: Invalid name "testmaskbz2" (should match [A-Z_][a-zA-Z0-9]+$)
+C:128,0:testbruker: Invalid name "testbruker" (should match [A-Z_][a-zA-Z0-9]+$)
+C:143,0:testbrukergz: Invalid name "testbrukergz" (should match [A-Z_][a-zA-Z0-9]+$)
+C:147,0:testbrukerbz2: Invalid name "testbrukerbz2" (should match [A-Z_][a-zA-Z0-9]+$)
+C:154,0:testadsc: Invalid name "testadsc" (should match [A-Z_][a-zA-Z0-9]+$)
+C:169,0:testadscgz: Invalid name "testadscgz" (should match [A-Z_][a-zA-Z0-9]+$)
+C:173,0:testadscbz2: Invalid name "testadscbz2" (should match [A-Z_][a-zA-Z0-9]+$)
+C:181,0:testOXD: Invalid name "testOXD" (should match [A-Z_][a-zA-Z0-9]+$)
+C:197,0:testOXDUNC: Invalid name "testOXDUNC" (should match [A-Z_][a-zA-Z0-9]+$)
+C:204,0:test_suite_all_openimage: Missing docstring
+W: 30,0: Unused import fabio
 
 
 Report
 ======
-144 statements analysed.
+145 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |18     |18       |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |2      |2        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |17          |
++-----------+------------+
+|F0401      |2           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|W0611      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.62/10 (previous run: 8.62/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -55,16 +85,20 @@ Raw metrics
 
 
 
-Duplication
------------
+Statistics by type
+------------------
 
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |17     |17         |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |13     |13         |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -90,61 +124,16 @@ External dependencies
 
 
 
-Statistics by type
-------------------
+Duplication
+-----------
 
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |17     |17         |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |13     |13         |=          |53.85       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |24     |24       |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |2      |2        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0103      |17          |
-+-----------+------------+
-|C0111      |7           |
-+-----------+------------+
-|F0401      |2           |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|W0611      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 8.19/10 (previous run: 8.19/10)
-That's pretty good. Good work mate.
 

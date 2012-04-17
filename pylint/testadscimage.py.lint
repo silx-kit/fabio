@@ -1,82 +1,16 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testadscimage
-W: 29: No exception type(s) specified
-F: 31: Unable to import 'utilstest'
-C: 47:testmatch: Invalid name "testmatch" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 69:testflatmccdsadsc: Invalid name "testflatmccdsadsc" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 69:testflatmccdsadsc: Empty docstring
-C: 93:test_suite_all_adsc: Missing docstring
-W: 34: Unused import fabio
+W: 28,0: No exception type(s) specified
+F: 31,0: Unable to import 'utilstest'
+C: 47,0:testmatch: Invalid name "testmatch" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 69,0:testflatmccdsadsc: Invalid name "testflatmccdsadsc" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 69,0:testflatmccdsadsc: Empty docstring
+C: 97,0:test_suite_all_adsc: Missing docstring
+W: 34,0: Unused import fabio
 
 
 Report
 ======
-62 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |65     |63.73 |65       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |15     |14.71 |15       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |4      |3.92  |4        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |18     |17.65 |18       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testadscimage)
-      \-adscimage 
-      | \-adscimage (testadscimage)
-      \-edfimage 
-        \-edfimage (testadscimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |50.00       |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+65 statements analysed.
 
 Messages by category
 --------------------
@@ -118,6 +52,65 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.03/10 (previous run: 9.03/10)
+Your code has been rated at 9.08/10 (previous run: 9.08/10)
 So close to being perfect...
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |67     |63.81 |67       |=          |
++----------+-------+------+---------+-----------+
+|docstring |16     |15.24 |16       |=          |
++----------+-------+------+---------+-----------+
+|comment   |4      |3.81  |4        |=          |
++----------+-------+------+---------+-----------+
+|empty     |18     |17.14 |18       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testadscimage)
+      \-adscimage 
+      | \-adscimage (testadscimage)
+      \-edfimage 
+        \-edfimage (testadscimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |50.00       |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |4          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
 

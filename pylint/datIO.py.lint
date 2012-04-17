@@ -1,68 +1,19 @@
 ************* Module datIO
-W: 25: Bad indentation. Found 16 spaces, expected 12
-C:  1: Invalid name "datIO" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
-C: 13:fabiodata: Invalid name "fabiodata" (should match [A-Z_][a-zA-Z0-9]+$)
-R: 35:fabiodata.read: Method could be a function
-W: 35:fabiodata.read: Unused argument 'fname'
-R: 13:fabiodata: Too few public methods (1/2)
-C: 44:columnfile: Invalid name "columnfile" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 44:columnfile: Missing docstring
-C: 46:columnfile.read: Missing docstring
-W: 46:columnfile.read: Signature differs from overridden method
-F: 47:columnfile.read: Unable to import 'cf_io'
-R: 44:columnfile: Too few public methods (1/2)
+C:  1,0: Invalid name "datIO" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
+C: 14,0:fabiodata: Invalid name "fabiodata" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 36,31:fabiodata.read: Unused argument 'frame'
+W: 36,19:fabiodata.read: Unused argument 'fname'
+R: 36,4:fabiodata.read: Method could be a function
+R: 14,0:fabiodata: Too few public methods (1/2)
+C: 45,0:columnfile: Invalid name "columnfile" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 47,4:columnfile.read: Signature differs from overridden method
+F: 48,8:columnfile.read: Unable to import 'cf_io'
+R: 45,0:columnfile: Too few public methods (1/2)
 
 
 Report
 ======
-26 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |27     |45.00 |27       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |22     |36.67 |22       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |2      |3.33  |2        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |9      |15.00 |9        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |50.00       |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |66.67       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+27 statements analysed.
 
 Messages by category
 --------------------
@@ -70,7 +21,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |5        |=          |
+|convention |3      |3        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |3      |3        |=          |
 +-----------+-------+---------+-----------+
@@ -89,13 +40,9 @@ Messages
 +===========+============+
 |C0103      |3           |
 +-----------+------------+
+|W0613      |2           |
++-----------+------------+
 |R0903      |2           |
-+-----------+------------+
-|C0111      |2           |
-+-----------+------------+
-|W0613      |1           |
-+-----------+------------+
-|W0311      |1           |
 +-----------+------------+
 |W0222      |1           |
 +-----------+------------+
@@ -108,6 +55,53 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 5.77/10 (previous run: 5.77/10)
-Just the bare minimum. Give it a bit more polish. 
+Your code has been rated at 6.67/10 (previous run: 6.67/10)
+This is okay-ish, but I'm sure you can do better.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |27     |43.55 |27       |=          |
++----------+-------+------+---------+-----------+
+|docstring |23     |37.10 |23       |=          |
++----------+-------+------+---------+-----------+
+|comment   |3      |4.84  |3        |=          |
++----------+-------+------+---------+-----------+
+|empty     |9      |14.52 |9        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 

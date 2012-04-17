@@ -1,14 +1,21 @@
-************* Module testopenheader
-W: 23,0: No exception type(s) specified
-F: 26,0: Unable to import 'utilstest'
-C: 33,0:test1: Invalid name "test1" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 50,0:test_suite_all_openheader: Missing docstring
-W: 29,0: Unused import fabio
+************* Module testcompression
+C: 42,0: Line too long (217/200)
+C: 43,0: Line too long (390/200)
+W: 26,0: No exception type(s) specified
+F: 29,0: Unable to import 'utilstest'
+C: 37,0:testbyteoffset: Invalid name "testbyteoffset" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 42,8:testbyteoffset.setUp: Invalid name "ds" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 44,4:testbyteoffset.testComp: Empty docstring
+C: 47,8:testbyteoffset.testComp: Invalid name "ds" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 50,8:testbyteoffset.testComp: Invalid name "ds" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 53,8:testbyteoffset.testComp: Invalid name "ds" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 74,0:test_suite_all_compression: Missing docstring
+W: 32,0: Unused import fabio
 
 
 Report
 ======
-40 statements analysed.
+57 statements analysed.
 
 Messages by category
 --------------------
@@ -16,7 +23,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |2      |2        |=          |
+|convention |9      |9        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -33,23 +40,27 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
+|C0103      |5           |
++-----------+------------+
+|C0301      |2           |
++-----------+------------+
 |W0702      |1           |
 +-----------+------------+
 |W0611      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
-|C0111      |1           |
+|C0112      |1           |
 +-----------+------------+
-|C0103      |1           |
+|C0111      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.00/10 (previous run: 9.00/10)
-So close to being perfect...
+Your code has been rated at 8.07/10 (previous run: 8.07/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -57,27 +68,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |40     |72.73 |40       |=          |
+|code      |57     |69.51 |57       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |7      |12.73 |7        |=          |
+|docstring |11     |13.41 |11       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.64  |2        |=          |
+|comment   |2      |2.44  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |6      |10.91 |6        |=          |
+|empty     |12     |14.63 |12       |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -91,7 +89,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |100.00      |0.00     |
+|method   |3      |3          |=          |66.67       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
@@ -102,9 +100,22 @@ External dependencies
 ---------------------
 ::
 
-    fabio (testopenheader)
-      \-openimage 
-        \-openheader (testopenheader)
+    fabio (testcompression)
+      \-compression (testcompression)
+    numpy (testcompression)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
 

@@ -1,80 +1,16 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testmar345image
-W: 25: No exception type(s) specified
-F: 27: Unable to import 'utilstest'
-C: 39:testMAR345: Invalid name "testMAR345" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 39:testMAR345: Missing docstring
-W: 53:testMAR345.test_read: Unused variable 'dim2'
-C: 67:test_suite_all_mar345: Missing docstring
-W: 30: Unused import fabio
+W: 24,0: No exception type(s) specified
+F: 27,0: Unable to import 'utilstest'
+C: 39,0:testMAR345: Invalid name "testMAR345" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 39,0:testMAR345: Missing docstring
+W: 56,18:testMAR345.test_read: Unused variable 'dim2'
+C: 86,0:test_suite_all_mar345: Missing docstring
+W: 30,0: Unused import fabio
 
 
 Report
 ======
-48 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |50     |68.49 |50       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |11     |15.07 |11       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |3      |4.11  |3        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |9      |12.33 |9        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testmar345image)
-      \-mar345image 
-        \-mar345image (testmar345image)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+68 statements analysed.
 
 Messages by category
 --------------------
@@ -116,6 +52,63 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.75/10 (previous run: 8.75/10)
-That's pretty good. Good work mate.
+Your code has been rated at 9.12/10 (previous run: 9.12/10)
+So close to being perfect...
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |69     |74.19 |69       |=          |
++----------+-------+------+---------+-----------+
+|docstring |12     |12.90 |12       |=          |
++----------+-------+------+---------+-----------+
+|comment   |3      |3.23  |3        |=          |
++----------+-------+------+---------+-----------+
+|empty     |9      |9.68  |9        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testmar345image)
+      \-mar345image 
+        \-mar345image (testmar345image)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |4          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
 

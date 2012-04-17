@@ -1,82 +1,25 @@
 ************* Module fit2dspreadsheetimage
-W: 23: TODO : test for minimal attributes?
-F: 10: Unable to import 'fabioimage'
-C: 15:fit2dspreadsheetimage: Invalid name "fit2dspreadsheetimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 15:fit2dspreadsheetimage: Class has no __init__ method
-E: 42:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no 'resetvals' member
-E: 43:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no '_open' member
-W: 63:fit2dspreadsheetimage.read: No exception type(s) specified
-E: 70:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no 'resetvals' member
-W: 72:fit2dspreadsheetimage.read: Attribute 'pilimage' defined outside __init__
-W: 54:fit2dspreadsheetimage.read: Attribute 'bpp' defined outside __init__
-W: 48:fit2dspreadsheetimage.read: Attribute 'dim2' defined outside __init__
-W: 41:fit2dspreadsheetimage.read: Attribute 'header' defined outside __init__
-W: 47:fit2dspreadsheetimage.read: Attribute 'dim1' defined outside __init__
-W: 64:fit2dspreadsheetimage.read: Attribute 'data' defined outside __init__
-R: 15:fit2dspreadsheetimage: Too few public methods (1/2)
+W: 23,0: TODO : test for minimal attributes?
+F: 10,0: Unable to import 'fabioimage'
+C: 15,0:fit2dspreadsheetimage: Invalid name "fit2dspreadsheetimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 15,0:fit2dspreadsheetimage: Class has no __init__ method
+E: 42,8:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no 'resetvals' member
+E: 43,17:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no '_open' member
+W: 62,16:fit2dspreadsheetimage.read: No exception type(s) specified
+E: 70,8:fit2dspreadsheetimage.read: Instance of 'fit2dspreadsheetimage' has no 'resetvals' member
+W: 36,26:fit2dspreadsheetimage.read: Unused argument 'frame'
+R: 15,0:fit2dspreadsheetimage: Too few public methods (1/2)
+W: 72,8:fit2dspreadsheetimage.read: Attribute 'pilimage' defined outside __init__
+W: 54,8:fit2dspreadsheetimage.read: Attribute 'bpp' defined outside __init__
+W: 48,12:fit2dspreadsheetimage.read: Attribute 'dim2' defined outside __init__
+W: 41,8:fit2dspreadsheetimage.read: Attribute 'header' defined outside __init__
+W: 47,12:fit2dspreadsheetimage.read: Attribute 'dim1' defined outside __init__
+W: 64,12:fit2dspreadsheetimage.read: Attribute 'data' defined outside __init__
 
 
 Report
 ======
-50 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |50     |60.98 |50       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |16     |19.51 |16       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |1      |1.22  |1        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |15     |18.29 |15       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    matplotlib 
-      \-pylab 
-        \-imshow (fit2dspreadsheetimage)
-        \-show (fit2dspreadsheetimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+51 statements analysed.
 
 Messages by category
 --------------------
@@ -88,7 +31,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |9      |9        |=          |
+|warning    |10     |10       |=          |
 +-----------+-------+---------+-----------+
 |error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
@@ -107,6 +50,8 @@ Messages
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
+|W0613      |1           |
++-----------+------------+
 |W0511      |1           |
 +-----------+------------+
 |W0232      |1           |
@@ -122,6 +67,65 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 4.80/10 (previous run: 4.80/10)
+Your code has been rated at 4.71/10 (previous run: 4.71/10)
 A little more work would make it acceptable.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |50     |60.98 |50       |=          |
++----------+-------+------+---------+-----------+
+|docstring |16     |19.51 |16       |=          |
++----------+-------+------+---------+-----------+
+|comment   |1      |1.22  |1        |=          |
++----------+-------+------+---------+-----------+
+|empty     |15     |18.29 |15       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    matplotlib 
+      \-pylab 
+        \-imshow (fit2dspreadsheetimage)
+        \-show (fit2dspreadsheetimage)
+    numpy (fit2dspreadsheetimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |2      |2          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
 

@@ -1,53 +1,103 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module edfimage
-F: 26: Unable to import 'fabioutils'
-C:205:Frame.parseheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:206:Frame.parseheader: Use of the exec statement
-R:122:Frame.parseheader: Too many branches (24/15)
-R:122:Frame.parseheader: Too many statements (69/50)
-F:253:Frame.getData: Unable to import 'byte_offset'
-W:274:Frame.getData: Catch "Exception"
-R:226:Frame.getData: Too many branches (27/15)
-R:226:Frame.getData: Too many statements (77/50)
-C:339:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:355:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:324:Frame.getEdfBlock: Too many branches (24/15)
-R:324:Frame.getEdfBlock: Too many statements (82/50)
-C:434:edfimage: Invalid name "edfimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W:449:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
-W:451:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
-W:453:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
-W:455:edfimage.__init__: __init__ method from a non direct base class 'fabioimage' is called
-W:441:edfimage.__init__: Catch "Exception"
-W:623:edfimage.write: Arguments number differs from overridden method
-C:790:edfimage.getDim1: Missing docstring
-C:792:edfimage.setDim1: Missing docstring
-C:802:edfimage.getDim2: Missing docstring
-C:804:edfimage.setDim2: Missing docstring
-C:815:edfimage.getDims: Missing docstring
-C:818:edfimage.getByteCode: Missing docstring
-C:820:edfimage.setByteCode: Missing docstring
-C:831:edfimage.getBpp: Missing docstring
-C:833:edfimage.setBpp: Missing docstring
-R:434:edfimage: Too many public methods (45/20)
+F: 25,0: Unable to import 'fabioimage'
+F: 26,0: Unable to import 'fabioutils'
+F: 27,0: Unable to import 'compression'
+C:206,15:Frame.parseheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:123,4:Frame.parseheader: Too many branches (24/15)
+R:123,4:Frame.parseheader: Too many statements (69/50)
+F:254,24:Frame.getData: Unable to import 'byte_offset'
+R:227,4:Frame.getData: Too many branches (21/15)
+R:227,4:Frame.getData: Too many statements (58/50)
+C:316,12:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:332,12:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:301,4:Frame.getEdfBlock: Too many branches (24/15)
+R:301,4:Frame.getEdfBlock: Too many statements (82/50)
+C:411,0:edfimage: Invalid name "edfimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W:418,15:edfimage.__init__: Catching too general exception Exception
+E:536,8:edfimage.read: Instance of 'edfimage' has no 'resetvals' member
+E:539,17:edfimage.read: Instance of 'edfimage' has no '_open' member
+E:549,8:edfimage.read: Instance of 'edfimage' has no 'resetvals' member (but some types could not be inferred)
+E:629,18:edfimage.write: Instance of 'edfimage' has no '_open' member
+W:676,14:edfimage: Use of "property" on an old style class
+W:700,13:edfimage: Use of "property" on an old style class
+W:725,18:edfimage: Use of "property" on an old style class
+W:763,11:edfimage: Use of "property" on an old style class
+W:783,17:edfimage: Use of "property" on an old style class
+C:785,4:edfimage.getDim1: Missing docstring
+C:787,4:edfimage.setDim1: Missing docstring
+W:796,11:edfimage: Use of "property" on an old style class
+C:797,4:edfimage.getDim2: Missing docstring
+C:799,4:edfimage.setDim2: Missing docstring
+W:808,11:edfimage: Use of "property" on an old style class
+C:810,4:edfimage.getDims: Missing docstring
+W:812,11:edfimage: Use of "property" on an old style class
+C:813,4:edfimage.getByteCode: Missing docstring
+C:815,4:edfimage.setByteCode: Missing docstring
+W:825,15:edfimage: Use of "property" on an old style class
+C:826,4:edfimage.getBpp: Missing docstring
+C:828,4:edfimage.setBpp: Missing docstring
+W:837,10:edfimage: Use of "property" on an old style class
+R:411,0:edfimage: Too many public methods (33/20)
+W:551,8:edfimage.read: Attribute 'pilimage' defined outside __init__
+W:588,12:edfimage.getframe: Attribute 'filename' defined outside __init__
 
 
 Report
 ======
-525 statements analysed.
+520 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |13     |13       |=          |
++-----------+-------+---------+-----------+
+|refactor   |7      |7        |=          |
++-----------+-------+---------+-----------+
+|warning    |13     |13       |=          |
++-----------+-------+---------+-----------+
+|error      |4      |4        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W1001      |10          |
++-----------+------------+
+|C0111      |9           |
++-----------+------------+
+|F0401      |4           |
++-----------+------------+
+|C0103      |4           |
++-----------+------------+
+|R0915      |3           |
++-----------+------------+
+|R0912      |3           |
++-----------+------------+
+|E1101      |3           |
++-----------+------------+
+|W0201      |2           |
++-----------+------------+
+|W0703      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|E1103      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.98/10 (previous run: 8.98/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -55,14 +105,22 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |558    |68.05 |558      |=          |
+|code      |552    |67.65 |552      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |185    |22.56 |185      |=          |
+|docstring |188    |23.04 |188      |=          |
 +----------+-------+------+---------+-----------+
-|comment   |11     |1.34  |11       |=          |
+|comment   |11     |1.35  |11       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |66     |8.05  |66       |=          |
+|empty     |65     |7.97  |65       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (edfimage)
 
 
 
@@ -79,15 +137,6 @@ Duplication
 
 
 
-External dependencies
----------------------
-::
-
-    fabioimage 
-      \-fabioimage (edfimage)
-
-
-
 Statistics by type
 ------------------
 
@@ -98,61 +147,10 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |2      |2          |=          |100.00      |50.00    |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |41     |41         |=          |78.05       |0.00     |
+|method   |42     |42         |=          |78.57       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |13     |13       |=          |
-+-----------+-------+---------+-----------+
-|refactor   |7      |7        |=          |
-+-----------+-------+---------+-----------+
-|warning    |8      |8        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0111      |9           |
-+-----------+------------+
-|W0233      |4           |
-+-----------+------------+
-|C0103      |4           |
-+-----------+------------+
-|R0915      |3           |
-+-----------+------------+
-|R0912      |3           |
-+-----------+------------+
-|W0703      |2           |
-+-----------+------------+
-|F0401      |2           |
-+-----------+------------+
-|W0221      |1           |
-+-----------+------------+
-|W0122      |1           |
-+-----------+------------+
-|R0904      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 9.47/10 (previous run: 9.47/10)
-So close to being perfect...
 

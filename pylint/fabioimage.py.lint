@@ -1,35 +1,86 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-
 ************* Module fabioimage
-W:349: Bad indentation. Found 20 spaces, expected 16
-W:101: FIXME - this should be handled by the libraries now
-W:322: FIXME - what about seek ? 
-W:345: FIXME - should we fix that or complain about the daft naming?
-F: 18: Unable to import 'fabioutils'
-C: 21:fabioStream: Invalid name "fabioStream" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 37:fabioimage: Invalid name "fabioimage" (should match [A-Z_][a-zA-Z0-9]+$)
-F: 80:fabioimage.getframe: Unable to import 'openimage'
-F: 87:fabioimage.previous: Unable to import 'openimage'
-F: 93:fabioimage.next: Unable to import 'openimage'
-R:280:fabioimage.write: Method could be a function
-W:280:fabioimage.write: Unused argument 'fname'
-R:298:fabioimage._readheader: Method could be a function
-W:298:fabioimage._readheader: Unused argument 'fik_obj'
-R:311:fabioimage.read: Method could be a function
-W:311:fabioimage.read: Unused argument 'filename'
-C:366:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:372:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:355:fabioimage._compressed_stream: Unused argument 'system_uncompress'
-W:426:test.clean: No exception type(s) specified
-W:432:test: Access to a protected member _open of a client class
-W:438:test: Access to a protected member _open of a client class
-W:444:test: Access to a protected member _open of a client class
-W:446:test: Access to a protected member _open of a client class
+W:136,0: FIXME - this should be handled by the libraries now
+W:387,0: FIXME - what about seek ? 
+W:410,0: FIXME - should we fix that or complain about the daft naming?
+F: 23,0: Unable to import 'fabioutils'
+F: 23,0: Unable to import 'converters'
+C: 26,0:fabioStream: Invalid name "fabioStream" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 42,0:fabioimage: Invalid name "fabioimage" (should match [A-Z_][a-zA-Z0-9]+$)
+F:115,12:fabioimage.getframe: Unable to import 'openimage'
+F:122,8:fabioimage.previous: Unable to import 'openimage'
+F:128,8:fabioimage.next: Unable to import 'openimage'
+W:320,20:fabioimage.write: Unused argument 'fname'
+R:320,4:fabioimage.write: Method could be a function
+W:342,26:fabioimage._readheader: Unused argument 'fik_obj'
+R:342,4:fabioimage._readheader: Method could be a function
+W:355,29:fabioimage.read: Unused argument 'frame'
+W:355,19:fabioimage.read: Unused argument 'filename'
+R:355,4:fabioimage.read: Method could be a function
+E:372,15:fabioimage.readROI: Undefined variable 'coord'
+C:431,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:437,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:420,27:fabioimage._compressed_stream: Unused argument 'system_uncompress'
+W:463,24:fabioimage.convert: No exception type(s) specified
+R: 42,0:fabioimage: Too many public methods (25/20)
+W:535,12:test.clean: No exception type(s) specified
+W:542,11:test: Access to a protected member _open of a client class
+W:548,11:test: Access to a protected member _open of a client class
+W:554,20:test: Access to a protected member _open of a client class
+W:556,11:test: Access to a protected member _open of a client class
 
 
 Report
 ======
-236 statements analysed.
+311 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |4      |4        |=          |
++-----------+-------+---------+-----------+
+|refactor   |4      |4        |=          |
++-----------+-------+---------+-----------+
+|warning    |14     |14       |=          |
++-----------+-------+---------+-----------+
+|error      |1      |1        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|W0613      |5           |
++-----------+------------+
+|F0401      |5           |
++-----------+------------+
+|W0212      |4           |
++-----------+------------+
+|C0103      |4           |
++-----------+------------+
+|W0511      |3           |
++-----------+------------+
+|R0201      |3           |
++-----------+------------+
+|W0702      |2           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|E0602      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 9.13/10 (previous run: 9.13/10)
+So close to being perfect...
 
 Raw metrics
 -----------
@@ -37,14 +88,22 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |271    |63.02 |271      |=          |
+|code      |353    |65.61 |353      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |104    |24.19 |104      |=          |
+|docstring |124    |23.05 |124      |=          |
 +----------+-------+------+---------+-----------+
-|comment   |14     |3.26  |14       |=          |
+|comment   |14     |2.60  |14       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |41     |9.53  |41       |=          |
+|empty     |47     |8.74  |47       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (fabioimage)
 
 
 
@@ -71,57 +130,10 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |2      |2          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |23     |23         |=          |100.00      |0.00     |
+|method   |30     |30         |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |4      |4        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |3      |3        |=          |
-+-----------+-------+---------+-----------+
-|warning    |13     |13       |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|W0613      |4           |
-+-----------+------------+
-|W0212      |4           |
-+-----------+------------+
-|F0401      |4           |
-+-----------+------------+
-|C0103      |4           |
-+-----------+------------+
-|W0511      |3           |
-+-----------+------------+
-|R0201      |3           |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|W0311      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 9.15/10 (previous run: 9.15/10)
-So close to being perfect...
 

@@ -1,27 +1,83 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-
 ************* Module file_series
-F: 16: Unable to import 'openimage'
-C: 24:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 40:new_file_series0: No exception type(s) specified
-C: 38:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 50:new_file_series0: No exception type(s) specified
-C: 82:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 93:new_file_series: Catch "Exception"
-C: 91:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:105:new_file_series: No exception type(s) specified
-C:110:new_file_series: More than one statement on a single line
-W: 93:new_file_series: Unused variable 'ex'
-C:115:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
-R:115:file_series: Too many public methods (28/20)
-C:229:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
-R:229:numbered_file_series: Too many public methods (28/20)
-C:254:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
+F: 18,0: Unable to import 'fabioutils'
+F: 20,0: Unable to import 'openimage'
+C: 28,4:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 43,15:new_file_series0: Catching too general exception Exception
+C: 42,12:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 50,19:new_file_series0: Catching too general exception Exception
+C: 86,4:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 97,15:new_file_series: Catching too general exception Exception
+C: 95,12:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:106,19:new_file_series: Catching too general exception Exception
+C:112,22:new_file_series: More than one statement on a single line
+C:117,0:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
+R:117,0:file_series: Too many public methods (28/20)
+C:231,0:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
+R:231,0:numbered_file_series: Too many public methods (28/20)
+C:256,0:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
 
 
 Report
 ======
-139 statements analysed.
+141 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |8      |8        |=          |
++-----------+-------+---------+-----------+
+|refactor   |2      |2        |=          |
++-----------+-------+---------+-----------+
+|warning    |4      |4        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |7           |
++-----------+------------+
+|W0703      |4           |
++-----------+------------+
+|R0904      |2           |
++-----------+------------+
+|F0401      |2           |
++-----------+------------+
+|C0321      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 9.01/10 (previous run: 9.01/10)
+So close to being perfect...
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |146    |51.05 |146      |=          |
++----------+-------+------+---------+-----------+
+|docstring |101    |35.31 |101      |=          |
++----------+-------+------+---------+-----------+
+|comment   |7      |2.45  |7        |=          |
++----------+-------+------+---------+-----------+
+|empty     |32     |11.19 |32       |=          |
++----------+-------+------+---------+-----------+
+
+
 
 Duplication
 -----------
@@ -33,33 +89,6 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
-
-
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |145    |50.70 |145      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |101    |35.31 |101      |=          |
-+----------+-------+------+---------+-----------+
-|comment   |7      |2.45  |7        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |33     |11.54 |33       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabioutils 
-      \-filename_object (file_series)
-      \-next_filename (file_series)
 
 
 
@@ -79,49 +108,4 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 
 
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |8      |8        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |2      |2        |=          |
-+-----------+-------+---------+-----------+
-|warning    |5      |5        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0103      |7           |
-+-----------+------------+
-|W0702      |3           |
-+-----------+------------+
-|R0904      |2           |
-+-----------+------------+
-|W0703      |1           |
-+-----------+------------+
-|W0612      |1           |
-+-----------+------------+
-|F0401      |1           |
-+-----------+------------+
-|C0321      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 8.92/10 (previous run: 8.92/10)
-That's pretty good. Good work mate.
 

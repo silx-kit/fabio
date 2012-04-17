@@ -1,36 +1,60 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module test_flat_binary
-C:  1: Missing docstring
-W: 19: No exception type(s) specified
-F: 21: Unable to import 'utilstest'
-C: 27:test_flat_binary: Invalid name "test_flat_binary" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 27:test_flat_binary: Missing docstring
-C: 35:test_flat_binary.setUp: Missing docstring
-C: 37:test_flat_binary.setUp: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 56:test_flat_binary.test_openimage: No exception type(s) specified
-C: 50:test_flat_binary.test_openimage: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 60:test_flat_binary.tearDown: Missing docstring
-C: 64:test_suite_all_flat: Missing docstring
+C:  1,0: Missing docstring
+W: 18,0: No exception type(s) specified
+F: 21,0: Unable to import 'utilstest'
+C: 27,0:test_flat_binary: Invalid name "test_flat_binary" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 27,0:test_flat_binary: Missing docstring
+C: 37,12:test_flat_binary.setUp: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 42,4:test_flat_binary.NOtest_openimage: Invalid name "NOtest_openimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 55,12:test_flat_binary.NOtest_openimage: No exception type(s) specified
+C: 50,16:test_flat_binary.NOtest_openimage: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E: 71,14: Undefined variable 'test_suite_all_flat'
 
 
 Report
 ======
-51 statements analysed.
+48 statements analysed.
 
-Duplication
------------
+Messages by category
+--------------------
 
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |6      |6        |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |2      |2        |=          |
++-----------+-------+---------+-----------+
+|error      |1      |1        |=          |
++-----------+-------+---------+-----------+
 
 
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0103      |4           |
++-----------+------------+
+|W0702      |2           |
++-----------+------------+
+|C0111      |2           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|E0602      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 7.29/10 (previous run: 7.29/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 
 Raw metrics
 -----------
@@ -38,22 +62,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |52     |80.00 |52       |=          |
+|code      |48     |71.64 |48       |=          |
 +----------+-------+------+---------+-----------+
-|docstring |8      |12.31 |8        |=          |
+|docstring |8      |11.94 |8        |=          |
 +----------+-------+------+---------+-----------+
-|comment   |0      |0.00  |0        |=          |
+|comment   |5      |7.46  |5        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |5      |7.69  |5        |=          |
+|empty     |6      |8.96  |6        |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (test_flat_binary)
 
 
 
@@ -67,49 +83,31 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |33.33       |0.00     |
+|method   |3      |3          |=          |100.00      |33.33    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
+|function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 
 
-Messages by category
---------------------
+External dependencies
+---------------------
+::
 
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |8      |8        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |2      |2        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
+    fabio (test_flat_binary)
 
 
 
-Messages
---------
+Duplication
+-----------
 
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0111      |5           |
-+-----------+------------+
-|C0103      |3           |
-+-----------+------------+
-|W0702      |2           |
-+-----------+------------+
-|F0401      |1           |
-+-----------+------------+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
-
-Global evaluation
------------------
-Your code has been rated at 8.04/10 (previous run: 8.04/10)
-That's pretty good. Good work mate.
 

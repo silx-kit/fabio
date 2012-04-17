@@ -1,18 +1,54 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testheadernotsingleton
-W: 26: No exception type(s) specified
-F: 28: Unable to import 'utilstest'
-C: 34:testheadernotsingleton: Invalid name "testheadernotsingleton" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 34:testheadernotsingleton: Missing docstring
-C: 43:testheadernotsingleton.testheader: Missing docstring
-C: 55:test_suite_all_header: Missing docstring
+W: 25,0: No exception type(s) specified
+F: 28,0: Unable to import 'utilstest'
+C: 34,0:testheadernotsingleton: Invalid name "testheadernotsingleton" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 34,0:testheadernotsingleton: Missing docstring
+C: 43,4:testheadernotsingleton.testheader: Missing docstring
+C: 55,0:test_suite_all_header: Missing docstring
 
 
 Report
 ======
-43 statements analysed.
+44 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |4      |4        |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |1      |1        |=          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |3           |
++-----------+------------+
+|W0702      |1           |
++-----------+------------+
+|F0401      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.86/10 (previous run: 8.86/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -68,43 +104,4 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 
 
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |4      |4        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |1      |1        |=          |
-+-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0111      |3           |
-+-----------+------------+
-|W0702      |1           |
-+-----------+------------+
-|F0401      |1           |
-+-----------+------------+
-|C0103      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 8.84/10 (previous run: 8.84/10)
-That's pretty good. Good work mate.
 

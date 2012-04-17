@@ -1,49 +1,107 @@
 ************* Module bruker100image
-W: 12: FIXME - why is this different for bruker100images?
-C:  1: Missing docstring
-F:  5: Unable to import 'brukerimage'
-F:  6: Unable to import 'readbytestream'
-C:  8:bruker100image: Invalid name "bruker100image" (should match [A-Z_][a-zA-Z0-9]+$)
-C:  8:bruker100image: Missing docstring
-W:  8:bruker100image: Class has no __init__ method
-C: 11:bruker100image.toPIL16: Missing docstring
-C: 15:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 22:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 29:bruker100image.read: Missing docstring
-C: 30:bruker100image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E: 32:bruker100image.read: Instance of 'bruker100image' has no '_readheader' member
-E: 36:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-E: 37:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-E: 38:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-E: 47:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-E: 54:bruker100image.read: Undefined variable 'numpy'
-E: 55:bruker100image.read: Undefined variable 'numpy'
-E: 56:bruker100image.read: Undefined variable 'numpy'
-C: 57:bruker100image.read: Invalid name "ar" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E: 57:bruker100image.read: Undefined variable 'numpy'
-E: 57:bruker100image.read: Undefined variable 'numpy'
-E: 58:bruker100image.read: Undefined variable 'numpy'
-C: 65:bruker100image.read: Invalid name "M" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E: 65:bruker100image.read: Undefined variable 'numpy'
-E: 65:bruker100image.read: Undefined variable 'numpy'
-E: 65:bruker100image.read: Undefined variable 'numpy'
-E: 67:bruker100image.read: Undefined variable 'numpy'
-E: 78:bruker100image.read: Instance of 'bruker100image' has no 'resetvals' member
-W: 76:bruker100image.read: Attribute 'dim2' defined outside __init__
-W: 76:bruker100image.read: Attribute 'dim1' defined outside __init__
-W: 44:bruker100image.read: Attribute 'data' defined outside __init__
-E: 88: Instance of 'bruker100image' has no 'rebin' member
-E: 90: Instance of 'bruker100image' has no 'getmax' member
-E: 90: Instance of 'bruker100image' has no 'getmin' member
-E: 90: Instance of 'bruker100image' has no 'getmean' member
-E: 90: Instance of 'bruker100image' has no 'getstddev' member
-E: 92: Instance of 'bruker100image' has no 'integrate_area' member
-W:  2: Unused import N
+C:  1,0: Missing docstring
+F: 11,0: Unable to import 'brukerimage'
+F: 12,0: Unable to import 'readbytestream'
+C: 14,0:bruker100image: Invalid name "bruker100image" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 14,0:bruker100image: Missing docstring
+W: 14,0:bruker100image: Class has no __init__ method
+C: 17,4:bruker100image.toPIL16: Missing docstring
+C: 23,8:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 30,4:bruker100image.read: Missing docstring
+C: 31,8:bruker100image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E: 33,12:bruker100image.read: Instance of 'bruker100image' has no '_readheader' member
+E: 37,19:bruker100image.read: Instance of 'bruker100image' has no 'header' member
+E: 38,19:bruker100image.read: Instance of 'bruker100image' has no 'header' member
+E: 39,22:bruker100image.read: Instance of 'bruker100image' has no 'header' member
+E: 48,18:bruker100image.read: Instance of 'bruker100image' has no 'header' member
+C: 58,12:bruker100image.read: Invalid name "ar" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 66,12:bruker100image.read: Invalid name "M" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E: 79,8:bruker100image.read: Instance of 'bruker100image' has no 'resetvals' member
+W: 30,26:bruker100image.read: Unused argument 'frame'
+W: 77,20:bruker100image.read: Attribute 'dim2' defined outside __init__
+W: 77,9:bruker100image.read: Attribute 'dim1' defined outside __init__
+W: 45,8:bruker100image.read: Attribute 'data' defined outside __init__
+E: 89,8: Instance of 'bruker100image' has no 'rebin' member
+E: 91,12: Instance of 'bruker100image' has no 'getmax' member
+E: 91,24: Instance of 'bruker100image' has no 'getmin' member
+E: 91,36: Instance of 'bruker100image' has no 'getmean' member
+E: 91,49: Instance of 'bruker100image' has no 'getstddev' member
+E: 93,28: Instance of 'bruker100image' has no 'integrate_area' member
 
 
 Report
 ======
-54 statements analysed.
+61 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |9      |9        |=          |
++-----------+-------+---------+-----------+
+|refactor   |0      |0        |=          |
++-----------+-------+---------+-----------+
+|warning    |5      |5        |=          |
++-----------+-------+---------+-----------+
+|error      |12     |12       |=          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|E1101      |12          |
++-----------+------------+
+|C0103      |5           |
++-----------+------------+
+|C0111      |4           |
++-----------+------------+
+|W0201      |3           |
++-----------+------------+
+|F0401      |2           |
++-----------+------------+
+|W0613      |1           |
++-----------+------------+
+|W0232      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at -2.13/10 (previous run: -2.13/10)
+You have to do something quick !
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |66     |76.74 |66       |=          |
++----------+-------+------+---------+-----------+
+|docstring |5      |5.81  |5        |=          |
++----------+-------+------+---------+-----------+
+|comment   |7      |8.14  |7        |=          |
++----------+-------+------+---------+-----------+
+|empty     |8      |9.30  |8        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (bruker100image)
+
+
 
 Duplication
 -----------
@@ -55,23 +113,6 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
-
-
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |63     |72.41 |63       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |7      |8.05  |7        |=          |
-+----------+-------+------+---------+-----------+
-|comment   |7      |8.05  |7        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |10     |11.49 |10       |=          |
-+----------+-------+------+---------+-----------+
 
 
 
@@ -87,57 +128,8 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |method   |2      |2          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
+|function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |10     |10       |=          |
-+-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
-+-----------+-------+---------+-----------+
-|warning    |6      |6        |=          |
-+-----------+-------+---------+-----------+
-|error      |22     |22       |=          |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|E1101      |12          |
-+-----------+------------+
-|E0602      |10          |
-+-----------+------------+
-|C0103      |6           |
-+-----------+------------+
-|C0111      |4           |
-+-----------+------------+
-|W0201      |3           |
-+-----------+------------+
-|F0401      |2           |
-+-----------+------------+
-|W0611      |1           |
-+-----------+------------+
-|W0511      |1           |
-+-----------+------------+
-|W0232      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at -13.33/10 (previous run: -13.33/10)
-You have to do something quick !
 

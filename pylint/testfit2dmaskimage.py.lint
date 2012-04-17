@@ -1,78 +1,14 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testfit2dmaskimage
-W: 30: No exception type(s) specified
-F: 32: Unable to import 'utilstest'
-C: 39:testfacemask: Invalid name "testfacemask" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 63:testclickedmask: Invalid name "testclickedmask" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 99:test_suite_all_fit2d: Missing docstring
+W: 29,0: No exception type(s) specified
+F: 32,0: Unable to import 'utilstest'
+C: 39,0:testfacemask: Invalid name "testfacemask" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 63,0:testclickedmask: Invalid name "testclickedmask" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 99,0:test_suite_all_fit2d: Missing docstring
 
 
 Report
 ======
-69 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |70     |67.31 |70       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |15     |14.42 |15       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |4      |3.85  |4        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |15     |14.42 |15       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testfit2dmaskimage)
-      \-fit2dmaskimage 
-        \-fit2dmaskimage (testfit2dmaskimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |5      |5          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+70 statements analysed.
 
 Messages by category
 --------------------
@@ -110,6 +46,64 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.42/10 (previous run: 9.42/10)
+Your code has been rated at 9.43/10 (previous run: 9.43/10)
 So close to being perfect...
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |70     |67.31 |70       |=          |
++----------+-------+------+---------+-----------+
+|docstring |15     |14.42 |15       |=          |
++----------+-------+------+---------+-----------+
+|comment   |4      |3.85  |4        |=          |
++----------+-------+------+---------+-----------+
+|empty     |15     |14.42 |15       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testfit2dmaskimage)
+      \-fit2dmaskimage 
+        \-fit2dmaskimage (testfit2dmaskimage)
+    numpy (testfit2dmaskimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |5      |5          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
 

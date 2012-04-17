@@ -1,88 +1,38 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module adscimage
-W: 91: FIXME ??? - made padding match header bytes keyword            
-F: 19: Unable to import 'fabioimage'
-C: 22:adscimage: Invalid name "adscimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 22:adscimage: Class has no __init__ method
-E: 27:adscimage.read: Instance of 'adscimage' has no '_open' member
-E: 34:adscimage.read: Instance of 'adscimage' has no 'header' member
-E: 39:adscimage.read: Instance of 'adscimage' has no '_open' member
-E: 40:adscimage.read: Instance of 'adscimage' has no 'header' member
-E: 45:adscimage.read: Instance of 'adscimage' has no 'header' member
-E: 46:adscimage.read: Instance of 'adscimage' has no 'header' member
-E: 47:adscimage.read: Instance of 'adscimage' has no 'header' member
-E: 67:adscimage.read: Instance of 'adscimage' has no 'resetvals' member
-E: 78:adscimage._readheader: Instance of 'adscimage' has no 'header_keys' member
-E: 79:adscimage._readheader: Instance of 'adscimage' has no 'header' member
-E: 89:adscimage.write: Instance of 'adscimage' has no 'header_keys' member
-E: 90:adscimage.write: Instance of 'adscimage' has no 'header' member
-E: 93:adscimage.write: Instance of 'adscimage' has no 'header' member
-E: 94:adscimage.write: Instance of 'adscimage' has no 'header' member
-E:109:adscimage.write: Instance of 'adscimage' has no 'header' member
-W: 46:adscimage.read: Attribute 'dim2' defined outside __init__
-W: 45:adscimage.read: Attribute 'dim1' defined outside __init__
-W: 49:adscimage.read: Attribute 'data' defined outside __init__
-W: 55:adscimage.read: Attribute 'bytecode' defined outside __init__
-E:125:test: Instance of 'adscimage' has no 'rebin' member
-E:128:test: Instance of 'adscimage' has no 'getmax' member
-E:128:test: Instance of 'adscimage' has no 'getmin' member
-E:128:test: Instance of 'adscimage' has no 'getmean' member
-E:128:test: Instance of 'adscimage' has no 'getstddev' member
-E:130:test: Instance of 'adscimage' has no 'integrate_area' member
+W: 91,0: FIXME ??? - made padding match header bytes keyword            
+F: 17,0: Unable to import 'fabioimage'
+C: 20,0:adscimage: Invalid name "adscimage" (should match [A-Z_][a-zA-Z0-9]+$)
+E: 27,17:adscimage.read: Instance of 'adscimage' has no '_open' member
+E: 34,28:adscimage.read: Instance of 'adscimage' has no 'header' member
+E: 39,21:adscimage.read: Instance of 'adscimage' has no '_open' member
+E: 40,28:adscimage.read: Instance of 'adscimage' has no 'header' member
+E: 45,24:adscimage.read: Instance of 'adscimage' has no 'header' member
+E: 46,24:adscimage.read: Instance of 'adscimage' has no 'header' member
+E: 47,23:adscimage.read: Instance of 'adscimage' has no 'header' member
+E: 67,8:adscimage.read: Instance of 'adscimage' has no 'resetvals' member
+W: 25,26:adscimage.read: Unused argument 'frame'
+E: 78,16:adscimage._readheader: Instance of 'adscimage' has no 'header_keys' member
+E: 79,16:adscimage._readheader: Instance of 'adscimage' has no 'header' member
+E: 89,19:adscimage.write: Instance of 'adscimage' has no 'header_keys' member
+E: 90,40:adscimage.write: Instance of 'adscimage' has no 'header' member
+E: 93,11:adscimage.write: Instance of 'adscimage' has no 'header' member
+E: 94,22:adscimage.write: Instance of 'adscimage' has no 'header' member
+E:109,23:adscimage.write: Instance of 'adscimage' has no 'header' member
+W: 46,8:adscimage.read: Attribute 'dim2' defined outside __init__
+W: 45,8:adscimage.read: Attribute 'dim1' defined outside __init__
+W: 59,16:adscimage.read: Attribute 'data' defined outside __init__
+W: 65,12:adscimage.read: Attribute 'bytecode' defined outside __init__
+E:125,8:test: Instance of 'adscimage' has no 'rebin' member
+E:128,14:test: Instance of 'adscimage' has no 'getmax' member
+E:128,28:test: Instance of 'adscimage' has no 'getmin' member
+E:128,42:test: Instance of 'adscimage' has no 'getmean' member
+E:128,57:test: Instance of 'adscimage' has no 'getstddev' member
+E:130,30:test: Instance of 'adscimage' has no 'integrate_area' member
 
 
 Report
 ======
-77 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |84     |63.16 |84       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |24     |18.05 |24       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |9      |6.77  |9        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |16     |12.03 |16       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+80 statements analysed.
 
 Messages by category
 --------------------
@@ -111,9 +61,9 @@ Messages
 +-----------+------------+
 |W0201      |4           |
 +-----------+------------+
-|W0511      |1           |
+|W0613      |1           |
 +-----------+------------+
-|W0232      |1           |
+|W0511      |1           |
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
@@ -124,6 +74,61 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at -4.55/10 (previous run: -4.55/10)
+Your code has been rated at -4.00/10 (previous run: -4.00/10)
 You have to do something quick !
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |86     |64.66 |86       |=          |
++----------+-------+------+---------+-----------+
+|docstring |24     |18.05 |24       |=          |
++----------+-------+------+---------+-----------+
+|comment   |9      |6.77  |9        |=          |
++----------+-------+------+---------+-----------+
+|empty     |14     |10.53 |14       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (adscimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |4          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 

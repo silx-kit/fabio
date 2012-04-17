@@ -1,77 +1,13 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-
 ************* Module testcbfimage
-W: 28: No exception type(s) specified
-F: 30: Unable to import 'utilstest'
-C: 37:test_cbfimage_reader: Invalid name "test_cbfimage_reader" (should match [A-Z_][a-zA-Z0-9]+$)
-C:101:test_suite_all_cbf: Missing docstring
+W: 27,0: No exception type(s) specified
+F: 30,0: Unable to import 'utilstest'
+C: 38,0:test_cbfimage_reader: Invalid name "test_cbfimage_reader" (should match [A-Z_][a-zA-Z0-9]+$)
+C:119,0:test_suite_all_cbf: Missing docstring
 
 
 Report
 ======
-72 statements analysed.
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |73     |73.74 |73       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |12     |12.12 |12       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |8      |8.08  |8        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |6      |6.06  |6        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testcbfimage)
-      \-byte_offset 
-      | \-analyseCython (testcbfimage)
-      \-cbfimage 
-        \-cbfimage (testcbfimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |4      |4          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+84 statements analysed.
 
 Messages by category
 --------------------
@@ -109,6 +45,66 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.58/10 (previous run: 9.58/10)
+Your code has been rated at 9.64/10 (previous run: 9.64/10)
 So close to being perfect...
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |84     |71.19 |84       |=          |
++----------+-------+------+---------+-----------+
+|docstring |13     |11.02 |13       |=          |
++----------+-------+------+---------+-----------+
+|comment   |15     |12.71 |15       |=          |
++----------+-------+------+---------+-----------+
+|empty     |6      |5.08  |6        |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |6      |6          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testcbfimage)
+      \-cbfimage 
+      | \-cbfimage (testcbfimage)
+      \-compression 
+        \-decByteOffet_cython (testcbfimage)
+        \-decByteOffet_numpy (testcbfimage)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 

@@ -1,80 +1,28 @@
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.RuntimeError'> ignored
-
 ************* Module kcdimage
-W: 11: Uses of a deprecated module 'string'
-F: 12: Unable to import 'fabioimage'
-C: 29:kcdimage: Invalid name "kcdimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 29:kcdimage: Class has no __init__ method
-W: 61:kcdimage._readheader: No exception type(s) specified
-E: 64:kcdimage._readheader: Instance of 'kcdimage' has no 'header_keys' member
-E: 68:kcdimage._readheader: Instance of 'kcdimage' has no 'header_keys' member
-E: 80:kcdimage.read: Instance of 'kcdimage' has no 'resetvals' member
-E: 81:kcdimage.read: Instance of 'kcdimage' has no '_open' member
-E:120:kcdimage.read: Instance of 'kcdimage' has no 'resetvals' member
-W:122:kcdimage.read: Attribute 'pilimage' defined outside __init__
-W: 91:kcdimage.read: Attribute 'bpp' defined outside __init__
-W: 86:kcdimage.read: Attribute 'dim2' defined outside __init__
-W: 79:kcdimage.read: Attribute 'header' defined outside __init__
-W: 85:kcdimage.read: Attribute 'dim1' defined outside __init__
-W:119:kcdimage.read: Attribute 'bytecode' defined outside __init__
-W:109:kcdimage.read: Attribute 'data' defined outside __init__
-R: 29:kcdimage: Too few public methods (1/2)
+W: 11,0: Uses of a deprecated module 'string'
+F: 12,0: Unable to import 'fabioimage'
+C: 29,0:kcdimage: Invalid name "kcdimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 29,0:kcdimage: Class has no __init__ method
+W: 60,12:kcdimage._readheader: No exception type(s) specified
+E: 64,12:kcdimage._readheader: Instance of 'kcdimage' has no 'header_keys' member
+E: 68,27:kcdimage._readheader: Instance of 'kcdimage' has no 'header_keys' member
+E: 80,8:kcdimage.read: Instance of 'kcdimage' has no 'resetvals' member
+E: 81,17:kcdimage.read: Instance of 'kcdimage' has no '_open' member
+E:120,8:kcdimage.read: Instance of 'kcdimage' has no 'resetvals' member
+W: 74,26:kcdimage.read: Unused argument 'frame'
+C:127,4:kcdimage.checkData: Missing docstring
+W:122,8:kcdimage.read: Attribute 'pilimage' defined outside __init__
+W: 94,12:kcdimage.read: Attribute 'bpp' defined outside __init__
+W: 86,12:kcdimage.read: Attribute 'dim2' defined outside __init__
+W: 79,8:kcdimage.read: Attribute 'header' defined outside __init__
+W: 85,12:kcdimage.read: Attribute 'dim1' defined outside __init__
+W:119,8:kcdimage.read: Attribute 'bytecode' defined outside __init__
+W:109,8:kcdimage.read: Attribute 'data' defined outside __init__
 
 
 Report
 ======
-78 statements analysed.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |79     |64.75 |79       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |23     |18.85 |23       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |2      |1.64  |2        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |18     |14.75 |18       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+83 statements analysed.
 
 Messages by category
 --------------------
@@ -82,11 +30,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |1      |1        |=          |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |10     |10       |=          |
+|warning    |11     |11       |=          |
 +-----------+-------+---------+-----------+
 |error      |5      |5        |=          |
 +-----------+-------+---------+-----------+
@@ -105,13 +53,15 @@ Messages
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
+|W0613      |1           |
++-----------+------------+
 |W0402      |1           |
 +-----------+------------+
 |W0232      |1           |
 +-----------+------------+
-|R0903      |1           |
-+-----------+------------+
 |F0401      |1           |
++-----------+------------+
+|C0111      |1           |
 +-----------+------------+
 |C0103      |1           |
 +-----------+------------+
@@ -120,6 +70,61 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 5.26/10 (previous run: 5.26/10)
+Your code has been rated at 5.42/10 (previous run: 5.42/10)
 Just the bare minimum. Give it a bit more polish. 
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |85     |66.41 |85       |=          |
++----------+-------+------+---------+-----------+
+|docstring |23     |17.97 |23       |=          |
++----------+-------+------+---------+-----------+
+|comment   |2      |1.56  |2        |=          |
++----------+-------+------+---------+-----------+
+|empty     |18     |14.06 |18       |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (kcdimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |3          |=          |66.67       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
 

@@ -1,82 +1,75 @@
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded in __subclasscheck__' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
-Exception RuntimeError: 'maximum recursion depth exceeded while calling a Python object' in <type 'exceptions.AttributeError'> ignored
 Traceback (most recent call last):
   File "/usr/bin/pylint", line 4, in <module>
     lint.Run(sys.argv[1:])
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 891, in __init__
+  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 879, in __init__
     linter.check(args)
   File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 502, in check
-    self.check_astng_module(astng, checkers)
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 579, in check_astng_module
-    if implements(checker, IASTNGChecker)])
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 596, in astng_events
-    self.astng_events(child, checkers, _reversed_checkers)
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 596, in astng_events
-    self.astng_events(child, checkers, _reversed_checkers)
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 596, in astng_events
-    self.astng_events(child, checkers, _reversed_checkers)
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 596, in astng_events
-    self.astng_events(child, checkers, _reversed_checkers)
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 596, in astng_events
-    self.astng_events(child, checkers, _reversed_checkers)
-  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 593, in astng_events
-    checker.visit(astng)
-  File "/usr/lib/pymodules/python2.6/logilab/astng/utils.py", line 323, in visit
-    method(node)
-  File "/usr/lib/pymodules/python2.6/pylint/checkers/typecheck.py", line 239, in visit_callfunc
+    self.check_astng_module(astng, walker, rawcheckers)
+  File "/usr/lib/pymodules/python2.6/pylint/lint.py", line 574, in check_astng_module
+    walker.walk(astng)
+  File "/usr/lib/pymodules/python2.6/pylint/utils.py", line 528, in walk
+    self.walk(child)
+  File "/usr/lib/pymodules/python2.6/pylint/utils.py", line 528, in walk
+    self.walk(child)
+  File "/usr/lib/pymodules/python2.6/pylint/utils.py", line 528, in walk
+    self.walk(child)
+  File "/usr/lib/pymodules/python2.6/pylint/utils.py", line 528, in walk
+    self.walk(child)
+  File "/usr/lib/pymodules/python2.6/pylint/utils.py", line 528, in walk
+    self.walk(child)
+  File "/usr/lib/pymodules/python2.6/pylint/utils.py", line 525, in walk
+    cb(astng)
+  File "/usr/lib/pymodules/python2.6/pylint/checkers/typecheck.py", line 250, in visit_callfunc
     called = safe_infer(node.func)
-  File "/usr/lib/pymodules/python2.6/pylint/checkers/utils.py", line 42, in safe_infer
+  File "/usr/lib/pymodules/python2.6/pylint/checkers/utils.py", line 66, in safe_infer
     inferit.next()
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 203, in wrapped
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 302, in wrapped
     for res in _func(node, context, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 231, in wrapper
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 326, in wrapper
     for node in func(*args, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 253, in infer_getattr
+  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 211, in infer_getattr
     for owner in self.expr.infer(context):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 203, in wrapped
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 302, in wrapped
     for res in _func(node, context, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 367, in infer_binop
+  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 327, in infer_binop
     for val in _infer_binop(self.op, lhs, self.right, context, failures):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 350, in _infer_binop
+  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 310, in _infer_binop
     for valnode in operand1.infer_binary_op(operator, operand2, context):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 221, in wrapper
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 316, in wrapper
     for node in func(*args, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/protocols.py", line 78, in const_infer_binary_op
+  File "/usr/lib/pymodules/python2.6/logilab/astng/protocols.py", line 80, in const_infer_binary_op
     for other in other.infer(context):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 203, in wrapped
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 302, in wrapped
     for res in _func(node, context, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 231, in wrapper
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 326, in wrapper
     for node in func(*args, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 253, in infer_getattr
+  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 211, in infer_getattr
     for owner in self.expr.infer(context):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 203, in wrapped
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 302, in wrapped
     for res in _func(node, context, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 231, in wrapper
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 326, in wrapper
     for node in func(*args, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 253, in infer_getattr
+  File "/usr/lib/pymodules/python2.6/logilab/astng/inference.py", line 211, in infer_getattr
     for owner in self.expr.infer(context):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 203, in wrapped
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 302, in wrapped
     for res in _func(node, context, **kwargs):
-  File "/usr/lib/pymodules/python2.6/logilab/astng/infutils.py", line 177, in _infer_stmts
+  File "/usr/lib/pymodules/python2.6/logilab/astng/bases.py", line 124, in _infer_stmts
     raise InferenceError(str(stmt))
-logilab.astng._exceptions.InferenceError: AssName(self)
+logilab.astng.exceptions.InferenceError: AssName(self)
 
 ************* Module testedfimage
-W: 97: Bad indentation. Found 20 spaces, expected 12
-W:106: Bad indentation. Found 20 spaces, expected 12
-W: 26: No exception type(s) specified
-F: 28: Unable to import 'utilstest'
-C: 38:testflatedfs: Invalid name "testflatedfs" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 91:testbzipedf: Invalid name "testbzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
-C:100:testgzipedf: Invalid name "testgzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
-C:120:testedfs: Invalid name "testedfs" (should match [A-Z_][a-zA-Z0-9]+$)
-C:124:testedfs.setUp: Missing docstring
-C:152:testedfs.test_rebin: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:159:testedfcompresseddata: Invalid name "testedfcompresseddata" (should match [A-Z_][a-zA-Z0-9]+$)
-C:164:testedfcompresseddata.setUp: Missing docstring
-C:193:testedfmultiframe: Invalid name "testedfmultiframe" (should match [A-Z_][a-zA-Z0-9]+$)
-C:206:testedfmultiframe.setUp: Invalid name "Frame0File" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:207:testedfmultiframe.setUp: Invalid name "Frame1File" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:198:testedfmultiframe.setUp: Missing docstring
+W: 97,0: Bad indentation. Found 20 spaces, expected 12
+W:106,0: Bad indentation. Found 20 spaces, expected 12
+W: 25,0: No exception type(s) specified
+F: 28,0: Unable to import 'utilstest'
+C: 38,0:testflatedfs: Invalid name "testflatedfs" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 91,0:testbzipedf: Invalid name "testbzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
+C:100,0:testgzipedf: Invalid name "testgzipedf" (should match [A-Z_][a-zA-Z0-9]+$)
+C:120,0:testedfs: Invalid name "testedfs" (should match [A-Z_][a-zA-Z0-9]+$)
+C:152,8:testedfs.test_rebin: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:159,0:testedfcompresseddata: Invalid name "testedfcompresseddata" (should match [A-Z_][a-zA-Z0-9]+$)
+C:193,0:testedfmultiframe: Invalid name "testedfmultiframe" (should match [A-Z_][a-zA-Z0-9]+$)
+C:201,8:testedfmultiframe.setUp: Invalid name "Frame1Filename" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:200,8:testedfmultiframe.setUp: Invalid name "Frame0Filename" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E:212,73:testedfmultiframe.setUp: Instance of 'testedfmultiframe' has no 'Frame0File' member
+E:216,73:testedfmultiframe.setUp: Instance of 'testedfmultiframe' has no 'Frame1File' member
