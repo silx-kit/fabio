@@ -126,11 +126,11 @@ class mar345image(fabioimage):
             n = m.split(' ', 1)
             if n[0] == '':
                 continue
-            logger.debug("reading: %s %s", n[0], n[1])
             if n[0] in ('PROGRAM', 'DATE', 'SCANNER', 'HIGH', 'MULTIPLIER',
                         'GAIN', 'WAVELENGTH', 'DISTANCE', 'RESOLUTION',
                         'CHI', 'TWOTHETA', 'MODE', 'TIME', 'GENERATOR',
                         'MONOCHROMATOR', 'REMARK'):
+                logger.debug("reading: %s %s", n[0], n[1])
                 h[n[0]] = n[1].strip()
                 continue
             if n[0] in ('FORMAT'):
