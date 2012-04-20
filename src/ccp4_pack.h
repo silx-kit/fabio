@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+
+
 #define CCP4_PCK_BLOCK_HEADER_LENGTH 6
 #define CCP4_PCK_BLOCK_HEADER_LENGTH_V2 8
 /*array translating the number of errors per block*/
@@ -53,4 +55,4 @@ void *mar345_read_data(FILE *file, int ocount, int dim1, int dim2);
 void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2);
 void *ccp4_unpack(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
 void *ccp4_unpack_v2(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
-
+void pack_wordimage_c(short int *img, int x, int y, char *filename);

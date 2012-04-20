@@ -25,7 +25,7 @@ mar345_backend = Extension('mar345_IO',
                            include_dirs=get_numpy_include_dirs(),
                            sources=['src/mar345_IO.c',
                                     'src/ccp4_pack.c',
-                                    'src/pack_c.c',
+#                                    'src/pack_c.c',
                                       ])
 
 version = [eval(l.split("=")[1])

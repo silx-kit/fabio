@@ -16,6 +16,56 @@
    Public License along with this library; if not, write to the
    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301 USA */
+
+/* part of this code is freely adaped from pack_c.c from CCP4 distribution
+ * (which is also LGPL). The original author is Jan Pieter Abrahams
+ *
+						    jpa@mrc-lmb.cam.ac.uk
+
+   This file contains functions capable of compressing and decompressing
+   images. It is especially suited for X-ray diffraction patterns, or other
+   image formats in which orthogonal pixels contain "grey-levels" and
+   vary smoothly accross the image. Clean images measured by a MAR-research
+   image plate scanner containing two bytes per pixel can be compressed by
+   a factor of 3.5 to 4.5 .
+
+   Since the images are encoded in a byte-stream, there should be no problem
+   concerning big- or little ended machines: both will produce an identical
+   packed image.
+
+   Compression is achieved by first calculating the differences between every
+   pixel and the truncated value of four of its neighbours. For example:
+   the difference for a pixel at img[x, y] is:
+
+     img[x, y] - (int) (img[x-1, y-1] +
+                        img[x-1, y] +
+			img[x-1, y+1] +
+			img[x, y-1]) / 4
+
+   After calculating the differences, they are encoded in a packed array. A
+   packed array consists of consequitive chunks which have the following format:
+   - Three bits containing the logarithm base 2 of the number of pixels encoded
+     in the chunk.
+   - Three bits defining the number of bits used to encode one element of the
+     chunk. The value of these three bits is used as index in a lookup table
+     to get the actual number of bits of the elements of the chunk.
+        Note: in version 2, there are four bits in this position!! This allows
+              more efficient packing of synchrotron data! The routines in this
+	      sourcefile are backwards compatible.
+	                                             JPA, 26 June 1995
+   - The truncated pixel differences.
+
+   To compress an image, call pack_wordimage_c() or pack_longimage_c(). These
+   will append the packed image to any header information already written to
+   disk (take care that the file containing this information is closed before
+   calling). To decompress an image, call readpack_word_c() or
+   readpack_long_c(). These functions will find the start of the packed image
+   themselves, irrespective of the header format.
+
+                                            Jan Pieter Abrahams, 6 Jan 1993   */
+
+
+
 #ifndef _MSC_VER
 #include <stdint.h> 
 #else
@@ -25,6 +75,34 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#define PACKIDENTIFIER "\nCCP4 packed image, X: %04d, Y: %04d\n"
+/* This string defines the start of a packed image. An image file is scanned
+   until this string is encountered, the size of the unpacked image is
+   determined from the values of X and Y (which are written out as formatted
+   ascii numbers), and the packed image is expected to start immediately after
+   the null-character ending the string. */
+
+#define V2IDENTIFIER "\nCCP4 packed image V2, X: %04d, Y: %04d\n"
+/* This string defines the start of a packed image. An image file is scanned
+   until this string is encountered, the size of the unpacked image is
+   determined from the values of X and Y (which are written out as formatted
+   ascii numbers), and the packed image is expected to start immediately after
+   the null-character ending the string. */
+
+#define PACKBUFSIZ BUFSIZ
+/* Size of internal buffer in which the packed array is stored during transit
+   form an unpacked image to a packed image on disk. It is set to the size
+   used by the buffered io-routines given in <stdio.h>, but it could be
+   anything. */
+
+#define DIFFBUFSIZ 16384L
+/* Size of the internal buffer in which the differences between neighbouring
+   pixels are stored prior to compression. The image is therefore compressed
+   in DIFFBUFSIZ chunks. Decompression does not need to know what DIFFBUFSIZ
+   was when the image was compressed. By increasing this value, the image
+   can be compressed into a packed image which is a few bytes smaller. Do
+   not decrease the value of DIFFBUFSIZ below 128L. */
+
 #define CCP4_PCK_BLOCK_HEADER_LENGTH 6
 #define CCP4_PCK_BLOCK_HEADER_LENGTH_V2 8
 /*array translating the number of errors per block*/
@@ -50,6 +128,17 @@ static const unsigned long CCP4_PCK_MASK_32[]={0x00,
   0x1FFFFFF, 0x3FFFFFF, 0x7FFFFFF, 0xFFFFFFF, 0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF};
 
 #define pfail_nonzero(a) if ((a)) return NULL;
+#define max(x, y) (((x) > (y)) ? (x) : (y))
+#define min(x, y) (((x) < (y)) ? (x) : (y))
+#define shift_left(x, n)  (((x) & CCP4_PCK_MASK_32[32 - (n)]) << (n))
+/* This macro is included because the C standard does not properly define a
+   left shift: on some machines the bits which are pushed out at the left are
+   popped back in at the right. By masking, the macro prevents this behaviour.
+   If you are sure that your machine does not pops bits back in, you can speed
+   up the code insignificantly by taking out the masking. */
+
+#define shift_right(x, n) (((x) >> (n)) & CCP4_PCK_MASK_32[32 - (n)])
+
 
 void *mar345_read_data(FILE *file, int ocount, int dim1, int dim2);
 void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2);
@@ -648,3 +737,209 @@ void * ccp4_unpack_v2_string(
   }
   return (void *) unpacked_array;
 }
+/*
+#############################################################################
+################### Everything to write Mar345 ##############################
+#############################################################################
+*/
+
+/* Returns the number of bits neccesary to encode the longword-array 'chunk'
+   of size 'n' The size in bits of one encoded element can be 0, 4, 5, 6, 7,
+   8, 16 or 32. */
+int bits(		int32_t *chunk,		int n){
+  int size, maxsize, i;
+
+  for (i = 1, maxsize = abs(chunk[0]); i < n; ++i)
+    maxsize = max(maxsize, abs(chunk[i]));
+  if (maxsize == 0)
+    size = 0;
+  else if (maxsize < 8)
+    size = 4 * n;
+  else if (maxsize < 16)
+    size = 5 * n;
+  else if (maxsize < 32)
+    size = 6 * n;
+  else if (maxsize < 64)
+    size = 7 * n;
+  else if (maxsize < 128)
+    size = 8 * n;
+  else if (maxsize < 32768)
+    size = 16 * n;
+  else
+    size = 32 * n;
+  return(size);
+}
+
+/* Calculates the difference of WORD-sized pixels of an image with the
+   truncated mean value of four of its neighbours. 'x' is the number of fast
+   coordinates of the image 'img', 'y' is the number of slow coordinates,
+   'diffs' will contain the differences, 'done' defines the index of the pixel
+   where calculating the differences should start. A pointer to the last
+   difference is returned. Maximally DIFFBUFSIZ differences are returned in
+   'diffs'.*/
+int *diff_words(
+		short int *word,
+		int x,
+		int y,
+		int *diffs,
+		int done){
+  int i = 0;
+  int tot = x * y;
+
+  if (done == 0)
+  { *diffs = word[0];
+    ++diffs;
+    ++done;
+    ++i;}
+  while ((done <= x) && (i < DIFFBUFSIZ))
+  { *diffs = word[done] - word[done - 1];
+    ++diffs;
+    ++done;
+    ++i;}
+  while ((done < tot) && (i < DIFFBUFSIZ))
+  { *diffs = word[done] - (word[done - 1] + word[done - x + 1] +
+                           word[done - x] + word[done - x - 1] + 2) / 4;
+    ++diffs;
+    ++done;
+    ++i;}
+  return(--diffs);
+}
+
+/* Pack 'n' WORDS, starting with 'lng[0]' into the packed array 'target'. The
+   elements of such a packed array do not obey BYTE-boundaries, but are put one
+   behind the other without any spacing. Only the 'bitsiz' number of least
+   significant bits are used. The starting bit of 'target' is 'bit' (bits range
+   from 0 to 7). After completion of 'pack_words()', both '**target' and '*bit'
+   are updated and define the next position in 'target' from which packing
+   could continue. */
+void pack_longs(int32_t *lng,
+		int n,
+		char **target,
+		int *bit,
+		int size){
+  int32_t mask, window;
+  int valids, i, temp;
+  int temp_bit = *bit;
+  char *temp_target = *target;
+
+  if (size > 0)
+  { mask = CCP4_PCK_MASK_32[size];
+    for (i = 0; i < n; ++i)
+    { window = lng[i] & mask;
+      valids = size;
+      if (temp_bit == 0)
+        *temp_target = (char) window;
+      else
+      { temp = shift_left(window, temp_bit);
+        *temp_target |= temp;}
+      window = shift_right(window, 8 - temp_bit);
+      valids = valids - (8 - temp_bit);
+      if (valids < 0)
+        temp_bit += size;
+      else
+      { while (valids > 0)
+        { *++temp_target = (char) window;
+          window = shift_right(window, 8);
+          valids -= 8;}
+        temp_bit = 8 + valids;}
+      if (valids == 0)
+      { temp_bit = 0;
+        ++temp_target;}}
+  *target = temp_target;
+  *bit = (*bit + (size * n)) % 8;}
+}
+
+
+/* Packs 'nmbr' LONGs starting at 'lng[0]' into a packed array of 'bitsize'
+   sized elements. If the internal buffer in which the array is packed is full,
+   it is flushed to 'file', making room for more of the packed array. If
+   ('lng == NULL'), the buffer is flushed a swell. */
+void pack_chunk(int32_t *lng,
+		int nmbr,
+		int bitsize,
+		FILE *packfile){
+  static int32_t bitsize_encode[33] = {0, 0, 0, 0, 1, 2, 3, 4, 5, 0, 0,
+                                    0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0,
+                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7};
+  int32_t descriptor[2], i, j;
+  static char *buffer = NULL;
+  static char *buffree = NULL;
+  static int bitmark;
+
+  if (buffer == NULL)
+  { buffree = buffer = (char *) malloc(PACKBUFSIZ);
+    bitmark = 0;}
+  if (lng != NULL)
+  { for (i = nmbr, j = 0; i > 1; i /= 2, ++j);
+    descriptor[0] = j;
+    descriptor[1] = bitsize_encode[bitsize];
+    if ((buffree - buffer) > (PACKBUFSIZ - (130 * 4)))
+    { fwrite(buffer, sizeof(char), buffree - buffer, packfile);
+      buffer[0] = buffree[0];
+      buffree = buffer;}
+    pack_longs(descriptor, 2, &buffree, &bitmark, 3);
+    pack_longs(lng, nmbr, &buffree, &bitmark, bitsize);}
+  else
+  { int len=buffree-buffer;
+    if (bitmark!=0) len++;
+    fwrite(buffer, sizeof(char), len, packfile);
+    free((void *) buffer);
+    buffer = NULL;}}
+
+
+/* Pack image 'img', containing 'x * y' WORD-sized pixels into 'filename'. */
+void pack_wordimage_copen(short int *img,
+		int x,
+		int y,
+		FILE *packfile){
+	int chunksiz, packsiz, nbits, next_nbits, tot_nbits;
+	  int32_t buffer[DIFFBUFSIZ];
+	  int32_t *diffs = buffer;
+	  int32_t *end = diffs - 1;
+	  int32_t done = 0;
+
+	  fprintf(packfile, PACKIDENTIFIER, x, y);
+	  while (done < (x * y))
+	  { end = diff_words(img, x, y, buffer, done);
+		done += (end - buffer) + 1;
+		diffs = buffer;
+		while (diffs <= end)
+		{ packsiz = 0;
+		  chunksiz = 1;
+		  nbits = bits(diffs, 1);
+		  while (packsiz == 0)
+		  { if (end <= (diffs + chunksiz * 2))
+			  packsiz = chunksiz;
+			else
+			{ next_nbits = bits(diffs + chunksiz, chunksiz);
+			  tot_nbits = 2 * max(nbits, next_nbits);
+			  if (tot_nbits >= (nbits + next_nbits + 6))
+				packsiz = chunksiz;
+			  else
+			  { nbits = tot_nbits;
+				if (chunksiz == 64)
+				  packsiz = 128;
+				else
+				  chunksiz *= 2;}}}
+		   pack_chunk(diffs, packsiz, nbits / packsiz, packfile);
+		   diffs += packsiz;}}
+		pack_chunk(NULL, 0, 0, packfile);
+}
+
+
+
+void pack_wordimage_c(
+		short int *img,
+		int x, int y,
+		char *filename){
+  FILE *packfile = fopen(filename, "ab");
+  if (packfile == NULL) {
+    fprintf(stderr,"The file %s cannot be created!\n   ...giving up...\n",
+          filename);
+    exit(1);
+  } else {
+    pack_wordimage_copen(img, x, y, packfile);
+    fclose(packfile);
+  }
+}
+

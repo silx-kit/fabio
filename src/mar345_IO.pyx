@@ -19,18 +19,14 @@ import cython
 cimport numpy
 import numpy
 import os,tempfile
-#from libc.stdio cimport FILE
-ctypedef int LONG
-ctypedef short int WORD
-ctypedef char BYTE
 
-cdef extern from "pack_c.h":
-     void pack_wordimage_c(WORD*, int , int , char*) nogil
-#     void unpack_word(FILE *packfile, int x, int y, WORD *img) nogil
+#cdef extern from "pack_c.h":
+#     void pack_wordimage_c(short int*, int , int , char*) nogil
+#     void unpack_word(FILE *packfile, int x, int y, short int *img) nogil
 
 cdef extern from "ccp4_pack.h":
-#    void* mar345_read_data(FILE *file, int ocount, int dim1, int dim2) nogil
     void* mar345_read_data_string(char *instream, int ocount, int dim1, int dim2) nogil
+    void pack_wordimage_c(short int*, int , int , char*) nogil
     
 @cython.boundscheck(False)
 def compress_pck(numpy.ndarray inputArray not None):
@@ -45,8 +41,8 @@ def compress_pck(numpy.ndarray inputArray not None):
     dim0 = inputArray.shape[0]
     dim1 = inputArray.shape[1]
     cdef numpy.ndarray[numpy.uint16_t, ndim = 1] data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
-    cdef WORD * cdata
-    cdata = < WORD *> data.data
+    cdef short int * cdata
+    cdata = < short int *> data.data
     (fd,fname) = tempfile.mkstemp()
     name = <char*>  fname
     with nogil:
