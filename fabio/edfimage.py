@@ -12,8 +12,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
          email:erik.knudsen@risoe.dk
 
         + Jon Wright, ESRF
-        
-2011-02-11: Mostly rewritten by Jérôme Kieffer (Jerome.Kieffer@esrf.eu) 
+
+2011-02-11: Mostly rewritten by Jérôme Kieffer (Jerome.Kieffer@esrf.eu)
             European Synchrotron Radiation Facility
             Grenoble (France)
 
@@ -302,9 +302,9 @@ class Frame(object):
         """
         @param force_type: type of the dataset to be enforced like "float64" or "uint16"
         @type force_type: string or numpy.dtype
-        @param fit2dMode: enforce compatibility with fit2d and starts countimg number of images at 1 
+        @param fit2dMode: enforce compatibility with fit2d and starts countimg number of images at 1
         @type fit2dMode: boolean
-        @return: ascii header block 
+        @return: ascii header block
         @rtype: python string with the concatenation of the ascii header and the binary data block
         """
         if force_type is not None:
@@ -456,9 +456,9 @@ class edfimage(fabioimage):
     def _readHeaderBlock(infile):
         """
         Read in a header in some EDF format from an already open file
-        
+
         @param infile: file object open in read mode
-        @return: string (or None if no header was found. 
+        @return: string (or None if no header was found.
         """
 
         block = infile.read(BLOCKSIZE)
@@ -511,7 +511,14 @@ class edfimage(fabioimage):
             frame = Frame(number=self.nframes)
             self.__frames.append(frame)
             size = frame.parseheader(block)
-            frame.rawData = infile.read(size)
+            try:
+                frame.rawData = infile.read(size)
+            except Exception, error:
+                logger.warning("infile is %s" % infile)
+                logger.warning("size is %s" % size)
+                logger.error("It seams this error occurs under windows when reading a (large-) file over  network: %s ", error)
+                raise Exception(error)
+
             if len(frame.rawData) != size:
                 logger.warning("Non complete datablock: got %s, expected %s" % (len(frame.rawData), size))
                 bContinue = False
@@ -620,10 +627,10 @@ class edfimage(fabioimage):
         Try to write a file
         check we can write zipped also
         mimics that fabian was writing uint16 (we sometimes want floats)
-        
+
         @param force_type: can be numpy.uint16 or simply "float"
         @return: None
-        
+
         """
 
         outfile = self._open(fname, mode="wb")
@@ -636,7 +643,7 @@ class edfimage(fabioimage):
     def appendFrame(self, frame=None, data=None, header=None):
         """
         Method used add a frame to an EDF file
-        @param frame: frame to append to edf image 
+        @param frame: frame to append to edf image
         @type frame: instance of Frame
         @return: None
         """
@@ -660,7 +667,7 @@ class edfimage(fabioimage):
 
 
 ################################################################################
-# Properties definition for header, data, header_keys and capsHeader 
+# Properties definition for header, data, header_keys and capsHeader
 ################################################################################
     def getNbFrames(self):
         """
@@ -669,7 +676,7 @@ class edfimage(fabioimage):
         return len(self.__frames)
     def setNbFrames(self, val):
         """
-        Setter for number of frames ... should do nothing. Here just to avoid bugs  
+        Setter for number of frames ... should do nothing. Here just to avoid bugs
         """
         if val != len(self.__frames):
             logger.warning("trying to set the number of frames ")
@@ -727,7 +734,7 @@ class edfimage(fabioimage):
     def getData(self):
         """
         getter for edf Data
-        @return: data for current frame  
+        @return: data for current frame
         @rtype: numpy.ndarray
         """
         npaData = None
@@ -746,7 +753,7 @@ class edfimage(fabioimage):
     def setData(self, _data):
         """
         Enforces the propagation of the data to the list of frames
-        @param _data: numpy array representing data 
+        @param _data: numpy array representing data
         """
         try:
             self.__frames[self.currentframe].data = _data
@@ -764,15 +771,15 @@ class edfimage(fabioimage):
 
     def getCapsHeader(self):
         """
-        getter for edf headers keys in upper case 
-        @return: data for current frame  
+        getter for edf headers keys in upper case
+        @return: data for current frame
         @rtype: dict
         """
         return self.__frames[self.currentframe].capsHeader
     def setCapsHeader(self, _data):
         """
         Enforces the propagation of the header_keys to the list of frames
-        @param _data: numpy array representing data 
+        @param _data: numpy array representing data
         """
         self.__frames[self.currentframe].capsHeader = _data
     def delCapsHeader(self):

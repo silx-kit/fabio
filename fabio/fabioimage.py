@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 """
 
@@ -8,11 +8,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
          Frederiksborgvej 399
          DK-4000 Roskilde
          email:erik.knudsen@risoe.dk
-         
+
          and Jon Wright, Jerome Kieffer: ESRF
 
 """
-import os, gzip, bz2, StringIO, types, logging, sys
+import os, gzip, bz2, StringIO, types, logging, sys, tempfile
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -24,9 +24,9 @@ import fabioutils, converters
 
 
 class fabioStream(StringIO.StringIO):
-    """ 
+    """
     just an interface providing the name and mode property to a StringIO
-    
+
     BugFix for MacOSX
     """
     def __init__(self, data, fname=None, mode="r"):
@@ -101,7 +101,7 @@ class fabioimage(object):
     def getclassname(self):
         """
         Retrieves the name of the class
-        @return: the name of the class 
+        @return: the name of the class
         """
         if self._classname is None:
             self._classname = str(self.__class__).replace("<class '", "").replace("'>", "").split(".")[-1]
@@ -156,7 +156,7 @@ class fabioimage(object):
             mode1 = mode2[0]
         else:
             raise Exception("Unknown numpy type " + str(self.data.dtype.type))
-        # 
+        #
         # hack for byteswapping for PIL in MacOS
         testval = numpy.array((1, 0), numpy.uint8).view(numpy.uint16)[0]
         if  testval == 1:
@@ -194,7 +194,7 @@ class fabioimage(object):
 
     def make_slice(self, coords):
         """
-        Convert a len(4) set of coords into a len(2) 
+        Convert a len(4) set of coords into a len(2)
         tuple (pair) of slice objects
         the latter are immutable, meaning the roi can be cached
         """
@@ -205,9 +205,9 @@ class fabioimage(object):
                 coords[0:3:2] = [coords[2], coords[0]]
             if coords[1] > coords[3]:
                 coords[1:4:2] = [coords[3], coords[1]]
-            #in fabian: normally coordinates are given as (x,y) whereas 
-            # a matrix is given as row,col 
-            # also the (for whichever reason) the image is flipped upside 
+            #in fabian: normally coordinates are given as (x,y) whereas
+            # a matrix is given as row,col
+            # also the (for whichever reason) the image is flipped upside
             # down wrt to the matrix hence these tranformations
             fixme = (self.dim2 - coords[3] - 1,
                      coords[0] ,
@@ -218,8 +218,8 @@ class fabioimage(object):
 
 
     def integrate_area(self, coords):
-        """ 
-        Sums up a region of interest 
+        """
+        Sums up a region of interest
         if len(coords) == 4 -> convert coords to slices
         if len(coords) == 2 -> use as slices
         floor -> ? removed as unused in the function.
@@ -274,8 +274,8 @@ class fabioimage(object):
         self.roi = self.slice = self.area_sum = None
 
     def rebin(self, x_rebin_fact, y_rebin_fact, keep_I=True):
-        """ 
-        Rebin the data and adjust dims 
+        """
+        Rebin the data and adjust dims
         @param x_rebin_fact: x binning factor
         @param y_rebin_fact: y binning factor
         @param keep_I: shall the signal increase ?
@@ -283,7 +283,7 @@ class fabioimage(object):
         @type y_rebin_fact: int
         @type keep_I: boolean
 
-        
+
         """
         if self.data == None:
             raise Exception('Please read in the file you wish to rebin first')
@@ -383,8 +383,8 @@ class fabioimage(object):
     def _open(self, fname, mode="rb"):
         """
         Try to handle compressed files, streams, shared memory etc
-        Return an object which can be used for "read" and "write" 
-        ... FIXME - what about seek ? 
+        Return an object which can be used for "read" and "write"
+        ... FIXME - what about seek ?
         """
         fileObject = None
         self.filename = fname
@@ -421,7 +421,7 @@ class fabioimage(object):
                            python_uncompress,
                            mode='rb'):
         """
-        Try to transparently handle gzip / bzip without always getting python 
+        Try to transparently handle gzip / bzip without always getting python
         performance
         """
         # assert that python modules are always OK based on performance benchmark
@@ -429,7 +429,11 @@ class fabioimage(object):
         fobj = None
         if self._need_a_real_file and mode[0] == "r":
             fo = python_uncompress(fname, mode)
-            fobj = os.tmpfile()
+#            fobj = os.tmpfile()
+            #problem when not administrator under certain flavors of windows
+            tmpfd, tmpfn = tempfile.mkstemp()
+            os.close(tmpfd)
+            fobj = open(tmpfn, "w+b")
             fobj.write(fo.read())
             fo.close()
             fobj.seek(0)
@@ -443,7 +447,7 @@ class fabioimage(object):
     def convert(self, dest):
         """
         Convert a fabioimage object into another fabioimage object (with possible conversions)
-        @param dest: destination type "EDF", "edfimage" or the class itself 
+        @param dest: destination type "EDF", "edfimage" or the class itself
         """
         if type(dest) in types.StringTypes:
             dest = dest.lower()
