@@ -585,7 +585,7 @@ class CIF(dict):
         if "_chemical_name_common" in self:
             t = self["_chemical_name_common"].split()[0]
         elif _strFilename is not None:
-            t = os.path.splitext(os.path.split(_strFilename.strip())[1])[0]
+            t = os.path.splitext(os.path.split(str(_strFilename).strip())[1])[0]
         else:
             t = ""
         lstStrCif.append("data_%s" % (t))
