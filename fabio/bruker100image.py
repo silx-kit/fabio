@@ -9,7 +9,7 @@ except ImportError:
     Image = None
 
 from brukerimage import brukerimage
-import readbytestream
+from readbytestream import readbytestream 
 
 class bruker100image(brukerimage):
 
