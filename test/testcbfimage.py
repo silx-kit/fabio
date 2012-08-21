@@ -147,6 +147,21 @@ class test_cbfimage_reader(unittest.TestCase):
             self.assertTrue(key in other.header, "Key %s is in header" % key)
             self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s [%s|%s]" % (key, obj.header[key], other.header[key]))
 
+    def test_unicode(self):
+        """
+        Test if an image can be read and saved to an unicode named
+        """
+        name = unicode(os.path.basename(self.cbf_filename))
+        obj = fabio.open(self.cbf_filename)
+        obj.write(os.path.join(self.tempdir, name))
+        other = fabio.open(os.path.join(self.tempdir, name))
+        self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+        for key in obj.header:
+            if key in[ "filename", "X-Binary-Size-Padding"]:
+                continue
+            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s [%s|%s]" % (key, obj.header[key], other.header[key]))
+
 
 def test_suite_all_cbf():
     testSuite = unittest.TestSuite()
@@ -155,6 +170,8 @@ def test_suite_all_cbf():
     testSuite.addTest(test_cbfimage_reader("test_byte_offset"))
     testSuite.addTest(test_cbfimage_reader("test_consitency_manual"))
     testSuite.addTest(test_cbfimage_reader("test_consitency_convert"))
+    testSuite.addTest(test_cbfimage_reader("test_unicode"))
+
     return testSuite
 
 if __name__ == '__main__':
