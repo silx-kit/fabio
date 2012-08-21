@@ -684,9 +684,16 @@ class edfimage(fabioimage):
             raise RuntimeError("edfimage.fastReadData is only valid with another file: %s does not exist" % (filename))
         data = None
         frame = self.__frames[self.currentframe]
-        start = frame.start
-        start = frame.size
+        with open(filename, "rb")as f:
+            f.seek(frame.start)
+            raw = f.read(frame.size)
+        try:
+            data = numpy.fromstring(raw, dtype=self.bytecode)
+            data.shape = self.data.shape
+        except Exception, err :
+            logger.error("unable to convert file content to numpy array: %s", err)
         return data
+
 ################################################################################
 # Properties definition for header, data, header_keys and capsHeader
 ################################################################################

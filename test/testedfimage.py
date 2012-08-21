@@ -260,6 +260,20 @@ class testedfmultiframe(unittest.TestCase):
         self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
         self.assertEqual((fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(), 0, "openimage_multiframes: Same data for frame 1")
 
+class testedffastread(unittest.TestCase):
+    """
+    Read some test images with their data-block compressed.
+    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
+    """
+    def setUp(self):
+        self.refFilename = UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
+        self.fastFilename = self.refFilename[:-4]
+    def test_fastread(self):
+        ref = fabio.open(self.refFilename)
+        refdata = ref.data
+        obt = ref.fastReadData(self.fastFilename)
+        self.assertEqual(abs(obt - refdata).max(), 0, "testedffastread: Same data")
+
 def test_suite_all_edf():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testflatedfs("test_read"))
@@ -277,6 +291,8 @@ def test_suite_all_edf():
     testSuite.addTest(testedfmultiframe("text_next_mono"))
     testSuite.addTest(testedfmultiframe("test_previous_multi"))
     testSuite.addTest(testedfmultiframe("test_openimage_multiframes"))
+    testSuite.addTest(testedffastread("test_fastread"))
+
     return testSuite
 
 if __name__ == '__main__':
