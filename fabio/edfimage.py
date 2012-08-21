@@ -16,9 +16,9 @@ Authors: Henning O. Sorensen & Erik Knudsen
 2011-02-11: Mostly rewritten by Jérôme Kieffer (Jerome.Kieffer@esrf.eu)
             European Synchrotron Radiation Facility
             Grenoble (France)
-
+2012-08-20: laisy read of data in EDF
 """
-
+from __future__ import with_statement
 import os, logging, types
 logger = logging.getLogger("edfimage")
 import numpy
@@ -106,15 +106,15 @@ class Frame(object):
                 self.capsHeader[key.upper()] = key
             except AttributeError:
                 logger.warning("Header key %s is not a string" % key)
-
-        self.rawData = None
         self._data = data
         self.dims = []
         self.dim1 = 0
         self.dim2 = 0
-        self.size = None
+        self.start = None # Position of start of raw data in file
+        self.size = None  # size of raw data in file
+        self.file = None  # opened file object with locking capabilities !!!
         self.bpp = None
-        self.bytecode = None
+        self._bytecode = None
         if (number is not None) and isinstance(number, int):
             self.iFrame = number
         else:
@@ -188,13 +188,13 @@ class Frame(object):
             else:
                 logger.debug("No Dim_3 -> it is a 2D image")
                 iDim = None
-        if self.bytecode is None:
+        if self._bytecode is None:
             if "DATATYPE" in self.capsHeader:
-                self.bytecode = DATA_TYPES[self.header[self.capsHeader['DATATYPE']]]
+                self._bytecode = DATA_TYPES[self.header[self.capsHeader['DATATYPE']]]
             else:
-                self.bytecode = numpy.uint16
+                self._bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
-        self.bpp = len(numpy.array(0, self.bytecode).tostring())
+        self.bpp = len(numpy.array(0, self._bytecode).tostring())
         calcsize *= self.bpp
         if (self.size is None):
             self.size = calcsize
@@ -233,16 +233,23 @@ class Frame(object):
         data = None
         if self._data is not None:
             data = self._data
-        elif self.rawData is None:
+        elif self.file is None:
             data = self._data
         else:
-            if self.bytecode is None:
+            if self._bytecode is None:
                 if "DATATYPE" in self.capsHeader:
-                    self.bytecode = DATA_TYPES[self.header[self.capsHeader["DATATYPE"]]]
+                    self._bytecode = DATA_TYPES[self.header[self.capsHeader["DATATYPE"]]]
                 else:
-                    self.bytecode = numpy.uint16
+                    self._bytecode = numpy.uint16
             dims = self.dims[:]
             dims.reverse()
+            with self.file.lock:
+                if self.file.closed:
+                    logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.filename))
+                    return
+                else:
+                    self.file.seek(self.start)
+                    fileData = self.file.read(self.size)
 
             if ("COMPRESSION" in self.capsHeader):
                 compression = self.header[self.capsHeader["COMPRESSION"]].upper()
@@ -255,26 +262,26 @@ class Frame(object):
                     except ImportError, error:
                         logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
-                        myData = byte_offset.analyseCython(self.rawData, size=uncompressed_size)
-                        rawData = myData.astype(self.bytecode).tostring()
+                        myData = byte_offset.analyseCython(fileData, size=uncompressed_size)
+                        rawData = myData.astype(self._bytecode).tostring()
                         self.size = uncompressed_size
                 elif compression == "NONE":
-                    rawData = self.rawData
+                    rawData = fileData
                 elif "GZIP" in compression:
-                    rawData = decGzip(self.rawData)
+                    rawData = decGzip(fileData)
                     self.size = uncompressed_size
                 elif "BZ" in compression :
-                    rawData = decBzip2(self.rawData)
+                    rawData = decBzip2(fileData)
                     self.size = uncompressed_size
                 elif "Z" in compression :
-                    rawData = decZlib(self.rawData)
+                    rawData = decZlib(fileData)
                     self.size = uncompressed_size
                 else:
                     logger.warning("Unknown compression scheme %s" % compression)
-                    rawData = self.rawData
+                    rawData = fileData
 
             else:
-                rawData = self.rawData
+                rawData = fileData
 
             expected = self.size
             obtained = len(rawData)
@@ -285,18 +292,24 @@ class Frame(object):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
             if self.swap_needed():
-                data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
+                data = numpy.fromstring(rawData, self._bytecode).byteswap().reshape(tuple(dims))
             else:
-                data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
+                data = numpy.fromstring(rawData, self._bytecode).reshape(tuple(dims))
             self._data = data
-            self.rawData = None #no need to keep garbage in memory
-            self.bytecode = data.dtype.type
+            self._bytecode = data.dtype.type
         return data
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
     data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
+    def getByteCode(self):
+        if self._bytecode is None:
+            self._bytecode = self.data.dtype.type
 
+        return self._bytecode
+    def setByteCode(self, _iVal):
+        self._bytecode = _iVal
+    bytecode = property(getByteCode, setByteCode)
 
     def getEdfBlock(self, force_type=None, fit2dMode=False):
         """
@@ -387,7 +400,6 @@ class Frame(object):
             line = strKey + " = " + strValue + " ;\n"
             preciseSize += len(line)
             listHeader.append(line)
-#            print type(line), line
         if preciseSize > approxHeaderSize:
             logger.error("I expected the header block only at %s in fact it is %s" % (approxHeaderSize, preciseSize))
             for  idx, line in enumerate(listHeader[:]):
@@ -413,6 +425,7 @@ class edfimage(fabioimage):
 
     def __init__(self, data=None , header=None, header_keys=None, frames=None):
         self.currentframe = 0
+        self.filesize = None
         try:
             dim = len(data.shape)
         except Exception, error: #IGNORE:W0703
@@ -486,11 +499,7 @@ class edfimage(fabioimage):
             logger.error("Unable to locate start of the binary section")
             offset = None
         if offset is not None:
-            try:
-                infile.seek(offset, os.SEEK_CUR)
-            except TypeError: #JK20110407 bugfix specific to MacOSX
-                pos = infile.tell()
-                infile.seek(pos + offset)
+            infile.seek(offset, os.SEEK_CUR)
         return block[start:end]
 
 
@@ -501,7 +510,6 @@ class edfimage(fabioimage):
         @type infile: file object open in read mode
         """
         self.__frames = []
-
         bContinue = True
         while bContinue:
             block = self._readHeaderBlock(infile)
@@ -509,18 +517,22 @@ class edfimage(fabioimage):
                 bContinue = False
                 break
             frame = Frame(number=self.nframes)
-            self.__frames.append(frame)
             size = frame.parseheader(block)
+            frame.file = infile
+            frame.start = infile.tell()
+            frame.size = size
+            self.__frames += [frame]
             try:
-                frame.rawData = infile.read(size)
+                infile.seek(size, os.SEEK_CUR)
             except Exception, error:
                 logger.warning("infile is %s" % infile)
+                logger.warning("Position is %s" % infile.tell())
                 logger.warning("size is %s" % size)
-                logger.error("It seams this error occurs under windows when reading a (large-) file over  network: %s ", error)
+                logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
-            if len(frame.rawData) != size:
-                logger.warning("Non complete datablock: got %s, expected %s" % (len(frame.rawData), size))
+            if  frame.start + size > infile.size:
+                logger.warning("Non complete datablock: got %s, expected %s" % (infile.size - frame.start, size))
                 bContinue = False
                 break
 
@@ -531,7 +543,6 @@ class edfimage(fabioimage):
                     missing.append(item)
             if len(missing) > 0:
                 logger.info("EDF file %s frame %i misses mandatory keys: %s " % (self.filename, i, " ".join(missing)))
-
         self.currentframe = 0
 
 
@@ -546,9 +557,7 @@ class edfimage(fabioimage):
         infile = self._open(fname, "rb")
         self._readheader(infile)
         if frame is None:
-            if self.data is None:
-                self.data = self.unpack()
-    #            self.bytecode = self.data.dtype.type
+            pass
         elif frame < self.nframes:
             self = self.getframe(frame)
         else:
@@ -571,7 +580,6 @@ class edfimage(fabioimage):
                 return True
             else:
                 return False
-
 
     def unpack(self):
         """
@@ -665,7 +673,20 @@ class edfimage(fabioimage):
         else:
             self.__frames.pop(frameNb)
 
-
+    def fastReadData(self, filename=None):
+        """
+        This is a special method that will read and return the data from another file ...
+        The aim is performances, ... but only supports uncompressed files 
+         
+        @return: data from another file using positions from current edfimage
+        """
+        if (filename is None) or not os.path.isfile(filename):
+            raise RuntimeError("edfimage.fastReadData is only valid with another file: %s does not exist" % (filename))
+        data = None
+        frame = self.__frames[self.currentframe]
+        start = frame.start
+        start = frame.size
+        return data
 ################################################################################
 # Properties definition for header, data, header_keys and capsHeader
 ################################################################################
@@ -747,7 +768,6 @@ class edfimage(fabioimage):
             if self.currentframe < len(self.__frames):
                 self.__frames.append(Frame())
                 npaData = self.__frames[self.currentframe].data
-#        logger.warning("Data of %s, currentframe=%s  is type %s" % (id(self), self.currentframe, type(npaData)))
         return npaData
 
     def setData(self, _data):
@@ -828,7 +848,6 @@ class edfimage(fabioimage):
             if self.currentframe < len(self.__frames):
                 self.__frames.append(Frame())
                 self.__frames[self.currentframe].bytecode = _iVal
-
     bytecode = property(getByteCode, setByteCode)
     def getBpp(self):
         return self.__frames[self.currentframe].bpp

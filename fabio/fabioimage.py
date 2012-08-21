@@ -12,7 +12,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
          and Jon Wright, Jerome Kieffer: ESRF
 
 """
-import os, gzip, bz2, StringIO, types, logging, sys, tempfile
+from __future__ import with_statement
+import os, types, logging, sys, tempfile
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -21,22 +22,6 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 import fabioutils, converters
-
-
-class fabioStream(StringIO.StringIO):
-    """
-    just an interface providing the name and mode property to a StringIO
-
-    BugFix for MacOSX
-    """
-    def __init__(self, data, fname=None, mode="r"):
-        StringIO.StringIO.__init__(self, data)
-        self.closed = False
-        if fname == None:
-            self.name = "fabioStream"
-        else:
-            self.name = fname
-        self.mode = mode
 
 
 class fabioimage(object):
@@ -396,12 +381,12 @@ class fabioimage(object):
             if os.path.splitext(fname)[1] == ".gz":
                 fileObject = self._compressed_stream(fname,
                                        fabioutils.COMPRESSORS['.gz'],
-                                       gzip.GzipFile,
+                                       fabioutils.GzipFile,
                                        mode)
             elif os.path.splitext(fname)[1] == '.bz2':
                 fileObject = self._compressed_stream(fname,
                                        fabioutils.COMPRESSORS['.bz2'],
-                                       bz2.BZ2File,
+                                       fabioutils.BZ2File,
                                        mode)
             #
             # Here we return the file even though it may be bzipped or gzipped
@@ -409,7 +394,7 @@ class fabioimage(object):
             #
             # FIXME - should we fix that or complain about the daft naming?
             else:
-                fileObject = open(fname, mode)
+                fileObject = fabioutils.File(fname, mode)
             if "name" not in dir(fileObject):
                 fileObject.name = fname
 
@@ -433,13 +418,13 @@ class fabioimage(object):
             #problem when not administrator under certain flavors of windows
             tmpfd, tmpfn = tempfile.mkstemp()
             os.close(tmpfd)
-            fobj = open(tmpfn, "w+b")
+            fobj = fabioutils.File(tmpfn, "w+b")
             fobj.write(fo.read())
             fo.close()
             fobj.seek(0)
         elif self._need_a_seek_to_read and mode[0] == "r":
             fo = python_uncompress(fname, mode)
-            fobj = fabioStream(fo.read(), fname, mode)
+            fobj = fabioutils.StringIO(fo.read(), fname, mode)
         else:
             fobj = python_uncompress(fname, mode)
         return fobj
@@ -541,7 +526,7 @@ def test():
 
 
     clean()
-
+    import gzip, bz2
     gzip.open("testfile.gz", "wb").write("{ hello }")
     fout = obj._open("testfile.gz")
     readin = fout.read()

@@ -4,9 +4,11 @@
 """
 General purpose utilities functions for fabio
 """
-
-import re, os, logging
+from __future__ import with_statement
+import re, os, logging, threading
+import StringIO as stringIO
 logger = logging.getLogger("fabioutils")
+from compression import bz2, gzip
 
 
 FILETYPES = {
@@ -282,3 +284,214 @@ def toAscii(name, excluded=None):
     out = [i for i in str(name) if i in ascii]
     return "".join(out)
 
+class StringIO(stringIO.StringIO):
+    """
+    just an interface providing the name and mode property to a StringIO
+
+    BugFix for MacOSX mainly
+    """
+    def __init__(self, data, fname=None, mode="r"):
+        stringIO.StringIO.__init__(self, data)
+        self.closed = False
+        if fname == None:
+            self.name = "fabioStream"
+        else:
+            self.name = fname
+        self.mode = mode
+        self.lock = threading.Lock()
+        self._size = None
+    def getSize(self):
+        if self._size is None:
+            logger.debug("Measuring size of %s" % self.name)
+            with self.lock:
+                pos = self.tell()
+                self.seek(0, os.SEEK_END)
+                self._size = self.tell()
+                self.seek(pos)
+        return self._size
+    size = property(getSize)
+
+
+#    def seek(self, offset, whence=os.SEEK_SET):
+#        """
+#        Move to new file position.
+#
+#        Argument offset is a byte count.  Optional argument whence defaults to
+#        0 (offset from start of file, offset should be >= 0); other values are 1
+#        (move relative to current position, positive or negative), and 2 (move
+#        relative to end of file, usually negative, although many platforms allow
+#        seeking beyond the end of a file).  If the file is opened in text mode,
+#        only offsets returned by tell() are legal.  Use of other offsets causes
+#        undefined behavior.
+#        
+#        This is a wrapper for seek to ensure compatibility with old MacOSX python 2.5
+#        """
+#        try:
+#                StringIO.StringIO.seek(self, offset, whence)
+#        except TypeError: #JK20110407 bugfix specific to MacOSX
+#                if whence == os.SEEK_SET:
+#                    StringIO.StringIO.seek(self, offset)
+#                elif whence == os.SEEK_CUR:
+#                    StringIO.StringIO.seek(self, offset + self.tell())
+#                elif whence == os.SEEK_END:
+#NEED LOCKING
+#                    StringIO.StringIO.seek(self, -1)
+#                    StringIO.StringIO.seek(self, offset + self.tell())
+
+
+
+
+class File(file):
+    """
+    wrapper for "file" with locking
+    """
+    def __init__(self, name, mode="rb", buffering=0):
+        """file(name[, mode[, buffering]]) -> file object
+            
+        Open a file.  The mode can be 'r', 'w' or 'a' for reading (default),
+        writing or appending.  The file will be created if it doesn't exist
+        when opened for writing or appending; it will be truncated when
+        opened for writing.  Add a 'b' to the mode for binary files.
+        Add a '+' to the mode to allow simultaneous reading and writing.
+        If the buffering argument is given, 0 means unbuffered, 1 means line
+        buffered, and larger numbers specify the buffer size.  The preferred way
+        to open a file is with the builtin open() function.
+        Add a 'U' to mode to open the file for input with universal newline
+        support.  Any line ending in the input file will be seen as a '\n'
+        in Python.  Also, a file so opened gains the attribute 'newlines';
+        the value for this attribute is one of None (no newline read yet),
+        '\r', '\n', '\r\n' or a tuple containing all the newline types seen.
+        
+        'U' cannot be combined with 'w' or '+' mode.
+        """
+        file.__init__(self, name, mode, buffering)
+        self.lock = threading.Lock()
+        self._size = None
+    def getSize(self):
+        if self._size is None:
+            logger.debug("Measuring size of %s" % self.name)
+            with self.lock:
+                pos = self.tell()
+                self.seek(0, os.SEEK_END)
+                self._size = self.tell()
+                self.seek(pos)
+        return self._size
+    size = property(getSize)
+
+class UnknownCompressedFile(File):
+    """
+    wrapper for "File" with locking
+    """
+    def __init__(self, name, mode="rb", buffering=0):
+        logger.warning("No decompressor found for this type of file (are gzip anf bz2 installed ???")
+        File.__init__(self, name, mode, buffering)
+
+if gzip is None:
+    GzipFile = UnknownCompressedFile
+else:
+    class GzipFile(gzip.GzipFile):
+        """
+        Just a wrapper forgzip.GzipFile providing the correct seek capabilities for python 2.5   
+        """
+        def __init__(self, filename=None, mode=None, compresslevel=9, fileobj=None):
+            """
+            Wrapper with locking for constructor for the GzipFile class.
+            
+            At least one of fileobj and filename must be given a
+            non-trivial value.
+            
+            The new class instance is based on fileobj, which can be a regular
+            file, a StringIO object, or any other object which simulates a file.
+            It defaults to None, in which case filename is opened to provide
+            a file object.
+            
+            When fileobj is not None, the filename argument is only used to be
+            included in the gzip file header, which may includes the original
+            filename of the uncompressed file.  It defaults to the filename of
+            fileobj, if discernible; otherwise, it defaults to the empty string,
+            and in this case the original filename is not included in the header.
+            
+            The mode argument can be any of 'r', 'rb', 'a', 'ab', 'w', or 'wb',
+            depending on whether the file will be read or written.  The default
+            is the mode of fileobj if discernible; otherwise, the default is 'rb'.
+            Be aware that only the 'rb', 'ab', and 'wb' values should be used
+            for cross-platform portability.
+            
+            The compresslevel argument is an integer from 1 to 9 controlling the
+            level of compression; 1 is fastest and produces the least compression,
+            and 9 is slowest and produces the most compression.  The default is 9.
+            """
+            gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
+            self.lock = threading.Lock()
+            self._size = None
+            self.closed = False
+        def getSize(self):
+            if self._size is None:
+                logger.debug("Measuring size of %s" % self.name)
+                with self.lock:
+                    pos = self.tell()
+                    all = self.read()
+                    self._size = self.tell()
+                    self.seek(pos)
+            return self._size
+        size = property(getSize)
+
+        def seek(self, offset, whence=os.SEEK_SET):
+            """
+            Move to new file position.
+    
+            Argument offset is a byte count.  Optional argument whence defaults to
+            0 (offset from start of file, offset should be >= 0); other values are 1
+            (move relative to current position, positive or negative), and 2 (move
+            relative to end of file, usually negative, although many platforms allow
+            seeking beyond the end of a file).  If the file is opened in text mode,
+            only offsets returned by tell() are legal.  Use of other offsets causes
+            undefined behavior.
+            
+            This is a wrapper for seek to ensure compatibility with old python 2.5
+            """
+            if whence == os.SEEK_SET:
+                gzip.GzipFile.seek(self, offset)
+            elif whence == os.SEEK_CUR:
+                    gzip.GzipFile.seek(self, offset + self.tell())
+            elif whence == os.SEEK_END:
+                    gzip.GzipFile.seek(self, -1)
+                    gzip.GzipFile.seek(self, offset + self.tell())
+        def close(self):
+            self.closed = True
+            gzip.GzipFile.close(self)
+if bz2 is None:
+    BZ2File = UnknownCompressedFile
+else:
+    class BZ2File(bz2.BZ2File):
+        "Wrapper with lock"
+        def __init__(self, name , mode='r', buffering=0, compresslevel=9):
+            """
+            BZ2File(name [, mode='r', buffering=0, compresslevel=9]) -> file object
+            
+            Open a bz2 file. The mode can be 'r' or 'w', for reading (default) or
+            writing. When opened for writing, the file will be created if it doesn't
+            exist, and truncated otherwise. If the buffering argument is given, 0 means
+            unbuffered, and larger numbers specify the buffer size. If compresslevel
+            is given, must be a number between 1 and 9.
+            
+            Add a 'U' to mode to open the file for input with universal newline
+            support. Any line ending in the input file will be seen as a '\n' in
+            Python. Also, a file so opened gains the attribute 'newlines'; the value
+            for this attribute is one of None (no newline read yet), '\r', '\n',
+            '\r\n' or a tuple containing all the newline types seen. Universal
+            newlines are available only when reading.
+            """
+            bz2.BZ2File.__init__(self, name , mode, buffering, compresslevel)
+            self.lock = threading.Lock()
+            self._size = None
+        def getSize(self):
+            if self._size is None:
+                logger.debug("Measuring size of %s" % self.name)
+                with self.lock:
+                    pos = self.tell()
+                    all = self.read()
+                    self._size = self.tell()
+                    self.seek(pos)
+            return self._size
+        size = property(getSize)
