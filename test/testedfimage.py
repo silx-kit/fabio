@@ -69,11 +69,11 @@ History-1 = something=something else;
         """ check readable"""
         obj = edfimage()
         obj.read(self.filename)
-        self.assertEqual(obj.dim1 , 256)
-        self.assertEqual(obj.dim2 , 256)
-        self.assertEqual(obj.bpp , 4)
-        self.assertEqual(obj.bytecode, numpy.float32)
-        self.assertEqual(obj.data.shape, (256, 256))
+        self.assertEqual(obj.dim1 , 256, msg="dim1!=256 for file: %s" % self.filename)
+        self.assertEqual(obj.dim2 , 256, msg="dim2!=256 for file: %s" % self.filename)
+        self.assertEqual(obj.bpp , 4, msg="bpp!=4 for file: %s" % self.filename)
+        self.assertEqual(obj.bytecode, numpy.float32, msg="bytecode!=flot32 for file: %s" % self.filename)
+        self.assertEqual(obj.data.shape, (256, 256), msg="shape!=(256,256) for file: %s" % self.filename)
         self.assertEqual(obj.header['History-1'],
                          "something=something else")
 
