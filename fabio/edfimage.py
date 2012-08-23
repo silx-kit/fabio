@@ -676,7 +676,7 @@ class edfimage(fabioimage):
     def fastReadData(self, filename=None):
         """
         This is a special method that will read and return the data from another file ...
-        The aim is performances, ... but only supports uncompressed files 
+        The aim is performances, ... but only supports uncompressed files. 
          
         @return: data from another file using positions from current edfimage
         """
@@ -693,6 +693,45 @@ class edfimage(fabioimage):
         except Exception, err :
             logger.error("unable to convert file content to numpy array: %s", err)
         return data
+
+    def fastReadROI(self, filename, coords=None):
+        """
+        Method reading Region of Interest of another file  based on metadata available in current edfimage.
+        The aim is performances, ... but only supports uncompressed files.
+        
+        @return: ROI-data from another file using positions from current edfimage
+        @rtype: numpy 2darray
+        """
+        if (filename is None) or not os.path.isfile(filename):
+            raise RuntimeError("edfimage.fastReadData is only valid with another file: %s does not exist" % (filename))
+        data = None
+        frame = self.__frames[self.currentframe]
+
+        if len(coords) == 4:
+            slice1 = self.make_slice(coords)
+        elif len(coords) == 2 and isinstance(coords[0], slice) and \
+                                  isinstance(coords[1], slice):
+            slice1 = coords
+        else:
+            logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)
+            return
+        d1 = self.data.shape[-1]
+        start0 = slice1[0].start
+        start1 = slice1[1].start
+        slice2 = (slice(0, slice1[0].stop - start0, slice1[0].step),
+                   slice(0, slice1[1].stop - start1, slice1[1].step))
+        start = frame.start + self.bpp * (d1 * start0 + start1)
+        size = self.bpp * ((slice2[0].stop) * d1)
+        with open(filename, "rb")as f:
+            f.seek(start)
+            raw = f.read(size)
+        try:
+            data = numpy.fromstring(raw, dtype=self.bytecode)
+            data.shape = -1, d1
+        except Exception, err :
+            logger.error("unable to convert file content to numpy array: %s", err)
+        return data[slice2]
+
 
 ################################################################################
 # Properties definition for header, data, header_keys and capsHeader

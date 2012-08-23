@@ -354,7 +354,7 @@ class fabioimage(object):
         This implementation is the trivial one, just doing read and crop
         """
         self.read(filename, frame)
-        if len(coord) == 4:
+        if len(coords) == 4:
             self.slice = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
                                   isinstance(coords[1], slice):
