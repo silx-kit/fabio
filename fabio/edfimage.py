@@ -26,6 +26,14 @@ from fabioimage import fabioimage
 from fabioutils import isAscii, toAscii
 from compression import decBzip2, decGzip, decZlib
 
+def nice_int(s):
+    """ workaround that int('1.0') raises an exception """
+    try:
+        return int(s)
+    except ValueError:
+        return int(float(s))
+        
+
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"    :  numpy.int8,
                 "Signed8"       :  numpy.int8,
@@ -147,12 +155,12 @@ class Frame(object):
         # Compute image size
         if "SIZE" in self.capsHeader:
             try:
-                self.size = int(self.header[self.capsHeader["SIZE"]])
+                self.size = nice_int(self.header[self.capsHeader["SIZE"]])
             except ValueError:
                 logger.warning("Unable to convert to integer : %s %s " % (self.capsHeader["SIZE"], self.header[self.capsHeader["SIZE"]]))
         if "DIM_1" in self.capsHeader:
             try:
-                dim1 = int(self.header[self.capsHeader['DIM_1']])
+                dim1 = nice_int(self.header[self.capsHeader['DIM_1']])
             except ValueError:
                 logger.error("Unable to convert to integer Dim_1: %s %s" % (self.capsHeader["DIM_1"], self.header[self.capsHeader["DIM_1"]]))
             else:
@@ -162,7 +170,7 @@ class Frame(object):
             logger.error("No Dim_1 in headers !!!")
         if "DIM_2" in self.capsHeader:
             try:
-                dim2 = int(self.header[self.capsHeader['DIM_2']])
+                dim2 = nice_int(self.header[self.capsHeader['DIM_2']])
             except ValueError:
                 logger.error("Unable to convert to integer Dim_3: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
             else:
@@ -171,20 +179,24 @@ class Frame(object):
         else:
             logger.error("No Dim_2 in headers !!!")
         iDim = 3
+        # JON: this appears to be for nD images, but we don't treat those
         while iDim is not None:
             strDim = "DIM_%i" % iDim
             if strDim in self.capsHeader:
                 try:
-                    dim3 = int(self.header[self.capsHeader[strDim]])
+                    dim3 = nice_int(self.header[self.capsHeader[strDim]])
                 except ValueError:
                     logger.error("Unable to convert to integer %s: %s %s"
                                   % (strDim, self.capsHeader[strDim], self.header[self.capsHeader[strDim]]))
                     dim3 = None
                     iDim = None
                 else:
-                    calcsize *= dim3
-                    self.dims.append(dim3)
+                    if dim3 > 1:
+                        # Otherwise treat dim3==1 as a 2D image
+                        calcsize *= dim3
+                        self.dims.append(dim3)
                     iDim += 1
+                    
             else:
                 logger.debug("No Dim_3 -> it is a 2D image")
                 iDim = None
