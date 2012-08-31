@@ -23,16 +23,9 @@ import os, logging, types
 logger = logging.getLogger("edfimage")
 import numpy
 from fabioimage import fabioimage
-from fabioutils import isAscii, toAscii
+from fabioutils import isAscii, toAscii, nice_int
 from compression import decBzip2, decGzip, decZlib
 
-def nice_int(s):
-    """ workaround that int('1.0') raises an exception """
-    try:
-        return int(s)
-    except ValueError:
-        return int(float(s))
-        
 
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"    :  numpy.int8,
@@ -61,7 +54,9 @@ DATA_TYPES = {  "SignedByte"    :  numpy.int8,
                 "Double"        :  numpy.float64,
                 "DoubleValue"   :  numpy.float64,
                 "FloatIEEE64"   :  numpy.float64,
-                "DoubleIEEE64"  :  numpy.float64
+                "DoubleIEEE64"  :  numpy.float64,
+                "FloatIEEE128"  :  numpy.float128,
+                "QuadrupleValue":  numpy.float128,
                 }
 
 NUMPY_EDF_DTYPE = {"int8"       :"SignedByte",
@@ -73,7 +68,8 @@ NUMPY_EDF_DTYPE = {"int8"       :"SignedByte",
                    "uint32"     :"UnsignedInteger",
                    "uint64"     :"Unsigned64",
                    "float32"    :"FloatValue",
-                   "float64"    :"DoubleValue"
+                   "float64"    :"DoubleValue",
+                   "float128"   :"QuadrupleValue",
              }
 
 MINIMUM_KEYS = ['HEADERID',
@@ -196,7 +192,7 @@ class Frame(object):
                         calcsize *= dim3
                         self.dims.append(dim3)
                     iDim += 1
-                    
+
             else:
                 logger.debug("No Dim_3 -> it is a 2D image")
                 iDim = None

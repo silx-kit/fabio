@@ -284,6 +284,18 @@ def toAscii(name, excluded=None):
     out = [i for i in str(name) if i in ascii]
     return "".join(out)
 
+def nice_int(s):
+    """ 
+    Workaround that int('1.0') raises an exception 
+    
+    @param s: string to be converted to integer
+    """
+    try:
+        return int(s)
+    except ValueError:
+        return int(float(s))
+
+
 class StringIO(stringIO.StringIO):
     """
     just an interface providing the name and mode property to a StringIO
