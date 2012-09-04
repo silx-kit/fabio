@@ -260,7 +260,7 @@ class OXDimage(fabioimage):
             ascii_headers.append("TIME=%s" % self.header["Time"])
         else:
 
-            ascii_headers.append("TIME=%s" % time.ctime)
+            ascii_headers.append("TIME=%s" % time.ctime())
 
         header = (linesep.join(ascii_headers)).ljust(256)
 
