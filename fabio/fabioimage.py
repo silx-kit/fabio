@@ -49,7 +49,7 @@ class fabioimage(object):
             self.header = self.checkHeader(header)
         self.header_keys = self.header.keys() # holds key ordering
         if self.data is not None:
-            self.dim1, self.dim2 = self.data.shape
+            self.dim2, self.dim1 = self.data.shape
         else:
             self.dim1 = self.dim2 = 0
         self.bytecode = None     # numpy typecode
