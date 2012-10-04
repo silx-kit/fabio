@@ -58,6 +58,8 @@ DATA_TYPES = {  "SignedByte"    :  numpy.int8,
 try:
     DATA_TYPES["FloatIEEE128" ] =  numpy.float128
     DATA_TYPES["DoubleIEEE128" ] =  numpy.float128
+    DATA_TYPES["QuadrupleValue" ] =  numpy.float128
+
 except AttributeError:
     # not in your numpy
     pass
