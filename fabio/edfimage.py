@@ -54,10 +54,13 @@ DATA_TYPES = {  "SignedByte"    :  numpy.int8,
                 "Double"        :  numpy.float64,
                 "DoubleValue"   :  numpy.float64,
                 "FloatIEEE64"   :  numpy.float64,
-                "DoubleIEEE64"  :  numpy.float64,
-                "FloatIEEE128"  :  numpy.float128,
-                "QuadrupleValue":  numpy.float128,
-                }
+                "DoubleIEEE64"  :  numpy.float64}
+try:
+    DATA_TYPES["FloatIEEE128" ] =  numpy.float128
+    DATA_TYPES["DoubleIEEE128" ] =  numpy.float128
+except AttributeError:
+    # not in your numpy
+    pass
 
 NUMPY_EDF_DTYPE = {"int8"       :"SignedByte",
                    "int16"      :"SignedShort",
@@ -143,8 +146,9 @@ class Frame(object):
         for line in block.split(';'):
             if '=' in line:
                 key, val = line.split('=' , 1)
-                key = key.strip()
-                self.header[key] = val.strip()
+                # Why would someone put null bytes in a header?
+                key = key.replace("\x00"," ").strip()
+                self.header[key] = val.replace("\x00"," ").strip()
                 self.capsHeader[key.upper()] = key
                 self.header_keys.append(key)
 
