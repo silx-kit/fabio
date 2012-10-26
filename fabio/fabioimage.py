@@ -64,6 +64,7 @@ class fabioimage(object):
         self.nframes = 1
         self.currentframe = 0
         self.filename = None
+        self.filenumber = None
 
     @staticmethod
     def checkHeader(header=None):
@@ -81,7 +82,6 @@ class fabioimage(object):
         Empty for fabioimage but may be populated by others classes, especially for format accepting only integers
         """
         return data
-
 
     def getclassname(self):
         """
@@ -373,6 +373,7 @@ class fabioimage(object):
         """
         fileObject = None
         self.filename = fname
+        self.filenumber = fabioutils.extract_filenumber(fname)
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
             return fname
