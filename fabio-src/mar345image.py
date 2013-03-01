@@ -147,26 +147,17 @@ class mar345image(fabioimage):
     def write(self, fname):
         """Try to write mar345 file. This is still in beta version.
         It uses CCP4 (LGPL) PCK1 algo from JPA"""
+        headers = self._writeheader()
+        hotpixels = self._high_intensity_pixel_records()
+        compressed_stream = compPCK(self.data)
         try:
             outfile = self._open(fname, mode="wb")
-        except Exception, error:
-            logger.error("Error153 in writing file %s: %s" % (fname, error))
-        try:
-            outfile.write(self._writeheader())
-        except Exception, error:
-            logger.error("Error157 in writing file %s: %s" % (fname, error))
-        try:
-            outfile.write(self._high_intensity_pixel_records())
-        except Exception, error:
-            logger.error("Error161 in writing file %s: %s" % (fname, error))
-        try:
-            outfile.write(compPCK(self.data))
-        except Exception, error:
-            logger.error("Error165 in writing file %s: %s" % (fname, error))
-        try:
+            outfile.write(headers)
+            outfile.write(hotpixels)
+            outfile.write(compressed_stream)
             outfile.close()
         except Exception, error:
-            logger.error("Error169 in writing file %s: %s" % (fname, error))
+            logger.error("Error in writing file %s: %s" % (fname, error))
 
     def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
         """
@@ -176,7 +167,7 @@ class mar345image(fabioimage):
         try:
             version = sys.modules["fabio"].version
         except (KeyError, AttributeError):
-            version = "0.0.9"
+            version = "0.1.1"
         lnsep = len(linesep)
 
         self.header["HIGH"] = str(self.nb_overflow_pixels())
