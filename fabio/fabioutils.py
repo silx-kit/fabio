@@ -150,15 +150,16 @@ def deconstruct_filename(filename):
     """
     Break up a filename to get image type and number
     """
-    direc , name = os.path.split(filename)
-    if len(direc) == 0:
-        direc = None
-    parts = os.path.split(name)[-1].split(".")
-    # loop back from end
+    direc, name = os.path.split(filename)
+    direc = direc or None
+    parts = name.split(".")
     compressed = False
+    stem = parts[0]
     extn = ""
     postnum = ""
     ndigit = 4
+    num = None
+    typ = None
     if parts[-1] in ["gz", "bz2"]:
         extn = "." + parts[-1]
         parts = parts[:-1]
@@ -167,11 +168,12 @@ def deconstruct_filename(filename):
         typ = FILETYPES[parts[-1]]
         extn = "." + parts[-1] + extn
         try:
-            stem , numstring, postnum = numstem(".".join(parts[:-1]))
+            stem, numstring, postnum = numstem(".".join(parts[:-1]))
             num = int(numstring)
             ndigit = len(numstring)
-        except:
+        except Exception, err:
             # There is no number - hence make num be None, not 0
+            logger.debug("l176: %s" % err)
             num = None
             stem = "".join(parts[:-1])
     else:
@@ -179,27 +181,27 @@ def deconstruct_filename(filename):
         if len(parts) == 1:
             # Probably GE format stem_numb
             parts2 = parts[0].split("_")
-            try:
+            if parts2[-1].isdigit():
                 num = int(parts2[-1])
                 ndigit = len(parts2[-1])
                 typ = ['GE']
                 stem = "_".join(parts2[:-1]) + "_"
-            except:
-                pass
         else:
             try:
                 num = int(parts[-1])
                 ndigit = len(parts[-1])
                 typ = ['bruker']
                 stem = ".".join(parts[:-1]) + "."
-            except:
+            except Exception, err:
+                logger.debug("l196: %s" % err)
                 typ = None
                 extn = "." + parts[-1] + extn
                 try:
                     stem , numstring, postnum = numstem(".".join(parts[:-1]))
                     num = int(numstring)
                     ndigit = len(numstring)
-                except:
+                except Exception, err:
+                    logger.debug("l204: %s" % err)
                     raise
             #            raise Exception("Cannot decode "+filename)
     obj = filename_object(stem,
