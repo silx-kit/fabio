@@ -150,14 +150,14 @@ class mar345image(fabioimage):
         headers = self._writeheader()
         hotpixels = self._high_intensity_pixel_records()
         compressed_stream = compPCK(self.data)
-#        try:
-        outfile = self._open(fname, mode="wb")
-        outfile.write(headers)
-        outfile.write(hotpixels)
-        outfile.write(compressed_stream)
-        outfile.close()
-#        except Exception, error:
-#            logger.error("Error in writing file %s: %s" % (fname, error))
+        try:
+            outfile = self._open(fname, mode="wb")
+            outfile.write(headers)
+            outfile.write(hotpixels)
+            outfile.write(compressed_stream)
+            outfile.close()
+        except Exception, error:
+            logger.error("Error in writing file %s: %s" % (fname, error))
 
     def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
         """
