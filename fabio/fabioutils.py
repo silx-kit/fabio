@@ -436,9 +436,13 @@ else:
             and 9 is slowest and produces the most compression.  The default is 9.
             """
             gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
-            self.lock = threading.Lock()
+            self.lock = threading.Semaphore()
             self._size = None
-            self.closed = False
+
+        @property
+        def closed(self):
+            return self.fileobj is None
+
         def getSize(self):
             if self._size is None:
                 logger.debug("Measuring size of %s" % self.name)
@@ -471,9 +475,7 @@ else:
             elif whence == os.SEEK_END:
                     gzip.GzipFile.seek(self, -1)
                     gzip.GzipFile.seek(self, offset + self.tell())
-        def close(self):
-            self.closed = True
-            gzip.GzipFile.close(self)
+
 if bz2 is None:
     BZ2File = UnknownCompressedFile
 else:
