@@ -67,6 +67,7 @@ class testMAR345(unittest.TestCase):
     def test_write(self):
         "Test writing with self consistency at the fabio level"
         for line in TESTIMAGES.split("\n"):
+            logger.debug("Processing file: %s" % line)
             vals = line.split()
             name = vals[0]
             obj = mar345image()
