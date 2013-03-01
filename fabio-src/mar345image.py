@@ -149,12 +149,24 @@ class mar345image(fabioimage):
         It uses CCP4 (LGPL) PCK1 algo from JPA"""
         try:
             outfile = self._open(fname, mode="wb")
+        except Exception, error:
+            logger.error("Error153 in writing file %s: %s" % (fname, error))
+        try:
             outfile.write(self._writeheader())
+        except Exception, error:
+            logger.error("Error157 in writing file %s: %s" % (fname, error))
+        try:
             outfile.write(self._high_intensity_pixel_records())
+        except Exception, error:
+            logger.error("Error161 in writing file %s: %s" % (fname, error))
+        try:
             outfile.write(compPCK(self.data))
+        except Exception, error:
+            logger.error("Error165 in writing file %s: %s" % (fname, error))
+        try:
             outfile.close()
         except Exception, error:
-            logger.error("Error in writing file %s: %s" % (fname, error))
+            logger.error("Error169 in writing file %s: %s" % (fname, error))
 
     def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
         """
