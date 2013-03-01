@@ -419,11 +419,9 @@ else:
             def getSize(self):
                 if self.__size is None:
                     logger.debug("Measuring size of %s" % self.name)
-                    with self.lock:
-                        pos = self.tell()
-                        all = self.read()
-                        self.__size = self.tell()
-                        self.seek(pos)
+                    with open(self.filename, "rb") as f:
+                        f.seek(-4)
+                        self.__size = numpy.fromstring(f.read(4), dtype=numpy.uint32)
                 return self.__size
             def setSize(self, value):
                 self.__size = value
