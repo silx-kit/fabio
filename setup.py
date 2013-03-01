@@ -29,7 +29,7 @@ mar345_backend = Extension('mar345_IO',
                                       ])
 
 version = [eval(l.split("=")[1])
-           for l in open(op.join(op.dirname(op.abspath(__file__)), "fabio", "__init__.py"))
+           for l in open(op.join(op.dirname(op.abspath(__file__)), "fabio-src", "__init__.py"))
            if l.strip().startswith("version")][0]
 
 
@@ -44,6 +44,6 @@ setup(name='fabio',
       ext_package="fabio",
       ext_modules=[mar345_backend, cf_backend, byteOffset_backend],
       packages=["fabio"],
-      package_dir={"fabio": "fabio" },
+      package_dir={"fabio": "fabio-src" },
       test_suite="test"
       )
