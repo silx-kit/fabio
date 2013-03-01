@@ -452,7 +452,9 @@ else:
                     self._size = self.tell()
                     self.seek(pos)
             return self._size
-        size = property(getSize)
+        def setSize(self, value):
+            self._size = value
+        size = property(getSize, setSize)
 
         def seek(self, offset, whence=os.SEEK_SET):
             """
