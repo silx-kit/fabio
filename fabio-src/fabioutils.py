@@ -5,7 +5,7 @@
 General purpose utilities functions for fabio
 """
 from __future__ import with_statement
-import re, os, logging, threading
+import re, os, logging, threading, sys
 import StringIO as stringIO
 logger = logging.getLogger("fabioutils")
 from compression import bz2, gzip
@@ -312,48 +312,21 @@ class StringIO(stringIO.StringIO):
         else:
             self.name = fname
         self.mode = mode
-        self.lock = threading.Lock()
-        self._size = None
+        self.lock = threading.Semaphore()
+        self.__size = None
+    
     def getSize(self):
-        if self._size is None:
+        if self.__size is None:
             logger.debug("Measuring size of %s" % self.name)
             with self.lock:
                 pos = self.tell()
                 self.seek(0, os.SEEK_END)
-                self._size = self.tell()
+                self.__size = self.tell()
                 self.seek(pos)
-        return self._size
-    size = property(getSize)
-
-
-#    def seek(self, offset, whence=os.SEEK_SET):
-#        """
-#        Move to new file position.
-#
-#        Argument offset is a byte count.  Optional argument whence defaults to
-#        0 (offset from start of file, offset should be >= 0); other values are 1
-#        (move relative to current position, positive or negative), and 2 (move
-#        relative to end of file, usually negative, although many platforms allow
-#        seeking beyond the end of a file).  If the file is opened in text mode,
-#        only offsets returned by tell() are legal.  Use of other offsets causes
-#        undefined behavior.
-#        
-#        This is a wrapper for seek to ensure compatibility with old MacOSX python 2.5
-#        """
-#        try:
-#                StringIO.StringIO.seek(self, offset, whence)
-#        except TypeError: #JK20110407 bugfix specific to MacOSX
-#                if whence == os.SEEK_SET:
-#                    StringIO.StringIO.seek(self, offset)
-#                elif whence == os.SEEK_CUR:
-#                    StringIO.StringIO.seek(self, offset + self.tell())
-#                elif whence == os.SEEK_END:
-#NEED LOCKING
-#                    StringIO.StringIO.seek(self, -1)
-#                    StringIO.StringIO.seek(self, offset + self.tell())
-
-
-
+        return self.__size
+    def setSize(self, size):
+        self.__size = size
+    size = property(getSize, setSize)
 
 class File(file):
     """
@@ -379,18 +352,20 @@ class File(file):
         'U' cannot be combined with 'w' or '+' mode.
         """
         file.__init__(self, name, mode, buffering)
-        self.lock = threading.Lock()
-        self._size = None
+        self.lock = threading.Semaphore()
+        self.__size = None
     def getSize(self):
-        if self._size is None:
+        if self.__size is None:
             logger.debug("Measuring size of %s" % self.name)
             with self.lock:
                 pos = self.tell()
                 self.seek(0, os.SEEK_END)
-                self._size = self.tell()
+                self.__size = self.tell()
                 self.seek(pos)
-        return self._size
-    size = property(getSize)
+        return self.__size
+    def setSize(self, size):
+        self.__size = size
+    size = property(getSize, setSize)
 
 class UnknownCompressedFile(File):
     """
@@ -437,46 +412,47 @@ else:
             """
             gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
             self.lock = threading.Semaphore()
-            self._size = None
+            self.__size = None
 
-        @property
-        def closed(self):
-            return self.fileobj is None
 
         def getSize(self):
-            if self._size is None:
+            if self.__size is None:
                 logger.debug("Measuring size of %s" % self.name)
                 with self.lock:
                     pos = self.tell()
                     all = self.read()
-                    self._size = self.tell()
+                    self.__size = self.tell()
                     self.seek(pos)
-            return self._size
+            return self.__size
         def setSize(self, value):
-            self._size = value
+            self.__size = value
         size = property(getSize, setSize)
+        if sys.version_info < (2, 7):
+            @property
+            def closed(self):
+                return self.fileobj is None
 
-        def seek(self, offset, whence=os.SEEK_SET):
-            """
-            Move to new file position.
-    
-            Argument offset is a byte count.  Optional argument whence defaults to
-            0 (offset from start of file, offset should be >= 0); other values are 1
-            (move relative to current position, positive or negative), and 2 (move
-            relative to end of file, usually negative, although many platforms allow
-            seeking beyond the end of a file).  If the file is opened in text mode,
-            only offsets returned by tell() are legal.  Use of other offsets causes
-            undefined behavior.
-            
-            This is a wrapper for seek to ensure compatibility with old python 2.5
-            """
-            if whence == os.SEEK_SET:
-                gzip.GzipFile.seek(self, offset)
-            elif whence == os.SEEK_CUR:
-                    gzip.GzipFile.seek(self, offset + self.tell())
-            elif whence == os.SEEK_END:
-                    gzip.GzipFile.seek(self, -1)
-                    gzip.GzipFile.seek(self, offset + self.tell())
+            def seek(self, offset, whence=os.SEEK_SET):
+                """
+                Move to new file position.
+        
+                Argument offset is a byte count.  Optional argument whence defaults to
+                0 (offset from start of file, offset should be >= 0); other values are 1
+                (move relative to current position, positive or negative), and 2 (move
+                relative to end of file, usually negative, although many platforms allow
+                seeking beyond the end of a file).  If the file is opened in text mode,
+                only offsets returned by tell() are legal.  Use of other offsets causes
+                undefined behavior.
+                
+                This is a wrapper for seek to ensure compatibility with old python 2.5
+                """
+                if whence == os.SEEK_SET:
+                    gzip.GzipFile.seek(self, offset)
+                elif whence == os.SEEK_CUR:
+                        gzip.GzipFile.seek(self, offset + self.tell())
+                elif whence == os.SEEK_END:
+                        gzip.GzipFile.seek(self, -1)
+                        gzip.GzipFile.seek(self, offset + self.tell())
 
 if bz2 is None:
     BZ2File = UnknownCompressedFile
@@ -501,15 +477,17 @@ else:
             newlines are available only when reading.
             """
             bz2.BZ2File.__init__(self, name , mode, buffering, compresslevel)
-            self.lock = threading.Lock()
-            self._size = None
+            self.lock = threading.Semaphore()
+            self.__size = None
         def getSize(self):
-            if self._size is None:
+            if self.__size is None:
                 logger.debug("Measuring size of %s" % self.name)
                 with self.lock:
                     pos = self.tell()
                     all = self.read()
-                    self._size = self.tell()
+                    self.__size = self.tell()
                     self.seek(pos)
-            return self._size
-        size = property(getSize)
+            return self.__size
+        def setSize(self, value):
+            self.__size = value
+        size = property(getSize, setSize)
