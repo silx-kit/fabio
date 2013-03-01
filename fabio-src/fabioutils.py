@@ -415,19 +415,19 @@ else:
             self.__size = None
 
 
-        def getSize(self):
-            if self.__size is None:
-                logger.debug("Measuring size of %s" % self.name)
-                with self.lock:
-                    pos = self.tell()
-                    all = self.read()
-                    self.__size = self.tell()
-                    self.seek(pos)
-            return self.__size
-        def setSize(self, value):
-            self.__size = value
-        size = property(getSize, setSize)
         if sys.version_info < (2, 7):
+            def getSize(self):
+                if self.__size is None:
+                    logger.debug("Measuring size of %s" % self.name)
+                    with self.lock:
+                        pos = self.tell()
+                        all = self.read()
+                        self.__size = self.tell()
+                        self.seek(pos)
+                return self.__size
+            def setSize(self, value):
+                self.__size = value
+            size = property(getSize, setSize)
             @property
             def closed(self):
                 return self.fileobj is None
