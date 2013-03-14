@@ -3,7 +3,7 @@
           "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>fabio.datIO.columnfile</title>
+  <title>fabio.fabioutils.StringIO</title>
   <link rel="stylesheet" href="epydoc.css" type="text/css" />
   <script type="text/javascript" src="epydoc.js"></script>
 </head>
@@ -38,8 +38,8 @@
     <td width="100%">
       <span class="breadcrumbs">
         <a href="fabio-module.html">Package&nbsp;fabio</a> ::
-        <a href="fabio.datIO-module.html">Module&nbsp;datIO</a> ::
-        Class&nbsp;columnfile
+        <a href="fabio.fabioutils-module.html">Module&nbsp;fabioutils</a> ::
+        Class&nbsp;StringIO
       </span>
     </td>
     <td>
@@ -49,24 +49,24 @@
     onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
         <tr><td align="right"><span class="options"
             >[<a href="frames.html" target="_top">frames</a
-            >]&nbsp;|&nbsp;<a href="fabio.datIO.columnfile-class.html"
+            >]&nbsp;|&nbsp;<a href="fabio.fabioutils.StringIO-class.html"
             target="_top">no&nbsp;frames</a>]</span></td></tr>
       </table>
     </td>
   </tr>
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
-<h1 class="epydoc">Class columnfile</h1><p class="nomargin-top"><span class="codelink"><a href="fabio.datIO-pysrc.html#columnfile">source&nbsp;code</a></span></p>
+<h1 class="epydoc">Class StringIO</h1><p class="nomargin-top"><span class="codelink"><a href="fabio.fabioutils-pysrc.html#StringIO">source&nbsp;code</a></span></p>
 <pre class="base-tree">
-object --+    
-         |    
- <a href="fabio.datIO.fabiodata-class.html">fabiodata</a> --+
-             |
-            <strong class="uidshort">columnfile</strong>
+StringIO.StringIO --+
+                    |
+                   <strong class="uidshort">StringIO</strong>
 </pre>
 
 <hr />
-<p>Concrete fabiodata class</p>
+<p>just an interface providing the name and mode property to a 
+  StringIO</p>
+  <p>BugFix for MacOSX mainly</p>
 
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
@@ -91,12 +91,45 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="fabio.datIO.columnfile-class.html#read" class="summary-sig-name">read</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">fname</span>,
-        <span class="summary-sig-arg">frame</span>=<span class="summary-sig-default">None</span>)</span><br />
-      To be overridden by format specific subclasses</td>
+          <td><span class="summary-sig"><a href="fabio.fabioutils.StringIO-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">data</span>,
+        <span class="summary-sig-arg">fname</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">mode</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">r</code><code class="variable-quote">'</code></span>)</span></td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="fabio.datIO-pysrc.html#columnfile.read">source&nbsp;code</a></span>
+            <span class="codelink"><a href="fabio.fabioutils-pysrc.html#StringIO.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="getSize"></a><span class="summary-sig-name">getSize</span>(<span class="summary-sig-arg">self</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.fabioutils-pysrc.html#StringIO.getSize">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="setSize"></a><span class="summary-sig-name">setSize</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">size</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fabio.fabioutils-pysrc.html#StringIO.setSize">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -106,22 +139,21 @@ object --+
   </tr>
   <tr>
     <td colspan="2" class="summary">
-    <p class="indent-wrapped-lines"><b>Inherited from <code><a href="fabio.datIO.fabiodata-class.html">fabiodata</a></code></b>:
-      <code><a href="fabio.datIO.fabiodata-class.html#__init__">__init__</a></code>
-      </p>
-    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
-      <code>__delattr__</code>,
-      <code>__format__</code>,
-      <code>__getattribute__</code>,
-      <code>__hash__</code>,
-      <code>__new__</code>,
-      <code>__reduce__</code>,
-      <code>__reduce_ex__</code>,
-      <code>__repr__</code>,
-      <code>__setattr__</code>,
-      <code>__sizeof__</code>,
-      <code>__str__</code>,
-      <code>__subclasshook__</code>
+    <p class="indent-wrapped-lines"><b>Inherited from <code>StringIO.StringIO</code></b>:
+      <code>__iter__</code>,
+      <code>close</code>,
+      <code>flush</code>,
+      <code>getvalue</code>,
+      <code>isatty</code>,
+      <code>next</code>,
+      <code>read</code>,
+      <code>readline</code>,
+      <code>readlines</code>,
+      <code>seek</code>,
+      <code>tell</code>,
+      <code>truncate</code>,
+      <code>write</code>,
+      <code>writelines</code>
       </p>
     </td>
   </tr>
@@ -143,11 +175,11 @@ object --+
     </table>
   </td>
 </tr>
-  <tr>
-    <td colspan="2" class="summary">
-    <p class="indent-wrapped-lines"><b>Inherited from <code>object</code></b>:
-      <code>__class__</code>
-      </p>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="fabio.fabioutils.StringIO-class.html#size" class="summary-name">size</a>
     </td>
   </tr>
 </table>
@@ -169,28 +201,66 @@ object --+
   </td>
 </tr>
 </table>
-<a name="read"></a>
+<a name="__init__"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">read</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">fname</span>,
-        <span class="sig-arg">frame</span>=<span class="sig-default">None</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">data</span>,
+        <span class="sig-arg">fname</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">mode</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">r</code><code class="variable-quote">'</code></span>)</span>
+    <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="fabio.datIO-pysrc.html#columnfile.read">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="fabio.fabioutils-pysrc.html#StringIO.__init__">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>To be overridden by format specific subclasses</p>
+  
   <dl class="fields">
     <dt>Overrides:
-        <a href="fabio.datIO.fabiodata-class.html#read">fabiodata.read</a>
-        <dd><em class="note">(inherited documentation)</em></dd>
+        StringIO.StringIO.__init__
     </dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== PROPERTY DETAILS ==================== -->
+<a name="section-PropertyDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Property Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-PropertyDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="size"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">size</h3>
+  
+  <dl class="fields">
+    <dt>Get Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.fabioutils.StringIO-class.html#getSize" class="summary-sig-name">getSize</a>(<span class="summary-sig-arg">self</span>)</span>
+    </dd>
+    <dt>Set Method:</dt>
+    <dd class="value"><span class="summary-sig"><a href="fabio.fabioutils.StringIO-class.html#setSize" class="summary-sig-name">setSize</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">size</span>)</span>
+    </dd>
   </dl>
 </td></tr></table>
 </div>

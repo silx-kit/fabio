@@ -69,10 +69,11 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
          email:erik.knudsen@risoe.dk
 
         + Jon Wright, ESRF
-        
-2011-02-11: Mostly rewritten by J&#233;r&#244;me Kieffer (Jerome.Kieffer@esrf.eu) 
+
+2011-02-11: Mostly rewritten by J&#233;r&#244;me Kieffer (Jerome.Kieffer@esrf.eu)
             European Synchrotron Radiation Facility
             Grenoble (France)
+2012-08-20: laisy read of data in EDF
 
 </pre>
 
@@ -146,29 +147,29 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
         <a href="fabio.edfimage-module.html#DATA_TYPES" class="summary-name">DATA_TYPES</a> = <code title="{'Double': &lt;type 'numpy.float64'&gt;,
+ 'DoubleIEEE128': &lt;type 'numpy.float128'&gt;,
  'DoubleIEEE64': &lt;type 'numpy.float64'&gt;,
  'DoubleValue': &lt;type 'numpy.float64'&gt;,
  'FLOAT': &lt;type 'numpy.float32'&gt;,
  'FLOATVALUE': &lt;type 'numpy.float32'&gt;,
  'Float': &lt;type 'numpy.float32'&gt;,
  'Float32': &lt;type 'numpy.float32'&gt;,
- 'FloatIEEE32': &lt;type 'numpy.float32'&gt;,
-..."><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">Double</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float64'&gt;<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">DoubleIEEE64</code><code class="variable-quote">'</code><code class="variable-ellipsis">...</code></code>
+..."><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">Double</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float64'&gt;<code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">DoubleIEEE128</code><code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a href="fabio.edfimage-module.html#NUMPY_EDF_DTYPE" class="summary-name">NUMPY_EDF_DTYPE</a> = <code title="{'float32': 'FloatValue',
+        <a href="fabio.edfimage-module.html#NUMPY_EDF_DTYPE" class="summary-name">NUMPY_EDF_DTYPE</a> = <code title="{'float128': 'QuadrupleValue',
+ 'float32': 'FloatValue',
  'float64': 'DoubleValue',
  'int16': 'SignedShort',
  'int32': 'SignedInteger',
  'int64': 'Signed64',
  'int8': 'SignedByte',
  'uint16': 'UnsignedShort',
- 'uint32': 'UnsignedInteger',
-..."><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">float32</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">FloatValue</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">float64</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Double</code><code class="variable-ellipsis">...</code></code>
+..."><code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">float128</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">QuadrupleValue</code><code class="variable-quote">'</code><code class="variable-op">, </code><code class="variable-quote">'</code><code class="variable-string">float32</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">F</code><code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
 <tr>
@@ -230,13 +231,13 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
     <dt>Value:</dt>
       <dd><table><tr><td><pre class="variable">
 <code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">Double</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float64'&gt;<code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">DoubleIEEE128</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float128'&gt;<code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">DoubleIEEE64</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float64'&gt;<code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">DoubleValue</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float64'&gt;<code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">FLOAT</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float32'&gt;<code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">FLOATVALUE</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float32'&gt;<code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">Float</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float32'&gt;<code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">Float32</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float32'&gt;<code class="variable-op">,</code>
- <code class="variable-quote">'</code><code class="variable-string">FloatIEEE32</code><code class="variable-quote">'</code><code class="variable-op">: </code>&lt;type 'numpy.float32'&gt;<code class="variable-op">,</code>
 <code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
@@ -255,14 +256,14 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
   <dl class="fields">
     <dt>Value:</dt>
       <dd><table><tr><td><pre class="variable">
-<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">float32</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">FloatValue</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+<code class="variable-group">{</code><code class="variable-quote">'</code><code class="variable-string">float128</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">QuadrupleValue</code><code class="variable-quote">'</code><code class="variable-op">,</code>
+ <code class="variable-quote">'</code><code class="variable-string">float32</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">FloatValue</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">float64</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">DoubleValue</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">int16</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">SignedShort</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">int32</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">SignedInteger</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">int64</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">Signed64</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">int8</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">SignedByte</code><code class="variable-quote">'</code><code class="variable-op">,</code>
  <code class="variable-quote">'</code><code class="variable-string">uint16</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">UnsignedShort</code><code class="variable-quote">'</code><code class="variable-op">,</code>
- <code class="variable-quote">'</code><code class="variable-string">uint32</code><code class="variable-quote">'</code><code class="variable-op">: </code><code class="variable-quote">'</code><code class="variable-string">UnsignedInteger</code><code class="variable-quote">'</code><code class="variable-op">,</code>
 <code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
@@ -320,7 +321,7 @@ Authors: Henning O. Sorensen &amp; Erik Knudsen
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Apr 17 11:30:30 2012
+    Generated by Epydoc 3.0.1 on Thu Mar 14 18:47:33 2013
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
