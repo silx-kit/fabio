@@ -1,37 +1,36 @@
 ************* Module fabioimage
-W:136,0: FIXME - this should be handled by the libraries now
-W:387,0: FIXME - what about seek ? 
-W:410,0: FIXME - should we fix that or complain about the daft naming?
-F: 23,0: Unable to import 'fabioutils'
-F: 23,0: Unable to import 'converters'
-C: 26,0:fabioStream: Invalid name "fabioStream" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 42,0:fabioimage: Invalid name "fabioimage" (should match [A-Z_][a-zA-Z0-9]+$)
-F:115,12:fabioimage.getframe: Unable to import 'openimage'
-F:122,8:fabioimage.previous: Unable to import 'openimage'
-F:128,8:fabioimage.next: Unable to import 'openimage'
-W:320,20:fabioimage.write: Unused argument 'fname'
-R:320,4:fabioimage.write: Method could be a function
-W:342,26:fabioimage._readheader: Unused argument 'fik_obj'
-R:342,4:fabioimage._readheader: Method could be a function
-W:355,29:fabioimage.read: Unused argument 'frame'
-W:355,19:fabioimage.read: Unused argument 'filename'
-R:355,4:fabioimage.read: Method could be a function
-E:372,15:fabioimage.readROI: Undefined variable 'coord'
+W:121,0: FIXME - this should be handled by the libraries now
+W:372,0: FIXME - what about seek ?
+W:400,0: FIXME - should we fix that or complain about the daft naming?
+F: 24,0: Unable to import 'fabioutils'
+F: 24,0: Unable to import 'converters'
+C: 27,0:fabioimage: Invalid name "fabioimage" (should match [A-Z_][a-zA-Z0-9]+$)
+F:100,12:fabioimage.getframe: Unable to import 'openimage'
+F:107,8:fabioimage.previous: Unable to import 'openimage'
+F:113,8:fabioimage.next: Unable to import 'openimage'
+W:305,20:fabioimage.write: Unused argument 'fname'
+R:305,4:fabioimage.write: Method could be a function
+W:327,26:fabioimage._readheader: Unused argument 'fik_obj'
+R:327,4:fabioimage._readheader: Method could be a function
+W:340,29:fabioimage.read: Unused argument 'frame'
+W:340,19:fabioimage.read: Unused argument 'filename'
+R:340,4:fabioimage.read: Method could be a function
+W:378,27:fabioimage._open: Unused variable 'error'
+C:421,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:431,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:437,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:420,27:fabioimage._compressed_stream: Unused argument 'system_uncompress'
-W:463,24:fabioimage.convert: No exception type(s) specified
-R: 42,0:fabioimage: Too many public methods (25/20)
-W:535,12:test.clean: No exception type(s) specified
+W:410,27:fabioimage._compressed_stream: Unused argument 'system_uncompress'
+W:457,24:fabioimage.convert: No exception type(s) specified
+R: 27,0:fabioimage: Too many public methods (25/20)
+W:529,12:test.clean: No exception type(s) specified
+W:536,11:test: Access to a protected member _open of a client class
 W:542,11:test: Access to a protected member _open of a client class
-W:548,11:test: Access to a protected member _open of a client class
-W:554,20:test: Access to a protected member _open of a client class
-W:556,11:test: Access to a protected member _open of a client class
+W:548,20:test: Access to a protected member _open of a client class
+W:550,11:test: Access to a protected member _open of a client class
 
 
 Report
 ======
-311 statements analysed.
+312 statements analysed.
 
 Messages by category
 --------------------
@@ -39,13 +38,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |4      |4        |=          |
+|convention |3      |4        |-1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|warning    |14     |14       |=          |
+|warning    |15     |14       |+1.00      |
 +-----------+-------+---------+-----------+
-|error      |1      |1        |=          |
+|error      |0      |1        |-1.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -62,24 +61,24 @@ Messages
 +-----------+------------+
 |W0212      |4           |
 +-----------+------------+
-|C0103      |4           |
-+-----------+------------+
 |W0511      |3           |
 +-----------+------------+
 |R0201      |3           |
 +-----------+------------+
+|C0103      |3           |
++-----------+------------+
 |W0702      |2           |
 +-----------+------------+
-|R0904      |1           |
+|W0612      |1           |
 +-----------+------------+
-|E0602      |1           |
+|R0904      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.13/10 (previous run: 9.13/10)
+Your code has been rated at 9.29/10 (previous run: 9.14/10)
 So close to being perfect...
 
 Raw metrics
@@ -88,22 +87,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |353    |65.61 |353      |=          |
+|code      |353    |66.35 |355      |-2.00      |
 +----------+-------+------+---------+-----------+
-|docstring |124    |23.05 |124      |=          |
+|docstring |119    |22.37 |124      |-5.00      |
 +----------+-------+------+---------+-----------+
-|comment   |14     |2.60  |14       |=          |
+|comment   |15     |2.82  |15       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |47     |8.74  |47       |=          |
+|empty     |45     |8.46  |48       |-3.00      |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (fabioimage)
 
 
 
@@ -128,12 +119,20 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |100.00      |100.00   |
+|class    |1      |2          |-1.00      |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |30     |30         |=          |100.00      |0.00     |
+|method   |29     |30         |-1.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (fabioimage)
 
 
 
