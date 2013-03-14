@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 
 """
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
-import unittest, sys, os, logging
+import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testedfimage")
 force_build = False
 
@@ -274,6 +274,40 @@ class testedffastread(unittest.TestCase):
         obt = ref.fastReadData(self.fastFilename)
         self.assertEqual(abs(obt - refdata).max(), 0, "testedffastread: Same data")
 
+class testedfwrite(unittest.TestCase):
+    """
+    Write dummy edf files with various compression schemes
+    
+    """
+    def setUp(self):
+        self.data = numpy.arange(100).reshape((10, 10))
+        self.header = {"toto": "tutu"}
+        self.tmpdir = tempfile.mkdtemp(prefix="testedfwrite")
+    def testFlat(self):
+        self.filename = os.path.join(self.tmpdir, "merged.azim")
+        e = edfimage(data=self.data, header=self.header)
+        e.write(self.filename)
+        r = fabio.open(self.filename)
+        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+    def testGzip(self):
+        self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
+        e = edfimage(data=self.data, header=self.header)
+        e.write(self.filename)
+        r = fabio.open(self.filename)
+        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+    def testBzip2(self):
+        self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
+        e = edfimage(data=self.data, header=self.header)
+        e.write(self.filename)
+        r = fabio.open(self.filename)
+        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+    def tearDown(self):
+        os.unlink(self.filename)
+        os.rmdir(self.tmpdir)
+
 def test_suite_all_edf():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testflatedfs("test_read"))
@@ -292,6 +326,9 @@ def test_suite_all_edf():
     testSuite.addTest(testedfmultiframe("test_previous_multi"))
     testSuite.addTest(testedfmultiframe("test_openimage_multiframes"))
     testSuite.addTest(testedffastread("test_fastread"))
+    testSuite.addTest(testedfwrite("testFlat"))
+    testSuite.addTest(testedfwrite("testGzip"))
+    testSuite.addTest(testedfwrite("testBzip2"))
 
     return testSuite
 
