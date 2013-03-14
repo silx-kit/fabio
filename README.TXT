@@ -5,10 +5,21 @@ FabIO support images detectors from a dozen of companies (including Mar, Dectris
 for a total of 20 different file formats (like CBF, EDF, TIFF, ...) and offers an unified interface to their 
 headers (as a python dictionary) and datasets (as a numpy ndarray of integers or floats)
   
+The general philosophy of the library is described in:
+FabIO: easy access to two-dimensional X-ray detector images in Python
+E. B. Knudsen, H. O. Sørensen, J. P. Wright, G. Goret and J. Kieffer
+Journal of Applied Crystallography, Volume 46, Part 2, pages 537-539.
+http://dx.doi.org/10.1107/S0021889813000150
 
 
 Changelog
 =========
+From FabIO-0.1.0 to FabIO-0.1.1:
+- Merged Mar345 image reader and writer with cython bindings (towards python3 compliance) 
+- Improve CBF image writing under windows
+- Bz2, Gzip and Flat files are managed through a common way ... classes are more (python v2.5) or less (python v2.7) overloaded
+- Fast EDF reading if one assumes offsets are the same between files, same for ROIs
+
 From FabIO-0.0.8 to FabIO-0.1.0:
 - OXD reader improved and writer implemented
 - Mar345 reader improved and writer implemented
@@ -39,13 +50,13 @@ fabio can be downloaded from the fable download page on sourceforge.net. Present
 http://sourceforge.net/projects/fable/files/fabio/
 
 e.g.
-tar xvzf fabio-0.1.0.tar.gz
+tar xvzf fabio-0.1.1.tar.gz
 or
-unzip fabio-0.1.0.zip
+unzip fabio-0.1.1.zip
 
-all files are unpacked into the directory fabio-0.1.0. To install these do
+all files are unpacked into the directory fabio-0.1.1. To install these do
 
-cd fabio-0.1.0
+cd fabio-0.1.1
 
 and install fabio with
 
@@ -61,12 +72,12 @@ sudo python setup.py install
 If you are using MS Windows you also download a binary version packaged as executable installation files. 
 Dependent on your python version open either:
 
-fabio-0.1.0.win32-py2.6.msi or fabio-0.1.0.win32-py2.6.msi or fabio-0.0.8.win32-py2.7.msi
+fabio-0.1.1.win32-py2.6.msi or fabio-0.1.1.win32-py2.6.msi or fabio-0.0.8.win32-py2.7.msi
 
 
 Dependencies
 ============
-Python 2.5 or later (we are workin on python 3.x)
+Python 2.5 or later (we are working on python 3.x)
 For full functionality of fabio the following modules need to be installed.
 * numpy - http://www.numpy.org
 
@@ -124,7 +135,7 @@ We hope it will be relatively easy to add new file formats to fabio in the futur
    2. readheader fills in a dictionary of "name":"value" pairs in self.header. No one expects to find anything much in there.
    3. read fills in self.data with a numpy array holding the image. Some redundant info which also appears are self.dim1 and self.dim2: the image dimensions, self.bpp is the bytes per pixel and self.bytecode is the numpy.dtype.type of the data.
    4. The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there in case you have trouble with the transparent handling of bz2 and gz files.
-   5. Register the file type (extension naming) in init__.py:FILETYPES
+   5. Register the file type (extension naming) in fabioutils.py:FILETYPES
    6. Add your new module as an import into fabio.openimage
    7. Fill out the magic numbers for your format in fabio.openimage if you know them (the characteristic first few bytes in the file)
    8. Upload a testimage to the file release system and create a unittest testcase which opens an example of your new format, confirming the image has actually been read in successfully (eg check the mean, max, min and esd are all correct, perhaps orientation too)
@@ -183,7 +194,7 @@ Known file formats
   o kcdimage: Nonius KappaCCD diffractometer
 * Mar Research
   o marccd (fileformat derived from Tiff)
-  o mar345 imaging plate
+  o mar345 imaging plate with PCK compression
 * Dectris 
   o cbfimage (implements a fast byte offset decompression scheme in python/cython)
   o pilatusimage (fileformat derived from Tiff)
@@ -206,5 +217,7 @@ Known file formats
   o HiPiCimage 
 * Oxford Diffraction Sapphire 3 
   o OXDimage
- 
+* Nonius
+ o KappaCCD
+* Raw Binary without compression
   
