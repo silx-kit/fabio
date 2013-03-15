@@ -4,6 +4,7 @@
 """
 Setup script for python distutils package and fabio
 """
+import os, sys
 import os.path as op
 try:
     from setuptools import setup
@@ -30,6 +31,37 @@ mar345_backend = Extension('mar345_IO',
 version = [eval(l.split("=")[1])
            for l in open(op.join(op.dirname(op.abspath(__file__)), "fabio-src", "__init__.py"))
            if l.strip().startswith("version")][0]
+#######################
+# build_doc commandes #
+#######################
+cmdclass = {}
+
+try:
+    import sphinx
+    import sphinx.util.console
+    sphinx.util.console.color_terminal = lambda: False
+    from sphinx.setup_command import BuildDoc
+except ImportError:
+    sphinx = None
+
+if sphinx:
+    class build_doc(BuildDoc):
+
+        def run(self):
+            # make sure the python path is pointing to the newly built
+            # code so that the documentation is built on this and not a
+            # previously installed version
+
+            build = self.get_finalized_command('build')
+            print os.path.abspath(build.build_lib)
+            sys.path.insert(0, os.path.abspath(build.build_lib))
+            # we need to reload PyMca from the build directory and not
+            # the one from the source directory which does not contain
+            # the extensions
+            BuildDoc.run(self)
+            sys.path.pop(0)
+    cmdclass['build_doc'] = build_doc
+
 
 
 # See the distutils docs...
@@ -45,6 +77,7 @@ setup(name='fabio',
       packages=["fabio"],
       package_dir={"fabio": "fabio-src" },
       test_suite="test",
+      cmdclass=cmdclass,
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',

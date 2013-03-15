@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fabio.brukerimage &mdash; FabIO v0.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="FabIO v0.1.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for fabio.brukerimage</h1><pre>
+
+Authors: Henning O. Sorensen &amp; Erik Knudsen
+         Center for Fundamental Research: Metal Structures in Four Dimensions
+         Risoe National Laboratory
+         Frederiksborgvej 399
+         DK-4000 Roskilde
+         email:erik.knudsen@risoe.dk
+
+Based on: openbruker,readbruker, readbrukerheader functions in the opendata
+         module of ImageD11 written by Jon Wright, ESRF, Grenoble, France
+
+"""
+
+import numpy, logging
+logger = logging.getLogger("brukerimage")
+from fabioimage import fabioimage
+from readbytestream import readbytestream
+
+
+class brukerimage(fabioimage):
+    """
+<div class="viewcode-block" id="brukerimage"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage">[docs]</a>    Read and eventually write ID11 bruker (eg smart6500) images
+    """
+
+    # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
+
+    __headerstring__ = ""
+
+
+    def _readheader(self, infile):
+        """
+        the bruker format uses 80 char lines in key : value format
+        In the fisrt 512*5 bytes of the header there should be a 
+        HDRBLKS key, whose value denotes how many 512 byte blocks 
+        are in the total header. The header is always n*5*512 bytes,
+        otherwise it wont contain whole key: value pairs
+        """
+        lump = infile.read(512 * 5)
+        self.__headerstring__ += lump
+        i = 80
+        self.header = {}
+        while i &lt; 512 * 5:
+            if lump[i - 80: i].find(":") &gt; 0:
+                key, val = lump[i - 80: i].split(":", 1)
+                key = key.strip()         # remove the whitespace (why?)
+                val = val.strip()
+                if self.header.has_key(key):
+                    # append lines if key already there
+                    self.header[key] = self.header[key] + '\n' + val
+                else:
+                    self.header[key] = val
+                    self.header_keys.append(key)
+            i = i + 80                  # next 80 characters
+        # we must have read this in the first 512 bytes.
+        nhdrblks = int(self.header['HDRBLKS'])
+        # Now read in the rest of the header blocks, appending 
+        rest = infile.read(512 * (nhdrblks - 5))
+        self.__headerstring__ += rest
+        lump = lump[i - 80: 512] + rest
+        i = 80
+        j = 512 * nhdrblks
+        while i &lt; j :
+            if lump[i - 80: i].find(":") &gt; 0: # as for first 512 bytes of header
+                key, val = lump[i - 80: i].split(":", 1)
+                key = key.strip()
+                val = val.strip()
+                if self.header.has_key(key):
+                    self.header[key] = self.header[key] + '\n' + val
+                else:
+                    self.header[key] = val
+                    self.header_keys.append(key)
+            i = i + 80
+        # make a (new) header item called "datastart"
+        self.header['datastart'] = infile.tell()
+        #set the image dimensions
+        self.dim1 = int(self.header['NROWS'])
+        self.dim2 = int(self.header['NCOLS'])
+
+    def read(self, fname, frame=None):
+        """
+<div class="viewcode-block" id="brukerimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.read">[docs]</a>        Read in and unpack the pixels (including overflow table
+        """
+        infile = self._open(fname, "rb")
+        try:
+            self._readheader(infile)
+        except:
+            raise
+
+        rows = self.dim1
+        cols = self.dim2
+
+        try:
+            # you had to read the Bruker docs to know this!
+            npixelb = int(self.header['NPIXELB'])
+        except:
+            errmsg = "length " + str(len(self.header['NPIXELB'])) + "\n"
+            for byt in self.header['NPIXELB']:
+                errmsg += "char: " + str(byt) + " " + str(ord(byt)) + "\n"
+            logger.warning(errmsg)
+            raise
+
+        self.data = readbytestream(infile, infile.tell(),
+                                   rows, cols, npixelb,
+                                   datatype="int",
+                                   signed='n',
+                                   swap='n')
+
+        #handle overflows
+        nov = int(self.header['NOVERFL'])
+        if nov &gt; 0:   # Read in the overflows
+            # need at least int32 sized data I guess - can reach 2^21
+            self.data = self.data.astype(numpy.uint32)
+            # 16 character overflows:
+            #      9 characters of intensity
+            #      7 character position
+            for i in range(nov):
+                ovfl = infile.read(16)
+                intensity = int(ovfl[0: 9])
+                position = int(ovfl[9: 16])
+                # relies on python style modulo being always +
+                row = position % rows
+                # relies on truncation down
+                col = position / rows
+                #print "Overflow ", r, c, intensity, position,\
+                #    self.data[r,c],self.data[c,r]
+                self.data[col, row] = intensity
+        infile.close()
+
+        self.resetvals()
+        self.pilimage = None
+        return self
+
+
+    def write(self, fname):
+        """</div>
+<div class="viewcode-block" id="brukerimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.write">[docs]</a>        Writes the image as EDF
+        FIXME - this should call edfimage.write if that is wanted?
+        eg:     obj = edfimage(data = self.data, header = self.header)
+                obj.write(fname)
+                or maybe something like: edfimage.write(self, fname)
+        """
+        logger.warning("***warning***: call to unifinished " + \
+                "brukerimage.write. This will write the file" + \
+                            fname + "as an edf-file")
+
+
+        outfile = self._open(fname, "wb")
+        outfile.write('{\n')
+        i = 4
+        for k in self.header_keys:
+            out = (("%s = %s;\n") % (k, self.header[k]))
+            i = i + len(out)
+            outfile.write(out)
+        out = (4096 - i) * ' '
+        outfile.write(out)
+        outfile.write('}\n')
+        # Assumes a short-circuiting if / or ...
+        if not self.header.has_key("ByteOrder") or \
+               self.header["ByteOrder"] == "LowByteFirst":
+            outfile.write(self.data.astype(numpy.uint16).tostring())
+        else:
+            outfile.write(self.data.byteswap().astype(
+                    numpy.uint16).tostring())
+        outfile.close()
+
+    def write2(self, fname):
+        """ FIXME: what is this? """</div>
+<div class="viewcode-block" id="brukerimage.write2"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.write2">[docs]</a>        pass
+
+
+
+def test():
+    """ a testcase """</div></div>
+<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.test">[docs]</a>    import sys, time
+    img = brukerimage()
+    start = time.clock()
+    for filename in sys.argv[1:]:
+        img.read(filename)
+        res = img.toPIL16()
+        img.rebin(2, 2)
+        print filename + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
+            img.getmax(), img.getmin(), img.getmean(), img.getstddev())
+        print 'integrated intensity (%d %d %d %d) =%.3f' % (
+            10, 20, 20, 40, img.integrate_area((10, 20, 20, 40)))
+    end = time.clock()
+    print (end - start)
+
+
+
+if __name__ == '__main__':
+    test()</div>
+
+
+</pre>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>
