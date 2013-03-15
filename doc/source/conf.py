@@ -179,7 +179,7 @@ htmlhelp_basename = 'FabIOdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'FabIO.tex', u'FabIO Documentation',
-   u'Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer', 'manual'),
+   u'H. Sorensen, E. Knudsen, J. Wright, G. Goret and J. Kieffer', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -214,3 +214,25 @@ man_pages = [
     ('index', 'fabio', u'FabIO Documentation',
      [u'Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer'], 1)
 ]
+# Documents to append as an appendix to all manuals.
+#texinfo_appendices = []
+
+# If false, no module index is generated.
+#texinfo_domain_indices = True
+
+# How to display URL addresses: 'footnote', 'no', or 'inline'.
+#texinfo_show_urls = 'footnote'
+
+# still use the epydoc markup for now
+import re
+
+re_field = re.compile('@(param|type|rtype|return)')
+
+
+def fix_docstring(app, what, name, obj, options, lines):
+    for i in xrange(len(lines)):
+        lines[i] = re_field.sub(r':\1', lines[i])
+
+
+def setup(app):
+    app.connect('autodoc-process-docstring', fix_docstring)

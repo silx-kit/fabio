@@ -22,25 +22,21 @@ not least because the data can be stored in many different formats
 depending on the instrument used. To overcome this problem we
 decided to develop a general module, FabIO (FABle I/O), to handle
 reading and writing of two-dimensional data. The code-base was
-initiated by merging parts of our fabian imageviewer {fabian}and
-ImageD11 {imaged11}peak-search programs and has been developed
-since 2007 as part of the TotalCryst {totalcryst}program suite for
-analysis of 3DXRD microscopy data {3dxrd}. During integration into
+initiated by merging parts of our fabian imageviewer and
+ImageD11 peak-search programs and has been developed
+since 2007 as part of the TotalCryst program suite for
+analysis of 3DXRD microscopy data . During integration into
 a range of scientific programs like the FABLE graphical interface
-{fable}, EDNA {edna}and the fast azimuthal integration library,
-pyFAI {pyfai}; FabIO has gained several features like handling
+, EDNA and the fast azimuthal integration library,
+pyFAI ; FabIO has gained several features like handling
 multi-frame image formats as well as writing many of the file
 formats.
 
-We believe FabIO is now ready for a wider audience and could save
-other researchers from repeating the work involved in decoding a
-binary file format. Table format shows the list of file formats
-that FabIO can currently (ver. 0.1.0) read.
 
 FabIO Python module
 -------------------
 
-Python {python}is a scripting language that is very popular among
+Python is a scripting language that is very popular among
 scientists and which also allows well structured applications and
 libraries to be developed.
 
@@ -51,12 +47,12 @@ The intention behind this development was to create a Python module
 which would enable easy reading of 2D data images, from any
 detector without having to worry about the file format. Therefore
 FabIO just needs a file name to open a file and it determines the
-file format automatically and deals with gzip {gzip}and bzip2
-{bzip2}compression transparently. Opening a file returns an object
-which stores the image {data} in memory as a 2D NumPy array
-{numpy}and the metadata, called {header}, in a python dictionary.
-Beside the {data} and {header} attributes, some methods are
-provided for reading the {previous} or {next} image in a series of
+file format automatically and deals with gzip and bzip2
+compression transparently. Opening a file returns an object
+which stores the image in memory as a 2D NumPy array
+and the metadata, called header, in a python dictionary.
+Beside the data and header attributes, some methods are
+provided for reading the previous or next image in a series of
 images as well as jumping to a specific file number. For the user,
 these auxiliary methods are intended to be independent of the image
 format (as far as is reasonably possible).
@@ -71,46 +67,46 @@ been added to reduce the number of regressions when new features
 are added or old problems are repaired. The software is very
 modular and allows new classes to be added for handling other data
 formats easily. FabIO and its source-code are freely available to
-everyone on-line {fabio}, licensed under the GNU General Public
+everyone on-line, licensed under the GNU General Public
 License version 3 (GPLv3). FabIO is also available directly from
 popular Linux distributions like Debian and Ubuntu.
 
 Implementation
 ..............
 
-The main language used in the development of FabIO is Python
-{python}; however, some image formats are compressed and require
+The main language used in the development of FabIO is Python;
+however, some image formats are compressed and require
 compression algorithms for reading and writing data. When such
 algorithms could not be implemented efficiently using Python or
 NumPy native modules were developed, in i.e. standard C code
-callable from Python (sometimes generated using Cython {cython}).
+callable from Python (sometimes generated using Cython).
 This code has to be compiled for each computer architecture and
 offers excellent performance. FabIO is only dependent on the NumPy
 module and has extra features if two other optional python modules
 are available. For reading XML files (that are used in EDNA) the
-Lxml module {lxml}is required and the Python Image Library, PIL
-{pil}is needed for producing a PIL image for displaying the image
+Lxml module is required and the Python Image Library, PIL
+is needed for producing a PIL image for displaying the image
 in graphical user interfaces and several image-processing
 operations that are not re-implemented in FabIO. A variety of
 useful image processing is also available in the scipy.ndimage
-module {scipy}and in scikits-image {skimage}.
+module and in scikits-image.
 
 Images can also be displayed in a convenient interactive manner
-using matplotlib {matplotlib}and an IPython shell {ipython}, which
+using matplotlib and an IPython shell , which
 is mainly used for developing data analysis algorithms. Reading and
-writing procedure of the various TIFF {tiff}formats is based on the
-TiffIO code from PyMCA {pymca}.
+writing procedure of the various TIFF formats is based on the
+TiffIO code from PyMCA.
 
-In the Python shell, the {fabio} module must be imported prior to
+In the Python shell, the fabio module must be imported prior to
 reading an image in one of the supported file formats (see Table
-format). The {fabio.open} function creates an instance of the
-Python class {fabioimage}, from the name of a file. This instance,
-named {img} hereafter, stores the image data in {img.data} as a 2D
+format). The fabio.open function creates an instance of the
+Python class fabioimage, from the name of a file. This instance,
+named img hereafter, stores the image data in img.data as a 2D
 NumPy array. Often the image file contains more information than
 just the intensities of the pixels, e.g. information about how the
 image is stored and the instrument parameters at the time of the
 image acquisition, these metadata are usually stored in the file
-header. Header information, are available in {img.header} as a
+header. Header information, are available in img.header as a
 Python dictionary where keys are strings and values are usually
 strings or numeric values.
 
@@ -132,31 +128,33 @@ FabIO methods
 One strength of the implementation in an object oriented language
 is the possibility to combine functions (or methods) together with
 data appropriate for specific formats. In addition to the header
-information and image data, every {fabioimage} instance (returned
+information and image data, every fabioimage instance (returned
 by {fabio.open}) has methods inherited from fabioimage which
 provide information about the image minimum, maximum and mean
 values. In addition there are methods which return the file number,
 name etc. Some of the most important methods are specific for
 certain formats because the methods are related to how frames in a
-sequence are handled; these methods are {img.next()},
-{img.previous()}, and {img.getframe(n)}. The behaviour of such
+sequence are handled; these methods are img.next(),
+img.previous(), and img.getframe(n). The behaviour of such
 methods varies depending on the image format: for single-frame
-format (like mar345), {img.next()} will return the image in next
-file; for multi-frame format (like GE), {img.next()} will return
+format (like mar345), img.next() will return the image in next
+file; for multi-frame format (like GE), img.next() will return
 the next frame within the same file. For formats which are possibly
 multi-framed like EDF, the behaviour depends on the actual number
-of frames per file (accessible via the {img.nframes} attribute).
+of frames per file (accessible via the img.nframes attribute).
 
 Installation and usage
 ----------------------
 
 FabIO can, as any Python module, be installed from its sources,
-available on sourceforge {fabio}but we advice to use binary
+available on sourceforge but we advice to use binary
 packages provided for the most common platforms on sourceforge:
 Windows, MacOSX and Linux. Moreover FabIO is part of the common
 Linux distributions Ubuntu (since 11.10) and Debian7 where the
-package is named {python-fabio} and can be installed via {# apt-get
-install python-fabio}.
+package is named {python-fabio} and can be installed via: 
+::
+
+    # apt-get install python-fabio
 
 Examples
 ........
@@ -248,9 +246,10 @@ al., 2006).
 Citation
 ........
 
-http://dx.doi.org/10.1107/S0021889813000150
-Knudsen, E. B., Sorensen, H. O., Wright, J. P., Goret, G. & Kieffer, J. (2013). J. Appl. Cryst. 46, 537-539.
 
+Knudsen, E. B., Sørensen, H. O., Wright, J. P., Goret, G. & Kieffer, J. (2013). J. Appl. Cryst. 46, 537-539.
+
+http://dx.doi.org/10.1107/S0021889813000150
 
 List of file formats that FabIO can read and write
 ..................................................
