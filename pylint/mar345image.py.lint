@@ -21,13 +21,13 @@ C:123,12:mar345image._readheader: Invalid name "m" (should match [a-z_][a-zA-Z0-
 C:126,12:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:141,16:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 R: 54,4:mar345image._readheader: Too many statements (57/50)
-W:156,15:mar345image.write: Catching too general exception Exception
-E:151,22:mar345image.write: Instance of 'mar345image' has no '_open' member
-R:159,4:mar345image._writeheader: Too many branches (28/15)
-R:159,4:mar345image._writeheader: Too many statements (123/50)
-C:290,4:mar345image._high_intensity_pixel_records: Missing docstring
-C:302,4:mar345image.nb_overflow_pixels: Missing docstring
-C:306,4:mar345image.checkData: Missing docstring
+W:159,15:mar345image.write: Catching too general exception Exception
+E:154,22:mar345image.write: Instance of 'mar345image' has no '_open' member
+R:162,4:mar345image._writeheader: Too many branches (28/15)
+R:162,4:mar345image._writeheader: Too many statements (123/50)
+C:293,4:mar345image._high_intensity_pixel_records: Missing docstring
+C:305,4:mar345image.nb_overflow_pixels: Missing docstring
+C:309,4:mar345image.checkData: Missing docstring
 W: 31,8:mar345image.read: Attribute 'filename' defined outside __init__
 W: 76,20:mar345image._readheader: Attribute 'dim2' defined outside __init__
 W:144,8:mar345image._readheader: Attribute 'header' defined outside __init__
@@ -38,7 +38,7 @@ W: 43,16:mar345image.read: Attribute 'data' defined outside __init__
 
 Report
 ======
-243 statements analysed.
+246 statements analysed.
 
 Messages by category
 --------------------
@@ -90,7 +90,7 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.31/10 (previous run: 8.31/10)
+Your code has been rated at 8.33/10 (previous run: 8.31/10)
 That's pretty good. Good work mate.
 
 Raw metrics
@@ -99,14 +99,31 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |257    |83.71 |257      |=          |
+|code      |260    |83.87 |257      |+3.00      |
 +----------+-------+------+---------+-----------+
-|docstring |16     |5.21  |16       |=          |
+|docstring |16     |5.16  |16       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |13     |4.23  |13       |=          |
+|comment   |13     |4.19  |13       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |21     |6.84  |21       |=          |
+|empty     |21     |6.77  |21       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |8      |8          |=          |62.50       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -128,23 +145,6 @@ External dependencies
 ::
 
     numpy (mar345image)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |8      |8          |=          |62.50       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
