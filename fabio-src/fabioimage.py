@@ -373,10 +373,7 @@ class fabioimage(object):
         """
         fileObject = None
         self.filename = fname
-        try:
-            self.filenumber = fabioutils.extract_filenumber(fname)
-        except ValueError, error:
-            self.filenumber = None
+        self.filenumber = fabioutils.extract_filenumber(fname)
 
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use

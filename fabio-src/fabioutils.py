@@ -196,13 +196,15 @@ def deconstruct_filename(filename):
                 logger.debug("l196: %s" % err)
                 typ = None
                 extn = "." + parts[-1] + extn
+                numstring = ""
                 try:
                     stem , numstring, postnum = numstem(".".join(parts[:-1]))
+                except Exception, err:
+                    logger.debug("l202: %s" % err)
+                    raise
+                if numstring.isdigit():
                     num = int(numstring)
                     ndigit = len(numstring)
-                except Exception, err:
-                    logger.debug("l204: %s" % err)
-                    raise
             #            raise Exception("Cannot decode "+filename)
     obj = filename_object(stem,
             num=num,
