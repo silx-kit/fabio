@@ -50,7 +50,7 @@ FabIO just needs a file name to open a file and it determines the
 file format automatically and deals with gzip and bzip2
 compression transparently. Opening a file returns an object
 which stores the image in memory as a 2D NumPy array
-and the metadata, called header, in a python dictionary.
+and the metadata, called header, in a Python dictionary.
 Beside the data and header attributes, some methods are
 provided for reading the previous or next image in a series of
 images as well as jumping to a specific file number. For the user,
@@ -82,7 +82,7 @@ NumPy native modules were developed, in i.e. standard C code
 callable from Python (sometimes generated using Cython).
 This code has to be compiled for each computer architecture and
 offers excellent performance. FabIO is only dependent on the NumPy
-module and has extra features if two other optional python modules
+module and has extra features if two other optional Python modules
 are available. For reading XML files (that are used in EDNA) the
 Lxml module is required and the Python Image Library, PIL
 is needed for producing a PIL image for displaying the image
@@ -143,18 +143,8 @@ the next frame within the same file. For formats which are possibly
 multi-framed like EDF, the behaviour depends on the actual number
 of frames per file (accessible via the img.nframes attribute).
 
-Installation and usage
+Usage
 ----------------------
-
-FabIO can, as any Python module, be installed from its sources,
-available on sourceforge but we advice to use binary
-packages provided for the most common platforms on sourceforge:
-Windows, MacOSX and Linux. Moreover FabIO is part of the common
-Linux distributions Ubuntu (since 11.10) and Debian7 where the
-package is named {python-fabio} and can be installed via:
-::
-
-    # apt-get install python-fabio
 
 Examples
 ........
@@ -213,7 +203,7 @@ In the near future FabIO will be upgraded to work with Python3 (a
 new version of Python); this change of version will affect some
 internals FabIO as string and file handling have been altered. This
 change is already ongoing as many parts of native code in C have
-already been translated into Cython {cython}to smoothe the
+already been translated into Cython to smoothe the
 transition, since Cython generates code compatible with Python3.
 This also makes it easier to retain backwards compatibility with
 the earlier Python versions.
