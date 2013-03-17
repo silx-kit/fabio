@@ -151,7 +151,7 @@ available on sourceforge but we advice to use binary
 packages provided for the most common platforms on sourceforge:
 Windows, MacOSX and Linux. Moreover FabIO is part of the common
 Linux distributions Ubuntu (since 11.10) and Debian7 where the
-package is named {python-fabio} and can be installed via: 
+package is named {python-fabio} and can be installed via:
 ::
 
     # apt-get install python-fabio
@@ -166,7 +166,7 @@ Opening an image:
 
 ::
 
-    import fabio     
+    import fabio
     im100 = fabio.open('Quartz_0100.tif') # Open image file
     print(im0.data[1024,1024])            # Check a pixel value
     im101 = im100.next()                  # Open next image
@@ -192,7 +192,7 @@ Interactive viewing with matplotlib:
 
 ::
 
-    from matplotlib import pyplot       # Load matplotlib 
+    from matplotlib import pyplot       # Load matplotlib
     pyplot.imshow(img.data)             # Display as an image
     pyplot.show()                       # Show GUI window
 
@@ -251,32 +251,50 @@ Knudsen, E. B., Sørensen, H. O., Wright, J. P., Goret, G. & Kieffer, J. (2013).
 
 http://dx.doi.org/10.1107/S0021889813000150
 
+
 List of file formats that FabIO can read and write
 ..................................................
 
 In alphabetical order. The listed filename extensions are typical examples.
 FabIO tries to deduce the actual format from the file itself and only
-uses extensions as a fallback if that fails.}
+uses extensions as a fallback if that fails.
 
-Python Module & Detector / Format & Extension & Read & Multi-image & Write
+.. csv-table:: Supported formats
+   :header: "Python Module", "Detector / Format", "Extension", "Read", "Multi-image", "Write"
+   :widths: 30, 30, 20, 10, 15, 10
 
-ADSC & ADSC Quantum & .img & Yes& - & Yes
-Bruker & Bruker formats & .sfrm & Yes& - &Yes
-DM3 & Gatan Digital Micrograph & .dm3 & Yes& - & -
-EDF & ESRF data format & .edf & Yes& Yes &            Yes
-EDNA-XML & Used by EDNA {edna}& .xml & Yes& - & -
-CBF & CIF binary files & .cbf & Yes& - & Yes
-kcd & Nonius KappaCCD & .kccd & Yes& - & -
-fit2dmask & Used by Fit2D {fit2d}& .msk & Yes& - &            Yes
-fit2dspreadsheet & Used by Fit2D {fit2d}& .spr & Yes& -& Yes
-GE & General Electric & - & Yes& Yes & -
-HiPiC & Hamamatsu CCD & .tif & Yes& - & -
-marccd & MarCCD/Mar165 & .mccd & Yes& - &Yes
-mar345 & Mar345 image plate & .mar3450 & Yes& - &            Yes
-OXD & Oxford Diffraction & .img & Yes& - &            Yes
-pilatus & Dectris Pilatus Tiff & .tif & Yes& - &           Yes
-PNM & Portable aNy Map & .pnm & Yes& - & -
-TIFF & Tagged Image File Format & .tif & Yes& - &            Yes
+   "ADSC", "ADSC Quantum", ".img ", "Yes", "No", "Yes"
+   "Bruker", "Bruker formats", ".sfrm ", "Yes", "No", "Yes"
+   "DM3", "Gatan Digital Micrograph ", ".dm3 ", "Yes", "No", "No"
+   "EDF", "ESRF data format ", ".edf ", "Yes", "Yes ", "Yes"
+   "EDNA-XML", "Used by EDNA", ".xml ", "Yes", "No", "No"
+   "CBF", "CIF binary files", ".cbf ", "Yes", "No", "Yes"
+   "kcd", "Nonius KappaCCD", ".kccd ", "Yes", "No", "No"
+   "fit2d mask", "Used by Fit2D", ".msk ", "Yes", "No", "Yes"
+   "fit2d spreadsheet", "Used by Fit2D", ".spr ", "Yes", "No", "Yes"
+   "GE", "General Electric", "No", "Yes", "Yes ", "No"
+   "HiPiC", "Hamamatsu CCD", ".tif ", "Yes", "No", "No"
+   "marccd", "MarCCD/Mar165", ".mccd ", "Yes", "No", "Yes"
+   "mar345", "Mar345 image plate", ".mar3450 ", "Yes", "No", "Yes"
+   "OXD", "Oxford Diffraction", ".img ", "Yes", "No", "Yes"
+   "pilatus", "Dectris Pilatus Tiff", ".tif ", "Yes", "No", "Yes"
+   "PNM", "Portable aNy Map", ".pnm ", "Yes", "No", "No"
+   "TIFF", "Tagged Image File Format", ".tif ", "Yes", "No", "Yes"
+
+Adding new file formats
+.......................
+
+We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:
+ 1. inherit from fabioimage overriding the methods _readheader, read and optionally write. Name your new module XXXimage where XXX means something (eg tifimage).
+ 2. readheader fills in a dictionary of "name":"value" pairs in self.header. No one expects to find anything much in there.
+ 3. read fills in self.data with a numpy array holding the image. Some redundant info which also appears are self.dim1 and self.dim2: the image dimensions, self.bpp is the bytes per pixel and self.bytecode is the numpy.dtype.type of the data.
+ 4. The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there in case you have trouble with the transparent handling of bz2 and gz files.
+ 5. Register the file type (extension naming) in fabioutils.py:FILETYPES
+ 6. Add your new module as an import into fabio.openimage
+ 7. Fill out the magic numbers for your format in fabio.openimage if you know them (the characteristic first few bytes in the file)
+ 8. Upload a testimage to the file release system and create a unittest testcase which opens an example of your new format, confirming the image has actually been read in successfully (eg check the mean, max, min and esd are all correct, perhaps orientation too)
+ 9. Run pylint on your code and then please go clean it up. Have a go at mine while you are at it.
+ 10. Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert their data into another format
 
 
 
