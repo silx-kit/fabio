@@ -9,7 +9,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
          DK-4000 Roskilde
          email:erik.knudsen@risoe.dk
 
-        + Jon Wright, ESRF
+         + Jon Wright, ESRF
+
 """
 import logging, sys
 logger = logging.getLogger("fileseries")
@@ -24,6 +25,7 @@ def new_file_series0(first_object, first=None, last=None, step=1):
     """
     Created from a fabio image
     first and last are file numbers
+
     """
     im = first_object
     nimages = 0
@@ -62,26 +64,28 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
     A generator function that creates a file series starting from a a fabioimage.
     Iterates through all images in a file (if more than 1), then proceeds to
     the next file as determined by fabio.next_filename.
-    
-    first_object: the starting fabioimage, which will be the first one yielded
-      in the sequence
-    nimages:  the maximum number of images to consider
+
+    @param first_object: the starting fabioimage, which will be the first one yielded
+    in the sequence
+    @param nimages:  the maximum number of images to consider
     step: step size, will yield the first and every step'th image until nimages
-      is reached.  (e.g. nimages = 5, step = 2 will yield 3 images (0, 2, 4) 
-    traceback: if True causes it to print a traceback in the event of an
-      exception (missing image, etc.).  Otherwise the calling routine can handle
-      the exception as it chooses 
-    yields: the next fabioimage in the series.
-      In the event there is an exception, it yields the sys.exec_info for the
-      exception instead.  sys.exec_info is a tuple:
-        ( exceptionType, exceptionValue, exceptionTraceback )
-      from which all the exception information can be obtained.
-      Suggested usage:
+    is reached.  (e.g. nimages = 5, step = 2 will yield 3 images (0, 2, 4)
+    @param traceback: if True causes it to print a traceback in the event of an
+    exception (missing image, etc.).  Otherwise the calling routine can handle
+    the exception as it chooses
+    @param yields: the next fabioimage in the series.
+    In the event there is an exception, it yields the sys.exec_info for the
+    exception instead.  sys.exec_info is a tuple:
+    ( exceptionType, exceptionValue, exceptionTraceback )
+    from which all the exception information can be obtained.
+
+    Suggested usage:
         for obj in new_file_series( ... ):
           if not isinstance( obj, fabio.fabioimage.fabioimage ):
             # deal with errors like missing images, non readable files, etc
             # e.g.
             traceback.print_exception(obj[0], obj[1], obj[2])
+
     """
     im = first_object
     nprocessed = 0
@@ -116,7 +120,7 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
 
 class file_series(list):
     """
-    represents a series of files to iterate
+    Represents a series of files to iterate
     has an idea of a current position to do next and prev
 
     You also get from the list python superclass:
@@ -131,7 +135,10 @@ class file_series(list):
     """
     def __init__(self, list_of_strings):
         """
-        arg should be a list of strings which are filenames
+        Constructor:
+
+        @param list_of_strings: arg should be a list of strings which are filenames
+
         """
         super(file_series, self).__init__(list_of_strings)
         # track current position in list
@@ -141,88 +148,167 @@ class file_series(list):
     # methods which return a filename
 
     def first(self):
-        """ first image in series """
+        """
+        First image in series
+
+        """
         return self[0]
 
     def last(self):
-        """ last in series """
+        """
+        Last in series
+
+        """
         return self[-1]
 
     def previous(self):
-        """ prev in a sequence"""
+        """
+        Prev in a sequence
+
+        """
         self._current -= 1
         return self[self._current]
 
     def current(self):
-        """ current position in a sequence """
+        """Current position in a sequence
+
+        """
         return self[self._current]
 
     def next(self):
-        """ next in a sequence """
+        """
+        Next in a sequence
+
+        """
         self._current += 1
         return self[self._current]
 
     def jump(self, num):
-        """ goto a position in sequence """
+        """
+        Goto a position in sequence
+
+        """
         assert num < len(self) and num > 0, "num out of range"
         self._current = num
         return self[self._current]
 
     def len(self):
-        """ number of files"""
+        """
+        Number of files
+
+        """
         return len(self)
 
 
     # Methods which return a fabioimage
 
     def first_image(self):
-        """ first image in a sequence """
+        """
+        First image in a sequence
+
+        @return: fabioimage
+
+        """
         return openimage(self.first())
 
     def last_image(self):
-        """ last image in a sequence """
+        """
+        Last image in a sequence
+
+        @return: fabioimage
+
+        """
         return openimage(self.last())
 
     def next_image(self):
-        """ Return the next image """
+        """
+        Return the next image
+
+        @return: fabioimage
+
+        """
         return openimage(self.next())
 
     def previous_image(self):
-        """ Return the previous image """
+        """
+        Return the previous image
+
+        @return: fabioimage
+
+        """
         return openimage(self.previous())
 
     def jump_image(self, num):
-        """ jump to and read image """
+        """
+        Jump to and read image
+
+        @return: fabioimage
+
+        """
         return openimage(self.jump(num))
 
     def current_image(self):
-        """ current image in sequence """
+        """
+        Current image in sequence
+
+        @return: fabioimage
+
+        """
         return openimage(self.current())
 
     # methods which return a file_object
 
     def first_object(self):
-        """ first image in a sequence """
+        """
+        First image in a sequence
+
+        @return: file_object
+        """
         return filename_object(self.first())
 
     def last_object(self):
-        """ last image in a sequence """
+        """
+        Last image in a sequence
+
+        @return: file_object
+
+        """
         return filename_object(self.last())
 
     def next_object(self):
-        """ Return the next image """
+        """
+        Return the next image
+
+        @return: file_object
+
+        """
         return filename_object(self.next())
 
     def previous_object(self):
-        """ Return the previous image """
+        """
+        Return the previous image
+
+        @return: file_object
+
+        """
         return filename_object(self.previous())
 
     def jump_object(self, num):
-        """ jump to and read image """
+        """
+        Jump to and read image
+
+        @return: file_object
+
+        """
         return filename_object(self.jump(num))
 
     def current_object(self):
-        """ current image in sequence """
+        """
+        Current image in sequence
+
+        @return: file_object
+
+        """
         return filename_object(self.current())
 
 
@@ -237,10 +323,12 @@ class numbered_file_series(file_series):
     def __init__(self, stem, first, last, extension,
                  digits=4, padding='Y', step=1):
         """
-        stem - first part of the name
-        step - in case of every nth file
-        padding - possibility for specifying that numbers are not padded
-                  with zeroes up to digits
+        Constructor
+
+        @param stem: first part of the name
+        @param step: in case of every nth file
+        @param padding: possibility for specifying that numbers are not padded with zeroes up to digits
+
         """
         if padding == 'Y':
             fmt = "%s%0" + str(digits) + "d%s"

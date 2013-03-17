@@ -51,6 +51,12 @@ def endianness():
 
 
 def decGzip(stream):
+    """
+
+    Decompress a chunk of data using the gzip algorithm from Python or alternatives if possible
+
+    """
+
     if gzip is None:
         raise ImportError("gzip module is not available")
     fileobj = StringIO.StringIO(stream)
@@ -81,7 +87,9 @@ def decGzip(stream):
 
 def decBzip2(stream):
     """
-    decompress a chunk of data using the bzip2 algorithm
+
+    Decompress a chunk of data using the bzip2 algorithm from Python
+
     """
     if bz2 is None:
         raise ImportError("bz2 module is not available")
@@ -90,7 +98,9 @@ def decBzip2(stream):
 
 def decZlib(stream):
     """
-    decompress a chunk of data using the zlib algorithm
+
+    Decompress a chunk of data using the zlib algorithm from Python
+
     """
     if zlib is None:
         raise ImportError("zlib module is not available")
@@ -352,6 +362,7 @@ def compTY1(data):
 
     @param data: numpy.ndarray with the input data (integers!)
     @return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size
+
     """
     fdata = data.flatten()
     diff = numpy.zeros_like(fdata)
