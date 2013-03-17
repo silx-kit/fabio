@@ -25,10 +25,10 @@ reading and writing of two-dimensional data. The code-base was
 initiated by merging parts of our fabian imageviewer and
 ImageD11 peak-search programs and has been developed
 since 2007 as part of the TotalCryst program suite for
-analysis of 3DXRD microscopy data . During integration into
-a range of scientific programs like the FABLE graphical interface
-, EDNA and the fast azimuthal integration library,
-pyFAI ; FabIO has gained several features like handling
+analysis of 3DXRD microscopy data. During integration into
+a range of scientific programs like the FABLE graphical interface,
+EDNA and the fast azimuthal integration library,
+pyFAI; FabIO has gained several features like handling
 multi-frame image formats as well as writing many of the file
 formats.
 
@@ -97,16 +97,17 @@ is mainly used for developing data analysis algorithms. Reading and
 writing procedure of the various TIFF formats is based on the
 TiffIO code from PyMCA.
 
-In the Python shell, the fabio module must be imported prior to
+In the Python shell, the `fabio` module must be imported prior to
 reading an image in one of the supported file formats (see Table
-format). The fabio.open function creates an instance of the
-Python class fabioimage, from the name of a file. This instance,
-named img hereafter, stores the image data in img.data as a 2D
+`Supported formats`, hereafter).
+The `fabio.open` function creates an instance of the
+Python class `fabioimage`, from the name of a file. This instance,
+named `img` hereafter, stores the image data in `img.data` as a 2D
 NumPy array. Often the image file contains more information than
 just the intensities of the pixels, e.g. information about how the
 image is stored and the instrument parameters at the time of the
 image acquisition, these metadata are usually stored in the file
-header. Header information, are available in img.header as a
+header. Header information, are available in `img.header` as a
 Python dictionary where keys are strings and values are usually
 strings or numeric values.
 
@@ -114,7 +115,8 @@ Information in the header about the binary part of the image
 (compression, endianness, shape) are interpreted however, other
 metadata are exposed as they are recorded in the file. FabIO allows
 the user to modify and, where possible, to save this information
-(Table format summarizes writable formats). Automatic translation
+(the table `Supported formats` summarizes writable formats).
+Automatic translation
 between file-formats, even if desirable, is sometimes impossible
 because not all format have the capability to be extended with
 additional metadata. Nevertheless FabIO is capable of converting
@@ -128,23 +130,23 @@ FabIO methods
 One strength of the implementation in an object oriented language
 is the possibility to combine functions (or methods) together with
 data appropriate for specific formats. In addition to the header
-information and image data, every fabioimage instance (returned
-by {fabio.open}) has methods inherited from fabioimage which
+information and image data, every `fabioimage` instance (returned
+by `fabio.open`) has methods inherited from `fabioimage` which
 provide information about the image minimum, maximum and mean
 values. In addition there are methods which return the file number,
 name etc. Some of the most important methods are specific for
 certain formats because the methods are related to how frames in a
-sequence are handled; these methods are img.next(),
-img.previous(), and img.getframe(n). The behaviour of such
+sequence are handled; these methods are `img.next()`,
+`img.previous()`, and `img.getframe(n)`. The behaviour of such
 methods varies depending on the image format: for single-frame
-format (like mar345), img.next() will return the image in next
-file; for multi-frame format (like GE), img.next() will return
+format (like mar345), `img.next()` will return the image in next
+file; for multi-frame format (like GE), `img.next()` will return
 the next frame within the same file. For formats which are possibly
 multi-framed like EDF, the behaviour depends on the actual number
-of frames per file (accessible via the img.nframes attribute).
+of frames per file (accessible via the `img.nframes` attribute).
 
 Usage
-----------------------
+-----
 
 Examples
 ........
@@ -189,13 +191,13 @@ Interactive viewing with matplotlib:
 Future and perspectives
 -----------------------
 
-The Hierarchical Data Format version 5 {hdf5}is a data format which
+The Hierarchical Data Format version 5 (`hdf5`) is a data format which
 is increasingly popular for storage of X-ray and neutron data. To
-name a few facilities the synchrotron Soleil {tub05}and the neutron
+name a few facilities the synchrotron Soleil and the neutron
 sources ISIS, SNS and SINQ already use HDF extensively through the
-NeXus {nexus}format. For now, mainly processed or curated data are
+NeXus format. For now, mainly processed or curated data are
 stored in this format but new detectors are rumoured to provide
-native output in HDF5. FabIO will rely on H5Py {h5py}, which
+native output in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
 dependency, to be able to read and write such HDF5 files.
 
