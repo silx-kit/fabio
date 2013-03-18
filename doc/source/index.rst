@@ -11,9 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   
    getting_started
-   
+   INSTALL
+   Changelog
    api/modules
 
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf8
 """
-Authors: Jérôme Kieffer, ESRF 
+Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
-FabIO library containing compression and decompression algorithm for various  
+FabIO library containing compression and decompression algorithm for various
 """
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
@@ -38,7 +38,7 @@ except ImportError:
 
 def md5sum(blob):
     """
-    returns the md5sum of an object... 
+    returns the md5sum of an object...
     """
     return base64.b64encode(hashlib.md5(blob).digest())
 
@@ -51,6 +51,12 @@ def endianness():
 
 
 def decGzip(stream):
+    """
+
+    Decompress a chunk of data using the gzip algorithm from Python or alternatives if possible
+
+    """
+
     if gzip is None:
         raise ImportError("gzip module is not available")
     fileobj = StringIO.StringIO(stream)
@@ -81,7 +87,9 @@ def decGzip(stream):
 
 def decBzip2(stream):
     """
-    decompress a chunk of data using the bzip2 algorithm
+
+    Decompress a chunk of data using the bzip2 algorithm from Python
+
     """
     if bz2 is None:
         raise ImportError("bz2 module is not available")
@@ -90,7 +98,9 @@ def decBzip2(stream):
 
 def decZlib(stream):
     """
-    decompress a chunk of data using the zlib algorithm
+
+    Decompress a chunk of data using the zlib algorithm from Python
+
     """
     if zlib is None:
         raise ImportError("zlib module is not available")
@@ -100,9 +110,11 @@ def decZlib(stream):
 def decByteOffet_python(stream, size):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
+
     @param stream: string representing the compressed data
     @param size: the size of the output array (of longInts)
-    @return :NParrays 
+    @return: 1D-ndarray
+
     """
     logger.debug("CBF decompression using Python with Cython loops")
     dataOut = numpy.zeros((size), dtype=numpy.int64)
@@ -134,11 +146,18 @@ def decByteOffet_weave(stream, size):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
 
-    @return list of NParrays
+    @param stream: string representing the compressed data
+    @param size: the size of the output array (of longInts)
+    @return: 1D-ndarray
+
     """
     logger.debug("CBF decompression using Weave")
-    from scipy import weave
-    from scipy.weave import converters
+    try:
+        from scipy import weave
+        from scipy.weave import converters
+    except ImportError:
+        logger.warning("scipy.weave is not available, falling back on slow Numpy implementations")
+        return decByteOffet_numpy(stream, size)
     dataIn = numpy.fromstring(stream, dtype="uint8")
     n = dataIn.size
     dataOut = numpy.zeros(size, dtype="int64")
@@ -195,10 +214,13 @@ return_val=0;
 
 def decByteOffet_numpy(stream, size=None):
     """
-    Analyze a stream of char with any length of exception: 
+    Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
 
-    @return list of NParrays
+    @param stream: string representing the compressed data
+    @param size: the size of the output array (of longInts)
+    @return: 1D-ndarray
+
     """
     logger.debug("CBF decompression using Numpy")
     listnpa = []
@@ -223,7 +245,7 @@ def decByteOffet_numpy(stream, size=None):
                 listnpa.append(numpy.fromstring(stream[idx + 3:idx + 7],
                                              dtype="int32"))
                 shift = 7
-        else: #int16 
+        else:  # int16
             listnpa.append(numpy.fromstring(stream[idx + 1:idx + 3],
                                          dtype="int16"))
             shift = 3
@@ -233,10 +255,13 @@ def decByteOffet_numpy(stream, size=None):
 
 def decByteOffet_cython(stream, size=None):
     """
-    Analyze a stream of char with any length of exception: 
+    Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
 
-    @return list of NParrays
+    @param stream: string representing the compressed data
+    @param size: the size of the output array (of longInts)
+    @return: 1D-ndarray
+
     """
     logger.debug("CBF decompression using cython")
     try:
@@ -250,12 +275,12 @@ def decByteOffet_cython(stream, size=None):
 def compByteOffet_numpy(data):
     """
     Compress a dataset into a string using the byte_offet algorithm
+
     @param data: ndarray
     @return: string/bytes with compressed data
-    
+
     test = numpy.array([0,1,2,127,0,1,2,128,0,1,2,32767,0,1,2,32768,0,1,2,2147483647,0,1,2,2147483648,0,1,2,128,129,130,32767,32768,128,129,130,32768,2147483647,2147483648])
-    
-    
+
     """
     flat = data.astype("int64").ravel()
     delta = numpy.zeros_like(flat)
@@ -300,8 +325,12 @@ def compByteOffet_numpy(data):
 def decTY1(raw_8, raw_16=None, raw_32=None):
     """
     Modified byte offset decompressor used in Oxford Diffraction images
-    @param raw_8,raw_16,raw_32: strings containing raw data with integer of the given size
-    @return numpy.ndarray 
+
+    @param raw_8:  strings containing raw data with integer 8 bits
+    @param raw_16: strings containing raw data with integer 16 bits
+    @param raw_32: strings containing raw data with integer 32 bits
+    @return numpy.ndarray
+
     """
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
     data -= 127
@@ -330,9 +359,10 @@ decKM4CCD = decTY1
 def compTY1(data):
     """
     Modified byte offset compressor used in Oxford Diffraction images
-    
-    @param data numpy.ndarray
-    @return  raw_8,raw_16,raw_32: strings containing raw data with integer of the given size 
+
+    @param data: numpy.ndarray with the input data (integers!)
+    @return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size
+
     """
     fdata = data.flatten()
     diff = numpy.zeros_like(fdata)
@@ -354,9 +384,10 @@ def compTY1(data):
 def decPCK(stream, dim1=None, dim2=None, overflowPix=None):
     """
     Modified CCP4  pck decompressor used in MAR345 images
-    
-    @param stream: string or file 
-    @return numpy.ndarray (square array) 
+
+    @param stream: string or file
+    @return: numpy.ndarray (square array)
+
     """
 
     try:
@@ -375,9 +406,10 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None):
 def compPCK(data):
     """
     Modified CCP4  pck compressor used in MAR345 images
-    
-    @param data numpy.ndarray (square array)
-    @return  compressed stream 
+
+    @param data: numpy.ndarray (square array)
+    @return:  compressed stream
+
     """
     try:
         from mar345_IO import compress_pck

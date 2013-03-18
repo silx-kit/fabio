@@ -32,8 +32,8 @@ class brukerimage(fabioimage):
     def _readheader(self, infile):
         """
         the bruker format uses 80 char lines in key : value format
-        In the fisrt 512*5 bytes of the header there should be a 
-        HDRBLKS key, whose value denotes how many 512 byte blocks 
+        In the fisrt 512*5 bytes of the header there should be a
+        HDRBLKS key, whose value denotes how many 512 byte blocks
         are in the total header. The header is always n*5*512 bytes,
         otherwise it wont contain whole key: value pairs
         """
@@ -55,7 +55,7 @@ class brukerimage(fabioimage):
             i = i + 80                  # next 80 characters
         # we must have read this in the first 512 bytes.
         nhdrblks = int(self.header['HDRBLKS'])
-        # Now read in the rest of the header blocks, appending 
+        # Now read in the rest of the header blocks, appending
         rest = infile.read(512 * (nhdrblks - 5))
         self.__headerstring__ += rest
         lump = lump[i - 80: 512] + rest
@@ -136,10 +136,12 @@ class brukerimage(fabioimage):
     def write(self, fname):
         """
         Writes the image as EDF
+
         FIXME - this should call edfimage.write if that is wanted?
         eg:     obj = edfimage(data = self.data, header = self.header)
                 obj.write(fname)
                 or maybe something like: edfimage.write(self, fname)
+
         """
         logger.warning("***warning***: call to unifinished " + \
                 "brukerimage.write. This will write the file" + \
