@@ -12,7 +12,7 @@ mods for fabio by JPW
 """
 import sys, logging
 logger = logging.getLogger("openimage")
-from fabioutils  import deconstruct_filename, filename_object
+from fabioutils  import FilenameObject
 from fabioimage import fabioimage
 import edfimage
 import adscimage
@@ -80,7 +80,7 @@ def do_magic(byts):
 
 def openimage(filename, frame=None):
     """ Try to open an image """
-    if isinstance(filename, filename_object):
+    if isinstance(filename, FilenameObject):
         try:
             logger.debug("Attempting to open %s" % (filename.tostring()))
             obj = _openimage(filename.tostring())
@@ -128,7 +128,7 @@ def _openimage(filename):
         raise error
     except:
         try:
-            file_obj = deconstruct_filename(filename)
+            file_obj = FilenameObject(filename=filename)
             if file_obj == None:
                 raise Exception("Unable to deconstruct filename")
             if (file_obj.format is not None) and\

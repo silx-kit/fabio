@@ -9,6 +9,8 @@ import re, os, logging, threading, sys
 import StringIO as stringIO
 logger = logging.getLogger("fabioutils")
 from compression import bz2, gzip
+import traceback
+
 
 
 FILETYPES = {
@@ -55,7 +57,7 @@ try:
         COMPRESSORS['.gz'] = 'gzip -dc '
     else:
         COMPRESSORS['.gz'] = None
-except:
+except Exception:
     COMPRESSORS['.gz'] = None
 
 try:
@@ -65,8 +67,17 @@ try:
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
     else:
         COMPRESSORS['.bz2'] = None
-except:
+except Exception:
     COMPRESSORS['.bz2'] = None
+
+def deprecated(func):
+    def wrapper(*arg, **kw):
+        """
+        decorator that deprecates the use of a function  
+        """
+        logger.warning("%s is Deprecated !!! %s" % (func.func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
+        return func(*arg, **kw)
+    return wrapper
 
 
 def getnum(name):
@@ -80,17 +91,36 @@ def getnum(name):
     except ValueError:
         return None
 
-class filename_object:
+class FilenameObject(object):
     """
-    The 'meaning' of a filename
+    The 'meaning' of a filename ... 
     """
-    def __init__(self, stem,
+    def __init__(self, stem=None,
             num=None,
             directory=None,
             format=None,
             extension=None,
             postnum=None,
-            digits=4):
+            digits=4,
+            filename = None):
+        """
+        This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...   
+        
+        @param stem: the stem is a kind of prefix (str)
+        @param num: image number in the serie (int)
+        @param directory: name of the directory (str)
+        @param format: ??
+        @param extension: 
+        @param postnum: 
+        @param digits: Number of digits used to print num
+        
+        Alternative constructor: 
+        
+        @param filename: fullpath of an image file to be deconstructed into directory, prefix, num, extension, ... 
+        
+        """
+
+
         self.stem = stem
         self.num = num
         self.format = format
@@ -98,6 +128,10 @@ class filename_object:
         self.digits = digits
         self.postnum = postnum
         self.directory = directory
+        self.compressed = None
+        if filename is not None:
+            self.deconstruct_filename(filename)
+            
 
     def str(self):
         """ Return a string representation """
@@ -111,7 +145,7 @@ class filename_object:
                     self.postnum ,
                     self.digits ,
                     self.directory ] ])
-
+    __repr__ = str
 
     def tostring(self):
         """
@@ -130,6 +164,76 @@ class filename_object:
         return name
 
 
+    def deconstruct_filename(self, filename):
+        """
+        Break up a filename to get image type and number
+        """
+        direc, name = os.path.split(filename)
+        direc = direc or None
+        parts = name.split(".")
+        compressed = False
+        stem = parts[0]
+        extn = ""
+        postnum = ""
+        ndigit = 4
+        num = None
+        typ = None
+        if parts[-1] in ["gz", "bz2"]:
+            extn = "." + parts[-1]
+            parts = parts[:-1]
+            compressed = True
+        if parts[-1] in FILETYPES.keys():
+            typ = FILETYPES[parts[-1]]
+            extn = "." + parts[-1] + extn
+            try:
+                stem, numstring, postnum = numstem(".".join(parts[:-1]))
+                num = int(numstring)
+                ndigit = len(numstring)
+            except Exception, err:
+                # There is no number - hence make num be None, not 0
+                logger.debug("l176: %s" % err)
+                num = None
+                stem = "".join(parts[:-1])
+        else:
+            # Probably two type left
+            if len(parts) == 1:
+                # Probably GE format stem_numb
+                parts2 = parts[0].split("_")
+                if parts2[-1].isdigit():
+                    num = int(parts2[-1])
+                    ndigit = len(parts2[-1])
+                    typ = ['GE']
+                    stem = "_".join(parts2[:-1]) + "_"
+            else:
+                try:
+                    num = int(parts[-1])
+                    ndigit = len(parts[-1])
+                    typ = ['bruker']
+                    stem = ".".join(parts[:-1]) + "."
+                except Exception, err:
+                    logger.debug("l196: %s" % err)
+                    typ = None
+                    extn = "." + parts[-1] + extn
+                    numstring = ""
+                    try:
+                        stem , numstring, postnum = numstem(".".join(parts[:-1]))
+                    except Exception, err:
+                        logger.debug("l202: %s" % err)
+                        raise
+                    if numstring.isdigit():
+                        num = int(numstring)
+                        ndigit = len(numstring)
+                #            raise Exception("Cannot decode "+filename)
+
+        self.stem = stem
+        self.num=num
+        self.directory=direc
+        self.format=typ
+        self.extension=extn
+        self.postnum = postnum
+        self.digits = ndigit
+        self.compressed = compressed
+
 def numstem(name):
     """ cant see how to do without reversing strings
     Match 1 or more digits going backwards from the end of the string
@@ -140,116 +244,56 @@ def numstem(name):
         res = reg.match(name).groups()
         #res = reg.match(name[::-1]).groups()
         #return [ r[::-1] for r in res[::-1]]
-        if len(res[0]) == len(res[1]) == 0: # Hack for file without number 
+        if len(res[0]) == len(res[1]) == 0: # Hack for file without number
             return [res[2], '', '']
         return [ r for r in res]
     except AttributeError: # no digits found
         return [name, "", ""]
 
+@deprecated
 def deconstruct_filename(filename):
     """
-    Break up a filename to get image type and number
+    Function for backward compatibility.
+    Deprecated
     """
-    direc, name = os.path.split(filename)
-    direc = direc or None
-    parts = name.split(".")
-    compressed = False
-    stem = parts[0]
-    extn = ""
-    postnum = ""
-    ndigit = 4
-    num = None
-    typ = None
-    if parts[-1] in ["gz", "bz2"]:
-        extn = "." + parts[-1]
-        parts = parts[:-1]
-        compressed = True
-    if parts[-1] in FILETYPES.keys():
-        typ = FILETYPES[parts[-1]]
-        extn = "." + parts[-1] + extn
-        try:
-            stem, numstring, postnum = numstem(".".join(parts[:-1]))
-            num = int(numstring)
-            ndigit = len(numstring)
-        except Exception, err:
-            # There is no number - hence make num be None, not 0
-            logger.debug("l176: %s" % err)
-            num = None
-            stem = "".join(parts[:-1])
-    else:
-        # Probably two type left
-        if len(parts) == 1:
-            # Probably GE format stem_numb
-            parts2 = parts[0].split("_")
-            if parts2[-1].isdigit():
-                num = int(parts2[-1])
-                ndigit = len(parts2[-1])
-                typ = ['GE']
-                stem = "_".join(parts2[:-1]) + "_"
-        else:
-            try:
-                num = int(parts[-1])
-                ndigit = len(parts[-1])
-                typ = ['bruker']
-                stem = ".".join(parts[:-1]) + "."
-            except Exception, err:
-                logger.debug("l196: %s" % err)
-                typ = None
-                extn = "." + parts[-1] + extn
-                numstring = ""
-                try:
-                    stem , numstring, postnum = numstem(".".join(parts[:-1]))
-                except Exception, err:
-                    logger.debug("l202: %s" % err)
-                    raise
-                if numstring.isdigit():
-                    num = int(numstring)
-                    ndigit = len(numstring)
-            #            raise Exception("Cannot decode "+filename)
-    obj = filename_object(stem,
-            num=num,
-            directory=direc,
-            format=typ,
-            extension=extn,
-            postnum=postnum,
-            digits=ndigit)
-    return obj
+    return FilenameObject(filename=filename)
 
-def construct_filename(filename, frame):
+def construct_filename(filename, frame=None):
     "Try to construct the filename for a given frame"
-    fo = deconstruct_filename(filename)
-    fo.num = frame
-    return fo.tostring()
+    fobj = FilenameObject(filename=filename)
+    if frame is not None:
+        fobj.num = frame
+    return fobj.tostring()
 
 def next_filename(name, padding=True):
     """ increment number """
-    obj = deconstruct_filename(name)
-    obj.num += 1
+    fobj = FilenameObject(filename=name)
+    fobj.num += 1
     if not padding:
-        obj.digits = 0
-    return obj.tostring()
+        fobj.digits = 0
+    return fobj.tostring()
 
 def previous_filename(name, padding=True):
     """ decrement number """
-    obj = deconstruct_filename(name)
-    obj.num -= 1
+    fobj = FilenameObject(filename=name)
+    fobj.num -= 1
     if not padding:
-        obj.digits = 0
-    return obj.tostring()
+        fobj.digits = 0
+    return fobj.tostring()
 
 def jump_filename(name, num, padding=True):
     """ jump to number """
-    obj = deconstruct_filename(name)
-    obj.num = num
+    fobj = FilenameObject(filename=name)
+    fobj.num = num
     if not padding:
-        obj.digits = 0
-    return obj.tostring()
+        fobj.digits = 0
+    return fobj.tostring()
 
 
 def extract_filenumber(name):
     """ extract file number """
-    obj = deconstruct_filename(name)
-    return obj.num
+    fobj = FilenameObject(filename=name)
+    return fobj.num
 
 def isAscii(name, listExcluded=None):
     """
@@ -449,10 +493,10 @@ else:
                 if whence == os.SEEK_SET:
                     gzip.GzipFile.seek(self, offset)
                 elif whence == os.SEEK_CUR:
-                        gzip.GzipFile.seek(self, offset + self.tell())
+                    gzip.GzipFile.seek(self, offset + self.tell())
                 elif whence == os.SEEK_END:
-                        gzip.GzipFile.seek(self, -1)
-                        gzip.GzipFile.seek(self, offset + self.tell())
+                    gzip.GzipFile.seek(self, -1)
+                    gzip.GzipFile.seek(self, offset + self.tell())
 
 if bz2 is None:
     BZ2File = UnknownCompressedFile

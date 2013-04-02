@@ -16,7 +16,7 @@ import logging, sys
 logger = logging.getLogger("fileseries")
 import traceback as pytraceback
 
-from fabioutils import filename_object, next_filename
+from fabioutils import FilenameObject, next_filename
 
 from openimage import openimage
 
@@ -264,7 +264,7 @@ class file_series(list):
 
         @return: file_object
         """
-        return filename_object(self.first())
+        return FilenameObject(self.first())
 
     def last_object(self):
         """
@@ -273,7 +273,7 @@ class file_series(list):
         @return: file_object
 
         """
-        return filename_object(self.last())
+        return FilenameObject(self.last())
 
     def next_object(self):
         """
@@ -282,7 +282,7 @@ class file_series(list):
         @return: file_object
 
         """
-        return filename_object(self.next())
+        return FilenameObject(self.next())
 
     def previous_object(self):
         """
@@ -291,7 +291,7 @@ class file_series(list):
         @return: file_object
 
         """
-        return filename_object(self.previous())
+        return FilenameObject(self.previous())
 
     def jump_object(self, num):
         """
@@ -300,7 +300,7 @@ class file_series(list):
         @return: file_object
 
         """
-        return filename_object(self.jump(num))
+        return FilenameObject(self.jump(num))
 
     def current_object(self):
         """
@@ -309,7 +309,7 @@ class file_series(list):
         @return: file_object
 
         """
-        return filename_object(self.current())
+        return FilenameObject(self.current())
 
 
 
@@ -345,7 +345,7 @@ class filename_series:
     """ Much like the others, but created from a string filename """
     def __init__(self, filename):
         """ create from a filename (String)"""
-        self.obj = filename_object(filename)
+        self.obj = FilenameObject(filename)
 
     def next(self):
         """ increment number """
@@ -381,18 +381,18 @@ class filename_series:
         return openimage(self.jump(num))
     # object methods
     def next_object(self):
-        """ returns the next filename as a fabio.filename_object"""
+        """ returns the next filename as a fabio.FilenameObject"""
         self.obj.num += 1
         return self.obj
     def previous_object(self):
-        """ returns the previous filename as a fabio.filename_object"""
+        """ returns the previous filename as a fabio.FilenameObject"""
         self.obj.num -= 1
         return self.obj
     def current_object(self):
-        """ returns the current filename as a fabio.filename_object"""
+        """ returns the current filename as a fabio.FilenameObject"""
         return self.obj
     def jump_object(self, num):
-        """ returns the filename num as a fabio.filename_object"""
+        """ returns the filename num as a fabio.FilenameObject"""
         self.obj.num = num
         return self.obj
 
