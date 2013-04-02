@@ -1,39 +1,28 @@
 ************* Module mar345image
-W:113,0: TODO: validate these values against the binaries already read
+W:118,0: TODO: validate these values against the binaries already read
 W:  4,0: Redefining built-in '__doc__'
 C:  1,0: Missing docstring
-F: 16,0: Unable to import 'fabioimage'
-F: 20,0: Unable to import 'compression'
-C: 22,0:mar345image: Invalid name "mar345image" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 22,0:mar345image: Missing docstring
-C: 32,8:mar345image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E: 32,12:mar345image.read: Instance of 'mar345image' has no '_open' member
-W: 37,19:mar345image.read: Catching too general exception Exception
-W: 29,26:mar345image.read: Unused argument 'frame'
-C: 59,8:mar345image._readheader: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 60,8:mar345image._readheader: Invalid name "h" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 63,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 71,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 73,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:114,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:122,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:123,12:mar345image._readheader: Invalid name "m" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:126,12:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:141,16:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R: 54,4:mar345image._readheader: Too many statements (57/50)
-W:159,15:mar345image.write: Catching too general exception Exception
-E:154,22:mar345image.write: Instance of 'mar345image' has no '_open' member
-R:162,4:mar345image._writeheader: Too many branches (28/15)
-R:162,4:mar345image._writeheader: Too many statements (123/50)
-C:293,4:mar345image._high_intensity_pixel_records: Missing docstring
-C:305,4:mar345image.nb_overflow_pixels: Missing docstring
-C:309,4:mar345image.checkData: Missing docstring
-W: 31,8:mar345image.read: Attribute 'filename' defined outside __init__
-W: 76,20:mar345image._readheader: Attribute 'dim2' defined outside __init__
-W:144,8:mar345image._readheader: Attribute 'header' defined outside __init__
-W: 76,8:mar345image._readheader: Attribute 'dim1' defined outside __init__
-W: 50,8:mar345image.read: Attribute 'bytecode' defined outside __init__
-W: 43,16:mar345image.read: Attribute 'data' defined outside __init__
+C: 27,0:mar345image: Invalid name "mar345image" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 27,0:mar345image: Missing docstring
+C: 37,8:mar345image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 42,19:mar345image.read: Catching too general exception Exception
+C: 64,8:mar345image._readheader: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 65,8:mar345image._readheader: Invalid name "h" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 68,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 76,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 78,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:119,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:127,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:128,12:mar345image._readheader: Invalid name "m" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:131,12:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:146,16:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R: 59,4:mar345image._readheader: Too many statements (57/50)
+W:164,15:mar345image.write: Catching too general exception Exception
+R:167,4:mar345image._writeheader: Too many branches (28/15)
+R:167,4:mar345image._writeheader: Too many statements (123/50)
+C:298,4:mar345image._high_intensity_pixel_records: Missing docstring
+C:310,4:mar345image.nb_overflow_pixels: Missing docstring
+R: 27,0:mar345image: Too many public methods (26/20)
 
 
 Report
@@ -46,13 +35,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |17     |17       |=          |
+|convention |16     |17       |-1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |3      |3        |=          |
+|refactor   |4      |3        |+1.00      |
 +-----------+-------+---------+-----------+
-|warning    |11     |11       |=          |
+|warning    |4      |11       |-7.00      |
 +-----------+-------+---------+-----------+
-|error      |2      |2        |=          |
+|error      |0      |2        |-2.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -65,33 +54,27 @@ Messages
 +===========+============+
 |C0103      |12          |
 +-----------+------------+
-|W0201      |6           |
-+-----------+------------+
-|C0111      |5           |
+|C0111      |4           |
 +-----------+------------+
 |W0703      |2           |
 +-----------+------------+
 |R0915      |2           |
 +-----------+------------+
-|F0401      |2           |
-+-----------+------------+
-|E1101      |2           |
-+-----------+------------+
 |W0622      |1           |
-+-----------+------------+
-|W0613      |1           |
 +-----------+------------+
 |W0511      |1           |
 +-----------+------------+
 |R0912      |1           |
++-----------+------------+
+|R0904      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.33/10 (previous run: 8.31/10)
-That's pretty good. Good work mate.
+Your code has been rated at 9.02/10 (previous run: 8.33/10)
+So close to being perfect...
 
 Raw metrics
 -----------
@@ -99,14 +82,22 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |260    |83.87 |257      |+3.00      |
+|code      |265    |84.13 |260      |+5.00      |
 +----------+-------+------+---------+-----------+
-|docstring |16     |5.16  |16       |=          |
+|docstring |16     |5.08  |16       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |13     |4.19  |13       |=          |
+|comment   |13     |4.13  |13       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |21     |6.77  |21       |=          |
+|empty     |21     |6.67  |21       |=          |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (mar345image)
 
 
 
@@ -120,7 +111,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |8      |8          |=          |62.50       |0.00     |
+|method   |8      |8          |=          |75.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
@@ -137,14 +128,6 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (mar345image)
 
 
 

@@ -1,18 +1,18 @@
 ************* Module file_series
-C: 30,4:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 45,15:new_file_series0: Catching too general exception Exception
-C: 44,12:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 52,19:new_file_series0: Catching too general exception Exception
-C: 90,4:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:101,15:new_file_series: Catching too general exception Exception
-C: 99,12:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:110,19:new_file_series: Catching too general exception Exception
-C:116,22:new_file_series: More than one statement on a single line
-C:121,0:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
-R:121,0:file_series: Too many public methods (28/20)
-C:317,0:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
-R:317,0:numbered_file_series: Too many public methods (28/20)
-C:344,0:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 32,4:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 47,15:new_file_series0: Catching too general exception Exception
+C: 46,12:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 54,19:new_file_series0: Catching too general exception Exception
+C: 95,4:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:106,15:new_file_series: Catching too general exception Exception
+C:104,12:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:115,19:new_file_series: Catching too general exception Exception
+C:121,22:new_file_series: More than one statement on a single line
+C:126,0:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
+R:126,0:file_series: Too many public methods (28/20)
+C:322,0:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
+R:322,0:numbered_file_series: Too many public methods (28/20)
+C:349,0:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
 
 
 Report
@@ -64,13 +64,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |146    |37.15 |146      |=          |
+|code      |146    |36.68 |146      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |189    |48.09 |189      |=          |
+|docstring |194    |48.74 |189      |+5.00      |
 +----------+-------+------+---------+-----------+
-|comment   |7      |1.78  |7        |=          |
+|comment   |7      |1.76  |7        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |51     |12.98 |51       |=          |
+|empty     |51     |12.81 |51       |=          |
 +----------+-------+------+---------+-----------+
 
 

@@ -79,16 +79,6 @@ Statistics by type
 
 
 
-External dependencies
----------------------
-::
-
-    fabio 
-      \-tifimage 
-        \-tifimage (pilatusimage)
-
-
-
 Duplication
 -----------
 

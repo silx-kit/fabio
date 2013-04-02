@@ -1,10 +1,7 @@
 ************* Module marccdimage
-F: 22,0: Unable to import 'tifimage'
-W:230,4:make_format: Unused variable 'expected'
-C:287,0:marccdimage: Invalid name "marccdimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W:287,0:marccdimage: Class has no __init__ method
-R:287,0:marccdimage: Too few public methods (0/2)
-W:299,8:marccdimage._readheader: Attribute 'header' defined outside __init__
+W:234,4:make_format: Unused variable 'expected'
+C:291,0:marccdimage: Invalid name "marccdimage" (should match [A-Z_][a-zA-Z0-9]+$)
+R:291,0:marccdimage: Too many public methods (25/20)
 
 
 Report
@@ -21,7 +18,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |3        |=          |
+|warning    |1      |3        |-2.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -36,13 +33,7 @@ Messages
 +===========+============+
 |W0612      |1           |
 +-----------+------------+
-|W0232      |1           |
-+-----------+------------+
-|W0201      |1           |
-+-----------+------------+
-|R0903      |1           |
-+-----------+------------+
-|F0401      |1           |
+|R0904      |1           |
 +-----------+------------+
 |C0103      |1           |
 +-----------+------------+
@@ -51,7 +42,7 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.21/10 (previous run: 9.21/10)
+Your code has been rated at 9.52/10 (previous run: 9.21/10)
 So close to being perfect...
 
 Raw metrics
@@ -60,13 +51,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |236    |76.87 |236      |=          |
+|code      |236    |75.88 |236      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |41     |13.36 |41       |=          |
+|docstring |45     |14.47 |41       |+4.00      |
 +----------+-------+------+---------+-----------+
-|comment   |9      |2.93  |9        |=          |
+|comment   |9      |2.89  |9        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |21     |6.84  |21       |=          |
+|empty     |21     |6.75  |21       |=          |
 +----------+-------+------+---------+-----------+
 
 
