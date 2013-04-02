@@ -12,7 +12,7 @@ __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
-import os, logging, struct, hashlib, base64, StringIO, sys
+import logging, struct, hashlib, base64, StringIO, sys
 if sys.version_info >= (3,):
     str = bytes
 logger = logging.getLogger("compression")
@@ -44,6 +44,9 @@ def md5sum(blob):
 
 
 def endianness():
+    """
+    Return the native endianness of the system
+    """
     if numpy.little_endian:
         return "LITTLE_ENDIAN"
     else:

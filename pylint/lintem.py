@@ -12,7 +12,7 @@ __licence__ = "GPL"
 import os, subprocess, sys, distutils.util
 import numpy
 import Image
-
+from os.path import dirname
 arch = "lib.%s-%i.%i" % (distutils.util.get_platform(), sys.version_info[0], sys.version_info[1])
 pylint_dir = os.path.dirname(os.path.abspath(__file__))
 fabio_root = os.path.dirname(pylint_dir)
@@ -20,7 +20,9 @@ installDir = os.path.abspath(os.path.join(fabio_root, "build", arch, "fabio"))
 testDir = os.path.abspath(os.path.join(fabio_root, "test"))
 sys.path.append(testDir)
 import utilstest
-env = {"PYTHONPAH":":".join([installDir, testDir, os.path.dirname(numpy.__file__), os.path.dirname(Image.__file__)])}
+#env = {"PYTHONPATH":":".join([installDir, testDir, dirname(dirname(numpy.__file__)), dirname(Image.__file__)])}
+env = {"PYTHONPATH":installDir}
+print env
 def lintit(infile, outfile):
     print ("Updating %s" % outfile)
     process = subprocess.Popen(["pylint", infile], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)

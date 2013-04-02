@@ -1,6 +1,6 @@
 ************* Module brukerimage
-W:139,0: FIXME - this should call edfimage.write if that is wanted?
-W:169,0: FIXME: what is this? """
+W:140,0: FIXME - this should call edfimage.write if that is wanted?
+W:171,0: FIXME: what is this? """
 F: 18,0: Unable to import 'fabioimage'
 F: 19,0: Unable to import 'readbytestream'
 C: 22,0:brukerimage: Invalid name "brukerimage" (should match [A-Z_][a-zA-Z0-9]+$)
@@ -11,21 +11,21 @@ E: 85,17:brukerimage.read: Instance of 'brukerimage' has no '_open' member
 E:131,8:brukerimage.read: Instance of 'brukerimage' has no 'resetvals' member
 W: 81,26:brukerimage.read: Unused argument 'frame'
 W:118,16:brukerimage.read: Unused variable 'i'
-E:149,18:brukerimage.write: Instance of 'brukerimage' has no '_open' member
-E:152,17:brukerimage.write: Instance of 'brukerimage' has no 'header_keys' member
+E:151,18:brukerimage.write: Instance of 'brukerimage' has no '_open' member
+E:154,17:brukerimage.write: Instance of 'brukerimage' has no 'header_keys' member
 W:132,8:brukerimage.read: Attribute 'pilimage' defined outside __init__
 W: 79,8:brukerimage._readheader: Attribute 'dim2' defined outside __init__
 W: 43,8:brukerimage._readheader: Attribute 'header' defined outside __init__
 W: 78,8:brukerimage._readheader: Attribute 'dim1' defined outside __init__
 W:114,12:brukerimage.read: Attribute 'data' defined outside __init__
-E:181,14:test: Instance of 'brukerimage' has no 'toPIL16' member
-E:182,8:test: Instance of 'brukerimage' has no 'rebin' member
-E:184,12:test: Instance of 'brukerimage' has no 'getmax' member
-E:184,26:test: Instance of 'brukerimage' has no 'getmin' member
-E:184,40:test: Instance of 'brukerimage' has no 'getmean' member
-E:184,55:test: Instance of 'brukerimage' has no 'getstddev' member
-E:186,28:test: Instance of 'brukerimage' has no 'integrate_area' member
-W:181,8:test: Unused variable 'res'
+E:183,14:test: Instance of 'brukerimage' has no 'toPIL16' member
+E:184,8:test: Instance of 'brukerimage' has no 'rebin' member
+E:186,12:test: Instance of 'brukerimage' has no 'getmax' member
+E:186,26:test: Instance of 'brukerimage' has no 'getmin' member
+E:186,40:test: Instance of 'brukerimage' has no 'getmean' member
+E:186,55:test: Instance of 'brukerimage' has no 'getstddev' member
+E:188,28:test: Instance of 'brukerimage' has no 'integrate_area' member
+W:183,8:test: Unused variable 'res'
 
 
 Report
@@ -40,11 +40,11 @@ Messages by category
 +===========+=======+=========+===========+
 |convention |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |0      |1        |-1.00      |
 +-----------+-------+---------+-----------+
-|warning    |11     |11       |=          |
+|warning    |11     |4        |+7.00      |
 +-----------+-------+---------+-----------+
-|error      |13     |13       |=          |
+|error      |13     |10       |+3.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -76,7 +76,7 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 2.60/10 (previous run: 2.60/10)
+Your code has been rated at 2.60/10 (previous run: 4.62/10)
 Hum... Needs work.
 
 Raw metrics
@@ -85,13 +85,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |113    |59.79 |113      |=          |
+|code      |113    |59.16 |113      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |37     |19.58 |37       |=          |
+|docstring |39     |20.42 |37       |+2.00      |
 +----------+-------+------+---------+-----------+
-|comment   |6      |3.17  |6        |=          |
+|comment   |6      |3.14  |6        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |33     |17.46 |33       |=          |
+|empty     |33     |17.28 |33       |=          |
 +----------+-------+------+---------+-----------+
 
 

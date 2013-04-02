@@ -71,6 +71,9 @@ except Exception:
     COMPRESSORS['.bz2'] = None
 
 def deprecated(func):
+    """
+    used to deprecate a function/method: prints a lot of warning messages to enforce the modifaction of the code
+    """
     def wrapper(*arg, **kw):
         """
         decorator that deprecates the use of a function  
@@ -226,10 +229,10 @@ class FilenameObject(object):
                 #            raise Exception("Cannot decode "+filename)
 
         self.stem = stem
-        self.num=num
-        self.directory=direc
-        self.format=typ
-        self.extension=extn
+        self.num = num
+        self.directory = direc
+        self.format = typ
+        self.extension = extn
         self.postnum = postnum
         self.digits = ndigit
         self.compressed = compressed

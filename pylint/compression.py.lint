@@ -1,23 +1,18 @@
 ************* Module compression
 W: 17,4: Redefining built-in 'str'
-C: 46,0:endianness: Missing docstring
-C: 53,0:decGzip: Missing docstring
-W: 67,15:decGzip: Catching too general exception Exception
-C:143,4:decByteOffet_weave: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:189,4:decByteOffet_weave: Invalid name "rc" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:143,4:decByteOffet_weave: Unused variable 'n'
-W:196,31:decByteOffet_numpy: Unused argument 'size'
-W:244,24:decByteOffet_cython: Unused variable 'error'
-F:363,8:decPCK: Unable to import 'mar345_IO'
-W:364,24:decPCK: Unused variable 'error'
-F:383,8:compPCK: Unable to import 'mar345_IO'
-W:384,24:compPCK: Unused variable 'error'
-W: 15,0: Unused import os
+W: 76,15:decGzip: Catching too general exception Exception
+C:165,4:decByteOffet_weave: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:211,4:decByteOffet_weave: Invalid name "rc" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:165,4:decByteOffet_weave: Unused variable 'n'
+W:218,31:decByteOffet_numpy: Unused argument 'size'
+W:272,24:decByteOffet_cython: Unused variable 'error'
+W:398,24:decPCK: Unused variable 'error'
+W:419,24:compPCK: Unused variable 'error'
 
 
 Report
 ======
-219 statements analysed.
+223 statements analysed.
 
 Messages by category
 --------------------
@@ -25,11 +20,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |4      |4        |=          |
+|convention |2      |3        |-1.00      |
 +-----------+-------+---------+-----------+
 |refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |8      |8        |=          |
+|warning    |7      |8        |-1.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -44,10 +39,6 @@ Messages
 +===========+============+
 |W0612      |4           |
 +-----------+------------+
-|F0401      |2           |
-+-----------+------------+
-|C0111      |2           |
-+-----------+------------+
 |C0103      |2           |
 +-----------+------------+
 |W0703      |1           |
@@ -56,14 +47,12 @@ Messages
 +-----------+------------+
 |W0613      |1           |
 +-----------+------------+
-|W0611      |1           |
-+-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.45/10 (previous run: 9.45/10)
+Your code has been rated at 9.60/10 (previous run: 9.51/10)
 So close to being perfect...
 
 Raw metrics
@@ -72,38 +61,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |280    |73.30 |280      |=          |
+|code      |284    |67.78 |284      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |70     |18.32 |70       |=          |
+|docstring |100    |23.87 |97       |+3.00      |
 +----------+-------+------+---------+-----------+
-|comment   |2      |0.52  |2        |=          |
+|comment   |2      |0.48  |2        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |30     |7.85  |30       |=          |
+|empty     |33     |7.88  |32       |+1.00      |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio 
-      \-byte_offset 
-        \-analyseCython (compression)
-    numpy (compression)
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
 
 
 
@@ -119,8 +84,29 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |method   |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
-|function |14     |14         |=          |85.71       |0.00     |
+|function |14     |14         |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (compression)
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
 
