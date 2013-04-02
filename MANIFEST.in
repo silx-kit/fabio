@@ -5,13 +5,13 @@ recursive-include test *.py
 recursive-include doc *
 recursive-include pylint *
 recursive-include epydoc *
-recursive-exclude pylint *
-recursive-exclude pydoc *
-recursive-exclude epydoc *
+# recursive-exclude pylint *
+# recursive-exclude pydoc *
+# recursive-exclude epydoc *
 recursive-exclude build *
 recursive-exclude dist *
 recursive-exclude test/tiftest *
 recursive-exclude test/testimages *
 recursive-exclude fabio.egg-info *
-recursive-exclude debian *
+# recursive-exclude debian *
 
