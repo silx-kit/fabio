@@ -1,55 +1,37 @@
 ************* Module fabioutils
-W:450,0: Bad indentation. Found 24 spaces, expected 20
-W:452,0: Bad indentation. Found 24 spaces, expected 20
-W:453,0: Bad indentation. Found 24 spaces, expected 20
-F: 11,0: Unable to import 'compression'
-W: 58,0: No exception type(s) specified
-W: 68,0: No exception type(s) specified
-W: 77,4:getnum: Unused variable 'stem'
-W: 77,16:getnum: Unused variable 'post_num'
-C: 83,0:filename_object: Invalid name "filename_object" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 90,12:filename_object.__init__: Redefining built-in 'format'
-W:174,15:deconstruct_filename: Catching too general exception Exception
-W:195,19:deconstruct_filename: Catching too general exception Exception
-R:149,0:deconstruct_filename: Too many statements (51/50)
-W:156,4:deconstruct_filename: Unused variable 'compressed'
-C:218,4:construct_filename: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:278,12:toAscii: Redefining name 'i' from outer scope (line 48)
-E:282,29:toAscii: Unsupported format character 'n' (0x6e) at index 11
-C:289,0:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:289,13:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:318,4:StringIO.getSize: Missing docstring
-C:327,4:StringIO.setSize: Missing docstring
-W:329,11:StringIO: Use of "property" on an old style class
-C:357,4:File.getSize: Missing docstring
-C:366,4:File.setSize: Missing docstring
-C:419,12:GzipFile.getSize: Missing docstring
-E:421,58:GzipFile.getSize: Instance of 'GzipFile' has no 'name' member
-E:422,30:GzipFile.getSize: Instance of 'GzipFile' has no 'filename' member
-C:422,54:GzipFile.getSize: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E:424,38:GzipFile.getSize: Undefined variable 'numpy'
-E:424,72:GzipFile.getSize: Undefined variable 'numpy'
-C:426,12:GzipFile.setSize: Missing docstring
-W:428,19:GzipFile: Use of "property" on an old style class
-C:430,12:GzipFile.closed: Missing docstring
-E:431,23:GzipFile.closed: Instance of 'GzipFile' has no 'fileobj' member
-E:450,58:GzipFile.seek: Instance of 'GzipFile' has no 'tell' member
-E:453,58:GzipFile.seek: Instance of 'GzipFile' has no 'tell' member
-W:485,20:BZ2File.getSize: Redefining built-in 'all'
-C:480,8:BZ2File.getSize: Missing docstring
-E:482,54:BZ2File.getSize: Instance of 'BZ2File' has no 'name' member
-E:484,26:BZ2File.getSize: Instance of 'BZ2File' has no 'tell' member
-E:485,26:BZ2File.getSize: Instance of 'BZ2File' has no 'read' member
-E:486,34:BZ2File.getSize: Instance of 'BZ2File' has no 'tell' member
-E:487,20:BZ2File.getSize: Instance of 'BZ2File' has no 'seek' member
-W:485,20:BZ2File.getSize: Unused variable 'all'
-C:489,8:BZ2File.setSize: Missing docstring
-W:491,15:BZ2File: Use of "property" on an old style class
+W: 60,7: Catching too general exception Exception
+W: 70,7: Catching too general exception Exception
+W: 91,4:getnum: Unused variable 'stem'
+W: 91,16:getnum: Unused variable 'post_num'
+W:104,12:FilenameObject.__init__: Redefining built-in 'format'
+W:195,19:FilenameObject.deconstruct_filename: Catching too general exception Exception
+W:216,23:FilenameObject.deconstruct_filename: Catching too general exception Exception
+R:170,4:FilenameObject.deconstruct_filename: Too many statements (60/50)
+W:327,12:toAscii: Redefining name 'i' from outer scope (line 50)
+E:331,29:toAscii: Unsupported format character 'n' (0x6e) at index 11
+C:338,0:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:338,13:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:367,4:StringIO.getSize: Missing docstring
+C:376,4:StringIO.setSize: Missing docstring
+W:378,11:StringIO: Use of "property" on an old style class
+C:406,4:File.getSize: Missing docstring
+C:415,4:File.setSize: Missing docstring
+C:468,12:GzipFile.getSize: Missing docstring
+C:471,54:GzipFile.getSize: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E:473,38:GzipFile.getSize: Undefined variable 'numpy'
+E:473,72:GzipFile.getSize: Undefined variable 'numpy'
+C:475,12:GzipFile.setSize: Missing docstring
+W:477,19:GzipFile: Use of "property" on an old style class
+C:479,12:GzipFile.closed: Missing docstring
+W:534,20:BZ2File.getSize: Redefining built-in 'all'
+C:529,8:BZ2File.getSize: Missing docstring
+W:534,20:BZ2File.getSize: Unused variable 'all'
+C:538,8:BZ2File.setSize: Missing docstring
 
 
 Report
 ======
-257 statements analysed.
+278 statements analysed.
 
 Messages by category
 --------------------
@@ -57,13 +39,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |14     |2        |+12.00     |
+|convention |12     |17       |-5.00      |
 +-----------+-------+---------+-----------+
-|refactor   |1      |0        |+1.00      |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |17     |10       |+7.00      |
+|warning    |12     |12       |=          |
 +-----------+-------+---------+-----------+
-|error      |13     |1        |+12.00     |
+|error      |3      |3        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -74,21 +56,15 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|E1101      |10          |
-+-----------+------------+
 |C0111      |9           |
 +-----------+------------+
-|C0103      |5           |
+|W0703      |4           |
 +-----------+------------+
-|W0612      |4           |
+|W0612      |3           |
 +-----------+------------+
-|W1001      |3           |
+|C0103      |3           |
 +-----------+------------+
-|W0311      |3           |
-+-----------+------------+
-|W0703      |2           |
-+-----------+------------+
-|W0702      |2           |
+|W1001      |2           |
 +-----------+------------+
 |W0622      |2           |
 +-----------+------------+
@@ -98,8 +74,6 @@ Messages
 +-----------+------------+
 |R0915      |1           |
 +-----------+------------+
-|F0401      |1           |
-+-----------+------------+
 |E1300      |1           |
 +-----------+------------+
 
@@ -107,8 +81,8 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 6.23/10 (previous run: 8.91/10)
-This is okay-ish, but I'm sure you can do better.
+Your code has been rated at 8.56/10 (previous run: 8.38/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -116,31 +90,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |288    |59.88 |184      |+104.00    |
+|code      |305    |57.33 |305      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |149    |30.98 |55       |+94.00     |
+|docstring |175    |32.89 |172      |+3.00      |
 +----------+-------+------+---------+-----------+
-|comment   |8      |1.66  |7        |+1.00      |
+|comment   |7      |1.32  |7        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |36     |7.48  |27       |+9.00      |
+|empty     |45     |8.46  |44       |+1.00      |
 +----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |6      |1          |+5.00      |100.00      |16.67    |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |18     |3          |+15.00     |50.00       |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |11     |10         |+1.00      |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
@@ -154,6 +111,23 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |6      |6          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |19     |19         |=          |52.63       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |13     |13         |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 

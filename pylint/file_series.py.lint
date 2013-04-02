@@ -1,20 +1,18 @@
 ************* Module file_series
-F: 18,0: Unable to import 'fabioutils'
-F: 20,0: Unable to import 'openimage'
-C: 28,4:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 43,15:new_file_series0: Catching too general exception Exception
-C: 42,12:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 50,19:new_file_series0: Catching too general exception Exception
-C: 86,4:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 97,15:new_file_series: Catching too general exception Exception
-C: 95,12:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:106,19:new_file_series: Catching too general exception Exception
-C:112,22:new_file_series: More than one statement on a single line
-C:117,0:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
-R:117,0:file_series: Too many public methods (28/20)
-C:231,0:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
-R:231,0:numbered_file_series: Too many public methods (28/20)
-C:256,0:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 30,4:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 45,15:new_file_series0: Catching too general exception Exception
+C: 44,12:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 52,19:new_file_series0: Catching too general exception Exception
+C: 90,4:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:101,15:new_file_series: Catching too general exception Exception
+C: 99,12:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:110,19:new_file_series: Catching too general exception Exception
+C:116,22:new_file_series: More than one statement on a single line
+C:121,0:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
+R:121,0:file_series: Too many public methods (28/20)
+C:317,0:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
+R:317,0:numbered_file_series: Too many public methods (28/20)
+C:344,0:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
 
 
 Report
@@ -50,8 +48,6 @@ Messages
 +-----------+------------+
 |R0904      |2           |
 +-----------+------------+
-|F0401      |2           |
-+-----------+------------+
 |C0321      |1           |
 +-----------+------------+
 
@@ -68,13 +64,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |146    |51.05 |146      |=          |
+|code      |146    |37.15 |146      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |101    |35.31 |101      |=          |
+|docstring |189    |48.09 |189      |=          |
 +----------+-------+------+---------+-----------+
-|comment   |7      |2.45  |7        |=          |
+|comment   |7      |1.78  |7        |=          |
 +----------+-------+------+---------+-----------+
-|empty     |32     |11.19 |32       |=          |
+|empty     |51     |12.98 |51       |=          |
 +----------+-------+------+---------+-----------+
 
 
