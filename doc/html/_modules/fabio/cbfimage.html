@@ -619,12 +619,13 @@
 
 
     <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linesep</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;converts a cif dictionnary to a string according to the CIF syntax</span></div>
-<div class="viewcode-block" id="CIF.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.tostring">[docs]</a><span class="sd">        @param _strFilename: the name of the filename to be appended in the</span>
-<span class="sd">                                header of the CIF file</span>
+        <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="CIF.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.tostring">[docs]</a><span class="sd">        Converts a cif dictionnary to a string according to the CIF syntax</span>
+<span class="sd">        </span>
+<span class="sd">        @param _strFilename: the name of the filename to be appended in the header of the CIF file</span>
 <span class="sd">        @type _strFilename: string</span>
-<span class="sd">        @return : a sting that corresponds to the content of the CIF - file.</span>
-<span class="sd">        @rtype: string</span>
+<span class="sd">        @return: a sting that corresponds to the content of the CIF - file.</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 <span class="c">#        sCifText = &quot;&quot;</span>
         <span class="n">lstStrCif</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;# &quot;</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">__version__</span><span class="p">]</span>

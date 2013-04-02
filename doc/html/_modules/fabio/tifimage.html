@@ -48,22 +48,28 @@
   <h1>Source code for fabio.tifimage</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">FabIO class for dealing with TIFF images. </span>
-<span class="sd">In facts wraps TiffIO from Armando (available in PyMca) or falls back to PIL</span>
+<span class="sd">In facts wraps TiffIO from V. Armando Solé (available in PyMca) or falls back to PIL</span>
 
-<span class="sd">Authors: Jérôme Kieffer (jerome.kieffer@esrf.fr)</span>
-<span class="sd">         Henning O. Sorensen &amp; Erik Knudsen</span>
-<span class="sd">             Center for Fundamental Research: Metal Structures in Four Dimensions</span>
-<span class="sd">             Risoe National Laboratory</span>
-<span class="sd">             Frederiksborgvej 399</span>
-<span class="sd">             DK-4000 Roskilde</span>
-<span class="sd">             email:henning.sorensen@risoe.dk    </span>
+<span class="sd">Authors:</span>
+<span class="sd">........</span>
+<span class="sd">* Henning O. Sorensen &amp; Erik Knudsen:</span>
+<span class="sd">  Center for Fundamental Research: Metal Structures in Four Dimensions;</span>
+<span class="sd">  Risoe National Laboratory;</span>
+<span class="sd">  Frederiksborgvej 399;</span>
+<span class="sd">  DK-4000 Roskilde;</span>
+<span class="sd">  email:erik.knudsen@risoe.dk</span>
+<span class="sd">* Jérôme Kieffer:</span>
+<span class="sd">  European Synchrotron Radiation Facility;</span>
+<span class="sd">  Grenoble (France)</span>
+<span class="sd">   </span>
 <span class="sd">License: GPLv3+        </span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Jérôme Kieffer&quot;</span><span class="p">,</span> <span class="s">&quot;Henning O. Sorensen&quot;</span><span class="p">,</span> <span class="s">&quot;Erik Knudsen&quot;</span><span class="p">]</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s">&quot;11/07/2011&quot;</span>
 <span class="n">__license__</span> <span class="o">=</span> <span class="s">&quot;GPLv3+&quot;</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&quot;ESRF, Grenoble &amp; Risoe National Laboratory&quot;</span>
-
+<span class="n">__status__</span> <span class="o">=</span> <span class="s">&quot;stable&quot;</span>
 <span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">struct</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;tifimage&quot;</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span>

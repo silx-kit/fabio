@@ -54,6 +54,8 @@
 <span class="kn">import</span> <span class="nn">StringIO</span> <span class="kn">as</span> <span class="nn">stringIO</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;fabioutils&quot;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">compression</span> <span class="kn">import</span> <span class="n">bz2</span><span class="p">,</span> <span class="n">gzip</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
 
 
 <span class="n">FILETYPES</span> <span class="o">=</span> <span class="p">{</span>
@@ -100,7 +102,7 @@
         <span class="n">COMPRESSORS</span><span class="p">[</span><span class="s">&#39;.gz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;gzip -dc &#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">COMPRESSORS</span><span class="p">[</span><span class="s">&#39;.gz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">COMPRESSORS</span><span class="p">[</span><span class="s">&#39;.gz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -110,13 +112,25 @@
         <span class="n">COMPRESSORS</span><span class="p">[</span><span class="s">&#39;.bz2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;bzip2 -dc &#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">COMPRESSORS</span><span class="p">[</span><span class="s">&#39;.bz2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="k">except</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">COMPRESSORS</span><span class="p">[</span><span class="s">&#39;.bz2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">deprecated</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    used to deprecate a function/method: prints a lot of warning messages to enforce the modifaction of the code</span>
+<div class="viewcode-block" id="deprecated"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.deprecated">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        decorator that deprecates the use of a function  </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> is Deprecated !!! </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">func_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_stack</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
 
 
 <span class="k">def</span> <span class="nf">getnum</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    # try to figure out a file number</span>
+<span class="sd">    # try to figure out a file number</span></div>
 <div class="viewcode-block" id="getnum"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.getnum">[docs]</a><span class="sd">    # guess it starts at the back</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stem</span> <span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">post_num</span> <span class="o">=</span> <span class="n">numstem</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -125,17 +139,36 @@
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">None</span>
 
-<span class="k">class</span> <span class="nc">filename_object</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">FilenameObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The &#39;meaning&#39; of a filename</span></div>
-<div class="viewcode-block" id="filename_object"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.filename_object">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stem</span><span class="p">,</span>
+<span class="sd">    The &#39;meaning&#39; of a filename ... </span></div>
+<div class="viewcode-block" id="FilenameObject"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stem</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">num</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">format</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">extension</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">postnum</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-            <span class="n">digits</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">digits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...   </span>
+<span class="sd">        </span>
+<span class="sd">        @param stem: the stem is a kind of prefix (str)</span>
+<span class="sd">        @param num: image number in the serie (int)</span>
+<span class="sd">        @param directory: name of the directory (str)</span>
+<span class="sd">        @param format: ??</span>
+<span class="sd">        @param extension: </span>
+<span class="sd">        @param postnum: </span>
+<span class="sd">        @param digits: Number of digits used to print num</span>
+<span class="sd">        </span>
+<span class="sd">        Alternative constructor: </span>
+<span class="sd">        </span>
+<span class="sd">        @param filename: fullpath of an image file to be deconstructed into directory, prefix, num, extension, ... </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
         <span class="bp">self</span><span class="o">.</span><span class="n">stem</span> <span class="o">=</span> <span class="n">stem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">format</span>
@@ -143,11 +176,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="n">digits</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">postnum</span> <span class="o">=</span> <span class="n">postnum</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compressed</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deconstruct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            
 
     <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a string representation &quot;&quot;&quot;</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="s">&quot;stem </span><span class="si">%s</span><span class="s">, num </span><span class="si">%s</span><span class="s"> format </span><span class="si">%s</span><span class="s"> extension </span><span class="si">%s</span><span class="s"> &quot;</span> <span class="o">+</span> \
-<div class="viewcode-block" id="filename_object.str"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.filename_object.str">[docs]</a>                <span class="s">&quot;postnum = </span><span class="si">%s</span><span class="s"> digits </span><span class="si">%s</span><span class="s"> dir </span><span class="si">%s</span><span class="s">&quot;</span>
+<div class="viewcode-block" id="FilenameObject.str"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.str">[docs]</a>                <span class="s">&quot;postnum = </span><span class="si">%s</span><span class="s"> digits </span><span class="si">%s</span><span class="s"> dir </span><span class="si">%s</span><span class="s">&quot;</span>
         <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">stem</span> <span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="p">,</span>
@@ -156,12 +193,12 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">postnum</span> <span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">digits</span> <span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="p">]</span> <span class="p">])</span>
+    <span class="n">__repr__</span> <span class="o">=</span> <span class="nb">str</span>
 
-
-    <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        convert yourself to a string</span></div>
-<div class="viewcode-block" id="filename_object.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.filename_object.tostring">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        convert yourself to a string</span>
+<div class="viewcode-block" id="FilenameObject.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.tostring">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stem</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">fmt</span> <span class="o">=</span> <span class="s">&quot;%0&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;d&quot;</span>
@@ -175,6 +212,76 @@
         <span class="k">return</span> <span class="n">name</span>
 
 
+    <span class="k">def</span> <span class="nf">deconstruct_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Break up a filename to get image type and number</span></div>
+<div class="viewcode-block" id="FilenameObject.deconstruct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.deconstruct_filename">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">direc</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">direc</span> <span class="o">=</span> <span class="n">direc</span> <span class="ow">or</span> <span class="bp">None</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">compressed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">stem</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">postnum</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">ndigit</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">typ</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;gz&quot;</span><span class="p">,</span> <span class="s">&quot;bz2&quot;</span><span class="p">]:</span>
+            <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">compressed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">FILETYPES</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">typ</span> <span class="o">=</span> <span class="n">FILETYPES</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">extn</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">stem</span><span class="p">,</span> <span class="n">numstring</span><span class="p">,</span> <span class="n">postnum</span> <span class="o">=</span> <span class="n">numstem</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
+                <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
+                <span class="c"># There is no number - hence make num be None, not 0</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;l176: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="n">stem</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Probably two type left</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c"># Probably GE format stem_numb</span>
+                <span class="n">parts2</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">parts2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GE&#39;</span><span class="p">]</span>
+                    <span class="n">stem</span> <span class="o">=</span> <span class="s">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;bruker&#39;</span><span class="p">]</span>
+                    <span class="n">stem</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;l196: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="bp">None</span>
+                    <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">extn</span>
+                    <span class="n">numstring</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">stem</span> <span class="p">,</span> <span class="n">numstring</span><span class="p">,</span> <span class="n">postnum</span> <span class="o">=</span> <span class="n">numstem</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;l202: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
+                        <span class="k">raise</span>
+                    <span class="k">if</span> <span class="n">numstring</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                        <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
+                        <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
+                <span class="c">#            raise Exception(&quot;Cannot decode &quot;+filename)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stem</span> <span class="o">=</span> <span class="n">stem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">direc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">typ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">extn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postnum</span> <span class="o">=</span> <span class="n">postnum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="n">ndigit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compressed</span> <span class="o">=</span> <span class="n">compressed</span>
+
 <span class="k">def</span> <span class="nf">numstem</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; cant see how to do without reversing strings</span>
 <span class="sd">    Match 1 or more digits going backwards from the end of the string</span></div></div>
@@ -185,116 +292,56 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
         <span class="c">#res = reg.match(name[::-1]).groups()</span>
         <span class="c">#return [ r[::-1] for r in res[::-1]]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c"># Hack for file without number </span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c"># Hack for file without number</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span> <span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c"># no digits found</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">]</span>
 
+<span class="nd">@deprecated</span>
 <span class="k">def</span> <span class="nf">deconstruct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Break up a filename to get image type and number</span></div>
-<div class="viewcode-block" id="deconstruct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.deconstruct_filename">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">direc</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">direc</span> <span class="o">=</span> <span class="n">direc</span> <span class="ow">or</span> <span class="bp">None</span>
-    <span class="n">parts</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)</span>
-    <span class="n">compressed</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="n">stem</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
-    <span class="n">postnum</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
-    <span class="n">ndigit</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">num</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">typ</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;gz&quot;</span><span class="p">,</span> <span class="s">&quot;bz2&quot;</span><span class="p">]:</span>
-        <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">parts</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">compressed</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">FILETYPES</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">typ</span> <span class="o">=</span> <span class="n">FILETYPES</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-        <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">extn</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">stem</span><span class="p">,</span> <span class="n">numstring</span><span class="p">,</span> <span class="n">postnum</span> <span class="o">=</span> <span class="n">numstem</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
-            <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
-            <span class="c"># There is no number - hence make num be None, not 0</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;l176: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
-            <span class="n">num</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="n">stem</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c"># Probably two type left</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c"># Probably GE format stem_numb</span>
-            <span class="n">parts2</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">parts2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">typ</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;GE&#39;</span><span class="p">]</span>
-                <span class="n">stem</span> <span class="o">=</span> <span class="s">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">typ</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;bruker&#39;</span><span class="p">]</span>
-                <span class="n">stem</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;l196: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
-                <span class="n">typ</span> <span class="o">=</span> <span class="bp">None</span>
-                <span class="n">extn</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">extn</span>
-                <span class="n">numstring</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">stem</span> <span class="p">,</span> <span class="n">numstring</span><span class="p">,</span> <span class="n">postnum</span> <span class="o">=</span> <span class="n">numstem</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;l202: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
-                    <span class="k">raise</span>
-                <span class="k">if</span> <span class="n">numstring</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
-                    <span class="n">ndigit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numstring</span><span class="p">)</span>
-            <span class="c">#            raise Exception(&quot;Cannot decode &quot;+filename)</span>
-    <span class="n">obj</span> <span class="o">=</span> <span class="n">filename_object</span><span class="p">(</span><span class="n">stem</span><span class="p">,</span>
-            <span class="n">num</span><span class="o">=</span><span class="n">num</span><span class="p">,</span>
-            <span class="n">directory</span><span class="o">=</span><span class="n">direc</span><span class="p">,</span>
-            <span class="n">format</span><span class="o">=</span><span class="n">typ</span><span class="p">,</span>
-            <span class="n">extension</span><span class="o">=</span><span class="n">extn</span><span class="p">,</span>
-            <span class="n">postnum</span><span class="o">=</span><span class="n">postnum</span><span class="p">,</span>
-            <span class="n">digits</span><span class="o">=</span><span class="n">ndigit</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">obj</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<span class="sd">    Function for backward compatibility.</span>
+<div class="viewcode-block" id="deconstruct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.deconstruct_filename">[docs]</a><span class="sd">    Deprecated</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">construct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">construct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="s">&quot;Try to construct the filename for a given frame&quot;</span>
-    <span class="n">fo</span> <span class="o">=</span> <span class="n">deconstruct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
-<div class="viewcode-block" id="construct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.construct_filename">[docs]</a>    <span class="n">fo</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">frame</span>
-    <span class="k">return</span> <span class="n">fo</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
+<div class="viewcode-block" id="construct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.construct_filename">[docs]</a>    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">frame</span>
+    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">next_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; increment number &quot;&quot;&quot;</span>
-    <span class="n">obj</span> <span class="o">=</span> <span class="n">deconstruct_filename</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
-<div class="viewcode-block" id="next_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.next_filename">[docs]</a>    <span class="n">obj</span><span class="o">.</span><span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="next_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.next_filename">[docs]</a>    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+        <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">previous_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; decrement number &quot;&quot;&quot;</span>
-    <span class="n">obj</span> <span class="o">=</span> <span class="n">deconstruct_filename</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
-<div class="viewcode-block" id="previous_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.previous_filename">[docs]</a>    <span class="n">obj</span><span class="o">.</span><span class="n">num</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="previous_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.previous_filename">[docs]</a>    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">-=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+        <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">jump_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; jump to number &quot;&quot;&quot;</span>
-    <span class="n">obj</span> <span class="o">=</span> <span class="n">deconstruct_filename</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
-<div class="viewcode-block" id="jump_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.jump_filename">[docs]</a>    <span class="n">obj</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="jump_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.jump_filename">[docs]</a>    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+        <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
 
 
 <span class="k">def</span> <span class="nf">extract_filenumber</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; extract file number &quot;&quot;&quot;</span>
-    <span class="n">obj</span> <span class="o">=</span> <span class="n">deconstruct_filename</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
-<div class="viewcode-block" id="extract_filenumber"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.extract_filenumber">[docs]</a>    <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">num</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="extract_filenumber"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.extract_filenumber">[docs]</a>    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">num</span>
 
 <span class="k">def</span> <span class="nf">isAscii</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">listExcluded</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -494,10 +541,10 @@
                 <span class="k">if</span> <span class="n">whence</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">:</span>
                     <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">whence</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_CUR</span><span class="p">:</span>
-                        <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">())</span>
+                    <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">())</span>
                 <span class="k">elif</span> <span class="n">whence</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">:</span>
-                        <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-                        <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">())</span>
+                    <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">())</span>
 
 <span class="k">if</span> <span class="n">bz2</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
     <span class="n">BZ2File</span> <span class="o">=</span> <span class="n">UnknownCompressedFile</span>
