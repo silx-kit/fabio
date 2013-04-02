@@ -2,14 +2,16 @@
 
 """
 
-Authors: Henning O. Sorensen & Erik Knudsen
-         Center for Fundamental Research: Metal Structures in Four Dimensions
-         Risoe National Laboratory
-         Frederiksborgvej 399
-         DK-4000 Roskilde
-         email:erik.knudsen@risoe.dk
+Authors:
+........
 
-         + Jon Wright, ESRF
+* Henning O. Sorensen & Erik Knudsen
+  Center for Fundamental Research: Metal Structures in Four Dimensions
+  Risoe National Laboratory
+  Frederiksborgvej 399
+  DK-4000 Roskilde
+  email:erik.knudsen@risoe.dk
+* Jon Wright, ESRF
 
 """
 import logging, sys
@@ -66,22 +68,25 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
     the next file as determined by fabio.next_filename.
 
     @param first_object: the starting fabioimage, which will be the first one yielded
-    in the sequence
+        in the sequence
     @param nimages:  the maximum number of images to consider
-    step: step size, will yield the first and every step'th image until nimages
-    is reached.  (e.g. nimages = 5, step = 2 will yield 3 images (0, 2, 4)
+        step: step size, will yield the first and every step'th image until nimages
+        is reached.  (e.g. nimages = 5, step = 2 will yield 3 images (0, 2, 4)
     @param traceback: if True causes it to print a traceback in the event of an
-    exception (missing image, etc.).  Otherwise the calling routine can handle
-    the exception as it chooses
+        exception (missing image, etc.).  Otherwise the calling routine can handle
+        the exception as it chooses
     @param yields: the next fabioimage in the series.
-    In the event there is an exception, it yields the sys.exec_info for the
-    exception instead.  sys.exec_info is a tuple:
-    ( exceptionType, exceptionValue, exceptionTraceback )
-    from which all the exception information can be obtained.
+        In the event there is an exception, it yields the sys.exec_info for the
+        exception instead.  sys.exec_info is a tuple:
+        ( exceptionType, exceptionValue, exceptionTraceback )
+        from which all the exception information can be obtained.
 
     Suggested usage:
+    
+    ::
+    
         for obj in new_file_series( ... ):
-          if not isinstance( obj, fabio.fabioimage.fabioimage ):
+          if not isinstance(obj, fabio.fabioimage.fabioimage ):
             # deal with errors like missing images, non readable files, etc
             # e.g.
             traceback.print_exception(obj[0], obj[1], obj[2])

@@ -3,14 +3,19 @@
 from __future__ import with_statement
 __doc__ = """
 
-Authors: Henning O. Sorensen & Erik Knudsen
-         Center for Fundamental Research: Metal Structures in Four Dimensions
-         Risoe National Laboratory
-         Frederiksborgvej 399
-         DK-4000 Roskilde
-         email:erik.knudsen@risoe.dk
-          +
-         Jon Wright, Jerome Kieffer, Gael Goret ESRF, France
+Authors:
+........
+* Henning O. Sorensen & Erik Knudsen:
+  Center for Fundamental Research: Metal Structures in Four Dimensions;
+  Risoe National Laboratory;
+  Frederiksborgvej 399;
+  DK-4000 Roskilde;
+  email:erik.knudsen@risoe.dk
+* Jon Wright, Jérôme Kieffer & Gaël Goret:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
+
+         
 """
 
 from fabioimage import fabioimage

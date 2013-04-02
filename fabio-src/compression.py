@@ -328,12 +328,12 @@ def compByteOffet_numpy(data):
 def decTY1(raw_8, raw_16=None, raw_32=None):
     """
     Modified byte offset decompressor used in Oxford Diffraction images
-
+    
     @param raw_8:  strings containing raw data with integer 8 bits
     @param raw_16: strings containing raw data with integer 16 bits
     @param raw_32: strings containing raw data with integer 32 bits
-    @return numpy.ndarray
-
+    @return: numpy.ndarray
+    
     """
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
     data -= 127
