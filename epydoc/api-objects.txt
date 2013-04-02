@@ -8,6 +8,7 @@ fabio.version	fabio-module.html#version
 fabio.openheader	fabio.openimage-module.html#openheader
 fabio.next_filename	fabio.fabioutils-module.html#next_filename
 fabio.extract_filenumber	fabio.fabioutils-module.html#extract_filenumber
+fabio.__status__	fabio-module.html#__status__
 fabio.previous_filename	fabio.fabioutils-module.html#previous_filename
 fabio.jump_filename	fabio.fabioutils-module.html#jump_filename
 fabio.GEimage	fabio.GEimage-module.html
@@ -159,14 +160,15 @@ fabio.fabioutils.next_filename	fabio.fabioutils-module.html#next_filename
 fabio.fabioutils.key	fabio.fabioutils-module.html#key
 fabio.fabioutils.extract_filenumber	fabio.fabioutils-module.html#extract_filenumber
 fabio.fabioutils.i	fabio.fabioutils-module.html#i
-fabio.fabioutils.jump_filename	fabio.fabioutils-module.html#jump_filename
+fabio.fabioutils.deprecated	fabio.fabioutils-module.html#deprecated
 fabio.fabioutils.lines	fabio.fabioutils-module.html#lines
 fabio.fabioutils.previous_filename	fabio.fabioutils-module.html#previous_filename
 fabio.fabioutils.numstem	fabio.fabioutils-module.html#numstem
+fabio.fabioutils.jump_filename	fabio.fabioutils-module.html#jump_filename
 fabio.file_series	fabio.file_series-module.html
 fabio.file_series.next_filename	fabio.fabioutils-module.html#next_filename
-fabio.file_series.__package__	fabio.file_series-module.html#__package__
 fabio.file_series.new_file_series	fabio.file_series-module.html#new_file_series
+fabio.file_series.__package__	fabio.file_series-module.html#__package__
 fabio.file_series.logger	fabio.file_series-module.html#logger
 fabio.file_series.openimage	fabio.openimage-module.html#openimage
 fabio.file_series.new_file_series0	fabio.file_series-module.html#new_file_series0
@@ -203,7 +205,6 @@ fabio.marccdimage.C_SIZES	fabio.marccdimage-module.html#C_SIZES
 fabio.openimage	fabio.openimage-module.html
 fabio.openimage.MAGIC_NUMBERS	fabio.openimage-module.html#MAGIC_NUMBERS
 fabio.openimage._openimage	fabio.openimage-module.html#_openimage
-fabio.openimage.deconstruct_filename	fabio.fabioutils-module.html#deconstruct_filename
 fabio.openimage.do_magic	fabio.openimage-module.html#do_magic
 fabio.openimage.__package__	fabio.openimage-module.html#__package__
 fabio.openimage.openheader	fabio.openimage-module.html#openheader
@@ -758,6 +759,12 @@ fabio.fabioutils.File.getSize	fabio.fabioutils.File-class.html#getSize
 fabio.fabioutils.File.__init__	fabio.fabioutils.File-class.html#__init__
 fabio.fabioutils.File.size	fabio.fabioutils.File-class.html#size
 fabio.fabioutils.File.setSize	fabio.fabioutils.File-class.html#setSize
+fabio.fabioutils.FilenameObject	fabio.fabioutils.FilenameObject-class.html
+fabio.fabioutils.FilenameObject.deconstruct_filename	fabio.fabioutils.FilenameObject-class.html#deconstruct_filename
+fabio.fabioutils.FilenameObject.tostring	fabio.fabioutils.FilenameObject-class.html#tostring
+fabio.fabioutils.FilenameObject.__repr__	fabio.fabioutils.FilenameObject-class.html#__repr__
+fabio.fabioutils.FilenameObject.str	fabio.fabioutils.FilenameObject-class.html#str
+fabio.fabioutils.FilenameObject.__init__	fabio.fabioutils.FilenameObject-class.html#__init__
 fabio.fabioutils.GzipFile	fabio.fabioutils.GzipFile-class.html
 fabio.fabioutils.GzipFile.getSize	fabio.fabioutils.GzipFile-class.html#getSize
 fabio.fabioutils.GzipFile.seek	fabio.fabioutils.GzipFile-class.html#seek
@@ -775,10 +782,6 @@ fabio.fabioutils.File.getSize	fabio.fabioutils.File-class.html#getSize
 fabio.fabioutils.UnknownCompressedFile.__init__	fabio.fabioutils.UnknownCompressedFile-class.html#__init__
 fabio.fabioutils.File.size	fabio.fabioutils.File-class.html#size
 fabio.fabioutils.File.setSize	fabio.fabioutils.File-class.html#setSize
-fabio.fabioutils.filename_object	fabio.fabioutils.filename_object-class.html
-fabio.fabioutils.filename_object.tostring	fabio.fabioutils.filename_object-class.html#tostring
-fabio.fabioutils.filename_object.__init__	fabio.fabioutils.filename_object-class.html#__init__
-fabio.fabioutils.filename_object.str	fabio.fabioutils.filename_object-class.html#str
 fabio.file_series.file_series	fabio.file_series.file_series-class.html
 fabio.file_series.file_series.jump	fabio.file_series.file_series-class.html#jump
 fabio.file_series.file_series.__init__	fabio.file_series.file_series-class.html#__init__
