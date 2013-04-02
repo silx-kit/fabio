@@ -4,19 +4,19 @@
 
 License: GPLv2+
 
-Authors: Henning O. Sorensen & Erik Knudsen
-         Center for Fundamental Research: Metal Structures in Four Dimensions
-         Risoe National Laboratory
-         Frederiksborgvej 399
-         DK-4000 Roskilde
-         email:erik.knudsen@risoe.dk
+Authors:
+........
+* Henning O. Sorensen & Erik Knudsen:
+  Center for Fundamental Research: Metal Structures in Four Dimensions;
+  Risoe National Laboratory;
+  Frederiksborgvej 399;
+  DK-4000 Roskilde;
+  email:erik.knudsen@risoe.dk
+* Jon Wright & Jérôme Kieffer:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
 
-        + Jon Wright, ESRF
 
-2011-02-11: Mostly rewritten by Jérôme Kieffer (Jerome.Kieffer@esrf.eu)
-            European Synchrotron Radiation Facility
-            Grenoble (France)
-2012-08-20: laisy read of data in EDF
 """
 from __future__ import with_statement
 import os, logging, types

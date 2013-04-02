@@ -2,22 +2,28 @@
 #-*- coding: utf8 -*-
 """
 FabIO class for dealing with TIFF images. 
-In facts wraps TiffIO from Armando (available in PyMca) or falls back to PIL
+In facts wraps TiffIO from V. Armando Solé (available in PyMca) or falls back to PIL
 
-Authors: Jérôme Kieffer (jerome.kieffer@esrf.fr)
-         Henning O. Sorensen & Erik Knudsen
-             Center for Fundamental Research: Metal Structures in Four Dimensions
-             Risoe National Laboratory
-             Frederiksborgvej 399
-             DK-4000 Roskilde
-             email:henning.sorensen@risoe.dk    
+Authors:
+........
+* Henning O. Sorensen & Erik Knudsen:
+  Center for Fundamental Research: Metal Structures in Four Dimensions;
+  Risoe National Laboratory;
+  Frederiksborgvej 399;
+  DK-4000 Roskilde;
+  email:erik.knudsen@risoe.dk
+* Jérôme Kieffer:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
+   
 License: GPLv3+        
 """
+
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
 __date__ = "11/07/2011"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
-
+__status__ = "stable"
 import time, logging, struct
 logger = logging.getLogger("tifimage")
 try:

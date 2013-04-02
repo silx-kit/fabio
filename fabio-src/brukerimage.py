@@ -137,8 +137,8 @@ class brukerimage(fabioimage):
         """
         Writes the image as EDF
 
-        FIXME - this should call edfimage.write if that is wanted?
-        eg:     obj = edfimage(data = self.data, header = self.header)
+        FIXME:  this should call edfimage.write if that is wanted?
+                obj = edfimage(data = self.data, header = self.header)
                 obj.write(fname)
                 or maybe something like: edfimage.write(self, fname)
 
@@ -167,9 +167,6 @@ class brukerimage(fabioimage):
                     numpy.uint16).tostring())
         outfile.close()
 
-    def write2(self, fname):
-        """ FIXME: what is this? """
-        pass
 
 
 

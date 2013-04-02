@@ -573,12 +573,13 @@ class CIF(dict):
 
 
     def tostring(self, _strFilename=None, linesep=os.linesep):
-        """converts a cif dictionnary to a string according to the CIF syntax
-        @param _strFilename: the name of the filename to be appended in the
-                                header of the CIF file
+        """
+        Converts a cif dictionnary to a string according to the CIF syntax
+        
+        @param _strFilename: the name of the filename to be appended in the header of the CIF file
         @type _strFilename: string
-        @return : a sting that corresponds to the content of the CIF - file.
-        @rtype: string
+        @return: a sting that corresponds to the content of the CIF - file.
+        
         """
 #        sCifText = ""
         lstStrCif = ["# " + i for i in __version__]

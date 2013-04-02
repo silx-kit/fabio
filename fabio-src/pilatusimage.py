@@ -2,23 +2,23 @@
 #coding: utf8
 """
 
-Authors: Henning O. Sorensen & Erik Knudsen
-         Center for Fundamental Research: Metal Structures in Four Dimensions
-         Risoe National Laboratory
-         Frederiksborgvej 399
-         DK-4000 Roskilde
-         email:henning.sorensen@risoe.dk
-
-         + (mods for fabio) Jon Wright, ESRF
-marccdimage can read MarCCD and MarMosaic images including header info.
-
-JPW : Use a parser in case of typos (sorry?)
+Authors:
+........
+* Henning O. Sorensen & Erik Knudsen:
+  Center for Fundamental Research: Metal Structures in Four Dimensions;
+  Risoe National Laboratory;
+  Frederiksborgvej 399;
+  DK-4000 Roskilde;
+  email:erik.knudsen@risoe.dk
+* Jon Wright:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
 
 """
 
 
-# Base this on the tifimage (as Pilatus is tiff with a 
-# tiff header 
+# Base this on the tifimage (as Pilatus is tiff with a
+# tiff header
 
 from fabio.tifimage import tifimage
 
@@ -38,7 +38,7 @@ class pilatusimage(tifimage):
 
 #        infile = open(infile)
         hstr = infile.read(4096)
-        # well not very pretty - but seems to find start of 
+        # well not very pretty - but seems to find start of
         # header information
         if (hstr.find('# ') == -1):
             return self.header
