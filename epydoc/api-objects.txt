@@ -232,6 +232,7 @@ fabio.tifimage.TYPES	fabio.tifimage-module.html#TYPES
 fabio.tifimage.LITTLE_ENDIAN	fabio.tifimage-module.html#LITTLE_ENDIAN
 fabio.tifimage.baseline_tiff_tags	fabio.tifimage-module.html#baseline_tiff_tags
 fabio.tifimage.BIG_ENDIAN	fabio.tifimage-module.html#BIG_ENDIAN
+fabio.tifimage.__status__	fabio.tifimage-module.html#__status__
 fabio.xsdimage	fabio.xsdimage-module.html
 fabio.xsdimage.__package__	fabio.xsdimage-module.html#__package__
 fabio.xsdimage.logger	fabio.xsdimage-module.html#logger
