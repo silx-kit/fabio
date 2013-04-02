@@ -10,7 +10,7 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-from distutils.core import Extension
+from distutils.core import Extension, Command
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
 
@@ -62,6 +62,18 @@ if sphinx:
             sys.path.pop(0)
     cmdclass['build_doc'] = build_doc
 
+class PyTest(Command):
+    user_options = []
+    def initialize_options(self):
+        pass
+    def finalize_options(self):
+        pass
+    def run(self):
+        import sys, subprocess
+        os.chdir("test")
+        errno = subprocess.call([sys.executable, 'test_all.py'])
+        raise SystemExit(errno)
+cmdclass['test'] = PyTest
 
 
 # See the distutils docs...
