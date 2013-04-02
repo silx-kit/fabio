@@ -4,7 +4,9 @@ Changelog
 From FabIO-0.1.1 to FabIO-0.1.2:
 ................................
 - Fixed a bug in fabioimage.write (impacted all writers)
-- added Sphinx documentation
+- added Sphinx documentation "python setup.py build_doc"
+- PyLint compliance of some classes (rename, ...) 
+- tests from installer with "python setup.py build test"
 
 From FabIO-0.1.0 to FabIO-0.1.1:
 ................................
@@ -21,6 +23,7 @@ From FabIO-0.0.8 to FabIO-0.1.0:
 - Clean-up of the code & bug fixes
 - Move towards python3
 - Make PIL optional dependency
+
 Python3 is not yet tested but some blocking points have been identified and some fixed.
 
 From FabIO-0.0.7 to FabIO-0.0.8:
