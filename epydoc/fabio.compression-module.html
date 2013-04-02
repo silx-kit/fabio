@@ -58,10 +58,10 @@
 <h1 class="epydoc">Module compression</h1><p class="nomargin-top"><span class="codelink"><a href="fabio.compression-pysrc.html">source&nbsp;code</a></span></p>
 <pre class="literalblock">
 
-Authors: J&#233;r&#244;me Kieffer, ESRF 
+Authors: J&#233;r&#244;me Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
-FabIO library containing compression and decompression algorithm for various  
+FabIO library containing compression and decompression algorithm for various
 
 </pre>
 
@@ -144,7 +144,8 @@ FabIO library containing compression and decompression algorithm for various
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="endianness"></a><span class="summary-sig-name">endianness</span>()</span></td>
+          <td><span class="summary-sig"><a name="endianness"></a><span class="summary-sig-name">endianness</span>()</span><br />
+      Return the native endianness of the system</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.compression-pysrc.html#endianness">source&nbsp;code</a></span>
             
@@ -160,7 +161,9 @@ FabIO library containing compression and decompression algorithm for various
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="decGzip"></a><span class="summary-sig-name">decGzip</span>(<span class="summary-sig-arg">stream</span>)</span></td>
+          <td><span class="summary-sig"><a name="decGzip"></a><span class="summary-sig-name">decGzip</span>(<span class="summary-sig-arg">stream</span>)</span><br />
+      Decompress a chunk of data using the gzip algorithm from Python or 
+      alternatives if possible</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.compression-pysrc.html#decGzip">source&nbsp;code</a></span>
             
@@ -177,7 +180,7 @@ FabIO library containing compression and decompression algorithm for various
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="decBzip2"></a><span class="summary-sig-name">decBzip2</span>(<span class="summary-sig-arg">stream</span>)</span><br />
-      decompress a chunk of data using the bzip2 algorithm</td>
+      Decompress a chunk of data using the bzip2 algorithm from Python</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.compression-pysrc.html#decBzip2">source&nbsp;code</a></span>
             
@@ -194,7 +197,7 @@ FabIO library containing compression and decompression algorithm for various
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a name="decZlib"></a><span class="summary-sig-name">decZlib</span>(<span class="summary-sig-arg">stream</span>)</span><br />
-      decompress a chunk of data using the zlib algorithm</td>
+      Decompress a chunk of data using the zlib algorithm from Python</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.compression-pysrc.html#decZlib">source&nbsp;code</a></span>
             
@@ -250,7 +253,7 @@ FabIO library containing compression and decompression algorithm for various
         <tr>
           <td><span class="summary-sig"><a href="fabio.compression-module.html#decByteOffet_numpy" class="summary-sig-name">decByteOffet_numpy</a>(<span class="summary-sig-arg">stream</span>,
         <span class="summary-sig-arg">size</span>=<span class="summary-sig-default">None</span>)</span><br />
-      Analyze a stream of char with any length of exception: 
+      Analyze a stream of char with any length of exception:
             2, 4, or 8 bytes integers</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.compression-pysrc.html#decByteOffet_numpy">source&nbsp;code</a></span>
@@ -269,7 +272,7 @@ FabIO library containing compression and decompression algorithm for various
         <tr>
           <td><span class="summary-sig"><a href="fabio.compression-module.html#decByteOffet_cython" class="summary-sig-name">decByteOffet_cython</a>(<span class="summary-sig-arg">stream</span>,
         <span class="summary-sig-arg">size</span>=<span class="summary-sig-default">None</span>)</span><br />
-      Analyze a stream of char with any length of exception: 
+      Analyze a stream of char with any length of exception:
             2, 4, or 8 bytes integers</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fabio.compression-pysrc.html#decByteOffet_cython">source&nbsp;code</a></span>
@@ -461,8 +464,10 @@ FabIO library containing compression and decompression algorithm for various
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>stream</code></strong> - string representing the compressed data</li>
-        <li><strong class="pname"><code>size</code></strong> - the size of the output array (of longInts) @return :NParrays</li>
+        <li><strong class="pname"><code>size</code></strong> - the size of the output array (of longInts)</li>
     </ul></dd>
+    <dt>Returns:</dt>
+        <dd>1D-ndarray</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -483,8 +488,14 @@ FabIO library containing compression and decompression algorithm for various
   
   <p>Analyze a stream of char with any length of exception (2,4, or 8 bytes
   integers)</p>
-  <p>@return list of NParrays</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>stream</code></strong> - string representing the compressed data</li>
+        <li><strong class="pname"><code>size</code></strong> - the size of the output array (of longInts)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>1D-ndarray</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -505,10 +516,12 @@ FabIO library containing compression and decompression algorithm for various
   
   <pre class="literalblock">
 
-Analyze a stream of char with any length of exception: 
+Analyze a stream of char with any length of exception:
             2, 4, or 8 bytes integers
 
-@return list of NParrays
+@param stream: string representing the compressed data
+@param size: the size of the output array (of longInts)
+@return: 1D-ndarray
 
 </pre>
   <dl class="fields">
@@ -532,10 +545,12 @@ Analyze a stream of char with any length of exception:
   
   <pre class="literalblock">
 
-Analyze a stream of char with any length of exception: 
+Analyze a stream of char with any length of exception:
             2, 4, or 8 bytes integers
 
-@return list of NParrays
+@param stream: string representing the compressed data
+@param size: the size of the output array (of longInts)
+@return: 1D-ndarray
 
 </pre>
   <dl class="fields">
@@ -590,8 +605,10 @@ Analyze a stream of char with any length of exception:
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>raw_8</code></strong>, <strong class="pname"><code>raw_16</code></strong>, <strong class="pname"><code>raw_32</code></strong> - strings containing raw data with integer of the given size 
-          @return numpy.ndarray</li>
+        <li><strong class="pname"><code>raw_8</code></strong> - strings containing raw data with integer 8 bits</li>
+        <li><strong class="pname"><code>raw_16</code></strong> - strings containing raw data with integer 16 bits</li>
+        <li><strong class="pname"><code>raw_32</code></strong> - strings containing raw data with integer 32 bits @return 
+          numpy.ndarray</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -617,8 +634,10 @@ Analyze a stream of char with any length of exception:
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>raw_8</code></strong>, <strong class="pname"><code>raw_16</code></strong>, <strong class="pname"><code>raw_32</code></strong> - strings containing raw data with integer of the given size 
-          @return numpy.ndarray</li>
+        <li><strong class="pname"><code>raw_8</code></strong> - strings containing raw data with integer 8 bits</li>
+        <li><strong class="pname"><code>raw_16</code></strong> - strings containing raw data with integer 16 bits</li>
+        <li><strong class="pname"><code>raw_32</code></strong> - strings containing raw data with integer 32 bits @return 
+          numpy.ndarray</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -638,8 +657,14 @@ Analyze a stream of char with any length of exception:
   </tr></table>
   
   <p>Modified byte offset compressor used in Oxford Diffraction images</p>
-  <p>@param data numpy.ndarray</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>data</code></strong> - numpy.ndarray with the input data (integers!)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with 
+          integer of the given size</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -664,8 +689,10 @@ Analyze a stream of char with any length of exception:
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>stream</code></strong> - string or file @return numpy.ndarray (square array)</li>
+        <li><strong class="pname"><code>stream</code></strong> - string or file</li>
     </ul></dd>
+    <dt>Returns:</dt>
+        <dd>numpy.ndarray (square array)</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -684,9 +711,13 @@ Analyze a stream of char with any length of exception:
   </tr></table>
   
   <p>Modified CCP4  pck compressor used in MAR345 images</p>
-  <p>@param data numpy.ndarray (square array) @return  compressed 
-  stream</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>data</code></strong> - numpy.ndarray (square array)</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>compressed stream</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -717,7 +748,7 @@ Analyze a stream of char with any length of exception:
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Mar 14 18:47:33 2013
+    Generated by Epydoc 3.0.1 on Tue Apr  2 10:46:29 2013
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
