@@ -138,7 +138,10 @@
     <dt><a href="api/modules.html#fabio.compression.decBzip2">decBzip2() (in module fabio.compression)</a></dt>
     <dt><a href="api/modules.html#fabio.compression.decGzip">decGzip() (in module fabio.compression)</a></dt>
     <dt><a href="api/modules.html#fabio.compression.decKM4CCD">decKM4CCD() (in module fabio.compression)</a></dt>
-    <dt><a href="api/modules.html#fabio.fabioutils.deconstruct_filename">deconstruct_filename() (in module fabio.fabioutils)</a></dt>
+    <dt><a href="api/modules.html#fabio.fabioutils.FilenameObject.deconstruct_filename">deconstruct_filename() (fabio.fabioutils.FilenameObject method)</a></dt>
+    <dd><dl>
+      <dt><a href="api/modules.html#fabio.fabioutils.deconstruct_filename">(in module fabio.fabioutils)</a></dt>
+  </dl></dd>
     <dt><a href="api/modules.html#fabio.compression.decPCK">decPCK() (in module fabio.compression)</a></dt>
     <dt><a href="api/modules.html#fabio.compression.decTY1">decTY1() (in module fabio.compression)</a></dt>
     <dt><a href="api/modules.html#fabio.compression.decZlib">decZlib() (in module fabio.compression)</a></dt>
@@ -150,6 +153,7 @@
     <dt><a href="api/modules.html#fabio.edfimage.edfimage.delHeader">delHeader() (fabio.edfimage.edfimage method)</a></dt>
     <dt><a href="api/modules.html#fabio.edfimage.edfimage.delHeaderKeys">delHeaderKeys() (fabio.edfimage.edfimage method)</a></dt>
     <dt><a href="api/modules.html#fabio.GEimage.demo">demo() (in module fabio.GEimage)</a></dt>
+    <dt><a href="api/modules.html#fabio.fabioutils.deprecated">deprecated() (in module fabio.fabioutils)</a></dt>
     <dt><a href="api/modules.html#fabio.edfimage.edfimage.dim1">dim1 (fabio.edfimage.edfimage attribute)</a></dt>
     <dt><a href="api/modules.html#fabio.edfimage.edfimage.dim2">dim2 (fabio.edfimage.edfimage attribute)</a></dt>
     <dt><a href="api/modules.html#fabio.edfimage.edfimage.dims">dims (fabio.edfimage.edfimage attribute)</a></dt>
@@ -213,8 +217,8 @@
     <dt><a href="api/modules.html#fabio.edfimage.edfimage.fastReadROI">fastReadROI() (fabio.edfimage.edfimage method)</a></dt>
     <dt><a href="api/modules.html#fabio.fabioutils.File">File (class in fabio.fabioutils)</a></dt>
     <dt><a href="api/modules.html#fabio.file_series.file_series">file_series (class in fabio.file_series)</a></dt>
-    <dt><a href="api/modules.html#fabio.fabioutils.filename_object">filename_object (class in fabio.fabioutils)</a></dt>
     <dt><a href="api/modules.html#fabio.file_series.filename_series">filename_series (class in fabio.file_series)</a></dt>
+    <dt><a href="api/modules.html#fabio.fabioutils.FilenameObject">FilenameObject (class in fabio.fabioutils)</a></dt>
     <dt><a href="api/modules.html#fabio.file_series.file_series.first">first() (fabio.file_series.file_series method)</a></dt>
     <dt><a href="api/modules.html#fabio.file_series.file_series.first_image">first_image() (fabio.file_series.file_series method)</a></dt>
     <dt><a href="api/modules.html#fabio.file_series.file_series.first_object">first_object() (fabio.file_series.file_series method)</a></dt>
@@ -514,7 +518,7 @@
       <dt><a href="api/modules.html#fabio.fabioutils.GzipFile.size">(fabio.fabioutils.GzipFile attribute)</a></dt>
       <dt><a href="api/modules.html#fabio.fabioutils.StringIO.size">(fabio.fabioutils.StringIO attribute)</a></dt>
   </dl></dd>
-    <dt><a href="api/modules.html#fabio.fabioutils.filename_object.str">str() (fabio.fabioutils.filename_object method)</a></dt>
+    <dt><a href="api/modules.html#fabio.fabioutils.FilenameObject.str">str() (fabio.fabioutils.FilenameObject method)</a></dt>
     <dt><a href="api/modules.html#fabio.fabioutils.StringIO">StringIO (class in fabio.fabioutils)</a></dt>
     <dt><a href="api/modules.html#fabio.binaryimage.binaryimage.swap_needed">swap_needed() (fabio.binaryimage.binaryimage static method)</a></dt>
     <dd><dl>
@@ -544,7 +548,7 @@
   </dl></dd>
     <dt><a href="api/modules.html#fabio.cbfimage.CIF.tostring">tostring() (fabio.cbfimage.CIF method)</a></dt>
     <dd><dl>
-      <dt><a href="api/modules.html#fabio.fabioutils.filename_object.tostring">(fabio.fabioutils.filename_object method)</a></dt>
+      <dt><a href="api/modules.html#fabio.fabioutils.FilenameObject.tostring">(fabio.fabioutils.FilenameObject method)</a></dt>
   </dl></dd>
 </dl></td>
 </tr></table>
@@ -581,7 +585,6 @@
       <dt><a href="api/modules.html#fabio.pnmimage.pnmimage.write">(fabio.pnmimage.pnmimage method)</a></dt>
       <dt><a href="api/modules.html#fabio.tifimage.tifimage.write">(fabio.tifimage.tifimage method)</a></dt>
   </dl></dd>
-    <dt><a href="api/modules.html#fabio.brukerimage.brukerimage.write2">write2() (fabio.brukerimage.brukerimage method)</a></dt>
 </dl></td>
   <td style="width: 33%" valign="top"><dl>
     <dt><a href="api/modules.html#fabio.TiffIO.TiffIO.writeImage">writeImage() (fabio.TiffIO.TiffIO method)</a></dt>

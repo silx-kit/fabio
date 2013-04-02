@@ -25,10 +25,10 @@ reading and writing of two-dimensional data. The code-base was
 initiated by merging parts of our fabian imageviewer and
 ImageD11 peak-search programs and has been developed
 since 2007 as part of the TotalCryst program suite for
-analysis of 3DXRD microscopy data . During integration into
-a range of scientific programs like the FABLE graphical interface
-, EDNA and the fast azimuthal integration library,
-pyFAI ; FabIO has gained several features like handling
+analysis of 3DXRD microscopy data. During integration into
+a range of scientific programs like the FABLE graphical interface,
+EDNA and the fast azimuthal integration library,
+pyFAI; FabIO has gained several features like handling
 multi-frame image formats as well as writing many of the file
 formats.
 
@@ -50,7 +50,7 @@ FabIO just needs a file name to open a file and it determines the
 file format automatically and deals with gzip and bzip2
 compression transparently. Opening a file returns an object
 which stores the image in memory as a 2D NumPy array
-and the metadata, called header, in a python dictionary.
+and the metadata, called header, in a Python dictionary.
 Beside the data and header attributes, some methods are
 provided for reading the previous or next image in a series of
 images as well as jumping to a specific file number. For the user,
@@ -82,7 +82,7 @@ NumPy native modules were developed, in i.e. standard C code
 callable from Python (sometimes generated using Cython).
 This code has to be compiled for each computer architecture and
 offers excellent performance. FabIO is only dependent on the NumPy
-module and has extra features if two other optional python modules
+module and has extra features if two other optional Python modules
 are available. For reading XML files (that are used in EDNA) the
 Lxml module is required and the Python Image Library, PIL
 is needed for producing a PIL image for displaying the image
@@ -97,16 +97,17 @@ is mainly used for developing data analysis algorithms. Reading and
 writing procedure of the various TIFF formats is based on the
 TiffIO code from PyMCA.
 
-In the Python shell, the fabio module must be imported prior to
+In the Python shell, the `fabio` module must be imported prior to
 reading an image in one of the supported file formats (see Table
-format). The fabio.open function creates an instance of the
-Python class fabioimage, from the name of a file. This instance,
-named img hereafter, stores the image data in img.data as a 2D
+`Supported formats`, hereafter).
+The `fabio.open` function creates an instance of the
+Python class `fabioimage`, from the name of a file. This instance,
+named `img` hereafter, stores the image data in `img.data` as a 2D
 NumPy array. Often the image file contains more information than
 just the intensities of the pixels, e.g. information about how the
 image is stored and the instrument parameters at the time of the
 image acquisition, these metadata are usually stored in the file
-header. Header information, are available in img.header as a
+header. Header information, are available in `img.header` as a
 Python dictionary where keys are strings and values are usually
 strings or numeric values.
 
@@ -114,7 +115,8 @@ Information in the header about the binary part of the image
 (compression, endianness, shape) are interpreted however, other
 metadata are exposed as they are recorded in the file. FabIO allows
 the user to modify and, where possible, to save this information
-(Table format summarizes writable formats). Automatic translation
+(the table `Supported formats` summarizes writable formats).
+Automatic translation
 between file-formats, even if desirable, is sometimes impossible
 because not all format have the capability to be extended with
 additional metadata. Nevertheless FabIO is capable of converting
@@ -128,33 +130,23 @@ FabIO methods
 One strength of the implementation in an object oriented language
 is the possibility to combine functions (or methods) together with
 data appropriate for specific formats. In addition to the header
-information and image data, every fabioimage instance (returned
-by {fabio.open}) has methods inherited from fabioimage which
+information and image data, every `fabioimage` instance (returned
+by `fabio.open`) has methods inherited from `fabioimage` which
 provide information about the image minimum, maximum and mean
 values. In addition there are methods which return the file number,
 name etc. Some of the most important methods are specific for
 certain formats because the methods are related to how frames in a
-sequence are handled; these methods are img.next(),
-img.previous(), and img.getframe(n). The behaviour of such
+sequence are handled; these methods are `img.next()`,
+`img.previous()`, and `img.getframe(n)`. The behaviour of such
 methods varies depending on the image format: for single-frame
-format (like mar345), img.next() will return the image in next
-file; for multi-frame format (like GE), img.next() will return
+format (like mar345), `img.next()` will return the image in next
+file; for multi-frame format (like GE), `img.next()` will return
 the next frame within the same file. For formats which are possibly
 multi-framed like EDF, the behaviour depends on the actual number
-of frames per file (accessible via the img.nframes attribute).
+of frames per file (accessible via the `img.nframes` attribute).
 
-Installation and usage
-----------------------
-
-FabIO can, as any Python module, be installed from its sources,
-available on sourceforge but we advice to use binary
-packages provided for the most common platforms on sourceforge:
-Windows, MacOSX and Linux. Moreover FabIO is part of the common
-Linux distributions Ubuntu (since 11.10) and Debian7 where the
-package is named {python-fabio} and can be installed via: 
-::
-
-    # apt-get install python-fabio
+Usage
+-----
 
 Examples
 ........
@@ -166,7 +158,7 @@ Opening an image:
 
 ::
 
-    import fabio     
+    import fabio
     im100 = fabio.open('Quartz_0100.tif') # Open image file
     print(im0.data[1024,1024])            # Check a pixel value
     im101 = im100.next()                  # Open next image
@@ -192,20 +184,20 @@ Interactive viewing with matplotlib:
 
 ::
 
-    from matplotlib import pyplot       # Load matplotlib 
+    from matplotlib import pyplot       # Load matplotlib
     pyplot.imshow(img.data)             # Display as an image
     pyplot.show()                       # Show GUI window
 
 Future and perspectives
 -----------------------
 
-The Hierarchical Data Format version 5 {hdf5}is a data format which
+The Hierarchical Data Format version 5 (`hdf5`) is a data format which
 is increasingly popular for storage of X-ray and neutron data. To
-name a few facilities the synchrotron Soleil {tub05}and the neutron
+name a few facilities the synchrotron Soleil and the neutron
 sources ISIS, SNS and SINQ already use HDF extensively through the
-NeXus {nexus}format. For now, mainly processed or curated data are
+NeXus format. For now, mainly processed or curated data are
 stored in this format but new detectors are rumoured to provide
-native output in HDF5. FabIO will rely on H5Py {h5py}, which
+native output in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
 dependency, to be able to read and write such HDF5 files.
 
@@ -213,7 +205,7 @@ In the near future FabIO will be upgraded to work with Python3 (a
 new version of Python); this change of version will affect some
 internals FabIO as string and file handling have been altered. This
 change is already ongoing as many parts of native code in C have
-already been translated into Cython {cython}to smoothe the
+already been translated into Cython to smoothe the
 transition, since Cython generates code compatible with Python3.
 This also makes it easier to retain backwards compatibility with
 the earlier Python versions.
@@ -251,32 +243,50 @@ Knudsen, E. B., Sørensen, H. O., Wright, J. P., Goret, G. & Kieffer, J. (2013).
 
 http://dx.doi.org/10.1107/S0021889813000150
 
+
 List of file formats that FabIO can read and write
 ..................................................
 
 In alphabetical order. The listed filename extensions are typical examples.
 FabIO tries to deduce the actual format from the file itself and only
-uses extensions as a fallback if that fails.}
+uses extensions as a fallback if that fails.
 
-Python Module & Detector / Format & Extension & Read & Multi-image & Write
+.. csv-table:: Supported formats
+   :header: "Python Module", "Detector / Format", "Extension", "Read", "Multi-image", "Write"
+   :widths: 30, 30, 20, 10, 15, 10
 
-ADSC & ADSC Quantum & .img & Yes& - & Yes
-Bruker & Bruker formats & .sfrm & Yes& - &Yes
-DM3 & Gatan Digital Micrograph & .dm3 & Yes& - & -
-EDF & ESRF data format & .edf & Yes& Yes &            Yes
-EDNA-XML & Used by EDNA {edna}& .xml & Yes& - & -
-CBF & CIF binary files & .cbf & Yes& - & Yes
-kcd & Nonius KappaCCD & .kccd & Yes& - & -
-fit2dmask & Used by Fit2D {fit2d}& .msk & Yes& - &            Yes
-fit2dspreadsheet & Used by Fit2D {fit2d}& .spr & Yes& -& Yes
-GE & General Electric & - & Yes& Yes & -
-HiPiC & Hamamatsu CCD & .tif & Yes& - & -
-marccd & MarCCD/Mar165 & .mccd & Yes& - &Yes
-mar345 & Mar345 image plate & .mar3450 & Yes& - &            Yes
-OXD & Oxford Diffraction & .img & Yes& - &            Yes
-pilatus & Dectris Pilatus Tiff & .tif & Yes& - &           Yes
-PNM & Portable aNy Map & .pnm & Yes& - & -
-TIFF & Tagged Image File Format & .tif & Yes& - &            Yes
+   "ADSC", "ADSC Quantum", ".img ", "Yes", "No", "Yes"
+   "Bruker", "Bruker formats", ".sfrm ", "Yes", "No", "Yes"
+   "DM3", "Gatan Digital Micrograph ", ".dm3 ", "Yes", "No", "No"
+   "EDF", "ESRF data format ", ".edf ", "Yes", "Yes ", "Yes"
+   "EDNA-XML", "Used by EDNA", ".xml ", "Yes", "No", "No"
+   "CBF", "CIF binary files", ".cbf ", "Yes", "No", "Yes"
+   "kcd", "Nonius KappaCCD", ".kccd ", "Yes", "No", "No"
+   "fit2d mask", "Used by Fit2D", ".msk ", "Yes", "No", "Yes"
+   "fit2d spreadsheet", "Used by Fit2D", ".spr ", "Yes", "No", "Yes"
+   "GE", "General Electric", "No", "Yes", "Yes ", "No"
+   "HiPiC", "Hamamatsu CCD", ".tif ", "Yes", "No", "No"
+   "marccd", "MarCCD/Mar165", ".mccd ", "Yes", "No", "Yes"
+   "mar345", "Mar345 image plate", ".mar3450 ", "Yes", "No", "Yes"
+   "OXD", "Oxford Diffraction", ".img ", "Yes", "No", "Yes"
+   "pilatus", "Dectris Pilatus Tiff", ".tif ", "Yes", "No", "Yes"
+   "PNM", "Portable aNy Map", ".pnm ", "Yes", "No", "No"
+   "TIFF", "Tagged Image File Format", ".tif ", "Yes", "No", "Yes"
+
+Adding new file formats
+.......................
+
+We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:
+ 1. inherit from fabioimage overriding the methods _readheader, read and optionally write. Name your new module XXXimage where XXX means something (eg tifimage).
+ 2. readheader fills in a dictionary of "name":"value" pairs in self.header. No one expects to find anything much in there.
+ 3. read fills in self.data with a numpy array holding the image. Some redundant info which also appears are self.dim1 and self.dim2: the image dimensions, self.bpp is the bytes per pixel and self.bytecode is the numpy.dtype.type of the data.
+ 4. The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there in case you have trouble with the transparent handling of bz2 and gz files.
+ 5. Register the file type (extension naming) in fabioutils.py:FILETYPES
+ 6. Add your new module as an import into fabio.openimage
+ 7. Fill out the magic numbers for your format in fabio.openimage if you know them (the characteristic first few bytes in the file)
+ 8. Upload a testimage to the file release system and create a unittest testcase which opens an example of your new format, confirming the image has actually been read in successfully (eg check the mean, max, min and esd are all correct, perhaps orientation too)
+ 9. Run pylint on your code and then please go clean it up. Have a go at mine while you are at it.
+ 10. Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert their data into another format
 
 
 
