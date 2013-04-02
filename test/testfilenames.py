@@ -86,7 +86,7 @@ class testfilenames(unittest.TestCase):
     def test_many_cases(self):
         """ loop over CASES """
         for num, typ, name in CASES:
-            obj = fabio.deconstruct_filename(name)
+            obj = fabio.FilenameObject(filename=name)
             self.assertEqual(num, obj.num , name + " num=" + str(num) + \
                                                  " != obj.num=" + str(obj.num))
             self.assertEqual(typ, "_or_".join(obj.format),
