@@ -2,6 +2,7 @@
 W: 28,0: No exception type(s) specified
 F: 31,0: Unable to import 'utilstest'
 C: 83,0:testfilenames: Invalid name "testfilenames" (should match [A-Z_][a-zA-Z0-9]+$)
+E: 89,18:testfilenames.test_many_cases: Module 'fabio' has no 'FilenameObject' member
 C: 96,4:testfilenames.test_more_cases: Missing docstring
 C:101,4:testfilenames.test_more_cases_jump: Missing docstring
 C:107,0:test_suite_all_filenames: Missing docstring
@@ -23,7 +24,7 @@ Messages by category
 +-----------+-------+---------+-----------+
 |warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |1      |0        |+1.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -40,6 +41,8 @@ Messages
 +-----------+------------+
 |F0401      |1           |
 +-----------+------------+
+|E1101      |1           |
++-----------+------------+
 |C0103      |1           |
 +-----------+------------+
 
@@ -47,8 +50,8 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.98/10 (previous run: 8.98/10)
-That's pretty good. Good work mate.
+Your code has been rated at 7.96/10 (previous run: 8.98/10)
+If you commit now, people should not be making nasty comments about you on c.l.py
 
 Raw metrics
 -----------
@@ -81,14 +84,6 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testfilenames)
 
 
 

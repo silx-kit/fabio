@@ -1,39 +1,23 @@
 ************* Module OXDimage
-W:247,0: Found indentation with tabs instead of spaces
 W:248,0: Found indentation with tabs instead of spaces
+W:249,0: Found indentation with tabs instead of spaces
+W:  5,0: Redefining built-in '__doc__'
 C:  1,0: Missing docstring
-F: 24,0: Unable to import 'fabioimage'
-F: 25,0: Unable to import 'compression'
-W: 51,0:OXDimage: Class has no __init__ method
-C: 55,4:OXDimage._readheader: Missing docstring
-R: 55,4:OXDimage._readheader: Too many statements (95/50)
-E:190,8:OXDimage.read: Instance of 'OXDimage' has no 'resetvals' member
-E:191,17:OXDimage.read: Instance of 'OXDimage' has no '_open' member
-C:224,12:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:184,26:OXDimage.read: Unused argument 'frame'
-E:242,26:OXDimage._writeheader: Instance of 'OXDimage' has no 'header_keys' member
-E:243,16:OXDimage._writeheader: Instance of 'OXDimage' has no 'header_keys' member
-C:268,8:OXDimage._writeheader: Invalid name "NG" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:278,8:OXDimage._writeheader: Invalid name "NS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:298,8:OXDimage._writeheader: Invalid name "KM" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:365,8:OXDimage._writeheader: Invalid name "SS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:374,8:OXDimage._writeheader: Invalid name "HS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:236,4:OXDimage._writeheader: Too many branches (25/15)
-R:236,4:OXDimage._writeheader: Too many statements (102/50)
-E:388,13:OXDimage.write: Instance of 'OXDimage' has no '_open' member
-C:399,4:OXDimage.checkData: Missing docstring
-W:233,8:OXDimage.read: Attribute 'pilimage' defined outside __init__
-W:215,12:OXDimage.read: Attribute 'raw16' defined outside __init__
-W:223,12:OXDimage.read: Attribute 'bpp' defined outside __init__
-W:214,12:OXDimage.read: Attribute 'raw8' defined outside __init__
-W:199,12:OXDimage.read: Attribute 'dim2' defined outside __init__
-W:189,8:OXDimage.read: Attribute 'header' defined outside __init__
-W:198,12:OXDimage.read: Attribute 'dim1' defined outside __init__
-W:232,8:OXDimage.read: Attribute 'bytecode' defined outside __init__
-W:216,12:OXDimage.read: Attribute 'raw32' defined outside __init__
-W:231,8:OXDimage.read: Attribute 'data' defined outside __init__
-C:421,4:Section.getSize: Missing docstring
-W: 21,0: Unused import struct
+R: 56,4:OXDimage._readheader: Too many statements (95/50)
+C:225,12:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:269,8:OXDimage._writeheader: Invalid name "NG" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:279,8:OXDimage._writeheader: Invalid name "NS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:299,8:OXDimage._writeheader: Invalid name "KM" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:366,8:OXDimage._writeheader: Invalid name "SS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:375,8:OXDimage._writeheader: Invalid name "HS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:237,4:OXDimage._writeheader: Too many branches (25/15)
+R:237,4:OXDimage._writeheader: Too many statements (102/50)
+R: 52,0:OXDimage: Too many public methods (26/20)
+W:216,12:OXDimage.read: Attribute 'raw16' defined outside __init__
+W:215,12:OXDimage.read: Attribute 'raw8' defined outside __init__
+W:217,12:OXDimage.read: Attribute 'raw32' defined outside __init__
+C:422,4:Section.getSize: Missing docstring
+W: 22,0: Unused import struct
 
 
 Report
@@ -46,13 +30,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |10     |10       |=          |
+|convention |8      |8        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |3      |3        |=          |
+|refactor   |4      |4        |=          |
 +-----------+-------+---------+-----------+
-|warning    |15     |15       |=          |
+|warning    |7      |7        |=          |
 +-----------+-------+---------+-----------+
-|error      |5      |5        |=          |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -63,35 +47,31 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W0201      |10          |
-+-----------+------------+
 |C0103      |6           |
 +-----------+------------+
-|E1101      |5           |
-+-----------+------------+
-|C0111      |4           |
+|W0201      |3           |
 +-----------+------------+
 |W0312      |2           |
 +-----------+------------+
 |R0915      |2           |
 +-----------+------------+
-|F0401      |2           |
+|C0111      |2           |
 +-----------+------------+
-|W0613      |1           |
+|W0622      |1           |
 +-----------+------------+
 |W0611      |1           |
 +-----------+------------+
-|W0232      |1           |
-+-----------+------------+
 |R0912      |1           |
++-----------+------------+
+|R0904      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.16/10 (previous run: 8.16/10)
-That's pretty good. Good work mate.
+Your code has been rated at 9.34/10 (previous run: 9.34/10)
+So close to being perfect...
 
 Raw metrics
 -----------
@@ -99,24 +79,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |321    |78.29 |321      |=          |
+|code      |322    |78.35 |321      |+1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |42     |10.24 |42       |=          |
+|docstring |42     |10.22 |42       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |17     |4.15  |17       |=          |
+|comment   |17     |4.14  |17       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |30     |7.32  |30       |=          |
+|empty     |30     |7.30  |30       |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (OXDimage)
-      \-deg2rad (OXDimage)
-      \-rad2deg (OXDimage)
 
 
 
@@ -133,6 +103,16 @@ Duplication
 
 
 
+External dependencies
+---------------------
+::
+
+    numpy (OXDimage)
+      \-deg2rad (OXDimage)
+      \-rad2deg (OXDimage)
+
+
+
 Statistics by type
 ------------------
 
@@ -143,7 +123,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |10     |10         |=          |70.00       |0.00     |
+|method   |10     |10         |=          |90.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
