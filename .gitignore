@@ -3,6 +3,9 @@
 # C extensions
 *.so
 
+#testimages
+test/testimages
+
 # Packages
 *.egg
 *.egg-info
