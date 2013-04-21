@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8
+# coding: utf8
 
 """
 Setup script for python distutils package and fabio
@@ -53,7 +53,7 @@ if sphinx:
             # previously installed version
 
             build = self.get_finalized_command('build')
-            print os.path.abspath(build.build_lib)
+            print(os.path.abspath(build.build_lib))
             sys.path.insert(0, os.path.abspath(build.build_lib))
             # we need to reload PyMca from the build directory and not
             # the one from the source directory which does not contain
@@ -69,12 +69,14 @@ class PyTest(Command):
     def finalize_options(self):
         pass
     def run(self):
-        import sys, subprocess
+        import subprocess
         os.chdir("test")
         errno = subprocess.call([sys.executable, 'test_all.py'])
-        raise SystemExit(errno)
+        if errno != 0:
+            raise SystemExit(errno)
+        else:
+            os.chdir("..")
 cmdclass['test'] = PyTest
-
 
 # See the distutils docs...
 setup(name='fabio',
