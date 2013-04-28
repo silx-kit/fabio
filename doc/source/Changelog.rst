@@ -1,11 +1,15 @@
 Changelog
 =========
 
+From FabIO-0.1.2 to FabIO-0.1.3:
+................................
+- Fixed a memory-leak in mar345 module
+
 From FabIO-0.1.1 to FabIO-0.1.2:
 ................................
 - Fixed a bug in fabioimage.write (impacted all writers)
 - added Sphinx documentation "python setup.py build_doc"
-- PyLint compliance of some classes (rename, ...) 
+- PyLint compliance of some classes (rename, ...)
 - tests from installer with "python setup.py build test"
 
 From FabIO-0.1.0 to FabIO-0.1.1:
