@@ -87,8 +87,9 @@ class testMAR345(unittest.TestCase):
         """
         if logger.getEffectiveLevel() <= logging.INFO:
             logger.debug("Testing for memory leak")
-            for i in range(10000):
+            for i in range(1000):
                 img = fabio.open(self.mar)
+                print i
 
 
 

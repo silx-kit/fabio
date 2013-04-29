@@ -384,7 +384,7 @@ def compTY1(data):
     raw_8 = diff.astype("uint8").tostring()
     return  raw_8, raw_16, raw_32
 
-def decPCK(stream, dim1=None, dim2=None, overflowPix=None):
+def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
     """
     Modified CCP4  pck decompressor used in MAR345 images
 
@@ -403,7 +403,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None):
     else:
         raw = str(stream)
 
-    return uncompress_pck(raw, dim1, dim2, overflowPix)
+    return uncompress_pck(raw, dim1, dim2, overflowPix, version)
 
 
 def compPCK(data):

@@ -434,13 +434,14 @@ void * ccp4_unpack_string(
   int x4,x3,x2,x1;
   unsigned int *int_arr;
   char *instream = (char *)packed;
- /* printf("string ");
-  int toto;
-  for (toto=0;toto<16;toto++){
-	  printf("%02X ",(unsigned char)instream[toto]);
-  }
-  printf("\n");
-  */
+
+//  printf("string ");
+//  int toto;
+//  for (toto=0;toto<16;toto++){
+//	  printf("%02X ",(unsigned char)instream[toto]);
+//  }
+//  printf("\n");
+
 
   /*if no maximum integers are give read the whole nine yards*/
   if (max_num_int==0){

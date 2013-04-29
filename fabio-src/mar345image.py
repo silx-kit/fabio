@@ -19,10 +19,11 @@ Authors:
 """
 
 from fabioimage import fabioimage
-import numpy, struct, time, sys
+import numpy, struct, time, sys, traceback
 import logging
 logger = logging.getLogger("mar345image")
 from compression import compPCK, decPCK
+
 
 class mar345image(fabioimage):
     _need_a_real_file = True
@@ -37,8 +38,9 @@ class mar345image(fabioimage):
         f = self._open(self.filename, "rb")
         self._readheader(f)
         if 'compressed' in self.header['Format']:
+#            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, version=1)
             try:
-                self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
+                self.data = decPCK(f, self.dim1, self.dim2)
             except Exception, error:
                 logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
                 f.close()
