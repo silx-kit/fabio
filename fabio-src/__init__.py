@@ -2,16 +2,16 @@
 #coding: utf8
 """
 FabIO module
- 
+
 """
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/04/2013"
+__date__ = "30/04/2013"
 __status__ = "stable"
 
-version = "0.1.2"
+version = "0.1.3"
 import logging
 logging.basicConfig()
 import fabioimage

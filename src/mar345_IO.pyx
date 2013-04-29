@@ -1,12 +1,12 @@
 """
 New Cython version of mar345_io for preparing the migration to Python3
 
-Compressor & decompressor for "pack" algorithm by JPA, binding to CCP4 libraries 
+Compressor & decompressor for "pack" algorithm by JPA, binding to CCP4 libraries
 
 Warning: decompressor is just a cython porting of mar345_io, but in cython so (soon) python3 compliant.
 
 Future: make those algorithm actually generate strings not go via files;
-        it will allow a broader use of the algorithm. 
+        it will allow a broader use of the algorithm.
 
 """
 
@@ -19,6 +19,8 @@ import cython
 cimport numpy
 import numpy
 import os,tempfile
+from libc.string cimport memcpy
+from libc.stdlib cimport free
 
 #cdef extern from "pack_c.h":
 #     void pack_wordimage_c(short int*, int , int , char*) nogil
@@ -27,12 +29,12 @@ import os,tempfile
 cdef extern from "ccp4_pack.h":
     void* mar345_read_data_string(char *instream, int ocount, int dim1, int dim2) nogil
     void pack_wordimage_c(short int*, int , int , char*) nogil
-    
+
 @cython.boundscheck(False)
 def compress_pck(numpy.ndarray inputArray not None):
     """
     @param inputArray: numpy array as input
-    @param filename: file to write data to 
+    @param filename: file to write data to
     """
     cdef long  size = inputArray.size
     cdef int dim0, dim1, i, j, fd, ret
@@ -58,11 +60,11 @@ def compress_pck(numpy.ndarray inputArray not None):
 def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None):
     """
     Unpack a mar345 compressed image
-    
+
     @param raw: input string (bytes in python3)
     @param dim1,dim2: optional parameters size
-    @param overflowPix: optional parameters: number of overflowed pixels 
-    
+    @param overflowPix: optional parameters: number of overflowed pixels
+
     @return : ndarray of 2D with the right size
     """
     cdef int cdim1, cdim2, chigh
@@ -95,13 +97,20 @@ def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None):
             chigh = 0
     else:
         chigh = < int > overflowPix
-    cdef numpy.ndarray[numpy.uint32_t, ndim = 2] data = numpy.zeros((cdim2, cdim1), dtype=numpy.uint32)   
+    cdef numpy.ndarray[numpy.uint32_t, ndim = 2] data = numpy.empty((cdim2, cdim1), dtype=numpy.uint32)
+    cdef int nbytes = data.nbytes
+    cdef void* cdata
     if not end:
         end = raw.find("END OF HEADER")
     if end !=-1:
         raw = raw[end+14:].lstrip()
     cdef char* instream = <char*> raw
     with nogil:
-        data.data = <char *> mar345_read_data_string(instream, chigh, cdim1, cdim2)
+        cdata = mar345_read_data_string(instream, chigh, cdim1, cdim2)
+        memcpy(&data[0,0],
+               cdata,
+               nbytes)
+        free(cdata)
+#        data.data = <char *> mar345_read_data_string(instream, chigh, cdim1, cdim2)
     return data
 

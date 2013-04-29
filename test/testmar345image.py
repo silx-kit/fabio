@@ -48,7 +48,7 @@ class testMAR345(unittest.TestCase):
 
     def test_read(self):
         """
-        Test the reading of Mar345 images 
+        Test the reading of Mar345 images
         """
         for line in TESTIMAGES.split('\n'):
             vals = line.strip().split()
@@ -81,6 +81,14 @@ class testMAR345(unittest.TestCase):
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
                 self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s: [%s|%s]" % (key, obj.header[key], other.header[key]))
+    def test_memoryleak(self):
+        """
+        This test takes a lot of time, so only in debug mode.
+        """
+        if logger.getEffectiveLevel() <= logging.INFO:
+            logger.debug("Testing for memory leak")
+            for i in range(10000):
+                img = fabio.open(self.mar)
 
 
 
@@ -88,6 +96,7 @@ def test_suite_all_mar345():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testMAR345("test_read"))
     testSuite.addTest(testMAR345("test_write"))
+    testSuite.addTest(testMAR345("test_memoryleak"))
 
     return testSuite
 
