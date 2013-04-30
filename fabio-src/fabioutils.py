@@ -87,7 +87,6 @@ def pad(mystr, pattern=" ", size=80):
     """
     Performs the padding of the string to the right size with the right pattern 
     """
-    print size
     size = int(size)
     padded_size = int(ceil(float(len(mystr)) / size) * size)
     if len(pattern) == 1:

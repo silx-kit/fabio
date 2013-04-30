@@ -158,10 +158,12 @@ class test_real_im(unittest.TestCase):
             other.read(os.path.join(self.tempdir, name))
             self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
             for key in obj.header:
-                if key == "filename":
+                if key in ("filename",):
                     continue
-                self.assertTrue(key in other.header, "Key %s is in header" % key)
-                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
+                if key not in other.header:
+                    logger.warning("Key %s is missing in new header, was %s" % (key, obj.header[key]))
+                else:
+                    self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
 
 def test_suite_all_bruker():
     testSuite = unittest.TestSuite()

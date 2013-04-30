@@ -96,7 +96,7 @@ class brukerimage(fabioimage):
                    "CORRECT",   #Flood table correction filename, UNKNOWN or LINEAR.
                    "WARPFIL"    #Brass plate correction filename, UNKNOWN or LINEAR. Note: A filename here does NOT mean that spatial correction was performed. See TYPE and string “UNWARP” to determine that.
                    "WAVELEN",   #Wavelengths (average, a1, a2)
-                   "MAXXY" ,    #X,Y pixel # of maximum counts (from lower corner of 0,0)
+                   "MAXXY",     #X,Y pixel # of maximum counts (from lower corner of 0,0)
                    "AXIS",      #Scan axis ib Eulerian space (1-4 for 2-theta, omega, phi, chi) (0 =none, 2 = default).
                    "ENDING" ,   #Actual goniometer angles at end of frame in Eulerian space.
                    "DETPAR" ,   #Detector position corrections (dX,dY,dDist,Pitch,Roll,Yaw)
@@ -271,6 +271,7 @@ class brukerimage(fabioimage):
                 overflown = (self.data >= (2 ** (8 * i) - 1))
                 if overflown.sum() < max_entry:
                     self.__bpp_file = i
+                    break
             else:
                 self.__bpp_file = 4
         return self.__bpp_file
@@ -285,13 +286,19 @@ class brukerimage(fabioimage):
             if key in self.header:
                 value = self.header[key]
                 if type(value) in StringTypes:
-                    if len(value) < 72:
+                    if os.linesep in value:
+                        for i in value.split(os.linesep):
+                            headers.append((key.ljust(7) + ":%s" % i).ljust(80, " "))
+                    elif len(value) < 72:
                         headers.append((key.ljust(7) + ":%s" % value).ljust(80, " "))
                     else:
                         for i in range(len(value) / 72 + 1):
                             headers.append((key.ljust(7) + ":%s" % value[72 * i:min(len(value), 72 + (i + 1))]).ljust(80, " "))
                 elif "__len__" in dir(value):
-                    headers.append((key.ljust(7) + ":%s" % " ".join([str(i) for i in value])).ljust(80, " "))
+                    if isinstance(value[0], float):
+                        headers.append((key.ljust(7) + ":%s" % " ".join(["%.3f" % i for i in value])).ljust(80, " "))
+                    else:
+                        headers.append((key.ljust(7) + ":%s" % " ".join([str(i) for i in value])).ljust(80, " "))
                 else:
                     headers.append((key.ljust(7) + ":%s" % value).ljust(80, " "))
         header = "".join(headers)
@@ -308,8 +315,8 @@ class brukerimage(fabioimage):
         Generate an overflow table  
         """
         limit = 2 ** (8 * self.calc_bpp()) - 1
-        flat = self.data.ravel()                  #flat memory view
-        overflow_pos = numpy.where(flat >= limit) #list of indexes
+        flat = self.data.ravel()                     #flat memory view
+        overflow_pos = numpy.where(flat >= limit)[0] #list of indexes
         overflow_val = flat[overflow_pos]
         overflow = "".join(["%09i%07i" % (val, pos) for pos, val  in zip(overflow_pos, overflow_val)])
         return pad(overflow, ".", 512)
@@ -353,10 +360,10 @@ def test():
         img.read(filename)
         res = img.toPIL16()
         img.rebin(2, 2)
-        print filename + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
-            img.getmax(), img.getmin(), img.getmean(), img.getstddev())
-        print 'integrated intensity (%d %d %d %d) =%.3f' % (
-            10, 20, 20, 40, img.integrate_area((10, 20, 20, 40)))
+        print(filename + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
+            img.getmax(), img.getmin(), img.getmean(), img.getstddev()))
+        print('integrated intensity (%d %d %d %d) =%.3f' % (
+            10, 20, 20, 40, img.integrate_area((10, 20, 20, 40))))
     end = time.clock()
     print (end - start)
 
