@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 #coding: utf8
-"""
+
+from __future__ import with_statement
+
+__doc__ = """
 
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -15,17 +18,20 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 Writer by Jérôme Kieffer, ESRF, Grenoble, France
 
 """
-
-import numpy, logging
-logger = logging.getLogger("brukerimage")
-from fabioimage import fabioimage
-from readbytestream import readbytestream
-
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
 __date__ = "20130430"
 __status__ = "development"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2013 ESRF"
 __licence__ = "GPL"
+
+import numpy, logging
+from math import ceil
+import os, pwd, time
+logger = logging.getLogger("brukerimage")
+from fabioimage import fabioimage
+from fabioutils import pad
+from readbytestream import readbytestream
+from types import StringTypes
 
 class brukerimage(fabioimage):
     """
@@ -35,7 +41,8 @@ class brukerimage(fabioimage):
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
 
     __headerstring__ = ""
-    header_keys = ["FORMAT",    #Frame format. Always “86” or "100" for Bruker-format frames.
+    SPACER = "\x1a\x04" #this is CTRL-Z CTRL-D
+    HEADERS_KEYS = ["FORMAT",    #Frame format. Always “86” or "100" for Bruker-format frames.
                    "VERSION",   #Header version #, such as: 1 to 17 (6 is obsolete).
                    "HDRBLKS",   #Header size in 512-byte blocks, such as 10 or 15. Determines where the image block begins.
                    "TYPE",      #String indicating kind of data in the frame. Used to determine if a spatial correction table was applied to the frame imag
@@ -43,7 +50,7 @@ class brukerimage(fabioimage):
                    "MODEL",     #Diffractometer model
                    "USER",      #Username
                    "SAMPLE",    #Sample ID,
-                   "SETNAME",   #Basic data set name   
+                   "SETNAME",   #Basic data set name
                    "RUN",       #Run number within the data set, usually starts at 0, but 1 for APEX2.
                    "SAMPNUM",   #Specimen number within the data set
                    "TITLE",     #User comments (8 lines)
@@ -78,7 +85,7 @@ class brukerimage(fabioimage):
                    "FILTER" ,   #Filter/monochromator setting: Such as: Parallel, graphite, Ni Filter, C Filter, Zr Filter,Cross coupled Goebel Mirrors ...
                    "CELL" ,     #Unit cell A,B,C,ALPHA,BETA,GAMMA
                    "MATRIX" ,   #9R Orientation matrix (P3 conventions)
-                   "LOWTEMP",   #Low temp flag. 
+                   "LOWTEMP",   #Low temp flag.
                    "ZOOM" ,     #Zoom: Xc, Yc, Mag used for HI-STAR detectors: 0.5 0.5 1.0
                    "CENTER" ,   #X, Y of direct beam at 2-theta = 0. These are raw center for raw frames and unwarped center for unwarped frames.
                    "DISTANC"    #Sample-detector distance, cm (see CmToGrid value) Adds: Sample-detector grid/phosphor distance, cm
@@ -120,6 +127,10 @@ class brukerimage(fabioimage):
                    "CFR",       #Only in 21CFRPart11 mode, writes the checksum for header and image (2str).]
            ]
 
+    def __init__(self, data=None , header=None):
+        fabioimage.__init__(self, data, header)
+        self.__bpp_file = None
+        self.version = 86
 
     def _readheader(self, infile):
         """
@@ -227,11 +238,110 @@ class brukerimage(fabioimage):
 
     def write(self, fname):
         """
-
+        Write a bruker image 
 
         """
-        header_block = ""
+        bpp = self.calc_bpp()
+        self.basic_translate(fname)
+        limit = 2 ** (8 * bpp) - 1
+        if bpp == 1:
+            data = self.data.astype("uint8")
+        elif bpp == 2:
+            data = self.data.astype("uint16")
+        elif bpp == 4:
+            data = self.data.astype("uint32")
+        reset = numpy.where(self.data >= limit)
+        data[reset] = limit
+        data = data.newbyteorder("<") #Bruker enforces little endian
+        with self._open(fname, "wb") as bruker:
+            bruker.write(self.gen_header())
+            bruker.write(data.tostring())
+            bruker.write(self.gen_overflow())
 
+
+
+    def calc_bpp(self, max_entry=4096):
+        """
+        Calculate the number of byte per pixel to get an optimal overflow table. 
+        
+        @return: byte per pixel 
+        """
+        if self.__bpp_file is None:
+            for i in [1, 2]:
+                overflown = (self.data >= (2 ** (8 * i) - 1))
+                if overflown.sum() < max_entry:
+                    self.__bpp_file = i
+            else:
+                self.__bpp_file = 4
+        return self.__bpp_file
+
+    def gen_header(self):
+        """
+        Generate headers (with some magic and guesses)
+        @param format can be 86 or 100
+        """
+        headers = []
+        for key in self.HEADERS_KEYS:
+            if key in self.header:
+                value = self.header[key]
+                if type(value) in StringTypes:
+                    if len(value) < 72:
+                        headers.append((key.ljust(7) + ":%s" % value).ljust(80, " "))
+                    else:
+                        for i in range(len(value) / 72 + 1):
+                            headers.append((key.ljust(7) + ":%s" % value[72 * i:min(len(value), 72 + (i + 1))]).ljust(80, " "))
+                elif "__len__" in dir(value):
+                    headers.append((key.ljust(7) + ":%s" % " ".join([str(i) for i in value])).ljust(80, " "))
+                else:
+                    headers.append((key.ljust(7) + ":%s" % value).ljust(80, " "))
+        header = "".join(headers)
+        if len(header) > 512 * self.header["HDRBLKS"]:
+            tmp = ceil(len(header) / 512.0)
+            self.header["HDRBLKS"] = int(ceil(tmp / 5.0) * 5.0)
+            for i in range(len(headers)):
+                if headers[i].startswith("HDRBLKS"):
+                    headers[i] = headers.append(("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " "))
+        return pad("".join(headers), self.SPACER + "."*78, 512 * int(self.header["HDRBLKS"]))
+
+    def gen_overflow(self):
+        """
+        Generate an overflow table  
+        """
+        limit = 2 ** (8 * self.calc_bpp()) - 1
+        flat = self.data.ravel()                  #flat memory view
+        overflow_pos = numpy.where(flat >= limit) #list of indexes
+        overflow_val = flat[overflow_pos]
+        overflow = "".join(["%09i%07i" % (val, pos) for pos, val  in zip(overflow_pos, overflow_val)])
+        return pad(overflow, ".", 512)
+
+    def basic_translate(self, fname=None):
+        """
+        Does some basic population of the headers so that the writing is possible 
+        """
+        if not "FORMAT" in self.header:
+            self.header["FORMAT"] = "86"
+        if not "HDRBLKS" in self.header:
+            self.header["HDRBLKS"] = 5
+        if not "TYPE" in self.header:
+            self.header["TYPE"] = "UNWARPED"
+        if not "USER" in self.header:
+            self.header["USER"] = pwd.getpwuid(os.getuid())[ 0 ]
+        if not "FILENAM" in self.header:
+            self.header["FILENAM"] = "%s" % fname
+        if not "CREATED" in self.header:
+            self.header["CREATED"] = time.ctime()
+        if not "NOVERFL" in self.header:
+            self.header["NOVERFL"] = "0"
+        if not "NPIXELB" in self.header:
+            self.header["NPIXELB"] = self.calc_bpp()
+        if not "NROWS" in self.header:
+            self.header["NROWS"] = self.data.shape[0]
+        if not "NCOLS" in self.header:
+            self.header["NCOLS"] = self.data.shape[1]
+        if not "WORDORD" in self.header:
+            self.header["WORDORD"] = "0"
+        if not "LONGORD" in self.header:
+            self.header["LONGORD"] = "0"
 
 
 def test():

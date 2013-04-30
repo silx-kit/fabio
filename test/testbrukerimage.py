@@ -32,6 +32,7 @@ import fabio
 from fabio.brukerimage import brukerimage
 import numpy
 import bz2, gzip
+import tempfile
 #this is actually a violation of the bruker format since the order of
 # the header items is specified
 #in the standard, whereas the order of a python dictionary is not
@@ -124,7 +125,9 @@ class test_real_im(unittest.TestCase):
         """
         download images
         """
+
         self.im_dir = os.path.dirname(UtilsTest.getimage("Cr8F8140k103.0026.bz2"))
+        self.tempdir = tempfile.mkdtemp()
 
     def test_read(self):
         """ check we can read bruker images"""
@@ -142,12 +145,31 @@ class test_real_im(unittest.TestCase):
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
 
+    def test_write(self):
+        "Test writing with self consistency at the fabio level"
+        for line in TESTIMAGES.split("\n"):
+            vals = line.split()
+            name = vals[0]
+            obj = brukerimage()
+            fname = os.path.join(self.im_dir, name)
+            obj.read(fname)
+            obj.write(os.path.join(self.tempdir, name))
+            other = brukerimage()
+            other.read(os.path.join(self.tempdir, name))
+            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+            for key in obj.header:
+                if key == "filename":
+                    continue
+                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
+
 def test_suite_all_bruker():
     testSuite = unittest.TestSuite()
     testSuite.addTest(testbruker("test_read"))
     testSuite.addTest(testbzipbruker("test_read"))
     testSuite.addTest(testgzipbruker("test_read"))
     testSuite.addTest(test_real_im("test_read"))
+    testSuite.addTest(test_real_im("test_write"))
     return testSuite
 
 if __name__ == '__main__':

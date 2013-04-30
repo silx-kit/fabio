@@ -10,6 +10,7 @@ import StringIO as stringIO
 logger = logging.getLogger("fabioutils")
 from compression import bz2, gzip
 import traceback
+from math import ceil
 
 
 
@@ -86,6 +87,8 @@ def pad(mystr, pattern=" ", size=80):
     """
     Performs the padding of the string to the right size with the right pattern 
     """
+    print size
+    size = int(size)
     padded_size = int(ceil(float(len(mystr)) / size) * size)
     if len(pattern) == 1:
         return mystr.ljust(padded_size, pattern)
