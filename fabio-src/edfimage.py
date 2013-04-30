@@ -655,11 +655,10 @@ class edfimage(fabioimage):
 
         """
 
-        outfile = self._open(fname, mode="wb")
-        for i, frame in enumerate(self.__frames):
-            frame.iFrame = i
-            outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
-        outfile.close()
+        with self._open(fname, mode="wb") as outfile:
+            for i, frame in enumerate(self.__frames):
+                frame.iFrame = i
+                outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
 
 
     def appendFrame(self, frame=None, data=None, header=None):
