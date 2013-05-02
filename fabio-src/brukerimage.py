@@ -170,11 +170,10 @@ class brukerimage(fabioimage):
         # we must have read this in the first 5*512 bytes.
         nhdrblks = int(self.header['HDRBLKS'])
         # Now read in the rest of the header blocks, appending
-        rest = infile.read(blocksize * (nhdrblks - 5))
-        self.__headerstring__ += rest
+        self.__headerstring__ += infile.read(blocksize * (nhdrblks - 5))
         for i in range(5 * blocksize, nhdrblks * blocksize, line):
             if self.__headerstring__[i: i + line].find(":") > 0: # as for first 512 bytes of header
-                key, val = self.__headerstring__[i - 80: i].split(":", 1)
+                key, val = self.__headerstring__[i: i + line].split(":", 1)
                 key = key.strip()
                 val = val.strip()
                 if key in self.header:
@@ -182,7 +181,6 @@ class brukerimage(fabioimage):
                 else:
                     self.header[key] = val
                     self.header_keys.append(key)
-            i = i + 80
         # make a (new) header item called "datastart"
         self.header['datastart'] = blocksize * nhdrblks
         #set the image dimensions
