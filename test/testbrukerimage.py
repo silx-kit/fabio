@@ -151,19 +151,21 @@ class test_real_im(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             obj = brukerimage()
+            ref = brukerimage()
             fname = os.path.join(self.im_dir, name)
             obj.read(fname)
             obj.write(os.path.join(self.tempdir, name))
             other = brukerimage()
             other.read(os.path.join(self.tempdir, name))
+            ref.read(fname)
             self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
-            for key in obj.header:
+            for key in ref.header:
                 if key in ("filename",):
                     continue
                 if key not in other.header:
-                    logger.warning("Key %s is missing in new header, was %s" % (key, obj.header[key]))
+                    logger.warning("Key %s is missing in new header, was %s" % (key, ref.header[key]))
                 else:
-                    self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
+                    self.assertEqual(ref.header[key], other.header[key], "value are the same for key %s: was %s now %s" % (key, ref.header[key], other.header[key]))
 
 def test_suite_all_bruker():
     testSuite = unittest.TestSuite()
