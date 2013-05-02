@@ -236,6 +236,18 @@ class brukerimage(fabioimage):
                 #    self.data[r,c],self.data[c,r]
                 self.data[col, row] = intensity
         infile.close()
+        # Handle Float images ...
+        if "LINEAR" in self.header:
+            try:
+                slope, offset = self.header["LINEAR"].split(None, 1)
+                slope = float(slope)
+                offset = float(offset)
+            except Except as error:
+                logger.warning("Error in converting to float data with linear parameter: %s" % self.header["LINEAR"])
+            else:
+                if slope != 1 or offset != 0:
+                    #TODO: check that the formula is OK, not reverted.
+                    self.data = self.data.astype(numpy.float32) * slope + offset
 
         self.resetvals()
         self.pilimage = None
@@ -247,16 +259,40 @@ class brukerimage(fabioimage):
         Write a bruker image 
 
         """
-        bpp = self.calc_bpp()
+        if numpy.issubdtype(self.data.dtype, float):
+            if "LINEAR" in self.header:
+                try:
+                    slope, offset = self.header["LINEAR"].split(None, 1)
+                    slope = float(slope)
+                    offset = float(offset)
+                except Except as error:
+                    logger.warning("Error in converting to float data with linear parameter: %s" % self.header["LINEAR"])
+                    slope, offset = 1.0, 0.0
+
+            else:
+                offset = self.data.min()
+                max_data = self.data.max()
+                max_range = 2 ** 24 - 1 #mantissa of a float32
+                if max_data > offset:
+                    slope = (max_data - offset) / float(max_range)
+                else:
+                    slope = 1.0
+            tmp_data = numpy.round(((self.data - offset) / slope)).astype(numpy.uint32)
+            self.header["LINEAR"] = "%s %s" % (slope, offset)
+
+        else:
+            tmp_data = self.data        
+        
+        bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1
         if bpp == 1:
-            data = self.data.astype("uint8")
+            data = tmp_data.astype("uint8")
         elif bpp == 2:
-            data = self.data.astype("uint16")
+            data = tmp_data.astype("uint16")
         elif bpp == 4:
-            data = self.data.astype("uint32")
-        reset = numpy.where(self.data >= limit)
+            data = tmp_data.astype("uint32")
+        reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
         data = data.newbyteorder("<") #Bruker enforces little endian
         with self._open(fname, "wb") as bruker:
@@ -266,15 +302,17 @@ class brukerimage(fabioimage):
 
 
 
-    def calc_bpp(self, max_entry=4096):
+    def calc_bpp(self, data=None, max_entry=4096):
         """
         Calculate the number of byte per pixel to get an optimal overflow table. 
         
         @return: byte per pixel 
         """
+        if data is None:
+            data=self.data
         if self.__bpp_file is None:
             for i in [1, 2]:
-                overflown = (self.data >= (2 ** (8 * i) - 1))
+                overflown = (data >= (2 ** (8 * i) - 1))
                 if overflown.sum() < max_entry:
                     self.__bpp_file = i
                     break
