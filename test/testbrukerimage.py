@@ -6,7 +6,7 @@
 #built on testedfimage
 """
 
-import unittest, sys, os, logging
+import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testbrukerimage")
 force_build = False
 
@@ -109,6 +109,20 @@ class testgzipbruker(testbruker):
             self.filename += ".gz"
 
 
+class testbrukerLinear(unittest.TestCase):
+    """basic test, test a random array of float32"""
+    fd, filename = tempfile.mkstemp('0000', "bruker")
+    os.close(fd)
+    data = numpy.random.random((500, 550)).astype("float32")
+    
+    def test_linear(self):
+        """ test for self consitency of random data read/write """
+        obj = brukerimage(data=self.data)
+        obj.write(self.filename)
+        new = brukerimage()
+        new.read(self.filename)
+        error = abs(new.data - self.data).max()
+        self.assert_(error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error)
 
 
 # statistics come from fit2d I think
@@ -174,6 +188,7 @@ def test_suite_all_bruker():
     testSuite.addTest(testgzipbruker("test_read"))
     testSuite.addTest(test_real_im("test_read"))
     testSuite.addTest(test_real_im("test_write"))
+    testSuite.addTest(testbrukerLinear("test_linear"))
     return testSuite
 
 if __name__ == '__main__':

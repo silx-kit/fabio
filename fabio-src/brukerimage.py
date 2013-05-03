@@ -30,7 +30,6 @@ import os, pwd, time
 logger = logging.getLogger("brukerimage")
 from fabioimage import fabioimage
 from fabioutils import pad
-from readbytestream import readbytestream
 from types import StringTypes
 if sys.version_info[0] < 3:
     bytes = str
@@ -39,10 +38,14 @@ class brukerimage(fabioimage):
     """
     Read and eventually write ID11 bruker (eg smart6500) images
 
-    TODO: int32 -> float32 conversion according to the "linear" keyword 
+    TODO: int32 -> float32 conversion according to the "linear" keyword.
+    This is done and works but we need to check with other program that we
+    are appliing the right formula and not the reciprocal one.
     
     """
-
+    bpp_to_numpy = {1:numpy.uint8,
+                    2:numpy.uint16,
+                    4:numpy.uint32}
 
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
 
@@ -203,24 +206,20 @@ class brukerimage(fabioimage):
         try:
             # you had to read the Bruker docs to know this!
             npixelb = int(self.header['NPIXELB'])
-        except:
+        except Exception:
             errmsg = "length " + str(len(self.header['NPIXELB'])) + "\n"
             for byt in self.header['NPIXELB']:
                 errmsg += "char: " + str(byt) + " " + str(ord(byt)) + "\n"
             logger.warning(errmsg)
-            raise
+            raise RuntimeError(errmsg)
 
-        self.data = readbytestream(infile, infile.tell(),
-                                   rows, cols, npixelb,
-                                   datatype="int",
-                                   signed='n',
-                                   swap='n')
+        data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
 
         #handle overflows
         nov = int(self.header['NOVERFL'])
         if nov > 0:   # Read in the overflows
             # need at least int32 sized data I guess - can reach 2^21
-            self.data = self.data.astype(numpy.uint32)
+            data = data.astype(numpy.uint32)
             # 16 character overflows:
             #      9 characters of intensity
             #      7 character position
@@ -228,13 +227,7 @@ class brukerimage(fabioimage):
                 ovfl = infile.read(16)
                 intensity = int(ovfl[0: 9])
                 position = int(ovfl[9: 16])
-                # relies on python style modulo being always +
-                row = position % rows
-                # relies on truncation down
-                col = position / rows
-                #print "Overflow ", r, c, intensity, position,\
-                #    self.data[r,c],self.data[c,r]
-                self.data[col, row] = intensity
+                data[position] = intensity
         infile.close()
         # Handle Float images ...
         if "LINEAR" in self.header:
@@ -242,12 +235,19 @@ class brukerimage(fabioimage):
                 slope, offset = self.header["LINEAR"].split(None, 1)
                 slope = float(slope)
                 offset = float(offset)
-            except Except as error:
+            except Except:
                 logger.warning("Error in converting to float data with linear parameter: %s" % self.header["LINEAR"])
+                self.data = data
             else:
-                if slope != 1 or offset != 0:
+                if slope == 1 and offset == 0:
+                    self.data = data
+                else:
                     #TODO: check that the formula is OK, not reverted.
-                    self.data = self.data.astype(numpy.float32) * slope + offset
+                    logger.warning("performing correction with slope=%s, offset=%s (LINEAR=%s)" % (slope, offset, self.header["LINEAR"]))
+                    self.data = (data * slope + offset).astype(numpy.float32)
+        else:
+            self.data = data
+        self.data.shape = self.dim1, self.dim2
 
         self.resetvals()
         self.pilimage = None
@@ -265,14 +265,14 @@ class brukerimage(fabioimage):
                     slope, offset = self.header["LINEAR"].split(None, 1)
                     slope = float(slope)
                     offset = float(offset)
-                except Except as error:
+                except Except:
                     logger.warning("Error in converting to float data with linear parameter: %s" % self.header["LINEAR"])
                     slope, offset = 1.0, 0.0
 
             else:
                 offset = self.data.min()
                 max_data = self.data.max()
-                max_range = 2 ** 24 - 1 #mantissa of a float32
+                max_range = 2 ** 24 - 1 #similar to the mantissa of a float32
                 if max_data > offset:
                     slope = (max_data - offset) / float(max_range)
                 else:
@@ -281,17 +281,12 @@ class brukerimage(fabioimage):
             self.header["LINEAR"] = "%s %s" % (slope, offset)
 
         else:
-            tmp_data = self.data        
-        
+            tmp_data = self.data
+
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1
-        if bpp == 1:
-            data = tmp_data.astype("uint8")
-        elif bpp == 2:
-            data = tmp_data.astype("uint16")
-        elif bpp == 4:
-            data = tmp_data.astype("uint32")
+        data = tmp_data.astype(self.bpp_to_numpy[bpp])
         reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
         data = data.newbyteorder("<") #Bruker enforces little endian
@@ -309,7 +304,7 @@ class brukerimage(fabioimage):
         @return: byte per pixel 
         """
         if data is None:
-            data=self.data
+            data = self.data
         if self.__bpp_file is None:
             for i in [1, 2]:
                 overflown = (data >= (2 ** (8 * i) - 1))
