@@ -265,7 +265,7 @@ def numstem(name):
     except AttributeError: # no digits found
         return [name, "", ""]
 
-@deprecated
+#@deprecated
 def deconstruct_filename(filename):
     """
     Function for backward compatibility.
