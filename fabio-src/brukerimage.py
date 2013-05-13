@@ -26,7 +26,7 @@ __licence__ = "GPL"
 
 import numpy, logging, sys
 from math import ceil
-import os, pwd, time
+import os, getpass, time
 logger = logging.getLogger("brukerimage")
 from fabioimage import fabioimage
 from fabioutils import pad
@@ -378,7 +378,7 @@ class brukerimage(fabioimage):
         if not "TYPE" in self.header:
             self.header["TYPE"] = "UNWARPED"
         if not "USER" in self.header:
-            self.header["USER"] = pwd.getpwuid(os.getuid())[ 0 ]
+            self.header["USER"] = getpass.getuser()
         if not "FILENAM" in self.header:
             self.header["FILENAM"] = "%s" % fname
         if not "CREATED" in self.header:
