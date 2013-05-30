@@ -87,7 +87,6 @@ History-1 = something=something else;
 
 
 
-
 class testbzipedf(testflatedfs):
     """ same for bzipped versions """
     def setUp(self):
@@ -290,6 +289,7 @@ class testedfwrite(unittest.TestCase):
         r = fabio.open(self.filename)
         self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
     def testGzip(self):
         self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
         e = edfimage(data=self.data, header=self.header)
@@ -297,6 +297,7 @@ class testedfwrite(unittest.TestCase):
         r = fabio.open(self.filename)
         self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
     def testBzip2(self):
         self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
         e = edfimage(data=self.data, header=self.header)
@@ -304,6 +305,7 @@ class testedfwrite(unittest.TestCase):
         r = fabio.open(self.filename)
         self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
     def tearDown(self):
         os.unlink(self.filename)
         os.rmdir(self.tmpdir)
