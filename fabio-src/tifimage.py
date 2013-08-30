@@ -27,7 +27,7 @@ __status__ = "stable"
 import time, logging, struct
 logger = logging.getLogger("tifimage")
 try:
-    import Image
+    from PIL import Image
 except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None

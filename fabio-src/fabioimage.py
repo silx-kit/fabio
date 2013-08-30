@@ -17,7 +17,7 @@ import os, types, logging, sys, tempfile
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
-    import Image
+    from PIL import Image
 except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
