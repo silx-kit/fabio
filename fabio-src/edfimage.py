@@ -487,7 +487,7 @@ class edfimage(fabioimage):
         @param infile: file object open in read mode
         @return: string (or None if no header was found.
         """
-
+        MAX_HEADER_SIZE = BLOCKSIZE * 20
         block = infile.read(BLOCKSIZE)
         if len(block) < BLOCKSIZE:
             logger.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
@@ -496,10 +496,21 @@ class edfimage(fabioimage):
             # This does not look like an edf file
             logger.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
             return
+        if "EDF_HeaderSize" in block:
+            start = block.index("EDF_HeaderSize")
+            chunk = block[start:].split("=")[1].strip()
+            try:
+                new_max_header_size = int(chunk.split(";")[0].strip())
+            except Exception:
+                logger.warning("Unable to read header size in %s" % chunk)
+            else:
+                if new_max_header_size > MAX_HEADER_SIZE:
+                    logger.info("Redefining MAX_HEADER_SIZE to %s" % new_max_header_size)
+                    MAX_HEADER_SIZE = new_max_header_size
         while '}' not in block:
             block = block + infile.read(BLOCKSIZE)
-            if len(block) > BLOCKSIZE * 20:
-                logger.warning("Runaway header in EDF file")
+            if len(block) > MAX_HEADER_SIZE:
+                logger.warning("Runaway header in EDF file MAX_HEADER_SIZE: %s \n%s" % (MAX_HEADER_SIZE, block))
                 return
         start = block.find("{") + 1
         end = block.find("}")
