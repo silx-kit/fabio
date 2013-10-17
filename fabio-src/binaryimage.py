@@ -27,6 +27,8 @@ class binaryimage(fabioimage):
     
     Binary files images are simple none-compressed 2D images only defined by their : 
     data-type, dimensions, byte order and offset
+    if offset is not set or set to zero, the image is read using the last data i
+    n the file, skipping any header.
     """
 
     def __init__(self, *args, **kwargs):
@@ -60,8 +62,16 @@ class binaryimage(fabioimage):
         dims = [dim2, dim1]
         bpp = len(numpy.array(0, bytecode).tostring())
         size = dims[0] * dims[1] * bpp
-
-        f.seek(offset)
+        
+        if offset!=0:
+            f.seek(offset)
+        else:
+            try:
+                f.seek(-size,2) #seek from EOF backwards
+            except IOError:
+                logging.warn('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
+            except:
+                logging.error('Uncommon error encountered when reading file')
         rawData = f.read(size)
         if  self.swap_needed(endian):
             data = numpy.fromstring(rawData, bytecode).byteswap().reshape(tuple(dims))
