@@ -1,10 +1,21 @@
-************* Module testkcdimage
+No config file found, using default configuration
+
+************* Module test.testkcdimage
+C: 42,0: Line too long (88/80)
+C: 69,0: Line too long (81/80)
+C: 10,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 11,0: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 25,0: No exception type(s) specified
-F: 28,0: Unable to import 'utilstest'
+W: 28,0: Relative import 'utilstest', should be 'test.utilstest'
 C: 38,0:testkcd: Invalid name "testkcd" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 47,8:testkcd.setUp: Invalid name "fn" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 47,8:testkcd.setUp: Invalid name "fn" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 45,4:testkcd.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
 W: 56,8:testkcd.test_read: Unused variable 'name'
+R: 38,0:testkcd: Too many public methods (47/20)
 C: 77,0:test_suite_all_kcd: Missing docstring
+C: 78,4:test_suite_all_kcd: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 84,4: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 85,4: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 33,0: Unused import edfimage
 
 
@@ -18,13 +29,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |3      |3        |=          |
+|convention |11     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |3      |3        |=          |
+|warning    |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -35,7 +46,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |2           |
+|C0103      |8           |
++-----------+------------+
+|C0301      |2           |
 +-----------+------------+
 |W0702      |1           |
 +-----------+------------+
@@ -43,7 +56,9 @@ Messages
 +-----------+------------+
 |W0611      |1           |
 +-----------+------------+
-|F0401      |1           |
+|W0403      |1           |
++-----------+------------+
+|R0904      |1           |
 +-----------+------------+
 |C0111      |1           |
 +-----------+------------+
@@ -52,39 +67,7 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.03/10 (previous run: 9.03/10)
-So close to being perfect...
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |61     |76.25 |61       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |9      |11.25 |9        |=          |
-+----------+-------+------+---------+-----------+
-|comment   |2      |2.50  |2        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |8      |10.00 |8        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    fabio (testkcdimage)
-      \-edfimage 
-      | \-edfimage (testkcdimage)
-      \-kcdimage 
-      | \-kcdimage (testkcdimage)
-      \-openimage 
-        \-openimage (testkcdimage)
-
-
+Your code has been rated at 7.42/10
 
 Duplication
 -----------
@@ -92,10 +75,27 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |61     |76.25 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |9      |11.25 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |2      |2.50  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |8      |10.00 |NC       |NC         |
++----------+-------+------+---------+-----------+
 
 
 
@@ -105,13 +105,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
+|module   |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |3      |3          |=          |100.00      |0.00     |
+|method   |3      |NC         |NC         |100.00      |33.33    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |0.00        |0.00     |
+|function |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 

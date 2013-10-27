@@ -1,32 +1,22 @@
+No config file found, using default configuration
+
 ************* Module bruker100image
+C: 58,0: Line too long (81/80)
+C: 66,0: Line too long (89/80)
 C:  1,0: Missing docstring
-F: 11,0: Unable to import 'brukerimage'
-F: 12,0: Unable to import 'readbytestream'
+C:  4,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C:  9,4: Invalid name "Image" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 C: 14,0:bruker100image: Invalid name "bruker100image" (should match [A-Z_][a-zA-Z0-9]+$)
 C: 14,0:bruker100image: Missing docstring
-W: 14,0:bruker100image: Class has no __init__ method
-C: 17,4:bruker100image.toPIL16: Missing docstring
-C: 23,8:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 30,4:bruker100image.read: Missing docstring
-C: 31,8:bruker100image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E: 33,12:bruker100image.read: Instance of 'bruker100image' has no '_readheader' member
-E: 37,19:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-E: 38,19:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-E: 39,22:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-E: 48,18:bruker100image.read: Instance of 'bruker100image' has no 'header' member
-C: 58,12:bruker100image.read: Invalid name "ar" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 66,12:bruker100image.read: Invalid name "M" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E: 79,8:bruker100image.read: Instance of 'bruker100image' has no 'resetvals' member
-W: 30,26:bruker100image.read: Unused argument 'frame'
-W: 77,20:bruker100image.read: Attribute 'dim2' defined outside __init__
-W: 77,9:bruker100image.read: Attribute 'dim1' defined outside __init__
-W: 45,8:bruker100image.read: Attribute 'data' defined outside __init__
-E: 89,8: Instance of 'bruker100image' has no 'rebin' member
-E: 91,12: Instance of 'bruker100image' has no 'getmax' member
-E: 91,24: Instance of 'bruker100image' has no 'getmin' member
-E: 91,36: Instance of 'bruker100image' has no 'getmean' member
-E: 91,49: Instance of 'bruker100image' has no 'getstddev' member
-E: 93,28: Instance of 'bruker100image' has no 'integrate_area' member
+C: 17,4:bruker100image.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 23,8:bruker100image.toPIL16: Invalid name "PILimage" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 31,8:bruker100image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 58,12:bruker100image.read: Invalid name "ar" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 66,12:bruker100image.read: Invalid name "M" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 14,0:bruker100image: Too many public methods (29/20)
+C: 85,4: Invalid name "b" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 88,8: Invalid name "r" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 95,4: Invalid name "e" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 
 
 Report
@@ -39,13 +29,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |9      |9        |=          |
+|convention |15     |16       |-1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |1      |0        |+1.00      |
 +-----------+-------+---------+-----------+
-|warning    |5      |5        |=          |
+|warning    |0      |6        |-6.00      |
 +-----------+-------+---------+-----------+
-|error      |12     |12       |=          |
+|error      |0      |22       |-22.00     |
 +-----------+-------+---------+-----------+
 
 
@@ -56,52 +46,20 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|E1101      |12          |
+|C0103      |11          |
 +-----------+------------+
-|C0103      |5           |
+|C0301      |2           |
 +-----------+------------+
-|C0111      |4           |
+|C0111      |2           |
 +-----------+------------+
-|W0201      |3           |
-+-----------+------------+
-|F0401      |2           |
-+-----------+------------+
-|W0613      |1           |
-+-----------+------------+
-|W0232      |1           |
+|R0904      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at -2.13/10 (previous run: -2.13/10)
-You have to do something quick !
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |66     |76.74 |66       |=          |
-+----------+-------+------+---------+-----------+
-|docstring |5      |5.81  |5        |=          |
-+----------+-------+------+---------+-----------+
-|comment   |7      |8.14  |7        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |8      |9.30  |8        |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (bruker100image)
-
-
+Your code has been rated at 7.38/10 (previous run: -14.00/10)
 
 Duplication
 -----------
@@ -116,6 +74,31 @@ Duplication
 
 
 
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |66     |76.74 |63       |+3.00      |
++----------+-------+------+---------+-----------+
+|docstring |5      |5.81  |7        |-2.00      |
++----------+-------+------+---------+-----------+
+|comment   |7      |8.14  |7        |=          |
++----------+-------+------+---------+-----------+
+|empty     |8      |9.30  |10       |-2.00      |
++----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (bruker100image)
+
+
+
 Statistics by type
 ------------------
 
@@ -126,7 +109,7 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |2      |2          |=          |0.00        |0.00     |
+|method   |2      |2          |=          |100.00      |50.00    |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+

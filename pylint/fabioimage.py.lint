@@ -1,13 +1,30 @@
+No config file found, using default configuration
+
 ************* Module fabioimage
+C: 92,0: Line too long (106/80)
+C:277,0: Line too long (83/80)
+C:291,0: Line too long (83/80)
+C:295,0: Line too long (85/80)
+C:319,0: Line too long (86/80)
+C:363,0: Line too long (94/80)
+C:414,0: Line too long (81/80)
+C:476,0: Line too long (95/80)
+C:477,0: Line too long (99/80)
 W:121,0: FIXME - this should be handled by the libraries now
 W:372,0: FIXME - what about seek ?
 W:397,0: FIXME - should we fix that or complain about the daft naming?
-F: 24,0: Unable to import 'fabioutils'
-F: 24,0: Unable to import 'converters'
+C: 17,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 23,4: Invalid name "Image" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 27,0:fabioimage: Too many instance attributes (22/7)
 C: 27,0:fabioimage: Invalid name "fabioimage" (should match [A-Z_][a-zA-Z0-9]+$)
-F:100,12:fabioimage.getframe: Unable to import 'openimage'
-F:107,8:fabioimage.previous: Unable to import 'openimage'
-F:113,8:fabioimage.next: Unable to import 'openimage'
+C: 70,4:fabioimage.checkHeader: Invalid name "checkHeader" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 80,4:fabioimage.checkData: Invalid name "checkData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:117,4:fabioimage.toPIL16: Invalid name "toPIL16" (should match [a-z_][a-z0-9_]{2,30}$)
+C:261,4:fabioimage.rebin: Invalid name "keep_I" (should match [a-z_][a-z0-9_]{2,30}$)
+C:261,48:fabioimage.rebin: Invalid name "keep_I" (should match [a-z_][a-z0-9_]{2,30}$)
+C:280,12:fabioimage.rebin: Invalid name "dataIn" (should match [a-z_][a-z0-9_]{2,30}$)
+C:281,12:fabioimage.rebin: Invalid name "shapeIn" (should match [a-z_][a-z0-9_]{2,30}$)
+C:282,12:fabioimage.rebin: Invalid name "shapeOut" (should match [a-z_][a-z0-9_]{2,30}$)
 W:305,20:fabioimage.write: Unused argument 'fname'
 R:305,4:fabioimage.write: Method could be a function
 W:327,26:fabioimage._readheader: Unused argument 'fik_obj'
@@ -15,11 +32,18 @@ R:327,4:fabioimage._readheader: Method could be a function
 W:340,29:fabioimage.read: Unused argument 'frame'
 W:340,19:fabioimage.read: Unused argument 'filename'
 R:340,4:fabioimage.read: Method could be a function
-C:418,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:428,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:351,4:fabioimage.readROI: Invalid name "readROI" (should match [a-z_][a-z0-9_]{2,30}$)
+C:374,8:fabioimage._open: Invalid name "fileObject" (should match [a-z_][a-z0-9_]{2,30}$)
+C:384,16:fabioimage._open: Invalid name "fileObject" (should match [a-z_][a-z0-9_]{2,30}$)
+C:389,16:fabioimage._open: Invalid name "fileObject" (should match [a-z_][a-z0-9_]{2,30}$)
+C:399,16:fabioimage._open: Invalid name "fileObject" (should match [a-z_][a-z0-9_]{2,30}$)
+C:418,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-z0-9_]{2,30}$)
+C:428,12:fabioimage._compressed_stream: Invalid name "fo" (should match [a-z_][a-z0-9_]{2,30}$)
 W:407,27:fabioimage._compressed_stream: Unused argument 'system_uncompress'
 W:454,24:fabioimage.convert: No exception type(s) specified
+R:434,4:fabioimage.convert: Too many branches (15/12)
 R: 27,0:fabioimage: Too many public methods (25/20)
+R:480,0:test: Too many local variables (17/15)
 W:526,12:test.clean: No exception type(s) specified
 W:533,11:test: Access to a protected member _open of a client class
 W:539,11:test: Access to a protected member _open of a client class
@@ -37,13 +61,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |3      |3        |=          |
+|convention |27     |19       |+8.00      |
 +-----------+-------+---------+-----------+
-|refactor   |4      |4        |=          |
+|refactor   |7      |4        |+3.00      |
 +-----------+-------+---------+-----------+
-|warning    |14     |15       |-1.00      |
+|warning    |14     |13       |+1.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |15       |-15.00     |
 +-----------+-------+---------+-----------+
 
 
@@ -54,9 +78,11 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W0613      |5           |
+|C0103      |18          |
 +-----------+------------+
-|F0401      |5           |
+|C0301      |9           |
++-----------+------------+
+|W0613      |5           |
 +-----------+------------+
 |W0212      |4           |
 +-----------+------------+
@@ -64,53 +90,22 @@ Messages
 +-----------+------------+
 |R0201      |3           |
 +-----------+------------+
-|C0103      |3           |
-+-----------+------------+
 |W0702      |2           |
 +-----------+------------+
+|R0914      |1           |
++-----------+------------+
+|R0912      |1           |
++-----------+------------+
 |R0904      |1           |
++-----------+------------+
+|R0902      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.32/10 (previous run: 9.29/10)
-So close to being perfect...
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |350    |66.16 |353      |-3.00      |
-+----------+-------+------+---------+-----------+
-|docstring |119    |22.50 |119      |=          |
-+----------+-------+------+---------+-----------+
-|comment   |15     |2.84  |15       |=          |
-+----------+-------+------+---------+-----------+
-|empty     |45     |8.51  |45       |=          |
-+----------+-------+------+---------+-----------+
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |29     |29         |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |2      |2          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-
-
+Your code has been rated at 8.45/10 (previous run: 5.32/10)
 
 Duplication
 -----------
@@ -125,11 +120,45 @@ Duplication
 
 
 
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |350    |66.16 |271      |+79.00     |
++----------+-------+------+---------+-----------+
+|docstring |119    |22.50 |104      |+15.00     |
++----------+-------+------+---------+-----------+
+|comment   |15     |2.84  |14       |+1.00      |
++----------+-------+------+---------+-----------+
+|empty     |45     |8.51  |41       |+4.00      |
++----------+-------+------+---------+-----------+
+
+
+
 External dependencies
 ---------------------
 ::
 
     numpy (fabioimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |2          |-1.00      |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |29     |23         |+6.00      |100.00      |13.79    |
++---------+-------+-----------+-----------+------------+---------+
+|function |2      |2          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 

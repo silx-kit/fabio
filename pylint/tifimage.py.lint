@@ -1,8 +1,35 @@
+No config file found, using default configuration
+
 ************* Module tifimage
+C:  5,0: Line too long (84/80)
+C: 48,0: Line too long (167/80)
+C:108,0: Line too long (112/80)
+C:131,0: Line too long (98/80)
+C:139,0: Line too long (120/80)
+C:155,0: Line too long (112/80)
+C:156,0: Line too long (101/80)
+C:157,0: Line too long (106/80)
+C:160,0: Line too long (100/80)
+C:176,0: Line too long (100/80)
+C:216,0: Line too long (85/80)
+C:226,0: Line too long (89/80)
+C:248,0: Line too long (94/80)
+C:273,0: Line too long (88/80)
+C:276,0: Line too long (84/80)
+C:281,0: Line too long (84/80)
+C:287,0: Line too long (84/80)
+C:289,0: Line too long (170/80)
+C: 28,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 33,4: Invalid name "Image" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 52,0: Invalid name "baseline_tiff_tags" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 80,0:tifimage: Too many instance attributes (9/7)
 C: 80,0:tifimage: Invalid name "tifimage" (should match [A-Z_][a-zA-Z0-9]+$)
 W:130,15:tifimage.read: Catching too general exception Exception
+C:125,12:tifimage.read: Invalid name "tiffIO" (should match [a-z_][a-z0-9_]{2,30}$)
 W:147,23:tifimage.read: Catching too general exception Exception
+R:116,4:tifimage.read: Too many branches (13/12)
 W:136,38:tifimage.read: Unused variable 'ncol'
+C:175,8:tifimage.write: Invalid name "tiffIO" (should match [a-z_][a-z0-9_]{2,30}$)
 R: 80,0:tifimage: Too many public methods (25/20)
 C:181,0:Tiff_header: Invalid name "Tiff_header" (should match [A-Z_][a-zA-Z0-9]+$)
 C:181,0:Tiff_header: Missing docstring
@@ -12,82 +39,22 @@ C:205,0:Image_File_Directory: Missing docstring
 W:206,23:Image_File_Directory.__init__: Unused argument 'instring'
 C:211,4:Image_File_Directory.unpack: Missing docstring
 C:212,27:Image_File_Directory.unpack: More than one statement on a single line
-C:218,12:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:222,16:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:214,8:Image_File_Directory.unpack: Invalid name "strInput" (should match [a-z_][a-z0-9_]{2,30}$)
+C:218,12:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
+C:222,16:Image_File_Directory.unpack: Invalid name "e" (should match [a-z_][a-z0-9_]{2,30}$)
 R:205,0:Image_File_Directory: Too few public methods (1/2)
 C:229,0:Image_File_Directory_entry: Invalid name "Image_File_Directory_entry" (should match [A-Z_][a-zA-Z0-9]+$)
 C:229,0:Image_File_Directory_entry: Missing docstring
+C:237,4:Image_File_Directory_entry.unpack: Invalid name "strInput" (should match [a-z_][a-z0-9_]{2,30}$)
 C:237,4:Image_File_Directory_entry.unpack: Missing docstring
+C:237,21:Image_File_Directory_entry.unpack: Invalid name "strInput" (should match [a-z_][a-z0-9_]{2,30}$)
 C:258,4:Image_File_Directory_entry.extract_data: Missing docstring
+R:258,4:Image_File_Directory_entry.extract_data: Too many branches (15/12)
 
 
 Report
 ======
 168 statements analysed.
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |13     |13       |=          |
-+-----------+-------+---------+-----------+
-|refactor   |3      |2        |+1.00      |
-+-----------+-------+---------+-----------+
-|warning    |4      |12       |-8.00      |
-+-----------+-------+---------+-----------+
-|error      |0      |2        |-2.00      |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|C0111      |6           |
-+-----------+------------+
-|C0103      |6           |
-+-----------+------------+
-|W0703      |2           |
-+-----------+------------+
-|R0903      |2           |
-+-----------+------------+
-|W0613      |1           |
-+-----------+------------+
-|W0612      |1           |
-+-----------+------------+
-|R0904      |1           |
-+-----------+------------+
-|C0321      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 8.81/10 (previous run: 7.78/10)
-That's pretty good. Good work mate.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |199    |72.36 |198      |+1.00      |
-+----------+-------+------+---------+-----------+
-|docstring |38     |13.82 |33       |+5.00      |
-+----------+-------+------+---------+-----------+
-|comment   |18     |6.55  |18       |=          |
-+----------+-------+------+---------+-----------+
-|empty     |20     |7.27  |19       |+1.00      |
-+----------+-------+------+---------+-----------+
-
-
 
 Duplication
 -----------
@@ -99,6 +66,75 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |39     |35       |+4.00      |
++-----------+-------+---------+-----------+
+|refactor   |6      |4        |+2.00      |
++-----------+-------+---------+-----------+
+|warning    |4      |3        |+1.00      |
++-----------+-------+---------+-----------+
+|error      |0      |10       |-10.00     |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0301      |18          |
++-----------+------------+
+|C0103      |14          |
++-----------+------------+
+|C0111      |6           |
++-----------+------------+
+|W0703      |2           |
++-----------+------------+
+|R0912      |2           |
++-----------+------------+
+|R0903      |2           |
++-----------+------------+
+|W0613      |1           |
++-----------+------------+
+|W0612      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|R0902      |1           |
++-----------+------------+
+|C0321      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 7.08/10 (previous run: 3.99/10)
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |199    |72.36 |183      |+16.00     |
++----------+-------+------+---------+-----------+
+|docstring |38     |13.82 |33       |+5.00      |
++----------+-------+------+---------+-----------+
+|comment   |18     |6.55  |18       |=          |
++----------+-------+------+---------+-----------+
+|empty     |20     |7.27  |18       |+2.00      |
++----------+-------+------+---------+-----------+
 
 
 

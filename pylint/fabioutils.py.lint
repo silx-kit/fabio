@@ -1,37 +1,66 @@
+No config file found, using default configuration
+
 ************* Module fabioutils
-W: 60,7: Catching too general exception Exception
-W: 70,7: Catching too general exception Exception
-W: 91,4:getnum: Unused variable 'stem'
-W: 91,16:getnum: Unused variable 'post_num'
-W:104,12:FilenameObject.__init__: Redefining built-in 'format'
-W:195,19:FilenameObject.deconstruct_filename: Catching too general exception Exception
-W:216,23:FilenameObject.deconstruct_filename: Catching too general exception Exception
-R:170,4:FilenameObject.deconstruct_filename: Too many statements (60/50)
-W:327,12:toAscii: Redefining name 'i' from outer scope (line 50)
-E:331,29:toAscii: Unsupported format character 'n' (0x6e) at index 11
-C:338,0:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:338,13:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:367,4:StringIO.getSize: Missing docstring
-C:376,4:StringIO.setSize: Missing docstring
-W:378,11:StringIO: Use of "property" on an old style class
-C:406,4:File.getSize: Missing docstring
-C:415,4:File.setSize: Missing docstring
-C:468,12:GzipFile.getSize: Missing docstring
-C:471,54:GzipFile.getSize: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E:473,38:GzipFile.getSize: Undefined variable 'numpy'
-E:473,72:GzipFile.getSize: Undefined variable 'numpy'
-C:475,12:GzipFile.setSize: Missing docstring
-W:477,19:GzipFile: Use of "property" on an old style class
-C:479,12:GzipFile.closed: Missing docstring
-W:534,20:BZ2File.getSize: Redefining built-in 'all'
-C:529,8:BZ2File.getSize: Missing docstring
-W:534,20:BZ2File.getSize: Unused variable 'all'
-C:538,8:BZ2File.setSize: Missing docstring
+C: 82,0: Line too long (123/80)
+C: 95,0: Line too long (106/80)
+C:234,0: Line too long (81/80)
+C:444,0: Line too long (101/80)
+C:454,0: Line too long (84/80)
+C:493,0: Line too long (85/80)
+W:569,0: Bad indentation. Found 16 spaces, expected 12
+W:572,0: Bad indentation. Found 16 spaces, expected 12
+C: 10,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 51,0: Invalid name "dictAscii" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 61,7: Catching too general exception Exception
+C: 55,4: Invalid name "lines" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W: 71,7: Catching too general exception Exception
+C: 65,4: Invalid name "lines" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W:103,4:getnum: Unused variable 'stem'
+W:103,16:getnum: Unused variable 'post_num'
+R:109,0:FilenameObject: Too many instance attributes (8/7)
+R:113,4:FilenameObject.__init__: Too many arguments (9/5)
+W:116,12:FilenameObject.__init__: Redefining built-in 'format'
+W:207,19:FilenameObject.deconstruct_filename: Catching too general exception Exception
+W:228,23:FilenameObject.deconstruct_filename: Catching too general exception Exception
+R:182,4:FilenameObject.deconstruct_filename: Too many statements (60/50)
+C:313,0:isAscii: Invalid name "isAscii" (should match [a-z_][a-z0-9_]{2,30}$)
+C:313,0:isAscii: Invalid name "listExcluded" (should match [a-z_][a-z0-9_]{2,30}$)
+C:313,18:isAscii: Invalid name "listExcluded" (should match [a-z_][a-z0-9_]{2,30}$)
+W:339,12:toAscii: Redefining name 'i' from outer scope (line 51)
+C:331,0:toAscii: Invalid name "toAscii" (should match [a-z_][a-z0-9_]{2,30}$)
+E:343,29:toAscii: Unsupported format character 'n' (0x6e) at index 11
+C:350,0:nice_int: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
+C:350,13:nice_int: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
+C:379,4:StringIO.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:379,4:StringIO.getSize: Missing docstring
+C:388,4:StringIO.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:388,4:StringIO.setSize: Missing docstring
+W:390,11:StringIO: Use of "property" on an old style class
+C:418,4:File.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:418,4:File.getSize: Missing docstring
+C:427,4:File.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:427,4:File.setSize: Missing docstring
+C:448,4: Invalid name "GzipFile" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C:488,12:GzipFile.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:488,12:GzipFile.getSize: Missing docstring
+C:491,54:GzipFile.getSize: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+E:493,38:GzipFile.getSize: Undefined variable 'numpy'
+E:493,72:GzipFile.getSize: Undefined variable 'numpy'
+C:495,12:GzipFile.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:495,12:GzipFile.setSize: Missing docstring
+R:450,4:GzipFile: Too many public methods (24/20)
+C:532,4: Invalid name "BZ2File" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+W:561,20:BZ2File.getSize: Redefining built-in 'all'
+C:556,8:BZ2File.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:556,8:BZ2File.getSize: Missing docstring
+W:561,20:BZ2File.getSize: Unused variable 'all'
+C:565,8:BZ2File.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:565,8:BZ2File.setSize: Missing docstring
 
 
 Report
 ======
-278 statements analysed.
+297 statements analysed.
 
 Messages by category
 --------------------
@@ -39,13 +68,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |12     |17       |-5.00      |
+|convention |35     |30       |+5.00      |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |4      |3        |+1.00      |
 +-----------+-------+---------+-----------+
-|warning    |12     |12       |=          |
+|warning    |13     |19       |-6.00      |
 +-----------+-------+---------+-----------+
-|error      |3      |3        |=          |
+|error      |3      |13       |-10.00     |
 +-----------+-------+---------+-----------+
 
 
@@ -56,23 +85,33 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0111      |9           |
+|C0103      |21          |
++-----------+------------+
+|C0111      |8           |
++-----------+------------+
+|C0301      |6           |
 +-----------+------------+
 |W0703      |4           |
 +-----------+------------+
 |W0612      |3           |
 +-----------+------------+
-|C0103      |3           |
-+-----------+------------+
-|W1001      |2           |
-+-----------+------------+
 |W0622      |2           |
 +-----------+------------+
+|W0311      |2           |
++-----------+------------+
 |E0602      |2           |
++-----------+------------+
+|W1001      |1           |
 +-----------+------------+
 |W0621      |1           |
 +-----------+------------+
 |R0915      |1           |
++-----------+------------+
+|R0913      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|R0902      |1           |
 +-----------+------------+
 |E1300      |1           |
 +-----------+------------+
@@ -81,25 +120,7 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 8.56/10 (previous run: 8.38/10)
-That's pretty good. Good work mate.
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |305    |57.33 |305      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |175    |32.89 |172      |+3.00      |
-+----------+-------+------+---------+-----------+
-|comment   |7      |1.32  |7        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |45     |8.46  |44       |+1.00      |
-+----------+-------+------+---------+-----------+
-
-
+Your code has been rated at 7.74/10 (previous run: 5.36/10)
 
 Duplication
 -----------
@@ -114,6 +135,23 @@ Duplication
 
 
 
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |324    |56.94 |283      |+41.00     |
++----------+-------+------+---------+-----------+
+|docstring |187    |32.86 |149      |+38.00     |
++----------+-------+------+---------+-----------+
+|comment   |8      |1.41  |33       |-25.00     |
++----------+-------+------+---------+-----------+
+|empty     |50     |8.79  |40       |+10.00     |
++----------+-------+------+---------+-----------+
+
+
+
 Statistics by type
 ------------------
 
@@ -124,9 +162,9 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |6      |6          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |19     |19         |=          |52.63       |0.00     |
+|method   |25     |15         |+10.00     |68.00       |32.00    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |13     |13         |=          |100.00      |0.00     |
+|function |14     |11         |+3.00      |100.00      |14.29    |
 +---------+-------+-----------+-----------+------------+---------+
 
 

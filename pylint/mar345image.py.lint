@@ -1,28 +1,73 @@
+No config file found, using default configuration
+
 ************* Module mar345image
-W:118,0: TODO: validate these values against the binaries already read
+C: 41,0: Line too long (81/80)
+C: 45,0: Line too long (106/80)
+C: 98,0: Line too long (85/80)
+C:149,0: Line too long (86/80)
+C:169,0: Line too long (90/80)
+C:182,0: Line too long (83/80)
+C:196,0: Line too long (128/80)
+C:197,0: Line too long (104/80)
+C:200,0: Line too long (82/80)
+C:203,0: Line too long (134/80)
+C:206,0: Line too long (82/80)
+C:210,0: Line too long (130/80)
+C:214,0: Line too long (127/80)
+C:217,0: Line too long (82/80)
+C:220,0: Line too long (82/80)
+C:223,0: Line too long (82/80)
+C:226,0: Line too long (82/80)
+C:229,0: Line too long (82/80)
+C:233,0: Line too long (85/80)
+C:234,0: Line too long (151/80)
+C:238,0: Line too long (85/80)
+C:239,0: Line too long (153/80)
+C:242,0: Line too long (82/80)
+C:245,0: Line too long (82/80)
+C:249,0: Line too long (121/80)
+C:252,0: Line too long (82/80)
+C:255,0: Line too long (82/80)
+C:260,0: Line too long (156/80)
+C:264,0: Line too long (125/80)
+C:268,0: Line too long (125/80)
+C:273,0: Line too long (103/80)
+C:274,0: Line too long (182/80)
+C:279,0: Line too long (157/80)
+C:282,0: Line too long (82/80)
+C:285,0: Line too long (82/80)
+C:289,0: Line too long (134/80)
+C:292,0: Line too long (82/80)
+W:120,0: TODO: validate these values against the binaries already read
 W:  4,0: Redefining built-in '__doc__'
 C:  1,0: Missing docstring
-C: 27,0:mar345image: Invalid name "mar345image" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 27,0:mar345image: Missing docstring
-C: 37,8:mar345image.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W: 42,19:mar345image.read: Catching too general exception Exception
-C: 64,8:mar345image._readheader: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 65,8:mar345image._readheader: Invalid name "h" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 68,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 76,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 78,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:119,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:127,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:128,12:mar345image._readheader: Invalid name "m" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:131,12:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:146,16:mar345image._readheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R: 59,4:mar345image._readheader: Too many statements (57/50)
-W:164,15:mar345image.write: Catching too general exception Exception
-R:167,4:mar345image._writeheader: Too many branches (28/15)
-R:167,4:mar345image._writeheader: Too many statements (123/50)
-C:298,4:mar345image._high_intensity_pixel_records: Missing docstring
-C:310,4:mar345image.nb_overflow_pixels: Missing docstring
-R: 27,0:mar345image: Too many public methods (26/20)
+C: 24,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 28,0:mar345image: Too many instance attributes (8/7)
+C: 28,0:mar345image: Invalid name "mar345image" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 28,0:mar345image: Missing docstring
+C: 38,8:mar345image.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+W: 44,19:mar345image.read: Catching too general exception Exception
+C: 66,8:mar345image._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 67,8:mar345image._readheader: Invalid name "h" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 70,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 78,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 80,12:mar345image._readheader: Invalid name "fs" (should match [a-z_][a-z0-9_]{2,30}$)
+C:121,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C:129,8:mar345image._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
+C:130,12:mar345image._readheader: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+C:133,12:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+C:148,16:mar345image._readheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 61,4:mar345image._readheader: Too many branches (13/12)
+R: 61,4:mar345image._readheader: Too many statements (57/50)
+W:166,15:mar345image.write: Catching too general exception Exception
+R:169,4:mar345image._writeheader: Too many branches (28/12)
+R:169,4:mar345image._writeheader: Too many statements (123/50)
+C:300,4:mar345image._high_intensity_pixel_records: Missing docstring
+C:312,4:mar345image.nb_overflow_pixels: Missing docstring
+C:316,4:mar345image.checkData: Invalid name "checkData" (should match [a-z_][a-z0-9_]{2,30}$)
+C:324,12:mar345image.checkData: Invalid name "z" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 28,0:mar345image: Too many public methods (26/20)
+W: 22,0: Unused import traceback
 
 
 Report
@@ -35,13 +80,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |16     |17       |-1.00      |
+|convention |56     |18       |+38.00     |
 +-----------+-------+---------+-----------+
-|refactor   |4      |3        |+1.00      |
+|refactor   |6      |3        |+3.00      |
 +-----------+-------+---------+-----------+
-|warning    |4      |11       |-7.00      |
+|warning    |5      |10       |-5.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |2        |-2.00      |
+|error      |0      |4        |-4.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -52,7 +97,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |12          |
+|C0301      |37          |
++-----------+------------+
+|C0103      |15          |
 +-----------+------------+
 |C0111      |4           |
 +-----------+------------+
@@ -60,21 +107,37 @@ Messages
 +-----------+------------+
 |R0915      |2           |
 +-----------+------------+
+|R0912      |2           |
++-----------+------------+
 |W0622      |1           |
++-----------+------------+
+|W0611      |1           |
 +-----------+------------+
 |W0511      |1           |
 +-----------+------------+
-|R0912      |1           |
-+-----------+------------+
 |R0904      |1           |
++-----------+------------+
+|R0902      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.02/10 (previous run: 8.33/10)
-So close to being perfect...
+Your code has been rated at 7.28/10 (previous run: 4.07/10)
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
 
 Raw metrics
 -----------
@@ -82,13 +145,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |265    |84.13 |260      |+5.00      |
+|code      |265    |83.60 |86       |+179.00    |
 +----------+-------+------+---------+-----------+
-|docstring |16     |5.08  |16       |=          |
+|docstring |16     |5.05  |20       |-4.00      |
 +----------+-------+------+---------+-----------+
-|comment   |13     |4.13  |13       |=          |
+|comment   |13     |4.10  |12       |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |21     |6.67  |21       |=          |
+|empty     |23     |7.26  |20       |+3.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -111,23 +174,10 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |1      |1          |=          |0.00        |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |8      |8          |=          |75.00       |0.00     |
+|method   |8      |4          |+4.00      |75.00       |12.50    |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
-
-
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
 
 
 

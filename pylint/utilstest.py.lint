@@ -1,10 +1,21 @@
-************* Module utilstest
+No config file found, using default configuration
+
+************* Module test.utilstest
+C: 62,0: Line too long (86/80)
+C: 71,0: Line too long (95/80)
+C: 84,0: Line too long (99/80)
 C:  1,0: Missing docstring
+C: 42,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 W: 71,12:UtilsTest: Used * or ** magic
 W: 73,4:UtilsTest: Specify string format arguments as logging function parameters
-C: 81,8:UtilsTest.forceBuild: Invalid name "p" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:103,4:UtilsTest.getimage: Too many branches (16/15)
+C: 76,4:UtilsTest.forceBuild: Invalid name "forceBuild" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 81,8:UtilsTest.forceBuild: Invalid name "p" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 91,4:UtilsTest.timeoutDuringDownload: Invalid name "timeoutDuringDownload" (should match [a-z_][a-z0-9_]{2,30}$)
+C:114,16:UtilsTest.getimage: Invalid name "dictProxies" (should match [a-z_][a-z0-9_]{2,30}$)
+R:103,4:UtilsTest.getimage: Too many branches (16/12)
 R:103,4:UtilsTest.getimage: Too many statements (52/50)
+C:180,4:UtilsTest.recursive_delete: Invalid name "strDirname" (should match [a-z_][a-z0-9_]{2,30}$)
+C:180,25:UtilsTest.recursive_delete: Invalid name "strDirname" (should match [a-z_][a-z0-9_]{2,30}$)
 
 
 Report
@@ -17,13 +28,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |2      |2        |=          |
+|convention |11     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |2      |2        |=          |
+|refactor   |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |2      |2        |=          |
+|warning    |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -34,6 +45,10 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
+|C0103      |7           |
++-----------+------------+
+|C0301      |3           |
++-----------+------------+
 |W1201      |1           |
 +-----------+------------+
 |W0142      |1           |
@@ -44,32 +59,12 @@ Messages
 +-----------+------------+
 |C0111      |1           |
 +-----------+------------+
-|C0103      |1           |
-+-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.42/10 (previous run: 9.42/10)
-So close to being perfect...
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |133    |69.27 |133      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |24     |12.50 |24       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |26     |13.54 |26       |=          |
-+----------+-------+------+---------+-----------+
-|empty     |9      |4.69  |9        |=          |
-+----------+-------+------+---------+-----------+
-
-
+Your code has been rated at 8.56/10
 
 Duplication
 -----------
@@ -77,10 +72,27 @@ Duplication
 +-------------------------+------+---------+-----------+
 |                         |now   |previous |difference |
 +=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
+|nb duplicated lines      |0     |NC       |NC         |
 +-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
+|percent duplicated lines |0.000 |NC       |NC         |
 +-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |133    |69.27 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |24     |12.50 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |26     |13.54 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |9      |4.69  |NC       |NC         |
++----------+-------+------+---------+-----------+
 
 
 
@@ -90,13 +102,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
+|module   |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |0.00     |
+|class    |1      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |4          |=          |100.00      |0.00     |
+|method   |4      |NC         |NC         |100.00      |50.00    |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0           |0        |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 

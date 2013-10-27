@@ -1,16 +1,24 @@
+No config file found, using default configuration
+
 ************* Module file_series
-C: 32,4:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:116,0: Line too long (93/80)
+C: 18,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 32,4:new_file_series0: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
 W: 47,15:new_file_series0: Catching too general exception Exception
-C: 46,12:new_file_series0: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 46,12:new_file_series0: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
 W: 54,19:new_file_series0: Catching too general exception Exception
-C: 95,4:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 95,4:new_file_series: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
 W:106,15:new_file_series: Catching too general exception Exception
-C:104,12:new_file_series: Invalid name "im" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:104,12:new_file_series: Invalid name "im" (should match [a-z_][a-z0-9_]{2,30}$)
+C:105,12:new_file_series: Invalid name "retVal" (should match [a-z_][a-z0-9_]{2,30}$)
+C:107,12:new_file_series: Invalid name "retVal" (should match [a-z_][a-z0-9_]{2,30}$)
 W:115,19:new_file_series: Catching too general exception Exception
+C:120,12:new_file_series: Invalid name "retVal" (should match [a-z_][a-z0-9_]{2,30}$)
 C:121,22:new_file_series: More than one statement on a single line
 C:126,0:file_series: Invalid name "file_series" (should match [A-Z_][a-zA-Z0-9]+$)
 R:126,0:file_series: Too many public methods (28/20)
 C:322,0:numbered_file_series: Invalid name "numbered_file_series" (should match [A-Z_][a-zA-Z0-9]+$)
+R:328,4:numbered_file_series.__init__: Too many arguments (8/5)
 R:322,0:numbered_file_series: Too many public methods (28/20)
 C:349,0:filename_series: Invalid name "filename_series" (should match [A-Z_][a-zA-Z0-9]+$)
 
@@ -25,11 +33,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |8      |8        |=          |
+|convention |13     |11       |+2.00      |
 +-----------+-------+---------+-----------+
-|refactor   |2      |2        |=          |
+|refactor   |3      |3        |=          |
 +-----------+-------+---------+-----------+
-|warning    |4      |4        |=          |
+|warning    |4      |5        |-1.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -42,38 +50,24 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |7           |
+|C0103      |11          |
 +-----------+------------+
 |W0703      |4           |
 +-----------+------------+
 |R0904      |2           |
 +-----------+------------+
+|R0913      |1           |
++-----------+------------+
 |C0321      |1           |
++-----------+------------+
+|C0301      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.01/10 (previous run: 9.01/10)
-So close to being perfect...
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |146    |36.68 |146      |=          |
-+----------+-------+------+---------+-----------+
-|docstring |194    |48.74 |189      |+5.00      |
-+----------+-------+------+---------+-----------+
-|comment   |7      |1.76  |7        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |51     |12.81 |51       |=          |
-+----------+-------+------+---------+-----------+
-
-
+Your code has been rated at 8.58/10 (previous run: 8.64/10)
 
 Duplication
 -----------
@@ -85,6 +79,23 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |146    |36.68 |145      |+1.00      |
++----------+-------+------+---------+-----------+
+|docstring |194    |48.74 |101      |+93.00     |
++----------+-------+------+---------+-----------+
+|comment   |7      |1.76  |7        |=          |
++----------+-------+------+---------+-----------+
+|empty     |51     |12.81 |33       |+18.00     |
++----------+-------+------+---------+-----------+
 
 
 

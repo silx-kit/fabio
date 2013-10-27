@@ -1,70 +1,90 @@
+No config file found, using default configuration
+
 ************* Module brukerimage
-W:140,0: FIXME:  this should call edfimage.write if that is wanted?
-C: 22,0:brukerimage: Invalid name "brukerimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W:118,16:brukerimage.read: Unused variable 'i'
-R: 22,0:brukerimage: Too many public methods (25/20)
-W:180,8:test: Unused variable 'res'
+C: 21,0: Line too long (86/80)
+C: 53,0: Line too long (94/80)
+C: 54,0: Line too long (84/80)
+C: 55,0: Line too long (123/80)
+C: 56,0: Line too long (155/80)
+C: 62,0: Line too long (102/80)
+C: 70,0: Line too long (87/80)
+C: 81,0: Line too long (110/80)
+C: 83,0: Line too long (91/80)
+C: 84,0: Line too long (88/80)
+C: 86,0: Line too long (93/80)
+C: 87,0: Line too long (89/80)
+C: 90,0: Line too long (100/80)
+C: 93,0: Line too long (155/80)
+C: 99,0: Line too long (90/80)
+C:100,0: Line too long (145/80)
+C:101,0: Line too long (131/80)
+C:103,0: Line too long (146/80)
+C:104,0: Line too long (97/80)
+C:105,0: Line too long (138/80)
+C:106,0: Line too long (122/80)
+C:107,0: Line too long (84/80)
+C:108,0: Line too long (207/80)
+C:110,0: Line too long (89/80)
+C:111,0: Line too long (119/80)
+C:112,0: Line too long (92/80)
+C:113,0: Line too long (91/80)
+C:116,0: Line too long (84/80)
+C:117,0: Line too long (98/80)
+C:118,0: Line too long (99/80)
+C:119,0: Line too long (145/80)
+C:121,0: Line too long (158/80)
+C:122,0: Line too long (118/80)
+C:123,0: Line too long (93/80)
+C:124,0: Line too long (91/80)
+C:126,0: Line too long (81/80)
+C:128,0: Line too long (88/80)
+C:129,0: Line too long (90/80)
+C:131,0: Line too long (201/80)
+C:132,0: Line too long (87/80)
+C:133,0: Line too long (84/80)
+C:134,0: Line too long (88/80)
+C:135,0: Line too long (90/80)
+C:136,0: Line too long (93/80)
+C:137,0: Line too long (139/80)
+C:139,0: Line too long (108/80)
+C:178,0: Line too long (99/80)
+C:216,0: Line too long (101/80)
+C:239,0: Line too long (117/80)
+C:246,0: Line too long (137/80)
+C:269,0: Line too long (121/80)
+C:280,0: Line too long (87/80)
+C:339,0: Line too long (86/80)
+C:355,0: Line too long (103/80)
+C:356,0: Line too long (92/80)
+C:367,0: Line too long (102/80)
+W: 41,0: TODO: int32 -> float32 conversion according to the "linear" keyword.
+W:245,0: TODO: check that the formula is OK, not reverted.
+W: 35,4: Redefining built-in 'bytes'
+W:  6,0: Redefining built-in '__doc__'
+C:  1,0: Missing docstring
+C: 30,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 35,4: Invalid name "bytes" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 37,0:brukerimage: Too many instance attributes (8/7)
+C: 37,0:brukerimage: Invalid name "brukerimage" (should match [A-Z_][a-zA-Z0-9]+$)
+R:193,4:brukerimage.read: Too many local variables (17/15)
+E:238,19:brukerimage.read: Undefined variable 'Except'
+W:226,16:brukerimage.read: Unused variable 'i'
+E:268,23:brukerimage.write: Undefined variable 'Except'
+W:341,44:brukerimage.gen_header: Using possibly undefined loop variable 'i'
+C:343,20:brukerimage.gen_header: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+E:343,24:brukerimage.gen_header: Too many arguments for format string
+R:318,4:brukerimage.gen_header: Too many branches (13/12)
+R: 37,0:brukerimage: Too many public methods (29/20)
+W:402,4:test: Redefining name 'sys' from outer scope (line 27)
+W:402,4:test: Redefining name 'time' from outer scope (line 29)
+W:402,4:test: Reimport 'sys' (imported line 27)
+W:402,4:test: Reimport 'time' (imported line 29)
+W:407,8:test: Unused variable 'res'
 
 
 Report
 ======
-102 statements analysed.
-
-Messages by category
---------------------
-
-+-----------+-------+---------+-----------+
-|type       |number |previous |difference |
-+===========+=======+=========+===========+
-|convention |1      |1        |=          |
-+-----------+-------+---------+-----------+
-|refactor   |1      |0        |+1.00      |
-+-----------+-------+---------+-----------+
-|warning    |3      |11       |-8.00      |
-+-----------+-------+---------+-----------+
-|error      |0      |13       |-13.00     |
-+-----------+-------+---------+-----------+
-
-
-
-Messages
---------
-
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
-|W0612      |2           |
-+-----------+------------+
-|W0511      |1           |
-+-----------+------------+
-|R0904      |1           |
-+-----------+------------+
-|C0103      |1           |
-+-----------+------------+
-
-
-
-Global evaluation
------------------
-Your code has been rated at 9.51/10 (previous run: 2.60/10)
-So close to being perfect...
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |112    |59.57 |113      |-1.00      |
-+----------+-------+------+---------+-----------+
-|docstring |38     |20.21 |39       |-1.00      |
-+----------+-------+------+---------+-----------+
-|comment   |6      |3.19  |6        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |32     |17.02 |33       |-1.00      |
-+----------+-------+------+---------+-----------+
-
-
+215 statements analysed.
 
 Duplication
 -----------
@@ -79,20 +99,80 @@ Duplication
 
 
 
-Statistics by type
-------------------
+Messages by category
+--------------------
 
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |4          |-1.00      |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |61     |2        |+59.00     |
++-----------+-------+---------+-----------+
+|refactor   |4      |0        |+4.00      |
++-----------+-------+---------+-----------+
+|warning    |11     |10       |+1.00      |
++-----------+-------+---------+-----------+
+|error      |3      |16       |-13.00     |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0301      |56          |
++-----------+------------+
+|C0103      |4           |
++-----------+------------+
+|W0622      |2           |
++-----------+------------+
+|W0621      |2           |
++-----------+------------+
+|W0612      |2           |
++-----------+------------+
+|W0511      |2           |
++-----------+------------+
+|W0404      |2           |
++-----------+------------+
+|E0602      |2           |
++-----------+------------+
+|W0631      |1           |
++-----------+------------+
+|R0914      |1           |
++-----------+------------+
+|R0912      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|R0902      |1           |
++-----------+------------+
+|E1305      |1           |
++-----------+------------+
+|C0111      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 5.77/10 (previous run: 1.15/10)
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |244    |59.95 |113      |+131.00    |
++----------+-------+------+---------+-----------+
+|docstring |124    |30.47 |37       |+87.00     |
++----------+-------+------+---------+-----------+
+|comment   |6      |1.47  |6        |=          |
++----------+-------+------+---------+-----------+
+|empty     |33     |8.11  |33       |=          |
++----------+-------+------+---------+-----------+
 
 
 
@@ -101,6 +181,23 @@ External dependencies
 ::
 
     numpy (brukerimage)
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |8      |4          |+4.00      |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
 
 
 

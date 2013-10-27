@@ -1,30 +1,32 @@
 No config file found, using default configuration
 
-************* Module test.testadscimage
-C: 63,0: Line too long (115/80)
-C: 64,0: Line too long (115/80)
-C: 65,0: Line too long (91/80)
-C: 13,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 14,0: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-W: 28,0: No exception type(s) specified
-W: 31,0: Relative import 'utilstest', should be 'test.utilstest'
-C: 47,0:testmatch: Invalid name "testmatch" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 51,4:testmatch.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 47,0:testmatch: Too many public methods (46/20)
-C: 69,0:testflatmccdsadsc: Invalid name "testflatmccdsadsc" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 69,0:testflatmccdsadsc: Empty docstring
-C: 72,4:testflatmccdsadsc.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 69,0:testflatmccdsadsc: Too many public methods (46/20)
-C: 97,0:test_suite_all_adsc: Missing docstring
-C: 98,4:test_suite_all_adsc: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C:104,4: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:105,4: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-W: 34,0: Unused import fabio
+************* Module templateimage
+C:  5,0: Line too long (117/80)
+C:  6,0: Line too long (91/80)
+C: 13,0: Line too long (94/80)
+C: 14,0: Line too long (91/80)
+C: 16,0: Line too long (99/80)
+C: 23,0: Line too long (83/80)
+C: 26,0: Line too long (81/80)
+C: 27,0: Line too long (81/80)
+C: 28,0: Line too long (84/80)
+C: 31,0: Line too long (99/80)
+C: 33,0: Line too long (102/80)
+W:  7,0: XXXimage where XXX means something (eg tifimage).
+W: 58,0: XXX detector
+W: 38,0: Redefining built-in '__doc__'
+C:  1,0: Missing docstring
+C: 53,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 56,0:templateimage: Too many instance attributes (10/7)
+C: 56,0:templateimage: Invalid name "templateimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 68,8:templateimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
+W: 72,26:templateimage._readheader: Unused argument 'infile'
+R: 56,0:templateimage: Too many public methods (25/20)
 
 
 Report
 ======
-65 statements analysed.
+29 statements analysed.
 
 Messages by category
 --------------------
@@ -32,11 +34,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |14     |NC       |NC         |
+|convention |15     |NC       |NC         |
 +-----------+-------+---------+-----------+
 |refactor   |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |3      |NC       |NC         |
+|warning    |4      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -49,19 +51,19 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |9           |
+|C0301      |11          |
 +-----------+------------+
-|C0301      |3           |
+|C0103      |3           |
 +-----------+------------+
-|R0904      |2           |
+|W0511      |2           |
 +-----------+------------+
-|W0702      |1           |
+|W0622      |1           |
 +-----------+------------+
-|W0611      |1           |
+|W0613      |1           |
 +-----------+------------+
-|W0403      |1           |
+|R0904      |1           |
 +-----------+------------+
-|C0112      |1           |
+|R0902      |1           |
 +-----------+------------+
 |C0111      |1           |
 +-----------+------------+
@@ -70,7 +72,7 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 7.08/10
+Your code has been rated at 2.76/10
 
 Duplication
 -----------
@@ -91,14 +93,22 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |67     |63.81 |NC       |NC         |
+|code      |35     |36.08 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |16     |15.24 |NC       |NC         |
+|docstring |16     |16.49 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |4      |3.81  |NC       |NC         |
+|comment   |36     |37.11 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |18     |17.14 |NC       |NC         |
+|empty     |10     |10.31 |NC       |NC         |
 +----------+-------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (templateimage)
 
 
 
@@ -108,13 +118,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |NC         |NC         |50.00       |100.00   |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |4      |NC         |NC         |100.00      |50.00    |
+|method   |3      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 

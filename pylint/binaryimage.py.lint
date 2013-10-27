@@ -1,22 +1,40 @@
+No config file found, using default configuration
+
 ************* Module binaryimage
-W:  4,0: Redefining built-in '__doc__'
+C: 46,0: Line too long (98/80)
+C: 48,0: Line too long (98/80)
+C: 79,0: Line too long (113/80)
+C: 84,0: Line too long (86/80)
+C: 98,0: Line too long (81/80)
+W:  6,0: Redefining built-in '__doc__'
 C:  1,0: Missing docstring
-F: 20,0: Unable to import 'fabioimage'
-C: 24,0:binaryimage: Invalid name "binaryimage" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 59,8:binaryimage.read: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 75,34:binaryimage.estimate_offset_value: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R: 73,4:binaryimage.estimate_offset_value: Method could be a function
-C: 83,4:binaryimage.write: Missing docstring
-W: 57,8:binaryimage.read: Attribute 'dim2' defined outside __init__
-W: 56,8:binaryimage.read: Attribute 'dim1' defined outside __init__
-W: 70,8:binaryimage.read: Attribute 'data' defined outside __init__
-W: 58,8:binaryimage.read: Attribute 'bytecode' defined outside __init__
-W: 55,8:binaryimage.read: Attribute 'filename' defined outside __init__
+C: 25,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 27,0:binaryimage: Invalid name "binaryimage" (should match [A-Z_][a-zA-Z0-9]+$)
+R: 51,4:binaryimage.read: Too many arguments (7/5)
+W: 51,4:binaryimage.read: Arguments number differs from overridden method
+C: 68,8:binaryimage.read: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 82,8:binaryimage.read: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 92,34:binaryimage.estimate_offset_value: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
+R: 90,4:binaryimage.estimate_offset_value: Method could be a function
+R: 27,0:binaryimage: Too many public methods (27/20)
 
 
 Report
 ======
-46 statements analysed.
+53 statements analysed.
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
 
 Messages by category
 --------------------
@@ -24,13 +42,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |5      |5        |=          |
+|convention |11     |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |1      |1        |=          |
+|refactor   |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |6      |6        |=          |
+|warning    |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
 
 
@@ -41,25 +59,28 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|W0201      |5           |
+|C0301      |5           |
 +-----------+------------+
-|C0103      |3           |
-+-----------+------------+
-|C0111      |2           |
+|C0103      |5           |
 +-----------+------------+
 |W0622      |1           |
 +-----------+------------+
+|W0221      |1           |
++-----------+------------+
+|R0913      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
 |R0201      |1           |
 +-----------+------------+
-|F0401      |1           |
+|C0111      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.39/10 (previous run: 7.39/10)
-If you commit now, people should not be making nasty comments about you on c.l.py
+Your code has been rated at 6.98/10
 
 Raw metrics
 -----------
@@ -67,13 +88,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |56     |66.67 |56       |=          |
+|code      |65     |64.36 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|docstring |19     |22.62 |19       |=          |
+|docstring |25     |24.75 |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|comment   |2      |2.38  |2        |=          |
+|comment   |3      |2.97  |NC       |NC         |
 +----------+-------+------+---------+-----------+
-|empty     |7      |8.33  |7        |=          |
+|empty     |8      |7.92  |NC       |NC         |
 +----------+-------+------+---------+-----------+
 
 
@@ -86,32 +107,19 @@ External dependencies
 
 
 
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
-
 Statistics by type
 ------------------
 
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |0.00        |0.00     |
+|module   |1      |NC         |NC         |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |100.00      |100.00   |
+|class    |1      |NC         |NC         |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |5      |5          |=          |80.00       |0.00     |
+|method   |5      |NC         |NC         |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0           |0        |
+|function |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
 
 

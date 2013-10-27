@@ -1,22 +1,108 @@
+No config file found, using default configuration
+
 ************* Module OXDimage
+C: 30,0: Line too long (90/80)
+C: 80,0: Line too long (88/80)
+C: 81,0: Line too long (94/80)
+C: 82,0: Line too long (95/80)
+C: 83,0: Line too long (90/80)
+C: 84,0: Line too long (91/80)
+C: 85,0: Line too long (89/80)
+C: 89,0: Line too long (83/80)
+C: 90,0: Line too long (83/80)
+C: 91,0: Line too long (88/80)
+C: 92,0: Line too long (88/80)
+C: 93,0: Line too long (84/80)
+C: 94,0: Line too long (84/80)
+C: 95,0: Line too long (85/80)
+C:100,0: Line too long (88/80)
+C:101,0: Line too long (103/80)
+C:102,0: Line too long (92/80)
+C:103,0: Line too long (94/80)
+C:104,0: Line too long (94/80)
+C:105,0: Line too long (103/80)
+C:106,0: Line too long (103/80)
+C:107,0: Line too long (112/80)
+C:108,0: Line too long (112/80)
+C:109,0: Line too long (83/80)
+C:110,0: Line too long (103/80)
+C:111,0: Line too long (96/80)
+C:112,0: Line too long (96/80)
+C:120,0: Line too long (82/80)
+C:142,0: Line too long (81/80)
+C:149,0: Line too long (94/80)
+C:150,0: Line too long (94/80)
+C:152,0: Line too long (91/80)
+C:153,0: Line too long (91/80)
+C:154,0: Line too long (90/80)
+C:155,0: Line too long (89/80)
+C:158,0: Line too long (97/80)
+C:159,0: Line too long (97/80)
+C:160,0: Line too long (97/80)
+C:164,0: Line too long (87/80)
+C:165,0: Line too long (87/80)
+C:167,0: Line too long (92/80)
+C:169,0: Line too long (91/80)
+C:172,0: Line too long (88/80)
+C:177,0: Line too long (86/80)
+C:178,0: Line too long (97/80)
+C:179,0: Line too long (87/80)
 W:248,0: Found indentation with tabs instead of spaces
 W:249,0: Found indentation with tabs instead of spaces
+C:251,0: Line too long (107/80)
+C:252,0: Line too long (133/80)
+C:253,0: Line too long (111/80)
+C:254,0: Line too long (125/80)
+C:255,0: Line too long (125/80)
+C:256,0: Line too long (121/80)
+C:257,0: Line too long (122/80)
+C:258,0: Line too long (121/80)
+C:305,0: Line too long (91/80)
+C:307,0: Line too long (120/80)
+C:309,0: Line too long (118/80)
+C:311,0: Line too long (125/80)
+C:314,0: Line too long (95/80)
+C:316,0: Line too long (124/80)
+C:318,0: Line too long (122/80)
+C:320,0: Line too long (129/80)
+C:323,0: Line too long (96/80)
+C:325,0: Line too long (124/80)
+C:327,0: Line too long (122/80)
+C:329,0: Line too long (129/80)
+C:332,0: Line too long (94/80)
+C:334,0: Line too long (121/80)
+C:336,0: Line too long (119/80)
+C:338,0: Line too long (126/80)
+C:371,0: Line too long (82/80)
+C:397,0: Line too long (110/80)
 W:  5,0: Redefining built-in '__doc__'
 C:  1,0: Missing docstring
+C: 23,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 31,4: Invalid name "rad2deg" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+C: 32,4: Invalid name "deg2rad" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+R: 52,0:OXDimage: Too many instance attributes (10/7)
 R: 56,4:OXDimage._readheader: Too many statements (95/50)
-C:225,12:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:269,8:OXDimage._writeheader: Invalid name "NG" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:279,8:OXDimage._writeheader: Invalid name "NS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:299,8:OXDimage._writeheader: Invalid name "KM" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:366,8:OXDimage._writeheader: Invalid name "SS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:375,8:OXDimage._writeheader: Invalid name "HS" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:237,4:OXDimage._writeheader: Too many branches (25/15)
+C:225,12:OXDimage.read: Invalid name "ReadBytes" (should match [a-z_][a-z0-9_]{2,30}$)
+C:269,8:OXDimage._writeheader: Invalid name "NG" (should match [a-z_][a-z0-9_]{2,30}$)
+C:279,8:OXDimage._writeheader: Invalid name "NS" (should match [a-z_][a-z0-9_]{2,30}$)
+C:299,8:OXDimage._writeheader: Invalid name "KM" (should match [a-z_][a-z0-9_]{2,30}$)
+C:366,8:OXDimage._writeheader: Invalid name "SS" (should match [a-z_][a-z0-9_]{2,30}$)
+C:375,8:OXDimage._writeheader: Invalid name "HS" (should match [a-z_][a-z0-9_]{2,30}$)
+R:237,4:OXDimage._writeheader: Too many branches (25/12)
 R:237,4:OXDimage._writeheader: Too many statements (102/50)
+C:395,4:OXDimage.getCompressionRatio: Invalid name "getCompressionRatio" (should match [a-z_][a-z0-9_]{2,30}$)
+C:400,4:OXDimage.checkData: Invalid name "checkData" (should match [a-z_][a-z0-9_]{2,30}$)
 R: 52,0:OXDimage: Too many public methods (26/20)
 W:216,12:OXDimage.read: Attribute 'raw16' defined outside __init__
 W:215,12:OXDimage.read: Attribute 'raw8' defined outside __init__
 W:217,12:OXDimage.read: Attribute 'raw32' defined outside __init__
+C:418,8:Section.__init__: Invalid name "_dictSize" (should match [a-z_][a-z0-9_]{2,30}$)
+C:417,8:Section.__init__: Invalid name "lstChr" (should match [a-z_][a-z0-9_]{2,30}$)
+C:410,4:Section.__init__: Invalid name "dictHeader" (should match [a-z_][a-z0-9_]{2,30}$)
+C:410,29:Section.__init__: Invalid name "dictHeader" (should match [a-z_][a-z0-9_]{2,30}$)
+C:422,4:Section.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
 C:422,4:Section.getSize: Missing docstring
+C:427,4:Section.setData: Invalid name "setData" (should match [a-z_][a-z0-9_]{2,30}$)
 W: 22,0: Unused import struct
 
 
@@ -30,13 +116,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |8      |8        |=          |
+|convention |91     |56       |+35.00     |
 +-----------+-------+---------+-----------+
-|refactor   |4      |4        |=          |
+|refactor   |5      |3        |+2.00      |
 +-----------+-------+---------+-----------+
-|warning    |7      |7        |=          |
+|warning    |7      |8        |-1.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |86       |-86.00     |
 +-----------+-------+---------+-----------+
 
 
@@ -47,7 +133,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |6           |
+|C0301      |72          |
++-----------+------------+
+|C0103      |17          |
 +-----------+------------+
 |W0201      |3           |
 +-----------+------------+
@@ -65,30 +153,14 @@ Messages
 +-----------+------------+
 |R0904      |1           |
 +-----------+------------+
+|R0902      |1           |
++-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 9.34/10 (previous run: 9.34/10)
-So close to being perfect...
-
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |322    |78.35 |321      |+1.00      |
-+----------+-------+------+---------+-----------+
-|docstring |42     |10.22 |42       |=          |
-+----------+-------+------+---------+-----------+
-|comment   |17     |4.14  |17       |=          |
-+----------+-------+------+---------+-----------+
-|empty     |30     |7.30  |30       |=          |
-+----------+-------+------+---------+-----------+
-
-
+Your code has been rated at 6.42/10 (previous run: -22.48/10)
 
 Duplication
 -----------
@@ -100,6 +172,23 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |322    |78.35 |158      |+164.00    |
++----------+-------+------+---------+-----------+
+|docstring |42     |10.22 |18       |+24.00     |
++----------+-------+------+---------+-----------+
+|comment   |17     |4.14  |14       |+3.00      |
++----------+-------+------+---------+-----------+
+|empty     |30     |7.30  |25       |+5.00      |
++----------+-------+------+---------+-----------+
 
 
 
@@ -121,9 +210,9 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |100.00      |0.00     |
+|class    |2      |1          |+1.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |10     |10         |=          |90.00       |0.00     |
+|method   |10     |2          |+8.00      |90.00       |40.00    |
 +---------+-------+-----------+-----------+------------+---------+
 |function |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
