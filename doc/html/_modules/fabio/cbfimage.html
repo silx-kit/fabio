@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.cbfimage &mdash; FabIO v0.1.2 documentation</title>
+    <title>fabio.cbfimage &mdash; FabIO 0.1.3 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO v0.1.2 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -35,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -46,6 +49,8 @@
           <div class="body">
             
   <h1>Source code for fabio.cbfimage</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># coding: utf8</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Authors: Jérôme Kieffer, ESRF</span>
 <span class="sd">         email:jerome.kieffer@esrf.fr</span>
@@ -89,9 +94,9 @@
 <span class="n">STARTER</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\x0c\x1a\x04\xd5</span><span class="s">&quot;</span>
 <span class="n">PADDING</span> <span class="o">=</span> <span class="mi">512</span>
 
-<span class="k">class</span> <span class="nc">cbfimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
+<div class="viewcode-block" id="cbfimage"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage">[docs]</a><span class="k">class</span> <span class="nc">cbfimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="cbfimage"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage">[docs]</a><span class="sd">    Read the Cif Binary File data format</span>
+<span class="sd">    Read the Cif Binary File data format</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span> <span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -106,17 +111,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="cbfimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage.checkData">[docs]</a>    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-<div class="viewcode-block" id="cbfimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage.checkData">[docs]</a>            <span class="k">return</span> <span class="bp">None</span>
+            <span class="k">return</span> <span class="bp">None</span>
         <span class="k">elif</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-
+</div>
     <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inStream</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read in a header in some CBF format from a string representing binary stuff</span>
 
 <span class="sd">        @param inStream: file containing the Cif Binary part.</span>
@@ -158,9 +163,9 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;CBF file misses the keys &quot;</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
 
 
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="cbfimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="cbfimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage.read">[docs]</a><span class="sd">        Read in header into self.header and</span>
+<span class="sd">        Read in header into self.header and</span>
 <span class="sd">            the data   into self.data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">fname</span>
@@ -194,9 +199,9 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 
-
+</div>
     <span class="k">def</span> <span class="nf">_readbinary_byte_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inStream</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read in a binary part of an x-CBF_BYTE_OFFSET compressed image</span>
 
 <span class="sd">        @param inStream: the binary image (without any CIF decorators)</span>
@@ -218,9 +223,9 @@
         <span class="k">return</span> <span class="n">myData</span>
 
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<div class="viewcode-block" id="cbfimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="cbfimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.cbfimage.write">[docs]</a><span class="sd">        write the file in CBF format</span>
+<span class="sd">        write the file in CBF format</span>
 <span class="sd">        @param fname: name of the file</span>
 <span class="sd">        @type: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -287,10 +292,10 @@
 
 <span class="c">################################################################################</span>
 <span class="c"># CIF class</span>
-<span class="c">################################################################################</span>
-<span class="k">class</span> <span class="nc">CIF</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span></div></div>
-<div class="viewcode-block" id="CIF"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF">[docs]</a><span class="sd">    This is the CIF class, it represents the CIF dictionary;</span>
+<span class="c">################################################################################</span></div></div>
+<div class="viewcode-block" id="CIF"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF">[docs]</a><span class="k">class</span> <span class="nc">CIF</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is the CIF class, it represents the CIF dictionary;</span>
 <span class="sd">    and as a a python dictionary thus inherits from the dict built in class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">EOL</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n\r</span><span class="s">&quot;</span><span class="p">]</span>
@@ -315,20 +320,20 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="CIF.pop"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">key</span>  <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="p">:</span>
-<div class="viewcode-block" id="CIF.pop"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.pop">[docs]</a>            <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">key</span>  <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="p">:</span></div>
-<div class="viewcode-block" id="CIF.popitem"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.popitem">[docs]</a>            <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CIF.popitem"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.popitem">[docs]</a>    <span class="k">def</span> <span class="nf">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span>  <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ordered</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
-
-    <span class="k">def</span> <span class="nf">loadCIF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="p">,</span> <span class="n">_bKeepComment</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Load the CIF file and populates the CIF dictionary into the object</span></div>
-<div class="viewcode-block" id="CIF.loadCIF"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.loadCIF">[docs]</a><span class="sd">        @param _strFilename: the name of the file to open</span>
+</div>
+<div class="viewcode-block" id="CIF.loadCIF"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.loadCIF">[docs]</a>    <span class="k">def</span> <span class="nf">loadCIF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="p">,</span> <span class="n">_bKeepComment</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the CIF file and populates the CIF dictionary into the object</span>
+<span class="sd">        @param _strFilename: the name of the file to open</span>
 <span class="sd">        @type  _strFilename: string</span>
 <span class="sd">        @param _strFilename: the name of the file to open</span>
 <span class="sd">        @type  _strFilename: string</span>
@@ -348,13 +353,13 @@
         <span class="k">if</span> <span class="n">_bKeepComment</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parseCIF</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_parseCIF</span><span class="p">(</span><span class="n">CIF</span><span class="o">.</span><span class="n">_readCIF</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parseCIF</span><span class="p">(</span><span class="n">CIF</span><span class="o">.</span><span class="n">_readCIF</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span></div>
     <span class="n">readCIF</span> <span class="o">=</span> <span class="n">loadCIF</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">isAscii</span><span class="p">(</span><span class="n">_strIn</span><span class="p">):</span>
+<div class="viewcode-block" id="CIF.isAscii"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.isAscii">[docs]</a>    <span class="k">def</span> <span class="nf">isAscii</span><span class="p">(</span><span class="n">_strIn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CIF.isAscii"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.isAscii">[docs]</a><span class="sd">        Check if all characters in a string are ascii,</span>
+<span class="sd">        Check if all characters in a string are ascii,</span>
 
 <span class="sd">        @param _strIn: input string</span>
 <span class="sd">        @type _strIn: python string</span>
@@ -368,9 +373,9 @@
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">bIsAcii</span>
 
-
+</div>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_readCIF</span><span class="p">(</span><span class="n">_instream</span><span class="p">):</span></div>
+    <span class="k">def</span> <span class="nf">_readCIF</span><span class="p">(</span><span class="n">_instream</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        - Check if the filename containing the CIF data exists</span>
 <span class="sd">        - read the cif file</span>
@@ -593,9 +598,9 @@
 <span class="c">########     everything needed to  write a cif file #########################################</span>
 <span class="c">#############################################################################################</span>
 
-    <span class="k">def</span> <span class="nf">saveCIF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="o">=</span><span class="s">&quot;test.cif&quot;</span><span class="p">,</span> <span class="n">linesep</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="CIF.saveCIF"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.saveCIF">[docs]</a>    <span class="k">def</span> <span class="nf">saveCIF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="o">=</span><span class="s">&quot;test.cif&quot;</span><span class="p">,</span> <span class="n">linesep</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transforms the CIF object in string then write it into the given file</span>
-<div class="viewcode-block" id="CIF.saveCIF"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.saveCIF">[docs]</a><span class="sd">        @param _strFilename: the of the file to be written</span>
+<span class="sd">        @param _strFilename: the of the file to be written</span>
 <span class="sd">        @param linesep: line separation used (to force compatibility with windows/unix)</span>
 <span class="sd">        @param binary: Shall we write the data as binary (True only for imageCIF/CBF)</span>
 <span class="sd">        @type param: string</span>
@@ -617,10 +622,10 @@
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;Error during the closing of file for write: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span>
                                                              <span class="n">_strFilename</span><span class="p">)</span>
 
-
-    <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linesep</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="CIF.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.tostring">[docs]</a><span class="sd">        Converts a cif dictionnary to a string according to the CIF syntax</span>
+</div>
+<div class="viewcode-block" id="CIF.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.tostring">[docs]</a>    <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linesep</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a cif dictionnary to a string according to the CIF syntax</span>
 <span class="sd">        </span>
 <span class="sd">        @param _strFilename: the name of the filename to be appended in the header of the CIF file</span>
 <span class="sd">        @type _strFilename: string</span>
@@ -694,10 +699,10 @@
                 <span class="n">lstStrCif</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lstStrCif</span><span class="p">)</span>
 
-
-    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sKey</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="CIF.exists"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.exists">[docs]</a><span class="sd">        Check if the key exists in the CIF and is non empty.</span>
+</div>
+<div class="viewcode-block" id="CIF.exists"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sKey</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the key exists in the CIF and is non empty.</span>
 <span class="sd">        @param sKey: CIF key</span>
 <span class="sd">        @type sKey: string</span>
 <span class="sd">        @param cif: CIF dictionary</span>
@@ -711,10 +716,10 @@
                     <span class="n">bExists</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">return</span> <span class="n">bExists</span>
 
-
-    <span class="k">def</span> <span class="nf">existsInLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sKey</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="CIF.existsInLoop"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.existsInLoop">[docs]</a><span class="sd">        Check if the key exists in the CIF dictionary.</span>
+</div>
+<div class="viewcode-block" id="CIF.existsInLoop"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.existsInLoop">[docs]</a>    <span class="k">def</span> <span class="nf">existsInLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sKey</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the key exists in the CIF dictionary.</span>
 <span class="sd">        @param sKey: CIF key</span>
 <span class="sd">        @type sKey: string</span>
 <span class="sd">        @param cif: CIF dictionary</span>
@@ -731,10 +736,10 @@
                         <span class="n">bExists</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">return</span> <span class="n">bExists</span>
 
-
-    <span class="k">def</span> <span class="nf">loadCHIPLOT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="CIF.loadCHIPLOT"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.loadCHIPLOT">[docs]</a><span class="sd">        Load the powder diffraction CHIPLOT file and returns the</span>
+</div>
+<div class="viewcode-block" id="CIF.loadCHIPLOT"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.loadCHIPLOT">[docs]</a>    <span class="k">def</span> <span class="nf">loadCHIPLOT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_strFilename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the powder diffraction CHIPLOT file and returns the</span>
 <span class="sd">        pd_CIF dictionary in the object</span>
 
 <span class="sd">        @param _strFilename: the name of the file to open</span>
@@ -793,11 +798,11 @@
         <span class="bp">self</span><span class="p">[</span> <span class="s">&quot;_pd_meas_number_of_points&quot;</span> <span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">iLenData</span><span class="p">)</span>
         <span class="bp">self</span><span class="p">[</span><span class="s">&quot;loop_&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span> <span class="p">[</span><span class="s">&quot;_pd_meas_intensity_total&quot;</span> <span class="p">],</span> <span class="n">lOneLoop</span> <span class="p">]</span> <span class="p">]</span>
 
-
+</div>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">LoopHasKey</span><span class="p">(</span><span class="n">loop</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="CIF.LoopHasKey"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.LoopHasKey">[docs]</a>    <span class="k">def</span> <span class="nf">LoopHasKey</span><span class="p">(</span><span class="n">loop</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="s">&quot;Returns True if the key (string) exist in the array called loop&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CIF.LoopHasKey"><a class="viewcode-back" href="../../api/modules.html#fabio.cbfimage.CIF.LoopHasKey">[docs]</a>        <span class="k">try</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
             <span class="n">loop</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">True</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -835,13 +840,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

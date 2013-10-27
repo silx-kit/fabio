@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.fabioimage &mdash; FabIO v0.1.2 documentation</title>
+    <title>fabio.fabioimage &mdash; FabIO 0.1.3 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO v0.1.2 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -35,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -46,6 +49,8 @@
           <div class="body">
             
   <h1>Source code for fabio.fabioimage</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">Authors: Henning O. Sorensen &amp; Erik Knudsen</span>
@@ -63,16 +68,16 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;fabioimage&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">Image</span>
+    <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;PIL is not installed ... trying to do without&quot;</span><span class="p">)</span>
     <span class="n">Image</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">import</span> <span class="nn">fabioutils</span><span class="o">,</span> <span class="nn">converters</span>
 
 
-<span class="k">class</span> <span class="nc">fabioimage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="fabioimage"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage">[docs]</a><span class="k">class</span> <span class="nc">fabioimage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="fabioimage"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage">[docs]</a><span class="sd">    A common object for images in fable</span>
+<span class="sd">    A common object for images in fable</span>
 <span class="sd">    Contains a numpy array (.data) and dict of meta data (.header)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -113,56 +118,56 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filenumber</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">checkHeader</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="fabioimage.checkHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.checkHeader">[docs]</a>    <span class="k">def</span> <span class="nf">checkHeader</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="fabioimage.checkHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.checkHeader">[docs]</a><span class="sd">        Empty for fabioimage but may be populated by others classes</span>
+<span class="sd">        Empty for fabioimage but may be populated by others classes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">header</span>
-
+</div>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="fabioimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.checkData">[docs]</a>    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="fabioimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.checkData">[docs]</a><span class="sd">        Empty for fabioimage but may be populated by others classes, especially for format accepting only integers</span>
+<span class="sd">        Empty for fabioimage but may be populated by others classes, especially for format accepting only integers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="nf">getclassname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.getclassname"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getclassname">[docs]</a><span class="sd">        Retrieves the name of the class</span>
+</div>
+<div class="viewcode-block" id="fabioimage.getclassname"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getclassname">[docs]</a>    <span class="k">def</span> <span class="nf">getclassname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the name of the class</span>
 <span class="sd">        @return: the name of the class</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classname</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_classname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&lt;class &#39;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&#39;&gt;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classname</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classname</span></div>
     <span class="n">classname</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getclassname</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">getframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+
+<div class="viewcode-block" id="fabioimage.getframe"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getframe">[docs]</a>    <span class="k">def</span> <span class="nf">getframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; returns the file numbered &#39;num&#39; in the series as a fabioimage &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="fabioimage.getframe"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getframe">[docs]</a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c"># single image per file</span>
             <span class="kn">import</span> <span class="nn">openimage</span>
             <span class="k">return</span> <span class="n">openimage</span><span class="o">.</span><span class="n">openimage</span><span class="p">(</span>
                 <span class="n">fabioutils</span><span class="o">.</span><span class="n">jump_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;getframe out of range&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the previous file in the series as a fabioimage &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.previous"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.previous">[docs]</a>        <span class="kn">import</span> <span class="nn">openimage</span>
+</div>
+<div class="viewcode-block" id="fabioimage.previous"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.previous">[docs]</a>    <span class="k">def</span> <span class="nf">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the previous file in the series as a fabioimage &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">openimage</span>
         <span class="k">return</span> <span class="n">openimage</span><span class="o">.</span><span class="n">openimage</span><span class="p">(</span>
             <span class="n">fabioutils</span><span class="o">.</span><span class="n">previous_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the next file in the series as a fabioimage &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.next"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.next">[docs]</a>        <span class="kn">import</span> <span class="nn">openimage</span>
+</div>
+<div class="viewcode-block" id="fabioimage.next"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the next file in the series as a fabioimage &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">openimage</span>
         <span class="k">return</span> <span class="n">openimage</span><span class="o">.</span><span class="n">openimage</span><span class="p">(</span>
             <span class="n">fabioutils</span><span class="o">.</span><span class="n">next_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">toPIL16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.toPIL16"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.toPIL16">[docs]</a><span class="sd">        Convert to Python Imaging Library 16 bit greyscale image</span>
+</div>
+<div class="viewcode-block" id="fabioimage.toPIL16"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.toPIL16">[docs]</a>    <span class="k">def</span> <span class="nf">toPIL16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert to Python Imaging Library 16 bit greyscale image</span>
 
 <span class="sd">        FIXME - this should be handled by the libraries now</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -206,26 +211,26 @@
                                          <span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pilimage</span>
-
-    <span class="k">def</span> <span class="nf">getheader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns self.header &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.getheader"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getheader">[docs]</a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span>
-
-    <span class="k">def</span> <span class="nf">getmax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Find max value in self.data, caching for the future &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.getmax"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getmax">[docs]</a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</div>
+<div class="viewcode-block" id="fabioimage.getheader"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getheader">[docs]</a>    <span class="k">def</span> <span class="nf">getheader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns self.header &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span>
+</div>
+<div class="viewcode-block" id="fabioimage.getmax"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getmax">[docs]</a>    <span class="k">def</span> <span class="nf">getmax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find max value in self.data, caching for the future &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span>
-
-    <span class="k">def</span> <span class="nf">getmin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Find min value in self.data, caching for the future &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.getmin"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getmin">[docs]</a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</div>
+<div class="viewcode-block" id="fabioimage.getmin"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getmin">[docs]</a>    <span class="k">def</span> <span class="nf">getmin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find min value in self.data, caching for the future &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span>
-
-    <span class="k">def</span> <span class="nf">make_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.make_slice"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.make_slice">[docs]</a><span class="sd">        Convert a len(4) set of coords into a len(2)</span>
+</div>
+<div class="viewcode-block" id="fabioimage.make_slice"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.make_slice">[docs]</a>    <span class="k">def</span> <span class="nf">make_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a len(4) set of coords into a len(2)</span>
 <span class="sd">        tuple (pair) of slice objects</span>
 <span class="sd">        the latter are immutable, meaning the roi can be cached</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -247,10 +252,10 @@
         <span class="k">return</span> <span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fixme</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">fixme</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">,</span>
                  <span class="nb">slice</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fixme</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">fixme</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
-
-    <span class="k">def</span> <span class="nf">integrate_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.integrate_area"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.integrate_area">[docs]</a><span class="sd">        Sums up a region of interest</span>
+</div>
+<div class="viewcode-block" id="fabioimage.integrate_area"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.integrate_area">[docs]</a>    <span class="k">def</span> <span class="nf">integrate_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sums up a region of interest</span>
 <span class="sd">        if len(coords) == 4 -&gt; convert coords to slices</span>
 <span class="sd">        if len(coords) == 2 -&gt; use as slices</span>
 <span class="sd">        floor -&gt; ? removed as unused in the function.</span>
@@ -273,22 +278,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice</span> <span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">area_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_sum</span>
-
-    <span class="k">def</span> <span class="nf">getmean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; return the mean &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.getmean"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getmean">[docs]</a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</div>
+<div class="viewcode-block" id="fabioimage.getmean"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getmean">[docs]</a>    <span class="k">def</span> <span class="nf">getmean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return the mean &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
-
-    <span class="k">def</span> <span class="nf">getstddev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; return the standard deviation &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.getstddev"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getstddev">[docs]</a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+</div>
+<div class="viewcode-block" id="fabioimage.getstddev"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.getstddev">[docs]</a>    <span class="k">def</span> <span class="nf">getstddev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; return the standard deviation &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span>
-
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.add"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.add">[docs]</a><span class="sd">        Add another Image - warning, does not clip to 16 bit images by default</span>
+</div>
+<div class="viewcode-block" id="fabioimage.add"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add another Image - warning, does not clip to 16 bit images by default</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;edfimage.add() called with something that &#39;</span> <span class="o">+</span> \
@@ -298,15 +303,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
 
-
-    <span class="k">def</span> <span class="nf">resetvals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset cache - call on changing data &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.resetvals"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.resetvals">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="fabioimage.resetvals"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.resetvals">[docs]</a>    <span class="k">def</span> <span class="nf">resetvals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reset cache - call on changing data &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_sum</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">rebin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_rebin_fact</span><span class="p">,</span> <span class="n">y_rebin_fact</span><span class="p">,</span> <span class="n">keep_I</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.rebin"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.rebin">[docs]</a><span class="sd">        Rebin the data and adjust dims</span>
+</div>
+<div class="viewcode-block" id="fabioimage.rebin"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.rebin">[docs]</a>    <span class="k">def</span> <span class="nf">rebin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_rebin_fact</span><span class="p">,</span> <span class="n">y_rebin_fact</span><span class="p">,</span> <span class="n">keep_I</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rebin the data and adjust dims</span>
 <span class="sd">        @param x_rebin_fact: x binning factor</span>
 <span class="sd">        @param y_rebin_fact: y binning factor</span>
 <span class="sd">        @param keep_I: shall the signal increase ?</span>
@@ -347,20 +352,20 @@
 
         <span class="c">#update header</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_header</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.write">[docs]</a><span class="sd">        To be overwritten - write the file</span>
+</div>
+<div class="viewcode-block" id="fabioimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        To be overwritten - write the file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Class has not implemented readheader method yet&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
-        <span class="s">&#39;wrapper for write&#39;</span></div>
-<div class="viewcode-block" id="fabioimage.save"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.save">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.readheader"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.readheader">[docs]</a><span class="sd">        Call the _readheader function...</span>
+</div>
+<div class="viewcode-block" id="fabioimage.save"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="s">&#39;wrapper for write&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="fabioimage.readheader"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.readheader">[docs]</a>    <span class="k">def</span> <span class="nf">readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the _readheader function...</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># Override the needs asserting that all headers can be read via python modules</span>
         <span class="n">save_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_a_real_file</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_a_seek_to_read</span>
@@ -369,34 +374,34 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
         <span class="n">fin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_need_a_real_file</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_a_seek_to_read</span> <span class="o">=</span> <span class="n">save_state</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fik_obj</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Must be overridden in classes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Class has not implemented _readheader method yet&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">update_header</span><span class="p">(</span><span class="bp">self</span> <span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<div class="viewcode-block" id="fabioimage.update_header"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.update_header">[docs]</a>    <span class="k">def</span> <span class="nf">update_header</span><span class="p">(</span><span class="bp">self</span> <span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="fabioimage.update_header"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.update_header">[docs]</a><span class="sd">        update the header entries</span>
+<span class="sd">        update the header entries</span>
 <span class="sd">        by default pass in a dict of key, values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwds</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.read">[docs]</a><span class="sd">        To be overridden - fill in self.header and self.data</span>
+</div>
+<div class="viewcode-block" id="fabioimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        To be overridden - fill in self.header and self.data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Class has not implemented read method yet&quot;</span><span class="p">)</span>
 <span class="c">#        return self</span>
-
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwarg</span><span class="p">):</span>
-        <span class="s">&quot;Wrapper for read&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.load"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.load">[docs]</a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwarg</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">readROI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="fabioimage.readROI"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.readROI">[docs]</a><span class="sd">        Method reading Region of Interest.</span>
+</div>
+<div class="viewcode-block" id="fabioimage.load"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwarg</span><span class="p">):</span>
+        <span class="s">&quot;Wrapper for read&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwarg</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="fabioimage.readROI"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.readROI">[docs]</a>    <span class="k">def</span> <span class="nf">readROI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method reading Region of Interest.</span>
 <span class="sd">        This implementation is the trivial one, just doing read and crop</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
@@ -410,9 +415,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">slice</span> <span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">roi</span>
 
-
+</div>
     <span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;rb&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Try to handle compressed files, streams, shared memory etc</span>
 <span class="sd">        Return an object which can be used for &quot;read&quot; and &quot;write&quot;</span>
 <span class="sd">        ... FIXME - what about seek ?</span>
@@ -477,9 +482,9 @@
             <span class="n">fobj</span> <span class="o">=</span> <span class="n">python_uncompress</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fobj</span>
 
-    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+<div class="viewcode-block" id="fabioimage.convert"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="fabioimage.convert"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.fabioimage.convert">[docs]</a><span class="sd">        Convert a fabioimage object into another fabioimage object (with possible conversions)</span>
+<span class="sd">        Convert a fabioimage object into another fabioimage object (with possible conversions)</span>
 <span class="sd">        @param dest: destination type &quot;EDF&quot;, &quot;edfimage&quot; or the class itself</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span> <span class="ow">in</span> <span class="n">types</span><span class="o">.</span><span class="n">StringTypes</span><span class="p">:</span>
@@ -522,10 +527,10 @@
         <span class="n">other</span> <span class="o">=</span> <span class="n">klass</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">converters</span><span class="o">.</span><span class="n">convert_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">classname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
                     <span class="n">header</span><span class="o">=</span><span class="n">converters</span><span class="o">.</span><span class="n">convert_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">classname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">other</span>
-
-<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span></div></div>
-<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.test">[docs]</a><span class="sd">    check some basic fabioimage functionality</span>
+</div></div>
+<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioimage.test">[docs]</a><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    check some basic fabioimage functionality</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">time</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -598,9 +603,9 @@
     <span class="n">clean</span><span class="p">()</span>
 
     <span class="k">print</span> <span class="s">&quot;Passed in&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="s">&quot;s&quot;</span>
-
+</div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">test</span><span class="p">()</span></div>
+    <span class="n">test</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -634,13 +639,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

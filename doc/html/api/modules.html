@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>FabIO Package &mdash; FabIO v0.1.2 documentation</title>
+    <title>FabIO Package &mdash; FabIO 0.1.3 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="FabIO v0.1.2 documentation" href="../index.html" />
+    <link rel="top" title="FabIO 0.1.3 documentation" href="../index.html" />
     <link rel="prev" title="Changelog" href="../Changelog.html" /> 
   </head>
   <body>
@@ -38,7 +41,7 @@
         <li class="right" >
           <a href="../Changelog.html" title="Changelog"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">FabIO v0.1.2 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">FabIO 0.1.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -334,40 +337,6 @@ by default pass in a dict of key, values.</p>
 <em class="property">class </em><tt class="descclassname">fabio.fabioutils.</tt><tt class="descname">GzipFile</tt><big>(</big><em>filename=None</em>, <em>mode=None</em>, <em>compresslevel=9</em>, <em>fileobj=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#GzipFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.GzipFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">gzip.GzipFile</span></tt></p>
 <p>Just a wrapper forgzip.GzipFile providing the correct seek capabilities for python 2.5</p>
-<dl class="attribute">
-<dt id="fabio.fabioutils.GzipFile.closed">
-<tt class="descname">closed</tt><a class="reference internal" href="../_modules/fabio/fabioutils.html#GzipFile.closed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.GzipFile.closed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="fabio.fabioutils.GzipFile.getSize">
-<tt class="descname">getSize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#GzipFile.getSize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.GzipFile.getSize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="fabio.fabioutils.GzipFile.seek">
-<tt class="descname">seek</tt><big>(</big><em>offset</em>, <em>whence=0</em><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#GzipFile.seek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.GzipFile.seek" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move to new file position.</p>
-<p>Argument offset is a byte count.  Optional argument whence defaults to
-0 (offset from start of file, offset should be &gt;= 0); other values are 1
-(move relative to current position, positive or negative), and 2 (move
-relative to end of file, usually negative, although many platforms allow
-seeking beyond the end of a file).  If the file is opened in text mode,
-only offsets returned by tell() are legal.  Use of other offsets causes
-undefined behavior.</p>
-<p>This is a wrapper for seek to ensure compatibility with old python 2.5</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="fabio.fabioutils.GzipFile.setSize">
-<tt class="descname">setSize</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#GzipFile.setSize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.GzipFile.setSize" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fabio.fabioutils.GzipFile.size">
-<tt class="descname">size</tt><a class="headerlink" href="#fabio.fabioutils.GzipFile.size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -408,8 +377,9 @@ undefined behavior.</p>
 
 <dl class="function">
 <dt id="fabio.fabioutils.deconstruct_filename">
-<tt class="descclassname">fabio.fabioutils.</tt><tt class="descname">deconstruct_filename</tt><big>(</big><em>*arg</em>, <em>**kw</em><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#deconstruct_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.deconstruct_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>decorator that deprecates the use of a function</p>
+<tt class="descclassname">fabio.fabioutils.</tt><tt class="descname">deconstruct_filename</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#deconstruct_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.deconstruct_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for backward compatibility.
+Deprecated</p>
 </dd></dl>
 
 <dl class="function">
@@ -438,13 +408,13 @@ undefined behavior.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>name</strong> &#8211; string to check</li>
 <li><strong>listExcluded</strong> &#8211; list of char or string excluded.</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True of False whether  name is pure ascii or not</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True of False whether  name is pure ascii or not</p>
 </td>
 </tr>
 </tbody>
@@ -471,7 +441,7 @@ undefined behavior.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s</strong> &#8211; string to be converted to integer</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s</strong> &#8211; string to be converted to integer</td>
 </tr>
 </tbody>
 </table>
@@ -482,6 +452,12 @@ undefined behavior.</p>
 <tt class="descclassname">fabio.fabioutils.</tt><tt class="descname">numstem</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#numstem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.numstem" title="Permalink to this definition">¶</a></dt>
 <dd><p>cant see how to do without reversing strings
 Match 1 or more digits going backwards from the end of the string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fabio.fabioutils.pad">
+<tt class="descclassname">fabio.fabioutils.</tt><tt class="descname">pad</tt><big>(</big><em>mystr</em>, <em>pattern=' '</em>, <em>size=80</em><big>)</big><a class="reference internal" href="../_modules/fabio/fabioutils.html#pad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fabioutils.pad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the padding of the string to the right size with the right pattern</p>
 </dd></dl>
 
 <dl class="function">
@@ -497,13 +473,13 @@ Match 1 or more digits going backwards from the end of the string</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>name</strong> &#8211; string to check</li>
 <li><strong>excluded</strong> &#8211; tuple of char or string excluded (not list: they are mutable).</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the name with all non valid char removed</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the name with all non valid char removed</p>
 </td>
 </tr>
 </tbody>
@@ -555,7 +531,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
 </tr>
 </tbody>
 </table>
@@ -569,7 +545,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
 </tr>
 </tbody>
 </table>
@@ -589,7 +565,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
 </tr>
 </tbody>
 </table>
@@ -603,7 +579,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
 </tr>
 </tbody>
 </table>
@@ -623,7 +599,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
 </tr>
 </tbody>
 </table>
@@ -637,7 +613,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
 </tr>
 </tbody>
 </table>
@@ -657,7 +633,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
 </tr>
 </tbody>
 </table>
@@ -671,7 +647,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
 </tr>
 </tbody>
 </table>
@@ -697,7 +673,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
 </tr>
 </tbody>
 </table>
@@ -711,7 +687,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
 </tr>
 </tbody>
 </table>
@@ -731,7 +707,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">fabioimage</td>
 </tr>
 </tbody>
 </table>
@@ -745,7 +721,7 @@ sort</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">file_object</td>
 </tr>
 </tbody>
 </table>
@@ -841,7 +817,7 @@ the next file as determined by fabio.next_filename.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>first_object</strong> &#8211; the starting fabioimage, which will be the first one yielded
 in the sequence</li>
 <li><strong>nimages</strong> &#8211; the maximum number of images to consider
@@ -959,8 +935,10 @@ email:erik.knudsen&#64;risoe.dk</dd>
 </div>
 <div class="section" id="module-fabio.binaryimage">
 <span id="fabio-binaryimage-module"></span><h2><a class="reference internal" href="#module-fabio.binaryimage" title="fabio.binaryimage"><tt class="xref py py-mod docutils literal"><span class="pre">fabio.binaryimage</span></tt></a> Module<a class="headerlink" href="#module-fabio.binaryimage" title="Permalink to this headline">¶</a></h2>
-<p>Authors: Gael Goret, Jerome Kieffer, ESRF, France
+<p>Authors: Gael Goret, Jerome Kieffer, ESRF, France 
 Emails: <a class="reference external" href="mailto:gael&#46;goret&#37;&#52;&#48;esrf&#46;fr">gael<span>&#46;</span>goret<span>&#64;</span>esrf<span>&#46;</span>fr</a>, <a class="reference external" href="mailto:jerome&#46;kieffer&#37;&#52;&#48;esrf&#46;fr">jerome<span>&#46;</span>kieffer<span>&#64;</span>esrf<span>&#46;</span>fr</a></p>
+<blockquote>
+<div>Brian Richard Pauw &lt;<a class="reference external" href="mailto:brian&#37;&#52;&#48;stack&#46;nl">brian<span>&#64;</span>stack<span>&#46;</span>nl</a>&gt;</div></blockquote>
 <p>Binary files images are simple none-compressed 2D images only defined by their : 
 data-type, dimensions, byte order and offset</p>
 <p>This simple library has been made for manipulating exotic/unknown files format.</p>
@@ -971,6 +949,8 @@ data-type, dimensions, byte order and offset</p>
 <p>This simple library has been made for manipulating exotic/unknown files format.</p>
 <p>Binary files images are simple none-compressed 2D images only defined by their : 
 data-type, dimensions, byte order and offset</p>
+<p>if offset is set to a negative value, the image is read using the last data but n 
+data in the file, skipping any header.</p>
 <dl class="method">
 <dt id="fabio.binaryimage.binaryimage.estimate_offset_value">
 <tt class="descname">estimate_offset_value</tt><big>(</big><em>fname</em>, <em>dim1</em>, <em>dim2</em>, <em>bytecode='int32'</em><big>)</big><a class="reference internal" href="../_modules/fabio/binaryimage.html#binaryimage.estimate_offset_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.binaryimage.binaryimage.estimate_offset_value" title="Permalink to this definition">¶</a></dt>
@@ -982,11 +962,11 @@ data-type, dimensions, byte order and offset</p>
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>dim1</em>, <em>dim2</em>, <em>offset=0</em>, <em>bytecode='int32'</em>, <em>endian='&lt;'</em><big>)</big><a class="reference internal" href="../_modules/fabio/binaryimage.html#binaryimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.binaryimage.binaryimage.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a binary image
 Parameters : fname, dim1, dim2, offset, bytecode, endian
-fname : file name : str
-dim1,dim2 : image dimensions : int
-offset : size of the : int 
-bytecode among : &#8220;int8&#8221;,&#8221;int16&#8221;,&#8221;int32&#8221;,&#8221;int64&#8221;,&#8221;uint8&#8221;,&#8221;uint16&#8221;,&#8221;uint32&#8221;,&#8221;uint64&#8221;,&#8221;float32&#8221;,&#8221;float64&#8221;,...
-endian among short or long endian (&#8220;&lt;&#8221; or &#8220;&gt;&#8221;)</p>
+:param fname: file name (str)
+:param dim1,dim2 : image dimensions (int)
+:param offset: starting position of the data-block. If negative, starts at the end.  
+:param bytecode: can ba &#8220;int8&#8221;,&#8221;int16&#8221;,&#8221;int32&#8221;,&#8221;int64&#8221;,&#8221;uint8&#8221;,&#8221;uint16&#8221;,&#8221;uint32&#8221;,&#8221;uint64&#8221;,&#8221;float32&#8221;,&#8221;float64&#8221;,...
+:param endian:  among short or long endian (&#8220;&lt;&#8221; or &#8220;&gt;&#8221;)</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1034,11 +1014,63 @@ email:erik.knudsen&#64;risoe.dk</dd>
 <dt>Based on: openbruker,readbruker, readbrukerheader functions in the opendata</dt>
 <dd>module of ImageD11 written by Jon Wright, ESRF, Grenoble, France</dd>
 </dl>
+<p>Writer by Jérôme Kieffer, ESRF, Grenoble, France</p>
 <dl class="class">
 <dt id="fabio.brukerimage.brukerimage">
 <em class="property">class </em><tt class="descclassname">fabio.brukerimage.</tt><tt class="descname">brukerimage</tt><big>(</big><em>data=None</em>, <em>header=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/brukerimage.html#brukerimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.brukerimage.brukerimage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fabio.fabioimage.fabioimage" title="fabio.fabioimage.fabioimage"><tt class="xref py py-class docutils literal"><span class="pre">fabio.fabioimage.fabioimage</span></tt></a></p>
 <p>Read and eventually write ID11 bruker (eg smart6500) images</p>
+<p>TODO: int32 -&gt; float32 conversion according to the &#8220;linear&#8221; keyword.
+This is done and works but we need to check with other program that we
+are appliing the right formula and not the reciprocal one.</p>
+<dl class="attribute">
+<dt id="fabio.brukerimage.brukerimage.HEADERS_KEYS">
+<tt class="descname">HEADERS_KEYS</tt><em class="property"> = ['FORMAT', 'VERSION', 'HDRBLKS', 'TYPE', 'SITE', 'MODEL', 'USER', 'SAMPLE', 'SETNAME', 'RUN', 'SAMPNUM', 'TITLE', 'NCOUNTS', 'NOVERFL', 'MINIMUM', 'MAXIMUM', 'NONTIME', 'NLATE', 'FILENAM', 'CREATED', 'CUMULAT', 'ELAPSDR', 'ELAPSDA', 'OSCILLA', 'NSTEPS', 'RANGE', 'START', 'INCREME', 'NUMBER', 'NFRAMES', 'ANGLES', 'NOVER64', 'NPIXELB', 'NROWS', 'NCOLS', 'WORDORD', 'LONGORD', 'TARGET', 'SOURCEK', 'SOURCEM', 'FILTER', 'CELL', 'MATRIX', 'LOWTEMP', 'TEMP', 'HITEMP', 'ZOOM', 'CENTER', 'DISTANC', 'TRAILER', 'COMPRES', 'LINEAR', 'PHD', 'PREAMP', 'CORRECT', 'WARPFIL', 'WAVELEN', 'MAXXY', 'AXIS', 'ENDING', 'DETPAR', 'LUT', 'DISPLIM', 'PROGRAM', 'ROTATE', 'BITMASK', 'OCTMASK', 'ESDCELL', 'DETTYPE', 'NEXP', 'CCDPARM', 'BIS', 'CHEM', 'MORPH', 'CCOLOR', 'CSIZE', 'DNSMET', 'DARK', 'AUTORNG', 'ZEROADJ', 'XTRANS', 'HKL&amp;XY', 'AXES2', 'ENDING2', 'FILTER2', 'LEPTOS', 'CFR']</em><a class="headerlink" href="#fabio.brukerimage.brukerimage.HEADERS_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fabio.brukerimage.brukerimage.SPACER">
+<tt class="descname">SPACER</tt><em class="property"> = '\x1a\x04'</em><a class="headerlink" href="#fabio.brukerimage.brukerimage.SPACER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fabio.brukerimage.brukerimage.basic_translate">
+<tt class="descname">basic_translate</tt><big>(</big><em>fname=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/brukerimage.html#brukerimage.basic_translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.brukerimage.brukerimage.basic_translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does some basic population of the headers so that the writing is possible</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fabio.brukerimage.brukerimage.bpp_to_numpy">
+<tt class="descname">bpp_to_numpy</tt><em class="property"> = {1: &lt;type 'numpy.uint8'&gt;, 2: &lt;type 'numpy.uint16'&gt;, 4: &lt;type 'numpy.uint32'&gt;}</em><a class="headerlink" href="#fabio.brukerimage.brukerimage.bpp_to_numpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fabio.brukerimage.brukerimage.calc_bpp">
+<tt class="descname">calc_bpp</tt><big>(</big><em>data=None</em>, <em>max_entry=4096</em><big>)</big><a class="reference internal" href="../_modules/fabio/brukerimage.html#brukerimage.calc_bpp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.brukerimage.brukerimage.calc_bpp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the number of byte per pixel to get an optimal overflow table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">byte per pixel</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fabio.brukerimage.brukerimage.gen_header">
+<tt class="descname">gen_header</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/fabio/brukerimage.html#brukerimage.gen_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.brukerimage.brukerimage.gen_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate headers (with some magic and guesses)
+:param format can be 86 or 100</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fabio.brukerimage.brukerimage.gen_overflow">
+<tt class="descname">gen_overflow</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/fabio/brukerimage.html#brukerimage.gen_overflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.brukerimage.brukerimage.gen_overflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an overflow table</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="fabio.brukerimage.brukerimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/brukerimage.html#brukerimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.brukerimage.brukerimage.read" title="Permalink to this definition">¶</a></dt>
@@ -1048,13 +1080,7 @@ email:erik.knudsen&#64;risoe.dk</dd>
 <dl class="method">
 <dt id="fabio.brukerimage.brukerimage.write">
 <tt class="descname">write</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="../_modules/fabio/brukerimage.html#brukerimage.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.brukerimage.brukerimage.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the image as EDF</p>
-<dl class="docutils">
-<dt>FIXME:  this should call edfimage.write if that is wanted?</dt>
-<dd>obj = edfimage(data = self.data, header = self.header)
-obj.write(fname)
-or maybe something like: edfimage.write(self, fname)</dd>
-</dl>
+<dd><p>Write a bruker image</p>
 </dd></dl>
 
 </dd></dl>
@@ -1082,11 +1108,31 @@ to conform to the specification of the IUCR</p>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
 <p>This is the CIF class, it represents the CIF dictionary;
 and as a a python dictionary thus inherits from the dict built in class.</p>
+<dl class="attribute">
+<dt id="fabio.cbfimage.CIF.BINARY_MARKER">
+<tt class="descname">BINARY_MARKER</tt><em class="property"> = '--CIF-BINARY-FORMAT-SECTION--'</em><a class="headerlink" href="#fabio.cbfimage.CIF.BINARY_MARKER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fabio.cbfimage.CIF.BLANK">
+<tt class="descname">BLANK</tt><em class="property"> = [' ', '\t', '\r', '\n', '\r\n', '\n\r']</em><a class="headerlink" href="#fabio.cbfimage.CIF.BLANK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fabio.cbfimage.CIF.EOL">
+<tt class="descname">EOL</tt><em class="property"> = ['\r', '\n', '\r\n', '\n\r']</em><a class="headerlink" href="#fabio.cbfimage.CIF.EOL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="staticmethod">
 <dt id="fabio.cbfimage.CIF.LoopHasKey">
 <em class="property">static </em><tt class="descname">LoopHasKey</tt><big>(</big><em>loop</em>, <em>key</em><big>)</big><a class="reference internal" href="../_modules/fabio/cbfimage.html#CIF.LoopHasKey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.cbfimage.CIF.LoopHasKey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the key (string) exist in the array called loop</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="fabio.cbfimage.CIF.START_COMMENT">
+<tt class="descname">START_COMMENT</tt><em class="property"> = ['&quot;', &quot;'&quot;]</em><a class="headerlink" href="#fabio.cbfimage.CIF.START_COMMENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="fabio.cbfimage.CIF.exists">
@@ -1118,11 +1164,11 @@ and as a a python dictionary thus inherits from the dict built in class.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_strIn</strong> (<em>python string</em>) &#8211; input string</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_strIn</strong> (<em>python string</em>) &#8211; input string</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">boolean</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">boolean</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
 </tr>
 </tbody>
 </table>
@@ -1137,11 +1183,11 @@ pd_CIF dictionary in the object</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_strFilename</strong> (<em>string</em>) &#8211; the name of the file to open</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_strFilename</strong> (<em>string</em>) &#8211; the name of the file to open</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the CIF object corresponding to the powder diffraction</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the CIF object corresponding to the powder diffraction</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
 </tr>
 </tbody>
 </table>
@@ -1197,9 +1243,9 @@ pd_CIF dictionary in the object</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_strFilename</strong> (<em>string</em>) &#8211; the name of the filename to be appended in the header of the CIF file</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_strFilename</strong> (<em>string</em>) &#8211; the name of the filename to be appended in the header of the CIF file</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">a sting that corresponds to the content of the CIF - file.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a sting that corresponds to the content of the CIF - file.</td>
 </tr>
 </tbody>
 </table>
@@ -1220,10 +1266,8 @@ pd_CIF dictionary in the object</p>
 <dl class="method">
 <dt id="fabio.cbfimage.cbfimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/cbfimage.html#cbfimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.cbfimage.cbfimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Read in header into self.header and</dt>
-<dd>the data   into self.data</dd>
-</dl>
+<dd><p>Read in header into self.header and
+the data   into self.data</p>
 </dd></dl>
 
 <dl class="method">
@@ -1324,7 +1368,7 @@ Grenoble (France)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">dataset as numpy.ndarray</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dataset as numpy.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -1343,7 +1387,7 @@ Grenoble (France)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">dataset as numpy.ndarray</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dataset as numpy.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -1356,16 +1400,16 @@ Grenoble (France)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>force_type</strong> (<em>string or numpy.dtype</em>) &#8211; type of the dataset to be enforced like &#8220;float64&#8221; or &#8220;uint16&#8221;</li>
 <li><strong>fit2dMode</strong> (<em>boolean</em>) &#8211; enforce compatibility with fit2d and starts countimg number of images at 1</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">ascii header block</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">ascii header block</p>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">python string with the concatenation of the ascii header and the binary data block</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">python string with the concatenation of the ascii header and the binary data block</p>
 </td>
 </tr>
 </tbody>
@@ -1380,9 +1424,9 @@ Grenoble (France)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>block</strong> (<em>string, should be full ascii</em>) &#8211; string representing the header block</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>block</strong> (<em>string, should be full ascii</em>) &#8211; string representing the header block</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">size of the binary blob</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">size of the binary blob</td>
 </tr>
 </tbody>
 </table>
@@ -1506,7 +1550,7 @@ The aim is performances, ... but only supports uncompressed files.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">data from another file using positions from current edfimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">data from another file using positions from current edfimage</td>
 </tr>
 </tbody>
 </table>
@@ -1521,9 +1565,9 @@ The aim is performances, ... but only supports uncompressed files.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">ROI-data from another file using positions from current edfimage</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ROI-data from another file using positions from current edfimage</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">numpy 2darray</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy 2darray</td>
 </tr>
 </tbody>
 </table>
@@ -1627,10 +1671,8 @@ The aim is performances, ... but only supports uncompressed files.</p>
 <dl class="method">
 <dt id="fabio.edfimage.edfimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/edfimage.html#edfimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.edfimage.edfimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Read in header into self.header and</dt>
-<dd>the data   into self.data</dd>
-</dl>
+<dd><p>Read in header into self.header and
+the data   into self.data</p>
 </dd></dl>
 
 <dl class="method">
@@ -1701,7 +1743,7 @@ The aim is performances, ... but only supports uncompressed files.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">dataset as numpy.ndarray</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dataset as numpy.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -1717,9 +1759,9 @@ mimics that fabian was writing uint16 (we sometimes want floats)</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force_type</strong> &#8211; can be numpy.uint16 or simply &#8220;float&#8221;</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force_type</strong> &#8211; can be numpy.uint16 or simply &#8220;float&#8221;</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -1746,10 +1788,8 @@ Translation into python/fabio: Jon Wright, ESRF</p>
 <dl class="method">
 <dt id="fabio.fit2dmaskimage.fit2dmaskimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/fit2dmaskimage.html#fit2dmaskimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fit2dmaskimage.fit2dmaskimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Read in header into self.header and</dt>
-<dd>the data   into self.data</dd>
-</dl>
+<dd><p>Read in header into self.header and
+the data   into self.data</p>
 </dd></dl>
 
 <dl class="method">
@@ -1780,10 +1820,8 @@ mimics that fabian was writing uint16 (we sometimes want floats)</p>
 <dl class="method">
 <dt id="fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/fit2dspreadsheetimage.html#fit2dspreadsheetimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.fit2dspreadsheetimage.fit2dspreadsheetimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Read in header into self.header and</dt>
-<dd>the data   into self.data</dd>
-</dl>
+<dd><p>Read in header into self.header and
+the data   into self.data</p>
 </dd></dl>
 
 </dd></dl>
@@ -1858,10 +1896,8 @@ email:erik.knudsen&#64;risoe.dk</div></blockquote>
 <dl class="method">
 <dt id="fabio.HiPiCimage.HiPiCimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/HiPiCimage.html#HiPiCimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.HiPiCimage.HiPiCimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Read in header into self.header and</dt>
-<dd>the data   into self.data</dd>
-</dl>
+<dd><p>Read in header into self.header and
+the data   into self.data</p>
 </dd></dl>
 
 </dd></dl>
@@ -1888,10 +1924,8 @@ Based on the edfimage.py parser.</p>
 <dl class="method">
 <dt id="fabio.kcdimage.kcdimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/kcdimage.html#kcdimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.kcdimage.kcdimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Read in header into self.header and</dt>
-<dd>the data   into self.data</dd>
-</dl>
+<dd><p>Read in header into self.header and
+the data   into self.data</p>
 </dd></dl>
 
 </dd></dl>
@@ -2018,10 +2052,8 @@ Grenoble (France)</li>
 <dl class="method">
 <dt id="fabio.OXDimage.OXDimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>frame=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/OXDimage.html#OXDimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.OXDimage.OXDimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Read in header into self.header and</dt>
-<dd>the data   into self.data</dd>
-</dl>
+<dd><p>Read in header into self.header and
+the data   into self.data</p>
 </dd></dl>
 
 <dl class="method">
@@ -2050,7 +2082,7 @@ Grenoble (France)</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>offset</strong> &#8211; int, starting position in the section</li>
 <li><strong>key</strong> &#8211; name of the header key</li>
 <li><strong>dtype</strong> &#8211; type of the data to insert (defines the size!)</li>
@@ -2270,9 +2302,9 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; ndarray</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; ndarray</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">string/bytes with compressed data</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string/bytes with compressed data</td>
 </tr>
 </tbody>
 </table>
@@ -2287,9 +2319,9 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; numpy.ndarray (square array)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; numpy.ndarray (square array)</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">compressed stream</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">compressed stream</td>
 </tr>
 </tbody>
 </table>
@@ -2303,9 +2335,9 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; numpy.ndarray with the input data (integers!)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; numpy.ndarray with the input data (integers!)</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size</td>
 </tr>
 </tbody>
 </table>
@@ -2322,13 +2354,13 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>stream</strong> &#8211; string representing the compressed data</li>
 <li><strong>size</strong> &#8211; the size of the output array (of longInts)</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -2346,13 +2378,13 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>stream</strong> &#8211; string representing the compressed data</li>
 <li><strong>size</strong> &#8211; the size of the output array (of longInts)</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -2367,13 +2399,13 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>stream</strong> &#8211; string representing the compressed data</li>
 <li><strong>size</strong> &#8211; the size of the output array (of longInts)</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -2388,13 +2420,13 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>stream</strong> &#8211; string representing the compressed data</li>
 <li><strong>size</strong> &#8211; the size of the output array (of longInts)</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">1D-ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -2421,14 +2453,14 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>raw_8</strong> &#8211; strings containing raw data with integer 8 bits</li>
 <li><strong>raw_16</strong> &#8211; strings containing raw data with integer 16 bits</li>
 <li><strong>raw_32</strong> &#8211; strings containing raw data with integer 32 bits</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -2437,15 +2469,15 @@ Wraps TiffIO</p>
 
 <dl class="function">
 <dt id="fabio.compression.decPCK">
-<tt class="descclassname">fabio.compression.</tt><tt class="descname">decPCK</tt><big>(</big><em>stream</em>, <em>dim1=None</em>, <em>dim2=None</em>, <em>overflowPix=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/compression.html#decPCK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.compression.decPCK" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">fabio.compression.</tt><tt class="descname">decPCK</tt><big>(</big><em>stream</em>, <em>dim1=None</em>, <em>dim2=None</em>, <em>overflowPix=None</em>, <em>version=None</em><big>)</big><a class="reference internal" href="../_modules/fabio/compression.html#decPCK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.compression.decPCK" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modified CCP4  pck decompressor used in MAR345 images</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> &#8211; string or file</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> &#8211; string or file</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">numpy.ndarray (square array)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">numpy.ndarray (square array)</td>
 </tr>
 </tbody>
 </table>
@@ -2459,14 +2491,14 @@ Wraps TiffIO</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>raw_8</strong> &#8211; strings containing raw data with integer 8 bits</li>
 <li><strong>raw_16</strong> &#8211; strings containing raw data with integer 16 bits</li>
 <li><strong>raw_32</strong> &#8211; strings containing raw data with integer 32 bits</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -2729,12 +2761,12 @@ IT IS USEFUL FOR THE BRUKER FORMAT</p>
         <li class="right" >
           <a href="../Changelog.html" title="Changelog"
              >previous</a> |</li>
-        <li><a href="../index.html">FabIO v0.1.2 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">FabIO 0.1.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

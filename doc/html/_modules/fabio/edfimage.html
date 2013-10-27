@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.edfimage &mdash; FabIO v0.1.2 documentation</title>
+    <title>fabio.edfimage &mdash; FabIO 0.1.3 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO v0.1.2 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -35,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -46,6 +49,8 @@
           <div class="body">
             
   <h1>Source code for fabio.edfimage</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">License: GPLv2+</span>
@@ -136,9 +141,9 @@
                   <span class="c"># JK20110415</span>
                   <span class="p">}</span>
 
-<span class="k">class</span> <span class="nc">Frame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Frame"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame">[docs]</a><span class="k">class</span> <span class="nc">Frame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Frame"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame">[docs]</a><span class="sd">    A class representing a single frame in an EDF file</span>
+<span class="sd">    A class representing a single frame in an EDF file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header_keys</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -175,9 +180,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">iFrame</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">parseheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">):</span>
+<div class="viewcode-block" id="Frame.parseheader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.parseheader">[docs]</a>    <span class="k">def</span> <span class="nf">parseheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Frame.parseheader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.parseheader">[docs]</a><span class="sd">        Parse the header in some EDF format from an already open file</span>
+<span class="sd">        Parse the header in some EDF format from an already open file</span>
 
 <span class="sd">        @param block: string representing the header block</span>
 <span class="sd">        @type block: string, should be full ascii</span>
@@ -268,10 +273,10 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
 
-
-    <span class="k">def</span> <span class="nf">swap_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="Frame.swap_needed"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.swap_needed">[docs]</a><span class="sd">        Decide if we need to byteswap</span>
+</div>
+<div class="viewcode-block" id="Frame.swap_needed"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.swap_needed">[docs]</a>    <span class="k">def</span> <span class="nf">swap_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decide if we need to byteswap</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s">&#39;Low&#39;</span>  <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">capsHeader</span><span class="p">[</span><span class="s">&#39;BYTEORDER&#39;</span><span class="p">]]</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">)</span> <span class="ow">or</span> \
            <span class="p">(</span><span class="s">&#39;High&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">capsHeader</span><span class="p">[</span><span class="s">&#39;BYTEORDER&#39;</span><span class="p">]]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">):</span>
@@ -283,10 +288,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">False</span>
 
-
-    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="Frame.getData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.getData">[docs]</a><span class="sd">        Unpack a binary blob according to the specification given in the header</span>
+</div>
+<div class="viewcode-block" id="Frame.getData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.getData">[docs]</a>    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unpack a binary blob according to the specification given in the header</span>
 
 <span class="sd">        @return: dataset as numpy.ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -357,23 +362,23 @@
                 <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">rawData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span>
-        <span class="k">return</span> <span class="n">data</span>
-    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">npa</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Setter for data in edf frame&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="Frame.setData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.setData">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">npa</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+<div class="viewcode-block" id="Frame.setData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">npa</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setter for data in edf frame&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">npa</span></div>
     <span class="n">data</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getData</span><span class="p">,</span> <span class="n">setData</span><span class="p">,</span> <span class="s">&quot;property: (edf)frame.data, uncompress the datablock when needed&quot;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">getByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Frame.getByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.getByteCode">[docs]</a>    <span class="k">def</span> <span class="nf">getByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-<div class="viewcode-block" id="Frame.getByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.getByteCode">[docs]</a>            <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span>
-    <span class="k">def</span> <span class="nf">setByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span></div>
+<div class="viewcode-block" id="Frame.setByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.setByteCode">[docs]</a>    <span class="k">def</span> <span class="nf">setByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bytecode</span> <span class="o">=</span> <span class="n">_iVal</span></div>
-<div class="viewcode-block" id="Frame.setByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.setByteCode">[docs]</a>    <span class="n">bytecode</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getByteCode</span><span class="p">,</span> <span class="n">setByteCode</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">getEdfBlock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fit2dMode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">bytecode</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getByteCode</span><span class="p">,</span> <span class="n">setByteCode</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Frame.getEdfBlock"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.getEdfBlock">[docs]</a>    <span class="k">def</span> <span class="nf">getEdfBlock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fit2dMode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Frame.getEdfBlock"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.Frame.getEdfBlock">[docs]</a><span class="sd">        @param force_type: type of the dataset to be enforced like &quot;float64&quot; or &quot;uint16&quot;</span>
+<span class="sd">        @param force_type: type of the dataset to be enforced like &quot;float64&quot; or &quot;uint16&quot;</span>
 <span class="sd">        @type force_type: string or numpy.dtype</span>
 <span class="sd">        @param fit2dMode: enforce compatibility with fit2d and starts countimg number of images at 1</span>
 <span class="sd">        @type fit2dMode: boolean</span>
@@ -440,7 +445,7 @@
             <span class="n">approxHeaderSize</span> <span class="o">+=</span> <span class="mi">7</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
         <span class="n">approxHeaderSize</span> <span class="o">=</span> <span class="n">BLOCKSIZE</span> <span class="o">*</span> <span class="p">(</span><span class="n">approxHeaderSize</span> <span class="o">//</span> <span class="n">BLOCKSIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">header_keys</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;EDF_HeaderSize&quot;</span><span class="p">)</span>
-        <span class="n">header</span><span class="p">[</span><span class="s">&quot;EDF_HeaderSize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">BLOCKSIZE</span> <span class="o">*</span> <span class="p">(</span><span class="n">approxHeaderSize</span> <span class="o">//</span> <span class="n">BLOCKSIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">header</span><span class="p">[</span><span class="s">&quot;EDF_HeaderSize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%5s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">approxHeaderSize</span><span class="p">)</span>
         <span class="n">header_keys</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;EDF_BinarySize&quot;</span><span class="p">)</span>
         <span class="n">header</span><span class="p">[</span><span class="s">&quot;EDF_BinarySize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">tostring</span><span class="p">())</span>
         <span class="n">header_keys</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&quot;EDF_DataBlockID&quot;</span><span class="p">)</span>
@@ -465,11 +470,11 @@
             <span class="k">for</span>  <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">listHeader</span><span class="p">[:]):</span>
                 <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;EDF_HeaderSize&quot;</span><span class="p">):</span>
                     <span class="n">headerSize</span> <span class="o">=</span> <span class="n">BLOCKSIZE</span> <span class="o">*</span> <span class="p">(</span><span class="n">preciseSize</span> <span class="o">//</span> <span class="n">BLOCKSIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-                    <span class="n">newline</span> <span class="o">=</span> <span class="s">&quot;EDF_HeaderSize = </span><span class="si">%s</span><span class="s"> ;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">headerSize</span>
+                    <span class="n">newline</span> <span class="o">=</span> <span class="s">&quot;EDF_HeaderSize = </span><span class="si">%5s</span><span class="s"> ;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">headerSize</span>
                     <span class="n">delta</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">newline</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                     <span class="k">if</span> <span class="p">(</span><span class="n">preciseSize</span> <span class="o">//</span> <span class="n">BLOCKSIZE</span><span class="p">)</span> <span class="o">!=</span> <span class="p">((</span><span class="n">preciseSize</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span> <span class="o">//</span> <span class="n">BLOCKSIZE</span><span class="p">):</span>
                         <span class="n">headerSize</span> <span class="o">=</span> <span class="n">BLOCKSIZE</span> <span class="o">*</span> <span class="p">((</span><span class="n">preciseSize</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span> <span class="o">//</span> <span class="n">BLOCKSIZE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-                        <span class="n">newline</span> <span class="o">=</span> <span class="s">&quot;EDF_HeaderSize = </span><span class="si">%s</span><span class="s"> ;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">headerSize</span>
+                        <span class="n">newline</span> <span class="o">=</span> <span class="s">&quot;EDF_HeaderSize = </span><span class="si">%5s</span><span class="s"> ;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">headerSize</span>
                     <span class="n">preciseSize</span> <span class="o">=</span> <span class="n">preciseSize</span> <span class="o">+</span> <span class="n">delta</span>
                     <span class="n">listHeader</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">newline</span>
                     <span class="k">break</span>
@@ -479,10 +484,10 @@
         <span class="k">return</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">listHeader</span><span class="p">)</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
 
 
+</div></div>
+<div class="viewcode-block" id="edfimage"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage">[docs]</a><span class="k">class</span> <span class="nc">edfimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read and try to write the ESRF edf data format &quot;&quot;&quot;</span>
 
-<span class="k">class</span> <span class="nc">edfimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Read and try to write the ESRF edf data format &quot;&quot;&quot;</span></div></div>
-<div class="viewcode-block" id="edfimage"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage">[docs]</a>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span> <span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header_keys</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filesize</span> <span class="o">=</span> <span class="bp">None</span>
@@ -514,9 +519,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="n">frames</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">checkHeader</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="edfimage.checkHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.checkHeader">[docs]</a>    <span class="k">def</span> <span class="nf">checkHeader</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="edfimage.checkHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.checkHeader">[docs]</a><span class="sd">        Empty for fabioimage but may be populated by others classes</span>
+<span class="sd">        Empty for fabioimage but may be populated by others classes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">!=</span> <span class="n">types</span><span class="o">.</span><span class="n">DictionaryType</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
@@ -524,16 +529,16 @@
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">new</span><span class="p">[</span><span class="n">toAscii</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&quot;;{}&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">toAscii</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s">&quot;;{}&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new</span>
-
+</div>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_readHeaderBlock</span><span class="p">(</span><span class="n">infile</span><span class="p">):</span></div>
+    <span class="k">def</span> <span class="nf">_readHeaderBlock</span><span class="p">(</span><span class="n">infile</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read in a header in some EDF format from an already open file</span>
 
 <span class="sd">        @param infile: file object open in read mode</span>
 <span class="sd">        @return: string (or None if no header was found.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="n">MAX_HEADER_SIZE</span> <span class="o">=</span> <span class="n">BLOCKSIZE</span> <span class="o">*</span> <span class="mi">20</span>
         <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">BLOCKSIZE</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">BLOCKSIZE</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Under-short header: only </span><span class="si">%i</span><span class="s"> bytes in </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">),</span> <span class="n">infile</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
@@ -542,10 +547,21 @@
             <span class="c"># This does not look like an edf file</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;no opening {. Corrupt header of EDF file </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">infile</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span>
+        <span class="k">if</span> <span class="s">&quot;EDF_HeaderSize&quot;</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;EDF_HeaderSize&quot;</span><span class="p">)</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="n">start</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_max_header_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Unable to read header size in </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">chunk</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">new_max_header_size</span> <span class="o">&gt;</span> <span class="n">MAX_HEADER_SIZE</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Redefining MAX_HEADER_SIZE to </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">new_max_header_size</span><span class="p">)</span>
+                    <span class="n">MAX_HEADER_SIZE</span> <span class="o">=</span> <span class="n">new_max_header_size</span>
         <span class="k">while</span> <span class="s">&#39;}&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
             <span class="n">block</span> <span class="o">=</span> <span class="n">block</span> <span class="o">+</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">BLOCKSIZE</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">BLOCKSIZE</span> <span class="o">*</span> <span class="mi">20</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Runaway header in EDF file&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_HEADER_SIZE</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Runaway header in EDF file MAX_HEADER_SIZE: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">MAX_HEADER_SIZE</span><span class="p">,</span> <span class="n">block</span><span class="p">))</span>
                 <span class="k">return</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">end</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">)</span>
@@ -606,9 +622,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">=</span> <span class="mi">0</span>
 
 
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="edfimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="edfimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.read">[docs]</a><span class="sd">        Read in header into self.header and</span>
+<span class="sd">        Read in header into self.header and</span>
 <span class="sd">            the data   into self.data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
@@ -626,10 +642,10 @@
         <span class="c"># ensure the PIL image is reset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pilimage</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">swap_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.swap_needed"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.swap_needed">[docs]</a><span class="sd">        Decide if we need to byteswap</span>
+</div>
+<div class="viewcode-block" id="edfimage.swap_needed"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.swap_needed">[docs]</a>    <span class="k">def</span> <span class="nf">swap_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decide if we need to byteswap</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="s">&#39;Low&#39;</span>  <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">capsHeader</span><span class="p">[</span><span class="s">&#39;BYTEORDER&#39;</span><span class="p">]]</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">)</span> <span class="ow">or</span> \
            <span class="p">(</span><span class="s">&#39;High&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">capsHeader</span><span class="p">[</span><span class="s">&#39;BYTEORDER&#39;</span><span class="p">]]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">):</span>
@@ -640,19 +656,19 @@
                 <span class="k">return</span> <span class="bp">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">False</span>
-
-    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.unpack"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.unpack">[docs]</a><span class="sd">        Unpack a binary blob according to the specification given in the header and return the dataset</span>
+</div>
+<div class="viewcode-block" id="edfimage.unpack"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.unpack">[docs]</a>    <span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unpack a binary blob according to the specification given in the header and return the dataset</span>
 
 <span class="sd">        @return: dataset as numpy.ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">getData</span><span class="p">()</span>
 
-
-    <span class="k">def</span> <span class="nf">getframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the file numbered &#39;num&#39; in the series as a fabioimage &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.getframe"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getframe">[docs]</a>        <span class="n">newImage</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="edfimage.getframe"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getframe">[docs]</a>    <span class="k">def</span> <span class="nf">getframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the file numbered &#39;num&#39; in the series as a fabioimage &quot;&quot;&quot;</span>
+        <span class="n">newImage</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Single frame EDF; having fabioimage default behavour: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">num</span><span class="p">)</span>
             <span class="n">newImage</span> <span class="o">=</span> <span class="n">fabioimage</span><span class="o">.</span><span class="n">getframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
@@ -667,10 +683,10 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;edfimage.getframe:&quot;</span> <span class="o">+</span> <span class="n">txt</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">newImage</span>
 
-
-    <span class="k">def</span> <span class="nf">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the previous file in the series as a fabioimage &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.previous"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.previous">[docs]</a>        <span class="n">newImage</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="edfimage.previous"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.previous">[docs]</a>    <span class="k">def</span> <span class="nf">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the previous file in the series as a fabioimage &quot;&quot;&quot;</span>
+        <span class="n">newImage</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">newImage</span> <span class="o">=</span> <span class="n">fabioimage</span><span class="o">.</span><span class="n">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -678,10 +694,10 @@
             <span class="n">newImage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getframe</span><span class="p">(</span><span class="n">newFrameId</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">newImage</span>
 
-
-    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns the next file in the series as a fabioimage &quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.next"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.next">[docs]</a>        <span class="n">newImage</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="edfimage.next"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the next file in the series as a fabioimage &quot;&quot;&quot;</span>
+        <span class="n">newImage</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">newImage</span> <span class="o">=</span> <span class="n">fabioimage</span><span class="o">.</span><span class="n">next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -689,10 +705,10 @@
             <span class="n">newImage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getframe</span><span class="p">(</span><span class="n">newFrameId</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">newImage</span>
 
-
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fit2dMode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.write">[docs]</a><span class="sd">        Try to write a file</span>
+</div>
+<div class="viewcode-block" id="edfimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fit2dMode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Try to write a file</span>
 <span class="sd">        check we can write zipped also</span>
 <span class="sd">        mimics that fabian was writing uint16 (we sometimes want floats)</span>
 
@@ -701,16 +717,15 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">outfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;wb&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
-            <span class="n">frame</span><span class="o">.</span><span class="n">iFrame</span> <span class="o">=</span> <span class="n">i</span>
-            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">getEdfBlock</span><span class="p">(</span><span class="n">force_type</span><span class="o">=</span><span class="n">force_type</span><span class="p">,</span> <span class="n">fit2dMode</span><span class="o">=</span><span class="n">fit2dMode</span><span class="p">))</span>
-        <span class="n">outfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
+                <span class="n">frame</span><span class="o">.</span><span class="n">iFrame</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">getEdfBlock</span><span class="p">(</span><span class="n">force_type</span><span class="o">=</span><span class="n">force_type</span><span class="p">,</span> <span class="n">fit2dMode</span><span class="o">=</span><span class="n">fit2dMode</span><span class="p">))</span>
 
-
-    <span class="k">def</span> <span class="nf">appendFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.appendFrame"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.appendFrame">[docs]</a><span class="sd">        Method used add a frame to an EDF file</span>
+</div>
+<div class="viewcode-block" id="edfimage.appendFrame"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.appendFrame">[docs]</a>    <span class="k">def</span> <span class="nf">appendFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method used add a frame to an EDF file</span>
 <span class="sd">        @param frame: frame to append to edf image</span>
 <span class="sd">        @type frame: instance of Frame</span>
 <span class="sd">        @return: None</span>
@@ -720,10 +735,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="p">))</span>
 
-
-    <span class="k">def</span> <span class="nf">deleteFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNb</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.deleteFrame"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.deleteFrame">[docs]</a><span class="sd">        Method used to remove a frame from an EDF image. by default the last one is removed.</span>
+</div>
+<div class="viewcode-block" id="edfimage.deleteFrame"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.deleteFrame">[docs]</a>    <span class="k">def</span> <span class="nf">deleteFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNb</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method used to remove a frame from an EDF image. by default the last one is removed.</span>
 <span class="sd">        @param frameNb: frame number to remove, by  default the last.</span>
 <span class="sd">        @type frameNb: integer</span>
 <span class="sd">        @return: None</span>
@@ -732,10 +747,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">frameNb</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">fastReadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.fastReadData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.fastReadData">[docs]</a><span class="sd">        This is a special method that will read and return the data from another file ...</span>
+</div>
+<div class="viewcode-block" id="edfimage.fastReadData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.fastReadData">[docs]</a>    <span class="k">def</span> <span class="nf">fastReadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a special method that will read and return the data from another file ...</span>
 <span class="sd">        The aim is performances, ... but only supports uncompressed files. </span>
 <span class="sd">         </span>
 <span class="sd">        @return: data from another file using positions from current edfimage</span>
@@ -753,10 +768,10 @@
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span> <span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;unable to convert file content to numpy array: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="nf">fastReadROI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.fastReadROI"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.fastReadROI">[docs]</a><span class="sd">        Method reading Region of Interest of another file  based on metadata available in current edfimage.</span>
+</div>
+<div class="viewcode-block" id="edfimage.fastReadROI"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.fastReadROI">[docs]</a>    <span class="k">def</span> <span class="nf">fastReadROI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method reading Region of Interest of another file  based on metadata available in current edfimage.</span>
 <span class="sd">        The aim is performances, ... but only supports uncompressed files.</span>
 <span class="sd">        </span>
 <span class="sd">        @return: ROI-data from another file using positions from current edfimage</span>
@@ -795,29 +810,29 @@
 
 <span class="c">################################################################################</span>
 <span class="c"># Properties definition for header, data, header_keys and capsHeader</span>
-<span class="c">################################################################################</span>
-    <span class="k">def</span> <span class="nf">getNbFrames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.getNbFrames"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getNbFrames">[docs]</a><span class="sd">        Getter for number of frames</span>
+<span class="c">################################################################################</span></div>
+<div class="viewcode-block" id="edfimage.getNbFrames"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getNbFrames">[docs]</a>    <span class="k">def</span> <span class="nf">getNbFrames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for number of frames</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">setNbFrames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.setNbFrames"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setNbFrames">[docs]</a><span class="sd">        Setter for number of frames ... should do nothing. Here just to avoid bugs</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">)</span></div>
+<div class="viewcode-block" id="edfimage.setNbFrames"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setNbFrames">[docs]</a>    <span class="k">def</span> <span class="nf">setNbFrames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for number of frames ... should do nothing. Here just to avoid bugs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;trying to set the number of frames &quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;trying to set the number of frames &quot;</span><span class="p">)</span></div>
     <span class="n">nframes</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getNbFrames</span><span class="p">,</span> <span class="n">setNbFrames</span><span class="p">,</span> <span class="s">&quot;property: number of frames in EDF file&quot;</span><span class="p">)</span>
-</div>
 
-    <span class="k">def</span> <span class="nf">getHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="edfimage.getHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getHeader">[docs]</a>    <span class="k">def</span> <span class="nf">getHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="edfimage.getHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getHeader">[docs]</a><span class="sd">        Getter for the headers. used by the property header,</span>
+<span class="sd">        Getter for the headers. used by the property header,</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-    <span class="k">def</span> <span class="nf">setHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_dictHeader</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.setHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setHeader">[docs]</a><span class="sd">        Enforces the propagation of the header to the list of frames</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header</span></div>
+<div class="viewcode-block" id="edfimage.setHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setHeader">[docs]</a>    <span class="k">def</span> <span class="nf">setHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_dictHeader</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enforces the propagation of the header to the list of frames</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">_dictHeader</span>
@@ -825,22 +840,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Frame</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">_dictHeader</span><span class="p">)]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">_dictHeader</span><span class="p">))</span>
-    <span class="k">def</span> <span class="nf">delHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.delHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delHeader">[docs]</a><span class="sd">        Deleter for edf header</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">header</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getHeader</span><span class="p">,</span> <span class="n">setHeader</span><span class="p">,</span> <span class="n">delHeader</span><span class="p">,</span> <span class="s">&quot;property: header of EDF file&quot;</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">getHeaderKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">_dictHeader</span><span class="p">))</span></div>
+<div class="viewcode-block" id="edfimage.delHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delHeader">[docs]</a>    <span class="k">def</span> <span class="nf">delHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="edfimage.getHeaderKeys"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getHeaderKeys">[docs]</a><span class="sd">        Getter for edf header_keys</span>
+<span class="sd">        Deleter for edf header</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header_keys</span>
-    <span class="k">def</span> <span class="nf">setHeaderKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_listtHeader</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.setHeaderKeys"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setHeaderKeys">[docs]</a><span class="sd">        Enforces the propagation of the header_keys to the list of frames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span></div>
+    <span class="n">header</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getHeader</span><span class="p">,</span> <span class="n">setHeader</span><span class="p">,</span> <span class="n">delHeader</span><span class="p">,</span> <span class="s">&quot;property: header of EDF file&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="edfimage.getHeaderKeys"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getHeaderKeys">[docs]</a>    <span class="k">def</span> <span class="nf">getHeaderKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Getter for edf header_keys</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header_keys</span></div>
+<div class="viewcode-block" id="edfimage.setHeaderKeys"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setHeaderKeys">[docs]</a>    <span class="k">def</span> <span class="nf">setHeaderKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_listtHeader</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enforces the propagation of the header_keys to the list of frames</span>
 <span class="sd">        @param _listtHeader: list of the (ordered) keys in the header</span>
 <span class="sd">        @type _listtHeader: python list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -850,17 +865,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Frame</span><span class="p">(</span><span class="n">header_keys</span><span class="o">=</span><span class="n">_listtHeader</span><span class="p">)]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">(</span><span class="n">header_keys</span><span class="o">=</span><span class="n">_listtHeader</span><span class="p">))</span>
-    <span class="k">def</span> <span class="nf">delHeaderKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.delHeaderKeys"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delHeaderKeys">[docs]</a><span class="sd">        Deleter for edf header_keys</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header_keys</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">header_keys</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getHeaderKeys</span><span class="p">,</span> <span class="n">setHeaderKeys</span><span class="p">,</span> <span class="n">delHeaderKeys</span><span class="p">,</span> <span class="s">&quot;property: header_keys of EDF file&quot;</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">(</span><span class="n">header_keys</span><span class="o">=</span><span class="n">_listtHeader</span><span class="p">))</span></div>
+<div class="viewcode-block" id="edfimage.delHeaderKeys"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delHeaderKeys">[docs]</a>    <span class="k">def</span> <span class="nf">delHeaderKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="edfimage.getData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getData">[docs]</a><span class="sd">        getter for edf Data</span>
+<span class="sd">        Deleter for edf header_keys</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">header_keys</span> <span class="o">=</span> <span class="p">[]</span></div>
+    <span class="n">header_keys</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getHeaderKeys</span><span class="p">,</span> <span class="n">setHeaderKeys</span><span class="p">,</span> <span class="n">delHeaderKeys</span><span class="p">,</span> <span class="s">&quot;property: header_keys of EDF file&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="edfimage.getData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getData">[docs]</a>    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        getter for edf Data</span>
 <span class="sd">        @return: data for current frame</span>
 <span class="sd">        @rtype: numpy.ndarray</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -875,10 +890,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">())</span>
                 <span class="n">npaData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
         <span class="k">return</span> <span class="n">npaData</span>
-
-    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.setData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setData">[docs]</a><span class="sd">        Enforces the propagation of the data to the list of frames</span>
+</div>
+<div class="viewcode-block" id="edfimage.setData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enforces the propagation of the data to the list of frames</span>
 <span class="sd">        @param _data: numpy array representing data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -887,87 +902,87 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Frame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">_data</span><span class="p">)]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">_data</span><span class="p">))</span>
-    <span class="k">def</span> <span class="nf">delData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.delData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delData">[docs]</a><span class="sd">        deleter for edf Data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getData</span><span class="p">,</span> <span class="n">setData</span><span class="p">,</span> <span class="n">delData</span><span class="p">,</span> <span class="s">&quot;property: data of EDF file&quot;</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">getCapsHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">_data</span><span class="p">))</span></div>
+<div class="viewcode-block" id="edfimage.delData"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delData">[docs]</a>    <span class="k">def</span> <span class="nf">delData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="edfimage.getCapsHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getCapsHeader">[docs]</a><span class="sd">        getter for edf headers keys in upper case</span>
+<span class="sd">        deleter for edf Data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span></div>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getData</span><span class="p">,</span> <span class="n">setData</span><span class="p">,</span> <span class="n">delData</span><span class="p">,</span> <span class="s">&quot;property: data of EDF file&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="edfimage.getCapsHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getCapsHeader">[docs]</a>    <span class="k">def</span> <span class="nf">getCapsHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        getter for edf headers keys in upper case</span>
 <span class="sd">        @return: data for current frame</span>
 <span class="sd">        @rtype: dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">capsHeader</span>
-    <span class="k">def</span> <span class="nf">setCapsHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.setCapsHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setCapsHeader">[docs]</a><span class="sd">        Enforces the propagation of the header_keys to the list of frames</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">capsHeader</span></div>
+<div class="viewcode-block" id="edfimage.setCapsHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setCapsHeader">[docs]</a>    <span class="k">def</span> <span class="nf">setCapsHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enforces the propagation of the header_keys to the list of frames</span>
 <span class="sd">        @param _data: numpy array representing data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">capsHeader</span> <span class="o">=</span> <span class="n">_data</span>
-    <span class="k">def</span> <span class="nf">delCapsHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="edfimage.delCapsHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delCapsHeader">[docs]</a><span class="sd">        deleter for edf capsHeader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">capsHeader</span> <span class="o">=</span> <span class="n">_data</span></div>
+<div class="viewcode-block" id="edfimage.delCapsHeader"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.delCapsHeader">[docs]</a>    <span class="k">def</span> <span class="nf">delCapsHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        deleter for edf capsHeader</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">capsHeader</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">capsHeader</span> <span class="o">=</span> <span class="p">{}</span></div>
     <span class="n">capsHeader</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getCapsHeader</span><span class="p">,</span> <span class="n">setCapsHeader</span><span class="p">,</span> <span class="n">delCapsHeader</span><span class="p">,</span> <span class="s">&quot;property: capsHeader of EDF file, i.e. the keys of the header in UPPER case.&quot;</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">getDim1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim1</span>
-<div class="viewcode-block" id="edfimage.getDim1"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getDim1">[docs]</a>    <span class="k">def</span> <span class="nf">setDim1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span></div>
-<div class="viewcode-block" id="edfimage.setDim1"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setDim1">[docs]</a>            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="n">_iVal</span>
+
+<div class="viewcode-block" id="edfimage.getDim1"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getDim1">[docs]</a>    <span class="k">def</span> <span class="nf">getDim1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim1</span></div>
+<div class="viewcode-block" id="edfimage.setDim1"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setDim1">[docs]</a>    <span class="k">def</span> <span class="nf">setDim1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="n">_iVal</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Frame</span><span class="p">()]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">())</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="n">_iVal</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="n">_iVal</span></div>
     <span class="n">dim1</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getDim1</span><span class="p">,</span> <span class="n">setDim1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">getDim2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim2</span>
-<div class="viewcode-block" id="edfimage.getDim2"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getDim2">[docs]</a>    <span class="k">def</span> <span class="nf">setDim2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span></div>
-<div class="viewcode-block" id="edfimage.setDim2"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setDim2">[docs]</a>            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="n">_iVal</span>
+<div class="viewcode-block" id="edfimage.getDim2"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getDim2">[docs]</a>    <span class="k">def</span> <span class="nf">getDim2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim2</span></div>
+<div class="viewcode-block" id="edfimage.setDim2"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setDim2">[docs]</a>    <span class="k">def</span> <span class="nf">setDim2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="n">_iVal</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Frame</span><span class="p">()]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">())</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="n">_iVal</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="n">_iVal</span></div>
     <span class="n">dim2</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getDim2</span><span class="p">,</span> <span class="n">setDim2</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">getDims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dims</span>
-<div class="viewcode-block" id="edfimage.getDims"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getDims">[docs]</a>    <span class="n">dims</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getDims</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">getByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bytecode</span>
-<div class="viewcode-block" id="edfimage.getByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getByteCode">[docs]</a>    <span class="k">def</span> <span class="nf">setByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span></div>
-<div class="viewcode-block" id="edfimage.setByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setByteCode">[docs]</a>            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">_iVal</span>
+
+<div class="viewcode-block" id="edfimage.getDims"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getDims">[docs]</a>    <span class="k">def</span> <span class="nf">getDims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">dims</span></div>
+    <span class="n">dims</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getDims</span><span class="p">)</span>
+<div class="viewcode-block" id="edfimage.getByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getByteCode">[docs]</a>    <span class="k">def</span> <span class="nf">getByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bytecode</span></div>
+<div class="viewcode-block" id="edfimage.setByteCode"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setByteCode">[docs]</a>    <span class="k">def</span> <span class="nf">setByteCode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">_iVal</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Frame</span><span class="p">()]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">())</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">_iVal</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">_iVal</span></div>
     <span class="n">bytecode</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getByteCode</span><span class="p">,</span> <span class="n">setByteCode</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">getBpp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bpp</span>
-<div class="viewcode-block" id="edfimage.getBpp"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getBpp">[docs]</a>    <span class="k">def</span> <span class="nf">setBpp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span></div>
-<div class="viewcode-block" id="edfimage.setBpp"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setBpp">[docs]</a>            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="n">_iVal</span>
+<div class="viewcode-block" id="edfimage.getBpp"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.getBpp">[docs]</a>    <span class="k">def</span> <span class="nf">getBpp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bpp</span></div>
+<div class="viewcode-block" id="edfimage.setBpp"><a class="viewcode-back" href="../../api/modules.html#fabio.edfimage.edfimage.setBpp">[docs]</a>    <span class="k">def</span> <span class="nf">setBpp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_iVal</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="n">_iVal</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Frame</span><span class="p">()]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Frame</span><span class="p">())</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="n">_iVal</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__frames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">]</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="n">_iVal</span></div>
     <span class="n">bpp</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getBpp</span><span class="p">,</span> <span class="n">setBpp</span><span class="p">)</span>
-</pre></div></div></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -1000,13 +1015,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

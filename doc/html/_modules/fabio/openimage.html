@@ -3,17 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.openimage &mdash; FabIO v0.1.2 documentation</title>
+    <title>fabio.openimage &mdash; FabIO 0.1.3 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO v0.1.2 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -35,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -45,168 +48,165 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for fabio.openimage</h1><pre>
-Authors: Henning O. Sorensen &amp; Erik Knudsen
-         Center for Fundamental Research: Metal Structures in Four Dimensions
-         Risoe National Laboratory
-         Frederiksborgvej 399
-         DK-4000 Roskilde
-         email:henning.sorensen@risoe.dk
+  <h1>Source code for fabio.openimage</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
 
-mods for fabio by JPW
+<span class="sd">Authors: Henning O. Sorensen &amp; Erik Knudsen</span>
+<span class="sd">         Center for Fundamental Research: Metal Structures in Four Dimensions</span>
+<span class="sd">         Risoe National Laboratory</span>
+<span class="sd">         Frederiksborgvej 399</span>
+<span class="sd">         DK-4000 Roskilde</span>
+<span class="sd">         email:henning.sorensen@risoe.dk</span>
 
-"""
-import sys, logging
-logger = logging.getLogger("openimage")
-from fabioutils  import FilenameObject
-from fabioimage import fabioimage
-import edfimage
-import adscimage
-import tifimage
-import marccdimage
-import mar345image
-import fit2dmaskimage
-import brukerimage
-import bruker100image
-import pnmimage
-import GEimage
-import OXDimage
-import dm3image
-import HiPiCimage
-import pilatusimage
-import fit2dspreadsheetimage
-import kcdimage
-import cbfimage
-import xsdimage
-import binaryimage
+<span class="sd">mods for fabio by JPW</span>
 
-MAGIC_NUMBERS = [
-    # "\42\5a" : 'bzipped'
-    # "\1f\8b" : 'gzipped'
-    ("FORMAT :        86" , 'bruker'),
-    ("\x4d\x4d\x00\x2a"   , 'tif') ,
-    # The marCCD and Pilatus formats are both standard tif with a header
-    # hopefully these byte patterns are unique for the formats
-    # If not the image will be read, but the is missing 
-    ("\x49\x49\x2a\x00\x08\x00"   , 'marccd') ,
-    ("\x49\x49\x2a\x00\x82\x00"   , 'pilatus') ,
-    ("\x49\x49\x2a\x00"   , 'tif') ,
-    # ADSC must come before edf
-    ("{\nHEA"             , 'adsc'),
-    ("{"                  , 'edf'),
-    ("\r{"                , 'edf'),
-    ("\n{"                , 'edf'),
-    ("ADEPT"              , 'GE'),
-    ("OD"                 , 'OXD'),
-    ("IM"                 , 'HiPiC'),
-    ('\x2d\x04'           , 'mar345'),
-    ('\xd2\x04'           , 'mar345'),
-    ('\x04\x2d'           , 'mar345'), #some machines may need byteswapping
-    ('\x04\xd2'           , 'mar345'),
-    # hint : MASK in 32 bit
-    ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
-    ('\x00\x00\x00\x03'   , 'dm3'),
-    ("No"                 , "kcd"),
-    ("&lt;"                  , "xsd")
-    ]
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;openimage&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">fabioutils</span>  <span class="kn">import</span> <span class="n">FilenameObject</span>
+<span class="kn">from</span> <span class="nn">fabioimage</span> <span class="kn">import</span> <span class="n">fabioimage</span>
+<span class="kn">import</span> <span class="nn">edfimage</span>
+<span class="kn">import</span> <span class="nn">adscimage</span>
+<span class="kn">import</span> <span class="nn">tifimage</span>
+<span class="kn">import</span> <span class="nn">marccdimage</span>
+<span class="kn">import</span> <span class="nn">mar345image</span>
+<span class="kn">import</span> <span class="nn">fit2dmaskimage</span>
+<span class="kn">import</span> <span class="nn">brukerimage</span>
+<span class="kn">import</span> <span class="nn">bruker100image</span>
+<span class="kn">import</span> <span class="nn">pnmimage</span>
+<span class="kn">import</span> <span class="nn">GEimage</span>
+<span class="kn">import</span> <span class="nn">OXDimage</span>
+<span class="kn">import</span> <span class="nn">dm3image</span>
+<span class="kn">import</span> <span class="nn">HiPiCimage</span>
+<span class="kn">import</span> <span class="nn">pilatusimage</span>
+<span class="kn">import</span> <span class="nn">fit2dspreadsheetimage</span>
+<span class="kn">import</span> <span class="nn">kcdimage</span>
+<span class="kn">import</span> <span class="nn">cbfimage</span>
+<span class="kn">import</span> <span class="nn">xsdimage</span>
+<span class="kn">import</span> <span class="nn">binaryimage</span>
 
-def do_magic(byts):
-    """ Try to interpret the bytes starting the file as a magic number """
-<div class="viewcode-block" id="do_magic"><a class="viewcode-back" href="../../api/modules.html#fabio.openimage.do_magic">[docs]</a>    for magic, format_type in MAGIC_NUMBERS:
-        if byts.find(magic) == 0:
-            return format_type
-        if 0: # debugging - bruker needed 18 bytes below
-            logger.debug("m: %s f: %s", magic, format_type)
-            logger.debug("bytes: %s len(bytes) %s", magic, len(magic))
-            logger.debug("found: %s", byts.find(magic))
-            for i in range(len(magic)):
-                logger.debug("%s %s %s %s ", ord(magic[i]), ord(byts[i]), magic[i], byts[i])
-    raise Exception("Could not interpret magic string")
+<span class="n">MAGIC_NUMBERS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c"># &quot;\42\5a&quot; : &#39;bzipped&#39;</span>
+    <span class="c"># &quot;\1f\8b&quot; : &#39;gzipped&#39;</span>
+    <span class="p">(</span><span class="s">&quot;FORMAT :        86&quot;</span> <span class="p">,</span> <span class="s">&#39;bruker&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;</span><span class="se">\x4d\x4d\x00\x2a</span><span class="s">&quot;</span>   <span class="p">,</span> <span class="s">&#39;tif&#39;</span><span class="p">)</span> <span class="p">,</span>
+    <span class="c"># The marCCD and Pilatus formats are both standard tif with a header</span>
+    <span class="c"># hopefully these byte patterns are unique for the formats</span>
+    <span class="c"># If not the image will be read, but the is missing </span>
+    <span class="p">(</span><span class="s">&quot;</span><span class="se">\x49\x49\x2a\x00\x08\x00</span><span class="s">&quot;</span>   <span class="p">,</span> <span class="s">&#39;marccd&#39;</span><span class="p">)</span> <span class="p">,</span>
+    <span class="p">(</span><span class="s">&quot;</span><span class="se">\x49\x49\x2a\x00\x82\x00</span><span class="s">&quot;</span>   <span class="p">,</span> <span class="s">&#39;pilatus&#39;</span><span class="p">)</span> <span class="p">,</span>
+    <span class="p">(</span><span class="s">&quot;</span><span class="se">\x49\x49\x2a\x00</span><span class="s">&quot;</span>   <span class="p">,</span> <span class="s">&#39;tif&#39;</span><span class="p">)</span> <span class="p">,</span>
+    <span class="c"># ADSC must come before edf</span>
+    <span class="p">(</span><span class="s">&quot;{</span><span class="se">\n</span><span class="s">HEA&quot;</span>             <span class="p">,</span> <span class="s">&#39;adsc&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;{&quot;</span>                  <span class="p">,</span> <span class="s">&#39;edf&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">{&quot;</span>                <span class="p">,</span> <span class="s">&#39;edf&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">{&quot;</span>                <span class="p">,</span> <span class="s">&#39;edf&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;ADEPT&quot;</span>              <span class="p">,</span> <span class="s">&#39;GE&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;OD&quot;</span>                 <span class="p">,</span> <span class="s">&#39;OXD&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;IM&quot;</span>                 <span class="p">,</span> <span class="s">&#39;HiPiC&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;</span><span class="se">\x2d\x04</span><span class="s">&#39;</span>           <span class="p">,</span> <span class="s">&#39;mar345&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;</span><span class="se">\xd2\x04</span><span class="s">&#39;</span>           <span class="p">,</span> <span class="s">&#39;mar345&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;</span><span class="se">\x04\x2d</span><span class="s">&#39;</span>           <span class="p">,</span> <span class="s">&#39;mar345&#39;</span><span class="p">),</span> <span class="c">#some machines may need byteswapping</span>
+    <span class="p">(</span><span class="s">&#39;</span><span class="se">\x04\xd2</span><span class="s">&#39;</span>           <span class="p">,</span> <span class="s">&#39;mar345&#39;</span><span class="p">),</span>
+    <span class="c"># hint : MASK in 32 bit</span>
+    <span class="p">(</span><span class="s">&#39;M</span><span class="se">\x00\x00\x00</span><span class="s">A</span><span class="se">\x00\x00\x00</span><span class="s">S</span><span class="se">\x00\x00\x00</span><span class="s">K</span><span class="se">\x00\x00\x00</span><span class="s">&#39;</span> <span class="p">,</span> <span class="s">&#39;fit2dmask&#39;</span><span class="p">)</span> <span class="p">,</span>
+    <span class="p">(</span><span class="s">&#39;</span><span class="se">\x00\x00\x00\x03</span><span class="s">&#39;</span>   <span class="p">,</span> <span class="s">&#39;dm3&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;No&quot;</span>                 <span class="p">,</span> <span class="s">&quot;kcd&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&quot;&lt;&quot;</span>                  <span class="p">,</span> <span class="s">&quot;xsd&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
 
+<div class="viewcode-block" id="do_magic"><a class="viewcode-back" href="../../api/modules.html#fabio.openimage.do_magic">[docs]</a><span class="k">def</span> <span class="nf">do_magic</span><span class="p">(</span><span class="n">byts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Try to interpret the bytes starting the file as a magic number &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">magic</span><span class="p">,</span> <span class="n">format_type</span> <span class="ow">in</span> <span class="n">MAGIC_NUMBERS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">byts</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">magic</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">format_type</span>
+        <span class="k">if</span> <span class="mi">0</span><span class="p">:</span> <span class="c"># debugging - bruker needed 18 bytes below</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;m: </span><span class="si">%s</span><span class="s"> f: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">magic</span><span class="p">,</span> <span class="n">format_type</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;bytes: </span><span class="si">%s</span><span class="s"> len(bytes) </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">magic</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">magic</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;found: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">byts</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">magic</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magic</span><span class="p">)):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> &quot;</span><span class="p">,</span> <span class="nb">ord</span><span class="p">(</span><span class="n">magic</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">ord</span><span class="p">(</span><span class="n">byts</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">magic</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">byts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Could not interpret magic string&quot;</span><span class="p">)</span>
 
-def openimage(filename, frame=None):
-    """ Try to open an image """</div>
-<div class="viewcode-block" id="openimage"><a class="viewcode-back" href="../../api/modules.html#fabio.openimage.openimage">[docs]</a>    if isinstance(filename, FilenameObject):
-        try:
-            logger.debug("Attempting to open %s" % (filename.tostring()))
-            obj = _openimage(filename.tostring())
-            logger.debug("Attempting to read frame %s from %s" % (frame,
-                filename.tostring()))
-            obj = obj.read(filename.tostring(), frame)
-        except Exception, ex:
-            # multiframe file
-            #logger.debug( "DEBUG: multiframe file, start # %d"%(
-            #    filename.num)
-            logger.debug("Exception %s, trying name %s" % (ex, filename.stem))
-            obj = _openimage(filename.stem)
-            logger.debug("Reading frame %s from %s" % (filename.num, filename.stem))
-            obj.read(filename.stem, frame=filename.num)
-    else:
-        logger.debug("Attempting to open %s" % (filename))
-        obj = _openimage(filename)
-        logger.debug("Attempting to read frame %s from %s" % (frame, filename))
-        obj = obj.read(filename, frame)
-    return obj
+</div>
+<div class="viewcode-block" id="openimage"><a class="viewcode-back" href="../../api/modules.html#fabio.openimage.openimage">[docs]</a><span class="k">def</span> <span class="nf">openimage</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Try to open an image &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">FilenameObject</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Attempting to open </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">tostring</span><span class="p">()))</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">_openimage</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">tostring</span><span class="p">())</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Attempting to read frame </span><span class="si">%s</span><span class="s"> from </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">frame</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">.</span><span class="n">tostring</span><span class="p">()))</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">tostring</span><span class="p">(),</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="c"># multiframe file</span>
+            <span class="c">#logger.debug( &quot;DEBUG: multiframe file, start # %d&quot;%(</span>
+            <span class="c">#    filename.num)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Exception </span><span class="si">%s</span><span class="s">, trying name </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">_openimage</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Reading frame </span><span class="si">%s</span><span class="s"> from </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">num</span><span class="p">,</span> <span class="n">filename</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">filename</span><span class="o">.</span><span class="n">num</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Attempting to open </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">_openimage</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Attempting to read frame </span><span class="si">%s</span><span class="s"> from </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
 
+</div>
+<div class="viewcode-block" id="openheader"><a class="viewcode-back" href="../../api/modules.html#fabio.openimage.openheader">[docs]</a><span class="k">def</span> <span class="nf">openheader</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; return only the header&quot;&quot;&quot;</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">_openimage</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">readheader</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
 
-def openheader(filename):
-    """ return only the header"""</div>
-<div class="viewcode-block" id="openheader"><a class="viewcode-back" href="../../api/modules.html#fabio.openimage.openheader">[docs]</a>    obj = _openimage(filename)
-    obj.readheader(filename)
-    return obj
-
-
-def _openimage(filename):
-    """ </div>
-    determine which format for a filename
-    and return appropriate class which can be used for opening the image
-    """
-    try:
-        imo = fabioimage()
-        byts = imo._open(filename).read(18)
-        filetype = do_magic(byts)
-        if filetype == "marccd" and filename.find("mccd") == -1:
-            # Cannot see a way around this. Need to find something
-            # to distinguish mccd from regular tif...
-            filetype = "tif"
-    except IOError, error:
-        logger.error("%s: File probably does not exist", error)
-        raise error
-    except:
-        try:
-            file_obj = FilenameObject(filename=filename)
-            if file_obj == None:
-                raise Exception("Unable to deconstruct filename")
-            if (file_obj.format is not None) and\
-                len(file_obj.format) != 1 and \
-                type(file_obj.format) != type(["list"]):
-                # one of OXD/ ADSC - should have got in previous
-                raise Exception("openimage failed on magic bytes &amp; name guess")
-            filetype = file_obj.format
-            #UNUSED filenumber = file_obj.num
-        except Exception, error:
-            logger.error(error)
-            import traceback
-            traceback.print_exc()
-            raise Exception("Fabio could not identify " + filename)
-    klass_name = "".join(filetype) + 'image'
-    module = sys.modules.get("fabio." + klass_name, None)
-    if module is not None:
-        if hasattr(module, klass_name):
-            klass = getattr(module, klass_name)
-        else:
-            raise Exception("Module %s has no image class" % module)
-    else:
-        raise Exception("Filetype not known %s %s" % (filename, klass_name))
-    obj = klass()
-    # skip the read for read header
-    return obj
-
-
-
-
-
-</pre>
+</div>
+<span class="k">def</span> <span class="nf">_openimage</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    determine which format for a filename</span>
+<span class="sd">    and return appropriate class which can be used for opening the image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">imo</span> <span class="o">=</span> <span class="n">fabioimage</span><span class="p">()</span>
+        <span class="n">byts</span> <span class="o">=</span> <span class="n">imo</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+        <span class="n">filetype</span> <span class="o">=</span> <span class="n">do_magic</span><span class="p">(</span><span class="n">byts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filetype</span> <span class="o">==</span> <span class="s">&quot;marccd&quot;</span> <span class="ow">and</span> <span class="n">filename</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;mccd&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c"># Cannot see a way around this. Need to find something</span>
+            <span class="c"># to distinguish mccd from regular tif...</span>
+            <span class="n">filetype</span> <span class="o">=</span> <span class="s">&quot;tif&quot;</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: File probably does not exist&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">error</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">file_obj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">file_obj</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Unable to deconstruct filename&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">file_obj</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span>\
+                <span class="nb">len</span><span class="p">(</span><span class="n">file_obj</span><span class="o">.</span><span class="n">format</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> \
+                <span class="nb">type</span><span class="p">(</span><span class="n">file_obj</span><span class="o">.</span><span class="n">format</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">([</span><span class="s">&quot;list&quot;</span><span class="p">]):</span>
+                <span class="c"># one of OXD/ ADSC - should have got in previous</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;openimage failed on magic bytes &amp; name guess&quot;</span><span class="p">)</span>
+            <span class="n">filetype</span> <span class="o">=</span> <span class="n">file_obj</span><span class="o">.</span><span class="n">format</span>
+            <span class="c">#UNUSED filenumber = file_obj.num</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="kn">import</span> <span class="nn">traceback</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Fabio could not identify &quot;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">klass_name</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filetype</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;image&#39;</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;fabio.&quot;</span> <span class="o">+</span> <span class="n">klass_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">klass_name</span><span class="p">):</span>
+            <span class="n">klass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">klass_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Module </span><span class="si">%s</span><span class="s"> has no image class&quot;</span> <span class="o">%</span> <span class="n">module</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Filetype not known </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">klass_name</span><span class="p">))</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">klass</span><span class="p">()</span>
+    <span class="c"># skip the read for read header</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</pre></div>
 
           </div>
         </div>
@@ -239,13 +239,13 @@ def _openimage(filename):
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO v0.1.2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
