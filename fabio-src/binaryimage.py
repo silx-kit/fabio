@@ -1,17 +1,17 @@
 #!/usr/bin/env python
-#coding: utf8 
+# coding: utf8
 
 # Get ready for python3:
 from __future__ import with_statement, print_function
 __doc__ = """
-Authors: Gael Goret, Jerome Kieffer, ESRF, France 
+Authors: Gael Goret, Jerome Kieffer, ESRF, France
 Emails: gael.goret@esrf.fr, jerome.kieffer@esrf.fr
         Brian Richard Pauw <brian@stack.nl>
 
-Binary files images are simple none-compressed 2D images only defined by their : 
+Binary files images are simple none-compressed 2D images only defined by their :
 data-type, dimensions, byte order and offset
 
-This simple library has been made for manipulating exotic/unknown files format.  
+This simple library has been made for manipulating exotic/unknown files format.
 """
 
 __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]
@@ -27,11 +27,11 @@ logger = logging.getLogger("binaryimage")
 class binaryimage(fabioimage):
     """
     This simple library has been made for manipulating exotic/unknown files format.
-    
-    Binary files images are simple none-compressed 2D images only defined by their : 
+
+    Binary files images are simple none-compressed 2D images only defined by their :
     data-type, dimensions, byte order and offset
-    
-    if offset is set to a negative value, the image is read using the last data but n 
+
+    if offset is set to a negative value, the image is read using the last data but n
     data in the file, skipping any header.
     """
 
@@ -49,12 +49,15 @@ class binaryimage(fabioimage):
             return True
 
     def read(self, fname, dim1, dim2, offset=0, bytecode="int32", endian="<"):
-        """ 
+        """
         Read a binary image
         Parameters : fname, dim1, dim2, offset, bytecode, endian
-        @param fname: file name (str)
-        @param dim1,dim2 : image dimensions (int)
-        @param offset: starting position of the data-block. If negative, starts at the end.  
+
+        @param fname: file name
+        @type fname: string
+        @param dim1: image dimensions (Fast index)
+        @param dim2 : image dimensions (Slow index)
+        @param offset: starting position of the data-block. If negative, starts at the end.
         @param bytecode: can ba "int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64",...
         @param endian:  among short or long endian ("<" or ">")
         """
@@ -66,7 +69,7 @@ class binaryimage(fabioimage):
         dims = [dim2, dim1]
         bpp = len(numpy.array(0, bytecode).tostring())
         size = dims[0] * dims[1] * bpp
-        
+
         if offset >= 0:
             f.seek(offset)
         else:
