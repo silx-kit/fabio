@@ -43,19 +43,19 @@ Download either one and unpack it.
 e.g.
 ::
 
-    tar xvzf fabio-0.1.2.tar.gz
+    tar xvzf fabio-0.1.3.tar.gz
 
 or
 
 ::
 
-    unzip fabio-0.1.2.zip
+    unzip fabio-0.1.3.zip
 
-all files are unpacked into the directory fabio-0.1.2. To install these do
+all files are unpacked into the directory fabio-0.1.3. To install these do
 
 ::
 
-     cd fabio-0.1.2
+     cd fabio-0.1.3
 
 and install fabio with
 

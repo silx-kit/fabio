@@ -935,11 +935,11 @@ email:erik.knudsen&#64;risoe.dk</dd>
 </div>
 <div class="section" id="module-fabio.binaryimage">
 <span id="fabio-binaryimage-module"></span><h2><a class="reference internal" href="#module-fabio.binaryimage" title="fabio.binaryimage"><tt class="xref py py-mod docutils literal"><span class="pre">fabio.binaryimage</span></tt></a> Module<a class="headerlink" href="#module-fabio.binaryimage" title="Permalink to this headline">¶</a></h2>
-<p>Authors: Gael Goret, Jerome Kieffer, ESRF, France 
+<p>Authors: Gael Goret, Jerome Kieffer, ESRF, France
 Emails: <a class="reference external" href="mailto:gael&#46;goret&#37;&#52;&#48;esrf&#46;fr">gael<span>&#46;</span>goret<span>&#64;</span>esrf<span>&#46;</span>fr</a>, <a class="reference external" href="mailto:jerome&#46;kieffer&#37;&#52;&#48;esrf&#46;fr">jerome<span>&#46;</span>kieffer<span>&#64;</span>esrf<span>&#46;</span>fr</a></p>
 <blockquote>
 <div>Brian Richard Pauw &lt;<a class="reference external" href="mailto:brian&#37;&#52;&#48;stack&#46;nl">brian<span>&#64;</span>stack<span>&#46;</span>nl</a>&gt;</div></blockquote>
-<p>Binary files images are simple none-compressed 2D images only defined by their : 
+<p>Binary files images are simple none-compressed 2D images only defined by their :
 data-type, dimensions, byte order and offset</p>
 <p>This simple library has been made for manipulating exotic/unknown files format.</p>
 <dl class="class">
@@ -947,9 +947,9 @@ data-type, dimensions, byte order and offset</p>
 <em class="property">class </em><tt class="descclassname">fabio.binaryimage.</tt><tt class="descname">binaryimage</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/fabio/binaryimage.html#binaryimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.binaryimage.binaryimage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fabio.fabioimage.fabioimage" title="fabio.fabioimage.fabioimage"><tt class="xref py py-class docutils literal"><span class="pre">fabio.fabioimage.fabioimage</span></tt></a></p>
 <p>This simple library has been made for manipulating exotic/unknown files format.</p>
-<p>Binary files images are simple none-compressed 2D images only defined by their : 
+<p>Binary files images are simple none-compressed 2D images only defined by their :
 data-type, dimensions, byte order and offset</p>
-<p>if offset is set to a negative value, the image is read using the last data but n 
+<p>if offset is set to a negative value, the image is read using the last data but n
 data in the file, skipping any header.</p>
 <dl class="method">
 <dt id="fabio.binaryimage.binaryimage.estimate_offset_value">
@@ -960,13 +960,23 @@ data in the file, skipping any header.</p>
 <dl class="method">
 <dt id="fabio.binaryimage.binaryimage.read">
 <tt class="descname">read</tt><big>(</big><em>fname</em>, <em>dim1</em>, <em>dim2</em>, <em>offset=0</em>, <em>bytecode='int32'</em>, <em>endian='&lt;'</em><big>)</big><a class="reference internal" href="../_modules/fabio/binaryimage.html#binaryimage.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabio.binaryimage.binaryimage.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a binary image
-Parameters : fname, dim1, dim2, offset, bytecode, endian
-:param fname: file name (str)
-:param dim1,dim2 : image dimensions (int)
-:param offset: starting position of the data-block. If negative, starts at the end.  
-:param bytecode: can ba &#8220;int8&#8221;,&#8221;int16&#8221;,&#8221;int32&#8221;,&#8221;int64&#8221;,&#8221;uint8&#8221;,&#8221;uint16&#8221;,&#8221;uint32&#8221;,&#8221;uint64&#8221;,&#8221;float32&#8221;,&#8221;float64&#8221;,...
-:param endian:  among short or long endian (&#8220;&lt;&#8221; or &#8220;&gt;&#8221;)</p>
+<dd><p>Read a binary image</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fname</strong> (<em>string</em>) &#8211; file name</li>
+<li><strong>dim1</strong> &#8211; image dimensions (Fast index)</li>
+<li><strong>dim2</strong> &#8211; image dimensions (Slow index)</li>
+<li><strong>offset</strong> &#8211; starting position of the data-block. If negative, starts at the end.</li>
+<li><strong>bytecode</strong> &#8211; can be &#8220;int8&#8221;,&#8221;int16&#8221;,&#8221;int32&#8221;,&#8221;int64&#8221;,&#8221;uint8&#8221;,&#8221;uint16&#8221;,&#8221;uint32&#8221;,&#8221;uint64&#8221;,&#8221;float32&#8221;,&#8221;float64&#8221;,...</li>
+<li><strong>endian</strong> &#8211; among short or long endian (&#8220;&lt;&#8221; or &#8220;&gt;&#8221;)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">

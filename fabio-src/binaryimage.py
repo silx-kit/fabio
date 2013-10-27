@@ -51,15 +51,15 @@ class binaryimage(fabioimage):
     def read(self, fname, dim1, dim2, offset=0, bytecode="int32", endian="<"):
         """
         Read a binary image
-        Parameters : fname, dim1, dim2, offset, bytecode, endian
 
         @param fname: file name
         @type fname: string
         @param dim1: image dimensions (Fast index)
-        @param dim2 : image dimensions (Slow index)
+        @param dim2: image dimensions (Slow index)
         @param offset: starting position of the data-block. If negative, starts at the end.
-        @param bytecode: can ba "int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64",...
+        @param bytecode: can be "int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64",...
         @param endian:  among short or long endian ("<" or ">")
+
         """
         self.filename = fname
         self.dim1 = dim1
