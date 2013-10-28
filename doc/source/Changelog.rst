@@ -1,6 +1,10 @@
 Changelog
 =========
 
+From FabIO-0.1.3 to FabIO-0.1.X:
+................................
+- Drop support for python 2.5
+
 From FabIO-0.1.2 to FabIO-0.1.3:
 ................................
 - Fixed a memory-leak in mar345 module
