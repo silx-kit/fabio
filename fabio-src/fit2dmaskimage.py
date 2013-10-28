@@ -1,15 +1,25 @@
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
 #!/usr/bin/env python
+#coding: utf8
+
+# Get ready for python3:
+from __future__ import with_statement, print_function
+__doc__ = """
+Author: Andy Hammersley, ESRF
+Translation into python/fabio: Jon Wright, ESRF.
+Writer: Jérôme Kieffer
 """
 
-Author: Andy Hammersley, ESRF
-Translation into python/fabio: Jon Wright, ESRF
-"""
+__authors__ = ["Jon Wright", "Jérôme Kieffer"]
+__contact__ = "Jerome.Kieffer@esrf.fr"
+__license__ = "GPLv3+"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+__version__ = "28 Oct 2013"
 
 import numpy
-
+import sys
 from fabioimage import fabioimage
+if sys.version_info < (3.0):
+    bytes = str
 
 
 class fit2dmaskimage(fabioimage):
@@ -81,10 +91,32 @@ class fit2dmaskimage(fabioimage):
     def write(self, fname):
         """
         Try to write a file
-        check we can write zipped also
-        mimics that fabian was writing uint16 (we sometimes want floats)
         """
-        raise Exception("Not implemented yet")
+        header = numpy.zeros(1024, dtype=numpy.uint8)
+        header[0] = 77 #M
+        header[4] = 65 #A
+        header[8] = 83 #S
+        header[12] = 75 #K
+        header[24] = 1 #1
+        str1 = numpy.array([self.dim1], numpy.uint32).tostring()
+        str2 = numpy.array([self.dim2], numpy.uint32).tostring()
+        if not numpy.little_endian:
+            str1 = str1[-1::-1]
+            str2 = str2[-1::-1]
+        for i, c in zip(range(16, 20), str1):
+            header[i] = ord(c)
+        for i, c in zip(range(20, 24), str2):
+            header[i] = ord(c)
+        compact_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 4), dtype=numpy.uint8)
+        large_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 32), dtype=numpy.uint8)
+        large_array[:self.dim2, :self.dim1] = (self.data != 0)
+        order = 1
+        for i in range(8):
+            compact_array += large_array[:, i::8] * order
+            order *= 2
+        with self._open(fname, mode="wb") as outfile:
+            outfile.write(header)
+            outfile.write(compact_array.tostring())
 
     @staticmethod
     def checkData(data=None):
