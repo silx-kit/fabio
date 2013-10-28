@@ -2,7 +2,7 @@
 # coding: utf8
 
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement #, print_function
 __doc__ = """
 Authors: Gael Goret, Jerome Kieffer, ESRF, France
 Emails: gael.goret@esrf.fr, jerome.kieffer@esrf.fr

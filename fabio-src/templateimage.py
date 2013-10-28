@@ -34,7 +34,7 @@
 #    their data into another format
 
 # Get ready for python3:
-from __future__ import with_statement, print_function
+#from __future__ import with_statement, print_function
 __doc__ = """
 Template for FabIO
 
