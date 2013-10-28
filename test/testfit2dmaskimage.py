@@ -10,7 +10,7 @@
 
 Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 """
-import unittest, sys, os, logging
+import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testfit2dmaskdfimage")
 force_build = False
 
@@ -92,6 +92,49 @@ class testclickedmask(unittest.TestCase):
         sumd = abs(diff).sum(dtype=float)
         self.assertEqual(sumd , 0)
 
+class testmskwrite(unittest.TestCase):
+    """
+    Write dummy mask files with various compression schemes
+
+    """
+    def setUp(self):
+        shape = (199, 211)  # those are prime numbers
+        self.data = (numpy.random.random(shape) > 0.6)
+        self.header = {}
+        self.tmpdir = tempfile.mkdtemp(prefix="testmskwrite")
+    def testFlat(self):
+        self.filename = os.path.join(self.tmpdir, "random.msk")
+        e = fit2dmaskimage(data=self.data, header=self.header)
+        e.write(self.filename)
+        r = fabio.open(self.filename)
+        self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
+        self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
+        self.assert_(r.header == self.header, "header are OK")
+        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+    def testGzip(self):
+        self.filename = os.path.join(self.tmpdir, "random.msk.gz")
+        e = fit2dmaskimage(data=self.data, header=self.header)
+        e.write(self.filename)
+        r = fabio.open(self.filename)
+        self.assert_(r.header == self.header, "header are OK")
+        self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
+        self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
+        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+
+    def testBzip2(self):
+        self.filename = os.path.join(self.tmpdir, "random.msk.gz")
+        e = fit2dmaskimage(data=self.data, header=self.header)
+        e.write(self.filename)
+        r = fabio.open(self.filename)
+        self.assert_(r.header == self.header, "header are OK")
+        self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
+        self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
+        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+
+    def tearDown(self):
+        if os.path.isfile(self.filename):
+            os.unlink(self.filename)
+        os.rmdir(self.tmpdir)
 
 
 
@@ -101,6 +144,9 @@ def test_suite_all_fit2d():
     testSuite.addTest(testfacemask("test_getmatch"))
     testSuite.addTest(testclickedmask("test_read"))
     testSuite.addTest(testclickedmask("test_getmatch"))
+    testSuite.addTest(testmskwrite("testFlat"))
+    testSuite.addTest(testmskwrite("testGzip"))
+    testSuite.addTest(testmskwrite("testBzip2"))
     return testSuite
 
 if __name__ == '__main__':
