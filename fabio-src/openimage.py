@@ -33,6 +33,7 @@ import kcdimage
 import cbfimage
 import xsdimage
 import binaryimage
+import pixiimage
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -61,7 +62,8 @@ MAGIC_NUMBERS = [
     ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
     ('\x00\x00\x00\x03'   , 'dm3'),
     ("No"                 , "kcd"),
-    ("<"                  , "xsd")
+    ("<"                  , "xsd"),
+    ("\n\xb8\x03\x00"     , 'pixi')
     ]
 
 def do_magic(byts):
