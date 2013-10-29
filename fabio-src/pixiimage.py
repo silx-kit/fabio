@@ -1,4 +1,21 @@
+#!/usr/bin/env python
+#coding: utf8
 
+# Get ready for python3:
+from __future__ import with_statement, print_function
+__doc__ = """
+Author: Jon Wright, ESRF.
+"""
+
+__authors__ = ["Jon Wright", "Jérôme Kieffer"]
+__contact__ = "wright@esrf.fr"
+__license__ = "GPLv3+"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+__version__ = "29 Oct 2013"
+
+import numpy
+import sys
+from fabioimage import fabioimage
 
 import numpy, os
 from fabio.fabioimage import fabioimage
@@ -21,7 +38,7 @@ class pixiimage(fabioimage):
             self.header['height']=height
             self.header['offset']=offset
         else:
-            print "Pixiimage, bad framesize",framesize
+            print("Pixiimage, bad framesize: %s"%framesize)
             raise
     
     def read( self, fname, frame=None):
@@ -106,7 +123,7 @@ def demo(fname):
     i.read(fname)
     import pylab
     pylab.imshow( numpy.log(i.data ))
-    print  i.filename,i.data.max(),i.data.min(),i.data.mean()
+    print("%s\t%s\t%s\ts" % (i.filename, i.data.max(), i.data.min(), i.data.mean()))
     pylab.title(i.filename)
     pylab.show()
     while 1:
