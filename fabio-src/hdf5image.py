@@ -157,7 +157,7 @@ class hdf5image(fabioimage):
         self.nframes = None
 
 
-    def read(self, fname):
+    def read(self, fname, frame=None):
         """
         try to read image
         @param fname: name of the file as hdf5://filename:path[slice]
@@ -165,6 +165,8 @@ class hdf5image(fabioimage):
 
         self.resetvals()
         self.hdf5_location = HDF5location(url=fname)
+        if frame:
+            self.hdf5_location.set_index(frame)
         self.filename = self.hdf5_location.filename
         if os.path.isfile(self.filename):
             self.hdf5 = h5py.File(self.filename, "r")

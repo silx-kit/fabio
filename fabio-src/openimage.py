@@ -68,6 +68,8 @@ MAGIC_NUMBERS = [
     ("\x89\x48\x44\x46"   , 'hdf5')
     ]
 
+URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True} #Shall we split after the last ":"
+
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
     for magic, format_type in MAGIC_NUMBERS:
@@ -119,6 +121,19 @@ def _openimage(filename):
     determine which format for a filename
     and return appropriate class which can be used for opening the image
     """
+    lower_filename = filename.lower()
+    for prefix in URL_PREFIX:
+        if lower_filename.startswith(prefix):
+            filename = filename[len(prefix):]
+            if filename.startswith("//"):
+                filename = filename[2:]
+            if URL_PREFIX[prefix]: #process :path[slice,:,:]
+                if "[" in filename:
+                    filename = filename[:filename.index("[")]
+                if ":" in filename:
+                    col_split = filename.split(":")
+                    filename = ":".join(col_split[:-1])
+
     try:
         imo = fabioimage()
         byts = imo._open(filename).read(18)
