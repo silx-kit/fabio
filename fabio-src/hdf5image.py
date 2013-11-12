@@ -21,7 +21,7 @@ __license__ = "GPLv3+"
 __copyright__ = "Jérôme Kieffer"
 __version__ = "12 Nov 2013"
 
-import numpy, logging, os, posixpath, sys
+import numpy, logging, os, posixpath, sys, copy
 from fabioimage import fabioimage
 logger = logging.getLogger("hdf5image")
 if sys.version_info < (3.0):
@@ -40,19 +40,20 @@ class HDF5location(object):
     hdf5://filename:path[slice]
  
     """
-    def init(self, filename=None, h5path=None, slices=None, url=None):
+    def __init__(self, filename=None, h5path=None, slices=None, url=None):
         self.filename = filename
-        self.dataset = posixpath.abspath(h5path)
-        self.group=None
-        if self.dataset:
+        if h5path:
+            self.dataset = posixpath.abspath(h5path)
             self.group = posixpath.dirname(self.dataset)
-        
-        self.slice = slices[:] # I want a copy
-        
+        else:
+            self.dataset = None
+            self.group = None
+
+        self.slice = copy.deepcopy(slices)
         self.last_index = None # where should I increment when next.
         if self.slice:
-            for i,j  in enumerate(self.slice):
-                if "__len__" in dir(j): 
+            for i, j  in enumerate(self.slice):
+                if "__len__" in dir(j):
                     if ":" in j:
                         self.slice[i] = slice(None, None, 1)
                     else:
@@ -61,10 +62,10 @@ class HDF5location(object):
                 else:
                     self.slice[i] = int(j)
                     self.last_index = i
-                     
+
         if url is not None:
             self.parse(url)
-        
+
     def __repr__(self):
         return "HDF5location: %s" % self.to_url()
 
@@ -95,6 +96,7 @@ class HDF5location(object):
         col_split = url.split(":")
 #        col_split
         self.dataset = posixpath.abspath(col_split[-1])
+        col_split = col_split[:-1]
         self.group = posixpath.dirname(self.dataset)
         if col_split[0].lower() in ("hdf5", "h5"):
             col_split = col_split[1:]
@@ -123,6 +125,14 @@ class HDF5location(object):
             url = url[:-1] + "]"
         return url
 
+    def set_index(self, idx):
+        """
+        Set the current frame to idx
+        """
+        if self.slice:
+            self.slice[self.last_index] = idx
+        else:
+            raise RuntimeError("Changing slices is not allowed without slicing.")
 
 class hdf5image(fabioimage):
     """
@@ -132,6 +142,9 @@ class hdf5image(fabioimage):
         """
         Generic constructor
         """
+        if not h5py:
+            raise RuntimeError("fabio.hdf5image cannot be used without h5py. Please install h5py and restart")
+
         fabioimage.__init__(self, *arg, **kwargs)
         self.data = None
         self.header = {}
@@ -139,89 +152,38 @@ class hdf5image(fabioimage):
         self.m = self.maxval = self.stddev = self.minval = None
         self.header_keys = self.header.keys()
         self.bytecode = None
+        self.hdf5 = None
+        self.hdf5_location = None
+        self.nframes = None
 
-    def _readheader(self, infile):
-        """
-        Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bipped file)
-        """
-        # list of header key to keep the order (when writing)
-        self.header = {}
-        self.header_keys = []
-        # header is composed of 56-int32 plus 10x80char lines
-        int_block = numpy.fromstring(infile.read(56 * 4), dtype=numpy.int32)
-        for key, value in zip(self.KEYS, int_block):
-            self.header_keys.append(key)
-            self.header[key] = value
-        assert self.header["MAP"] == 542130509  # "MAP " in int32 !
-
-        for i in range(10):
-            label = "LABEL_%02i" % i
-            self.header_keys.append(label)
-            self.header[label] = infile.read(80).strip()
-        self.dim1 = self.header["NX"]
-        self.dim2 = self.header["NY"]
-        self.nframes = self.header["NZ"]
-        mode = self.header["MODE"]
-        if mode == 0:
-            self.bytecode = numpy.int8
-        elif mode == 1:
-            self.bytecode = numpy.int16
-        elif mode == 2:
-            self.bytecode = numpy.float32
-        elif mode == 3:
-            self.bytecode = numpy.complex64
-        elif mode == 4:
-            self.bytecode = numpy.complex64
-        elif mode == 6:
-            self.bytecode = numpy.uint16
-        self.imagesize = self.dim1 * self.dim2 * numpy.dtype(self.bytecode).itemsize
-
-    def read(self, fname, frame=None):
+    def read(self, fname):
         """
         try to read image
-        @param fname: name of the file
-        @param frame:
+        @param fname: name of the file as hdf5://filename:path[slice]
         """
 
         self.resetvals()
-        self.sequencefilename = fname
-        self.currentframe = frame or 0
-
-        with self._open(fname) as infile:
-            self._readheader(infile)
-            self._readframe(infile, self.currentframe)
+        self.hdf5_location = HDF5location(url=fname)
+        self.filename = self.hdf5_location.filename
+        if os.path.isfile(self.filename):
+            self.hdf5 = h5py.File(self.filename, "r")
+        else:
+            error = "No such file or directory: %s" % self.filename
+            logger.error(error)
+            raise RuntimeError(error)
+        self.ds = self.hdf5[self.hdf5_location.dataset]
+        if "Group" in self.ds.__class__.__name__:
+            self.ds = self.ds["data"]
+        if self.hdf5_location.slice:
+            self.data = self.ds[tuple(self.hdf5_location.slice)]
+            self.nframes = self.ds.shape[self.hdf5_location.last_index]
+        else:
+            self.data = self.ds[:]
+            self.nframes = 1
+        self.dim2, self.dim1 = self.data.shape
+        self.bytecode = str(self.data.dtype)
         return self
-
-    def _calc_offset(self, frame):
-        """
-        Calculate the frame position in the file
-
-        @param frame: frame number
-        """
-        assert frame < self.nframes
-        return 1024 + frame * self.imagesize
-
-    def _makeframename(self):
-        self.filename = "%s$%04d" % (self.sequencefilename,
-                                     self.currentframe)
-
-    def _readframe(self, infile, img_num):
-        """
-        Read a frame an populate data
-        @param infile: opened file
-        @param img_num: frame number (int)
-        """
-        if (img_num > self.nframes or img_num < 0):
-            raise RuntimeError("Requested frame number is out of range")
-        imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
-        infile.seek(self.calc_offset(img_num), 0)
-        self.data = numpy.fromstring(infile.read(self.imagesize),
-                                      self.bytecode)
-        self.data.shape = self.dim2, self.dim1
-        self.currentframe = int(img_num)
-        self._makeframename()
 
     def write(self, fname, force_type=numpy.uint16):
         raise NotImplementedError("Write is not implemented")
@@ -236,10 +198,15 @@ class hdf5image(fabioimage):
         # Do a deep copy of the header to make a new one
         frame = hdf5image(header=self.header.copy())
         frame.header_keys = self.header_keys[:]
-        for key in ("dim1", "dim2", "nframes", "bytecode", "imagesize", "sequencefilename"):
+        for key in ("dim1", "dim2", "nframes", "bytecode", "hdf5", "ds"):
             frame.__setattr__(key, self.__getattribute__(key))
-        with frame._open(self.sequencefilename, "rb") as infile:
-            frame._readframe(infile, num)
+        frame.hdf5_location = copy.deepcopy(self.hdf5_location)
+        frame.hdf5_location.set_index(num)
+        if self.hdf5_location.slice:
+            self.data = self.ds[tuple(self.hdf5_location.slice)]
+            self.nframes = self.ds.shape[self.hdf5_location.last_index]
+        else:
+            self.data = self.ds[:]
         return frame
 
     def next(self):

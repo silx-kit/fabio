@@ -34,6 +34,7 @@ import cbfimage
 import xsdimage
 import binaryimage
 import pixiimage
+import hdf5image
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -63,7 +64,8 @@ MAGIC_NUMBERS = [
     ('\x00\x00\x00\x03'   , 'dm3'),
     ("No"                 , "kcd"),
     ("<"                  , "xsd"),
-    ("\n\xb8\x03\x00"     , 'pixi')
+    ("\n\xb8\x03\x00"     , 'pixi'),
+    ("\x89\x48\x44\x46"   , 'hdf5')
     ]
 
 def do_magic(byts):
