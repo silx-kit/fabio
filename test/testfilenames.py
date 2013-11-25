@@ -55,10 +55,10 @@ CASES = [
     (670005, 'edf' , 'S82P670005.edf'),
     (670005, 'edf' , 'S82P670005.edf.gz'),
     # based on only the name it can be either img or oxd
-    (1     , 'adsc_or_OXD_or_HiPiC' , 'mb_LP_1_001.img'),
-    (2     , 'adsc_or_OXD_or_HiPiC' , 'mb_LP_1_002.img.gz'),
-    (3     , 'adsc_or_OXD_or_HiPiC' , 'mb_LP_1_003.img.bz2'),
-    (3     , 'adsc_or_OXD_or_HiPiC' , os.path.join("data", 'mb_LP_1_003.img.bz2')),
+    (1     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_001.img'),
+    (2     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_002.img.gz'),
+    (3     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_003.img.bz2'),
+    (3     , 'adsc_or_OXD_or_HiPiC_or_raxis' , os.path.join("data", 'mb_LP_1_003.img.bz2')),
     ]
 
 

@@ -54,7 +54,7 @@ from testOXDimage           import test_suite_all_OXD
 from testkcdimage           import test_suite_all_kcd
 from testtifimage           import test_suite_all_tiffimage
 from testXSDimage           import test_suite_all_XSD
-
+from testraxisimage         import test_suite_all_raxis
 def test_suite_all():
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_suite_all_fabio())
@@ -77,6 +77,7 @@ def test_suite_all():
     testSuite.addTest(test_suite_all_kcd())
     testSuite.addTest(test_suite_all_tiffimage())
     testSuite.addTest(test_suite_all_XSD())
+    testSuite.addTest(test_suite_all_raxis())
     return testSuite
 
 if __name__ == '__main__':
