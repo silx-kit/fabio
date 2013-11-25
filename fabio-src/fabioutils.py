@@ -487,10 +487,16 @@ else:
         if sys.version_info < (2, 7):
             def getSize(self):
                 if self.__size is None:
-                    logger.debug("Measuring size of %s" % self.name)
-                    with open(self.filename, "rb") as f:
-                        f.seek(-4)
-                        self.__size = numpy.fromstring(f.read(4), dtype=numpy.uint32)
+                    with self.lock:
+                        if self.__size is None:
+                            logger.debug("Measuring size of %s" % self.name)
+                            pos = self.tell()
+                            all_data = gzip.GzipFile.read(self)
+                            self.__size = self.tell()
+                            all_data = gzip.GzipFile.seek(self, pos)
+        #                    with open(self.filename, "rb") as f:
+        #                        f.seek(-4, os.SEEK_END)
+        #                        self.__size = numpy.fromstring(f.read(4), dtype=numpy.uint32)
                 return self.__size
             def setSize(self, value):
                 self.__size = value
@@ -512,14 +518,18 @@ else:
                 undefined behavior.
                 
                 This is a wrapper for seek to ensure compatibility with old python 2.5
+                
+                Warning: Seek from end is not supported (works only for single blocks !!!)
+                This implemtents a hack
                 """
                 if whence == os.SEEK_SET:
                     gzip.GzipFile.seek(self, offset)
                 elif whence == os.SEEK_CUR:
                     gzip.GzipFile.seek(self, offset + self.tell())
                 elif whence == os.SEEK_END:
-                    gzip.GzipFile.seek(self, -1)
-                    gzip.GzipFile.seek(self, offset + self.tell())
+                    size = self.getSize()
+                    gzip.GzipFile.seek(self, offset + size)
+
             def __enter__(self, *args, **kwargs):
                 return self
             def __exit__(self, *args, **kwargs):
@@ -572,3 +582,40 @@ else:
                 return bz2.BZ2File.close(self)
         def __enter__(self, *args, **kwargs):
             return self
+
+
+
+class DebugSemaphore(threading._Semaphore):
+    """
+    threading.Semaphore like class with helper for fighting dead-locks
+    """
+    write_lock = threading._Semaphore()
+    blocked = []
+    def __init__(self, *arg, **kwarg):
+        threading._Semaphore.__init__(self, *arg, **kwarg)
+
+
+    def acquire(self, *arg, **kwarg):
+        if self._Semaphore__value == 0:
+            with self.write_lock:
+                self.blocked.append(id(self))
+                sys.stderr.write(os.linesep.join(["Blocking sem %s" % id(self)] + \
+                                        traceback.format_stack()[:-1] + [""]))
+
+        return threading._Semaphore.acquire(self, *arg, **kwarg)
+
+    def release(self, *arg, **kwarg):
+        with self.write_lock:
+            uid = id(self)
+            if uid in self.blocked:
+                self.blocked.remove(uid)
+                sys.stderr.write("Released sem %s %s" % (uid, os.linesep))
+        threading._Semaphore.release(self, *arg, **kwarg)
+
+    def __enter__(self):
+        self.acquire()
+        return self
+
+    def __exit__(self, *arg, **kwarg):
+        self.release()
+

@@ -1,20 +1,9 @@
 #!/usr/bin/env python
 #coding: utf8
 
-# We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:
-#
-# 8) Upload a testimage to the file release system and create a unittest testcase
-#    which opens an example of your new format, confirming the image has actually
-#    been read in successfully (eg check the mean, max, min and esd are all correct,
-#    perhaps orientation too)
-#
-# 9) Run pylint on your code and then please go clean it up. Have a go at mine while you are at it.
-#
-#10) Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert
-#    their data into another format
 
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, division
 __doc__ = """
 
 Authors: Brian R. Pauw
@@ -32,7 +21,7 @@ __license__ = "GPLv3+"
 __copyright__ = ""
 __version__ = "23 Nov 2013"
 
-import numpy, logging, struct
+import numpy, logging, struct, os
 from fabioimage import fabioimage
 logger = logging.getLogger("templateimage")
 
@@ -82,7 +71,7 @@ class raxisimage(fabioimage):
         
         TODO: It would be useful to have an automatic endianness test in here. 
         
-        @param infile: Opened python file (can be stringIO or bipped file)  
+        @param infile: Opened python file (can be stringIO or bzipped file)  
         """
         endianness=self.endianness
         #list of header key to keep the order (when writing)
@@ -160,36 +149,41 @@ class raxisimage(fabioimage):
         self.dim1 = self.header['X Pixels'] 
         self.dim2 = self.header['Y Pixels']
         self.bytecode = 'uint16'
-        f = open(self.filename, "rb")
         dims = [self.dim2, self.dim1]
-        bpp = len(numpy.array(0, self.bytecode).tostring())
+        bpp = numpy.dtype(self.bytecode).itemsize
         size = dims[0] * dims[1] * bpp
 
         if offset >= 0:
-            f.seek(offset)
+            infile.seek(offset)
         else:
             try:
-                f.seek(-size + offset + 1, 2) #seek from EOF backwards
-            except IOError:
-                logging.warn('expected datablock too large, please check bytecode settings: {}'.format(self.bytecode))
-            except:
-                logging.error('Uncommon error encountered when reading file')
-        rawData = f.read(size)
+                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
+            except IOError as error:
+                logging.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
+            except Exception as error:
+                logging.error('Uncommon error encountered when reading file: %s' % error)
+        rawData = infile.read(size)
         if  self.swap_needed():
             data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
         else:
             data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
 
-        #Now we do some fixing for Rigaku's refusal to adhere to standards:
-        sf=self.header['Photomultiplier Ratio']
-        #find indices for which we need to do the correction (for which
-        #the 16th bit is set):
-        di=(data>=2**15)
-        #reduce by the last bit
-        data[di]-=2**16
-        #multiply by the ratio  defined in the header
-        data[di]*=sf
+        di = (data >= 2 ** 15)
+        if di.sum() >= 1:
+            logger.debug("Correct for PM", di.sum())
+            #Now we do some fixing for Rigaku's refusal to adhere to standards:
+            sf = self.header['Photomultiplier Ratio']
+            #find indices for which we need to do the correction (for which
+            #the 16th bit is set):
+#            self.bytecode = "int32"
+#            data = data.astype(self.bytecode)
+            #reduce by the last bit
+            data[di] -= 2 ** 16
+            #multiply by the ratio  defined in the header
+            data[di] *= sf
+
         self.data = data
+
         return self
 
     def rigakuKeys(self):

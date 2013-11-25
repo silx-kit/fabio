@@ -32,6 +32,7 @@ from fabio.raxisimage import raxisimage
 TESTIMAGES = """mgzn-20hpt.img     2300 1280 16 15040  287.82 570.72
                 mgzn-20hpt.img.bz2 2300 1280 16 15040  287.82 570.72
                 mgzn-20hpt.img.gz  2300 1280 16 15040  287.82 570.72"""
+#                Seek from end is not supported with gzip
 
 
 class testRaxisImage(unittest.TestCase):
