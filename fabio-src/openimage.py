@@ -35,6 +35,7 @@ import xsdimage
 import binaryimage
 import pixiimage
 import hdf5image
+import raxisimage
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -65,7 +66,8 @@ MAGIC_NUMBERS = [
     ("No"                 , "kcd"),
     ("<"                  , "xsd"),
     ("\n\xb8\x03\x00"     , 'pixi'),
-    ("\x89\x48\x44\x46"   , 'hdf5')
+    ("\x89\x48\x44\x46"   , 'hdf5'),
+    ("R-AXIS"             , 'raxis')
     ]
 
 URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True} #Shall we split after the last ":"
