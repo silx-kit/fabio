@@ -9,8 +9,8 @@ __doc__ = """
 Authors: Brian R. Pauw
 email:  brian@stack.nl
 
-Written using information gleaned from the ReadRAXISImage program 
-written by T. L. Hendrixson, made available by Rigaku Americas. 
+Written using information gleaned from the ReadRAXISImage program
+written by T. L. Hendrixson, made available by Rigaku Americas.
 Available at: http://www.rigaku.com/downloads/software/readimage.html
 
 
@@ -28,11 +28,11 @@ logger = logging.getLogger("templateimage")
 
 class raxisimage(fabioimage):
     """
-    FabIO image class to read Rigaku RAXIS image files. 
+    FabIO image class to read Rigaku RAXIS image files.
     Write functions are not planned as there are plenty of more suitable
     file formats available for storing detector data.
-    In particular, the MSB used in Rigaku files is used in an uncommon way: 
-    it is used as a *multiply-by* flag rather than a normal image value bit. 
+    In particular, the MSB used in Rigaku files is used in an uncommon way:
+    it is used as a *multiply-by* flag rather than a normal image value bit.
     While it is said to multiply by the value specified in the header, there
     is at least one case where this is found not to hold, so YMMV and be careful.
 
@@ -62,16 +62,16 @@ class raxisimage(fabioimage):
 
     def _readheader(self, infile):
         """
-        Read and decode the header of a Rigaku RAXIS image. 
+        Read and decode the header of a Rigaku RAXIS image.
         The Rigaku format uses a block of (at least) 1400 bytes for storing
         information. The information has a fixed structure, but endianness
-        can be flipped for non-char values. Header items which are not 
+        can be flipped for non-char values. Header items which are not
         capitalised form part of a non-standardized data block and may not
-        be accurate. 
-        
-        TODO: It would be useful to have an automatic endianness test in here. 
-        
-        @param infile: Opened python file (can be stringIO or bzipped file)  
+        be accurate.
+
+        TODO: It would be useful to have an automatic endianness test in here.
+
+        @param infile: Opened python file (can be stringIO or bzipped file)
         """
         endianness=self.endianness
         #list of header key to keep the order (when writing)
@@ -94,7 +94,7 @@ class raxisimage(fabioimage):
         curByte=0
         for key in orderList:
             if isinstance(RKey[key],int):
-                #read a number of bytes, convert to char. 
+                # read a number of bytes, convert to char.
                 #if -1, read remainder of header
                 if RKey[key]==-1:
                     rByte=len(rawHead)-curByte
@@ -128,9 +128,9 @@ class raxisimage(fabioimage):
 
     def read(self, fname, frame=None):
         """
-        try to read image 
+        try to read image
         @param fname: name of the file
-        @param frame: 
+        @param frame:
         """
 
         endianness=self.endianness
@@ -146,7 +146,7 @@ class raxisimage(fabioimage):
         #lifted from binaryimage
         #read the image data
 
-        self.dim1 = self.header['X Pixels'] 
+        self.dim1 = self.header['X Pixels']
         self.dim2 = self.header['Y Pixels']
         self.bytecode = 'uint16'
         dims = [self.dim2, self.dim1]
@@ -168,9 +168,11 @@ class raxisimage(fabioimage):
         else:
             data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
 
-        di = (data >= 2 ** 15)
+        di = (data >> 15)  # greater than 2^15
         if di.sum() >= 1:
             logger.debug("Correct for PM", di.sum())
+            self.bytecode = numpy.uint32
+            data = data.astype(self.bytecode)
             #Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
             #find indices for which we need to do the correction (for which
@@ -224,7 +226,7 @@ class raxisimage(fabioimage):
                 'Phi Datum':'float', #degrees
                 'Phi Oscillation Start':'float', #deg
                 'Phi Oscillation Stop':'float',  #deg
-                'Frame Number':'long',  
+                'Frame Number':'long',
                 'Exposure Time':'float', #minutes
                 'Direct beam X position':'float', #special, x,y
                 'Direct beam Y position':'float', #special, x,y
