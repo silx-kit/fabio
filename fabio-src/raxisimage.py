@@ -148,7 +148,7 @@ class raxisimage(fabioimage):
 
         self.dim1 = self.header['X Pixels']
         self.dim2 = self.header['Y Pixels']
-        self.bytecode = 'uint16'
+        self.bytecode = numpy.uint16
         dims = [self.dim2, self.dim1]
         bpp = numpy.dtype(self.bytecode).itemsize
         size = dims[0] * dims[1] * bpp
@@ -168,19 +168,17 @@ class raxisimage(fabioimage):
         else:
             data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
 
-        di = (data >> 15)  # greater than 2^15
+        di = (data >> 15) != 0  # greater than 2^15
         if di.sum() >= 1:
+            # find indices for which we need to do the correction (for which
+            # the 16th bit is set):
+
             logger.debug("Correct for PM", di.sum())
+            data = data << 1 >> 1  # reset bit #15 to zero
             self.bytecode = numpy.uint32
             data = data.astype(self.bytecode)
             #Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
-            #find indices for which we need to do the correction (for which
-            #the 16th bit is set):
-#            self.bytecode = "int32"
-#            data = data.astype(self.bytecode)
-            #reduce by the last bit
-            data[di] -= 2 ** 16
             #multiply by the ratio  defined in the header
             data[di] *= sf
 
