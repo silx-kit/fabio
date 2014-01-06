@@ -6,27 +6,48 @@ Setup script for python distutils package and fabio
 """
 import os, sys
 import os.path as op
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from distutils.core import setup
 from distutils.core import Extension, Command
 from numpy.distutils.misc_util import get_numpy_include_dirs
 
 
+################################################################################
+# Check for Cython and use it if it is available
+################################################################################
+USE_CYTHON = True
+try:
+    import Cython.Compiler.Version
+    from Cython.Distutils import build_ext
+except ImportError:
+    USE_CYTHON = False
+else:
+    if Cython.Compiler.Version.version < "0.17":
+        USE_CYTHON = False
+    else:
+        USE_CYTHON = True
 
-cf_backend = Extension('cf_io', include_dirs=get_numpy_include_dirs(),
-      sources=['src/cf_iomodule.c', 'src/columnfile.c'])
+if USE_CYTHON:
+    ext = ".pyx"
+else:
+    from distutils.command.build_ext import build_ext
+    ext = ".c"
 
+cf_backend = Extension('cf_io',
+                       include_dirs=get_numpy_include_dirs(),
+                       sources=['src/cf_iomodule.c', 'src/columnfile.c'])
 byteOffset_backend = Extension("byte_offset",
                        include_dirs=get_numpy_include_dirs(),
-                           sources=['src/byte_offset.c'])
+                       sources=['src/byte_offset' + ext])
 
 mar345_backend = Extension('mar345_IO',
                            include_dirs=get_numpy_include_dirs(),
-                           sources=['src/mar345_IO.c',
+                           sources=['src/mar345_IO' + ext,
                                     'src/ccp4_pack.c',
                                       ])
+
+extensions = [cf_backend, byteOffset_backend, mar345_backend]
+for e in extensions:
+    print e.sources
 
 version = [eval(l.split("=")[1])
            for l in open(op.join(op.dirname(op.abspath(__file__)), "fabio-src", "__init__.py"))
@@ -78,7 +99,48 @@ class PyTest(Command):
             os.chdir("..")
 cmdclass['test'] = PyTest
 
-# See the distutils docs...
+# We subclass the build_ext class in order to handle compiler flags
+# for openmp and opencl etc in a cross platform way
+translator = {
+        # Compiler
+            # name, compileflag, linkflag
+        'msvc' : {
+            'openmp' : ('/openmp', ' '),
+            'debug'  : ('/Zi', ' '),
+            'OpenCL' : 'OpenCL',
+            },
+        'mingw32':{
+            'openmp' : ('-fopenmp', '-fopenmp'),
+            'debug'  : ('-g', '-g'),
+            'stdc++' : 'stdc++',
+            'OpenCL' : 'OpenCL'
+            },
+        'default':{
+            'openmp' : ('-fopenmp', '-fopenmp'),
+            'debug'  : ('-g', '-g'),
+            'stdc++' : 'stdc++',
+            'OpenCL' : 'OpenCL'
+            }
+        }
+
+
+class build_ext_FabIO(build_ext):
+    def build_extensions(self):
+        if self.compiler.compiler_type in translator:
+            trans = translator[self.compiler.compiler_type]
+        else:
+            trans = translator['default']
+
+        for e in self.extensions:
+            e.extra_compile_args = [ trans[a][0] if a in trans else a
+                                    for a in e.extra_compile_args]
+            e.extra_link_args = [ trans[a][1] if a in trans else a
+                                 for a in e.extra_link_args]
+            e.libraries = filter(None, [ trans[a] if a in trans else None
+                                        for a in e.libraries])
+        build_ext.build_extensions(self)
+cmdclass['build_ext'] = build_ext_FabIO
+
 setup(name='fabio',
       version=version,
       author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer and Gael Goret",
@@ -87,7 +149,7 @@ setup(name='fabio',
       url="http://fable.wiki.sourceforge.net/fabio",
       download_url="http://sourceforge.net/projects/fable/files/fabio/0.1.2",
       ext_package="fabio",
-      ext_modules=[mar345_backend, cf_backend, byteOffset_backend],
+      ext_modules=extensions,
       packages=["fabio"],
       package_dir={"fabio": "fabio-src" },
       test_suite="test",
