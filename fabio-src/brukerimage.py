@@ -235,7 +235,7 @@ class brukerimage(fabioimage):
                 slope, offset = self.header["LINEAR"].split(None, 1)
                 slope = float(slope)
                 offset = float(offset)
-            except Except:
+            except Exception:
                 logger.warning("Error in converting to float data with linear parameter: %s" % self.header["LINEAR"])
                 self.data = data
             else:
@@ -265,7 +265,7 @@ class brukerimage(fabioimage):
                     slope, offset = self.header["LINEAR"].split(None, 1)
                     slope = float(slope)
                     offset = float(offset)
-                except Except:
+                except Exception:
                     logger.warning("Error in converting to float data with linear parameter: %s" % self.header["LINEAR"])
                     slope, offset = 1.0, 0.0
 

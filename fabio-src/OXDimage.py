@@ -245,8 +245,8 @@ class OXDimage(fabioimage):
                 self.header[key] = DEFAULT_HEADERS[key]
 
         if "NX" not in self.header.keys() or "NY" not in self.header.keys():
-			self.header['NX'] = self.dim1
-			self.header['NY'] = self.dim2
+            self.header['NX'] = self.dim1
+            self.header['NY'] = self.dim2
         ascii_headers = [self.header['Header Version'],
                        "COMPRESSION=%s (%5.1f)" % (self.header["Compression"], self.getCompressionRatio()),
                        "NX=%4i NY=%4i OI=%7i OL=%7i " % (self.header["NX"], self.header["NY"], self.header["OI"], self.header["OL"]),

@@ -99,8 +99,7 @@ class pnmimage(fabioimage):
         self.resetvals()
         return self
 
-    @staticmethod
-    def P1dec(buf, bytecode):
+    def P1dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
         for l in buf.readlines():
@@ -116,8 +115,7 @@ class pnmimage(fabioimage):
         logger.error(err)
         raise NotImplementedError(err)
 
-    @staticmethod
-    def P2dec(buf, bytecode):
+    def P2dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
         for l in buf.readlines():
@@ -127,8 +125,7 @@ class pnmimage(fabioimage):
                 raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
 
-    @staticmethod
-    def P5dec(buf, bytecode):
+    def P5dec(self, buf, bytecode):
         l = buf.read()
         try:
             data = numpy.reshape(numpy.fromstring(l, bytecode), [self.dim2, self.dim1]).byteswap()
