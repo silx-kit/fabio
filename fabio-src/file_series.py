@@ -14,6 +14,8 @@ Authors:
 * Jon Wright, ESRF
 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 import logging, sys
 logger = logging.getLogger("fileseries")
 import traceback as pytraceback

@@ -10,10 +10,13 @@ Authors: Henning O. Sorensen & Erik Knudsen
          email:henning.sorensen@risoe.dk
 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
-import numpy, logging
+import numpy
+import logging
 logger = logging.getLogger("pnmimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 
 SUBFORMATS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
 

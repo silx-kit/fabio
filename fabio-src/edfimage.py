@@ -18,13 +18,14 @@ Authors:
 
 
 """
-from __future__ import with_statement
+# get ready for python3
+from __future__ import with_statement, print_function
 import os, logging, types
 logger = logging.getLogger("edfimage")
 import numpy
-from fabioimage import fabioimage
-from fabioutils import isAscii, toAscii, nice_int
-from compression import decBzip2, decGzip, decZlib
+from .fabioimage import fabioimage
+from .fabioutils import isAscii, toAscii, nice_int
+from .compression import decBzip2, decGzip, decZlib
 
 
 BLOCKSIZE = 512

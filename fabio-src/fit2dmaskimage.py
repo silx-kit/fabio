@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 #coding: utf8
 
-# Get ready for python3:
-from __future__ import with_statement, print_function
-__doc__ = """
+"""
 Author: Andy Hammersley, ESRF
 Translation into python/fabio: Jon Wright, ESRF.
 Writer: Jérôme Kieffer
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
 __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
@@ -17,7 +17,7 @@ __version__ = "28 Oct 2013"
 
 import numpy
 import sys
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 if sys.version_info < (3.0):
     bytes = str
 

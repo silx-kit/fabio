@@ -4,10 +4,11 @@
 Read the fit2d ascii image output
         + Jon Wright, ESRF
 """
-
+# Get ready for python3:
+from __future__ import with_statement, print_function
 import numpy
 
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 
 
 
@@ -78,8 +79,8 @@ if __name__ == "__main__":
     start = time.time()
     img = fit2dspreadsheetimage()
     img.read(sys.argv[1])
-    print time.time() - start
-    print img.dim1, img.dim2, img.data.shape
+    print(time.time() - start)
+    print(img.dim1, img.dim2, img.data.shape)
     from matplotlib.pylab import imshow, show
     imshow(img.data.T)
     show()

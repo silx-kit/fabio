@@ -10,32 +10,35 @@ Authors: Henning O. Sorensen & Erik Knudsen
 mods for fabio by JPW
 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
+
 import sys, logging
 logger = logging.getLogger("openimage")
 from fabioutils  import FilenameObject
-from fabioimage import fabioimage
-import edfimage
-import adscimage
-import tifimage
-import marccdimage
-import mar345image
-import fit2dmaskimage
-import brukerimage
-import bruker100image
-import pnmimage
-import GEimage
-import OXDimage
-import dm3image
-import HiPiCimage
-import pilatusimage
-import fit2dspreadsheetimage
-import kcdimage
-import cbfimage
-import xsdimage
-import binaryimage
-import pixiimage
-import hdf5image
-import raxisimage
+from .fabioimage import fabioimage
+from . import edfimage
+from . import adscimage
+from . import tifimage
+from . import marccdimage
+from . import mar345image
+from . import fit2dmaskimage
+from . import brukerimage
+from . import bruker100image
+from . import pnmimage
+from . import GEimage
+from . import OXDimage
+from . import dm3image
+from . import HiPiCimage
+from . import pilatusimage
+from . import fit2dspreadsheetimage
+from . import kcdimage
+from . import cbfimage
+from . import xsdimage
+from . import binaryimage
+from . import pixiimage
+from . import hdf5image
+from . import raxisimage
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'

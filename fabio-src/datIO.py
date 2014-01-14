@@ -10,6 +10,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
          
          and Jon Wright, ESRF
 """
+# get ready for python3
+from __future__ import with_statement, print_function
 
 class fabiodata(object):
     """

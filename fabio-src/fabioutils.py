@@ -4,7 +4,8 @@
 """
 General purpose utilities functions for fabio
 """
-from __future__ import with_statement
+# get ready for python3
+from __future__ import with_statement, print_function
 import re, os, logging, threading, sys
 import StringIO as stringIO
 logger = logging.getLogger("fabioutils")

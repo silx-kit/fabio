@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #coding: utf8 
-from __future__ import with_statement
-__doc__ = """
+"""
 
 Authors:
 ........
@@ -17,12 +16,14 @@ Authors:
 
          
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 import numpy, struct, time, sys, traceback
 import logging
 logger = logging.getLogger("mar345image")
-from compression import compPCK, decPCK
+from .compression import compPCK, decPCK
 
 
 class mar345image(fabioimage):

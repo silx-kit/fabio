@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 #coding: utf8
 """
 Converter module. 
@@ -6,6 +6,9 @@ This is for the moment empty (populated only with almost pass through anonymous 
 but aims to be populated with more sofisticated translators ...  
 
 """
+# get ready for python3
+from __future__ import with_statement, print_function
+
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"

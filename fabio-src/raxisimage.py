@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 #coding: utf8
-
-
-# Get ready for python3:
-from __future__ import with_statement, print_function, division
-__doc__ = """
+"""
 
 Authors: Brian R. Pauw
 email:  brian@stack.nl
@@ -15,14 +11,19 @@ Available at: http://www.rigaku.com/downloads/software/readimage.html
 
 
 """
+
+
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
+
 __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "GPLv3+"
 __copyright__ = ""
 __version__ = "23 Nov 2013"
-
-import numpy, logging, struct, os
-from fabioimage import fabioimage
+import logging, struct, os
+import numpy
+from .fabioimage import fabioimage
 logger = logging.getLogger("templateimage")
 
 

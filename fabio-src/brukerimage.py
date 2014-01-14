@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 #coding: utf8
 
-from __future__ import with_statement
 
-__doc__ = """
+"""
 
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -18,6 +17,9 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 Writer by Jérôme Kieffer, ESRF, Grenoble, France
 
 """
+# get ready for python3
+from __future__ import with_statement, print_function
+
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
 __date__ = "20130502"
 __status__ = "development"
@@ -28,8 +30,8 @@ import numpy, logging, sys
 from math import ceil
 import os, getpass, time
 logger = logging.getLogger("brukerimage")
-from fabioimage import fabioimage
-from fabioutils import pad
+from .fabioimage import fabioimage
+from .fabioutils import pad
 from types import StringTypes
 if sys.version_info[0] < 3:
     bytes = str

@@ -18,12 +18,13 @@ marccdimage can read MarCCD and MarMosaic images including header info.
 JPW : Use a parser in case of typos (sorry?)
 
 """
-
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
 # Base this on the tifimage (as marccd seems to be tiff with a 
 # special header 
 
-from tifimage import tifimage
+from .tifimage import tifimage
 import logging
 logger = logging.getLogger("marccdimage")
 

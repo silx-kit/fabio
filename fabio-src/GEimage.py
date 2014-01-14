@@ -11,12 +11,13 @@
 
 # modifications by Jon Wright for style, pychecker and fabio
 # 
-
+# Get ready for python3:
+from __future__ import with_statement, print_function
 import numpy
 import struct, logging
 logger = logging.getLogger("GEimage")
-from fabioimage import fabioimage
-from fabioutils import next_filename, previous_filename
+from .fabioimage import fabioimage
+from .fabioutils import next_filename, previous_filename
 
 GE_HEADER_INFO = [
     # Name, length in bytes, format for struct (None means string)
@@ -301,30 +302,30 @@ def demo():
     import sys, time
 
     if len(sys.argv) < 2:
-        print "USAGE: GE_script.py <GEaSi_raw_image_file>"
+        print("USAGE: GE_script.py <GEaSi_raw_image_file>")
         sys.exit()
 
     image_file = sys.argv[1]
 
-    print "init read_GEaSi_data class and load header.."
+    print("init read_GEaSi_data class and load header..")
     sequence1 = GEimage()
     sequence1.read(image_file)
 
-    print "TimeBetweenFramesInMicrosecs = ",
-    print sequence1.header['TimeBetweenFramesInMicrosecs']
-    print "AcquisitionTime = ",
-    print sequence1.header['AcquisitionTime']
+    print("TimeBetweenFramesInMicrosecs = ")
+    print(sequence1.header['TimeBetweenFramesInMicrosecs'])
+    print("AcquisitionTime = ")
+    print(sequence1.header['AcquisitionTime'])
 
 
-    print "Mean = ", sequence1.data.ravel().mean()
+    print("Mean = ", sequence1.data.ravel().mean())
 
     while 1:
         start = time.time()
         try:
             sequence1 = sequence1.next()
-            print sequence1.currentframe, sequence1.data.ravel().mean(), \
-                  time.time() - start
-        except Exception, ex:
+            print(sequence1.currentframe, sequence1.data.ravel().mean(), \
+                  time.time() - start)
+        except Exception as  ex:
             raise ex
 
 

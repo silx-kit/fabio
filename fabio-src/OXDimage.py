@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 #coding: utf8
-
-from __future__ import with_statement
-__doc__ = """
+"""
 Reads Oxford Diffraction Sapphire 3 images
 
 Authors:
@@ -19,11 +17,14 @@ Authors:
 
 """
 
+# Get ready for python3:
+from __future__ import with_statement, print_function
+
 import time, logging, struct
 logger = logging.getLogger("OXDimage")
 import numpy
-from fabioimage import fabioimage
-from compression import decTY1, compTY1
+from .fabioimage import fabioimage
+from .compression import decTY1, compTY1
 
 try:
     from numpy import rad2deg, deg2rad

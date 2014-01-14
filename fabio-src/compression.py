@@ -6,6 +6,9 @@ Authors: Jérôme Kieffer, ESRF
 
 FabIO library containing compression and decompression algorithm for various
 """
+# get ready for python3
+from __future__ import with_statement, print_function
+
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"

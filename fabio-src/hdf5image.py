@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # coding: utf8
 
-# Get ready for python3:
-from __future__ import with_statement, print_function, division
-__doc__ = """
+"""
 HDF5 image for FabIO
 
 Authors: Jerome Kieffer
@@ -15,6 +13,9 @@ input should being the form:
 hdf5://filename:path[slice]
 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
+
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "GPLv3+"
@@ -22,7 +23,7 @@ __copyright__ = "Jérôme Kieffer"
 __version__ = "12 Nov 2013"
 
 import numpy, logging, os, posixpath, sys, copy
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 logger = logging.getLogger("hdf5image")
 if sys.version_info < (3.0):
     bytes = str

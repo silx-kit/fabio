@@ -6,10 +6,12 @@ Authors: Jerome Kieffer, ESRF
 kcd images are 2D images written by the old KappaCCD diffractometer built by Nonius in the 1990's
 Based on the edfimage.py parser.
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
 import numpy, logging
 import os, string
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 logger = logging.getLogger("kcdimage")
 
 DATA_TYPES = {"u16"  :  numpy.uint16 }
@@ -113,9 +115,9 @@ class kcdimage(fabioimage):
                     block[i * expected_size / nbReadOut:(i + 1) * expected_size / nbReadOut], bytecode),
                     [self.dim2, self.dim1])
         except:
-            print len(block), bytecode, self.bpp, self.dim2, self.dim1
-            raise IOError, \
-              'Size spec in kcd-header does not match size of image data field'
+            print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            raise IOError(
+              'Size spec in kcd-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
         self.resetvals()
         # ensure the PIL image is reset

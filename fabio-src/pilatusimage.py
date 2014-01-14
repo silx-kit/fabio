@@ -15,12 +15,14 @@ Authors:
   Grenoble (France)
 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
 
 # Base this on the tifimage (as Pilatus is tiff with a
 # tiff header
 
-from fabio.tifimage import tifimage
+from .tifimage import tifimage
 
 
 class pilatusimage(tifimage):

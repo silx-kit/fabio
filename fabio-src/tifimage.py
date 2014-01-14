@@ -18,6 +18,8 @@ Authors:
    
 License: GPLv3+        
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
 __date__ = "11/07/2011"
@@ -32,8 +34,8 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 import numpy
-from fabioimage import fabioimage
-from TiffIO     import TiffIO
+from .fabioimage import fabioimage
+from .TiffIO     import TiffIO
 
 PIL_TO_NUMPY = { "I;16": numpy.uint16,
                    "F": numpy.float32,
@@ -274,7 +276,7 @@ class Image_File_Directory_entry(object):
         elif (TYPES[tag_type] == 'rational'):
             if self.val_offset != None:
                 (num, den) = struct.unpack_from("LL", full_string[self.val_offset:])
-                print self.val_offset
+                print(self.val_offset)
                 self.val = float(num) / den
         elif (TYPES[tag_type] == 'srational'):
             if self.val_offset != None:

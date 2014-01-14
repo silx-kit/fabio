@@ -15,6 +15,9 @@
 # details.
 #
 #############################################################################*/
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
+
 __author__ = "V.A. Sole - ESRF Data Analysis"
 __revision__ = 1501
 

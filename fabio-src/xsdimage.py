@@ -6,6 +6,9 @@ Authors: Jérôme Kieffer, ESRF
 
 XSDimge are XML files containing numpy arrays 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
+
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
@@ -13,7 +16,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging, numpy
 logger = logging.getLogger("xsdimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 import base64, hashlib
 try:
     from lxml import etree

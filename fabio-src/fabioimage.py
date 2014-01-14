@@ -12,7 +12,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
          and Jon Wright, Jerome Kieffer: ESRF
 
 """
-from __future__ import with_statement
+# get ready for python3
+from __future__ import with_statement, print_function
 import os, types, logging, sys, tempfile
 logger = logging.getLogger("fabioimage")
 import numpy
@@ -551,7 +552,7 @@ def test():
     ftest.close()
     clean()
 
-    print "Passed in", time.time() - start, "s"
+    print ("Passed in %s s" % (time.time() - start))
 
 if __name__ == '__main__':
     test()
