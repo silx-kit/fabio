@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf8
 
+from __future__ import print_function
+
 """
 Setup script for python distutils package and fabio
 """
@@ -46,8 +48,6 @@ mar345_backend = Extension('mar345_IO',
                                       ])
 
 extensions = [cf_backend, byteOffset_backend, mar345_backend]
-for e in extensions:
-    print e.sources
 
 version = [eval(l.split("=")[1])
            for l in open(op.join(op.dirname(op.abspath(__file__)), "fabio-src", "__init__.py"))
@@ -136,8 +136,8 @@ class build_ext_FabIO(build_ext):
                                     for a in e.extra_compile_args]
             e.extra_link_args = [ trans[a][1] if a in trans else a
                                  for a in e.extra_link_args]
-            e.libraries = filter(None, [ trans[a] if a in trans else None
-                                        for a in e.libraries])
+            e.libraries = list(filter(None, [ trans[a] if a in trans else None
+                                        for a in e.libraries]))
         build_ext.build_extensions(self)
 cmdclass['build_ext'] = build_ext_FabIO
 
