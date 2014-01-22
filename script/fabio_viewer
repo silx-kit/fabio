@@ -34,13 +34,6 @@ from matplotlib.figure import Figure
 
 output_format = ['*.bin','*.cbf','*.edf','*.h5','*.img','*.mar2300','*.mar3450','*.marccd','*.tiff']
 
-app = None
-try:
-    from rfoo.utils import rconsole
-    rconsole.spawn_server()
-except ImportError:
-    logging.info("No socket opened for debugging -> install rfoo")
-
 #--------------------------------------------------------------------------------------------------------
 # Application Form
 #--------------------------------------------------------------------------------------------------------
