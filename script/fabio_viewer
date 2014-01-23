@@ -5,16 +5,19 @@
 # Gael Goret for the European Synchrotron Radiation Facility
 # gael.goret@esrf.fr
 #############################################################
+
 """ 
-Image Converter is a portable diffraction images converter:
+Fabio_viewer is a portable diffraction images viewer/converter:
 * Written in Python, it combines the functionalities of the I/O library fabIO with a user friendly Qt4 GUI.
 * Image converter is also a light viewer based on the visualization tool provided by the module matplotlib.
 """
+from __future__ import with_statement, print_function
 __version__ = "1.0"
 __author__ = u"Gaël Goret"
 __copyright__ = "2012 ESRF"
 __licence__ = "GPL"
-import sys, os, random, h5py,time
+import sys, os, random, time
+import h5py
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *      
 
@@ -23,14 +26,19 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
-import fabio, numpy as np
-np.seterr(divide='ignore')
+import numpy
+import fabio
+numpy.seterr(divide='ignore')
 
 import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 from matplotlib.figure import Figure
 
+try:
+    from argparse import ArgumentParser
+except ImportError:
+    from fabio.argparse import ArgumentParser
 
 output_format = ['*.bin','*.cbf','*.edf','*.h5','*.img','*.mar2300','*.mar3450','*.marccd','*.tiff']
 
@@ -51,7 +59,7 @@ class AppForm(QMainWindow):
         self.create_status_bar()
         
         # Active Data
-        self.data = np.array([])
+        self.data = numpy.array([])
         self.header = []
         
         #Data Series
@@ -83,9 +91,9 @@ class AppForm(QMainWindow):
 
 #--------------------------------------------------------------------------------------------------------   
         
-    def open_data_series(self): 
-
-        series = QFileDialog.getOpenFileNames(self, 'Select and open series of files')
+    def open_data_series(self, series=None):
+        if series is None:
+            series = QFileDialog.getOpenFileNames(self, 'Select and open series of files')
         series = [str(f) for f in list(series)]
         total=len(series)
         if len(series)!= 0:
@@ -168,7 +176,7 @@ class AppForm(QMainWindow):
             self.imagelistWidget.clear()
             self.headerTextEdit.clear()
             hdf = h5py.File(fname,'r')
-            iids = np.int32(hdf['data'].keys())
+            iids = numpy.int32(hdf['data'].keys())
             iids.sort()
             total = len(iids)
             imgDict = {}
@@ -179,7 +187,7 @@ class AppForm(QMainWindow):
                 self.progressBar.setValue((float(iid+1)/(total))*100.)
                 self.log.appendPlainText('Extracting data from hdf5 archive, image number %d'%iid)
                 QCoreApplication.processEvents()
-                self.data_series += [np.array(hdf['data'][str(iid)])]
+                self.data_series += [numpy.array(hdf['data'][str(iid)])]
                 self.header_series +=[{'Info':'No header information available in hdf5 Archive'}]
                 imgDict[extract_fname+str(iid)]= safeiid
                 self.images_list.addItem(extract_fname+str(iid))
@@ -423,7 +431,7 @@ class AppForm(QMainWindow):
                     QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")
                     return
                 for i in range(len(self.data_series)):
-                    self.data_series[i] = np.flipud(self.data_series[i])[:]
+                    self.data_series[i] = numpy.flipud(self.data_series[i])[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
                     self.log.appendPlainText('Applying horizontal mirror to data series : image %d'%i)
                     QCoreApplication.processEvents()
@@ -432,7 +440,7 @@ class AppForm(QMainWindow):
         else:
             
             if self.data.any():
-                self.data = np.flipud(self.data)[:]
+                self.data = numpy.flipud(self.data)[:]
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.data_series[iid] =  self.data[:]
                 self.log.appendPlainText('Applying horizontal mirror to current data')
@@ -456,7 +464,7 @@ class AppForm(QMainWindow):
                     QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")
                     return
                 for i in range(len(self.data_series)):
-                    self.data_series[i] = np.fliplr(self.data_series[i])[:]
+                    self.data_series[i] = numpy.fliplr(self.data_series[i])[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
                     self.log.appendPlainText('Applying vertical mirror to data series : image %d'%i)
                     QCoreApplication.processEvents()
@@ -464,7 +472,7 @@ class AppForm(QMainWindow):
                 self.select_new_image(None,imgID=iid) 
         else:
             if self.data.any():
-                self.data = np.fliplr(self.data)[:]
+                self.data = numpy.fliplr(self.data)[:]
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.data_series[iid] =  self.data[:]
                 self.log.appendPlainText('Applying vertical mirror to current data')
@@ -520,7 +528,7 @@ class AppForm(QMainWindow):
                     QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")
                     return
                 for i in range(len(self.data_series)):
-                    self.data_series[i] = np.rot90(self.data_series[i])[:]
+                    self.data_series[i] = numpy.rot90(self.data_series[i])[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
                     self.log.appendPlainText('Applying + 90 rotation to data series : image %d'%i)
                     QCoreApplication.processEvents()
@@ -528,7 +536,7 @@ class AppForm(QMainWindow):
                 self.select_new_image(None,imgID=iid) 
         else:
             if self.data.any():
-                self.data = np.rot90(self.data)[:]
+                self.data = numpy.rot90(self.data)[:]
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.data_series[iid] =  self.data[:]
                 self.log.appendPlainText('Applying + 90 rotation to current data')
@@ -552,7 +560,7 @@ class AppForm(QMainWindow):
                     QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")
                     return
                 for i in range(len(self.data_series)):
-                    self.data_series[i] = np.rot90(self.data_series[i],2)[:]
+                    self.data_series[i] = numpy.rot90(self.data_series[i], 2)[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
                     self.log.appendPlainText('Applying + 180 rotation to data series : image %d'%i)
                     QCoreApplication.processEvents()
@@ -560,7 +568,7 @@ class AppForm(QMainWindow):
                 self.select_new_image(None,imgID=iid) 
         else:
             if self.data.any():
-                self.data = np.rot90(self.data,2)[:]
+                self.data = numpy.rot90(self.data, 2)[:]
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.data_series[iid] =  self.data[:]
                 self.log.appendPlainText('Applying + 180 rotation to current data')
@@ -584,7 +592,7 @@ class AppForm(QMainWindow):
                     QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")
                     return
                 for i in range(len(self.data_series)):
-                    self.data_series[i] = np.rot90(self.data_series[i],3)[:]
+                    self.data_series[i] = numpy.rot90(self.data_series[i], 3)[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
                     self.log.appendPlainText('Applying - 90 rotation to data series : image %d'%i)
                     QCoreApplication.processEvents()
@@ -592,7 +600,7 @@ class AppForm(QMainWindow):
                 self.select_new_image(None,imgID=iid) 
         else:
             if self.data.any():
-                self.data = np.rot90(self.data,3)[:]
+                self.data = numpy.rot90(self.data, 3)[:]
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.data_series[iid] =  self.data[:]
                 self.log.appendPlainText('Applying - 90 rotation to current data')
@@ -661,22 +669,22 @@ class AppForm(QMainWindow):
         for t in self.transform_list:
                 if t in transformations:
                     if t =='horizontal_mirror':
-                        data = np.flipud(data)[:]
+                        data = numpy.flipud(data)[:]
                         self.log.appendPlainText('horizontal_mirror Done')
                     elif t =='vertical_mirror':
-                        data = np.fliplr(data)[:]
+                        data = numpy.fliplr(data)[:]
                         self.log.appendPlainText('vertical_mirror Done')
                     elif t =='transposition':
                         data = data.transpose()[:]
                         self.log.appendPlainText('transposition Done')
                     elif t =='rotation(+90)':
-                        data = np.rot90(data)[:]
+                        data = numpy.rot90(data)[:]
                         self.log.appendPlainText('rotation(+90) Done')
                     elif t =='rotation(+180)':
-                        data = np.rot90(data,2)[:]
+                        data = numpy.rot90(data, 2)[:]
                         self.log.appendPlainText('rotation(+180) Done')
                     elif t =='rotation(-90)':
-                        data = np.rot90(data,3)[:]
+                        data = numpy.rot90(data, 3)[:]
                         self.log.appendPlainText('rotation(-90) Done')
                     elif t =='masking':
                         data = self.mask*data
@@ -716,7 +724,7 @@ class AppForm(QMainWindow):
                     if self.sequential_file_mode:
                         total = len(self.sequential_file_list)
                         img =  fabio.open( self.sequential_file_dict[self.sequential_file_list[0]])
-                        stack = np.zeros_like(img.data)
+                        stack = numpy.zeros_like(img.data)
                         t0 = time.time()
                         subtotal = (total//thick)*thick
                         for i in range(subtotal):
@@ -743,7 +751,7 @@ class AppForm(QMainWindow):
                             if img.data.shape != stack.shape:
                                 self.log.appendPlainText("Error image shape: %s summed data shape: %s"%(img.data.shape,stack.shape))
                                 continue
-                            np.add( stack , img.data, stack)
+                            numpy.add(stack , img.data, stack)
                             self.progressBar.setValue((float(i+1)/(subtotal))*100.)
                             self.log.appendPlainText('File %s stacked'%imgkey)
                             QCoreApplication.processEvents()
@@ -755,12 +763,12 @@ class AppForm(QMainWindow):
                                        img.header["PHI_END"]='%.3f'%(start_angle+step_angle*(i))
                                 self.convert_and_write(('%s_%s%s'%(fname,self.counter_format,format[1:]))%k,format,stack,img.header)
                                 t1 = time.time()
-                                print 'time :' ,t1 - t0
-                                stack = np.zeros_like(img.data)
+                                print('time : %s' % (t1 - t0))
+                                stack = numpy.zeros_like(img.data)
                                 t0 = time.time()
                     else:
                         total = len(self.data_series)
-                        stack = np.zeros_like(self.data_series[0])
+                        stack = numpy.zeros_like(self.data_series[0])
                         subtotal = (total//thick)*thick
                         for i in range(subtotal):
                             j=i%thick
@@ -769,7 +777,7 @@ class AppForm(QMainWindow):
                             if data.shape != stack.shape:
                                 self.log.appendPlainText("Error image shape: %s summed data shape: %s"%(img.data.shape,stack.shape))
                                 continue
-                            np.add( stack , data, stack)
+                            numpy.add(stack , data, stack)
                             self.progressBar.setValue((float(i+1)/(subtotal))*100.)
                             self.log.appendPlainText('File number %d stacked'%i)
                             QCoreApplication.processEvents()
@@ -780,7 +788,7 @@ class AppForm(QMainWindow):
                                        self.header_series[i]["PHI_START"]='%.3f'%(start_angle+step_angle*(i-thick+1))
                                        self.header_series[i]["PHI_END"]='%.3f'%(start_angle+step_angle*(i))
                                 self.convert_and_write(('%s_%s%s'%(fname,self.counter_format,format[1:]))%k,format,stack,self.header_series[i])
-                                stack = np.zeros_like(data)
+                                stack = numpy.zeros_like(data)
                     self.progressBar.setValue(0)
                     self.log.appendPlainText('Downsampling : Complete')
                     QCoreApplication.processEvents()
@@ -826,8 +834,8 @@ class AppForm(QMainWindow):
         QCoreApplication.processEvents()
         # clear the axes and redraw a new plot 
         self.axes.clear()        
-        # self.axes.imshow(np.log(np.clip(self.data,1.0e-12,1.0e260) ),interpolation = 'nearest')
-        self.axes.imshow(np.log(self.data ),interpolation = 'nearest')
+        # self.axes.imshow(numpy.log(numpy.clip(self.data,1.0e-12,1.0e260) ),interpolation = 'nearest')
+        self.axes.imshow(numpy.log(self.data), interpolation='nearest')
 
         self.axes.set_visible(True) 
         if self.axes.get_ylim()[0]<self.axes.get_ylim()[1]:
@@ -907,7 +915,7 @@ class AppForm(QMainWindow):
         up = (size - dim2)//2
         down = size - (dim2 + up) 
         
-        out = np.zeros((size,size))
+        out = numpy.zeros((size, size))
         
         if left > 0 : #pad
             outlm = left 
@@ -1139,11 +1147,11 @@ class AppForm(QMainWindow):
 #        msg = """Image Converter v 1.0\n\nA portable diffraction images converter :\n\n* Written in python, it combines the functionalities of the I/O library fabIO with a user friendly Qt4 GUI.\n\n* Image converter is also a light viewer based on the visualisation tool provided by the module matplotlib.\n"""
         msg = [__doc__,
                "",
-               "Version: \t%s" % __version__,
+               "Version: \t\t%s" % __version__,
                "FabIO version: \t%s" % fabio.version,
-               "Author: \t%s" % __author__,
-               "Copyright: \t%s" % __copyright__,
-               "License: \t%s" % __licence__]
+               "Author: \t\t%s" % __author__,
+               "Copyright: \t\t%s" % __copyright__,
+               "License: \t\t%s" % __licence__]
 
 
         QMessageBox.about(self, "About FabIO Viewer", os.linesep.join(msg))   
@@ -1475,10 +1483,17 @@ class binDialog(QDialog):
 #--------------------------------------------------------------------------------------------------------
 
 def main():
-
+    parser = ArgumentParser(prog="fabio_viewer", usage="fabio_viewer img1 img2 ... imgn",
+                            description=__doc__,
+                            epilog="Based on FabIO version %s" % fabio.version)
+    parser.add_argument("images", nargs="*")
+    parser.add_argument("-V", "--version", action='version', version=__version__, help="Print version & quit")
+    args = parser.parse_args()
     QApplication.setStyle(QStyleFactory.create("Cleanlooks"))
-    app = QApplication(sys.argv)
+    app = QApplication([])
     form = AppForm()
+    if args.images:
+        form.open_data_series(args.images)
     form.show()
     sys.exit(app.exec_())
 
