@@ -203,12 +203,12 @@ cmdclass['debian_src'] = sdist_debian
 if sys.platform == "win32":
     root = os.path.dirname(os.path.abspath(__file__))
     script_files = []
-    for i in os.listdir(join(root, "scripts")):
-        if os.path.isfile(join(root, "scripts", i)):
+    for i in os.listdir(op.join(root, "scripts")):
+        if os.path.isfile(op.join(root, "scripts", i)):
             if i.endswith(".py"):
-                script_files.append(join("scripts", i))
+                script_files.append(op.join("scripts", i))
             else:
-                tocopy_files.append(join("scripts", i))
+                tocopy_files.append(op.join("scripts", i))
 else:
     script_files = glob.glob("scripts/*")
 
