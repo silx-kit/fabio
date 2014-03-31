@@ -174,7 +174,7 @@ class raxisimage(fabioimage):
             # find indices for which we need to do the correction (for which
             # the 16th bit is set):
 
-            logger.debug("Correct for PM", di.sum())
+            logger.debug("Correct for PM: %s" % di.sum())
             data = data << 1 >> 1  # reset bit #15 to zero
             self.bytecode = numpy.uint32
             data = data.astype(self.bytecode)
