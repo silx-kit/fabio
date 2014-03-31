@@ -9,6 +9,7 @@ Setup script for python distutils package and fabio
 import os, sys
 import os.path as op
 import glob
+import shutil
 from distutils.core import setup
 from distutils.core import Extension, Command
 from numpy.distutils.misc_util import get_numpy_include_dirs
