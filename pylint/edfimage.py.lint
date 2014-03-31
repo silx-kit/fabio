@@ -1,200 +1,36 @@
-No config file found, using default configuration
-
 ************* Module edfimage
-C: 89,0: Line too long (91/80)
-C:109,0: Line too long (113/80)
-C:162,0: Line too long (137/80)
-C:167,0: Line too long (141/80)
-C:177,0: Line too long (141/80)
-C:192,0: Line too long (108/80)
-C:207,0: Line too long (85/80)
-C:216,0: Line too long (125/80)
-C:217,0: Line too long (118/80)
-C:230,0: Line too long (93/80)
-C:231,0: Line too long (93/80)
-C:233,0: Line too long (94/80)
-C:234,0: Line too long (92/80)
-C:255,0: Line too long (89/80)
-C:262,0: Line too long (115/80)
-C:269,0: Line too long (81/80)
-C:277,0: Line too long (105/80)
-C:279,0: Line too long (92/80)
-C:294,0: Line too long (81/80)
-C:303,0: Line too long (104/80)
-C:306,0: Line too long (113/80)
-C:309,0: Line too long (96/80)
-C:311,0: Line too long (85/80)
-C:318,0: Line too long (104/80)
-C:359,0: Line too long (110/80)
-C:367,0: Line too long (85/80)
-C:402,0: Line too long (82/80)
-C:418,0: Line too long (117/80)
-C:424,0: Line too long (90/80)
-C:425,0: Line too long (89/80)
-C:446,0: Line too long (92/80)
-C:493,0: Line too long (95/80)
-C:497,0: Line too long (87/80)
-C:508,0: Line too long (89/80)
-C:513,0: Line too long (112/80)
-C:556,0: Line too long (126/80)
-C:560,0: Line too long (113/80)
-C:570,0: Line too long (118/80)
-C:589,0: Line too long (127/80)
-C:599,0: Line too long (93/80)
-C:600,0: Line too long (93/80)
-C:602,0: Line too long (94/80)
-C:603,0: Line too long (92/80)
-C:622,0: Line too long (90/80)
-C:625,0: Line too long (107/80)
-C:672,0: Line too long (92/80)
-C:708,0: Line too long (119/80)
-C:718,0: Line too long (82/80)
-C:730,0: Line too long (119/80)
-C:740,0: Line too long (94/80)
-C:756,0: Line too long (82/80)
-C:774,0: Line too long (90/80)
-C:798,0: Line too long (86/80)
-C:823,0: Line too long (108/80)
-C:880,0: Line too long (150/80)
-C: 23,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-R: 93,0:Frame: Too many instance attributes (13/7)
-C:128,12:Frame.__init__: Invalid name "iFrame" (should match [a-z_][a-z0-9_]{2,30}$)
-C:112,8:Frame.__init__: Invalid name "capsHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:183,8:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:186,12:Frame.parseheader: Invalid name "strDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:194,20:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:200,20:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:204,16:Frame.parseheader: Invalid name "iDim" (should match [a-z_][a-z0-9_]{2,30}$)
-C:220,15:Frame.parseheader: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
-R:132,4:Frame.parseheader: Too many branches (25/12)
-R:132,4:Frame.parseheader: Too many statements (70/50)
-C:241,4:Frame.getData: Invalid name "getData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:266,20:Frame.getData: Invalid name "fileData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:279,24:Frame.getData: Invalid name "myData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:280,24:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:283,20:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:285,20:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:288,20:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:291,20:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:295,20:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:298,16:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:304,16:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:307,16:Frame.getData: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-R:241,4:Frame.getData: Too many branches (23/12)
-R:241,4:Frame.getData: Too many statements (63/50)
-C:315,4:Frame.setData: Invalid name "setData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:319,4:Frame.getByteCode: Invalid name "getByteCode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:319,4:Frame.getByteCode: Missing docstring
-C:324,4:Frame.setByteCode: Invalid name "setByteCode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:324,4:Frame.setByteCode: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:324,4:Frame.setByteCode: Missing docstring
-C:324,26:Frame.setByteCode: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-R:328,4:Frame.getEdfBlock: Too many local variables (22/15)
-C:328,4:Frame.getEdfBlock: Invalid name "getEdfBlock" (should match [a-z_][a-z0-9_]{2,30}$)
-C:328,4:Frame.getEdfBlock: Invalid name "fit2dMode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:328,43:Frame.getEdfBlock: Invalid name "fit2dMode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:341,8:Frame.getEdfBlock: Invalid name "fit2dMode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:343,12:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-z0-9_]{2,30}$)
-C:351,8:Frame.getEdfBlock: Invalid name "capsHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:353,8:Frame.getEdfBlock: Invalid name "listHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:359,12:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-z0-9_]{2,30}$)
-C:392,8:Frame.getEdfBlock: Invalid name "approxHeaderSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:394,12:Frame.getEdfBlock: Invalid name "approxHeaderSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:395,8:Frame.getEdfBlock: Invalid name "approxHeaderSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:403,8:Frame.getEdfBlock: Invalid name "preciseSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:406,12:Frame.getEdfBlock: Invalid name "strKey" (should match [a-z_][a-z0-9_]{2,30}$)
-C:410,12:Frame.getEdfBlock: Invalid name "strValue" (should match [a-z_][a-z0-9_]{2,30}$)
-C:415,12:Frame.getEdfBlock: Invalid name "preciseSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:421,20:Frame.getEdfBlock: Invalid name "headerSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:425,24:Frame.getEdfBlock: Invalid name "headerSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:427,20:Frame.getEdfBlock: Invalid name "preciseSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:431,12:Frame.getEdfBlock: Invalid name "headerSize" (should match [a-z_][a-z0-9_]{2,30}$)
-R:328,4:Frame.getEdfBlock: Too many branches (24/12)
-R:328,4:Frame.getEdfBlock: Too many statements (82/50)
-C:437,0:edfimage: Invalid name "edfimage" (should match [A-Z_][a-zA-Z0-9]+$)
-W:445,15:edfimage.__init__: Catching too general exception Exception
-C:471,4:edfimage.checkHeader: Invalid name "checkHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:483,4:edfimage._readHeaderBlock: Invalid name "_readHeaderBlock" (should match [a-z_][a-z0-9_]{2,30}$)
-C:490,8:edfimage._readHeaderBlock: Invalid name "MAX_HEADER_SIZE" (should match [a-z_][a-z0-9_]{2,30}$)
-W:504,19:edfimage._readHeaderBlock: Catching too general exception Exception
-C:509,20:edfimage._readHeaderBlock: Invalid name "MAX_HEADER_SIZE" (should match [a-z_][a-z0-9_]{2,30}$)
-C:538,8:edfimage._readheader: Invalid name "bContinue" (should match [a-z_][a-z0-9_]{2,30}$)
-C:542,16:edfimage._readheader: Invalid name "bContinue" (should match [a-z_][a-z0-9_]{2,30}$)
-C:561,16:edfimage._readheader: Invalid name "bContinue" (should match [a-z_][a-z0-9_]{2,30}$)
-C:620,8:edfimage.getframe: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:623,12:edfimage.getframe: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:626,12:edfimage.getframe: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:638,8:edfimage.previous: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:640,12:edfimage.previous: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:642,12:edfimage.previous: Invalid name "newFrameId" (should match [a-z_][a-z0-9_]{2,30}$)
-C:643,12:edfimage.previous: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:649,8:edfimage.next: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:651,12:edfimage.next: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-C:653,12:edfimage.next: Invalid name "newFrameId" (should match [a-z_][a-z0-9_]{2,30}$)
-C:654,12:edfimage.next: Invalid name "newImage" (should match [a-z_][a-z0-9_]{2,30}$)
-W:658,4:edfimage.write: Arguments number differs from overridden method
-C:658,4:edfimage.write: Invalid name "fit2dMode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:658,44:edfimage.write: Invalid name "fit2dMode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:675,4:edfimage.appendFrame: Invalid name "appendFrame" (should match [a-z_][a-z0-9_]{2,30}$)
-C:688,4:edfimage.deleteFrame: Invalid name "deleteFrame" (should match [a-z_][a-z0-9_]{2,30}$)
-C:688,4:edfimage.deleteFrame: Invalid name "frameNb" (should match [a-z_][a-z0-9_]{2,30}$)
-C:688,26:edfimage.deleteFrame: Invalid name "frameNb" (should match [a-z_][a-z0-9_]{2,30}$)
-C:700,4:edfimage.fastReadData: Invalid name "fastReadData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:711,36:edfimage.fastReadData: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-W:717,15:edfimage.fastReadData: Catching too general exception Exception
-C:721,4:edfimage.fastReadROI: Invalid name "fastReadROI" (should match [a-z_][a-z0-9_]{2,30}$)
-C:742,8:edfimage.fastReadROI: Invalid name "d1" (should match [a-z_][a-z0-9_]{2,30}$)
-C:749,36:edfimage.fastReadROI: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-W:755,15:edfimage.fastReadROI: Catching too general exception Exception
-C:763,4:edfimage.getNbFrames: Invalid name "getNbFrames" (should match [a-z_][a-z0-9_]{2,30}$)
-C:768,4:edfimage.setNbFrames: Invalid name "setNbFrames" (should match [a-z_][a-z0-9_]{2,30}$)
-C:777,4:edfimage.getHeader: Invalid name "getHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:782,4:edfimage.setHeader: Invalid name "setHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:782,4:edfimage.setHeader: Invalid name "_dictHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:782,24:edfimage.setHeader: Invalid name "_dictHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:793,4:edfimage.delHeader: Invalid name "delHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:800,4:edfimage.getHeaderKeys: Invalid name "getHeaderKeys" (should match [a-z_][a-z0-9_]{2,30}$)
-C:805,4:edfimage.setHeaderKeys: Invalid name "setHeaderKeys" (should match [a-z_][a-z0-9_]{2,30}$)
-C:805,4:edfimage.setHeaderKeys: Invalid name "_listtHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:805,28:edfimage.setHeaderKeys: Invalid name "_listtHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:818,4:edfimage.delHeaderKeys: Invalid name "delHeaderKeys" (should match [a-z_][a-z0-9_]{2,30}$)
-C:825,4:edfimage.getData: Invalid name "getData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:831,8:edfimage.getData: Invalid name "npaData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:833,12:edfimage.getData: Invalid name "npaData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:836,12:edfimage.getData: Invalid name "npaData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:840,16:edfimage.getData: Invalid name "npaData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:843,4:edfimage.setData: Invalid name "setData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:855,4:edfimage.delData: Invalid name "delData" (should match [a-z_][a-z0-9_]{2,30}$)
-C:862,4:edfimage.getCapsHeader: Invalid name "getCapsHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:869,4:edfimage.setCapsHeader: Invalid name "setCapsHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:875,4:edfimage.delCapsHeader: Invalid name "delCapsHeader" (should match [a-z_][a-z0-9_]{2,30}$)
-C:882,4:edfimage.getDim1: Invalid name "getDim1" (should match [a-z_][a-z0-9_]{2,30}$)
-C:882,4:edfimage.getDim1: Missing docstring
-C:884,4:edfimage.setDim1: Invalid name "setDim1" (should match [a-z_][a-z0-9_]{2,30}$)
-C:884,4:edfimage.setDim1: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:884,4:edfimage.setDim1: Missing docstring
-C:884,22:edfimage.setDim1: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:894,4:edfimage.getDim2: Invalid name "getDim2" (should match [a-z_][a-z0-9_]{2,30}$)
-C:894,4:edfimage.getDim2: Missing docstring
-C:896,4:edfimage.setDim2: Invalid name "setDim2" (should match [a-z_][a-z0-9_]{2,30}$)
-C:896,4:edfimage.setDim2: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:896,4:edfimage.setDim2: Missing docstring
-C:896,22:edfimage.setDim2: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:907,4:edfimage.getDims: Invalid name "getDims" (should match [a-z_][a-z0-9_]{2,30}$)
-C:907,4:edfimage.getDims: Missing docstring
-C:910,4:edfimage.getByteCode: Invalid name "getByteCode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:910,4:edfimage.getByteCode: Missing docstring
-C:912,4:edfimage.setByteCode: Invalid name "setByteCode" (should match [a-z_][a-z0-9_]{2,30}$)
-C:912,4:edfimage.setByteCode: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:912,4:edfimage.setByteCode: Missing docstring
-C:912,26:edfimage.setByteCode: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:922,4:edfimage.getBpp: Invalid name "getBpp" (should match [a-z_][a-z0-9_]{2,30}$)
-C:922,4:edfimage.getBpp: Missing docstring
-C:924,4:edfimage.setBpp: Invalid name "setBpp" (should match [a-z_][a-z0-9_]{2,30}$)
-C:924,4:edfimage.setBpp: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-C:924,4:edfimage.setBpp: Missing docstring
-C:924,21:edfimage.setBpp: Invalid name "_iVal" (should match [a-z_][a-z0-9_]{2,30}$)
-R:437,0:edfimage: Too many public methods (54/20)
+C:221,15:Frame.parseheader: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:133,4:Frame.parseheader: Too many branches (25/15)
+R:133,4:Frame.parseheader: Too many statements (70/50)
+R:242,4:Frame.getData: Too many branches (23/15)
+R:242,4:Frame.getData: Too many statements (63/50)
+C:320,4:Frame.getByteCode: Missing docstring
+C:325,4:Frame.setByteCode: Missing docstring
+C:344,12:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:360,12:Frame.getEdfBlock: Invalid name "KEY" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:329,4:Frame.getEdfBlock: Too many branches (24/15)
+R:329,4:Frame.getEdfBlock: Too many statements (82/50)
+C:438,0:edfimage: Invalid name "edfimage" (should match [A-Z_][a-zA-Z0-9]+$)
+W:446,15:edfimage.__init__: Catching too general exception Exception
+C:491,8:edfimage._readHeaderBlock: Invalid name "MAX_HEADER_SIZE" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:505,19:edfimage._readHeaderBlock: Catching too general exception Exception
+C:510,20:edfimage._readHeaderBlock: Invalid name "MAX_HEADER_SIZE" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:659,4:edfimage.write: Arguments number differs from overridden method
+C:712,36:edfimage.fastReadData: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:718,15:edfimage.fastReadData: Catching too general exception Exception
+C:743,8:edfimage.fastReadROI: Invalid name "d1" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:750,36:edfimage.fastReadROI: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:756,15:edfimage.fastReadROI: Catching too general exception Exception
+C:883,4:edfimage.getDim1: Missing docstring
+C:885,4:edfimage.setDim1: Missing docstring
+C:895,4:edfimage.getDim2: Missing docstring
+C:897,4:edfimage.setDim2: Missing docstring
+C:908,4:edfimage.getDims: Missing docstring
+C:911,4:edfimage.getByteCode: Missing docstring
+C:913,4:edfimage.setByteCode: Missing docstring
+C:923,4:edfimage.getBpp: Missing docstring
+C:925,4:edfimage.setBpp: Missing docstring
+R:438,0:edfimage: Too many public methods (54/20)
 
 
 Report
@@ -207,13 +43,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |180    |180      |=          |
+|convention |20     |18       |+2.00      |
 +-----------+-------+---------+-----------+
-|refactor   |9      |9        |=          |
+|refactor   |7      |7        |=          |
 +-----------+-------+---------+-----------+
-|warning    |5      |15       |-10.00     |
+|warning    |5      |4        |+1.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |5        |-5.00      |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -224,11 +60,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |114         |
-+-----------+------------+
-|C0301      |55          |
-+-----------+------------+
 |C0111      |11          |
++-----------+------------+
+|C0103      |9           |
 +-----------+------------+
 |W0703      |4           |
 +-----------+------------+
@@ -238,18 +72,49 @@ Messages
 +-----------+------------+
 |W0221      |1           |
 +-----------+------------+
-|R0914      |1           |
-+-----------+------------+
 |R0904      |1           |
-+-----------+------------+
-|R0902      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.75/10 (previous run: 6.12/10)
+Your code has been rated at 9.46/10 (previous run: 9.51/10)
+So close to being perfect...
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |631    |69.19 |620      |+11.00     |
++----------+-------+------+---------+-----------+
+|docstring |202    |22.15 |202      |=          |
++----------+-------+------+---------+-----------+
+|comment   |12     |1.32  |11       |+1.00      |
++----------+-------+------+---------+-----------+
+|empty     |67     |7.35  |68       |-1.00      |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |2      |2          |=          |100.00      |50.00    |
++---------+-------+-----------+-----------+------------+---------+
+|method   |46     |46         |=          |76.09       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -264,45 +129,11 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |631    |69.26 |623      |+8.00      |
-+----------+-------+------+---------+-----------+
-|docstring |202    |22.17 |205      |-3.00      |
-+----------+-------+------+---------+-----------+
-|comment   |11     |1.21  |11       |=          |
-+----------+-------+------+---------+-----------+
-|empty     |67     |7.35  |70       |-3.00      |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
     numpy (edfimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |2      |2          |=          |100.00      |50.00    |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |46     |47         |-1.00      |76.09       |73.91    |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 

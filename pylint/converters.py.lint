@@ -1,10 +1,10 @@
 ************* Module converters
-W: 14,0: Unused import types
+W: 17,0: Unused import types
 
 
 Report
 ======
-17 statements analysed.
+18 statements analysed.
 
 Messages by category
 --------------------
@@ -36,7 +36,7 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.41/10 (previous run: 9.41/10)
+Your code has been rated at 9.44/10 (previous run: 9.41/10)
 So close to being perfect...
 
 Raw metrics
@@ -45,13 +45,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |27     |50.00 |27       |=          |
+|code      |28     |50.00 |27       |+1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |19     |35.19 |19       |=          |
+|docstring |19     |33.93 |19       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |3.70  |2        |=          |
+|comment   |3      |5.36  |2        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |6      |11.11 |6        |=          |
+|empty     |6      |10.71 |6        |=          |
 +----------+-------+------+---------+-----------+
 
 

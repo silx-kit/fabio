@@ -1,0 +1,338 @@
+************* Module argparse
+C:  1,0: Too many lines in module (2353)
+C:114,4:_sorted: Missing docstring
+C:122,0:_callable: Missing docstring
+C:165,4:_AttributeHolder._get_kwargs: Missing docstring
+C:168,4:_AttributeHolder._get_args: Missing docstring
+R:168,4:_AttributeHolder._get_args: Method could be a function
+R:147,0:_AttributeHolder: Too few public methods (0/2)
+C:172,0:_ensure_value: Missing docstring
+C:221,4:HelpFormatter._indent: Missing docstring
+C:225,4:HelpFormatter._dedent: Missing docstring
+C:230,4:HelpFormatter._Section: Missing docstring
+C:238,8:HelpFormatter._Section.format_help: Missing docstring
+W:241,16:HelpFormatter._Section.format_help: Access to a protected member _indent of a client class
+W:242,19:HelpFormatter._Section.format_help: Access to a protected member _join_parts of a client class
+W:244,16:HelpFormatter._Section.format_help: Used * or ** magic
+W:245,30:HelpFormatter._Section.format_help: Used * or ** magic
+W:247,16:HelpFormatter._Section.format_help: Access to a protected member _dedent of a client class
+W:255,33:HelpFormatter._Section.format_help: Access to a protected member _current_indent of a client class
+R:230,4:HelpFormatter._Section: Too few public methods (1/2)
+C:263,4:HelpFormatter._add_item: Missing docstring
+C:269,4:HelpFormatter.start_section: Missing docstring
+C:275,4:HelpFormatter.end_section: Missing docstring
+C:279,4:HelpFormatter.add_text: Missing docstring
+C:283,4:HelpFormatter.add_usage: Missing docstring
+C:288,4:HelpFormatter.add_argument: Missing docstring
+C:306,4:HelpFormatter.add_arguments: Missing docstring
+W:314,8:HelpFormatter.format_help: Redefining built-in 'help'
+C:313,4:HelpFormatter.format_help: Missing docstring
+C:320,4:HelpFormatter._join_parts: Missing docstring
+R:320,4:HelpFormatter._join_parts: Method could be a function
+W:351,12:HelpFormatter._format_usage: Redefining built-in 'format'
+C:325,4:HelpFormatter._format_usage: Missing docstring
+C:369,16:HelpFormatter._format_usage.get_lines: Missing docstring
+R:325,4:HelpFormatter._format_usage: Too many branches (21/15)
+W:496,8:HelpFormatter._format_actions_usage: Redefining built-in 'open'
+C:417,4:HelpFormatter._format_actions_usage: Missing docstring
+W:423,38:HelpFormatter._format_actions_usage: Access to a protected member _group_actions of a client class
+W:427,34:HelpFormatter._format_actions_usage: Access to a protected member _group_actions of a client class
+W:428,41:HelpFormatter._format_actions_usage: Access to a protected member _group_actions of a client class
+W:429,34:HelpFormatter._format_actions_usage: Access to a protected member _group_actions of a client class
+R:417,4:HelpFormatter._format_actions_usage: Too many branches (20/15)
+R:417,4:HelpFormatter._format_actions_usage: Too many statements (51/50)
+C:507,4:HelpFormatter._format_text: Missing docstring
+C:514,4:HelpFormatter._format_action: Missing docstring
+C:561,4:HelpFormatter._format_action_invocation: Missing docstring
+W:593,8:HelpFormatter._metavar_formatter.format: Redefining built-in 'format'
+C:584,4:HelpFormatter._metavar_formatter: Missing docstring
+C:593,8:HelpFormatter._metavar_formatter.format: Missing docstring
+R:584,4:HelpFormatter._metavar_formatter: Method could be a function
+W:615,32:HelpFormatter._format_args: Redefining name '_' from outer scope (line 98)
+C:600,4:HelpFormatter._format_args: Missing docstring
+C:619,4:HelpFormatter._expand_help: Missing docstring
+C:632,4:HelpFormatter._iter_indented_subactions: Missing docstring
+W:634,29:HelpFormatter._iter_indented_subactions: Access to a protected member _get_subactions of a client class
+C:643,4:HelpFormatter._split_lines: Missing docstring
+C:647,4:HelpFormatter._fill_text: Missing docstring
+C:652,4:HelpFormatter._get_help_string: Missing docstring
+R:652,4:HelpFormatter._get_help_string: Method could be a function
+W:686,8:ArgumentDefaultsHelpFormatter._get_help_string: Redefining built-in 'help'
+C:699,0:_get_action_name: Missing docstring
+W:719,4:ArgumentError.__init__: __init__ method from base class 'Exception' is not called
+W:725,12:ArgumentError.__str__: Redefining built-in 'format'
+R:792,4:Action.__init__: Too many arguments (11/10)
+W:801,17:Action.__init__: Redefining built-in 'help'
+W:798,17:Action.__init__: Redefining built-in 'type'
+W:792,4:Action.__init__: __init__ method from base class '_AttributeHolder' is not called
+R:741,0:Action: Too few public methods (0/2)
+C:832,0:_StoreAction: Missing docstring
+R:834,4:_StoreAction.__init__: Too many arguments (11/10)
+W:843,17:_StoreAction.__init__: Redefining built-in 'help'
+W:840,17:_StoreAction.__init__: Redefining built-in 'type'
+R:832,0:_StoreAction: Too few public methods (0/2)
+C:867,0:_StoreConstAction: Missing docstring
+W:875,17:_StoreConstAction.__init__: Redefining built-in 'help'
+R:867,0:_StoreConstAction: Too few public methods (0/2)
+C:890,0:_StoreTrueAction: Missing docstring
+W:897,17:_StoreTrueAction.__init__: Redefining built-in 'help'
+R:890,0:_StoreTrueAction: Too few public methods (0/2)
+C:907,0:_StoreFalseAction: Missing docstring
+W:914,17:_StoreFalseAction.__init__: Redefining built-in 'help'
+R:907,0:_StoreFalseAction: Too few public methods (0/2)
+C:924,0:_AppendAction: Missing docstring
+R:926,4:_AppendAction.__init__: Too many arguments (11/10)
+W:935,17:_AppendAction.__init__: Redefining built-in 'help'
+W:932,17:_AppendAction.__init__: Redefining built-in 'type'
+R:924,0:_AppendAction: Too few public methods (0/2)
+C:961,0:_AppendConstAction: Missing docstring
+W:969,17:_AppendConstAction.__init__: Redefining built-in 'help'
+R:961,0:_AppendConstAction: Too few public methods (0/2)
+C:987,0:_CountAction: Missing docstring
+W:994,17:_CountAction.__init__: Redefining built-in 'help'
+R:987,0:_CountAction: Too few public methods (0/2)
+C:1008,0:_HelpAction: Missing docstring
+W:1014,17:_HelpAction.__init__: Redefining built-in 'help'
+R:1008,0:_HelpAction: Too few public methods (0/2)
+C:1027,0:_VersionAction: Missing docstring
+W:1034,17:_VersionAction.__init__: Redefining built-in 'help'
+W:1047,20:_VersionAction.__call__: Access to a protected member _get_formatter of a client class
+R:1027,0:_VersionAction: Too few public methods (0/2)
+C:1052,0:_SubParsersAction: Missing docstring
+C:1054,4:_SubParsersAction._ChoicesPseudoAction: Missing docstring
+W:1054,4:_SubParsersAction._ChoicesPseudoAction: Method '__call__' is abstract in class 'Action' but is not overridden
+W:1056,33:_SubParsersAction._ChoicesPseudoAction.__init__: Redefining built-in 'help'
+W:1058,12:_SubParsersAction._ChoicesPseudoAction.__init__: __init__ method from a non direct base class 'super' is called
+W:1056,8:_SubParsersAction._ChoicesPseudoAction.__init__: __init__ method from base class 'Action' is not called
+W:1057,24:_SubParsersAction._ChoicesPseudoAction.__init__: Access to a protected member _ChoicesPseudoAction of a client class
+R:1054,4:_SubParsersAction._ChoicesPseudoAction: Too few public methods (0/2)
+W:1065,17:_SubParsersAction.__init__: Redefining built-in 'help'
+W:1088,12:_SubParsersAction.add_parser: Redefining built-in 'help'
+C:1081,4:_SubParsersAction.add_parser: Missing docstring
+C:1097,4:_SubParsersAction._get_subactions: Missing docstring
+R:1052,0:_SubParsersAction: Too few public methods (1/2)
+R:1124,0:FileType: Too few public methods (0/2)
+W:1174,4:Namespace.__init__: __init__ method from base class '_AttributeHolder' is not called
+R:1167,0:Namespace: Too few public methods (0/2)
+C:1188,0:_ActionsContainer: Missing docstring
+W:1242,45:_ActionsContainer.register: Redefining built-in 'object'
+C:1242,4:_ActionsContainer.register: Missing docstring
+C:1246,4:_ActionsContainer._registry_get: Missing docstring
+C:1252,4:_ActionsContainer.set_defaults: Missing docstring
+C:1261,4:_ActionsContainer.get_default: Missing docstring
+C:1311,4:_ActionsContainer.add_argument_group: Missing docstring
+C:1316,4:_ActionsContainer.add_mutually_exclusive_group: Missing docstring
+C:1321,4:_ActionsContainer._add_action: Missing docstring
+C:1342,4:_ActionsContainer._remove_action: Missing docstring
+C:1345,4:_ActionsContainer._add_container_actions: Missing docstring
+W:1356,21:_ActionsContainer._add_container_actions: Access to a protected member _action_groups of a client class
+W:1367,26:_ActionsContainer._add_container_actions: Access to a protected member _group_actions of a client class
+W:1373,21:_ActionsContainer._add_container_actions: Access to a protected member _mutually_exclusive_groups of a client class
+W:1378,26:_ActionsContainer._add_container_actions: Access to a protected member _group_actions of a client class
+W:1382,22:_ActionsContainer._add_container_actions: Access to a protected member _actions of a client class
+W:1383,12:_ActionsContainer._add_container_actions: Access to a protected member _add_action of a client class
+C:1385,4:_ActionsContainer._get_positional_kwargs: Missing docstring
+R:1385,4:_ActionsContainer._get_positional_kwargs: Method could be a function
+C:1401,4:_ActionsContainer._get_optional_kwargs: Missing docstring
+W:1430,39:_ActionsContainer._get_optional_kwargs: Using possibly undefined loop variable 'option_string'
+C:1436,4:_ActionsContainer._pop_action_class: Missing docstring
+C:1440,4:_ActionsContainer._get_handler: Missing docstring
+C:1449,4:_ActionsContainer._check_conflict: Missing docstring
+C:1463,4:_ActionsContainer._handle_conflict_error: Missing docstring
+R:1463,4:_ActionsContainer._handle_conflict_error: Method could be a function
+C:1470,4:_ActionsContainer._handle_conflict_resolve: Missing docstring
+W:1482,16:_ActionsContainer._handle_conflict_resolve: Access to a protected member _remove_action of a client class
+C:1485,0:_ArgumentGroup: Missing docstring
+W:1487,4:_ArgumentGroup.__init__: __init__ method from base class '_ActionsContainer' is not called
+W:1501,27:_ArgumentGroup.__init__: Access to a protected member _registries of a client class
+W:1502,24:_ArgumentGroup.__init__: Access to a protected member _actions of a client class
+W:1503,38:_ArgumentGroup.__init__: Access to a protected member _option_string_actions of a client class
+W:1504,25:_ArgumentGroup.__init__: Access to a protected member _defaults of a client class
+W:1506,12:_ArgumentGroup.__init__: Access to a protected member _has_negative_number_optionals of a client class
+C:1518,0:_MutuallyExclusiveGroup: Missing docstring
+W:1529,17:_MutuallyExclusiveGroup._add_action: Access to a protected member _add_action of a client class
+W:1534,8:_MutuallyExclusiveGroup._remove_action: Access to a protected member _remove_action of a client class
+R:1556,4:ArgumentParser.__init__: Too many arguments (13/10)
+W:1571,12:ArgumentParser.__init__: Redefining name 'warnings' from outer scope (line 127)
+W:1556,4:ArgumentParser.__init__: Dangerous default value [] as argument
+W:1556,4:ArgumentParser.__init__: __init__ method from base class '_AttributeHolder' is not called
+W:1556,4:ArgumentParser.__init__: __init__ method from base class '_ActionsContainer' is not called
+W:1571,12:ArgumentParser.__init__: Reimport 'warnings' (imported line 127)
+C:1602,8:ArgumentParser.__init__.identity: Missing docstring
+W:1622,27:ArgumentParser.__init__: Access to a protected member _defaults of a client class
+C:1646,4:ArgumentParser.add_subparsers: Missing docstring
+W:1672,8:ArgumentParser.add_subparsers: Access to a protected member _add_action of a client class
+W:1679,12:ArgumentParser._add_action: Access to a protected member _add_action of a client class
+W:1681,12:ArgumentParser._add_action: Access to a protected member _add_action of a client class
+C:1684,4:ArgumentParser._get_optional_actions: Missing docstring
+C:1689,4:ArgumentParser._get_positional_actions: Missing docstring
+C:1697,4:ArgumentParser.parse_args: Missing docstring
+C:1704,4:ArgumentParser.parse_known_args: Missing docstring
+R:1735,4:ArgumentParser._parse_known_args: Too many local variables (35/25)
+C:1735,4:ArgumentParser._parse_known_args: Missing docstring
+W:1744,28:ArgumentParser._parse_known_args: Access to a protected member _group_actions of a client class
+W:1745,45:ArgumentParser._parse_known_args: Access to a protected member _group_actions of a client class
+C:1782,8:ArgumentParser._parse_known_args.take_action: Missing docstring
+C:1803,8:ArgumentParser._parse_known_args.consume_optional: Missing docstring
+C:1880,8:ArgumentParser._parse_known_args.consume_positionals: Missing docstring
+W:1955,30:ArgumentParser._parse_known_args: Access to a protected member _group_actions of a client class
+W:1962,43:ArgumentParser._parse_known_args: Access to a protected member _group_actions of a client class
+R:1735,4:ArgumentParser._parse_known_args: Too many branches (44/15)
+C:1970,4:ArgumentParser._read_args_from_files: Missing docstring
+C:1999,4:ArgumentParser.convert_arg_line_to_args: Missing docstring
+R:1999,4:ArgumentParser.convert_arg_line_to_args: Method could be a function
+C:2002,4:ArgumentParser._match_argument: Missing docstring
+C:2021,4:ArgumentParser._match_arguments_partial: Missing docstring
+C:2037,4:ArgumentParser._parse_optional: Missing docstring
+R:2037,4:ArgumentParser._parse_optional: Too many return statements (9/6)
+C:2094,4:ArgumentParser._get_option_tuples: Missing docstring
+C:2138,4:ArgumentParser._get_nargs_pattern: Missing docstring
+R:2138,4:ArgumentParser._get_nargs_pattern: Method could be a function
+C:2182,4:ArgumentParser._get_values: Missing docstring
+C:2225,16:ArgumentParser._get_values: Invalid name "v" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:2231,4:ArgumentParser._get_value: Missing docstring
+C:2256,4:ArgumentParser._check_value: Missing docstring
+R:2256,4:ArgumentParser._check_value: Method could be a function
+C:2266,4:ArgumentParser.format_usage: Missing docstring
+C:2272,4:ArgumentParser.format_help: Missing docstring
+W:2286,36:ArgumentParser.format_help: Access to a protected member _group_actions of a client class
+W:2296,8:ArgumentParser.format_version: Redefining name 'warnings' from outer scope (line 127)
+C:2295,4:ArgumentParser.format_version: Missing docstring
+W:2296,8:ArgumentParser.format_version: Reimport 'warnings' (imported line 127)
+C:2305,4:ArgumentParser._get_formatter: Missing docstring
+W:2311,26:ArgumentParser.print_usage: Redefining built-in 'file'
+C:2311,4:ArgumentParser.print_usage: Missing docstring
+W:2316,25:ArgumentParser.print_help: Redefining built-in 'file'
+C:2316,4:ArgumentParser.print_help: Missing docstring
+W:2321,28:ArgumentParser.print_version: Redefining built-in 'file'
+W:2322,8:ArgumentParser.print_version: Redefining name 'warnings' from outer scope (line 127)
+C:2321,4:ArgumentParser.print_version: Missing docstring
+W:2322,8:ArgumentParser.print_version: Reimport 'warnings' (imported line 127)
+W:2329,38:ArgumentParser._print_message: Redefining built-in 'file'
+C:2329,4:ArgumentParser._print_message: Missing docstring
+R:2329,4:ArgumentParser._print_message: Method could be a function
+C:2338,4:ArgumentParser.exit: Missing docstring
+
+
+Report
+======
+1171 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |96     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |36     |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |81     |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |94          |
++-----------+------------+
+|W0212      |34          |
++-----------+------------+
+|W0622      |27          |
++-----------+------------+
+|R0903      |16          |
++-----------+------------+
+|R0201      |10          |
++-----------+------------+
+|W0231      |7           |
++-----------+------------+
+|W0621      |4           |
++-----------+------------+
+|R0913      |4           |
++-----------+------------+
+|W0404      |3           |
++-----------+------------+
+|R0912      |3           |
++-----------+------------+
+|W0142      |2           |
++-----------+------------+
+|W0631      |1           |
++-----------+------------+
+|W0233      |1           |
++-----------+------------+
+|W0223      |1           |
++-----------+------------+
+|W0102      |1           |
++-----------+------------+
+|R0915      |1           |
++-----------+------------+
+|R0914      |1           |
++-----------+------------+
+|R0911      |1           |
++-----------+------------+
+|C0302      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 8.18/10
+That's pretty good. Good work mate.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |1411   |69.44 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |230    |11.32 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |298    |14.67 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |93     |4.58  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |26     |NC         |NC         |42.31       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |118    |NC         |NC         |41.53       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |10     |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+

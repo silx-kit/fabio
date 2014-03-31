@@ -1,61 +1,18 @@
-No config file found, using default configuration
-
 ************* Module compression
-C: 69,0: Line too long (101/80)
-C: 73,0: Line too long (127/80)
-C: 75,0: Line too long (120/80)
-C: 77,0: Line too long (97/80)
-C: 87,0: Line too long (105/80)
-C:162,0: Line too long (98/80)
-C:211,0: Line too long (110/80)
-C:273,0: Line too long (96/80)
-C:313,0: Line too long (89/80)
-C:319,0: Line too long (89/80)
-C:399,0: Line too long (83/80)
-C:420,0: Line too long (84/80)
-W: 17,4: Redefining built-in 'str'
-C: 17,4: Invalid name "str" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 18,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 25,4: Invalid name "gzip" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 31,4: Invalid name "bz2" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 37,4: Invalid name "zlib" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-E: 43,28:md5sum: Module 'hashlib' has no 'md5' member
-C: 56,0:decGzip: Invalid name "decGzip" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 67,8:decGzip: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-W: 76,15:decGzip: Catching too general exception Exception
-C: 74,12:decGzip: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 81,20:decGzip: Invalid name "rawData" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 91,0:decBzip2: Invalid name "decBzip2" (should match [a-z_][a-z0-9_]{2,30}$)
-C:102,0:decZlib: Invalid name "decZlib" (should match [a-z_][a-z0-9_]{2,30}$)
-C:113,0:decByteOffet_python: Invalid name "decByteOffet_python" (should match [a-z_][a-z0-9_]{2,30}$)
-C:123,4:decByteOffet_python: Invalid name "dataOut" (should match [a-z_][a-z0-9_]{2,30}$)
-C:148,0:decByteOffet_weave: Invalid name "decByteOffet_weave" (should match [a-z_][a-z0-9_]{2,30}$)
-C:164,4:decByteOffet_weave: Invalid name "dataIn" (should match [a-z_][a-z0-9_]{2,30}$)
-C:165,4:decByteOffet_weave: Invalid name "n" (should match [a-z_][a-z0-9_]{2,30}$)
-C:166,4:decByteOffet_weave: Invalid name "dataOut" (should match [a-z_][a-z0-9_]{2,30}$)
-C:167,4:decByteOffet_weave: Invalid name "codeC" (should match [a-z_][a-z0-9_]{2,30}$)
-C:211,4:decByteOffet_weave: Invalid name "rc" (should match [a-z_][a-z0-9_]{2,30}$)
-W:165,4:decByteOffet_weave: Unused variable 'n'
-C:218,0:decByteOffet_numpy: Invalid name "decByteOffet_numpy" (should match [a-z_][a-z0-9_]{2,30}$)
-W:218,31:decByteOffet_numpy: Unused argument 'size'
-C:259,0:decByteOffet_cython: Invalid name "decByteOffet_cython" (should match [a-z_][a-z0-9_]{2,30}$)
-W:272,24:decByteOffet_cython: Unused variable 'error'
-C:278,0:compByteOffet_numpy: Invalid name "compByteOffet_numpy" (should match [a-z_][a-z0-9_]{2,30}$)
-R:278,0:compByteOffet_numpy: Too many branches (14/12)
-C:328,0:decTY1: Invalid name "decTY1" (should match [a-z_][a-z0-9_]{2,30}$)
-C:360,0: Invalid name "decKM4CCD" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:362,0:compTY1: Invalid name "compTY1" (should match [a-z_][a-z0-9_]{2,30}$)
-C:387,0:decPCK: Invalid name "decPCK" (should match [a-z_][a-z0-9_]{2,30}$)
-C:387,0:decPCK: Invalid name "overflowPix" (should match [a-z_][a-z0-9_]{2,30}$)
-C:387,41:decPCK: Invalid name "overflowPix" (should match [a-z_][a-z0-9_]{2,30}$)
-W:398,24:decPCK: Unused variable 'error'
-C:409,0:compPCK: Invalid name "compPCK" (should match [a-z_][a-z0-9_]{2,30}$)
-W:419,24:compPCK: Unused variable 'error'
+W: 20,4: Redefining built-in 'str'
+W: 79,15:decGzip: Catching too general exception Exception
+C:168,4:decByteOffet_weave: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:214,4:decByteOffet_weave: Invalid name "rc" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:168,4:decByteOffet_weave: Unused variable 'n'
+W:221,31:decByteOffet_numpy: Unused argument 'size'
+W:275,24:decByteOffet_cython: Unused variable 'error'
+W:401,24:decPCK: Unused variable 'error'
+W:422,24:compPCK: Unused variable 'error'
 
 
 Report
 ======
-223 statements analysed.
+224 statements analysed.
 
 Messages by category
 --------------------
@@ -63,13 +20,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |41     |NC       |NC         |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |0      |0        |=          |
 +-----------+-------+---------+-----------+
-|warning    |7      |NC       |NC         |
+|warning    |7      |7        |=          |
 +-----------+-------+---------+-----------+
-|error      |1      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -80,11 +37,9 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |29          |
-+-----------+------------+
-|C0301      |12          |
-+-----------+------------+
 |W0612      |4           |
++-----------+------------+
+|C0103      |2           |
 +-----------+------------+
 |W0703      |1           |
 +-----------+------------+
@@ -92,29 +47,13 @@ Messages
 +-----------+------------+
 |W0613      |1           |
 +-----------+------------+
-|R0912      |1           |
-+-----------+------------+
-|E1101      |1           |
-+-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.58/10
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
-
-
+Your code has been rated at 9.60/10 (previous run: 9.60/10)
+So close to being perfect...
 
 Raw metrics
 -----------
@@ -122,22 +61,14 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |284    |67.78 |NC       |NC         |
+|code      |285    |67.70 |284      |+1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |100    |23.87 |NC       |NC         |
+|docstring |100    |23.75 |100      |=          |
 +----------+-------+------+---------+-----------+
-|comment   |2      |0.48  |NC       |NC         |
+|comment   |3      |0.71  |2        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |33     |7.88  |NC       |NC         |
+|empty     |33     |7.84  |33       |=          |
 +----------+-------+------+---------+-----------+
-
-
-
-External dependencies
----------------------
-::
-
-    numpy (compression)
 
 
 
@@ -147,14 +78,38 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |0      |NC         |NC         |0           |0        |
+|class    |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |0      |NC         |NC         |0           |0        |
+|method   |0      |0          |=          |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
-|function |14     |NC         |NC         |100.00      |85.71    |
+|function |14     |14         |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio 
+      \-byte_offset 
+        \-analyseCython (compression)
+    numpy (compression)
 
 
 
