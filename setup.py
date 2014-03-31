@@ -17,7 +17,7 @@ from distutils.command.sdist import sdist
 ################################################################################
 # Remove MANIFEST file ... it needs to be re-generated on the fly
 ################################################################################
-if os.path.isfile("MANIFEST"):
+if op.isfile("MANIFEST"):
     os.unlink("MANIFEST")
 
 
@@ -83,8 +83,8 @@ if sphinx:
             # previously installed version
 
             build = self.get_finalized_command('build')
-            print(os.path.abspath(build.build_lib))
-            sys.path.insert(0, os.path.abspath(build.build_lib))
+            print(op.abspath(build.build_lib))
+            sys.path.insert(0, op.abspath(build.build_lib))
             # we need to reload PyMca from the build directory and not
             # the one from the source directory which does not contain
             # the extensions
@@ -100,7 +100,7 @@ class PyTest(Command):
         pass
     def run(self):
         import subprocess
-        os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "test"))
+        os.chdir(op.join(op.dirname(op.abspath(__file__)), "test"))
         errno = subprocess.call([sys.executable, 'test_all.py'])
         if errno != 0:
             raise SystemExit(errno)
@@ -201,21 +201,27 @@ cmdclass['debian_src'] = sdist_debian
 
 
 if sys.platform == "win32":
-    root = os.path.dirname(os.path.abspath(__file__))
+    root = op.dirname(op.abspath(__file__))
+    tocopy_files = []
     script_files = []
     for i in os.listdir(op.join(root, "scripts")):
-        if os.path.isfile(op.join(root, "scripts", i)):
+        if op.isfile(op.join(root, "scripts", i)):
             if i.endswith(".py"):
                 script_files.append(op.join("scripts", i))
             else:
                 tocopy_files.append(op.join("scripts", i))
+    for i in tocopy_files:
+        filein = op.join(root, i)
+        if (filein + ".py") not in script_files:
+            shutil.copyfile(filein, filein + ".py")
+            script_files.append(filein + ".py")
 else:
     script_files = glob.glob("scripts/*")
 
 
 setup(name='fabio',
       version=version,
-      author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer and Gael Goret",
+      author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
       author_email="fable-talk@lists.sourceforge.net",
       description='Image IO for fable',
       url="http://fable.wiki.sourceforge.net/fabio",
