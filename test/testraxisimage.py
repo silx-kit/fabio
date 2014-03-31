@@ -52,6 +52,7 @@ class testRaxisImage(unittest.TestCase):
         for line in TESTIMAGES.split('\n'):
             vals = line.strip().split()
             name = vals[0]
+            logger.debug("Testing file %s" % name)
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = raxisimage()

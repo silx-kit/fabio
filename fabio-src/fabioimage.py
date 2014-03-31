@@ -409,7 +409,7 @@ class fabioimage(object):
                            python_uncompress,
                            mode='rb'):
         """
-        Try to transparently handle gzip / bzip without always getting python
+        Try to transparently handle gzip / bzip2 without always getting python
         performance
         """
         # assert that python modules are always OK based on performance benchmark

@@ -24,7 +24,7 @@ __version__ = "23 Nov 2013"
 import logging, struct, os
 import numpy
 from .fabioimage import fabioimage
-logger = logging.getLogger("templateimage")
+logger = logging.getLogger("raxisimage")
 
 
 class raxisimage(fabioimage):
@@ -53,7 +53,7 @@ class raxisimage(fabioimage):
 
     def swap_needed(self):
         """not sure if this function is needed"""
-        endian=self.endianness
+        endian = self.endianness
         #Decide if we need to byteswap
         if (endian == '<' and numpy.little_endian) or (endian == '>' and not numpy.little_endian):
             return False
@@ -74,56 +74,56 @@ class raxisimage(fabioimage):
 
         @param infile: Opened python file (can be stringIO or bzipped file)
         """
-        endianness=self.endianness
+        endianness = self.endianness
         #list of header key to keep the order (when writing)
-        RKey,orderList=self.rigakuKeys()
+        RKey, orderList = self.rigakuKeys()
         self.header = {}
         self.header_keys = orderList
 
         #swapBool=False
-        fs=endianness
-        minHeaderLength=1400 #from rigaku's def
+        fs = endianness
+        minHeaderLength = 1400 #from rigaku's def
         #if (numpy.little_endian and endianness=='>'):
         #    swapBool=True
         #file should be open already
         #fh=open(filename,'rb')
         infile.seek(0) #hopefully seeking works.
-        rawHead=infile.read(minHeaderLength)
+        rawHead = infile.read(minHeaderLength)
         #fh.close() #don't like open files in case of intermediate crash
 
-        self.header=dict()
-        curByte=0
+        self.header = dict()
+        curByte = 0
         for key in orderList:
-            if isinstance(RKey[key],int):
+            if isinstance(RKey[key], int):
                 # read a number of bytes, convert to char.
                 #if -1, read remainder of header
-                if RKey[key]==-1:
-                    rByte=len(rawHead)-curByte
-                    self.header[key]=struct.unpack(fs + str(rByte) + 's',
+                if RKey[key] == -1:
+                    rByte = len(rawHead) - curByte
+                    self.header[key] = struct.unpack(fs + str(rByte) + 's',
                             rawHead[curByte : curByte + rByte])[0]
-                    curByte+=rByte
+                    curByte += rByte
                     break
 
-                rByte=RKey[key]
-                self.header[key]=struct.unpack(fs + str(rByte) + 's',
+                rByte = RKey[key]
+                self.header[key] = struct.unpack(fs + str(rByte) + 's',
                         rawHead[curByte : curByte + rByte])[0]
-                curByte+=rByte
-            elif RKey[key]=='float':
+                curByte += rByte
+            elif RKey[key] == 'float':
                 #read a float, 4 bytes
-                rByte=4
-                self.header[key]=struct.unpack(fs + 'f',
+                rByte = 4
+                self.header[key] = struct.unpack(fs + 'f',
                         rawHead[curByte : curByte + rByte])[0]
-                curByte+=rByte
-            elif RKey[key]=='long':
+                curByte += rByte
+            elif RKey[key] == 'long':
                 #read a long, 4 bytes
-                rByte=4
-                self.header[key]=struct.unpack(fs + 'l',
+                rByte = 4
+                self.header[key] = struct.unpack(fs + 'l',
                         rawHead[curByte : curByte + rByte])[0]
-                curByte+=rByte
+                curByte += rByte
             else:
                 logging.warn('special header data type {} not understood'
                         .format(Rkey[key]))
-            if len(rawHead)==curByte:
+            if len(rawHead) == curByte:
                 #"end reached"
                 break
 
@@ -134,10 +134,10 @@ class raxisimage(fabioimage):
         @param frame:
         """
 
-        endianness=self.endianness
+        endianness = self.endianness
         self.resetvals()
-        infile = self._open(fname,'rb')
-        offset=-1 #read from EOF backward
+        infile = self._open(fname, 'rb')
+        offset = -1 #read from EOF backward
         try:
             self._readheader(infile)
         except:
@@ -153,22 +153,26 @@ class raxisimage(fabioimage):
         dims = [self.dim2, self.dim1]
         bpp = numpy.dtype(self.bytecode).itemsize
         size = dims[0] * dims[1] * bpp
-
         if offset >= 0:
             infile.seek(offset)
         else:
             try:
-                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
+                if "getSize" in dir(infile): #Handle specifically gzip ... works also for bzip2
+                    filesize = infile.getSize()
+                    infile.seek(filesize - size) #seek from EOF backwards
+                else:
+                    infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
+#                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
-                logging.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
+                logger.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
             except Exception as error:
-                logging.error('Uncommon error encountered when reading file: %s' % error)
+                logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
         if  self.swap_needed():
             data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
         else:
             data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
-
+#        print(data)
         di = (data >> 15) != 0  # greater than 2^15
         if di.sum() >= 1:
             # find indices for which we need to do the correction (for which
@@ -189,7 +193,7 @@ class raxisimage(fabioimage):
 
     def rigakuKeys(self):
         #returns dict of keys and keyLengths
-        RKey={
+        RKey = {
                 'InstrumentType':10,
                 'Version':10,
                 'Crystal Name':20,
@@ -306,7 +310,7 @@ class raxisimage(fabioimage):
                 }
 
         #make a list with the items in the right order
-        orderList=[
+        orderList = [
                 'InstrumentType',
                 'Version',
                 'Crystal Name',
@@ -422,6 +426,6 @@ class raxisimage(fabioimage):
                 ]
 
 
-        return RKey,orderList
+        return RKey, orderList
 
 

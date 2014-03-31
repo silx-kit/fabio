@@ -9,7 +9,7 @@ from __future__ import with_statement, print_function
 import re, os, logging, threading, sys
 import StringIO as stringIO
 logger = logging.getLogger("fabioutils")
-from compression import bz2, gzip
+from .compression import bz2, gzip
 import traceback
 from math import ceil
 
@@ -78,7 +78,7 @@ def deprecated(func):
     """
     def wrapper(*arg, **kw):
         """
-        decorator that deprecates the use of a function  
+        decorator that deprecates the use of a function
         """
         logger.warning("%s is Deprecated !!! %s" % (func.func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
         return func(*arg, **kw)
@@ -86,7 +86,7 @@ def deprecated(func):
 
 def pad(mystr, pattern=" ", size=80):
     """
-    Performs the padding of the string to the right size with the right pattern 
+    Performs the padding of the string to the right size with the right pattern
     """
     size = int(size)
     padded_size = int(ceil(float(len(mystr)) / size) * size)
@@ -109,7 +109,7 @@ def getnum(name):
 
 class FilenameObject(object):
     """
-    The 'meaning' of a filename ... 
+    The 'meaning' of a filename ...
     """
     def __init__(self, stem=None,
             num=None,
@@ -120,20 +120,20 @@ class FilenameObject(object):
             digits=4,
             filename=None):
         """
-        This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...   
-        
+        This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...
+
         @param stem: the stem is a kind of prefix (str)
         @param num: image number in the serie (int)
         @param directory: name of the directory (str)
         @param format: ??
-        @param extension: 
-        @param postnum: 
+        @param extension:
+        @param postnum:
         @param digits: Number of digits used to print num
-        
-        Alternative constructor: 
-        
-        @param filename: fullpath of an image file to be deconstructed into directory, prefix, num, extension, ... 
-        
+
+        Alternative constructor:
+
+        @param filename: fullpath of an image file to be deconstructed into directory, prefix, num, extension, ...
+
         """
 
 
@@ -349,9 +349,9 @@ def toAscii(name, excluded=None):
     return "".join(out)
 
 def nice_int(s):
-    """ 
-    Workaround that int('1.0') raises an exception 
-    
+    """
+    Workaround that int('1.0') raises an exception
+
     @param s: string to be converted to integer
     """
     try:
@@ -396,7 +396,7 @@ class File(file):
     """
     def __init__(self, name, mode="rb", buffering=0):
         """file(name[, mode[, buffering]]) -> file object
-            
+
         Open a file.  The mode can be 'r', 'w' or 'a' for reading (default),
         writing or appending.  The file will be created if it doesn't exist
         when opened for writing or appending; it will be truncated when
@@ -410,7 +410,7 @@ class File(file):
         in Python.  Also, a file so opened gains the attribute 'newlines';
         the value for this attribute is one of None (no newline read yet),
         '\r', '\n', '\r\n' or a tuple containing all the newline types seen.
-        
+
         'U' cannot be combined with 'w' or '+' mode.
         """
         file.__init__(self, name, mode, buffering)
@@ -450,32 +450,32 @@ if gzip is None:
 else:
     class GzipFile(gzip.GzipFile):
         """
-        Just a wrapper forgzip.GzipFile providing the correct seek capabilities for python 2.5   
+        Just a wrapper forgzip.GzipFile providing the correct seek capabilities for python 2.5
         """
         def __init__(self, filename=None, mode=None, compresslevel=9, fileobj=None):
             """
             Wrapper with locking for constructor for the GzipFile class.
-            
+
             At least one of fileobj and filename must be given a
             non-trivial value.
-            
+
             The new class instance is based on fileobj, which can be a regular
             file, a StringIO object, or any other object which simulates a file.
             It defaults to None, in which case filename is opened to provide
             a file object.
-            
+
             When fileobj is not None, the filename argument is only used to be
             included in the gzip file header, which may includes the original
             filename of the uncompressed file.  It defaults to the filename of
             fileobj, if discernible; otherwise, it defaults to the empty string,
             and in this case the original filename is not included in the header.
-            
+
             The mode argument can be any of 'r', 'rb', 'a', 'ab', 'w', or 'wb',
             depending on whether the file will be read or written.  The default
             is the mode of fileobj if discernible; otherwise, the default is 'rb'.
             Be aware that only the 'rb', 'ab', and 'wb' values should be used
             for cross-platform portability.
-            
+
             The compresslevel argument is an integer from 1 to 9 controlling the
             level of compression; 1 is fastest and produces the least compression,
             and 9 is slowest and produces the most compression.  The default is 9.
@@ -483,22 +483,24 @@ else:
             gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
             self.lock = threading.Semaphore()
             self.__size = None
+#            self.getSize()
 
+        def __repr__(self):
+            return "fabio." + gzip.GzipFile.__repr__(self)
 
+        def getSize(self):
+            if self.mode == gzip.WRITE:
+                return self.size
+            if self.__size is None:
+                with self.lock:
+                    if self.__size is None:
+                        pos = self.offset
+                        end_pos = len(gzip.GzipFile.read(self)) + pos
+                        self.seek(pos)
+                        logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, self.offset))
+                        self.__size = end_pos
+            return self.__size
         if sys.version_info < (2, 7):
-            def getSize(self):
-                if self.__size is None:
-                    with self.lock:
-                        if self.__size is None:
-                            logger.debug("Measuring size of %s" % self.name)
-                            pos = self.tell()
-                            all_data = gzip.GzipFile.read(self)
-                            self.__size = self.tell()
-                            all_data = gzip.GzipFile.seek(self, pos)
-        #                    with open(self.filename, "rb") as f:
-        #                        f.seek(-4, os.SEEK_END)
-        #                        self.__size = numpy.fromstring(f.read(4), dtype=numpy.uint32)
-                return self.__size
             def setSize(self, value):
                 self.__size = value
             size = property(getSize, setSize)
@@ -509,7 +511,7 @@ else:
             def seek(self, offset, whence=os.SEEK_SET):
                 """
                 Move to new file position.
-        
+
                 Argument offset is a byte count.  Optional argument whence defaults to
                 0 (offset from start of file, offset should be >= 0); other values are 1
                 (move relative to current position, positive or negative), and 2 (move
@@ -517,9 +519,9 @@ else:
                 seeking beyond the end of a file).  If the file is opened in text mode,
                 only offsets returned by tell() are legal.  Use of other offsets causes
                 undefined behavior.
-                
+
                 This is a wrapper for seek to ensure compatibility with old python 2.5
-                
+
                 Warning: Seek from end is not supported (works only for single blocks !!!)
                 This implemtents a hack
                 """
@@ -528,8 +530,7 @@ else:
                 elif whence == os.SEEK_CUR:
                     gzip.GzipFile.seek(self, offset + self.tell())
                 elif whence == os.SEEK_END:
-                    size = self.getSize()
-                    gzip.GzipFile.seek(self, offset + size)
+                    gzip.GzipFile.seek(self, offset + self.getSize())
 
             def __enter__(self, *args, **kwargs):
                 return self
@@ -547,13 +548,13 @@ else:
         def __init__(self, name , mode='r', buffering=0, compresslevel=9):
             """
             BZ2File(name [, mode='r', buffering=0, compresslevel=9]) -> file object
-            
+
             Open a bz2 file. The mode can be 'r' or 'w', for reading (default) or
             writing. When opened for writing, the file will be created if it doesn't
             exist, and truncated otherwise. If the buffering argument is given, 0 means
             unbuffered, and larger numbers specify the buffer size. If compresslevel
             is given, must be a number between 1 and 9.
-            
+
             Add a 'U' to mode to open the file for input with universal newline
             support. Any line ending in the input file will be seen as a '\n' in
             Python. Also, a file so opened gains the attribute 'newlines'; the value
