@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.OXDimage &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.OXDimage &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,451 +45,449 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for fabio.OXDimage</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="c">#coding: utf8</span>
+  <h1>Source code for fabio.OXDimage</h1><pre>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">with_statement</span>
-<span class="n">__doc__</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">Reads Oxford Diffraction Sapphire 3 images</span>
+from __future__ import with_statement
+__doc__ = """
+Reads Oxford Diffraction Sapphire 3 images
 
-<span class="s">Authors:</span>
-<span class="s">........</span>
-<span class="s">* Henning O. Sorensen &amp; Erik Knudsen:</span>
-<span class="s">  Center for Fundamental Research: Metal Structures in Four Dimensions;</span>
-<span class="s">  Risoe National Laboratory;</span>
-<span class="s">  Frederiksborgvej 399;</span>
-<span class="s">  DK-4000 Roskilde;</span>
-<span class="s">  email:erik.knudsen@risoe.dk</span>
-<span class="s">* Jon Wright, Jérôme Kieffer &amp; Gaël Goret:</span>
-<span class="s">  European Synchrotron Radiation Facility;</span>
-<span class="s">  Grenoble (France)</span>
+Authors:
+........
+* Henning O. Sorensen &amp; Erik Knudsen:
+  Center for Fundamental Research: Metal Structures in Four Dimensions;
+  Risoe National Laboratory;
+  Frederiksborgvej 399;
+  DK-4000 Roskilde;
+  email:erik.knudsen@risoe.dk
+* Jon Wright, Jérôme Kieffer &amp; Gaël Goret:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
 
-<span class="s">&quot;&quot;&quot;</span>
+"""
 
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">struct</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;OXDimage&quot;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">fabioimage</span> <span class="kn">import</span> <span class="n">fabioimage</span>
-<span class="kn">from</span> <span class="nn">compression</span> <span class="kn">import</span> <span class="n">decTY1</span><span class="p">,</span> <span class="n">compTY1</span>
+import time, logging, struct
+logger = logging.getLogger("OXDimage")
+import numpy
+from fabioimage import fabioimage
+from compression import decTY1, compTY1
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">rad2deg</span><span class="p">,</span> <span class="n">deg2rad</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span> <span class="c">#naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)</span>
-    <span class="n">rad2deg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">x</span> <span class="o">/</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span>
-    <span class="n">deg2rad</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.</span>
+try:
+    from numpy import rad2deg, deg2rad
+except ImportError: #naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)
+    rad2deg = lambda x: 180.0 * x / numpy.pi
+    deg2rad = lambda x: x * numpy.pi / 180.
 
-<span class="n">DETECTOR_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s">&#39;Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)&#39;</span><span class="p">,</span>
-<span class="mi">1</span><span class="p">:</span> <span class="s">&#39;Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)&#39;</span><span class="p">,</span>
-<span class="mi">2</span><span class="p">:</span> <span class="s">&#39;Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)&#39;</span><span class="p">,</span>
-<span class="mi">3</span><span class="p">:</span> <span class="s">&#39;Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)&#39;</span><span class="p">,</span>
-<span class="mi">4</span><span class="p">:</span> <span class="s">&#39;Unknown Oxford diffraction detector&#39;</span><span class="p">}</span>
+DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
+1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
+2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
+3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
+4: 'Unknown Oxford diffraction detector'}
 
-<span class="n">DEFAULT_HEADERS</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Header Version&#39;</span><span class="p">:</span>  <span class="s">&#39;OD SAPPHIRE  3.0&#39;</span><span class="p">,</span>
-                   <span class="s">&#39;Compression&#39;</span><span class="p">:</span> <span class="s">&quot;TY1&quot;</span><span class="p">,</span>
-                   <span class="s">&#39;Header Size In Bytes&#39;</span><span class="p">:</span> <span class="mi">5120</span><span class="p">,</span>
-                   <span class="s">&quot;ASCII Section size in Byte&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
-                   <span class="s">&quot;General Section size in Byte&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
-                   <span class="s">&quot;Special Section size in Byte&quot;</span><span class="p">:</span> <span class="mi">768</span><span class="p">,</span>
-                   <span class="s">&quot;KM4 Section size in Byte&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
-                   <span class="s">&quot;Statistic Section in Byte&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
-                   <span class="s">&quot;History Section in Byte&quot;</span><span class="p">:</span> <span class="mi">2048</span><span class="p">,</span>
-                   <span class="s">&#39;NSUPPLEMENT&#39;</span><span class="p">:</span><span class="mi">0</span>
-                   <span class="p">}</span>
+DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
+                   'Compression': "TY1",
+                   'Header Size In Bytes': 5120,
+                   "ASCII Section size in Byte": 256,
+                   "General Section size in Byte": 512,
+                   "Special Section size in Byte": 768,
+                   "KM4 Section size in Byte": 1024,
+                   "Statistic Section in Byte": 512,
+                   "History Section in Byte": 2048,
+                   'NSUPPLEMENT':0
+                   }
 
-<div class="viewcode-block" id="OXDimage"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage">[docs]</a><span class="k">class</span> <span class="nc">OXDimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Oxford Diffraction Sapphire 3 images reader/writer class</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+class OXDimage(fabioimage):
+    """
+<div class="viewcode-block" id="OXDimage"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage">[docs]</a>    Oxford Diffraction Sapphire 3 images reader/writer class
+    """
+    def _readheader(self, infile):
 
-        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        infile.seek(0)
 
-        <span class="c"># Ascii header part 256 byes long</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Header Version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Compression&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">15</span><span class="p">]</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NX&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">11</span><span class="p">:</span><span class="mi">15</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;OI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="mi">26</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;OL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">37</span><span class="p">])</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Header Size In Bytes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">15</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;General Section size in Byte&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">19</span><span class="p">:</span><span class="mi">26</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Special Section size in Byte&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">37</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;KM4 Section size in Byte&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">41</span><span class="p">:</span><span class="mi">48</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Statistic Section in Byte&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">52</span><span class="p">:</span><span class="mi">59</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;History Section in Byte&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">63</span><span class="p">:])</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NSUPPLEMENT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">19</span><span class="p">])</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">29</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;ASCII Section size in Byte&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Header Size In Bytes&#39;</span><span class="p">]</span>\
-                                                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;General Section size in Byte&#39;</span><span class="p">]</span>\
-                                                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Special Section size in Byte&#39;</span><span class="p">]</span> \
-                                                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;KM4 Section size in Byte&#39;</span><span class="p">]</span>\
-                                                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Statistic Section in Byte&#39;</span><span class="p">]</span>\
-                                                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;History Section in Byte&#39;</span><span class="p">]</span>\
-        <span class="c"># Skip to general section (NG) 512 byes long &lt;&lt;&lt;&lt;&lt;&lt;&quot;</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;ASCII Section size in Byte&quot;</span><span class="p">])</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;General Section size in Byte&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Binning in x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Binning in y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Detector size x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Detector size y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">24</span><span class="p">:</span><span class="mi">26</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Pixels in x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">26</span><span class="p">:</span><span class="mi">28</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Pixels in y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">28</span><span class="p">:</span><span class="mi">30</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;No of pixels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">36</span><span class="p">:</span><span class="mi">40</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        # Ascii header part 256 byes long
+        self.header['Header Version'] = infile.readline()[:-2]
+        block = infile.readline()
+        self.header['Compression'] = block[12:15]
+        block = infile.readline()
+        self.header['NX'] = int(block[3:7])
+        self.header['NY'] = int(block[11:15])
+        self.header['OI'] = int(block[19:26])
+        self.header['OL'] = int(block[30:37])
+        block = infile.readline()
+        self.header['Header Size In Bytes'] = int(block[8:15])
+        self.header['General Section size in Byte'] = int(block[19:26])
+        self.header['Special Section size in Byte'] = int(block[30:37])
+        self.header['KM4 Section size in Byte'] = int(block[41:48])
+        self.header['Statistic Section in Byte'] = int(block[52:59])
+        self.header['History Section in Byte'] = int(block[63:])
+        block = infile.readline()
+        self.header['NSUPPLEMENT'] = int(block[12:19])
+        block = infile.readline()
+        self.header['Time'] = block[5:29]
+        self.header["ASCII Section size in Byte"] = self.header['Header Size In Bytes']\
+                                                - self.header['General Section size in Byte']\
+                                                - self.header['Special Section size in Byte'] \
+                                                - self.header['KM4 Section size in Byte']\
+                                                - self.header['Statistic Section in Byte']\
+                                                - self.header['History Section in Byte']\
+        # Skip to general section (NG) 512 byes long &lt;&lt;&lt;&lt;&lt;&lt;"
+        infile.seek(self.header["ASCII Section size in Byte"])
+        block = infile.read(self.header['General Section size in Byte'])
+        self.header['Binning in x'] = numpy.fromstring(block[0:2], numpy.uint16)[0]
+        self.header['Binning in y'] = numpy.fromstring(block[2:4], numpy.uint16)[0]
+        self.header['Detector size x'] = numpy.fromstring(block[22:24], numpy.uint16)[0]
+        self.header['Detector size y'] = numpy.fromstring(block[24:26], numpy.uint16)[0]
+        self.header['Pixels in x'] = numpy.fromstring(block[26:28], numpy.uint16)[0]
+        self.header['Pixels in y'] = numpy.fromstring(block[28:30], numpy.uint16)[0]
+        self.header['No of pixels'] = numpy.fromstring(block[36:40], numpy.uint32)[0]
 
-        <span class="c"># Speciel section (NS) 768 bytes long</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Special Section size in Byte&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Gain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">56</span><span class="p">:</span><span class="mi">64</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Overflows flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">464</span><span class="p">:</span><span class="mi">466</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Overflow after remeasure flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">466</span><span class="p">:</span><span class="mi">468</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Overflow threshold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">472</span><span class="p">:</span><span class="mi">476</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Exposure time in sec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">480</span><span class="p">:</span><span class="mi">488</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Overflow time in sec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">488</span><span class="p">:</span><span class="mi">496</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Monitor counts of raw image 1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">528</span><span class="p">:</span><span class="mi">532</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Monitor counts of raw image 2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">532</span><span class="p">:</span><span class="mi">536</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Monitor counts of overflow raw image 1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">536</span><span class="p">:</span><span class="mi">540</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Monitor counts of overflow raw image 2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">540</span><span class="p">:</span><span class="mi">544</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Unwarping&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">544</span><span class="p">:</span><span class="mi">548</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Detector type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DETECTOR_TYPES</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">548</span><span class="p">:</span><span class="mi">552</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Real pixel size x (mm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">568</span><span class="p">:</span><span class="mi">576</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Real pixel size y (mm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">576</span><span class="p">:</span><span class="mi">584</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        # Speciel section (NS) 768 bytes long
+        block = infile.read(self.header['Special Section size in Byte'])
+        self.header['Gain'] = numpy.fromstring(block[56:64], numpy.float)[0]
+        self.header['Overflows flag'] = numpy.fromstring(block[464:466], numpy.int16)[0]
+        self.header['Overflow after remeasure flag'] = numpy.fromstring(block[466:468], numpy.int16)[0]
+        self.header['Overflow threshold'] = numpy.fromstring(block[472:476], numpy.int32)[0]
+        self.header['Exposure time in sec'] = numpy.fromstring(block[480:488], numpy.float)[0]
+        self.header['Overflow time in sec'] = numpy.fromstring(block[488:496], numpy.float)[0]
+        self.header['Monitor counts of raw image 1'] = numpy.fromstring(block[528:532], numpy.int32)[0]
+        self.header['Monitor counts of raw image 2'] = numpy.fromstring(block[532:536], numpy.int32)[0]
+        self.header['Monitor counts of overflow raw image 1'] = numpy.fromstring(block[536:540], numpy.int32)[0]
+        self.header['Monitor counts of overflow raw image 2'] = numpy.fromstring(block[540:544], numpy.int32)[0]
+        self.header['Unwarping'] = numpy.fromstring(block[544:548], numpy.int32)[0]
+        self.header['Detector type'] = DETECTOR_TYPES[numpy.fromstring(block[548:552], numpy.int32)[0]]
+        self.header['Real pixel size x (mm)'] = numpy.fromstring(block[568:576], numpy.float)[0]
+        self.header['Real pixel size y (mm)'] = numpy.fromstring(block[576:584], numpy.float)[0]
 
-        <span class="c"># KM4 goniometer section (NK) 1024 bytes long</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;KM4 Section size in Byte&#39;</span><span class="p">])</span>
-        <span class="c"># Spatial correction file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Spatial correction file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="mi">26</span><span class="p">:</span><span class="mi">272</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\x00</span><span class="s">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Spatial correction file date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">26</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\x00</span><span class="s">&quot;</span><span class="p">)</span>
-        <span class="c"># Angles are in steps due to stepper motors - conversion factor RAD</span>
-        <span class="c"># angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,   </span>
-        <span class="n">start_angles_step</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">284</span><span class="p">:</span><span class="mi">304</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">end_angles_step</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">324</span><span class="p">:</span><span class="mi">344</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">step2rad</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">368</span><span class="p">:</span><span class="mi">408</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">step_angles_deg</span> <span class="o">=</span> <span class="n">rad2deg</span><span class="p">(</span><span class="n">step2rad</span><span class="p">)</span>
-        <span class="c"># calc angles</span>
-        <span class="n">start_angles_deg</span> <span class="o">=</span> <span class="n">start_angles_step</span> <span class="o">*</span> <span class="n">step_angles_deg</span>
-        <span class="n">end_angles_deg</span> <span class="o">=</span> <span class="n">end_angles_step</span> <span class="o">*</span> <span class="n">step_angles_deg</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Omega start in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_angles_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Theta start in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_angles_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Kappa start in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_angles_deg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Phi start in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_angles_deg</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Omega end in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_angles_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Theta end in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_angles_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Kappa end in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_angles_deg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Phi end in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_angles_deg</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Omega step in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_angles_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Theta step in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_angles_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Kappa step in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_angles_deg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Phi step in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_angles_deg</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        # KM4 goniometer section (NK) 1024 bytes long
+        block = infile.read(self.header['KM4 Section size in Byte'])
+        # Spatial correction file
+        self.header['Spatial correction file'] = block[26:272].strip("\x00")
+        self.header['Spatial correction file date'] = block[0:26].strip("\x00")
+        # Angles are in steps due to stepper motors - conversion factor RAD
+        # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,   
+        start_angles_step = numpy.fromstring(block[284:304], numpy.int32)
+        end_angles_step = numpy.fromstring(block[324:344], numpy.int32)
+        step2rad = numpy.fromstring(block[368:408], numpy.float)
+        step_angles_deg = rad2deg(step2rad)
+        # calc angles
+        start_angles_deg = start_angles_step * step_angles_deg
+        end_angles_deg = end_angles_step * step_angles_deg
+        self.header['Omega start in deg'] = start_angles_deg[0]
+        self.header['Theta start in deg'] = start_angles_deg[1]
+        self.header['Kappa start in deg'] = start_angles_deg[2]
+        self.header['Phi start in deg'] = start_angles_deg[3]
+        self.header['Omega end in deg'] = end_angles_deg[0]
+        self.header['Theta end in deg'] = end_angles_deg[1]
+        self.header['Kappa end in deg'] = end_angles_deg[2]
+        self.header['Phi end in deg'] = end_angles_deg[3]
+        self.header['Omega step in deg'] = step_angles_deg[0]
+        self.header['Theta step in deg'] = step_angles_deg[1]
+        self.header['Kappa step in deg'] = step_angles_deg[2]
+        self.header['Phi step in deg'] = step_angles_deg[3]
 
 
-        <span class="n">zero_correction_soft_step</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">512</span><span class="p">:</span><span class="mi">532</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">zero_correction_soft_deg</span> <span class="o">=</span> <span class="n">zero_correction_soft_step</span> <span class="o">*</span> <span class="n">step_angles_deg</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Omega zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zero_correction_soft_deg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Theta zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zero_correction_soft_deg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Kappa zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zero_correction_soft_deg</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Phi zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zero_correction_soft_deg</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-        <span class="c"># Beam rotation about e2,e3</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Beam rot in deg (e2)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">552</span><span class="p">:</span><span class="mi">560</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Beam rot in deg (e3)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">560</span><span class="p">:</span><span class="mi">568</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c"># Wavelenghts alpha1, alpha2, beta</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Wavelength alpha1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">568</span><span class="p">:</span><span class="mi">576</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Wavelength alpha2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">576</span><span class="p">:</span><span class="mi">584</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Wavelength alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">584</span><span class="p">:</span><span class="mi">592</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Wavelength beta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">592</span><span class="p">:</span><span class="mi">600</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        zero_correction_soft_step = numpy.fromstring(block[512:532], numpy.int32)
+        zero_correction_soft_deg = zero_correction_soft_step * step_angles_deg
+        self.header['Omega zero corr. in deg'] = zero_correction_soft_deg[0]
+        self.header['Theta zero corr. in deg'] = zero_correction_soft_deg[1]
+        self.header['Kappa zero corr. in deg'] = zero_correction_soft_deg[2]
+        self.header['Phi zero corr. in deg'] = zero_correction_soft_deg[3]
+        # Beam rotation about e2,e3
+        self.header['Beam rot in deg (e2)'] = numpy.fromstring(block[552:560], numpy.float)[0]
+        self.header['Beam rot in deg (e3)'] = numpy.fromstring(block[560:568], numpy.float)[0]
+        # Wavelenghts alpha1, alpha2, beta
+        self.header['Wavelength alpha1'] = numpy.fromstring(block[568:576], numpy.float)[0]
+        self.header['Wavelength alpha2'] = numpy.fromstring(block[576:584], numpy.float)[0]
+        self.header['Wavelength alpha'] = numpy.fromstring(block[584:592], numpy.float)[0]
+        self.header['Wavelength beta'] = numpy.fromstring(block[592:600], numpy.float)[0]
 
-        <span class="c"># Detector tilts around e1,e2,e3 in deg</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Detector tilt e1 in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">640</span><span class="p">:</span><span class="mi">648</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Detector tilt e2 in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">648</span><span class="p">:</span><span class="mi">656</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Detector tilt e3 in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">656</span><span class="p">:</span><span class="mi">664</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-
-        <span class="c"># Beam center</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Beam center x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">664</span><span class="p">:</span><span class="mi">672</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Beam center y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">672</span><span class="p">:</span><span class="mi">680</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c"># Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Alpha angle in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">672</span><span class="p">:</span><span class="mi">680</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c"># Angle (beta) between phi rotation axis and e3 (ideally 0 deg)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Beta angle in deg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">672</span><span class="p">:</span><span class="mi">680</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="c"># Detector distance</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Distance in mm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">712</span><span class="p">:</span><span class="mi">720</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c"># Statistics section (NS) 512 bytes long</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Statistic Section in Byte&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Stat: Min &#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Stat: Max &#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Stat: Average &#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">24</span><span class="p">:</span><span class="mi">32</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Stat: Stddev &#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">32</span><span class="p">:</span><span class="mi">40</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Stat: Skewness &#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="mi">40</span><span class="p">:</span><span class="mi">48</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="c"># History section (NH) 2048 bytes long</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;History Section in Byte&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Flood field image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="mi">99</span><span class="p">:</span><span class="mi">126</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\x00</span><span class="s">&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="OXDimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read in header into self.header and</span>
-<span class="sd">            the data   into self.data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
-        <span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-
-        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Header Size In Bytes&#39;</span><span class="p">])</span>
-
-        <span class="c"># Compute image size</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NX&#39;</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NY&#39;</span><span class="p">])</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Oxford  file&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="o">+</span> \
-                                <span class="s">&quot;is corrupt, cannot read it&quot;</span><span class="p">)</span>
-        <span class="c">#</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Compression&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TY1&#39;</span><span class="p">:</span>
-            <span class="c">#Compressed with the KM4CCD compression</span>
-            <span class="n">raw8</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">)</span>
-            <span class="n">raw16</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="n">raw32</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;OI&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">raw16</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;OI&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;OL&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">raw32</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;OL&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
-            <span class="c">#DEBUG stuff ... </span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">raw8</span> <span class="o">=</span> <span class="n">raw8</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">raw16</span> <span class="o">=</span> <span class="n">raw16</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">raw32</span> <span class="o">=</span> <span class="n">raw32</span>
-            <span class="c">#END DEBUG</span>
-            <span class="n">block</span> <span class="o">=</span> <span class="n">decTY1</span><span class="p">(</span><span class="n">raw8</span><span class="p">,</span> <span class="n">raw16</span><span class="p">,</span> <span class="n">raw32</span><span class="p">)</span>
-            <span class="n">bytecode</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">dtype</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">)</span><span class="o">.</span><span class="n">tostring</span><span class="p">())</span>
-            <span class="n">ReadBytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span>
-            <span class="n">block</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ReadBytes</span><span class="p">),</span> <span class="n">bytecode</span><span class="p">)</span>
-
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;OVER_SHORT2: </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">block</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;BYTECODE: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pilimage</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">return</span> <span class="bp">self</span>
-</div>
-    <span class="k">def</span> <span class="nf">_writeheader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @return a string containing the header for Oxford images</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">linesep</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">DEFAULT_HEADERS</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_HEADERS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="s">&quot;NX&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s">&quot;NY&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NX&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span>
-        <span class="n">ascii_headers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Header Version&#39;</span><span class="p">],</span>
-                       <span class="s">&quot;COMPRESSION=</span><span class="si">%s</span><span class="s"> (</span><span class="si">%5.1f</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Compression&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">getCompressionRatio</span><span class="p">()),</span>
-                       <span class="s">&quot;NX=</span><span class="si">%4i</span><span class="s"> NY=</span><span class="si">%4i</span><span class="s"> OI=</span><span class="si">%7i</span><span class="s"> OL=</span><span class="si">%7i</span><span class="s"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;NX&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;NY&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;OI&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;OL&quot;</span><span class="p">]),</span>
-                       <span class="s">&quot;NHEADER=</span><span class="si">%7i</span><span class="s"> NG=</span><span class="si">%7i</span><span class="s"> NS=</span><span class="si">%7i</span><span class="s"> NK=</span><span class="si">%7i</span><span class="s"> NS=</span><span class="si">%7i</span><span class="s"> NH=</span><span class="si">%7i</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Header Size In Bytes&#39;</span><span class="p">],</span>
-                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;General Section size in Byte&#39;</span><span class="p">],</span>
-                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Special Section size in Byte&#39;</span><span class="p">],</span>
-                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;KM4 Section size in Byte&#39;</span><span class="p">],</span>
-                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Statistic Section in Byte&#39;</span><span class="p">],</span>
-                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;History Section in Byte&#39;</span><span class="p">]),</span>
-                        <span class="s">&quot;NSUPPLEMENT=</span><span class="si">%7i</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;NSUPPLEMENT&quot;</span><span class="p">])]</span>
-        <span class="k">if</span> <span class="s">&quot;Time&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-            <span class="n">ascii_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;TIME=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Time&quot;</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-
-            <span class="n">ascii_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;TIME=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">())</span>
-
-        <span class="n">header</span> <span class="o">=</span> <span class="p">(</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ascii_headers</span><span class="p">))</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
+        # Detector tilts around e1,e2,e3 in deg
+        self.header['Detector tilt e1 in deg'] = numpy.fromstring(block[640:648], numpy.float)[0]
+        self.header['Detector tilt e2 in deg'] = numpy.fromstring(block[648:656], numpy.float)[0]
+        self.header['Detector tilt e3 in deg'] = numpy.fromstring(block[656:664], numpy.float)[0]
 
 
-        <span class="n">NG</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;General Section size in Byte&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-        <span class="n">NG</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Binning in x&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="n">NG</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Binning in y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="n">NG</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Detector size x&#39;</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="n">NG</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Detector size y&#39;</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="n">NG</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Pixels in x&#39;</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="n">NG</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Pixels in y&#39;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="n">NG</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;No of pixels&#39;</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">+=</span> <span class="n">NG</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+        # Beam center
+        self.header['Beam center x'] = numpy.fromstring(block[664:672], numpy.float)[0]
+        self.header['Beam center y'] = numpy.fromstring(block[672:680], numpy.float)[0]
+        # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
+        self.header['Alpha angle in deg'] = numpy.fromstring(block[672:680], numpy.float)[0]
+        # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
+        self.header['Beta angle in deg'] = numpy.fromstring(block[672:680], numpy.float)[0]
 
-        <span class="n">NS</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Special Section size in Byte&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Gain&#39;</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Overflows flag&#39;</span><span class="p">,</span> <span class="mi">464</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Overflow after remeasure flag&#39;</span><span class="p">,</span> <span class="mi">466</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Overflow threshold&#39;</span><span class="p">,</span> <span class="mi">472</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Exposure time in sec&#39;</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Overflow time in sec&#39;</span><span class="p">,</span> <span class="mi">488</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Monitor counts of raw image 1&#39;</span><span class="p">,</span> <span class="mi">528</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Monitor counts of raw image 2&#39;</span><span class="p">,</span> <span class="mi">532</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Monitor counts of overflow raw image 1&#39;</span><span class="p">,</span> <span class="mi">536</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Monitor counts of overflow raw image 2&#39;</span><span class="p">,</span> <span class="mi">540</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Unwarping&#39;</span><span class="p">,</span> <span class="mi">544</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s">&#39;Detector type&#39;</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span>  <span class="n">DETECTOR_TYPES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Detector type&#39;</span><span class="p">]:</span>
-                    <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">548</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Real pixel size x (mm)&#39;</span><span class="p">,</span> <span class="mi">568</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">NS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Real pixel size y (mm)&#39;</span><span class="p">,</span> <span class="mi">576</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">+=</span> <span class="n">NS</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+        # Detector distance
+        self.header['Distance in mm'] = numpy.fromstring(block[712:720], numpy.float)[0]
+        # Statistics section (NS) 512 bytes long
+        block = infile.read(self.header['Statistic Section in Byte'])
+        self.header['Stat: Min '] = numpy.fromstring(block[0:4], numpy.int32)[0]
+        self.header['Stat: Max '] = numpy.fromstring(block[4:8], numpy.int32)[0]
+        self.header['Stat: Average '] = numpy.fromstring(block[24:32], numpy.float)[0]
+        self.header['Stat: Stddev '] = numpy.sqrt(numpy.fromstring(block[32:40], numpy.float)[0])
+        self.header['Stat: Skewness '] = numpy.fromstring(block[40:48], numpy.float)[0]
 
-        <span class="n">KM</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;KM4 Section size in Byte&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Spatial correction file date&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;|S26&quot;</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Spatial correction file&#39;</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="s">&quot;|S246&quot;</span><span class="p">)</span>
-        <span class="c"># Angles are in steps due to stepper motors - conversion factor RAD</span>
-        <span class="c"># angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Omega step in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">368</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">deg2rad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Omega step in deg&quot;</span><span class="p">]))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Omega start in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">284</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Omega start in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Omega step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Omega end in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">324</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Omega end in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Omega step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Omega zero corr. in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Omega zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Omega step in deg&quot;</span><span class="p">])</span>
+        # History section (NH) 2048 bytes long
+        block = infile.read(self.header['History Section in Byte'])
+        self.header['Flood field image'] = block[99:126].strip("\x00")
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Theta step in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">368</span> <span class="o">+</span> <span class="mi">8</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">deg2rad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Theta step in deg&quot;</span><span class="p">]))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Theta start in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">284</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Theta start in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Theta step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Theta end in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">324</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Theta end in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Theta step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Theta zero corr. in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">512</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Theta zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Theta step in deg&quot;</span><span class="p">])</span>
+    def read(self, fname, frame=None):
+        """
+<div class="viewcode-block" id="OXDimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.read">[docs]</a>        Read in header into self.header and
+            the data   into self.data
+        """
+        self.header = {}
+        self.resetvals()
+        infile = self._open(fname)
+        self._readheader(infile)
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Kappa step in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">368</span> <span class="o">+</span> <span class="mi">16</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">deg2rad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Kappa step in deg&quot;</span><span class="p">]))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Kappa start in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">284</span> <span class="o">+</span> <span class="mi">8</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Kappa start in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Kappa step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Kappa end in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">324</span> <span class="o">+</span> <span class="mi">8</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Kappa end in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Kappa step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Kappa zero corr. in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">512</span> <span class="o">+</span> <span class="mi">8</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Kappa zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Kappa step in deg&quot;</span><span class="p">])</span>
+        infile.seek(self.header['Header Size In Bytes'])
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Phi step in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">368</span> <span class="o">+</span> <span class="mi">24</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">deg2rad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Phi step in deg&quot;</span><span class="p">]))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Phi start in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">284</span> <span class="o">+</span> <span class="mi">12</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Phi start in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Phi step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Phi end in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">324</span> <span class="o">+</span> <span class="mi">12</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Phi end in deg&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Phi step in deg&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Phi zero corr. in deg&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">512</span> <span class="o">+</span> <span class="mi">12</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Phi zero corr. in deg&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;Phi step in deg&quot;</span><span class="p">])</span>
+        # Compute image size
+        try:
+            self.dim1 = int(self.header['NX'])
+            self.dim2 = int(self.header['NY'])
+        except:
+            raise Exception("Oxford  file", str(fname) + \
+                                "is corrupt, cannot read it")
+        #
+        if self.header['Compression'] == 'TY1':
+            #Compressed with the KM4CCD compression
+            raw8 = infile.read(self.dim1 * self.dim2)
+            raw16 = None
+            raw32 = None
+            if self.header['OI'] &gt; 0:
+                raw16 = infile.read(self.header['OI'] * 2)
+            if self.header['OL'] &gt; 0:
+                raw32 = infile.read(self.header['OL'] * 4)
+            #DEBUG stuff ... 
+            self.raw8 = raw8
+            self.raw16 = raw16
+            self.raw32 = raw32
+            #END DEBUG
+            block = decTY1(raw8, raw16, raw32)
+            bytecode = block.dtype
 
-        <span class="c"># Beam rotation about e2,e3</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Beam rot in deg (e2)&#39;</span><span class="p">,</span> <span class="mi">552</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Beam rot in deg (e3)&#39;</span><span class="p">,</span> <span class="mi">560</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="c"># Wavelenghts alpha1, alpha2, beta</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Wavelength alpha1&#39;</span><span class="p">,</span> <span class="mi">568</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Wavelength alpha2&#39;</span><span class="p">,</span> <span class="mi">576</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Wavelength alpha&#39;</span><span class="p">,</span> <span class="mi">584</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Wavelength beta&#39;</span><span class="p">,</span> <span class="mi">592</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        else:
+            bytecode = numpy.int32
+            self.bpp = len(numpy.array(0, bytecode).tostring())
+            ReadBytes = self.dim1 * self.dim2 * self.bpp
+            block = numpy.fromstring(infile.read(ReadBytes), bytecode)
 
-        <span class="c"># Detector tilts around e1,e2,e3 in deg</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Detector tilt e1 in deg&#39;</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Detector tilt e2 in deg&#39;</span><span class="p">,</span> <span class="mi">648</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Detector tilt e3 in deg&#39;</span><span class="p">,</span> <span class="mi">656</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        logger.debug('OVER_SHORT2: %s', block.dtype)
+        logger.debug("%s" % (block &lt; 0).sum())
+        infile.close()
+        logger.debug("BYTECODE: %s", bytecode)
+        self.data = block.reshape((self.dim2, self.dim1))
+        self.bytecode = self.data.dtype.type
+        self.pilimage = None
+        return self
 
-        <span class="c"># Beam center</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Beam center x&#39;</span><span class="p">,</span> <span class="mi">664</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Beam center y&#39;</span><span class="p">,</span> <span class="mi">672</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="c"># Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Alpha angle in deg&#39;</span><span class="p">,</span> <span class="mi">672</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="c"># Angle (beta) between phi rotation axis and e3 (ideally 0 deg)</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Beta angle in deg&#39;</span><span class="p">,</span> <span class="mi">672</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    def _writeheader(self):
+        """</div>
+        @return a string containing the header for Oxford images
+        """
+        linesep = "\r\n"
+        for key in DEFAULT_HEADERS:
+            if key not in self.header_keys:
+                self.header_keys.append(key)
+                self.header[key] = DEFAULT_HEADERS[key]
 
-        <span class="c"># Detector distance</span>
-        <span class="n">KM</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Distance in mm&#39;</span><span class="p">,</span> <span class="mi">712</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">+=</span> <span class="n">KM</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+        if "NX" not in self.header.keys() or "NY" not in self.header.keys():
+			self.header['NX'] = self.dim1
+			self.header['NY'] = self.dim2
+        ascii_headers = [self.header['Header Version'],
+                       "COMPRESSION=%s (%5.1f)" % (self.header["Compression"], self.getCompressionRatio()),
+                       "NX=%4i NY=%4i OI=%7i OL=%7i " % (self.header["NX"], self.header["NY"], self.header["OI"], self.header["OL"]),
+                       "NHEADER=%7i NG=%7i NS=%7i NK=%7i NS=%7i NH=%7i" % (self.header['Header Size In Bytes'],
+                                                                                 self.header['General Section size in Byte'],
+                                                                                 self.header['Special Section size in Byte'],
+                                                                                 self.header['KM4 Section size in Byte'],
+                                                                                 self.header['Statistic Section in Byte'],
+                                                                                 self.header['History Section in Byte']),
+                        "NSUPPLEMENT=%7i" % (self.header["NSUPPLEMENT"])]
+        if "Time" in self.header:
+            ascii_headers.append("TIME=%s" % self.header["Time"])
+        else:
 
-        <span class="n">SS</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Statistic Section in Byte&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-        <span class="n">SS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Stat: Min &#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">SS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Stat: Max &#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">SS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Stat: Average &#39;</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;Stat: Stddev &#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="n">SS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Stat: Stddev &#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">SS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Stat: Skewness &#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">+=</span> <span class="n">SS</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+            ascii_headers.append("TIME=%s" % time.ctime())
 
-        <span class="n">HS</span> <span class="o">=</span> <span class="n">Section</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;History Section in Byte&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-        <span class="n">HS</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="s">&#39;Flood field image&#39;</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="s">&quot;|S27&quot;</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">+=</span> <span class="n">HS</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">header</span>
+        header = (linesep.join(ascii_headers)).ljust(256)
 
 
-<div class="viewcode-block" id="OXDimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Write Oxford diffraction images: this is still beta</span>
-<span class="sd">        @param fname: output filename </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">datablock8</span><span class="p">,</span> <span class="n">datablock16</span><span class="p">,</span> <span class="n">datablock32</span> <span class="o">=</span> <span class="n">compTY1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;OI&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">datablock16</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;OL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">datablock32</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_writeheader</span><span class="p">())</span>
-            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">datablock8</span><span class="p">)</span>
-            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">datablock16</span><span class="p">)</span>
-            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">datablock32</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="OXDimage.getCompressionRatio"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.getCompressionRatio">[docs]</a>    <span class="k">def</span> <span class="nf">getCompressionRatio</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s">&quot;calculate the compression factor obtained vs raw data&quot;</span>
-        <span class="k">return</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;OI&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;OL&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
-</div>
-    <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="OXDimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.checkData">[docs]</a>    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-</div></div>
-<div class="viewcode-block" id="Section"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.Section">[docs]</a><span class="k">class</span> <span class="nc">Section</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Small helper class for writing binary headers</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dictHeader</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @param size: size of the header section in bytes</span>
-<span class="sd">        @param dictHeader: headers of the image</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">dictHeader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lstChr</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;</span><span class="se">\x00</span><span class="s">&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dictSize</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lstChr</span><span class="p">)</span>
+        NG = Section(self.header['General Section size in Byte'], self.header)
+        NG.setData('Binning in x', 0, numpy.uint16)
+        NG.setData('Binning in y', 2, numpy.uint16)
+        NG.setData('Detector size x', 22, numpy.uint16)
+        NG.setData('Detector size y', 24, numpy.uint16)
+        NG.setData('Pixels in x', 26, numpy.uint16)
+        NG.setData('Pixels in y', 28, numpy.uint16)
+        NG.setData('No of pixels', 36, numpy.uint32)
+        header += NG.__repr__()
 
-<div class="viewcode-block" id="Section.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.Section.getSize">[docs]</a>    <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictSize</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dictSize</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tostring</span><span class="p">())</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictSize</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span>
-</div>
-<div class="viewcode-block" id="Section.setData"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.Section.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @param offset: int, starting position in the section</span>
-<span class="sd">        @param key: name of the header key</span>
-<span class="sd">        @param dtype: type of the data to insert (defines the size!)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">DEFAULT_HEADERS</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">DEFAULT_HEADERS</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">default</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\x00</span><span class="s">&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSize</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lstChr</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSize</span><span class="p">(</span><span class="n">dtype</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span></div></div>
-</pre></div>
+        NS = Section(self.header['Special Section size in Byte'], self.header)
+        NS.setData('Gain', 56, numpy.float)
+        NS.setData('Overflows flag', 464, numpy.int16)
+        NS.setData('Overflow after remeasure flag', 466, numpy.int16)
+        NS.setData('Overflow threshold', 472, numpy.int32)
+        NS.setData('Exposure time in sec', 480, numpy.float)
+        NS.setData('Overflow time in sec', 488, numpy.float)
+        NS.setData('Monitor counts of raw image 1', 528, numpy.int32)
+        NS.setData('Monitor counts of raw image 2', 532, numpy.int32)
+        NS.setData('Monitor counts of overflow raw image 1', 536, numpy.int32)
+        NS.setData('Monitor counts of overflow raw image 2', 540, numpy.int32)
+        NS.setData('Unwarping', 544, numpy.int32)
+        if 'Detector type' in  self.header:
+            for key, value in  DETECTOR_TYPES.items():
+                if value == self.header['Detector type']:
+                    NS.setData(None, 548, numpy.int32, default=key)
+        NS.setData('Real pixel size x (mm)', 568, numpy.float)
+        NS.setData('Real pixel size y (mm)', 576, numpy.float)
+        header += NS.__repr__()
+
+        KM = Section(self.header['KM4 Section size in Byte'], self.header)
+        KM.setData('Spatial correction file date', 0, "|S26")
+        KM.setData('Spatial correction file', 26, "|S246")
+        # Angles are in steps due to stepper motors - conversion factor RAD
+        # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
+        if self.header.get('Omega step in deg', None):
+            KM.setData(None, 368, numpy.float64, deg2rad(self.header["Omega step in deg"]))
+            if self.header.get('Omega start in deg', None):
+                KM.setData(None, 284, numpy.int32, self.header["Omega start in deg"] / self.header["Omega step in deg"])
+            if self.header.get('Omega end in deg', None):
+                KM.setData(None, 324, numpy.int32, self.header["Omega end in deg"] / self.header["Omega step in deg"])
+            if self.header.get('Omega zero corr. in deg', None):
+                KM.setData(None, 512, numpy.int32, self.header['Omega zero corr. in deg'] / self.header["Omega step in deg"])
+
+        if self.header.get('Theta step in deg', None):
+            KM.setData(None, 368 + 8, numpy.float64, deg2rad(self.header["Theta step in deg"]))
+            if self.header.get('Theta start in deg', None):
+                KM.setData(None, 284 + 4, numpy.int32, self.header["Theta start in deg"] / self.header["Theta step in deg"])
+            if self.header.get('Theta end in deg', None):
+                KM.setData(None, 324 + 4, numpy.int32, self.header["Theta end in deg"] / self.header["Theta step in deg"])
+            if self.header.get('Theta zero corr. in deg', None):
+                KM.setData(None, 512 + 4, numpy.int32, self.header['Theta zero corr. in deg'] / self.header["Theta step in deg"])
+
+        if self.header.get('Kappa step in deg', None):
+            KM.setData(None, 368 + 16, numpy.float64, deg2rad(self.header["Kappa step in deg"]))
+            if self.header.get('Kappa start in deg', None):
+                KM.setData(None, 284 + 8, numpy.int32, self.header["Kappa start in deg"] / self.header["Kappa step in deg"])
+            if self.header.get('Kappa end in deg', None):
+                KM.setData(None, 324 + 8, numpy.int32, self.header["Kappa end in deg"] / self.header["Kappa step in deg"])
+            if self.header.get('Kappa zero corr. in deg', None):
+                KM.setData(None, 512 + 8, numpy.int32, self.header['Kappa zero corr. in deg'] / self.header["Kappa step in deg"])
+
+        if self.header.get('Phi step in deg', None):
+            KM.setData(None, 368 + 24, numpy.float64, deg2rad(self.header["Phi step in deg"]))
+            if self.header.get('Phi start in deg', None):
+                KM.setData(None, 284 + 12, numpy.int32, self.header["Phi start in deg"] / self.header["Phi step in deg"])
+            if self.header.get('Phi end in deg', None):
+                KM.setData(None, 324 + 12, numpy.int32, self.header["Phi end in deg"] / self.header["Phi step in deg"])
+            if self.header.get('Phi zero corr. in deg', None):
+                KM.setData(None, 512 + 12, numpy.int32, self.header['Phi zero corr. in deg'] / self.header["Phi step in deg"])
+
+        # Beam rotation about e2,e3
+        KM.setData('Beam rot in deg (e2)', 552, numpy.float64)
+        KM.setData('Beam rot in deg (e3)', 560, numpy.float64)
+        # Wavelenghts alpha1, alpha2, beta
+        KM.setData('Wavelength alpha1', 568, numpy.float64)
+        KM.setData('Wavelength alpha2', 576, numpy.float64)
+        KM.setData('Wavelength alpha', 584, numpy.float64)
+        KM.setData('Wavelength beta', 592, numpy.float64)
+
+        # Detector tilts around e1,e2,e3 in deg
+        KM.setData('Detector tilt e1 in deg', 640, numpy.float64)
+        KM.setData('Detector tilt e2 in deg', 648, numpy.float64)
+        KM.setData('Detector tilt e3 in deg', 656, numpy.float64)
+
+        # Beam center
+        KM.setData('Beam center x', 664, numpy.float64)
+        KM.setData('Beam center y', 672, numpy.float64)
+        # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
+        KM.setData('Alpha angle in deg', 672, numpy.float64)
+        # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
+        KM.setData('Beta angle in deg', 672, numpy.float64)
+
+        # Detector distance
+        KM.setData('Distance in mm', 712, numpy.float64)
+        header += KM.__repr__()
+
+        SS = Section(self.header['Statistic Section in Byte'], self.header)
+        SS.setData('Stat: Min ', 0, numpy.int32)
+        SS.setData('Stat: Max ', 4, numpy.int32)
+        SS.setData('Stat: Average ', 24, numpy.float64)
+        if self.header.get('Stat: Stddev ', None):
+            SS.setData(None, 32, numpy.float64, self.header['Stat: Stddev '] ** 2)
+        SS.setData('Stat: Skewness ', 40, numpy.float64)
+        header += SS.__repr__()
+
+        HS = Section(self.header['History Section in Byte'], self.header)
+        HS.setData('Flood field image', 99, "|S27")
+        header += HS.__repr__()
+
+        return header
+
+
+    def write(self, fname):
+        """Write Oxford diffraction images: this is still beta
+<div class="viewcode-block" id="OXDimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.write">[docs]</a>        @param fname: output filename 
+        """
+        datablock8, datablock16, datablock32 = compTY1(self.data)
+        self.header["OI"] = len(datablock16) / 2
+        self.header["OL"] = len(datablock32) / 4
+        with self._open(fname, mode="wb") as outfile:
+            outfile.write(self._writeheader())
+            outfile.write(datablock8)
+            outfile.write(datablock16)
+            outfile.write(datablock32)
+
+    def getCompressionRatio(self):
+        "calculate the compression factor obtained vs raw data"</div>
+<div class="viewcode-block" id="OXDimage.getCompressionRatio"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.getCompressionRatio">[docs]</a>        return 100.0 * (self.data.size + 2 * self.header["OI"] + 4 * self.header["OL"]) / (self.data.size * 4)
+
+    @staticmethod
+    def checkData(data=None):</div>
+        if data is None:
+<div class="viewcode-block" id="OXDimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.OXDimage.checkData">[docs]</a>            return None
+        else:
+            return data.astype(int)
+
+class Section(object):
+    """</div></div>
+<div class="viewcode-block" id="Section"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.Section">[docs]</a>    Small helper class for writing binary headers
+    """
+    def __init__(self, size, dictHeader):
+        """
+        @param size: size of the header section in bytes
+        @param dictHeader: headers of the image
+        """
+        self.size = size
+        self.header = dictHeader
+        self.lstChr = ["\x00"] * size
+        self._dictSize = {}
+    def __repr__(self):
+        return "".join(self.lstChr)
+
+    def getSize(self, dtype):
+        if not dtype in self._dictSize:
+<div class="viewcode-block" id="Section.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.Section.getSize">[docs]</a>            self._dictSize[dtype] = len(numpy.zeros(1, dtype=dtype).tostring())
+        return self._dictSize[dtype]
+
+    def setData(self, key, offset, dtype, default=None):
+        """</div>
+<div class="viewcode-block" id="Section.setData"><a class="viewcode-back" href="../../api/modules.html#fabio.OXDimage.Section.setData">[docs]</a>        @param offset: int, starting position in the section
+        @param key: name of the header key
+        @param dtype: type of the data to insert (defines the size!)
+        """
+        if key in self.header:
+            value = self.header[key]
+        elif key in DEFAULT_HEADERS:
+            value = DEFAULT_HEADERS[key]
+        else:
+            value = default
+        if value is None:
+            value = "\x00" * self.getSize(dtype)
+        else:
+            value = numpy.array(value).astype(dtype).tostring()
+        self.lstChr[offset:offset + self.getSize(dtype)] = value
+</pre></div></div>
 
           </div>
         </div>
@@ -525,13 +520,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.brukerimage &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.brukerimage &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,9 +46,6 @@
           <div class="body">
             
   <h1>Source code for fabio.brukerimage</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="c">#coding: utf8</span>
-
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">with_statement</span>
 
 <span class="n">__doc__</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
@@ -85,10 +79,10 @@
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
     <span class="nb">bytes</span> <span class="o">=</span> <span class="nb">str</span>
 
-<div class="viewcode-block" id="brukerimage"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage">[docs]</a><span class="k">class</span> <span class="nc">brukerimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">brukerimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read and eventually write ID11 bruker (eg smart6500) images</span>
-
+<div class="viewcode-block" id="brukerimage"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage">[docs]</a>
 <span class="sd">    TODO: int32 -&gt; float32 conversion according to the &quot;linear&quot; keyword.</span>
 <span class="sd">    This is done and works but we need to check with other program that we</span>
 <span class="sd">    are appliing the right formula and not the reciprocal one.</span>
@@ -241,10 +235,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NROWS&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NCOLS&#39;</span><span class="p">])</span>
 
-<div class="viewcode-block" id="brukerimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read in and unpack the pixels (including overflow table</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="brukerimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.read">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
@@ -304,11 +298,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pilimage</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-</div>
-<div class="viewcode-block" id="brukerimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write a bruker image </span>
 
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a bruker image </span></div>
+<div class="viewcode-block" id="brukerimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.write">[docs]</a>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
             <span class="k">if</span> <span class="s">&quot;LINEAR&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
@@ -347,11 +341,11 @@
             <span class="n">bruker</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen_overflow</span><span class="p">())</span>
 
 
-</div>
-<div class="viewcode-block" id="brukerimage.calc_bpp"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.calc_bpp">[docs]</a>    <span class="k">def</span> <span class="nf">calc_bpp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_entry</span><span class="o">=</span><span class="mi">4096</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">calc_bpp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_entry</span><span class="o">=</span><span class="mi">4096</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate the number of byte per pixel to get an optimal overflow table. </span>
-<span class="sd">        </span>
+<span class="sd">        Calculate the number of byte per pixel to get an optimal overflow table. </span></div>
+<div class="viewcode-block" id="brukerimage.calc_bpp"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.calc_bpp">[docs]</a><span class="sd">        </span>
 <span class="sd">        @return: byte per pixel </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -365,11 +359,11 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__bpp_file</span> <span class="o">=</span> <span class="mi">4</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__bpp_file</span>
-</div>
-<div class="viewcode-block" id="brukerimage.gen_header"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.gen_header">[docs]</a>    <span class="k">def</span> <span class="nf">gen_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">gen_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate headers (with some magic and guesses)</span>
-<span class="sd">        @param format can be 86 or 100</span>
+<span class="sd">        Generate headers (with some magic and guesses)</span></div>
+<div class="viewcode-block" id="brukerimage.gen_header"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.gen_header">[docs]</a><span class="sd">        @param format can be 86 or 100</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HEADERS_KEYS</span><span class="p">:</span>
@@ -406,22 +400,22 @@
                     <span class="n">headers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;HDRBLKS:</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;HDRBLKS&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">))</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">headers</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPACER</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span><span class="o">*</span><span class="mi">78</span><span class="p">,</span> <span class="mi">512</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;HDRBLKS&quot;</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">res</span>
-</div>
-<div class="viewcode-block" id="brukerimage.gen_overflow"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.gen_overflow">[docs]</a>    <span class="k">def</span> <span class="nf">gen_overflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">gen_overflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate an overflow table  </span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Generate an overflow table  </span></div>
+<div class="viewcode-block" id="brukerimage.gen_overflow"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.gen_overflow">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">limit</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_bpp</span><span class="p">())</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="n">flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>                     <span class="c">#flat memory view</span>
         <span class="n">overflow_pos</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">flat</span> <span class="o">&gt;=</span> <span class="n">limit</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c">#list of indexes</span>
         <span class="n">overflow_val</span> <span class="o">=</span> <span class="n">flat</span><span class="p">[</span><span class="n">overflow_pos</span><span class="p">]</span>
         <span class="n">overflow</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;</span><span class="si">%09i%07i</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span> <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">val</span>  <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">overflow_pos</span><span class="p">,</span> <span class="n">overflow_val</span><span class="p">)])</span>
         <span class="k">return</span> <span class="n">pad</span><span class="p">(</span><span class="n">overflow</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="brukerimage.basic_translate"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.basic_translate">[docs]</a>    <span class="k">def</span> <span class="nf">basic_translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">basic_translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Does some basic population of the headers so that the writing is possible </span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Does some basic population of the headers so that the writing is possible </span></div>
+<div class="viewcode-block" id="brukerimage.basic_translate"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.brukerimage.basic_translate">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;FORMAT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;FORMAT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;86&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;HDRBLKS&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
@@ -447,11 +441,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;LONGORD&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;LONGORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0&quot;</span>
 
-</div></div>
-<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.test">[docs]</a><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; a testcase &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">brukerimage</span><span class="p">()</span>
+    <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span></div></div>
+<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../api/modules.html#fabio.brukerimage.test">[docs]</a>    <span class="n">img</span> <span class="o">=</span> <span class="n">brukerimage</span><span class="p">()</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
         <span class="n">img</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -465,10 +459,10 @@
     <span class="k">print</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 
 
-</div>
+
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">test</span><span class="p">()</span>
-</pre></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -501,13 +495,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

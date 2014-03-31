@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.GEimage &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.GEimage &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,342 +45,340 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for fabio.GEimage</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
+  <h1>Source code for fabio.GEimage</h1><pre>
+#
+# Reads the header from a GE a-Si Angio Detector
+# Using version 8001 of the header from file:
+#     c:\adept\core\DefaultImageInfoConfig.csv
+#
+#  Antonino Miceli
+#  Thu Jan  4 13:46:31 CST 2007
+#
 
-<span class="c">#</span>
-<span class="c"># Reads the header from a GE a-Si Angio Detector</span>
-<span class="c"># Using version 8001 of the header from file:</span>
-<span class="c">#     c:\adept\core\DefaultImageInfoConfig.csv</span>
-<span class="c">#</span>
-<span class="c">#  Antonino Miceli</span>
-<span class="c">#  Thu Jan  4 13:46:31 CST 2007</span>
-<span class="c">#</span>
+# modifications by Jon Wright for style, pychecker and fabio
+# 
 
-<span class="c"># modifications by Jon Wright for style, pychecker and fabio</span>
-<span class="c"># </span>
+import numpy
+import struct, logging
+logger = logging.getLogger("GEimage")
+from fabioimage import fabioimage
+from fabioutils import next_filename, previous_filename
 
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">struct</span><span class="o">,</span> <span class="nn">logging</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;GEimage&quot;</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">fabioimage</span> <span class="kn">import</span> <span class="n">fabioimage</span>
-<span class="kn">from</span> <span class="nn">fabioutils</span> <span class="kn">import</span> <span class="n">next_filename</span><span class="p">,</span> <span class="n">previous_filename</span>
-
-<span class="n">GE_HEADER_INFO</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="c"># Name, length in bytes, format for struct (None means string)</span>
-    <span class="p">(</span><span class="s">&#39;ImageFormat&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;VersionOfStandardHeader&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;StandardHeaderSizeInBytes&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;VersionOfUserHeader&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;UserHeaderSizeInBytes&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;NumberOfFrames&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;NumberOfRowsInFrame&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;NumberOfColsInFrame&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ImageDepthInBits&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AcquisitionDate&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AcquisitionTime&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DUTID&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Operator&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorSignature&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestSystemName&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestStationRevision&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;CoreBundleRevision&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AcquisitionName&#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AcquisitionParameterRevision&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;OriginalNumberOfRows&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;OriginalNumberOfColumns&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RowNumberUpperLeftPointArchiveROI&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ColNumberUpperLeftPointArchiveROI&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Swapped&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Reordered&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;HorizontalFlipped&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;VerticalFlipped&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;WindowValueDesired&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;LevelValueDesired&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AcquisitionMode&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AcquisitionType&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;UserAcquisitionCoffFileName1&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;UserAcquisitionCoffFileName2&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FramesBeforeExpose&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FramesDuringExpose&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FramesAfterExpose&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;IntervalBetweenFrames&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ExposeTimeDelayInMicrosecs&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TimeBetweenFramesInMicrosecs&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FramesToSkipExpose&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ExposureMode&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;PrepPresetTimeInMicrosecs&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ExposePresetTimeInMicrosecs&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AcquisitionFrameRateInFps&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FOVSelect&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ExpertMode&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetVCommon1&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetVCommon2&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetAREF&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetAREFTrim&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetSpareVoltageSource&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetCompensationVoltageSource&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetRowOffVoltage&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetRowOnVoltage&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;StoreCompensationVoltage&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RampSelection&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TimingMode&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Bandwidth&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ARCIntegrator&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ARCPostIntegrator&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;NumberOfRows&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RowEnable&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;EnableStretch&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;CompEnable&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;CompStretch&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;LeftEvenTristate&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RightOddTristate&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestModeSelect&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;AnalogTestSource&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;VCommonSelect&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DRCColumnSum&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestPatternFrameDelta&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestPatternRowDelta&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestPatternColumnDelta&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorHorizontalFlip&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorVerticalFlip&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DFNAutoScrubOnOff&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FiberChannelTimeOutInMicrosecs&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DFNAutoScrubDelayInMicrosecs&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;StoreAECROI&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestPatternSaturationValue&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TestPatternSeed&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ExposureTimeInMillisecs&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FrameRateInFps&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;kVp&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;mA&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;mAs&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FocalSpotInMM&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;GeneratorType&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;StrobeIntensityInFtL&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;NDFilterSelection&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RefRegTemp1&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RefRegTemp2&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RefRegTemp3&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Humidity1&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Humidity2&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorControlTemp&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DoseValueInmR&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TargetLevelROIRow0&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TargetLevelROICol0&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TargetLevelROIRow1&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TargetLevelROICol1&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FrameNumberForTargetLevelROI&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;PercentRangeForTargetLevel&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TargetValue&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ComputedMedianValue&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;LoadZero&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;MaxLUTOut&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;MinLUTOut&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;MaxLinear&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Reserved&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ElectronsPerCount&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ModeGain&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;TemperatureInDegC&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;LineRepaired&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;LineRepairFileName&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;CurrentLongitudinalInMM&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;CurrentTransverseInMM&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;CurrentCircularInMM&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=f&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;CurrentFilterSelection&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;=L&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DisableScrubAck&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ScanModeSelect&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorAppSwVersion&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorNIOSVersion&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorPeripheralSetVersion&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DetectorPhysicalAddress&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;PowerDown&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;InitialVoltageLevel_VCOMMON&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FinalVoltageLevel_VCOMMON&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;=d&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DmrCollimatorSpotSize&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DmrTrack&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;DmrFilter&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FilterCarousel&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Phantom&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetEnableHighTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetEnableLowTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetCompHighTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetCompLowTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetSyncLowTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetConvertLowTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetSyncHighTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetEOLTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;SetRampOffsetTime&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FOVStartingValue&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;ColumnBinning&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;RowBinning&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;BorderColumns64&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;BorderRows64&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FETOffRows64&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FOVStartColumn128&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;FOVStartRow128&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;NumberOfColumns128&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;NumberOfRows128&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;=H&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;VFPAquisition&#39;</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">&#39;Comment&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-    <span class="p">]</span>
+GE_HEADER_INFO = [
+    # Name, length in bytes, format for struct (None means string)
+    ('ImageFormat', 10, None),
+    ('VersionOfStandardHeader', 2, '=H'),
+    ('StandardHeaderSizeInBytes', 4, '=L'),
+    ('VersionOfUserHeader', 2, '=H'),
+    ('UserHeaderSizeInBytes', 4, '=L'),
+    ('NumberOfFrames', 2, '=H'),
+    ('NumberOfRowsInFrame', 2, '=H'),
+    ('NumberOfColsInFrame', 2, '=H'),
+    ('ImageDepthInBits', 2, '=H'),
+    ('AcquisitionDate', 20, None),
+    ('AcquisitionTime', 20, None),
+    ('DUTID', 20, None),
+    ('Operator', 50, None),
+    ('DetectorSignature', 20, None),
+    ('TestSystemName', 20, None),
+    ('TestStationRevision', 20, None),
+    ('CoreBundleRevision', 20, None),
+    ('AcquisitionName', 40, None),
+    ('AcquisitionParameterRevision', 20, None),
+    ('OriginalNumberOfRows', 2, '=H'),
+    ('OriginalNumberOfColumns', 2, '=H'),
+    ('RowNumberUpperLeftPointArchiveROI', 2, '=H'),
+    ('ColNumberUpperLeftPointArchiveROI', 2, '=H'),
+    ('Swapped', 2, '=H'),
+    ('Reordered', 2, '=H'),
+    ('HorizontalFlipped', 2, '=H'),
+    ('VerticalFlipped', 2, '=H'),
+    ('WindowValueDesired', 2, '=H'),
+    ('LevelValueDesired', 2, '=H'),
+    ('AcquisitionMode', 2, '=H'),
+    ('AcquisitionType', 2, '=H'),
+    ('UserAcquisitionCoffFileName1', 100, None),
+    ('UserAcquisitionCoffFileName2', 100, None),
+    ('FramesBeforeExpose', 2, '=H'),
+    ('FramesDuringExpose', 2, '=H'),
+    ('FramesAfterExpose', 2, '=H'),
+    ('IntervalBetweenFrames', 2, '=H'),
+    ('ExposeTimeDelayInMicrosecs', 8, '=d'),
+    ('TimeBetweenFramesInMicrosecs', 8, '=d'),
+    ('FramesToSkipExpose', 2, '=H'),
+    ('ExposureMode', 2, '=H'),
+    ('PrepPresetTimeInMicrosecs', 8, '=d'),
+    ('ExposePresetTimeInMicrosecs', 8, '=d'),
+    ('AcquisitionFrameRateInFps', 4, '=f'),
+    ('FOVSelect', 2, '=H'),
+    ('ExpertMode', 2, '=H'),
+    ('SetVCommon1', 8, '=d'),
+    ('SetVCommon2', 8, '=d'),
+    ('SetAREF', 8, '=d'),
+    ('SetAREFTrim', 4, '=L'),
+    ('SetSpareVoltageSource', 8, '=d'),
+    ('SetCompensationVoltageSource', 8, '=d'),
+    ('SetRowOffVoltage', 8, '=d'),
+    ('SetRowOnVoltage', 8, '=d'),
+    ('StoreCompensationVoltage', 4, '=L'),
+    ('RampSelection', 2, '=H'),
+    ('TimingMode', 2, '=H'),
+    ('Bandwidth', 2, '=H'),
+    ('ARCIntegrator', 2, '=H'),
+    ('ARCPostIntegrator', 2, '=H'),
+    ('NumberOfRows', 4, '=L'),
+    ('RowEnable', 2, '=H'),
+    ('EnableStretch', 2, '=H'),
+    ('CompEnable', 2, '=H'),
+    ('CompStretch', 2, '=H'),
+    ('LeftEvenTristate', 2, '=H'),
+    ('RightOddTristate', 2, '=H'),
+    ('TestModeSelect', 4, '=L'),
+    ('AnalogTestSource', 4, '=L'),
+    ('VCommonSelect', 4, '=L'),
+    ('DRCColumnSum', 4, '=L'),
+    ('TestPatternFrameDelta', 4, '=L'),
+    ('TestPatternRowDelta', 4, '=L'),
+    ('TestPatternColumnDelta', 4, '=L'),
+    ('DetectorHorizontalFlip', 2, '=H'),
+    ('DetectorVerticalFlip', 2, '=H'),
+    ('DFNAutoScrubOnOff', 2, '=H'),
+    ('FiberChannelTimeOutInMicrosecs', 4, '=L'),
+    ('DFNAutoScrubDelayInMicrosecs', 4, '=L'),
+    ('StoreAECROI', 2, '=H'),
+    ('TestPatternSaturationValue', 2, '=H'),
+    ('TestPatternSeed', 4, '=L'),
+    ('ExposureTimeInMillisecs', 4, '=f'),
+    ('FrameRateInFps', 4, '=f'),
+    ('kVp', 4, '=f'),
+    ('mA', 4, '=f'),
+    ('mAs', 4, '=f'),
+    ('FocalSpotInMM', 4, '=f'),
+    ('GeneratorType', 20, None),
+    ('StrobeIntensityInFtL', 4, '=f'),
+    ('NDFilterSelection', 2, '=H'),
+    ('RefRegTemp1', 8, '=d'),
+    ('RefRegTemp2', 8, '=d'),
+    ('RefRegTemp3', 8, '=d'),
+    ('Humidity1', 4, '=f'),
+    ('Humidity2', 4, '=f'),
+    ('DetectorControlTemp', 8, '=d'),
+    ('DoseValueInmR', 8, '=d'),
+    ('TargetLevelROIRow0', 2, '=H'),
+    ('TargetLevelROICol0', 2, '=H'),
+    ('TargetLevelROIRow1', 2, '=H'),
+    ('TargetLevelROICol1', 2, '=H'),
+    ('FrameNumberForTargetLevelROI', 2, '=H'),
+    ('PercentRangeForTargetLevel', 2, '=H'),
+    ('TargetValue', 2, '=H'),
+    ('ComputedMedianValue', 2, '=H'),
+    ('LoadZero', 2, '=H'),
+    ('MaxLUTOut', 2, '=H'),
+    ('MinLUTOut', 2, '=H'),
+    ('MaxLinear', 2, '=H'),
+    ('Reserved', 2, '=H'),
+    ('ElectronsPerCount', 2, '=H'),
+    ('ModeGain', 2, '=H'),
+    ('TemperatureInDegC', 8, '=d'),
+    ('LineRepaired', 2, '=H'),
+    ('LineRepairFileName', 100, None),
+    ('CurrentLongitudinalInMM', 4, '=f'),
+    ('CurrentTransverseInMM', 4, '=f'),
+    ('CurrentCircularInMM', 4, '=f'),
+    ('CurrentFilterSelection', 4, '=L'),
+    ('DisableScrubAck', 2, '=H'),
+    ('ScanModeSelect', 2, '=H'),
+    ('DetectorAppSwVersion', 20, None),
+    ('DetectorNIOSVersion', 20, None),
+    ('DetectorPeripheralSetVersion', 20, None),
+    ('DetectorPhysicalAddress', 20, None),
+    ('PowerDown', 2, '=H'),
+    ('InitialVoltageLevel_VCOMMON', 8, '=d'),
+    ('FinalVoltageLevel_VCOMMON', 8, '=d'),
+    ('DmrCollimatorSpotSize', 10, None),
+    ('DmrTrack', 5, None),
+    ('DmrFilter', 5, None),
+    ('FilterCarousel', 2, '=H'),
+    ('Phantom', 20, None),
+    ('SetEnableHighTime', 2, '=H'),
+    ('SetEnableLowTime', 2, '=H'),
+    ('SetCompHighTime', 2, '=H'),
+    ('SetCompLowTime', 2, '=H'),
+    ('SetSyncLowTime', 2, '=H'),
+    ('SetConvertLowTime', 2, '=H'),
+    ('SetSyncHighTime', 2, '=H'),
+    ('SetEOLTime', 2, '=H'),
+    ('SetRampOffsetTime', 2, '=H'),
+    ('FOVStartingValue', 2, '=H'),
+    ('ColumnBinning', 2, '=H'),
+    ('RowBinning', 2, '=H'),
+    ('BorderColumns64', 2, '=H'),
+    ('BorderRows64', 2, '=H'),
+    ('FETOffRows64', 2, '=H'),
+    ('FOVStartColumn128', 2, '=H'),
+    ('FOVStartRow128', 2, '=H'),
+    ('NumberOfColumns128', 2, '=H'),
+    ('NumberOfRows128', 2, '=H'),
+    ('VFPAquisition', 2000, None),
+    ('Comment', 200, None)
+    ]
 
 
-<div class="viewcode-block" id="GEimage"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage">[docs]</a><span class="k">class</span> <span class="nc">GEimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
+class GEimage(fabioimage):
 
-    <span class="n">_need_a_seek_to_read</span> <span class="o">=</span> <span class="bp">True</span>
+<div class="viewcode-block" id="GEimage"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage">[docs]</a>    _need_a_seek_to_read = True
 
-    <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Read a GE image header &quot;&quot;&quot;</span>
+    def _readheader(self, infile):
+        """ Read a GE image header """
 
-        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        infile.seek(0)
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">nbytes</span><span class="p">,</span> <span class="n">format</span> <span class="ow">in</span> <span class="n">GE_HEADER_INFO</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">format</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span> <span class="n">name</span> <span class="p">]</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nbytes</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span> <span class="n">name</span> <span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">format</span><span class="p">,</span>
-                                                     <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nbytes</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        self.header = {}
+        for name, nbytes, format in GE_HEADER_INFO:
+            if format is None:
+                self.header[ name ] = infile.read(nbytes)
+            else:
+                self.header[ name ] = struct.unpack(format,
+                                                     infile.read(nbytes))[0]
 
-<div class="viewcode-block" id="GEimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read in header into self.header and</span>
-<span class="sd">        the data   into self.data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">frame</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
-        <span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span> <span class="o">=</span> <span class="n">fname</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NumberOfFrames&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_readframe</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span>
-</div>
-    <span class="k">def</span> <span class="nf">_makeframename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The thing to be printed for the user to represent a frame inside</span>
-<span class="sd">        a file &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">$</span><span class="si">%04d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">,</span>
-                                   <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">)</span>
+    def read(self, fname, frame=None):
+        """
+<div class="viewcode-block" id="GEimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.read">[docs]</a>        Read in header into self.header and
+        the data   into self.data
+        """
+        if frame is None:
+            frame = 0
+        self.header = {}
+        self.resetvals()
+        infile = self._open(fname, "rb")
+        self.sequencefilename = fname
+        self._readheader(infile)
+        self.nframes = self.header['NumberOfFrames']
+        self._readframe(infile, frame)
+        infile.close()
+        return self
 
-    <span class="k">def</span> <span class="nf">_readframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepointer</span><span class="p">,</span> <span class="n">img_num</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        # Load only one image from the sequence</span>
-<span class="sd">        #    Note: the first image in the sequence 0</span>
-<span class="sd">        # raises an exception if you give an invalid image</span>
-<span class="sd">        # otherwise fills in self.data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">img_num</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="ow">or</span> <span class="n">img_num</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Bad image number&quot;</span><span class="p">)</span>
-        <span class="n">imgstart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;StandardHeaderSizeInBytes&#39;</span><span class="p">]</span> <span class="o">+</span> \
-                   <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;UserHeaderSizeInBytes&#39;</span><span class="p">]</span> <span class="o">+</span> \
-                   <span class="n">img_num</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NumberOfRowsInFrame&#39;</span><span class="p">]</span> <span class="o">*</span> \
-                   <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NumberOfColsInFrame&#39;</span><span class="p">]</span> <span class="o">*</span> \
-                   <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;ImageDepthInBits&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span>
-        <span class="c"># whence = 0 means seek from start of file</span>
-        <span class="n">filepointer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">imgstart</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    def _makeframename(self):
+        """ The thing to be printed for the user to represent a frame inside</div>
+        a file """
+        self.filename = "%s$%04d" % (self.sequencefilename,
+                                   self.currentframe)
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;ImageDepthInBits&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span> <span class="c"># hopefully 2        </span>
-        <span class="n">imglength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NumberOfRowsInFrame&#39;</span><span class="p">]</span> <span class="o">*</span> \
-                    <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NumberOfColsInFrame&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Using uint16 for GE but seems to be wrong&quot;</span><span class="p">)</span>
+    def _readframe(self, filepointer, img_num):
+        """
+        # Load only one image from the sequence
+        #    Note: the first image in the sequence 0
+        # raises an exception if you give an invalid image
+        # otherwise fills in self.data
+        """
+        if(img_num &gt; self.nframes or img_num &lt; 0):
+            raise Exception("Bad image number")
+        imgstart = self.header['StandardHeaderSizeInBytes'] + \
+                   self.header['UserHeaderSizeInBytes'] + \
+                   img_num * self.header['NumberOfRowsInFrame'] * \
+                   self.header['NumberOfColsInFrame'] * \
+                   self.header['ImageDepthInBits'] / 8
+        # whence = 0 means seek from start of file
+        filepointer.seek(imgstart, 0)
 
-        <span class="c"># Guessing it is always unsigned int?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">filepointer</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">imglength</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NumberOfRowsInFrame&#39;</span><span class="p">],</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NumberOfColsInFrame&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">img_num</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_makeframename</span><span class="p">()</span>
+        self.bpp = self.header['ImageDepthInBits'] / 8 # hopefully 2        
+        imglength = self.header['NumberOfRowsInFrame'] * \
+                    self.header['NumberOfColsInFrame'] * self.bpp
+        if self.bpp != 2:
+            logging.warning("Using uint16 for GE but seems to be wrong")
 
-
-<div class="viewcode-block" id="GEimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Not yet implemented&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Write is not implemented&quot;</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="GEimage.getframe"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.getframe">[docs]</a>    <span class="k">def</span> <span class="nf">getframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a frame as a new fabioimage object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Requested frame number is out of range&quot;</span><span class="p">)</span>
-        <span class="c"># Do a deep copy of the header to make a new one</span>
-        <span class="n">newheader</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">newheader</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-        <span class="n">frame</span> <span class="o">=</span> <span class="n">GEimage</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">newheader</span><span class="p">)</span>
-        <span class="n">frame</span><span class="o">.</span><span class="n">nframes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span>
-        <span class="n">frame</span><span class="o">.</span><span class="n">sequencefilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span>
-        <span class="n">infile</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
-        <span class="n">frame</span><span class="o">.</span><span class="n">_readframe</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">frame</span>
-</div>
-<div class="viewcode-block" id="GEimage.next"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the next image in a series as a fabio image</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">newobj</span> <span class="o">=</span> <span class="n">GEimage</span><span class="p">()</span>
-            <span class="n">newobj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">next_filename</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">newobj</span>
-</div>
-<div class="viewcode-block" id="GEimage.previous"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.previous">[docs]</a>    <span class="k">def</span> <span class="nf">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the previous image in a series as a fabio image</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">newobj</span> <span class="o">=</span> <span class="n">GEimage</span><span class="p">()</span>
-            <span class="n">newobj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">previous_filename</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">newobj</span>
-
-</div></div>
-<div class="viewcode-block" id="demo"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.demo">[docs]</a><span class="k">def</span> <span class="nf">demo</span><span class="p">():</span>
-    <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s">&quot;USAGE: GE_script.py &lt;GEaSi_raw_image_file&gt;&quot;</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-
-    <span class="n">image_file</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">print</span> <span class="s">&quot;init read_GEaSi_data class and load header..&quot;</span>
-    <span class="n">sequence1</span> <span class="o">=</span> <span class="n">GEimage</span><span class="p">()</span>
-    <span class="n">sequence1</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">image_file</span><span class="p">)</span>
-
-    <span class="k">print</span> <span class="s">&quot;TimeBetweenFramesInMicrosecs = &quot;</span><span class="p">,</span>
-    <span class="k">print</span> <span class="n">sequence1</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;TimeBetweenFramesInMicrosecs&#39;</span><span class="p">]</span>
-    <span class="k">print</span> <span class="s">&quot;AcquisitionTime = &quot;</span><span class="p">,</span>
-    <span class="k">print</span> <span class="n">sequence1</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;AcquisitionTime&#39;</span><span class="p">]</span>
+        # Guessing it is always unsigned int?
+        self.data = numpy.fromstring(filepointer.read(imglength), numpy.uint16)
+        self.data.shape = (self.header['NumberOfRowsInFrame'],
+                            self.header['NumberOfColsInFrame'])
+        self.dim2 , self.dim1 = self.data.shape
+        self.currentframe = int(img_num)
+        self._makeframename()
 
 
-    <span class="k">print</span> <span class="s">&quot;Mean = &quot;</span><span class="p">,</span> <span class="n">sequence1</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    def write(self, fname, force_type=numpy.uint16):
+        """ Not yet implemented"""
+<div class="viewcode-block" id="GEimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.write">[docs]</a>        raise Exception("Write is not implemented")
 
-    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">sequence1</span> <span class="o">=</span> <span class="n">sequence1</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-            <span class="k">print</span> <span class="n">sequence1</span><span class="o">.</span><span class="n">currentframe</span><span class="p">,</span> <span class="n">sequence1</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> \
-                  <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ex</span>
+    def getframe(self, num):
+        """</div>
+<div class="viewcode-block" id="GEimage.getframe"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.getframe">[docs]</a>        Returns a frame as a new fabioimage object
+        """
+        if num &lt; 0 or num &gt; self.nframes:
+            raise Exception("Requested frame number is out of range")
+        # Do a deep copy of the header to make a new one
+        newheader = {}
+        for k in self.header.keys():
+            newheader[k] = self.header[k]
+        frame = GEimage(header=newheader)
+        frame.nframes = self.nframes
+        frame.sequencefilename = self.sequencefilename
+        infile = frame._open(self.sequencefilename, "rb")
+        frame._readframe(infile, num)
+        infile.close()
+        return frame
+
+    def next(self):
+        """</div>
+<div class="viewcode-block" id="GEimage.next"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.next">[docs]</a>        Get the next image in a series as a fabio image
+        """
+        if self.currentframe &lt; (self.nframes - 1) and self.nframes &gt; 1:
+            return self.getframe(self.currentframe + 1)
+        else:
+            newobj = GEimage()
+            newobj.read(next_filename(
+                self.sequencefilename))
+            return newobj
+
+    def previous(self):
+        """</div>
+<div class="viewcode-block" id="GEimage.previous"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.GEimage.previous">[docs]</a>        Get the previous image in a series as a fabio image
+        """
+        if self.currentframe &gt; 0:
+            return self.getframe(self.currentframe - 1)
+        else:
+            newobj = GEimage()
+            newobj.read(previous_filename(
+                self.sequencefilename))
+            return newobj
+
+
+def demo():
+    import sys, time</div></div>
+<div class="viewcode-block" id="demo"><a class="viewcode-back" href="../../api/modules.html#fabio.GEimage.demo">[docs]</a>
+    if len(sys.argv) &lt; 2:
+        print "USAGE: GE_script.py &lt;GEaSi_raw_image_file&gt;"
+        sys.exit()
+
+    image_file = sys.argv[1]
+
+    print "init read_GEaSi_data class and load header.."
+    sequence1 = GEimage()
+    sequence1.read(image_file)
+
+    print "TimeBetweenFramesInMicrosecs = ",
+    print sequence1.header['TimeBetweenFramesInMicrosecs']
+    print "AcquisitionTime = ",
+    print sequence1.header['AcquisitionTime']
+
+
+    print "Mean = ", sequence1.data.ravel().mean()
+
+    while 1:
+        start = time.time()
+        try:
+            sequence1 = sequence1.next()
+            print sequence1.currentframe, sequence1.data.ravel().mean(), \
+                  time.time() - start
+        except Exception, ex:
+            raise ex
 
 
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">demo</span><span class="p">()</span>
-</pre></div>
+
+if __name__ == '__main__':
+    demo()</div>
+</pre>
 
           </div>
         </div>
@@ -416,13 +411,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.pnmimage &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.pnmimage &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,8 +46,6 @@
           <div class="body">
             
   <h1>Source code for fabio.pnmimage</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="c">#coding: utf8</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">Authors: Henning O. Sorensen &amp; Erik Knudsen</span>
@@ -71,9 +66,9 @@
 <span class="n">HEADERITEMS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;SUBFORMAT&#39;</span><span class="p">,</span> <span class="s">&#39;DIMENSIONS&#39;</span><span class="p">,</span> <span class="s">&#39;MAXVAL&#39;</span><span class="p">]</span>
 <span class="n">P7HEADERITEMS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;WIDTH&#39;</span><span class="p">,</span> <span class="s">&#39;HEIGHT&#39;</span><span class="p">,</span> <span class="s">&#39;DEPTH&#39;</span><span class="p">,</span> <span class="s">&#39;MAXVAL&#39;</span><span class="p">,</span> <span class="s">&#39;TUPLTYPE&#39;</span><span class="p">,</span> <span class="s">&#39;ENDHDR&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="pnmimage"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage">[docs]</a><span class="k">class</span> <span class="nc">pnmimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">pnmimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">fabioimage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="pnmimage"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage">[docs]</a>        <span class="n">fabioimage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">fun</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">,</span> <span class="s">&#39;__init__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">None</span><span class="p">)</span>
         <span class="n">fun</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
@@ -129,9 +124,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">,</span> <span class="s">&#39;could not figure out what kind of pixels you have&#39;</span>
 
-<div class="viewcode-block" id="pnmimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        try to read PNM images</span>
+<div class="viewcode-block" id="pnmimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.read">[docs]</a><span class="sd">        try to read PNM images</span>
 <span class="sd">        @param fname: name of the file</span>
 <span class="sd">        @param frame: not relevant here! PNM is always single framed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -149,72 +144,72 @@
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;No decoder named </span><span class="si">%s</span><span class="s"> for file </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">decoder_name</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.P1dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P1dec">[docs]</a>    <span class="k">def</span> <span class="nf">P1dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">P1dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span></div>
         <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">))</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<div class="viewcode-block" id="pnmimage.P1dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P1dec">[docs]</a>        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">buf</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">bytecode</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">,</span> <span class="s">&#39;Size spec in pnm-header does not match size of image data field&#39;</span>
         <span class="k">return</span> <span class="n">data</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.P4dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P4dec">[docs]</a>    <span class="k">def</span> <span class="nf">P4dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">P4dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span></div>
         <span class="n">err</span> <span class="o">=</span> <span class="s">&#39;single bit (pbm) images are not supported - yet&#39;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<div class="viewcode-block" id="pnmimage.P4dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P4dec">[docs]</a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.P2dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P2dec">[docs]</a>    <span class="k">def</span> <span class="nf">P2dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">P2dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span></div>
         <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">))</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<div class="viewcode-block" id="pnmimage.P2dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P2dec">[docs]</a>        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">buf</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">bytecode</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">,</span> <span class="s">&#39;Size spec in pnm-header does not match size of image data field&#39;</span>
         <span class="k">return</span> <span class="n">data</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.P5dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P5dec">[docs]</a>    <span class="k">def</span> <span class="nf">P5dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">P5dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span></div>
         <span class="n">l</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
+<div class="viewcode-block" id="pnmimage.P5dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P5dec">[docs]</a>        <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">),</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">])</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">,</span> <span class="s">&#39;Size spec in pnm-header does not match size of image data field&#39;</span>
         <span class="k">return</span> <span class="n">data</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.P3dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P3dec">[docs]</a>    <span class="k">def</span> <span class="nf">P3dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">P3dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span></div>
         <span class="n">err</span> <span class="o">=</span> <span class="s">&#39;(plain-ppm) RGB images are not supported - yet&#39;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<div class="viewcode-block" id="pnmimage.P3dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P3dec">[docs]</a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.P6dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P6dec">[docs]</a>    <span class="k">def</span> <span class="nf">P6dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">P6dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span></div>
         <span class="n">err</span> <span class="o">=</span> <span class="s">&#39;(ppm) RGB images are not supported - yet&#39;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<div class="viewcode-block" id="pnmimage.P6dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P6dec">[docs]</a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-</div>
+
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.P7dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P7dec">[docs]</a>    <span class="k">def</span> <span class="nf">P7dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">P7dec</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">):</span></div>
         <span class="n">err</span> <span class="o">=</span> <span class="s">&#39;(pam) images are not supported - yet&#39;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<div class="viewcode-block" id="pnmimage.P7dec"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.P7dec">[docs]</a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="pnmimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;write pnm images is not implemented yet.&#39;</span><span class="p">)</span>
-</div>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;write pnm images is not implemented yet.&#39;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="pnmimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.write">[docs]</a>
     <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="pnmimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.checkData">[docs]</a>    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
+<div class="viewcode-block" id="pnmimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.pnmimage.pnmimage.checkData">[docs]</a>            <span class="k">return</span> <span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div></div>
-</pre></div>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div></div></div>
 
           </div>
         </div>
@@ -247,13 +242,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>
