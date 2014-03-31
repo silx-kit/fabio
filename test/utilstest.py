@@ -142,7 +142,14 @@ Otherwise please try to download the images manually from
                 please set the environment variable http_proxy.\n \
                 Otherwise please try to download the images manually from \n \
                 %s" % (cls.url_base, imagename))
-
+        else:
+            data = open(fullimagename).read()
+        fullimagename_bz2 = os.path.splitext(fullimagename)[0]+".bz2"
+        fullimagename_gz = os.path.splitext(fullimagename)[0]+".gz"
+        fullimagename_raw = os.path.splitext(fullimagename)[0]
+        if not os.path.isfile(fullimagename_raw) or\
+           not os.path.isfile(fullimagename_gz) or\
+           not os.path.isfile(fullimagename_bz2):
             if imagename.endswith(".bz2"):
                 decompressed = bz2.decompress(data)
                 basename = fullimagename[:-4]

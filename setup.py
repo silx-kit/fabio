@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # coding: utf8
 
-from __future__ import print_function
+from __future__ import print_function, division
 
 """
 Setup script for python distutils package and fabio
 """
 import os, sys
 import os.path as op
+import glob
 from distutils.core import setup
 from distutils.core import Extension, Command
 from numpy.distutils.misc_util import get_numpy_include_dirs
-
+from distutils.command.sdist import sdist
 
 ################################################################################
 # Check for Cython and use it if it is available
@@ -141,6 +142,45 @@ class build_ext_FabIO(build_ext):
         build_ext.build_extensions(self)
 cmdclass['build_ext'] = build_ext_FabIO
 
+
+class sdist_debian(sdist):
+    """
+    Tailor made sdist for debian
+    * remove auto-generated doc
+    * remove cython generated .c files
+    * add image files from test/testimages/*  
+    """
+    def prune_file_list(self):
+        to_remove = ["doc/build", "doc/pdf", "doc/html", "pylint", "epydoc"]
+        sdist.prune_file_list(self)
+        print("Removing files for debian")
+        for rm in to_remove:
+            self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
+        #this is for Cython files specifically
+        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix="src")
+        for pyxf in glob.glob("src/*.pyx"):
+            cf = op.splitext(pyxf)[0] + ".c"
+            if op.isfile(cf):
+                self.filelist.exclude_pattern(pattern=cf)
+        print("Adding test_files for debian")
+        self.filelist.allfiles += (glob.glob("test/testimages/*"))
+        self.filelist.include_pattern(pattern="*.bz2", anchor=True,
+                                     prefix="test/testimages")
+cmdclass['debian'] = sdist_debian
+
+if sys.platform == "win32":
+    root = os.path.dirname(os.path.abspath(__file__))
+    script_files = []
+    for i in os.listdir(join(root, "scripts")):
+        if os.path.isfile(join(root, "scripts", i)):
+            if i.endswith(".py"):
+                script_files.append(join("scripts", i))
+            else:
+                tocopy_files.append(join("scripts", i))
+else:
+    script_files = glob.glob("scripts/*")
+
+
 setup(name='fabio',
       version=version,
       author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer and Gael Goret",
@@ -154,6 +194,7 @@ setup(name='fabio',
       package_dir={"fabio": "fabio-src" },
       test_suite="test",
       cmdclass=cmdclass,
+      scripts=script_files,
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',

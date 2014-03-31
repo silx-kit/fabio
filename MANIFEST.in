@@ -4,7 +4,7 @@ recursive-include src *.c *.h *.pyx
 recursive-include test *.py
 recursive-include doc *
 recursive-include pylint *
-recursive-include epydoc *
+recursive-include script *
 # recursive-exclude pylint *
 # recursive-exclude pydoc *
 # recursive-exclude epydoc *

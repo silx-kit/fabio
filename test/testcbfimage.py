@@ -50,7 +50,7 @@ class test_cbfimage_reader(unittest.TestCase):
         """Download images"""
 
         UtilsTest.getimage(os.path.basename(self.edf_filename + ".bz2"))
-        UtilsTest.getimage(os.path.basename(self.cbf_filename))
+        UtilsTest.getimage(os.path.basename(self.cbf_filename + ".bz2"))
         self.tempdir = tempfile.mkdtemp()
     def tearDown(self):
         UtilsTest.recursive_delete(self.tempdir)
