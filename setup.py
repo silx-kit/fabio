@@ -15,6 +15,13 @@ from numpy.distutils.misc_util import get_numpy_include_dirs
 from distutils.command.sdist import sdist
 
 ################################################################################
+# Remove MANIFEST file ... it needs to be re-generated on the fly
+################################################################################
+if os.path.isfile("MANIFEST"):
+    os.unlink("MANIFEST")
+
+
+################################################################################
 # Check for Cython and use it if it is available
 ################################################################################
 USE_CYTHON = True
@@ -34,6 +41,7 @@ if USE_CYTHON:
 else:
     from distutils.command.build_ext import build_ext
     ext = ".c"
+
 
 cf_backend = Extension('cf_io',
                        include_dirs=get_numpy_include_dirs(),
@@ -143,6 +151,10 @@ class build_ext_FabIO(build_ext):
 cmdclass['build_ext'] = build_ext_FabIO
 
 
+################################################################################
+# Debian source tree
+################################################################################
+
 class sdist_debian(sdist):
     """
     Tailor made sdist for debian
@@ -151,8 +163,8 @@ class sdist_debian(sdist):
     * add image files from test/testimages/*  
     """
     def prune_file_list(self):
-        to_remove = ["doc/build", "doc/pdf", "doc/html", "pylint", "epydoc"]
         sdist.prune_file_list(self)
+        to_remove = ["doc/build", "doc/pdf", "doc/html", "pylint", "epydoc"]
         print("Removing files for debian")
         for rm in to_remove:
             self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
@@ -166,7 +178,27 @@ class sdist_debian(sdist):
         self.filelist.allfiles += (glob.glob("test/testimages/*"))
         self.filelist.include_pattern(pattern="*.bz2", anchor=True,
                                      prefix="test/testimages")
-cmdclass['debian'] = sdist_debian
+    def make_distribution(self):
+        sdist.make_distribution(self)
+        dest = self.archive_files[0]
+        dirname, basename = op.split(dest)
+        base, ext = op.splitext(basename)
+        while ext in [".zip", ".tar", ".bz2", ".gz", ".Z", ".lz", ".orig"]:
+            base, ext = op.splitext(base)
+        if ext:
+            dest = "".join((base, ext))
+        else:
+            dest = base
+        sp = dest.split("-")
+        base = sp[:-1]
+        nr = sp[-1]
+        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig.tar.gz")
+        os.rename(self.archive_files[0], debian_arch)
+        self.archive_files = [debian_arch]
+        print("Building debian .orig.tar.gz in %s" % self.archive_files[0])
+
+cmdclass['debian_src'] = sdist_debian
+
 
 if sys.platform == "win32":
     root = os.path.dirname(os.path.abspath(__file__))
