@@ -1,0 +1,580 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &mdash; FabIO v0.1.4 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="FabIO v0.1.4 documentation" href="index.html" />
+    <link rel="next" title="Changelog" href="Changelog.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Changelog.html" title="Changelog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">FabIO v0.1.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>FabIO can, as any Python module, be installed from its sources,
+available on sourceforge but we advice to use binary
+packages provided for the most common platforms on sourceforge:
+Windows, MacOSX and Linux. Moreover FabIO is part of the common
+Linux distributions Ubuntu (since 11.10) and Debian7 where the
+package is named python-fabio and can be installed via:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># apt-get install python-fabio</span>
+</pre></div>
+</div>
+<p>If you are using MS Windows or MacOSX; binary version have been packaged.
+Windows installers are executable, just download the one corresponding to you python version and run it.
+MacOSX builds are zipped: unzip them at the right place.</p>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Python 2.6 or later (python 3.x is not yet ready)</li>
+<li>numpy - <a class="reference external" href="http://www.numpy.org">http://www.numpy.org</a></li>
+</ul>
+<p>For full functionality of Fabio the following modules need to be installed:</p>
+<ul class="simple">
+<li>PIL (python imaging library) - <a class="reference external" href="http://www.pythonware.com">http://www.pythonware.com</a></li>
+<li>lxml (library for reading XSDimages)</li>
+</ul>
+</div>
+<div class="section" id="installation-from-sources">
+<h2>Installation from sources<a class="headerlink" href="#installation-from-sources" title="Permalink to this headline">¶</a></h2>
+<p>FabIO can be downloaded from the fable download page on sourceforge.net.
+Presently the source code has been distributed as a zip package and a compressed tarball.
+Download either one and unpack it.</p>
+<div class="highlight-python"><pre>http://sourceforge.net/projects/fable/files/fabio/</pre>
+</div>
+<p>e.g.</p>
+<div class="highlight-python"><pre>tar xvzf fabio-0.1.4.tar.gz</pre>
+</div>
+<p>or</p>
+<div class="highlight-python"><pre>unzip fabio-0.1.4.zip</pre>
+</div>
+<p>all files are unpacked into the directory fabio-0.1.4. To install these do</p>
+<div class="highlight-python"><pre>cd fabio-0.1.4</pre>
+</div>
+<p>and install fabio with</p>
+<div class="highlight-python"><pre>python setup.py build
+sudo python setup.py install</pre>
+</div>
+<p>most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.</p>
+</div>
+<div class="section" id="development-versions">
+<h2>Development versions<a class="headerlink" href="#development-versions" title="Permalink to this headline">¶</a></h2>
+<p>The newest development version can be obtained by checking it out from the subversion (SVN) repository:</p>
+<div class="highlight-python"><pre>svn checkout https://svn.sourceforge.net/svnroot/fable/fabio/trunk fabio
+cd fabio
+python setup.py build
+sudo python setup.py install</pre>
+</div>
+<p>For Ubuntu/Debian users, you will need:</p>
+<ul class="simple">
+<li>python-imaging</li>
+<li>python-imaging-tk</li>
+<li>python-numpy</li>
+<li>python-dev</li>
+</ul>
+<div class="highlight-python"><pre>sudo apt-get install python-imaging python-imaging-tk python-numpy</pre>
+</div>
+<p>We provide also a debian-package builder based on stdeb:</p>
+<div class="highlight-python"><pre>sudo apt-get install python-stdeb
+./build-deb.sh</pre>
+</div>
+<p>which builds a debian package and installs it in a single command. Handy for testing.</p>
+</div>
+<div class="section" id="test-suite">
+<h2>Test suite<a class="headerlink" href="#test-suite" title="Permalink to this headline">¶</a></h2>
+<p>FabIO has a comprehensive test-suite to ensure non regression.
+When you run the test for the first time, many test images will be download and converted into various compressed format like gzip and bzip2 (this takes a lot of time).</p>
+<p>Be sure you have an internet connection and your environment variable http_proxy is correctly set-up. For example if you are behind a firewall/proxy:</p>
+<div class="highlight-python"><pre>export http_proxy=http://proxy.site.org:3128</pre>
+</div>
+<p>To run the test:</p>
+<div class="highlight-python"><pre>python setup.py test</pre>
+</div>
+<p>Many tests are there to deal with malformed files, don&#8217;t worry if the programs complains in warnings about &#8220;bad files&#8221;, it is done on purpose to ensure robustness in FabIO.</p>
+<p>FabIO comes with 25 test-suites (110 tests in total) representing a coverage of 60%.
+This ensures both non regression over time and ease the distribution under different platforms:
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with python versions 2.6 and 2.7.</p>
+<table border="1" class="docutils">
+<caption>Test suite coverage</caption>
+<colgroup>
+<col width="59%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stmts</th>
+<th class="head">Exec</th>
+<th class="head">Cover</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>fabio/GEimage</td>
+<td><blockquote class="first last">
+<div>94</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>48</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>51%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/HiPiCimage</td>
+<td><blockquote class="first last">
+<div>55</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>7</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>12%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/OXDimage</td>
+<td><blockquote class="first last">
+<div>285</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>271</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>95%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/TiffIO</td>
+<td><blockquote class="first last">
+<div>794</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>534</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>67%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/__init__</td>
+<td><blockquote class="first last">
+<div>15</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>15</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>100%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/adscimage</td>
+<td><blockquote class="first last">
+<div>79</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>37</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>46%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/binaryimage</td>
+<td><blockquote class="first last">
+<div>50</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>15</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>30%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/bruker100image</td>
+<td><blockquote class="first last">
+<div>60</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>13</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>21%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/brukerimage</td>
+<td><blockquote class="first last">
+<div>212</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>171</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>80%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/cbfimage</td>
+<td><blockquote class="first last">
+<div>441</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>219</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>49%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/compression</td>
+<td><blockquote class="first last">
+<div>223</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>136</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>60%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/converters</td>
+<td><blockquote class="first last">
+<div>17</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>14</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>82%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/dm3image</td>
+<td><blockquote class="first last">
+<div>133</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>16</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>12%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/edfimage</td>
+<td><blockquote class="first last">
+<div>596</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>397</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>66%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/fabioimage</td>
+<td><blockquote class="first last">
+<div>306</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>193</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>63%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/fabioutils</td>
+<td><blockquote class="first last">
+<div>322</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>256</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>79%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/file_series</td>
+<td><blockquote class="first last">
+<div>140</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>61</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>43%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/fit2dmaskimage</td>
+<td><blockquote class="first last">
+<div>75</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>71</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>94%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/fit2dspreadsheetimage</td>
+<td><blockquote class="first last">
+<div>47</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>7</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>14%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/hdf5image</td>
+<td><blockquote class="first last">
+<div>146</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>25</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>17%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/kcdimage</td>
+<td><blockquote class="first last">
+<div>80</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>65</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>81%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/mar345image</td>
+<td><blockquote class="first last">
+<div>244</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>215</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>88%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/marccdimage</td>
+<td><blockquote class="first last">
+<div>63</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>56</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>88%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/mrcimage</td>
+<td><blockquote class="first last">
+<div>96</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>0</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>0%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/openimage</td>
+<td><blockquote class="first last">
+<div>104</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>69</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>66%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/pilatusimage</td>
+<td><blockquote class="first last">
+<div>34</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>5</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>14%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/pixiimage</td>
+<td><blockquote class="first last">
+<div>95</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>22</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>23%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/pnmimage</td>
+<td><blockquote class="first last">
+<div>109</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>21</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>19%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/raxisimage</td>
+<td><blockquote class="first last">
+<div>98</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>88</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>89%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/readbytestream</td>
+<td><blockquote class="first last">
+<div>26</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>5</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>19%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/tifimage</td>
+<td><blockquote class="first last">
+<div>167</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>60</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>35%</div></blockquote>
+</td>
+</tr>
+<tr><td>fabio/xsdimage</td>
+<td><blockquote class="first last">
+<div>94</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>68</div></blockquote>
+</td>
+<td><blockquote class="first last">
+<div>72%</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#installation-from-sources">Installation from sources</a></li>
+<li><a class="reference internal" href="#development-versions">Development versions</a></li>
+<li><a class="reference internal" href="#test-suite">Test suite</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting Started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Changelog.html"
+                        title="next chapter">Changelog</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/install.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Changelog.html" title="Changelog"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             >previous</a> |</li>
+        <li><a href="index.html">FabIO v0.1.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

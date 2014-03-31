@@ -1,0 +1,514 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fabio.raxisimage &mdash; FabIO v0.1.4 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for fabio.raxisimage</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Authors: Brian R. Pauw</span>
+<span class="sd">email:  brian@stack.nl</span>
+
+<span class="sd">Written using information gleaned from the ReadRAXISImage program</span>
+<span class="sd">written by T. L. Hendrixson, made available by Rigaku Americas.</span>
+<span class="sd">Available at: http://www.rigaku.com/downloads/software/readimage.html</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c"># Get ready for python3:</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">with_statement</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Brian R. Pauw&quot;</span><span class="p">]</span>
+<span class="n">__contact__</span> <span class="o">=</span> <span class="s">&quot;brian@stack.nl&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s">&quot;GPLv3+&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&quot;23 Nov 2013&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">struct</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">.fabioimage</span> <span class="kn">import</span> <span class="n">fabioimage</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;templateimage&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">raxisimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="raxisimage"><a class="viewcode-back" href="../../api/modules.html#fabio.raxisimage.raxisimage">[docs]</a><span class="sd">    FabIO image class to read Rigaku RAXIS image files.</span>
+<span class="sd">    Write functions are not planned as there are plenty of more suitable</span>
+<span class="sd">    file formats available for storing detector data.</span>
+<span class="sd">    In particular, the MSB used in Rigaku files is used in an uncommon way:</span>
+<span class="sd">    it is used as a *multiply-by* flag rather than a normal image value bit.</span>
+<span class="sd">    While it is said to multiply by the value specified in the header, there</span>
+<span class="sd">    is at least one case where this is found not to hold, so YMMV and be careful.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generic constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fabioimage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="s">&#39;uint16&#39;</span> <span class="c">#same for all RAXIS images AFAICT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endianness</span> <span class="o">=</span> <span class="s">&#39;&gt;&#39;</span> <span class="c">#this may be tested for.</span>
+
+    <span class="k">def</span> <span class="nf">swap_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;not sure if this function is needed&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="raxisimage.swap_needed"><a class="viewcode-back" href="../../api/modules.html#fabio.raxisimage.raxisimage.swap_needed">[docs]</a>        <span class="n">endian</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span>
+        <span class="c">#Decide if we need to byteswap</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">endian</span> <span class="o">==</span> <span class="s">&#39;&lt;&#39;</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">endian</span> <span class="o">==</span> <span class="s">&#39;&gt;&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">endian</span> <span class="o">==</span> <span class="s">&#39;&gt;&#39;</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">endian</span> <span class="o">==</span> <span class="s">&#39;&lt;&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+
+    <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span></div>
+<span class="sd">        Read and decode the header of a Rigaku RAXIS image.</span>
+<span class="sd">        The Rigaku format uses a block of (at least) 1400 bytes for storing</span>
+<span class="sd">        information. The information has a fixed structure, but endianness</span>
+<span class="sd">        can be flipped for non-char values. Header items which are not</span>
+<span class="sd">        capitalised form part of a non-standardized data block and may not</span>
+<span class="sd">        be accurate.</span>
+
+<span class="sd">        TODO: It would be useful to have an automatic endianness test in here.</span>
+
+<span class="sd">        @param infile: Opened python file (can be stringIO or bzipped file)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span>
+        <span class="c">#list of header key to keep the order (when writing)</span>
+        <span class="n">RKey</span><span class="p">,</span><span class="n">orderList</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rigakuKeys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span> <span class="o">=</span> <span class="n">orderList</span>
+
+        <span class="c">#swapBool=False</span>
+        <span class="n">fs</span><span class="o">=</span><span class="n">endianness</span>
+        <span class="n">minHeaderLength</span><span class="o">=</span><span class="mi">1400</span> <span class="c">#from rigaku&#39;s def</span>
+        <span class="c">#if (numpy.little_endian and endianness==&#39;&gt;&#39;):</span>
+        <span class="c">#    swapBool=True</span>
+        <span class="c">#file should be open already</span>
+        <span class="c">#fh=open(filename,&#39;rb&#39;)</span>
+        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c">#hopefully seeking works.</span>
+        <span class="n">rawHead</span><span class="o">=</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">minHeaderLength</span><span class="p">)</span>
+        <span class="c">#fh.close() #don&#39;t like open files in case of intermediate crash</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
+        <span class="n">curByte</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">orderList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">RKey</span><span class="p">[</span><span class="n">key</span><span class="p">],</span><span class="nb">int</span><span class="p">):</span>
+                <span class="c"># read a number of bytes, convert to char.</span>
+                <span class="c">#if -1, read remainder of header</span>
+                <span class="k">if</span> <span class="n">RKey</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">rByte</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">rawHead</span><span class="p">)</span><span class="o">-</span><span class="n">curByte</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">fs</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rByte</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;s&#39;</span><span class="p">,</span>
+                            <span class="n">rawHead</span><span class="p">[</span><span class="n">curByte</span> <span class="p">:</span> <span class="n">curByte</span> <span class="o">+</span> <span class="n">rByte</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">curByte</span><span class="o">+=</span><span class="n">rByte</span>
+                    <span class="k">break</span>
+
+                <span class="n">rByte</span><span class="o">=</span><span class="n">RKey</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">fs</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rByte</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;s&#39;</span><span class="p">,</span>
+                        <span class="n">rawHead</span><span class="p">[</span><span class="n">curByte</span> <span class="p">:</span> <span class="n">curByte</span> <span class="o">+</span> <span class="n">rByte</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">curByte</span><span class="o">+=</span><span class="n">rByte</span>
+            <span class="k">elif</span> <span class="n">RKey</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;float&#39;</span><span class="p">:</span>
+                <span class="c">#read a float, 4 bytes</span>
+                <span class="n">rByte</span><span class="o">=</span><span class="mi">4</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">fs</span> <span class="o">+</span> <span class="s">&#39;f&#39;</span><span class="p">,</span>
+                        <span class="n">rawHead</span><span class="p">[</span><span class="n">curByte</span> <span class="p">:</span> <span class="n">curByte</span> <span class="o">+</span> <span class="n">rByte</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">curByte</span><span class="o">+=</span><span class="n">rByte</span>
+            <span class="k">elif</span> <span class="n">RKey</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;long&#39;</span><span class="p">:</span>
+                <span class="c">#read a long, 4 bytes</span>
+                <span class="n">rByte</span><span class="o">=</span><span class="mi">4</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">fs</span> <span class="o">+</span> <span class="s">&#39;l&#39;</span><span class="p">,</span>
+                        <span class="n">rawHead</span><span class="p">[</span><span class="n">curByte</span> <span class="p">:</span> <span class="n">curByte</span> <span class="o">+</span> <span class="n">rByte</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">curByte</span><span class="o">+=</span><span class="n">rByte</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;special header data type {} not understood&#39;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rkey</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rawHead</span><span class="p">)</span><span class="o">==</span><span class="n">curByte</span><span class="p">:</span>
+                <span class="c">#&quot;end reached&quot;</span>
+                <span class="k">break</span>
+
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="raxisimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.raxisimage.raxisimage.read">[docs]</a><span class="sd">        try to read image</span>
+<span class="sd">        @param fname: name of the file</span>
+<span class="sd">        @param frame:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">endianness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endianness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
+        <span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="s">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="n">offset</span><span class="o">=-</span><span class="mi">1</span> <span class="c">#read from EOF backward</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+        <span class="c">#we read the required bytes from the end of file, using code</span>
+        <span class="c">#lifted from binaryimage</span>
+        <span class="c">#read the image data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;X Pixels&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Y Pixels&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">]</span>
+        <span class="n">bpp</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">bpp</span>
+
+        <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="o">-</span><span class="n">size</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span> <span class="c">#seek from EOF backwards</span>
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;expected datablock too large, please check bytecode settings: </span><span class="si">%s</span><span class="s">, IOError: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Uncommon error encountered when reading file: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">error</span><span class="p">)</span>
+        <span class="n">rawData</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">if</span>  <span class="bp">self</span><span class="o">.</span><span class="n">swap_needed</span><span class="p">():</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">rawData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">rawData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
+
+        <span class="n">di</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span> <span class="o">&gt;&gt;</span> <span class="mi">15</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>  <span class="c"># greater than 2^15</span>
+        <span class="k">if</span> <span class="n">di</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c"># find indices for which we need to do the correction (for which</span>
+            <span class="c"># the 16th bit is set):</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Correct for PM&quot;</span><span class="p">,</span> <span class="n">di</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span>  <span class="c"># reset bit #15 to zero</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span><span class="p">)</span>
+            <span class="c">#Now we do some fixing for Rigaku&#39;s refusal to adhere to standards:</span>
+            <span class="n">sf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Photomultiplier Ratio&#39;</span><span class="p">]</span>
+            <span class="c">#multiply by the ratio  defined in the header</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">di</span><span class="p">]</span> <span class="o">*=</span> <span class="n">sf</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">rigakuKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#returns dict of keys and keyLengths</span></div>
+<div class="viewcode-block" id="raxisimage.rigakuKeys"><a class="viewcode-back" href="../../api/modules.html#fabio.raxisimage.raxisimage.rigakuKeys">[docs]</a>        <span class="n">RKey</span><span class="o">=</span><span class="p">{</span>
+                <span class="s">&#39;InstrumentType&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+                <span class="s">&#39;Version&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+                <span class="s">&#39;Crystal Name&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;Crystal System&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+                <span class="s">&#39;A&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;B&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;C&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Alpha&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Beta&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Gamma&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Space Group&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+                <span class="s">&#39;Mosaicity&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Memo&#39;</span><span class="p">:</span><span class="mi">80</span><span class="p">,</span>
+                <span class="s">&#39;Date&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+                <span class="s">&#39;Reserved Space 1&#39;</span><span class="p">:</span><span class="mi">84</span><span class="p">,</span>
+                <span class="s">&#39;User&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;Xray Target&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+                <span class="s">&#39;Wavelength&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Monochromator&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;Monochromator 2theta&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Collimator&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;Filter&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+                <span class="s">&#39;Crystal-to-detector Distance&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Generator Voltage&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Generator Current&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Focus&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+                <span class="s">&#39;Xray Memo&#39;</span><span class="p">:</span><span class="mi">80</span><span class="p">,</span>
+                <span class="s">&#39;IP shape&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span> <span class="c">#1= cylindrical, 0=flat. A &quot;long&quot; is overkill.</span>
+                <span class="s">&#39;Oscillation Type&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#1=weissenberg. else regular. &quot;float&quot;? really?</span>
+                <span class="s">&#39;Reserved Space 2&#39;</span><span class="p">:</span><span class="mi">56</span><span class="p">,</span>
+                <span class="s">&#39;Crystal Mount (spindle axis)&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+                <span class="s">&#39;Crystal Mount (beam axis)&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+                <span class="s">&#39;Phi Datum&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#degrees</span>
+                <span class="s">&#39;Phi Oscillation Start&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#deg</span>
+                <span class="s">&#39;Phi Oscillation Stop&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>  <span class="c">#deg</span>
+                <span class="s">&#39;Frame Number&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Exposure Time&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#minutes</span>
+                <span class="s">&#39;Direct beam X position&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#special, x,y</span>
+                <span class="s">&#39;Direct beam Y position&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#special, x,y</span>
+                <span class="s">&#39;Omega Angle&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#omega angle</span>
+                <span class="s">&#39;Chi Angle&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#omega angle</span>
+                <span class="s">&#39;2Theta Angle&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#omega angle</span>
+                <span class="s">&#39;Mu Angle&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#omega angle</span>
+                <span class="s">&#39;Image Template&#39;</span><span class="p">:</span><span class="mi">204</span><span class="p">,</span> <span class="c">#used for storing scan template..</span>
+                <span class="s">&#39;X Pixels&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Y Pixels&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;X Pixel Length&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#mm</span>
+                <span class="s">&#39;Y Pixel Length&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#mm</span>
+                <span class="s">&#39;Record Length&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Total&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Starting Line&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;IP Number&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Photomultiplier Ratio&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Fade Time (to start of read)&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Fade Time (to end of read)&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="c">#good that they thought of this, but is it applied?</span>
+                <span class="s">&#39;Host Type/Endian&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+                <span class="s">&#39;IP Type&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+                <span class="s">&#39;Horizontal Scan&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span> <span class="c">#0=left-&gt;Right, 1=Rigth-&gt;Left</span>
+                <span class="s">&#39;Vertical Scan&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span> <span class="c">#0=down-&gt;up, 1=up-&gt;down</span>
+                <span class="s">&#39;Front/Back Scan&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span> <span class="c">#0=front, 1=back</span>
+                <span class="s">&#39;Pixel Shift (RAXIS V)&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Even/Odd Intensity Ratio (RAXIS V)&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Magic number&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span> <span class="c">#&#39;RAPID&#39;-specific</span>
+                <span class="s">&#39;Number of Axes&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.1.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.1.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.1.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.2.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.2.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.2.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.3.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.3.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.3.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.4.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.4.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.4.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.5.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.5.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.5.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.4&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.5&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.4&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.5&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.1&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.2&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.3&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.4&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.5&#39;</span><span class="p">:</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Scan Axis&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Axes Names&#39;</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span>
+                <span class="s">&#39;file&#39;</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span>
+                <span class="s">&#39;cmnt&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;smpl&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;iext&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;reso&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;save&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;dint&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;byte&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;init&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;ipus&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;dexp&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;expn&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="s">&#39;posx&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;posy&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+                <span class="s">&#39;xray&#39;</span><span class="p">:</span><span class="s">&#39;long&#39;</span><span class="p">,</span>
+                <span class="c">#more values can be added here</span>
+                <span class="s">&#39;Header Leftovers&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">}</span>
+
+        <span class="c">#make a list with the items in the right order</span>
+        <span class="n">orderList</span><span class="o">=</span><span class="p">[</span>
+                <span class="s">&#39;InstrumentType&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Version&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Crystal Name&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Crystal System&#39;</span><span class="p">,</span>
+                <span class="s">&#39;A&#39;</span><span class="p">,</span>
+                <span class="s">&#39;B&#39;</span><span class="p">,</span>
+                <span class="s">&#39;C&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Alpha&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Beta&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Gamma&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Space Group&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Mosaicity&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Memo&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Date&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Reserved Space 1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;User&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Xray Target&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Wavelength&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Monochromator&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Monochromator 2theta&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Collimator&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Filter&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Crystal-to-detector Distance&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Generator Voltage&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Generator Current&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Focus&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Xray Memo&#39;</span><span class="p">,</span>
+                <span class="s">&#39;IP shape&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Oscillation Type&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Reserved Space 2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Crystal Mount (spindle axis)&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Crystal Mount (beam axis)&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Phi Datum&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Phi Oscillation Start&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Phi Oscillation Stop&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Frame Number&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Exposure Time&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Direct beam X position&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Direct beam Y position&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Omega Angle&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Chi Angle&#39;</span><span class="p">,</span>
+                <span class="s">&#39;2Theta Angle&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Mu Angle&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Image Template&#39;</span><span class="p">,</span>
+                <span class="s">&#39;X Pixels&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Y Pixels&#39;</span><span class="p">,</span>
+                <span class="s">&#39;X Pixel Length&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Y Pixel Length&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Record Length&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Total&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Starting Line&#39;</span><span class="p">,</span>
+                <span class="s">&#39;IP Number&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Photomultiplier Ratio&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Fade Time (to start of read)&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Fade Time (to end of read)&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Host Type/Endian&#39;</span><span class="p">,</span>
+                <span class="s">&#39;IP Type&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Horizontal Scan&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Vertical Scan&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Front/Back Scan&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Pixel Shift (RAXIS V)&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Even/Odd Intensity Ratio (RAXIS V)&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Magic number&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Number of Axes&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.1.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.1.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.1.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.2.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.2.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.2.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.3.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.3.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.3.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.4.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.4.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.4.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.5.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.5.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Vector ax.5.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.4&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Start ax.5&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.4&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer End ax.5&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.1&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.2&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.4&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Offset ax.5&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Goniometer Scan Axis&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Axes Names&#39;</span><span class="p">,</span>
+                <span class="s">&#39;file&#39;</span><span class="p">,</span>
+                <span class="s">&#39;cmnt&#39;</span><span class="p">,</span>
+                <span class="s">&#39;smpl&#39;</span><span class="p">,</span>
+                <span class="s">&#39;iext&#39;</span><span class="p">,</span>
+                <span class="s">&#39;reso&#39;</span><span class="p">,</span>
+                <span class="s">&#39;save&#39;</span><span class="p">,</span>
+                <span class="s">&#39;dint&#39;</span><span class="p">,</span>
+                <span class="s">&#39;byte&#39;</span><span class="p">,</span>
+                <span class="s">&#39;init&#39;</span><span class="p">,</span>
+                <span class="s">&#39;ipus&#39;</span><span class="p">,</span>
+                <span class="s">&#39;dexp&#39;</span><span class="p">,</span>
+                <span class="s">&#39;expn&#39;</span><span class="p">,</span>
+                <span class="s">&#39;posx&#39;</span><span class="p">,</span>
+                <span class="s">&#39;posy&#39;</span><span class="p">,</span>
+                <span class="s">&#39;xray&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Header Leftovers&#39;</span>
+                <span class="p">]</span>
+
+
+        <span class="k">return</span> <span class="n">RKey</span><span class="p">,</span><span class="n">orderList</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>
