@@ -43,7 +43,7 @@ class testXSD(unittest.TestCase):
     def setUp(self):
         self.fn = {}
         for i in ["XSDataImage.edf", "XSDataImage.xml", "XSDataImageInv.xml"]:
-            self.fn[i] = UtilsTest.getimage(i)
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
 
     def test_read(self):
         "Test reading of XSD images"
