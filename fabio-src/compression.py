@@ -22,7 +22,10 @@ logger = logging.getLogger("compression")
 import numpy
 
 try:
-    import gzip
+    if sys.version_info < (2, 7):
+        from . import gzip
+    else:
+        import gzip
 except ImportError:
     logger.error("Unable to import gzip module: disabling gzip compression")
     gzip = None

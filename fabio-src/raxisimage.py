@@ -157,8 +157,8 @@ class raxisimage(fabioimage):
             infile.seek(offset)
         else:
             try:
-                if "getSize" in dir(infile): #Handle specifically gzip ... works also for bzip2
-                    filesize = infile.getSize()
+                if "measureSize" in dir(infile): #Handle specifically gzip
+                    filesize = infile.measureSize()
                     infile.seek(filesize - size) #seek from EOF backwards
                 else:
                     infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards

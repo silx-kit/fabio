@@ -483,12 +483,11 @@ else:
             gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
             self.lock = threading.Semaphore()
             self.__size = None
-#            self.getSize()
 
         def __repr__(self):
             return "fabio." + gzip.GzipFile.__repr__(self)
 
-        def getSize(self):
+        def measureSize(self):
             if self.mode == gzip.WRITE:
                 return self.size
             if self.__size is None:
@@ -500,45 +499,45 @@ else:
                         logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, self.offset))
                         self.__size = end_pos
             return self.__size
-        if sys.version_info < (2, 7):
-            def setSize(self, value):
-                self.__size = value
-            size = property(getSize, setSize)
-            @property
-            def closed(self):
-                return self.fileobj is None
-
-            def seek(self, offset, whence=os.SEEK_SET):
-                """
-                Move to new file position.
-
-                Argument offset is a byte count.  Optional argument whence defaults to
-                0 (offset from start of file, offset should be >= 0); other values are 1
-                (move relative to current position, positive or negative), and 2 (move
-                relative to end of file, usually negative, although many platforms allow
-                seeking beyond the end of a file).  If the file is opened in text mode,
-                only offsets returned by tell() are legal.  Use of other offsets causes
-                undefined behavior.
-
-                This is a wrapper for seek to ensure compatibility with old python 2.5
-
-                Warning: Seek from end is not supported (works only for single blocks !!!)
-                This implemtents a hack
-                """
-                if whence == os.SEEK_SET:
-                    gzip.GzipFile.seek(self, offset)
-                elif whence == os.SEEK_CUR:
-                    gzip.GzipFile.seek(self, offset + self.tell())
-                elif whence == os.SEEK_END:
-                    gzip.GzipFile.seek(self, offset + self.getSize())
-
-            def __enter__(self, *args, **kwargs):
-                return self
-            def __exit__(self, *args, **kwargs):
-                """
-                Close the file.
-                """
-                return gzip.GzipFile.close(self)
+#        if sys.version_info < (2, 7):
+#            def setSize(self, value):
+#                self.__size = value
+#            size = property(getSize, setSize)
+#            @property
+#            def closed(self):
+#                return self.fileobj is None
+#
+#            def seek(self, offset, whence=os.SEEK_SET):
+#                """
+#                Move to new file position.
+#
+#                Argument offset is a byte count.  Optional argument whence defaults to
+#                0 (offset from start of file, offset should be >= 0); other values are 1
+#                (move relative to current position, positive or negative), and 2 (move
+#                relative to end of file, usually negative, although many platforms allow
+#                seeking beyond the end of a file).  If the file is opened in text mode,
+#                only offsets returned by tell() are legal.  Use of other offsets causes
+#                undefined behavior.
+#
+#                This is a wrapper for seek to ensure compatibility with old python 2.5
+#
+#                Warning: Seek from end is not supported (works only for single blocks !!!)
+#                This implemtents a hack
+#                """
+#                if whence == os.SEEK_SET:
+#                    gzip.GzipFile.seek(self, offset)
+#                elif whence == os.SEEK_CUR:
+#                    gzip.GzipFile.seek(self, offset + self.tell())
+#                elif whence == os.SEEK_END:
+#                    gzip.GzipFile.seek(self, offset + self.getSize())
+#
+#            def __enter__(self, *args, **kwargs):
+#                return self
+#            def __exit__(self, *args, **kwargs):
+#                """
+#                Close the file.
+#                """
+#                return gzip.GzipFile.close(self)
 
 if bz2 is None:
     BZ2File = UnknownCompressedFile
