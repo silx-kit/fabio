@@ -21,6 +21,7 @@ __version__ = "29 Oct 2013"
 
 import numpy, logging, sys
 from .fabioimage import fabioimage
+from .fabioutils import previous_filename, next_filename
 logger = logging.getLogger("mrcimage")
 if sys.version_info < (3.0):
     bytes = str

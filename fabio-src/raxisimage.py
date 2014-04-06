@@ -121,8 +121,7 @@ class raxisimage(fabioimage):
                         rawHead[curByte : curByte + rByte])[0]
                 curByte += rByte
             else:
-                logging.warn('special header data type {} not understood'
-                        .format(Rkey[key]))
+                logging.warning('special header data type %s not understood' % Rkey[key])
             if len(rawHead) == curByte:
                 #"end reached"
                 break

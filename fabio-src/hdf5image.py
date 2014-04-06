@@ -32,14 +32,14 @@ try:
     import h5py
 except ImportError:
     h5py = None
-
+from .fabioutils import previous_filename, next_filename
 
 class HDF5location(object):
     """
     Handle URL like:
-    
+
     hdf5://filename:path[slice]
- 
+
     """
     def __init__(self, filename=None, h5path=None, slices=None, url=None):
         self.filename = filename
@@ -73,7 +73,7 @@ class HDF5location(object):
     def parse(self, url):
         """
         Analyse a string of the form hdf5://filename:path[slice]
-        
+
         @param url: string of form of an hdf5-url
         """
         if "[" in url:
@@ -220,8 +220,7 @@ class hdf5image(fabioimage):
             return self.getframe(self.currentframe + 1)
         else:
             newobj = hdf5image()
-            newobj.read(next_filename(
-                self.sequencefilename))
+            newobj.read(next_filename(self.filename))
             return newobj
 
     def previous(self):
@@ -232,6 +231,5 @@ class hdf5image(fabioimage):
             return self.getframe(self.currentframe - 1)
         else:
             newobj = hdf5image()
-            newobj.read(previous_filename(
-                self.sequencefilename))
+            newobj.read(previous_filename(self.filename))
             return newobj

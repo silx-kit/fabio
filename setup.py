@@ -161,7 +161,7 @@ class sdist_debian(sdist):
     Tailor made sdist for debian
     * remove auto-generated doc
     * remove cython generated .c files
-    * add image files from test/testimages/*  
+    * add image files from test/testimages/*
     """
     def prune_file_list(self):
         sdist.prune_file_list(self)
@@ -175,6 +175,8 @@ class sdist_debian(sdist):
             cf = op.splitext(pyxf)[0] + ".c"
             if op.isfile(cf):
                 self.filelist.exclude_pattern(pattern=cf)
+        for ex in ["argparse", "gzip"]:
+            self.filelist.exclude_pattern(pattern=ex + ".py", anchor=True, prefix="fabio-src")
         print("Adding test_files for debian")
         self.filelist.allfiles += (glob.glob("test/testimages/*"))
         self.filelist.include_pattern(pattern="*.bz2", anchor=True,

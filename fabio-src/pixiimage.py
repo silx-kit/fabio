@@ -17,6 +17,7 @@ import numpy
 import sys
 import os
 from .fabioimage import fabioimage
+from .fabioutils import previous_filename, next_filename
 
 class pixiimage(fabioimage):
     _need_a_seek_to_read = True
@@ -121,7 +122,7 @@ def demo(fname):
     i.read(fname)
     import pylab
     pylab.imshow(numpy.log(i.data))
-    print("%s\t%s\t%s\ts" % (i.filename, i.data.max(), i.data.min(), i.data.mean()))
+    print("%s\t%s\t%s\t%s" % (i.filename, i.data.max(), i.data.min(), i.data.mean()))
     pylab.title(i.filename)
     pylab.show()
     while 1:
