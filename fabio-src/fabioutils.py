@@ -205,7 +205,7 @@ class FilenameObject(object):
                 stem, numstring, postnum = numstem(".".join(parts[:-1]))
                 num = int(numstring)
                 ndigit = len(numstring)
-            except Exception, err:
+            except Exception as err:
                 # There is no number - hence make num be None, not 0
                 logger.debug("l176: %s" % err)
                 num = None
@@ -226,14 +226,14 @@ class FilenameObject(object):
                     ndigit = len(parts[-1])
                     typ = ['bruker']
                     stem = ".".join(parts[:-1]) + "."
-                except Exception, err:
+                except Exception as err:
                     logger.debug("l196: %s" % err)
                     typ = None
                     extn = "." + parts[-1] + extn
                     numstring = ""
                     try:
                         stem , numstring, postnum = numstem(".".join(parts[:-1]))
-                    except Exception, err:
+                    except Exception as err:
                         logger.debug("l202: %s" % err)
                         raise
                     if numstring.isdigit():
