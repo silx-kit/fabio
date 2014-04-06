@@ -15,7 +15,7 @@ from __future__ import with_statement, print_function
 
 import sys, logging
 logger = logging.getLogger("openimage")
-from fabioutils  import FilenameObject
+from .fabioutils  import FilenameObject
 from .fabioimage import fabioimage
 from . import edfimage
 from . import adscimage
@@ -47,7 +47,7 @@ MAGIC_NUMBERS = [
     ("\x4d\x4d\x00\x2a"   , 'tif') ,
     # The marCCD and Pilatus formats are both standard tif with a header
     # hopefully these byte patterns are unique for the formats
-    # If not the image will be read, but the is missing 
+    # If not the image will be read, but the is missing
     ("\x49\x49\x2a\x00\x08\x00"   , 'marccd') ,
     ("\x49\x49\x2a\x00\x82\x00"   , 'pilatus') ,
     ("\x49\x49\x2a\x00"   , 'tif') ,
@@ -98,7 +98,7 @@ def openimage(filename, frame=None):
             logger.debug("Attempting to read frame %s from %s" % (frame,
                 filename.tostring()))
             obj = obj.read(filename.tostring(), frame)
-        except Exception, ex:
+        except Exception as ex:
             # multiframe file
             #logger.debug( "DEBUG: multiframe file, start # %d"%(
             #    filename.num)
@@ -122,7 +122,7 @@ def openheader(filename):
 
 
 def _openimage(filename):
-    """ 
+    """
     determine which format for a filename
     and return appropriate class which can be used for opening the image
     """
@@ -147,7 +147,7 @@ def _openimage(filename):
             # Cannot see a way around this. Need to find something
             # to distinguish mccd from regular tif...
             filetype = "tif"
-    except IOError, error:
+    except IOError as error:
         logger.error("%s: File probably does not exist", error)
         raise error
     except:
@@ -162,7 +162,7 @@ def _openimage(filename):
                 raise Exception("openimage failed on magic bytes & name guess")
             filetype = file_obj.format
             #UNUSED filenumber = file_obj.num
-        except Exception, error:
+        except Exception as error:
             logger.error(error)
             import traceback
             traceback.print_exc()

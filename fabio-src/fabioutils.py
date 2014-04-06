@@ -7,7 +7,12 @@ General purpose utilities functions for fabio
 # get ready for python3
 from __future__ import with_statement, print_function
 import re, os, logging, threading, sys
-import StringIO as stringIO
+if sys.version_info < (3,):
+    import StringIO as io
+    FileIO = file
+else:
+    import io
+    from io import FileIO
 logger = logging.getLogger("fabioutils")
 from .compression import bz2, gzip
 import traceback
@@ -39,7 +44,7 @@ FILETYPES = {
              }
 
 # Add bzipped and gzipped
-for key in FILETYPES.keys():
+for key in list(FILETYPES.keys()):
     FILETYPES[key + ".bz2"] = FILETYPES[key]
     FILETYPES[key + ".gz"] = FILETYPES[key]
 
@@ -360,14 +365,14 @@ def nice_int(s):
         return int(float(s))
 
 
-class StringIO(stringIO.StringIO):
+class StringIO(io.StringIO):
     """
     just an interface providing the name and mode property to a StringIO
 
     BugFix for MacOSX mainly
     """
     def __init__(self, data, fname=None, mode="r"):
-        stringIO.StringIO.__init__(self, data)
+        io.StringIO.__init__(self, data)
         self.closed = False
         if fname == None:
             self.name = "fabioStream"
@@ -390,7 +395,7 @@ class StringIO(stringIO.StringIO):
         self.__size = size
     size = property(getSize, setSize)
 
-class File(file):
+class File(FileIO):
     """
     wrapper for "file" with locking
     """
@@ -413,7 +418,7 @@ class File(file):
 
         'U' cannot be combined with 'w' or '+' mode.
         """
-        file.__init__(self, name, mode, buffering)
+        FileIO.__init__(self, name, mode, buffering)
         self.lock = threading.Semaphore()
         self.__size = None
     def getSize(self):
@@ -431,7 +436,7 @@ class File(file):
         """
         Close the file.
         """
-        return file.close(self)
+        return FileIO.close(self)
     def __enter__(self, *args, **kwargs):
         return self
     size = property(getSize, setSize)

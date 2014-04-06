@@ -18,7 +18,7 @@ __version__ = "28 Oct 2013"
 import numpy
 import sys
 from .fabioimage import fabioimage
-if sys.version_info < (3.0):
+if sys.version_info < (3,):
     bytes = str
 
 

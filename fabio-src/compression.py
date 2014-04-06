@@ -15,9 +15,13 @@ __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
-import logging, struct, hashlib, base64, StringIO, sys
+import logging, struct, hashlib, base64, sys
 if sys.version_info >= (3,):
     str = bytes
+    from io import StringIO
+else:
+    from StringIO import StringIO
+
 logger = logging.getLogger("compression")
 import numpy
 
@@ -68,7 +72,7 @@ def decGzip(stream):
 
     if gzip is None:
         raise ImportError("gzip module is not available")
-    fileobj = StringIO.StringIO(stream)
+    fileobj = StringIO(stream)
     try:
         rawData = gzip.GzipFile(fileobj=fileobj).read()
     except IOError:
@@ -79,11 +83,11 @@ def decGzip(stream):
             sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             rawData, err = sub.communicate(input=stream)
             logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
-        except Exception, error: #IGNORE:W0703
+        except Exception as error: #IGNORE:W0703
             logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
             for i in range(1, 513):
                 try:
-                    fileobj = StringIO.StringIO(stream[:-i])
+                    fileobj = StringIO(stream[:-i])
                     rawData = gzip.GzipFile(fileobj=fileobj).read()
                 except IOError:
                     logger.debug("trying with %s bytes less, doesn't work" % i)
@@ -275,7 +279,7 @@ def decByteOffet_cython(stream, size=None):
     logger.debug("CBF decompression using cython")
     try:
         from fabio.byte_offset import analyseCython
-    except ImportError, error:
+    except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method")
         return decByteOffet_numpy(stream, size)
     else:
@@ -334,12 +338,12 @@ def compByteOffet_numpy(data):
 def decTY1(raw_8, raw_16=None, raw_32=None):
     """
     Modified byte offset decompressor used in Oxford Diffraction images
-    
+
     @param raw_8:  strings containing raw data with integer 8 bits
     @param raw_16: strings containing raw data with integer 16 bits
     @param raw_32: strings containing raw data with integer 32 bits
     @return: numpy.ndarray
-    
+
     """
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
     data -= 127
@@ -401,7 +405,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
 
     try:
         from mar345_IO import uncompress_pck
-    except ImportError, error:
+    except ImportError as  error:
         raise RuntimeError("Unable to import mar345_IO to read compressed dataset")
     if "seek" in dir(stream):
         stream.seek(0)
@@ -422,7 +426,7 @@ def compPCK(data):
     """
     try:
         from mar345_IO import compress_pck
-    except ImportError, error:
+    except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to write compressed dataset")
     return compress_pck(data)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8 
+#coding: utf8
 """
 
 Authors:
@@ -14,7 +14,7 @@ Authors:
   European Synchrotron Radiation Facility;
   Grenoble (France)
 
-         
+
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function
@@ -42,7 +42,7 @@ class mar345image(fabioimage):
 #            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, version=1)
             try:
                 self.data = decPCK(f, self.dim1, self.dim2)
-            except Exception, error:
+            except Exception as error:
                 logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
                 f.close()
                 self.dim1 = 1
@@ -164,7 +164,7 @@ class mar345image(fabioimage):
             outfile.write(hotpixels)
             outfile.write(compressed_stream)
             outfile.close()
-        except Exception, error:
+        except Exception as error:
             logger.error("Error in writing file %s: %s" % (fname, error))
 
     def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
@@ -318,7 +318,7 @@ class mar345image(fabioimage):
         if data is None:
             return None
         else:
-#            enforce square image 
+#            enforce square image
             shape = data.shape
             assert len(shape) == 2, "image has 2 dimensions"
             mshape = max(shape)

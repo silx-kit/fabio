@@ -51,8 +51,8 @@ class adscimage(fabioimage):
                     numpy.fromstring(binary, numpy.uint16),
                     (self.dim2, self.dim1))
             except ValueError:
-                raise IOError, 'Size spec in ADSC-header does not match ' + \
-                    'size of image data field'
+                raise IOError('Size spec in ADSC-header does not match ' + \
+                    'size of image data field')
             self.bytecode = numpy.uint16
             logger.info("adscimage read in using low byte first (x386-order)")
         else:
@@ -61,8 +61,8 @@ class adscimage(fabioimage):
                     numpy.fromstring(binary, numpy.uint16),
                     (self.dim2, self.dim1)).byteswap()
             except ValueError:
-                raise IOError, 'Size spec in ADSC-header does not match ' + \
-                    'size of image data field'
+                raise IOError('Size spec in ADSC-header does not match ' + \
+                    'size of image data field')
             self.bytecode = numpy.uint16
             logger.info('adscimage using high byte first (network order)')
         self.resetvals()
@@ -89,7 +89,7 @@ class adscimage(fabioimage):
         out = '{\n'
         for key in self.header_keys:
             out += "%s = %s;\n" % (key, self.header[key])
-        # FIXME ??? - made padding match header bytes keyword            
+        # FIXME ??? - made padding match header bytes keyword
         #        the cbflib example image has exactly 512...
         if self.header.has_key("HEADER_BYTES"):
             pad = int(self.header["HEADER_BYTES"]) - len(out) - 2

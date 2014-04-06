@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf8 -*-
 """
-FabIO class for dealing with TIFF images. 
+FabIO class for dealing with TIFF images.
 In facts wraps TiffIO from V. Armando Solé (available in PyMca) or falls back to PIL
 
 Authors:
@@ -15,8 +15,8 @@ Authors:
 * Jérôme Kieffer:
   European Synchrotron Radiation Facility;
   Grenoble (France)
-   
-License: GPLv3+        
+
+License: GPLv3+
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function, division
@@ -129,7 +129,7 @@ class tifimage(fabioimage):
                 #No support for now of multi-frame tiff images
                 self.data = tiffIO.getImage(0)
                 self.header = tiffIO.getInfo(0)
-        except Exception, error:
+        except Exception as error:
             logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
         else:
             if self.data.ndim == 2:
@@ -179,7 +179,7 @@ class tifimage(fabioimage):
 
 
 
-#define a couple of helper classes here:         
+#define a couple of helper classes here:
 class Tiff_header(object):
     def __init__(self, string):
         if string[:4] == "II\x2a\x00":
@@ -224,7 +224,7 @@ class Image_File_Directory(object):
             for e in self.entries:
                 if (e.val == None):
                     e.extract_data(instring)
-        #do we have some more ifds in this file 
+        #do we have some more ifds in this file
         offset_next = struct.unpack_from("L", instring[offset + 2 + self.count * 12:])[0]
         return offset_next
 
