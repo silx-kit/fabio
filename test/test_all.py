@@ -55,6 +55,7 @@ from testkcdimage           import test_suite_all_kcd
 from testtifimage           import test_suite_all_tiffimage
 from testXSDimage           import test_suite_all_XSD
 from testraxisimage         import test_suite_all_raxis
+
 def test_suite_all():
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_suite_all_fabio())
@@ -81,8 +82,8 @@ def test_suite_all():
     return testSuite
 
 if __name__ == '__main__':
-
     mysuite = test_suite_all()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    if not runner.run(mysuite).wasSuccessful():
+        sys.exit(1)
 
