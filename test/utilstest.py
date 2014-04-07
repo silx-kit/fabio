@@ -55,9 +55,13 @@ class UtilsTest(object):
     platform = distutils.util.get_platform()
     architecture = "lib.%s-%i.%i" % (platform,
                                     sys.version_info[0], sys.version_info[1])
-    fabio_home = os.path.dirname(test_home)
-    fabio_build_home = os.path.join(fabio_home, "build", architecture)
-    logger.info("Fabio Home is: " + fabio_build_home)
+    if os.environ.get("BUILDPYTHONPATH"):
+        fabio_build_home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
+    else:
+        fabio_build_home = os.path.join(os.path.dirname(test_home),
+                                                    "build", architecture)
+#    fabio_build_home = os.path.join(fabio_home, "build", architecture)
+    print("Fabio Home is: %s" % fabio_build_home)
     if "fabio" in sys.modules:
         logger.info("Fabio module was already loaded from  %s" % sys.modules["fabio"])
         fabio = None
@@ -68,9 +72,9 @@ class UtilsTest(object):
                          shell=False, cwd=os.path.dirname(test_home))
         logger.info("subprocess ended with rc= %s" % p.wait())
 
-    fabio = imp.load_module(*((name,) + imp.find_module(name, [fabio_build_home, fabio_home])))
+    fabio = imp.load_module(*((name,) + imp.find_module(name, [fabio_build_home])))
     sys.modules[name] = fabio
-    logging.info("pyFAI loaded from %s" % fabio.__file__)
+    print("pyFAI loaded from %s" % fabio.__file__)
 
     @classmethod
     def forceBuild(cls):
