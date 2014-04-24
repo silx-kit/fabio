@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf8 -*-
+#-*- coding: utf-8 -*-
 """
 FabIO class for dealing with TIFF images.
 In facts wraps TiffIO from V. Armando Solé (available in PyMca) or falls back to PIL

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding: utf8
+# coding: utf-8
 """
 Authors: Gael Goret, Jerome Kieffer, ESRF, France
 Emails: gael.goret@esrf.fr, jerome.kieffer@esrf.fr

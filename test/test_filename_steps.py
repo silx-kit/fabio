@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*- 
+# -*- coding: utf-8 -*- 
 
 import unittest, sys, os, logging
 logger = logging.getLogger("test_filename_steps")

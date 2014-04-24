@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8
+#coding: utf-8
 """
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions

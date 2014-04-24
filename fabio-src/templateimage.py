@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8
+#coding: utf-8
 #This is a template for adding new file formats to FabIO
 
 # We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:

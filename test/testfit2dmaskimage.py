@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 ## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
 
 

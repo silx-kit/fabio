@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8
+#coding: utf-8
 """
 Converter module. 
 This is for the moment empty (populated only with almost pass through anonymous functions)
