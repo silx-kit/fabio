@@ -107,7 +107,7 @@ class Frame(object):
             self.header_keys = header_keys[:]
             for key in header_keys:
                 if key not in self.header:
-                    logger.warning("Header key %s, in header_keys is not in header dictionary, poping !!!" % key)
+                    logger.warning("Header key %s, in header_keys is not in header dictionary, popping !!!" % key)
                     self.header_keys.remove(key)
 
         self.capsHeader = {}
