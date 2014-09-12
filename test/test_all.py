@@ -34,27 +34,29 @@ if force_build:
     import fabio
 
 
-from testfabioimage         import test_suite_all_fabio
-from testedfimage           import test_suite_all_edf
-from testcbfimage           import test_suite_all_cbf
-from testfilenames          import test_suite_all_filenames
-from test_file_series       import test_suite_all_series
-from test_filename_steps    import test_suite_all_steps
+from testfabioimage import test_suite_all_fabio
+from testedfimage import test_suite_all_edf
+from testcbfimage import test_suite_all_cbf
+from testfilenames import test_suite_all_filenames
+from test_file_series import test_suite_all_series
+from test_filename_steps import test_suite_all_steps
 #from test_flat_binary       import test_suite_all_flat
-from testadscimage          import test_suite_all_adsc
-from testfit2dmaskimage     import test_suite_all_fit2d
-from testGEimage            import test_suite_all_GE
+from testadscimage import test_suite_all_adsc
+from testfit2dmaskimage import test_suite_all_fit2d
+from testGEimage import test_suite_all_GE
 from testheadernotsingleton import test_suite_all_header
-from testmar345image        import test_suite_all_mar345
-from testbrukerimage        import test_suite_all_bruker
-from testmccdimage          import test_suite_all_mccd
-from testopenheader         import test_suite_all_openheader
-from testopenimage          import test_suite_all_openimage
-from testOXDimage           import test_suite_all_OXD
-from testkcdimage           import test_suite_all_kcd
-from testtifimage           import test_suite_all_tiffimage
-from testXSDimage           import test_suite_all_XSD
-from testraxisimage         import test_suite_all_raxis
+from testmar345image import test_suite_all_mar345
+from testbrukerimage import test_suite_all_bruker
+from testmccdimage import test_suite_all_mccd
+from testopenheader import test_suite_all_openheader
+from testopenimage import test_suite_all_openimage
+from testOXDimage import test_suite_all_OXD
+from testkcdimage import test_suite_all_kcd
+from testtifimage import test_suite_all_tiffimage
+from testXSDimage import test_suite_all_XSD
+from testraxisimage import test_suite_all_raxis
+from testpnmimage import test_suite_all_pnm
+
 
 def test_suite_all():
     testSuite = unittest.TestSuite()
@@ -79,6 +81,7 @@ def test_suite_all():
     testSuite.addTest(test_suite_all_tiffimage())
     testSuite.addTest(test_suite_all_XSD())
     testSuite.addTest(test_suite_all_raxis())
+    testSuite.addTest(test_suite_all_pnm())
     return testSuite
 
 if __name__ == '__main__':
