@@ -9,9 +9,20 @@ Authors: Henning O. Sorensen & Erik Knudsen
          DK-4000 Roskilde
          email:henning.sorensen@risoe.dk
 
+* Jérôme Kieffer:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
+
+License: GPLv3+
 """
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, division
+
+__authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
+__date__ = "12/09/2014"
+__license__ = "GPLv3+"
+__copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
+__status__ = "stable"
 
 import numpy
 import logging
@@ -20,7 +31,7 @@ from .fabioimage import fabioimage
 
 SUBFORMATS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
 
-HEADERITEMS = ['SUBFORMAT', 'DIMENSIONS', 'MAXVAL']
+HEADERITEMS = ['SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL']
 P7HEADERITEMS = ['WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR']
 
 class pnmimage(fabioimage):
@@ -40,7 +51,6 @@ class pnmimage(fabioimage):
         #1st line contains the pnm image sub format
         #2nd line contains the image pixel dimension
         #3rd line contains the maximum pixel value (at least for grayscale - check this)
-        self.header_keys = ['SUBFORMAT', 'DIMENSIONS', 'MAXVAL']
 
         l = f.readline().strip()
         if l not in SUBFORMATS:
@@ -60,14 +70,18 @@ class pnmimage(fabioimage):
                 self.header[s[0]] = s[1]
         else:
             self.header_keys = HEADERITEMS
-            for k in self.header_keys[1:]:
+            values = list(l.split())
+            while len(values) < len(self.header_keys):
                 l = f.readline()
-                while(l[0] == '#'): l = f.readline()
-                self.header[k] = l.strip()
+                while l[0] == '#':
+                    l = f.readline()
+                values += l.split()
+            for k, v in zip(self.header_keys, values):
+                self.header[k] = v.strip()
 
         #set the dimensions
-        dims = (self.header['DIMENSIONS'].split())
-        self.dim1, self.dim2 = int(dims[0]), int(dims[1])
+        self.dim1 = int(self.header["WIDTH"])
+        self.dim2 = int(self.header["HEIGHT"])
         #figure out how many bytes are used to store the data
         #case construct here!
         m = int(self.header['MAXVAL'])
@@ -96,7 +110,7 @@ class pnmimage(fabioimage):
         decoder_name = "%sdec" % self.header['SUBFORMAT']
         if decoder_name in dir(pnmimage):
             decoder = getattr(pnmimage, decoder_name)
-            self.data = decoder(infile, self.bytecode)
+            self.data = decoder(self, infile, self.bytecode)
         else:
             raise IOError("No decoder named %s for file %s" % (decoder_name, fname))
         self.resetvals()
@@ -112,8 +126,7 @@ class pnmimage(fabioimage):
                 raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
 
-    @staticmethod
-    def P4dec(buf, bytecode):
+    def P4dec(self, buf, bytecode):
         err = 'single bit (pbm) images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)
@@ -131,25 +144,24 @@ class pnmimage(fabioimage):
     def P5dec(self, buf, bytecode):
         l = buf.read()
         try:
-            data = numpy.reshape(numpy.fromstring(l, bytecode), [self.dim2, self.dim1]).byteswap()
+            npa = numpy.fromstring(l, bytecode)
+            npa.shape = self.dim2, self.dim1
+            data = npa.byteswap()
         except ValueError:
             raise IOError, 'Size spec in pnm-header does not match size of image data field'
         return data
 
-    @staticmethod
-    def P3dec(buf, bytecode):
+    def P3dec(self, buf, bytecode):
         err = '(plain-ppm) RGB images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)
 
-    @staticmethod
-    def P6dec(buf, bytecode):
+    def P6dec(self, buf, bytecode):
         err = '(ppm) RGB images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)
 
-    @staticmethod
-    def P7dec(buf, bytecode):
+    def P7dec(self, buf, bytecode):
         err = '(pam) images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)
