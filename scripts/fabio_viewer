@@ -13,9 +13,10 @@ Fabio_viewer is a portable diffraction images viewer/converter:
 """
 from __future__ import with_statement, print_function
 __version__ = "1.0"
-__author__ = u"Gaël Goret"
-__copyright__ = "2012 ESRF"
+__author__ = u"Gaël Goret, Jérôme Kieffer"
+__copyright__ = "2014 ESRF"
 __licence__ = "GPL"
+
 import sys, os, random, time
 import h5py
 from PyQt4.QtCore import *
@@ -40,11 +41,12 @@ try:
 except ImportError:
     from fabio.argparse import ArgumentParser
 
-output_format = ['*.bin','*.cbf','*.edf','*.h5','*.img','*.mar2300','*.mar3450','*.marccd','*.tiff']
+output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img', '*.mar2300', '*.mar3450', '*.marccd', '*.tiff']
 
 #--------------------------------------------------------------------------------------------------------
 # Application Form
 #--------------------------------------------------------------------------------------------------------
+
 
 class AppForm(QMainWindow):
     def __init__(self, parent=None):
@@ -89,8 +91,6 @@ class AppForm(QMainWindow):
             res += '%s: %s \n' % (k, d[k])
         return res
 
-#--------------------------------------------------------------------------------------------------------   
-        
     def open_data_series(self, series=None):
         if series is None:
             series = QFileDialog.getOpenFileNames(self, 'Select and open series of files')
@@ -134,7 +134,7 @@ class AppForm(QMainWindow):
                                 if endian == 'Short':
                                     endian = '<'
                                 else:
-                                    enfian = '>'
+                                    endian = '>'
                                 img = fabio.binaryimage.binaryimage()
                                 img.read(fname,dim1,dim2,offset,bytecode,endian)
                                 img.header = {'Info':'No header information available in binary data blocks'}
@@ -155,8 +155,6 @@ class AppForm(QMainWindow):
             self.log.appendPlainText('Opening procedure: Complete')
             if self.data_series:
                 self.select_new_image(None,imgID=0)
-
-#--------------------------------------------------------------------------------------------------------   
 
     def open_h5_data_series(self): #TODO batch mode compatibility
         fname = QFileDialog.getOpenFileName(self, 'Select and open series of files')
@@ -200,18 +198,12 @@ class AppForm(QMainWindow):
         if self.data_series:
             self.select_new_image(None,imgID=0)
         
-#--------------------------------------------------------------------------------------------------------   
-
-    def extract_fname_from_path(self,name ):
-	    posslash=name.rfind("/")
-	    if(posslash>-1):
-		    return name[posslash+1:]
-	    else:
-		    return name
-
-#--------------------------------------------------------------------------------------------------------
-# Convertion
-#--------------------------------------------------------------------------------------------------------
+    def extract_fname_from_path(self, name):
+        posslash = name.rfind("/")
+        if posslash > -1:
+            return name[posslash + 1:]
+        else:
+            return name
 
     def save_as(self):
         info = QFileDialog.getSaveFileNameAndFilter(self, "Save active image as", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
@@ -224,8 +216,6 @@ class AppForm(QMainWindow):
             if str(info[0])!='' and str(info[1])!='':
                 QMessageBox.warning(self,'Warning',"Could not save image as file if no data have been loaded")
 
-#--------------------------------------------------------------------------------------------------------
-
     def save_data_series_as_multiple_file(self):
         info = QFileDialog.getSaveFileNameAndFilter(self, "Save data series as multiple files", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
         if self.data_series or self.sequential_file_list:
@@ -237,8 +227,6 @@ class AppForm(QMainWindow):
             if str(info[0])!='' and str(info[1])!='':
                 QMessageBox.warning(self,'Warning',"Could not save image as file if no data have been loaded")
 
-#--------------------------------------------------------------------------------------------------------
-    
     def save_data_series_as_singlehdf(self):
         info = QFileDialog.getSaveFileNameAndFilter(self, "Save data series as single high density file", QDir.currentPath(), filter=self.tr("HDF5 archive (*.h5)"))
         if self.data_series or self.sequential_file_list:
@@ -254,9 +242,7 @@ class AppForm(QMainWindow):
             if str(info[0])!='' and str(info[1])!='':
                 QMessageBox.warning(self,'Warning',"Could not save image as file if no data have been loaded")
 
-#--------------------------------------------------------------------------------------------------------
-
-    def convert_and_save_to_h5(self,fname): 
+    def convert_and_save_to_h5(self, fname):
 
         hdf = h5py.File(fname,'w')
         group = hdf.create_group('data')
@@ -275,7 +261,7 @@ class AppForm(QMainWindow):
                         if endian == 'Short':
                             endian = '<'
                         else:
-                            enfian = '>'
+                            endian = '>'
                         img = fabio.binaryimage.binaryimage()
                         img.read(tmpfname,dim1,dim2,offset,bytecode,endian)
                         img.header = {'Info':'No header information available in binary data blocks'}
@@ -308,7 +294,6 @@ class AppForm(QMainWindow):
         self.progressBar.setValue(0)
         self.log.appendPlainText('Hdf5 Recording: Complete')
         hdf.close()
-#--------------------------------------------------------------------------------------------------------
 
     def add_extention_if_absent(self,fname,format):
         posslash=fname.rfind("/")
@@ -318,10 +303,7 @@ class AppForm(QMainWindow):
         else:
             return fname + format[1:]
 
-#--------------------------------------------------------------------------------------------------------
-
-    def convert_and_write(self,fname,format,data,header):
-
+    def convert_and_write(self, fname, format, data, header):
         if format == '*.bin':
             out = open(fname, mode="wb")
             out.write(data.tostring())
@@ -341,27 +323,22 @@ class AppForm(QMainWindow):
         elif format == '*.img':
             out = fabio.OXDimage.OXDimage(data=data, header=header)
         else:
-            raise Warning, ("Unknown format: %s" % format)
+            raise Warning("Unknown format: %s" % format)
         self.statusBar().showMessage('Writing file %s to %s format, please wait ...'%(fname,format[2:]))
         self.log.appendPlainText('Writing file %s to %s format'%(fname,format[2:]))
         QCoreApplication.processEvents()
         out.write(fname)
         self.statusBar().clearMessage()
         
-
-#--------------------------------------------------------------------------------------------------------
-
-    def remove_extention_if_present(self,fname):
-        posslash=fname.rfind("/")
-        posdot  =fname.rfind(".")
-        if posdot>posslash:
+    def remove_extention_if_present(self, fname):
+        posslash = fname.rfind("/")
+        posdot = fname.rfind(".")
+        if posdot > posslash:
             return  fname[:posdot]
         else:
             return fname
                
-#--------------------------------------------------------------------------------------------------------
-    
-    def convert_and_write_multiple_files(self,fname,format):
+    def convert_and_write_multiple_files(self, fname, format):
 
         if self.sequential_file_mode:
             total = len(self.sequential_file_list)
@@ -378,7 +355,7 @@ class AppForm(QMainWindow):
                         if endian == 'Short':
                             endian = '<'
                         else:
-                            enfian = '>'
+                            endian = '>'
                         img = fabio.binaryimage.binaryimage()
                         img.read(tmpfname,dim1,dim2,offset,bytecode,endian)
                         img.header = {'Info':'No header information available in binary data blocks'}
@@ -407,13 +384,12 @@ class AppForm(QMainWindow):
                 self.convert_and_write(tmpfname,format,tmpdata,tmpheader)
         self.progressBar.setValue(0)
         self.log.appendPlainText('Convertion to %s: Complete' % format[2:])
-#--------------------------------------------------------------------------------------------------------
 
     def extract_format_from_string(self,format_long):
         for fmt in output_format:
             if fmt in format_long:
                 return fmt
-        raise Warning, ("Unknown format: %s" % format_long)
+        raise Warning("Unknown format: %s" % format_long)
 
 #--------------------------------------------------------------------------------------------------------
 # Transformation
@@ -428,7 +404,7 @@ class AppForm(QMainWindow):
             else:
                 total = len(self.data_series)
                 if not total:
-                    QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")
+                    QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.flipud(self.data_series[i])[:]
@@ -436,21 +412,19 @@ class AppForm(QMainWindow):
                     self.log.appendPlainText('Applying horizontal mirror to data series: image %d' % i)
                     QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
-                self.select_new_image(None,imgID=iid) 
+                self.select_new_image(None, imgID=iid)
         else:
             
             if self.data.any():
                 self.data = numpy.flipud(self.data)[:]
                 iid = self.imgDict[str(self.images_list.currentText())]
-                self.data_series[iid] =  self.data[:]
+                self.data_series[iid] = self.data[:]
                 self.log.appendPlainText('Applying horizontal mirror to current data')
                 self.on_draw()
             else:
-                QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")   
+                QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
         self.progressBar.setValue(0)
         
-#--------------------------------------------------------------------------------------------------------                       
-    
     def vertical_mirror(self):
         if self.transform_data_series:
             if self.sequential_file_mode:
@@ -480,8 +454,6 @@ class AppForm(QMainWindow):
             else:
                 QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")            
         self.progressBar.setValue(0)
-        
-#--------------------------------------------------------------------------------------------------------
         
     def transposition(self):
         if self.transform_data_series:
@@ -513,8 +485,6 @@ class AppForm(QMainWindow):
                 QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")             
         self.progressBar.setValue(0)
         
-#--------------------------------------------------------------------------------------------------------
-        
     def rotation_90(self):
         if self.transform_data_series:
             if self.sequential_file_mode:
@@ -544,8 +514,6 @@ class AppForm(QMainWindow):
             else:
                 QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")            
         self.progressBar.setValue(0)
-        
-#--------------------------------------------------------------------------------------------------------
         
     def rotation_180(self):
         if self.transform_data_series:
@@ -577,8 +545,6 @@ class AppForm(QMainWindow):
                 QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")            
         self.progressBar.setValue(0)
         
-#--------------------------------------------------------------------------------------------------------
-        
     def rotation_270(self):
         if self.transform_data_series:
             if self.sequential_file_mode:
@@ -609,8 +575,6 @@ class AppForm(QMainWindow):
                 QMessageBox.warning(self,'Warning',"Could not transform image if no data have been loaded")            
         self.progressBar.setValue(0)
         
-#--------------------------------------------------------------------------------------------------------
-        
     def mask(self):
         fname = QFileDialog.getOpenFileName(self, 'Select and import a boolean mask from binary data block file')
         fname = str(fname)
@@ -621,7 +585,7 @@ class AppForm(QMainWindow):
                 if endian == 'Short':
                     endian = '<'
                 else:
-                    enfian = '>'
+                    endian = '>'
                 img = fabio.binaryimage.binaryimage()
                 img.read(fname,dim1,dim2,offset,bytecode,endian)
                 self.mask = img.data[:]
@@ -662,58 +626,48 @@ class AppForm(QMainWindow):
                 return     
         self.progressBar.setValue(0)
         
-#--------------------------------------------------------------------------------------------------------
-
-    def apply_queued_transformations(self,data):
-        transformations = ['horizontal_mirror','vertical_mirror','transposition','rotation(+90)','rotation(+180)','rotation(-90)','masking','downsampling']
+    def apply_queued_transformations(self, data):
+        transformations = ['horizontal_mirror', 'vertical_mirror', 'transposition', 'rotation(+90)', 'rotation(+180)', 'rotation(-90)', 'masking', 'downsampling']
         for t in self.transform_list:
                 if t in transformations:
-                    if t =='horizontal_mirror':
+                    if t == 'horizontal_mirror':
                         data = numpy.flipud(data)[:]
                         self.log.appendPlainText('horizontal_mirror Done')
-                    elif t =='vertical_mirror':
+                    elif t == 'vertical_mirror':
                         data = numpy.fliplr(data)[:]
                         self.log.appendPlainText('vertical_mirror Done')
-                    elif t =='transposition':
+                    elif t == 'transposition':
                         data = data.transpose()[:]
                         self.log.appendPlainText('transposition Done')
-                    elif t =='rotation(+90)':
+                    elif t == 'rotation(+90)':
                         data = numpy.rot90(data)[:]
                         self.log.appendPlainText('rotation(+90) Done')
-                    elif t =='rotation(+180)':
+                    elif t == 'rotation(+180)':
                         data = numpy.rot90(data, 2)[:]
                         self.log.appendPlainText('rotation(+180) Done')
-                    elif t =='rotation(-90)':
+                    elif t == 'rotation(-90)':
                         data = numpy.rot90(data, 3)[:]
                         self.log.appendPlainText('rotation(-90) Done')
-                    elif t =='masking':
-                        data = self.mask*data
+                    elif t == 'masking':
+                        data = self.mask * data
                         self.log.appendPlainText('masking Done')
                 else:
-                    raise Warning, 'Unknown transformation %s'%t
-        return data       
-             
-#--------------------------------------------------------------------------------------------------------
+                    raise Warning('Unknown transformation %s' % t)
+        return data
              
     def transformation_options(self):
-        if self.transform_option_action.isChecked ():
+        if self.transform_option_action.isChecked():
             self.transform_data_series = True
         else:
             self.transform_data_series = False
 
-#--------------------------------------------------------------------------------------------------------
-
     def clear_transform_list(self):
-        self.transform_list=[]
+        self.transform_list = []
         self.transformation_queue.clear()
 
-
-
-#--------------------------------------------------------------------------------------------------------        
-        
     def downsample(self):
         Dial = down_sampling_Dialog()
-        thick,start_angle,step_angle = Dial.exec_()
+        thick, start_angle, step_angle = Dial.exec_()
         if thick is not None:
             info = QFileDialog.getSaveFileNameAndFilter(self, "Save downsampled data series as multiple files", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
             if self.data_series or self.sequential_file_list:
@@ -723,13 +677,13 @@ class AppForm(QMainWindow):
 
                     if self.sequential_file_mode:
                         total = len(self.sequential_file_list)
-                        img =  fabio.open( self.sequential_file_dict[self.sequential_file_list[0]])
+                        img = fabio.open(self.sequential_file_dict[self.sequential_file_list[0]])
                         stack = numpy.zeros_like(img.data)
                         t0 = time.time()
-                        subtotal = (total//thick)*thick
+                        subtotal = (total // thick) * thick
                         for i in range(subtotal):
-                            j=i%thick
-                            k = i//thick
+                            j = i % thick
+                            k = i // thick
                             imgkey = self.sequential_file_list[i]
                             tmpfname = self.sequential_file_dict[imgkey]
                             try:
@@ -737,31 +691,31 @@ class AppForm(QMainWindow):
                             except:
                                 QMessageBox.warning(self, 'Message','Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')                
                                 Dial = binDialog(self)
-                                dim1,dim2,offset,bytecode,endian = Dial.exec_()
+                                dim1, dim2, offset, bytecode, endian = Dial.exec_()
                                 if dim1 is not None and dim2 is not None:
                                     if endian == 'Short':
                                         endian = '<'
                                     else:
-                                        enfian = '>'
+                                        endian = '>'
                                         img = fabio.binaryimage.binaryimage()
-                                        img.read(tmpfname,dim1,dim2,offset,bytecode,endian)
+                                        img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
                                         img.header = {'Info':'No header information available in binary data blocks'}
                                 else:
                                     continue
                             if img.data.shape != stack.shape:
-                                self.log.appendPlainText("Error image shape: %s summed data shape: %s"%(img.data.shape,stack.shape))
+                                self.log.appendPlainText("Error image shape: %s summed data shape: %s" % (img.data.shape, stack.shape))
                                 continue
-                            numpy.add(stack , img.data, stack)
-                            self.progressBar.setValue((float(i+1)/(subtotal))*100.)
-                            self.log.appendPlainText('File %s stacked'%imgkey)
+                            numpy.add(stack, img.data, stack)
+                            self.progressBar.setValue((float(i + 1) / (subtotal)) * 100.)
+                            self.log.appendPlainText('File %s stacked' % imgkey)
                             QCoreApplication.processEvents()
-                            if j==thick-1:
+                            if j == thick - 1:
                                 self.log.appendPlainText('stack number %d summing up'%k)
                                 QCoreApplication.processEvents()
-                                if format in ['*.mar3450','*.mar2300']:
-                                       img.header["PHI_START"]='%.3f'%(start_angle+step_angle*(i-thick+1))
-                                       img.header["PHI_END"]='%.3f'%(start_angle+step_angle*(i))
-                                self.convert_and_write(('%s_%s%s'%(fname,self.counter_format,format[1:]))%k,format,stack,img.header)
+                                if format in ['*.mar3450', '*.mar2300']:
+                                    img.header["PHI_START"] = '%.3f' % (start_angle + step_angle * (i - thick + 1))
+                                    img.header["PHI_END"] = '%.3f' % (start_angle + step_angle * (i))
+                                self.convert_and_write(('%s_%s%s' % (fname, self.counter_format, format[1:])) % k, format, stack, img.header)
                                 t1 = time.time()
                                 print('time: %s' % (t1 - t0))
                                 stack = numpy.zeros_like(img.data)
@@ -769,19 +723,19 @@ class AppForm(QMainWindow):
                     else:
                         total = len(self.data_series)
                         stack = numpy.zeros_like(self.data_series[0])
-                        subtotal = (total//thick)*thick
+                        subtotal = (total // thick) * thick
                         for i in range(subtotal):
-                            j=i%thick
-                            k = i//thick
+                            j = i % thick
+                            k = i // thick
                             data = self.data_series[i]    
                             if data.shape != stack.shape:
                                 self.log.appendPlainText("Error image shape: %s summed data shape: %s"%(img.data.shape,stack.shape))
                                 continue
-                            numpy.add(stack , data, stack)
-                            self.progressBar.setValue((float(i+1)/(subtotal))*100.)
+                            numpy.add(stack, data, stack)
+                            self.progressBar.setValue((float(i + 1) / (subtotal)) * 100.)
                             self.log.appendPlainText('File number %d stacked'%i)
                             QCoreApplication.processEvents()
-                            if j==thick-1:
+                            if j == thick - 1:
                                 self.log.appendPlainText('stack number %d summing up'%k)
                                 QCoreApplication.processEvents()
                                 if format in ['*.mar3450','*.mar2300']:
@@ -1292,6 +1246,7 @@ class AppForm(QMainWindow):
 #--------------------------------------------------------------------------------------------------------  
 # External top level window class
 #--------------------------------------------------------------------------------------------------------
+
 
 class counter_format_option_Dialog(QDialog): #option doivent refleter l etat des couche du dessous
     """Dialog containing entry for down sampling"""    
