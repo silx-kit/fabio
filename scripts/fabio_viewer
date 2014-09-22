@@ -86,7 +86,7 @@ class AppForm(QMainWindow):
         keys[:] = d.keys()
         keys.sort()
         for k in keys:
-            res += '%s : %s \n'%(k,d[k])
+            res += '%s: %s \n' % (k, d[k])
         return res
 
 #--------------------------------------------------------------------------------------------------------   
@@ -124,21 +124,21 @@ class AppForm(QMainWindow):
                         self.statusBar().showMessage('Opening file %s, please wait ...'%fname)
                         self.log.appendPlainText('Opening file %s'%fname)
                         QCoreApplication.processEvents()
-                        try :
+                        try:
                             img = fabio.open(fname)
                         except:
                             QMessageBox.warning(self, 'Message','Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')                
                             Dial = binDialog(self)
                             dim1,dim2,offset,bytecode,endian = Dial.exec_()
-                            if dim1 != None and dim2 != None:
+                            if dim1 is not None and dim2 is not None:
                                 if endian == 'Short':
                                     endian = '<'
-                                else :
+                                else:
                                     enfian = '>'
                                 img = fabio.binaryimage.binaryimage()
                                 img.read(fname,dim1,dim2,offset,bytecode,endian)
                                 img.header = {'Info':'No header information available in binary data blocks'}
-                            else :
+                            else:
                                 continue     
                         self.data_series += [img.data[:]]
                         self.header_series += [img.header.copy()]
@@ -152,7 +152,7 @@ class AppForm(QMainWindow):
                 self.progressBar.setValue(float(iid+1)/(total)*100.)
             self.statusBar().clearMessage()
             self.progressBar.setValue(0)
-            self.log.appendPlainText('Opening procedure : Complete')
+            self.log.appendPlainText('Opening procedure: Complete')
             if self.data_series:
                 self.select_new_image(None,imgID=0)
 
@@ -167,7 +167,7 @@ class AppForm(QMainWindow):
             self.filecheckBox.setCheckState(False)
             self.sequential_file_mode = False
             self.filecheckBox.stateChanged.connect(self.sequential_option)
-            QMessageBox.warning(self, 'Message','Sequential file mode is not compatible with hdf5 input file : option removed')    
+            QMessageBox.warning(self, 'Message', 'Sequential file mode is not compatible with hdf5 input file: option removed')
         if fname:
             self.data_series = []
             self.header_series = []
@@ -194,7 +194,7 @@ class AppForm(QMainWindow):
                 safeiid += 1
             self.statusBar().clearMessage()
             self.progressBar.setValue(0)
-            self.log.appendPlainText('Hdf5 Extraction : Complete')
+            self.log.appendPlainText('Hdf5 Extraction: Complete')
             self.imgDict = imgDict.copy()
             hdf.close()
         if self.data_series:
@@ -248,7 +248,7 @@ class AppForm(QMainWindow):
                 if format == '*.h5':
                     self.convert_and_save_to_h5(fname)
                 else:
-                    QMessageBox.warning(self,'Warning',"Unknown format : %s"%format)
+                    QMessageBox.warning(self, 'Warning', "Unknown format: %s" % format)
                     return
         else:
             if str(info[0])!='' and str(info[1])!='':
@@ -265,21 +265,21 @@ class AppForm(QMainWindow):
             total = len(self.sequential_file_list)
             for imgkey in self.sequential_file_list:
                 tmpfname = self.sequential_file_dict[imgkey]
-                try :
+                try:
                     img = fabio.open(tmpfname)
                 except:
                     QMessageBox.warning(self, 'Message','Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')                
                     Dial = binDialog(self)
                     dim1,dim2,offset,bytecode,endian = Dial.exec_()
-                    if dim1 != None and dim2 != None:
+                    if dim1 is not None and dim2 is not None:
                         if endian == 'Short':
                             endian = '<'
-                        else :
+                        else:
                             enfian = '>'
                         img = fabio.binaryimage.binaryimage()
                         img.read(tmpfname,dim1,dim2,offset,bytecode,endian)
                         img.header = {'Info':'No header information available in binary data blocks'}
-                    else :
+                    else:
                         continue
                 self.progressBar.setValue((float(iid+1)/(total))*100.)
                 self.log.appendPlainText('Converting and saving file %s. saving file number %d'%(tmpfname,iid))
@@ -306,7 +306,7 @@ class AppForm(QMainWindow):
                 iid +=1
         self.statusBar().clear()
         self.progressBar.setValue(0)
-        self.log.appendPlainText('Hdf5 Recording : Complete')
+        self.log.appendPlainText('Hdf5 Recording: Complete')
         hdf.close()
 #--------------------------------------------------------------------------------------------------------
 
@@ -341,7 +341,7 @@ class AppForm(QMainWindow):
         elif format == '*.img':
             out = fabio.OXDimage.OXDimage(data=data, header=header)
         else:
-            raise Warning, ("Unknown format : %s"%format)
+            raise Warning, ("Unknown format: %s" % format)
         self.statusBar().showMessage('Writing file %s to %s format, please wait ...'%(fname,format[2:]))
         self.log.appendPlainText('Writing file %s to %s format'%(fname,format[2:]))
         QCoreApplication.processEvents()
@@ -368,21 +368,21 @@ class AppForm(QMainWindow):
             ii = 0
             for imgkey in self.sequential_file_list:
                 tmpfname = self.sequential_file_dict[imgkey]
-                try :
+                try:
                     img = fabio.open(tmpfname)
                 except:
                     QMessageBox.warning(self, 'Message','Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')                
                     Dial = binDialog(self)
                     dim1,dim2,offset,bytecode,endian = Dial.exec_()
-                    if dim1 != None and dim2 != None:
+                    if dim1 is not None and dim2 is not None:
                         if endian == 'Short':
                             endian = '<'
-                        else :
+                        else:
                             enfian = '>'
                         img = fabio.binaryimage.binaryimage()
                         img.read(tmpfname,dim1,dim2,offset,bytecode,endian)
                         img.header = {'Info':'No header information available in binary data blocks'}
-                    else :
+                    else:
                         continue
                 self.progressBar.setValue((float(ii+1)/(total))*100.)
                 self.log.appendPlainText('Converting file %s'%tmpfname)
@@ -406,14 +406,14 @@ class AppForm(QMainWindow):
                     tmpdata = self.apply_queued_transformations(tmpdata)
                 self.convert_and_write(tmpfname,format,tmpdata,tmpheader)
         self.progressBar.setValue(0)
-        self.log.appendPlainText('Convertion to %s : Complete'%format[2:])  
+        self.log.appendPlainText('Convertion to %s: Complete' % format[2:])
 #--------------------------------------------------------------------------------------------------------
 
     def extract_format_from_string(self,format_long):
         for fmt in output_format:
             if fmt in format_long:
                 return fmt
-        raise Warning, ("Unknown format : %s"%format_long)
+        raise Warning, ("Unknown format: %s" % format_long)
 
 #--------------------------------------------------------------------------------------------------------
 # Transformation
@@ -433,7 +433,7 @@ class AppForm(QMainWindow):
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.flipud(self.data_series[i])[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
-                    self.log.appendPlainText('Applying horizontal mirror to data series : image %d'%i)
+                    self.log.appendPlainText('Applying horizontal mirror to data series: image %d' % i)
                     QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.select_new_image(None,imgID=iid) 
@@ -466,7 +466,7 @@ class AppForm(QMainWindow):
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.fliplr(self.data_series[i])[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
-                    self.log.appendPlainText('Applying vertical mirror to data series : image %d'%i)
+                    self.log.appendPlainText('Applying vertical mirror to data series: image %d' % i)
                     QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.select_new_image(None,imgID=iid) 
@@ -498,7 +498,7 @@ class AppForm(QMainWindow):
                 for i in range(len(self.data_series)):
                     self.data_series[i] = self.data_series[i].transpose()[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
-                    self.log.appendPlainText('Applying transposition to data series : image %d'%i)
+                    self.log.appendPlainText('Applying transposition to data series: image %d' % i)
                     QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.select_new_image(None,imgID=iid) 
@@ -530,7 +530,7 @@ class AppForm(QMainWindow):
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i])[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
-                    self.log.appendPlainText('Applying + 90 rotation to data series : image %d'%i)
+                    self.log.appendPlainText('Applying + 90 rotation to data series: image %d' % i)
                     QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.select_new_image(None,imgID=iid) 
@@ -562,7 +562,7 @@ class AppForm(QMainWindow):
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i], 2)[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
-                    self.log.appendPlainText('Applying + 180 rotation to data series : image %d'%i)
+                    self.log.appendPlainText('Applying + 180 rotation to data series: image %d' % i)
                     QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.select_new_image(None,imgID=iid) 
@@ -594,7 +594,7 @@ class AppForm(QMainWindow):
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i], 3)[:]
                     self.progressBar.setValue((float(i+1)/(total))*100.)
-                    self.log.appendPlainText('Applying - 90 rotation to data series : image %d'%i)
+                    self.log.appendPlainText('Applying - 90 rotation to data series: image %d' % i)
                     QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
                 self.select_new_image(None,imgID=iid) 
@@ -617,10 +617,10 @@ class AppForm(QMainWindow):
         if fname:
             Dial = binDialog(self)
             dim1,dim2,offset,bytecode,endian = Dial.exec_()
-            if dim1 != None and dim2 != None:
+            if dim1 is not None and dim2 is not None:
                 if endian == 'Short':
                     endian = '<'
-                else :
+                else:
                     enfian = '>'
                 img = fabio.binaryimage.binaryimage()
                 img.read(fname,dim1,dim2,offset,bytecode,endian)
@@ -643,7 +643,7 @@ class AppForm(QMainWindow):
                             else:
                                 self.data_series[i] = self.mask*self.data_series[i]
                                 self.progressBar.setValue((float(i+1)/(total))*100.)
-                                self.log.appendPlainText('Applying mask to data series : image %d'%i)
+                                self.log.appendPlainText('Applying mask to data series: image %d' % i)
                                 QCoreApplication.processEvents()
                         iid = self.imgDict[str(self.images_list.currentText())]
                         self.select_new_image(None,imgID=iid) 
@@ -714,7 +714,7 @@ class AppForm(QMainWindow):
     def downsample(self):
         Dial = down_sampling_Dialog()
         thick,start_angle,step_angle = Dial.exec_()
-        if thick != None :
+        if thick is not None:
             info = QFileDialog.getSaveFileNameAndFilter(self, "Save downsampled data series as multiple files", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
             if self.data_series or self.sequential_file_list:
                 if str(info[0])!='' and str(info[1])!='':
@@ -732,21 +732,21 @@ class AppForm(QMainWindow):
                             k = i//thick
                             imgkey = self.sequential_file_list[i]
                             tmpfname = self.sequential_file_dict[imgkey]
-                            try :
+                            try:
                                 img = fabio.open(tmpfname)
                             except:
                                 QMessageBox.warning(self, 'Message','Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')                
                                 Dial = binDialog(self)
                                 dim1,dim2,offset,bytecode,endian = Dial.exec_()
-                                if dim1 != None and dim2 != None:
+                                if dim1 is not None and dim2 is not None:
                                     if endian == 'Short':
                                         endian = '<'
-                                    else :
+                                    else:
                                         enfian = '>'
                                         img = fabio.binaryimage.binaryimage()
                                         img.read(tmpfname,dim1,dim2,offset,bytecode,endian)
                                         img.header = {'Info':'No header information available in binary data blocks'}
-                                else :
+                                else:
                                     continue
                             if img.data.shape != stack.shape:
                                 self.log.appendPlainText("Error image shape: %s summed data shape: %s"%(img.data.shape,stack.shape))
@@ -763,7 +763,7 @@ class AppForm(QMainWindow):
                                        img.header["PHI_END"]='%.3f'%(start_angle+step_angle*(i))
                                 self.convert_and_write(('%s_%s%s'%(fname,self.counter_format,format[1:]))%k,format,stack,img.header)
                                 t1 = time.time()
-                                print('time : %s' % (t1 - t0))
+                                print('time: %s' % (t1 - t0))
                                 stack = numpy.zeros_like(img.data)
                                 t0 = time.time()
                     else:
@@ -785,26 +785,26 @@ class AppForm(QMainWindow):
                                 self.log.appendPlainText('stack number %d summing up'%k)
                                 QCoreApplication.processEvents()
                                 if format in ['*.mar3450','*.mar2300']:
-                                       self.header_series[i]["PHI_START"]='%.3f'%(start_angle+step_angle*(i-thick+1))
-                                       self.header_series[i]["PHI_END"]='%.3f'%(start_angle+step_angle*(i))
-                                self.convert_and_write(('%s_%s%s'%(fname,self.counter_format,format[1:]))%k,format,stack,self.header_series[i])
+                                    self.header_series[i]["PHI_START"] = '%.3f' % (start_angle + step_angle * (i - thick + 1))
+                                    self.header_series[i]["PHI_END"] = '%.3f' % (start_angle + step_angle * (i))
+                                self.convert_and_write(('%s_%s%s' % (fname, self.counter_format, format[1:])) % k, format, stack, self.header_series[i])
                                 stack = numpy.zeros_like(data)
                     self.progressBar.setValue(0)
-                    self.log.appendPlainText('Downsampling : Complete')
+                    self.log.appendPlainText('Downsampling: Complete')
                     QCoreApplication.processEvents()
             else:
-                if str(info[0])!='' and str(info[1])!='':
-                    QMessageBox.warning(self,'Warning',"Could not save image as file if no data have been loaded")
+                if str(info[0]) != '' and str(info[1]) != '':
+                    QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
 
        
 #--------------------------------------------------------------------------------------------------------
 # Miscelaneous
 #--------------------------------------------------------------------------------------------------------
              
-    def select_new_image(self, name,imgID=None):
-        if imgID != None:
+    def select_new_image(self, name, imgID=None):
+        if imgID is not None:
             iid = imgID
-        else :
+        else:
             iid = self.imgDict[str(name)]
         self.data = self.data_series[iid]
         self.header = self.header_series[iid]
@@ -812,22 +812,18 @@ class AppForm(QMainWindow):
         self.headerTextEdit.setPlainText(str(self.format_header(self.header)))
         self.on_draw()
         
-#--------------------------------------------------------------------------------------------------------
-    
     def on_pick(self, event):
         if event.inaxes and self.data.any():
-            if int(event.xdata) <= self.data.shape[1] and int(event.ydata) <= self.data.shape[0]:
-                x = int(round(event.xdata))
-                y = int(round(event.ydata))
-                i = self.data[y,x]
-                self.pix_coords_label.setText("Pixel coordinates and intensity : x =%6d, y =%6d, i =%6g"%(x,y,i))
-            else :
-                self.pix_coords_label.setText("Pixel coordinates and intensity : x = None , y = None , i = None ")
-        else : 
-            self.pix_coords_label.setText("Pixel coordinates and intensity : x = None , y = None , i = None ")
+            x = int(round(event.xdata))
+            y = int(round(event.ydata))
+            if x <= self.data.shape[1] and y <= self.data.shape[0]:
+                i = self.data[y, x]
+                self.pix_coords_label.setText("Pixel coordinates and intensity: x =%6d, y =%6d, i =%6g" % (x, y, i))
+            else:
+                self.pix_coords_label.setText("Pixel coordinates and intensity: x = None , y = None , i = None ")
+        else:
+            self.pix_coords_label.setText("Pixel coordinates and intensity: x = None , y = None , i = None ")
 
-#--------------------------------------------------------------------------------------------------------  
-    
     def on_draw(self):
         """ Redraws the figure"""
         self.statusBar().showMessage('Loading display ...')
@@ -838,22 +834,20 @@ class AppForm(QMainWindow):
         self.axes.imshow(numpy.log(self.data), interpolation='nearest')
 
         self.axes.set_visible(True) 
-        if self.axes.get_ylim()[0]<self.axes.get_ylim()[1]:
+        if self.axes.get_ylim()[0] < self.axes.get_ylim()[1]:
             self.axes.set_ylim(self.axes.get_ylim()[::-1])   
         self.canvas.draw()
         self.statusBar().clearMessage()
-
-#--------------------------------------------------------------------------------------------------------  
 
     def batch_to_view(self):
         items = self.imagelistWidget.selectedItems()
         iid = 0 
         item = items[0]
         item = str(item.text())
-        hdfxtens = ['.h5','.H5','.hdf','.HDF','hdf5','.HDF5']
+        hdfxtens = ['.h5', '.H5', '.hdf', '.HDF', 'hdf5', '.HDF5']
         for xtens in hdfxtens:
             if xtens in item:
-                QMessageBox.warning(self, 'Message',"Can't display hdf archive from batch mode ")
+                QMessageBox.warning(self, 'Message', "Can't display hdf archive from batch mode ")
                 return
         if self.sequential_file_mode:
             self.data_series = []
@@ -863,47 +857,43 @@ class AppForm(QMainWindow):
             self.headerTextEdit.clear()
             self.axes.clear()
             self.canvas.draw()
-            self.statusBar().showMessage('Import image %s in the View Mode tab, please wait ...'%item)
-            self.log.appendPlainText('Import image %s in the View Mode tab'%item)
+            self.statusBar().showMessage('Import image %s in the View Mode tab, please wait ...' % item)
+            self.log.appendPlainText('Import image %s in the View Mode tab' % item)
             QCoreApplication.processEvents()
             fname = self.sequential_file_dict[item]
-            try :
+            try:
                 img = fabio.open(fname)
             except:
-                QMessageBox.warning(self, 'Message','Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')                
+                QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
                 Dial = binDialog(self)
-                dim1,dim2,offset,bytecode,endian = Dial.exec_()
-                if dim1 != None and dim2 != None:
+                dim1, dim2, offset, bytecode, endian = Dial.exec_()
+                if dim1 is not None and dim2 is not None:
                     if endian == 'Short':
                         endian = '<'
-                    else :
-                        enfian = '>'
+                    else:
+                        endian = '>'
                     img = fabio.binaryimage.binaryimage()
-                    img.read(fname,dim1,dim2,offset,bytecode,endian)
-                    img.header = {'Info':'No header information available in binary data blocks'}
-                else :
+                    img.read(fname, dim1, dim2, offset, bytecode, endian)
+                    img.header = {'Info': 'No header information available in binary data blocks'}
+                else:
                     return     
             self.data_series += [img.data[:]]
             self.header_series += [img.header.copy()]
             extract_fname = self.extract_fname_from_path(fname)
             self.images_list.addItem(extract_fname)
-            self.imgDict[extract_fname]=iid
-            iid +=1
+            self.imgDict[extract_fname] = iid
+            iid += 1
         self.statusBar().clearMessage()
         if self.data_series:
-            self.select_new_image(None,imgID=0)
+            self.select_new_image(None, imgID=0)
         self.tabWidget.setCurrentIndex(0)
-
-#--------------------------------------------------------------------------------------------------------  
 
     def set_counter_format_option(self):
         Dial = counter_format_option_Dialog(self.counter_format)
         self.counter_format = Dial.exec_()
         
-#--------------------------------------------------------------------------------------------------------  
-
-    def padd_mar(self,data,format):
-        dim1,dim2 = data.shape
+    def padd_mar(self, data, format):
+        dim1, dim2 = data.shape
         
         if format == '*.mar2300':
             size = 2300
@@ -917,7 +907,7 @@ class AppForm(QMainWindow):
         
         out = numpy.zeros((size, size))
         
-        if left > 0 : #pad
+        if left > 0: #pad
             outlm = left 
             inlm =  0
         else: #crop
@@ -929,7 +919,7 @@ class AppForm(QMainWindow):
         else: #crop
             outrm = size
             inrm = right
-        if up > 0 : #pad
+        if up > 0: #pad
             outum = up 
             inum =  0
         else: #crop
@@ -945,8 +935,6 @@ class AppForm(QMainWindow):
         out[outlm:outrm,outum:outdm] = data[inlm:inrm,inum:indm]
         return out
 
-
-#--------------------------------------------------------------------------------------------------------  
     def sequential_option(self,state):
         if not self.h5_loaded:
             if state == Qt.Checked:
@@ -958,7 +946,7 @@ class AppForm(QMainWindow):
             self.filecheckBox.setCheckState(False)
             self.sequential_file_mode = False
             self.filecheckBox.stateChanged.connect(self.sequential_option)
-            QMessageBox.warning(self, 'Message','Sequential file mode is not compatible with hdf5 input file : option removed')    
+            QMessageBox.warning(self, 'Message', 'Sequential file mode is not compatible with hdf5 input file: option removed')
                   
 #--------------------------------------------------------------------------------------------------------
 # Main Frame
@@ -997,12 +985,12 @@ class AppForm(QMainWindow):
         self.mpl_toolbar = NavigationToolbar(self.canvas, tab1,coordinates=False)
 
         # Other GUI controls
-        selector_label = QLabel('Active Image :')
+        selector_label = QLabel('Active Image:')
         self.images_list = QComboBox(self)
         self.images_list.activated[str].connect(self.select_new_image)
         
-        viewer_label = QLabel("Images Viewer : ", self)
-        self.pix_coords_label = QLabel("Pixel coordinates and intensity : x = None , y = None , i = None ", self)
+        viewer_label = QLabel("Images Viewer: ", self)
+        self.pix_coords_label = QLabel("Pixel coordinates and intensity: x = None , y = None , i = None ", self)
         self.mpl_toolbar.addWidget(self.pix_coords_label)
         
         self.headerTextEdit = QPlainTextEdit(tab1)
@@ -1010,7 +998,7 @@ class AppForm(QMainWindow):
         # Layout with box sizers
        
         header_vbox = QVBoxLayout()
-        header_label = QLabel("Header Info :", self)
+        header_label = QLabel("Header Info:", self)
         header_vbox.addWidget(header_label)
         header_vbox.addWidget(self.headerTextEdit)
         
@@ -1044,7 +1032,7 @@ class AppForm(QMainWindow):
         imagelistvbox = QVBoxLayout()
         
         imagelistlabel = QLabel(tab2)
-        imagelistlabel.setText("Images List :")
+        imagelistlabel.setText("Images List:")
         self.imagelistWidget = QListWidget(tab2)
         import_view_button = QPushButton('Export image to View Mode', tab2)
         import_view_button.clicked.connect(self.batch_to_view)
@@ -1056,7 +1044,7 @@ class AppForm(QMainWindow):
         rightsidevbox = QVBoxLayout()
         
         optiongroupBox = QGroupBox(tab2)
-        optiongroupBox.setTitle("File Modes :")
+        optiongroupBox.setTitle("File Modes:")
         
         optionbox = QVBoxLayout()
         
@@ -1083,9 +1071,8 @@ class AppForm(QMainWindow):
         
         splitter3 = QSplitter(Qt.Vertical)
         
-        
         queuegroupBox = QGroupBox(tab2)
-        queuegroupBox.setTitle("Transformations Queue :")
+        queuegroupBox.setTitle("Transformations Queue:")
         
         queuebox = QVBoxLayout()
         self.transformation_queue = QListWidget(tab2)
@@ -1098,21 +1085,18 @@ class AppForm(QMainWindow):
         
         splitter3.addWidget(queuegroupBox)        
                
-
         loggroupBox = QGroupBox(tab2)
-        loggroupBox.setTitle("Log View :")
+        loggroupBox.setTitle("Log View:")
         
         logbox = QHBoxLayout()
         self.log = QPlainTextEdit()
         logbox.addWidget(self.log)
-        
-       
+
         loggroupBox.setLayout(logbox)
         splitter3.addWidget(loggroupBox)
         splitter3.setStretchFactor(1, 1)
         
         rightsidevbox.addWidget(splitter3)
-        
         
         self.progressBar = QProgressBar(tab2)
         self.progressBar.setProperty("value", 0)
@@ -1134,17 +1118,12 @@ class AppForm(QMainWindow):
         
         self.setCentralWidget(self.tabWidget)
         
-#--------------------------------------------------------------------------------------------------------        
-        
     def create_status_bar(self):
         self.status_text = QLabel('')
         self.statusBar().addWidget(self.status_text, 1)
         self.statusBar().showMessage('Thanks for using FabIO viewer.', 5000)
 
-#--------------------------------------------------------------------------------------------------------        
-
     def on_about(self):
-#        msg = """Image Converter v 1.0\n\nA portable diffraction images converter :\n\n* Written in python, it combines the functionalities of the I/O library fabIO with a user friendly Qt4 GUI.\n\n* Image converter is also a light viewer based on the visualisation tool provided by the module matplotlib.\n"""
         msg = [__doc__,
                "",
                "Version: \t\t%s" % __version__,
@@ -1152,7 +1131,6 @@ class AppForm(QMainWindow):
                "Author: \t\t%s" % __author__,
                "Copyright: \t\t%s" % __copyright__,
                "License: \t\t%s" % __licence__]
-
 
         QMessageBox.about(self, "About FabIO Viewer", os.linesep.join(msg))   
      
@@ -1289,16 +1267,12 @@ class AppForm(QMainWindow):
         
         self.add_actions(self.help_menu, (about_action,))
 
-#--------------------------------------------------------------------------------------------------------
-    
     def add_actions(self, target, actions):
         for action in actions:
             if action is None:
                 target.addSeparator()
             else:
                 target.addAction(action)
-
-#--------------------------------------------------------------------------------------------------------
 
     def create_action(self,text,slot=None,shortcut=None,icon=None,tip=None,checkable=False,signal="triggered()"):
         action = QAction(text, self)
@@ -1319,21 +1293,21 @@ class AppForm(QMainWindow):
 # External top level window class
 #--------------------------------------------------------------------------------------------------------
 
-class counter_format_option_Dialog(QDialog):#option doivent refleter l etat des couche du dessous
+class counter_format_option_Dialog(QDialog): #option doivent refleter l etat des couche du dessous
     """Dialog containing entry for down sampling"""    
-    def __init__(self,counter_format, parent=None):
-        QDialog.__init__(self,parent)           
+    def __init__(self, counter_format, parent=None):
+        QDialog.__init__(self, parent)
         self.resize(350, 100)
         self.setWindowTitle('Options')
         self.counter_format = counter_format
         buttonBox = QDialogButtonBox(self)
         buttonBox.setGeometry(QRect(0, 60, 341, 32))
         buttonBox.setOrientation(Qt.Horizontal)
-        buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         
         label = QLabel(self)
         label.setGeometry(QRect(38, 23, 181, 16))
-        label.setText("File Counter format :")
+        label.setText("File Counter format:")
         
         self.lineEdit = QLineEdit(self)
         self.lineEdit.setGeometry(QRect(175, 18, 113, 25))
@@ -1344,14 +1318,13 @@ class counter_format_option_Dialog(QDialog):#option doivent refleter l etat des 
         
     def exec_(self):
         if QDialog.exec_(self) == QDialog.Accepted:
-            if str(self.lineEdit.text()) !='' :
+            if str(self.lineEdit.text()) != '':
                 return str(self.lineEdit.text())
             else:
-                QMessageBox.warning(self,'Warning',"All informations are mandatory, please fill the blanks")
+                QMessageBox.warning(self, 'Warning', "All informations are mandatory, please fill the blanks")
         else:
             return self.counter_format
             
-#--------------------------------------------------------------------------------------------------------    
 
 class down_sampling_Dialog(QDialog):
     """Dialog containing entry for down sampling"""    
@@ -1362,25 +1335,25 @@ class down_sampling_Dialog(QDialog):
         buttonBox = QDialogButtonBox(self)
         buttonBox.setGeometry(QRect(45, 200, 341, 32))
         buttonBox.setOrientation(Qt.Horizontal)
-        buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         
         label = QLabel(self)
         label.setGeometry(QRect(38, 63, 181, 16))
-        label.setText("Number of files to sum up :")
+        label.setText("Number of files to sum up:")
         
         self.lineEdit = QLineEdit(self)
         self.lineEdit.setGeometry(QRect(220, 58, 113, 25))
         
         label2 = QLabel(self)
         label2.setGeometry(QRect(90, 100, 131, 20))
-        label2.setText("Starting Phi angle :")
+        label2.setText("Starting Phi angle:")
         
         self.lineEdit2 = QLineEdit(self)
         self.lineEdit2.setGeometry(QRect(220, 95, 113, 25))
         
         label3 = QLabel(self)
         label3.setGeometry(QRect(151, 133, 101, 16))
-        label3.setText("Phi step :")
+        label3.setText("Phi step:")
         
         self.lineEdit3 = QLineEdit(self)
         self.lineEdit3.setGeometry(QRect(219, 130, 113, 25))
@@ -1390,15 +1363,14 @@ class down_sampling_Dialog(QDialog):
         
     def exec_(self):
         if QDialog.exec_(self) == QDialog.Accepted:
-            if str(self.lineEdit.text()) !='' and str(self.lineEdit2.text()) != '' and str(self.lineEdit3.text()) != '':
-                return int(str(self.lineEdit.text())),float(str(self.lineEdit2.text())),float(str(self.lineEdit3.text()))
+            if str(self.lineEdit.text()) != '' and str(self.lineEdit2.text()) != '' and str(self.lineEdit3.text()) != '':
+                return int(str(self.lineEdit.text())), float(str(self.lineEdit2.text())), float(str(self.lineEdit3.text()))
             else:
-                QMessageBox.warning(self,'Warning',"All informations are mandatory, please fill the blanks")
+                QMessageBox.warning(self, 'Warning', "All informations are mandatory, please fill the blanks")
         else:
-            return None,None,None
+            return None, None, None
             
-#--------------------------------------------------------------------------------------------------------            
-            
+
 class binDialog(QDialog):
     """Dialog containing entry for binary data block opening"""    
     def __init__(self, parent=None):
@@ -1415,39 +1387,39 @@ class binDialog(QDialog):
         buttonBox = QDialogButtonBox(self)
         buttonBox.setGeometry(QRect(50, 230, 341, 32))
         buttonBox.setOrientation(Qt.Horizontal)
-        buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
+        buttonBox.setStandardButtons(QDialogButtonBox.Cancel | QDialogButtonBox.Ok)
         
         groupBox = QGroupBox(self)
         groupBox.setGeometry(QRect(10, 10, 370, 191))
-        groupBox.setTitle("Binary data block required informations :")
+        groupBox.setTitle("Binary data block required informations:")
         label = QLabel(self)
         label.setGeometry(QRect(67, 48, 91, 16))
-        label.setText("Dimention 1 :")
+        label.setText("Dimention 1:")
         label_2 = QLabel(self)
         label_2.setGeometry(QRect(66, 76, 91, 16))
-        label_2.setText("Dimention 2 :")
+        label_2.setText("Dimention 2:")
         self.lineEdit = QLineEdit(self)
         self.lineEdit.setGeometry(QRect(185, 40, 91, 25))
         self.lineEdit_2 = QLineEdit(self)
         self.lineEdit_2.setGeometry(QRect(185, 70, 91, 25))
         label_5 = QLabel(self)
         label_5.setGeometry(QRect(105, 106, 51, 16))
-        label_5.setText("Offset :")
+        label_5.setText("Offset:")
         self.lineEdit_3 = QLineEdit(self)
         self.lineEdit_3.setGeometry(QRect(184, 100, 91, 25))
         self.lineEdit_3.setText('0')
         label_3 = QLabel(groupBox)
         label_3.setGeometry(QRect(70, 130, 91, 16))
-        label_3.setText("ByteCode :")
+        label_3.setText("ByteCode:")
         self.comboBox = QComboBox(groupBox)
         self.comboBox.setGeometry(QRect(173, 123, 91, 25))
-        bytecodes = ["int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64"]
+        bytecodes = ["int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64"]
         for bytecode in bytecodes:
             self.comboBox.addItem(_fromUtf8(bytecode))
         self.comboBox.setCurrentIndex(2)
         label_4 = QLabel(self)
         label_4.setGeometry(QRect(98, 170, 61, 16))
-        label_4.setText("Endian :")
+        label_4.setText("Endian:")
         self.comboBox_2 = QComboBox(self)
         self.comboBox_2.setGeometry(QRect(182, 166, 91, 25))
         self.comboBox_2.addItem(_fromUtf8("Short"))
@@ -1457,16 +1429,15 @@ class binDialog(QDialog):
         self.connect(buttonBox, SIGNAL('accepted()'), self.binary_block_info);
    
     def binary_block_info(self):
-        if str(self.lineEdit.text()) !='' and str(self.lineEdit_2.text()) != '' and str(self.lineEdit_3.text()) != '':
+        if str(self.lineEdit.text()) != '' and str(self.lineEdit_2.text()) != '' and str(self.lineEdit_3.text()) != '':
             self.dim1 = int(str(self.lineEdit.text()))
             self.dim2 = int(str(self.lineEdit_2.text()))
             self.offset = int(str(self.lineEdit_3.text()))
         else:
-            QMessageBox.warning(self,'Warning',"All informations are mandatory, please fill the blanks")
+            QMessageBox.warning(self, 'Warning', "All informations are mandatory, please fill the blanks")
             return 
         self.bytecode = str(self.comboBox.currentText())
         self.endian = str(self.comboBox_2.currentText())
-        #dim1,dim2,offset,bytecode,endian
         self.accept()
         
     def cancel(self):
@@ -1474,13 +1445,14 @@ class binDialog(QDialog):
     
     def exec_(self):
         if QDialog.exec_(self) == QDialog.Accepted:
-            return  self.dim1,self.dim2,self.offset,self.bytecode,self.endian
+            return  self.dim1, self.dim2, self.offset, self.bytecode, self.endian
         else:
-            return None,None,None,None,None
+            return None, None, None, None, None
 
 #--------------------------------------------------------------------------------------------------------
 # Main
 #--------------------------------------------------------------------------------------------------------
+
 
 def main():
     parser = ArgumentParser(prog="fabio_viewer", usage="fabio_viewer img1 img2 ... imgn",
