@@ -12,7 +12,7 @@ import glob
 import shutil
 from distutils.core import setup
 from distutils.core import Extension, Command
-from numpy.distutils.misc_util import get_numpy_include_dirs
+import numpy as np
 from distutils.command.sdist import sdist
 
 ################################################################################
@@ -45,14 +45,14 @@ else:
 
 
 cf_backend = Extension('cf_io',
-                       include_dirs=get_numpy_include_dirs(),
+                       include_dirs=[np.get_include()],
                        sources=['src/cf_io' + ext, 'src/columnfile.c'])
 byteOffset_backend = Extension("byte_offset",
-                       include_dirs=get_numpy_include_dirs(),
+                       include_dirs=[np.get_include()],
                        sources=['src/byte_offset' + ext])
 
 mar345_backend = Extension('mar345_IO',
-                           include_dirs=get_numpy_include_dirs(),
+                           include_dirs=[np.get_include()],
                            sources=['src/mar345_IO' + ext,
                                     'src/ccp4_pack.c',
                                       ])
