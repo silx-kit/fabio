@@ -12,7 +12,7 @@ import glob
 import shutil
 from distutils.core import setup
 from distutils.core import Extension, Command
-import  as np
+import numpy as np
 from distutils.command.sdist import sdist
 
 ################################################################################
