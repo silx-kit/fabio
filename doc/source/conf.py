@@ -25,7 +25,18 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.viewcode', "sphinx.ext.pngmath"]
+try:
+    import sphinx.ext.mathjax
+except:
+    print("Not using math extension for sphinx")
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    import mathjax
+    import sphinx.ext
+    sphinx.ext.mathjax = mathjax
+    sys.modules["sphinx.ext.mathjax"] = mathjax
+
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax']
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -169,11 +180,16 @@ htmlhelp_basename = 'FabIOdoc'
 
 # -- Options for LaTeX output --------------------------------------------------
 
-# The paper size ('letter' or 'a4').
-#latex_paper_size = 'letter'
+latex_elements = {
+# The paper size ('letterpaper' or 'a4paper').
+#'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
+#'pointsize': '10pt',
+
+# Additional stuff for the LaTeX preamble.
+#'preamble': '',
+}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).

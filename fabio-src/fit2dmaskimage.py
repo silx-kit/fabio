@@ -13,12 +13,12 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__version__ = "28 Oct 2013"
+__version__ = "11 Nov 2014"
 
 import numpy
 import sys
 from .fabioimage import fabioimage
-if sys.version_info < (3,):
+if sys.version < '3':
     bytes = str
 
 
