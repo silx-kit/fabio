@@ -5,6 +5,18 @@ FabIO support images detectors from a dozen of companies (including Mar, Dectris
 for a total of 20 different file formats (like CBF, EDF, TIFF, ...) and offers an unified interface to their
 headers (as a python dictionary) and datasets (as a numpy ndarray of integers or floats)
 
+Getting FabIO
+-------------
+
+FabIO is available from PyPI:
+https://pypi.python.org/pypi/fabio
+But also as Debian/Ubuntu packages, and builds are available
+(windows, linux and MacOSX) from the Fable package at sourceforge:
+http://sourceforge.net/projects/fable/
+
+Documentation is available at:
+http://pythonhosted.org//fabio/
+
 Citation:
 ---------
 The general philosophy of the library is described in:
