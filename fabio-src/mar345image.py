@@ -14,10 +14,13 @@ Authors:
   European Synchrotron Radiation Facility;
   Grenoble (France)
 
+Supports Mar345 imaging plate and Mar555 flat panel
 
+Documentation on the format is available from:
+http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, absolute_import
 
 from .fabioimage import fabioimage
 import numpy, struct, time, sys, traceback
@@ -41,21 +44,20 @@ class mar345image(fabioimage):
         if 'compressed' in self.header['Format']:
 #            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, version=1)
             try:
-                self.data = decPCK(f, self.dim1, self.dim2)
+                self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
             except Exception as error:
                 logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
                 f.close()
                 self.dim1 = 1
                 self.dim2 = 1
-                self.bytecode = numpy.int #
+                self.bytecode = numpy.int
                 self.data = numpy.resize(numpy.array([0], numpy.int), [1, 1])
                 return self
-
         else:
             logger.error("cannot handle these formats yet " + \
                 "due to lack of documentation")
             return None
-        self.bytecode = numpy.uint
+        self.bytecode = numpy.uint32
         f.close()
         return self
 
@@ -81,7 +83,7 @@ class mar345image(fabioimage):
             fs = '>i'
 
         #image dimensions
-        self.dim1 = self.dim2 = int(struct.unpack(fs, l[4:8])[0])
+        self.dim1 = int(struct.unpack(fs, l[4:8])[0])
         #number of high intensity pixels
         self.numhigh = struct.unpack(fs, l[2 * 4 : (2 + 1) * 4])[0]
         h['NumHigh'] = self.numhigh
@@ -93,13 +95,14 @@ class mar345image(fabioimage):
             h['Format'] = 'spiral'
         else:
             h['Format'] = 'compressed'
-            logger.warning("image format could not be detetermined" + \
+            logger.warning("image format could not be determined" + \
                 "- assuming compressed mar345")
         #collection mode
         h['Mode'] = {0:'Dose', 1: 'Time'}[struct.unpack(fs, l[4 * 4:(4 + 1) * 4])[0]]
         #total number of pixels
         self.numpixels = struct.unpack(fs, l[5 * 4:(5 + 1) * 4])[0]
         h['NumPixels'] = str(self.numpixels)
+        self.dim2 = self.numpixels // self.dim1
         #pixel dimensions (length,height) in mm
         h['PixelLength'] = struct.unpack(fs, l[6 * 4:(6 + 1) * 4])[0] / 1000.0
         h['PixelHeight'] = struct.unpack(fs, l[7 * 4:(7 + 1) * 4])[0] / 1000.0

@@ -1,15 +1,21 @@
 Changelog
 =========
 
+From FabIO-0.1.4 to FabIO-0.1.5:
+................................
+- Work on compatibility with Python3
+- Support for Mar555 flat panel
+
+
 From FabIO-0.1.3 to FabIO-0.1.4:
 ................................
 - Work on compatibility with Python3
-- Specific debian support with test images included but no auto-generated files  
+- Specific debian support with test images included but no auto-generated files
 - Image viewer (fabio_viewer) based on Qt4 (Thanks for Gaël Goret)
 - Reading images from HDF5 datasets
-- Read support for "MRC" images  
+- Read support for "MRC" images
 - Read support for "Pixi detector (Thanks for Jon Wright)
-- Read support for "Raxis" images from Rigaku (Thanks to Brian Pauw) 
+- Read support for "Raxis" images from Rigaku (Thanks to Brian Pauw)
 - Write support for fit2d mask images
 - Drop support for python 2.5 + Cythonization of other algorithms
 
