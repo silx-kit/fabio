@@ -42,17 +42,17 @@ class mar345image(fabioimage):
         f = self._open(self.filename, "rb")
         self._readheader(f)
         if 'compressed' in self.header['Format']:
-#            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, version=1)
-            try:
-                self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
-            except Exception as error:
-                logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
-                f.close()
-                self.dim1 = 1
-                self.dim2 = 1
-                self.bytecode = numpy.int
-                self.data = numpy.resize(numpy.array([0], numpy.int), [1, 1])
-                return self
+            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
+#            try:
+#                self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
+#            except Exception as error:
+#                logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
+#                f.close()
+#                self.dim1 = 1
+#                self.dim2 = 1
+#                self.bytecode = numpy.int
+#                self.data = numpy.resize(numpy.array([0], numpy.int), [1, 1])
+#                return self
         else:
             logger.error("cannot handle these formats yet " + \
                 "due to lack of documentation")
