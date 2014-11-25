@@ -18,6 +18,10 @@ from .compression import bz2, gzip
 import traceback
 from math import ceil
 
+if sys.version_info < (3, 4):
+    from threading import _Semaphore as _Semaphore
+else:
+    from threading import Semaphore as _Semaphore
 
 
 FILETYPES = {
@@ -379,7 +383,7 @@ class StringIO(io.StringIO):
         else:
             self.name = fname
         self.mode = mode
-        self.lock = threading.Semaphore()
+        self.lock = _Semaphore()
         self.__size = None
 
     def getSize(self):
@@ -419,7 +423,7 @@ class File(FileIO):
         'U' cannot be combined with 'w' or '+' mode.
         """
         FileIO.__init__(self, name, mode, buffering)
-        self.lock = threading.Semaphore()
+        self.lock = _Semaphore()
         self.__size = None
     def getSize(self):
         if self.__size is None:
@@ -486,7 +490,7 @@ else:
             and 9 is slowest and produces the most compression.  The default is 9.
             """
             gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
-            self.lock = threading.Semaphore()
+            self.lock = _Semaphore()
             self.__size = None
 
         def __repr__(self):
@@ -567,7 +571,7 @@ else:
             newlines are available only when reading.
             """
             bz2.BZ2File.__init__(self, name , mode, buffering, compresslevel)
-            self.lock = threading.Semaphore()
+            self.lock = _Semaphore()
             self.__size = None
         def getSize(self):
             if self.__size is None:
@@ -591,14 +595,14 @@ else:
 
 
 
-class DebugSemaphore(threading._Semaphore):
+class DebugSemaphore(_Semaphore):
     """
     threading.Semaphore like class with helper for fighting dead-locks
     """
-    write_lock = threading._Semaphore()
+    write_lock = _Semaphore()
     blocked = []
     def __init__(self, *arg, **kwarg):
-        threading._Semaphore.__init__(self, *arg, **kwarg)
+        _Semaphore.__init__(self, *arg, **kwarg)
 
 
     def acquire(self, *arg, **kwarg):
@@ -608,7 +612,7 @@ class DebugSemaphore(threading._Semaphore):
                 sys.stderr.write(os.linesep.join(["Blocking sem %s" % id(self)] + \
                                         traceback.format_stack()[:-1] + [""]))
 
-        return threading._Semaphore.acquire(self, *arg, **kwarg)
+        return _Semaphore.acquire(self, *arg, **kwarg)
 
     def release(self, *arg, **kwarg):
         with self.write_lock:
@@ -616,7 +620,7 @@ class DebugSemaphore(threading._Semaphore):
             if uid in self.blocked:
                 self.blocked.remove(uid)
                 sys.stderr.write("Released sem %s %s" % (uid, os.linesep))
-        threading._Semaphore.release(self, *arg, **kwarg)
+        _Semaphore.release(self, *arg, **kwarg)
 
     def __enter__(self):
         self.acquire()
