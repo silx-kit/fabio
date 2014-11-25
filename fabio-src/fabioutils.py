@@ -1,19 +1,31 @@
 #!/usr/bin/env python
 #coding: utf-8
+from __future__ import absolute_import, print_function, with_statement, division
 
-"""
+__doc__ = """
 General purpose utilities functions for fabio
 """
+__author__ = "Jérôme Kieffer"
+__contact__ = "Jerome.Kieffer@ESRF.eu"
+__license__ = "GPL"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "26/11/2014"
+__status__ = "stable"
+__docformat__ = 'restructuredtext'
+
 # get ready for python3
-from __future__ import with_statement, print_function
 import re, os, logging, threading, sys
+logger = logging.getLogger("fabioutils")
 if sys.version_info < (3,):
     import StringIO as io
     FileIO = file
+    StringTypes = (str, unicode)
+    bytes = str
 else:
     import io
     from io import FileIO
-logger = logging.getLogger("fabioutils")
+    StringTypes = (str, bytes)
+
 from .compression import bz2, gzip
 import traceback
 from math import ceil

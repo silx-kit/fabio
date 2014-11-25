@@ -7,8 +7,7 @@ Authors: Jérôme Kieffer, ESRF
 FabIO library containing compression and decompression algorithm for various
 """
 # get ready for python3
-from __future__ import with_statement, print_function
-
+from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
@@ -16,13 +15,14 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
 import logging, struct, hashlib, base64, sys
-if sys.version_info >= (3,):
-    str = bytes
-    from io import StringIO
-else:
-    from StringIO import StringIO
-
 logger = logging.getLogger("compression")
+if sys.version_info < (3,):
+    from StringIO import StringIO
+    bytes = str
+else:
+    from io import StringIO
+
+
 import numpy
 
 try:
@@ -404,14 +404,14 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
     """
 
     try:
-        from mar345_IO import uncompress_pck
+        from .mar345_IO import uncompress_pck
     except ImportError as  error:
         raise RuntimeError("Unable to import mar345_IO to read compressed dataset")
     if "seek" in dir(stream):
         stream.seek(0)
         raw = stream.read()
     else:
-        raw = str(stream)
+        raw = bytes(stream)
 
     return uncompress_pck(raw, dim1, dim2, overflowPix, version)
 
@@ -425,7 +425,7 @@ def compPCK(data):
 
     """
     try:
-        from mar345_IO import compress_pck
+        from .mar345_IO import compress_pck
     except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to write compressed dataset")
     return compress_pck(data)

@@ -5,6 +5,7 @@
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
+from __future__ import absolute_import, print_function, with_statement, division
 import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testmar345image")
 force_build = False
@@ -95,7 +96,7 @@ class testMAR345(unittest.TestCase):
             logger.debug("Testing for memory leak")
             for i in range(1000):
                 img = fabio.open(self.mar345)
-                print i
+                print("reading #%s" % i)
 
 
 

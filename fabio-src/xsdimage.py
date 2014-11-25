@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 """
-Authors: Jérôme Kieffer, ESRF 
+Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
-XSDimge are XML files containing numpy arrays 
+XSDimge are XML files containing numpy arrays
 """
 # Get ready for python3:
-from __future__ import with_statement, print_function, division
-
+from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
@@ -25,8 +24,8 @@ except ImportError:
     etree = None
 
 class xsdimage(fabioimage):
-    """ 
-    Read the XSDataImage XML File data format 
+    """
+    Read the XSDataImage XML File data format
     """
     def __init__(self, data=None, header=None, fname=None):
         """
@@ -105,12 +104,12 @@ class xsdimage(fabioimage):
         for i in xml.xpath("//shape"):
             try:
                 self.dims.append(int(i.text))
-            except ValueError, error:
+            except ValueError as error:
                 logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
         for i in xml.xpath("//size"):
             try:
                 self.size = int(i.text)
-            except Exception, error:#IGNORE:W0703
+            except Exception as error:
                 logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
         self.dtype = None
         for i in xml.xpath("//dtype"):

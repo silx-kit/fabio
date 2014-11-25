@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from __future__ import absolute_import, print_function, with_statement, division
 """
 # Unit tests
 
@@ -39,7 +39,7 @@ class testflatedfs(unittest.TestCase):
     """ test some flat images """
     filename = os.path.join(UtilsTest.test_home, "testimages", "im0000.edf")
     MYHEADER = "{\n%-1020s}\n" % (
-"""Omega = 0.0 ; 
+"""Omega = 0.0 ;
 Dim_1 = 256 ;
 Dim_2 = 256 ;
 DataType = FloatValue ;
@@ -118,7 +118,7 @@ TESTIMAGES = """F2K_Seb_Lyso0675.edf     2048 2048 982 17467 1504.29  217.61
 
 class testedfs(unittest.TestCase):
     """
-    Read some test images 
+    Read some test images
     """
     def setUp(self):
         self.im_dir = os.path.dirname(UtilsTest.getimage("F2K_Seb_Lyso0675.edf.bz2"))
@@ -135,7 +135,7 @@ class testedfs(unittest.TestCase):
             try:
                 obj.read(os.path.join(self.im_dir, name))
             except:
-                print "Cannot read image", name
+                print ("Cannot read image", name)
                 raise
             self.assertAlmostEqual(mini, obj.getmin(), 2, "testedfs: %s getmin()" % name)
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "testedfs: %s getmax" % name)
@@ -158,7 +158,7 @@ class testedfs(unittest.TestCase):
 class testedfcompresseddata(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
-    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
+    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
     """
     def setUp(self):
         self.im_dir = os.path.dirname(UtilsTest.getimage("edfGzip_U16.edf.bz2"))
@@ -192,7 +192,7 @@ class testedfcompresseddata(unittest.TestCase):
 class testedfmultiframe(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
-    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
+    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
     """
     def setUp(self):
         self.multiFrameFilename = UtilsTest.getimage("MultiFrame.edf.bz2")[:-4]
@@ -262,7 +262,7 @@ class testedfmultiframe(unittest.TestCase):
 class testedffastread(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
-    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental 
+    Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
     """
     def setUp(self):
         self.refFilename = UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
@@ -276,7 +276,7 @@ class testedffastread(unittest.TestCase):
 class testedfwrite(unittest.TestCase):
     """
     Write dummy edf files with various compression schemes
-    
+
     """
     def setUp(self):
         self.data = numpy.arange(100).reshape((10, 10))

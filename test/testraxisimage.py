@@ -3,6 +3,7 @@
 """
 # Unit tests for raxis images
 """
+from __future__ import absolute_import, print_function, with_statement, division
 import unittest, sys, os, logging, tempfile
 logger = logging.getLogger("testraxisimage")
 force_build = False
@@ -91,7 +92,7 @@ class testRaxisImage(unittest.TestCase):
             logger.debug("Testing for memory leak")
             for i in range(1000):
                 img = fabio.open(self.mar)
-                print i
+                print("Reading #%s" % i)
 
 
 

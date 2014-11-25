@@ -18,8 +18,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 
 """
 # get ready for python3
-from __future__ import with_statement, print_function
-
+from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
 __date__ = "20130502"
 __status__ = "development"
@@ -31,9 +30,8 @@ from math import ceil
 import os, getpass, time
 logger = logging.getLogger("brukerimage")
 from .fabioimage import fabioimage
-from .fabioutils import pad
-from types import StringTypes
-if sys.version_info[0] < 3:
+from .fabioutils import pad, StringTypes
+if sys.version_info < (3,):
     bytes = str
 
 class brukerimage(fabioimage):
@@ -43,7 +41,7 @@ class brukerimage(fabioimage):
     TODO: int32 -> float32 conversion according to the "linear" keyword.
     This is done and works but we need to check with other program that we
     are appliing the right formula and not the reciprocal one.
-    
+
     """
     bpp_to_numpy = {1:numpy.uint8,
                     2:numpy.uint16,
@@ -258,7 +256,7 @@ class brukerimage(fabioimage):
 
     def write(self, fname):
         """
-        Write a bruker image 
+        Write a bruker image
 
         """
         if numpy.issubdtype(self.data.dtype, float):
@@ -301,9 +299,9 @@ class brukerimage(fabioimage):
 
     def calc_bpp(self, data=None, max_entry=4096):
         """
-        Calculate the number of byte per pixel to get an optimal overflow table. 
-        
-        @return: byte per pixel 
+        Calculate the number of byte per pixel to get an optimal overflow table.
+
+        @return: byte per pixel
         """
         if data is None:
             data = self.data
@@ -360,7 +358,7 @@ class brukerimage(fabioimage):
 
     def gen_overflow(self):
         """
-        Generate an overflow table  
+        Generate an overflow table
         """
         limit = 2 ** (8 * self.calc_bpp()) - 1
         flat = self.data.ravel()                     #flat memory view
@@ -371,7 +369,7 @@ class brukerimage(fabioimage):
 
     def basic_translate(self, fname=None):
         """
-        Does some basic population of the headers so that the writing is possible 
+        Does some basic population of the headers so that the writing is possible
         """
         if not "FORMAT" in self.header:
             self.header["FORMAT"] = "86"
