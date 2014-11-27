@@ -19,7 +19,7 @@ Authors:
 
 """
 # get ready for python3
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, absolute_import, division
 import os, logging, types
 logger = logging.getLogger("edfimage")
 import numpy

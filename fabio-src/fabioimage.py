@@ -13,8 +13,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 # get ready for python3
-from __future__ import with_statement, print_function
-import os, types, logging, sys, tempfile
+from __future__ import with_statement, print_function, absolute_import, division
+import os, logging, sys, tempfile
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -39,7 +39,7 @@ class fabioimage(object):
         Set up initial values
         """
         self._classname = None
-        if type(data) in types.StringTypes:
+        if type(data) in fabioutils.StringTypes:
             raise Exception("fabioimage.__init__ bad argument - " + \
                             "data should be numpy array")
         self.data = self.checkData(data)
@@ -98,21 +98,19 @@ class fabioimage(object):
         """ returns the file numbered 'num' in the series as a fabioimage """
         if self.nframes == 1:
             # single image per file
-            import openimage
-            return openimage.openimage(
-                fabioutils.jump_filename(self.filename, num))
+            from .openimage import openimage
+            return openimage(fabioutils.jump_filename(self.filename, num))
         raise Exception("getframe out of range")
 
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
-        import openimage
-        return openimage.openimage(
-            fabioutils.previous_filename(self.filename))
+        from .openimage import openimage
+        return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
         """ returns the next file in the series as a fabioimage """
-        import openimage
-        return openimage.openimage(
+        from .openimage import openimage
+        return openimage(
             fabioutils.next_filename(self.filename))
 
     def toPIL16(self, filename=None):
@@ -379,7 +377,7 @@ class fabioimage(object):
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
             return fname
-        if isinstance(fname, (str, unicode)):
+        if isinstance(fname, fabioutils.StringTypes):
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
                 fileObject = self._compressed_stream(fname,
@@ -437,7 +435,7 @@ class fabioimage(object):
         Convert a fabioimage object into another fabioimage object (with possible conversions)
         @param dest: destination type "EDF", "edfimage" or the class itself
         """
-        if type(dest) in types.StringTypes:
+        if type(dest) in fabioutils.StringTypes:
             dest = dest.lower()
             modules = []
             for val  in fabioutils.FILETYPES.values():

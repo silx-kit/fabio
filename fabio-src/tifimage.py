@@ -35,7 +35,7 @@ except ImportError:
     Image = None
 import numpy
 from .fabioimage import fabioimage
-from .TiffIO     import TiffIO
+from .third_party.TiffIO import TiffIO
 
 PIL_TO_NUMPY = { "I;16": numpy.uint16,
                    "F": numpy.float32,

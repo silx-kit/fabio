@@ -181,6 +181,7 @@ class sdist_debian(sdist):
         self.filelist.allfiles += (glob.glob("test/testimages/*"))
         self.filelist.include_pattern(pattern="*.bz2", anchor=True,
                                      prefix="test/testimages")
+
     def make_distribution(self):
         sdist.make_distribution(self)
         dest = self.archive_files[0]
@@ -231,8 +232,11 @@ setup(name='fabio',
       download_url="http://sourceforge.net/projects/fable/files/fabio/0.1.4",
       ext_package="fabio",
       ext_modules=extensions,
-      packages=["fabio"],
-      package_dir={"fabio": "fabio-src" },
+      packages=["fabio", "fabio.third_party", "fabio.test"],
+      package_dir={"fabio": "fabio-src",
+                   "fabio.third_party": "third_party",
+                   "fabio.test": "test"
+                   },
       test_suite="test",
       cmdclass=cmdclass,
       scripts=script_files,

@@ -434,9 +434,13 @@ class File(FileIO):
 
         'U' cannot be combined with 'w' or '+' mode.
         """
-        FileIO.__init__(self, name, mode, buffering)
+        if sys.version_info < (3, 0):
+            FileIO.__init__(self, name, mode, buffering)
+        else:  # for python3 we drop buffering
+            FileIO.__init__(self, name, mode)
         self.lock = _Semaphore()
         self.__size = None
+
     def getSize(self):
         if self.__size is None:
             logger.debug("Measuring size of %s" % self.name)
