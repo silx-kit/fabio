@@ -22,12 +22,11 @@ if sys.version_info < (3,):
 else:
     from io import StringIO
 
-
 import numpy
 
 try:
     if sys.version_info < (2, 7):
-        from . import gzip
+        from .third_party import gzip
     else:
         import gzip
 except ImportError:
