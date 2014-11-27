@@ -32,6 +32,7 @@ from fabio.fabioimage import fabioimage
 import numpy
 import gzip, bz2
 
+
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
     def setUp(self):
@@ -103,6 +104,7 @@ class testslices(unittest.TestCase):
 class testopen(unittest.TestCase):
     """check opening compressed files"""
     testfile = os.path.join(UtilsTest.test_home, "testimages", "testfile")
+
     def setUp(self):
         """ create test files"""
         if not os.path.isfile(self.testfile):
@@ -116,27 +118,27 @@ class testopen(unittest.TestCase):
     def testFlat(self):
         """ no compression"""
         res = self.obj._open(self.testfile).read()
-        self.assertEqual(res , "{ hello }")
+        self.assertEqual(res, b"{ hello }")
 
     def testgz(self):
         """ gzipped """
         res = self.obj._open(self.testfile + ".gz").read()
-        self.assertEqual(res , "{ hello }")
+        self.assertEqual(res, b"{ hello }")
 
     def testbz2(self):
         """ bzipped"""
         res = self.obj._open(self.testfile + ".bz2").read()
-        self.assertEqual(res , "{ hello }")
+        self.assertEqual(res, b"{ hello }")
 
 
-NAMES = { numpy.uint8 :  "numpy.uint8",
-          numpy.int8  :  "numpy.int8" ,
-          numpy.uint16:  "numpy.uint16",
-          numpy.int16 :  "numpy.int16" ,
-          numpy.uint32:  "numpy.uint32" ,
-          numpy.int32 :  "numpy.int32"   ,
-          numpy.float32: "numpy.float32" ,
-          numpy.float64: "numpy.float64"}
+NAMES = {numpy.uint8 :  "numpy.uint8",
+         numpy.int8  :  "numpy.int8" ,
+         numpy.uint16:  "numpy.uint16",
+         numpy.int16 :  "numpy.int16" ,
+         numpy.uint32:  "numpy.uint32" ,
+         numpy.int32 :  "numpy.int32"   ,
+         numpy.float32: "numpy.float32" ,
+         numpy.float64: "numpy.float64"}
 
 
 class testPILimage(unittest.TestCase):
@@ -151,11 +153,9 @@ class testPILimage(unittest.TestCase):
                           numpy.int32,
                           numpy.float32]
 
-
     def mkdata(self, shape, typ):
         """ generate [01] testdata """
         return (numpy.random.random(shape)).astype(typ)
-
 
     def testpil(self):
 
@@ -189,13 +189,15 @@ class testPILimage2(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive and big"""
-        return (numpy.random.random(shape) * sys.maxint / 10).astype(typ)
+        return (numpy.random.random(shape) * sys.maxsize / 10).astype(typ)
+
 
 class testPILimage3(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive, negative and big"""
-        return ((numpy.random.random(shape) - 0.5) * sys.maxint / 10).astype(typ)
+        return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)
+
 
 def test_suite_all_fabio():
     testSuite = unittest.TestSuite()

@@ -29,7 +29,11 @@ __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import os, imp, sys, subprocess, threading
+import os
+import imp
+import sys
+import subprocess
+import threading
 import distutils.util
 import logging
 import bz2
@@ -40,6 +44,7 @@ else:
     import urllib2
 
 logger = logging.getLogger("utilstest")
+
 
 class UtilsTest(object):
     """
@@ -74,7 +79,7 @@ class UtilsTest(object):
 
     fabio = imp.load_module(*((name,) + imp.find_module(name, [fabio_build_home])))
     sys.modules[name] = fabio
-    print("pyFAI loaded from %s" % fabio.__file__)
+    print("FabIO loaded from %s" % fabio.__file__)
 
     @classmethod
     def forceBuild(cls):
@@ -89,8 +94,6 @@ class UtilsTest(object):
         sys.modules[cls.name] = fabio
         logger.info("fabio loaded from %s" % fabio.__file__)
 
-
-
     @classmethod
     def timeoutDuringDownload(cls):
         """
@@ -101,7 +104,6 @@ class UtilsTest(object):
 If you are behind a firewall, please set the environment variable http_proxy.
 Otherwise please try to download the images manually from
 """ + cls.url_base)
-
 
     @classmethod
     def getimage(cls, imagename):
@@ -148,8 +150,8 @@ Otherwise please try to download the images manually from
                 %s" % (cls.url_base, imagename))
         else:
             data = open(fullimagename).read()
-        fullimagename_bz2 = os.path.splitext(fullimagename)[0]+".bz2"
-        fullimagename_gz = os.path.splitext(fullimagename)[0]+".gz"
+        fullimagename_bz2 = os.path.splitext(fullimagename)[0] + ".bz2"
+        fullimagename_gz = os.path.splitext(fullimagename)[0] + ".gz"
         fullimagename_raw = os.path.splitext(fullimagename)[0]
         if not os.path.isfile(fullimagename_raw) or\
            not os.path.isfile(fullimagename_gz) or\
