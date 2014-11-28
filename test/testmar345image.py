@@ -4,31 +4,19 @@
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
+28/11/2014
 """
 from __future__ import absolute_import, print_function, with_statement, division
-import unittest, sys, os, logging, tempfile
-logger = logging.getLogger("testmar345image")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+import unittest
+import sys
+import os
+import numpy
+import gzip
+import logging
 
 from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 from fabio.mar345image import mar345image
 
 # filename dim1 dim2 min max mean stddev
@@ -38,19 +26,16 @@ TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67
                 Fe3O4_023_101.mar2560 2560 3072 0 258253 83.61749 198.29895739775
                 Fe3O4_023_101.mar2560.bz2 2560 3072 0 258253 83.61749 198.29895739775
                 Fe3O4_023_101.mar2560.gz 2560 3072 0 258253 83.61749 198.29895739775"""
-#Fe3O4_023_101.mar2560 is a pathological file from Mar555
+# Fe3O4_023_101.mar2560 is a pathological file from Mar555
 
-class testMAR345(unittest.TestCase):
+
+class TestMar345(unittest.TestCase):
     def setUp(self):
         """
         download images
         """
         self.mar345 = UtilsTest.getimage("example.mar2300.bz2")[:-4]
         self.mar555 = UtilsTest.getimage("Fe3O4_023_101.mar2560.bz2")[:-4]
-        self.tempdir = tempfile.mkdtemp()
-
-    def tearDown(self):
-        UtilsTest.recursive_delete(self.tempdir)
 
     def test_read(self):
         """
@@ -79,32 +64,35 @@ class testMAR345(unittest.TestCase):
             name = vals[0]
             obj = mar345image()
             obj.read(os.path.join(os.path.dirname(self.mar345), name))
-            obj.write(os.path.join(self.tempdir, name))
+            obj.write(os.path.join(UtilsTest.tempdir, name))
             other = mar345image()
-            other.read(os.path.join(self.tempdir, name))
+            other.read(os.path.join(UtilsTest.tempdir, name))
             self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
             for key in obj.header:
                 if key == "filename":
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
                 self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s: [%s|%s]" % (key, obj.header[key], other.header[key]))
+
+            os.unlink(os.path.join(UtilsTest.tempdir, name))
+
     def test_memoryleak(self):
         """
         This test takes a lot of time, so only in debug mode.
         """
+        N = 1000
         if logger.getEffectiveLevel() <= logging.INFO:
             logger.debug("Testing for memory leak")
-            for i in range(1000):
+            for i in range(N):
                 img = fabio.open(self.mar345)
-                print("reading #%s" % i)
-
+                print("reading #%s/%s" % (i, N))
 
 
 def test_suite_all_mar345():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testMAR345("test_read"))
-    testSuite.addTest(testMAR345("test_write"))
-    testSuite.addTest(testMAR345("test_memoryleak"))
+    testSuite.addTest(TestMar345("test_read"))
+    testSuite.addTest(TestMar345("test_write"))
+    testSuite.addTest(TestMar345("test_memoryleak"))
 
     return testSuite
 

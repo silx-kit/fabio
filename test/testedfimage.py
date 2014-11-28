@@ -1,43 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, with_statement, division
 """
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
+28/11/2014
 """
-import unittest, sys, os, logging, tempfile
-logger = logging.getLogger("testedfimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+from __future__ import absolute_import, print_function, with_statement, division
+import unittest
+import sys
+import os
+import numpy
+import gzip
+import bz2
 
 from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 from fabio.edfimage import edfimage
-import numpy
-import gzip, bz2
 
 
-
-class testflatedfs(unittest.TestCase):
+class TestFlatEdfs(unittest.TestCase):
     """ test some flat images """
-    filename = os.path.join(UtilsTest.test_home, "testimages", "im0000.edf")
     MYHEADER = "{\n%-1020s}\n" % (
 """Omega = 0.0 ;
 Dim_1 = 256 ;
@@ -57,6 +41,7 @@ History-1 = something=something else;
 
     def setUp(self):
         """ initialize"""
+        self.filename = os.path.join(UtilsTest.tempdir, "im0000.edf")
         if not os.path.isfile(self.filename):
             outf = open(self.filename, "wb")
             assert len(self.MYHEADER) % 1024 == 0
@@ -64,14 +49,13 @@ History-1 = something=something else;
             outf.write(self.MYIMAGE.tostring())
             outf.close()
 
-
     def test_read(self):
         """ check readable"""
         obj = edfimage()
         obj.read(self.filename)
-        self.assertEqual(obj.dim1 , 256, msg="dim1!=256 for file: %s" % self.filename)
-        self.assertEqual(obj.dim2 , 256, msg="dim2!=256 for file: %s" % self.filename)
-        self.assertEqual(obj.bpp , 4, msg="bpp!=4 for file: %s" % self.filename)
+        self.assertEqual(obj.dim1, 256, msg="dim1!=256 for file: %s" % self.filename)
+        self.assertEqual(obj.dim2, 256, msg="dim2!=256 for file: %s" % self.filename)
+        self.assertEqual(obj.bpp, 4, msg="bpp!=4 for file: %s" % self.filename)
         self.assertEqual(obj.bytecode, numpy.float32, msg="bytecode!=flot32 for file: %s" % self.filename)
         self.assertEqual(obj.data.shape, (256, 256), msg="shape!=(256,256) for file: %s" % self.filename)
         self.assertEqual(obj.header['History-1'],
@@ -81,32 +65,29 @@ History-1 = something=something else;
         """ test statistics"""
         obj = edfimage()
         obj.read(self.filename)
-        self.assertEqual(obj.getmean() , 10)
-        self.assertEqual(obj.getmin() , 0)
-        self.assertEqual(obj.getmax() , 20)
+        self.assertEqual(obj.getmean(), 10)
+        self.assertEqual(obj.getmin(), 0)
+        self.assertEqual(obj.getmax(), 20)
 
 
-
-class testbzipedf(testflatedfs):
+class TestBzipEdf(TestFlatEdfs):
     """ same for bzipped versions """
     def setUp(self):
         """set it up"""
-        testflatedfs.setUp(self)
+        TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".bz2"):
                     bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
         self.filename += ".bz2"
 
-class testgzipedf(testflatedfs):
+
+class TestGzipEdf(TestFlatEdfs):
     """ same for gzipped versions """
     def setUp(self):
         """ set it up """
-        testflatedfs.setUp(self)
+        TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
                     gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
         self.filename += ".gz"
-
-
-
 
 
 # statistics come from fit2d I think
@@ -116,7 +97,8 @@ TESTIMAGES = """F2K_Seb_Lyso0675.edf     2048 2048 982 17467 1504.29  217.61
                 F2K_Seb_Lyso0675.edf.gz  2048 2048 982 17467 1504.29  217.61
                 id13_badPadding.edf      512  512  85  61947 275.62   583.44 """
 
-class testedfs(unittest.TestCase):
+
+class TestEdfs(unittest.TestCase):
     """
     Read some test images
     """
@@ -189,7 +171,7 @@ class testedfcompresseddata(unittest.TestCase):
         self.assertEqual((ref.data - compressed.data).max(), 0, "Zlib compressed data block is correct")
 
 
-class testedfmultiframe(unittest.TestCase):
+class TestEdfMultiFrame(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
@@ -230,14 +212,14 @@ class testedfmultiframe(unittest.TestCase):
     def test_next_multi(self):
         """testedfmultiframe.test_getFrame_mono"""
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_multi: Same data for frame 0")
-        next = self.ref.next()
-        self.assertEqual((next.data - self.frame1.data).max(), 0, "next_multi: Same data for frame 1")
+        next_ = self.ref.next()
+        self.assertEqual((next_.data - self.frame1.data).max(), 0, "next_multi: Same data for frame 1")
 
     def text_next_mono(self):
         "testedfmultiframe.text_next_mono"
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_mono: Same data for frame 0")
-        next = self.frame0.next()
-        self.assertEqual((next.data - self.frame1.data).max(), 0, "next_mono: Same data for frame 1")
+        next_ = self.frame0.next()
+        self.assertEqual((next_.data - self.frame1.data).max(), 0, "next_mono: Same data for frame 1")
 
     def test_previous_multi(self):
         """testedfmultiframe.test_previous_multi"""
@@ -259,7 +241,8 @@ class testedfmultiframe(unittest.TestCase):
         self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
         self.assertEqual((fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(), 0, "openimage_multiframes: Same data for frame 1")
 
-class testedffastread(unittest.TestCase):
+
+class TestEdfFastRead(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
@@ -267,21 +250,24 @@ class testedffastread(unittest.TestCase):
     def setUp(self):
         self.refFilename = UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
         self.fastFilename = self.refFilename[:-4]
+
     def test_fastread(self):
         ref = fabio.open(self.refFilename)
         refdata = ref.data
         obt = ref.fastReadData(self.fastFilename)
         self.assertEqual(abs(obt - refdata).max(), 0, "testedffastread: Same data")
 
-class testedfwrite(unittest.TestCase):
+
+class TestEdfWrite(unittest.TestCase):
     """
     Write dummy edf files with various compression schemes
-
     """
+    tmpdir = UtilsTest.tempdir
+
     def setUp(self):
         self.data = numpy.arange(100).reshape((10, 10))
         self.header = {"toto": "tutu"}
-        self.tmpdir = tempfile.mkdtemp(prefix="testedfwrite")
+
     def testFlat(self):
         self.filename = os.path.join(self.tmpdir, "merged.azim")
         e = edfimage(data=self.data, header=self.header)
@@ -290,6 +276,7 @@ class testedfwrite(unittest.TestCase):
         self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
+
     def testGzip(self):
         self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
         e = edfimage(data=self.data, header=self.header)
@@ -298,6 +285,7 @@ class testedfwrite(unittest.TestCase):
         self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
+
     def testBzip2(self):
         self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
         e = edfimage(data=self.data, header=self.header)
@@ -306,31 +294,32 @@ class testedfwrite(unittest.TestCase):
         self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
+
     def tearDown(self):
         os.unlink(self.filename)
-        os.rmdir(self.tmpdir)
+
 
 def test_suite_all_edf():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testflatedfs("test_read"))
-    testSuite.addTest(testflatedfs("test_getstats"))
-    testSuite.addTest(testbzipedf("test_read"))
-    testSuite.addTest(testbzipedf("test_getstats"))
-    testSuite.addTest(testgzipedf("test_read"))
-    testSuite.addTest(testgzipedf("test_getstats"))
-    testSuite.addTest(testedfs("test_read"))
-    testSuite.addTest(testedfs("test_rebin"))
+    testSuite.addTest(TestFlatEdfs("test_read"))
+    testSuite.addTest(TestFlatEdfs("test_getstats"))
+    testSuite.addTest(TestBzipEdf("test_read"))
+    testSuite.addTest(TestBzipEdf("test_getstats"))
+    testSuite.addTest(TestGzipEdf("test_read"))
+    testSuite.addTest(TestGzipEdf("test_getstats"))
+    testSuite.addTest(TestEdfs("test_read"))
+    testSuite.addTest(TestEdfs("test_rebin"))
     testSuite.addTest(testedfcompresseddata("test_read"))
-    testSuite.addTest(testedfmultiframe("test_getFrame_multi"))
-    testSuite.addTest(testedfmultiframe("test_getFrame_mono"))
-    testSuite.addTest(testedfmultiframe("test_next_multi"))
-    testSuite.addTest(testedfmultiframe("text_next_mono"))
-    testSuite.addTest(testedfmultiframe("test_previous_multi"))
-    testSuite.addTest(testedfmultiframe("test_openimage_multiframes"))
-    testSuite.addTest(testedffastread("test_fastread"))
-    testSuite.addTest(testedfwrite("testFlat"))
-    testSuite.addTest(testedfwrite("testGzip"))
-    testSuite.addTest(testedfwrite("testBzip2"))
+    testSuite.addTest(TestEdfMultiFrame("test_getFrame_multi"))
+    testSuite.addTest(TestEdfMultiFrame("test_getFrame_mono"))
+    testSuite.addTest(TestEdfMultiFrame("test_next_multi"))
+    testSuite.addTest(TestEdfMultiFrame("text_next_mono"))
+    testSuite.addTest(TestEdfMultiFrame("test_previous_multi"))
+    testSuite.addTest(TestEdfMultiFrame("test_openimage_multiframes"))
+    testSuite.addTest(TestEdfFastRead("test_fastread"))
+    testSuite.addTest(TestEdfWrite("testFlat"))
+    testSuite.addTest(TestEdfWrite("testGzip"))
+    testSuite.addTest(TestEdfWrite("testBzip2"))
 
     return testSuite
 

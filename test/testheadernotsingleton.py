@@ -4,41 +4,28 @@
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
+28/11/2014
 """
-
-import unittest, sys, os, logging
-logger = logging.getLogger("testheadernotsingleton")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+from __future__ import absolute_import, print_function, with_statement, division
+import unittest
+import sys
+import os
+import numpy
+import gzip
+import bz2
 
 from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 import shutil
 
-class testheadernotsingleton(unittest.TestCase):
+class TestHeaderNotSingleton(unittest.TestCase):
 
     def setUp(self):
         """
         download images
         """
         self.file1 = UtilsTest.getimage("mb_LP_1_001.img.bz2")[:-4]
-
 
     def testheader(self):
         file2 = self.file1.replace("mb_LP_1_001.img", "mb_LP_1_002.img")
@@ -52,9 +39,10 @@ class testheadernotsingleton(unittest.TestCase):
         self.assertNotEqual(image1.header['filename'] ,
                              image2.header['filename'])
 
+
 def test_suite_all_header():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testheadernotsingleton("testheader"))
+    testSuite.addTest(TestHeaderNotSingleton("testheader"))
     return testSuite
 
 if __name__ == '__main__':

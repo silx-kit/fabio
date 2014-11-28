@@ -1,58 +1,46 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 """
 test cases for fileseries
 
+28/11/2014
 """
+from __future__ import absolute_import, print_function, with_statement, division
 import unittest
-import os
-import logging
 import sys
-logger = logging.getLogger("test_file_series")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+import os
+import numpy
+import gzip
+import bz2
 
 from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-    import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
+from fabio.file_series import numbered_file_series, file_series
 
-from fabio.file_series import numbered_file_series , file_series
 
-class testrandomseries(unittest.TestCase):
+class TestRandomSeries(unittest.TestCase):
     """arbitrary series"""
+
     def setUp(self):
         """sets up"""
-        self.fso = file_series(["first", "second", "last" ])
+        self.fso = file_series(["first", "second", "last"])
+
     def testfirst(self):
         """check first"""
         self.assertEqual("first", self.fso.first())
+
     def testlast(self):
         """check first"""
-        self.assertEqual("last" , self.fso.last())
+        self.assertEqual("last", self.fso.last())
+
     def testjump(self):
         """check jump"""
         self.assertEqual("second", self.fso.jump(1))
 
 
-
-
-class testedfnumbered(unittest.TestCase):
+class TestEdfNumbered(unittest.TestCase):
     """
     Typical sequence of edf files
     """
@@ -70,7 +58,7 @@ class testedfnumbered(unittest.TestCase):
 
     def testnext(self):
         """ check all in order """
-        mylist = [ "mydata%04d.edf" % (i) for i in range(0, 10005) ]
+        mylist = ["mydata%04d.edf" % (i) for i in range(0, 10005)]
         i = 1
         while i < len(mylist):
             self.assertEqual(mylist[i], self.fso.next())
@@ -78,13 +66,12 @@ class testedfnumbered(unittest.TestCase):
 
     def testprevious(self):
         """ check all in order """
-        mylist = [ "mydata%04d.edf" % (i) for i in range(0, 10005) ]
+        mylist = ["mydata%04d.edf" % (i) for i in range(0, 10005)]
         i = 10003
         self.fso.jump(10004)
-        while i > 0 :
+        while i > 0:
             self.assertEqual(mylist[i], self.fso.previous())
             i -= 1
-
 
     def testprevjump(self):
         """check current"""
@@ -100,23 +87,23 @@ class testedfnumbered(unittest.TestCase):
 
     def testlen(self):
         """check len"""
-        self.assertEqual(self.fso.len() , 10006)# +1 for 0000
+        self.assertEqual(self.fso.len(), 10006)  # +1 for 0000
 
 
 def test_suite_all_series():
     testSuite = unittest.TestSuite()
 
-    testSuite.addTest(testrandomseries("testfirst"))
-    testSuite.addTest(testrandomseries("testlast"))
-    testSuite.addTest(testrandomseries("testjump"))
+    testSuite.addTest(TestRandomSeries("testfirst"))
+    testSuite.addTest(TestRandomSeries("testlast"))
+    testSuite.addTest(TestRandomSeries("testjump"))
 
-    testSuite.addTest(testedfnumbered("testfirst"))
-    testSuite.addTest(testedfnumbered("testprevious"))
-    testSuite.addTest(testedfnumbered("testlast"))
-    testSuite.addTest(testedfnumbered("testnext"))
-    testSuite.addTest(testedfnumbered("testprevjump"))
-    testSuite.addTest(testedfnumbered("testnextjump"))
-    testSuite.addTest(testedfnumbered("testlen"))
+    testSuite.addTest(TestEdfNumbered("testfirst"))
+    testSuite.addTest(TestEdfNumbered("testprevious"))
+    testSuite.addTest(TestEdfNumbered("testlast"))
+    testSuite.addTest(TestEdfNumbered("testnext"))
+    testSuite.addTest(TestEdfNumbered("testprevjump"))
+    testSuite.addTest(TestEdfNumbered("testnextjump"))
+    testSuite.addTest(TestEdfNumbered("testlen"))
 
     return testSuite
 
