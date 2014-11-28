@@ -1,36 +1,23 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 """
 Test cases for the fabioimage class
 
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
+28/11/2014
 """
-import unittest, sys, os, logging
-logger = logging.getLogger("testfabioimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+from __future__ import absolute_import, print_function, with_statement, division
+import unittest
+import sys
+import os
+import numpy
+import gzip
+import bz2
 
 from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 from fabio.fabioimage import fabioimage
-import numpy
-import gzip, bz2
 
 
 class test50000(unittest.TestCase):
@@ -58,6 +45,7 @@ class test50000(unittest.TestCase):
     def getstddev(self):
         """check stddev"""
         self.assertEqual(self.obj.getstddev(), 0)
+
 
 class testslices(unittest.TestCase):
     """check slicing"""
@@ -103,7 +91,7 @@ class testslices(unittest.TestCase):
 
 class testopen(unittest.TestCase):
     """check opening compressed files"""
-    testfile = os.path.join(UtilsTest.test_home, "testimages", "testfile")
+    testfile = os.path.join(UtilsTest.tempdir, "testfile")
 
     def setUp(self):
         """ create test files"""

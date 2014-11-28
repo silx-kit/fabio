@@ -4,38 +4,21 @@
 #bruker Unit tests
 
 #built on testedfimage
+28/11/2014
 """
-
-import unittest, sys, os, logging, tempfile
-logger = logging.getLogger("testbrukerimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
-
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
-from fabio.brukerimage import brukerimage
+from __future__ import absolute_import, print_function, with_statement, division
+import unittest
+import os
 import numpy
-import bz2, gzip
-import tempfile
-#this is actually a violation of the bruker format since the order of
+import gzip
+import bz2
+from utilstest import UtilsTest
+logger = UtilsTest.get_logger(__file__)
+from fabio.brukerimage import brukerimage
+
+# this is actually a violation of the bruker format since the order of
 # the header items is specified
-#in the standard, whereas the order of a python dictionary is not
+# in the standard, whereas the order of a python dictionary is not
 MYHEADER = {"FORMAT":'86',
             'NPIXELB':'2',
             'VERSION':'9',
@@ -57,9 +40,10 @@ OVERFLOWS = [
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))]
     ]
 
-class testbruker(unittest.TestCase):
+
+class TestBruker(unittest.TestCase):
     """basic test"""
-    filename = os.path.join(UtilsTest.test_home, "testimages", "image.0000")
+    filename = os.path.join(UtilsTest.image_home, "image.0000")
 
     def setUp(self):
         """ Generate a test bruker image """
@@ -85,38 +69,41 @@ class testbruker(unittest.TestCase):
         """ see if we can read the test image """
         obj = brukerimage()
         obj.read(self.filename)
-        self.assertAlmostEqual(obj.getmean() , 272.0, 2)
-        self.assertEqual(obj.getmin() , 0)
-        self.assertEqual(obj.getmax() , 4194304)
+        self.assertAlmostEqual(obj.getmean(), 272.0, 2)
+        self.assertEqual(obj.getmin(), 0)
+        self.assertEqual(obj.getmax(), 4194304)
 
-class testbzipbruker(testbruker):
+
+class TestBzipBruker(TestBruker):
     """ test for a bzipped image """
     def setUp(self):
         """ create the image """
-        testbruker.setUp(self)
+        TestBruker.setUp(self)
         if not os.path.isfile(self.filename + ".bz2"):
             bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
             self.filename += ".bz2"
 
-class testgzipbruker(testbruker):
+
+class TestGzipBruker(TestBruker):
     """ test for a gzipped image """
     def setUp(self):
         """ Create the image """
-        testbruker.setUp(self)
+        TestBruker.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
             gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
 #            os.system("gzip %s" % (self.filename))
             self.filename += ".gz"
 
 
-class testbrukerLinear(unittest.TestCase):
+class TestBrukerLinear(unittest.TestCase):
     """basic test, test a random array of float32"""
-    fd, filename = tempfile.mkstemp('0000', "bruker")
-    os.close(fd)
-    data = numpy.random.random((500, 550)).astype("float32")
-    
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.filename = os.path.join(UtilsTest.tempdir, "bruker.0000")
+        self.data = numpy.random.random((500, 550)).astype("float32")
+
     def test_linear(self):
-        """ test for self consitency of random data read/write """
+        """ test for self consistency of random data read/write """
         obj = brukerimage(data=self.data)
         obj.write(self.filename)
         new = brukerimage()
@@ -124,6 +111,9 @@ class testbrukerLinear(unittest.TestCase):
         error = abs(new.data - self.data).max()
         self.assert_(error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error)
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        os.unlink(self.filename)
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
@@ -133,15 +123,13 @@ TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17
                 Cr8F8140k103.0026.bz2   512  512  0 145942 289.37  432.17 """
 
 
-class test_real_im(unittest.TestCase):
+class TestRealImg(unittest.TestCase):
     """ check some read data from bruker detector"""
     def setUp(self):
         """
         download images
         """
-
         self.im_dir = os.path.dirname(UtilsTest.getimage("Cr8F8140k103.0026.bz2"))
-        self.tempdir = tempfile.mkdtemp()
 
     def test_read(self):
         """ check we can read bruker images"""
@@ -168,9 +156,9 @@ class test_real_im(unittest.TestCase):
             ref = brukerimage()
             fname = os.path.join(self.im_dir, name)
             obj.read(fname)
-            obj.write(os.path.join(self.tempdir, name))
+            obj.write(os.path.join(UtilsTest.tempdir, name))
             other = brukerimage()
-            other.read(os.path.join(self.tempdir, name))
+            other.read(os.path.join(UtilsTest.tempdir, name))
             ref.read(fname)
             self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
             for key in ref.header:
@@ -181,14 +169,15 @@ class test_real_im(unittest.TestCase):
                 else:
                     self.assertEqual(ref.header[key], other.header[key], "value are the same for key %s: was %s now %s" % (key, ref.header[key], other.header[key]))
 
+
 def test_suite_all_bruker():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testbruker("test_read"))
-    testSuite.addTest(testbzipbruker("test_read"))
-    testSuite.addTest(testgzipbruker("test_read"))
-    testSuite.addTest(test_real_im("test_read"))
-    testSuite.addTest(test_real_im("test_write"))
-    testSuite.addTest(testbrukerLinear("test_linear"))
+    testSuite.addTest(TestBruker("test_read"))
+    testSuite.addTest(TestBzipBruker("test_read"))
+    testSuite.addTest(TestGzipBruker("test_read"))
+    testSuite.addTest(TestRealImg("test_read"))
+    testSuite.addTest(TestRealImg("test_write"))
+    testSuite.addTest(TestBrukerLinear("test_linear"))
     return testSuite
 
 if __name__ == '__main__':
