@@ -251,7 +251,7 @@ class UtilsTest(object):
                 Otherwise please try to download the images manually from \n \
                 %s" % (cls.url_base, imagename))
         else:
-            data = open(fullimagename).read()
+            data = open(fullimagename, "rb").read()
         fullimagename_bz2 = os.path.splitext(fullimagename)[0] + ".bz2"
         fullimagename_gz = os.path.splitext(fullimagename)[0] + ".gz"
         fullimagename_raw = os.path.splitext(fullimagename)[0]
