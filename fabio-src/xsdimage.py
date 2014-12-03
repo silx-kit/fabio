@@ -16,12 +16,14 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 import logging, numpy
 logger = logging.getLogger("xsdimage")
 from .fabioimage import fabioimage
+from .third_party import six
 import base64, hashlib
 try:
     from lxml import etree
 except ImportError:
     logger.warning("lxml library is probably not part of your python installation: disabling xsdimage format")
     etree = None
+
 
 class xsdimage(fabioimage):
     """
@@ -86,7 +88,7 @@ class xsdimage(fabioimage):
 
 
         self.data = numpy.fromstring(decData, dtype=self.bytecode).reshape(tuple(self.dims))
-        if not numpy.little_endian: #by default little endian
+        if not numpy.little_endian:  # by default little endian
             self.data.byteswap(inplace=True)
         self.resetvals()
 #        # ensure the PIL image is reset
@@ -121,7 +123,7 @@ class xsdimage(fabioimage):
                 self.coding = j.text
         self.rawData = None
         for i in xml.xpath("//data"):
-            self.rawData = i.text
+            self.rawData = six.b(i.text)
         self.md5 = None
         for i in xml.xpath("//md5sum"):
             j = i.find("value")

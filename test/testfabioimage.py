@@ -18,7 +18,7 @@ from utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.fabioimage import fabioimage
-
+from fabio.third_party import six
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -27,7 +27,7 @@ class test50000(unittest.TestCase):
         dat = numpy.ones((1024, 1024), numpy.uint16)
         dat = (dat * 50000).astype(numpy.uint16)
         assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
-        hed = {"Title":"50000 everywhere"}
+        hed = {"Title": "50000 everywhere"}
         self.obj = fabioimage(dat, hed)
 
     def testgetmax(self):
@@ -52,8 +52,8 @@ class testslices(unittest.TestCase):
     def setUp(self):
         """make test data"""
         dat2 = numpy.zeros((1024, 1024), numpy.uint16)
-        hed = {"Title":"zeros and 100"}
-        self.cord = [ 256, 256, 790, 768 ]
+        hed = {"Title": "zeros and 100"}
+        self.cord = [256, 256, 790, 768]
         self.obj = fabioimage(dat2, hed)
         self.slic = slic = self.obj.make_slice(self.cord)
         # Note - d2 is modified *after* fabioimage is made
@@ -106,25 +106,25 @@ class testopen(unittest.TestCase):
     def testFlat(self):
         """ no compression"""
         res = self.obj._open(self.testfile).read()
-        self.assertEqual(res, b"{ hello }")
+        self.assertEqual(res, six.b("{ hello }"))
 
     def testgz(self):
         """ gzipped """
         res = self.obj._open(self.testfile + ".gz").read()
-        self.assertEqual(res, b"{ hello }")
+        self.assertEqual(res, six.b("{ hello }"))
 
     def testbz2(self):
         """ bzipped"""
         res = self.obj._open(self.testfile + ".bz2").read()
-        self.assertEqual(res, b"{ hello }")
+        self.assertEqual(res, six.b("{ hello }"))
 
 
-NAMES = {numpy.uint8 :  "numpy.uint8",
-         numpy.int8  :  "numpy.int8" ,
+NAMES = {numpy.uint8:   "numpy.uint8",
+         numpy.int8:    "numpy.int8" ,
          numpy.uint16:  "numpy.uint16",
-         numpy.int16 :  "numpy.int16" ,
+         numpy.int16:   "numpy.int16" ,
          numpy.uint32:  "numpy.uint32" ,
-         numpy.int32 :  "numpy.int32"   ,
+         numpy.int32:   "numpy.int32"   ,
          numpy.float32: "numpy.float32" ,
          numpy.float64: "numpy.float64"}
 
