@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -27,11 +27,12 @@ import numpy
 import logging
 logger = logging.getLogger("pnmimage")
 from .fabioimage import fabioimage
+from .third_party import six
 
-SUBFORMATS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
+SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
 
-HEADERITEMS = ['SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL']
-P7HEADERITEMS = ['WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR']
+HEADERITEMS = [six.b(i) for i in ('SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL')]
+P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR')]
 
 class pnmimage(fabioimage):
     def __init__(self, *arg, **kwargs):
@@ -46,21 +47,22 @@ class pnmimage(fabioimage):
         self.bytecode = None
 
     def _readheader(self, f):
-        #pnm images have a 3-line header but ignore lines starting with '#'
-        #1st line contains the pnm image sub format
-        #2nd line contains the image pixel dimension
-        #3rd line contains the maximum pixel value (at least for grayscale - check this)
+        # pnm images have a 3-line header but ignore lines starting with '#'
+        # 1st line contains the pnm image sub format
+        # 2nd line contains the image pixel dimension
+        # 3rd line contains the maximum pixel value (at least for grayscale - check this)
 
         l = f.readline().strip()
+
         if l not in SUBFORMATS:
             raise IOError('unknown subformat of pnm: %s' % l)
         else:
-            self.header['SUBFORMAT'] = l
+            self.header[six.b('SUBFORMAT')] = l
 
-        if self.header['SUBFORMAT'] == 'P7':
+        if self.header[six.b('SUBFORMAT')] == 'P7':
             self.header_keys = P7HEADERITEMS
-            #this one has a special header
-            while 'ENDHDR' not in l:
+            # this one has a special header
+            while six.b('ENDHDR') not in l:
                 l = f.readline()
                 while(l[0] == '#'): l = f.readline()
                 s = l.lsplit(' ', 1)
@@ -78,12 +80,12 @@ class pnmimage(fabioimage):
             for k, v in zip(self.header_keys, values):
                 self.header[k] = v.strip()
 
-        #set the dimensions
-        self.dim1 = int(self.header["WIDTH"])
-        self.dim2 = int(self.header["HEIGHT"])
-        #figure out how many bytes are used to store the data
-        #case construct here!
-        m = int(self.header['MAXVAL'])
+        # set the dimensions
+        self.dim1 = int(self.header[six.b("WIDTH")])
+        self.dim2 = int(self.header[six.b("HEIGHT")])
+        # figure out how many bytes are used to store the data
+        # case construct here!
+        m = int(self.header[six.b('MAXVAL')])
         if m < 256:
             self.bytecode = numpy.uint8
         elif m < 65536:
@@ -105,8 +107,13 @@ class pnmimage(fabioimage):
         infile = self._open(fname)
         self._readheader(infile)
 
-        #read the image data
-        decoder_name = "%sdec" % self.header['SUBFORMAT']
+        # read the image data
+        if six.PY3:
+            format = str(self.header[six.b('SUBFORMAT')], encoding="latin-1")
+        else:
+            format = self.header[six.b('SUBFORMAT')]
+        decoder_name = "%sdec" % format
+
         if decoder_name in dir(pnmimage):
             decoder = getattr(pnmimage, decoder_name)
             self.data = decoder(self, infile, self.bytecode)
