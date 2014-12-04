@@ -19,6 +19,7 @@ logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 import shutil
 
+
 class TestHeaderNotSingleton(unittest.TestCase):
 
     def setUp(self):
@@ -34,9 +35,9 @@ class TestHeaderNotSingleton(unittest.TestCase):
             shutil.copy(self.file1, file2)
         image1 = fabio.open(self.file1)
         image2 = fabio.open(file2)
-        self.assertEqual(image1.header['filename'] , self.file1)
-        self.assertEqual(image2.header['filename'] , file2)
-        self.assertNotEqual(image1.header['filename'] ,
+        self.assertEqual(image1.header['filename'], self.file1)
+        self.assertEqual(image2.header['filename'], file2)
+        self.assertNotEqual(image1.header['filename'],
                              image2.header['filename'])
 
 
