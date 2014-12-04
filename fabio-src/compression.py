@@ -16,11 +16,12 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging, struct, hashlib, base64, sys
 logger = logging.getLogger("compression")
-if sys.version_info < (3,):
-    from StringIO import StringIO
+from .third_party import six
+
+if six.PY2:
     bytes = str
-else:
-    from io import StringIO
+
+
 
 import numpy
 
@@ -71,22 +72,22 @@ def decGzip(stream):
 
     if gzip is None:
         raise ImportError("gzip module is not available")
-    fileobj = StringIO(stream)
+    fileobj = six.BytesIO(stream)
     try:
         rawData = gzip.GzipFile(fileobj=fileobj).read()
     except IOError:
         logger.warning("Encounter the python-gzip bug with trailing garbage, trying subprocess gzip")
         try:
-            #This is as an ugly hack against a bug in Python gzip
+            # This is as an ugly hack against a bug in Python gzip
             import subprocess
             sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             rawData, err = sub.communicate(input=stream)
             logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
-        except Exception as error: #IGNORE:W0703
+        except Exception as error:  # IGNORE:W0703
             logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
             for i in range(1, 513):
                 try:
-                    fileobj = StringIO(stream[:-i])
+                    fileobj = six.BytesIO(stream[:-i])
                     rawData = gzip.GzipFile(fileobj=fileobj).read()
                 except IOError:
                     logger.debug("trying with %s bytes less, doesn't work" % i)
@@ -253,7 +254,7 @@ def decByteOffet_numpy(stream, size=None):
                 listnpa.append(numpy.fromstring(stream[idx + 7:idx + 15],
                                              dtype="int64"))
                 shift = 15
-            else: #32 bit int
+            else:  # 32 bit int
                 listnpa.append(numpy.fromstring(stream[idx + 3:idx + 7],
                                              dtype="int32"))
                 shift = 7
@@ -310,19 +311,19 @@ def compByteOffet_numpy(data):
         if stop - start > 0:
             binary_blob += delta[start:stop].astype("int8").tostring()
         exc = delta[stop]
-        if (exc > 2147483647) or (exc < -2147483647): #2**31-1
+        if (exc > 2147483647) or (exc < -2147483647):  # 2**31-1
             binary_blob += "\x80\x00\x80\x00\x00\x00\x80"
             if byteswap:
                 binary_blob += delta[stop:stop + 1].byteswap().tostring()
             else:
                 binary_blob += delta[stop:stop + 1].tostring()
-        elif (exc > 32767) or (exc < -32767): #2**15-1
+        elif (exc > 32767) or (exc < -32767):  # 2**15-1
             binary_blob += "\x80\x00\x80"
             if byteswap:
                 binary_blob += delta[stop:stop + 1].astype("int32").byteswap().tostring()
             else:
                 binary_blob += delta[stop:stop + 1].astype("int32").tostring()
-        else: #>127
+        else:  # >127
             binary_blob += "\x80"
             if byteswap:
                 binary_blob += delta[stop:stop + 1].astype("int16").byteswap().tostring()
@@ -381,8 +382,8 @@ def compTY1(data):
     diff[0] = fdata[0]
     diff[1:] = fdata[1:] - fdata[:-1]
     adiff = abs(diff)
-    exception32 = (adiff > 32767)#2**15-1
-    exception16 = (adiff >= 127) - exception32 #2**7-1)
+    exception32 = (adiff > 32767)  # 2**15-1
+    exception16 = (adiff >= 127) - exception32  # 2**7-1)
     we16 = numpy.where(exception16)
     we32 = numpy.where(exception32)
     raw_16 = diff[we16].astype("int16").tostring()

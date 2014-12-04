@@ -6,33 +6,20 @@ Test for Nonius Kappa CCD cameras.
 
 """
 
-import unittest, sys, os, logging
-logger = logging.getLogger("testkcdimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
+from __future__ import print_function, with_statement, division, absolute_import
+import unittest
+import sys
+import os
 try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+    from .utilstest import UtilsTest
+except ValueError:
+    from utilstest import UtilsTest
 
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 from fabio.kcdimage     import kcdimage
 from fabio.edfimage     import edfimage
 from fabio.openimage    import openimage
-
 
 
 class testkcd(unittest.TestCase):
@@ -40,7 +27,6 @@ class testkcd(unittest.TestCase):
     kcdfilename = 'i01f0001.kcd'
     edffilename = 'i01f0001.edf'
     results = """i01f0001.kcd   625 576  96  66814.0 195.3862972   243.58150990245315"""
-
 
     def setUp(self):
         """Download files"""
@@ -63,7 +49,6 @@ class testkcd(unittest.TestCase):
         self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev")
         self.assertEqual(dim1, obj.dim1, "dim1")
         self.assertEqual(dim2, obj.dim2, "dim2")
-
 
     def test_same(self):
         """ see if we can read kcd images and if they are the same as the EDF """

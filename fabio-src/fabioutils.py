@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 from __future__ import absolute_import, print_function, with_statement, division
 
 __doc__ = """
@@ -9,22 +9,22 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPL"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "26/11/2014"
+__date__ = "04/12/2014"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
-# get ready for python3
 import re, os, logging, threading, sys
 logger = logging.getLogger("fabioutils")
-if sys.version_info < (3,):
-    import StringIO as io
+from .third_party import six
+
+if six.PY2:
+    bytes = str
     FileIO = file
     StringTypes = (str, unicode)
-    bytes = str
 else:
-    import io
-    from io import FileIO
     StringTypes = (str, bytes)
+    unicode = str
+    from io import FileIO
 
 from .compression import bz2, gzip
 import traceback
@@ -276,18 +276,18 @@ def numstem(name):
     Match 1 or more digits going backwards from the end of the string
     """
     reg = re.compile(r"^(.*?)(-?[0-9]{0,9})(\D*)$")
-    #reg = re.compile("""(\D*)(\d\d*)(\w*)""")
+    # reg = re.compile("""(\D*)(\d\d*)(\w*)""")
     try:
         res = reg.match(name).groups()
-        #res = reg.match(name[::-1]).groups()
-        #return [ r[::-1] for r in res[::-1]]
-        if len(res[0]) == len(res[1]) == 0: # Hack for file without number
+        # res = reg.match(name[::-1]).groups()
+        # return [ r[::-1] for r in res[::-1]]
+        if len(res[0]) == len(res[1]) == 0:  # Hack for file without number
             return [res[2], '', '']
         return [ r for r in res]
-    except AttributeError: # no digits found
+    except AttributeError:  # no digits found
         return [name, "", ""]
 
-#@deprecated
+# @deprecated
 def deconstruct_filename(filename):
     """
     Function for backward compatibility.
@@ -381,15 +381,16 @@ def nice_int(s):
         return int(float(s))
 
 
-class StringIO(io.StringIO):
+class BytesIO(six.BytesIO):
     """
-    just an interface providing the name and mode property to a StringIO
+    just an interface providing the name and mode property to a BytesIO
 
     BugFix for MacOSX mainly
     """
     def __init__(self, data, fname=None, mode="r"):
-        io.StringIO.__init__(self, data)
-        self.closed = False
+        six.BytesIO.__init__(self, data)
+        if not "closed" in dir(self):
+            self.closed = False
         if fname == None:
             self.name = "fabioStream"
         else:
@@ -410,6 +411,7 @@ class StringIO(io.StringIO):
     def setSize(self, size):
         self.__size = size
     size = property(getSize, setSize)
+
 
 class File(FileIO):
     """
@@ -434,7 +436,7 @@ class File(FileIO):
 
         'U' cannot be combined with 'w' or '+' mode.
         """
-        if sys.version_info < (3, 0):
+        if six.PY2:
             FileIO.__init__(self, name, mode, buffering)
         else:  # for python3 we drop buffering
             FileIO.__init__(self, name, mode)
@@ -469,6 +471,7 @@ class UnknownCompressedFile(File):
     def __init__(self, name, mode="rb", buffering=0):
         logger.warning("No decompressor found for this type of file (are gzip anf bz2 installed ???")
         File.__init__(self, name, mode, buffering)
+
 
 if gzip is None:
     GzipFile = UnknownCompressedFile
@@ -524,45 +527,7 @@ else:
                         logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, self.offset))
                         self.__size = end_pos
             return self.__size
-#        if sys.version_info < (2, 7):
-#            def setSize(self, value):
-#                self.__size = value
-#            size = property(getSize, setSize)
-#            @property
-#            def closed(self):
-#                return self.fileobj is None
-#
-#            def seek(self, offset, whence=os.SEEK_SET):
-#                """
-#                Move to new file position.
-#
-#                Argument offset is a byte count.  Optional argument whence defaults to
-#                0 (offset from start of file, offset should be >= 0); other values are 1
-#                (move relative to current position, positive or negative), and 2 (move
-#                relative to end of file, usually negative, although many platforms allow
-#                seeking beyond the end of a file).  If the file is opened in text mode,
-#                only offsets returned by tell() are legal.  Use of other offsets causes
-#                undefined behavior.
-#
-#                This is a wrapper for seek to ensure compatibility with old python 2.5
-#
-#                Warning: Seek from end is not supported (works only for single blocks !!!)
-#                This implemtents a hack
-#                """
-#                if whence == os.SEEK_SET:
-#                    gzip.GzipFile.seek(self, offset)
-#                elif whence == os.SEEK_CUR:
-#                    gzip.GzipFile.seek(self, offset + self.tell())
-#                elif whence == os.SEEK_END:
-#                    gzip.GzipFile.seek(self, offset + self.getSize())
-#
-#            def __enter__(self, *args, **kwargs):
-#                return self
-#            def __exit__(self, *args, **kwargs):
-#                """
-#                Close the file.
-#                """
-#                return gzip.GzipFile.close(self)
+
 
 if bz2 is None:
     BZ2File = UnknownCompressedFile
@@ -608,7 +573,6 @@ else:
                 return bz2.BZ2File.close(self)
         def __enter__(self, *args, **kwargs):
             return self
-
 
 
 class DebugSemaphore(_Semaphore):

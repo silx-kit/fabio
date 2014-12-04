@@ -15,7 +15,11 @@ import numpy
 import gzip
 import bz2
 
-from utilstest import UtilsTest
+try:
+    from .utilstest import UtilsTest
+except ValueError:
+    from utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 import fabio.compression as compression

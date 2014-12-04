@@ -6,15 +6,16 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 28/11/2014
 """
-from __future__ import absolute_import, print_function, with_statement, division
+from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import numpy
-import gzip
-import bz2
 
-from utilstest import UtilsTest
+try:
+    from .utilstest import UtilsTest
+except ValueError:
+    from utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.OXDimage import OXDimage
@@ -32,7 +33,6 @@ class TestOxd(unittest.TestCase):
             self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
         for i in self.fn:
             assert os.path.exists(self.fn[i])
-
 
     def test_read(self):
         "Test reading of compressed OXD images"
@@ -99,7 +99,6 @@ class TestOxdBig(unittest.TestCase):
             self.assertTrue(os.path.exists(self.fn[i]), self.fn[i])
 
     def test_same(self):
-#        print self.fn
         df = [fabio.open(i).data for i in self.fn.values()]
         self.assertEqual(abs(df[0] - df[1]).max(), 0, "Data are the same")
 

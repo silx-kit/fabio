@@ -6,7 +6,7 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 28/11/2014
 """
-from __future__ import absolute_import, print_function, with_statement, division
+from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
@@ -14,15 +14,20 @@ import numpy
 import gzip
 import bz2
 
-from utilstest import UtilsTest
+try:
+    from .utilstest import UtilsTest
+except ValueError:
+    from utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.edfimage import edfimage
+from fabio.third_party import six
 
 
 class TestFlatEdfs(unittest.TestCase):
     """ test some flat images """
-    MYHEADER = "{\n%-1020s}\n" % (
+    MYHEADER = six.b("{\n%-1020s}\n" % (
 """Omega = 0.0 ;
 Dim_1 = 256 ;
 Dim_2 = 256 ;
@@ -30,7 +35,7 @@ DataType = FloatValue ;
 ByteOrder = LowByteFirst ;
 Image = 1;
 History-1 = something=something else;
-\n\n""")
+\n\n"""))
 
     MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
     MYIMAGE[0, 0] = 0

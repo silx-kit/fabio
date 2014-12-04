@@ -4,7 +4,7 @@
 # Unit tests for raxis images
 28/11/2014
 """
-from __future__ import absolute_import, print_function, with_statement, division
+from __future__ import print_function, with_statement, division
 import unittest
 import sys
 import os
@@ -13,7 +13,10 @@ import gzip
 import bz2
 import logging
 
-from utilstest import UtilsTest
+try:
+    from .utilstest import UtilsTest
+except ValueError:
+    from utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.raxisimage import raxisimage

@@ -48,13 +48,13 @@ class fabioimage(object):
             self.header = {}
         else:
             self.header = self.checkHeader(header)
-        self.header_keys = self.header.keys() # holds key ordering
+        self.header_keys = list(self.header.keys())  # holds key ordering
         if self.data is not None:
             self.dim2, self.dim1 = self.data.shape
         else:
             self.dim1 = self.dim2 = 0
-        self.bytecode = None     # numpy typecode
-        self.bpp = 2             # bytes per pixel
+        self.bytecode = None  # numpy typecode
+        self.bpp = 2  # bytes per pixel
         # cache for image statistics
         self.mean = self.maxval = self.stddev = self.minval = None
         # Cache roi
@@ -189,7 +189,7 @@ class fabioimage(object):
                 coords[0:3:2] = [coords[2], coords[0]]
             if coords[1] > coords[3]:
                 coords[1:4:2] = [coords[3], coords[1]]
-            #in fabian: normally coordinates are given as (x,y) whereas
+            # in fabian: normally coordinates are given as (x,y) whereas
             # a matrix is given as row,col
             # also the (for whichever reason) the image is flipped upside
             # down wrt to the matrix hence these tranformations
@@ -280,12 +280,12 @@ class fabioimage(object):
             shapeIn = self.data.shape
             shapeOut = (shapeIn[0] / y_rebin_fact, shapeIn[1] / x_rebin_fact)
             binsize = y_rebin_fact * x_rebin_fact
-            if binsize < 50: #method faster for small binning (4x4)
+            if binsize < 50:  # method faster for small binning (4x4)
                 out = numpy.zeros(shapeOut, dtype="float64")
                 for j in range(x_rebin_fact):
                     for i in range(y_rebin_fact):
                         out += dataIn[i::y_rebin_fact, j::x_rebin_fact]
-            else: #method faster for large binning (8x8)
+            else:  # method faster for large binning (8x8)
                 temp = self.data.astype("float64")
                 temp.shape = (shapeOut[0], y_rebin_fact, shapeOut[1], x_rebin_fact)
                 out = temp.sum(axis=3).sum(axis=1)
@@ -298,7 +298,7 @@ class fabioimage(object):
         self.dim1 = self.dim1 / x_rebin_fact
         self.dim2 = self.dim2 / y_rebin_fact
 
-        #update header
+        # update header
         self.update_header()
 
     def write(self, fname):
@@ -416,7 +416,7 @@ class fabioimage(object):
         if self._need_a_real_file and mode[0] == "r":
             fo = python_uncompress(fname, mode)
 #            fobj = os.tmpfile()
-            #problem when not administrator under certain flavors of windows
+            # problem when not administrator under certain flavors of windows
             tmpfd, tmpfn = tempfile.mkstemp()
             os.close(tmpfd)
             fobj = fabioutils.File(tmpfn, "w+b")
@@ -425,7 +425,7 @@ class fabioimage(object):
             fobj.seek(0)
         elif self._need_a_seek_to_read and mode[0] == "r":
             fo = python_uncompress(fname, mode)
-            fobj = fabioutils.StringIO(fo.read(), fname, mode)
+            fobj = fabioutils.BytesIO(fo.read(), fname, mode)
         else:
             fobj = python_uncompress(fname, mode)
         return fobj
@@ -471,7 +471,7 @@ class fabioimage(object):
         if klass is None:
             logger.warning("Unrecognized destination format: %s " % dest)
             return self
-        other = klass() #temporary instance (to be overwritten)
+        other = klass()  # temporary instance (to be overwritten)
         other = klass(data=converters.convert_data(self.classname, other.classname, self.data),
                     header=converters.convert_header(self.classname, other.classname, self.header))
         return other

@@ -4,34 +4,17 @@
 
 Test for PNM images.
 
+Jerome Kieffer, 04/12/2014
 """
-
-import unittest
-import sys
 import os
-import logging
-logger = logging.getLogger("testpnmimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
+import sys
+import unittest
 try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
-
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+    from .utilstest import UtilsTest
+except ValueError:
+    from utilstest import UtilsTest
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 from fabio.pnmimage import pnmimage
 from fabio.openimage import openimage
 

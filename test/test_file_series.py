@@ -6,7 +6,7 @@ test cases for fileseries
 
 28/11/2014
 """
-from __future__ import absolute_import, print_function, with_statement, division
+from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
@@ -14,7 +14,11 @@ import numpy
 import gzip
 import bz2
 
-from utilstest import UtilsTest
+try:
+    from .utilstest import UtilsTest
+except ValueError:
+    from utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.file_series import numbered_file_series, file_series

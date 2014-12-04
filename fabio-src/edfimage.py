@@ -20,13 +20,13 @@ Authors:
 """
 # get ready for python3
 from __future__ import with_statement, print_function, absolute_import, division
-import os, logging, types
+import os, logging
 logger = logging.getLogger("edfimage")
 import numpy
 from .fabioimage import fabioimage
 from .fabioutils import isAscii, toAscii, nice_int
 from .compression import decBzip2, decGzip, decZlib
-
+from .third_party import six
 
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"    :  numpy.int8,
@@ -48,8 +48,8 @@ DATA_TYPES = {  "SignedByte"    :  numpy.int8,
                 "Unsigned64"    :  numpy.uint64,
                 "FloatValue"    :  numpy.float32,
                 "FLOATVALUE"    :  numpy.float32,
-                "FLOAT"         :  numpy.float32, # fit2d
-                "Float"         :  numpy.float32, # fit2d
+                "FLOAT"         :  numpy.float32,  # fit2d
+                "Float"         :  numpy.float32,  # fit2d
                 "FloatIEEE32"   :  numpy.float32,
                 "Float32"       :  numpy.float32,
                 "Double"        :  numpy.float64,
@@ -57,13 +57,11 @@ DATA_TYPES = {  "SignedByte"    :  numpy.int8,
                 "FloatIEEE64"   :  numpy.float64,
                 "DoubleIEEE64"  :  numpy.float64}
 try:
-    DATA_TYPES["FloatIEEE128" ] =  numpy.float128
-    DATA_TYPES["DoubleIEEE128" ] =  numpy.float128
-    DATA_TYPES["QuadrupleValue" ] =  numpy.float128
+    DATA_TYPES["FloatIEEE128"] = DATA_TYPES["DoubleIEEE128"] = DATA_TYPES["QuadrupleValue"] = numpy.float128
 
 except AttributeError:
     # not in your numpy
-    pass
+    logger.debug("No support for float128 in your code")
 
 NUMPY_EDF_DTYPE = {"int8"       :"SignedByte",
                    "int16"      :"SignedShort",
@@ -84,7 +82,7 @@ MINIMUM_KEYS = ['HEADERID',
                 'DATATYPE',
                 'DIM_1',
                 'DIM_2',
-                'SIZE'] # Size is thought to be essential for writing at least
+                'SIZE']  # Size is thought to be essential for writing at least
 
 DEFAULT_VALUES = {
                   # I do not define default values as they will be calculated at write time
@@ -120,7 +118,7 @@ class Frame(object):
         self.dims = []
         self.dim1 = 0
         self.dim2 = 0
-        self.start = None # Position of start of raw data in file
+        self.start = None  # Position of start of raw data in file
         self.size = None  # size of raw data in file
         self.file = None  # opened file object with locking capabilities !!!
         self.bpp = None
@@ -134,11 +132,11 @@ class Frame(object):
         """
         Parse the header in some EDF format from an already open file
 
-        @param block: string representing the header block
+        @param block: string representing the header block. 
         @type block: string, should be full ascii
         @return: size of the binary blob
         """
-        #reset values ...
+        # reset values ...
         self.header = {}
         self.capsHeader = {}
         self.header_keys = []
@@ -150,8 +148,8 @@ class Frame(object):
             if '=' in line:
                 key, val = line.split('=' , 1)
                 # Why would someone put null bytes in a header?
-                key = key.replace("\x00"," ").strip()
-                self.header[key] = val.replace("\x00"," ").strip()
+                key = key.replace("\x00", " ").strip()
+                self.header[key] = val.replace("\x00", " ").strip()
                 self.capsHeader[key.upper()] = key
                 self.header_keys.append(key)
 
@@ -273,7 +271,7 @@ class Frame(object):
                     uncompressed_size *= i
                 if "OFFSET" in compression :
                     try:
-                        import byte_offset#IGNORE:F0401
+                        import byte_offset  # IGNORE:F0401
                     except ImportError as error:
                         logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
@@ -363,7 +361,7 @@ class Frame(object):
                 header_keys.remove(capsHeader[KEY])
         if "EDF_DATABLOCKID" in capsHeader:
             header_keys.remove(capsHeader["EDF_DATABLOCKID"])
-            #but do not remove the value from dict, instead reset the key ...
+            # but do not remove the value from dict, instead reset the key ...
             if capsHeader["EDF_DATABLOCKID"] != "EDF_DataBlockID":
                 header["EDF_DataBlockID"] = header.pop(capsHeader["EDF_DATABLOCKID"])
                 capsHeader["EDF_DATABLOCKID"] = "EDF_DataBlockID"
@@ -401,9 +399,9 @@ class Frame(object):
         header_keys.insert(0, "EDF_DataBlockID")
         if not "EDF_DataBlockID" in header:
             header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
-        preciseSize = 4 #2 before {\n 2 after }\n
+        preciseSize = 4  # 2 before {\n 2 after }\n
         for key in header_keys:
-            #Escape keys or values that are no ascii
+            # Escape keys or values that are no ascii
             strKey = str(key)
             if not isAscii(strKey, listExcluded=["}", "{"]):
                 logger.warning("Non ascii key %s, skipping" % strKey)
@@ -443,7 +441,7 @@ class edfimage(fabioimage):
         self.filesize = None
         try:
             dim = len(data.shape)
-        except Exception as error: #IGNORE:W0703
+        except Exception as error:  # IGNORE:W0703
             logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
             data = None
             dim = 0
@@ -473,7 +471,7 @@ class edfimage(fabioimage):
         """
         Empty for fabioimage but may be populated by others classes
         """
-        if type(header) != types.DictionaryType:
+        if not isinstance(header, dict):
             return {}
         new = {}
         for key, value in header.items():
@@ -493,41 +491,40 @@ class edfimage(fabioimage):
         if len(block) < BLOCKSIZE:
             logger.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
             return
-        if (block.find("{") < 0) :
+        if (block.find(b"{") < 0) :
             # This does not look like an edf file
             logger.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
             return
-        if "EDF_HeaderSize" in block:
-            start = block.index("EDF_HeaderSize")
-            chunk = block[start:].split("=")[1].strip()
+        if b"EDF_HeaderSize" in block:
+            start = block.index(b"EDF_HeaderSize")
+            chunk = block[start:].split(b"=")[1].strip()
             try:
-                new_max_header_size = int(chunk.split(";")[0].strip())
+                new_max_header_size = int(chunk.split(b";")[0].strip())
             except Exception:
                 logger.warning("Unable to read header size in %s" % chunk)
             else:
                 if new_max_header_size > MAX_HEADER_SIZE:
                     logger.info("Redefining MAX_HEADER_SIZE to %s" % new_max_header_size)
                     MAX_HEADER_SIZE = new_max_header_size
-        while '}' not in block:
+        while b'}' not in block:
             block = block + infile.read(BLOCKSIZE)
             if len(block) > MAX_HEADER_SIZE:
                 logger.warning("Runaway header in EDF file MAX_HEADER_SIZE: %s \n%s" % (MAX_HEADER_SIZE, block))
                 return
-        start = block.find("{") + 1
-        end = block.find("}")
+        start = block.find(b"{") + 1
+        end = block.find(b"}")
 
         # Now it is essential to go to the start of the binary part
-        if block[end: end + 3] == "}\r\n":
+        if block[end: end + 3] == b"}\r\n":
             offset = end + 3 - len(block)
-        elif block[end: end + 2] == "}\n":
+        elif block[end: end + 2] == b"}\n":
             offset = end + 2 - len(block)
         else:
             logger.error("Unable to locate start of the binary section")
             offset = None
         if offset is not None:
             infile.seek(offset, os.SEEK_CUR)
-        return block[start:end]
-
+        return block[start:end].decode("ASCII")
 
     def _readheader(self, infile):
         """

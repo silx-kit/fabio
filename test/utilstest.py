@@ -47,6 +47,10 @@ import gzip
 import json
 import tempfile
 
+# print("ENVIRON at begin of tests...")
+# for k, v in os.environ.items():
+#     print("%s: %s" % (k, v))
+
 try:  # Python3
     from urllib.request import urlopen, ProxyHandler, build_opener
 except ImportError:  # Python2
@@ -86,7 +90,11 @@ class UtilsTest(object):
         platform = distutils.util.get_platform()
         architecture = "lib.%s-%i.%i" % (platform,
                                          sys.version_info[0], sys.version_info[1])
-        if os.environ.get("BUILDPYTHONPATH"):
+
+        if os.environ.get("PYBUILD_NAME") == name:
+            # we are in the debian packaging way
+            home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
+        elif os.environ.get("BUILDPYTHONPATH"):
             home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
         else:
             home = os.path.join(os.path.dirname(TEST_HOME),
