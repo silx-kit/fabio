@@ -66,7 +66,7 @@ class testXSD(unittest.TestCase):
 def test_suite_all_XSD():
     testSuite = unittest.TestSuite()
     if xsdimage is None:
-        loggerwarning("xsdimage is None ... probably an import error related to lxml. Skipping test")
+        logger.warning("xsdimage is None ... probably an import error related to lxml. Skipping test")
     else:
         testSuite.addTest(testXSD("test_read"))
         testSuite.addTest(testXSD("test_same"))
