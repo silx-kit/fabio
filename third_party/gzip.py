@@ -9,6 +9,7 @@ import struct, sys, time, os
 import zlib
 builtins = six.moves.builtins
 BytesIO = six.BytesIO
+import io
 
 __all__ = ["GzipFile", "open", "compress", "decompress"]
 
@@ -101,7 +102,7 @@ class _PaddedFile:
         return getattr(self.file, name)
 
 
-class GzipFile(BytesIO):
+class GzipFile(io.BufferedIOBase):
     """The GzipFile class simulates most of the methods of a file object with
     the exception of the readinto() and truncate() methods.
 
