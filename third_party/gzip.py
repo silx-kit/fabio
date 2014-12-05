@@ -29,13 +29,16 @@ def LOWU32(i):
     """Return the low-order 32 bits, as a non-negative int"""
     return i & 0xFFFFFFFF
 
+
 def write32u(output, value):
     # The L format writes the bit pattern correctly whether signed
     # or unsigned.
     output.write(struct.pack("<L", value))
 
+
 def read32(input):
     return struct.unpack("<I", input.read(4))[0]
+
 
 def open(filename, mode="rb", compresslevel=9):
     """Shorthand for GzipFile(filename, mode, compresslevel).
@@ -46,7 +49,8 @@ def open(filename, mode="rb", compresslevel=9):
     """
     return GzipFile(filename, mode, compresslevel)
 
-class _PaddedFile:
+
+class _PaddedFile(object):
     """Minimal read-only file object that prepends a string to the contents
     of an actual file. Shouldn't be used outside of gzip.py, as it lacks
     essential functionality."""
