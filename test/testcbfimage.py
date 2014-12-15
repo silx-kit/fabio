@@ -25,7 +25,7 @@ except ValueError:
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.cbfimage import cbfimage
-from fabio.compression import decByteOffet_numpy, decByteOffet_cython
+from fabio.compression import decByteOffset_numpy, decByteOffset_cython
 import time
 
 
@@ -80,7 +80,7 @@ class TestCbfReader(unittest.TestCase):
         startPos = cbf.cif["_array_data.data"].find(starter) + 4
         data = cbf.cif["_array_data.data"][startPos: startPos + int(cbf.header["X-Binary-Size"])]
         startTime = time.time()
-        numpyRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
+        numpyRes = decByteOffset_numpy(data, size=cbf.dim1 * cbf.dim2)
         tNumpy = time.time() - startTime
         logger.info("Timing for Numpy method : %.3fs" % tNumpy)
 
@@ -92,14 +92,14 @@ class TestCbfReader(unittest.TestCase):
 #        logger.info("Timing for Weave method : %.3fs, max delta=%s" % (tWeave, delta))
 #
 #        startTime = time.time()
-#        pythonRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
+#        pythonRes = decByteOffset_numpy(data, size=cbf.dim1 * cbf.dim2)
 #        tPython = time.time() - startTime
 #        delta = abs(numpyRes - pythonRes).max()
 #        self.assertAlmostEqual(0, delta)
 #        logger.info("Timing for Python method : %.3fs, max delta= %s" % (tPython, delta))
 
         startTime = time.time()
-        cythonRes = decByteOffet_cython(stream=data, size=cbf.dim1 * cbf.dim2)
+        cythonRes = decByteOffset_cython(stream=data, size=cbf.dim1 * cbf.dim2)
         tCython = time.time() - startTime
         delta = abs(numpyRes - cythonRes).max()
         self.assertAlmostEqual(0, delta)

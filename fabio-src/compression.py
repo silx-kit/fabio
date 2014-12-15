@@ -46,6 +46,7 @@ except ImportError:
     logger.error("Unable to import zlib module: disabling zlib compression")
     zlib = None
 
+
 def md5sum(blob):
     """
     returns the md5sum of an object...
@@ -120,7 +121,7 @@ def decZlib(stream):
     return zlib.decompress(stream)
 
 
-def decByteOffet_python(stream, size):
+def decByteOffset_python(stream, size):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
 
@@ -155,7 +156,7 @@ def decByteOffet_python(stream, size):
         j += 1
     return dataOut
 
-def decByteOffet_weave(stream, size):
+def decByteOffset_weave(stream, size):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
 
@@ -170,7 +171,7 @@ def decByteOffet_weave(stream, size):
         from scipy.weave import converters
     except ImportError:
         logger.warning("scipy.weave is not available, falling back on slow Numpy implementations")
-        return decByteOffet_numpy(stream, size)
+        return decByteOffset_numpy(stream, size)
     dataIn = numpy.fromstring(stream, dtype="uint8")
     n = dataIn.size
     dataOut = numpy.zeros(size, dtype="int64")
@@ -225,7 +226,7 @@ return_val=0;
 
 
 
-def decByteOffet_numpy(stream, size=None):
+def decByteOffset_numpy(stream, size=None):
     """
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
@@ -266,7 +267,7 @@ def decByteOffet_numpy(stream, size=None):
     return  (numpy.hstack(listnpa)).astype("int64").cumsum()
 
 
-def decByteOffet_cython(stream, size=None):
+def decByteOffset_cython(stream, size=None):
     """
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
@@ -278,14 +279,17 @@ def decByteOffet_cython(stream, size=None):
     """
     logger.debug("CBF decompression using cython")
     try:
-        from fabio.byte_offset import analyseCython
+        from .byte_offset import analyseCython
     except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method")
-        return decByteOffet_numpy(stream, size)
+        return decByteOffset_numpy(stream, size)
     else:
         return analyseCython(stream, size)
 
-def compByteOffet_numpy(data):
+decByteOffset = decByteOffset_cython
+
+
+def compByteOffset_numpy(data):
     """
     Compress a dataset into a string using the byte_offet algorithm
 
@@ -333,6 +337,8 @@ def compByteOffet_numpy(data):
     if start < delta.size:
         binary_blob += delta[start:].astype("int8").tostring()
     return binary_blob
+
+compByteOffset = compByteOffset_numpy
 
 
 def decTY1(raw_8, raw_16=None, raw_32=None):
