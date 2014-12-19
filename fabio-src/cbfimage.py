@@ -423,37 +423,37 @@ class CIF(dict):
                 break
             elif bytes_text[0] == cls.SINGLE_QUOTE:
                 idx = 0
-                bFinished = False
-                while not  bFinished:
+                finished = False
+                while not finished:
                     idx += 1 + bytes_text[idx + 1:].find(cls.SINGLE_QUOTE)
                     if idx >= len(bytes_text) - 1:
                         fields.append(bytes_text[1:-1].strip())
                         bytes_text = numpy.string_("")
-                        bFinished = True
+                        finished = True
                         break
 
                     if bytes_text[idx + 1] in cls.BLANK:
                         fields.append(bytes_text[1:idx].strip())
                         tmp_text = bytes_text[idx + 1:]
                         bytes_text = tmp_text.strip()
-                        bFinished = True
+                        finished = True
 
             elif bytes_text[0] == cls.DOUBLE_QUOTE:
                 idx = 0
-                bFinished = False
-                while not  bFinished:
+                finished = False
+                while not finished:
                     idx += 1 + bytes_text[idx + 1:].find(cls.DOUBLE_QUOTE)
                     if idx >= len(bytes_text) - 1:
                         fields.append(bytes_text[1:-1].strip())
-                        bytes_text = ""
-                        bFinished = True
+                        bytes_text = numpy.string_("")
+                        finished = True
                         break
 
                     if bytes_text[idx + 1] in cls.BLANK:
                         fields.append(bytes_text[1:idx].strip())
                         tmp_text = bytes_text[idx + 1:]
                         bytes_text = tmp_text.strip()
-                        bFinished = True
+                        finished = True
 
             elif bytes_text[0] == cls.SEMICOLUMN:
                 if bytes_text[1:].strip().find(cls.BINARY_MARKER) == 0:
@@ -464,29 +464,33 @@ class CIF(dict):
                         idx += 32 + len(cls.BINARY_MARKER)
                 else:
                     idx = 0
-                bFinished = False
-                while not  bFinished:
+                finished = False
+                while not finished:
                     idx += 1 + bytes_text[idx + 1:].find(cls.SEMICOLUMN)
                     if bytes_text[idx - 1] in cls.EOL:
                         fields.append(bytes_text[1:idx - 1].strip())
                         tmp_text = bytes_text[idx + 1:]
                         bytes_text = tmp_text.strip()
-                        bFinished = True
+                        finished = True
             else:
-                first, second = bytes_text.split(None, 1)
-                if cls.isAscii(first):
-                    fields.append(first)
-                    bytes_text = second.strip()
+                res = bytes_text.split(None, 1)
+                if len(res) == 2:
+                    first, second = bytes_text.split(None, 1)
+                    if cls.isAscii(first):
+                        fields.append(first)
+                        bytes_text = second.strip()
+                        continue
+                start_binary = bytes_text.find(cls.BINARY_MARKER)
+                if start_binary > 0:
+                    end_binary = bytes_text[start_binary + 1:].find(cls.BINARY_MARKER) + start_binary + 1 + len(cls.BINARY_MARKER)
+                    fields.append(bytes_text[:end_binary])
+                    bytes_text = bytes_text[end_binary:].strip()
                 else:
-                    start_binary = bytes_text.find(cls.BINARY_MARKER)
-                    if start_binary > 0:
-                        end_binary = bytes_text[start_binary + 1:].find(cls.BINARY_MARKER) + start_binary + 1 + len(cls.BINARY_MARKER)
-                        fields.append(bytes_text[:end_binary])
-                        bytes_text = bytes_text[end_binary:].strip()
-                    else:
-                        fields.append(bytes_text)
-                        bytes_text = numpy.string_("")
-
+                    fields.append(bytes_text)
+                    bytes_text = numpy.string_("")
+                    break
+        print(len(fields))
+        print(fields[:10])
         return fields
 
 
