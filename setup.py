@@ -56,8 +56,12 @@ mar345_backend = Extension('mar345_IO',
                            sources=['src/mar345_IO' + ext,
                                     'src/ccp4_pack.c',
                                       ])
+_cif_backend = Extension('_cif',
+                           include_dirs=[np.get_include()],
+                           sources=['src/_cif' + ext])
 
-extensions = [cf_backend, byteOffset_backend, mar345_backend]
+
+extensions = [cf_backend, byteOffset_backend, mar345_backend, _cif_backend]
 
 version = [eval(l.split("=")[1])
            for l in open(op.join(op.dirname(op.abspath(__file__)), "fabio-src", "__init__.py"))
@@ -169,7 +173,7 @@ class sdist_debian(sdist):
         print("Removing files for debian")
         for rm in to_remove:
             self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
-        #this is for Cython files specifically
+        # this is for Cython files specifically
         self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix="src")
         for pyxf in glob.glob("src/*.pyx"):
             cf = op.splitext(pyxf)[0] + ".c"
