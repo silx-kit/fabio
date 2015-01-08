@@ -100,7 +100,7 @@ class Frame(object):
             self.header = dict(header)
 
         if header_keys is None:
-            self.header_keys = self.header.keys()
+            self.header_keys = list(self.header.keys())
         else:
             self.header_keys = header_keys[:]
             for key in header_keys:
@@ -619,7 +619,7 @@ class edfimage(fabioimage):
         if self.nframes == 1:
             logger.debug("Single frame EDF; having fabioimage default behavour: %s" % num)
             newImage = fabioimage.getframe(self, num)
-        elif num in xrange(self.nframes):
+        elif num in range(self.nframes):
             logger.debug("Multi frame EDF; having edfimage specific behavour: %s/%s" % (num, self.nframes))
             newImage = edfimage(frames=self.__frames)
             newImage.currentframe = num
