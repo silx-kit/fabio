@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# coding: utf-8
 #
 # Reads the header from a GE a-Si Angio Detector
 # Using version 8001 of the header from file:
