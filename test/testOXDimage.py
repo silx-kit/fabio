@@ -4,7 +4,7 @@
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
-28/11/2014
+08/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
@@ -115,4 +115,3 @@ if __name__ == '__main__':
     mysuite = test_suite_all_OXD()
     runner = unittest.TextTestRunner()
     runner.run(mysuite)
-

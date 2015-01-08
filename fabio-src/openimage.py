@@ -43,44 +43,44 @@ from . import raxisimage
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
     # "\1f\8b" : 'gzipped'
-    ("FORMAT :        86" , 'bruker'),
-    ("\x4d\x4d\x00\x2a"   , 'tif') ,
+    (b"FORMAT :        86" , 'bruker'),
+    (b"\x4d\x4d\x00\x2a"   , 'tif') ,
     # The marCCD and Pilatus formats are both standard tif with a header
     # hopefully these byte patterns are unique for the formats
     # If not the image will be read, but the is missing
-    ("\x49\x49\x2a\x00\x08\x00"   , 'marccd') ,
-    ("\x49\x49\x2a\x00\x82\x00"   , 'pilatus') ,
-    ("\x49\x49\x2a\x00"   , 'tif') ,
+    (b"\x49\x49\x2a\x00\x08\x00"   , 'marccd') ,
+    (b"\x49\x49\x2a\x00\x82\x00"   , 'pilatus') ,
+    (b"\x49\x49\x2a\x00"   , 'tif') ,
     # ADSC must come before edf
-    ("{\nHEA"             , 'adsc'),
-    ("{"                  , 'edf'),
-    ("\r{"                , 'edf'),
-    ("\n{"                , 'edf'),
-    ("ADEPT"              , 'GE'),
-    ("OD"                 , 'OXD'),
-    ("IM"                 , 'HiPiC'),
-    ('\x2d\x04'           , 'mar345'),
-    ('\xd2\x04'           , 'mar345'),
-    ('\x04\x2d'           , 'mar345'), #some machines may need byteswapping
-    ('\x04\xd2'           , 'mar345'),
+    (b"{\nHEA"             , 'adsc'),
+    (b"{"                  , 'edf'),
+    (b"\r{"                , 'edf'),
+    (b"\n{"                , 'edf'),
+    (b"ADEPT"              , 'GE'),
+    (b"OD"                 , 'OXD'),
+    (b"IM"                 , 'HiPiC'),
+    (b'\x2d\x04'           , 'mar345'),
+    (b'\xd2\x04'           , 'mar345'),
+    (b'\x04\x2d'           , 'mar345'),  # some machines may need byteswapping
+    (b'\x04\xd2'           , 'mar345'),
     # hint : MASK in 32 bit
-    ('M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
-    ('\x00\x00\x00\x03'   , 'dm3'),
-    ("No"                 , "kcd"),
-    ("<"                  , "xsd"),
-    ("\n\xb8\x03\x00"     , 'pixi'),
-    ("\x89\x48\x44\x46"   , 'hdf5'),
-    ("R-AXIS"             , 'raxis')
+    (b'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00' , 'fit2dmask') ,
+    (b'\x00\x00\x00\x03'   , 'dm3'),
+    (b"No"                 , "kcd"),
+    (b"<"                  , "xsd"),
+    (b"\n\xb8\x03\x00"     , 'pixi'),
+    (b"\x89\x48\x44\x46"   , 'hdf5'),
+    (b"R-AXIS"             , 'raxis')
     ]
 
-URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True} #Shall we split after the last ":"
+URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True}  # Shall we split after the last ":"
 
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
     for magic, format_type in MAGIC_NUMBERS:
         if byts.find(magic) == 0:
             return format_type
-        if 0: # debugging - bruker needed 18 bytes below
+        if 0:  # debugging - bruker needed 18 bytes below
             logger.debug("m: %s f: %s", magic, format_type)
             logger.debug("bytes: %s len(bytes) %s", magic, len(magic))
             logger.debug("found: %s", byts.find(magic))
@@ -100,7 +100,7 @@ def openimage(filename, frame=None):
             obj = obj.read(filename.tostring(), frame)
         except Exception as ex:
             # multiframe file
-            #logger.debug( "DEBUG: multiframe file, start # %d"%(
+            # logger.debug( "DEBUG: multiframe file, start # %d"%(
             #    filename.num)
             logger.debug("Exception %s, trying name %s" % (ex, filename.stem))
             obj = _openimage(filename.stem)
@@ -132,7 +132,7 @@ def _openimage(filename):
             filename = filename[len(prefix):]
             if filename.startswith("//"):
                 filename = filename[2:]
-            if URL_PREFIX[prefix]: #process :path[slice,:,:]
+            if URL_PREFIX[prefix]:  # process :path[slice,:,:]
                 if "[" in filename:
                     filename = filename[:filename.index("[")]
                 if ":" in filename:
@@ -161,7 +161,7 @@ def _openimage(filename):
                 # one of OXD/ ADSC - should have got in previous
                 raise Exception("openimage failed on magic bytes & name guess")
             filetype = file_obj.format
-            #UNUSED filenumber = file_obj.num
+            # UNUSED filenumber = file_obj.num
         except Exception as error:
             logger.error(error)
             import traceback

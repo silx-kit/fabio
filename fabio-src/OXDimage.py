@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 """
 Reads Oxford Diffraction Sapphire 3 images
 
@@ -25,10 +25,15 @@ logger = logging.getLogger("OXDimage")
 import numpy
 from .fabioimage import fabioimage
 from .compression import decTY1, compTY1
+from .third_party import six
+if six.PY3:
+    to_str = lambda s: str(s, "ASCII")
+else:
+    to_str = lambda s: str(s)
 
 try:
     from numpy import rad2deg, deg2rad
-except ImportError: #naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)
+except ImportError:  # naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)
     rad2deg = lambda x: 180.0 * x / numpy.pi
     deg2rad = lambda x: x * numpy.pi / 180.
 
@@ -59,9 +64,9 @@ class OXDimage(fabioimage):
         infile.seek(0)
 
         # Ascii header part 256 byes long
-        self.header['Header Version'] = infile.readline()[:-2]
+        self.header['Header Version'] = to_str(infile.readline()[:-2])
         block = infile.readline()
-        self.header['Compression'] = block[12:15]
+        self.header['Compression'] = to_str(block[12:15])
         block = infile.readline()
         self.header['NX'] = int(block[3:7])
         self.header['NY'] = int(block[11:15])
@@ -77,7 +82,7 @@ class OXDimage(fabioimage):
         block = infile.readline()
         self.header['NSUPPLEMENT'] = int(block[12:19])
         block = infile.readline()
-        self.header['Time'] = block[5:29]
+        self.header['Time'] = to_str(block[5:29])
         self.header["ASCII Section size in Byte"] = self.header['Header Size In Bytes']\
                                                 - self.header['General Section size in Byte']\
                                                 - self.header['Special Section size in Byte'] \
@@ -87,38 +92,38 @@ class OXDimage(fabioimage):
         # Skip to general section (NG) 512 byes long <<<<<<"
         infile.seek(self.header["ASCII Section size in Byte"])
         block = infile.read(self.header['General Section size in Byte'])
-        self.header['Binning in x'] = numpy.fromstring(block[0:2], numpy.uint16)[0]
-        self.header['Binning in y'] = numpy.fromstring(block[2:4], numpy.uint16)[0]
-        self.header['Detector size x'] = numpy.fromstring(block[22:24], numpy.uint16)[0]
-        self.header['Detector size y'] = numpy.fromstring(block[24:26], numpy.uint16)[0]
-        self.header['Pixels in x'] = numpy.fromstring(block[26:28], numpy.uint16)[0]
-        self.header['Pixels in y'] = numpy.fromstring(block[28:30], numpy.uint16)[0]
-        self.header['No of pixels'] = numpy.fromstring(block[36:40], numpy.uint32)[0]
+        self.header['Binning in x'] = struct.unpack("H", block[0:2])[0]
+        self.header['Binning in y'] = struct.unpack("H", block[2:4])[0]
+        self.header['Detector size x'] = struct.unpack("H", block[22:24])[0]
+        self.header['Detector size y'] = struct.unpack("H", block[24:26])[0]
+        self.header['Pixels in x'] = struct.unpack("H", block[26:28])[0]
+        self.header['Pixels in y'] = struct.unpack("H", block[28:30])[0]
+        self.header['No of pixels'] = struct.unpack("I", block[36:40])[0]
 
         # Speciel section (NS) 768 bytes long
         block = infile.read(self.header['Special Section size in Byte'])
-        self.header['Gain'] = numpy.fromstring(block[56:64], numpy.float)[0]
-        self.header['Overflows flag'] = numpy.fromstring(block[464:466], numpy.int16)[0]
-        self.header['Overflow after remeasure flag'] = numpy.fromstring(block[466:468], numpy.int16)[0]
-        self.header['Overflow threshold'] = numpy.fromstring(block[472:476], numpy.int32)[0]
-        self.header['Exposure time in sec'] = numpy.fromstring(block[480:488], numpy.float)[0]
-        self.header['Overflow time in sec'] = numpy.fromstring(block[488:496], numpy.float)[0]
-        self.header['Monitor counts of raw image 1'] = numpy.fromstring(block[528:532], numpy.int32)[0]
-        self.header['Monitor counts of raw image 2'] = numpy.fromstring(block[532:536], numpy.int32)[0]
-        self.header['Monitor counts of overflow raw image 1'] = numpy.fromstring(block[536:540], numpy.int32)[0]
-        self.header['Monitor counts of overflow raw image 2'] = numpy.fromstring(block[540:544], numpy.int32)[0]
-        self.header['Unwarping'] = numpy.fromstring(block[544:548], numpy.int32)[0]
-        self.header['Detector type'] = DETECTOR_TYPES[numpy.fromstring(block[548:552], numpy.int32)[0]]
-        self.header['Real pixel size x (mm)'] = numpy.fromstring(block[568:576], numpy.float)[0]
-        self.header['Real pixel size y (mm)'] = numpy.fromstring(block[576:584], numpy.float)[0]
+        self.header['Gain'] = struct.unpack("d", block[56:64])[0]
+        self.header['Overflows flag'] = struct.unpack("h", block[464:466])[0]
+        self.header['Overflow after remeasure flag'] = struct.unpack("h", block[466:468])[0]
+        self.header['Overflow threshold'] = struct.unpack("i", block[472:476])[0]
+        self.header['Exposure time in sec'] = struct.unpack("d", block[480:488])[0]
+        self.header['Overflow time in sec'] = struct.unpack("d", block[488:496])[0]
+        self.header['Monitor counts of raw image 1'] = struct.unpack("i", block[528:532])[0]
+        self.header['Monitor counts of raw image 2'] = struct.unpack("i", block[532:536])[0]
+        self.header['Monitor counts of overflow raw image 1'] = struct.unpack("i", block[536:540])[0]
+        self.header['Monitor counts of overflow raw image 2'] = struct.unpack("i", block[540:544])[0]
+        self.header['Unwarping'] = struct.unpack("i", block[544:548])[0]
+        self.header['Detector type'] = DETECTOR_TYPES[struct.unpack("i", block[548:552])[0]]
+        self.header['Real pixel size x (mm)'] = struct.unpack("d", block[568:576])[0]
+        self.header['Real pixel size y (mm)'] = struct.unpack("d", block[576:584])[0]
 
         # KM4 goniometer section (NK) 1024 bytes long
         block = infile.read(self.header['KM4 Section size in Byte'])
         # Spatial correction file
-        self.header['Spatial correction file'] = block[26:272].strip("\x00")
-        self.header['Spatial correction file date'] = block[0:26].strip("\x00")
+        self.header['Spatial correction file'] = to_str(block[26:272].strip(b"\x00"))
+        self.header['Spatial correction file date'] = to_str(block[0:26].strip(b"\x00"))
         # Angles are in steps due to stepper motors - conversion factor RAD
-        # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,   
+        # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
         start_angles_step = numpy.fromstring(block[284:304], numpy.int32)
         end_angles_step = numpy.fromstring(block[324:344], numpy.int32)
         step2rad = numpy.fromstring(block[368:408], numpy.float)
@@ -147,41 +152,41 @@ class OXDimage(fabioimage):
         self.header['Kappa zero corr. in deg'] = zero_correction_soft_deg[2]
         self.header['Phi zero corr. in deg'] = zero_correction_soft_deg[3]
         # Beam rotation about e2,e3
-        self.header['Beam rot in deg (e2)'] = numpy.fromstring(block[552:560], numpy.float)[0]
-        self.header['Beam rot in deg (e3)'] = numpy.fromstring(block[560:568], numpy.float)[0]
+        self.header['Beam rot in deg (e2)'] = struct.unpack("d", block[552:560])[0]
+        self.header['Beam rot in deg (e3)'] = struct.unpack("d", block[560:568])[0]
         # Wavelenghts alpha1, alpha2, beta
-        self.header['Wavelength alpha1'] = numpy.fromstring(block[568:576], numpy.float)[0]
-        self.header['Wavelength alpha2'] = numpy.fromstring(block[576:584], numpy.float)[0]
-        self.header['Wavelength alpha'] = numpy.fromstring(block[584:592], numpy.float)[0]
-        self.header['Wavelength beta'] = numpy.fromstring(block[592:600], numpy.float)[0]
+        self.header['Wavelength alpha1'] = struct.unpack("d", block[568:576])[0]
+        self.header['Wavelength alpha2'] = struct.unpack("d", block[576:584])[0]
+        self.header['Wavelength alpha'] = struct.unpack("d", block[584:592])[0]
+        self.header['Wavelength beta'] = struct.unpack("d", block[592:600])[0]
 
         # Detector tilts around e1,e2,e3 in deg
-        self.header['Detector tilt e1 in deg'] = numpy.fromstring(block[640:648], numpy.float)[0]
-        self.header['Detector tilt e2 in deg'] = numpy.fromstring(block[648:656], numpy.float)[0]
-        self.header['Detector tilt e3 in deg'] = numpy.fromstring(block[656:664], numpy.float)[0]
+        self.header['Detector tilt e1 in deg'] = struct.unpack("d", block[640:648])[0]
+        self.header['Detector tilt e2 in deg'] = struct.unpack("d", block[648:656])[0]
+        self.header['Detector tilt e3 in deg'] = struct.unpack("d", block[656:664])[0]
 
 
         # Beam center
-        self.header['Beam center x'] = numpy.fromstring(block[664:672], numpy.float)[0]
-        self.header['Beam center y'] = numpy.fromstring(block[672:680], numpy.float)[0]
+        self.header['Beam center x'] = struct.unpack("d", block[664:672])[0]
+        self.header['Beam center y'] = struct.unpack("d", block[672:680])[0]
         # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
-        self.header['Alpha angle in deg'] = numpy.fromstring(block[672:680], numpy.float)[0]
+        self.header['Alpha angle in deg'] = struct.unpack("d", block[672:680])[0]
         # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
-        self.header['Beta angle in deg'] = numpy.fromstring(block[672:680], numpy.float)[0]
+        self.header['Beta angle in deg'] = struct.unpack("d", block[672:680])[0]
 
         # Detector distance
-        self.header['Distance in mm'] = numpy.fromstring(block[712:720], numpy.float)[0]
+        self.header['Distance in mm'] = struct.unpack("d", block[712:720])[0]
         # Statistics section (NS) 512 bytes long
         block = infile.read(self.header['Statistic Section in Byte'])
-        self.header['Stat: Min '] = numpy.fromstring(block[0:4], numpy.int32)[0]
-        self.header['Stat: Max '] = numpy.fromstring(block[4:8], numpy.int32)[0]
-        self.header['Stat: Average '] = numpy.fromstring(block[24:32], numpy.float)[0]
-        self.header['Stat: Stddev '] = numpy.sqrt(numpy.fromstring(block[32:40], numpy.float)[0])
-        self.header['Stat: Skewness '] = numpy.fromstring(block[40:48], numpy.float)[0]
+        self.header['Stat: Min '] = struct.unpack("i", block[0:4])[0]
+        self.header['Stat: Max '] = struct.unpack("i", block[4:8])[0]
+        self.header['Stat: Average '] = struct.unpack("d", block[24:32])[0]
+        self.header['Stat: Stddev '] = numpy.sqrt(struct.unpack("d", block[32:40])[0])
+        self.header['Stat: Skewness '] = struct.unpack("d", block[40:48])[0]
 
         # History section (NH) 2048 bytes long
         block = infile.read(self.header['History Section in Byte'])
-        self.header['Flood field image'] = block[99:126].strip("\x00")
+        self.header['Flood field image'] = to_str(block[99:126].strip(b"\x00"))
 
     def read(self, fname, frame=None):
         """
@@ -204,7 +209,7 @@ class OXDimage(fabioimage):
                                 "is corrupt, cannot read it")
         #
         if self.header['Compression'] == 'TY1':
-            #Compressed with the KM4CCD compression
+            "# Compressed with the KM4CCD compression"
             raw8 = infile.read(self.dim1 * self.dim2)
             raw16 = None
             raw32 = None
@@ -212,25 +217,21 @@ class OXDimage(fabioimage):
                 raw16 = infile.read(self.header['OI'] * 2)
             if self.header['OL'] > 0:
                 raw32 = infile.read(self.header['OL'] * 4)
-            #DEBUG stuff ... 
-            self.raw8 = raw8
-            self.raw16 = raw16
-            self.raw32 = raw32
-            #END DEBUG
-            block = decTY1(raw8, raw16, raw32)
-            bytecode = block.dtype
+
+            raw_data = decTY1(raw8, raw16, raw32)
+            bytecode = raw_data.dtype
 
         else:
             bytecode = numpy.int32
             self.bpp = len(numpy.array(0, bytecode).tostring())
             ReadBytes = self.dim1 * self.dim2 * self.bpp
-            block = numpy.fromstring(infile.read(ReadBytes), bytecode)
+            raw_data = numpy.fromstring(infile.read(ReadBytes), bytecode)
 
-        logger.debug('OVER_SHORT2: %s', block.dtype)
-        logger.debug("%s" % (block < 0).sum())
+        logger.debug('OVER_SHORT2: %s', raw_data.dtype)
+        logger.debug("%s" % (raw_data < 0).sum())
         infile.close()
         logger.debug("BYTECODE: %s", bytecode)
-        self.data = block.reshape((self.dim2, self.dim1))
+        self.data = raw_data.reshape((self.dim2, self.dim1))
         self.bytecode = self.data.dtype.type
         self.pilimage = None
         return self
@@ -264,7 +265,7 @@ class OXDimage(fabioimage):
 
             ascii_headers.append("TIME=%s" % time.ctime())
 
-        header = (linesep.join(ascii_headers)).ljust(256)
+        header = (linesep.join(ascii_headers)).ljust(256).encode("ASCII")
 
 
         NG = Section(self.header['General Section size in Byte'], self.header)
@@ -415,10 +416,10 @@ class Section(object):
         """
         self.size = size
         self.header = dictHeader
-        self.lstChr = ["\x00"] * size
+        self.lstChr = bytearray(size)
         self._dictSize = {}
     def __repr__(self):
-        return "".join(self.lstChr)
+        return bytes(self.lstChr)
 
     def getSize(self, dtype):
         if not dtype in self._dictSize:
