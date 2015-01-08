@@ -46,7 +46,8 @@ def compress_pck(inputArray not None):
     data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
 
     (fd, fname) = tempfile.mkstemp()
-    name = <char*>  fname
+    fname = fname.encode("ASCII")
+    name = <char*> fname
     with nogil:
         pack_wordimage_c(< short int *> &data[0], dim1, dim0, name)
     with open(name, "rb") as f:
@@ -59,7 +60,7 @@ def compress_pck(inputArray not None):
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
-def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None):
+def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None):
     """
     Unpack a mar345 compressed image
 
@@ -76,8 +77,8 @@ def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None, version
         numpy.ndarray[numpy.uint8_t, ndim = 1] instream
         void* out
     end = None
-    key1 = "CCP4 packed image, X: "
-    key2 = "CCP4 packed image V2, X: "
+    key1 = b"CCP4 packed image, X: "
+    key2 = b"CCP4 packed image V2, X: "
 
     if (dim1 is None) or (dim2 is None) or \
        (version not in [1, 2]) or \

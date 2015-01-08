@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 """
 
 Authors:
@@ -21,6 +21,13 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function, absolute_import
+
+__authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
+__date__ = "08/01/2015"
+__status__ = "production"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
+__licence__ = "GPL"
+
 
 from .fabioimage import fabioimage
 import numpy, struct, time, sys, traceback
@@ -65,29 +72,29 @@ class mar345image(fabioimage):
         """ Read a mar345 image header """
         # clip was not used anywhere - commented out
         # clip = '\x00'
-        #using a couple of local variables inside this function
+        # using a couple of local variables inside this function
         f = infile
         h = {}
 
-        #header is 4096 bytes long
+        # header is 4096 bytes long
         l = f.read(64)
-        #the contents of the mar345 header is taken to be as
+        # the contents of the mar345 header is taken to be as
         # described in
         # http://www.mar-usa.com/support/downloads/mar345_formats.pdf
-        #the first 64 bytes are 4-byte integers (but in the CBFlib
+        # the first 64 bytes are 4-byte integers (but in the CBFlib
         # example image it seems to 128 bytes?)
-        #first 4-byte integer is a marker to check endianness
+        # first 4-byte integer is a marker to check endianness
         if struct.unpack("<i", l[0:4])[0] == 1234:
             fs = '<i'
         else:
             fs = '>i'
 
-        #image dimensions
+        # image dimensions
         self.dim1 = int(struct.unpack(fs, l[4:8])[0])
-        #number of high intensity pixels
+        # number of high intensity pixels
         self.numhigh = struct.unpack(fs, l[2 * 4 : (2 + 1) * 4])[0]
         h['NumHigh'] = self.numhigh
-        #Image format
+        # Image format
         i = struct.unpack(fs, l[3 * 4 : (3 + 1) * 4])[0]
         if i == 1:
             h['Format'] = 'compressed'
@@ -97,41 +104,49 @@ class mar345image(fabioimage):
             h['Format'] = 'compressed'
             logger.warning("image format could not be determined" + \
                 "- assuming compressed mar345")
-        #collection mode
+        # collection mode
         h['Mode'] = {0:'Dose', 1: 'Time'}[struct.unpack(fs, l[4 * 4:(4 + 1) * 4])[0]]
-        #total number of pixels
+        # total number of pixels
         self.numpixels = struct.unpack(fs, l[5 * 4:(5 + 1) * 4])[0]
         h['NumPixels'] = str(self.numpixels)
         self.dim2 = self.numpixels // self.dim1
-        #pixel dimensions (length,height) in mm
+        # pixel dimensions (length,height) in mm
         h['PixelLength'] = struct.unpack(fs, l[6 * 4:(6 + 1) * 4])[0] / 1000.0
         h['PixelHeight'] = struct.unpack(fs, l[7 * 4:(7 + 1) * 4])[0] / 1000.0
-        #x-ray wavelength in AA
+        # x-ray wavelength in AA
         h['Wavelength'] = struct.unpack(fs, l[8 * 4:(8 + 1) * 4])[0] / 1000000.0
-        #used distance
+        # used distance
         h['Distance'] = struct.unpack(fs, l[9 * 4:(9 + 1) * 4])[0] / 1000.0
-        #starting and ending phi
+        # starting and ending phi
         h['StartPhi'] = struct.unpack(fs, l[10 * 4:11 * 4])[0] / 1000.0
         h['EndPhi'] = struct.unpack(fs, l[11 * 4:12 * 4])[0] / 1000.0
-        #starting and ending omega
+        # starting and ending omega
         h['StartOmega'] = struct.unpack(fs, l[12 * 4:13 * 4])[0] / 1000.0
         h['EndOmega'] = struct.unpack(fs, l[13 * 4:14 * 4])[0] / 1000.0
-        #Chi and Twotheta angles
+        # Chi and Twotheta angles
         h['Chi'] = struct.unpack(fs, l[14 * 4:15 * 4])[0] / 1000.0
         h['TwoTheta'] = struct.unpack(fs, l[15 * 4:16 * 4])[0] / 1000.0
 
-        #the rest of the header is ascii
+        # the rest of the header is ascii
         # TODO: validate these values against the binaries already read
         l = f.read(128)
-        if not 'mar research' in l:
+        if b'mar research' not in l:
             logger.warning("the string \"mar research\" should be in " + \
                 "bytes 65-76 of the header but was not")
             start = 128
         else:
-            start = l.index('mar research')
+            start = l.index(b'mar research')
             f.seek(64 + start)
         l = f.read(4096 - start - 64).strip()
         for m in l.splitlines():
+            try:
+                m = m.decode("ASCII")
+            except UnicodeDecodeError:
+                if m.startswith(b"DATE"):
+                    m = m[:39].decode("ASCII")
+                else:
+                    logger.warning("Skip binary trash on header line %s" % m)
+                    continue
             if m == 'END OF HEADER':
                 break
             n = m.split(' ', 1)
@@ -158,29 +173,24 @@ class mar345image(fabioimage):
     def write(self, fname):
         """Try to write mar345 file. This is still in beta version.
         It uses CCP4 (LGPL) PCK1 algo from JPA"""
-        headers = self._writeheader()
+        bin_headers = self.binary_header()
+        asc_headers = self.ascii_header("\n", 4096 - len(bin_headers)).encode("ASCII")
         hotpixels = self._high_intensity_pixel_records()
         compressed_stream = compPCK(self.data)
         try:
             outfile = self._open(fname, mode="wb")
-            outfile.write(headers)
+            outfile.write(bin_headers)
+            outfile.write(asc_headers)
             outfile.write(hotpixels)
             outfile.write(compressed_stream)
             outfile.close()
         except Exception as error:
             logger.error("Error in writing file %s: %s" % (fname, error))
 
-    def _writeheader(self, linesep="\n", size=4096):#the standard padding does not inclued
+    def binary_header(self):
         """
-        @param linesep: end of line separator
-        @return string/bytes containing the mar345 header
+        @return: Binary header of mar345 file
         """
-        try:
-            version = sys.modules["fabio"].version
-        except (KeyError, AttributeError):
-            version = "0.1.1"
-        lnsep = len(linesep)
-
         self.header["HIGH"] = str(self.nb_overflow_pixels())
         binheader = numpy.zeros(16, "int32")
         binheader[:4] = numpy.array([1234, self.dim1, int(self.header["HIGH"]), 1])
@@ -196,7 +206,22 @@ class mar345image(fabioimage):
         binheader[13] = int(float(self.header.get("OMEGA_END", 1)) * 1e3)
         binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
-        lstout = [binheader.tostring() + 'mar research'.ljust(64 - lnsep)]
+        return binheader.tostring()
+
+    def ascii_header(self, linesep="\n", size=4096):
+        """
+        @param linesep: end of line separator
+        @param size: size of the header (without the binary header)
+        @return string (unicode) containing the mar345 header
+        """
+        try:
+            version = sys.modules["fabio"].version
+        except (KeyError, AttributeError):
+            version = "0.1.1"
+        lnsep = len(linesep)
+
+
+        lstout = [ 'mar research'.ljust(64 - lnsep)]
         lstout.append("PROGRAM".ljust(15) + (str(self.header.get("PROGRAM", "FabIO Version %s" % (version))).ljust(49 - lnsep)))
         lstout.append("DATE".ljust(15) + (str(self.header.get("DATE", time.ctime()))).ljust(49 - lnsep))
         key = "SCANNER"
