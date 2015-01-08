@@ -342,7 +342,7 @@ def isAscii(name, listExcluded=None):
     """
     isascii = None
     try:
-        name.decode("ascii")
+        name.encode("ASCII")
     except UnicodeDecodeError:
         isascii = False
     else:
