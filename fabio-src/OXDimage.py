@@ -25,11 +25,7 @@ logger = logging.getLogger("OXDimage")
 import numpy
 from .fabioimage import fabioimage
 from .compression import decTY1, compTY1
-from .third_party import six
-if six.PY3:
-    to_str = lambda s: str(s, "ASCII")
-else:
-    to_str = lambda s: str(s)
+from .fabioutils import to_str
 
 try:
     from numpy import rad2deg, deg2rad
