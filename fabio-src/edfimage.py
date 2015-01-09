@@ -328,10 +328,10 @@ class Frame(object):
         """
         @param force_type: type of the dataset to be enforced like "float64" or "uint16"
         @type force_type: string or numpy.dtype
-        @param fit2dMode: enforce compatibility with fit2d and starts countimg number of images at 1
+        @param fit2dMode: enforce compatibility with fit2d and starts counting number of images at 1
         @type fit2dMode: boolean
-        @return: ascii header block
-        @rtype: python string with the concatenation of the ascii header and the binary data block
+        @return: ascii header block + binary data block
+        @rtype: python bytes with the concatenation of the ascii header and the binary data block
         """
         if force_type is not None:
             data = self.data.astype(force_type)
@@ -429,7 +429,7 @@ class Frame(object):
         else:
             headerSize = approxHeaderSize
         listHeader.append(" "*(headerSize - preciseSize) + "}\n")
-        return "".join(listHeader) + data.tostring()
+        return ("".join(listHeader)).encode("ASCII") + data.tostring()
 
 
 

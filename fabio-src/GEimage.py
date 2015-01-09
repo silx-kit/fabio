@@ -12,10 +12,10 @@
 # modifications by Jon Wright for style, pychecker and fabio
 #
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli" , "Jon Wright", "Jérôme Kieffer"]
-__date__ = "08/01/2015"
+__date__ = "09/01/2015"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "GPL"
