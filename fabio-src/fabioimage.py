@@ -335,6 +335,9 @@ class fabioimage(object):
         by default pass in a dict of key, values.
         """
         self.header.update(kwds)
+        for key in kwds:
+            if key not in self.header_keys:
+                 self.header_keys.append(key)
 
     def read(self, filename, frame=None):
         """

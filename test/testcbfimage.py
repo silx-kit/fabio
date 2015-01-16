@@ -16,6 +16,7 @@ import os
 import numpy
 import gzip
 import bz2
+import time
 
 try:
     from .utilstest import UtilsTest
@@ -26,8 +27,9 @@ logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.cbfimage import cbfimage
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
-import time
-
+from fabio.third_party.six import PY3
+if PY3:
+    from fabio.fabioutils import unicode
 
 class TestCbfReader(unittest.TestCase):
     """ test cbf image reader """
