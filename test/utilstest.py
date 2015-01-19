@@ -38,6 +38,7 @@ DATA_KEY = "FABIO_DATA"
 import os
 import imp
 import sys
+import getpass
 import subprocess
 import threading
 import distutils.util
@@ -140,7 +141,7 @@ class UtilsTest(object):
                 ALL_DOWNLOADED_FILES = set(json.load(f))
         else:
             ALL_DOWNLOADED_FILES = set()
-    tempdir = tempfile.mkdtemp("_" + os.getlogin(), name + "_")
+    tempdir = tempfile.mkdtemp("_" + getpass.getuser(), name + "_")
 
     @classmethod
     def deep_reload(cls):
