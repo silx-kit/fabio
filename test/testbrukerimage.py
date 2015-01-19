@@ -67,7 +67,7 @@ class TestBruker(unittest.TestCase):
 
         noverfl = int(MYHEADER['NOVERFL'])
         for ovf in OVERFLOWS:
-            fout.write(ovf[0] + ovf[1])
+            fout.write((ovf[0] + ovf[1]).encode("ASCII"))
         fout.write(b'.' * (512 - (16 * noverfl) % 512))
 
     def test_read(self):
