@@ -3,7 +3,7 @@
 """
 #bruker Unit tests
 
-#built on testedfimage
+#built on testbrukerimage
 19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
@@ -23,14 +23,14 @@ from fabio.brukerimage import brukerimage
 # this is actually a violation of the bruker format since the order of
 # the header items is specified
 # in the standard, whereas the order of a python dictionary is not
-MYHEADER = {"FORMAT":'86',
-            'NPIXELB':'2',
-            'VERSION':'9',
-            'HDRBLKS':'5',
-            'NOVERFL':'4',
-            'NCOLS':'256',
-            'NROWS':'256',
-            'WORDORD':'0'}
+MYHEADER = {"FORMAT": '86',
+            'NPIXELB': '2',
+            'VERSION': '9',
+            'HDRBLKS': '5',
+            'NOVERFL': '4',
+            'NCOLS': '256',
+            'NROWS': '256',
+            'WORDORD': '0'}
 
 MYIMAGE = numpy.ones((256, 256), numpy.uint16) * 16
 MYIMAGE[0, 0] = 0
@@ -55,19 +55,19 @@ class TestBruker(unittest.TestCase):
             fout = open(self.filename, 'wb')
             wrb = 0
             for key, val in MYHEADER.items():
-                fout.write(("%-7s" % key) + ':' + ("%-72s" % val))
+                fout.write(("%-7s" % key) + ':' + ("%-72s" % val).encode("ASCII"))
                 wrb = wrb + 80
             hdrblks = int(MYHEADER['HDRBLKS'])
             while (wrb < hdrblks * 512):
-                fout.write("\x1a\x04")
-                fout.write('.' * 78)
+                fout.write(b"\x1a\x04")
+                fout.write(b'.' * 78)
                 wrb = wrb + 80
             fout.write(MYIMAGE.tostring())
 
             noverfl = int(MYHEADER['NOVERFL'])
             for ovf in OVERFLOWS:
                 fout.write(ovf[0] + ovf[1])
-            fout.write('.' * (512 - (16 * noverfl) % 512))
+            fout.write(b'.' * (512 - (16 * noverfl) % 512))
 
     def test_read(self):
         """ see if we can read the test image """
