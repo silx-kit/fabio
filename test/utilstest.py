@@ -140,7 +140,6 @@ class UtilsTest(object):
                 ALL_DOWNLOADED_FILES = set(json.load(f))
         else:
             ALL_DOWNLOADED_FILES = set()
-
     tempdir = tempfile.mkdtemp("_" + os.getlogin(), name + "_")
 
     @classmethod
@@ -233,16 +232,9 @@ class UtilsTest(object):
                 opener = urlopen
 
 #           Nota: since python2.6 there is a timeout in the urllib2
-            timer = threading.Timer(cls.timeout + 1, cls.timeoutDuringDownload, args=[imagename])
-            timer.start()
             logger.info("wget %s/%s" % (cls.url_base, imagename))
-            if sys.version > (2, 6):
-                data = opener("%s/%s" % (cls.url_base, imagename),
-                              data=None, timeout=cls.timeout).read()
-            else:
-                data = opener("%s/%s" % (cls.url_base, imagename),
-                              data=None).read()
-            timer.cancel()
+            data = opener("%s/%s" % (cls.url_base, imagename),
+                          data=None, timeout=cls.timeout).read()
             logger.info("Image %s successfully downloaded." % baseimage)
 
             try:
