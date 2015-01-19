@@ -342,7 +342,7 @@ class UtilsTest(object):
         basename = os.path.splitext(basename)[0]
         force_build = False
         force_remove = False
-        level = logging.WARN
+        level = logging.root.level
         if options.debug:
             level = logging.DEBUG
         elif options.info:
