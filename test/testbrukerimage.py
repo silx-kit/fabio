@@ -47,7 +47,7 @@ OVERFLOWS = [
 
 class TestBruker(unittest.TestCase):
     """basic test"""
-    filename = os.path.join(UtilsTest.image_home, "image.0000")
+    filename = os.path.join(UtilsTest.tempdir, "image.0000")
 
     def setUp(self):
         """ Generate a test bruker image """
