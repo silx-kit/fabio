@@ -7,8 +7,9 @@ packages provided for the most common platforms on sourceforge:
 Windows, MacOSX and Linux. Moreover FabIO is part of the common
 Linux distributions Ubuntu (since 11.10) and Debian7 where the
 package is named python-fabio and can be installed via:
-::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+::
     # apt-get install python-fabio
 
 If you are using MS Windows or MacOSX; binary version have been packaged.
@@ -41,6 +42,7 @@ Download either one and unpack it.
     http://sourceforge.net/projects/fable/files/fabio/
 
 e.g.
+
 ::
 
     tar xvzf fabio-0.1.4.tar.gz
@@ -109,18 +111,36 @@ Be sure you have an internet connection and your environment variable http_proxy
 
    export http_proxy=http://proxy.site.org:3128
 
+Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files", it is done on purpose to ensure robustness in FabIO.
+
+
+Run test suite from installation directory
+..........................................
 
 To run the test:
 
 ::
 
-   python setup.py test   
+   python setup.py build test   
 
-Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files", it is done on purpose to ensure robustness in FabIO. 
-  
+
+Run test suite from installed version
+.....................................
+
+Within Python:
+
+.. code-block:: python
+
+   import fabio
+   fabio.tests()   
+
+
+Test coverage
+-------------
+
 FabIO comes with 25 test-suites (110 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with python versions 2.6 and 2.7.
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2 and 3.4.
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"

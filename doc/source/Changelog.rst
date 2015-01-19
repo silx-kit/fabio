@@ -1,11 +1,12 @@
 Changelog
 =========
 
-From FabIO-0.1.4 to FabIO-0.1.5:
+From FabIO-0.1.4 to FabIO-0.2.0:
 ................................
-- Work on compatibility with Python3
+- Compatibility with Python3 (tested on Python 2.6, 2.7, 3.2 and 3.4)
 - Support for Mar555 flat panel
-
+- Optimization of CBF reader (about 2x faster)
+- include tests into installed module (and download in /tmp)
 
 From FabIO-0.1.3 to FabIO-0.1.4:
 ................................
