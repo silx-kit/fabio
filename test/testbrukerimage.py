@@ -51,7 +51,7 @@ class TestBruker(unittest.TestCase):
 
     def setUp(self):
         """ Generate a test bruker image """
-        if not os.path.isfile(self.filename):
+        if os.path.isfile(self.filename):
             os.unlink(self.filename)
         fout = open(self.filename, 'wb')
         wrb = 0
