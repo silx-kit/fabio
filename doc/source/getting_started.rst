@@ -201,15 +201,6 @@ native output in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
 dependency, to be able to read and write such HDF5 files.
 
-In the near future FabIO will be upgraded to work with Python3 (a
-new version of Python); this change of version will affect some
-internals FabIO as string and file handling have been altered. This
-change is already ongoing as many parts of native code in C have
-already been translated into Cython to smoothe the
-transition, since Cython generates code compatible with Python3.
-This also makes it easier to retain backwards compatibility with
-the earlier Python versions.
-
 Conclusion
 ----------
 
