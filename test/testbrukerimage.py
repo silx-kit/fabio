@@ -4,7 +4,7 @@
 #bruker Unit tests
 
 #built on testedfimage
-28/11/2014
+19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
@@ -14,7 +14,7 @@ import gzip
 import bz2
 try:
     from .utilstest import UtilsTest
-except ValueError:
+except (ValueError, SystemError):
     from utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)

@@ -7,7 +7,7 @@
 Unit tests for CBF images based on references images taken from:
 http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 
-28/11/2014
+19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
@@ -20,7 +20,7 @@ import time
 
 try:
     from .utilstest import UtilsTest
-except ValueError:
+except (ValueError, SystemError):
     from utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)

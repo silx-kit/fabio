@@ -12,7 +12,7 @@ import sys
 import os
 try:
     from .utilstest import UtilsTest
-except ValueError:
+except (ValueError, SystemError):
     from utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]

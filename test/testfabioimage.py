@@ -16,7 +16,7 @@ import bz2
 
 try:
     from .utilstest import UtilsTest
-except ValueError:
+except (ValueError, SystemError):
     from utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
@@ -208,10 +208,12 @@ def test_suite_all_fabio():
     testSuite.addTest(testopen("testgz"))
     testSuite.addTest(testopen("testbz2"))
 
-    testSuite.addTest(testPILimage("testpil"))
-    testSuite.addTest(testPILimage2("testpil"))
-    testSuite.addTest(testPILimage3("testpil"))
-
+    if fabio.fabioimage.Image is not None:
+        testSuite.addTest(testPILimage("testpil"))
+        testSuite.addTest(testPILimage2("testpil"))
+        testSuite.addTest(testPILimage3("testpil"))
+    else:
+        logger.warning("Skipping PIL related tests")
     return testSuite
 
 if __name__ == '__main__':
