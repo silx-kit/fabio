@@ -10,7 +10,7 @@ import unittest
 import sys
 try:
     from . import utilstest
-except ValueError:
+except ValueError, SystemError:
     import utilstest
 
 logger = utilstest.UtilsTest.get_logger(__file__)
