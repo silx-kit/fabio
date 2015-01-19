@@ -55,7 +55,7 @@ class TestBruker(unittest.TestCase):
             fout = open(self.filename, 'wb')
             wrb = 0
             for key, val in MYHEADER.items():
-                fout.write(("%-7s" % key) + ':' + ("%-72s" % val).encode("ASCII"))
+                fout.write((("%-7s" % key) + ':' + ("%-72s" % val)).encode("ASCII"))
                 wrb = wrb + 80
             hdrblks = int(MYHEADER['HDRBLKS'])
             while (wrb < hdrblks * 512):
