@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from __future__ import print_function, division
+from __future__ import print_function, division, with_statement, absolute_import
 
 """
 Setup script for python distutils package and fabio
@@ -48,8 +48,8 @@ cf_backend = Extension('cf_io',
                        include_dirs=[np.get_include()],
                        sources=['src/cf_io' + ext, 'src/columnfile.c'])
 byteOffset_backend = Extension("byte_offset",
-                       include_dirs=[np.get_include()],
-                       sources=['src/byte_offset' + ext])
+                               include_dirs=[np.get_include()],
+                               sources=['src/byte_offset' + ext])
 
 mar345_backend = Extension('mar345_IO',
                            include_dirs=[np.get_include()],
@@ -57,8 +57,8 @@ mar345_backend = Extension('mar345_IO',
                                     'src/ccp4_pack.c',
                                       ])
 _cif_backend = Extension('_cif',
-                           include_dirs=[np.get_include()],
-                           sources=['src/_cif' + ext])
+                         include_dirs=[np.get_include()],
+                         sources=['src/_cif' + ext])
 
 
 extensions = [cf_backend, byteOffset_backend, mar345_backend, _cif_backend]
@@ -90,19 +90,25 @@ if sphinx:
             build = self.get_finalized_command('build')
             print(op.abspath(build.build_lib))
             sys.path.insert(0, op.abspath(build.build_lib))
-            # we need to reload PyMca from the build directory and not
-            # the one from the source directory which does not contain
-            # the extensions
-            BuildDoc.run(self)
+            # Build the Users Guide in HTML and TeX format
+            for builder in ('html', 'latex'):
+                self.builder = builder
+                self.builder_target_dir = os.path.join(self.build_dir, builder)
+                self.mkpath(self.builder_target_dir)
+                BuildDoc.run(self)
             sys.path.pop(0)
     cmdclass['build_doc'] = build_doc
 
+
 class PyTest(Command):
     user_options = []
+
     def initialize_options(self):
         pass
+
     def finalize_options(self):
         pass
+
     def run(self):
         import subprocess
         os.chdir(op.join(op.dirname(op.abspath(__file__)), "test"))
@@ -111,29 +117,30 @@ class PyTest(Command):
             raise SystemExit(errno)
         else:
             os.chdir("..")
+
 cmdclass['test'] = PyTest
 
 # We subclass the build_ext class in order to handle compiler flags
 # for openmp and opencl etc in a cross platform way
 translator = {
         # Compiler
-            # name, compileflag, linkflag
-        'msvc' : {
-            'openmp' : ('/openmp', ' '),
-            'debug'  : ('/Zi', ' '),
-            'OpenCL' : 'OpenCL',
+          # name, compileflag, linkflag
+        'msvc':{
+            'openmp': ('/openmp', ' '),
+            'debug' : ('/Zi', ' '),
+            'OpenCL': 'OpenCL',
             },
         'mingw32':{
-            'openmp' : ('-fopenmp', '-fopenmp'),
-            'debug'  : ('-g', '-g'),
-            'stdc++' : 'stdc++',
-            'OpenCL' : 'OpenCL'
+            'openmp': ('-fopenmp', '-fopenmp'),
+            'debug' : ('-g', '-g'),
+            'stdc++': 'stdc++',
+            'OpenCL': 'OpenCL'
             },
         'default':{
-            'openmp' : ('-fopenmp', '-fopenmp'),
-            'debug'  : ('-g', '-g'),
-            'stdc++' : 'stdc++',
-            'OpenCL' : 'OpenCL'
+            'openmp': ('-fopenmp', '-fopenmp'),
+            'debug' : ('-g', '-g'),
+            'stdc++': 'stdc++',
+            'OpenCL': 'OpenCL'
             }
         }
 
@@ -146,12 +153,11 @@ class build_ext_FabIO(build_ext):
             trans = translator['default']
 
         for e in self.extensions:
-            e.extra_compile_args = [ trans[a][0] if a in trans else a
+            e.extra_compile_args = [trans[a][0] if a in trans else a
                                     for a in e.extra_compile_args]
-            e.extra_link_args = [ trans[a][1] if a in trans else a
+            e.extra_link_args = [trans[a][1] if a in trans else a
                                  for a in e.extra_link_args]
-            e.libraries = list(filter(None, [ trans[a] if a in trans else None
-                                        for a in e.libraries]))
+            e.libraries = [trans[arg] for arg in e.libraries if arg in trans]
         build_ext.build_extensions(self)
 cmdclass['build_ext'] = build_ext_FabIO
 

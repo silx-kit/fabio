@@ -1,7 +1,10 @@
+Benchmarks
+==========
+
 Those benchmarks have been done with all data already in cache using a Intel Xeon E5520  @ 2.27GHz
 running Debian 7.
 
-.. table:: Execution time for reading a file, banchmarked using the ``timeit'' module. :label:`Benchmark`
+.. table:: Execution time for reading a file, benchmarked using the ``timeit'' module. :label:`Benchmark`
     :class: w
 
     +---------------+---------------------------+--------+--------------+--------------+--------------+
@@ -35,3 +38,6 @@ running Debian 7.
     +---------------+---------------------------+--------+--------------+--------------+--------------+
     | xsdimage      | XSDataImage.xml           | 256kpix|  13.3 ms     | 12.9 ms      | 18.4 ms      |
     +---------------+---------------------------+--------+--------------+--------------+--------------+
+    
+The Python3 version is sometimes twice slower then the Python2 version. As the codebase is essentially the
+same this regression is not due to FabIO but to the programming language itself (the code is the same !)

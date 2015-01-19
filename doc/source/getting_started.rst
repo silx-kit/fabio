@@ -156,7 +156,7 @@ can be employed.
 
 Opening an image:
 
-::
+.. code-block:: python
 
     import fabio
     im100 = fabio.open('Quartz_0100.tif') # Open image file
@@ -166,7 +166,7 @@ Opening an image:
 
 Normalising the intensity to a value in the header:
 
-::
+.. code-block:: python
 
     img = fabio.open('exampleimage0001.edf')
     print(img.header)
@@ -182,7 +182,7 @@ Normalising the intensity to a value in the header:
 
 Interactive viewing with matplotlib:
 
-::
+.. code-block:: python
 
     from matplotlib import pyplot       # Load matplotlib
     pyplot.imshow(img.data)             # Display as an image

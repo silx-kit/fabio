@@ -37,9 +37,8 @@ class TestCbfReader(unittest.TestCase):
     def __init__(self, methodName):
         "Constructor of the class"
         unittest.TestCase.__init__(self, methodName)
-        testimgdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testimages")
-        self.edf_filename = os.path.join(testimgdir, "run2_1_00148.edf")
-        self.cbf_filename = os.path.join(testimgdir, "run2_1_00148.cbf")
+        self.edf_filename = os.path.join(UtilsTest.image_home, "run2_1_00148.edf")
+        self.cbf_filename = os.path.join(UtilsTest.image_home, "run2_1_00148.cbf")
 
     def setUp(self):
         """Download images"""
