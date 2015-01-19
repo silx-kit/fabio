@@ -78,27 +78,14 @@ class TestCbfReader(unittest.TestCase):
     def test_byte_offset(self):
         """ check byte offset algorythm"""
         cbf = fabio.open(self.cbf_filename)
-        starter = "\x0c\x1a\x04\xd5"
-        startPos = cbf.cif["_array_data.data"].find(starter) + 4
-        data = cbf.cif["_array_data.data"][startPos: startPos + int(cbf.header["X-Binary-Size"])]
+        starter = b"\x0c\x1a\x04\xd5"
+        cbs = cbf.cbs
+        startPos = cbs.find(starter) + 4
+        data = cbs[startPos: startPos + int(cbf.header["X-Binary-Size"])]
         startTime = time.time()
         numpyRes = decByteOffset_numpy(data, size=cbf.dim1 * cbf.dim2)
         tNumpy = time.time() - startTime
         logger.info("Timing for Numpy method : %.3fs" % tNumpy)
-
-#        startTime = time.time()
-#        weaveRes = cbfimage.analyseWeave(data, size=cbf.dim1 * cbf.dim2)
-#        tWeave = time.time() - startTime
-#        delta = abs(numpyRes - weaveRes).max()
-#        self.assertAlmostEqual(0, delta)
-#        logger.info("Timing for Weave method : %.3fs, max delta=%s" % (tWeave, delta))
-#
-#        startTime = time.time()
-#        pythonRes = decByteOffset_numpy(data, size=cbf.dim1 * cbf.dim2)
-#        tPython = time.time() - startTime
-#        delta = abs(numpyRes - pythonRes).max()
-#        self.assertAlmostEqual(0, delta)
-#        logger.info("Timing for Python method : %.3fs, max delta= %s" % (tPython, delta))
 
         startTime = time.time()
         cythonRes = decByteOffset_cython(stream=data, size=cbf.dim1 * cbf.dim2)

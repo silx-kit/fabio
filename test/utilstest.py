@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "28/11/2014"
+__date__ = "19/01/2015"
 
 PACKAGE = "fabio"
 SOURCES = PACKAGE + "-src"
@@ -363,6 +363,7 @@ class UtilsTest(object):
         mylogger = logging.getLogger(basename)
         logger.setLevel(level)
         mylogger.setLevel(level)
+        logging.root.setLevel(level)
         mylogger.debug("tests loaded from file: %s" % basename)
         if force_build:
             UtilsTest.forceBuild(force_remove)
