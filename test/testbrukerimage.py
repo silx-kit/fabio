@@ -54,7 +54,7 @@ class TestBruker(unittest.TestCase):
         if not os.path.isfile(self.filename):
             fout = open(self.filename, 'wb')
             wrb = 0
-            for key, val in MYHEADER.iteritems():
+            for key, val in MYHEADER.items():
                 fout.write(("%-7s" % key) + ':' + ("%-72s" % val))
                 wrb = wrb + 80
             hdrblks = int(MYHEADER['HDRBLKS'])
