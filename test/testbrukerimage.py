@@ -52,22 +52,23 @@ class TestBruker(unittest.TestCase):
     def setUp(self):
         """ Generate a test bruker image """
         if not os.path.isfile(self.filename):
-            fout = open(self.filename, 'wb')
-            wrb = 0
-            for key, val in MYHEADER.items():
-                fout.write((("%-7s" % key) + ':' + ("%-72s" % val)).encode("ASCII"))
-                wrb = wrb + 80
-            hdrblks = int(MYHEADER['HDRBLKS'])
-            while (wrb < hdrblks * 512):
-                fout.write(b"\x1a\x04")
-                fout.write(b'.' * 78)
-                wrb = wrb + 80
-            fout.write(MYIMAGE.tostring())
+            os.unlink(self.filename)
+        fout = open(self.filename, 'wb')
+        wrb = 0
+        for key, val in MYHEADER.items():
+            fout.write((("%-7s" % key) + ':' + ("%-72s" % val)).encode("ASCII"))
+            wrb = wrb + 80
+        hdrblks = int(MYHEADER['HDRBLKS'])
+        while (wrb < hdrblks * 512):
+            fout.write(b"\x1a\x04")
+            fout.write(b'.' * 78)
+            wrb = wrb + 80
+        fout.write(MYIMAGE.tostring())
 
-            noverfl = int(MYHEADER['NOVERFL'])
-            for ovf in OVERFLOWS:
-                fout.write(ovf[0] + ovf[1])
-            fout.write(b'.' * (512 - (16 * noverfl) % 512))
+        noverfl = int(MYHEADER['NOVERFL'])
+        for ovf in OVERFLOWS:
+            fout.write(ovf[0] + ovf[1])
+        fout.write(b'.' * (512 - (16 * noverfl) % 512))
 
     def test_read(self):
         """ see if we can read the test image """
@@ -83,9 +84,10 @@ class TestBzipBruker(TestBruker):
     def setUp(self):
         """ create the image """
         TestBruker.setUp(self)
-        if not os.path.isfile(self.filename + ".bz2"):
-            bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
-            self.filename += ".bz2"
+        if os.path.isfile(self.filename + ".bz2"):
+            os.unlink(self.filename + ".bz2")
+        bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
+        self.filename = self.filename + ".bz2"
 
 
 class TestGzipBruker(TestBruker):
@@ -93,10 +95,10 @@ class TestGzipBruker(TestBruker):
     def setUp(self):
         """ Create the image """
         TestBruker.setUp(self)
-        if not os.path.isfile(self.filename + ".gz"):
-            gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
-#            os.system("gzip %s" % (self.filename))
-            self.filename += ".gz"
+        if os.path.isfile(self.filename + ".gz"):
+            os.unlink(self.filename + ".gz")
+        gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
+        self.filename = self.filename + ".gz"
 
 
 class TestBrukerLinear(unittest.TestCase):
