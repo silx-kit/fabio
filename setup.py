@@ -165,6 +165,26 @@ cmdclass['build_ext'] = build_ext_FabIO
 ################################################################################
 # Debian source tree
 ################################################################################
+def download_images():
+    """
+    Download all test images and  
+    """
+    test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test")
+    sys.path.insert(0, test_dir)
+    from utilstest import UtilsTest
+    for afile in UtilsTest.ALL_DOWNLOADED_FILES.copy():
+        if afile.endswith(".bz2"):
+            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-4] + ".gz")
+            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-4])
+        elif afile.endswith(".gz"):
+            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-3] + ".bz2")
+            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-3])
+        else:
+            UtilsTest.ALL_DOWNLOADED_FILES.add(afile + ".gz")
+            UtilsTest.ALL_DOWNLOADED_FILES.add(afile + ".bz2")
+    UtilsTest.download_images()
+    return list(UtilsTest.ALL_DOWNLOADED_FILES)
+
 
 class sdist_debian(sdist):
     """
@@ -188,9 +208,11 @@ class sdist_debian(sdist):
         for ex in ["argparse", "gzip"]:
             self.filelist.exclude_pattern(pattern=ex + ".py", anchor=True, prefix="fabio-src")
         print("Adding test_files for debian")
-        self.filelist.allfiles += (glob.glob("test/testimages/*"))
-        self.filelist.include_pattern(pattern="*.bz2", anchor=True,
-                                     prefix="test/testimages")
+
+        self.filelist.allfiles += [op.join("test", "testimages", i) \
+                                   for i in download_images()]
+        self.filelist.include_pattern(pattern="*", anchor=True,
+                                      prefix="test/testimages")
 
     def make_distribution(self):
         sdist.make_distribution(self)
@@ -232,40 +254,40 @@ if sys.platform == "win32":
 else:
     script_files = glob.glob("scripts/*")
 
-
-setup(name='fabio',
-      version=version,
-      author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
-      author_email="fable-talk@lists.sourceforge.net",
-      description='Image IO for fable',
-      url="http://fable.wiki.sourceforge.net/fabio",
-      download_url="http://sourceforge.net/projects/fable/files/fabio/0.1.4",
-      ext_package="fabio",
-      ext_modules=extensions,
-      packages=["fabio", "fabio.third_party", "fabio.test"],
-      package_dir={"fabio": "fabio-src",
-                   "fabio.third_party": "third_party",
-                   "fabio.test": "test"
-                   },
-      test_suite="test",
-      cmdclass=cmdclass,
-      scripts=script_files,
-      classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Environment :: Console',
-          'Intended Audience :: End Users/Desktop',
-          'Intended Audience :: Developers',
-          'Intended Audience :: Science/Research',
-          "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
-          'Operating System :: MacOS :: MacOS X',
-          'Operating System :: Microsoft :: Windows',
-          'Operating System :: POSIX',
-          'Programming Language :: Python',
-          'Programming Language :: Cython',
-          'Programming Language :: C',
-          'Topic :: Scientific/Engineering :: Chemistry',
-          'Topic :: Scientific/Engineering :: Bio-Informatics',
-          'Topic :: Scientific/Engineering :: Physics',
-          'Topic :: Scientific/Engineering :: Visualization',
-          'Topic :: Software Development :: Libraries :: Python Modules',
-          ],)
+if __name__ == "__main__":
+    setup(name='fabio',
+          version=version,
+          author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
+          author_email="fable-talk@lists.sourceforge.net",
+          description='Image IO for fable',
+          url="http://fable.wiki.sourceforge.net/fabio",
+          download_url="http://sourceforge.net/projects/fable/files/fabio/0.1.4",
+          ext_package="fabio",
+          ext_modules=extensions,
+          packages=["fabio", "fabio.third_party", "fabio.test"],
+          package_dir={"fabio": "fabio-src",
+                       "fabio.third_party": "third_party",
+                       "fabio.test": "test"
+                       },
+          test_suite="test",
+          cmdclass=cmdclass,
+          scripts=script_files,
+          classifiers=[
+              'Development Status :: 5 - Production/Stable',
+              'Environment :: Console',
+              'Intended Audience :: End Users/Desktop',
+              'Intended Audience :: Developers',
+              'Intended Audience :: Science/Research',
+              "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+              'Operating System :: MacOS :: MacOS X',
+              'Operating System :: Microsoft :: Windows',
+              'Operating System :: POSIX',
+              'Programming Language :: Python',
+              'Programming Language :: Cython',
+              'Programming Language :: C',
+              'Topic :: Scientific/Engineering :: Chemistry',
+              'Topic :: Scientific/Engineering :: Bio-Informatics',
+              'Topic :: Scientific/Engineering :: Physics',
+              'Topic :: Scientific/Engineering :: Visualization',
+              'Topic :: Software Development :: Libraries :: Python Modules',
+              ],)

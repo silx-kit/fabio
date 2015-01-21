@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "19/01/2015"
+__date__ = "21/01/2015"
 
 PACKAGE = "fabio"
 SOURCES = PACKAGE + "-src"
@@ -48,9 +48,6 @@ import gzip
 import json
 import tempfile
 
-# print("ENVIRON at begin of tests...")
-# for k, v in os.environ.items():
-#     print("%s: %s" % (k, v))
 
 try:  # Python3
     from urllib.request import urlopen, ProxyHandler, build_opener
@@ -209,10 +206,9 @@ class UtilsTest(object):
         For the RedMine forge, the filename contains a directory name that is removed
         @return: full path of the locally saved file
         """
-        if imagename not in cls.ALL_DOWNLOADED_FILES:
-            cls.ALL_DOWNLOADED_FILES.add(imagename)
-            with open(cls.testimages, "w") as fp:
-                json.dump(list(cls.ALL_DOWNLOADED_FILES), fp)
+        cls.ALL_DOWNLOADED_FILES.add(imagename)
+        with open(cls.testimages, "w") as fp:
+            json.dump(list(cls.ALL_DOWNLOADED_FILES), fp, indent=4)
 
         baseimage = os.path.basename(imagename)
         logger.info("UtilsTest.getimage('%s')" % baseimage)
@@ -232,7 +228,6 @@ class UtilsTest(object):
             else:
                 opener = urlopen
 
-#           Nota: since python2.6 there is a timeout in the urllib2
             logger.info("wget %s/%s" % (cls.url_base, imagename))
             data = opener("%s/%s" % (cls.url_base, imagename),
                           data=None, timeout=cls.timeout).read()
@@ -303,12 +298,18 @@ class UtilsTest(object):
             imgs = cls.ALL_DOWNLOADED_FILES
         for fn in imgs:
             print("Downloading from internet: %s" % fn)
+            if fn[-4:] != ".bz2":
+                if fn[-3:] == ".gz":
+                    fn = fn[:-2] + "bz2"
+                else:
+                    fn = fn + ".bz2"
+                print("  actually " + fn)
             cls.getimage(fn)
 
     @classmethod
     def get_options(cls):
         """
-        Parse the command line to analyse options ... returns options
+        Parse the command line to analyze options ... returns options
         """
         if cls.options is None:
             try:
