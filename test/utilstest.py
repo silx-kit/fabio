@@ -124,9 +124,11 @@ class UtilsTest(object):
                 sys.argv.append("-r")
     else:
         try:
-            directories = __import__("%s.directories" % name)
+            fabio = __import__(name)
+            directories = fabio.directories
             image_home = directories.testimages
-        except:
+        except Exception as err:
+            logger.warning("in loading directories %s", err)
             image_home = None
         if image_home is None:
             image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, os.getlogin()))
