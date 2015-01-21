@@ -124,17 +124,17 @@ class UtilsTest(object):
                 sys.argv.append("-r")
     else:
         try:
-            fabio = __import__(name)
+            fabio = __import__("%s.directories" % name)
             directories = fabio.directories
             image_home = directories.testimages
         except Exception as err:
             logger.warning("in loading directories %s", err)
             image_home = None
         if image_home is None:
-            image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, os.getlogin()))
+            image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, getpass.getuser()))
             if not os.path.exists(image_home):
                 os.makedirs(image_home)
-        testimages = os.path.join(image_home, "all_testimages.json")
+        testimages = os.path.join(TEST_HOME, "all_testimages.json")
         if os.path.exists(testimages):
             with open(testimages) as f:
                 ALL_DOWNLOADED_FILES = set(json.load(f))
@@ -209,9 +209,11 @@ class UtilsTest(object):
         @return: full path of the locally saved file
         """
         cls.ALL_DOWNLOADED_FILES.add(imagename)
-        with open(cls.testimages, "w") as fp:
-            json.dump(list(cls.ALL_DOWNLOADED_FILES), fp, indent=4)
-
+        try:
+            with open(cls.testimages, "w") as fp:
+                json.dump(list(cls.ALL_DOWNLOADED_FILES), fp, indent=4)
+        except IOError:
+            logger.debug("Unable to save JSON list")
         baseimage = os.path.basename(imagename)
         logger.info("UtilsTest.getimage('%s')" % baseimage)
         fullimagename = os.path.abspath(os.path.join(cls.image_home, baseimage))
