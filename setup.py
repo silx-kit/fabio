@@ -63,9 +63,10 @@ _cif_backend = Extension('_cif',
 
 extensions = [cf_backend, byteOffset_backend, mar345_backend, _cif_backend]
 
-version = [eval(l.split("=")[1])
-           for l in open(op.join(op.dirname(op.abspath(__file__)), "fabio-src", "__init__.py"))
-           if l.strip().startswith("version")][0]
+sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
+import _version
+sys.path.pop(0)
+version = _version.version
 #######################
 # build_doc commandes #
 #######################
