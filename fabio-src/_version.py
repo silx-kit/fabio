@@ -1,6 +1,7 @@
 
 from collections import namedtuple
 _version_info = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
+
 MAJOR = 0
 MINOR = 2
 MICRO = 1
@@ -30,3 +31,4 @@ hexversion |= RELEASE_LEVEL_VALUE.get(version_info[3], 0) * 1 << 4
 hexversion |= version_info[2] * 1 << 8
 hexversion |= version_info[1] * 1 << 16
 hexversion |= version_info[0] * 1 << 24
+

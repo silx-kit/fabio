@@ -20,8 +20,7 @@ __licence__ = "GPL"
 import sys
 import os
 import time
-import h5py
-from PyQt4.QtCore import QDir, Qt, SIGNAL, QObject, QRect, QString, QCoreApplication
+from PyQt4.QtCore import QDir, Qt, QRect, QString, QCoreApplication
 from PyQt4.QtGui import QLabel, QVBoxLayout, QWidget, QSplitter, QListWidget, \
                         QComboBox, QApplication, QStyleFactory, QHBoxLayout, \
                         QTabWidget, QPlainTextEdit, QPushButton, QGroupBox, \
@@ -36,6 +35,7 @@ except AttributeError:
 
 import numpy
 import fabio
+from fabio.nexus import Nexus
 numpy.seterr(divide='ignore')
 
 import matplotlib
@@ -136,8 +136,8 @@ class AppForm(QMainWindow):
                             img = fabio.open(fname)
                         except:
                             QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or perhaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                            Dial = binDialog(self)
-                            dim1, dim2, offset, bytecode, endian = Dial.exec_()
+                            dial = BinDialog(self)
+                            dim1, dim2, offset, bytecode, endian = dial.exec_()
                             if dim1 is not None and dim2 is not None:
                                 if endian == 'Short':
                                     endian = '<'
@@ -181,27 +181,28 @@ class AppForm(QMainWindow):
             self.sequential_file_dict = {}
             self.imagelistWidget.clear()
             self.headerTextEdit.clear()
-            hdf = h5py.File(fname, 'r')
-            iids = numpy.array(list(hdf['data'].keys()), dtype=numpy.int32)
-            iids.sort()
-            imgDict = {}
-            extract_fname = self.extract_fname_from_path(self.remove_extention_if_present(fname))
-            self.images_list.clear()
-            safeiid = 0
-            for iid in iids:
-                self.progressBar.setValue(((iid + 1.0) / (iids.size)) * 100.)
-                self.log.appendPlainText('Extracting data from hdf5 archive, image number %d' % iid)
-                QCoreApplication.processEvents()
-                self.data_series += [numpy.array(hdf['data'][str(iid)])]
-                self.header_series += [{'Info': 'No header information available in hdf5 Archive'}]
-                imgDict[extract_fname + str(iid)] = safeiid
-                self.images_list.addItem(extract_fname + str(iid))
-                safeiid += 1
+            with Nexus(fname, 'r') as nxs:
+                entry = nxs.get_entries()[0]
+                nxdata = nxs.get_class(entry, class_type="NXdata")[0]
+                dataset = nxdata.get("data", numpy.zeros(shape=(1, 1, 1)))
+                total = dataset.shape[0]
+                imgDict = {}
+                extract_fname = self.extract_fname_from_path(self.remove_extention_if_present(fname))
+                self.images_list.clear()
+                safeiid = 0
+                for iid in range(total):
+                    self.progressBar.setValue(((iid + 1.0) / (total)) * 100.)
+                    self.log.appendPlainText('Extracting data from hdf5 archive, image number %d' % iid)
+                    QCoreApplication.processEvents()
+                    self.data_series.append(dataset[iid])
+                    self.header_series += [{'Info': 'No header information available in hdf5 Archive'}]
+                    imgDict[extract_fname + str(iid)] = safeiid
+                    self.images_list.addItem(extract_fname + str(iid))
+                    safeiid += 1
             self.statusBar().clearMessage()
             self.progressBar.setValue(0)
             self.log.appendPlainText('Hdf5 Extraction: Complete')
             self.imgDict = imgDict.copy()
-            hdf.close()
         if self.data_series:
             self.select_new_image(None, imgID=0)
 
@@ -250,20 +251,22 @@ class AppForm(QMainWindow):
                 QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
 
     def convert_and_save_to_h5(self, fname):
-
-        hdf = h5py.File(fname, 'w')
-        group = hdf.create_group('data')
-        iid = 0
-        if self.sequential_file_mode:
-            total = len(self.sequential_file_list)
-            for imgkey in self.sequential_file_list:
-                tmpfname = self.sequential_file_dict[imgkey]
+        """
+        Save a stack as Nexus entry (create a new entry in the file each time)
+        """
+        with Nexus(fname) as nxs:
+            entry = nxs.new_entry(entry="entry", program_name="fabio_viewer", title="FabIO Viewer")
+            nxdata = nxs.new_class(entry, "fabio", class_type="NXdata")
+            # Read shape:
+            if self.sequential_file_mode:
+                total = len(self.sequential_file_list)
+                tmpfname = self.sequential_file_dict[self.sequential_file_list[0]]
                 try:
                     img = fabio.open(tmpfname)
                 except:
-                    QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                    Dial = binDialog(self)
-                    dim1, dim2, offset, bytecode, endian = Dial.exec_()
+                    QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or perhaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
+                    dial = BinDialog(self)
+                    dim1, dim2, offset, bytecode, endian = dial.exec_()
                     if dim1 is not None and dim2 is not None:
                         if endian == 'Short':
                             endian = '<'
@@ -271,42 +274,64 @@ class AppForm(QMainWindow):
                             endian = '>'
                         img = fabio.binaryimage.binaryimage()
                         img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
-                        img.header = {'Info':'No header information available in binary data blocks'}
+                        img.header = {'Info': 'No header information available in binary data blocks'}
                     else:
-                        continue
-                self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
-                self.log.appendPlainText('Converting and saving file %s. saving file number %d' % (tmpfname, iid))
-                QCoreApplication.processEvents()
-                if self.transform_data_series:
-                    tmpdata = self.apply_queued_transformations(img.data)
-                else:
-                    tmpdata = img.data
-                dataset = group.create_dataset(str(iid), tmpdata.shape, 'f')
-                dataset[:] = tmpdata
-                iid += 1
-        else:
-            total = len(self.data_series)
-            for data in self.data_series:
-                self.log.appendPlainText('Saving file number %d' % iid)
-                self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
-                QCoreApplication.processEvents()
-                if self.transform_data_series:
-                    tmpdata = self.apply_queued_transformations(data)
-                else:
-                    tmpdata = data
-                dataset = group.create_dataset(str(iid), tmpdata.shape, 'f')
-                dataset[:] = tmpdata
-                iid += 1
+                        return
+                data = img.data
+            else:
+                total = len(self.data_series)
+                data = self.data_series[0]
+            if self.transform_data_series:
+                tmpdata = self.apply_queued_transformations(data)
+            else:
+                tmpdata = data
+            shape = tmpdata.shape
+            dataset = nxdata.create_dataset("data", shape=(total,) + shape, dtype=numpy.float32, chunks=(1,) + shape, compression="gzip")
+            dataset.attrs["interpretation"] = "image"
+            dataset.attrs["signal"] = "1"
+            if self.sequential_file_mode:
+                for iid, imgkey in enumerate(self.sequential_file_list):
+                    tmpfname = self.sequential_file_dict[imgkey]
+                    try:
+                        img = fabio.open(tmpfname)
+                    except:
+                        if dim1 is not None and dim2 is not None:
+                            if endian == 'Short':
+                                endian = '<'
+                            else:
+                                endian = '>'
+                            img = fabio.binaryimage.binaryimage()
+                            img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
+                            img.header = {'Info': 'No header information available in binary data blocks'}
+                        else:
+                            continue
+                    self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
+                    self.log.appendPlainText('Converting and saving file %s. saving file number %d' % (tmpfname, iid))
+                    QCoreApplication.processEvents()
+                    if self.transform_data_series:
+                        tmpdata = self.apply_queued_transformations(img.data)
+                    else:
+                        tmpdata = img.data
+                    dataset[iid] = tmpdata
+            else:
+                for iid, data in enumerate(self.data_series):
+                    self.log.appendPlainText('Saving file number %d' % iid)
+                    self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
+                    QCoreApplication.processEvents()
+                    if self.transform_data_series:
+                        tmpdata = self.apply_queued_transformations(data)
+                    else:
+                        tmpdata = data
+                    dataset[iid] = tmpdata
         self.statusBar().clear()
         self.progressBar.setValue(0)
         self.log.appendPlainText('Hdf5 Recording: Complete')
-        hdf.close()
 
     def add_extention_if_absent(self, fname, format_):
         posslash = fname.rfind("/")
         posdot = fname.rfind(".")
         if posdot > posslash:
-            return  fname
+            return fname
         else:
             return fname + format_[1:]
 
@@ -356,8 +381,8 @@ class AppForm(QMainWindow):
                     img = fabio.open(tmpfname)
                 except:
                     QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                    Dial = binDialog(self)
-                    dim1, dim2, offset, bytecode, endian = Dial.exec_()
+                    dial = BinDialog(self)
+                    dim1, dim2, offset, bytecode, endian = dial.exec_()
                     if dim1 is not None and dim2 is not None:
                         if endian == 'Short':
                             endian = '<'
@@ -586,8 +611,8 @@ class AppForm(QMainWindow):
         fname = QFileDialog.getOpenFileName(self, 'Select and import a boolean mask from binary data block file')
         fname = str(fname)
         if fname:
-            Dial = binDialog(self)
-            dim1, dim2, offset, bytecode, endian = Dial.exec_()
+            dial = BinDialog(self)
+            dim1, dim2, offset, bytecode, endian = dial.exec_()
             if dim1 is not None and dim2 is not None:
                 if endian == 'Short':
                     endian = '<'
@@ -673,8 +698,8 @@ class AppForm(QMainWindow):
         self.transformation_queue.clear()
 
     def downsample(self):
-        Dial = down_sampling_Dialog()
-        thick, start_angle, step_angle = Dial.exec_()
+        dial = down_sampling_Dialog()
+        thick, start_angle, step_angle = dial.exec_()
         if thick is not None:
             info = QFileDialog.getSaveFileNameAndFilter(self, "Save downsampled data series as multiple files", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
             if self.data_series or self.sequential_file_list:
@@ -697,8 +722,8 @@ class AppForm(QMainWindow):
                                 img = fabio.open(tmpfname)
                             except:
                                 QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                                Dial = binDialog(self)
-                                dim1, dim2, offset, bytecode, endian = Dial.exec_()
+                                dial = BinDialog(self)
+                                dim1, dim2, offset, bytecode, endian = dial.exec_()
                                 if dim1 is not None and dim2 is not None:
                                     if endian == 'Short':
                                         endian = '<'
@@ -826,8 +851,8 @@ class AppForm(QMainWindow):
                 img = fabio.open(fname)
             except:
                 QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                Dial = binDialog(self)
-                dim1, dim2, offset, bytecode, endian = Dial.exec_()
+                dial = BinDialog(self)
+                dim1, dim2, offset, bytecode, endian = dial.exec_()
                 if dim1 is not None and dim2 is not None:
                     if endian == 'Short':
                         endian = '<'
@@ -850,8 +875,8 @@ class AppForm(QMainWindow):
         self.tabWidget.setCurrentIndex(0)
 
     def set_counter_format_option(self):
-        Dial = counter_format_option_Dialog(self.counter_format)
-        self.counter_format = Dial.exec_()
+        dial = counter_format_option_Dialog(self.counter_format)
+        self.counter_format = dial.exec_()
 
     def padd_mar(self, data, format_):
         dim1, dim2 = data.shape
@@ -1333,7 +1358,7 @@ class down_sampling_Dialog(QDialog):
             return None, None, None
 
 
-class binDialog(QDialog):
+class BinDialog(QDialog):
     """Dialog containing entry for binary data block opening"""
     def __init__(self, parent=None):
         QDialog.__init__(self, parent)
