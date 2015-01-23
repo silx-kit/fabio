@@ -63,10 +63,13 @@ _cif_backend = Extension('_cif',
 
 extensions = [cf_backend, byteOffset_backend, mar345_backend, _cif_backend]
 
-sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
-import _version
-sys.path.pop(0)
-version = _version.version
+
+def get_version():
+    sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
+    import _version
+    sys.path.pop(0)
+    return _version.version
+
 #######################
 # build_doc commandes #
 #######################
@@ -257,7 +260,7 @@ else:
 
 if __name__ == "__main__":
     setup(name='fabio',
-          version=version,
+          version=get_version(),
           author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
           author_email="fable-talk@lists.sourceforge.net",
           description='Image IO for fable',
