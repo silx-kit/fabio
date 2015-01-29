@@ -126,6 +126,15 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
+
+:mod:`fabio.hdf5mage` Module
+----------------------------
+
+.. automodule:: fabio.hdf5image
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`fabio.HiPiCimage` Module
 ------------------------------
 
@@ -146,6 +155,14 @@ FabIO Package
 -------------------------------
 
 .. automodule:: fabio.mar345image
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`fabio.mrcimage` Module
+-------------------------------
+
+.. automodule:: fabio.mrcimage
     :members:
     :undoc-members:
     :show-inheritance:
@@ -174,6 +191,13 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`fabio.pixiimage` Module
+--------------------------------
+
+.. automodule:: fabio.pixiimage
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 :mod:`fabio.pnmimage` Module
 ----------------------------
@@ -183,6 +207,13 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`fabio.raxisimage` Module
+--------------------------------
+
+.. automodule:: fabio.raxisimage
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 :mod:`fabio.tifimage` Module
 ----------------------------

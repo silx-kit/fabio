@@ -1,11 +1,13 @@
 #!/usr/bin/env python
-# coding: utf8
+# coding: utf-8
 """
-Authors: Jérôme Kieffer, ESRF 
+Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
-XSDimge are XML files containing numpy arrays 
+XSDimge are XML files containing numpy arrays
 """
+# Get ready for python3:
+from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
@@ -13,7 +15,8 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging, numpy
 logger = logging.getLogger("xsdimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
+from .third_party import six
 import base64, hashlib
 try:
     from lxml import etree
@@ -21,9 +24,10 @@ except ImportError:
     logger.warning("lxml library is probably not part of your python installation: disabling xsdimage format")
     etree = None
 
+
 class xsdimage(fabioimage):
-    """ 
-    Read the XSDataImage XML File data format 
+    """
+    Read the XSDataImage XML File data format
     """
     def __init__(self, data=None, header=None, fname=None):
         """
@@ -84,7 +88,7 @@ class xsdimage(fabioimage):
 
 
         self.data = numpy.fromstring(decData, dtype=self.bytecode).reshape(tuple(self.dims))
-        if not numpy.little_endian: #by default little endian
+        if not numpy.little_endian:  # by default little endian
             self.data.byteswap(inplace=True)
         self.resetvals()
 #        # ensure the PIL image is reset
@@ -102,12 +106,12 @@ class xsdimage(fabioimage):
         for i in xml.xpath("//shape"):
             try:
                 self.dims.append(int(i.text))
-            except ValueError, error:
+            except ValueError as error:
                 logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
         for i in xml.xpath("//size"):
             try:
                 self.size = int(i.text)
-            except Exception, error:#IGNORE:W0703
+            except Exception as error:
                 logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
         self.dtype = None
         for i in xml.xpath("//dtype"):
@@ -119,7 +123,7 @@ class xsdimage(fabioimage):
                 self.coding = j.text
         self.rawData = None
         for i in xml.xpath("//data"):
-            self.rawData = i.text
+            self.rawData = six.b(i.text)
         self.md5 = None
         for i in xml.xpath("//md5sum"):
             j = i.find("value")

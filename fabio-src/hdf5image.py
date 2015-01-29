@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-# coding: utf8
+# coding: utf-8
 
-# Get ready for python3:
-from __future__ import with_statement, print_function, division
-__doc__ = """
+"""
 HDF5 image for FabIO
 
 Authors: Jerome Kieffer
@@ -15,30 +13,33 @@ input should being the form:
 hdf5://filename:path[slice]
 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
+
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "GPLv3+"
 __copyright__ = "Jérôme Kieffer"
-__version__ = "12 Nov 2013"
+__version__ = "11 Nov 2014"
 
 import numpy, logging, os, posixpath, sys, copy
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 logger = logging.getLogger("hdf5image")
-if sys.version_info < (3.0):
+if sys.version < '3':
     bytes = str
 
 try:
     import h5py
 except ImportError:
     h5py = None
-
+from .fabioutils import previous_filename, next_filename
 
 class HDF5location(object):
     """
     Handle URL like:
-    
+
     hdf5://filename:path[slice]
- 
+
     """
     def __init__(self, filename=None, h5path=None, slices=None, url=None):
         self.filename = filename
@@ -72,7 +73,7 @@ class HDF5location(object):
     def parse(self, url):
         """
         Analyse a string of the form hdf5://filename:path[slice]
-        
+
         @param url: string of form of an hdf5-url
         """
         if "[" in url:
@@ -219,8 +220,7 @@ class hdf5image(fabioimage):
             return self.getframe(self.currentframe + 1)
         else:
             newobj = hdf5image()
-            newobj.read(next_filename(
-                self.sequencefilename))
+            newobj.read(next_filename(self.filename))
             return newobj
 
     def previous(self):
@@ -231,6 +231,5 @@ class hdf5image(fabioimage):
             return self.getframe(self.currentframe - 1)
         else:
             newobj = hdf5image()
-            newobj.read(previous_filename(
-                self.sequencefilename))
+            newobj.read(previous_filename(self.filename))
             return newobj

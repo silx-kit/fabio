@@ -1,3 +1,4 @@
+from __future__ import with_statement, print_function
 import numpy
 import math
 import logging
@@ -8,8 +9,8 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 
-from brukerimage import brukerimage
-from readbytestream import readbytestream 
+from .brukerimage import brukerimage
+from .readbytestream import readbytestream
 
 class bruker100image(brukerimage):
 
@@ -69,13 +70,13 @@ class bruker100image(brukerimage):
             padding = 16 * int(math.ceil(int(noverfl[k]) * (2 ** k) / 16.)) - \
                          int(noverfl[k]) * (2 ** k)
             f.seek(padding, 1)
-            print noverfl[k] + " bytes read + %d bytes padding" % padding
+            print ("%s bytes read + %d bytes padding" % (noverfl[k],padding))
             k = k + 1
 
         f.close()
 
         (self.dim1, self.dim2) = (rows, cols)
-        print self.dim1, self.dim2
+        print( self.dim1, self.dim2)
         self.resetvals()
         return self
 
@@ -87,10 +88,10 @@ if __name__ == '__main__':
         I.read(sys.argv[1])
         r = I.toPIL16()
         I.rebin(2, 2)
-        print sys.argv[1] + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
-            I.getmax(), I.getmin(), I.getmean(), I.getstddev())
-        print 'integrated intensity (%d %d %d %d) =%.3f' % (
-            10, 20, 20, 40, I.integrate_area((10, 20, 20, 40)))
+        print(sys.argv[1] + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
+            I.getmax(), I.getmin(), I.getmean(), I.getstddev()))
+        print('integrated intensity (%d %d %d %d) =%.3f' % (
+            10, 20, 20, 40, I.integrate_area((10, 20, 20, 40))))
         sys.argv[1:] = sys.argv[2:]
     e = time.clock()
     print (e - b)

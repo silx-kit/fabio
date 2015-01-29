@@ -1,27 +1,10 @@
-No config file found, using default configuration
-
 ************* Module templateimage
-C:  5,0: Line too long (117/80)
-C:  6,0: Line too long (91/80)
-C: 13,0: Line too long (94/80)
-C: 14,0: Line too long (91/80)
-C: 16,0: Line too long (99/80)
-C: 23,0: Line too long (83/80)
-C: 26,0: Line too long (81/80)
-C: 27,0: Line too long (81/80)
-C: 28,0: Line too long (84/80)
-C: 31,0: Line too long (99/80)
-C: 33,0: Line too long (102/80)
 W:  7,0: XXXimage where XXX means something (eg tifimage).
-W: 58,0: XXX detector
-W: 38,0: Redefining built-in '__doc__'
-C:  1,0: Missing docstring
-C: 53,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-R: 56,0:templateimage: Too many instance attributes (10/7)
-C: 56,0:templateimage: Invalid name "templateimage" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 68,8:templateimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-W: 72,26:templateimage._readheader: Unused argument 'infile'
-R: 56,0:templateimage: Too many public methods (25/20)
+W: 61,0: XXX detector
+C: 59,0:templateimage: Invalid name "templateimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 71,8:templateimage.__init__: Invalid name "m" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W: 75,26:templateimage._readheader: Unused argument 'infile'
+R: 59,0:templateimage: Too many public methods (25/20)
 
 
 Report
@@ -34,11 +17,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |15     |NC       |NC         |
+|convention |2      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|refactor   |2      |NC       |NC         |
+|refactor   |1      |NC       |NC         |
 +-----------+-------+---------+-----------+
-|warning    |4      |NC       |NC         |
+|warning    |3      |NC       |NC         |
 +-----------+-------+---------+-----------+
 |error      |0      |NC       |NC         |
 +-----------+-------+---------+-----------+
@@ -51,28 +34,55 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0301      |11          |
-+-----------+------------+
-|C0103      |3           |
-+-----------+------------+
 |W0511      |2           |
 +-----------+------------+
-|W0622      |1           |
+|C0103      |2           |
 +-----------+------------+
 |W0613      |1           |
 +-----------+------------+
 |R0904      |1           |
-+-----------+------------+
-|R0902      |1           |
-+-----------+------------+
-|C0111      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 2.76/10
+Your code has been rated at 7.93/10
+If you commit now, people should not be making nasty comments about you on c.l.py
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |29     |29.29 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |23     |23.23 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |36     |36.36 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |11     |11.11 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |100.00      |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -87,45 +97,11 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |35     |36.08 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|docstring |16     |16.49 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|comment   |36     |37.11 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-|empty     |10     |10.31 |NC       |NC         |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
     numpy (templateimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |0.00        |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |3      |NC         |NC         |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |NC         |NC         |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 

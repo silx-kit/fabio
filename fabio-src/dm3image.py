@@ -8,9 +8,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
+# get ready for python3
+from __future__ import with_statement, print_function
 import logging
 import numpy
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 logger = logging.getLogger("dm3image")
 
 DATA_TYPES = {  2     :  numpy.int16,
@@ -65,9 +67,9 @@ class dm3image(fabioimage):
         assert file_format == 3, 'Wrong file type '
         self.bytes_in_file = self.readbytes(4, numpy.uint32)[0]
         self.byte_order = self.readbytes(4, numpy.uint32)[0] # 0 = big, 1= little
-        print 'read dm3 file - file format ', file_format
-        print 'Bytes in file : ' , self.bytes_in_file
-        print 'Byte order :', self.byte_order, '  - 0 = bigEndian , 1 = littleEndian'
+        logger.info('read dm3 file - file format %s' % file_format)
+        logger.info('Bytes in file: %s' % self.bytes_in_file)
+        logger.info('Byte order: %s  - 0 = bigEndian , 1 = littleEndian' % self.byte_order)
 
         if self.byte_order == 0:
             self.swap = True
@@ -82,7 +84,6 @@ class dm3image(fabioimage):
         self.infile = self._open(fname, "rb")
         self._readheader()
         self.go_on = True
-        print self.go_on
         while self.go_on:
             self.read_tag_group()
             self.read_tag_entry()
@@ -171,7 +172,7 @@ class dm3image(fabioimage):
         # are the data stored in a complex array ?
         # print 'tag_type + data_type', self.tag_encoded_type,self.tag_data_type
 
-        #print self.tag_encoded_type , self.tag_data_type 
+        #print self.tag_encoded_type , self.tag_data_type
         if self.tag_encoded_type == 20 and self.tag_data_type > 3 :
             self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
             logger.debug('found array - new tag_encoded_type %s', self.tag_encoded_type)

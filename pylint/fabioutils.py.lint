@@ -1,66 +1,43 @@
-No config file found, using default configuration
-
 ************* Module fabioutils
-C: 82,0: Line too long (123/80)
-C: 95,0: Line too long (106/80)
-C:234,0: Line too long (81/80)
-C:444,0: Line too long (101/80)
-C:454,0: Line too long (84/80)
-C:493,0: Line too long (85/80)
-W:569,0: Bad indentation. Found 16 spaces, expected 12
-W:572,0: Bad indentation. Found 16 spaces, expected 12
-C: 10,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 51,0: Invalid name "dictAscii" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-W: 61,7: Catching too general exception Exception
-C: 55,4: Invalid name "lines" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-W: 71,7: Catching too general exception Exception
-C: 65,4: Invalid name "lines" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-W:103,4:getnum: Unused variable 'stem'
-W:103,16:getnum: Unused variable 'post_num'
-R:109,0:FilenameObject: Too many instance attributes (8/7)
-R:113,4:FilenameObject.__init__: Too many arguments (9/5)
-W:116,12:FilenameObject.__init__: Redefining built-in 'format'
-W:207,19:FilenameObject.deconstruct_filename: Catching too general exception Exception
-W:228,23:FilenameObject.deconstruct_filename: Catching too general exception Exception
-R:182,4:FilenameObject.deconstruct_filename: Too many statements (60/50)
-C:313,0:isAscii: Invalid name "isAscii" (should match [a-z_][a-z0-9_]{2,30}$)
-C:313,0:isAscii: Invalid name "listExcluded" (should match [a-z_][a-z0-9_]{2,30}$)
-C:313,18:isAscii: Invalid name "listExcluded" (should match [a-z_][a-z0-9_]{2,30}$)
-W:339,12:toAscii: Redefining name 'i' from outer scope (line 51)
-C:331,0:toAscii: Invalid name "toAscii" (should match [a-z_][a-z0-9_]{2,30}$)
-E:343,29:toAscii: Unsupported format character 'n' (0x6e) at index 11
-C:350,0:nice_int: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C:350,13:nice_int: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C:379,4:StringIO.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:379,4:StringIO.getSize: Missing docstring
-C:388,4:StringIO.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:388,4:StringIO.setSize: Missing docstring
-W:390,11:StringIO: Use of "property" on an old style class
-C:418,4:File.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:418,4:File.getSize: Missing docstring
-C:427,4:File.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:427,4:File.setSize: Missing docstring
-C:448,4: Invalid name "GzipFile" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:488,12:GzipFile.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:488,12:GzipFile.getSize: Missing docstring
-C:491,54:GzipFile.getSize: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-E:493,38:GzipFile.getSize: Undefined variable 'numpy'
-E:493,72:GzipFile.getSize: Undefined variable 'numpy'
-C:495,12:GzipFile.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:495,12:GzipFile.setSize: Missing docstring
-R:450,4:GzipFile: Too many public methods (24/20)
-C:532,4: Invalid name "BZ2File" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-W:561,20:BZ2File.getSize: Redefining built-in 'all'
-C:556,8:BZ2File.getSize: Invalid name "getSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:556,8:BZ2File.getSize: Missing docstring
-W:561,20:BZ2File.getSize: Unused variable 'all'
-C:565,8:BZ2File.setSize: Invalid name "setSize" (should match [a-z_][a-z0-9_]{2,30}$)
-C:565,8:BZ2File.setSize: Missing docstring
+W:580,0: Bad indentation. Found 16 spaces, expected 12
+W:583,0: Bad indentation. Found 16 spaces, expected 12
+W: 62,7: Catching too general exception Exception
+W: 72,7: Catching too general exception Exception
+W:104,4:getnum: Unused variable 'stem'
+W:104,16:getnum: Unused variable 'post_num'
+W:117,12:FilenameObject.__init__: Redefining built-in 'format'
+W:208,19:FilenameObject.deconstruct_filename: Catching too general exception Exception
+W:229,23:FilenameObject.deconstruct_filename: Catching too general exception Exception
+R:183,4:FilenameObject.deconstruct_filename: Too many statements (60/50)
+W:340,12:toAscii: Redefining name 'i' from outer scope (line 52)
+E:344,29:toAscii: Unsupported format character 'n' (0x6e) at index 11
+C:351,0:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:351,13:nice_int: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:380,4:StringIO.getSize: Missing docstring
+C:389,4:StringIO.setSize: Missing docstring
+W:391,11:StringIO: Use of "property" on an old style class
+C:419,4:File.getSize: Missing docstring
+C:428,4:File.setSize: Missing docstring
+C:489,12:GzipFile.getSize: Missing docstring
+W:495,28:GzipFile.getSize: Unused variable 'all_data'
+C:502,12:GzipFile.setSize: Missing docstring
+W:504,19:GzipFile: Use of "property" on an old style class
+C:506,12:GzipFile.closed: Missing docstring
+W:572,20:BZ2File.getSize: Redefining built-in 'all'
+C:567,8:BZ2File.getSize: Missing docstring
+W:572,20:BZ2File.getSize: Unused variable 'all'
+C:576,8:BZ2File.setSize: Missing docstring
+W:589,21:DebugSemaphore: Access to a protected member _Semaphore of a client class
+W:593,17:DebugSemaphore: Access to a protected member _Semaphore of a client class
+W:596,8:DebugSemaphore.__init__: Access to a protected member _Semaphore of a client class
+E:600,11:DebugSemaphore.acquire: Instance of 'DebugSemaphore' has no '_Semaphore__value' member
+W:606,15:DebugSemaphore.acquire: Access to a protected member _Semaphore of a client class
+W:614,8:DebugSemaphore.release: Access to a protected member _Semaphore of a client class
 
 
 Report
 ======
-297 statements analysed.
+323 statements analysed.
 
 Messages by category
 --------------------
@@ -68,13 +45,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |35     |30       |+5.00      |
+|convention |11     |12       |-1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |4      |3        |+1.00      |
+|refactor   |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|warning    |13     |19       |-6.00      |
+|warning    |20     |12       |+8.00      |
 +-----------+-------+---------+-----------+
-|error      |3      |13       |-10.00     |
+|error      |2      |3        |-1.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -85,55 +62,37 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |21          |
+|C0111      |9           |
 +-----------+------------+
-|C0111      |8           |
-+-----------+------------+
-|C0301      |6           |
+|W0212      |5           |
 +-----------+------------+
 |W0703      |4           |
 +-----------+------------+
-|W0612      |3           |
+|W0612      |4           |
++-----------+------------+
+|W1001      |2           |
 +-----------+------------+
 |W0622      |2           |
 +-----------+------------+
 |W0311      |2           |
 +-----------+------------+
-|E0602      |2           |
-+-----------+------------+
-|W1001      |1           |
+|C0103      |2           |
 +-----------+------------+
 |W0621      |1           |
 +-----------+------------+
 |R0915      |1           |
 +-----------+------------+
-|R0913      |1           |
-+-----------+------------+
-|R0904      |1           |
-+-----------+------------+
-|R0902      |1           |
-+-----------+------------+
 |E1300      |1           |
++-----------+------------+
+|E1101      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.74/10 (previous run: 5.36/10)
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |0        |=          |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |0.000    |=          |
-+-------------------------+------+---------+-----------+
-
-
+Your code has been rated at 8.70/10 (previous run: 8.56/10)
+That's pretty good. Good work mate.
 
 Raw metrics
 -----------
@@ -141,13 +100,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |324    |56.94 |283      |+41.00     |
+|code      |351    |57.54 |305      |+46.00     |
 +----------+-------+------+---------+-----------+
-|docstring |187    |32.86 |149      |+38.00     |
+|docstring |193    |31.64 |175      |+18.00     |
 +----------+-------+------+---------+-----------+
-|comment   |8      |1.41  |33       |-25.00     |
+|comment   |11     |1.80  |7        |+4.00      |
 +----------+-------+------+---------+-----------+
-|empty     |50     |8.79  |40       |+10.00     |
+|empty     |55     |9.02  |45       |+10.00     |
 +----------+-------+------+---------+-----------+
 
 
@@ -160,12 +119,25 @@ Statistics by type
 +=========+=======+===========+===========+============+=========+
 |module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |6      |6          |=          |100.00      |0.00     |
+|class    |7      |6          |+1.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |25     |15         |+10.00     |68.00       |32.00    |
+|method   |30     |19         |+11.00     |70.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |14     |11         |+3.00      |100.00      |14.29    |
+|function |14     |13         |+1.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
 
 
 

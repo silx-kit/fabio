@@ -14,13 +14,15 @@ Authors:
 * Jon Wright, ESRF
 
 """
+# Get ready for python3:
+from __future__ import absolute_import, print_function, with_statement, division
 import logging, sys
 logger = logging.getLogger("fileseries")
 import traceback as pytraceback
 
-from fabioutils import FilenameObject, next_filename
+from .fabioutils import FilenameObject, next_filename
 
-from openimage import openimage
+from .openimage import openimage
 
 
 def new_file_series0(first_object, first=None, last=None, step=1):
@@ -44,14 +46,14 @@ def new_file_series0(first_object, first=None, last=None, step=1):
         try:
             newim = im.next()
             im = newim
-        except Exception, error:
+        except Exception as error:
             pytraceback.print_exc()
 
             # Skip bad images
             logger.warning("Got a problem here: %s", error)
             try:
                 im.filename = next_filename(im.filename)
-            except Exception, error:
+            except Exception as error:
                 # KE: This will not work and will throw an exception
                 # fabio.next_filename doesn't understand %nnnn on the end
                 logger.warning("Got another problem here: %s", error)
@@ -82,9 +84,9 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
         from which all the exception information can be obtained.
 
     Suggested usage:
-    
+
     ::
-    
+
         for obj in new_file_series( ... ):
           if not isinstance(obj, fabio.fabioimage.fabioimage ):
             # deal with errors like missing images, non readable files, etc
@@ -103,7 +105,7 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             newim = im.next()
             im = newim
             retVal = im
-        except Exception, ex:
+        except Exception as ex:
             retVal = sys.exc_info()
             if(traceback):
                 pytraceback.print_exc()
@@ -112,7 +114,7 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             # Skip bad images
             try:
                 im.filename = next_filename(im.filename)
-            except Exception, ex:
+            except Exception as ex:
                 logger.warning("Got another problem here: next_filename(im.filename) %s", ex)
         if nprocessed % step == 0:
             yield retVal

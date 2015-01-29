@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.dm3image &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.dm3image &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,226 +45,225 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for fabio.dm3image</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Authors: Henning O. Sorensen &amp; Erik Knudsen</span>
-<span class="sd">         Center for Fundamental Research: Metal Structures in Four Dimensions</span>
-<span class="sd">         Risoe National Laboratory</span>
-<span class="sd">         Frederiksborgvej 399</span>
-<span class="sd">         DK-4000 Roskilde</span>
-<span class="sd">         email:erik.knudsen@risoe.dk</span>
+  <h1>Source code for fabio.dm3image</h1><pre>
+         Center for Fundamental Research: Metal Structures in Four Dimensions
+         Risoe National Laboratory
+         Frederiksborgvej 399
+         DK-4000 Roskilde
+         email:erik.knudsen@risoe.dk
 
-<span class="sd">        + Jon Wright, ESRF</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">fabioimage</span> <span class="kn">import</span> <span class="n">fabioimage</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;dm3image&quot;</span><span class="p">)</span>
+        + Jon Wright, ESRF
+"""
+import logging
+import numpy
+from fabioimage import fabioimage
+logger = logging.getLogger("dm3image")
 
-<span class="n">DATA_TYPES</span> <span class="o">=</span> <span class="p">{</span>  <span class="mi">2</span>     <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span>
-                <span class="mi">4</span>     <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">,</span>
-                <span class="mi">3</span>     <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
-                <span class="mi">5</span>     <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">,</span>
-                <span class="mi">6</span>     <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-                <span class="mi">7</span>     <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
-                <span class="mi">8</span>     <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span>
-                <span class="mi">9</span>     <span class="p">:</span>  <span class="bp">None</span><span class="p">,</span>
-                <span class="mi">10</span>    <span class="p">:</span>  <span class="bp">None</span><span class="p">,</span>
-                <span class="mi">15</span>    <span class="p">:</span>  <span class="s">&#39;Struct&#39;</span><span class="p">,</span>
-                <span class="mi">18</span>    <span class="p">:</span>  <span class="bp">None</span><span class="p">,</span>
-                <span class="mi">20</span>    <span class="p">:</span>  <span class="bp">None</span>
-                <span class="p">}</span>
+DATA_TYPES = {  2     :  numpy.int16,
+                4     :  numpy.uint16,
+                3     :  numpy.int32,
+                5     :  numpy.uint32,
+                6     :  numpy.float32,
+                7     :  numpy.float,
+                8     :  numpy.int8,
+                9     :  None,
+                10    :  None,
+                15    :  'Struct',
+                18    :  None,
+                20    :  None
+                }
 
-<span class="n">DATA_BYTES</span> <span class="o">=</span> <span class="p">{</span>  <span class="mi">2</span>     <span class="p">:</span>  <span class="mi">2</span><span class="p">,</span>
-                <span class="mi">4</span>     <span class="p">:</span>  <span class="mi">2</span><span class="p">,</span>
-                <span class="mi">3</span>     <span class="p">:</span>  <span class="mi">4</span><span class="p">,</span>
-                <span class="mi">5</span>     <span class="p">:</span>  <span class="mi">4</span><span class="p">,</span>
-                <span class="mi">6</span>     <span class="p">:</span>  <span class="mi">4</span><span class="p">,</span>
-                <span class="mi">7</span>     <span class="p">:</span>  <span class="mi">8</span><span class="p">,</span>
-                <span class="mi">8</span>     <span class="p">:</span>  <span class="mi">1</span><span class="p">,</span>
-                <span class="mi">9</span>     <span class="p">:</span>  <span class="bp">None</span><span class="p">,</span>
-                <span class="mi">10</span>    <span class="p">:</span>  <span class="bp">None</span><span class="p">,</span>
-                <span class="mi">15</span>    <span class="p">:</span>  <span class="s">&#39;Struct&#39;</span><span class="p">,</span>
-                <span class="mi">18</span>    <span class="p">:</span>  <span class="bp">None</span><span class="p">,</span>
-                <span class="mi">20</span>    <span class="p">:</span>  <span class="bp">None</span>
-                <span class="p">}</span>
+DATA_BYTES = {  2     :  2,
+                4     :  2,
+                3     :  4,
+                5     :  4,
+                6     :  4,
+                7     :  8,
+                8     :  1,
+                9     :  None,
+                10    :  None,
+                15    :  'Struct',
+                18    :  None,
+                20    :  None
+                }
 
 
 
-<div class="viewcode-block" id="dm3image"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image">[docs]</a><span class="k">class</span> <span class="nc">dm3image</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Read and try to write the dm3 data format &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">fabioimage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">encoded_datatype</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_is_sorted</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_is_open</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_data_type</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_is_data</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_no_tags</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bytes_in_file</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_label_length</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">go_on</span> <span class="o">=</span> <span class="bp">None</span>
+class dm3image(fabioimage):
+    """ Read and try to write the dm3 data format """
+<div class="viewcode-block" id="dm3image"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image">[docs]</a>    def __init__(self, *args, **kwargs):
+        fabioimage.__init__(self, *args, **kwargs)
+        self.encoded_datatype = None
+        self.no_data_elements = None
+        self.grouptag_is_sorted = None
+        self.grouptag_is_open = None
+        self.tag_encoded_type = None
+        self.tag_data_type = None
+        self.tag_is_data = None
+        self.grouptag_no_tags = None
+        self.bytes_in_file = None
+        self.tag_label_length = None
+        self.go_on = None
 
-    <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">file_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c"># should be 3</span>
-        <span class="k">assert</span> <span class="n">file_format</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&#39;Wrong file type &#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bytes_in_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c"># 0 = big, 1= little</span>
-        <span class="k">print</span> <span class="s">&#39;read dm3 file - file format &#39;</span><span class="p">,</span> <span class="n">file_format</span>
-        <span class="k">print</span> <span class="s">&#39;Bytes in file : &#39;</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bytes_in_file</span>
-        <span class="k">print</span> <span class="s">&#39;Byte order :&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span><span class="p">,</span> <span class="s">&#39;  - 0 = bigEndian , 1 = littleEndian&#39;</span>
+    def _readheader(self):
+        self.infile.seek(0)
+        file_format = self.readbytes(4, numpy.uint32)[0] # should be 3
+        assert file_format == 3, 'Wrong file type '
+        self.bytes_in_file = self.readbytes(4, numpy.uint32)[0]
+        self.byte_order = self.readbytes(4, numpy.uint32)[0] # 0 = big, 1= little
+        print 'read dm3 file - file format ', file_format
+        print 'Bytes in file : ' , self.bytes_in_file
+        print 'Byte order :', self.byte_order, '  - 0 = bigEndian , 1 = littleEndian'
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">swap</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">byte_order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">swap</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+        if self.byte_order == 0:
+            self.swap = True
+        elif self.byte_order == 1:
+            self.swap = False
+        else:
+            raise ValueError
 
-<div class="viewcode-block" id="dm3image.read"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">go_on</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">go_on</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">go_on</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">read_tag_group</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">read_tag_entry</span><span class="p">()</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bytes_in_file</span><span class="p">:</span> <span class="k">break</span>
+    def read(self, fname, frame=None):
+        self.header = {}
+<div class="viewcode-block" id="dm3image.read"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read">[docs]</a>        self.resetvals()
+        self.infile = self._open(fname, "rb")
+        self._readheader()
+        self.go_on = True
+        print self.go_on
+        while self.go_on:
+            self.read_tag_group()
+            self.read_tag_entry()
+            if self.infile.tell() &gt; self.bytes_in_file: break
 
-            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_is_data</span> <span class="o">==</span> <span class="mi">21</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">read_tag_entry</span><span class="p">()</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bytes_in_file</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">go_on</span> <span class="o">=</span> <span class="bp">False</span>
+            while self.tag_is_data == 21:
+                self.read_tag_entry()
+                if self.infile.tell() &gt; self.bytes_in_file:
+                    self.go_on = False
 
-        <span class="p">(</span><span class="n">dim1_raw</span><span class="p">,</span> <span class="n">dim2_raw</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Active Size (pixels)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="p">(</span><span class="n">dim1_raw</span><span class="p">,</span> <span class="n">dim2_raw</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">dim1_raw</span><span class="p">),</span> <span class="nb">eval</span><span class="p">(</span><span class="n">dim2_raw</span><span class="p">))</span>
-        <span class="p">(</span><span class="n">dim1_binning</span><span class="p">,</span> <span class="n">dim2_binning</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Binning&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="p">(</span><span class="n">dim1_binning</span><span class="p">,</span> <span class="n">dim2_binning</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">dim1_binning</span><span class="p">),</span> <span class="nb">eval</span><span class="p">(</span><span class="n">dim2_binning</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="n">dim1_raw</span> <span class="o">/</span> <span class="n">dim1_binning</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="n">dim2_raw</span> <span class="o">/</span> <span class="n">dim2_binning</span>
-        <span class="c">#print dim1,dim2</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;Data&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">)</span>
+        (dim1_raw, dim2_raw) = self.header['Active Size (pixels)'].split()
+        (dim1_raw, dim2_raw) = (eval(dim1_raw), eval(dim2_raw))
+        (dim1_binning, dim2_binning) = self.header['Binning'].split()
+        (dim1_binning, dim2_binning) = (eval(dim1_binning), eval(dim2_binning))
+        self.dim1 = dim1_raw / dim1_binning
+        self.dim2 = dim2_raw / dim2_binning
+        #print dim1,dim2
+        if self.header.has_key('Data'):
+            self.data = self.header['Data'].reshape(self.dim1, self.dim2)
+
+    def readbytes(self, bytes_to_read, format, swap=True):
+        raw = self.infile.read(bytes_to_read)</div>
+<div class="viewcode-block" id="dm3image.readbytes"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.readbytes">[docs]</a>        if format != None:
+            data = numpy.fromstring(raw, format)
+        else:
+            data = raw
+        if swap:
+            data = data.byteswap()
+        return data
+
+
+
+    def read_tag_group(self):
 </div>
-<div class="viewcode-block" id="dm3image.readbytes"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.readbytes">[docs]</a>    <span class="k">def</span> <span class="nf">readbytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bytes_to_read</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">swap</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">bytes_to_read</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">format</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">format</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">raw</span>
-        <span class="k">if</span> <span class="n">swap</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">data</span>
+<div class="viewcode-block" id="dm3image.read_tag_group"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_tag_group">[docs]</a>        self.grouptag_is_sorted = self.readbytes(1, numpy.uint8)[0]
+        self.grouptag_is_open = self.readbytes(1, numpy.uint8)[0]
+        self.grouptag_no_tags = self.readbytes(4, numpy.uint32)[0]
+        logger.debug('TagGroup is sorted? %s', self.grouptag_is_sorted)
+        logger.debug('TagGroup is open? %s', self.grouptag_is_open)
+        logger.debug('no of tags in TagGroup %s', self.grouptag_no_tags)
 
-
+    def read_tag_entry(self):
 </div>
-<div class="viewcode-block" id="dm3image.read_tag_group"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_tag_group">[docs]</a>    <span class="k">def</span> <span class="nf">read_tag_group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="dm3image.read_tag_entry"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_tag_entry">[docs]</a>        self.tag_is_data = self.readbytes(1, numpy.uint8)[0]
+        self.tag_label_length = self.readbytes(2, numpy.uint16)[0]
+        logger.debug('does Tag have data ? %s  -  20 = Tag group , 21 = data ', self.tag_is_data)
+        logger.debug('length of tag_label ', self.tag_label_length)
+        if self.tag_label_length != 0:
+            tag_label = self.infile.read(self.tag_label_length)
+        else:
+            tag_label = None
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_is_sorted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_is_open</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_no_tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;TagGroup is sorted? </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_is_sorted</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;TagGroup is open? </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_is_open</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;no of tags in TagGroup </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouptag_no_tags</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="dm3image.read_tag_entry"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_tag_entry">[docs]</a>    <span class="k">def</span> <span class="nf">read_tag_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_is_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_label_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;does Tag have data ? </span><span class="si">%s</span><span class="s">  -  20 = Tag group , 21 = data &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_is_data</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;length of tag_label &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_label_length</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_label_length</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">tag_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_label_length</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">tag_label</span> <span class="o">=</span> <span class="bp">None</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_is_data</span> <span class="o">==</span> <span class="mi">21</span><span class="p">:</span>
-            <span class="c"># This is data</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">tag_label</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_tag_type</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">tag_label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">tag_label</span><span class="p">])</span>
-
-</div>
-<div class="viewcode-block" id="dm3image.read_tag_type"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_tag_type">[docs]</a>    <span class="k">def</span> <span class="nf">read_tag_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&#39;</span><span class="si">%%%%</span><span class="s">&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">IOError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_data_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;data is of type : </span><span class="si">%s</span><span class="s">  - 1 = simple, 2= string, 3 = array, &gt;3 structs&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_data_type</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;encode type: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span><span class="p">,</span> <span class="n">DATA_TYPES</span><span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span><span class="p">])</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_data_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c"># simple type</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="n">DATA_BYTES</span><span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span><span class="p">],</span>
-                                  <span class="n">DATA_TYPES</span><span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span><span class="p">],</span>
-                                  <span class="n">swap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">swap</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c"># are the data stored in a simple array?</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span> <span class="o">==</span> <span class="mi">20</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_data_type</span> <span class="o">==</span> <span class="mi">3</span> <span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;skip bytes </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span><span class="p">)</span>
-                <span class="n">dump</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span><span class="p">)</span>
-                <span class="k">return</span> <span class="bp">None</span>
-
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Data are stored as a simple a array -&#39;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> data elemets stored as </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">)</span>
-            <span class="n">read_no_bytes</span> <span class="o">=</span> <span class="n">DATA_BYTES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span>
-            <span class="n">format</span> <span class="o">=</span> <span class="n">DATA_TYPES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">]</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="n">read_no_bytes</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">swap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">swap</span><span class="p">)</span>
-
-        <span class="c"># are the data stored in a complex array ?</span>
-        <span class="c"># print &#39;tag_type + data_type&#39;, self.tag_encoded_type,self.tag_data_type</span>
-
-        <span class="c">#print self.tag_encoded_type , self.tag_data_type </span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span> <span class="o">==</span> <span class="mi">20</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_data_type</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;found array - new tag_encoded_type </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span> <span class="o">==</span> <span class="mi">15</span><span class="p">:</span>            <span class="c"># struct type</span>
-                 <span class="c">###type = self.readbytes(4,numpy.int32)</span>
-                <span class="n">struct_name_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">struct_number_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="c">#print &#39;struct - name_length, number_field&#39;,  struct_name_length,struct_number_fields</span>
-                <span class="c">#print self.infile.read(struct_name_length)</span>
-                <span class="n">field_info</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">struct_number_fields</span><span class="p">):</span>
-                    <span class="n">field_info</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]])</span>
-                <span class="c">#print field_info</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="c">#print &#39;%i data elemets stored as &#39; %self.no_data_elements</span>
-                <span class="n">bytes_in_struct</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">struct_number_fields</span><span class="p">):</span>
-                    <span class="n">bytes_in_struct</span> <span class="o">+=</span> <span class="n">DATA_BYTES</span><span class="p">[</span><span class="n">field_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;skip bytes </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span> <span class="o">*</span> <span class="n">bytes_in_struct</span><span class="p">)</span>
-                <span class="n">dump</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_data_elements</span> <span class="o">*</span> <span class="n">bytes_in_struct</span><span class="p">)</span>
-                <span class="k">return</span> <span class="bp">None</span>
+        if self.tag_is_data == 21:
+            # This is data
+            self.header[tag_label] = self.read_tag_type()
+            logger.debug("%s: %s", tag_label, self.header[tag_label])
 
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_encoded_type</span> <span class="o">==</span> <span class="mi">15</span><span class="p">:</span>            <span class="c"># struct type</span>
-            <span class="c">###type = self.readbytes(4,numpy.int32)</span>
-            <span class="n">struct_name_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">struct_number_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c">#print &#39;struct - name_length, number_field&#39;,  struct_name_length,struct_number_fields</span>
-            <span class="c">#print self.infile.read(struct_name_length)</span>
-            <span class="n">field_info</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">struct_number_fields</span><span class="p">):</span>
-                <span class="n">field_info</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)[</span><span class="mi">0</span><span class="p">]])</span>
-            <span class="c">#print field_info</span>
-            <span class="n">field_data</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">struct_number_fields</span><span class="p">):</span>
-                <span class="c">#print type(i)</span>
-                <span class="n">field_data</span> <span class="o">=</span> <span class="n">field_data</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="n">field_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="bp">None</span><span class="p">,</span> <span class="n">swap</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; &#39;</span>
-                <span class="n">field_data</span> <span class="o">=</span> <span class="n">field_data</span> <span class="o">+</span> <span class="s">&#39;</span><span class="si">%i</span><span class="s">  &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">readbytes</span><span class="p">(</span><span class="n">DATA_BYTES</span><span class="p">[</span><span class="n">field_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span>
-                                                                 <span class="n">DATA_TYPES</span><span class="p">[</span><span class="n">field_info</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]],</span>
-                                                                 <span class="n">swap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">swap</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">field_data</span>
-</div>
-<div class="viewcode-block" id="dm3image.read_data"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_data">[docs]</a>    <span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">encoded_datatype</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
-</pre></div></div></div>
+    def read_tag_type(self):
+        if self.infile.read(4) != '%%%%':</div>
+<div class="viewcode-block" id="dm3image.read_tag_type"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_tag_type">[docs]</a>            raise IOError
+        self.tag_data_type = self.readbytes(4, numpy.uint32)[0]
+        logger.debug('data is of type : %s  - 1 = simple, 2= string, 3 = array, &gt;3 structs', self.tag_data_type)
+        self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
+        logger.debug('encode type: %s %s', self.tag_encoded_type, DATA_TYPES[ self.tag_encoded_type])
+        if self.tag_data_type == 1:
+            # simple type
+            return self.readbytes(DATA_BYTES[ self.tag_encoded_type],
+                                  DATA_TYPES[ self.tag_encoded_type],
+                                  swap=self.swap)[0]
+        # are the data stored in a simple array?
+        if self.tag_encoded_type == 20 and self.tag_data_type == 3 :
+            self.data_type = self.readbytes(4, numpy.uint32)[0]
+            self.no_data_elements = self.readbytes(4, numpy.uint32)[0]
+            if self.data_type == 10:
+                logger.debug('skip bytes %s', self.no_data_elements)
+                dump = self.infile.read(self.no_data_elements)
+                return None
+
+            logger.debug('Data are stored as a simple a array -')
+            logger.debug('%s data elemets stored as %s', self.no_data_elements, self.data_type)
+            read_no_bytes = DATA_BYTES[self.data_type] * self.no_data_elements
+            format = DATA_TYPES[self.data_type]
+            return self.readbytes(read_no_bytes, format, swap=self.swap)
+
+        # are the data stored in a complex array ?
+        # print 'tag_type + data_type', self.tag_encoded_type,self.tag_data_type
+
+        #print self.tag_encoded_type , self.tag_data_type 
+        if self.tag_encoded_type == 20 and self.tag_data_type &gt; 3 :
+            self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
+            logger.debug('found array - new tag_encoded_type %s', self.tag_encoded_type)
+            if self.tag_encoded_type == 15:            # struct type
+                 ###type = self.readbytes(4,numpy.int32)
+                struct_name_length = self.readbytes(4, numpy.int32)[0]
+                struct_number_fields = self.readbytes(4, numpy.int32)[0]
+                #print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
+                #print self.infile.read(struct_name_length)
+                field_info = []
+                for i in range(struct_number_fields):
+                    field_info.append([self.readbytes(4, numpy.int32)[0], self.readbytes(4, numpy.int32)[0]])
+                #print field_info
+                self.no_data_elements = self.readbytes(4, numpy.int32)[0]
+                #print '%i data elemets stored as ' %self.no_data_elements
+                bytes_in_struct = 0
+                for i in range(struct_number_fields):
+                    bytes_in_struct += DATA_BYTES[field_info[i][1]]
+                logger.debug('skip bytes %s', self.no_data_elements * bytes_in_struct)
+                dump = self.infile.read(self.no_data_elements * bytes_in_struct)
+                return None
+
+
+        if self.tag_encoded_type == 15:            # struct type
+            ###type = self.readbytes(4,numpy.int32)
+            struct_name_length = self.readbytes(4, numpy.int32)[0]
+            struct_number_fields = self.readbytes(4, numpy.int32)[0]
+            #print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
+            #print self.infile.read(struct_name_length)
+            field_info = []
+            for i in range(struct_number_fields):
+                field_info.append([self.readbytes(4, numpy.int32)[0], self.readbytes(4, numpy.int32)[0]])
+            #print field_info
+            field_data = ''
+            for i in range(struct_number_fields):
+                #print type(i)
+                field_data = field_data + self.readbytes(field_info[i][0], None, swap=False) + ' '
+                field_data = field_data + '%i  ' % self.readbytes(DATA_BYTES[field_info[i][1]],
+                                                                 DATA_TYPES[field_info[i][1]],
+                                                                 swap=self.swap)[0]
+            return field_data
+
+    def read_data(self):
+        self.encoded_datatype = numpy.fromstring(self.infile.read(4), numpy.uint32).byteswap()</div>
+<div class="viewcode-block" id="dm3image.read_data"><a class="viewcode-back" href="../../api/modules.html#fabio.dm3image.dm3image.read_data">[docs]</a>
+</pre></div></div>
 
           </div>
         </div>
@@ -300,13 +296,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

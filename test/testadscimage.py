@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 
 """
 # Unit tests
@@ -7,31 +7,23 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 
 Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
+28/11/2014
 """
+from __future__ import print_function, with_statement, division, absolute_import
+import unittest
+import sys
+import os
+import numpy
+import gzip
+import bz2
 
-import unittest, sys, os, logging
-logger = logging.getLogger("testadscimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
 try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+    from .utilstest import UtilsTest
+except (ValueError, SystemError):
+    from utilstest import UtilsTest
 
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 from fabio.adscimage import adscimage
 from fabio.edfimage import edfimage
 
@@ -43,8 +35,7 @@ TESTIMAGES = """mb_LP_1_001.img 3072 3072 0.0000 65535. 120.33 147.38
                 mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38 """
 
 
-
-class testmatch(unittest.TestCase):
+class TestMatch(unittest.TestCase):
     """ 
     check the ??fit2d?? conversion to edf gives same numbers 
     """
@@ -66,7 +57,7 @@ class testmatch(unittest.TestCase):
         self.assertEqual(abs(diff).max(), 0.0, "asdc data == edf data")
 
 
-class testflatmccdsadsc(unittest.TestCase):
+class TestFlatMccdsAdsc(unittest.TestCase):
     """
     """
     def setUp(self):
@@ -90,14 +81,10 @@ class testflatmccdsadsc(unittest.TestCase):
             self.assertEqual(dim2, obj.dim2, "dim2")
 
 
-
-
-
-
 def test_suite_all_adsc():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testmatch("testsame"))
-    testSuite.addTest(testflatmccdsadsc("test_read"))
+    testSuite.addTest(TestMatch("testsame"))
+    testSuite.addTest(TestFlatMccdsAdsc("test_read"))
     return testSuite
 
 if __name__ == '__main__':

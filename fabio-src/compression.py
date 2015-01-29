@@ -1,25 +1,34 @@
 #!/usr/bin/env python
-# coding: utf8
+# coding: utf-8
 """
 Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
 FabIO library containing compression and decompression algorithm for various
 """
+# get ready for python3
+from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
+__date__ = "19/01/2015"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
-import logging, struct, hashlib, base64, StringIO, sys
-if sys.version_info >= (3,):
-    str = bytes
+import logging, struct, hashlib, base64, sys
 logger = logging.getLogger("compression")
+from .third_party import six
+
+if six.PY2:
+    bytes = str
+
 import numpy
 
 try:
-    import gzip
+    if sys.version_info < (2, 7):
+        from .third_party import gzip
+    else:
+        import gzip
 except ImportError:
     logger.error("Unable to import gzip module: disabling gzip compression")
     gzip = None
@@ -35,6 +44,7 @@ try:
 except ImportError:
     logger.error("Unable to import zlib module: disabling zlib compression")
     zlib = None
+
 
 def md5sum(blob):
     """
@@ -62,22 +72,22 @@ def decGzip(stream):
 
     if gzip is None:
         raise ImportError("gzip module is not available")
-    fileobj = StringIO.StringIO(stream)
+    fileobj = six.BytesIO(stream)
     try:
         rawData = gzip.GzipFile(fileobj=fileobj).read()
     except IOError:
         logger.warning("Encounter the python-gzip bug with trailing garbage, trying subprocess gzip")
         try:
-            #This is as an ugly hack against a bug in Python gzip
+            # This is as an ugly hack against a bug in Python gzip
             import subprocess
             sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
             rawData, err = sub.communicate(input=stream)
             logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
-        except Exception, error: #IGNORE:W0703
+        except Exception as error:  # IGNORE:W0703
             logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
             for i in range(1, 513):
                 try:
-                    fileobj = StringIO.StringIO(stream[:-i])
+                    fileobj = six.BytesIO(stream[:-i])
                     rawData = gzip.GzipFile(fileobj=fileobj).read()
                 except IOError:
                     logger.debug("trying with %s bytes less, doesn't work" % i)
@@ -110,112 +120,9 @@ def decZlib(stream):
     return zlib.decompress(stream)
 
 
-def decByteOffet_python(stream, size):
-    """
-    Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
-
-    @param stream: string representing the compressed data
-    @param size: the size of the output array (of longInts)
-    @return: 1D-ndarray
-
-    """
-    logger.debug("CBF decompression using Python with Cython loops")
-    dataOut = numpy.zeros((size), dtype=numpy.int64)
-    i = 0
-    j = 0
-    last = 0
-    current = 0
-    while ((i < len(stream)) and (j < size)):
-        if (stream[i] == '\x80'):
-            if (stream[i + 1:i + 3] == "\x00\x80"):
-                if (stream[i + 3:i + 7] == "\x00\x00\x00\x80"):
-                    current = struct.unpack("<q", stream[i + 7:i + 15])[0]
-                    i += 15
-                else:
-                    current = struct.unpack("<i", stream[i + 3:i + 7])[0]
-                    i += 7
-            else:
-                current = struct.unpack("<h", stream[i + 1:i + 3])[0]
-                i += 3
-        else:
-            current = struct.unpack("<b", stream[i])[0]
-            i += 1
-        last += current
-        dataOut[j] = last
-        j += 1
-    return dataOut
-
-def decByteOffet_weave(stream, size):
-    """
-    Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
-
-    @param stream: string representing the compressed data
-    @param size: the size of the output array (of longInts)
-    @return: 1D-ndarray
-
-    """
-    logger.debug("CBF decompression using Weave")
-    try:
-        from scipy import weave
-        from scipy.weave import converters
-    except ImportError:
-        logger.warning("scipy.weave is not available, falling back on slow Numpy implementations")
-        return decByteOffet_numpy(stream, size)
-    dataIn = numpy.fromstring(stream, dtype="uint8")
-    n = dataIn.size
-    dataOut = numpy.zeros(size, dtype="int64")
-    codeC = """
-unsigned char key = 0x80;
-long   j = 0;
-long   last=0;
-long   current=0;
-for (int i=0; i< n; i++){
-   if (j>=size){
-   //printf("i= %i<%i, j=%i < size= %i %i\\n",i,n,j,size,dataIn(i));
-       break;
-  }
-  if (dataIn(i) == key){
-      if ( (dataIn(i+1)==0) and (dataIn(i+2)==key) ){
-          if ( (dataIn(i+3)==0) and (dataIn(i+4)==0) and (dataIn(i+5)==0) and (dataIn(i+6)==key) )  {
-               // 64 bits mode
-               char tmp = dataIn(i+14) ;
-               current = (long(tmp)<<56) | (long(dataIn(i+13))<<48) | (long(dataIn(i+12))<<40) | (long(dataIn(i+11))<<32) | (long(dataIn(i+10))<<24) | (long(dataIn(i+9))<<16) | (long(dataIn(i+8))<<8) | (long(dataIn(i+7)));
-//                printf("64 bit int at pos %i, %i, value=%ld \\n",i,j,current);
-               i+=14;
-           }else{
-               // 32 bits mode
-               char tmp = dataIn(i+6) ;
-               current = (long(tmp)<<24) | (long(dataIn(i+5))<<16) | (long(dataIn(i+4))<<8) | (long(dataIn(i+3)));
-//                printf("32 bit int at pos %i, %i, value=%ld was %i %i %i %i %i %i %i\\n",i,j,current,dataIn(i),dataIn(i+1),dataIn(i+2),dataIn(i+3),dataIn(i+4),dataIn(i+5),dataIn(i+6));
-//                printf("%ld %ld %ld %ld\\n",(long(tmp)<<24) , (long(dataIn(i+5))<<16) , (long(dataIn(i+4))<<8) ,long(dataIn(i+3)));
-               i+=6;
-           }
-      }else{
-           // 16 bit mode
-           char tmp = dataIn(i+2);
-           current = (long(tmp)<<8) | (long (dataIn(i+1)));
-//           printf("16 bit int at pos %i, %i, value=%ld was %i %i %i\\n",i,j,current,dataIn(i),dataIn(i+1),dataIn(i+2));
-           i+=2;
-      }
-  }else{
-      // 8 bit mode
-      char tmp = dataIn(i) ;
-      current= long(tmp) ;
-  }
-  last+=current;
-  dataOut(j)=last;
-  j++ ;
-}
-return_val=0;
-     """
-    rc = weave.inline(codeC, ["dataIn", "dataOut", "n", "size" ], verbose=2, type_converters=converters.blitz)
-    if rc != 0:
-        logger.warning("weave binary module return error code %s" % rc)
-    return dataOut
 
 
-
-def decByteOffet_numpy(stream, size=None):
+def decByteOffset_numpy(stream, size=None):
     """
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
@@ -227,9 +134,9 @@ def decByteOffet_numpy(stream, size=None):
     """
     logger.debug("CBF decompression using Numpy")
     listnpa = []
-    key16 = "\x80"
-    key32 = "\x00\x80"
-    key64 = "\x00\x00\x00\x80"
+    key16 = b"\x80"
+    key32 = b"\x00\x80"
+    key64 = b"\x00\x00\x00\x80"
     shift = 1
     while True:
         idx = stream.find(key16)
@@ -244,7 +151,7 @@ def decByteOffet_numpy(stream, size=None):
                 listnpa.append(numpy.fromstring(stream[idx + 7:idx + 15],
                                              dtype="int64"))
                 shift = 15
-            else: #32 bit int
+            else:  # 32 bit int
                 listnpa.append(numpy.fromstring(stream[idx + 3:idx + 7],
                                              dtype="int32"))
                 shift = 7
@@ -256,7 +163,7 @@ def decByteOffet_numpy(stream, size=None):
     return  (numpy.hstack(listnpa)).astype("int64").cumsum()
 
 
-def decByteOffet_cython(stream, size=None):
+def decByteOffset_cython(stream, size=None):
     """
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
@@ -268,14 +175,17 @@ def decByteOffet_cython(stream, size=None):
     """
     logger.debug("CBF decompression using cython")
     try:
-        from fabio.byte_offset import analyseCython
-    except ImportError, error:
+        from .byte_offset import analyseCython
+    except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method")
-        return decByteOffet_numpy(stream, size)
+        return decByteOffset_numpy(stream, size)
     else:
         return analyseCython(stream, size)
 
-def compByteOffet_numpy(data):
+decByteOffset = decByteOffset_cython
+
+
+def compByteOffset_numpy(data):
     """
     Compress a dataset into a string using the byte_offet algorithm
 
@@ -296,25 +206,25 @@ def compByteOffet_numpy(data):
     else:
         byteswap = True
     start = 0
-    binary_blob = ""
+    binary_blob = b""
     for stop in exceptions:
         if stop - start > 0:
             binary_blob += delta[start:stop].astype("int8").tostring()
         exc = delta[stop]
-        if (exc > 2147483647) or (exc < -2147483647): #2**31-1
-            binary_blob += "\x80\x00\x80\x00\x00\x00\x80"
+        if (exc > 2147483647) or (exc < -2147483647):  # 2**31-1
+            binary_blob += b"\x80\x00\x80\x00\x00\x00\x80"
             if byteswap:
                 binary_blob += delta[stop:stop + 1].byteswap().tostring()
             else:
                 binary_blob += delta[stop:stop + 1].tostring()
-        elif (exc > 32767) or (exc < -32767): #2**15-1
-            binary_blob += "\x80\x00\x80"
+        elif (exc > 32767) or (exc < -32767):  # 2**15-1
+            binary_blob += b"\x80\x00\x80"
             if byteswap:
                 binary_blob += delta[stop:stop + 1].astype("int32").byteswap().tostring()
             else:
                 binary_blob += delta[stop:stop + 1].astype("int32").tostring()
-        else: #>127
-            binary_blob += "\x80"
+        else:  # >127
+            binary_blob += b"\x80"
             if byteswap:
                 binary_blob += delta[stop:stop + 1].astype("int16").byteswap().tostring()
             else:
@@ -324,16 +234,18 @@ def compByteOffet_numpy(data):
         binary_blob += delta[start:].astype("int8").tostring()
     return binary_blob
 
+compByteOffset = compByteOffset_numpy
+
 
 def decTY1(raw_8, raw_16=None, raw_32=None):
     """
     Modified byte offset decompressor used in Oxford Diffraction images
-    
+
     @param raw_8:  strings containing raw data with integer 8 bits
     @param raw_16: strings containing raw data with integer 16 bits
     @param raw_32: strings containing raw data with integer 32 bits
     @return: numpy.ndarray
-    
+
     """
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
     data -= 127
@@ -372,8 +284,8 @@ def compTY1(data):
     diff[0] = fdata[0]
     diff[1:] = fdata[1:] - fdata[:-1]
     adiff = abs(diff)
-    exception32 = (adiff > 32767)#2**15-1
-    exception16 = (adiff >= 127) - exception32 #2**7-1)
+    exception32 = (adiff > 32767)  # 2**15-1
+    exception16 = (adiff >= 127) - exception32  # 2**7-1)
     we16 = numpy.where(exception16)
     we32 = numpy.where(exception32)
     raw_16 = diff[we16].astype("int16").tostring()
@@ -383,6 +295,7 @@ def compTY1(data):
     diff += 127
     raw_8 = diff.astype("uint8").tostring()
     return  raw_8, raw_16, raw_32
+
 
 def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
     """
@@ -394,14 +307,14 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
     """
 
     try:
-        from mar345_IO import uncompress_pck
-    except ImportError, error:
+        from .mar345_IO import uncompress_pck
+    except ImportError as  error:
         raise RuntimeError("Unable to import mar345_IO to read compressed dataset")
     if "seek" in dir(stream):
         stream.seek(0)
         raw = stream.read()
     else:
-        raw = str(stream)
+        raw = bytes(stream)
 
     return uncompress_pck(raw, dim1, dim2, overflowPix, version)
 
@@ -415,8 +328,8 @@ def compPCK(data):
 
     """
     try:
-        from mar345_IO import compress_pck
-    except ImportError, error:
+        from .mar345_IO import compress_pck
+    except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to write compressed dataset")
     return compress_pck(data)
 

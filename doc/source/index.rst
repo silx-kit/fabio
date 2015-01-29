@@ -12,7 +12,8 @@ Contents:
    :maxdepth: 2
 
    getting_started
-   INSTALL
+   install
+   performances
    Changelog
    api/modules
 

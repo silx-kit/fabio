@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-# coding: utf8
+# coding: utf-8
 
-# Get ready for python3:
-from __future__ import with_statement, print_function
-__doc__ = """
+"""
 MRC image for FabIO
 
 Authors: Jerome Kieffer
@@ -12,6 +10,9 @@ email:  Jerome.Kieffer@terre-adelie.org
 Specifications from:
 http://ami.scripps.edu/software/mrctools/mrc_specification.php
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
+
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "GPLv3+"
@@ -19,7 +20,8 @@ __copyright__ = "Jérôme Kieffer"
 __version__ = "29 Oct 2013"
 
 import numpy, logging, sys
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
+from .fabioutils import previous_filename, next_filename
 logger = logging.getLogger("mrcimage")
 if sys.version_info < (3.0):
     bytes = str

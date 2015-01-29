@@ -6,12 +6,14 @@ Authors: Jerome Kieffer, ESRF
 kcd images are 2D images written by the old KappaCCD diffractometer built by Nonius in the 1990's
 Based on the edfimage.py parser.
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
 import numpy, logging
 import os, string
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 logger = logging.getLogger("kcdimage")
-
+from .third_party import six
 DATA_TYPES = {"u16"  :  numpy.uint16 }
 
 MINIMUM_KEYS = [
@@ -23,7 +25,10 @@ MINIMUM_KEYS = [
 
 DEFAULT_VALUES = { "Data type": "u16" }
 
-
+if six.PY2:
+    ALPHANUM = string.digits + string.letters + ". "
+else:
+    ALPHANUM = bytes(string.digits + string.ascii_letters + ". ", encoding="ASCII")
 
 
 class kcdimage(fabioimage):
@@ -36,33 +41,38 @@ class kcdimage(fabioimage):
         Read in a header in some KCD format from an already open file
         @
         """
-        oneLine = infile.readline()
-        alphanum = string.digits + string.letters + ". "
+        one_line = infile.readline()
+
         asciiHeader = True
-        for oneChar in oneLine.strip():
-            if not oneChar in alphanum:
+        for oneChar in one_line.strip():
+            if not oneChar in ALPHANUM:
                 asciiHeader = False
 
 
         if asciiHeader is False:
-            # This does not look like an edf file
+            # This does not look like an KappaCCD file
             logger.warning("First line of %s does not seam to be ascii text!" % infile.name)
-        endOfHeaders = False
-        while not endOfHeaders:
-            oneLine = infile.readline()
-            if len(oneLine) > 100:
-                endOfHeaders = True
-                break
-            if oneLine.strip() == "Binned mode":
-                oneLine = "Mode = Binned"
+        end_of_headers = False
+        while not end_of_headers:
+            one_line = infile.readline()
             try:
-                key, val = oneLine.split('=' , 1)
-            except:
-                endOfHeaders = True
-                break
-            key = key.strip()
-            self.header_keys.append(key)
-            self.header[key] = val.strip()
+                one_line = one_line.decode("ASCII")
+            except UnicodeDecodeError as err:
+                end_of_headers = True
+            else:
+                if len(one_line) > 100:
+                    end_of_headers = True
+            if not end_of_headers:
+                if one_line.strip() == "Binned mode":
+                    one_line = "Mode = Binned"
+                if "=" in one_line:
+                    key, val = one_line.split('=' , 1)
+                    key = key.strip()
+                    self.header_keys.append(key)
+                    self.header[key] = val.strip()
+                else:
+                    end_of_headers = True
+
         missing = []
         for item in MINIMUM_KEYS:
             if item not in self.header_keys:
@@ -105,17 +115,16 @@ class kcdimage(fabioimage):
         assert len(block) == expected_size
         infile.close()
 
-        #now read the data into the array
+        # now read the data into the array
         self.data = numpy.zeros((self.dim2, self.dim1))
         try:
             for i in range(nbReadOut):
                 self.data += numpy.reshape(numpy.fromstring(
-                    block[i * expected_size / nbReadOut:(i + 1) * expected_size / nbReadOut], bytecode),
+                    block[i * expected_size // nbReadOut:(i + 1) * expected_size // nbReadOut], bytecode),
                     [self.dim2, self.dim1])
         except:
-            print len(block), bytecode, self.bpp, self.dim2, self.dim1
-            raise IOError, \
-              'Size spec in kcd-header does not match size of image data field'
+            print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            raise IOError('Size spec in kcd-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
         self.resetvals()
         # ensure the PIL image is reset

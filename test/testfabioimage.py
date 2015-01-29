@@ -1,36 +1,28 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*- 
+# -*- coding: utf-8 -*-
 """
 Test cases for the fabioimage class
 
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
+28/11/2014
 """
-import unittest, sys, os, logging
-logger = logging.getLogger("testfabioimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
-
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
-from fabio.fabioimage import fabioimage
+from __future__ import print_function, with_statement, division, absolute_import
+import unittest
+import sys
+import os
 import numpy
-import gzip, bz2
+import gzip
+import bz2
+
+try:
+    from .utilstest import UtilsTest
+except (ValueError, SystemError):
+    from utilstest import UtilsTest
+
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
+from fabio.fabioimage import fabioimage
+from fabio.third_party import six
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -39,7 +31,7 @@ class test50000(unittest.TestCase):
         dat = numpy.ones((1024, 1024), numpy.uint16)
         dat = (dat * 50000).astype(numpy.uint16)
         assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
-        hed = {"Title":"50000 everywhere"}
+        hed = {"Title": "50000 everywhere"}
         self.obj = fabioimage(dat, hed)
 
     def testgetmax(self):
@@ -58,13 +50,14 @@ class test50000(unittest.TestCase):
         """check stddev"""
         self.assertEqual(self.obj.getstddev(), 0)
 
+
 class testslices(unittest.TestCase):
     """check slicing"""
     def setUp(self):
         """make test data"""
         dat2 = numpy.zeros((1024, 1024), numpy.uint16)
-        hed = {"Title":"zeros and 100"}
-        self.cord = [ 256, 256, 790, 768 ]
+        hed = {"Title": "zeros and 100"}
+        self.cord = [256, 256, 790, 768]
         self.obj = fabioimage(dat2, hed)
         self.slic = slic = self.obj.make_slice(self.cord)
         # Note - d2 is modified *after* fabioimage is made
@@ -102,41 +95,42 @@ class testslices(unittest.TestCase):
 
 class testopen(unittest.TestCase):
     """check opening compressed files"""
-    testfile = os.path.join(UtilsTest.test_home, "testimages", "testfile")
+    testfile = os.path.join(UtilsTest.tempdir, "testfile")
+
     def setUp(self):
         """ create test files"""
         if not os.path.isfile(self.testfile):
-            open(self.testfile, "wb").write("{ hello }")
+            open(self.testfile, "wb").write(b"{ hello }")
         if not os.path.isfile(self.testfile + ".gz"):
-            gzip.open(self.testfile + ".gz", "wb").write("{ hello }")
+            gzip.open(self.testfile + ".gz", "wb").write(b"{ hello }")
         if not os.path.isfile(self.testfile + ".bz2"):
-            bz2.BZ2File(self.testfile + ".bz2", "wb").write("{ hello }")
+            bz2.BZ2File(self.testfile + ".bz2", "wb").write(b"{ hello }")
         self.obj = fabioimage()
 
     def testFlat(self):
         """ no compression"""
         res = self.obj._open(self.testfile).read()
-        self.assertEqual(res , "{ hello }")
+        self.assertEqual(res, b"{ hello }")
 
     def testgz(self):
         """ gzipped """
         res = self.obj._open(self.testfile + ".gz").read()
-        self.assertEqual(res , "{ hello }")
+        self.assertEqual(res, b"{ hello }")
 
     def testbz2(self):
         """ bzipped"""
         res = self.obj._open(self.testfile + ".bz2").read()
-        self.assertEqual(res , "{ hello }")
+        self.assertEqual(res, b"{ hello }")
 
 
-NAMES = { numpy.uint8 :  "numpy.uint8",
-          numpy.int8  :  "numpy.int8" ,
-          numpy.uint16:  "numpy.uint16",
-          numpy.int16 :  "numpy.int16" ,
-          numpy.uint32:  "numpy.uint32" ,
-          numpy.int32 :  "numpy.int32"   ,
-          numpy.float32: "numpy.float32" ,
-          numpy.float64: "numpy.float64"}
+NAMES = {numpy.uint8:   "numpy.uint8",
+         numpy.int8:    "numpy.int8" ,
+         numpy.uint16:  "numpy.uint16",
+         numpy.int16:   "numpy.int16" ,
+         numpy.uint32:  "numpy.uint32" ,
+         numpy.int32:   "numpy.int32"   ,
+         numpy.float32: "numpy.float32" ,
+         numpy.float64: "numpy.float64"}
 
 
 class testPILimage(unittest.TestCase):
@@ -151,11 +145,9 @@ class testPILimage(unittest.TestCase):
                           numpy.int32,
                           numpy.float32]
 
-
     def mkdata(self, shape, typ):
         """ generate [01] testdata """
         return (numpy.random.random(shape)).astype(typ)
-
 
     def testpil(self):
 
@@ -189,13 +181,15 @@ class testPILimage2(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive and big"""
-        return (numpy.random.random(shape) * sys.maxint / 10).astype(typ)
+        return (numpy.random.random(shape) * sys.maxsize / 10).astype(typ)
+
 
 class testPILimage3(testPILimage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive, negative and big"""
-        return ((numpy.random.random(shape) - 0.5) * sys.maxint / 10).astype(typ)
+        return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)
+
 
 def test_suite_all_fabio():
     testSuite = unittest.TestSuite()
@@ -214,10 +208,12 @@ def test_suite_all_fabio():
     testSuite.addTest(testopen("testgz"))
     testSuite.addTest(testopen("testbz2"))
 
-    testSuite.addTest(testPILimage("testpil"))
-    testSuite.addTest(testPILimage2("testpil"))
-    testSuite.addTest(testPILimage3("testpil"))
-
+    if fabio.fabioimage.Image is not None:
+        testSuite.addTest(testPILimage("testpil"))
+        testSuite.addTest(testPILimage2("testpil"))
+        testSuite.addTest(testPILimage3("testpil"))
+    else:
+        logger.warning("Skipping PIL related tests")
     return testSuite
 
 if __name__ == '__main__':

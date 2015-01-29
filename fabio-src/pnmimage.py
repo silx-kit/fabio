@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8
+# coding: utf-8
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -9,16 +9,30 @@ Authors: Henning O. Sorensen & Erik Knudsen
          DK-4000 Roskilde
          email:henning.sorensen@risoe.dk
 
+* Jérôme Kieffer:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
+
+License: GPLv3+
 """
+# Get ready for python3:
+from __future__ import absolute_import, print_function, with_statement, division
+__authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
+__date__ = "12/09/2014"
+__license__ = "GPLv3+"
+__copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
+__status__ = "stable"
 
-import numpy, logging
+import numpy
+import logging
 logger = logging.getLogger("pnmimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
+from .third_party import six
 
-SUBFORMATS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']
+SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
 
-HEADERITEMS = ['SUBFORMAT', 'DIMENSIONS', 'MAXVAL']
-P7HEADERITEMS = ['WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR']
+HEADERITEMS = [six.b(i) for i in ('SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL')]
+P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR')]
 
 class pnmimage(fabioimage):
     def __init__(self, *arg, **kwargs):
@@ -33,50 +47,54 @@ class pnmimage(fabioimage):
         self.bytecode = None
 
     def _readheader(self, f):
-        #pnm images have a 3-line header but ignore lines starting with '#'
-        #1st line contains the pnm image sub format
-        #2nd line contains the image pixel dimension
-        #3rd line contains the maximum pixel value (at least for grayscale - check this)
-        self.header_keys = ['SUBFORMAT', 'DIMENSIONS', 'MAXVAL']
+        # pnm images have a 3-line header but ignore lines starting with '#'
+        # 1st line contains the pnm image sub format
+        # 2nd line contains the image pixel dimension
+        # 3rd line contains the maximum pixel value (at least for grayscale - check this)
 
         l = f.readline().strip()
-        if l not in SUBFORMATS:
-            raise IOError, ('unknown subformat of pnm: %s' % l)
-        else:
-            self.header['SUBFORMAT'] = l
 
-        if self.header['SUBFORMAT'] == 'P7':
+        if l not in SUBFORMATS:
+            raise IOError('unknown subformat of pnm: %s' % l)
+        else:
+            self.header[six.b('SUBFORMAT')] = l
+
+        if self.header[six.b('SUBFORMAT')] == 'P7':
             self.header_keys = P7HEADERITEMS
-            #this one has a special header
-            while 'ENDHDR' not in l:
+            # this one has a special header
+            while six.b('ENDHDR') not in l:
                 l = f.readline()
                 while(l[0] == '#'): l = f.readline()
                 s = l.lsplit(' ', 1)
                 if s[0] not in P7HEADERITEMS:
-                    raise IOError, ('Illegal pam (netpnm p7) headeritem %s' % s[0])
+                    raise IOError('Illegal pam (netpnm p7) headeritem %s' % s[0])
                 self.header[s[0]] = s[1]
         else:
             self.header_keys = HEADERITEMS
-            for k in self.header_keys[1:]:
+            values = list(l.split())
+            while len(values) < len(self.header_keys):
                 l = f.readline()
-                while(l[0] == '#'): l = f.readline()
-                self.header[k] = l.strip()
+                while l[0] == '#':
+                    l = f.readline()
+                values += l.split()
+            for k, v in zip(self.header_keys, values):
+                self.header[k] = v.strip()
 
-        #set the dimensions
-        dims = (self.header['DIMENSIONS'].split())
-        self.dim1, self.dim2 = int(dims[0]), int(dims[1])
-        #figure out how many bytes are used to store the data
-        #case construct here!
-        m = int(self.header['MAXVAL'])
+        # set the dimensions
+        self.dim1 = int(self.header[six.b("WIDTH")])
+        self.dim2 = int(self.header[six.b("HEIGHT")])
+        # figure out how many bytes are used to store the data
+        # case construct here!
+        m = int(self.header[six.b('MAXVAL')])
         if m < 256:
             self.bytecode = numpy.uint8
         elif m < 65536:
             self.bytecode = numpy.uint16
-        elif m < 2147483648L:
+        elif m < 2147483648:
             self.bytecode = numpy.uint32
             logger.warning('32-bit pixels are not really supported by the netpgm standard')
         else:
-            raise IOError, 'could not figure out what kind of pixels you have'
+            raise IOError('could not figure out what kind of pixels you have')
 
     def read(self, fname, frame=None):
         """
@@ -89,67 +107,67 @@ class pnmimage(fabioimage):
         infile = self._open(fname)
         self._readheader(infile)
 
-        #read the image data
-        decoder_name = "%sdec" % self.header['SUBFORMAT']
+        # read the image data
+        if six.PY3:
+            format = str(self.header[six.b('SUBFORMAT')], encoding="latin-1")
+        else:
+            format = self.header[six.b('SUBFORMAT')]
+        decoder_name = "%sdec" % format
+
         if decoder_name in dir(pnmimage):
             decoder = getattr(pnmimage, decoder_name)
-            self.data = decoder(infile, self.bytecode)
+            self.data = decoder(self, infile, self.bytecode)
         else:
             raise IOError("No decoder named %s for file %s" % (decoder_name, fname))
         self.resetvals()
         return self
 
-    @staticmethod
-    def P1dec(buf, bytecode):
+    def P1dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
         for l in buf.readlines():
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
-                raise IOError, 'Size spec in pnm-header does not match size of image data field'
+                raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
 
-    @staticmethod
-    def P4dec(buf, bytecode):
+    def P4dec(self, buf, bytecode):
         err = 'single bit (pbm) images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)
 
-    @staticmethod
-    def P2dec(buf, bytecode):
+    def P2dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
         for l in buf.readlines():
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
-                raise IOError, 'Size spec in pnm-header does not match size of image data field'
+                raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
 
-    @staticmethod
-    def P5dec(buf, bytecode):
+    def P5dec(self, buf, bytecode):
         l = buf.read()
         try:
-            data = numpy.reshape(numpy.fromstring(l, bytecode), [self.dim2, self.dim1]).byteswap()
+            npa = numpy.fromstring(l, bytecode)
+            npa.shape = self.dim2, self.dim1
+            data = npa.byteswap()
         except ValueError:
-            raise IOError, 'Size spec in pnm-header does not match size of image data field'
+            raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
 
-    @staticmethod
-    def P3dec(buf, bytecode):
+    def P3dec(self, buf, bytecode):
         err = '(plain-ppm) RGB images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)
 
-    @staticmethod
-    def P6dec(buf, bytecode):
+    def P6dec(self, buf, bytecode):
         err = '(ppm) RGB images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)
 
-    @staticmethod
-    def P7dec(buf, bytecode):
+    def P7dec(self, buf, bytecode):
         err = '(pam) images are not supported - yet'
         logger.error(err)
         raise NotImplementedError(err)

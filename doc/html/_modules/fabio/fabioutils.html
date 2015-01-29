@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.fabioutils &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.fabioutils &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,9 +46,6 @@
           <div class="body">
             
   <h1>Source code for fabio.fabioutils</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="c">#coding: utf8</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">General purpose utilities functions for fabio</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -122,10 +116,10 @@
 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="n">COMPRESSORS</span><span class="p">[</span><span class="s">&#39;.bz2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="deprecated"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.deprecated">[docs]</a><span class="k">def</span> <span class="nf">deprecated</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">deprecated</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    used to deprecate a function/method: prints a lot of warning messages to enforce the modifaction of the code</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="deprecated"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.deprecated">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        decorator that deprecates the use of a function  </span>
@@ -133,11 +127,11 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> is Deprecated !!! </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">func_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_stack</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">wrapper</span>
-</div>
-<div class="viewcode-block" id="pad"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.pad">[docs]</a><span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">mystr</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot; &quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">mystr</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot; &quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Performs the padding of the string to the right size with the right pattern </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Performs the padding of the string to the right size with the right pattern </span></div>
+<div class="viewcode-block" id="pad"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.pad">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
     <span class="n">padded_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span> <span class="o">/</span> <span class="n">size</span><span class="p">)</span> <span class="o">*</span> <span class="n">size</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -145,22 +139,22 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">mystr</span> <span class="o">+</span> <span class="n">pattern</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">padded_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">))))[:</span><span class="n">padded_size</span><span class="p">]</span>
 
-</div>
-<div class="viewcode-block" id="getnum"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.getnum">[docs]</a><span class="k">def</span> <span class="nf">getnum</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">getnum</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    # try to figure out a file number</span>
-<span class="sd">    # guess it starts at the back</span>
+<span class="sd">    # try to figure out a file number</span></div>
+<div class="viewcode-block" id="getnum"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.getnum">[docs]</a><span class="sd">    # guess it starts at the back</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stem</span> <span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">post_num</span> <span class="o">=</span> <span class="n">numstem</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="FilenameObject"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject">[docs]</a><span class="k">class</span> <span class="nc">FilenameObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<span class="k">class</span> <span class="nc">FilenameObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The &#39;meaning&#39; of a filename ... </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    The &#39;meaning&#39; of a filename ... </span></div>
+<div class="viewcode-block" id="FilenameObject"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stem</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">num</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -199,10 +193,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">deconstruct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="FilenameObject.str"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.str">[docs]</a>    <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a string representation &quot;&quot;&quot;</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="s">&quot;stem </span><span class="si">%s</span><span class="s">, num </span><span class="si">%s</span><span class="s"> format </span><span class="si">%s</span><span class="s"> extension </span><span class="si">%s</span><span class="s"> &quot;</span> <span class="o">+</span> \
-                <span class="s">&quot;postnum = </span><span class="si">%s</span><span class="s"> digits </span><span class="si">%s</span><span class="s"> dir </span><span class="si">%s</span><span class="s">&quot;</span>
+<div class="viewcode-block" id="FilenameObject.str"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.str">[docs]</a>                <span class="s">&quot;postnum = </span><span class="si">%s</span><span class="s"> digits </span><span class="si">%s</span><span class="s"> dir </span><span class="si">%s</span><span class="s">&quot;</span>
         <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">stem</span> <span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="p">,</span>
@@ -210,13 +204,13 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">postnum</span> <span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">digits</span> <span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="p">]</span> <span class="p">])</span></div>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="p">]</span> <span class="p">])</span>
     <span class="n">__repr__</span> <span class="o">=</span> <span class="nb">str</span>
 
-<div class="viewcode-block" id="FilenameObject.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.tostring">[docs]</a>    <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        convert yourself to a string</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FilenameObject.tostring"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.tostring">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stem</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">fmt</span> <span class="o">=</span> <span class="s">&quot;%0&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;d&quot;</span>
@@ -229,11 +223,11 @@
             <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">name</span>
 
-</div>
-<div class="viewcode-block" id="FilenameObject.deconstruct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.deconstruct_filename">[docs]</a>    <span class="k">def</span> <span class="nf">deconstruct_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">deconstruct_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Break up a filename to get image type and number</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Break up a filename to get image type and number</span></div>
+<div class="viewcode-block" id="FilenameObject.deconstruct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.FilenameObject.deconstruct_filename">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">direc</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">direc</span> <span class="o">=</span> <span class="n">direc</span> <span class="ow">or</span> <span class="bp">None</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)</span>
@@ -299,11 +293,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">postnum</span> <span class="o">=</span> <span class="n">postnum</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="n">ndigit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compressed</span> <span class="o">=</span> <span class="n">compressed</span>
-</div></div>
-<div class="viewcode-block" id="numstem"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.numstem">[docs]</a><span class="k">def</span> <span class="nf">numstem</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">numstem</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; cant see how to do without reversing strings</span>
-<span class="sd">    Match 1 or more digits going backwards from the end of the string</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Match 1 or more digits going backwards from the end of the string</span></div></div>
+<div class="viewcode-block" id="numstem"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.numstem">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">reg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;^(.*?)(-?[0-9]{0,9})(\D*)$&quot;</span><span class="p">)</span>
     <span class="c">#reg = re.compile(&quot;&quot;&quot;(\D*)(\d\d*)(\w*)&quot;&quot;&quot;)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -316,55 +310,55 @@
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c"># no digits found</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">]</span>
 
-<span class="c">#@deprecated</span></div>
-<div class="viewcode-block" id="deconstruct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.deconstruct_filename">[docs]</a><span class="k">def</span> <span class="nf">deconstruct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="c">#@deprecated</span>
+<span class="k">def</span> <span class="nf">deconstruct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function for backward compatibility.</span>
-<span class="sd">    Deprecated</span>
+<span class="sd">    Function for backward compatibility.</span></div>
+<div class="viewcode-block" id="deconstruct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.deconstruct_filename">[docs]</a><span class="sd">    Deprecated</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="construct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.construct_filename">[docs]</a><span class="k">def</span> <span class="nf">construct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">construct_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="s">&quot;Try to construct the filename for a given frame&quot;</span>
-    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
+<div class="viewcode-block" id="construct_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.construct_filename">[docs]</a>    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">frame</span>
     <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="next_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.next_filename">[docs]</a><span class="k">def</span> <span class="nf">next_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">next_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; increment number &quot;&quot;&quot;</span>
-    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
-        <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="previous_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.previous_filename">[docs]</a><span class="k">def</span> <span class="nf">previous_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; decrement number &quot;&quot;&quot;</span>
-    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">-=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
-        <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="jump_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.jump_filename">[docs]</a><span class="k">def</span> <span class="nf">jump_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; jump to number &quot;&quot;&quot;</span>
-    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="next_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.next_filename">[docs]</a>    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
         <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
 
-</div>
-<div class="viewcode-block" id="extract_filenumber"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.extract_filenumber">[docs]</a><span class="k">def</span> <span class="nf">extract_filenumber</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">previous_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; decrement number &quot;&quot;&quot;</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="previous_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.previous_filename">[docs]</a>    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
+        <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">jump_filename</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; jump to number &quot;&quot;&quot;</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="jump_filename"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.jump_filename">[docs]</a>    <span class="n">fobj</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">padding</span><span class="p">:</span>
+        <span class="n">fobj</span><span class="o">.</span><span class="n">digits</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">extract_filenumber</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; extract file number &quot;&quot;&quot;</span>
-    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">num</span>
-</div>
-<div class="viewcode-block" id="isAscii"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.isAscii">[docs]</a><span class="k">def</span> <span class="nf">isAscii</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">listExcluded</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">fobj</span> <span class="o">=</span> <span class="n">FilenameObject</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+<div class="viewcode-block" id="extract_filenumber"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.extract_filenumber">[docs]</a>    <span class="k">return</span> <span class="n">fobj</span><span class="o">.</span><span class="n">num</span>
+
+<span class="k">def</span> <span class="nf">isAscii</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">listExcluded</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @param name: string to check</span>
-<span class="sd">    @param listExcluded: list of char or string excluded.</span>
+<span class="sd">    @param name: string to check</span></div>
+<div class="viewcode-block" id="isAscii"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.isAscii">[docs]</a><span class="sd">    @param listExcluded: list of char or string excluded.</span>
 <span class="sd">    @return: True of False whether  name is pure ascii or not</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">isascii</span> <span class="o">=</span> <span class="bp">None</span>
@@ -378,11 +372,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">isascii</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">return</span> <span class="n">isascii</span>
-</div>
-<div class="viewcode-block" id="toAscii"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.toAscii">[docs]</a><span class="k">def</span> <span class="nf">toAscii</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">toAscii</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @param name: string to check</span>
-<span class="sd">    @param excluded: tuple of char or string excluded (not list: they are mutable).</span>
+<span class="sd">    @param name: string to check</span></div>
+<div class="viewcode-block" id="toAscii"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.toAscii">[docs]</a><span class="sd">    @param excluded: tuple of char or string excluded (not list: they are mutable).</span>
 <span class="sd">    @return: the name with all non valid char removed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">excluded</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dictAscii</span><span class="p">:</span>
@@ -397,11 +391,11 @@
         <span class="n">ascii</span> <span class="o">=</span> <span class="n">dictAscii</span><span class="p">[</span><span class="n">excluded</span><span class="p">]</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ascii</span><span class="p">]</span>
     <span class="k">return</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="nice_int"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.nice_int">[docs]</a><span class="k">def</span> <span class="nf">nice_int</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">nice_int</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Workaround that int(&#39;1.0&#39;) raises an exception </span>
-<span class="sd">    </span>
+<span class="sd">    Workaround that int(&#39;1.0&#39;) raises an exception </span></div>
+<div class="viewcode-block" id="nice_int"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.nice_int">[docs]</a><span class="sd">    </span>
 <span class="sd">    @param s: string to be converted to integer</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -409,11 +403,11 @@
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
 
-</div>
-<div class="viewcode-block" id="StringIO"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.StringIO">[docs]</a><span class="k">class</span> <span class="nc">StringIO</span><span class="p">(</span><span class="n">stringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    just an interface providing the name and mode property to a StringIO</span>
 
+<span class="k">class</span> <span class="nc">StringIO</span><span class="p">(</span><span class="n">stringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    just an interface providing the name and mode property to a StringIO</span></div>
+<div class="viewcode-block" id="StringIO"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.StringIO">[docs]</a>
 <span class="sd">    BugFix for MacOSX mainly</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;r&quot;</span><span class="p">):</span>
@@ -427,23 +421,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="StringIO.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.StringIO.getSize">[docs]</a>    <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Measuring size of </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+<div class="viewcode-block" id="StringIO.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.StringIO.getSize">[docs]</a>            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
                 <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span></div>
-<div class="viewcode-block" id="StringIO.setSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.StringIO.setSize">[docs]</a>    <span class="k">def</span> <span class="nf">setSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">size</span></div>
-    <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getSize</span><span class="p">,</span> <span class="n">setSize</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="File"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.File">[docs]</a><span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span>
+    <span class="k">def</span> <span class="nf">setSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">size</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getSize</span><span class="p">,</span> <span class="n">setSize</span><span class="p">)</span></div>
+<div class="viewcode-block" id="StringIO.setSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.StringIO.setSize">[docs]</a>
+<span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span></div>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    wrapper for &quot;file&quot; with locking</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    wrapper for &quot;file&quot; with locking</span></div>
+<div class="viewcode-block" id="File"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.File">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;rb&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;file(name[, mode[, buffering]]) -&gt; file object</span>
 <span class="sd">            </span>
@@ -466,42 +460,42 @@
         <span class="nb">file</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">buffering</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="bp">None</span>
-<div class="viewcode-block" id="File.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.File.getSize">[docs]</a>    <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Measuring size of </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+<div class="viewcode-block" id="File.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.File.getSize">[docs]</a>            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
                 <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span></div>
-<div class="viewcode-block" id="File.setSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.File.setSize">[docs]</a>    <span class="k">def</span> <span class="nf">setSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">size</span></div>
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Close the file.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span>
+    <span class="k">def</span> <span class="nf">setSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">size</span>
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span></div>
+<div class="viewcode-block" id="File.setSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.File.setSize">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the file.</span></div>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
     <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getSize</span><span class="p">,</span> <span class="n">setSize</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="UnknownCompressedFile"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.UnknownCompressedFile">[docs]</a><span class="k">class</span> <span class="nc">UnknownCompressedFile</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+
+<span class="k">class</span> <span class="nc">UnknownCompressedFile</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    wrapper for &quot;File&quot; with locking</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    wrapper for &quot;File&quot; with locking</span></div>
+<div class="viewcode-block" id="UnknownCompressedFile"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.UnknownCompressedFile">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;rb&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;No decompressor found for this type of file (are gzip anf bz2 installed ???&quot;</span><span class="p">)</span>
         <span class="n">File</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">buffering</span><span class="p">)</span>
-</div>
+
 <span class="k">if</span> <span class="n">gzip</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
     <span class="n">GzipFile</span> <span class="o">=</span> <span class="n">UnknownCompressedFile</span>
-<span class="k">else</span><span class="p">:</span>
-<div class="viewcode-block" id="GzipFile"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.GzipFile">[docs]</a>    <span class="k">class</span> <span class="nc">GzipFile</span><span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="p">):</span>
+<span class="k">else</span><span class="p">:</span></div>
+    <span class="k">class</span> <span class="nc">GzipFile</span><span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Just a wrapper forgzip.GzipFile providing the correct seek capabilities for python 2.5   </span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GzipFile"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.GzipFile">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">fileobj</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Wrapper with locking for constructor for the GzipFile class.</span>
@@ -539,21 +533,21 @@
             <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Measuring size of </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<div class="viewcode-block" id="GzipFile.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.GzipFile.getSize">[docs]</a>                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span>
             <span class="k">def</span> <span class="nf">setSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getSize</span><span class="p">,</span> <span class="n">setSize</span><span class="p">)</span>
-            <span class="nd">@property</span>
-            <span class="k">def</span> <span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getSize</span><span class="p">,</span> <span class="n">setSize</span><span class="p">)</span></div>
+<div class="viewcode-block" id="GzipFile.setSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.GzipFile.setSize">[docs]</a>            <span class="nd">@property</span>
+            <span class="k">def</span> <span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fileobj</span> <span class="ow">is</span> <span class="bp">None</span>
 
-            <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">):</span>
+<div class="viewcode-block" id="GzipFile.closed"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.GzipFile.closed">[docs]</a>            <span class="k">def</span> <span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">):</span>
                 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                Move to new file position.</span>
-<span class="sd">        </span>
+<span class="sd">                Move to new file position.</span></div>
+<div class="viewcode-block" id="GzipFile.seek"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.GzipFile.seek">[docs]</a><span class="sd">        </span>
 <span class="sd">                Argument offset is a byte count.  Optional argument whence defaults to</span>
 <span class="sd">                0 (offset from start of file, offset should be &gt;= 0); other values are 1</span>
 <span class="sd">                (move relative to current position, positive or negative), and 2 (move</span>
@@ -573,19 +567,19 @@
                     <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">())</span>
             <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="k">return</span> <span class="bp">self</span>
-            <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span></div>
                 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                Close the file.</span>
 <span class="sd">                &quot;&quot;&quot;</span>
                 <span class="k">return</span> <span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</div>
+
 <span class="k">if</span> <span class="n">bz2</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
     <span class="n">BZ2File</span> <span class="o">=</span> <span class="n">UnknownCompressedFile</span>
-<span class="k">else</span><span class="p">:</span>
-<div class="viewcode-block" id="BZ2File"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.BZ2File">[docs]</a>    <span class="k">class</span> <span class="nc">BZ2File</span><span class="p">(</span><span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">):</span>
+<span class="k">else</span><span class="p">:</span></div>
+    <span class="k">class</span> <span class="nc">BZ2File</span><span class="p">(</span><span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="p">):</span>
         <span class="s">&quot;Wrapper with lock&quot;</span>
         <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span> <span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BZ2File"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.BZ2File">[docs]</a>            <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            BZ2File(name [, mode=&#39;r&#39;, buffering=0, compresslevel=9]) -&gt; file object</span>
 <span class="sd">            </span>
 <span class="sd">            Open a bz2 file. The mode can be &#39;r&#39; or &#39;w&#39;, for reading (default) or</span>
@@ -604,26 +598,26 @@
             <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span> <span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">buffering</span><span class="p">,</span> <span class="n">compresslevel</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="bp">None</span>
-<div class="viewcode-block" id="BZ2File.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.BZ2File.getSize">[docs]</a>        <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">getSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Measuring size of </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+<div class="viewcode-block" id="BZ2File.getSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.BZ2File.getSize">[docs]</a>                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
                     <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
                     <span class="nb">all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span></div>
-<div class="viewcode-block" id="BZ2File.setSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.BZ2File.setSize">[docs]</a>        <span class="k">def</span> <span class="nf">setSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">value</span></div>
-        <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getSize</span><span class="p">,</span> <span class="n">setSize</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-                <span class="sd">&quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span>
+        <span class="k">def</span> <span class="nf">setSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getSize</span><span class="p">,</span> <span class="n">setSize</span><span class="p">)</span></div>
+<div class="viewcode-block" id="BZ2File.setSize"><a class="viewcode-back" href="../../api/modules.html#fabio.fabioutils.BZ2File.setSize">[docs]</a>        <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;</span></div>
 <span class="sd">                Close the file.</span>
 <span class="sd">                &quot;&quot;&quot;</span>
                 <span class="k">return</span> <span class="n">bz2</span><span class="o">.</span><span class="n">BZ2File</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span></div>
-</pre></div>
+            <span class="k">return</span> <span class="bp">self</span>
+</pre></div></div>
 
           </div>
         </div>
@@ -656,13 +650,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

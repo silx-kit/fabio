@@ -1,9 +1,6 @@
 #!/usr/bin/env python
-# coding: utf8
-
-# Get ready for python3:
-from __future__ import with_statement, print_function
-__doc__ = """
+# coding: utf-8
+"""
 Authors: Gael Goret, Jerome Kieffer, ESRF, France
 Emails: gael.goret@esrf.fr, jerome.kieffer@esrf.fr
         Brian Richard Pauw <brian@stack.nl>
@@ -14,13 +11,16 @@ data-type, dimensions, byte order and offset
 This simple library has been made for manipulating exotic/unknown files format.
 """
 
+# Get ready for python3:
+from __future__ import with_statement, print_function
+
 __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]
 __contact__ = "gael.goret@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "17 Oct 2012"
 
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 import numpy, logging
 logger = logging.getLogger("binaryimage")
 

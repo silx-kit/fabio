@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fabio.mrcimage &mdash; FabIO v0.1.4 documentation</title>
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for fabio.mrcimage</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">MRC image for FabIO</span>
+
+<span class="sd">Authors: Jerome Kieffer</span>
+<span class="sd">email:  Jerome.Kieffer@terre-adelie.org</span>
+
+<span class="sd">Specifications from:</span>
+<span class="sd">http://ami.scripps.edu/software/mrctools/mrc_specification.php</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># Get ready for python3:</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">with_statement</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Jérôme Kieffer&quot;</span><span class="p">]</span>
+<span class="n">__contact__</span> <span class="o">=</span> <span class="s">&quot;Jerome.Kieffer@terre-adelie.org&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s">&quot;GPLv3+&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&quot;Jérôme Kieffer&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&quot;29 Oct 2013&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">.fabioimage</span> <span class="kn">import</span> <span class="n">fabioimage</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;mrcimage&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">3.0</span><span class="p">):</span>
+    <span class="nb">bytes</span> <span class="o">=</span> <span class="nb">str</span>
+
+<span class="k">class</span> <span class="nc">mrcimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FabIO image class for Images from a mrc image stack</span>
+<div class="viewcode-block" id="mrcimage"><a class="viewcode-back" href="../../api/modules.html#fabio.mrcimage.mrcimage">[docs]</a><span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;NX&quot;</span><span class="p">,</span> <span class="s">&quot;NY&quot;</span><span class="p">,</span> <span class="s">&quot;NZ&quot;</span><span class="p">,</span> <span class="s">&quot;MODE&quot;</span><span class="p">,</span> <span class="s">&quot;NXSTART&quot;</span><span class="p">,</span> <span class="s">&quot;NYSTART&quot;</span><span class="p">,</span> <span class="s">&quot;NZSTART&quot;</span><span class="p">,</span>
+            <span class="s">&quot;MX&quot;</span><span class="p">,</span> <span class="s">&quot;MY&quot;</span><span class="p">,</span> <span class="s">&quot;MZ&quot;</span><span class="p">,</span> <span class="s">&quot;CELL_A&quot;</span><span class="p">,</span> <span class="s">&quot;CELL_B&quot;</span><span class="p">,</span> <span class="s">&quot;CELL_C&quot;</span><span class="p">,</span>
+            <span class="s">&quot;CELL_ALPHA&quot;</span><span class="p">,</span> <span class="s">&quot;CELL_BETA&quot;</span><span class="p">,</span> <span class="s">&quot;CELL_GAMMA&quot;</span><span class="p">,</span>
+            <span class="s">&quot;MAPC&quot;</span><span class="p">,</span> <span class="s">&quot;MAPR&quot;</span><span class="p">,</span> <span class="s">&quot;MAPS&quot;</span><span class="p">,</span> <span class="s">&quot;DMIN&quot;</span><span class="p">,</span> <span class="s">&quot;DMAX&quot;</span><span class="p">,</span> <span class="s">&quot;DMEAN&quot;</span><span class="p">,</span> <span class="s">&quot;ISPG&quot;</span><span class="p">,</span> <span class="s">&quot;NSYMBT&quot;</span><span class="p">,</span>
+            <span class="s">&quot;EXTRA&quot;</span><span class="p">,</span> <span class="s">&quot;ORIGIN&quot;</span><span class="p">,</span> <span class="s">&quot;MAP&quot;</span><span class="p">,</span> <span class="s">&quot;MACHST&quot;</span><span class="p">,</span> <span class="s">&quot;RMS&quot;</span><span class="p">,</span> <span class="s">&quot;NLABL&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generic constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fabioimage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minval</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read and decode the header of an image:</span>
+
+<span class="sd">        @param infile: Opened python file (can be stringIO or bipped file)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># list of header key to keep the order (when writing)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c"># header is composed of 56-int32 plus 10x80char lines</span>
+        <span class="n">int_block</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">56</span> <span class="o">*</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">KEYS</span><span class="p">,</span> <span class="n">int_block</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;MAP&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">542130509</span>  <span class="c"># &quot;MAP &quot; in int32 !</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;LABEL_</span><span class="si">%02i</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">i</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;NX&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;NY&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;NZ&quot;</span><span class="p">]</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;MODE&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int8</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int16</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">complex64</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">complex64</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imagesize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span>
+
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        try to read image</span>
+<div class="viewcode-block" id="mrcimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.mrcimage.mrcimage.read">[docs]</a><span class="sd">        @param fname: name of the file</span>
+<span class="sd">        @param frame:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span> <span class="o">=</span> <span class="n">fname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">=</span> <span class="n">frame</span> <span class="ow">or</span> <span class="mi">0</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_readframe</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">_calc_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the frame position in the file</span></div>
+
+<span class="sd">        @param frame: frame number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">frame</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span>
+        <span class="k">return</span> <span class="mi">1024</span> <span class="o">+</span> <span class="n">frame</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">imagesize</span>
+
+    <span class="k">def</span> <span class="nf">_makeframename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">$</span><span class="si">%04d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_readframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">img_num</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a frame an populate data</span>
+<span class="sd">        @param infile: opened file</span>
+<span class="sd">        @param img_num: frame number (int)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">img_num</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="ow">or</span> <span class="n">img_num</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Requested frame number is out of range&quot;</span><span class="p">)</span>
+        <span class="n">imgstart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;offset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">img_num</span> <span class="o">*</span> <span class="p">(</span><span class="mi">512</span> <span class="o">*</span> <span class="mi">476</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">24</span><span class="p">)</span>
+        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc_offset</span><span class="p">(</span><span class="n">img_num</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imagesize</span><span class="p">),</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">img_num</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_makeframename</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Write is not implemented&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="mrcimage.write"><a class="viewcode-back" href="../../api/modules.html#fabio.mrcimage.mrcimage.write">[docs]</a>    <span class="k">def</span> <span class="nf">getframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a frame as a new fabioimage object</span></div>
+<div class="viewcode-block" id="mrcimage.getframe"><a class="viewcode-back" href="../../api/modules.html#fabio.mrcimage.mrcimage.getframe">[docs]</a><span class="sd">        @param num: frame number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Requested frame number is out of range&quot;</span><span class="p">)</span>
+        <span class="c"># Do a deep copy of the header to make a new one</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">mrcimage</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">header_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span><span class="p">[:]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;dim1&quot;</span><span class="p">,</span> <span class="s">&quot;dim2&quot;</span><span class="p">,</span> <span class="s">&quot;nframes&quot;</span><span class="p">,</span> <span class="s">&quot;bytecode&quot;</span><span class="p">,</span> <span class="s">&quot;imagesize&quot;</span><span class="p">,</span> <span class="s">&quot;sequencefilename&quot;</span><span class="p">):</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        <span class="k">with</span> <span class="n">frame</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">_readframe</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">frame</span>
+
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the next image in a series as a fabio image</span></div>
+<div class="viewcode-block" id="mrcimage.next"><a class="viewcode-back" href="../../api/modules.html#fabio.mrcimage.mrcimage.next">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newobj</span> <span class="o">=</span> <span class="n">mrcimage</span><span class="p">()</span>
+            <span class="n">newobj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">next_filename</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">newobj</span>
+
+    <span class="k">def</span> <span class="nf">previous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the previous image in a series as a fabio image</span></div>
+<div class="viewcode-block" id="mrcimage.previous"><a class="viewcode-back" href="../../api/modules.html#fabio.mrcimage.mrcimage.previous">[docs]</a><span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentframe</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newobj</span> <span class="o">=</span> <span class="n">mrcimage</span><span class="p">()</span>
+            <span class="n">newobj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">previous_filename</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sequencefilename</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">newobj</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

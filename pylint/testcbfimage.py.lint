@@ -1,41 +1,9 @@
-No config file found, using default configuration
-
-************* Module test.testcbfimage
-C: 44,0: Line too long (91/80)
-C: 69,0: Line too long (122/80)
-C: 79,0: Line too long (82/80)
-C: 84,0: Line too long (103/80)
-C: 91,0: Line too long (98/80)
-C:102,0: Line too long (87/80)
-C:109,0: Line too long (90/80)
-C:116,0: Line too long (89/80)
-C:127,0: Line too long (82/80)
-C:132,0: Line too long (149/80)
-C:143,0: Line too long (82/80)
-C:148,0: Line too long (149/80)
-C:158,0: Line too long (82/80)
-C:163,0: Line too long (149/80)
-C: 12,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C: 13,0: Invalid name "force_build" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
+************* Module testcbfimage
 W: 27,0: No exception type(s) specified
-W: 30,0: Relative import 'utilstest', should be 'test.utilstest'
+F: 30,0: Unable to import 'utilstest'
 C: 38,0:test_cbfimage_reader: Invalid name "test_cbfimage_reader" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 41,4:test_cbfimage_reader.__init__: Invalid name "methodName" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 41,23:test_cbfimage_reader.__init__: Invalid name "methodName" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 49,4:test_cbfimage_reader.setUp: Invalid name "setUp" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 55,4:test_cbfimage_reader.tearDown: Invalid name "tearDown" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 90,8:test_cbfimage_reader.test_byte_offset: Invalid name "startPos" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 92,8:test_cbfimage_reader.test_byte_offset: Invalid name "startTime" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 93,8:test_cbfimage_reader.test_byte_offset: Invalid name "numpyRes" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 94,8:test_cbfimage_reader.test_byte_offset: Invalid name "tNumpy" (should match [a-z_][a-z0-9_]{2,30}$)
-C:111,8:test_cbfimage_reader.test_byte_offset: Invalid name "startTime" (should match [a-z_][a-z0-9_]{2,30}$)
-C:112,8:test_cbfimage_reader.test_byte_offset: Invalid name "cythonRes" (should match [a-z_][a-z0-9_]{2,30}$)
-C:113,8:test_cbfimage_reader.test_byte_offset: Invalid name "tCython" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 38,0:test_cbfimage_reader: Too many public methods (51/20)
+R: 38,0:test_cbfimage_reader: Too many public methods (22/20)
 C:166,0:test_suite_all_cbf: Missing docstring
-C:167,4:test_suite_all_cbf: Invalid name "testSuite" (should match [a-z_][a-z0-9_]{2,30}$)
-C:179,4: Invalid name "mysuite" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-C:180,4: Invalid name "runner" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
 
 
 Report
@@ -48,13 +16,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |32     |NC       |NC         |
+|convention |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|refactor   |1      |NC       |NC         |
+|refactor   |1      |0        |+1.00      |
 +-----------+-------+---------+-----------+
-|warning    |2      |NC       |NC         |
+|warning    |1      |1        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |NC       |NC         |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -65,37 +33,23 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |17          |
-+-----------+------------+
-|C0301      |14          |
-+-----------+------------+
 |W0702      |1           |
-+-----------+------------+
-|W0403      |1           |
 +-----------+------------+
 |R0904      |1           |
 +-----------+------------+
+|F0401      |1           |
++-----------+------------+
 |C0111      |1           |
++-----------+------------+
+|C0103      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 7.13/10
-
-Duplication
------------
-
-+-------------------------+------+---------+-----------+
-|                         |now   |previous |difference |
-+=========================+======+=========+===========+
-|nb duplicated lines      |0     |NC       |NC         |
-+-------------------------+------+---------+-----------+
-|percent duplicated lines |0.000 |NC       |NC         |
-+-------------------------+------+---------+-----------+
-
-
+Your code has been rated at 9.67/10 (previous run: 9.64/10)
+So close to being perfect...
 
 Raw metrics
 -----------
@@ -103,13 +57,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |122    |72.62 |NC       |NC         |
+|code      |122    |72.62 |84       |+38.00     |
 +----------+-------+------+---------+-----------+
-|docstring |22     |13.10 |NC       |NC         |
+|docstring |22     |13.10 |13       |+9.00      |
 +----------+-------+------+---------+-----------+
-|comment   |15     |8.93  |NC       |NC         |
+|comment   |15     |8.93  |15       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |9      |5.36  |NC       |NC         |
+|empty     |9      |5.36  |6        |+3.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -120,14 +74,40 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |1      |NC         |NC         |100.00      |0.00     |
+|module   |1      |1          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |1      |NC         |NC         |100.00      |100.00   |
+|class    |1      |1          |=          |100.00      |100.00   |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |9      |NC         |NC         |100.00      |22.22    |
+|method   |9      |6          |+3.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |1      |NC         |NC         |0.00        |0.00     |
+|function |1      |1          |=          |0.00        |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |=          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fabio (testcbfimage)
+      \-cbfimage 
+      | \-cbfimage (testcbfimage)
+      \-compression 
+        \-decByteOffet_cython (testcbfimage)
+        \-decByteOffet_numpy (testcbfimage)
 
 
 

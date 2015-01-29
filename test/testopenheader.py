@@ -1,32 +1,22 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 """
 # Unit tests
+Jerome Kieffer, 04/12/2014 
 """
+from __future__ import print_function, with_statement, division, absolute_import
+import unittest
+import sys
+import os
+import numpy
 
-import unittest, sys, os, logging
-logger = logging.getLogger("testopenheader")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
 try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+    from .utilstest import UtilsTest
+except (ValueError, SystemError):
+    from utilstest import UtilsTest
 
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 from fabio.openimage import openheader
 
 
@@ -44,7 +34,6 @@ class test1(unittest.TestCase):
             self.assertEqual(obj.header["title"],
                              "ESPIA FRELON Image",
                              "Error on file %s" % name)
-
 
 
 def test_suite_all_openheader():

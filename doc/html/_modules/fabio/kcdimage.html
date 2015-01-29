@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.kcdimage &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.kcdimage &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,139 +45,137 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for fabio.kcdimage</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Authors: Jerome Kieffer, ESRF </span>
-<span class="sd">         email:jerome.kieffer@esrf.fr</span>
+  <h1>Source code for fabio.kcdimage</h1><pre>
+Authors: Jerome Kieffer, ESRF 
+         email:jerome.kieffer@esrf.fr
 
-<span class="sd">kcd images are 2D images written by the old KappaCCD diffractometer built by Nonius in the 1990&#39;s</span>
-<span class="sd">Based on the edfimage.py parser.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+kcd images are 2D images written by the old KappaCCD diffractometer built by Nonius in the 1990's
+Based on the edfimage.py parser.
+"""
 
-<span class="kn">import</span> <span class="nn">numpy</span><span class="o">,</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">string</span>
-<span class="kn">from</span> <span class="nn">fabioimage</span> <span class="kn">import</span> <span class="n">fabioimage</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;kcdimage&quot;</span><span class="p">)</span>
+import numpy, logging
+import os, string
+from fabioimage import fabioimage
+logger = logging.getLogger("kcdimage")
 
-<span class="n">DATA_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;u16&quot;</span>  <span class="p">:</span>  <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span> <span class="p">}</span>
+DATA_TYPES = {"u16"  :  numpy.uint16 }
 
-<span class="n">MINIMUM_KEYS</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s">&#39;ByteOrder&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Data type&#39;</span><span class="p">,</span>
-                <span class="s">&#39;X dimension&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Y dimension&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Number of readouts&#39;</span><span class="p">]</span>
+MINIMUM_KEYS = [
+                'ByteOrder',
+                'Data type',
+                'X dimension',
+                'Y dimension',
+                'Number of readouts']
 
-<span class="n">DEFAULT_VALUES</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;Data type&quot;</span><span class="p">:</span> <span class="s">&quot;u16&quot;</span> <span class="p">}</span>
+DEFAULT_VALUES = { "Data type": "u16" }
 
 
 
 
-<div class="viewcode-block" id="kcdimage"><a class="viewcode-back" href="../../api/modules.html#fabio.kcdimage.kcdimage">[docs]</a><span class="k">class</span> <span class="nc">kcdimage</span><span class="p">(</span><span class="n">fabioimage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Read the Nonius kcd data format &quot;&quot;&quot;</span>
+class kcdimage(fabioimage):
+    """ 
+<div class="viewcode-block" id="kcdimage"><a class="viewcode-back" href="../../api/modules.html#fabio.kcdimage.kcdimage">[docs]</a>    Read the Nonius kcd data format """
 
 
-    <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read in a header in some KCD format from an already open file</span>
-<span class="sd">        @</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">oneLine</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="n">alphanum</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">letters</span> <span class="o">+</span> <span class="s">&quot;. &quot;</span>
-        <span class="n">asciiHeader</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">for</span> <span class="n">oneChar</span> <span class="ow">in</span> <span class="n">oneLine</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">oneChar</span> <span class="ow">in</span> <span class="n">alphanum</span><span class="p">:</span>
-                <span class="n">asciiHeader</span> <span class="o">=</span> <span class="bp">False</span>
+    def _readheader(self, infile):
+        """
+        Read in a header in some KCD format from an already open file
+        @
+        """
+        oneLine = infile.readline()
+        alphanum = string.digits + string.letters + ". "
+        asciiHeader = True
+        for oneChar in oneLine.strip():
+            if not oneChar in alphanum:
+                asciiHeader = False
 
 
-        <span class="k">if</span> <span class="n">asciiHeader</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">:</span>
-            <span class="c"># This does not look like an edf file</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;First line of </span><span class="si">%s</span><span class="s"> does not seam to be ascii text!&quot;</span> <span class="o">%</span> <span class="n">infile</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">endOfHeaders</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="n">endOfHeaders</span><span class="p">:</span>
-            <span class="n">oneLine</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">oneLine</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
-                <span class="n">endOfHeaders</span> <span class="o">=</span> <span class="bp">True</span>
-                <span class="k">break</span>
-            <span class="k">if</span> <span class="n">oneLine</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;Binned mode&quot;</span><span class="p">:</span>
-                <span class="n">oneLine</span> <span class="o">=</span> <span class="s">&quot;Mode = Binned&quot;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">oneLine</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span> <span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">endOfHeaders</span> <span class="o">=</span> <span class="bp">True</span>
-                <span class="k">break</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">MINIMUM_KEYS</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_keys</span><span class="p">:</span>
-                <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;KCD file misses the keys &quot;</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
+        if asciiHeader is False:
+            # This does not look like an edf file
+            logger.warning("First line of %s does not seam to be ascii text!" % infile.name)
+        endOfHeaders = False
+        while not endOfHeaders:
+            oneLine = infile.readline()
+            if len(oneLine) &gt; 100:
+                endOfHeaders = True
+                break
+            if oneLine.strip() == "Binned mode":
+                oneLine = "Mode = Binned"
+            try:
+                key, val = oneLine.split('=' , 1)
+            except:
+                endOfHeaders = True
+                break
+            key = key.strip()
+            self.header_keys.append(key)
+            self.header[key] = val.strip()
+        missing = []
+        for item in MINIMUM_KEYS:
+            if item not in self.header_keys:
+                missing.append(item)
+        if len(missing) &gt; 0:
+            logger.debug("KCD file misses the keys " + " ".join(missing))
 
 
-<div class="viewcode-block" id="kcdimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.kcdimage.kcdimage.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read in header into self.header and</span>
-<span class="sd">            the data   into self.data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
-        <span class="n">infile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_readheader</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-        <span class="c"># Compute image size</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;X dimension&#39;</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Y dimension&#39;</span><span class="p">])</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;KCD file </span><span class="si">%s</span><span class="s"> is corrupt, cannot read it&quot;</span> <span class="o">%</span> <span class="n">fname</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">bytecode</span> <span class="o">=</span> <span class="n">DATA_TYPES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Data type&#39;</span><span class="p">]]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bytecode</span><span class="p">)</span><span class="o">.</span><span class="n">tostring</span><span class="p">())</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">bytecode</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span> <span class="o">=</span> <span class="mi">2</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Defaulting type to uint16&quot;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">nbReadOut</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;Number of readouts&#39;</span><span class="p">])</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Defaulting number of ReadOut to 1&quot;</span><span class="p">)</span>
-            <span class="n">nbReadOut</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">fileSize</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fname</span><span class="p">)[</span><span class="mi">6</span><span class="p">]</span>
-        <span class="n">expected_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span> <span class="o">*</span> <span class="n">nbReadOut</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">fileSize</span> <span class="o">-</span> <span class="n">expected_size</span><span class="p">)</span>
-        <span class="n">block</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected_size</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    def read(self, fname, frame=None):
+        """
+<div class="viewcode-block" id="kcdimage.read"><a class="viewcode-back" href="../../api/modules.html#fabio.kcdimage.kcdimage.read">[docs]</a>        Read in header into self.header and
+            the data   into self.data
+        """
+        self.header = {}
+        self.resetvals()
+        infile = self._open(fname, "rb")
+        self._readheader(infile)
+        # Compute image size
+        try:
+            self.dim1 = int(self.header['X dimension'])
+            self.dim2 = int(self.header['Y dimension'])
+        except:
+            raise Exception("KCD file %s is corrupt, cannot read it" % fname)
+        try:
+            bytecode = DATA_TYPES[self.header['Data type']]
+            self.bpp = len(numpy.array(0, bytecode).tostring())
+        except KeyError:
+            bytecode = numpy.uint16
+            self.bpp = 2
+            logger.warning("Defaulting type to uint16")
+        try:
+            nbReadOut = int(self.header['Number of readouts'])
+        except KeyError:
+            logger.warning("Defaulting number of ReadOut to 1")
+            nbReadOut = 1
+        fileSize = os.stat(fname)[6]
+        expected_size = self.dim1 * self.dim2 * self.bpp * nbReadOut
+        infile.seek(fileSize - expected_size)
+        block = infile.read()
+        assert len(block) == expected_size
+        infile.close()
 
-        <span class="c">#now read the data into the array</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">))</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbReadOut</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span>
-                    <span class="n">block</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">expected_size</span> <span class="o">/</span> <span class="n">nbReadOut</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">expected_size</span> <span class="o">/</span> <span class="n">nbReadOut</span><span class="p">],</span> <span class="n">bytecode</span><span class="p">),</span>
-                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span><span class="p">])</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="p">),</span> <span class="n">bytecode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim1</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">,</span> \
-              <span class="s">&#39;Size spec in kcd-header does not match size of image data field&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bytecode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resetvals</span><span class="p">()</span>
-        <span class="c"># ensure the PIL image is reset</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pilimage</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        #now read the data into the array
+        self.data = numpy.zeros((self.dim2, self.dim1))
+        try:
+            for i in range(nbReadOut):
+                self.data += numpy.reshape(numpy.fromstring(
+                    block[i * expected_size / nbReadOut:(i + 1) * expected_size / nbReadOut], bytecode),
+                    [self.dim2, self.dim1])
+        except:
+            print len(block), bytecode, self.bpp, self.dim2, self.dim1
+            raise IOError, \
+              'Size spec in kcd-header does not match size of image data field'
+        self.bytecode = self.data.dtype.type
+        self.resetvals()
+        # ensure the PIL image is reset
+        self.pilimage = None
+        return self
 
-</div>
-    <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="kcdimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.kcdimage.kcdimage.checkData">[docs]</a>    <span class="k">def</span> <span class="nf">checkData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div></div>
-</pre></div>
+
+    @staticmethod
+    def checkData(data=None):</div>
+        if data is None:
+<div class="viewcode-block" id="kcdimage.checkData"><a class="viewcode-back" href="../../api/modules.html#fabio.kcdimage.kcdimage.checkData">[docs]</a>            return None
+        else:
+            return data.astype(int)
+</pre></div></div>
 
           </div>
         </div>
@@ -213,13 +208,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

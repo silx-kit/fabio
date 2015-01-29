@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.marccdimage &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.marccdimage &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,320 +45,318 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for fabio.marccdimage</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="sd">&quot;&quot;&quot;</span>
+  <h1>Source code for fabio.marccdimage</h1><pre>
 
-<span class="sd">Authors:</span>
-<span class="sd">........</span>
-<span class="sd">* Henning O. Sorensen &amp; Erik Knudsen:</span>
-<span class="sd">  Center for Fundamental Research: Metal Structures in Four Dimensions;</span>
-<span class="sd">  Risoe National Laboratory;</span>
-<span class="sd">  Frederiksborgvej 399;</span>
-<span class="sd">  DK-4000 Roskilde;</span>
-<span class="sd">  email:erik.knudsen@risoe.dk</span>
-<span class="sd">* Jon Wright:</span>
-<span class="sd">  European Synchrotron Radiation Facility;</span>
-<span class="sd">  Grenoble (France)</span>
-<span class="sd">         </span>
-<span class="sd">marccdimage can read MarCCD and MarMosaic images including header info.</span>
+Authors:
+........
+* Henning O. Sorensen &amp; Erik Knudsen:
+  Center for Fundamental Research: Metal Structures in Four Dimensions;
+  Risoe National Laboratory;
+  Frederiksborgvej 399;
+  DK-4000 Roskilde;
+  email:erik.knudsen@risoe.dk
+* Jon Wright:
+  European Synchrotron Radiation Facility;
+  Grenoble (France)
+         
+marccdimage can read MarCCD and MarMosaic images including header info.
 
-<span class="sd">JPW : Use a parser in case of typos (sorry?)</span>
+JPW : Use a parser in case of typos (sorry?)
 
-<span class="sd">&quot;&quot;&quot;</span>
+"""
 
 
-<span class="c"># Base this on the tifimage (as marccd seems to be tiff with a </span>
-<span class="c"># special header </span>
+# Base this on the tifimage (as marccd seems to be tiff with a 
+# special header 
 
-<span class="kn">from</span> <span class="nn">tifimage</span> <span class="kn">import</span> <span class="n">tifimage</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;marccdimage&quot;</span><span class="p">)</span>
+from tifimage import tifimage
+import logging
+logger = logging.getLogger("marccdimage")
 
-<span class="c"># Now for the c definition (found on mar webpage)</span>
-<span class="c"># The following string is therefore copyrighted by Mar I guess</span>
+# Now for the c definition (found on mar webpage)
+# The following string is therefore copyrighted by Mar I guess
 
-<span class="n">CDEFINITION</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">typedef struct frame_header_type {</span>
-<span class="s">         /* File/header format parameters (256 bytes) */</span>
-<span class="s">         UINT32        header_type;  /* flag for header type  </span>
-<span class="s">                                           (can be  used as magic number) */</span>
-<span class="s">         char header_name[16];           /* header name (MMX) */</span>
-<span class="s">         UINT32        header_major_version;   /* header_major_version  (n.) */</span>
-<span class="s">         UINT32        header_minor_version;   /* header_minor_version  (.n) */</span>
-<span class="s">         UINT32        header_byte_order;/* BIG_ENDIAN (Motorola,MIPS);  </span>
-<span class="s">                                            LITTLE_ENDIAN (DEC, Intel) */</span>
-<span class="s">         UINT32        data_byte_order;  /* BIG_ENDIAN (Motorola,MIPS);  </span>
-<span class="s">                                            LITTLE_ENDIAN (DEC, Intel) */</span>
-<span class="s">         UINT32        header_size;      /* in bytes                     */</span>
-<span class="s">         UINT32        frame_type;       /* flag for frame type */</span>
-<span class="s">         UINT32        magic_number;     /* to be used as a flag - </span>
-<span class="s">                                            usually  to indicate new file */</span>
-<span class="s">         UINT32        compression_type; /* type of image compression    */</span>
-<span class="s">         UINT32        compression1;     /* compression parameter 1 */</span>
-<span class="s">         UINT32        compression2;     /* compression parameter 2 */</span>
-<span class="s">         UINT32        compression3;     /* compression parameter 3 */</span>
-<span class="s">         UINT32        compression4;     /* compression parameter 4 */</span>
-<span class="s">         UINT32        compression5;     /* compression parameter 4 */</span>
-<span class="s">         UINT32        compression6;     /* compression parameter 4 */</span>
-<span class="s">         UINT32        nheaders;         /* total number of headers      */</span>
-<span class="s">         UINT32        nfast;            /* number of pixels in one line */</span>
-<span class="s">         UINT32        nslow;            /* number of lines in image     */</span>
-<span class="s">         UINT32        depth;            /* number of bytes per pixel    */</span>
-<span class="s">         UINT32        record_length;    /* number of pixels between </span>
-<span class="s">                                            succesive rows */</span>
-<span class="s">         UINT32        signif_bits;      /* true depth of data, in bits  */</span>
-<span class="s">         UINT32        data_type;        /* (signed,unsigned,float...) */</span>
-<span class="s">         UINT32        saturated_value;  /* value marks pixel as saturated */</span>
-<span class="s">         UINT32        sequence;         /* TRUE or FALSE */</span>
-<span class="s">         UINT32        nimages;          /* total number of images - size of </span>
-<span class="s">                                            each is nfast*(nslow/nimages) */</span>
-<span class="s">         UINT32        origin;           /* corner of origin             */</span>
-<span class="s">         UINT32        orientation;      /* direction of fast axis       */</span>
-<span class="s">         UINT32        view_direction;   /* direction to view frame      */</span>
-<span class="s">         UINT32        overflow_location;/* FOLLOWING_HEADER,  FOLLOWING_DATA */</span>
-<span class="s">         UINT32        over_8_bits;      /* # of pixels with counts  255 */</span>
-<span class="s">         UINT32        over_16_bits;     /* # of pixels with count  65535 */</span>
-<span class="s">         UINT32        multiplexed;      /* multiplex flag */</span>
-<span class="s">         UINT32        nfastimages;      /* # of images in fast direction */</span>
-<span class="s">         UINT32        nslowimages;      /* # of images in slow direction */</span>
-<span class="s">         UINT32        background_applied;/* flags correction has been applied </span>
-<span class="s">                                              hold magic number ? */</span>
-<span class="s">         UINT32        bias_applied;     /* flags correction has been applied</span>
-<span class="s">                                             hold magic number ? */</span>
-<span class="s">         UINT32        flatfield_applied;/* flags correction has been applied -</span>
-<span class="s">                                              hold magic number ? */</span>
-<span class="s">         UINT32        distortion_applied;/*flags correction has been applied - </span>
-<span class="s">                                              hold magic number ? */</span>
-<span class="s">         UINT32        original_header_type;    /* Header/frame type from  file </span>
-<span class="s">                                                    that frame is read from */</span>
-<span class="s">         UINT32        file_saved;         /* Flag that file has been  saved, </span>
-<span class="s">                                              should be zeroed if modified */</span>
-<span class="s">         char reserve1[(64-40)*sizeof(INT32)-16];</span>
+CDEFINITION = """
+typedef struct frame_header_type {
+         /* File/header format parameters (256 bytes) */
+         UINT32        header_type;  /* flag for header type  
+                                           (can be  used as magic number) */
+         char header_name[16];           /* header name (MMX) */
+         UINT32        header_major_version;   /* header_major_version  (n.) */
+         UINT32        header_minor_version;   /* header_minor_version  (.n) */
+         UINT32        header_byte_order;/* BIG_ENDIAN (Motorola,MIPS);  
+                                            LITTLE_ENDIAN (DEC, Intel) */
+         UINT32        data_byte_order;  /* BIG_ENDIAN (Motorola,MIPS);  
+                                            LITTLE_ENDIAN (DEC, Intel) */
+         UINT32        header_size;      /* in bytes                     */
+         UINT32        frame_type;       /* flag for frame type */
+         UINT32        magic_number;     /* to be used as a flag - 
+                                            usually  to indicate new file */
+         UINT32        compression_type; /* type of image compression    */
+         UINT32        compression1;     /* compression parameter 1 */
+         UINT32        compression2;     /* compression parameter 2 */
+         UINT32        compression3;     /* compression parameter 3 */
+         UINT32        compression4;     /* compression parameter 4 */
+         UINT32        compression5;     /* compression parameter 4 */
+         UINT32        compression6;     /* compression parameter 4 */
+         UINT32        nheaders;         /* total number of headers      */
+         UINT32        nfast;            /* number of pixels in one line */
+         UINT32        nslow;            /* number of lines in image     */
+         UINT32        depth;            /* number of bytes per pixel    */
+         UINT32        record_length;    /* number of pixels between 
+                                            succesive rows */
+         UINT32        signif_bits;      /* true depth of data, in bits  */
+         UINT32        data_type;        /* (signed,unsigned,float...) */
+         UINT32        saturated_value;  /* value marks pixel as saturated */
+         UINT32        sequence;         /* TRUE or FALSE */
+         UINT32        nimages;          /* total number of images - size of 
+                                            each is nfast*(nslow/nimages) */
+         UINT32        origin;           /* corner of origin             */
+         UINT32        orientation;      /* direction of fast axis       */
+         UINT32        view_direction;   /* direction to view frame      */
+         UINT32        overflow_location;/* FOLLOWING_HEADER,  FOLLOWING_DATA */
+         UINT32        over_8_bits;      /* # of pixels with counts  255 */
+         UINT32        over_16_bits;     /* # of pixels with count  65535 */
+         UINT32        multiplexed;      /* multiplex flag */
+         UINT32        nfastimages;      /* # of images in fast direction */
+         UINT32        nslowimages;      /* # of images in slow direction */
+         UINT32        background_applied;/* flags correction has been applied 
+                                              hold magic number ? */
+         UINT32        bias_applied;     /* flags correction has been applied
+                                             hold magic number ? */
+         UINT32        flatfield_applied;/* flags correction has been applied -
+                                              hold magic number ? */
+         UINT32        distortion_applied;/*flags correction has been applied - 
+                                              hold magic number ? */
+         UINT32        original_header_type;    /* Header/frame type from  file 
+                                                    that frame is read from */
+         UINT32        file_saved;         /* Flag that file has been  saved, 
+                                              should be zeroed if modified */
+         char reserve1[(64-40)*sizeof(INT32)-16];
 
-<span class="s">         /* Data statistics (128) */</span>
-<span class="s">         UINT32        total_counts[2];  /* 64 bit integer range = 1.85E19*/</span>
-<span class="s">         UINT32        special_counts1[2];</span>
-<span class="s">         UINT32        special_counts2[2];</span>
-<span class="s">         UINT32        min;</span>
-<span class="s">         UINT32        max;</span>
-<span class="s">         UINT32        mean;</span>
-<span class="s">         UINT32        rms;</span>
-<span class="s">         UINT32        p10;</span>
-<span class="s">         UINT32        p90;</span>
-<span class="s">         UINT32        stats_uptodate;</span>
-<span class="s">         UINT32        pixel_noise[MAXIMAGES]; /*1000*base noise value (ADUs) */</span>
-<span class="s">         char reserve2[(32-13-MAXIMAGES)*sizeof(INT32)];</span>
+         /* Data statistics (128) */
+         UINT32        total_counts[2];  /* 64 bit integer range = 1.85E19*/
+         UINT32        special_counts1[2];
+         UINT32        special_counts2[2];
+         UINT32        min;
+         UINT32        max;
+         UINT32        mean;
+         UINT32        rms;
+         UINT32        p10;
+         UINT32        p90;
+         UINT32        stats_uptodate;
+         UINT32        pixel_noise[MAXIMAGES]; /*1000*base noise value (ADUs) */
+         char reserve2[(32-13-MAXIMAGES)*sizeof(INT32)];
 
-<span class="s">         /* More statistics (256) */</span>
-<span class="s">         UINT16 percentile[128];</span>
-
-
-<span class="s">         /* Goniostat parameters (128 bytes) */</span>
-<span class="s">         INT32 xtal_to_detector;  /* 1000*distance in millimeters */</span>
-<span class="s">         INT32 beam_x;            /* 1000*x beam position (pixels) */</span>
-<span class="s">         INT32 beam_y;            /* 1000*y beam position (pixels) */</span>
-<span class="s">         INT32 integration_time;  /* integration time in  milliseconds */</span>
-<span class="s">         INT32 exposure_time;     /* exposure time in milliseconds */</span>
-<span class="s">         INT32 readout_time;      /* readout time in milliseconds */</span>
-<span class="s">         INT32 nreads;            /* number of readouts to get this  image */</span>
-<span class="s">         INT32 start_twotheta;    /* 1000*two_theta angle */</span>
-<span class="s">         INT32 start_omega;       /* 1000*omega angle */</span>
-<span class="s">         INT32 start_chi;         /* 1000*chi angle */</span>
-<span class="s">         INT32 start_kappa;       /* 1000*kappa angle */</span>
-<span class="s">         INT32 start_phi;         /* 1000*phi angle */</span>
-<span class="s">         INT32 start_delta;       /* 1000*delta angle */</span>
-<span class="s">         INT32 start_gamma;       /* 1000*gamma angle */</span>
-<span class="s">         INT32 start_xtal_to_detector; /* 1000*distance in mm (dist in um)*/</span>
-<span class="s">         INT32 end_twotheta;           /* 1000*two_theta angle */</span>
-<span class="s">         INT32 end_omega;              /* 1000*omega angle */</span>
-<span class="s">         INT32 end_chi;                /* 1000*chi angle */</span>
-<span class="s">         INT32 end_kappa;              /* 1000*kappa angle */</span>
-<span class="s">         INT32 end_phi;                /* 1000*phi angle */</span>
-<span class="s">         INT32 end_delta;              /* 1000*delta angle */</span>
-<span class="s">         INT32 end_gamma;              /* 1000*gamma angle */</span>
-<span class="s">         INT32 end_xtal_to_detector;   /* 1000*distance in mm (dist in um)*/</span>
-<span class="s">         INT32 rotation_axis;          /* active rotation axis */</span>
-<span class="s">         INT32 rotation_range;         /* 1000*rotation angle */</span>
-<span class="s">         INT32 detector_rotx;          /* 1000*rotation of detector  around X */</span>
-<span class="s">         INT32 detector_roty;          /* 1000*rotation of detector  around Y */</span>
-<span class="s">         INT32 detector_rotz;          /* 1000*rotation of detector  around Z */</span>
-<span class="s">         char reserve3[(32-28)*sizeof(INT32)];</span>
-
-<span class="s">         /* Detector parameters (128 bytes) */</span>
-<span class="s">         INT32 detector_type;            /* detector type */</span>
-<span class="s">         INT32 pixelsize_x;              /* pixel size (nanometers) */</span>
-<span class="s">         INT32 pixelsize_y;              /* pixel size (nanometers) */</span>
-<span class="s">         INT32 mean_bias;                        /* 1000*mean bias value */</span>
-<span class="s">         INT32 photons_per_100adu;       /* photons / 100 ADUs */</span>
-<span class="s">         INT32 measured_bias[MAXIMAGES];/* 1000*mean bias value for each image*/</span>
-<span class="s">         INT32 measured_temperature[MAXIMAGES];  /* Temperature of each  </span>
-<span class="s">                                                    detector in milliKelvins */</span>
-<span class="s">         INT32 measured_pressure[MAXIMAGES]; /* Pressure of each  chamber </span>
-<span class="s">                                               in microTorr */</span>
-<span class="s">         /* Retired reserve4 when MAXIMAGES set to 9 from 16 and </span>
-<span class="s">            two fields removed, and temp and pressure added</span>
-<span class="s">          char reserve4[(32-(5+3*MAXIMAGES))*sizeof(INT32)]</span>
-<span class="s">         */</span>
-
-<span class="s">         /* X-ray source and optics parameters (128 bytes) */</span>
-<span class="s">         /* X-ray source parameters (8*4 bytes) */</span>
-<span class="s">         INT32 source_type;              /* (code) - target, synch. etc */</span>
-<span class="s">         INT32 source_dx;                /* Optics param. - (size  microns) */</span>
-<span class="s">         INT32 source_dy;                /* Optics param. - (size  microns) */</span>
-<span class="s">         INT32 source_wavelength;        /* wavelength  (femtoMeters) */</span>
-<span class="s">         INT32 source_power;             /* (Watts) */</span>
-<span class="s">         INT32 source_voltage;           /* (Volts) */</span>
-<span class="s">         INT32 source_current;           /* (microAmps) */</span>
-<span class="s">         INT32 source_bias;              /* (Volts) */</span>
-<span class="s">         INT32 source_polarization_x;    /* () */</span>
-<span class="s">         INT32 source_polarization_y;    /* () */</span>
-<span class="s">         char reserve_source[4*sizeof(INT32)];</span>
-
-<span class="s">         /* X-ray optics_parameters (8*4 bytes) */</span>
-<span class="s">         INT32 optics_type;              /* Optics type (code)*/</span>
-<span class="s">         INT32 optics_dx;                /* Optics param. - (size  microns) */</span>
-<span class="s">         INT32 optics_dy;                /* Optics param. - (size  microns) */</span>
-<span class="s">         INT32 optics_wavelength;        /* Optics param. - (size  microns) */</span>
-<span class="s">         INT32 optics_dispersion;        /* Optics param. - (*10E6) */</span>
-<span class="s">         INT32 optics_crossfire_x;       /* Optics param. - (microRadians) */</span>
-<span class="s">         INT32 optics_crossfire_y;       /* Optics param. - (microRadians) */</span>
-<span class="s">         INT32 optics_angle;             /* Optics param. - (monoch.  </span>
-<span class="s">                                                    2theta - microradians) */</span>
-<span class="s">         INT32 optics_polarization_x;    /* () */</span>
-<span class="s">         INT32 optics_polarization_y;    /* () */</span>
-<span class="s">         char reserve_optics[4*sizeof(INT32)];</span>
-
-<span class="s">         char reserve5[((32-28)*sizeof(INT32))];</span>
-
-<span class="s">         /* File parameters (1024 bytes) */</span>
-<span class="s">         char filetitle[128];            /*  Title                  */</span>
-<span class="s">         char filepath[128];             /* path name for data  file  */</span>
-<span class="s">         char filename[64];              /* name of data  file  */</span>
-<span class="s">         char acquire_timestamp[32];     /* date and time of  acquisition */</span>
-<span class="s">         char header_timestamp[32];      /* date and time of header  update  */</span>
-<span class="s">         char save_timestamp[32];        /* date and time file  saved */</span>
-<span class="s">         char file_comments[512];        /* comments, use as desired   */</span>
-<span class="s">         char reserve6[1024-(128+128+64+(3*32)+512)];</span>
-
-<span class="s">         /* Dataset parameters (512 bytes) */</span>
-<span class="s">         char dataset_comments[512];     /* comments, used as desired   */</span>
-<span class="s">         /* pad out to  3072 bytes */</span>
-<span class="s">         char pad[3072-(256+128+256+(3*128)+1024+512)];     </span>
-
-<span class="s">         } frame_header;</span>
-<span class="s">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">struct</span>
-
-<span class="c"># Convert mar c header file types to python struct module types</span>
-<span class="n">C_TO_STRUCT</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&quot;INT32&quot;</span>  <span class="p">:</span> <span class="s">&quot;i&quot;</span><span class="p">,</span>
-    <span class="s">&quot;UINT32&quot;</span> <span class="p">:</span> <span class="s">&quot;I&quot;</span><span class="p">,</span>
-    <span class="s">&quot;char&quot;</span>   <span class="p">:</span> <span class="s">&quot;c&quot;</span><span class="p">,</span>
-    <span class="s">&quot;UINT16&quot;</span> <span class="p">:</span> <span class="s">&quot;H&quot;</span>
-    <span class="p">}</span>
-
-<span class="c"># Sizes (bytes) of mar c header objects</span>
-<span class="n">C_SIZES</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&quot;INT32&quot;</span>  <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s">&quot;UINT32&quot;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s">&quot;char&quot;</span>   <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s">&quot;UINT16&quot;</span> <span class="p">:</span> <span class="mi">2</span>
-    <span class="p">}</span>
-
-<span class="c"># This was worked out by trial and error from a trial image I think</span>
-<span class="n">MAXIMAGES</span> <span class="o">=</span> <span class="mi">9</span>
+         /* More statistics (256) */
+         UINT16 percentile[128];
 
 
-<div class="viewcode-block" id="make_format"><a class="viewcode-back" href="../../api/modules.html#fabio.marccdimage.make_format">[docs]</a><span class="k">def</span> <span class="nf">make_format</span><span class="p">(</span><span class="n">c_def_string</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Reads the header definition in c and makes the format </span>
-<span class="sd">    string to pass to struct.unpack</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">c_def_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
-    <span class="n">fmt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">expected</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">decl</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="p">[</span><span class="n">typ</span><span class="p">,</span> <span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">decl</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;skipping: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-            <span class="k">continue</span>
+         /* Goniostat parameters (128 bytes) */
+         INT32 xtal_to_detector;  /* 1000*distance in millimeters */
+         INT32 beam_x;            /* 1000*x beam position (pixels) */
+         INT32 beam_y;            /* 1000*y beam position (pixels) */
+         INT32 integration_time;  /* integration time in  milliseconds */
+         INT32 exposure_time;     /* exposure time in milliseconds */
+         INT32 readout_time;      /* readout time in milliseconds */
+         INT32 nreads;            /* number of readouts to get this  image */
+         INT32 start_twotheta;    /* 1000*two_theta angle */
+         INT32 start_omega;       /* 1000*omega angle */
+         INT32 start_chi;         /* 1000*chi angle */
+         INT32 start_kappa;       /* 1000*kappa angle */
+         INT32 start_phi;         /* 1000*phi angle */
+         INT32 start_delta;       /* 1000*delta angle */
+         INT32 start_gamma;       /* 1000*gamma angle */
+         INT32 start_xtal_to_detector; /* 1000*distance in mm (dist in um)*/
+         INT32 end_twotheta;           /* 1000*two_theta angle */
+         INT32 end_omega;              /* 1000*omega angle */
+         INT32 end_chi;                /* 1000*chi angle */
+         INT32 end_kappa;              /* 1000*kappa angle */
+         INT32 end_phi;                /* 1000*phi angle */
+         INT32 end_delta;              /* 1000*delta angle */
+         INT32 end_gamma;              /* 1000*gamma angle */
+         INT32 end_xtal_to_detector;   /* 1000*distance in mm (dist in um)*/
+         INT32 rotation_axis;          /* active rotation axis */
+         INT32 rotation_range;         /* 1000*rotation angle */
+         INT32 detector_rotx;          /* 1000*rotation of detector  around X */
+         INT32 detector_roty;          /* 1000*rotation of detector  around Y */
+         INT32 detector_rotz;          /* 1000*rotation of detector  around Z */
+         char reserve3[(32-28)*sizeof(INT32)];
 
-        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;[&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="c"># repeated ... times</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;[&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;]&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="n">num</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;MAXIMAGES&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">MAXIMAGES</span><span class="p">))</span>
-                <span class="n">num</span> <span class="o">=</span> <span class="n">num</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;sizeof(INT32)&quot;</span><span class="p">,</span> <span class="s">&quot;4&quot;</span><span class="p">)</span>
-                <span class="n">times</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> Please decode </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">decl</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">error</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">times</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">fmt</span> <span class="o">+=</span> <span class="n">C_TO_STRUCT</span><span class="p">[</span><span class="n">typ</span><span class="p">]</span> <span class="o">*</span> <span class="n">times</span>
-            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="n">times</span>
-            <span class="n">expected</span> <span class="o">+=</span> <span class="n">C_SIZES</span><span class="p">[</span><span class="n">typ</span><span class="p">]</span> <span class="o">*</span> <span class="n">times</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">continue</span>
-    <span class="k">return</span> <span class="n">names</span><span class="p">,</span> <span class="n">fmt</span>
+         /* Detector parameters (128 bytes) */
+         INT32 detector_type;            /* detector type */
+         INT32 pixelsize_x;              /* pixel size (nanometers) */
+         INT32 pixelsize_y;              /* pixel size (nanometers) */
+         INT32 mean_bias;                        /* 1000*mean bias value */
+         INT32 photons_per_100adu;       /* photons / 100 ADUs */
+         INT32 measured_bias[MAXIMAGES];/* 1000*mean bias value for each image*/
+         INT32 measured_temperature[MAXIMAGES];  /* Temperature of each  
+                                                    detector in milliKelvins */
+         INT32 measured_pressure[MAXIMAGES]; /* Pressure of each  chamber 
+                                               in microTorr */
+         /* Retired reserve4 when MAXIMAGES set to 9 from 16 and 
+            two fields removed, and temp and pressure added
+          char reserve4[(32-(5+3*MAXIMAGES))*sizeof(INT32)]
+         */
 
-<span class="c"># Make these be compiled on loading module</span></div>
-<span class="n">HEADER_NAMES</span><span class="p">,</span> <span class="n">HEADER_FORMAT</span> <span class="o">=</span> <span class="n">make_format</span><span class="p">(</span><span class="n">CDEFINITION</span><span class="p">)</span>
+         /* X-ray source and optics parameters (128 bytes) */
+         /* X-ray source parameters (8*4 bytes) */
+         INT32 source_type;              /* (code) - target, synch. etc */
+         INT32 source_dx;                /* Optics param. - (size  microns) */
+         INT32 source_dy;                /* Optics param. - (size  microns) */
+         INT32 source_wavelength;        /* wavelength  (femtoMeters) */
+         INT32 source_power;             /* (Watts) */
+         INT32 source_voltage;           /* (Volts) */
+         INT32 source_current;           /* (microAmps) */
+         INT32 source_bias;              /* (Volts) */
+         INT32 source_polarization_x;    /* () */
+         INT32 source_polarization_y;    /* () */
+         char reserve_source[4*sizeof(INT32)];
 
-<div class="viewcode-block" id="interpret_header"><a class="viewcode-back" href="../../api/modules.html#fabio.marccdimage.interpret_header">[docs]</a><span class="k">def</span> <span class="nf">interpret_header</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    given a format and header interpret it</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
-    <span class="n">hdr</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">hdr</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="s">&quot;string&quot;</span><span class="p">):</span>
-                <span class="n">hdr</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">+</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">hdr</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                    <span class="n">hdr</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">hdr</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">hdr</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+         /* X-ray optics_parameters (8*4 bytes) */
+         INT32 optics_type;              /* Optics type (code)*/
+         INT32 optics_dx;                /* Optics param. - (size  microns) */
+         INT32 optics_dy;                /* Optics param. - (size  microns) */
+         INT32 optics_wavelength;        /* Optics param. - (size  microns) */
+         INT32 optics_dispersion;        /* Optics param. - (*10E6) */
+         INT32 optics_crossfire_x;       /* Optics param. - (microRadians) */
+         INT32 optics_crossfire_y;       /* Optics param. - (microRadians) */
+         INT32 optics_angle;             /* Optics param. - (monoch.  
+                                                    2theta - microradians) */
+         INT32 optics_polarization_x;    /* () */
+         INT32 optics_polarization_y;    /* () */
+         char reserve_optics[4*sizeof(INT32)];
 
-    <span class="k">return</span> <span class="n">hdr</span>
+         char reserve5[((32-28)*sizeof(INT32))];
 
+         /* File parameters (1024 bytes) */
+         char filetitle[128];            /*  Title                  */
+         char filepath[128];             /* path name for data  file  */
+         char filename[64];              /* name of data  file  */
+         char acquire_timestamp[32];     /* date and time of  acquisition */
+         char header_timestamp[32];      /* date and time of header  update  */
+         char save_timestamp[32];        /* date and time file  saved */
+         char file_comments[512];        /* comments, use as desired   */
+         char reserve6[1024-(128+128+64+(3*32)+512)];
+
+         /* Dataset parameters (512 bytes) */
+         char dataset_comments[512];     /* comments, used as desired   */
+         /* pad out to  3072 bytes */
+         char pad[3072-(256+128+256+(3*128)+1024+512)];     
+
+         } frame_header;
+"""
+
+import struct
+
+# Convert mar c header file types to python struct module types
+C_TO_STRUCT = {
+    "INT32"  : "i",
+    "UINT32" : "I",
+    "char"   : "c",
+    "UINT16" : "H"
+    }
+
+# Sizes (bytes) of mar c header objects
+C_SIZES = {
+    "INT32"  : 4,
+    "UINT32" : 4,
+    "char"   : 1,
+    "UINT16" : 2
+    }
+
+# This was worked out by trial and error from a trial image I think
+MAXIMAGES = 9
+
+
+def make_format(c_def_string):
+    """
+<div class="viewcode-block" id="make_format"><a class="viewcode-back" href="../../api/modules.html#fabio.marccdimage.make_format">[docs]</a>    Reads the header definition in c and makes the format 
+    string to pass to struct.unpack
+    """
+    lines = c_def_string.split("\n")
+    fmt = ""
+    names = []
+    expected = 0
+    for line in lines:
+        if line.find(";") == -1:
+            continue
+        decl = line.split(";")[0].lstrip().rstrip()
+        try:
+            [typ, name] = decl.split()
+        except ValueError:
+            logger.debug("skipping: %s" , line)
+            continue
+
+        if name.find("[") &gt; -1:
+            # repeated ... times
+            try:
+                num = name.split("[")[1].split("]")[0]
+                num = num.replace("MAXIMAGES", str(MAXIMAGES))
+                num = num.replace("sizeof(INT32)", "4")
+                times = eval(num)
+            except Exception, error:
+                logger.error("%s Please decode %s", error, decl)
+                raise error
+        else:
+            times = 1
+        try:
+            fmt += C_TO_STRUCT[typ] * times
+            names += [name] * times
+            expected += C_SIZES[typ] * times
+        except KeyError:
+            continue
+    return names, fmt
+
+# Make these be compiled on loading module
+HEADER_NAMES, HEADER_FORMAT = make_format(CDEFINITION)
 </div>
-<div class="viewcode-block" id="marccdimage"><a class="viewcode-back" href="../../api/modules.html#fabio.marccdimage.marccdimage">[docs]</a><span class="k">class</span> <span class="nc">marccdimage</span><span class="p">(</span><span class="n">tifimage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Read in data in mar ccd format, also </span>
-<span class="sd">        MarMosaic images, including header info &quot;&quot;&quot;</span>
+def interpret_header(header, fmt, names):
+    """
+<div class="viewcode-block" id="interpret_header"><a class="viewcode-back" href="../../api/modules.html#fabio.marccdimage.interpret_header">[docs]</a>    given a format and header interpret it
+    """
+    values = struct.unpack(fmt, header)
+    hdr = {}
+    i = 0
+    for name in names:
+        if hdr.has_key(name):
+            if type(values[i]) == type("string"):
+                hdr[name] = hdr[name] + values[i]
+            else:
+                try:
+                    hdr[name].append(values[i])
+                except AttributeError:
+                    hdr[name] = [hdr[name], values[i]]
+        else:
+            hdr[name] = values[i]
+        i = i + 1
+
+    return hdr
 
 
-    <span class="k">def</span> <span class="nf">_readheader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parser based approach</span>
-<span class="sd">        Gets all entries</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
-        <span class="n">hstr</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">3072</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">interpret_header</span><span class="p">(</span><span class="n">hstr</span><span class="p">,</span> <span class="n">HEADER_FORMAT</span><span class="p">,</span> <span class="n">HEADER_NAMES</span><span class="p">)</span>
+class marccdimage(tifimage):
+    """ Read in data in mar ccd format, also </div>
+<div class="viewcode-block" id="marccdimage"><a class="viewcode-back" href="../../api/modules.html#fabio.marccdimage.marccdimage">[docs]</a>        MarMosaic images, including header info """
+
+
+    def _readheader(self, infile):
+        """
+        Parser based approach
+        Gets all entries
+        """
+        infile.seek(1024)
+        hstr = infile.read(3072)
+        self.header = interpret_header(hstr, HEADER_FORMAT, HEADER_NAMES)
 
 
 
-    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        inherited from tifimage</span>
-<span class="sd">        ... a marccd image *is a* tif image</span>
-<span class="sd">        just with a header</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">tifimage</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span></div>
+    def _read(self, fname):
+        """
+        inherited from tifimage
+        ... a marccd image *is a* tif image
+        just with a header
+        """
+        return tifimage.read(self, fname)
 </pre></div>
 
           </div>
@@ -395,13 +390,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

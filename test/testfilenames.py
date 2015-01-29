@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*- 
+# -*- coding: utf-8 -*-
 
 
 """
@@ -7,31 +7,20 @@ Test cases for filename deconstruction
 
 
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
+28/11/2014
 """
+from __future__ import print_function, with_statement, division, absolute_import
+import unittest
+import sys
+import os
 
-import unittest, sys, os, logging
-logger = logging.getLogger("testfilenames")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
 try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+    from .utilstest import UtilsTest
+except (ValueError, SystemError):
+    from utilstest import UtilsTest
 
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 
 CASES = [
     (1, 'edf', "data0001.edf"),
@@ -52,8 +41,8 @@ CASES = [
     (99, 'bruker', "sucrose101.0099.gz"),
     (2, 'fit2dmask', "fit2d.msk"),
     (None, 'fit2dmask', "mymask.msk"),
-    (670005, 'edf' , 'S82P670005.edf'),
-    (670005, 'edf' , 'S82P670005.edf.gz'),
+    (670005, 'edf', 'S82P670005.edf'),
+    (670005, 'edf', 'S82P670005.edf.gz'),
     # based on only the name it can be either img or oxd
     (1     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_001.img'),
     (2     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_002.img.gz'),
@@ -80,18 +69,18 @@ MORE_CASES = [
     ]
 
 
-class testfilenames(unittest.TestCase):
+class TestFilenames(unittest.TestCase):
     """ check the name -> number, type conversions """
 
     def test_many_cases(self):
         """ loop over CASES """
         for num, typ, name in CASES:
             obj = fabio.FilenameObject(filename=name)
-            self.assertEqual(num, obj.num , name + " num=" + str(num) + \
+            self.assertEqual(num, obj.num, name + " num=" + str(num) + \
                                                  " != obj.num=" + str(obj.num))
             self.assertEqual(typ, "_or_".join(obj.format),
                                  name + " " + "_or_".join(obj.format))
-            self.assertEqual(name, obj.tostring() , name + " " + obj.tostring())
+            self.assertEqual(name, obj.tostring(), name + " " + obj.tostring())
 
     def test_more_cases(self):
         for nname, oname, num in MORE_CASES:
@@ -107,9 +96,9 @@ class testfilenames(unittest.TestCase):
 def test_suite_all_filenames():
     testSuite = unittest.TestSuite()
 
-    testSuite.addTest(testfilenames("test_many_cases"))
-    testSuite.addTest(testfilenames("test_more_cases"))
-    testSuite.addTest(testfilenames("test_more_cases_jump"))
+    testSuite.addTest(TestFilenames("test_many_cases"))
+    testSuite.addTest(TestFilenames("test_more_cases"))
+    testSuite.addTest(TestFilenames("test_more_cases_jump"))
 
     return testSuite
 

@@ -1,104 +1,104 @@
 ************* Module TiffIO
-C:  1,0: Too many lines in module (1197)
+C:  1,0: Too many lines in module (1200)
 C:  1,0: Missing docstring
-C:122,12:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C: 94,0:TiffIO: Missing docstring
-W: 95,23:TiffIO.__init__: Redefining name 'filename' from outer scope (line 1170)
-C:107,12:TiffIO.__init__: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:111,12:TiffIO.__init__: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:118,4:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:118,4:TiffIO._initInternalVariables: Missing docstring
-C:118,37:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:120,12:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:137,12:TiffIO._initInternalVariables: Invalid name "a" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:162,4:TiffIO.__makeSureFileIsOpen: Missing docstring
-C:176,4:TiffIO.__makeSureFileIsClosed: Missing docstring
-C:186,4:TiffIO.getNumberOfImages: Missing docstring
-C:191,4:TiffIO._updateIFD: Missing docstring
-C:196,4:TiffIO.getImageFileDirectories: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:196,4:TiffIO.getImageFileDirectories: Missing docstring
-C:196,38:TiffIO.getImageFileDirectories: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:198,12:TiffIO.getImageFileDirectories: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:201,8:TiffIO.getImageFileDirectories: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:247,12:TiffIO._parseImageFileDirectory: Redefining name 'i' from outer scope (line 1186)
-C:232,4:TiffIO._parseImageFileDirectory: Missing docstring
-C:234,8:TiffIO._parseImageFileDirectory: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:235,8:TiffIO._parseImageFileDirectory: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:247,12:TiffIO._parseImageFileDirectory: Unused variable 'i'
-C:280,4:TiffIO._readIFDEntry: Missing docstring
-C:281,8:TiffIO._readIFDEntry: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:282,8:TiffIO._readIFDEntry: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:286,8:TiffIO._readIFDEntry: Unused variable 'ftype'
-W:294,12:TiffIO._readIFDEntry: Unused variable 'offset'
-C:298,4:TiffIO.getData: Missing docstring
-C:304,4:TiffIO.getImage: Missing docstring
-C:307,4:TiffIO.getInfo: Missing docstring
-W:311,8:TiffIO.getInfo: Unused variable 'current'
-W:307,0:TiffIO.getInfo: Unused argument 'kw'
-R:314,4:TiffIO._readInfo: Too many local variables (37/25)
-W:490,16:TiffIO._readInfo: Redefining name 'key' from outer scope (line 1188)
-W:460,8:TiffIO._readInfo: Redefining name 'info' from outer scope (line 1187)
-W:489,16:TiffIO._readInfo: Redefining name 'i' from outer scope (line 1186)
-C:314,4:TiffIO._readInfo: Missing docstring
-E:347,36:TiffIO._readInfo: Instance of 'list' has no 'shape' member (but some types could not be inferred)
-E:347,63:TiffIO._readInfo: Instance of 'list' has no 'dtype' member (but some types could not be inferred)
-E:348,29:TiffIO._readInfo: Instance of 'list' has no 'T' member (but some types could not be inferred)
-W:411,12:TiffIO._readInfo: No exception type(s) specified
-E:404,23:TiffIO._readInfo: Instance of 'list' has no 'upper' member (but some types could not be inferred)
-E:405,35:TiffIO._readInfo: Instance of 'list' has no 'split' member (but some types could not be inferred)
-E:407,32:TiffIO._readInfo: Instance of 'list' has no 'decode' member (but some types could not be inferred)
-C:438,20:TiffIO._readInfo: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-E:485,40:TiffIO._readInfo: Instance of 'list' has no 'decode' member (but some types could not be inferred)
-R:314,4:TiffIO._readInfo: Too many branches (51/15)
-R:314,4:TiffIO._readInfo: Too many statements (143/50)
-R:504,4:TiffIO._readImage: Too many local variables (35/25)
-W:583,16:TiffIO._readImage: Redefining name 'dtype' from outer scope (line 1171)
-W:525,12:TiffIO._readImage: Redefining name 'info' from outer scope (line 1187)
-W:643,16:TiffIO._readImage: Redefining name 'i' from outer scope (line 1186)
-C:504,4:TiffIO._readImage: Missing docstring
-E:573,12:TiffIO._readImage: NotImplemented raised - should raise NotImplementedError
-C:620,8:TiffIO._readImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:621,8:TiffIO._readImage: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-W:659,20:TiffIO._readImage: No exception type(s) specified
-C:667,24:TiffIO._readImage: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:504,4:TiffIO._readImage: Too many branches (77/15)
-R:504,4:TiffIO._readImage: Too many statements (190/50)
-W:742,33:TiffIO.writeImage: Redefining name 'info' from outer scope (line 1187)
-W:816,16:TiffIO.writeImage: Redefining name 'key' from outer scope (line 1188)
-C:742,4:TiffIO.writeImage: Missing docstring
-C:749,8:TiffIO.writeImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:768,12:TiffIO.writeImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:125,12:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 97,0:TiffIO: Missing docstring
+W: 98,23:TiffIO.__init__: Redefining name 'filename' from outer scope (line 1173)
+C:110,12:TiffIO.__init__: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:114,12:TiffIO.__init__: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:121,4:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:121,4:TiffIO._initInternalVariables: Missing docstring
+C:121,37:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:123,12:TiffIO._initInternalVariables: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:140,12:TiffIO._initInternalVariables: Invalid name "a" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:165,4:TiffIO.__makeSureFileIsOpen: Missing docstring
+C:179,4:TiffIO.__makeSureFileIsClosed: Missing docstring
+C:189,4:TiffIO.getNumberOfImages: Missing docstring
+C:194,4:TiffIO._updateIFD: Missing docstring
+C:199,4:TiffIO.getImageFileDirectories: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:199,4:TiffIO.getImageFileDirectories: Missing docstring
+C:199,38:TiffIO.getImageFileDirectories: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:201,12:TiffIO.getImageFileDirectories: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:204,8:TiffIO.getImageFileDirectories: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:250,12:TiffIO._parseImageFileDirectory: Redefining name 'i' from outer scope (line 1189)
+C:235,4:TiffIO._parseImageFileDirectory: Missing docstring
+C:237,8:TiffIO._parseImageFileDirectory: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:238,8:TiffIO._parseImageFileDirectory: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:250,12:TiffIO._parseImageFileDirectory: Unused variable 'i'
+C:283,4:TiffIO._readIFDEntry: Missing docstring
+C:284,8:TiffIO._readIFDEntry: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:285,8:TiffIO._readIFDEntry: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:289,8:TiffIO._readIFDEntry: Unused variable 'ftype'
+W:297,12:TiffIO._readIFDEntry: Unused variable 'offset'
+C:301,4:TiffIO.getData: Missing docstring
+C:307,4:TiffIO.getImage: Missing docstring
+C:310,4:TiffIO.getInfo: Missing docstring
+W:314,8:TiffIO.getInfo: Unused variable 'current'
+W:310,0:TiffIO.getInfo: Unused argument 'kw'
+R:317,4:TiffIO._readInfo: Too many local variables (37/25)
+W:493,16:TiffIO._readInfo: Redefining name 'key' from outer scope (line 1191)
+W:463,8:TiffIO._readInfo: Redefining name 'info' from outer scope (line 1190)
+W:492,16:TiffIO._readInfo: Redefining name 'i' from outer scope (line 1189)
+C:317,4:TiffIO._readInfo: Missing docstring
+E:350,36:TiffIO._readInfo: Instance of 'list' has no 'shape' member (but some types could not be inferred)
+E:350,63:TiffIO._readInfo: Instance of 'list' has no 'dtype' member (but some types could not be inferred)
+E:351,29:TiffIO._readInfo: Instance of 'list' has no 'T' member (but some types could not be inferred)
+W:414,12:TiffIO._readInfo: No exception type(s) specified
+E:407,23:TiffIO._readInfo: Instance of 'list' has no 'upper' member (but some types could not be inferred)
+E:408,35:TiffIO._readInfo: Instance of 'list' has no 'split' member (but some types could not be inferred)
+E:410,32:TiffIO._readInfo: Instance of 'list' has no 'decode' member (but some types could not be inferred)
+C:441,20:TiffIO._readInfo: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+E:488,40:TiffIO._readInfo: Instance of 'list' has no 'decode' member (but some types could not be inferred)
+R:317,4:TiffIO._readInfo: Too many branches (51/15)
+R:317,4:TiffIO._readInfo: Too many statements (143/50)
+R:507,4:TiffIO._readImage: Too many local variables (35/25)
+W:586,16:TiffIO._readImage: Redefining name 'dtype' from outer scope (line 1174)
+W:528,12:TiffIO._readImage: Redefining name 'info' from outer scope (line 1190)
+W:646,16:TiffIO._readImage: Redefining name 'i' from outer scope (line 1189)
+C:507,4:TiffIO._readImage: Missing docstring
+E:576,12:TiffIO._readImage: NotImplemented raised - should raise NotImplementedError
+C:623,8:TiffIO._readImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:624,8:TiffIO._readImage: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+W:662,20:TiffIO._readImage: No exception type(s) specified
+C:670,24:TiffIO._readImage: Invalid name "n" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:507,4:TiffIO._readImage: Too many branches (77/15)
+R:507,4:TiffIO._readImage: Too many statements (190/50)
+W:745,33:TiffIO.writeImage: Redefining name 'info' from outer scope (line 1190)
+W:819,16:TiffIO.writeImage: Redefining name 'key' from outer scope (line 1191)
+C:745,4:TiffIO.writeImage: Missing docstring
+C:752,8:TiffIO.writeImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:771,12:TiffIO.writeImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:777,8:TiffIO.writeImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:787,8:TiffIO.writeImage: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:742,4:TiffIO.writeImage: Too many branches (16/15)
-R:742,4:TiffIO.writeImage: Too many statements (67/50)
-C:837,4:TiffIO._initEmptyFile: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:837,4:TiffIO._initEmptyFile: Missing docstring
-C:837,29:TiffIO._initEmptyFile: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:839,12:TiffIO._initEmptyFile: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-C:850,8:TiffIO._initEmptyFile: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:866,4:TiffIO._getOutputIFD: Too many local variables (34/25)
-W:930,8:TiffIO._getOutputIFD: Redefining name 'dtype' from outer scope (line 1171)
-W:1023,8:TiffIO._getOutputIFD: Redefining name 'info' from outer scope (line 1187)
-W:999,16:TiffIO._getOutputIFD: Redefining name 'i' from outer scope (line 1186)
-C:866,4:TiffIO._getOutputIFD: Missing docstring
-C:989,8:TiffIO._getOutputIFD: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
-R:866,4:TiffIO._getOutputIFD: Too many branches (54/15)
-R:866,4:TiffIO._getOutputIFD: Too many statements (177/50)
-W:501,16:TiffIO._readInfo: Attribute '_imageInfoCache' defined outside __init__
-W:849,12:TiffIO._initEmptyFile: Attribute '_structChar' defined outside __init__
-W:203,8:TiffIO.getImageFileDirectories: Attribute '_IFD' defined outside __init__
-W:738,16:TiffIO._readImage: Attribute '_imageDataCache' defined outside __init__
-W:737,16:TiffIO._readImage: Attribute '_imageDataCacheIndex' defined outside __init__
-W:834,8:TiffIO.writeImage: Attribute 'fd' defined outside __init__
-W:854,12:TiffIO._initEmptyFile: Attribute '_swap' defined outside __init__
-W:500,16:TiffIO._readInfo: Attribute '_imageInfoCacheIndex' defined outside __init__
+C:774,12:TiffIO.writeImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:780,8:TiffIO.writeImage: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:790,8:TiffIO.writeImage: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:745,4:TiffIO.writeImage: Too many branches (16/15)
+R:745,4:TiffIO.writeImage: Too many statements (67/50)
+C:840,4:TiffIO._initEmptyFile: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:840,4:TiffIO._initEmptyFile: Missing docstring
+C:840,29:TiffIO._initEmptyFile: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:842,12:TiffIO._initEmptyFile: Invalid name "fd" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:853,8:TiffIO._initEmptyFile: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:869,4:TiffIO._getOutputIFD: Too many local variables (34/25)
+W:933,8:TiffIO._getOutputIFD: Redefining name 'dtype' from outer scope (line 1174)
+W:1026,8:TiffIO._getOutputIFD: Redefining name 'info' from outer scope (line 1190)
+W:1002,16:TiffIO._getOutputIFD: Redefining name 'i' from outer scope (line 1189)
+C:869,4:TiffIO._getOutputIFD: Missing docstring
+C:992,8:TiffIO._getOutputIFD: Invalid name "st" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+R:869,4:TiffIO._getOutputIFD: Too many branches (54/15)
+R:869,4:TiffIO._getOutputIFD: Too many statements (177/50)
+W:504,16:TiffIO._readInfo: Attribute '_imageInfoCache' defined outside __init__
+W:852,12:TiffIO._initEmptyFile: Attribute '_structChar' defined outside __init__
+W:206,8:TiffIO.getImageFileDirectories: Attribute '_IFD' defined outside __init__
+W:741,16:TiffIO._readImage: Attribute '_imageDataCache' defined outside __init__
+W:740,16:TiffIO._readImage: Attribute '_imageDataCacheIndex' defined outside __init__
+W:837,8:TiffIO.writeImage: Attribute 'fd' defined outside __init__
+W:857,12:TiffIO._initEmptyFile: Attribute '_swap' defined outside __init__
+W:503,16:TiffIO._readInfo: Attribute '_imageInfoCacheIndex' defined outside __init__
 
 
 Report
 ======
-797 statements analysed.
+798 statements analysed.
 
 Messages by category
 --------------------
@@ -163,13 +163,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |959    |87.82 |959      |=          |
+|code      |960    |87.75 |959      |+1.00      |
 +----------+-------+------+---------+-----------+
 |docstring |11     |1.01  |11       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |62     |5.68  |62       |=          |
+|comment   |63     |5.76  |62       |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |60     |5.49  |60       |=          |
+|empty     |60     |5.48  |60       |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -191,14 +191,6 @@ Statistics by type
 
 
 
-External dependencies
----------------------
-::
-
-    numpy (TiffIO)
-
-
-
 Duplication
 -----------
 
@@ -209,6 +201,14 @@ Duplication
 +-------------------------+------+---------+-----------+
 |percent duplicated lines |0.000 |0.000    |=          |
 +-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (TiffIO)
 
 
 

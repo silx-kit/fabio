@@ -3,20 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fabio.compression &mdash; FabIO 0.1.3 documentation</title>
-    
+    <title>fabio.compression &mdash; FabIO v0.1.4 documentation</title>
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +22,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="FabIO 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="FabIO v0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +35,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,8 +46,6 @@
           <div class="body">
             
   <h1>Source code for fabio.compression</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
-<span class="c"># coding: utf8</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Authors: Jérôme Kieffer, ESRF</span>
 <span class="sd">         email:jerome.kieffer@esrf.fr</span>
@@ -87,26 +82,26 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Unable to import zlib module: disabling zlib compression&quot;</span><span class="p">)</span>
     <span class="n">zlib</span> <span class="o">=</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="md5sum"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.md5sum">[docs]</a><span class="k">def</span> <span class="nf">md5sum</span><span class="p">(</span><span class="n">blob</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">md5sum</span><span class="p">(</span><span class="n">blob</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    returns the md5sum of an object...</span>
+<div class="viewcode-block" id="md5sum"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.md5sum">[docs]</a><span class="sd">    returns the md5sum of an object...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
 
-</div>
-<div class="viewcode-block" id="endianness"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.endianness">[docs]</a><span class="k">def</span> <span class="nf">endianness</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the native endianness of the system</span>
+
+<span class="k">def</span> <span class="nf">endianness</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="endianness"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.endianness">[docs]</a><span class="sd">    Return the native endianness of the system</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">little_endian</span><span class="p">:</span>
         <span class="k">return</span> <span class="s">&quot;LITTLE_ENDIAN&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="s">&quot;BIG_ENDIAN&quot;</span>
 
-</div>
-<div class="viewcode-block" id="decGzip"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decGzip">[docs]</a><span class="k">def</span> <span class="nf">decGzip</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="k">def</span> <span class="nf">decGzip</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decGzip"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decGzip">[docs]</a>
 <span class="sd">    Decompress a chunk of data using the gzip algorithm from Python or alternatives if possible</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -138,10 +133,10 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;I am totally unable to read this gzipped compressed data block, giving up&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rawData</span>
 
-</div>
-<div class="viewcode-block" id="decBzip2"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decBzip2">[docs]</a><span class="k">def</span> <span class="nf">decBzip2</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="k">def</span> <span class="nf">decBzip2</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decBzip2"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decBzip2">[docs]</a>
 <span class="sd">    Decompress a chunk of data using the bzip2 algorithm from Python</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -149,10 +144,10 @@
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s">&quot;bz2 module is not available&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">bz2</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="decZlib"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decZlib">[docs]</a><span class="k">def</span> <span class="nf">decZlib</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="k">def</span> <span class="nf">decZlib</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decZlib"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decZlib">[docs]</a>
 <span class="sd">    Decompress a chunk of data using the zlib algorithm from Python</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -160,10 +155,10 @@
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s">&quot;zlib module is not available&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="decByteOffet_python"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_python">[docs]</a><span class="k">def</span> <span class="nf">decByteOffet_python</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)</span>
+
+<span class="k">def</span> <span class="nf">decByteOffet_python</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decByteOffet_python"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_python">[docs]</a><span class="sd">    Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)</span>
 
 <span class="sd">    @param stream: string representing the compressed data</span>
 <span class="sd">    @param size: the size of the output array (of longInts)</span>
@@ -195,10 +190,10 @@
         <span class="n">dataOut</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">last</span>
         <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">dataOut</span>
-</div>
-<div class="viewcode-block" id="decByteOffet_weave"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_weave">[docs]</a><span class="k">def</span> <span class="nf">decByteOffet_weave</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)</span>
+
+<span class="k">def</span> <span class="nf">decByteOffet_weave</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decByteOffet_weave"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_weave">[docs]</a><span class="sd">    Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)</span>
 
 <span class="sd">    @param stream: string representing the compressed data</span>
 <span class="sd">    @param size: the size of the output array (of longInts)</span>
@@ -265,10 +260,10 @@
     <span class="k">return</span> <span class="n">dataOut</span>
 
 
-</div>
-<div class="viewcode-block" id="decByteOffet_numpy"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_numpy">[docs]</a><span class="k">def</span> <span class="nf">decByteOffet_numpy</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Analyze a stream of char with any length of exception:</span>
+
+<span class="k">def</span> <span class="nf">decByteOffet_numpy</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decByteOffet_numpy"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_numpy">[docs]</a><span class="sd">    Analyze a stream of char with any length of exception:</span>
 <span class="sd">                2, 4, or 8 bytes integers</span>
 
 <span class="sd">    @param stream: string representing the compressed data</span>
@@ -306,10 +301,10 @@
         <span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="n">shift</span><span class="p">:]</span>
     <span class="k">return</span>  <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">listnpa</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&quot;int64&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
 
-</div>
-<div class="viewcode-block" id="decByteOffet_cython"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_cython">[docs]</a><span class="k">def</span> <span class="nf">decByteOffet_cython</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Analyze a stream of char with any length of exception:</span>
+
+<span class="k">def</span> <span class="nf">decByteOffet_cython</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decByteOffet_cython"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decByteOffet_cython">[docs]</a><span class="sd">    Analyze a stream of char with any length of exception:</span>
 <span class="sd">                2, 4, or 8 bytes integers</span>
 
 <span class="sd">    @param stream: string representing the compressed data</span>
@@ -325,10 +320,10 @@
         <span class="k">return</span> <span class="n">decByteOffet_numpy</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">analyseCython</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="compByteOffet_numpy"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.compByteOffet_numpy">[docs]</a><span class="k">def</span> <span class="nf">compByteOffet_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compress a dataset into a string using the byte_offet algorithm</span>
+
+<span class="k">def</span> <span class="nf">compByteOffet_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="compByteOffet_numpy"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.compByteOffet_numpy">[docs]</a><span class="sd">    Compress a dataset into a string using the byte_offet algorithm</span>
 
 <span class="sd">    @param data: ndarray</span>
 <span class="sd">    @return: string/bytes with compressed data</span>
@@ -375,10 +370,10 @@
         <span class="n">binary_blob</span> <span class="o">+=</span> <span class="n">delta</span><span class="p">[</span><span class="n">start</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&quot;int8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">binary_blob</span>
 
-</div>
-<div class="viewcode-block" id="decTY1"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decTY1">[docs]</a><span class="k">def</span> <span class="nf">decTY1</span><span class="p">(</span><span class="n">raw_8</span><span class="p">,</span> <span class="n">raw_16</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">raw_32</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Modified byte offset decompressor used in Oxford Diffraction images</span>
+
+<span class="k">def</span> <span class="nf">decTY1</span><span class="p">(</span><span class="n">raw_8</span><span class="p">,</span> <span class="n">raw_16</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">raw_32</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decTY1"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decTY1">[docs]</a><span class="sd">    Modified byte offset decompressor used in Oxford Diffraction images</span>
 <span class="sd">    </span>
 <span class="sd">    @param raw_8:  strings containing raw data with integer 8 bits</span>
 <span class="sd">    @param raw_16: strings containing raw data with integer 16 bits</span>
@@ -407,12 +402,12 @@
         <span class="n">bytecode</span> <span class="o">=</span> <span class="s">&quot;int16&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">bytecode</span> <span class="o">=</span> <span class="s">&quot;int8&quot;</span>
-    <span class="k">return</span> <span class="n">summed</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">bytecode</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">summed</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">bytecode</span><span class="p">)</span>
 <span class="n">decKM4CCD</span> <span class="o">=</span> <span class="n">decTY1</span>
-
-<div class="viewcode-block" id="compTY1"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.compTY1">[docs]</a><span class="k">def</span> <span class="nf">compTY1</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+</div>
+<span class="k">def</span> <span class="nf">compTY1</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Modified byte offset compressor used in Oxford Diffraction images</span>
+<div class="viewcode-block" id="compTY1"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.compTY1">[docs]</a><span class="sd">    Modified byte offset compressor used in Oxford Diffraction images</span>
 
 <span class="sd">    @param data: numpy.ndarray with the input data (integers!)</span>
 <span class="sd">    @return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size</span>
@@ -434,10 +429,10 @@
     <span class="n">diff</span> <span class="o">+=</span> <span class="mi">127</span>
     <span class="n">raw_8</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&quot;uint8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
     <span class="k">return</span>  <span class="n">raw_8</span><span class="p">,</span> <span class="n">raw_16</span><span class="p">,</span> <span class="n">raw_32</span>
-</div>
-<div class="viewcode-block" id="decPCK"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decPCK">[docs]</a><span class="k">def</span> <span class="nf">decPCK</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">overflowPix</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Modified CCP4  pck decompressor used in MAR345 images</span>
+
+<span class="k">def</span> <span class="nf">decPCK</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">overflowPix</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="decPCK"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.decPCK">[docs]</a><span class="sd">    Modified CCP4  pck decompressor used in MAR345 images</span>
 
 <span class="sd">    @param stream: string or file</span>
 <span class="sd">    @return: numpy.ndarray (square array)</span>
@@ -456,10 +451,10 @@
 
     <span class="k">return</span> <span class="n">uncompress_pck</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">,</span> <span class="n">overflowPix</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="compPCK"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.compPCK">[docs]</a><span class="k">def</span> <span class="nf">compPCK</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Modified CCP4  pck compressor used in MAR345 images</span>
+
+<span class="k">def</span> <span class="nf">compPCK</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="compPCK"><a class="viewcode-back" href="../../api/modules.html#fabio.compression.compPCK">[docs]</a><span class="sd">    Modified CCP4  pck compressor used in MAR345 images</span>
 
 <span class="sd">    @param data: numpy.ndarray (square array)</span>
 <span class="sd">    @return:  compressed stream</span>
@@ -503,13 +498,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">FabIO 0.1.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">FabIO v0.1.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2013, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

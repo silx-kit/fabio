@@ -1,37 +1,26 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 """
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
+28/11/2014
 """
-
-import unittest, sys, os, logging
-logger = logging.getLogger("testmccdimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
-
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
-from fabio.marccdimage import marccdimage
-from fabio.tifimage import tifimage
+from __future__ import print_function, with_statement, division, absolute_import
+import unittest
+import sys
+import os
 import numpy
+
+try:
+    from .utilstest import UtilsTest
+except (ValueError, SystemError):
+    from utilstest import UtilsTest
+
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
+from fabio.tifimage import tifimage
+from fabio.marccdimage import marccdimage
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
@@ -42,19 +31,20 @@ TESTIMAGES = """corkcont2_H_0089.mccd      2048 2048  0  354    7.2611 14.639
                 somedata_0001.mccd.bz2     1024 1024  0  20721  128.37 136.23
                 somedata_0001.mccd.gz      1024 1024  0  20721  128.37 136.23"""
 
-class testnormaltifok(unittest.TestCase):
+
+class TestNormalTiffOK(unittest.TestCase):
     """
     check we can read normal tifs as well as mccd
     """
-    imdata = None
-    image = os.path.join(UtilsTest.test_home, "testimages", "tifimagewrite_test0000.tif")
+
     def setUp(self):
         """
         create an image 
         """
+        self.image = os.path.join(UtilsTest.tempdir, "tifimagewrite_test0000.tif")
         self.imdata = numpy.zeros((24, 24), numpy.uint16)
-        self.imdata[ 12:14, 15:17 ] = 42
-        obj = tifimage(self.imdata, { })
+        self.imdata[12:14, 15:17] = 42
+        obj = tifimage(self.imdata, {})
         obj.write(self.image)
 
     def test_read_openimage(self):
@@ -67,10 +57,12 @@ class testnormaltifok(unittest.TestCase):
         self.assertEqual(obj.data.astype(int).tostring(),
                           self.imdata.astype(int).tostring())
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        os.unlink(self.image)
 
 
-
-class testflatmccds(unittest.TestCase):
+class TestFlatMccds(unittest.TestCase):
     def setUp(self):
         self.fn = {}
         for i in ["corkcont2_H_0089.mccd", "somedata_0001.mccd"]:
@@ -97,18 +89,13 @@ class testflatmccds(unittest.TestCase):
             self.assertEqual(dim2, obj.dim2, "dim2")
 
 
-
-
-
 def test_suite_all_mccd():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testnormaltifok("test_read_openimage"))
-    testSuite.addTest(testflatmccds("test_read"))
+    testSuite.addTest(TestNormalTiffOK("test_read_openimage"))
+    testSuite.addTest(TestFlatMccds("test_read"))
     return testSuite
 
 if __name__ == '__main__':
     mysuite = test_suite_all_mccd()
     runner = unittest.TextTestRunner()
     runner.run(mysuite)
-
-

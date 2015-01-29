@@ -1,42 +1,29 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
-## Automatically adapted for numpy.oldnumeric Oct 05, 2007 by alter_code1.py
-
-
-
-# Unit tests
-
+# -*- coding: utf-8 -*-
 """ Test the fit2d mask reader
 
 Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
+28/11/2014
 """
-import unittest, sys, os, logging, tempfile
-logger = logging.getLogger("testfit2dmaskdfimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
-try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
-
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
-from fabio.fit2dmaskimage import fit2dmaskimage
+from __future__ import print_function, with_statement, division, absolute_import
+import unittest
+import sys
+import os
 import numpy
+import gzip
+import bz2
 
-class testfacemask(unittest.TestCase):
+try:
+    from .utilstest import UtilsTest
+except (ValueError, SystemError):
+    from utilstest import UtilsTest
+
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
+from fabio.fit2dmaskimage import fit2dmaskimage
+
+
+class TestFaceMask(unittest.TestCase):
     """ test the picture of a face """
 
     def setUp(self):
@@ -58,9 +45,10 @@ class testfacemask(unittest.TestCase):
         self.assertEqual(i.data.shape, j.data.shape)
         diff = j.data - i.data
         sumd = abs(diff).sum(dtype=float)
-        self.assertEqual(sumd , 0.0)
+        self.assertEqual(sumd, 0.0)
 
-class testclickedmask(unittest.TestCase):
+
+class TestClickedMask(unittest.TestCase):
     """ A few random clicks to make a test mask """
 
     def setUp(self):
@@ -92,7 +80,7 @@ class testclickedmask(unittest.TestCase):
         sumd = abs(diff).sum(dtype=float)
         self.assertEqual(sumd , 0)
 
-class testmskwrite(unittest.TestCase):
+class TestMskWrite(unittest.TestCase):
     """
     Write dummy mask files with various compression schemes
 
@@ -101,9 +89,9 @@ class testmskwrite(unittest.TestCase):
         shape = (199, 211)  # those are prime numbers
         self.data = (numpy.random.random(shape) > 0.6)
         self.header = {}
-        self.tmpdir = tempfile.mkdtemp(prefix="testmskwrite")
+
     def testFlat(self):
-        self.filename = os.path.join(self.tmpdir, "random.msk")
+        self.filename = os.path.join(UtilsTest.tempdir, "random.msk")
         e = fit2dmaskimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
@@ -111,8 +99,9 @@ class testmskwrite(unittest.TestCase):
         self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
         self.assert_(r.header == self.header, "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+
     def testGzip(self):
-        self.filename = os.path.join(self.tmpdir, "random.msk.gz")
+        self.filename = os.path.join(UtilsTest.tempdir, "random.msk.gz")
         e = fit2dmaskimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
@@ -122,7 +111,7 @@ class testmskwrite(unittest.TestCase):
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
 
     def testBzip2(self):
-        self.filename = os.path.join(self.tmpdir, "random.msk.gz")
+        self.filename = os.path.join(UtilsTest.tempdir, "random.msk.gz")
         e = fit2dmaskimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
@@ -134,19 +123,16 @@ class testmskwrite(unittest.TestCase):
     def tearDown(self):
         if os.path.isfile(self.filename):
             os.unlink(self.filename)
-        os.rmdir(self.tmpdir)
-
-
 
 
 def test_suite_all_fit2d():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testfacemask("test_getmatch"))
-    testSuite.addTest(testclickedmask("test_read"))
-    testSuite.addTest(testclickedmask("test_getmatch"))
-    testSuite.addTest(testmskwrite("testFlat"))
-    testSuite.addTest(testmskwrite("testGzip"))
-    testSuite.addTest(testmskwrite("testBzip2"))
+    testSuite.addTest(TestFaceMask("test_getmatch"))
+    testSuite.addTest(TestClickedMask("test_read"))
+    testSuite.addTest(TestClickedMask("test_getmatch"))
+    testSuite.addTest(TestMskWrite("testFlat"))
+    testSuite.addTest(TestMskWrite("testGzip"))
+    testSuite.addTest(TestMskWrite("testBzip2"))
     return testSuite
 
 if __name__ == '__main__':

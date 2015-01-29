@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf8
+#coding: utf-8
 #This is a template for adding new file formats to FabIO
 
 # We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:
@@ -33,24 +33,27 @@
 #10) Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert
 #    their data into another format
 
-# Get ready for python3:
-from __future__ import with_statement, print_function
-__doc__ = """
+"""
 Template for FabIO
 
 Authors: Who are you ?
 email:  Where can you be reached ?
 
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
+
 __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "GPLv3+"
 __copyright__ = "Institut"
 __version__ = "17 Oct 2012"
 
-import numpy, logging
-from fabioimage import fabioimage
+import logging
 logger = logging.getLogger("templateimage")
+import numpy
+from .fabioimage import fabioimage
+
 
 
 class templateimage(fabioimage):

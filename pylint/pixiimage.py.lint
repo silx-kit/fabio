@@ -1,0 +1,129 @@
+************* Module pixiimage
+C: 21,0:pixiimage: Invalid name "pixiimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 21,0:pixiimage: Missing docstring
+C: 55,4:pixiimage._makeframename: Missing docstring
+C: 59,4:pixiimage._readframe: Missing docstring
+W: 71,4:pixiimage.write: Arguments number differs from overridden method
+W: 71,27:pixiimage.write: Unused argument 'force_type'
+W: 87,17:pixiimage.getframe: Access to a protected member _open of a client class
+W: 88,8:pixiimage.getframe: Access to a protected member _readframe of a client class
+E:101,24:pixiimage.next: Undefined variable 'next_filename'
+E:113,24:pixiimage.previous: Undefined variable 'previous_filename'
+R: 21,0:pixiimage: Too many public methods (25/20)
+W: 86,8:pixiimage.getframe: Attribute 'sequencefilename' defined outside __init__
+C:119,0:demo: Missing docstring
+E:124,10:demo: Too many arguments for format string
+W:135,4: Reimport 'sys' (imported line 17)
+
+
+Report
+======
+96 statements analysed.
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |5      |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |1      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |6      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |3      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------+------------+
+|message id |occurrences |
++===========+============+
+|C0111      |4           |
++-----------+------------+
+|W0212      |2           |
++-----------+------------+
+|E0602      |2           |
++-----------+------------+
+|W0613      |1           |
++-----------+------------+
+|W0404      |1           |
++-----------+------------+
+|W0221      |1           |
++-----------+------------+
+|W0201      |1           |
++-----------+------------+
+|R0904      |1           |
++-----------+------------+
+|E1305      |1           |
++-----------+------------+
+|C0103      |1           |
++-----------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 7.19/10
+If you commit now, people should not be making nasty comments about you on c.l.py
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |102    |79.07 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |12     |9.30  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |3      |2.33  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |12     |9.30  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |8      |NC         |NC         |75.00       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+External dependencies
+---------------------
+::
+
+    numpy (pixiimage)
+    pylab (pixiimage)
+
+
+

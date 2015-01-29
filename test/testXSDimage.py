@@ -1,40 +1,25 @@
 #!/usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 """
 # Unit tests
 
 # builds on stuff from ImageD11.test.testpeaksearch
 """
 
+from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import os
-import logging
 import sys
-logger = logging.getLogger("testXSDimage")
-force_build = False
-
-for opts in sys.argv[:]:
-    if opts in ["-d", "--debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-i", "--info"]:
-        logging.basicConfig(level=logging.INFO)
-        sys.argv.pop(sys.argv.index(opts))
-    elif opts in ["-f", "--force"]:
-        force_build = True
-        sys.argv.pop(sys.argv.index(opts))
+import os
 try:
-    logger.debug("Tests loaded from file: %s" % __file__)
-except:
-    __file__ = os.getcwd()
+    from .utilstest import UtilsTest
+except (ValueError, SystemError):
+    from utilstest import UtilsTest
+logger = UtilsTest.get_logger(__file__)
+fabio = sys.modules["fabio"]
 
-from utilstest import UtilsTest
-if force_build:
-    UtilsTest.forceBuild()
-import fabio
 from fabio.xsdimage import xsdimage
 import numpy
-# filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0 
+# filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15
                 XSDataImageInv.xml  512 512  -0.2814 0.22705039 2.81e-08  0.010"""
 
@@ -43,7 +28,7 @@ class testXSD(unittest.TestCase):
     def setUp(self):
         self.fn = {}
         for i in ["XSDataImage.edf", "XSDataImage.xml", "XSDataImageInv.xml"]:
-            self.fn[i] = UtilsTest.getimage(i)
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
 
     def test_read(self):
         "Test reading of XSD images"
@@ -81,7 +66,7 @@ class testXSD(unittest.TestCase):
 def test_suite_all_XSD():
     testSuite = unittest.TestSuite()
     if xsdimage is None:
-        logging.warning("xsdimage is None ... probably an import error related to lxml. Skipping test")
+        logger.warning("xsdimage is None ... probably an import error related to lxml. Skipping test")
     else:
         testSuite.addTest(testXSD("test_read"))
         testSuite.addTest(testXSD("test_same"))

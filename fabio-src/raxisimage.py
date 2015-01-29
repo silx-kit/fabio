@@ -1,38 +1,39 @@
 #!/usr/bin/env python
-#coding: utf8
-
-
-# Get ready for python3:
-from __future__ import with_statement, print_function, division
-__doc__ = """
+#coding: utf-8
+"""
 
 Authors: Brian R. Pauw
 email:  brian@stack.nl
 
-Written using information gleaned from the ReadRAXISImage program 
-written by T. L. Hendrixson, made available by Rigaku Americas. 
+Written using information gleaned from the ReadRAXISImage program
+written by T. L. Hendrixson, made available by Rigaku Americas.
 Available at: http://www.rigaku.com/downloads/software/readimage.html
 
 
 """
+
+
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
+
 __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "GPLv3+"
 __copyright__ = ""
 __version__ = "23 Nov 2013"
-
-import numpy, logging, struct, os
-from fabioimage import fabioimage
-logger = logging.getLogger("templateimage")
+import logging, struct, os
+import numpy
+from .fabioimage import fabioimage
+logger = logging.getLogger("raxisimage")
 
 
 class raxisimage(fabioimage):
     """
-    FabIO image class to read Rigaku RAXIS image files. 
+    FabIO image class to read Rigaku RAXIS image files.
     Write functions are not planned as there are plenty of more suitable
     file formats available for storing detector data.
-    In particular, the MSB used in Rigaku files is used in an uncommon way: 
-    it is used as a *multiply-by* flag rather than a normal image value bit. 
+    In particular, the MSB used in Rigaku files is used in an uncommon way:
+    it is used as a *multiply-by* flag rather than a normal image value bit.
     While it is said to multiply by the value specified in the header, there
     is at least one case where this is found not to hold, so YMMV and be careful.
 
@@ -52,7 +53,7 @@ class raxisimage(fabioimage):
 
     def swap_needed(self):
         """not sure if this function is needed"""
-        endian=self.endianness
+        endian = self.endianness
         #Decide if we need to byteswap
         if (endian == '<' and numpy.little_endian) or (endian == '>' and not numpy.little_endian):
             return False
@@ -62,81 +63,80 @@ class raxisimage(fabioimage):
 
     def _readheader(self, infile):
         """
-        Read and decode the header of a Rigaku RAXIS image. 
+        Read and decode the header of a Rigaku RAXIS image.
         The Rigaku format uses a block of (at least) 1400 bytes for storing
         information. The information has a fixed structure, but endianness
-        can be flipped for non-char values. Header items which are not 
+        can be flipped for non-char values. Header items which are not
         capitalised form part of a non-standardized data block and may not
-        be accurate. 
-        
-        TODO: It would be useful to have an automatic endianness test in here. 
-        
-        @param infile: Opened python file (can be stringIO or bzipped file)  
+        be accurate.
+
+        TODO: It would be useful to have an automatic endianness test in here.
+
+        @param infile: Opened python file (can be stringIO or bzipped file)
         """
-        endianness=self.endianness
+        endianness = self.endianness
         #list of header key to keep the order (when writing)
-        RKey,orderList=self.rigakuKeys()
+        RKey, orderList = self.rigakuKeys()
         self.header = {}
         self.header_keys = orderList
 
         #swapBool=False
-        fs=endianness
-        minHeaderLength=1400 #from rigaku's def
+        fs = endianness
+        minHeaderLength = 1400 #from rigaku's def
         #if (numpy.little_endian and endianness=='>'):
         #    swapBool=True
         #file should be open already
         #fh=open(filename,'rb')
         infile.seek(0) #hopefully seeking works.
-        rawHead=infile.read(minHeaderLength)
+        rawHead = infile.read(minHeaderLength)
         #fh.close() #don't like open files in case of intermediate crash
 
-        self.header=dict()
-        curByte=0
+        self.header = dict()
+        curByte = 0
         for key in orderList:
-            if isinstance(RKey[key],int):
-                #read a number of bytes, convert to char. 
+            if isinstance(RKey[key], int):
+                # read a number of bytes, convert to char.
                 #if -1, read remainder of header
-                if RKey[key]==-1:
-                    rByte=len(rawHead)-curByte
-                    self.header[key]=struct.unpack(fs + str(rByte) + 's',
+                if RKey[key] == -1:
+                    rByte = len(rawHead) - curByte
+                    self.header[key] = struct.unpack(fs + str(rByte) + 's',
                             rawHead[curByte : curByte + rByte])[0]
-                    curByte+=rByte
+                    curByte += rByte
                     break
 
-                rByte=RKey[key]
-                self.header[key]=struct.unpack(fs + str(rByte) + 's',
+                rByte = RKey[key]
+                self.header[key] = struct.unpack(fs + str(rByte) + 's',
                         rawHead[curByte : curByte + rByte])[0]
-                curByte+=rByte
-            elif RKey[key]=='float':
+                curByte += rByte
+            elif RKey[key] == 'float':
                 #read a float, 4 bytes
-                rByte=4
-                self.header[key]=struct.unpack(fs + 'f',
+                rByte = 4
+                self.header[key] = struct.unpack(fs + 'f',
                         rawHead[curByte : curByte + rByte])[0]
-                curByte+=rByte
-            elif RKey[key]=='long':
+                curByte += rByte
+            elif RKey[key] == 'long':
                 #read a long, 4 bytes
-                rByte=4
-                self.header[key]=struct.unpack(fs + 'l',
+                rByte = 4
+                self.header[key] = struct.unpack(fs + 'l',
                         rawHead[curByte : curByte + rByte])[0]
-                curByte+=rByte
+                curByte += rByte
             else:
-                logging.warn('special header data type {} not understood'
-                        .format(Rkey[key]))
-            if len(rawHead)==curByte:
+                logging.warning('special header data type %s not understood' % Rkey[key])
+            if len(rawHead) == curByte:
                 #"end reached"
                 break
 
     def read(self, fname, frame=None):
         """
-        try to read image 
+        try to read image
         @param fname: name of the file
-        @param frame: 
+        @param frame:
         """
 
-        endianness=self.endianness
+        endianness = self.endianness
         self.resetvals()
-        infile = self._open(fname,'rb')
-        offset=-1 #read from EOF backward
+        infile = self._open(fname, 'rb')
+        offset = -1 #read from EOF backward
         try:
             self._readheader(infile)
         except:
@@ -146,39 +146,43 @@ class raxisimage(fabioimage):
         #lifted from binaryimage
         #read the image data
 
-        self.dim1 = self.header['X Pixels'] 
+        self.dim1 = self.header['X Pixels']
         self.dim2 = self.header['Y Pixels']
-        self.bytecode = 'uint16'
+        self.bytecode = numpy.uint16
         dims = [self.dim2, self.dim1]
         bpp = numpy.dtype(self.bytecode).itemsize
         size = dims[0] * dims[1] * bpp
-
         if offset >= 0:
             infile.seek(offset)
         else:
             try:
-                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
+                if "measureSize" in dir(infile): #Handle specifically gzip
+                    filesize = infile.measureSize()
+                    infile.seek(filesize - size) #seek from EOF backwards
+                else:
+                    infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
+#                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
-                logging.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
+                logger.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
             except Exception as error:
-                logging.error('Uncommon error encountered when reading file: %s' % error)
+                logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
         if  self.swap_needed():
             data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
         else:
             data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
-
-        di = (data >= 2 ** 15)
+#        print(data)
+        di = (data >> 15) != 0  # greater than 2^15
         if di.sum() >= 1:
-            logger.debug("Correct for PM", di.sum())
+            # find indices for which we need to do the correction (for which
+            # the 16th bit is set):
+
+            logger.debug("Correct for PM: %s" % di.sum())
+            data = data << 1 >> 1  # reset bit #15 to zero
+            self.bytecode = numpy.uint32
+            data = data.astype(self.bytecode)
             #Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
-            #find indices for which we need to do the correction (for which
-            #the 16th bit is set):
-#            self.bytecode = "int32"
-#            data = data.astype(self.bytecode)
-            #reduce by the last bit
-            data[di] -= 2 ** 16
             #multiply by the ratio  defined in the header
             data[di] *= sf
 
@@ -188,7 +192,7 @@ class raxisimage(fabioimage):
 
     def rigakuKeys(self):
         #returns dict of keys and keyLengths
-        RKey={
+        RKey = {
                 'InstrumentType':10,
                 'Version':10,
                 'Crystal Name':20,
@@ -224,7 +228,7 @@ class raxisimage(fabioimage):
                 'Phi Datum':'float', #degrees
                 'Phi Oscillation Start':'float', #deg
                 'Phi Oscillation Stop':'float',  #deg
-                'Frame Number':'long',  
+                'Frame Number':'long',
                 'Exposure Time':'float', #minutes
                 'Direct beam X position':'float', #special, x,y
                 'Direct beam Y position':'float', #special, x,y
@@ -305,7 +309,7 @@ class raxisimage(fabioimage):
                 }
 
         #make a list with the items in the right order
-        orderList=[
+        orderList = [
                 'InstrumentType',
                 'Version',
                 'Crystal Name',
@@ -421,6 +425,6 @@ class raxisimage(fabioimage):
                 ]
 
 
-        return RKey,orderList
+        return RKey, orderList
 
 

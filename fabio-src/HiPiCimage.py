@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 """
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -12,10 +11,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 Information about the file format from Masakatzu Kobayashi is highly appreciated
 """
+# Get ready for python3:
+from __future__ import with_statement, print_function
 
 import numpy, logging
 logger = logging.getLogger("HiPiCimage")
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 
 class HiPiCimage(fabioimage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
@@ -27,7 +28,6 @@ class HiPiCimage(fabioimage):
 
         """
         Image_tag = infile.read(2)
-        print Image_tag
         Comment_len = numpy.fromstring(infile.read(2), numpy.uint16)
         Dim_1 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
         Dim_2 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
@@ -88,9 +88,9 @@ class HiPiCimage(fabioimage):
                 numpy.fromstring(block, bytecode),
                 [self.dim2, self.dim1])
         except:
-            print len(block), bytecode, self.bpp, self.dim2, self.dim1
-            raise IOError, \
-              'Size spec in HiPic-header does not match size of image data field'
+            print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            raise IOError(
+              'Size spec in HiPic-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
 
         # Sometimes these files are not saved as 12 bit,

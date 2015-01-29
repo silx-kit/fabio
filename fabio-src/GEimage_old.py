@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 
 """
@@ -19,9 +18,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
         Thu Jan  4 13:46:31 CST 2007
 
 """
-
+# Get ready for python3:
+from __future__ import with_statement, print_function
 import numpy
-from fabioimage import fabioimage
+from .fabioimage import fabioimage
 
 class GEimage(fabioimage):
 
@@ -73,65 +73,65 @@ class GEimage(fabioimage):
 #         self.ColNumberUpperLeftPointArchiveROI = infile.read(2)
 #         self.ColNumberUpperLeftPointArchiveROI = struct.unpack("=H",self.ColNumberUpperLeftPointArchiveROI)[0]
 
-#         self.Swapped = infile.read(2) 
+#         self.Swapped = infile.read(2)
 #         self.Swapped = struct.unpack("=H",self.Swapped)[0]
 
-#         self.Reordered = infile.read(2) 
+#         self.Reordered = infile.read(2)
 #         self.Reordered = struct.unpack("=H",self.Reordered)[0]
 
-#         self.HorizontalFlipped = infile.read(2) 
+#         self.HorizontalFlipped = infile.read(2)
 #         self.HorizontalFlipped = struct.unpack("=H",self.HorizontalFlipped)[0]
 
-#         self.VerticalFlipped = infile.read(2) 
+#         self.VerticalFlipped = infile.read(2)
 #         self.VerticalFlipped = struct.unpack("=H",self.VerticalFlipped)[0]
 
-#         self.WindowValueDesired = infile.read(2) 
+#         self.WindowValueDesired = infile.read(2)
 #         self.WindowValueDesired = struct.unpack("=H",self.WindowValueDesired)[0]
 
-#         self.LevelValueDesired = infile.read(2) 
+#         self.LevelValueDesired = infile.read(2)
 #         self.LevelValueDesired = struct.unpack("=H",self.LevelValueDesired)[0]
 
-#         self.AcquisitionMode = infile.read(2) 
+#         self.AcquisitionMode = infile.read(2)
 #         self.AcquisitionMode = struct.unpack("=H",self.AcquisitionMode)[0]
 
-#         self.AcquisitionType = infile.read(2) 
+#         self.AcquisitionType = infile.read(2)
 #         self.AcquisitionType = struct.unpack("=H",self.AcquisitionType)[0]
 
-#         self.UserAcquisitionCoffFileName1 = infile.read(100) 
-#         self.UserAcquisitionCoffFileName2 = infile.read(100) 
+#         self.UserAcquisitionCoffFileName1 = infile.read(100)
+#         self.UserAcquisitionCoffFileName2 = infile.read(100)
 
-#         self.FramesBeforeExpose = infile.read(2) 
+#         self.FramesBeforeExpose = infile.read(2)
 #         self.FramesBeforeExpose = struct.unpack("=H",self.FramesBeforeExpose)[0]
 
-#         self.FramesDuringExpose = infile.read(2)  
+#         self.FramesDuringExpose = infile.read(2)
 #         self.FramesDuringExpose = struct.unpack("=H",self.FramesDuringExpose)[0]
 
-#         self.FramesAfterExpose = infile.read(2) 
+#         self.FramesAfterExpose = infile.read(2)
 #         self.FramesAfterExpose = struct.unpack("=H",self.FramesAfterExpose)[0]
 
-#         self.IntervalBetweenFrames = infile.read(2) 
+#         self.IntervalBetweenFrames = infile.read(2)
 #         self.IntervalBetweenFrames = struct.unpack("=H",self.IntervalBetweenFrames)[0]
 
-#         self.ExposeTimeDelayInMicrosecs = infile.read(8) 
+#         self.ExposeTimeDelayInMicrosecs = infile.read(8)
 #         self.ExposeTimeDelayInMicrosecs = struct.unpack("=d",self.ExposeTimeDelayInMicrosecs)[0]
 
-#         self.TimeBetweenFramesInMicrosecs = infile.read(8) 
+#         self.TimeBetweenFramesInMicrosecs = infile.read(8)
 #         self.TimeBetweenFramesInMicrosecs = struct.unpack("=d",self.TimeBetweenFramesInMicrosecs)[0]
 
-#         self.FramesToSkipExpose = infile.read(2) 
+#         self.FramesToSkipExpose = infile.read(2)
 #         self.FramesToSkipExpose = struct.unpack("=H",self.FramesToSkipExpose)[0]
 
 #         # Rad --> ExposureMode = 1
-#         self.ExposureMode = infile.read(2) 
+#         self.ExposureMode = infile.read(2)
 #         self.ExposureMode = struct.unpack("=H",self.ExposureMode)[0]
 
-#         self.PrepPresetTimeInMicrosecs = infile.read(8) 
+#         self.PrepPresetTimeInMicrosecs = infile.read(8)
 #         self.PrepPresetTimeInMicrosecs = struct.unpack("=d",self.PrepPresetTimeInMicrosecs)[0]
 
-#         self.ExposePresetTimeInMicrosecs = infile.read(8) 
+#         self.ExposePresetTimeInMicrosecs = infile.read(8)
 #         self.ExposePresetTimeInMicrosecs = struct.unpack("=d",self.ExposePresetTimeInMicrosecs)[0]
 
-#         self.AcquisitionFrameRateInFps = infile.read(4) 
+#         self.AcquisitionFrameRateInFps = infile.read(4)
 #         self.AcquisitionFrameRateInFps = struct.unpack("=f",self.AcquisitionFrameRateInFps)[0]
 
 #         self.FOVSelect = infile.read(2)
@@ -248,51 +248,51 @@ class GEimage(fabioimage):
 #         self.TestPatternSeed = infile.read(4)
 #         self.TestPatternSeed = struct.unpack("=L",self.TestPatternSeed)[0]
 
-#         self.ExposureTimeInMillisecs = infile.read(4) 
+#         self.ExposureTimeInMillisecs = infile.read(4)
 #         self.ExposureTimeInMillisecs = struct.unpack("=f",self.ExposureTimeInMillisecs)[0]
 
-#         self.FrameRateInFps = infile.read(4) 
+#         self.FrameRateInFps = infile.read(4)
 #         self.FrameRateInFps = struct.unpack("=f",self.FrameRateInFps)[0]
 
-#         self.kVp = infile.read(4) 
+#         self.kVp = infile.read(4)
 #         self.kVp = struct.unpack("=f",self.kVp)[0]
 
-#         self.mA = infile.read(4) 
+#         self.mA = infile.read(4)
 #         self.mA = struct.unpack("=f",self.mA)[0]
 
-#         self.mAs = infile.read(4) 
+#         self.mAs = infile.read(4)
 #         self.mAs = struct.unpack("=f",self.mAs)[0]
 
-#         self.FocalSpotInMM = infile.read(4) 
+#         self.FocalSpotInMM = infile.read(4)
 #         self.FocalSpotInMM = struct.unpack("=f",self.FocalSpotInMM)[0]
 
 #         self.GeneratorType = infile.read(20)
 
-#         self.StrobeIntensityInFtL = infile.read(4) 
+#         self.StrobeIntensityInFtL = infile.read(4)
 #         self.StrobeIntensityInFtL = struct.unpack("=f",self.StrobeIntensityInFtL)[0]
 
-#         self.NDFilterSelection = infile.read(2) 
+#         self.NDFilterSelection = infile.read(2)
 #         self.NDFilterSelection = struct.unpack("=H",self.NDFilterSelection)[0]
 
-#         self.RefRegTemp1 = infile.read(8) 
+#         self.RefRegTemp1 = infile.read(8)
 #         self.RefRegTemp1 = struct.unpack("=d",self.RefRegTemp1)[0]
 
-#         self.RefRegTemp2 = infile.read(8) 
+#         self.RefRegTemp2 = infile.read(8)
 #         self.RefRegTemp2 = struct.unpack("=d",self.RefRegTemp2)[0]
 
-#         self.RefRegTemp3 = infile.read(8) 
+#         self.RefRegTemp3 = infile.read(8)
 #         self.RefRegTemp3 = struct.unpack("=d",self.RefRegTemp3)[0]
 
-#         self.Humidity1 = infile.read(4) 
+#         self.Humidity1 = infile.read(4)
 #         self.Humidity1 = struct.unpack("=f",self.Humidity1)[0]
 
-#         self.Humidity2 = infile.read(4) 
+#         self.Humidity2 = infile.read(4)
 #         self.Humidity2 = struct.unpack("=f",self.Humidity2)[0]
 
-#         self.DetectorControlTemp = infile.read(8) 
+#         self.DetectorControlTemp = infile.read(8)
 #         self.DetectorControlTemp = struct.unpack("=d",self.DetectorControlTemp)[0]
 
-#         self.DoseValueInmR = infile.read(8) 
+#         self.DoseValueInmR = infile.read(8)
 #         self.DoseValueInmR = struct.unpack("=d",self.DoseValueInmR)[0]
 
 #         self.TargetLevelROIRow0 = infile.read(2)
@@ -366,11 +366,11 @@ class GEimage(fabioimage):
 #         self.ScanModeSelect = infile.read(2)
 #         self.ScanModeSelect = struct.unpack("=H",self.ScanModeSelect)[0]
 
-#         self.DetectorAppSwVersion = infile.read(20)	
+#         self.DetectorAppSwVersion = infile.read(20)
 
-#         self.DetectorNIOSVersion = infile.read(20)	
+#         self.DetectorNIOSVersion = infile.read(20)
 
-#         self.DetectorPeripheralSetVersion = infile.read(20)	
+#         self.DetectorPeripheralSetVersion = infile.read(20)
 
 #         self.DetectorPhysicalAddress	 = infile.read(20)
 
@@ -492,9 +492,8 @@ class GEimage(fabioimage):
         try:
             self.data = numpy.reshape(block, [self.dim2, self.dim1])
         except:
-            print len(block), self.dim2, self.dim1
-            raise IOError, \
-              'Size spec in GE-header does not match size of image data field'
+            print(len(block), self.dim2, self.dim1)
+            raise IOError('Size spec in GE-header does not match size of image data field')
 
         self.bytecode = self.data.dtype.type
         self.pilimage = None

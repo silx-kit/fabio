@@ -1,19 +1,18 @@
 ************* Module datIO
 C:  1,0: Invalid name "datIO" (should match (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$)
-C: 14,0:fabiodata: Invalid name "fabiodata" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 36,31:fabiodata.read: Unused argument 'frame'
-W: 36,19:fabiodata.read: Unused argument 'fname'
-R: 36,4:fabiodata.read: Method could be a function
-R: 14,0:fabiodata: Too few public methods (1/2)
-C: 45,0:columnfile: Invalid name "columnfile" (should match [A-Z_][a-zA-Z0-9]+$)
-W: 47,4:columnfile.read: Signature differs from overridden method
-F: 48,8:columnfile.read: Unable to import 'cf_io'
-R: 45,0:columnfile: Too few public methods (1/2)
+C: 16,0:fabiodata: Invalid name "fabiodata" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 38,31:fabiodata.read: Unused argument 'frame'
+W: 38,19:fabiodata.read: Unused argument 'fname'
+R: 38,4:fabiodata.read: Method could be a function
+R: 16,0:fabiodata: Too few public methods (1/2)
+C: 47,0:columnfile: Invalid name "columnfile" (should match [A-Z_][a-zA-Z0-9]+$)
+W: 49,4:columnfile.read: Signature differs from overridden method
+R: 47,0:columnfile: Too few public methods (1/2)
 
 
 Report
 ======
-27 statements analysed.
+28 statements analysed.
 
 Messages by category
 --------------------
@@ -48,14 +47,12 @@ Messages
 +-----------+------------+
 |R0201      |1           |
 +-----------+------------+
-|F0401      |1           |
-+-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 6.67/10 (previous run: 6.67/10)
+Your code has been rated at 6.79/10 (previous run: 6.67/10)
 This is okay-ish, but I'm sure you can do better.
 
 Raw metrics
@@ -64,13 +61,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |27     |43.55 |27       |=          |
+|code      |28     |44.44 |27       |+1.00      |
 +----------+-------+------+---------+-----------+
-|docstring |23     |37.10 |23       |=          |
+|docstring |23     |36.51 |23       |=          |
 +----------+-------+------+---------+-----------+
-|comment   |3      |4.84  |3        |=          |
+|comment   |4      |6.35  |3        |+1.00      |
 +----------+-------+------+---------+-----------+
-|empty     |9      |14.52 |9        |=          |
+|empty     |8      |12.70 |9        |-1.00      |
 +----------+-------+------+---------+-----------+
 
 

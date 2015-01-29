@@ -13,50 +13,54 @@ Future: make those algorithm actually generate strings not go via files;
 __authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
-__copyright__ = "2012, European Synchrotron Radiation Facility, Grenoble, France"
+__copyright__ = "2012-2014, European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "21/11/20147"
 
 import cython
 cimport numpy
 import numpy
-import os,tempfile
-from libc.string cimport memcpy
-#from libc.stdlib cimport free, malloc
+import os
+import tempfile
 
 cdef extern from "ccp4_pack.h":
     void* mar345_read_data_string(char *instream, int ocount, int dim1, int dim2) nogil
     void pack_wordimage_c(short int*, int , int , char*) nogil
     void* ccp4_unpack_string   (void *, void *, size_t, size_t, size_t) nogil
     void* ccp4_unpack_v2_string(void *, void *, size_t, size_t, size_t) nogil
-
+cdef int PACK_SIZE_HIGH = 8
 
 @cython.boundscheck(False)
-def compress_pck(numpy.ndarray inputArray not None):
+def compress_pck(inputArray not None):
     """
     @param inputArray: numpy array as input
     @param filename: file to write data to
     """
-    cdef long  size = inputArray.size
-    cdef int dim0, dim1, i, j, fd, ret
-    cdef char* name
+    cdef:
+        long  size = inputArray.size
+        int dim0, dim1, i, j, fd, ret
+        char* name
+        numpy.uint16_t[:] data
     assert inputArray.ndim == 2, "shape is 2D"
     dim0 = inputArray.shape[0]
     dim1 = inputArray.shape[1]
-    cdef numpy.ndarray[numpy.uint16_t, ndim = 1] data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
-    cdef short int * cdata
-    cdata = < short int *> data.data
-    (fd,fname) = tempfile.mkstemp()
-    name = <char*>  fname
+    data = numpy.ascontiguousarray(inputArray.astype(numpy.uint16).ravel(), dtype=numpy.uint16)
+
+    (fd, fname) = tempfile.mkstemp()
+    fname = fname.encode("ASCII")
+    name = <char*> fname
     with nogil:
-        pack_wordimage_c(cdata, dim1, dim0, name)
-    with open(name,"rb") as f:
+        pack_wordimage_c(< short int *> &data[0], dim1, dim0, name)
+    with open(name, "rb") as f:
         f.seek(0)
         output = f.read()
     os.close(fd)
     os.remove(name)
     return output
 
+
 @cython.boundscheck(False)
-def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None):
+@cython.cdivision(True)
+def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None):
     """
     Unpack a mar345 compressed image
 
@@ -67,16 +71,19 @@ def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None, version
     @param normal_start: position of the normal value section (can be auto-guessed)
     @return : ndarray of 2D with the right size
     """
-    cdef int cdimx, cdimy, chigh, cversion, orecords, normal_offset
-    cdef numpy.ndarray[numpy.uint32_t, ndim = 2] data
-    cdef numpy.ndarray[numpy.uint32_t, ndim = 1] flat 
-    cdef numpy.ndarray[numpy.uint8_t, ndim = 1] instream
-    cdef void* out
-    end=None
-    key1 = "CCP4 packed image, X: "
-    key2 = "CCP4 packed image V2, X: "
+    cdef:
+        int cdimx, cdimy, chigh, cversion, records, normal_offset, lenkey, i, stop
+        numpy.ndarray[numpy.uint32_t, ndim = 2] data
+        numpy.ndarray[numpy.uint8_t, ndim = 1] instream
+        void* out
+    end = None
+    key1 = b"CCP4 packed image, X: "
+    key2 = b"CCP4 packed image V2, X: "
 
-    if (dim1 is None) or (dim2 is None) or (version not in [1,2]) or (version is None) or (normal_start is None):
+    if (dim1 is None) or (dim2 is None) or \
+       (version not in [1, 2]) or \
+       (version is None) or \
+       (normal_start is None):
         start = raw.find(key2)
         key = key2
         cversion = 2
@@ -93,14 +100,14 @@ def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None, version
     else:
         cdimx = < int > dim1
         cdimy = < int > dim2
-        cversion = <int> version 
+        cversion = <int> version
         normal_offset = <int> normal_start
-        if cversion==1:
+        if cversion == 1:
             lenkey = len(key1)
         else:
             lenkey = len(key2)
-    if cversion not in [1,2]:
-        raise RuntimeError("Cannot determine the compression scheme for PCK compression (either version 1 or 2)") 
+    if cversion not in [1, 2]:
+        raise RuntimeError("Cannot determine the compression scheme for PCK compression (either version 1 or 2)")
     if (overflowPix is None):
         end = raw.find("END OF HEADER")
         start = raw[:end].find("HIGH")
@@ -114,29 +121,37 @@ def uncompress_pck(raw not None, dim1=None, dim2=None, overflowPix=None, version
             chigh = 0
     else:
         chigh = < int > overflowPix
-    
-    orecords = <int> (chigh/8.0+0.875)
-    data = numpy.empty((cdimy, cdimx), dtype=numpy.uint32)
-    flat = data.ravel() #flat view on the data
-    instream = numpy.fromstring(raw[normal_offset:].lstrip(),dtype=numpy.uint8)
+    data = numpy.empty((cdimy, cdimx), dtype=numpy.uint32)   
+    instream = numpy.fromstring(raw[normal_offset:].lstrip(), dtype=numpy.uint8)
     with nogil:
         ################################################################################
         #      relay to whichever version of ccp4_unpack is appropriate
         ################################################################################
         if cversion == 1:
-            ccp4_unpack_string( &data[0,0], &instream[0], cdimx, cdimy,0);
-        else:# cversion == 2:
-            ccp4_unpack_v2_string( &data[0,0], &instream[0], cdimx, cdimy,0);
-    ################################################################################
-    # handle overflows
-    ################################################################################
-    stop = normal_offset-lenkey-14
-    odata = numpy.fromstring(raw[stop-64*orecords: stop],dtype=numpy.int32)
-    odata.shape = -1,2 
-    addresses = odata[:,0]
-    values = odata[:,1]
-    valid = (addresses>0)
-    addresses = addresses[valid]-1 #addresses start at 1 !!
-    values = values[valid]
-    flat[addresses] = values.astype(numpy.uint32)
+            ccp4_unpack_string(&data[0,0], &instream[0], cdimx, cdimy, 0)
+        else:
+            # cversion == 2:
+            ccp4_unpack_v2_string(&data[0,0], &instream[0], cdimx, cdimy, 0)
+
+    if chigh > 0:
+        ################################################################################
+        # handle overflows: Each record is 8 overflow of 2x32bits integers
+        ################################################################################
+        records = (chigh + PACK_SIZE_HIGH - 1) // PACK_SIZE_HIGH
+        stop = normal_offset - lenkey - 14
+        odata = numpy.fromstring(raw[stop - 64 * records: stop], dtype=numpy.int32)
+        idx = odata[::2] - 1  # indexes are even values (-1 because 1 based counting)
+        value = odata[1::2]   # values are odd values
+        valid = numpy.logical_and(idx >= 0, idx < cdimx * cdimy)
+        valid_sum = valid.sum()
+        valid_idx = numpy.where(valid)[0]
+        if valid_sum > chigh:
+            print("Found %s High values, expected only %s. Taking the last ones (mar555 compatibility)" % (valid.sum, chigh))
+            valid_idx = numpy.where(valid)[0][valid_sum - chigh:]
+            idx = idx.take(valid_idx)
+            value = value.take(valid_idx)
+        else:
+            idx = idx[valid]
+            value = value[valid]
+        data.flat[idx] = value.astype(numpy.uint32)
     return data

@@ -1,70 +1,50 @@
-No config file found, using default configuration
-
 ************* Module pnmimage
-C: 39,0: Line too long (88/80)
-C: 56,0: Line too long (83/80)
-C: 77,0: Line too long (91/80)
-C: 98,0: Line too long (84/80)
-C:110,0: Line too long (96/80)
-C:127,0: Line too long (96/80)
-C:134,0: Line too long (98/80)
-C:136,0: Line too long (92/80)
-C: 15,0: Invalid name "logger" (should match (([A-Z_][A-Z0-9_]*)|(__.*__))$)
-R: 23,0:pnmimage: Too many instance attributes (10/7)
-C: 23,0:pnmimage: Invalid name "pnmimage" (should match [A-Z_][a-zA-Z0-9]+$)
-C: 31,8:pnmimage.__init__: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 23,0:pnmimage: Missing docstring
-C: 35,4:pnmimage._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 35,26:pnmimage._readheader: Invalid name "f" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 42,8:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 52,16:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 53,36:pnmimage._readheader: More than one statement on a single line
-C: 53,36:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 54,16:pnmimage._readheader: Invalid name "s" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 61,16:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 62,36:pnmimage._readheader: More than one statement on a single line
-C: 62,36:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C: 70,8:pnmimage._readheader: Invalid name "m" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 35,4:pnmimage._readheader: Too many branches (13/12)
-C:103,4:pnmimage.P1dec: Invalid name "P1dec" (should match [a-z_][a-z0-9_]{2,30}$)
-C:103,4:pnmimage.P1dec: Missing docstring
-E:104,28:pnmimage.P1dec: Undefined variable 'self'
-E:104,39:pnmimage.P1dec: Undefined variable 'self'
-C:106,12:pnmimage.P1dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C:114,4:pnmimage.P4dec: Invalid name "P4dec" (should match [a-z_][a-z0-9_]{2,30}$)
-C:114,4:pnmimage.P4dec: Missing docstring
-W:114,14:pnmimage.P4dec: Unused argument 'buf'
-W:114,19:pnmimage.P4dec: Unused argument 'bytecode'
-C:120,4:pnmimage.P2dec: Invalid name "P2dec" (should match [a-z_][a-z0-9_]{2,30}$)
-C:120,4:pnmimage.P2dec: Missing docstring
-E:121,28:pnmimage.P2dec: Undefined variable 'self'
-E:121,39:pnmimage.P2dec: Undefined variable 'self'
-C:123,12:pnmimage.P2dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-C:131,4:pnmimage.P5dec: Invalid name "P5dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C: 26,0:pnmimage: Invalid name "pnmimage" (should match [A-Z_][a-zA-Z0-9]+$)
+C: 34,8:pnmimage.__init__: Invalid name "m" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 26,0:pnmimage: Missing docstring
+C: 38,4:pnmimage._readheader: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 38,26:pnmimage._readheader: Invalid name "f" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 45,8:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 55,16:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 56,36:pnmimage._readheader: More than one statement on a single line
+C: 56,36:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 57,16:pnmimage._readheader: Invalid name "s" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 64,16:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 65,36:pnmimage._readheader: More than one statement on a single line
+C: 65,36:pnmimage._readheader: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C: 73,8:pnmimage._readheader: Invalid name "m" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:105,4:pnmimage.P1dec: Invalid name "P1dec" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:105,4:pnmimage.P1dec: Missing docstring
+C:108,12:pnmimage.P1dec: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:116,4:pnmimage.P4dec: Invalid name "P4dec" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:116,4:pnmimage.P4dec: Missing docstring
+W:116,14:pnmimage.P4dec: Unused argument 'buf'
+W:116,19:pnmimage.P4dec: Unused argument 'bytecode'
+C:121,4:pnmimage.P2dec: Invalid name "P2dec" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:121,4:pnmimage.P2dec: Missing docstring
+C:124,12:pnmimage.P2dec: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:131,4:pnmimage.P5dec: Invalid name "P5dec" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:131,4:pnmimage.P5dec: Missing docstring
-C:132,8:pnmimage.P5dec: Invalid name "l" (should match [a-z_][a-z0-9_]{2,30}$)
-E:134,65:pnmimage.P5dec: Undefined variable 'self'
-E:134,76:pnmimage.P5dec: Undefined variable 'self'
-C:140,4:pnmimage.P3dec: Invalid name "P3dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C:132,8:pnmimage.P5dec: Invalid name "l" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
+C:140,4:pnmimage.P3dec: Invalid name "P3dec" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:140,4:pnmimage.P3dec: Missing docstring
 W:140,14:pnmimage.P3dec: Unused argument 'buf'
 W:140,19:pnmimage.P3dec: Unused argument 'bytecode'
-C:146,4:pnmimage.P6dec: Invalid name "P6dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C:146,4:pnmimage.P6dec: Invalid name "P6dec" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:146,4:pnmimage.P6dec: Missing docstring
 W:146,14:pnmimage.P6dec: Unused argument 'buf'
 W:146,19:pnmimage.P6dec: Unused argument 'bytecode'
-C:152,4:pnmimage.P7dec: Invalid name "P7dec" (should match [a-z_][a-z0-9_]{2,30}$)
+C:152,4:pnmimage.P7dec: Invalid name "P7dec" (should match [a-z_][a-zA-Z0-9_]{2,30}$)
 C:152,4:pnmimage.P7dec: Missing docstring
 W:152,14:pnmimage.P7dec: Unused argument 'buf'
 W:152,19:pnmimage.P7dec: Unused argument 'bytecode'
-C:161,4:pnmimage.checkData: Invalid name "checkData" (should match [a-z_][a-z0-9_]{2,30}$)
-R: 23,0:pnmimage: Too many public methods (32/20)
-R: 23,0:pnmimage: Abstract class not referenced
+R: 26,0:pnmimage: Too many public methods (32/20)
+R: 26,0:pnmimage: Abstract class not referenced
 
 
 Report
 ======
-110 statements analysed.
+112 statements analysed.
 
 Messages by category
 --------------------
@@ -72,13 +52,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |41     |43       |-2.00      |
+|convention |31     |34       |-3.00      |
 +-----------+-------+---------+-----------+
-|refactor   |4      |4        |=          |
+|refactor   |2      |1        |+1.00      |
 +-----------+-------+---------+-----------+
-|warning    |8      |4        |+4.00      |
+|warning    |8      |9        |-1.00      |
 +-----------+-------+---------+-----------+
-|error      |6      |12       |-6.00      |
+|error      |0      |9        |-9.00      |
 +-----------+-------+---------+-----------+
 
 
@@ -89,32 +69,59 @@ Messages
 +-----------+------------+
 |message id |occurrences |
 +===========+============+
-|C0103      |23          |
+|C0103      |21          |
 +-----------+------------+
 |W0613      |8           |
 +-----------+------------+
-|C0301      |8           |
-+-----------+------------+
 |C0111      |8           |
-+-----------+------------+
-|E0602      |6           |
 +-----------+------------+
 |C0321      |2           |
 +-----------+------------+
 |R0921      |1           |
 +-----------+------------+
-|R0912      |1           |
-+-----------+------------+
 |R0904      |1           |
-+-----------+------------+
-|R0902      |1           |
 +-----------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 2.45/10 (previous run: -1.44/10)
+Your code has been rated at 6.34/10 (previous run: 1.91/10)
+This is okay-ish, but I'm sure you can do better.
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |120    |80.54 |121      |-1.00      |
++----------+-------+------+---------+-----------+
+|docstring |15     |10.07 |15       |=          |
++----------+-------+------+---------+-----------+
+|comment   |9      |6.04  |8        |+1.00      |
++----------+-------+------+---------+-----------+
+|empty     |5      |3.36  |6        |-1.00      |
++----------+-------+------+---------+-----------+
+
+
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |1          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |1          |=          |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |12     |12         |=          |41.67       |58.33    |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |0          |=          |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
 
 Duplication
 -----------
@@ -129,45 +136,11 @@ Duplication
 
 
 
-Raw metrics
------------
-
-+----------+-------+------+---------+-----------+
-|type      |number |%     |previous |difference |
-+==========+=======+======+=========+===========+
-|code      |121    |80.67 |98       |+23.00     |
-+----------+-------+------+---------+-----------+
-|docstring |15     |10.00 |10       |+5.00      |
-+----------+-------+------+---------+-----------+
-|comment   |8      |5.33  |8        |=          |
-+----------+-------+------+---------+-----------+
-|empty     |6      |4.00  |10       |-4.00      |
-+----------+-------+------+---------+-----------+
-
-
-
 External dependencies
 ---------------------
 ::
 
     numpy (pnmimage)
-
-
-
-Statistics by type
-------------------
-
-+---------+-------+-----------+-----------+------------+---------+
-|type     |number |old number |difference |%documented |%badname |
-+=========+=======+===========+===========+============+=========+
-|module   |1      |1          |=          |100.00      |0.00     |
-+---------+-------+-----------+-----------+------------+---------+
-|class    |1      |1          |=          |0.00        |100.00   |
-+---------+-------+-----------+-----------+------------+---------+
-|method   |12     |11         |+1.00      |41.67       |66.67    |
-+---------+-------+-----------+-----------+------------+---------+
-|function |0      |0          |=          |0           |0        |
-+---------+-------+-----------+-----------+------------+---------+
 
 
 
