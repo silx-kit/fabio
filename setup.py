@@ -271,7 +271,7 @@ if __name__ == "__main__":
           author_email="fable-talk@lists.sourceforge.net",
           description='Image IO for fable',
           url="http://fable.wiki.sourceforge.net/fabio",
-          download_url="http://sourceforge.net/projects/fable/files/fabio/0.2.1",
+          download_url="http://sourceforge.net/projects/fable/files/fabio/",
           ext_package="fabio",
           ext_modules=extensions,
           packages=["fabio", "fabio.third_party", "fabio.test"],
