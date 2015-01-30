@@ -6,14 +6,20 @@ from __future__ import print_function, division, with_statement, absolute_import
 """
 Setup script for python distutils package and fabio
 """
-import os, sys
+import os
+import sys
 import os.path as op
 import glob
 import shutil
-from distutils.core import setup
-from distutils.core import Extension, Command
 import numpy as np
-from distutils.command.sdist import sdist
+try:
+    # setuptools allows the creation of wheels
+    from setuptools import setup, Extension, Command
+    from setuptools.command.sdist import sdist
+except ImportError:
+    from distutils.core import setup
+    from distutils.core import Extension, Command
+    from distutils.command.sdist import sdist
 
 ################################################################################
 # Remove MANIFEST file ... it needs to be re-generated on the fly
@@ -82,8 +88,8 @@ try:
     from sphinx.setup_command import BuildDoc
 except ImportError:
     sphinx = None
-
-if sphinx:
+else:
+    # i.e. if sphinx:
     class build_doc(BuildDoc):
 
         def run(self):
