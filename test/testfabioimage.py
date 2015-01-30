@@ -16,7 +16,7 @@ import bz2
 
 try:
     from .utilstest import UtilsTest
-except ValueError:
+except (ValueError, SystemError):
     from utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
@@ -100,27 +100,27 @@ class testopen(unittest.TestCase):
     def setUp(self):
         """ create test files"""
         if not os.path.isfile(self.testfile):
-            open(self.testfile, "wb").write("{ hello }")
+            open(self.testfile, "wb").write(b"{ hello }")
         if not os.path.isfile(self.testfile + ".gz"):
-            gzip.open(self.testfile + ".gz", "wb").write("{ hello }")
+            gzip.open(self.testfile + ".gz", "wb").write(b"{ hello }")
         if not os.path.isfile(self.testfile + ".bz2"):
-            bz2.BZ2File(self.testfile + ".bz2", "wb").write("{ hello }")
+            bz2.BZ2File(self.testfile + ".bz2", "wb").write(b"{ hello }")
         self.obj = fabioimage()
 
     def testFlat(self):
         """ no compression"""
         res = self.obj._open(self.testfile).read()
-        self.assertEqual(res, six.b("{ hello }"))
+        self.assertEqual(res, b"{ hello }")
 
     def testgz(self):
         """ gzipped """
         res = self.obj._open(self.testfile + ".gz").read()
-        self.assertEqual(res, six.b("{ hello }"))
+        self.assertEqual(res, b"{ hello }")
 
     def testbz2(self):
         """ bzipped"""
         res = self.obj._open(self.testfile + ".bz2").read()
-        self.assertEqual(res, six.b("{ hello }"))
+        self.assertEqual(res, b"{ hello }")
 
 
 NAMES = {numpy.uint8:   "numpy.uint8",
@@ -208,10 +208,12 @@ def test_suite_all_fabio():
     testSuite.addTest(testopen("testgz"))
     testSuite.addTest(testopen("testbz2"))
 
-    testSuite.addTest(testPILimage("testpil"))
-    testSuite.addTest(testPILimage2("testpil"))
-    testSuite.addTest(testPILimage3("testpil"))
-
+    if fabio.fabioimage.Image is not None:
+        testSuite.addTest(testPILimage("testpil"))
+        testSuite.addTest(testPILimage2("testpil"))
+        testSuite.addTest(testPILimage3("testpil"))
+    else:
+        logger.warning("Skipping PIL related tests")
     return testSuite
 
 if __name__ == '__main__':

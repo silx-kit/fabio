@@ -7,7 +7,7 @@
 Unit tests for CBF images based on references images taken from:
 http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 
-28/11/2014
+19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
@@ -16,18 +16,20 @@ import os
 import numpy
 import gzip
 import bz2
+import time
 
 try:
     from .utilstest import UtilsTest
-except ValueError:
+except (ValueError, SystemError):
     from utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.cbfimage import cbfimage
-from fabio.compression import decByteOffet_numpy, decByteOffet_cython
-import time
-
+from fabio.compression import decByteOffset_numpy, decByteOffset_cython
+from fabio.third_party.six import PY3
+if PY3:
+    from fabio.fabioutils import unicode
 
 class TestCbfReader(unittest.TestCase):
     """ test cbf image reader """
@@ -35,9 +37,8 @@ class TestCbfReader(unittest.TestCase):
     def __init__(self, methodName):
         "Constructor of the class"
         unittest.TestCase.__init__(self, methodName)
-        testimgdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testimages")
-        self.edf_filename = os.path.join(testimgdir, "run2_1_00148.edf")
-        self.cbf_filename = os.path.join(testimgdir, "run2_1_00148.cbf")
+        self.edf_filename = os.path.join(UtilsTest.image_home, "run2_1_00148.edf")
+        self.cbf_filename = os.path.join(UtilsTest.image_home, "run2_1_00148.cbf")
 
     def setUp(self):
         """Download images"""
@@ -76,30 +77,17 @@ class TestCbfReader(unittest.TestCase):
     def test_byte_offset(self):
         """ check byte offset algorythm"""
         cbf = fabio.open(self.cbf_filename)
-        starter = "\x0c\x1a\x04\xd5"
-        startPos = cbf.cif["_array_data.data"].find(starter) + 4
-        data = cbf.cif["_array_data.data"][startPos: startPos + int(cbf.header["X-Binary-Size"])]
+        starter = b"\x0c\x1a\x04\xd5"
+        cbs = cbf.cbs
+        startPos = cbs.find(starter) + 4
+        data = cbs[startPos: startPos + int(cbf.header["X-Binary-Size"])]
         startTime = time.time()
-        numpyRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
+        numpyRes = decByteOffset_numpy(data, size=cbf.dim1 * cbf.dim2)
         tNumpy = time.time() - startTime
         logger.info("Timing for Numpy method : %.3fs" % tNumpy)
 
-#        startTime = time.time()
-#        weaveRes = cbfimage.analyseWeave(data, size=cbf.dim1 * cbf.dim2)
-#        tWeave = time.time() - startTime
-#        delta = abs(numpyRes - weaveRes).max()
-#        self.assertAlmostEqual(0, delta)
-#        logger.info("Timing for Weave method : %.3fs, max delta=%s" % (tWeave, delta))
-#
-#        startTime = time.time()
-#        pythonRes = decByteOffet_numpy(data, size=cbf.dim1 * cbf.dim2)
-#        tPython = time.time() - startTime
-#        delta = abs(numpyRes - pythonRes).max()
-#        self.assertAlmostEqual(0, delta)
-#        logger.info("Timing for Python method : %.3fs, max delta= %s" % (tPython, delta))
-
         startTime = time.time()
-        cythonRes = decByteOffet_cython(stream=data, size=cbf.dim1 * cbf.dim2)
+        cythonRes = decByteOffset_cython(stream=data, size=cbf.dim1 * cbf.dim2)
         tCython = time.time() - startTime
         delta = abs(numpyRes - cythonRes).max()
         self.assertAlmostEqual(0, delta)

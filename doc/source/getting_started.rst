@@ -156,7 +156,7 @@ can be employed.
 
 Opening an image:
 
-::
+.. code-block:: python
 
     import fabio
     im100 = fabio.open('Quartz_0100.tif') # Open image file
@@ -166,7 +166,7 @@ Opening an image:
 
 Normalising the intensity to a value in the header:
 
-::
+.. code-block:: python
 
     img = fabio.open('exampleimage0001.edf')
     print(img.header)
@@ -182,7 +182,7 @@ Normalising the intensity to a value in the header:
 
 Interactive viewing with matplotlib:
 
-::
+.. code-block:: python
 
     from matplotlib import pyplot       # Load matplotlib
     pyplot.imshow(img.data)             # Display as an image
@@ -200,15 +200,6 @@ stored in this format but new detectors are rumoured to provide
 native output in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
 dependency, to be able to read and write such HDF5 files.
-
-In the near future FabIO will be upgraded to work with Python3 (a
-new version of Python); this change of version will affect some
-internals FabIO as string and file handling have been altered. This
-change is already ongoing as many parts of native code in C have
-already been translated into Cython to smoothe the
-transition, since Cython generates code compatible with Python3.
-This also makes it easier to retain backwards compatibility with
-the earlier Python versions.
 
 Conclusion
 ----------

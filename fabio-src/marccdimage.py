@@ -19,7 +19,7 @@ JPW : Use a parser in case of typos (sorry?)
 
 """
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, absolute_import
 
 # Base this on the tifimage (as marccd seems to be tiff with a
 # special header
@@ -274,7 +274,7 @@ def interpret_header(header, fmt, names):
     hdr = {}
     i = 0
     for name in names:
-        if hdr.has_key(name):
+        if name in hdr:
             if type(values[i]) == type("string"):
                 hdr[name] = hdr[name] + values[i]
             else:

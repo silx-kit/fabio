@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
 
 
 """
@@ -20,9 +20,9 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "20130502"
-__status__ = "development"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2013 ESRF"
+__date__ = "08/01/2015"
+__status__ = "production"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPL"
 
 import numpy, logging, sys
@@ -31,8 +31,6 @@ import os, getpass, time
 logger = logging.getLogger("brukerimage")
 from .fabioimage import fabioimage
 from .fabioutils import pad, StringTypes
-if sys.version_info < (3,):
-    bytes = str
 
 class brukerimage(fabioimage):
     """
@@ -49,94 +47,94 @@ class brukerimage(fabioimage):
 
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
 
-    SPACER = "\x1a\x04" #this is CTRL-Z CTRL-D
-    HEADERS_KEYS = ["FORMAT",    #Frame format. Always “86” or "100" for Bruker-format frames.
-                   "VERSION",   #Header version #, such as: 1 to 17 (6 is obsolete).
-                   "HDRBLKS",   #Header size in 512-byte blocks, such as 10 or 15. Determines where the image block begins.
-                   "TYPE",      #String indicating kind of data in the frame. Used to determine if a spatial correction table was applied to the frame imag
-                   "SITE",      #Site name
-                   "MODEL",     #Diffractometer model
-                   "USER",      #Username
-                   "SAMPLE",    #Sample ID,
-                   "SETNAME",   #Basic data set name
-                   "RUN",       #Run number within the data set, usually starts at 0, but 1 for APEX2.
-                   "SAMPNUM",   #Specimen number within the data set
-                   "TITLE",     #User comments (8 lines)
-                   "NCOUNTS",   #Total frame counts
-                   "NOVERFL",   #Number of overflows when compression frame.
-                   "MINIMUM",   #Minimum counts in a pixel (uncompressed value)
-                   "MAXIMUM",   #Maximum counts in a pixel (uncompressed value)
-                   "NONTIME",   #Number of on-time events
-                   "NLATE",     #Number of late events. Always zero for many detectors.
-                   "FILENAM",   #(Original) frame filename
-                   "CREATED",   #Date and time of creation
-                   "CUMULAT",   #Accumulated frame exposure time in seconds
-                   "ELAPSDR",   #Requested time for last exposure in seconds
-                   "ELAPSDA",   #Actual time for last exposure in seconds.
-                   "OSCILLA",   #Nonzero if acquired by oscillation
-                   "NSTEPS",    #steps or oscillations in this frame
-                   "RANGE",     #Scan range in decimal degrees (unsigned)
-                   "START",     #Starting scan angle value, decimal degrees
-                   "INCREME",   #Scan angle increment between frames (signed)
-                   "NUMBER",    #Sequence number of this frame in series, usually starts at 0, but 1 for APEX2
-                   "NFRAMES",   #Total number of frames in the series
-                   "ANGLES",    #Diffractometer angles in Eulerian space ( 2T, OM, PH, CH).
-                   "NOVER64",   #Number of pixels > 64K (actually LinearThreshold value)
-                   "NPIXELB",   #Number of bytes/pixel, such as 1, 2, or 4.
-                   "NROWS",     #Number of rasters in frame, such as 512, 1024, 2048, or 4096
-                   "NCOLS",     #Number of pixels/raster, such as 512, 1024, 2048 or 4096
-                   "WORDORD",   #Order of bytes in word (0=LSB first)
-                   "LONGORD",   #Order of words in a longword (0=LSW first)
-                   "TARGET" ,   #X-ray target material: Cu, Mo, Ag, Fe, Cr, Co, Ni, W, Mn, or other.
-                   "SOURCEK",   #X-ray source voltage in kV
-                   "SOURCEM",   #X-ray source current in mA
-                   "FILTER" ,   #Filter/monochromator setting: Such as: Parallel, graphite, Ni Filter, C Filter, Zr Filter,Cross coupled Goebel Mirrors ...
-                   "CELL" ,     #Unit cell A,B,C,ALPHA,BETA,GAMMA
-                   "MATRIX" ,   #9R Orientation matrix (P3 conventions)
-                   "LOWTEMP",   #Low temp flag.
-                   "TEMP",      #set temperature
-                   "HITEMP",    #Acquired at high temperature
-                   "ZOOM" ,     #Zoom: Xc, Yc, Mag used for HI-STAR detectors: 0.5 0.5 1.0
-                   "CENTER" ,   #X, Y of direct beam at 2-theta = 0. These are raw center for raw frames and unwarped center for unwarped frames.
-                   "DISTANC",   #Sample-detector distance, cm (see CmToGrid value) Adds: Sample-detector grid/phosphor distance, cm
-                   "TRAILER",   #Byte pointer to trailer info
-                   "COMPRES",   #Compression scheme ID, if any. Such as: NONE, LINEAR (Linear scale, offset for pixel values, typically 1.0, 0.0).
-                   "LINEAR",    #Linear scale (1.0 0.0 for no change; 0.1 0 for divided by 10...)
-                   "PHD" ,      # Discriminator: Pulse height settings. X100 and X1000 only. Stores CCD phosphor efficiency (first field).
-                   "PREAMP" ,   #Preamp gain setting. X100 and X1000 only. SMART: Stores Roper CCD gain table index value.
-                   "CORRECT",   #Flood table correction filename, UNKNOWN or LINEAR.
-                   "WARPFIL",   #Brass plate correction filename, UNKNOWN or LINEAR. Note: A filename here does NOT mean that spatial correction was performed. See TYPE and string “UNWARP” to determine that.
-                   "WAVELEN",   #Wavelengths (average, a1, a2)
-                   "MAXXY",     #X,Y pixel # of maximum counts (from lower corner of 0,0)
-                   "AXIS",      #Scan axis ib Eulerian space (1-4 for 2-theta, omega, phi, chi) (0 =none, 2 = default).
-                   "ENDING" ,   #Actual goniometer angles at end of frame in Eulerian space.
-                   "DETPAR" ,   #Detector position corrections (dX,dY,dDist,Pitch,Roll,Yaw)
-                   "LUT",       #Recommended display lookup table
-                   "DISPLIM",   #Recommended display limits
-                   "PROGRAM",   #Name and version of program writing frame, such as:
-                   "ROTATE",    #Non zero if acquired by rotation of phi during scan (or oscilate)
-                   "BITMASK",   #File name of active pixel mask associated with this frame or $NULL
-                   "OCTMASK",   #Octagon mask parameters to use if BITMASK=$null. Min X, Min X+Y, Min Y, Max X-Y, Max X, Max X+Y, Max Y, Max Y-X.
-                   "ESDCELL",   #Unit cell parameter standard deviations
-                   "DETTYPE",   #Detector or CCD chip type (as displayed on CEU). Default is MULTIWIRE but UNKNOWN is advised, can contain PIXPERCM: CMTOGRID:
-                   "NEXP",      #Number of exposures: 1=single, 2=correlated sum.32 for most ccds, and 64 for 2K ccds.
-                   "CCDPARM",   #CCD parameters: readnoise, e/ADU, e/photon, bias, full scale
-                   "BIS",       #Potential full linear scale if rescan and attenuator used.
-                   "CHEM",      #Chemical formula in CIFTAB string, such as “?”
-                   "MORPH",     #Crystal morphology in CIFTAB string, such as “?”
-                   "CCOLOR",    #Crystal color in CIFTAB string, such as “?”
-                   "CSIZE",     #Crystal dimensions (3 ea) in CIFTAB string, such as “?”
-                   "DNSMET",     #Density measurement method in CIFTAB string, such as “?”
-                   "DARK",       #Name of dark current correction or NONE.
-                   "AUTORNG",   #Auto-ranging: gain, high-speed time, scale, offset, full linear scale Note: If full linear scale is zero, then CCDPARM full scale is the full linear scale (BIS frames).
-                   "ZEROADJ",   #Goniometer zero corrections (refined in least squares)
-                   "XTRANS",    #Crystal XYZ translations (refined in least squares)
-                   "HKL&XY",    #HKL and pixel XY for reciprocal space scan. GADDS only.
-                   "AXES2",     #Diffractometer setting linear axes (4 ea). (X, Y, Z, Aux)
-                   "ENDING2",   #Actual goniometer linear axes @ end of frame. (X, Y, Z, Aux)
-                   "FILTER2",   #Monochromator 2-theta angle and monochromator roll angle. v15: Adds beam tilt angle and attenuator factor.
-                   "LEPTOS",    # String for LEPTOS.
-                   "CFR",       #Only in 21CFRPart11 mode, writes the checksum for header and image (2str).]
+    SPACER = "\x1a\x04"  # this is CTRL-Z CTRL-D
+    HEADERS_KEYS = ["FORMAT",  # Frame format. Always “86” or "100" for Bruker-format frames.
+                   "VERSION",  # Header version #, such as: 1 to 17 (6 is obsolete).
+                   "HDRBLKS",  # Header size in 512-byte blocks, such as 10 or 15. Determines where the image block begins.
+                   "TYPE",  # String indicating kind of data in the frame. Used to determine if a spatial correction table was applied to the frame imag
+                   "SITE",  # Site name
+                   "MODEL",  # Diffractometer model
+                   "USER",  # Username
+                   "SAMPLE",  # Sample ID,
+                   "SETNAME",  # Basic data set name
+                   "RUN",  # Run number within the data set, usually starts at 0, but 1 for APEX2.
+                   "SAMPNUM",  # Specimen number within the data set
+                   "TITLE",  # User comments (8 lines)
+                   "NCOUNTS",  # Total frame counts
+                   "NOVERFL",  # Number of overflows when compression frame.
+                   "MINIMUM",  # Minimum counts in a pixel (uncompressed value)
+                   "MAXIMUM",  # Maximum counts in a pixel (uncompressed value)
+                   "NONTIME",  # Number of on-time events
+                   "NLATE",  # Number of late events. Always zero for many detectors.
+                   "FILENAM",  # (Original) frame filename
+                   "CREATED",  # Date and time of creation
+                   "CUMULAT",  # Accumulated frame exposure time in seconds
+                   "ELAPSDR",  # Requested time for last exposure in seconds
+                   "ELAPSDA",  # Actual time for last exposure in seconds.
+                   "OSCILLA",  # Nonzero if acquired by oscillation
+                   "NSTEPS",  # steps or oscillations in this frame
+                   "RANGE",  # Scan range in decimal degrees (unsigned)
+                   "START",  # Starting scan angle value, decimal degrees
+                   "INCREME",  # Scan angle increment between frames (signed)
+                   "NUMBER",  # Sequence number of this frame in series, usually starts at 0, but 1 for APEX2
+                   "NFRAMES",  # Total number of frames in the series
+                   "ANGLES",  # Diffractometer angles in Eulerian space ( 2T, OM, PH, CH).
+                   "NOVER64",  # Number of pixels > 64K (actually LinearThreshold value)
+                   "NPIXELB",  # Number of bytes/pixel, such as 1, 2, or 4.
+                   "NROWS",  # Number of rasters in frame, such as 512, 1024, 2048, or 4096
+                   "NCOLS",  # Number of pixels/raster, such as 512, 1024, 2048 or 4096
+                   "WORDORD",  # Order of bytes in word (0=LSB first)
+                   "LONGORD",  # Order of words in a longword (0=LSW first)
+                   "TARGET" ,  # X-ray target material: Cu, Mo, Ag, Fe, Cr, Co, Ni, W, Mn, or other.
+                   "SOURCEK",  # X-ray source voltage in kV
+                   "SOURCEM",  # X-ray source current in mA
+                   "FILTER" ,  # Filter/monochromator setting: Such as: Parallel, graphite, Ni Filter, C Filter, Zr Filter,Cross coupled Goebel Mirrors ...
+                   "CELL" ,  # Unit cell A,B,C,ALPHA,BETA,GAMMA
+                   "MATRIX" ,  # 9R Orientation matrix (P3 conventions)
+                   "LOWTEMP",  # Low temp flag.
+                   "TEMP",  # set temperature
+                   "HITEMP",  # Acquired at high temperature
+                   "ZOOM" ,  # Zoom: Xc, Yc, Mag used for HI-STAR detectors: 0.5 0.5 1.0
+                   "CENTER" ,  # X, Y of direct beam at 2-theta = 0. These are raw center for raw frames and unwarped center for unwarped frames.
+                   "DISTANC",  # Sample-detector distance, cm (see CmToGrid value) Adds: Sample-detector grid/phosphor distance, cm
+                   "TRAILER",  # Byte pointer to trailer info
+                   "COMPRES",  # Compression scheme ID, if any. Such as: NONE, LINEAR (Linear scale, offset for pixel values, typically 1.0, 0.0).
+                   "LINEAR",  # Linear scale (1.0 0.0 for no change; 0.1 0 for divided by 10...)
+                   "PHD" ,  # Discriminator: Pulse height settings. X100 and X1000 only. Stores CCD phosphor efficiency (first field).
+                   "PREAMP" ,  # Preamp gain setting. X100 and X1000 only. SMART: Stores Roper CCD gain table index value.
+                   "CORRECT",  # Flood table correction filename, UNKNOWN or LINEAR.
+                   "WARPFIL",  # Brass plate correction filename, UNKNOWN or LINEAR. Note: A filename here does NOT mean that spatial correction was performed. See TYPE and string “UNWARP” to determine that.
+                   "WAVELEN",  # Wavelengths (average, a1, a2)
+                   "MAXXY",  # X,Y pixel # of maximum counts (from lower corner of 0,0)
+                   "AXIS",  # Scan axis ib Eulerian space (1-4 for 2-theta, omega, phi, chi) (0 =none, 2 = default).
+                   "ENDING" ,  # Actual goniometer angles at end of frame in Eulerian space.
+                   "DETPAR" ,  # Detector position corrections (dX,dY,dDist,Pitch,Roll,Yaw)
+                   "LUT",  # Recommended display lookup table
+                   "DISPLIM",  # Recommended display limits
+                   "PROGRAM",  # Name and version of program writing frame, such as:
+                   "ROTATE",  # Non zero if acquired by rotation of phi during scan (or oscilate)
+                   "BITMASK",  # File name of active pixel mask associated with this frame or $NULL
+                   "OCTMASK",  # Octagon mask parameters to use if BITMASK=$null. Min X, Min X+Y, Min Y, Max X-Y, Max X, Max X+Y, Max Y, Max Y-X.
+                   "ESDCELL",  # Unit cell parameter standard deviations
+                   "DETTYPE",  # Detector or CCD chip type (as displayed on CEU). Default is MULTIWIRE but UNKNOWN is advised, can contain PIXPERCM: CMTOGRID:
+                   "NEXP",  # Number of exposures: 1=single, 2=correlated sum.32 for most ccds, and 64 for 2K ccds.
+                   "CCDPARM",  # CCD parameters: readnoise, e/ADU, e/photon, bias, full scale
+                   "BIS",  # Potential full linear scale if rescan and attenuator used.
+                   "CHEM",  # Chemical formula in CIFTAB string, such as “?”
+                   "MORPH",  # Crystal morphology in CIFTAB string, such as “?”
+                   "CCOLOR",  # Crystal color in CIFTAB string, such as “?”
+                   "CSIZE",  # Crystal dimensions (3 ea) in CIFTAB string, such as “?”
+                   "DNSMET",  # Density measurement method in CIFTAB string, such as “?”
+                   "DARK",  # Name of dark current correction or NONE.
+                   "AUTORNG",  # Auto-ranging: gain, high-speed time, scale, offset, full linear scale Note: If full linear scale is zero, then CCDPARM full scale is the full linear scale (BIS frames).
+                   "ZEROADJ",  # Goniometer zero corrections (refined in least squares)
+                   "XTRANS",  # Crystal XYZ translations (refined in least squares)
+                   "HKL&XY",  # HKL and pixel XY for reciprocal space scan. GADDS only.
+                   "AXES2",  # Diffractometer setting linear axes (4 ea). (X, Y, Z, Aux)
+                   "ENDING2",  # Actual goniometer linear axes @ end of frame. (X, Y, Z, Aux)
+                   "FILTER2",  # Monochromator 2-theta angle and monochromator roll angle. v15: Adds beam tilt angle and attenuator factor.
+                   "LEPTOS",  # String for LEPTOS.
+                   "CFR",  # Only in 21CFRPart11 mode, writes the checksum for header and image (2str).]
            ]
 
     def __init__(self, data=None , header=None):
@@ -156,13 +154,13 @@ class brukerimage(fabioimage):
         """
         line = 80
         blocksize = 512
-        nhdrblks = 5 #by default we always read 5 blocks of 512
-        self.__headerstring__ = infile.read(blocksize * nhdrblks)
+        nhdrblks = 5  # by default we always read 5 blocks of 512
+        self.__headerstring__ = infile.read(blocksize * nhdrblks).decode("ASCII")
         self.header = {}
         for i in range(0, nhdrblks * blocksize, line):
             if self.__headerstring__[i: i + line].find(":") > 0:
                 key, val = self.__headerstring__[i: i + line].split(":", 1)
-                key = key.strip()         # remove the whitespace (why?)
+                key = key.strip()  # remove the whitespace (why?)
                 val = val.strip()
                 if key in self.header:
                     # append lines if key already there
@@ -171,11 +169,12 @@ class brukerimage(fabioimage):
                     self.header[key] = val
                     self.header_keys.append(key)
         # we must have read this in the first 5*512 bytes.
-        nhdrblks = int(self.header['HDRBLKS'])
+        nhdrblks = int(self.header.get('HDRBLKS', 5))
+        self.header['HDRBLKS'] = nhdrblks
         # Now read in the rest of the header blocks, appending
-        self.__headerstring__ += infile.read(blocksize * (nhdrblks - 5))
+        self.__headerstring__ += infile.read(blocksize * (nhdrblks - 5)).decode("ASCII")
         for i in range(5 * blocksize, nhdrblks * blocksize, line):
-            if self.__headerstring__[i: i + line].find(":") > 0: # as for first 512 bytes of header
+            if self.__headerstring__[i: i + line].find(":") > 0:  # as for first 512 bytes of header
                 key, val = self.__headerstring__[i: i + line].split(":", 1)
                 key = key.strip()
                 val = val.strip()
@@ -186,7 +185,7 @@ class brukerimage(fabioimage):
                     self.header_keys.append(key)
         # make a (new) header item called "datastart"
         self.header['datastart'] = blocksize * nhdrblks
-        #set the image dimensions
+        # set the image dimensions
         self.dim1 = int(self.header['NROWS'])
         self.dim2 = int(self.header['NCOLS'])
 
@@ -215,9 +214,9 @@ class brukerimage(fabioimage):
 
         data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
 
-        #handle overflows
+        # handle overflows
         nov = int(self.header['NOVERFL'])
-        if nov > 0:   # Read in the overflows
+        if nov > 0:  # Read in the overflows
             # need at least int32 sized data I guess - can reach 2^21
             data = data.astype(numpy.uint32)
             # 16 character overflows:
@@ -242,7 +241,7 @@ class brukerimage(fabioimage):
                 if slope == 1 and offset == 0:
                     self.data = data
                 else:
-                    #TODO: check that the formula is OK, not reverted.
+                    # TODO: check that the formula is OK, not reverted.
                     logger.warning("performing correction with slope=%s, offset=%s (LINEAR=%s)" % (slope, offset, self.header["LINEAR"]))
                     self.data = (data * slope + offset).astype(numpy.float32)
         else:
@@ -272,7 +271,7 @@ class brukerimage(fabioimage):
             else:
                 offset = self.data.min()
                 max_data = self.data.max()
-                max_range = 2 ** 24 - 1 #similar to the mantissa of a float32
+                max_range = 2 ** 24 - 1  # similar to the mantissa of a float32
                 if max_data > offset:
                     slope = (max_data - offset) / float(max_range)
                 else:
@@ -289,11 +288,11 @@ class brukerimage(fabioimage):
         data = tmp_data.astype(self.bpp_to_numpy[bpp])
         reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
-        data = data.newbyteorder("<") #Bruker enforces little endian
+        data = data.newbyteorder("<")  # Bruker enforces little endian
         with self._open(fname, "wb") as bruker:
-            bruker.write(self.gen_header())
+            bruker.write(self.gen_header().encode("ASCII"))
             bruker.write(data.tostring())
-            bruker.write(self.gen_overflow())
+            bruker.write(self.gen_overflow().encode("ASCII"))
 
 
 
@@ -329,21 +328,21 @@ class brukerimage(fabioimage):
                     if os.linesep in value:
                         lines = value.split(os.linesep)
                         for i in lines[:-1] :
-                            headers.append((line + bytes(i)).ljust(80, " "))
+                            headers.append((line + str(i)).ljust(80, " "))
                             line = key.ljust(7) + ":"
-                        line += bytes(lines[-1])
+                        line += str(lines[-1])
                     elif len(value) < 72:
-                        line += bytes(value)
+                        line += str(value)
                     else:
                         for i in range(len(value) // 72):
-                            headers.append((line + bytes(value[72 * i:72 * (i + 1)])))
+                            headers.append((line + str(value[72 * i:72 * (i + 1)])))
                             line = key.ljust(7) + ":"
                         line += value[72 * (i + 1):]
                 elif "__len__" in dir(value):
                     f = "\%.%is" % 72 // len(value) - 1
                     line += " ".join([f % i for i in value])
                 else:
-                    line += bytes(value)
+                    line += str(value)
                 headers.append(line.ljust(80, " "))
 
         header = "".join(headers)
@@ -361,8 +360,8 @@ class brukerimage(fabioimage):
         Generate an overflow table
         """
         limit = 2 ** (8 * self.calc_bpp()) - 1
-        flat = self.data.ravel()                     #flat memory view
-        overflow_pos = numpy.where(flat >= limit)[0] #list of indexes
+        flat = self.data.ravel()  # flat memory view
+        overflow_pos = numpy.where(flat >= limit)[0]  # list of indexes
         overflow_val = flat[overflow_pos]
         overflow = "".join(["%09i%07i" % (val, pos) for pos, val  in zip(overflow_pos, overflow_val)])
         return pad(overflow, ".", 512)
@@ -387,9 +386,9 @@ class brukerimage(fabioimage):
             self.header["NOVERFL"] = "0"
 #        if not "NPIXELB" in self.header:
         self.header["NPIXELB"] = self.calc_bpp()
-        #if not "NROWS" in self.header:
+        # if not "NROWS" in self.header:
         self.header["NROWS"] = self.data.shape[0]
-        #if not "NCOLS" in self.header:
+        # if not "NCOLS" in self.header:
         self.header["NCOLS"] = self.data.shape[1]
         if not "WORDORD" in self.header:
             self.header["WORDORD"] = "0"

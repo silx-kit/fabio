@@ -9,7 +9,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPL"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "04/12/2014"
+__date__ = "08/01/2015"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -21,10 +21,12 @@ if six.PY2:
     bytes = str
     FileIO = file
     StringTypes = (str, unicode)
+    to_str = lambda s: str(s)
 else:
     StringTypes = (str, bytes)
     unicode = str
     from io import FileIO
+    to_str = lambda s: str(s, "ASCII")
 
 from .compression import bz2, gzip
 import traceback
@@ -340,7 +342,7 @@ def isAscii(name, listExcluded=None):
     """
     isascii = None
     try:
-        name.decode("ascii")
+        name.encode("ASCII")
     except UnicodeDecodeError:
         isascii = False
     else:

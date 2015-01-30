@@ -13,6 +13,7 @@ Contents:
 
    getting_started
    install
+   performances
    Changelog
    api/modules
 

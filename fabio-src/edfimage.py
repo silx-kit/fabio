@@ -100,7 +100,7 @@ class Frame(object):
             self.header = dict(header)
 
         if header_keys is None:
-            self.header_keys = self.header.keys()
+            self.header_keys = list(self.header.keys())
         else:
             self.header_keys = header_keys[:]
             for key in header_keys:
@@ -328,10 +328,10 @@ class Frame(object):
         """
         @param force_type: type of the dataset to be enforced like "float64" or "uint16"
         @type force_type: string or numpy.dtype
-        @param fit2dMode: enforce compatibility with fit2d and starts countimg number of images at 1
+        @param fit2dMode: enforce compatibility with fit2d and starts counting number of images at 1
         @type fit2dMode: boolean
-        @return: ascii header block
-        @rtype: python string with the concatenation of the ascii header and the binary data block
+        @return: ascii header block + binary data block
+        @rtype: python bytes with the concatenation of the ascii header and the binary data block
         """
         if force_type is not None:
             data = self.data.astype(force_type)
@@ -429,7 +429,7 @@ class Frame(object):
         else:
             headerSize = approxHeaderSize
         listHeader.append(" "*(headerSize - preciseSize) + "}\n")
-        return "".join(listHeader) + data.tostring()
+        return ("".join(listHeader)).encode("ASCII") + data.tostring()
 
 
 
@@ -619,7 +619,7 @@ class edfimage(fabioimage):
         if self.nframes == 1:
             logger.debug("Single frame EDF; having fabioimage default behavour: %s" % num)
             newImage = fabioimage.getframe(self, num)
-        elif num in xrange(self.nframes):
+        elif num in range(self.nframes):
             logger.debug("Multi frame EDF; having edfimage specific behavour: %s/%s" % (num, self.nframes))
             newImage = edfimage(frames=self.__frames)
             newImage.currentframe = num

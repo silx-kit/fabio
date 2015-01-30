@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# coding: utf-8
 #
 # Reads the header from a GE a-Si Angio Detector
 # Using version 8001 of the header from file:
@@ -10,9 +10,17 @@
 #
 
 # modifications by Jon Wright for style, pychecker and fabio
-# 
+#
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, division
+
+__authors__ = ["Antonino Miceli" , "Jon Wright", "Jérôme Kieffer"]
+__date__ = "09/01/2015"
+__status__ = "production"
+__copyright__ = "2007 APS; 2010-2015 ESRF"
+__licence__ = "GPL"
+
+
 import numpy
 import struct, logging
 logger = logging.getLogger("GEimage")
@@ -232,11 +240,11 @@ class GEimage(fabioimage):
                    self.header['UserHeaderSizeInBytes'] + \
                    img_num * self.header['NumberOfRowsInFrame'] * \
                    self.header['NumberOfColsInFrame'] * \
-                   self.header['ImageDepthInBits'] / 8
+                   self.header['ImageDepthInBits'] // 8
         # whence = 0 means seek from start of file
         filepointer.seek(imgstart, 0)
 
-        self.bpp = self.header['ImageDepthInBits'] / 8 # hopefully 2        
+        self.bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
         imglength = self.header['NumberOfRowsInFrame'] * \
                     self.header['NumberOfColsInFrame'] * self.bpp
         if self.bpp != 2:

@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "28/11/2014"
+__date__ = "21/01/2015"
 
 PACKAGE = "fabio"
 SOURCES = PACKAGE + "-src"
@@ -38,6 +38,7 @@ DATA_KEY = "FABIO_DATA"
 import os
 import imp
 import sys
+import getpass
 import subprocess
 import threading
 import distutils.util
@@ -47,9 +48,6 @@ import gzip
 import json
 import tempfile
 
-# print("ENVIRON at begin of tests...")
-# for k, v in os.environ.items():
-#     print("%s: %s" % (k, v))
 
 try:  # Python3
     from urllib.request import urlopen, ProxyHandler, build_opener
@@ -126,22 +124,23 @@ class UtilsTest(object):
                 sys.argv.append("-r")
     else:
         try:
-            directories = __import__("%s.directories" % name)
+            fabio = __import__("%s.directories" % name)
+            directories = fabio.directories
             image_home = directories.testimages
-        except:
+        except Exception as err:
+            logger.warning("in loading directories %s", err)
             image_home = None
         if image_home is None:
-            image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, os.getlogin()))
+            image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, getpass.getuser()))
             if not os.path.exists(image_home):
                 os.makedirs(image_home)
-        testimages = os.path.join(image_home, "all_testimages.json")
+        testimages = os.path.join(TEST_HOME, "all_testimages.json")
         if os.path.exists(testimages):
             with open(testimages) as f:
                 ALL_DOWNLOADED_FILES = set(json.load(f))
         else:
             ALL_DOWNLOADED_FILES = set()
-
-    tempdir = tempfile.mkdtemp("_" + os.getlogin(), name + "_")
+    tempdir = tempfile.mkdtemp("_" + getpass.getuser(), name + "_")
 
     @classmethod
     def deep_reload(cls):
@@ -209,11 +208,12 @@ class UtilsTest(object):
         For the RedMine forge, the filename contains a directory name that is removed
         @return: full path of the locally saved file
         """
-        if imagename not in cls.ALL_DOWNLOADED_FILES:
-            cls.ALL_DOWNLOADED_FILES.add(imagename)
+        cls.ALL_DOWNLOADED_FILES.add(imagename)
+        try:
             with open(cls.testimages, "w") as fp:
-                json.dump(list(cls.ALL_DOWNLOADED_FILES), fp)
-
+                json.dump(list(cls.ALL_DOWNLOADED_FILES), fp, indent=4)
+        except IOError:
+            logger.debug("Unable to save JSON list")
         baseimage = os.path.basename(imagename)
         logger.info("UtilsTest.getimage('%s')" % baseimage)
         fullimagename = os.path.abspath(os.path.join(cls.image_home, baseimage))
@@ -232,17 +232,9 @@ class UtilsTest(object):
             else:
                 opener = urlopen
 
-#           Nota: since python2.6 there is a timeout in the urllib2
-            timer = threading.Timer(cls.timeout + 1, cls.timeoutDuringDownload, args=[imagename])
-            timer.start()
             logger.info("wget %s/%s" % (cls.url_base, imagename))
-            if sys.version > (2, 6):
-                data = opener("%s/%s" % (cls.url_base, imagename),
-                              data=None, timeout=cls.timeout).read()
-            else:
-                data = opener("%s/%s" % (cls.url_base, imagename),
-                              data=None).read()
-            timer.cancel()
+            data = opener("%s/%s" % (cls.url_base, imagename),
+                          data=None, timeout=cls.timeout).read()
             logger.info("Image %s successfully downloaded." % baseimage)
 
             try:
@@ -310,12 +302,18 @@ class UtilsTest(object):
             imgs = cls.ALL_DOWNLOADED_FILES
         for fn in imgs:
             print("Downloading from internet: %s" % fn)
+            if fn[-4:] != ".bz2":
+                if fn[-3:] == ".gz":
+                    fn = fn[:-2] + "bz2"
+                else:
+                    fn = fn + ".bz2"
+                print("  actually " + fn)
             cls.getimage(fn)
 
     @classmethod
     def get_options(cls):
         """
-        Parse the command line to analyse options ... returns options
+        Parse the command line to analyze options ... returns options
         """
         if cls.options is None:
             try:
@@ -350,7 +348,7 @@ class UtilsTest(object):
         basename = os.path.splitext(basename)[0]
         force_build = False
         force_remove = False
-        level = logging.WARN
+        level = logging.root.level
         if options.debug:
             level = logging.DEBUG
         elif options.info:
@@ -363,6 +361,7 @@ class UtilsTest(object):
         mylogger = logging.getLogger(basename)
         logger.setLevel(level)
         mylogger.setLevel(level)
+        logging.root.setLevel(level)
         mylogger.debug("tests loaded from file: %s" % basename)
         if force_build:
             UtilsTest.forceBuild(force_remove)

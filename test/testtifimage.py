@@ -5,17 +5,16 @@
 
 #built on testedfimage
 """
-from __future__ import print_function, with_statement, division
+from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
 try:
     from .utilstest import UtilsTest
-except ValueError:
+except (ValueError, SystemError):
     from utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
-from testtifgz import testtif_rect, testgziptif
 
 
 class testtifimage_pilatus(unittest.TestCase):
@@ -91,6 +90,30 @@ identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field,
         o1 = fabio.open(self.fn["a0009.tif"]).data
         o2 = fabio.open(self.fn["a0009.edf"]).data
         self.assertEqual(abs(o1 - o2).max(), 0.0)
+
+
+class testgziptif(unittest.TestCase):
+    def setUp(self):
+        self.unzipped = UtilsTest.getimage("oPPA_5grains_0001.tif.bz2")[:-4]
+        self.zipped = self.unzipped + ".gz"
+        assert os.path.exists(self.zipped)
+        assert os.path.exists(self.unzipped)
+
+    def test1(self):
+        o1 = fabio.open(self.zipped)
+        o2 = fabio.open(self.unzipped)
+        self.assertEqual(o1.data[0, 0], 10)
+        self.assertEqual(o2.data[0, 0], 10)
+
+
+class testtif_rect(unittest.TestCase):
+    def setUp(self):
+        self.fn = UtilsTest.getimage("testmap1_0002.tif.bz2")[:-4]
+
+    def test1(self):
+        for ext in ["", ".gz", ".bz2"]:
+            o1 = fabio.open(self.fn + ext)
+            self.assertEqual(o1.data.shape, (100, 120))
 
 
 def test_suite_all_tiffimage():

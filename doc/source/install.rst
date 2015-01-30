@@ -7,8 +7,8 @@ packages provided for the most common platforms on sourceforge:
 Windows, MacOSX and Linux. Moreover FabIO is part of the common
 Linux distributions Ubuntu (since 11.10) and Debian7 where the
 package is named python-fabio and can be installed via:
-::
 
+::
     # apt-get install python-fabio
 
 If you are using MS Windows or MacOSX; binary version have been packaged.
@@ -19,7 +19,7 @@ MacOSX builds are zipped: unzip them at the right place.
 Dependencies
 ------------
 
-* Python 2.6 or later (python 3.x is not yet ready)
+* Python 2.6 - 2.7 or 3.2+
 * numpy - http://www.numpy.org
 
 For full functionality of Fabio the following modules need to be installed:
@@ -41,21 +41,22 @@ Download either one and unpack it.
     http://sourceforge.net/projects/fable/files/fabio/
 
 e.g.
+
 ::
 
-    tar xvzf fabio-0.1.4.tar.gz
+    tar xvzf fabio-0.2.0.tar.gz
 
 or
 
 ::
 
-    unzip fabio-0.1.4.zip
+    unzip fabio-0.2.0.zip
 
-all files are unpacked into the directory fabio-0.1.4. To install these do
+all files are unpacked into the directory fabio-0.2.0. To install these do
 
 ::
 
-     cd fabio-0.1.4
+     cd fabio-0.2.0
 
 and install fabio with
 
@@ -68,11 +69,11 @@ most likely you will need to gain root privileges (with sudo in front of the com
 
 Development versions
 --------------------
-The newest development version can be obtained by checking it out from the subversion (SVN) repository:
+The newest development version can be obtained by checking it out from the git repository:
 
 ::
 
-    svn checkout https://svn.sourceforge.net/svnroot/fable/fabio/trunk fabio
+    git clone https://github.com/kif/fabio
     cd fabio
     python setup.py build
     sudo python setup.py install
@@ -93,9 +94,9 @@ We provide also a debian-package builder based on stdeb:
 ::
 
 	sudo apt-get install python-stdeb
-	./build-deb.sh
+	./build-deb.sh 3
 
-which builds a debian package and installs it in a single command. Handy for testing.
+which builds a couple of debian packages (actually one for python2 and another for python3) and installs them in a single command. Handy for testing.
 
 Test suite
 ----------
@@ -105,27 +106,45 @@ When you run the test for the first time, many test images will be download and 
 
 Be sure you have an internet connection and your environment variable http_proxy is correctly set-up. For example if you are behind a firewall/proxy:
 
-:: 
+::
 
    export http_proxy=http://proxy.site.org:3128
 
+Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files", it is done on purpose to ensure robustness in FabIO.
+
+
+Run test suite from installation directory
+..........................................
 
 To run the test:
 
 ::
 
-   python setup.py test   
+   python setup.py build test
 
-Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files", it is done on purpose to ensure robustness in FabIO. 
-  
+
+Run test suite from installed version
+.....................................
+
+Within Python:
+
+.. code-block:: python
+
+   import fabio
+   fabio.tests()
+
+
+Test coverage
+-------------
+
 FabIO comes with 25 test-suites (110 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with python versions 2.6 and 2.7.
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2 and 3.4.
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
    :widths: 35, 8, 8, 8
-   
+
    "fabio/GEimage                 ", "   94", "     48", "    51%"
    "fabio/HiPiCimage              ", "   55", "      7", "    12%"
    "fabio/OXDimage                ", "  285", "    271", "    95%"

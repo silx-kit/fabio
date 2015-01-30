@@ -135,7 +135,7 @@ class fabioimage(object):
             'uint16'  : "F;16"  ,
             'int8'    : "F;8S"  ,
             'uint8'   : "F;8"  }
-        if typmap.has_key(self.data.dtype.name):
+        if self.data.dtype.name in typmap:
             mode2 = typmap[ self.data.dtype.name ]
             mode1 = mode2[0]
         else:
@@ -148,7 +148,7 @@ class fabioimage(object):
         elif testval == 256:
             dats = self.data.byteswap().tostring()
         else:
-            raise Exception("Endian unknown in fabioimage.toPIL16")
+            raise RuntimeError("Endian unknown in fabioimage.toPIL16")
 
         self.pilimage = Image.frombuffer(mode1,
                                          size,
@@ -335,6 +335,9 @@ class fabioimage(object):
         by default pass in a dict of key, values.
         """
         self.header.update(kwds)
+        for key in kwds:
+            if key not in self.header_keys:
+                 self.header_keys.append(key)
 
     def read(self, filename, frame=None):
         """
