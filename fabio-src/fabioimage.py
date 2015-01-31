@@ -208,7 +208,7 @@ class fabioimage(object):
         if len(coords) == 2 -> use as slices
         floor -> ? removed as unused in the function.
         """
-        if self.data == None:
+        if self.data is None:
             # This should return NAN, not zero ?
             return 0
         if len(coords) == 4:
@@ -235,7 +235,7 @@ class fabioimage(object):
 
     def getstddev(self):
         """ return the standard deviation """
-        if self.stddev == None:
+        if self.stddev is None:
             self.stddev = self.data.std(dtype=numpy.double)
         return self.stddev
 
@@ -269,7 +269,7 @@ class fabioimage(object):
 
 
         """
-        if self.data == None:
+        if self.data is None:
             raise Exception('Please read in the file you wish to rebin first')
 
         if (self.dim1 % x_rebin_fact != 0) or (self.dim2 % y_rebin_fact != 0):
