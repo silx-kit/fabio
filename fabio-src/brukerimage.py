@@ -193,42 +193,43 @@ class brukerimage(fabioimage):
         """
         Read in and unpack the pixels (including overflow table
         """
-        infile = self._open(fname, "rb")
-        try:
-            self._readheader(infile)
-        except:
-            raise
+        with self._open(fname, "rb") as infile:
+            try:
+                self._readheader(infile)
+            except:
+                raise
 
-        rows = self.dim1
-        cols = self.dim2
+            rows = self.dim1
+            cols = self.dim2
 
-        try:
-            # you had to read the Bruker docs to know this!
-            npixelb = int(self.header['NPIXELB'])
-        except Exception:
-            errmsg = "length " + str(len(self.header['NPIXELB'])) + "\n"
-            for byt in self.header['NPIXELB']:
-                errmsg += "char: " + str(byt) + " " + str(ord(byt)) + "\n"
-            logger.warning(errmsg)
-            raise RuntimeError(errmsg)
+            try:
+                # you had to read the Bruker docs to know this!
+                npixelb = int(self.header['NPIXELB'])
+            except Exception:
+                errmsg = "length " + str(len(self.header['NPIXELB'])) + "\n"
+                for byt in self.header['NPIXELB']:
+                    errmsg += "char: " + str(byt) + " " + str(ord(byt)) + "\n"
+                logger.warning(errmsg)
+                raise RuntimeError(errmsg)
 
-        data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
-        if not numpy.little_endian:
-            data.byteswap(True)
-        # handle overflows
-        nov = int(self.header['NOVERFL'])
-        if nov > 0:  # Read in the overflows
-            # need at least int32 sized data I guess - can reach 2^21
-            data = data.astype(numpy.uint32)
-            # 16 character overflows:
-            #      9 characters of intensity
-            #      7 character position
-            for i in range(nov):
-                ovfl = infile.read(16)
-                intensity = int(ovfl[0: 9])
-                position = int(ovfl[9: 16])
-                data[position] = intensity
-        infile.close()
+            data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
+            if not numpy.little_endian and data.dtype.itemsize > 1:
+                data.byteswap(True)
+            # handle overflows
+            nov = int(self.header['NOVERFL'])
+            if nov > 0:  # Read in the overflows
+                # need at least int32 sized data I guess - can reach 2^21
+                data = data.astype(numpy.uint32)
+                # 16 character overflows:
+                #      9 characters of intensity
+                #      7 character position
+                for i in range(nov):
+                    ovfl = infile.read(16)
+                    intensity = int(ovfl[0: 9])
+                    position = int(ovfl[9: 16])
+                    data[position] = intensity
+        # infile.close()
+
         # Handle Float images ...
         if "LINEAR" in self.header:
             try:
@@ -289,7 +290,9 @@ class brukerimage(fabioimage):
         data = tmp_data.astype(self.bpp_to_numpy[bpp])
         reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
-        data = data.newbyteorder("<")  # Bruker enforces little endian
+        if not numpy.little_endian and bpp > 1:
+            # Bruker enforces little endian
+            data.byteswap(True)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
             bruker.write(data.tostring())

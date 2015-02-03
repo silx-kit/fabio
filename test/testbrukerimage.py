@@ -36,6 +36,9 @@ MYIMAGE = numpy.ones((256, 256), numpy.uint16) * 16
 MYIMAGE[0, 0] = 0
 MYIMAGE[1, 1] = 32
 MYIMAGE[127:129, 127:129] = 65535
+if not numpy.little_endian:
+    MYIMAGE.byteswap(True)
+
 
 OVERFLOWS = [
     ["%09d" % 4194304, ("%07d" % (127 * 256 + 127))],
@@ -53,22 +56,22 @@ class TestBruker(unittest.TestCase):
         """ Generate a test bruker image """
         if os.path.isfile(self.filename):
             os.unlink(self.filename)
-        fout = open(self.filename, 'wb')
-        wrb = 0
-        for key, val in MYHEADER.items():
-            fout.write((("%-7s" % key) + ':' + ("%-72s" % val)).encode("ASCII"))
-            wrb = wrb + 80
-        hdrblks = int(MYHEADER['HDRBLKS'])
-        while (wrb < hdrblks * 512):
-            fout.write(b"\x1a\x04")
-            fout.write(b'.' * 78)
-            wrb = wrb + 80
-        fout.write(MYIMAGE.tostring())
+        with open(self.filename, 'wb') as fout:
+            wrb = 0
+            for key, val in MYHEADER.items():
+                fout.write((("%-7s" % key) + ':' + ("%-72s" % val)).encode("ASCII"))
+                wrb = wrb + 80
+            hdrblks = int(MYHEADER['HDRBLKS'])
+            while (wrb < hdrblks * 512):
+                fout.write(b"\x1a\x04")
+                fout.write(b'.' * 78)
+                wrb = wrb + 80
+            fout.write(MYIMAGE.tostring())
 
-        noverfl = int(MYHEADER['NOVERFL'])
-        for ovf in OVERFLOWS:
-            fout.write((ovf[0] + ovf[1]).encode("ASCII"))
-        fout.write(b'.' * (512 - (16 * noverfl) % 512))
+            noverfl = int(MYHEADER['NOVERFL'])
+            for ovf in OVERFLOWS:
+                fout.write((ovf[0] + ovf[1]).encode("ASCII"))
+            fout.write(b'.' * (512 - (16 * noverfl) % 512))
 
     def test_read(self):
         """ see if we can read the test image """
