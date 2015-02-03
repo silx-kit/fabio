@@ -15,7 +15,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "2010-2012, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/02/2014"
+__date__ = "03/02/2015"
 
 
 cimport numpy
@@ -51,63 +51,41 @@ def analyseCython(bytes stream not None, size=None):
 
         int csize
         int lenStream = < int > len(stream)
-        numpy.uint8_t[:] cstream = numpy.fromstring(stream, dtype=numpy.uint8)
-        bint little_endian = numpy.little_endian
+        numpy.uint8_t[:] cstream = bytearray(stream)
     if size is None:
         csize = lenStream
     else:
         csize = < int > size
-    cdef numpy.ndarray[ numpy.int64_t  , ndim = 1] dataOut = numpy.zeros(csize, dtype=numpy.int64)
+    cdef numpy.ndarray[numpy.int64_t, ndim = 1] dataOut = numpy.zeros(csize, dtype=numpy.int64)
     with nogil:
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):
                 if ((cstream[i + 1] == key0) and (cstream[i + 2] == key8)):
                     if (cstream[i + 3] == key0) and (cstream[i + 4] == key0) and (cstream[i + 5] == key0) and (cstream[i + 6] == key8):
-                        #Retrieve the interesting Bytes of data
-                        if little_endian:
-                            tmp64g = cstream[i + 7]
-                            tmp64f = cstream[i + 8]
-                            tmp64e = cstream[i + 9]
-                            tmp64d = cstream[i + 10]
-                            tmp64c = cstream[i + 11]
-                            tmp64b = cstream[i + 12]
-                            tmp64a = cstream[i + 13]
-                            tmp64  = <numpy.int8_t> cstream[i + 14]
-                        else:
-                            tmp64  = <numpy.int8_t> cstream[i + 7]
-                            tmp64a = cstream[i + 8]
-                            tmp64b = cstream[i + 9]
-                            tmp64c = cstream[i + 10]
-                            tmp64d = cstream[i + 11]
-                            tmp64e = cstream[i + 12]
-                            tmp64f = cstream[i + 13]
-                            tmp64g = cstream[i + 14]
-                        #Assemble data into a 64 bits integer
+                        # Retrieve the interesting Bytes of data
+                        tmp64g = cstream[i + 7]
+                        tmp64f = cstream[i + 8]
+                        tmp64e = cstream[i + 9]
+                        tmp64d = cstream[i + 10]
+                        tmp64c = cstream[i + 11]
+                        tmp64b = cstream[i + 12]
+                        tmp64a = cstream[i + 13]
+                        tmp64  = <numpy.int8_t> cstream[i + 14]
+                        # Assemble data into a 64 bits integer
                         current = (tmp64 << 56) | (tmp64a << 48) | (tmp64b << 40) | (tmp64c << 32) | (tmp64d << 24) | (tmp64e << 16) | (tmp64f << 8) | (tmp64g)
                         i += 15
                     else:
-                        #Retrieve the interesting Bytes of data
-                        if little_endian:
-                            tmp64c = cstream[i + 3]
-                            tmp64b = cstream[i + 4]
-                            tmp64a = cstream[i + 5]
-                            tmp64  = <numpy.int8_t> cstream[i + 6]
-                        else:
-                            tmp64  = <numpy.int8_t> cstream[i + 3]
-                            tmp64a = cstream[i + 4]
-                            tmp64b = cstream[i + 5]
-                            tmp64c = cstream[i + 6]
-
-                        #Assemble data into a 64 bits integer
+                        # Retrieve the interesting Bytes of data
+                        tmp64c = cstream[i + 3]
+                        tmp64b = cstream[i + 4]
+                        tmp64a = cstream[i + 5]
+                        tmp64  = <numpy.int8_t> cstream[i + 6]
+                        # Assemble data into a 64 bits integer
                         current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c);
                         i += 7
                 else:
-                    if little_endian:
-                        tmp64a = cstream[i + 1]
-                        tmp64 =  <numpy.int8_t> cstream[i + 2];
-                    else:
-                        tmp64 =  <numpy.int8_t> cstream[i + 1];
-                        tmp64a = cstream[i + 2]
+                    tmp64a = cstream[i + 1]
+                    tmp64  = <numpy.int8_t> cstream[i + 2];
 
                     current = (tmp64 << 8) | (tmp64a);
                     i += 3
