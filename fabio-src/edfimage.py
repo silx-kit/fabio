@@ -596,15 +596,14 @@ class edfimage(fabioimage):
         
         @return True if needed, False else and None if not understood
         """
+        if self.bpp == 1 :
+            return False
         if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             return False
         if ('High'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            if self.bpp in [2, 4, 8]:
-                return True
-            else:
-                return False
+            return True
 
     def unpack(self):
         """
