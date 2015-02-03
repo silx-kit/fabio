@@ -20,7 +20,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "08/01/2015"
+__date__ = "03/02/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPL"
@@ -213,7 +213,8 @@ class brukerimage(fabioimage):
             raise RuntimeError(errmsg)
 
         data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
-
+        if not numpy.little_endian:
+            data.byteswap(True)
         # handle overflows
         nov = int(self.header['NOVERFL'])
         if nov > 0:  # Read in the overflows
