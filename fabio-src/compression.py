@@ -11,7 +11,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "19/01/2015"
+__date__ = "03/02/2015"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -147,19 +147,24 @@ def decByteOffset_numpy(stream, size=None):
 
         if stream[idx + 1:idx + 3] == key32:
             if stream[idx + 3:idx + 7] == key64:
-#                        long int 64 bits
-                listnpa.append(numpy.fromstring(stream[idx + 7:idx + 15],
-                                             dtype="int64"))
+                # 64 bits int
+                res = numpy.fromstring(stream[idx + 7:idx + 15], dtype="int64")
+                listnpa.append(res)
                 shift = 15
-            else:  # 32 bit int
-                listnpa.append(numpy.fromstring(stream[idx + 3:idx + 7],
-                                             dtype="int32"))
+            else:
+                # 32 bits int
+                res = numpy.fromstring(stream[idx + 3:idx + 7], dtype="int32")
+                listnpa.append(res)
                 shift = 7
         else:  # int16
-            listnpa.append(numpy.fromstring(stream[idx + 1:idx + 3],
-                                         dtype="int16"))
+            res = numpy.fromstring(stream[idx + 1:idx + 3], dtype="int16")
+            listnpa.append(res)
             shift = 3
         stream = stream[idx + shift:]
+    if not numpy.little_endian:
+        for res in listnpa:
+            if res.dtype != numpy.int8:
+                res.byteswap(True)
     return  (numpy.hstack(listnpa)).astype("int64").cumsum()
 
 

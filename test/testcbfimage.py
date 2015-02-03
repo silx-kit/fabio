@@ -31,6 +31,7 @@ from fabio.third_party.six import PY3
 if PY3:
     from fabio.fabioutils import unicode
 
+
 class TestCbfReader(unittest.TestCase):
     """ test cbf image reader """
 

@@ -310,6 +310,7 @@ class Frame(object):
             self._data = data
             self._bytecode = data.dtype.type
         return data
+
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
@@ -653,7 +654,6 @@ class edfimage(fabioimage):
             newImage = self.getframe(newFrameId)
         return newImage
 
-
     def write(self, fname, force_type=None, fit2dMode=False):
         """
         Try to write a file
@@ -664,12 +664,10 @@ class edfimage(fabioimage):
         @return: None
 
         """
-
         with self._open(fname, mode="wb") as outfile:
             for i, frame in enumerate(self.__frames):
                 frame.iFrame = i
                 outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
-
 
     def appendFrame(self, frame=None, data=None, header=None):
         """
@@ -682,7 +680,6 @@ class edfimage(fabioimage):
             self.__frames.append(frame)
         else:
             self.__frames.append(Frame(data, header))
-
 
     def deleteFrame(self, frameNb=None):
         """
@@ -755,8 +752,9 @@ class edfimage(fabioimage):
             data.shape = -1, d1
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
+        if self.swap_needed():
+            data.byteswap(True)
         return data[slice2]
-
 
 ################################################################################
 # Properties definition for header, data, header_keys and capsHeader
