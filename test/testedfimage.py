@@ -27,16 +27,16 @@ from fabio.third_party import six
 
 class TestFlatEdfs(unittest.TestCase):
     """ test some flat images """
+    BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
     MYHEADER = six.b("{\n%-1020s}\n" % (
-"""Omega = 0.0 ;
-Dim_1 = 256 ;
-Dim_2 = 256 ;
-DataType = FloatValue ;
-ByteOrder = LowByteFirst ;
-Image = 1;
-History-1 = something=something else;
-\n\n"""))
-
+                """Omega = 0.0 ;
+                Dim_1 = 256 ;
+                Dim_2 = 256 ;
+                DataType = FloatValue ;
+                ByteOrder = %s ;
+                Image = 1;
+                History-1 = something=something else;
+                \n\n""" % BYTE_ORDER))
     MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
     MYIMAGE[0, 0] = 0
     MYIMAGE[1, 1] = 20
