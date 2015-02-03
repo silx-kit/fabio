@@ -304,10 +304,9 @@ class Frame(object):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
+            data = numpy.fromstring(rawData, self._bytecode).reshape(tuple(dims))
             if self.swap_needed():
-                data = numpy.fromstring(rawData, self._bytecode).byteswap().reshape(tuple(dims))
-            else:
-                data = numpy.fromstring(rawData, self._bytecode).reshape(tuple(dims))
+                data.byteswap(True)
             self._data = data
             self._bytecode = data.dtype.type
         return data
@@ -593,6 +592,8 @@ class edfimage(fabioimage):
     def swap_needed(self):
         """
         Decide if we need to byteswap
+        
+        @return True if needed, False else and None if not understood
         """
         if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
@@ -714,6 +715,8 @@ class edfimage(fabioimage):
             data.shape = self.data.shape
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
+        if self.swap_needed():
+            data.byteswap(True)
         return data
 
     def fastReadROI(self, filename, coords=None):
