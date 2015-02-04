@@ -85,8 +85,10 @@ class mar345image(fabioimage):
         # example image it seems to 128 bytes?)
         # first 4-byte integer is a marker to check endianness
         if struct.unpack("<i", l[0:4])[0] == 1234:
+            logger.warning("Going for little endian")
             fs = '<i'
         else:
+            logger.warning("Going for big endian")
             fs = '>i'
 
         # image dimensions
