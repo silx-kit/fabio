@@ -150,11 +150,12 @@ class pnmimage(fabioimage):
     def P5dec(self, buf, bytecode):
         l = buf.read()
         try:
-            npa = numpy.fromstring(l, bytecode)
-            npa.shape = self.dim2, self.dim1
-            data = npa.byteswap()
+            data = numpy.fromstring(l, bytecode)
         except ValueError:
             raise IOError('Size spec in pnm-header does not match size of image data field')
+        data.shape = self.dim2, self.dim1
+        if numpy.little_endian:
+            data.byteswap(True)
         return data
 
     def P3dec(self, buf, bytecode):
