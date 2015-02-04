@@ -23,7 +23,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "08/01/2015"
+__date__ = "04/02/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPL"
@@ -206,6 +206,8 @@ class mar345image(fabioimage):
         binheader[13] = int(float(self.header.get("OMEGA_END", 1)) * 1e3)
         binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
+        if not numpy.little_endian:
+            binheader.byteswap()
         return binheader.tostring()
 
     def ascii_header(self, linesep="\n", size=4096):
