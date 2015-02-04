@@ -42,6 +42,7 @@ class mar345image(fabioimage):
         fabioimage.__init__(self, *args, **kwargs)
         self.numhigh = None
         self.numpixels = None
+        self.swap_needed = None
 
     def read(self, fname, frame=None):
         """ Read a mar345 image"""
@@ -49,17 +50,7 @@ class mar345image(fabioimage):
         f = self._open(self.filename, "rb")
         self._readheader(f)
         if 'compressed' in self.header['Format']:
-            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
-#            try:
-#                self.data = decPCK(f, self.dim1, self.dim2, self.numhigh)
-#            except Exception as error:
-#                logger.error('%s. importing the mar345_io backend: generate an empty 1x1 picture' % error)
-#                f.close()
-#                self.dim1 = 1
-#                self.dim2 = 1
-#                self.bytecode = numpy.int
-#                self.data = numpy.resize(numpy.array([0], numpy.int), [1, 1])
-#                return self
+            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, swap_needed=self.swap_needed)
         else:
             logger.error("cannot handle these formats yet " + \
                 "due to lack of documentation")
@@ -85,11 +76,13 @@ class mar345image(fabioimage):
         # example image it seems to 128 bytes?)
         # first 4-byte integer is a marker to check endianness
         if struct.unpack("<i", l[0:4])[0] == 1234:
-            logger.warning("Going for little endian")
             fs = '<i'
+            self.swap_needed = not(numpy.little_endian)
+            logger.warning("Going for little endian, swap_needed %s" % self.swap_needed)
         else:
-            logger.warning("Going for big endian")
+            self.swap_needed = numpy.little_endian
             fs = '>i'
+            logger.warning("Going for big endian, swap_needed %s" % self.swap_needed)
 
         # image dimensions
         self.dim1 = int(struct.unpack(fs, l[4:8])[0])
@@ -195,7 +188,10 @@ class mar345image(fabioimage):
         """
         self.header["HIGH"] = str(self.nb_overflow_pixels())
         binheader = numpy.zeros(16, "int32")
-        binheader[:4] = numpy.array([1234, self.dim1, int(self.header["HIGH"]), 1])
+        binheader[0] = 1234
+        binheader[1] = self.dim1
+        binheader[2] = self.nb_overflow_pixels()
+        binheader[3] = 1
         binheader[4] = (self.header.get("MODE", "TIME") == "TIME")
         binheader[5] = self.dim1 * self.dim2
         binheader[6] = int(self.header.get("PIXEL_LENGTH", 1))
@@ -208,8 +204,9 @@ class mar345image(fabioimage):
         binheader[13] = int(float(self.header.get("OMEGA_END", 1)) * 1e3)
         binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
-        if not numpy.little_endian:
-            binheader.byteswap()
+        self.header["HIGH"] = str(binheader[2])
+        if self.swap_needed:
+            binheader.byteswap(True)
         return binheader.tostring()
 
     def ascii_header(self, linesep="\n", size=4096):
@@ -340,6 +337,8 @@ class mar345image(fabioimage):
             tmp = numpy.zeros(((nb_pix // 8 + 1) * 8, 2), dtype="int32")
         tmp[:nb_pix, 0] = pix_location + 1
         tmp[:nb_pix, 1] = flt_data[pix_location]
+        if self.swap_needed:
+            tmp.byteswap(True)
         return tmp.tostring()
 
     def nb_overflow_pixels(self):

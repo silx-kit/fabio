@@ -11,7 +11,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "03/02/2015"
+__date__ = "04/02/2015"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -302,15 +302,18 @@ def compTY1(data):
     return  raw_8, raw_16, raw_32
 
 
-def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
+def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):
     """
     Modified CCP4  pck decompressor used in MAR345 images
 
-    @param stream: string or file
-    @return: numpy.ndarray (square array)
-
+    @param raw: input string (bytes in python3)
+    @param dim1,dim2: optional parameters size
+    @param overflowPix: optional parameters: number of overflowed pixels
+    @param version: PCK version 1 or 2
+    @param normal_start: position of the normal value section (can be auto-guessed)
+    @param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
+    @return : ndarray of 2D with the right size
     """
-
     try:
         from .mar345_IO import uncompress_pck
     except ImportError as  error:
@@ -321,7 +324,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
     else:
         raw = bytes(stream)
 
-    return uncompress_pck(raw, dim1, dim2, overflowPix, version)
+    return uncompress_pck(raw, dim1, dim2, overflowPix, version, normal_start, swap_needed)
 
 
 def compPCK(data):
