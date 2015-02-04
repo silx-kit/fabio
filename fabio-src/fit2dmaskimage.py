@@ -40,6 +40,9 @@ class fit2dmaskimage(fabioimage):
             if header[j] != i[0]:
                 raise Exception("Not a fit2d mask file")
         fit2dhdr = numpy.fromstring(header, numpy.int32)
+        # Enforce little endian
+        if not numpy.little_endian:
+             fit2dhdr.byteswap(True)
         self.dim1 = fit2dhdr[4]  # 1 less than Andy's fortran
         self.dim2 = fit2dhdr[5]
 
@@ -64,6 +67,9 @@ class fit2dmaskimage(fabioimage):
 
         # Now to unpack it
         data = numpy.fromstring(data, numpy.uint8)
+        if not numpy.little_endian:
+             data.byteswap(True)
+
         data = numpy.reshape(data, (self.dim2, num_ints * 4))
 
         result = numpy.zeros((self.dim2, num_ints * 4 * 8), numpy.uint8)
@@ -99,8 +105,8 @@ class fit2dmaskimage(fabioimage):
         header[8] = 83  # S
         header[12] = 75  # K
         header[24] = 1  # 1
-        str1 = struct.pack("I", self.dim1)
-        str2 = struct.pack("I", self.dim2)
+        str1 = struct.pack("<I", self.dim1)
+        str2 = struct.pack("<I", self.dim2)
         if not numpy.little_endian:
             str1 = str1[-1::-1]
             str2 = str2[-1::-1]
