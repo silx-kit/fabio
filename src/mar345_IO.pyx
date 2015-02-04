@@ -141,6 +141,8 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
         records = (chigh + PACK_SIZE_HIGH - 1) // PACK_SIZE_HIGH
         stop = normal_offset - lenkey - 14
         odata = numpy.fromstring(raw[stop - 64 * records: stop], dtype=numpy.int32)
+        if swap_needed:
+            odata.byteswap(True)
         idx = odata[::2] - 1  # indexes are even values (-1 because 1 based counting)
         value = odata[1::2]   # values are odd values
         valid = numpy.logical_and(idx >= 0, idx < cdimx * cdimy)

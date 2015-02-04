@@ -80,6 +80,29 @@ class TestMar345(unittest.TestCase):
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
+    def test_byteswap_write(self):
+        "Test writing with self consistency at the fabio level"
+        for line in TESTIMAGES.split("\n"):
+            logger.debug("Processing file: %s" % line)
+            vals = line.split()
+            name = vals[0]
+            obj = mar345image()
+            obj.read(os.path.join(os.path.dirname(self.mar345), name))
+            if not obj.swap_needed:
+                continue
+            obj.swap_needed = True
+            obj.write(os.path.join(UtilsTest.tempdir, name))
+            other = mar345image()
+            other.read(os.path.join(UtilsTest.tempdir, name))
+            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+            for key in obj.header:
+                if key == "filename":
+                    continue
+                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s: [%s|%s]" % (key, obj.header[key], other.header[key]))
+
+            os.unlink(os.path.join(UtilsTest.tempdir, name))
+
     def test_memoryleak(self):
         """
         This test takes a lot of time, so only in debug mode.
@@ -96,6 +119,7 @@ def test_suite_all_mar345():
     testSuite = unittest.TestSuite()
     testSuite.addTest(TestMar345("test_read"))
     testSuite.addTest(TestMar345("test_write"))
+    testSuite.addTest(TestMar345("test_byteswap_write"))
     testSuite.addTest(TestMar345("test_memoryleak"))
 
     return testSuite
