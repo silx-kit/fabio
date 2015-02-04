@@ -78,11 +78,11 @@ class mar345image(fabioimage):
         if struct.unpack("<i", l[0:4])[0] == 1234:
             fs = '<i'
             self.swap_needed = not(numpy.little_endian)
-            logger.warning("Going for little endian, swap_needed %s" % self.swap_needed)
+            logger.debug("Going for little endian, swap_needed %s" % self.swap_needed)
         else:
             self.swap_needed = numpy.little_endian
             fs = '>i'
-            logger.warning("Going for big endian, swap_needed %s" % self.swap_needed)
+            logger.debug("Going for big endian, swap_needed %s" % self.swap_needed)
 
         # image dimensions
         self.dim1 = int(struct.unpack(fs, l[4:8])[0])

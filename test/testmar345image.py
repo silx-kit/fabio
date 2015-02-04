@@ -88,9 +88,7 @@ class TestMar345(unittest.TestCase):
             name = vals[0]
             obj = mar345image()
             obj.read(os.path.join(os.path.dirname(self.mar345), name))
-            if not obj.swap_needed:
-                continue
-            obj.swap_needed = False
+            obj.swap_needed = not (obj.swap_needed)
             obj.write(os.path.join(UtilsTest.tempdir, name))
             other = mar345image()
             other.read(os.path.join(UtilsTest.tempdir, name))
