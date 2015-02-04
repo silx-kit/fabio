@@ -88,40 +88,45 @@ class kcdimage(fabioimage):
         """
         self.header = {}
         self.resetvals()
-        infile = self._open(fname, "rb")
-        self._readheader(infile)
-        # Compute image size
-        try:
-            self.dim1 = int(self.header['X dimension'])
-            self.dim2 = int(self.header['Y dimension'])
-        except:
-            raise Exception("KCD file %s is corrupt, cannot read it" % fname)
-        try:
-            bytecode = DATA_TYPES[self.header['Data type']]
-            self.bpp = len(numpy.array(0, bytecode).tostring())
-        except KeyError:
-            bytecode = numpy.uint16
-            self.bpp = 2
-            logger.warning("Defaulting type to uint16")
-        try:
-            nbReadOut = int(self.header['Number of readouts'])
-        except KeyError:
-            logger.warning("Defaulting number of ReadOut to 1")
-            nbReadOut = 1
-        fileSize = os.stat(fname)[6]
-        expected_size = self.dim1 * self.dim2 * self.bpp * nbReadOut
-        infile.seek(fileSize - expected_size)
-        block = infile.read()
-        assert len(block) == expected_size
-        infile.close()
+        with self._open(fname, "rb") as infile:
+            self._readheader(infile)
+            # Compute image size
+            try:
+                self.dim1 = int(self.header['X dimension'])
+                self.dim2 = int(self.header['Y dimension'])
+            except:
+                raise Exception("KCD file %s is corrupt, cannot read it" % fname)
+            try:
+                bytecode = DATA_TYPES[self.header['Data type']]
+                self.bpp = len(numpy.array(0, bytecode).tostring())
+            except KeyError:
+                bytecode = numpy.uint16
+                self.bpp = 2
+                logger.warning("Defaulting type to uint16")
+            try:
+                nbReadOut = int(self.header['Number of readouts'])
+            except KeyError:
+                logger.warning("Defaulting number of ReadOut to 1")
+                nbReadOut = 1
+            fileSize = os.stat(fname)[6]
+            expected_size = self.dim1 * self.dim2 * self.bpp * nbReadOut
+            infile.seek(fileSize - expected_size)
+            block = infile.read()
+            assert len(block) == expected_size
+        # infile.close()
 
         # now read the data into the array
-        self.data = numpy.zeros((self.dim2, self.dim1))
+        self.data = numpy.zeros((self.dim2, self.dim1), numpy.int32)
         try:
+            stop = 0
             for i in range(nbReadOut):
-                self.data += numpy.reshape(numpy.fromstring(
-                    block[i * expected_size // nbReadOut:(i + 1) * expected_size // nbReadOut], bytecode),
-                    [self.dim2, self.dim1])
+                start = stop
+                stop = (i + 1) * expected_size // nbReadOut
+                data = numpy.fromstring(block[start: stop], bytecode)
+                data.shape = self.dim2, self.dim1
+                if not numpy.little_endian:
+                    data.swapbytes(True)
+                self.data += data
         except:
             print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
             raise IOError('Size spec in kcd-header does not match size of image data field')
