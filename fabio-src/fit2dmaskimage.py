@@ -105,10 +105,8 @@ class fit2dmaskimage(fabioimage):
         header[8] = 83  # S
         header[12] = 75  # K
         header[24] = 1  # 1
-        str1 = struct.pack("<I", self.dim1)
-        str2 = struct.pack("<I", self.dim2)
-        header[16:20] = str1
-        header[20:24] = str2
+        header[16:20] = struct.pack("<I", self.dim1)
+        header[20:24] = struct.pack("<I", self.dim2)
         compact_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 4), dtype=numpy.uint8)
         large_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 32), dtype=numpy.uint8)
         large_array[:self.dim2, :self.dim1] = (self.data != 0)
