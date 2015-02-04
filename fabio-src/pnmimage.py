@@ -18,7 +18,7 @@ License: GPLv3+
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "12/09/2014"
+__date__ = "04/02/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -125,7 +125,7 @@ class pnmimage(fabioimage):
     def P1dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
-        for l in buf.readlines():
+        for l in buf:
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
@@ -140,7 +140,7 @@ class pnmimage(fabioimage):
     def P2dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
-        for l in buf.readlines():
+        for l in buf:
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:

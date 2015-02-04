@@ -17,7 +17,7 @@ from .third_party import six
 DATA_TYPES = {"u16"  :  numpy.uint16 }
 
 MINIMUM_KEYS = [
-                'ByteOrder',
+                # 'ByteOrder', Assume little by default
                 'Data type',
                 'X dimension',
                 'Y dimension',
@@ -117,19 +117,15 @@ class kcdimage(fabioimage):
 
         # now read the data into the array
         self.data = numpy.zeros((self.dim2, self.dim1), numpy.int32)
-        try:
-            stop = 0
-            for i in range(nbReadOut):
-                start = stop
-                stop = (i + 1) * expected_size // nbReadOut
-                data = numpy.fromstring(block[start: stop], bytecode)
-                data.shape = self.dim2, self.dim1
-                if not numpy.little_endian:
-                    data.swapbytes(True)
-                self.data += data
-        except:
-            print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
-            raise IOError('Size spec in kcd-header does not match size of image data field')
+        stop = 0
+        for i in range(nbReadOut):
+            start = stop
+            stop = (i + 1) * expected_size // nbReadOut
+            data = numpy.fromstring(block[start: stop], bytecode)
+            data.shape = self.dim2, self.dim1
+            if not numpy.little_endian:
+                data.byteswap(True)
+            self.data += data
         self.bytecode = self.data.dtype.type
         self.resetvals()
         # ensure the PIL image is reset
