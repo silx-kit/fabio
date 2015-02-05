@@ -14,7 +14,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 # get ready for python3
 from __future__ import with_statement, print_function, absolute_import, division
-import os, logging, sys, tempfile
+import os, logging, sys, tempfile, threading
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -117,7 +117,6 @@ class fabioimage(object):
         """
         Convert to Python Imaging Library 16 bit greyscale image
 
-        FIXME - this should be handled by the libraries now
         """
         if not Image:
             raise RuntimeError("PIL is not installed !!! ")
@@ -129,34 +128,19 @@ class fabioimage(object):
         size = self.data.shape[:2][::-1]
         typmap = {
             'float32' : "F"     ,
-            'int32'   : "F;32S" ,
-            'uint32'  : "F;32"  ,
-            'int16'   : "F;16S" ,
-            'uint16'  : "F;16"  ,
+            'int32'   : "F;32NS" ,
+            'uint32'  : "F;32N"  ,
+            'int16'   : "F;16NS" ,
+            'uint16'  : "F;16N"  ,
             'int8'    : "F;8S"  ,
             'uint8'   : "F;8"  }
         if self.data.dtype.name in typmap:
             mode2 = typmap[ self.data.dtype.name ]
             mode1 = mode2[0]
         else:
-            raise Exception("Unknown numpy type " + str(self.data.dtype.type))
-        #
-        # hack for byteswapping for PIL in MacOS
-        testval = numpy.array((1, 0), numpy.uint8).view(numpy.uint16)[0]
-        if  testval == 1:
-            dats = self.data.tostring()
-        elif testval == 256:
-            dats = self.data.byteswap().tostring()
-        else:
-            raise RuntimeError("Endian unknown in fabioimage.toPIL16")
-
-        self.pilimage = Image.frombuffer(mode1,
-                                         size,
-                                         dats,
-                                         "raw",
-                                         mode2,
-                                         0,
-                                         1)
+            raise RuntimeError("Unknown numpy type: %s" % (self.data.dtype.type))
+        dats = self.data.tostring()
+        self.pilimage = Image.frombuffer(mode1, size, dats, "raw", mode2, 0, 1)
 
         return self.pilimage
 
@@ -199,7 +183,6 @@ class fabioimage(object):
                      coords[2])
         return (slice(int(fixme[0]), int(fixme[2]) + 1) ,
                  slice(int(fixme[1]), int(fixme[3]) + 1))
-
 
     def integrate_area(self, coords):
         """
