@@ -89,7 +89,7 @@ class xsdimage(fabioimage):
 
         self.data = numpy.fromstring(decData, dtype=self.bytecode).reshape(tuple(self.dims))
         if not numpy.little_endian:  # by default little endian
-            self.data.byteswap(inplace=True)
+            self.data.byteswap(True)
         self.resetvals()
 #        # ensure the PIL image is reset
         self.pilimage = None
