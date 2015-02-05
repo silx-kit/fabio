@@ -39,5 +39,5 @@ running Debian 7.
     | xsdimage      | XSDataImage.xml           | 256kpix|  13.3 ms     | 12.9 ms      | 18.4 ms      |
     +---------------+---------------------------+--------+--------------+--------------+--------------+
     
-The Python3 version is sometimes twice slower then the Python2 version. As the codebase is essentially the
-same this regression is not due to FabIO but to the programming language itself (the code is the same !)
+The Python3 version is sometimes twice slower then the Python2 version. As the codebase is the
+same this regression is not due to FabIO but to the programming language itself.

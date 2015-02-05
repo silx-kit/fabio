@@ -22,8 +22,7 @@ Dependencies
 * Python 2.6 - 2.7 or 3.2+
 * numpy - http://www.numpy.org
 
-For full functionality of Fabio the following modules need to be installed:
-
+For full functionality of FabIO the following modules need to be installed:
 
 * PIL (python imaging library) - http://www.pythonware.com
 * lxml (library for reading XSDimages)
@@ -44,19 +43,19 @@ e.g.
 
 ::
 
-    tar xvzf fabio-0.2.0.tar.gz
+    tar xvzf fabio-0.2.1.tar.gz
 
 or
 
 ::
 
-    unzip fabio-0.2.0.zip
+    unzip fabio-0.2.1.zip
 
 all files are unpacked into the directory fabio-0.2.0. To install these do
 
 ::
 
-     cd fabio-0.2.0
+     cd fabio-0.2.1
 
 and install fabio with
 
