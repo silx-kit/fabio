@@ -7,7 +7,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/02/2015"
+__date__ = "06/02/2015"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -45,8 +45,8 @@ RELEASE_LEVEL_VALUE = { "dev": 0,
 MAJOR = 0
 MINOR = 2
 MICRO = 1
-RELEV = "beta"  # <16
-SERIAL = 1  # <16
+RELEV = "final"  # <16
+SERIAL = 0  # <16
 
 
 from collections import namedtuple
