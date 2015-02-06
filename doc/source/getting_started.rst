@@ -196,8 +196,8 @@ is increasingly popular for storage of X-ray and neutron data. To
 name a few facilities the synchrotron Soleil and the neutron
 sources ISIS, SNS and SINQ already use HDF extensively through the
 NeXus format. For now, mainly processed or curated data are
-stored in this format but new detectors are rumoured to provide
-native output in HDF5. FabIO will rely on H5Py, which
+stored in this format but new detectors (Eiger from Dectris) are natively
+saving data in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
 dependency, to be able to read and write such HDF5 files.
 
@@ -209,8 +209,7 @@ Python computer language. It was originally developed for X-ray
 diffraction data but now gives an easy way for scientists to access
 and manipulate their data from a wide range of 2D X-ray detectors.
 We welcome contributions to further improve the code and hope to
-add more file formats in the future as well as port the existing
-code base to the emerging Python3.
+add more file formats in the future.
 
 Acknoledgements
 ...............

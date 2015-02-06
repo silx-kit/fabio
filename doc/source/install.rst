@@ -11,20 +11,24 @@ package is named python-fabio and can be installed via:
 ::
     # apt-get install python-fabio
 
-If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP installable.
+If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP-installable.
+PIP is the Python Installer Program, similar to ``apt-get`` for Python. It runs under any architecture and can simply be installed from:
 
-Installation under windows:
-===========================
+https://bootstrap.pypa.io/get-pip.py
+
+
+Installation under windows
+--------------------------
 
 Install Python from http://python.org.
 I would recommend Python 2.7 in 64 bits version if your operating system allows it.
 Python3 (>=3.2) is OK while less tested.
 
 Installation using PIP:
------------------------
-
+.......................
 Download PIP and run:
 https://bootstrap.pypa.io/get-pip.py
+
 
 Then install the wheel package manager:
 
@@ -39,10 +43,9 @@ Note: for now, PyQt4 is not yet pip-installable. you will need to get it from ri
 http://www.riverbankcomputing.co.uk/software/pyqt/download
 
 Manual installation under windows
----------------------------------
+.................................
 
-You will find all the scientific python stack packaged for Windows on Christopher Gohlke' page:
-Even FabIO is part of it.
+You will find all the scientific Python stack packaged for Windows on Christopher Gohlke' page (including FabIO):
 
 http://www.lfd.uci.edu/~gohlke/pythonlibs/
 
@@ -57,7 +60,7 @@ This gives you the architecture of the Python interpreter
 
 
 Installation from sources
--------------------------
+.........................
 
 Install the required dependencies (via PIP or a repository), then retrieve the Microsoft compiler and install it from:
 http://aka.ms/vcpython27
@@ -68,9 +71,40 @@ Once done, follow the classical procedure (similar to MacOSX or Linux):
 * run ``python setup.py build install``
 
 
-Dependencies
-------------
+Installation on MacOSX
+----------------------
 
+Python 2.7, 64 bits and numpy are  natively available on MacOSX.
+
+Install PIP
+...........
+
+Download PIP and run:
+https://bootstrap.pypa.io/get-pip.py
+
+Then install the wheel package manager:
+
+::
+    pip install setuptools
+    pip install wheel
+    pip install PIL
+    pip install lxml
+    pip install fabio
+
+Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
+http://www.riverbankcomputing.co.uk/software/pyqt/download
+
+Get the compiler
+................
+Apple provides for free Xcode which contains the compiler needed to build binary extensions.
+Xcode can be installed from the App-store.
+
+
+Manual Installation for any operating system
+--------------------------------------------
+
+Install the dependencies
+........................
 * Python 2.6 - 2.7 or 3.2+
 * numpy - http://www.numpy.org
 
@@ -116,8 +150,6 @@ and install fabio with
     sudo python setup.py install
 
 most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.
-
-To run the tests
 
 Development versions
 --------------------
@@ -187,11 +219,12 @@ Within Python:
 
 
 Test coverage
--------------
+.............
 
-FabIO comes with 25 test-suites (110 tests in total) representing a coverage of 60%.
+FabIO comes with 25 test-suites (113 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
 FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2 and 3.4.
+Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
