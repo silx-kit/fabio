@@ -54,6 +54,8 @@ DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
 class OXDimage(fabioimage):
     """
     Oxford Diffraction Sapphire 3 images reader/writer class
+    
+    Note: We assume the binary format is alway little-endian, is this True ?
     """
     def _readheader(self, infile):
 
@@ -88,30 +90,30 @@ class OXDimage(fabioimage):
         # Skip to general section (NG) 512 byes long <<<<<<"
         infile.seek(self.header["ASCII Section size in Byte"])
         block = infile.read(self.header['General Section size in Byte'])
-        self.header['Binning in x'] = struct.unpack("H", block[0:2])[0]
-        self.header['Binning in y'] = struct.unpack("H", block[2:4])[0]
-        self.header['Detector size x'] = struct.unpack("H", block[22:24])[0]
-        self.header['Detector size y'] = struct.unpack("H", block[24:26])[0]
-        self.header['Pixels in x'] = struct.unpack("H", block[26:28])[0]
-        self.header['Pixels in y'] = struct.unpack("H", block[28:30])[0]
-        self.header['No of pixels'] = struct.unpack("I", block[36:40])[0]
+        self.header['Binning in x'] = struct.unpack("<H", block[0:2])[0]
+        self.header['Binning in y'] = struct.unpack("<H", block[2:4])[0]
+        self.header['Detector size x'] = struct.unpack("<H", block[22:24])[0]
+        self.header['Detector size y'] = struct.unpack("<H", block[24:26])[0]
+        self.header['Pixels in x'] = struct.unpack("<H", block[26:28])[0]
+        self.header['Pixels in y'] = struct.unpack("<H", block[28:30])[0]
+        self.header['No of pixels'] = struct.unpack("<I", block[36:40])[0]
 
         # Speciel section (NS) 768 bytes long
         block = infile.read(self.header['Special Section size in Byte'])
-        self.header['Gain'] = struct.unpack("d", block[56:64])[0]
-        self.header['Overflows flag'] = struct.unpack("h", block[464:466])[0]
-        self.header['Overflow after remeasure flag'] = struct.unpack("h", block[466:468])[0]
-        self.header['Overflow threshold'] = struct.unpack("i", block[472:476])[0]
-        self.header['Exposure time in sec'] = struct.unpack("d", block[480:488])[0]
-        self.header['Overflow time in sec'] = struct.unpack("d", block[488:496])[0]
-        self.header['Monitor counts of raw image 1'] = struct.unpack("i", block[528:532])[0]
-        self.header['Monitor counts of raw image 2'] = struct.unpack("i", block[532:536])[0]
-        self.header['Monitor counts of overflow raw image 1'] = struct.unpack("i", block[536:540])[0]
-        self.header['Monitor counts of overflow raw image 2'] = struct.unpack("i", block[540:544])[0]
-        self.header['Unwarping'] = struct.unpack("i", block[544:548])[0]
-        self.header['Detector type'] = DETECTOR_TYPES[struct.unpack("i", block[548:552])[0]]
-        self.header['Real pixel size x (mm)'] = struct.unpack("d", block[568:576])[0]
-        self.header['Real pixel size y (mm)'] = struct.unpack("d", block[576:584])[0]
+        self.header['Gain'] = struct.unpack("<d", block[56:64])[0]
+        self.header['Overflows flag'] = struct.unpack("<h", block[464:466])[0]
+        self.header['Overflow after remeasure flag'] = struct.unpack("<h", block[466:468])[0]
+        self.header['Overflow threshold'] = struct.unpack("<i", block[472:476])[0]
+        self.header['Exposure time in sec'] = struct.unpack("<d", block[480:488])[0]
+        self.header['Overflow time in sec'] = struct.unpack("<d", block[488:496])[0]
+        self.header['Monitor counts of raw image 1'] = struct.unpack("<i", block[528:532])[0]
+        self.header['Monitor counts of raw image 2'] = struct.unpack("<i", block[532:536])[0]
+        self.header['Monitor counts of overflow raw image 1'] = struct.unpack("<i", block[536:540])[0]
+        self.header['Monitor counts of overflow raw image 2'] = struct.unpack("<i", block[540:544])[0]
+        self.header['Unwarping'] = struct.unpack("<i", block[544:548])[0]
+        self.header['Detector type'] = DETECTOR_TYPES[struct.unpack("<i", block[548:552])[0]]
+        self.header['Real pixel size x (mm)'] = struct.unpack("<d", block[568:576])[0]
+        self.header['Real pixel size y (mm)'] = struct.unpack("<d", block[576:584])[0]
 
         # KM4 goniometer section (NK) 1024 bytes long
         block = infile.read(self.header['KM4 Section size in Byte'])
@@ -148,37 +150,37 @@ class OXDimage(fabioimage):
         self.header['Kappa zero corr. in deg'] = zero_correction_soft_deg[2]
         self.header['Phi zero corr. in deg'] = zero_correction_soft_deg[3]
         # Beam rotation about e2,e3
-        self.header['Beam rot in deg (e2)'] = struct.unpack("d", block[552:560])[0]
-        self.header['Beam rot in deg (e3)'] = struct.unpack("d", block[560:568])[0]
+        self.header['Beam rot in deg (e2)'] = struct.unpack("<d", block[552:560])[0]
+        self.header['Beam rot in deg (e3)'] = struct.unpack("<d", block[560:568])[0]
         # Wavelenghts alpha1, alpha2, beta
-        self.header['Wavelength alpha1'] = struct.unpack("d", block[568:576])[0]
-        self.header['Wavelength alpha2'] = struct.unpack("d", block[576:584])[0]
-        self.header['Wavelength alpha'] = struct.unpack("d", block[584:592])[0]
-        self.header['Wavelength beta'] = struct.unpack("d", block[592:600])[0]
+        self.header['Wavelength alpha1'] = struct.unpack("<d", block[568:576])[0]
+        self.header['Wavelength alpha2'] = struct.unpack("<d", block[576:584])[0]
+        self.header['Wavelength alpha'] = struct.unpack("<d", block[584:592])[0]
+        self.header['Wavelength beta'] = struct.unpack("<d", block[592:600])[0]
 
         # Detector tilts around e1,e2,e3 in deg
-        self.header['Detector tilt e1 in deg'] = struct.unpack("d", block[640:648])[0]
-        self.header['Detector tilt e2 in deg'] = struct.unpack("d", block[648:656])[0]
-        self.header['Detector tilt e3 in deg'] = struct.unpack("d", block[656:664])[0]
+        self.header['Detector tilt e1 in deg'] = struct.unpack("<d", block[640:648])[0]
+        self.header['Detector tilt e2 in deg'] = struct.unpack("<d", block[648:656])[0]
+        self.header['Detector tilt e3 in deg'] = struct.unpack("<d", block[656:664])[0]
 
 
         # Beam center
-        self.header['Beam center x'] = struct.unpack("d", block[664:672])[0]
-        self.header['Beam center y'] = struct.unpack("d", block[672:680])[0]
+        self.header['Beam center x'] = struct.unpack("<d", block[664:672])[0]
+        self.header['Beam center y'] = struct.unpack("<d", block[672:680])[0]
         # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
-        self.header['Alpha angle in deg'] = struct.unpack("d", block[672:680])[0]
+        self.header['Alpha angle in deg'] = struct.unpack("<d", block[672:680])[0]
         # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
-        self.header['Beta angle in deg'] = struct.unpack("d", block[672:680])[0]
+        self.header['Beta angle in deg'] = struct.unpack("<d", block[672:680])[0]
 
         # Detector distance
-        self.header['Distance in mm'] = struct.unpack("d", block[712:720])[0]
+        self.header['Distance in mm'] = struct.unpack("<d", block[712:720])[0]
         # Statistics section (NS) 512 bytes long
         block = infile.read(self.header['Statistic Section in Byte'])
-        self.header['Stat: Min '] = struct.unpack("i", block[0:4])[0]
-        self.header['Stat: Max '] = struct.unpack("i", block[4:8])[0]
-        self.header['Stat: Average '] = struct.unpack("d", block[24:32])[0]
-        self.header['Stat: Stddev '] = numpy.sqrt(struct.unpack("d", block[32:40])[0])
-        self.header['Stat: Skewness '] = struct.unpack("d", block[40:48])[0]
+        self.header['Stat: Min '] = struct.unpack("<i", block[0:4])[0]
+        self.header['Stat: Max '] = struct.unpack("<i", block[4:8])[0]
+        self.header['Stat: Average '] = struct.unpack("<d", block[24:32])[0]
+        self.header['Stat: Stddev '] = numpy.sqrt(struct.unpack("<d", block[32:40])[0])
+        self.header['Stat: Skewness '] = struct.unpack("<d", block[40:48])[0]
 
         # History section (NH) 2048 bytes long
         block = infile.read(self.header['History Section in Byte'])
@@ -436,6 +438,8 @@ class Section(object):
             value = default
         if value is None:
             value = "\x00" * self.getSize(dtype)
-        else:
+        elif numpy.little_endian:
             value = numpy.array(value).astype(dtype).tostring()
+        else:
+            value = numpy.array(value).astype(dtype).byteswap().tostring()
         self.lstChr[offset:offset + self.getSize(dtype)] = value
