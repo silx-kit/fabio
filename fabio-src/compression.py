@@ -11,7 +11,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "04/02/2015"
+__date__ = "06/02/2015"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -246,6 +246,8 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     """
     Modified byte offset decompressor used in Oxford Diffraction images
 
+    Note: Always expect little endian data on the disk
+
     @param raw_8:  strings containing raw data with integer 8 bits
     @param raw_16: strings containing raw data with integer 16 bits
     @param raw_32: strings containing raw data with integer 32 bits
@@ -255,10 +257,14 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
     data -= 127
     if raw_32 is not None:
-        int32 = numpy.fromstring(raw_32, dtype="int32").astype(int)
+        int32 = numpy.fromstring(raw_32, dtype="int32")
+        if not numpy.little_endian:
+            int32.byteswap(True)
         exception32 = numpy.nonzero(data == 128)
     if raw_16 is not None:
-        int16 = numpy.fromstring(raw_16, dtype="int16").astype(int)
+        int16 = numpy.fromstring(raw_16, dtype="int16")
+        if not numpy.little_endian:
+            int16.byteswap(True)
         exception16 = numpy.nonzero(data == 127)
         data[exception16] = int16
     if raw_32:
@@ -293,13 +299,16 @@ def compTY1(data):
     exception16 = (adiff >= 127) - exception32  # 2**7-1)
     we16 = numpy.where(exception16)
     we32 = numpy.where(exception32)
-    raw_16 = diff[we16].astype("int16").tostring()
-    raw_32 = diff[we32].astype("int32").tostring()
+    data_16 = diff[we16].astype(numpy.int16)
+    data_32 = diff[we32].astype(numpy.int32)
+    if not numpy.little_endian:
+        data_16.byteswap(True)
+        data_16.byteswap(True)
     diff[we16] = 127
     diff[we32] = 128
     diff += 127
-    raw_8 = diff.astype("uint8").tostring()
-    return  raw_8, raw_16, raw_32
+    data_8 = diff.astype(numpy.uint8)
+    return  data_8.tostring(), data_16.tostring(), data_32.tostring()
 
 
 def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):

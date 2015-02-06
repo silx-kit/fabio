@@ -216,6 +216,7 @@ class OXDimage(fabioimage):
             if self.header['OL'] > 0:
                 raw32 = infile.read(self.header['OL'] * 4)
 
+            # endianess is landled at the decompression level
             raw_data = decTY1(raw8, raw16, raw32)
             bytecode = raw_data.dtype
 
@@ -224,6 +225,9 @@ class OXDimage(fabioimage):
             self.bpp = len(numpy.array(0, bytecode).tostring())
             ReadBytes = self.dim1 * self.dim2 * self.bpp
             raw_data = numpy.fromstring(infile.read(ReadBytes), bytecode)
+            # Always assume littel-endian on the disk
+            if not numpy.little_endian:
+                raw_data.byteswap(True)
 
         logger.debug('OVER_SHORT2: %s', raw_data.dtype)
         logger.debug("%s" % (raw_data < 0).sum())
