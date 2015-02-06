@@ -3,8 +3,8 @@ Changelog
 
 From FabIO-0.2.0 to FabIO-0.2.1:
 ................................
-- Fix issues with variable endianness (tested PPC, PPC64le, i386, x86-64, ARM
-- Optimization of byte-offset reader (about 20% faster)
+- Fix issues with variable endianness (tested PPC, PPC64le, i386, x86-64, ARM processors)
+- Optimization of byte-offset reader (about 20% faster on some processors)
 
 From FabIO-0.1.4 to FabIO-0.2.0:
 ................................

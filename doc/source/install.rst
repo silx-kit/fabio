@@ -11,9 +11,61 @@ package is named python-fabio and can be installed via:
 ::
     # apt-get install python-fabio
 
-If you are using MS Windows or MacOSX; binary version have been packaged.
-Windows installers are executable, just download the one corresponding to you python version and run it.
-MacOSX builds are zipped: unzip them at the right place.
+If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP installable.
+
+Installation under windows:
+===========================
+
+Install Python from http://python.org.
+I would recommend Python 2.7 in 64 bits version if your operating system allows it.
+Python3 (>=3.2) is OK while less tested.
+
+Installation using PIP:
+-----------------------
+
+Download PIP and run:
+https://bootstrap.pypa.io/get-pip.py
+
+Then install the wheel package manager:
+
+::
+    pip install setuptools
+    pip install wheel
+    pip install PIL
+    pip install numpy
+    pip install lxml
+
+Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
+http://www.riverbankcomputing.co.uk/software/pyqt/download
+
+Manual installation under windows
+---------------------------------
+
+You will find all the scientific python stack packaged for Windows on Christopher Gohlke' page:
+Even FabIO is part of it.
+
+http://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+Pay attention to the Python version (both number and architecture).
+DO NOT MIX 32 and 64 bits version.
+To determine the version of your Python:
+
+::
+    >> 8 * tuple.itemsize
+    
+This gives you the architecture of the Python interpreter
+
+
+Installation from sources
+-------------------------
+
+Install the required dependencies (via PIP or a repository), then retrieve the Microsoft compiler and install it from:
+http://aka.ms/vcpython27
+
+Once done, follow the classical procedure (similar to MacOSX or Linux):
+* download sources of FabIO from fable.sourceforge.net.
+* unzip the archive
+* run ``python setup.py build install``
 
 
 Dependencies
@@ -26,10 +78,9 @@ For full functionality of FabIO the following modules need to be installed:
 
 * PIL (python imaging library) - http://www.pythonware.com
 * lxml (library for reading XSDimages)
+* PyQt4 for the fabio_viewer
 
 
-Installation from sources
--------------------------
 
 FabIO can be downloaded from the fable download page on sourceforge.net.
 Presently the source code has been distributed as a zip package and a compressed tarball.
@@ -65,6 +116,8 @@ and install fabio with
     sudo python setup.py install
 
 most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.
+
+To run the tests
 
 Development versions
 --------------------
