@@ -61,7 +61,7 @@ class TestOxd(unittest.TestCase):
             obj.write(os.path.join(UtilsTest.tempdir, name))
             other = OXDimage()
             other.read(os.path.join(UtilsTest.tempdir, name))
-            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
+            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same for %s" % name)
             for key in obj.header:
                 if key == "filename":
                     continue
