@@ -4,7 +4,7 @@ Benchmarks
 Those benchmarks have been done with all data already in cache using a Intel Xeon E5520  @ 2.27GHz
 running Debian 7.
 
-.. table:: Execution time for reading a file, benchmarked using the ``timeit'' module. :label:`Benchmark`
+.. table:: Execution time for reading a file, benchmarked using the ``timeit'' module. 
     :class: w
 
     +---------------+---------------------------+--------+--------------+--------------+--------------+

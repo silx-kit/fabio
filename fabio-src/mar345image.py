@@ -23,7 +23,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "04/02/2015"
+__date__ = "06/02/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPL"
@@ -211,9 +211,12 @@ class mar345image(fabioimage):
 
     def ascii_header(self, linesep="\n", size=4096):
         """
+        Generate the ASCII header for writing
+        
         @param linesep: end of line separator
         @param size: size of the header (without the binary header)
-        @return string (unicode) containing the mar345 header
+        @return: string (unicode) containing the mar345 header
+
         """
         try:
             version = sys.modules["fabio"].version

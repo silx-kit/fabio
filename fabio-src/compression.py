@@ -322,6 +322,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_
     @param normal_start: position of the normal value section (can be auto-guessed)
     @param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
     @return : ndarray of 2D with the right size
+    
     """
     try:
         from .mar345_IO import uncompress_pck
