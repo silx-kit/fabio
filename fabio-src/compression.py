@@ -290,7 +290,7 @@ def compTY1(data):
     @return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size
 
     """
-    fdata = data.flatten()
+    fdata = data.ravel()
     diff = numpy.zeros_like(fdata)
     diff[0] = fdata[0]
     diff[1:] = fdata[1:] - fdata[:-1]
@@ -303,7 +303,7 @@ def compTY1(data):
     data_32 = diff[we32].astype(numpy.int32)
     if not numpy.little_endian:
         data_16.byteswap(True)
-        data_16.byteswap(True)
+        data_32.byteswap(True)
     diff[we16] = 127
     diff[we32] = 128
     diff += 127

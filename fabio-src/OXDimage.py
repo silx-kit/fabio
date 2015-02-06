@@ -125,6 +125,12 @@ class OXDimage(fabioimage):
         start_angles_step = numpy.fromstring(block[284:304], numpy.int32)
         end_angles_step = numpy.fromstring(block[324:344], numpy.int32)
         step2rad = numpy.fromstring(block[368:408], numpy.float)
+        zero_correction_soft_step = numpy.fromstring(block[512:532], numpy.int32)
+        if not numpy.little_endian:
+            start_angles_step.byteswap(True)
+            end_angles_step.byteswap(True)
+            step2rad.byteswap(True)
+            zero_correction_soft_step.byteswap(True)
         step_angles_deg = rad2deg(step2rad)
         # calc angles
         start_angles_deg = start_angles_step * step_angles_deg
@@ -143,7 +149,6 @@ class OXDimage(fabioimage):
         self.header['Phi step in deg'] = step_angles_deg[3]
 
 
-        zero_correction_soft_step = numpy.fromstring(block[512:532], numpy.int32)
         zero_correction_soft_deg = zero_correction_soft_step * step_angles_deg
         self.header['Omega zero corr. in deg'] = zero_correction_soft_deg[0]
         self.header['Theta zero corr. in deg'] = zero_correction_soft_deg[1]
@@ -207,7 +212,7 @@ class OXDimage(fabioimage):
                                 "is corrupt, cannot read it")
         #
         if self.header['Compression'] == 'TY1':
-            "# Compressed with the KM4CCD compression"
+            logger.debug("# Compressed with the KM4CCD compression")
             raw8 = infile.read(self.dim1 * self.dim2)
             raw16 = None
             raw32 = None
@@ -216,10 +221,9 @@ class OXDimage(fabioimage):
             if self.header['OL'] > 0:
                 raw32 = infile.read(self.header['OL'] * 4)
 
-            # endianess is landled at the decompression level
+            # endianess is handled at the decompression level
             raw_data = decTY1(raw8, raw16, raw32)
             bytecode = raw_data.dtype
-
         else:
             bytecode = numpy.int32
             self.bpp = len(numpy.array(0, bytecode).tostring())
@@ -385,11 +389,13 @@ class OXDimage(fabioimage):
 
     def write(self, fname):
         """Write Oxford diffraction images: this is still beta
+        Only TY1 compressed images is currently possible
         @param fname: output filename 
         """
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2
         self.header["OL"] = len(datablock32) / 4
+        self.header["Compression"] = "TY1"
         with self._open(fname, mode="wb") as outfile:
             outfile.write(self._writeheader())
             outfile.write(datablock8)
