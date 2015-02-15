@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -8,10 +10,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
          email:henning.sorensen@risoe.dk
 
 mods for fabio by JPW
+modification for HDF5 by Jérôme Kieffer
 
 """
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, absolute_import
 
 import sys, logging
 logger = logging.getLogger("openimage")
@@ -39,6 +42,12 @@ from . import binaryimage
 from . import pixiimage
 from . import hdf5image
 from . import raxisimage
+
+if sys.version_info[0] < 3:
+    bytes = str
+    from urlparse import urlparse
+else:
+    from urllib.parse import  urlparse
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -73,7 +82,7 @@ MAGIC_NUMBERS = [
     (b"R-AXIS"             , 'raxis')
     ]
 
-URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True}  # Shall we split after the last ":"
+URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True, "nxs:": True}
 
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
@@ -125,20 +134,14 @@ def _openimage(filename):
     """
     determine which format for a filename
     and return appropriate class which can be used for opening the image
-    """
-    lower_filename = filename.lower()
-    for prefix in URL_PREFIX:
-        if lower_filename.startswith(prefix):
-            filename = filename[len(prefix):]
-            if filename.startswith("//"):
-                filename = filename[2:]
-            if URL_PREFIX[prefix]:  # process :path[slice,:,:]
-                if "[" in filename:
-                    filename = filename[:filename.index("[")]
-                if ":" in filename:
-                    col_split = filename.split(":")
-                    filename = ":".join(col_split[:-1])
 
+    @param filename: can be an url like:
+
+    hdf5:///example.h5?entry/instrument/data#slice=[:,:,5]
+
+    """
+    url = urlparse(filename)
+    filename = url.path
     try:
         imo = fabioimage()
         byts = imo._open(filename).read(18)
@@ -177,6 +180,9 @@ def _openimage(filename):
     else:
         raise Exception("Filetype not known %s %s" % (filename, klass_name))
     obj = klass()
+
+    if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
+        obj.set_url(url)
     # skip the read for read header
     return obj
 
