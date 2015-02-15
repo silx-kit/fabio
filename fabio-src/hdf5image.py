@@ -20,19 +20,24 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "GPLv3+"
 __copyright__ = "Jérôme Kieffer"
-__version__ = "11 Nov 2014"
+__version__ = "15/02/2015"
 
 import numpy, logging, os, posixpath, sys, copy
 from .fabioimage import fabioimage
 logger = logging.getLogger("hdf5image")
-if sys.version < '3':
+if sys.version_info[0] < 3:
     bytes = str
+    from urlparse import urlparse
+else:
+    from urllib.parse import  urlparse
 
 try:
     import h5py
 except ImportError:
     h5py = None
 from .fabioutils import previous_filename, next_filename
+
+
 
 class HDF5location(object):
     """

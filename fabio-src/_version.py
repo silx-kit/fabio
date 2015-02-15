@@ -19,8 +19,8 @@ provides:
 * version_info = named tuple (1,2,3,"beta",4)
 * hexversion: 0x010203B4
 
-This is called hexversion since it only really looks meaningful when viewed as the 
-result of passing it to the built-in hex() function. 
+This is called hexversion since it only really looks meaningful when viewed as the
+result of passing it to the built-in hex() function.
 The version_info value may be used for a more human-friendly encoding of the same information.
 
 The hexversion is a 32-bit number with the following layout:
@@ -44,8 +44,8 @@ RELEASE_LEVEL_VALUE = { "dev": 0,
 
 MAJOR = 0
 MINOR = 2
-MICRO = 1
-RELEV = "final"  # <16
+MICRO = 2
+RELEV = "dev"  # <16
 SERIAL = 0  # <16
 
 
