@@ -119,14 +119,14 @@ def openimage(filename, frame=None):
         logger.debug("Attempting to open %s" % (filename))
         obj = _openimage(filename)
         logger.debug("Attempting to read frame %s from %s" % (frame, filename))
-        obj = obj.read(filename, frame)
+        obj = obj.read(obj.filename, frame)
     return obj
 
 
 def openheader(filename):
     """ return only the header"""
     obj = _openimage(filename)
-    obj.readheader(filename)
+    obj.readheader(obj.filename)
     return obj
 
 
@@ -183,6 +183,7 @@ def _openimage(filename):
 
     if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
         obj.set_url(url)
+    obj.filename = url.path
     # skip the read for read header
     return obj
 
