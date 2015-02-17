@@ -137,7 +137,7 @@ def _openimage(filename):
 
     @param filename: can be an url like:
 
-    hdf5:///example.h5?entry/instrument/data#slice=[:,:,5]
+    hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
 
     """
     url = urlparse(filename)
