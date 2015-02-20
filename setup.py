@@ -246,6 +246,56 @@ class sdist_debian(sdist):
 cmdclass['debian_src'] = sdist_debian
 
 
+class sdist_testimages(sdist):
+    """
+    Tailor made sdist for debian containing only testimages
+    * remove auto-generated doc
+    * remove cython generated .c files
+    * add image files from test/testimages/*
+    """
+    def prune_file_list(self):
+        sdist.prune_file_list(self)
+        to_remove = ["doc/build", "doc/pdf", "doc/html", "pylint", "epydoc", "src", ]
+        print("Removing files for debian")
+        for rm in to_remove:
+            self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
+        # this is for Cython files specifically
+        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix="src")
+        for pyxf in glob.glob("src/*.pyx"):
+            cf = op.splitext(pyxf)[0] + ".c"
+            if op.isfile(cf):
+                self.filelist.exclude_pattern(pattern=cf)
+        for ex in ["argparse", "gzip"]:
+            self.filelist.exclude_pattern(pattern=ex + ".py", anchor=True, prefix="fabio-src")
+        print("Adding test_files for debian")
+
+        self.filelist.allfiles += [op.join("test", "testimages", i)\
+                                   for i in download_images()]
+        self.filelist.include_pattern(pattern="*", anchor=True,
+                                      prefix="test/testimages")
+
+    def make_distribution(self):
+        sdist.make_distribution(self)
+        dest = self.archive_files[0]
+        dirname, basename = op.split(dest)
+        base, ext = op.splitext(basename)
+        while ext in [".zip", ".tar", ".bz2", ".gz", ".Z", ".lz", ".orig"]:
+            base, ext = op.splitext(base)
+        if ext:
+            dest = "".join((base, ext))
+        else:
+            dest = base
+        sp = dest.split("-")
+        base = sp[:-1]
+        nr = sp[-1]
+        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig-test.tar.gz")
+        os.rename(self.archive_files[0], debian_arch)
+        self.archive_files = [debian_arch]
+        print("Building debian orig-test.tar.gz in %s" % self.archive_files[0])
+
+cmdclass['debian_testimages'] = sdist_testimages
+
+
 if sys.platform == "win32":
     root = op.dirname(op.abspath(__file__))
     tocopy_files = []
