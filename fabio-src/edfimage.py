@@ -132,7 +132,7 @@ class Frame(object):
         """
         Parse the header in some EDF format from an already open file
 
-        @param block: string representing the header block. 
+        @param block: string representing the header block.
         @type block: string, should be full ascii
         @return: size of the binary blob
         """
@@ -534,6 +534,13 @@ class edfimage(fabioimage):
         """
         self.__frames = []
         bContinue = True
+
+        if "measure_size" in dir(infile):
+            # Handle bug #18 (https://github.com/kif/fabio/issues/18)
+            stream_size = infile.measure_size()
+        else:
+            stream_size = infile.size
+
         while bContinue:
             block = self._readHeaderBlock(infile)
             if block is None:
@@ -554,7 +561,7 @@ class edfimage(fabioimage):
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
-            if  frame.start + size > infile.size:
+            if  frame.start + size > stream_size:
                 logger.warning("Non complete datablock: got %s, expected %s" % (infile.size - frame.start, size))
                 bContinue = False
                 break
@@ -593,7 +600,7 @@ class edfimage(fabioimage):
     def swap_needed(self):
         """
         Decide if we need to byteswap
-        
+
         @return True if needed, False else and None if not understood
         """
         if self.bpp == 1 :

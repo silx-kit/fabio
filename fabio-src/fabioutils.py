@@ -517,7 +517,7 @@ else:
         def __repr__(self):
             return "fabio." + gzip.GzipFile.__repr__(self)
 
-        def measureSize(self):
+        def measure_size(self):
             if self.mode == gzip.WRITE:
                 return self.size
             if self.__size is None:
