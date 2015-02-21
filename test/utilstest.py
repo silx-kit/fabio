@@ -76,7 +76,7 @@ class UtilsTest(object):
     name = PACKAGE
 
     if IN_SOURCES:
-        image_home = os.path.join(TEST_HOME, "testimages")
+        image_home = os.path.join(os.path.dirname(TEST_HOME), "testimages")
         if not os.path.isdir(image_home):
             os.makedirs(image_home)
         testimages = os.path.join(TEST_HOME, "all_testimages.json")

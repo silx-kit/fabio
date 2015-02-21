@@ -20,6 +20,7 @@ except ImportError:
     from distutils.core import setup
     from distutils.core import Extension, Command
     from distutils.command.sdist import sdist
+from distutils.filelist import FileList
 
 ################################################################################
 # Remove MANIFEST file ... it needs to be re-generated on the fly
@@ -177,7 +178,7 @@ cmdclass['build_ext'] = build_ext_FabIO
 ################################################################################
 def download_images():
     """
-    Download all test images and  
+    Download all test images and
     """
     test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test")
     sys.path.insert(0, test_dir)
@@ -215,16 +216,9 @@ class sdist_debian(sdist):
             cf = op.splitext(pyxf)[0] + ".c"
             if op.isfile(cf):
                 self.filelist.exclude_pattern(pattern=cf)
-        for ex in ["argparse", "gzip"]:
-            self.filelist.exclude_pattern(pattern=ex + ".py", anchor=True, prefix="fabio-src")
-        print("Adding test_files for debian")
-
-        self.filelist.allfiles += [op.join("test", "testimages", i) \
-                                   for i in download_images()]
-        self.filelist.include_pattern(pattern="*", anchor=True,
-                                      prefix="test/testimages")
 
     def make_distribution(self):
+        self.prune_file_list()
         sdist.make_distribution(self)
         dest = self.archive_files[0]
         dirname, basename = op.split(dest)
@@ -249,32 +243,32 @@ cmdclass['debian_src'] = sdist_debian
 class sdist_testimages(sdist):
     """
     Tailor made sdist for debian containing only testimages
-    * remove auto-generated doc
-    * remove cython generated .c files
-    * add image files from test/testimages/*
+    * remove everything
+    * add image files from testimages/*
     """
-    def prune_file_list(self):
-        sdist.prune_file_list(self)
-        to_remove = ["doc/build", "doc/pdf", "doc/html", "pylint", "epydoc", "src", ]
-        print("Removing files for debian")
-        for rm in to_remove:
-            self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
-        # this is for Cython files specifically
-        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix="src")
-        for pyxf in glob.glob("src/*.pyx"):
-            cf = op.splitext(pyxf)[0] + ".c"
-            if op.isfile(cf):
-                self.filelist.exclude_pattern(pattern=cf)
-        for ex in ["argparse", "gzip"]:
-            self.filelist.exclude_pattern(pattern=ex + ".py", anchor=True, prefix="fabio-src")
-        print("Adding test_files for debian")
+    to_remove = ["PKG-INFO", "setup.cfg"]
 
-        self.filelist.allfiles += [op.join("test", "testimages", i)\
-                                   for i in download_images()]
-        self.filelist.include_pattern(pattern="*", anchor=True,
-                                      prefix="test/testimages")
+    def run(self):
+        self.filelist = FileList()
+        self.add_defaults()
+        self.make_distribution()
+
+    def add_defaults(self):
+        print("in sdist_testimages.add_defaults")
+        self.filelist.extend([op.join("testimages", i)\
+                              for i in download_images()])
+        print(self.filelist.files)
+
+    def make_release_tree(self, base_dir, files):
+        print("in sdist_testimages.make_release_tree")
+        sdist.make_release_tree(self, base_dir, files)
+        for afile in self.to_remove:
+            dest = os.path.join(base_dir, afile)
+            if os.path.exists(dest):
+                os.unlink(dest)
 
     def make_distribution(self):
+        print("in sdist_testimages.make_distribution")
         sdist.make_distribution(self)
         dest = self.archive_files[0]
         dirname, basename = op.split(dest)
@@ -288,10 +282,10 @@ class sdist_testimages(sdist):
         sp = dest.split("-")
         base = sp[:-1]
         nr = sp[-1]
-        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig-test.tar.gz")
+        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig-testimages.tar.gz")
         os.rename(self.archive_files[0], debian_arch)
         self.archive_files = [debian_arch]
-        print("Building debian orig-test.tar.gz in %s" % self.archive_files[0])
+        print("Building debian orig-testimages.tar.gz in %s" % self.archive_files[0])
 
 cmdclass['debian_testimages'] = sdist_testimages
 
