@@ -267,6 +267,7 @@ class sdist_testimages(sdist):
             if os.path.exists(dest):
                 os.unlink(dest)
 
+
     def make_distribution(self):
         print("in sdist_testimages.make_distribution")
         sdist.make_distribution(self)
