@@ -82,6 +82,7 @@ class hdf5image(fabioimage):
                     else:
                         ssi.append(None)
                 res.append(slice(*ssi))
+        print(res)
         return tuple(res)
 
     def read(self, fname, frame=None):
