@@ -1270,7 +1270,10 @@ class AppForm(QMainWindow):
             action.setToolTip(tip)
             action.setStatusTip(tip)
         if slot is not None:
-            action.__getattr__(signal).connect(slot)
+# bug debian6: AttributeError: 'QAction' object has no attribute '__getattr__'
+#             action.__getattr__(signal).connect(slot)
+            getattr(action, signal).connect(slot)
+
         if checkable:
             action.setCheckable(True)
         return action
