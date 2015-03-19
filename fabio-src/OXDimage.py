@@ -198,44 +198,55 @@ class OXDimage(fabioimage):
         """
         self.header = {}
         self.resetvals()
-        infile = self._open(fname)
-        self._readheader(infile)
+        with self._open(fname) as infile:
+            self._readheader(infile)
 
-        infile.seek(self.header['Header Size In Bytes'])
+            infile.seek(self.header['Header Size In Bytes'])
 
-        # Compute image size
-        try:
-            self.dim1 = int(self.header['NX'])
-            self.dim2 = int(self.header['NY'])
-        except:
-            raise Exception("Oxford  file", str(fname) + \
-                                "is corrupt, cannot read it")
-        #
-        if self.header['Compression'] == 'TY1':
-            logger.debug("# Compressed with the KM4CCD compression")
-            raw8 = infile.read(self.dim1 * self.dim2)
-            raw16 = None
-            raw32 = None
-            if self.header['OI'] > 0:
-                raw16 = infile.read(self.header['OI'] * 2)
-            if self.header['OL'] > 0:
-                raw32 = infile.read(self.header['OL'] * 4)
+            # Compute image size
+            try:
+                self.dim1 = int(self.header['NX'])
+                self.dim2 = int(self.header['NY'])
+            except:
+                raise Exception("Oxford  file", str(fname) + \
+                                    "is corrupt, cannot read it")
+            #
+            if self.header['Compression'] == 'TY1':
+                logger.debug("# Compressed with the KM4CCD compression")
+                raw8 = infile.read(self.dim1 * self.dim2)
+                raw16 = None
+                raw32 = None
+                if self.header['OI'] > 0:
+                    raw16 = infile.read(self.header['OI'] * 2)
+                if self.header['OL'] > 0:
+                    raw32 = infile.read(self.header['OL'] * 4)
 
-            # endianess is handled at the decompression level
-            raw_data = decTY1(raw8, raw16, raw32)
-            bytecode = raw_data.dtype
-        else:
-            bytecode = numpy.int32
-            self.bpp = len(numpy.array(0, bytecode).tostring())
-            ReadBytes = self.dim1 * self.dim2 * self.bpp
-            raw_data = numpy.fromstring(infile.read(ReadBytes), bytecode)
-            # Always assume littel-endian on the disk
-            if not numpy.little_endian:
-                raw_data.byteswap(True)
+                # endianess is handled at the decompression level
+                raw_data = decTY1(raw8, raw16, raw32)
+                bytecode = raw_data.dtype
+            if self.header['Compression'] == 'TY5':
+                logger.debug("# Compressed with the TY5 compression")
+                bytecode = numpy.int8
+                raw8 = infile.read(self.dim1 * self.dim2)
+                raw_data = numpy.fromstring(raw8, bytecode)
+
+                if self.header['OI'] > 0:
+                    self.raw16 = infile.read(self.header['OI'] * 2)
+                if self.header['OL'] > 0:
+                    self.raw32 = infile.read(self.header['OL'] * 4)
+                self.rest = infile.read()
+            else:
+                bytecode = numpy.int32
+                self.bpp = len(numpy.array(0, bytecode).tostring())
+                nbytes = self.dim1 * self.dim2 * self.bpp
+                raw_data = numpy.fromstring(infile.read(nbytes), bytecode)
+                # Always assume littel-endian on the disk
+                if not numpy.little_endian:
+                    raw_data.byteswap(True)
+#         infile.close()
 
         logger.debug('OVER_SHORT2: %s', raw_data.dtype)
         logger.debug("%s" % (raw_data < 0).sum())
-        infile.close()
         logger.debug("BYTECODE: %s", bytecode)
         self.data = raw_data.reshape((self.dim2, self.dim1))
         self.bytecode = self.data.dtype.type
