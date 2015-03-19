@@ -1,4 +1,28 @@
-from __future__ import with_statement, print_function
+#!/usr/bin/env python
+# coding: utf-8
+
+
+"""
+
+Authors: Henning O. Sorensen & Erik Knudsen
+         Center for Fundamental Research: Metal Structures in Four Dimensions
+         Risoe National Laboratory
+         Frederiksborgvej 399
+         DK-4000 Roskilde
+         email:erik.knudsen@risoe.dk
+
+
+         Jérôme Kieffer, ESRF, Grenoble, France
+
+"""
+# get ready for python3
+from __future__ import absolute_import, print_function, with_statement, division
+__authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
+__date__ = "19/03/2015"
+__status__ = "production"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2015 ESRF"
+__licence__ = "GPL"
+
 import numpy
 import math
 import logging
@@ -13,7 +37,9 @@ from .brukerimage import brukerimage
 from .readbytestream import readbytestream
 
 class bruker100image(brukerimage):
-
+    def __init__(self, data=None , header=None):
+        brukerimage.__init__(self, data, header)
+        self.version = 100
 
     def toPIL16(self, filename=None):
         if not Image:
@@ -29,54 +55,57 @@ class bruker100image(brukerimage):
         return PILimage
 
     def read(self, fname, frame=None):
-        f = open(fname, "rb")
-        try:
-            self._readheader(f)
-        except:
-            raise
+        with self._open(fname, "rb") as infile:
+            try:
+                self._readheader(infile)
+            except:
+                raise
+            rows = self.dim1
+            cols = self.dim2
+            npixelb = int(self.header['NPIXELB'][0])
+            # you had to read the Bruker docs to know this!
 
-        rows = int(self.header['NROWS'])
-        cols = int(self.header['NCOLS'])
-        npixelb = int(self.header['NPIXELB'][0])
-        # you had to read the Bruker docs to know this!
+            # We are now at the start of the image - assuming bruker._readheader worked
+            # Get image block size from NPIXELB.
+            # The total size is nbytes * nrows * ncolumns.
+            self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
+                                        datatype="int", signed='n', swap='n')
 
-        # We are now at the start of the image - assuming 
-        #   readbrukerheader worked
-        # size = rows * cols * npixelb
-        self.data = readbytestream(f, f.tell(), rows, cols, npixelb,
-                                    datatype="int", signed='n', swap='n')
 
-        noverfl = self.header['NOVERFL'].split() # now process the overflows
-        #read the set of "underflow pixels" - these will be completely 
-        # disregarded for now
-        data = self.data
-        k = 0
+            # now process the overflows
 
-        while k < 2:#for the time being things - are done in 16 bits
-            datatype = {'1' : numpy.uint8,
-                        '2' : numpy.uint16,
-                        '4' : numpy.uint32 }[("%d" % 2 ** k)]
-            ar = numpy.array(numpy.fromstring(f.read(int(noverfl[k]) * (2 ** k)),
-                                        datatype), numpy.uint16)
-            #insert the the overflow pixels in the image array:
-            #this is probably a memory intensive way of doing this - 
-            # might be done in a more clever way
-            lim = 2 ** (8 * k) - 1
-            #generate an array comprising of the indices into data.ravel() 
-            # where its value equals lim.
-            M = numpy.compress(numpy.equal(data.ravel(), lim), numpy.arange(rows * cols))
-            #now put values from ar into those indices
-            numpy.put(data.ravel(), M, ar)
-            padding = 16 * int(math.ceil(int(noverfl[k]) * (2 ** k) / 16.)) - \
-                         int(noverfl[k]) * (2 ** k)
-            f.seek(padding, 1)
-            print ("%s bytes read + %d bytes padding" % (noverfl[k],padding))
-            k = k + 1
+            for k, nover in enumerate(self.header['NOVERFL'].split()):
+                if k == 0:
+                    # read the set of "underflow pixels" - these will be completely disregarded for now
+                    continue
+                nov = int(nover)
+                if nov <= 0:
+                    continue
+                bpp = 1 << k  # (2 ** k)
+                datatype = self.bpp_to_numpy[bpp]
+                # upgrade data type
+                self.data = self.data.astype(datatype)
 
-        f.close()
+                # pad nov*bpp to a multiple of 16 bytes
+                nbytes = (nov * bpp + 15) & ~(15)
+                print(k, bpp, datatype, nov, nbytes)
 
-        (self.dim1, self.dim2) = (rows, cols)
-        print( self.dim1, self.dim2)
+                # Multiple of 16 just above
+                data_str = infile.read(nbytes)
+
+                ar = numpy.fromstring(data_str[:nov * bpp], datatype)
+                print(ar)
+                # insert the the overflow pixels in the image array:
+                lim = (1 << (8 * k)) - 1
+                # generate an array comprising of the indices into data.ravel()
+                # where its value equals lim.
+                flat = self.data.ravel()
+                mask = numpy.where(flat == lim)[0]
+                # now put values from ar into those indices
+                flat.put(mask, ar)
+                print ("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
+#         infile.close()
+
         self.resetvals()
         return self
 

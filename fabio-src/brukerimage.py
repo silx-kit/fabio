@@ -20,7 +20,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "03/02/2015"
+__date__ = "19/03/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPL"
@@ -185,9 +185,17 @@ class brukerimage(fabioimage):
                     self.header_keys.append(key)
         # make a (new) header item called "datastart"
         self.header['datastart'] = blocksize * nhdrblks
+
+        # Debugging
+        keys = list(self.header.keys())
+        keys.sort()
+        for k in keys:
+            print(">", k, ":", self.header[k])
+
         # set the image dimensions
-        self.dim1 = int(self.header['NROWS'])
-        self.dim2 = int(self.header['NCOLS'])
+        self.dim1 = int(self.header['NROWS'].split()[0])
+        self.dim2 = int(self.header['NCOLS'].split()[0])
+        self.version = int(self.header.get('VERSION', "86"))
 
     def read(self, fname, frame=None):
         """
@@ -196,8 +204,8 @@ class brukerimage(fabioimage):
         with self._open(fname, "rb") as infile:
             try:
                 self._readheader(infile)
-            except:
-                raise
+            except Exception as err:
+                raise RuntimeError("Unable to parse Bruker headers: %s" % err)
 
             rows = self.dim1
             cols = self.dim2
@@ -215,6 +223,7 @@ class brukerimage(fabioimage):
             data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
             if not numpy.little_endian and data.dtype.itemsize > 1:
                 data.byteswap(True)
+
             # handle overflows
             nov = int(self.header['NOVERFL'])
             if nov > 0:  # Read in the overflows
