@@ -802,7 +802,7 @@ class AppForm(QMainWindow):
         if event.inaxes and self.data.any():
             x = int(round(event.xdata))
             y = int(round(event.ydata))
-            if x <= self.data.shape[1] and y <= self.data.shape[0]:
+            if x < self.data.shape[1] and y < self.data.shape[0]:
                 i = self.data[y, x]
                 self.pix_coords_label.setText("Pixel coordinates and intensity: x =%6d, y =%6d, i =%6g" % (x, y, i))
             else:

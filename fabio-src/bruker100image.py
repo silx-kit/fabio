@@ -88,13 +88,12 @@ class bruker100image(brukerimage):
 
                 # pad nov*bpp to a multiple of 16 bytes
                 nbytes = (nov * bpp + 15) & ~(15)
-                print(k, bpp, datatype, nov, nbytes)
 
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
 
                 ar = numpy.fromstring(data_str[:nov * bpp], datatype)
-                print(ar)
+
                 # insert the the overflow pixels in the image array:
                 lim = (1 << (8 * k)) - 1
                 # generate an array comprising of the indices into data.ravel()
@@ -103,11 +102,17 @@ class bruker100image(brukerimage):
                 mask = numpy.where(flat == lim)[0]
                 # now put values from ar into those indices
                 flat.put(mask, ar)
-                print ("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
+                logger.debug("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
 #         infile.close()
 
         self.resetvals()
         return self
+
+    def write(self, fname):
+        """
+        """
+        raise NotImplementedError
+        #TODO: make a writer !!!
 
 if __name__ == '__main__':
     import sys, time

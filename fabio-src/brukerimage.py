@@ -186,12 +186,6 @@ class brukerimage(fabioimage):
         # make a (new) header item called "datastart"
         self.header['datastart'] = blocksize * nhdrblks
 
-        # Debugging
-        keys = list(self.header.keys())
-        keys.sort()
-        for k in keys:
-            print(">", k, ":", self.header[k])
-
         # set the image dimensions
         self.dim1 = int(self.header['NROWS'].split()[0])
         self.dim2 = int(self.header['NCOLS'].split()[0])
