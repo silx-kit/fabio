@@ -232,9 +232,14 @@ class OXDimage(fabioimage):
 
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
+                else:
+                    self.raw16 = ""
                 if self.header['OL'] > 0:
                     self.raw32 = infile.read(self.header['OL'] * 4)
+                else:
+                    self.raw32 = ""
                 self.rest = infile.read()
+                self.blob = raw8 + self.raw16 + self.raw32 + self.rest
             else:
                 bytecode = numpy.int32
                 self.bpp = len(numpy.array(0, bytecode).tostring())
