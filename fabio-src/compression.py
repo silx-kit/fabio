@@ -11,13 +11,24 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "06/02/2015"
+__date__ = "22/03/2015"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
-import logging, struct, hashlib, base64, sys
+import sys
+import base64
+import hashlib
+import struct
+import logging
 logger = logging.getLogger("compression")
-from .third_party import six
+
+try:
+    import six
+    if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
+        raise ImportError("Six version is too old")
+except ImportError:
+    from .third_party import six
+
 
 if six.PY2:
     bytes = str
@@ -322,7 +333,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_
     @param normal_start: position of the normal value section (can be auto-guessed)
     @param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
     @return : ndarray of 2D with the right size
-    
+
     """
     try:
         from .mar345_IO import uncompress_pck

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Authors: Jerome Kieffer, ESRF 
+Authors: Jerome Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
 kcd images are 2D images written by the old KappaCCD diffractometer built by Nonius in the 1990's
@@ -12,8 +12,9 @@ from __future__ import with_statement, print_function
 import numpy, logging
 import os, string
 from .fabioimage import fabioimage
+from .fabioutils import six
 logger = logging.getLogger("kcdimage")
-from .third_party import six
+
 DATA_TYPES = {"u16"  :  numpy.uint16 }
 
 MINIMUM_KEYS = [
@@ -32,7 +33,7 @@ else:
 
 
 class kcdimage(fabioimage):
-    """ 
+    """
     Read the Nonius kcd data format """
 
 

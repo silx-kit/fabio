@@ -15,7 +15,13 @@ __docformat__ = 'restructuredtext'
 
 import re, os, logging, threading, sys
 logger = logging.getLogger("fabioutils")
-from .third_party import six
+try:
+    import six
+    if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
+        raise ImportError("Six version is too old")
+except ImportError:
+    from .third_party import six
+
 
 if six.PY2:
     bytes = str

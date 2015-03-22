@@ -27,7 +27,7 @@ import numpy
 import logging
 logger = logging.getLogger("pnmimage")
 from .fabioimage import fabioimage
-from .third_party import six
+from .fabioutils import six
 
 SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
 

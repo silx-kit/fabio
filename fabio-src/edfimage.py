@@ -24,9 +24,9 @@ import os, logging
 logger = logging.getLogger("edfimage")
 import numpy
 from .fabioimage import fabioimage
-from .fabioutils import isAscii, toAscii, nice_int
+from .fabioutils import isAscii, toAscii, nice_int, six
 from .compression import decBzip2, decGzip, decZlib
-from .third_party import six
+
 
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"    :  numpy.int8,

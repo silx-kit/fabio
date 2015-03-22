@@ -35,7 +35,15 @@ except ImportError:
     Image = None
 import numpy
 from .fabioimage import fabioimage
-from .third_party.TiffIO import TiffIO
+
+try:
+    from PyMca.TiffIO import TiffIO
+except ImportError:
+    try:
+        from PyMca5.PyMca.TiffIO import TiffIO
+    except ImportError:
+        from .third_party.TiffIO import TiffIO
+
 
 PIL_TO_NUMPY = { "I;16": numpy.uint16,
                    "F": numpy.float32,
