@@ -54,7 +54,7 @@ DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
 class OXDimage(fabioimage):
     """
     Oxford Diffraction Sapphire 3 images reader/writer class
-    
+
     Note: We assume the binary format is alway little-endian, is this True ?
     """
     def _readheader(self, infile):
@@ -224,9 +224,10 @@ class OXDimage(fabioimage):
                 # endianess is handled at the decompression level
                 raw_data = decTY1(raw8, raw16, raw32)
                 bytecode = raw_data.dtype
-            if self.header['Compression'] == 'TY5':
-                logger.debug("# Compressed with the TY5 compression")
+            elif self.header['Compression'] == 'TY5':
+                logger.warning("# Compressed with the TY5 compression")
                 bytecode = numpy.int8
+                self.bpp = 1
                 raw8 = infile.read(self.dim1 * self.dim2)
                 raw_data = numpy.fromstring(raw8, bytecode)
 
@@ -406,7 +407,7 @@ class OXDimage(fabioimage):
     def write(self, fname):
         """Write Oxford diffraction images: this is still beta
         Only TY1 compressed images is currently possible
-        @param fname: output filename 
+        @param fname: output filename
         """
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2
