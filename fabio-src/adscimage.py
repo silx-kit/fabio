@@ -67,7 +67,7 @@ class adscimage(fabioimage):
             if b'=' in line:
                 (key, val) = to_str(line).split('=')
                 self.header_keys.append(key.strip())
-                self.header[key.strip()] = val.strip(' ;\n')
+                self.header[key.strip()] = val.strip(' ;\n\r')
             line = infile.readline()
             bytesread = bytesread + len(line)
 
