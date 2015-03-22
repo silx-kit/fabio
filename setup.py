@@ -39,7 +39,7 @@ try:
 except ImportError:
     USE_CYTHON = False
 else:
-    if Cython.Compiler.Version.version < "0.17":
+    if tuple(int(i) for i in Cython.Compiler.Version.version.split(".")[:2]) < (0, 17):
         USE_CYTHON = False
     else:
         USE_CYTHON = True
@@ -308,6 +308,16 @@ if sys.platform == "win32":
             script_files.append(filein + ".py")
 else:
     script_files = glob.glob("scripts/*")
+
+
+# adaptation for Debian packaging (without third_party)
+packages = ["fabio", "fabio.test"]
+package_dir = {"fabio": "fabio-src",
+             "fabio.test": "test" }
+if os.path.isdir("third_party"):
+    package_dir["fabio.third_party"] = "third_party"
+    packages.append("fabio.third_party")
+
 
 if __name__ == "__main__":
     setup(name='fabio',
