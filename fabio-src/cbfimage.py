@@ -205,7 +205,7 @@ class cbfimage(fabioimage):
         binary_data = self.cbs[self.start_binary + len(STARTER):]
         logger.debug("CBS type %s len %s" % (type(self.cbs), len(self.cbs)))
         
-        if self.header.has_key("Content-MD5"):
+        if "Content-MD5" in self.header:
                 ref = numpy.string_(self.header["Content-MD5"])
                 obt = md5sum(binary_data)
                 if ref != obt:
