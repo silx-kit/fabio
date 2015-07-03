@@ -395,7 +395,7 @@ class Frame(object):
         header_keys.insert(0, "EDF_HeaderSize")
         header["EDF_HeaderSize"] = "%5s" % (approxHeaderSize)
         header_keys.insert(0, "EDF_BinarySize")
-        header["EDF_BinarySize"] = len(data.tostring())
+        header["EDF_BinarySize"] = data.nbytes
         header_keys.insert(0, "EDF_DataBlockID")
         if not "EDF_DataBlockID" in header:
             header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
@@ -670,6 +670,10 @@ class edfimage(fabioimage):
         @return: None
 
         """
+        # correct for bug #27: read all data before opening the file in write mode
+        if fname == self.filename:
+            [(frame.header, frame.data) for frame in self.__frames]
+            # this is thrown away
         with self._open(fname, mode="wb") as outfile:
             for i, frame in enumerate(self.__frames):
                 frame.iFrame = i
