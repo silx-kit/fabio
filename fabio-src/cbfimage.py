@@ -204,10 +204,12 @@ class cbfimage(fabioimage):
                 self.cbs = self.cif[CIF_BINARY_BLOCK_KEY]
         binary_data = self.cbs[self.start_binary + len(STARTER):]
         logger.debug("CBS type %s len %s" % (type(self.cbs), len(self.cbs)))
-        ref = numpy.string_(self.header["Content-MD5"])
-        obt = md5sum(binary_data)
-        if ref != obt:
-            logger.error("Checksum of binary data mismatch: expected %s, got %s" % (ref, obt))
+        
+        if "Content-MD5" in self.header:
+                ref = numpy.string_(self.header["Content-MD5"])
+                obt = md5sum(binary_data)
+                if ref != obt:
+                    logger.error("Checksum of binary data mismatch: expected %s, got %s" % (ref, obt))
 
         if self.header["conversions"] == "x-CBF_BYTE_OFFSET":
             self.data = self._readbinary_byte_offset(binary_data).astype(self.bytecode).reshape((self.dim2, self.dim1))
