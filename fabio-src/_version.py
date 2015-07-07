@@ -46,7 +46,7 @@ MAJOR = 0
 MINOR = 2
 MICRO = 2
 RELEV = "dev"  # <16
-SERIAL = 2  # <16
+SERIAL = 3  # <16
 
 
 from collections import namedtuple

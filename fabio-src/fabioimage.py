@@ -359,6 +359,15 @@ class fabioimage(object):
 
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
+            if "name" in dir(fname):
+                self.header["filename"] =self.filename= fname.name
+            else:
+                self.filename = self.header["filename"] = "stream"
+                try:
+                    setattr(fname, "name", self.filename)
+                except AttributeError:
+                    #cStringIO
+                    logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s"%type(fname))
             return fname
 
         fileObject = None

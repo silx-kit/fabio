@@ -534,12 +534,14 @@ class edfimage(fabioimage):
         """
         self.__frames = []
         bContinue = True
-
-        if "measure_size" in dir(infile):
+        attrs = dir(infile)
+        if "measure_size" in attrs:
             # Handle bug #18 (https://github.com/kif/fabio/issues/18)
             stream_size = infile.measure_size()
-        else:
+        elif "size" in attrs:
             stream_size = infile.size
+        elif "len" in attrs:
+            stream_size = infile.len
 
         while bContinue:
             block = self._readHeaderBlock(infile)
