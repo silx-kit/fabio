@@ -356,13 +356,15 @@ class fabioimage(object):
         Return an object which can be used for "read" and "write"
         ... FIXME - what about seek ?
         """
-        fileObject = None
-        self.filename = fname
-        self.filenumber = fabioutils.extract_filenumber(fname)
 
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
             return fname
+
+        fileObject = None
+        self.filename = fname
+        self.filenumber = fabioutils.extract_filenumber(fname)
+
         if isinstance(fname, fabioutils.StringTypes):
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
