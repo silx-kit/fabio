@@ -9,7 +9,8 @@ Linux distributions Ubuntu (since 11.10) and Debian7 where the
 package is named python-fabio and can be installed via:
 
 ::
-    # apt-get install python-fabio
+
+    sudo apt-get install python-fabio
 
 If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP-installable.
 PIP is the Python Installer Program, similar to ``apt-get`` for Python.
@@ -20,6 +21,7 @@ https://bootstrap.pypa.io/get-pip.py
 then
 
 ::
+
   pip install fabio
 
 Installation under windows
@@ -42,6 +44,7 @@ https://bootstrap.pypa.io/get-pip.py
 Then install the wheel package manager and all dependencies for :
 
 ::
+
     python get-pip.py
     pip install setuptools
     pip install wheel
@@ -94,6 +97,7 @@ https://bootstrap.pypa.io/get-pip.py
 Then install the wheel package manager:
 
 ::
+
     pip install setuptools
     pip install wheel
     pip install PIL
@@ -114,6 +118,7 @@ Manual Installation for any operating system
 
 Install the dependencies
 ........................
+
 * Python 2.6 - 2.7 or 3.2+
 * numpy - http://www.numpy.org
 
@@ -198,6 +203,7 @@ Debian packaging
 FabIO features some helper function to make debian packaging easier:
 
 ::
+
     #to create the orig.tar.gz without cython generated C files for Sphinx built documentation:
     python setup.py debian_src
      

@@ -45,8 +45,8 @@ RELEASE_LEVEL_VALUE = { "dev": 0,
 MAJOR = 0
 MINOR = 2
 MICRO = 2
-RELEV = "beta"  # <16
-SERIAL = 1  # <16
+RELEV = "rc"  # <16
+SERIAL = 0  # <16
 
 
 from collections import namedtuple
