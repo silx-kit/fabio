@@ -1,4 +1,5 @@
+#List of dependecies used by PIP but also by ReadTheDocs to generate the documentation on the fly
 numpy
 cython
-sphinx
+#sphinx
 #sphinxcontrib-programoutput
