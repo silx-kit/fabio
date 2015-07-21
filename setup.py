@@ -134,26 +134,26 @@ cmdclass['test'] = PyTest
 # We subclass the build_ext class in order to handle compiler flags
 # for openmp and opencl etc in a cross platform way
 translator = {
-        # Compiler
-          # name, compileflag, linkflag
-        'msvc':{
-            'openmp': ('/openmp', ' '),
-            'debug' : ('/Zi', ' '),
-            'OpenCL': 'OpenCL',
-            },
-        'mingw32':{
-            'openmp': ('-fopenmp', '-fopenmp'),
-            'debug' : ('-g', '-g'),
-            'stdc++': 'stdc++',
-            'OpenCL': 'OpenCL'
-            },
-        'default':{
-            'openmp': ('-fopenmp', '-fopenmp'),
-            'debug' : ('-g', '-g'),
-            'stdc++': 'stdc++',
-            'OpenCL': 'OpenCL'
-            }
-        }
+        #  Compiler
+        #  name, compileflag, linkflag
+        'msvc': {
+                 'openmp': ('/openmp', ' '),
+                 'debug': ('/Zi', ' '),
+                 'OpenCL': 'OpenCL',
+                },
+        'mingw32': {
+                    'openmp': ('-fopenmp', '-fopenmp'),
+                    'debug': ('-g', '-g'),
+                    'stdc++': 'stdc++',
+                    'OpenCL': 'OpenCL'
+                   },
+        'default': {
+                    'openmp': ('-fopenmp', '-fopenmp'),
+                    'debug': ('-g', '-g'),
+                    'stdc++': 'stdc++',
+                    'OpenCL': 'OpenCL'
+                   }
+              }
 
 
 class build_ext_FabIO(build_ext):
@@ -267,7 +267,6 @@ class sdist_testimages(sdist):
             if os.path.exists(dest):
                 os.unlink(dest)
 
-
     def make_distribution(self):
         print("in sdist_testimages.make_distribution")
         sdist.make_distribution(self)
@@ -313,7 +312,7 @@ else:
 # adaptation for Debian packaging (without third_party)
 packages = ["fabio", "fabio.test"]
 package_dir = {"fabio": "fabio-src",
-             "fabio.test": "test" }
+               "fabio.test": "test"}
 if os.path.isdir("third_party"):
     package_dir["fabio.third_party"] = "third_party"
     packages.append("fabio.third_party")
@@ -355,4 +354,4 @@ if __name__ == "__main__":
               'Topic :: Scientific/Engineering :: Physics',
               'Topic :: Scientific/Engineering :: Visualization',
               'Topic :: Software Development :: Libraries :: Python Modules',
-              ],)
+                ],)
