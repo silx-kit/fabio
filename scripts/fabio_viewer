@@ -39,6 +39,7 @@ from fabio.nexus import Nexus
 numpy.seterr(divide='ignore')
 
 import matplotlib
+matplotlib.use("qt4Agg")
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -100,7 +101,7 @@ class AppForm(QMainWindow):
         return res
 
     def open_data_series(self, series=None):
-        if series is None:
+        if not series:
             series = QFileDialog.getOpenFileNames(self, 'Select and open series of files')
         series = [str(f) for f in list(series)]
         total = len(series)
