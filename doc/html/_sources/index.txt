@@ -13,7 +13,9 @@ Contents:
 
    getting_started
    install
+   performances
    Changelog
+   man/fabio_viewer
    api/modules
 
 
