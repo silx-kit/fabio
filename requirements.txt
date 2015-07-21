@@ -2,5 +2,5 @@
 numpy
 cython
 lxml
-#sphinx
-#sphinxcontrib-programoutput
+sphinx
+sphinxcontrib-programoutput

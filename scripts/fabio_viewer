@@ -7,7 +7,8 @@
 #############################################################
 
 """ 
-Fabio_viewer is a portable diffraction images viewer/converter:
+FabIO_viewer is a portable diffraction images viewer/converter:
+
 * Written in Python, it combines the functionalities of the I/O library fabIO with a user friendly Qt4 GUI.
 * Image converter is also a light viewer based on the visualization tool provided by the module matplotlib.
 """
@@ -20,6 +21,8 @@ __licence__ = "GPL"
 import sys
 import os
 import time
+import warnings
+
 from PyQt4.QtCore import QDir, Qt, QRect, QString, QCoreApplication
 from PyQt4.QtGui import QLabel, QVBoxLayout, QWidget, QSplitter, QListWidget, \
                         QComboBox, QApplication, QStyleFactory, QHBoxLayout, \
@@ -34,15 +37,18 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 import numpy
-import fabio
-from fabio.nexus import Nexus
 numpy.seterr(divide='ignore')
 
-import matplotlib
-matplotlib.use("qt4Agg")
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
+with warnings.catch_warnings():
+    import matplotlib
+    from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+    from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+    from matplotlib.figure import Figure
+    import fabio
+    warnings.simplefilter("ignore")
+
+from fabio.nexus import Nexus
+
 
 try:
     from argparse import ArgumentParser

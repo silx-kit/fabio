@@ -25,8 +25,6 @@ root_dir = os.path.abspath("../..")
 build_dir = [os.path.abspath(i) for i in glob.glob('../../build/lib*')]
 # if (not build_dir) or ("__init__.py" not in os.listdir(os.path.join(build_dir[0], "fabio"))):
 curr_dir = os.path.abspath(os.getcwd())
-print(root_dir, build_dir, curr_dir)
-print(os.listdir(root_dir))
 os.chdir(root_dir)
 errno = subprocess.call([sys.executable, 'setup.py', 'build'])
 if errno != 0:
@@ -55,7 +53,10 @@ except:
     sphinx.ext.mathjax = mathjax
     sys.modules["sphinx.ext.mathjax"] = mathjax
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax']
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.mathjax',
+              'sphinxcontrib.programoutput',
+]
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -72,14 +73,16 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'FabIO'
-copyright = u'2006-2015, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer'
+from fabio._version import strictversion, version, __date__ as fabio_date
+year = fabio_date.split("/")[-1]
+copyright = u'2006-%s, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer' % (year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-from fabio._version import strictversion, version
+
 # The full version, including alpha/beta/rc tags.
 release = strictversion
 
