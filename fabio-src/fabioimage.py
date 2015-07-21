@@ -356,13 +356,24 @@ class fabioimage(object):
         Return an object which can be used for "read" and "write"
         ... FIXME - what about seek ?
         """
+
+        if hasattr(fname, "read") and hasattr(fname, "write"):
+            # It is already something we can use
+            if "name" in dir(fname):
+                self.header["filename"] =self.filename= fname.name
+            else:
+                self.filename = self.header["filename"] = "stream"
+                try:
+                    setattr(fname, "name", self.filename)
+                except AttributeError:
+                    #cStringIO
+                    logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s"%type(fname))
+            return fname
+
         fileObject = None
         self.filename = fname
         self.filenumber = fabioutils.extract_filenumber(fname)
 
-        if hasattr(fname, "read") and hasattr(fname, "write"):
-            # It is already something we can use
-            return fname
         if isinstance(fname, fabioutils.StringTypes):
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":

@@ -22,7 +22,7 @@ License: GPLv3+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "11/07/2011"
+__date__ = "23/03/2011"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
