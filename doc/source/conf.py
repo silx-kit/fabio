@@ -14,6 +14,7 @@
 import sys
 import os
 import glob
+import subprocess
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -21,21 +22,20 @@ import glob
 # sys.path.insert(0, os.path.abspath('.'))
 
 root_dir = os.path.abspath("../..")
+build_dir = [os.path.abspath(i) for i in glob.glob('../../build/lib*')]
+# if (not build_dir) or ("__init__.py" not in os.listdir(os.path.join(build_dir[0], "fabio"))):
+curr_dir = os.path.abspath(os.getcwd())
+print(root_dir, build_dir, curr_dir)
+os.chdir(root_dir)
+errno = subprocess.call([sys.executable, 'setup.py', 'build'])
+if errno != 0:
+    print("Unable to build FabIO, needed for the documentation")
+    raise SystemExit(errno)
+os.chdir(curr_dir)
 build_dir = glob.glob('../../build/lib*')
-if (not build_dir) or ("__init__.py" not in os.listdir(os.path.join(build_dir[0], "fabio"))):
-    import subprocess
-    curr_dir = os.getcwd()
-    os.chdir(root_dir)
-    errno = subprocess.call([sys.executable, 'setup.py', 'build'])
-    if errno != 0:
-        raise SystemExit(errno)
-    else:
-        os.chdir(curr_dir)
-    build_dir = glob.glob('../../build/lib*')
-sys.path.insert(1, build_dir[0])
+sys.path.insert(0, build_dir[0])
 os.environ["PATH"] = os.path.join(root_dir, "scripts") + os.pathsep + os.environ.get("PATH", "")
 os.environ["PYTHONPATH"] = build_dir[0] + os.pathsep + os.environ.get("PYTHONPATH", "")
-
 
 # -- General configuration -----------------------------------------------------
 
