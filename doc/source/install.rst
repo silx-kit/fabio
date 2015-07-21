@@ -12,10 +12,15 @@ package is named python-fabio and can be installed via:
     # apt-get install python-fabio
 
 If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP-installable.
-PIP is the Python Installer Program, similar to ``apt-get`` for Python. It runs under any architecture and can simply be installed from:
+PIP is the Python Installer Program, similar to ``apt-get`` for Python.
+It runs under any architecture and can simply be installed from:
 
 https://bootstrap.pypa.io/get-pip.py
 
+then
+
+::
+  pip install fabio
 
 Installation under windows
 --------------------------
@@ -24,20 +29,23 @@ Install Python from http://python.org.
 I would recommend Python 2.7 in 64 bits version if your operating system allows it.
 Python3 (>=3.2) is OK while less tested.
 
+If you are looking for an integrated distribution of Python on Windows,
+WinPython is a good one, the Python2.7, 64 bit version is advised.
+https://winpython.github.io/
+It comes with pip pre-installed and configured.
+
 Installation using PIP:
 .......................
 Download PIP and run:
 https://bootstrap.pypa.io/get-pip.py
 
-
-Then install the wheel package manager:
+Then install the wheel package manager and all dependencies for :
 
 ::
+    python get-pip.py
     pip install setuptools
     pip install wheel
-    pip install PIL
-    pip install numpy
-    pip install lxml
+    pip install fabio
 
 Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
 http://www.riverbankcomputing.co.uk/software/pyqt/download
@@ -53,10 +61,11 @@ Pay attention to the Python version (both number and architecture).
 DO NOT MIX 32 and 64 bits version.
 To determine the version of your Python:
 
-::
-    >> 8 * tuple.itemsize
+.. highlight:: python
+
+    >>> 8 * tuple.__itemsize__
     
-This gives you the architecture of the Python interpreter
+This gives you the architecture width of the Python interpreter
 
 
 Installation from sources
@@ -112,7 +121,7 @@ For full functionality of FabIO the following modules need to be installed:
 
 * PIL (python imaging library) - http://www.pythonware.com
 * lxml (library for reading XSDimages)
-* PyQt4 for the fabio_viewer
+* PyQt4 for the fabio_viewer program
 
 
 
@@ -128,27 +137,28 @@ e.g.
 
 ::
 
-    tar xvzf fabio-0.2.1.tar.gz
+    tar xvzf fabio-0.2.2.tar.gz
 
 or
 
 ::
 
-    unzip fabio-0.2.1.zip
+    unzip fabio-0.2.2.zip
 
-all files are unpacked into the directory fabio-0.2.0. To install these do
+all files are unpacked into the directory fabio-0.2.2. To install these do
 
 ::
 
-     cd fabio-0.2.1
+     cd fabio-0.2.2
 
-and install fabio with
+and install fabio: build it, run the tests and build the wheel package and install it.
 
 ::
 
     python setup.py build
-    sudo python setup.py install
-
+    python setup.py bdist_wheel
+    sudo pip install dist/fabio-0.2.2*.whl
+    
 most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.
 
 Development versions
@@ -159,8 +169,8 @@ The newest development version can be obtained by checking it out from the git r
 
     git clone https://github.com/kif/fabio
     cd fabio
-    python setup.py build
-    sudo python setup.py install
+    python setup.py build bdist_wheel
+    sudo pip install dist/fabio-0.2.2*.whl
 
 For Ubuntu/Debian users, you will need:
 
@@ -180,7 +190,21 @@ We provide also a debian-package builder based on stdeb:
 	sudo apt-get install python-stdeb
 	./build-deb.sh 3
 
-which builds a couple of debian packages (actually one for python2 and another for python3) and installs them in a single command. Handy for testing.
+which builds a couple of debian packages (actually one for python2 and another for python3) and installs them in a single command.
+Handy for testing, but very clean, see hereafter
+
+Debian packaging
+----------------
+FabIO features some helper function to make debian packaging easier:
+
+::
+    #to create the orig.tar.gz without cython generated C files for Sphinx built documentation:
+    python setup.py debian_src
+     
+    # to create a tarball of all images needed to test the library 
+    python setup.py debian_testimages
+
+Two tarball are created, one with all source code (and only source code) and the other one with all test-data.
 
 Test suite
 ----------
@@ -194,7 +218,8 @@ Be sure you have an internet connection and your environment variable http_proxy
 
    export http_proxy=http://proxy.site.org:3128
 
-Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files", it is done on purpose to ensure robustness in FabIO.
+Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files",
+it is done on purpose to ensure robustness in FabIO.
 
 
 Run test suite from installation directory
@@ -210,7 +235,7 @@ To run the test:
 Run test suite from installed version
 .....................................
 
-Within Python:
+Within Python (or ipython):
 
 .. code-block:: python
 

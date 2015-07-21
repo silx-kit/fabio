@@ -255,8 +255,7 @@ class sdist_testimages(sdist):
 
     def add_defaults(self):
         print("in sdist_testimages.add_defaults")
-        self.filelist.extend([op.join("testimages", i)\
-                              for i in download_images()])
+        self.filelist.extend([op.join("testimages", i) for i in download_images()])
         print(self.filelist.files)
 
     def make_release_tree(self, base_dir, files):
