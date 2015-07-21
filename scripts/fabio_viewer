@@ -21,7 +21,6 @@ __licence__ = "GPL"
 import sys
 import os
 import time
-import warnings
 
 from PyQt4.QtCore import QDir, Qt, QRect, QString, QCoreApplication
 from PyQt4.QtGui import QLabel, QVBoxLayout, QWidget, QSplitter, QListWidget, \
@@ -39,13 +38,11 @@ except AttributeError:
 import numpy
 numpy.seterr(divide='ignore')
 
-with warnings.catch_warnings():
-    import matplotlib
-    from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-    from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-    from matplotlib.figure import Figure
-    import fabio
-    warnings.simplefilter("ignore")
+import matplotlib
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+import fabio
 
 from fabio.nexus import Nexus
 
