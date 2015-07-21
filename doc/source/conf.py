@@ -26,6 +26,7 @@ build_dir = [os.path.abspath(i) for i in glob.glob('../../build/lib*')]
 # if (not build_dir) or ("__init__.py" not in os.listdir(os.path.join(build_dir[0], "fabio"))):
 curr_dir = os.path.abspath(os.getcwd())
 print(root_dir, build_dir, curr_dir)
+print(os.listdir(root_dir))
 os.chdir(root_dir)
 errno = subprocess.call([sys.executable, 'setup.py', 'build'])
 if errno != 0:
