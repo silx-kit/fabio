@@ -8,7 +8,7 @@ python:
   - "nightly"
 # command to install dependencies
 install:
-  - "pip install -r requirements.txt"
+  - "pip install -r requirements_travis.txt"
 # command to run tests
 script: 
   - python setup.py build test
