@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 FabIO class for dealing with TIFF images.
 In facts wraps TiffIO from V. Armando Solé (available in PyMca) or falls back to PIL
@@ -22,7 +22,7 @@ License: GPLv3+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "23/03/2011"
+__date__ = "14/08/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -40,7 +40,7 @@ try:
     from PyMca.TiffIO import TiffIO
 except ImportError:
     try:
-        from PyMca5.PyMca.TiffIO import TiffIO
+        from PyMca5.PyMcaIO.TiffIO import TiffIO
     except ImportError:
         from .third_party.TiffIO import TiffIO
 
@@ -121,7 +121,7 @@ class tifimage(fabioimage):
         self.dim1 = int(header[9])
         self.dim2 = int(header[15])
 #         nbits is not a fabioimage attribute...
-        self.nbits = int(header[21]) # number of bits
+        self.nbits = int(header[21])  # number of bits
 
     def read(self, fname, frame=None):
         """
@@ -134,7 +134,7 @@ class tifimage(fabioimage):
         try:
             tiffIO = TiffIO(infile)
             if tiffIO.getNumberOfImages() > 0:
-                #No support for now of multi-frame tiff images
+                # No support for now of multi-frame tiff images
                 self.data = tiffIO.getImage(0)
                 self.header = tiffIO.getInfo(0)
         except Exception as error:
@@ -163,7 +163,7 @@ class tifimage(fabioimage):
                     self.dim1, self.dim2 = self.pilimage.size
                     if self.pilimage.mode in PIL_TO_NUMPY:
                         self.data = numpy.fromstring(self.pilimage.tostring(), PIL_TO_NUMPY[self.pilimage.mode])
-                    else: #probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
+                    else:  # probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
                         self.data = numpy.fromstring(self.pilimage.convert("F").tostring(), numpy.float32)
                     self.data.shape = (self.dim2, self.dim1)
             else:
@@ -187,7 +187,7 @@ class tifimage(fabioimage):
 
 
 
-#define a couple of helper classes here:
+# define a couple of helper classes here:
 class Tiff_header(object):
     def __init__(self, string):
         if string[:4] == "II\x2a\x00":
@@ -196,7 +196,7 @@ class Tiff_header(object):
             self.byteorder = BIG_ENDIAN
         else:
             logger.warning("Warning: This does not appear to be a tiff file")
-        #the next two bytes contains the offset of the oth IFD
+        # the next two bytes contains the offset of the oth IFD
         offset_first_ifd = struct.unpack_from("h", string[4:])[0]
         self.ifd = [Image_File_Directory()]
         offset_next = self.ifd[0].unpack(string, offset_first_ifd)
@@ -205,7 +205,7 @@ class Tiff_header(object):
             offset_next = self.ifd[-1].unpack(string, offset_next)
 
         self.header = {}
-        #read the values of the header items into a dictionary
+        # read the values of the header items into a dictionary
         for entry in self.ifd[0].entries:
             if entry.tag in baseline_tiff_tags.keys():
                 self.header[baseline_tiff_tags[entry.tag]] = entry.val
@@ -213,26 +213,26 @@ class Tiff_header(object):
                 self.header[entry.tag] = entry.val
 
 class Image_File_Directory(object):
-    def __init__(self, instring=None, offset= -1):
+    def __init__(self, instring=None, offset=-1):
         self.entries = []
         self.offset = offset
         self.count = None
 
-    def unpack(self, instring, offset= -1):
+    def unpack(self, instring, offset=-1):
         if (offset == -1): offset = self.offset
 
         strInput = instring[offset:]
         self.count = struct.unpack_from("H", strInput[:2])[0]
-        #0th IFD contains count-1 entries (count includes the adress of the next IFD)
+        # 0th IFD contains count-1 entries (count includes the adress of the next IFD)
         for i in range(self.count - 1):
             e = Image_File_Directory_entry().unpack(strInput[2 + 12 * (i + 1):])
             if (e != None):
                 self.entries.append(e)
-            #extract data associated with tags
+            # extract data associated with tags
             for e in self.entries:
                 if (e.val == None):
                     e.extract_data(instring)
-        #do we have some more ifds in this file
+        # do we have some more ifds in this file
         offset_next = struct.unpack_from("L", instring[offset + 2 + self.count * 12:])[0]
         return offset_next
 
