@@ -42,15 +42,14 @@ install:
 
   # Check that we have the expected version and architecture for Python
   - "python --version"
-  - "python -c 'print(tuple.__itemsize__*8)'"
+  - "python -c \"print(tuple.__itemsize__*8)\""
   # Install the build and runtime dependencies of the project.
   - "%CMD_IN_ENV% pip install -r requirements_appveyor.txt"
-  - "%CMD_IN_ENV% python setup.py bdist_wheel bdist_wininst"
+  - "%CMD_IN_ENV% python setup.py build bdist_wheel bdist_wininst"
   - ps: "ls dist"
 
   # Install the genreated wheel package to test it
-#  - "pip install --pre --no-index --find-links dist/ scikit-learn"
-  - "python setup.py build install"
+  - "pip install dist/*.whl"
 
 # Not a .NET project, we build fabio in the install step instead
 build: false
