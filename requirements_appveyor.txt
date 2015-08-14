@@ -2,6 +2,6 @@
 --find-links http://www.edna-site.org/pub/appveyor
 
 wheel==0.24.0
-numpy==1.8.1
+numpy==1.9.2
 Cython==0.23.0
 lxml==3.4.4
