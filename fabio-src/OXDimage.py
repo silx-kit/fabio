@@ -459,7 +459,10 @@ class OXDimage(fabioimage):
                 ex1 += 1
                 # this is the special case 1:
                 # if the marker 254 is found the next 2 bytes encode one pixel
-                current = last + raw[pos_inp + 1:pos_inp + 3].view("int16")[0]
+                value = raw[pos_inp + 1:pos_inp + 3].view("int16")
+                if not numpy.little_endian:
+                    value = value.byteswap(True)
+                current = last + value[0]
                 pos_inp += 3
 
             elif value == 255:
@@ -467,7 +470,10 @@ class OXDimage(fabioimage):
                 # if the marker 255 is found the next 4 bytes encode one pixel
                 ex2 += 1
                 print('special case 32 bits.')
-                current = last + raw[pos_inp + 1:pos_inp + 5].view("int32")[0]
+                value = raw[pos_inp + 1:pos_inp + 5].view("int32")
+                if not numpy.little_endian:
+                    value = value.byteswap(True)
+                current = last + value[0]
                 pos_inp += 5
             data[pos_out] = current
             pos_out += 1
