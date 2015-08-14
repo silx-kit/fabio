@@ -9,7 +9,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPL"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "08/01/2015"
+__date__ = "14/08/2015"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -38,7 +38,7 @@ from .compression import bz2, gzip
 import traceback
 from math import ceil
 
-if sys.version_info < (3, 4):
+if sys.version_info < (3, 3):
     from threading import _Semaphore as _Semaphore
 else:
     from threading import Semaphore as _Semaphore
