@@ -241,7 +241,7 @@ class OXDimage(fabioimage):
                     self.raw32 = ""
                 self.rest = infile.read()
                 self.blob = raw8 + self.raw16 + self.raw32 + self.rest
-                raw_data = self.dec_TY5(self.blob)
+                raw_data = self.dec_TY5(raw8 + self.raw16 + self.raw32)
             else:
                 bytecode = numpy.int32
                 self.bpp = len(numpy.array(0, bytecode).tostring())
@@ -438,19 +438,41 @@ class OXDimage(fabioimage):
         @param stream: input stream
         @return: 1D array with data
         """
-        array_size = self.dim1*self.dim2
+        array_size = self.dim1 * self.dim2
         stream_size = len(stream)
         data = numpy.zeros(array_size)
-        raw = numpy.fromstring(stream, dtype="uint8").astype(int)
-        pos_inp = 0
-        pos_out = 0
-        current = 0
-        last = 0
-        while pos_inp<stream_size and pos_out<array_size:
+        raw = numpy.fromstring(stream, dtype="uint8")
+        pos_inp = pos_out = current = ex1 = ex2 = 0
 
-
+        while pos_inp < stream_size and pos_out < array_size:
             if pos_out % self.dim2 == 0:
                 last = 0
+            else:
+                last = current
+            value = raw[pos_inp]
+            if value < 254:
+                # this is the normal case
+#               # 1 bytes encode one pixel
+                current = last + value - 127
+                pos_inp += 1
+            elif value == 254:
+                ex1 += 1
+                # this is the special case 1:
+                # if the marker 254 is found the next 2 bytes encode one pixel
+                current = last + raw[pos_inp + 1:pos_inp + 3].view("int16")[0]
+                pos_inp += 3
+
+            elif value == 255:
+                # this is the special case 2:
+                # if the marker 255 is found the next 4 bytes encode one pixel
+                ex2 += 1
+                print('special case 32 bits.')
+                current = last + raw[pos_inp + 1:pos_inp + 5].view("int32")[0]
+                pos_inp += 5
+            data[pos_out] = current
+            pos_out += 1
+
+        print("Exception encountered: 2:%s, 4:%s" % (ex1, ex2))
         return data
 
 
