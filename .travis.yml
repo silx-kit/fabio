@@ -9,6 +9,8 @@ python:
 # command to install dependencies
 install:
   - "pip install -r requirements_travis.txt"
+  - "python setup.py build install"
 # command to run tests
 script: 
-  - python setup.py build test
+  - "python setup.py build test"
+  - "(cd /tmp && python -c python -c 'import fabio; fabio.tests()')"
