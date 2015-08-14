@@ -45,11 +45,11 @@ install:
   - "python -c \"print(tuple.__itemsize__*8)\""
   # Install the build and runtime dependencies of the project.
   - "%CMD_IN_ENV% pip install --trusted-host www.edna-site.org -r requirements_appveyor.txt"
-  - "%CMD_IN_ENV% python setup.py build bdist_wheel bdist_wininst"
+  - "%CMD_IN_ENV% python setup.py build bdist_wheel bdist_msi"
   - ps: "ls dist"
 
   # Install the genreated wheel package to test it
-  - "pip install dist/*.whl"
+  - "pip install --pre --no-index --find-links dist/ fabio"
 
 # Not a .NET project, we build fabio in the install step instead
 build: false
