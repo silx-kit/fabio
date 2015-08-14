@@ -97,3 +97,85 @@ def analyseCython(bytes stream not None, size=None):
             j += 1
 
     return dataOut[:j]
+
+
+#@cython.boundscheck(False)
+def analyseTY5(bytes stream not None, size=None):
+    """
+    Analyze a stream of char with a TY5 compression scheme and exception (2 or 4 bytes integers)
+
+    TODO: known broken, FIXME
+
+    @param stream: bytes (string) representing the compressed data
+    @param size: the size of the output array (of longInts)
+    @return : int32 ndArrays
+    """
+
+    cdef:
+        int               i = 0
+        int               j = 0
+        numpy.int32_t     last = 0
+        numpy.int32_t     current = 0
+
+#         numpy.uint8_t     tmp8 = 0
+        numpy.uint8_t     key8 = 0xfe #127+127
+
+        numpy.int32_t    tmp32a = 0
+        numpy.int32_t    tmp32b = 0
+#         numpy.int32_t    tmp32c = 0
+#         numpy.int32_t    tmp32d = 0
+
+        int csize
+        int lenStream = len(stream)
+        numpy.uint8_t[:] cstream = bytearray(stream)
+    if size is None:
+        csize = lenStream
+    else:
+        csize = < int > size
+
+    cdef numpy.ndarray[numpy.int32_t, ndim = 1] dataOut = numpy.zeros(csize, dtype=numpy.int32)
+    if True:
+    #with nogil:
+        while (i < lenStream) and (j < csize):
+            if (cstream[i] == key8):
+                    tmp32a = cstream[i + 1]  -127
+                    tmp32b  = <numpy.int16_t>( <numpy.int8_t> cstream[i + 2] << 8 );
+                    print(tmp32a,tmp32b,(tmp32b|tmpa))
+                    current = (tmp32b) | (tmp32a);
+                    i += 3
+            else:
+                current = <numpy.int32_t>(<numpy.uint8_t> cstream[i]) - 127
+                i += 1
+            last += current
+            dataOut[j] = last
+            j += 1
+    return dataOut[:j]
+
+#                 # determines the current position in the bitstream
+#                 position=headersize+columnnumber*row+column+offset
+#                 value=float(file[position])-127
+#                 if value<127:
+#                         # this is the normal case
+#                         # two bytes encode one pixel
+#                         basevalue=value+basevalue
+#                         data[row][column]=basevalue
+#                 elif value==127:
+#                         # this is the special case 1
+#                         # if the marker 127 is found the next four bytes encode one pixel
+#                         if float(file[position+2]) < 127:
+#                                 # resulting value is positive
+#                                 value=(float(file[position+1]))+255*(float(file[position+2]))
+#                         elif float(file[position+2]) > 127:
+#                                 # resulting value is negative
+#                                 value=float(file[position+1])+255*(float(file[position+2])-256)
+#                         basevalue=value+basevalue
+#                         data[row][column]=basevalue
+#                         offset=offset+2
+#                 if float(file[position+0])+float(file[position+1])==510:
+#                         # this is the special case 1
+#                         # i do not know what is going on
+#                         print('special case i can not explain.')
+#                         offset=offset+8
+#                 if basevalue > 500:
+#                         # just a way to cut off very high intensities
+#                         data[row][column]=500

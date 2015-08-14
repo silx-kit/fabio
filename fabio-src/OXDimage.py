@@ -241,6 +241,7 @@ class OXDimage(fabioimage):
                     self.raw32 = ""
                 self.rest = infile.read()
                 self.blob = raw8 + self.raw16 + self.raw32 + self.rest
+                raw_data = self.dec_TY5(self.blob)
             else:
                 bytecode = numpy.int32
                 self.bpp = len(numpy.array(0, bytecode).tostring())
@@ -429,6 +430,29 @@ class OXDimage(fabioimage):
             return None
         else:
             return data.astype(int)
+
+    def dec_TY5(self, stream):
+        """
+        Attempt to decode TY5 compression scheme
+
+        @param stream: input stream
+        @return: 1D array with data
+        """
+        array_size = self.dim1*self.dim2
+        stream_size = len(stream)
+        data = numpy.zeros(array_size)
+        raw = numpy.fromstring(stream, dtype="uint8").astype(int)
+        pos_inp = 0
+        pos_out = 0
+        current = 0
+        last = 0
+        while pos_inp<stream_size and pos_out<array_size:
+
+
+            if pos_out % self.dim2 == 0:
+                last = 0
+        return data
+
 
 class Section(object):
     """
