@@ -3,7 +3,7 @@ FabIO: Fable Input/Output library
 
 Main website: http://fable.sf.net
 
-|Build Status| |Appveyor Status| 
+|Build Status| |Appveyor Status|
 
 ----
 
@@ -123,9 +123,11 @@ Known file formats
 * Hamamatsu
   o HiPiCimage
 * Oxford Diffraction Sapphire 3
-  o OXDimage
+  o OXDimage uncompressed
+  o OXDimage with TY1 byte offset compression
+  o OXDimage with TY5 byte offset compression (experimental)
 * Nonius
- o KappaCCD
+  o KappaCCD
 * Raw Binary without compression
 
 Installation
