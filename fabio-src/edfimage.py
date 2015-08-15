@@ -300,7 +300,7 @@ class Frame(object):
             obtained = len(rawData)
             if expected > obtained:
                 logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
-                rawData += "\x00" * (expected - obtained)
+                rawData += "\x00".encode("ascii") * (expected - obtained)
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]

@@ -97,7 +97,12 @@ class TestMskWrite(unittest.TestCase):
         r = fabio.open(self.filename)
         self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
         self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
-        self.assert_(r.header == self.header, "header are OK")
+        if r.header != self.header:
+            print("Issue with header in TestMskWrite.testFlat")
+            for k,v in r.header.items():
+                print(k,v,self.header.get(k))
+        else:
+            self.assert_(r.header == self.header, "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
 
     def testGzip(self):
@@ -105,7 +110,12 @@ class TestMskWrite(unittest.TestCase):
         e = fit2dmaskimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header == self.header, "header are OK")
+        if r.header != self.header:
+            print("Issue with header in TestMskWrite.testGzip")
+            for k,v in r.header.items():
+                print(k,v,self.header.get(k))
+        else:
+            self.assert_(r.header == self.header, "header are OK")
         self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
         self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
@@ -115,7 +125,12 @@ class TestMskWrite(unittest.TestCase):
         e = fit2dmaskimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header == self.header, "header are OK")
+        if r.header != self.header:
+            print("Issue with header in TestMskWrite.testBzip2")
+            for k,v in r.header.items():
+                print(k,v,self.header.get(k))
+        else:
+            self.assert_(r.header == self.header, "header are OK")
         self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
         self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
@@ -135,10 +150,8 @@ def test_suite_all_fit2d():
     testSuite.addTest(TestMskWrite("testBzip2"))
     return testSuite
 
+
 if __name__ == '__main__':
     mysuite = test_suite_all_fit2d()
     runner = unittest.TextTestRunner()
     runner.run(mysuite)
-
-
-
