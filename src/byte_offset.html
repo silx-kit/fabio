@@ -837,10 +837,10 @@ static PyObject *__pyx_pf_11byte_offset_analyseCython(CYTHON_UNUSED PyObject *__
 </pre><pre class='cython line score-0'>&#xA0;100: </pre>
 <pre class='cython line score-0'>&#xA0;101: </pre>
 <pre class='cython line score-0'>&#xA0;102: <span class="c">#@cython.boundscheck(False)</span></pre>
-<pre class='cython line score-61' onclick='toggleDiv(this)'>+103: <span class="k">def</span> <span class="nf">analyseTY5</span><span class="p">(</span><span class="nb">bytes</span> <span class="n">stream</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></pre>
-<pre class='cython code score-61'>/* Python wrapper */
+<pre class='cython line score-59' onclick='toggleDiv(this)'>+103: <span class="k">def</span> <span class="nf">analyseTY5</span><span class="p">(</span><span class="nb">bytes</span> <span class="n">stream</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></pre>
+<pre class='cython code score-59'>/* Python wrapper */
 static PyObject *__pyx_pw_11byte_offset_3analyseTY5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_11byte_offset_2analyseTY5[] = "\n    Analyze a stream of char with a TY5 compression scheme and exception (2 or 4 bytes integers)\n\n    @param stream: bytes (string) representing the compressed data\n    @param size: the size of the output array (of longInts)\n    @return : int32 ndArrays\n    ";
+static char __pyx_doc_11byte_offset_2analyseTY5[] = "\n    Analyze a stream of char with a TY5 compression scheme and exception (2 or 4 bytes integers)\n\n    TODO: known broken, FIXME\n\n    @param stream: bytes (string) representing the compressed data\n    @param size: the size of the output array (of longInts)\n    @return : int32 ndArrays\n    ";
 static PyMethodDef __pyx_mdef_11byte_offset_3analyseTY5 = {"analyseTY5", (PyCFunction)__pyx_pw_11byte_offset_3analyseTY5, METH_VARARGS|METH_KEYWORDS, __pyx_doc_11byte_offset_2analyseTY5};
 static PyObject *__pyx_pw_11byte_offset_3analyseTY5(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_stream = 0;
@@ -909,6 +909,8 @@ static PyObject *__pyx_pw_11byte_offset_3analyseTY5(PyObject *__pyx_self, PyObje
 static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_stream, PyObject *__pyx_v_size) {
   int __pyx_v_i;
   int __pyx_v_j;
+  __pyx_t_5numpy_int32_t __pyx_v_last;
+  __pyx_t_5numpy_int32_t __pyx_v_current;
   __pyx_t_5numpy_uint8_t __pyx_v_key8;
   __pyx_t_5numpy_int32_t __pyx_v_tmp32a;
   __pyx_t_5numpy_int32_t __pyx_v_tmp32b;
@@ -916,8 +918,6 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
   int __pyx_v_lenStream;
   __Pyx_memviewslice __pyx_v_cstream = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyArrayObject *__pyx_v_dataOut = 0;
-  PyObject *__pyx_v_current = NULL;
-  PyObject *__pyx_v_last = NULL;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_dataOut;
   __Pyx_Buffer __pyx_pybuffer_dataOut;
   PyObject *__pyx_r = NULL;
@@ -948,14 +948,12 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
   __pyx_L2:;
   __PYX_XDEC_MEMVIEW(&amp;__pyx_v_cstream, 1);
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>((PyObject *)__pyx_v_dataOut);
-  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_v_current);
-  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_v_last);
   <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
   <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
   return __pyx_r;
 }
 /* … */
-  __pyx_tuple__20 = <span class='py_c_api'>PyTuple_Pack</span>(13, __pyx_n_s_stream, __pyx_n_s_size, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_key8, __pyx_n_s_tmp32a, __pyx_n_s_tmp32b, __pyx_n_s_csize, __pyx_n_s_lenStream, __pyx_n_s_cstream, __pyx_n_s_dataOut, __pyx_n_s_current, __pyx_n_s_last);<span class='error_goto'> if (unlikely(!__pyx_tuple__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_tuple__20 = <span class='py_c_api'>PyTuple_Pack</span>(13, __pyx_n_s_stream, __pyx_n_s_size, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_last, __pyx_n_s_current, __pyx_n_s_key8, __pyx_n_s_tmp32a, __pyx_n_s_tmp32b, __pyx_n_s_csize, __pyx_n_s_lenStream, __pyx_n_s_cstream, __pyx_n_s_dataOut);<span class='error_goto'> if (unlikely(!__pyx_tuple__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_tuple__20);
   <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_tuple__20);
 /* … */
@@ -967,105 +965,112 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
 </pre><pre class='cython line score-0'>&#xA0;104:     <span class="sd">&quot;&quot;&quot;</span></pre>
 <pre class='cython line score-0'>&#xA0;105: <span class="sd">    Analyze a stream of char with a TY5 compression scheme and exception (2 or 4 bytes integers)</span></pre>
 <pre class='cython line score-0'>&#xA0;106: </pre>
-<pre class='cython line score-0'>&#xA0;107: <span class="sd">    @param stream: bytes (string) representing the compressed data</span></pre>
-<pre class='cython line score-0'>&#xA0;108: <span class="sd">    @param size: the size of the output array (of longInts)</span></pre>
-<pre class='cython line score-0'>&#xA0;109: <span class="sd">    @return : int32 ndArrays</span></pre>
-<pre class='cython line score-0'>&#xA0;110: <span class="sd">    &quot;&quot;&quot;</span></pre>
-<pre class='cython line score-0'>&#xA0;111: </pre>
-<pre class='cython line score-0'>&#xA0;112:     <span class="n">cdef</span><span class="p">:</span></pre>
-<pre class='cython line score-0' onclick='toggleDiv(this)'>+113:         <span class="nb">int</span>               <span class="n">i</span> <span class="o">=</span> <span class="mf">0</span></pre>
+<pre class='cython line score-0'>&#xA0;107: <span class="sd">    TODO: known broken, FIXME</span></pre>
+<pre class='cython line score-0'>&#xA0;108: </pre>
+<pre class='cython line score-0'>&#xA0;109: <span class="sd">    @param stream: bytes (string) representing the compressed data</span></pre>
+<pre class='cython line score-0'>&#xA0;110: <span class="sd">    @param size: the size of the output array (of longInts)</span></pre>
+<pre class='cython line score-0'>&#xA0;111: <span class="sd">    @return : int32 ndArrays</span></pre>
+<pre class='cython line score-0'>&#xA0;112: <span class="sd">    &quot;&quot;&quot;</span></pre>
+<pre class='cython line score-0'>&#xA0;113: </pre>
+<pre class='cython line score-0'>&#xA0;114:     <span class="n">cdef</span><span class="p">:</span></pre>
+<pre class='cython line score-0' onclick='toggleDiv(this)'>+115:         <span class="nb">int</span>               <span class="n">i</span> <span class="o">=</span> <span class="mf">0</span></pre>
 <pre class='cython code score-0'>  __pyx_v_i = 0;
-</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+114:         <span class="nb">int</span>               <span class="n">j</span> <span class="o">=</span> <span class="mf">0</span></pre>
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+116:         <span class="nb">int</span>               <span class="n">j</span> <span class="o">=</span> <span class="mf">0</span></pre>
 <pre class='cython code score-0'>  __pyx_v_j = 0;
-</pre><pre class='cython line score-0'>&#xA0;115: <span class="c">#         numpy.uint8_t     tmp8 = 0</span></pre>
-<pre class='cython line score-0' onclick='toggleDiv(this)'>+116:         <span class="n">numpy</span><span class="o">.</span><span class="n">uint8_t</span>     <span class="n">key8</span> <span class="o">=</span> <span class="mf">0</span><span class="n">xfe</span> <span class="c">#127+127</span></pre>
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+117:         <span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span>     <span class="n">last</span> <span class="o">=</span> <span class="mf">0</span></pre>
+<pre class='cython code score-0'>  __pyx_v_last = 0;
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+118:         <span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span>     <span class="n">current</span> <span class="o">=</span> <span class="mf">0</span></pre>
+<pre class='cython code score-0'>  __pyx_v_current = 0;
+</pre><pre class='cython line score-0'>&#xA0;119: </pre>
+<pre class='cython line score-0'>&#xA0;120: <span class="c">#         numpy.uint8_t     tmp8 = 0</span></pre>
+<pre class='cython line score-0' onclick='toggleDiv(this)'>+121:         <span class="n">numpy</span><span class="o">.</span><span class="n">uint8_t</span>     <span class="n">key8</span> <span class="o">=</span> <span class="mf">0</span><span class="n">xfe</span> <span class="c">#127+127</span></pre>
 <pre class='cython code score-0'>  __pyx_v_key8 = 0xfe;
-</pre><pre class='cython line score-0'>&#xA0;117: </pre>
-<pre class='cython line score-0' onclick='toggleDiv(this)'>+118:         <span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span>    <span class="n">tmp32a</span> <span class="o">=</span> <span class="mf">0</span></pre>
+</pre><pre class='cython line score-0'>&#xA0;122: </pre>
+<pre class='cython line score-0' onclick='toggleDiv(this)'>+123:         <span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span>    <span class="n">tmp32a</span> <span class="o">=</span> <span class="mf">0</span></pre>
 <pre class='cython code score-0'>  __pyx_v_tmp32a = 0;
-</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+119:         <span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span>    <span class="n">tmp32b</span> <span class="o">=</span> <span class="mf">0</span></pre>
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+124:         <span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span>    <span class="n">tmp32b</span> <span class="o">=</span> <span class="mf">0</span></pre>
 <pre class='cython code score-0'>  __pyx_v_tmp32b = 0;
-</pre><pre class='cython line score-0'>&#xA0;120: <span class="c">#         numpy.int32_t    tmp32c = 0</span></pre>
-<pre class='cython line score-0'>&#xA0;121: <span class="c">#         numpy.int32_t    tmp32d = 0</span></pre>
-<pre class='cython line score-0'>&#xA0;122: </pre>
-<pre class='cython line score-0'>&#xA0;123:         <span class="nb">int</span> <span class="n">csize</span></pre>
-<pre class='cython line score-1' onclick='toggleDiv(this)'>+124:         <span class="nb">int</span> <span class="n">lenStream</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span></pre>
-<pre class='cython code score-1'>  __pyx_t_1 = <span class='py_macro_api'>PyBytes_GET_SIZE</span>(__pyx_v_stream);<span class='error_goto'> if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+</pre><pre class='cython line score-0'>&#xA0;125: <span class="c">#         numpy.int32_t    tmp32c = 0</span></pre>
+<pre class='cython line score-0'>&#xA0;126: <span class="c">#         numpy.int32_t    tmp32d = 0</span></pre>
+<pre class='cython line score-0'>&#xA0;127: </pre>
+<pre class='cython line score-0'>&#xA0;128:         <span class="nb">int</span> <span class="n">csize</span></pre>
+<pre class='cython line score-1' onclick='toggleDiv(this)'>+129:         <span class="nb">int</span> <span class="n">lenStream</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span></pre>
+<pre class='cython code score-1'>  __pyx_t_1 = <span class='py_macro_api'>PyBytes_GET_SIZE</span>(__pyx_v_stream);<span class='error_goto'> if (unlikely(__pyx_t_1 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   __pyx_v_lenStream = __pyx_t_1;
-</pre><pre class='cython line score-11' onclick='toggleDiv(this)'>+125:         <span class="n">numpy</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">[:]</span> <span class="n">cstream</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span></pre>
-<pre class='cython code score-11'>  __pyx_t_2 = <span class='py_c_api'>PyTuple_New</span>(1);<span class='error_goto'> if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+</pre><pre class='cython line score-11' onclick='toggleDiv(this)'>+130:         <span class="n">numpy</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">[:]</span> <span class="n">cstream</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span></pre>
+<pre class='cython code score-11'>  __pyx_t_2 = <span class='py_c_api'>PyTuple_New</span>(1);<span class='error_goto'> if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
   <span class='pyx_macro_api'>__Pyx_INCREF</span>(__pyx_v_stream);
   <span class='py_macro_api'>PyTuple_SET_ITEM</span>(__pyx_t_2, 0, __pyx_v_stream);
   <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_v_stream);
-  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyObject_Call</span>(((PyObject *)((PyObject*)(&amp;PyByteArray_Type))), __pyx_t_2, NULL);<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyObject_Call</span>(((PyObject *)((PyObject*)(&amp;PyByteArray_Type))), __pyx_t_2, NULL);<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_4 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_5numpy_uint8_t(__pyx_t_3);
-  if (unlikely(!__pyx_t_4.memview)) <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  if (unlikely(!__pyx_t_4.memview)) <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_cstream = __pyx_t_4;
   __pyx_t_4.memview = NULL;
   __pyx_t_4.data = NULL;
-</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+126:     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span></pre>
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+131:     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span></pre>
 <pre class='cython code score-0'>  __pyx_t_5 = (__pyx_v_size == Py_None);
   __pyx_t_6 = (__pyx_t_5 != 0);
   if (__pyx_t_6) {
-</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+127:         <span class="n">csize</span> <span class="o">=</span> <span class="n">lenStream</span></pre>
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+132:         <span class="n">csize</span> <span class="o">=</span> <span class="n">lenStream</span></pre>
 <pre class='cython code score-0'>    __pyx_v_csize = __pyx_v_lenStream;
     goto __pyx_L3;
   }
   /*else*/ {
-</pre><pre class='cython line score-0'>&#xA0;128:     <span class="k">else</span><span class="p">:</span></pre>
-<pre class='cython line score-2' onclick='toggleDiv(this)'>+129:         <span class="n">csize</span> <span class="o">=</span> <span class="o">&lt;</span> <span class="nb">int</span> <span class="o">&gt;</span> <span class="n">size</span></pre>
-<pre class='cython code score-2'>    __pyx_t_7 = <span class='pyx_c_api'>__Pyx_PyInt_As_int</span>(__pyx_v_size);<span class='error_goto'> if (unlikely((__pyx_t_7 == (int)-1) &amp;&amp; PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+</pre><pre class='cython line score-0'>&#xA0;133:     <span class="k">else</span><span class="p">:</span></pre>
+<pre class='cython line score-2' onclick='toggleDiv(this)'>+134:         <span class="n">csize</span> <span class="o">=</span> <span class="o">&lt;</span> <span class="nb">int</span> <span class="o">&gt;</span> <span class="n">size</span></pre>
+<pre class='cython code score-2'>    __pyx_t_7 = <span class='pyx_c_api'>__Pyx_PyInt_As_int</span>(__pyx_v_size);<span class='error_goto'> if (unlikely((__pyx_t_7 == (int)-1) &amp;&amp; PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 134; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
     __pyx_v_csize = ((int)__pyx_t_7);
   }
   __pyx_L3:;
-</pre><pre class='cython line score-0'>&#xA0;130: </pre>
-<pre class='cython line score-39' onclick='toggleDiv(this)'>+131:     <span class="k">cdef</span> <span class="kt">numpy</span>.<span class="kt">ndarray</span>[<span class="kt">numpy</span>.<span class="nf">int64_t</span><span class="p">,</span> <span class="nf">ndim</span> <span class="o">=</span> <span class="mf">1</span><span class="p">]</span> <span class="n">dataOut</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">csize</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span></pre>
-<pre class='cython code score-39'>  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_n_s_numpy);<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+</pre><pre class='cython line score-0'>&#xA0;135: </pre>
+<pre class='cython line score-39' onclick='toggleDiv(this)'>+136:     <span class="k">cdef</span> <span class="kt">numpy</span>.<span class="kt">ndarray</span>[<span class="kt">numpy</span>.<span class="nf">int32_t</span><span class="p">,</span> <span class="nf">ndim</span> <span class="o">=</span> <span class="mf">1</span><span class="p">]</span> <span class="n">dataOut</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">csize</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></pre>
+<pre class='cython code score-39'>  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_n_s_numpy);<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
-  __pyx_t_2 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_3, __pyx_n_s_zeros);<span class='error_goto'> if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_2 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_3, __pyx_n_s_zeros);<span class='error_goto'> if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_csize);<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_csize);<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
-  __pyx_t_8 = <span class='py_c_api'>PyTuple_New</span>(1);<span class='error_goto'> if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_8 = <span class='py_c_api'>PyTuple_New</span>(1);<span class='error_goto'> if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_8);
   <span class='py_macro_api'>PyTuple_SET_ITEM</span>(__pyx_t_8, 0, __pyx_t_3);
   <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_3 = <span class='py_c_api'>PyDict_New</span>();<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_3 = <span class='py_c_api'>PyDict_New</span>();<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
-  __pyx_t_9 = <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_n_s_numpy);<span class='error_goto'> if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_9 = <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_n_s_numpy);<span class='error_goto'> if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_9);
-  __pyx_t_10 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_9, __pyx_n_s_int64);<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_10 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_9, __pyx_n_s_int32);<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_10);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_9); __pyx_t_9 = 0;
-  if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_10) &lt; 0) <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_10) &lt; 0) <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_t_10 = <span class='pyx_c_api'>__Pyx_PyObject_Call</span>(__pyx_t_2, __pyx_t_8, __pyx_t_3);<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  __pyx_t_10 = <span class='pyx_c_api'>__Pyx_PyObject_Call</span>(__pyx_t_2, __pyx_t_8, __pyx_t_3);<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_10);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_8); __pyx_t_8 = 0;
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_10) == Py_None) || likely(<span class='pyx_c_api'>__Pyx_TypeTest</span>(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  if (!(likely(((__pyx_t_10) == Py_None) || likely(<span class='pyx_c_api'>__Pyx_TypeTest</span>(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
   __pyx_t_11 = ((PyArrayObject *)__pyx_t_10);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_dataOut.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_11, &amp;__Pyx_TypeInfo_nn___pyx_t_5numpy_int64_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 1, 0, __pyx_stack) == -1)) {
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_dataOut.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_11, &amp;__Pyx_TypeInfo_nn___pyx_t_5numpy_int32_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_dataOut = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_dataOut.rcbuffer-&gt;pybuffer.buf = NULL;
-      <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
     } else {__pyx_pybuffernd_dataOut.diminfo[0].strides = __pyx_pybuffernd_dataOut.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_dataOut.diminfo[0].shape = __pyx_pybuffernd_dataOut.rcbuffer-&gt;pybuffer.shape[0];
     }
   }
   __pyx_t_11 = 0;
   __pyx_v_dataOut = ((PyArrayObject *)__pyx_t_10);
   __pyx_t_10 = 0;
-</pre><pre class='cython line score-0'>&#xA0;132:     <span class="k">if</span> <span class="bp">True</span><span class="p">:</span></pre>
-<pre class='cython line score-0'>&#xA0;133:     <span class="c">#with nogil:</span></pre>
-<pre class='cython line score-0' onclick='toggleDiv(this)'>+134:         <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">lenStream</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">csize</span><span class="p">):</span></pre>
+</pre><pre class='cython line score-0'>&#xA0;137:     <span class="k">if</span> <span class="bp">True</span><span class="p">:</span></pre>
+<pre class='cython line score-0'>&#xA0;138:     <span class="c">#with nogil:</span></pre>
+<pre class='cython line score-0' onclick='toggleDiv(this)'>+139:         <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">lenStream</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">csize</span><span class="p">):</span></pre>
 <pre class='cython code score-0'>  while (1) {
     __pyx_t_5 = ((__pyx_v_i &lt; __pyx_v_lenStream) != 0);
     if (__pyx_t_5) {
@@ -1077,7 +1082,7 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
     __pyx_t_6 = __pyx_t_5;
     __pyx_L6_bool_binop_done:;
     if (!__pyx_t_6) break;
-</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+135:             <span class="k">if</span> <span class="p">(</span><span class="n">cstream</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">key8</span><span class="p">):</span></pre>
+</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+140:             <span class="k">if</span> <span class="p">(</span><span class="n">cstream</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">key8</span><span class="p">):</span></pre>
 <pre class='cython code score-2'>    __pyx_t_7 = __pyx_v_i;
     __pyx_t_12 = -1;
     if (__pyx_t_7 &lt; 0) {
@@ -1086,11 +1091,11 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
     } else if (unlikely(__pyx_t_7 &gt;= __pyx_v_cstream.shape[0])) __pyx_t_12 = 0;
     if (unlikely(__pyx_t_12 != -1)) {
       <span class='pyx_c_api'>__Pyx_RaiseBufferIndexError</span>(__pyx_t_12);
-      <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
     }
     __pyx_t_6 = (((*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ (__pyx_v_cstream.data + __pyx_t_7 * __pyx_v_cstream.strides[0]) ))) == __pyx_v_key8) != 0);
     if (__pyx_t_6) {
-</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+136:                     <span class="n">tmp32a</span> <span class="o">=</span> <span class="n">cstream</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mf">1</span><span class="p">]</span></pre>
+</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+141:                     <span class="n">tmp32a</span> <span class="o">=</span> <span class="n">cstream</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mf">1</span><span class="p">]</span>  <span class="o">-</span><span class="mf">127</span></pre>
 <pre class='cython code score-2'>      __pyx_t_13 = (__pyx_v_i + 1);
       __pyx_t_12 = -1;
       if (__pyx_t_13 &lt; 0) {
@@ -1099,10 +1104,10 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
       } else if (unlikely(__pyx_t_13 &gt;= __pyx_v_cstream.shape[0])) __pyx_t_12 = 0;
       if (unlikely(__pyx_t_12 != -1)) {
         <span class='pyx_c_api'>__Pyx_RaiseBufferIndexError</span>(__pyx_t_12);
-        <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+        <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
       }
-      __pyx_v_tmp32a = (*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ (__pyx_v_cstream.data + __pyx_t_13 * __pyx_v_cstream.strides[0]) )));
-</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+137:                     <span class="n">tmp32b</span>  <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span><span class="o">.</span><span class="n">int8_t</span><span class="o">&gt;</span> <span class="n">cstream</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mf">2</span><span class="p">];</span></pre>
+      __pyx_v_tmp32a = ((*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ (__pyx_v_cstream.data + __pyx_t_13 * __pyx_v_cstream.strides[0]) ))) - 127);
+</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+142:                     <span class="n">tmp32b</span>  <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span><span class="o">.</span><span class="n">int16_t</span><span class="o">&gt;</span><span class="p">(</span> <span class="o">&lt;</span><span class="n">numpy</span><span class="o">.</span><span class="n">int8_t</span><span class="o">&gt;</span> <span class="n">cstream</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mf">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mf">8</span> <span class="p">);</span></pre>
 <pre class='cython code score-2'>      __pyx_t_14 = (__pyx_v_i + 2);
       __pyx_t_12 = -1;
       if (__pyx_t_14 &lt; 0) {
@@ -1111,23 +1116,39 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
       } else if (unlikely(__pyx_t_14 &gt;= __pyx_v_cstream.shape[0])) __pyx_t_12 = 0;
       if (unlikely(__pyx_t_12 != -1)) {
         <span class='pyx_c_api'>__Pyx_RaiseBufferIndexError</span>(__pyx_t_12);
-        <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 137; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+        <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
       }
-      __pyx_v_tmp32b = ((__pyx_t_5numpy_int8_t)(*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ (__pyx_v_cstream.data + __pyx_t_14 * __pyx_v_cstream.strides[0]) ))));
-</pre><pre class='cython line score-0'>&#xA0;138: </pre>
-<pre class='cython line score-3' onclick='toggleDiv(this)'>+139:                     <span class="n">current</span> <span class="o">=</span> <span class="p">(</span><span class="n">tmp32b</span> <span class="o">&lt;&lt;</span> <span class="mf">8</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">tmp32a</span> <span class="o">-</span> <span class="mf">127</span><span class="p">);</span></pre>
-<pre class='cython code score-3'>      __pyx_t_10 = <span class='pyx_c_api'>__Pyx_PyInt_From_long</span>(((__pyx_v_tmp32b &lt;&lt; 8) | (__pyx_v_tmp32a - 127)));<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      __pyx_v_tmp32b = ((__pyx_t_5numpy_int16_t)(((__pyx_t_5numpy_int8_t)(*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ (__pyx_v_cstream.data + __pyx_t_14 * __pyx_v_cstream.strides[0]) )))) &lt;&lt; 8));
+</pre><pre class='cython line score-13' onclick='toggleDiv(this)'>+143:                     <span class="k">print</span><span class="p">(</span><span class="n">tmp32a</span><span class="p">,</span><span class="n">tmp32b</span><span class="p">,(</span><span class="n">tmp32b</span><span class="o">|</span><span class="n">tmp32a</span><span class="p">))</span></pre>
+<pre class='cython code score-13'>      __pyx_t_10 = __Pyx_PyInt_From_npy_int32(__pyx_v_tmp32a);<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
       <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_10);
-      <span class='pyx_macro_api'>__Pyx_XDECREF_SET</span>(__pyx_v_current, __pyx_t_10);
+      __pyx_t_3 = __Pyx_PyInt_From_npy_int32(__pyx_v_tmp32b);<span class='error_goto'> if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
+      __pyx_t_8 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>((__pyx_v_tmp32b | __pyx_v_tmp32a));<span class='error_goto'> if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_8);
+      __pyx_t_2 = <span class='py_c_api'>PyTuple_New</span>(3);<span class='error_goto'> if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
+      <span class='py_macro_api'>PyTuple_SET_ITEM</span>(__pyx_t_2, 0, __pyx_t_10);
+      <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_t_10);
+      <span class='py_macro_api'>PyTuple_SET_ITEM</span>(__pyx_t_2, 1, __pyx_t_3);
+      <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_t_3);
+      <span class='py_macro_api'>PyTuple_SET_ITEM</span>(__pyx_t_2, 2, __pyx_t_8);
+      <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_t_8);
       __pyx_t_10 = 0;
-</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+140:                     <span class="n">i</span> <span class="o">+=</span> <span class="mf">3</span></pre>
+      __pyx_t_3 = 0;
+      __pyx_t_8 = 0;
+      if (<span class='pyx_c_api'>__Pyx_PrintOne</span>(0, __pyx_t_2) &lt; 0) <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+144:                     <span class="n">current</span> <span class="o">=</span> <span class="p">(</span><span class="n">tmp32b</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">tmp32a</span><span class="p">);</span></pre>
+<pre class='cython code score-0'>      __pyx_v_current = (__pyx_v_tmp32b | __pyx_v_tmp32a);
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+145:                     <span class="n">i</span> <span class="o">+=</span> <span class="mf">3</span></pre>
 <pre class='cython code score-0'>      __pyx_v_i = (__pyx_v_i + 3);
       goto __pyx_L8;
     }
     /*else*/ {
-</pre><pre class='cython line score-0'>&#xA0;141:             <span class="k">else</span><span class="p">:</span></pre>
-<pre class='cython line score-5' onclick='toggleDiv(this)'>+142:                 <span class="n">current</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&lt;</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8_t</span><span class="o">&gt;</span> <span class="n">cstream</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mf">127</span></pre>
-<pre class='cython code score-5'>      __pyx_t_12 = __pyx_v_i;
+</pre><pre class='cython line score-0'>&#xA0;146:             <span class="k">else</span><span class="p">:</span></pre>
+<pre class='cython line score-2' onclick='toggleDiv(this)'>+147:                 <span class="n">current</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&lt;</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8_t</span><span class="o">&gt;</span> <span class="n">cstream</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="mf">127</span></pre>
+<pre class='cython code score-2'>      __pyx_t_12 = __pyx_v_i;
       __pyx_t_15 = -1;
       if (__pyx_t_12 &lt; 0) {
         __pyx_t_12 += __pyx_v_cstream.shape[0];
@@ -1135,72 +1156,64 @@ static PyObject *__pyx_pf_11byte_offset_2analyseTY5(CYTHON_UNUSED PyObject *__py
       } else if (unlikely(__pyx_t_12 &gt;= __pyx_v_cstream.shape[0])) __pyx_t_15 = 0;
       if (unlikely(__pyx_t_15 != -1)) {
         <span class='pyx_c_api'>__Pyx_RaiseBufferIndexError</span>(__pyx_t_15);
-        <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+        <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
       }
-      __pyx_t_10 = <span class='pyx_c_api'>__Pyx_PyInt_From_long</span>((((__pyx_t_5numpy_int32_t)((__pyx_t_5numpy_uint8_t)(*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ (__pyx_v_cstream.data + __pyx_t_12 * __pyx_v_cstream.strides[0]) ))))) - 127));<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
-      <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_10);
-      <span class='pyx_macro_api'>__Pyx_XDECREF_SET</span>(__pyx_v_current, __pyx_t_10);
-      __pyx_t_10 = 0;
-</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+143:                 <span class="n">i</span> <span class="o">+=</span> <span class="mf">1</span></pre>
+      __pyx_v_current = (((__pyx_t_5numpy_int32_t)((__pyx_t_5numpy_uint8_t)(*((__pyx_t_5numpy_uint8_t *) ( /* dim=0 */ (__pyx_v_cstream.data + __pyx_t_12 * __pyx_v_cstream.strides[0]) ))))) - 127);
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+148:                 <span class="n">i</span> <span class="o">+=</span> <span class="mf">1</span></pre>
 <pre class='cython code score-0'>      __pyx_v_i = (__pyx_v_i + 1);
     }
     __pyx_L8:;
-</pre><pre class='cython line score-8' onclick='toggleDiv(this)'>+144:             <span class="n">last</span> <span class="o">+=</span> <span class="n">current</span></pre>
-<pre class='cython code score-8'>    if (unlikely(!__pyx_v_last)) { <span class='pyx_c_api'>__Pyx_RaiseUnboundLocalError</span>("last"); <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span> }
-    __pyx_t_10 = <span class='py_c_api'>PyNumber_InPlaceAdd</span>(__pyx_v_last, __pyx_v_current);<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
-    <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_10);
-    <span class='pyx_macro_api'>__Pyx_XDECREF_SET</span>(__pyx_v_last, __pyx_t_10);
-    __pyx_t_10 = 0;
-</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+145:             <span class="n">dataOut</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">last</span></pre>
-<pre class='cython code score-2'>    __pyx_t_16 = __Pyx_PyInt_As_npy_int64(__pyx_v_last);<span class='error_goto'> if (unlikely((__pyx_t_16 == (npy_int64)-1) &amp;&amp; PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
-    __pyx_t_15 = __pyx_v_j;
-    __pyx_t_17 = -1;
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+149:             <span class="n">last</span> <span class="o">+=</span> <span class="n">current</span></pre>
+<pre class='cython code score-0'>    __pyx_v_last = (__pyx_v_last + __pyx_v_current);
+</pre><pre class='cython line score-2' onclick='toggleDiv(this)'>+150:             <span class="n">dataOut</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">last</span></pre>
+<pre class='cython code score-2'>    __pyx_t_15 = __pyx_v_j;
+    __pyx_t_16 = -1;
     if (__pyx_t_15 &lt; 0) {
       __pyx_t_15 += __pyx_pybuffernd_dataOut.diminfo[0].shape;
-      if (unlikely(__pyx_t_15 &lt; 0)) __pyx_t_17 = 0;
-    } else if (unlikely(__pyx_t_15 &gt;= __pyx_pybuffernd_dataOut.diminfo[0].shape)) __pyx_t_17 = 0;
-    if (unlikely(__pyx_t_17 != -1)) {
-      <span class='pyx_c_api'>__Pyx_RaiseBufferIndexError</span>(__pyx_t_17);
-      <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+      if (unlikely(__pyx_t_15 &lt; 0)) __pyx_t_16 = 0;
+    } else if (unlikely(__pyx_t_15 &gt;= __pyx_pybuffernd_dataOut.diminfo[0].shape)) __pyx_t_16 = 0;
+    if (unlikely(__pyx_t_16 != -1)) {
+      <span class='pyx_c_api'>__Pyx_RaiseBufferIndexError</span>(__pyx_t_16);
+      <span class='error_goto'>{__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
     }
-    *__Pyx_BufPtrStrided1d(__pyx_t_5numpy_int64_t *, __pyx_pybuffernd_dataOut.rcbuffer-&gt;pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_dataOut.diminfo[0].strides) = __pyx_t_16;
-</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+146:             <span class="n">j</span> <span class="o">+=</span> <span class="mf">1</span></pre>
+    *__Pyx_BufPtrStrided1d(__pyx_t_5numpy_int32_t *, __pyx_pybuffernd_dataOut.rcbuffer-&gt;pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_dataOut.diminfo[0].strides) = __pyx_v_last;
+</pre><pre class='cython line score-0' onclick='toggleDiv(this)'>+151:             <span class="n">j</span> <span class="o">+=</span> <span class="mf">1</span></pre>
 <pre class='cython code score-0'>    __pyx_v_j = (__pyx_v_j + 1);
   }
-</pre><pre class='cython line score-3' onclick='toggleDiv(this)'>+147:     <span class="k">return</span> <span class="n">dataOut</span><span class="p">[:</span><span class="n">j</span><span class="p">]</span></pre>
+</pre><pre class='cython line score-3' onclick='toggleDiv(this)'>+152:     <span class="k">return</span> <span class="n">dataOut</span><span class="p">[:</span><span class="n">j</span><span class="p">]</span></pre>
 <pre class='cython code score-3'>  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_r);
-  __pyx_t_10 = <span class='pyx_c_api'>__Pyx_PyObject_GetSlice</span>(((PyObject *)__pyx_v_dataOut), 0, __pyx_v_j, NULL, NULL, NULL, 0, 1, 1);<span class='error_goto'> if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
-  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_10);
-  __pyx_r = __pyx_t_10;
-  __pyx_t_10 = 0;
+  __pyx_t_2 = <span class='pyx_c_api'>__Pyx_PyObject_GetSlice</span>(((PyObject *)__pyx_v_dataOut), 0, __pyx_v_j, NULL, NULL, NULL, 0, 1, 1);<span class='error_goto'> if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}</span>
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
-</pre><pre class='cython line score-0'>&#xA0;148: </pre>
-<pre class='cython line score-0'>&#xA0;149: <span class="c">#                 # determines the current position in the bitstream</span></pre>
-<pre class='cython line score-0'>&#xA0;150: <span class="c">#                 position=headersize+columnnumber*row+column+offset</span></pre>
-<pre class='cython line score-0'>&#xA0;151: <span class="c">#                 value=float(file[position])-127</span></pre>
-<pre class='cython line score-0'>&#xA0;152: <span class="c">#                 if value&lt;127:</span></pre>
-<pre class='cython line score-0'>&#xA0;153: <span class="c">#                         # this is the normal case</span></pre>
-<pre class='cython line score-0'>&#xA0;154: <span class="c">#                         # two bytes encode one pixel</span></pre>
-<pre class='cython line score-0'>&#xA0;155: <span class="c">#                         basevalue=value+basevalue</span></pre>
-<pre class='cython line score-0'>&#xA0;156: <span class="c">#                         data[row][column]=basevalue</span></pre>
-<pre class='cython line score-0'>&#xA0;157: <span class="c">#                 elif value==127:</span></pre>
-<pre class='cython line score-0'>&#xA0;158: <span class="c">#                         # this is the special case 1</span></pre>
-<pre class='cython line score-0'>&#xA0;159: <span class="c">#                         # if the marker 127 is found the next four bytes encode one pixel</span></pre>
-<pre class='cython line score-0'>&#xA0;160: <span class="c">#                         if float(file[position+2]) &lt; 127:</span></pre>
-<pre class='cython line score-0'>&#xA0;161: <span class="c">#                                 # resulting value is positive</span></pre>
-<pre class='cython line score-0'>&#xA0;162: <span class="c">#                                 value=(float(file[position+1]))+255*(float(file[position+2]))</span></pre>
-<pre class='cython line score-0'>&#xA0;163: <span class="c">#                         elif float(file[position+2]) &gt; 127:</span></pre>
-<pre class='cython line score-0'>&#xA0;164: <span class="c">#                                 # resulting value is negative</span></pre>
-<pre class='cython line score-0'>&#xA0;165: <span class="c">#                                 value=float(file[position+1])+255*(float(file[position+2])-256)</span></pre>
-<pre class='cython line score-0'>&#xA0;166: <span class="c">#                         basevalue=value+basevalue</span></pre>
-<pre class='cython line score-0'>&#xA0;167: <span class="c">#                         data[row][column]=basevalue</span></pre>
-<pre class='cython line score-0'>&#xA0;168: <span class="c">#                         offset=offset+2</span></pre>
-<pre class='cython line score-0'>&#xA0;169: <span class="c">#                 if float(file[position+0])+float(file[position+1])==510:</span></pre>
-<pre class='cython line score-0'>&#xA0;170: <span class="c">#                         # this is the special case 1</span></pre>
-<pre class='cython line score-0'>&#xA0;171: <span class="c">#                         # i do not know what is going on</span></pre>
-<pre class='cython line score-0'>&#xA0;172: <span class="c">#                         print(&#39;special case i can not explain.&#39;)</span></pre>
-<pre class='cython line score-0'>&#xA0;173: <span class="c">#                         offset=offset+8</span></pre>
-<pre class='cython line score-0'>&#xA0;174: <span class="c">#                 if basevalue &gt; 500:</span></pre>
-<pre class='cython line score-0'>&#xA0;175: <span class="c">#                         # just a way to cut off very high intensities</span></pre>
-<pre class='cython line score-0'>&#xA0;176: <span class="c">#                         data[row][column]=500</span></pre>
+</pre><pre class='cython line score-0'>&#xA0;153: </pre>
+<pre class='cython line score-0'>&#xA0;154: <span class="c">#                 # determines the current position in the bitstream</span></pre>
+<pre class='cython line score-0'>&#xA0;155: <span class="c">#                 position=headersize+columnnumber*row+column+offset</span></pre>
+<pre class='cython line score-0'>&#xA0;156: <span class="c">#                 value=float(file[position])-127</span></pre>
+<pre class='cython line score-0'>&#xA0;157: <span class="c">#                 if value&lt;127:</span></pre>
+<pre class='cython line score-0'>&#xA0;158: <span class="c">#                         # this is the normal case</span></pre>
+<pre class='cython line score-0'>&#xA0;159: <span class="c">#                         # two bytes encode one pixel</span></pre>
+<pre class='cython line score-0'>&#xA0;160: <span class="c">#                         basevalue=value+basevalue</span></pre>
+<pre class='cython line score-0'>&#xA0;161: <span class="c">#                         data[row][column]=basevalue</span></pre>
+<pre class='cython line score-0'>&#xA0;162: <span class="c">#                 elif value==127:</span></pre>
+<pre class='cython line score-0'>&#xA0;163: <span class="c">#                         # this is the special case 1</span></pre>
+<pre class='cython line score-0'>&#xA0;164: <span class="c">#                         # if the marker 127 is found the next four bytes encode one pixel</span></pre>
+<pre class='cython line score-0'>&#xA0;165: <span class="c">#                         if float(file[position+2]) &lt; 127:</span></pre>
+<pre class='cython line score-0'>&#xA0;166: <span class="c">#                                 # resulting value is positive</span></pre>
+<pre class='cython line score-0'>&#xA0;167: <span class="c">#                                 value=(float(file[position+1]))+255*(float(file[position+2]))</span></pre>
+<pre class='cython line score-0'>&#xA0;168: <span class="c">#                         elif float(file[position+2]) &gt; 127:</span></pre>
+<pre class='cython line score-0'>&#xA0;169: <span class="c">#                                 # resulting value is negative</span></pre>
+<pre class='cython line score-0'>&#xA0;170: <span class="c">#                                 value=float(file[position+1])+255*(float(file[position+2])-256)</span></pre>
+<pre class='cython line score-0'>&#xA0;171: <span class="c">#                         basevalue=value+basevalue</span></pre>
+<pre class='cython line score-0'>&#xA0;172: <span class="c">#                         data[row][column]=basevalue</span></pre>
+<pre class='cython line score-0'>&#xA0;173: <span class="c">#                         offset=offset+2</span></pre>
+<pre class='cython line score-0'>&#xA0;174: <span class="c">#                 if float(file[position+0])+float(file[position+1])==510:</span></pre>
+<pre class='cython line score-0'>&#xA0;175: <span class="c">#                         # this is the special case 1</span></pre>
+<pre class='cython line score-0'>&#xA0;176: <span class="c">#                         # i do not know what is going on</span></pre>
+<pre class='cython line score-0'>&#xA0;177: <span class="c">#                         print(&#39;special case i can not explain.&#39;)</span></pre>
+<pre class='cython line score-0'>&#xA0;178: <span class="c">#                         offset=offset+8</span></pre>
+<pre class='cython line score-0'>&#xA0;179: <span class="c">#                 if basevalue &gt; 500:</span></pre>
+<pre class='cython line score-0'>&#xA0;180: <span class="c">#                         # just a way to cut off very high intensities</span></pre>
+<pre class='cython line score-0'>&#xA0;181: <span class="c">#                         data[row][column]=500</span></pre>
 </div></body></html>

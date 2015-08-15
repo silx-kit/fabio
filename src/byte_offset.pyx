@@ -140,7 +140,7 @@ def analyseTY5(bytes stream not None, size=None):
             if (cstream[i] == key8):
                     tmp32a = cstream[i + 1]  -127
                     tmp32b  = <numpy.int16_t>( <numpy.int8_t> cstream[i + 2] << 8 );
-                    print(tmp32a,tmp32b,(tmp32b|tmpa))
+                    print(tmp32a,tmp32b,(tmp32b|tmp32a))
                     current = (tmp32b) | (tmp32a);
                     i += 3
             else:
