@@ -9,6 +9,7 @@ python:
 # command to install dependencies
 install:
   - "pip install -r requirements_travis.txt"
+  - "python info_platform.py"
   - "python setup.py build install"
 # command to run tests
 script: 
