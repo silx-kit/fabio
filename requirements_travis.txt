@@ -1,4 +1,7 @@
 #List of dependecies used by PIP but also by ReadTheDocs to generate the documentation on the fly
+--find-links http://www.edna-site.org/pub/wheelhouse
+
 numpy
+scipy
 cython
 lxml
