@@ -8,7 +8,7 @@ python:
 #  - "nightly"
 # command to install dependencies
 install:
-  - "pip install -r requirements_travis.txt"
+  - "pip install --trusted-host www.edna-site.org -r requirements_travis.txt"
   - "python info_platform.py"
   - "python setup.py build install"
 # command to run tests

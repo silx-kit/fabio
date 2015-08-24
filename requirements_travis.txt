@@ -2,6 +2,5 @@
 --find-links http://www.edna-site.org/pub/wheelhouse
 
 numpy
-scipy
 cython
 lxml
