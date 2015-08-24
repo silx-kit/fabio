@@ -7,9 +7,7 @@ try:
     from distutils.sysconfig import get_config_vars
 except:
     from sysconfig import get_config_vars
-for k, v in get_config_vars().items():
-    print("\t%s: %s" % (k, v))
-
+print(" ".join(get_config_vars("CONFIG_ARGS")))
 print("Numpy %s" % numpy.version.version)
 print("      include %s" % numpy.get_include())
 print("      options %s" % numpy.get_printoptions())
