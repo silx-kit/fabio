@@ -1,4 +1,5 @@
-#List of dependecies used by PIP but also by ReadTheDocs to generate the documentation on the fly
+#List of dependencies used.
+# PIP installs them from pre-compiled wheels, optimized for Travis-CI Python environment.   
 --find-links http://www.edna-site.org/pub/wheelhouse
 
 numpy
