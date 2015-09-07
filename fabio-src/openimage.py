@@ -141,7 +141,14 @@ def _openimage(filename):
 
     """
     url = urlparse(filename)
-    filename = url.path
+
+    # related to https://github.com/kif/fabio/issues/34
+    if len(url.scheme) == 1 and (sys.platform == "win32"):
+        # this is likely a C: from windows
+        filename = url.scheme + url.path
+    else:
+        filename = url.path
+
     try:
         imo = fabioimage()
         byts = imo._open(filename).read(18)
@@ -183,7 +190,7 @@ def _openimage(filename):
 
     if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
         obj.set_url(url)
-    obj.filename = url.path
+    obj.filename = filename
     # skip the read for read header
     return obj
 

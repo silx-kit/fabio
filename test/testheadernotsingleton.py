@@ -41,8 +41,7 @@ class TestHeaderNotSingleton(unittest.TestCase):
         image2 = fabio.open(file2)
         self.assertEqual(os.path.abspath(image1.header['filename']), os.path.abspath(self.file1))
         self.assertEqual(os.path.abspath(image2.header['filename']), os.path.abspath(file2))
-        self.assertNotEqual(image1.header['filename'],
-                             image2.header['filename'])
+        self.assertNotEqual(image1.header['filename'], image2.header['filename'])
 
 
 def test_suite_all_header():
