@@ -10,9 +10,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import numpy
-import gzip
-import bz2
 
 try:
     from .utilstest import UtilsTest
@@ -39,9 +36,14 @@ class TestHeaderNotSingleton(unittest.TestCase):
             shutil.copy(self.file1, file2)
         image1 = fabio.open(self.file1)
         image2 = fabio.open(file2)
-        self.assertEqual(os.path.abspath(image1.header['filename']), os.path.abspath(self.file1))
-        self.assertEqual(os.path.abspath(image2.header['filename']), os.path.abspath(file2))
+        abs_norm = lambda fn: os.path.normcase(os.path.abspath(fn))
+        self.assertEqual(abs_norm(image1.header['filename']), abs_norm(self.file1))
+        self.assertEqual(abs_norm(image2.header['filename']), abs_norm(file2))
         self.assertNotEqual(image1.header['filename'], image2.header['filename'])
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.file1 = None
 
 
 def test_suite_all_header():
