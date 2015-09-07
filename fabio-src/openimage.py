@@ -145,7 +145,7 @@ def _openimage(filename):
     # related to https://github.com/kif/fabio/issues/34
     if len(url.scheme) == 1 and (sys.platform == "win32"):
         # this is likely a C: from windows
-        filename = url.scheme + url.path
+        filename = url.scheme + ":" + url.path
     else:
         filename = url.path
 
