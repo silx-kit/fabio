@@ -1,19 +1,20 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Getting Started &mdash; FabIO v0.1.4 documentation</title>
+    <title>Getting Started &mdash; FabIO 0.2.2 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.1.4',
+        URL_ROOT:    './',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +23,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="FabIO v0.1.4 documentation" href="index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="FabIO 0.2.2 documentation" href="index.html" />
     <link rel="next" title="Installation" href="install.html" />
     <link rel="prev" title="Welcome to FabIO’s documentation!" href="index.html" /> 
   </head>
@@ -42,7 +44,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to FabIO’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FabIO v0.1.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -198,17 +200,18 @@ can be employed.</p>
 </pre></div>
 </div>
 <p>Normalising the intensity to a value in the header:</p>
-<div class="highlight-python"><pre>img = fabio.open('exampleimage0001.edf')
-print(img.header)
-{'ByteOrder': 'LowByteFirst',
- 'DATE (scan begin)': 'Mon Jun 28 21:22:16 2010',
- 'ESRFCurrent': '198.099',
-...
-}
-# Normalise to beam current and save data
-srcur = float(img.header['ESRFCurrent'])
-img.data *= 200.0/srcur
-img.write('normed_0001.edf')</pre>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">img</span> <span class="o">=</span> <span class="n">fabio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&#39;exampleimage0001.edf&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+<span class="p">{</span><span class="s">&#39;ByteOrder&#39;</span><span class="p">:</span> <span class="s">&#39;LowByteFirst&#39;</span><span class="p">,</span>
+ <span class="s">&#39;DATE (scan begin)&#39;</span><span class="p">:</span> <span class="s">&#39;Mon Jun 28 21:22:16 2010&#39;</span><span class="p">,</span>
+ <span class="s">&#39;ESRFCurrent&#39;</span><span class="p">:</span> <span class="s">&#39;198.099&#39;</span><span class="p">,</span>
+<span class="o">...</span>
+<span class="p">}</span>
+<span class="c"># Normalise to beam current and save data</span>
+<span class="n">srcur</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;ESRFCurrent&#39;</span><span class="p">])</span>
+<span class="n">img</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="mf">200.0</span><span class="o">/</span><span class="n">srcur</span>
+<span class="n">img</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;normed_0001.edf&#39;</span><span class="p">)</span>
+</pre></div>
 </div>
 <p>Interactive viewing with matplotlib:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>       <span class="c"># Load matplotlib</span>
@@ -225,18 +228,10 @@ is increasingly popular for storage of X-ray and neutron data. To
 name a few facilities the synchrotron Soleil and the neutron
 sources ISIS, SNS and SINQ already use HDF extensively through the
 NeXus format. For now, mainly processed or curated data are
-stored in this format but new detectors are rumoured to provide
-native output in HDF5. FabIO will rely on H5Py, which
+stored in this format but new detectors (Eiger from Dectris) are natively
+saving data in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
 dependency, to be able to read and write such HDF5 files.</p>
-<p>In the near future FabIO will be upgraded to work with Python3 (a
-new version of Python); this change of version will affect some
-internals FabIO as string and file handling have been altered. This
-change is already ongoing as many parts of native code in C have
-already been translated into Cython to smoothe the
-transition, since Cython generates code compatible with Python3.
-This also makes it easier to retain backwards compatibility with
-the earlier Python versions.</p>
 </div>
 <div class="section" id="conclusion">
 <h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
@@ -245,8 +240,7 @@ Python computer language. It was originally developed for X-ray
 diffraction data but now gives an easy way for scientists to access
 and manipulate their data from a wide range of 2D X-ray detectors.
 We welcome contributions to further improve the code and hope to
-add more file formats in the future as well as port the existing
-code base to the emerging Python3.</p>
+add more file formats in the future.</p>
 <div class="section" id="acknoledgements">
 <h3>Acknoledgements<a class="headerlink" href="#acknoledgements" title="Permalink to this headline">¶</a></h3>
 <p>We acknowledge Andy Götz and Kenneth Evans for extensive
@@ -280,7 +274,7 @@ uses extensions as a fallback if that fails.</p>
 <col width="9%" />
 </colgroup>
 <thead valign="bottom">
-<tr><th class="head">Python Module</th>
+<tr class="row-odd"><th class="head">Python Module</th>
 <th class="head">Detector / Format</th>
 <th class="head">Extension</th>
 <th class="head">Read</th>
@@ -289,140 +283,140 @@ uses extensions as a fallback if that fails.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td>ADSC</td>
+<tr class="row-even"><td>ADSC</td>
 <td>ADSC Quantum</td>
 <td>.img</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>Bruker</td>
+<tr class="row-odd"><td>Bruker</td>
 <td>Bruker formats</td>
 <td>.sfrm</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>DM3</td>
+<tr class="row-even"><td>DM3</td>
 <td>Gatan Digital Micrograph</td>
 <td>.dm3</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>EDF</td>
+<tr class="row-odd"><td>EDF</td>
 <td>ESRF data format</td>
 <td>.edf</td>
 <td>Yes</td>
 <td>Yes</td>
 <td>Yes</td>
 </tr>
-<tr><td>EDNA-XML</td>
+<tr class="row-even"><td>EDNA-XML</td>
 <td>Used by EDNA</td>
 <td>.xml</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>CBF</td>
+<tr class="row-odd"><td>CBF</td>
 <td>CIF binary files</td>
 <td>.cbf</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>kcd</td>
+<tr class="row-even"><td>kcd</td>
 <td>Nonius KappaCCD</td>
 <td>.kccd</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>fit2d mask</td>
+<tr class="row-odd"><td>fit2d mask</td>
 <td>Used by Fit2D</td>
 <td>.msk</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>fit2d spreadsheet</td>
+<tr class="row-even"><td>fit2d spreadsheet</td>
 <td>Used by Fit2D</td>
 <td>.spr</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>GE</td>
+<tr class="row-odd"><td>GE</td>
 <td>General Electric</td>
 <td>No</td>
 <td>Yes</td>
 <td>Yes</td>
 <td>No</td>
 </tr>
-<tr><td>HiPiC</td>
+<tr class="row-even"><td>HiPiC</td>
 <td>Hamamatsu CCD</td>
 <td>.tif</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>HDF5</td>
+<tr class="row-odd"><td>HDF5</td>
 <td>Hierachical data dormat</td>
 <td>.h5</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>marccd</td>
+<tr class="row-even"><td>marccd</td>
 <td>MarCCD/Mar165</td>
 <td>.mccd</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>mar345</td>
+<tr class="row-odd"><td>mar345</td>
 <td>Mar345 image plate</td>
 <td>.mar3450</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>OXD</td>
+<tr class="row-even"><td>OXD</td>
 <td>Oxford Diffraction</td>
 <td>.img</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>Pixi</td>
+<tr class="row-odd"><td>Pixi</td>
 <td>pixi</td>
 <td>.</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>pilatus</td>
+<tr class="row-even"><td>pilatus</td>
 <td>Dectris Pilatus Tiff</td>
 <td>.tif</td>
 <td>Yes</td>
 <td>No</td>
 <td>Yes</td>
 </tr>
-<tr><td>PNM</td>
+<tr class="row-odd"><td>PNM</td>
 <td>Portable aNy Map</td>
 <td>.pnm</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>Raxis</td>
+<tr class="row-even"><td>Raxis</td>
 <td>Rigaku Saxs format</td>
 <td>.img</td>
 <td>Yes</td>
 <td>No</td>
 <td>No</td>
 </tr>
-<tr><td>TIFF</td>
+<tr class="row-odd"><td>TIFF</td>
 <td>Tagged Image File Format</td>
 <td>.tif</td>
 <td>Yes</td>
@@ -529,12 +523,12 @@ uses extensions as a fallback if that fails.</p>
         <li class="right" >
           <a href="index.html" title="Welcome to FabIO’s documentation!"
              >previous</a> |</li>
-        <li><a href="index.html">FabIO v0.1.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+        &copy; Copyright 2006-2015, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

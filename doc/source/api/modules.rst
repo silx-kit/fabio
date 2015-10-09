@@ -160,7 +160,7 @@ FabIO Package
     :show-inheritance:
 
 :mod:`fabio.mrcimage` Module
--------------------------------
+----------------------------
 
 .. automodule:: fabio.mrcimage
     :members:
@@ -192,7 +192,7 @@ FabIO Package
     :show-inheritance:
 
 :mod:`fabio.pixiimage` Module
---------------------------------
+-----------------------------
 
 .. automodule:: fabio.pixiimage
     :members:
@@ -208,7 +208,7 @@ FabIO Package
     :show-inheritance:
 
 :mod:`fabio.raxisimage` Module
---------------------------------
+------------------------------
 
 .. automodule:: fabio.raxisimage
     :members:
@@ -255,10 +255,10 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`fabio.TiffIO` Module
---------------------------
+:mod:`fabio.third_party.TiffIO` Module
+--------------------------------------
 
-.. automodule:: fabio.TiffIO
+.. automodule:: fabio.third_party.TiffIO
     :members:
     :undoc-members:
     :show-inheritance:

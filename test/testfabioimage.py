@@ -171,10 +171,7 @@ class testPILimage(unittest.TestCase):
                         else:
                             err = er1
 
-                        self.assertAlmostEquals(err,
-                                                 0,
-                                                 6,
-                                                 errstr)
+                        self.assertAlmostEquals(err, 0, 6, errstr)
 
 
 class testPILimage2(testPILimage):

@@ -60,7 +60,7 @@ def compress_pck(inputArray not None):
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
-def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None):
+def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):
     """
     Unpack a mar345 compressed image
 
@@ -69,6 +69,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     @param overflowPix: optional parameters: number of overflowed pixels
     @param version: PCK version 1 or 2
     @param normal_start: position of the normal value section (can be auto-guessed)
+    @param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
     @return : ndarray of 2D with the right size
     """
     cdef:
@@ -140,6 +141,8 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
         records = (chigh + PACK_SIZE_HIGH - 1) // PACK_SIZE_HIGH
         stop = normal_offset - lenkey - 14
         odata = numpy.fromstring(raw[stop - 64 * records: stop], dtype=numpy.int32)
+        if swap_needed:
+            odata.byteswap(True)
         idx = odata[::2] - 1  # indexes are even values (-1 because 1 based counting)
         value = odata[1::2]   # values are odd values
         valid = numpy.logical_and(idx >= 0, idx < cdimx * cdimy)

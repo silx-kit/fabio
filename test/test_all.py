@@ -29,6 +29,7 @@ if utilstest.IN_SOURCES:
     from testheadernotsingleton import test_suite_all_header
     from testmar345image import test_suite_all_mar345
     from testbrukerimage import test_suite_all_bruker
+    from testbruker100image import test_suite_all_bruker100
     from testmccdimage import test_suite_all_mccd
     from testopenheader import test_suite_all_openheader
     from testopenimage import test_suite_all_openimage
@@ -52,6 +53,7 @@ else:
     from .testheadernotsingleton import test_suite_all_header
     from .testmar345image import test_suite_all_mar345
     from .testbrukerimage import test_suite_all_bruker
+    from .testbruker100image import test_suite_all_bruker100
     from .testmccdimage import test_suite_all_mccd
     from .testopenheader import test_suite_all_openheader
     from .testopenimage import test_suite_all_openimage

@@ -2,7 +2,7 @@ include README.txt
 include MANIFEST.in
 exclude MANIFEST
 include stdeb.cfg
-recursive-include src *.c *.h *.pyx 
+recursive-include src *.c *.h *.pyx
 recursive-include test *.py
 recursive-include doc *
 recursive-include pylint *
@@ -11,5 +11,6 @@ recursive-exclude build *
 recursive-exclude dist *
 recursive-exclude test/tiftest *
 recursive-exclude test/testimages *
+recursive-exclude testimages *
 recursive-exclude fabio.egg-info *
 

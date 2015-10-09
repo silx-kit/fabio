@@ -2,6 +2,7 @@
 # coding: utf-8
 """
 Authors: Gael Goret, Jerome Kieffer, ESRF, France
+
 Emails: gael.goret@esrf.fr, jerome.kieffer@esrf.fr
         Brian Richard Pauw <brian@stack.nl>
 
@@ -28,8 +29,8 @@ class binaryimage(fabioimage):
     """
     This simple library has been made for manipulating exotic/unknown files format.
 
-    Binary files images are simple none-compressed 2D images only defined by their :
-    data-type, dimensions, byte order and offset
+    Binary files images are simple none-compressed 2D images only defined by their:
+        data-type, dimensions, byte order and offset
 
     if offset is set to a negative value, the image is read using the last data but n
     data in the file, skipping any header.
@@ -74,7 +75,7 @@ class binaryimage(fabioimage):
             f.seek(offset)
         else:
             try:
-                f.seek(-size + offset + 1, 2) #seek from EOF backwards
+                f.seek(-size + offset + 1, 2)  # seek from EOF backwards
             except IOError:
                 logging.warn('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
             except:

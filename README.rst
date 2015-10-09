@@ -1,6 +1,13 @@
-FabIO
-=====
-FabIO is an I/O library for images produced by 2D X-ray detectors and written in python.
+FabIO: Fable Input/Output library
+=================================
+
+Main website: http://fable.sf.net
+
+|Build Status| |Appveyor Status|
+
+----
+
+FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python.
 FabIO support images detectors from a dozen of companies (including Mar, Dectris, ADSC, Hamamatsu, Oxford, ...),
 for a total of 20 different file formats (like CBF, EDF, TIFF, ...) and offers an unified interface to their
 headers (as a python dictionary) and datasets (as a numpy ndarray of integers or floats)
@@ -116,9 +123,11 @@ Known file formats
 * Hamamatsu
   o HiPiCimage
 * Oxford Diffraction Sapphire 3
-  o OXDimage
+  o OXDimage uncompressed
+  o OXDimage with TY1 byte offset compression
+  o OXDimage with TY5 byte offset compression (experimental)
 * Nonius
- o KappaCCD
+  o KappaCCD
 * Raw Binary without compression
 
 Installation
@@ -131,3 +140,7 @@ Changelog
 
 Please see doc/source/Changelog.rst
 
+.. |Build Status| image:: https://travis-ci.org/kif/fabio.svg?branch=master
+   :target: https://travis-ci.org/kif/fabio
+.. |Appveyor Status| image:: https://ci.appveyor.com/api/projects/status/u2nh1ehn4q3m4vuv/branch/master?svg=true
+   :target: https://ci.appveyor.com/project/kif/fabio/branch/master

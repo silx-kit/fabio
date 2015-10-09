@@ -6,14 +6,21 @@ from __future__ import print_function, division, with_statement, absolute_import
 """
 Setup script for python distutils package and fabio
 """
-import os, sys
+import os
+import sys
 import os.path as op
 import glob
 import shutil
-from distutils.core import setup
-from distutils.core import Extension, Command
 import numpy as np
-from distutils.command.sdist import sdist
+try:
+    # setuptools allows the creation of wheels
+    from setuptools import setup, Extension, Command
+    from setuptools.command.sdist import sdist
+except ImportError:
+    from distutils.core import setup
+    from distutils.core import Extension, Command
+    from distutils.command.sdist import sdist
+from distutils.filelist import FileList
 
 ################################################################################
 # Remove MANIFEST file ... it needs to be re-generated on the fly
@@ -32,7 +39,7 @@ try:
 except ImportError:
     USE_CYTHON = False
 else:
-    if Cython.Compiler.Version.version < "0.17":
+    if tuple(int(i) for i in Cython.Compiler.Version.version.split(".")[:2]) < (0, 17):
         USE_CYTHON = False
     else:
         USE_CYTHON = True
@@ -63,10 +70,13 @@ _cif_backend = Extension('_cif',
 
 extensions = [cf_backend, byteOffset_backend, mar345_backend, _cif_backend]
 
-sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
-import _version
-sys.path.pop(0)
-version = _version.version
+
+def get_version():
+    sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
+    import _version
+    sys.path.pop(0)
+    return _version.version
+
 #######################
 # build_doc commandes #
 #######################
@@ -79,8 +89,8 @@ try:
     from sphinx.setup_command import BuildDoc
 except ImportError:
     sphinx = None
-
-if sphinx:
+else:
+    # i.e. if sphinx:
     class build_doc(BuildDoc):
 
         def run(self):
@@ -124,26 +134,26 @@ cmdclass['test'] = PyTest
 # We subclass the build_ext class in order to handle compiler flags
 # for openmp and opencl etc in a cross platform way
 translator = {
-        # Compiler
-          # name, compileflag, linkflag
-        'msvc':{
-            'openmp': ('/openmp', ' '),
-            'debug' : ('/Zi', ' '),
-            'OpenCL': 'OpenCL',
-            },
-        'mingw32':{
-            'openmp': ('-fopenmp', '-fopenmp'),
-            'debug' : ('-g', '-g'),
-            'stdc++': 'stdc++',
-            'OpenCL': 'OpenCL'
-            },
-        'default':{
-            'openmp': ('-fopenmp', '-fopenmp'),
-            'debug' : ('-g', '-g'),
-            'stdc++': 'stdc++',
-            'OpenCL': 'OpenCL'
-            }
-        }
+        #  Compiler
+        #  name, compileflag, linkflag
+        'msvc': {
+                 'openmp': ('/openmp', ' '),
+                 'debug': ('/Zi', ' '),
+                 'OpenCL': 'OpenCL',
+                },
+        'mingw32': {
+                    'openmp': ('-fopenmp', '-fopenmp'),
+                    'debug': ('-g', '-g'),
+                    'stdc++': 'stdc++',
+                    'OpenCL': 'OpenCL'
+                   },
+        'default': {
+                    'openmp': ('-fopenmp', '-fopenmp'),
+                    'debug': ('-g', '-g'),
+                    'stdc++': 'stdc++',
+                    'OpenCL': 'OpenCL'
+                   }
+              }
 
 
 class build_ext_FabIO(build_ext):
@@ -168,7 +178,7 @@ cmdclass['build_ext'] = build_ext_FabIO
 ################################################################################
 def download_images():
     """
-    Download all test images and  
+    Download all test images and
     """
     test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test")
     sys.path.insert(0, test_dir)
@@ -206,16 +216,9 @@ class sdist_debian(sdist):
             cf = op.splitext(pyxf)[0] + ".c"
             if op.isfile(cf):
                 self.filelist.exclude_pattern(pattern=cf)
-        for ex in ["argparse", "gzip"]:
-            self.filelist.exclude_pattern(pattern=ex + ".py", anchor=True, prefix="fabio-src")
-        print("Adding test_files for debian")
-
-        self.filelist.allfiles += [op.join("test", "testimages", i) \
-                                   for i in download_images()]
-        self.filelist.include_pattern(pattern="*", anchor=True,
-                                      prefix="test/testimages")
 
     def make_distribution(self):
+        self.prune_file_list()
         sdist.make_distribution(self)
         dest = self.archive_files[0]
         dirname, basename = op.split(dest)
@@ -237,6 +240,55 @@ class sdist_debian(sdist):
 cmdclass['debian_src'] = sdist_debian
 
 
+class sdist_testimages(sdist):
+    """
+    Tailor made sdist for debian containing only testimages
+    * remove everything
+    * add image files from testimages/*
+    """
+    to_remove = ["PKG-INFO", "setup.cfg"]
+
+    def run(self):
+        self.filelist = FileList()
+        self.add_defaults()
+        self.make_distribution()
+
+    def add_defaults(self):
+        print("in sdist_testimages.add_defaults")
+        self.filelist.extend([op.join("testimages", i) for i in download_images()])
+        print(self.filelist.files)
+
+    def make_release_tree(self, base_dir, files):
+        print("in sdist_testimages.make_release_tree")
+        sdist.make_release_tree(self, base_dir, files)
+        for afile in self.to_remove:
+            dest = os.path.join(base_dir, afile)
+            if os.path.exists(dest):
+                os.unlink(dest)
+
+    def make_distribution(self):
+        print("in sdist_testimages.make_distribution")
+        sdist.make_distribution(self)
+        dest = self.archive_files[0]
+        dirname, basename = op.split(dest)
+        base, ext = op.splitext(basename)
+        while ext in [".zip", ".tar", ".bz2", ".gz", ".Z", ".lz", ".orig"]:
+            base, ext = op.splitext(base)
+        if ext:
+            dest = "".join((base, ext))
+        else:
+            dest = base
+        sp = dest.split("-")
+        base = sp[:-1]
+        nr = sp[-1]
+        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig-testimages.tar.gz")
+        os.rename(self.archive_files[0], debian_arch)
+        self.archive_files = [debian_arch]
+        print("Building debian orig-testimages.tar.gz in %s" % self.archive_files[0])
+
+cmdclass['debian_testimages'] = sdist_testimages
+
+
 if sys.platform == "win32":
     root = op.dirname(op.abspath(__file__))
     tocopy_files = []
@@ -255,14 +307,24 @@ if sys.platform == "win32":
 else:
     script_files = glob.glob("scripts/*")
 
+
+# adaptation for Debian packaging (without third_party)
+packages = ["fabio", "fabio.test"]
+package_dir = {"fabio": "fabio-src",
+               "fabio.test": "test"}
+if os.path.isdir("third_party"):
+    package_dir["fabio.third_party"] = "third_party"
+    packages.append("fabio.third_party")
+
+
 if __name__ == "__main__":
     setup(name='fabio',
-          version=version,
+          version=get_version(),
           author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
           author_email="fable-talk@lists.sourceforge.net",
           description='Image IO for fable',
           url="http://fable.wiki.sourceforge.net/fabio",
-          download_url="http://sourceforge.net/projects/fable/files/fabio/0.1.4",
+          download_url="http://sourceforge.net/projects/fable/files/fabio/",
           ext_package="fabio",
           ext_modules=extensions,
           packages=["fabio", "fabio.third_party", "fabio.test"],
@@ -291,4 +353,4 @@ if __name__ == "__main__":
               'Topic :: Scientific/Engineering :: Physics',
               'Topic :: Scientific/Engineering :: Visualization',
               'Topic :: Software Development :: Libraries :: Python Modules',
-              ],)
+                ],)

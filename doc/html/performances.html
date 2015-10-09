@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Benchmarks &mdash; FabIO 0.2.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="FabIO 0.2.2 documentation" href="index.html" />
+    <link rel="next" title="Changelog" href="Changelog.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Changelog.html" title="Changelog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="benchmarks">
+<h1>Benchmarks<a class="headerlink" href="#benchmarks" title="Permalink to this headline">¶</a></h1>
+<p>Those benchmarks have been done with all data already in cache using a Intel Xeon E5520  &#64; 2.27GHz
+running Debian 7.</p>
+<table border="1" class="w docutils">
+<caption>Execution time for reading a file, benchmarked using the <a href="#id1"><span class="problematic" id="id2">``</span></a>timeit&#8217;&#8217; module.</caption>
+<colgroup>
+<col width="16%" />
+<col width="29%" />
+<col width="9%" />
+<col width="15%" />
+<col width="15%" />
+<col width="15%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>FabIO module</td>
+<td>Filename</td>
+<td>Size</td>
+<td>Py2.7 v0.1.4</td>
+<td>Py2.7 v0.2.0</td>
+<td>Py3.2 v0.2.0</td>
+</tr>
+<tr class="row-even"><td>adscimage</td>
+<td>mb_LP_1_001.img</td>
+<td>9 Mpix</td>
+<td>1.16 s</td>
+<td>1.12 s</td>
+<td>2.67 s</td>
+</tr>
+<tr class="row-odd"><td>brukerimage</td>
+<td>Cr8F8140k103.0026</td>
+<td>256kpix</td>
+<td>796 µs</td>
+<td>795 µs</td>
+<td>1.43 ms</td>
+</tr>
+<tr class="row-even"><td>cbfimage</td>
+<td>run2_1_00148.cbf</td>
+<td>6 Mpix</td>
+<td>173 ms</td>
+<td>70.8 ms</td>
+<td>70.8 ms</td>
+</tr>
+<tr class="row-odd"><td>edfimage</td>
+<td>F2K_Seb_Lyso0675.edf</td>
+<td>4 Mpix</td>
+<td>512 µs</td>
+<td>597 µs</td>
+<td>595 µs</td>
+</tr>
+<tr class="row-even"><td>fit2dmaskimage</td>
+<td>fit2d_click.msk</td>
+<td>1 Mpix</td>
+<td>30.4 ms</td>
+<td>30.5 ms</td>
+<td>28.4 ms</td>
+</tr>
+<tr class="row-odd"><td>GEimage</td>
+<td>GE_aSI_detector_image_1529</td>
+<td>4 Mpix</td>
+<td>5.37 ms</td>
+<td>5.44 ms</td>
+<td>4.3 ms</td>
+</tr>
+<tr class="row-even"><td>kcdimage</td>
+<td>i01f0001.kcd</td>
+<td>360kpix</td>
+<td>130 ms</td>
+<td>121 ms</td>
+<td>292 ms</td>
+</tr>
+<tr class="row-odd"><td>mar345image</td>
+<td>example.mar2300</td>
+<td>5 Mpix</td>
+<td>78 ms</td>
+<td>77 ms</td>
+<td>77 ms</td>
+</tr>
+<tr class="row-even"><td>marccdimage</td>
+<td>corkcont2_H_0089.mccd</td>
+<td>4 Mpix</td>
+<td>9.28 ms</td>
+<td>9.01 ms</td>
+<td>17.2 ms</td>
+</tr>
+<tr class="row-odd"><td>OXDimage</td>
+<td>b191_1_9_1.img</td>
+<td>256kpix</td>
+<td>5.75 ms</td>
+<td>5.67 ms</td>
+<td>8.35 ms</td>
+</tr>
+<tr class="row-even"><td>pnmimage</td>
+<td>image0001.pgm</td>
+<td>1 Mpix</td>
+<td>3.29 ms</td>
+<td>3.25 ms</td>
+<td>5.71 ms</td>
+</tr>
+<tr class="row-odd"><td>raxisimage</td>
+<td>mgzn-20hpt.img</td>
+<td>3 Mpix</td>
+<td>53.5 ms</td>
+<td>57.1 ms</td>
+<td>69.2 ms</td>
+</tr>
+<tr class="row-even"><td>tifimage</td>
+<td>oPPA_5grains_0001.tif</td>
+<td>4 Mpix</td>
+<td>59.9 ms</td>
+<td>58.4 ms</td>
+<td>105 ms</td>
+</tr>
+<tr class="row-odd"><td>xsdimage</td>
+<td>XSDataImage.xml</td>
+<td>256kpix</td>
+<td>13.3 ms</td>
+<td>12.9 ms</td>
+<td>18.4 ms</td>
+</tr>
+</tbody>
+</table>
+<p>The Python3 version is sometimes twice slower then the Python2 version. As the codebase is the
+same this regression is not due to FabIO but to the programming language itself.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Changelog.html"
+                        title="next chapter">Changelog</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/performances.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Changelog.html" title="Changelog"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2006-2015, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

@@ -1,8 +1,8 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#    Project: Fast Azimuthal Integration
-#             https://github.com/pyFAI/pyFAI
+#    Project: X-ray image reader
+#             https://github.com/kif/fabio
 #
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
@@ -30,12 +30,12 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/01/2015"
+__date__ = "15/02/2015"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
 
-Module for handling HDF5 data structure folowing the NeXuS convention
+Module for handling HDF5 data structure following the NeXuS convention
 
 Stand-alone module which tries to offer interface to HDF5 via H5Py
 
@@ -52,8 +52,14 @@ import time
 
 from ._version import version
 
+if sys.version_info[0] < 3:
+    bytes = str
+    from urlparse import urlparse
+else:
+    from urllib.parse import  urlparse
 
-logger = logging.getLogger("pyFAI.io")
+
+logger = logging.getLogger("fabio.nexus")
 try:
     import h5py
 except ImportError as error:
@@ -66,6 +72,44 @@ else:
         pass
 
 
+def exists(fname):
+    """
+    Return True if the filename or dataset locator exist and is valid
+    @param fname: filename or url as a string
+
+    example of url: "hdf5:///example.h5?entry/instrument/data#slice=[:,:,5]"
+
+        foo://example.com:8042/over/there?name=ferret#nose
+         \_/   \______________/\_________/ \_________/ \__/
+          |           |            |            |        |
+       scheme     authority       path        query   fragment
+    """
+    if ":" in fname:
+        url = urlparse(fname)
+        if url.scheme =="file":
+            return os.path.exists(url.path)
+        elif url.scheme =="nxs":
+            if not os.path.exists(url.path):
+                return False
+            try:
+                nxs = Nexus(url.path)
+            except:
+                return False
+            else:
+                return bool(nxs.find_data())
+        elif url.scheme =="hdf5":
+            if not os.path.exists(url.path):
+                return False
+            h5 = h5py.File(url.path, "r")
+            try:
+                dset = h5[url.query]
+            except Exception:
+                return False
+            else:
+                return isinstance(dset, h5py.Dataset)
+
+    else:
+        return os.path.exists(fname)
 
 
 
@@ -84,6 +128,7 @@ def get_isotime(forceTime=None):
     tz_m = localtime.tm_min - gmtime.tm_min
     return "%s%+03i:%02i" % (time.strftime("%Y-%m-%dT%H:%M:%S", localtime), tz_h, tz_m)
 
+
 def from_isotime(text, use_tz=False):
     """
     @param text: string representing the time is iso format
@@ -96,6 +141,7 @@ def from_isotime(text, use_tz=False):
     else:
         tz = 0
     return time.mktime(time.strptime(base, "%Y-%m-%dT%H:%M:%S")) + tz
+
 
 def is_hdf5(filename):
     """
@@ -183,8 +229,18 @@ class Nexus(object):
                         "start_time" in self.h5[grp] and  \
                         "NX_class" in self.h5[grp].attrs and \
                         self.h5[grp].attrs["NX_class"] == "NXentry")]
-        entries.sort(key=lambda a: a[1], reverse=True)  # sort entries in decreasing time
-        return [self.h5[i[0]] for i in entries]
+        if entries :
+            entries.sort(key=lambda a: a[1], reverse=True)  # sort entries in decreasing time
+            return [self.h5[i[0]] for i in entries]
+        else: #no entries found, try without sorting by time
+            entries = [grp for grp in self.h5
+                    if (isinstance(self.h5[grp], h5py.Group) and \
+                        "NX_class" in self.h5[grp].attrs and \
+                        self.h5[grp].attrs["NX_class"] == "NXentry")]
+            entries.sort(reverse=True)
+            return [self.h5[i] for i in entries]
+
+
 
     def find_detector(self, all=False):
         """
@@ -201,6 +257,52 @@ class Nexus(object):
                     else:
                         return detector
         return result
+
+    def find_data(self, all=False):
+        """
+        Tries to find a NXdata within a NeXus file
+
+        @param all: return all detectors found as a list
+        """
+        result = []
+        for entry in self.get_entries():
+            data = self.get_data(entry)
+            if data:
+                if all:
+                    result+=data
+                else:
+                    return data[0]
+            for instrument in self.get_class(entry, "NXinstrument"):
+                data = self.get_data(instrument)
+                if data:
+                    if all:
+                        result += data
+                    else:
+                        return data[0]
+                for detector in self.get_class(instrument, "NXdetector"):
+                    data = self.get_data(detector)
+                    if data:
+                        if all:
+                            result += data
+                        else:
+                            return data[0]
+            for instrument in self.get_class(entry, "NXsubentry"):
+                data = self.get_data(instrument)
+                if data:
+                    if all:
+                        result += data
+                    else:
+                        return data[0]
+                for detector in self.get_class(instrument, "NXdetector"):
+                    data = self.get_data(detector)
+                    if data:
+                        if all:
+                            result += data
+                        else:
+                            return data[0]
+
+        return result
+
 
     def new_entry(self, entry="entry", program_name="pyFAI", title="description of experiment", force_time=None):
         """
@@ -282,17 +384,18 @@ class Nexus(object):
         @param grp: HDF5 group
         @param class_type: name of the NeXus class
         """
-        coll = [grp[name] for name in grp
+        result = []
+        for grp in self.get_class(grp, class_type):
+            result += [grp[name] for name in grp \
                if (isinstance(grp[name], h5py.Dataset) and \
-                   "NX_class" in grp[name].attrs and \
-                   grp[name].attrs["NX_class"] == class_type)]
-        return coll
+                   ("signal" in grp[name].attrs))]
+        return result
 
     def deep_copy(self, name, obj, where="/", toplevel=None, excluded=None, overwrite=False):
         """
         perform a deep copy:
         create a "name" entry in self containing a copy of the object
-        
+
         @param where: path to the toplevel object (i.e. root)
         @param  toplevel: firectly the top level Group
         @param excluded: list of keys to be excluded

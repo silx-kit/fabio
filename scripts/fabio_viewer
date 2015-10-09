@@ -7,7 +7,8 @@
 #############################################################
 
 """ 
-Fabio_viewer is a portable diffraction images viewer/converter:
+FabIO_viewer is a portable diffraction images viewer/converter:
+
 * Written in Python, it combines the functionalities of the I/O library fabIO with a user friendly Qt4 GUI.
 * Image converter is also a light viewer based on the visualization tool provided by the module matplotlib.
 """
@@ -20,6 +21,7 @@ __licence__ = "GPL"
 import sys
 import os
 import time
+
 from PyQt4.QtCore import QDir, Qt, QRect, QString, QCoreApplication
 from PyQt4.QtGui import QLabel, QVBoxLayout, QWidget, QSplitter, QListWidget, \
                         QComboBox, QApplication, QStyleFactory, QHBoxLayout, \
@@ -34,14 +36,16 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 import numpy
-import fabio
-from fabio.nexus import Nexus
 numpy.seterr(divide='ignore')
 
 import matplotlib
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+import fabio
+
+from fabio.nexus import Nexus
+
 
 try:
     from argparse import ArgumentParser
@@ -100,7 +104,7 @@ class AppForm(QMainWindow):
         return res
 
     def open_data_series(self, series=None):
-        if series is None:
+        if not series:
             series = QFileDialog.getOpenFileNames(self, 'Select and open series of files')
         series = [str(f) for f in list(series)]
         total = len(series)
@@ -802,7 +806,7 @@ class AppForm(QMainWindow):
         if event.inaxes and self.data.any():
             x = int(round(event.xdata))
             y = int(round(event.ydata))
-            if x <= self.data.shape[1] and y <= self.data.shape[0]:
+            if x < self.data.shape[1] and y < self.data.shape[0]:
                 i = self.data[y, x]
                 self.pix_coords_label.setText("Pixel coordinates and intensity: x =%6d, y =%6d, i =%6g" % (x, y, i))
             else:
@@ -1270,7 +1274,10 @@ class AppForm(QMainWindow):
             action.setToolTip(tip)
             action.setStatusTip(tip)
         if slot is not None:
-            action.__getattr__(signal).connect(slot)
+# bug debian6: AttributeError: 'QAction' object has no attribute '__getattr__'
+#             action.__getattr__(signal).connect(slot)
+            getattr(action, signal).connect(slot)
+
         if checkable:
             action.setCheckable(True)
         return action

@@ -24,9 +24,9 @@ import os, logging
 logger = logging.getLogger("edfimage")
 import numpy
 from .fabioimage import fabioimage
-from .fabioutils import isAscii, toAscii, nice_int
+from .fabioutils import isAscii, toAscii, nice_int, six
 from .compression import decBzip2, decGzip, decZlib
-from .third_party import six
+
 
 BLOCKSIZE = 512
 DATA_TYPES = {  "SignedByte"    :  numpy.int8,
@@ -132,7 +132,7 @@ class Frame(object):
         """
         Parse the header in some EDF format from an already open file
 
-        @param block: string representing the header block. 
+        @param block: string representing the header block.
         @type block: string, should be full ascii
         @return: size of the binary blob
         """
@@ -300,17 +300,17 @@ class Frame(object):
             obtained = len(rawData)
             if expected > obtained:
                 logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
-                rawData += "\x00" * (expected - obtained)
+                rawData += "\x00".encode("ascii") * (expected - obtained)
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
+            data = numpy.fromstring(rawData, self._bytecode).reshape(tuple(dims))
             if self.swap_needed():
-                data = numpy.fromstring(rawData, self._bytecode).byteswap().reshape(tuple(dims))
-            else:
-                data = numpy.fromstring(rawData, self._bytecode).reshape(tuple(dims))
+                data.byteswap(True)
             self._data = data
             self._bytecode = data.dtype.type
         return data
+
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
@@ -395,7 +395,7 @@ class Frame(object):
         header_keys.insert(0, "EDF_HeaderSize")
         header["EDF_HeaderSize"] = "%5s" % (approxHeaderSize)
         header_keys.insert(0, "EDF_BinarySize")
-        header["EDF_BinarySize"] = len(data.tostring())
+        header["EDF_BinarySize"] = data.nbytes
         header_keys.insert(0, "EDF_DataBlockID")
         if not "EDF_DataBlockID" in header:
             header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
@@ -534,6 +534,15 @@ class edfimage(fabioimage):
         """
         self.__frames = []
         bContinue = True
+        attrs = dir(infile)
+        if "measure_size" in attrs:
+            # Handle bug #18 (https://github.com/kif/fabio/issues/18)
+            stream_size = infile.measure_size()
+        elif "size" in attrs:
+            stream_size = infile.size
+        elif "len" in attrs:
+            stream_size = infile.len
+
         while bContinue:
             block = self._readHeaderBlock(infile)
             if block is None:
@@ -554,7 +563,7 @@ class edfimage(fabioimage):
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
-            if  frame.start + size > infile.size:
+            if  frame.start + size > stream_size:
                 logger.warning("Non complete datablock: got %s, expected %s" % (infile.size - frame.start, size))
                 bContinue = False
                 break
@@ -593,16 +602,17 @@ class edfimage(fabioimage):
     def swap_needed(self):
         """
         Decide if we need to byteswap
+
+        @return True if needed, False else and None if not understood
         """
+        if self.bpp == 1 :
+            return False
         if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             return False
         if ('High'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            if self.bpp in [2, 4, 8]:
-                return True
-            else:
-                return False
+            return True
 
     def unpack(self):
         """
@@ -652,7 +662,6 @@ class edfimage(fabioimage):
             newImage = self.getframe(newFrameId)
         return newImage
 
-
     def write(self, fname, force_type=None, fit2dMode=False):
         """
         Try to write a file
@@ -663,12 +672,14 @@ class edfimage(fabioimage):
         @return: None
 
         """
-
+        # correct for bug #27: read all data before opening the file in write mode
+        if fname == self.filename:
+            [(frame.header, frame.data) for frame in self.__frames]
+            # this is thrown away
         with self._open(fname, mode="wb") as outfile:
             for i, frame in enumerate(self.__frames):
                 frame.iFrame = i
                 outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
-
 
     def appendFrame(self, frame=None, data=None, header=None):
         """
@@ -681,7 +692,6 @@ class edfimage(fabioimage):
             self.__frames.append(frame)
         else:
             self.__frames.append(Frame(data, header))
-
 
     def deleteFrame(self, frameNb=None):
         """
@@ -714,6 +724,8 @@ class edfimage(fabioimage):
             data.shape = self.data.shape
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
+        if self.swap_needed():
+            data.byteswap(True)
         return data
 
     def fastReadROI(self, filename, coords=None):
@@ -752,8 +764,9 @@ class edfimage(fabioimage):
             data.shape = -1, d1
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
+        if self.swap_needed():
+            data.byteswap(True)
         return data[slice2]
-
 
 ################################################################################
 # Properties definition for header, data, header_keys and capsHeader

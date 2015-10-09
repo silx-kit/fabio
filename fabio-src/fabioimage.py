@@ -14,7 +14,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 # get ready for python3
 from __future__ import with_statement, print_function, absolute_import, division
-import os, logging, sys, tempfile
+import os, logging, sys, tempfile, threading
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -117,7 +117,6 @@ class fabioimage(object):
         """
         Convert to Python Imaging Library 16 bit greyscale image
 
-        FIXME - this should be handled by the libraries now
         """
         if not Image:
             raise RuntimeError("PIL is not installed !!! ")
@@ -129,34 +128,19 @@ class fabioimage(object):
         size = self.data.shape[:2][::-1]
         typmap = {
             'float32' : "F"     ,
-            'int32'   : "F;32S" ,
-            'uint32'  : "F;32"  ,
-            'int16'   : "F;16S" ,
-            'uint16'  : "F;16"  ,
+            'int32'   : "F;32NS" ,
+            'uint32'  : "F;32N"  ,
+            'int16'   : "F;16NS" ,
+            'uint16'  : "F;16N"  ,
             'int8'    : "F;8S"  ,
             'uint8'   : "F;8"  }
         if self.data.dtype.name in typmap:
             mode2 = typmap[ self.data.dtype.name ]
             mode1 = mode2[0]
         else:
-            raise Exception("Unknown numpy type " + str(self.data.dtype.type))
-        #
-        # hack for byteswapping for PIL in MacOS
-        testval = numpy.array((1, 0), numpy.uint8).view(numpy.uint16)[0]
-        if  testval == 1:
-            dats = self.data.tostring()
-        elif testval == 256:
-            dats = self.data.byteswap().tostring()
-        else:
-            raise RuntimeError("Endian unknown in fabioimage.toPIL16")
-
-        self.pilimage = Image.frombuffer(mode1,
-                                         size,
-                                         dats,
-                                         "raw",
-                                         mode2,
-                                         0,
-                                         1)
+            raise RuntimeError("Unknown numpy type: %s" % (self.data.dtype.type))
+        dats = self.data.tostring()
+        self.pilimage = Image.frombuffer(mode1, size, dats, "raw", mode2, 0, 1)
 
         return self.pilimage
 
@@ -200,7 +184,6 @@ class fabioimage(object):
         return (slice(int(fixme[0]), int(fixme[2]) + 1) ,
                  slice(int(fixme[1]), int(fixme[3]) + 1))
 
-
     def integrate_area(self, coords):
         """
         Sums up a region of interest
@@ -208,7 +191,7 @@ class fabioimage(object):
         if len(coords) == 2 -> use as slices
         floor -> ? removed as unused in the function.
         """
-        if self.data == None:
+        if self.data is None:
             # This should return NAN, not zero ?
             return 0
         if len(coords) == 4:
@@ -235,7 +218,7 @@ class fabioimage(object):
 
     def getstddev(self):
         """ return the standard deviation """
-        if self.stddev == None:
+        if self.stddev is None:
             self.stddev = self.data.std(dtype=numpy.double)
         return self.stddev
 
@@ -269,7 +252,7 @@ class fabioimage(object):
 
 
         """
-        if self.data == None:
+        if self.data is None:
             raise Exception('Please read in the file you wish to rebin first')
 
         if (self.dim1 % x_rebin_fact != 0) or (self.dim2 % y_rebin_fact != 0):
@@ -373,13 +356,24 @@ class fabioimage(object):
         Return an object which can be used for "read" and "write"
         ... FIXME - what about seek ?
         """
+
+        if hasattr(fname, "read") and hasattr(fname, "write"):
+            # It is already something we can use
+            if "name" in dir(fname):
+                self.header["filename"] =self.filename= fname.name
+            else:
+                self.filename = self.header["filename"] = "stream"
+                try:
+                    setattr(fname, "name", self.filename)
+                except AttributeError:
+                    #cStringIO
+                    logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s"%type(fname))
+            return fname
+
         fileObject = None
         self.filename = fname
         self.filenumber = fabioutils.extract_filenumber(fname)
 
-        if hasattr(fname, "read") and hasattr(fname, "write"):
-            # It is already something we can use
-            return fname
         if isinstance(fname, fabioutils.StringTypes):
             self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":

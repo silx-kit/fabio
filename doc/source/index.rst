@@ -15,6 +15,7 @@ Contents:
    install
    performances
    Changelog
+   man/fabio_viewer
    api/modules
 
 

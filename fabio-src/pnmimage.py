@@ -18,7 +18,7 @@ License: GPLv3+
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "12/09/2014"
+__date__ = "04/02/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -27,7 +27,7 @@ import numpy
 import logging
 logger = logging.getLogger("pnmimage")
 from .fabioimage import fabioimage
-from .third_party import six
+from .fabioutils import six
 
 SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
 
@@ -125,7 +125,7 @@ class pnmimage(fabioimage):
     def P1dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
-        for l in buf.readlines():
+        for l in buf:
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
@@ -140,7 +140,7 @@ class pnmimage(fabioimage):
     def P2dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
-        for l in buf.readlines():
+        for l in buf:
             try:
                 data[i, :] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
@@ -150,11 +150,12 @@ class pnmimage(fabioimage):
     def P5dec(self, buf, bytecode):
         l = buf.read()
         try:
-            npa = numpy.fromstring(l, bytecode)
-            npa.shape = self.dim2, self.dim1
-            data = npa.byteswap()
+            data = numpy.fromstring(l, bytecode)
         except ValueError:
             raise IOError('Size spec in pnm-header does not match size of image data field')
+        data.shape = self.dim2, self.dim1
+        if numpy.little_endian:
+            data.byteswap(True)
         return data
 
     def P3dec(self, buf, bytecode):

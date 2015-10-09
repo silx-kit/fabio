@@ -9,13 +9,19 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPL"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "08/01/2015"
+__date__ = "14/08/2015"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
 import re, os, logging, threading, sys
 logger = logging.getLogger("fabioutils")
-from .third_party import six
+try:
+    import six
+    if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
+        raise ImportError("Six version is too old")
+except ImportError:
+    from .third_party import six
+
 
 if six.PY2:
     bytes = str
@@ -32,7 +38,7 @@ from .compression import bz2, gzip
 import traceback
 from math import ceil
 
-if sys.version_info < (3, 4):
+if sys.version_info < (3, 3):
     from threading import _Semaphore as _Semaphore
 else:
     from threading import Semaphore as _Semaphore
@@ -517,7 +523,7 @@ else:
         def __repr__(self):
             return "fabio." + gzip.GzipFile.__repr__(self)
 
-        def measureSize(self):
+        def measure_size(self):
             if self.mode == gzip.WRITE:
                 return self.size
             if self.__size is None:

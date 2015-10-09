@@ -1,6 +1,18 @@
 Changelog
 =========
 
+From FabIO-0.2.1 to FabIO-0.2.2:
+................................
+- work on the auto-documentation on ReadTheDocs (see http://fabio.readthedocs.org)
+- fix regression when reading BytesIO
+- Python3 compatibility
+- prepare multiple package for debian
+
+From FabIO-0.2.0 to FabIO-0.2.1:
+................................
+- Fix issues with variable endianness (tested PPC, PPC64le, i386, x86-64, ARM processors)
+- Optimization of byte-offset reader (about 20% faster on some processors)
+
 From FabIO-0.1.4 to FabIO-0.2.0:
 ................................
 - Compatibility with Python3 (tested on Python 2.6, 2.7, 3.2 and 3.4)

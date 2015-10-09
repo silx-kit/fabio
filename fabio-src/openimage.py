@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding: utf-8
 """
 
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -8,10 +10,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
          email:henning.sorensen@risoe.dk
 
 mods for fabio by JPW
+modification for HDF5 by Jérôme Kieffer
 
 """
 # Get ready for python3:
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, absolute_import
 
 import sys, logging
 logger = logging.getLogger("openimage")
@@ -39,6 +42,12 @@ from . import binaryimage
 from . import pixiimage
 from . import hdf5image
 from . import raxisimage
+
+if sys.version_info[0] < 3:
+    bytes = str
+    from urlparse import urlparse
+else:
+    from urllib.parse import  urlparse
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -73,7 +82,7 @@ MAGIC_NUMBERS = [
     (b"R-AXIS"             , 'raxis')
     ]
 
-URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True}  # Shall we split after the last ":"
+URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True, "nxs:": True}
 
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
@@ -110,14 +119,14 @@ def openimage(filename, frame=None):
         logger.debug("Attempting to open %s" % (filename))
         obj = _openimage(filename)
         logger.debug("Attempting to read frame %s from %s" % (frame, filename))
-        obj = obj.read(filename, frame)
+        obj = obj.read(obj.filename, frame)
     return obj
 
 
 def openheader(filename):
     """ return only the header"""
     obj = _openimage(filename)
-    obj.readheader(filename)
+    obj.readheader(obj.filename)
     return obj
 
 
@@ -125,19 +134,20 @@ def _openimage(filename):
     """
     determine which format for a filename
     and return appropriate class which can be used for opening the image
+
+    @param filename: can be an url like:
+
+    hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
+
     """
-    lower_filename = filename.lower()
-    for prefix in URL_PREFIX:
-        if lower_filename.startswith(prefix):
-            filename = filename[len(prefix):]
-            if filename.startswith("//"):
-                filename = filename[2:]
-            if URL_PREFIX[prefix]:  # process :path[slice,:,:]
-                if "[" in filename:
-                    filename = filename[:filename.index("[")]
-                if ":" in filename:
-                    col_split = filename.split(":")
-                    filename = ":".join(col_split[:-1])
+    url = urlparse(filename)
+
+    # related to https://github.com/kif/fabio/issues/34
+    if len(url.scheme) == 1 and (sys.platform == "win32"):
+        # this is likely a C: from windows
+        filename = url.scheme + ":" + url.path
+    else:
+        filename = url.path
 
     try:
         imo = fabioimage()
@@ -177,6 +187,10 @@ def _openimage(filename):
     else:
         raise Exception("Filetype not known %s %s" % (filename, klass_name))
     obj = klass()
+
+    if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
+        obj.set_url(url)
+    obj.filename = filename
     # skip the read for read header
     return obj
 

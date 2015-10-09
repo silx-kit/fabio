@@ -11,13 +11,24 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "19/01/2015"
+__date__ = "22/03/2015"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
-import logging, struct, hashlib, base64, sys
+import sys
+import base64
+import hashlib
+import struct
+import logging
 logger = logging.getLogger("compression")
-from .third_party import six
+
+try:
+    import six
+    if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
+        raise ImportError("Six version is too old")
+except ImportError:
+    from .third_party import six
+
 
 if six.PY2:
     bytes = str
@@ -147,19 +158,24 @@ def decByteOffset_numpy(stream, size=None):
 
         if stream[idx + 1:idx + 3] == key32:
             if stream[idx + 3:idx + 7] == key64:
-#                        long int 64 bits
-                listnpa.append(numpy.fromstring(stream[idx + 7:idx + 15],
-                                             dtype="int64"))
+                # 64 bits int
+                res = numpy.fromstring(stream[idx + 7:idx + 15], dtype="int64")
+                listnpa.append(res)
                 shift = 15
-            else:  # 32 bit int
-                listnpa.append(numpy.fromstring(stream[idx + 3:idx + 7],
-                                             dtype="int32"))
+            else:
+                # 32 bits int
+                res = numpy.fromstring(stream[idx + 3:idx + 7], dtype="int32")
+                listnpa.append(res)
                 shift = 7
         else:  # int16
-            listnpa.append(numpy.fromstring(stream[idx + 1:idx + 3],
-                                         dtype="int16"))
+            res = numpy.fromstring(stream[idx + 1:idx + 3], dtype="int16")
+            listnpa.append(res)
             shift = 3
         stream = stream[idx + shift:]
+    if not numpy.little_endian:
+        for res in listnpa:
+            if res.dtype != numpy.int8:
+                res.byteswap(True)
     return  (numpy.hstack(listnpa)).astype("int64").cumsum()
 
 
@@ -241,6 +257,8 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     """
     Modified byte offset decompressor used in Oxford Diffraction images
 
+    Note: Always expect little endian data on the disk
+
     @param raw_8:  strings containing raw data with integer 8 bits
     @param raw_16: strings containing raw data with integer 16 bits
     @param raw_32: strings containing raw data with integer 32 bits
@@ -250,10 +268,14 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
     data -= 127
     if raw_32 is not None:
-        int32 = numpy.fromstring(raw_32, dtype="int32").astype(int)
+        int32 = numpy.fromstring(raw_32, dtype="int32")
+        if not numpy.little_endian:
+            int32.byteswap(True)
         exception32 = numpy.nonzero(data == 128)
     if raw_16 is not None:
-        int16 = numpy.fromstring(raw_16, dtype="int16").astype(int)
+        int16 = numpy.fromstring(raw_16, dtype="int16")
+        if not numpy.little_endian:
+            int16.byteswap(True)
         exception16 = numpy.nonzero(data == 127)
         data[exception16] = int16
     if raw_32:
@@ -279,7 +301,7 @@ def compTY1(data):
     @return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size
 
     """
-    fdata = data.flatten()
+    fdata = data.ravel()
     diff = numpy.zeros_like(fdata)
     diff[0] = fdata[0]
     diff[1:] = fdata[1:] - fdata[:-1]
@@ -288,24 +310,31 @@ def compTY1(data):
     exception16 = (adiff >= 127) - exception32  # 2**7-1)
     we16 = numpy.where(exception16)
     we32 = numpy.where(exception32)
-    raw_16 = diff[we16].astype("int16").tostring()
-    raw_32 = diff[we32].astype("int32").tostring()
+    data_16 = diff[we16].astype(numpy.int16)
+    data_32 = diff[we32].astype(numpy.int32)
+    if not numpy.little_endian:
+        data_16.byteswap(True)
+        data_32.byteswap(True)
     diff[we16] = 127
     diff[we32] = 128
     diff += 127
-    raw_8 = diff.astype("uint8").tostring()
-    return  raw_8, raw_16, raw_32
+    data_8 = diff.astype(numpy.uint8)
+    return  data_8.tostring(), data_16.tostring(), data_32.tostring()
 
 
-def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
+def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):
     """
     Modified CCP4  pck decompressor used in MAR345 images
 
-    @param stream: string or file
-    @return: numpy.ndarray (square array)
+    @param raw: input string (bytes in python3)
+    @param dim1,dim2: optional parameters size
+    @param overflowPix: optional parameters: number of overflowed pixels
+    @param version: PCK version 1 or 2
+    @param normal_start: position of the normal value section (can be auto-guessed)
+    @param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
+    @return : ndarray of 2D with the right size
 
     """
-
     try:
         from .mar345_IO import uncompress_pck
     except ImportError as  error:
@@ -316,7 +345,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None):
     else:
         raw = bytes(stream)
 
-    return uncompress_pck(raw, dim1, dim2, overflowPix, version)
+    return uncompress_pck(raw, dim1, dim2, overflowPix, version, normal_start, swap_needed)
 
 
 def compPCK(data):

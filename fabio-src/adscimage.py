@@ -26,46 +26,36 @@ class adscimage(fabioimage):
 
     def read(self, fname, frame=None):
         """ read in the file """
-        infile = self._open(fname, "rb")
-        try:
-            self._readheader(infile)
-        except:
-            raise Exception("Error processing adsc header")
-        # banned by bzip/gzip???
-        try:
-            infile.seek(int(self.header['HEADER_BYTES']), 0)
-        except TypeError:
-            # Gzipped does not allow a seek and read header is not
-            # promising to stop in the right place
-            infile.close()
-            infile = self._open(fname, "rb")
-            infile.read(int(self.header['HEADER_BYTES']))
-        binary = infile.read()
-        infile.close()
+        with self._open(fname, "rb") as infile:
+            try:
+                self._readheader(infile)
+            except:
+                raise Exception("Error processing adsc header")
+            # banned by bzip/gzip???
+            try:
+                infile.seek(int(self.header['HEADER_BYTES']), 0)
+            except TypeError:
+                # Gzipped does not allow a seek and read header is not
+                # promising to stop in the right place
+                infile.close()
+                infile = self._open(fname, "rb")
+                infile.read(int(self.header['HEADER_BYTES']))
+            binary = infile.read()
+        # infile.close()
 
         # now read the data into the array
         self.dim1 = int(self.header['SIZE1'])
         self.dim2 = int(self.header['SIZE2'])
-        if 'little' in self.header['BYTE_ORDER']:
-            try:
-                self.data = numpy.reshape(
-                    numpy.fromstring(binary, numpy.uint16),
-                    (self.dim2, self.dim1))
-            except ValueError:
+        data = numpy.fromstring(binary, numpy.uint16)
+        if self.swap_needed():
+            data.byteswap(True)
+        try:
+            data.shape = (self.dim2, self.dim1)
+        except ValueError:
                 raise IOError('Size spec in ADSC-header does not match ' + \
-                    'size of image data field')
-            self.bytecode = numpy.uint16
-            logger.info("adscimage read in using low byte first (x386-order)")
-        else:
-            try:
-                self.data = numpy.reshape(
-                    numpy.fromstring(binary, numpy.uint16),
-                    (self.dim2, self.dim1)).byteswap()
-            except ValueError:
-                raise IOError('Size spec in ADSC-header does not match ' + \
-                    'size of image data field')
-            self.bytecode = numpy.uint16
-            logger.info('adscimage using high byte first (network order)')
+                              'size of image data field %sx%s != %s' % (self.dim1, self.dim2, data.size))
+        self.data = data
+        self.bytecode = numpy.uint16
         self.resetvals()
         return self
 
@@ -77,7 +67,7 @@ class adscimage(fabioimage):
             if b'=' in line:
                 (key, val) = to_str(line).split('=')
                 self.header_keys.append(key.strip())
-                self.header[key.strip()] = val.strip(' ;\n')
+                self.header[key.strip()] = val.strip(' ;\n\r')
             line = infile.readline()
             bytesread = bytesread + len(line)
 
@@ -97,17 +87,30 @@ class adscimage(fabioimage):
             pad = hsize - len(out) - 2
         out += pad * b' ' + b"}\n"
         assert len(out) % 512 == 0 , "Header is not multiple of 512"
-        outf = open(fname, "wb")
-        outf.write(out)
-        # it says "unsigned_short" ? ... jpw example has:
-        # BYTE_ORDER=big_endian;
-        # TYPE=unsigned_short;
-        if "little" in self.header["BYTE_ORDER"]:
-            outf.write(self.data.astype(numpy.uint16).tostring())
+
+        data = self.data.astype(numpy.uint16)
+        if self.swap_needed():
+            data.byteswap(True)
+
+        with open(fname, "wb") as outf:
+            outf.write(out)
+            outf.write(data.tostring())
+        # outf.close()
+
+    def swap_needed(self):
+        if "BYTE_ORDER" not in self.header:
+            logger.warning("No byte order specified, assuming little_endian")
+            BYTE_ORDER = "little_endian"
         else:
-            outf.write(self.data.byteswap().astype(
-                    numpy.uint16).tostring())
-        outf.close()
+            BYTE_ORDER = self.header["BYTE_ORDER"]
+        if "little" in BYTE_ORDER and numpy.little_endian:
+            return False
+        elif "big" in BYTE_ORDER and not numpy.little_endian:
+            return False
+        elif  "little" in BYTE_ORDER and not numpy.little_endian:
+            return True
+        elif  "big" in BYTE_ORDER and numpy.little_endian:
+            return True
 
 
 def test():

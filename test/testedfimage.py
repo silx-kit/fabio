@@ -27,16 +27,16 @@ from fabio.third_party import six
 
 class TestFlatEdfs(unittest.TestCase):
     """ test some flat images """
+    BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
     MYHEADER = six.b("{\n%-1020s}\n" % (
-"""Omega = 0.0 ;
-Dim_1 = 256 ;
-Dim_2 = 256 ;
-DataType = FloatValue ;
-ByteOrder = LowByteFirst ;
-Image = 1;
-History-1 = something=something else;
-\n\n"""))
-
+                """Omega = 0.0 ;
+                Dim_1 = 256 ;
+                Dim_2 = 256 ;
+                DataType = FloatValue ;
+                ByteOrder = %s ;
+                Image = 1;
+                History-1 = something=something else;
+                \n\n""" % BYTE_ORDER))
     MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
     MYIMAGE[0, 0] = 0
     MYIMAGE[1, 1] = 20
@@ -304,6 +304,33 @@ class TestEdfWrite(unittest.TestCase):
         os.unlink(self.filename)
 
 
+class TestEdfRegression(unittest.TestCase):
+    """
+    Test suite to prevent regression
+    """
+    def bug_27(self):
+        """
+        import fabio
+        obj = fabio.open("any.edf")
+        obj.header["missing"]="blah"
+        obj.write("any.edf")
+        """
+        # create dummy image:
+        shape = (32, 32)
+        data = numpy.random.randint(0, 6500, size=shape[0] * shape[1]).astype("uint16").reshape(shape)
+        fname = os.path.join(UtilsTest.tempdir, "bug27.edf")
+        e = edfimage(data=data, header={"key1": "value1"})
+        e.write(fname)
+        del e
+
+        obj = fabio.open(fname)
+        obj.header["missing"] = "blah"
+        obj.write(fname)
+
+        del obj
+#        os.unlink(fname)
+
+
 def test_suite_all_edf():
     testSuite = unittest.TestSuite()
     testSuite.addTest(TestFlatEdfs("test_read"))
@@ -325,6 +352,7 @@ def test_suite_all_edf():
     testSuite.addTest(TestEdfWrite("testFlat"))
     testSuite.addTest(TestEdfWrite("testGzip"))
     testSuite.addTest(TestEdfWrite("testBzip2"))
+    testSuite.addTest(TestEdfRegression("bug_27"))
 
     return testSuite
 

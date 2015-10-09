@@ -1,19 +1,20 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &mdash; FabIO v0.1.4 documentation</title>
+    <title>Installation &mdash; FabIO 0.2.2 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.1.4',
+        URL_ROOT:    './',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,8 +23,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="FabIO v0.1.4 documentation" href="index.html" />
-    <link rel="next" title="Changelog" href="Changelog.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="FabIO 0.2.2 documentation" href="index.html" />
+    <link rel="next" title="Benchmarks" href="performances.html" />
     <link rel="prev" title="Getting Started" href="getting_started.html" /> 
   </head>
   <body>
@@ -37,12 +39,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Changelog.html" title="Changelog"
+          <a href="performances.html" title="Benchmarks"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="getting_started.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FabIO v0.1.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,53 +61,132 @@ packages provided for the most common platforms on sourceforge:
 Windows, MacOSX and Linux. Moreover FabIO is part of the common
 Linux distributions Ubuntu (since 11.10) and Debian7 where the
 package is named python-fabio and can be installed via:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># apt-get install python-fabio</span>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install python-fabio
 </pre></div>
 </div>
-<p>If you are using MS Windows or MacOSX; binary version have been packaged.
-Windows installers are executable, just download the one corresponding to you python version and run it.
-MacOSX builds are zipped: unzip them at the right place.</p>
-<div class="section" id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP-installable.
+PIP is the Python Installer Program, similar to <tt class="docutils literal"><span class="pre">apt-get</span></tt> for Python.
+It runs under any architecture and can simply be installed from:</p>
+<p><a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a></p>
+<p>then</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install fabio
+</pre></div>
+</div>
+<div class="section" id="installation-under-windows">
+<h2>Installation under windows<a class="headerlink" href="#installation-under-windows" title="Permalink to this headline">¶</a></h2>
+<p>Install Python from <a class="reference external" href="http://python.org">http://python.org</a>.
+I would recommend Python 2.7 in 64 bits version if your operating system allows it.
+Python3 (&gt;=3.2) is OK while less tested.</p>
+<p>If you are looking for an integrated distribution of Python on Windows,
+WinPython is a good one, the Python2.7, 64 bit version is advised.
+<a class="reference external" href="https://winpython.github.io/">https://winpython.github.io/</a>
+It comes with pip pre-installed and configured.</p>
+<div class="section" id="installation-using-pip">
+<h3>Installation using PIP:<a class="headerlink" href="#installation-using-pip" title="Permalink to this headline">¶</a></h3>
+<p>Download PIP and run:
+<a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a></p>
+<p>Then install the wheel package manager and all dependencies for :</p>
+<div class="highlight-python"><div class="highlight"><pre>python get-pip.py
+pip install setuptools
+pip install wheel
+pip install fabio
+</pre></div>
+</div>
+<p>Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
+<a class="reference external" href="http://www.riverbankcomputing.co.uk/software/pyqt/download">http://www.riverbankcomputing.co.uk/software/pyqt/download</a></p>
+</div>
+<div class="section" id="manual-installation-under-windows">
+<h3>Manual installation under windows<a class="headerlink" href="#manual-installation-under-windows" title="Permalink to this headline">¶</a></h3>
+<p>You will find all the scientific Python stack packaged for Windows on Christopher Gohlke&#8217; page (including FabIO):</p>
+<p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">http://www.lfd.uci.edu/~gohlke/pythonlibs/</a></p>
+<p>Pay attention to the Python version (both number and architecture).
+DO NOT MIX 32 and 64 bits version.
+To determine the version of your Python:</p>
+<p>This gives you the architecture width of the Python interpreter</p>
+</div>
+<div class="section" id="installation-from-sources">
+<h3>Installation from sources<a class="headerlink" href="#installation-from-sources" title="Permalink to this headline">¶</a></h3>
+<p>Install the required dependencies (via PIP or a repository), then retrieve the Microsoft compiler and install it from:
+<a class="reference external" href="http://aka.ms/vcpython27">http://aka.ms/vcpython27</a></p>
+<p>Once done, follow the classical procedure (similar to MacOSX or Linux):
+* download sources of FabIO from fable.sourceforge.net.
+* unzip the archive
+* run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">build</span> <span class="pre">install</span></tt></p>
+</div>
+</div>
+<div class="section" id="installation-on-macosx">
+<h2>Installation on MacOSX<a class="headerlink" href="#installation-on-macosx" title="Permalink to this headline">¶</a></h2>
+<p>Python 2.7, 64 bits and numpy are  natively available on MacOSX.</p>
+<div class="section" id="install-pip">
+<h3>Install PIP<a class="headerlink" href="#install-pip" title="Permalink to this headline">¶</a></h3>
+<p>Download PIP and run:
+<a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a></p>
+<p>Then install the wheel package manager:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install setuptools
+pip install wheel
+pip install PIL
+pip install lxml
+pip install fabio
+</pre></div>
+</div>
+<p>Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
+<a class="reference external" href="http://www.riverbankcomputing.co.uk/software/pyqt/download">http://www.riverbankcomputing.co.uk/software/pyqt/download</a></p>
+</div>
+<div class="section" id="get-the-compiler">
+<h3>Get the compiler<a class="headerlink" href="#get-the-compiler" title="Permalink to this headline">¶</a></h3>
+<p>Apple provides for free Xcode which contains the compiler needed to build binary extensions.
+Xcode can be installed from the App-store.</p>
+</div>
+</div>
+<div class="section" id="manual-installation-for-any-operating-system">
+<h2>Manual Installation for any operating system<a class="headerlink" href="#manual-installation-for-any-operating-system" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-the-dependencies">
+<h3>Install the dependencies<a class="headerlink" href="#install-the-dependencies" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Python 2.6 or later (python 3.x is not yet ready)</li>
+<li>Python 2.6 - 2.7 or 3.2+</li>
 <li>numpy - <a class="reference external" href="http://www.numpy.org">http://www.numpy.org</a></li>
 </ul>
-<p>For full functionality of Fabio the following modules need to be installed:</p>
+<p>For full functionality of FabIO the following modules need to be installed:</p>
 <ul class="simple">
 <li>PIL (python imaging library) - <a class="reference external" href="http://www.pythonware.com">http://www.pythonware.com</a></li>
 <li>lxml (library for reading XSDimages)</li>
+<li>PyQt4 for the fabio_viewer program</li>
 </ul>
-</div>
-<div class="section" id="installation-from-sources">
-<h2>Installation from sources<a class="headerlink" href="#installation-from-sources" title="Permalink to this headline">¶</a></h2>
 <p>FabIO can be downloaded from the fable download page on sourceforge.net.
 Presently the source code has been distributed as a zip package and a compressed tarball.
 Download either one and unpack it.</p>
-<div class="highlight-python"><pre>http://sourceforge.net/projects/fable/files/fabio/</pre>
+<div class="highlight-python"><div class="highlight"><pre>http://sourceforge.net/projects/fable/files/fabio/
+</pre></div>
 </div>
 <p>e.g.</p>
-<div class="highlight-python"><pre>tar xvzf fabio-0.1.4.tar.gz</pre>
+<div class="highlight-python"><div class="highlight"><pre>tar xvzf fabio-0.2.2.tar.gz
+</pre></div>
 </div>
 <p>or</p>
-<div class="highlight-python"><pre>unzip fabio-0.1.4.zip</pre>
+<div class="highlight-python"><div class="highlight"><pre>unzip fabio-0.2.2.zip
+</pre></div>
 </div>
-<p>all files are unpacked into the directory fabio-0.1.4. To install these do</p>
-<div class="highlight-python"><pre>cd fabio-0.1.4</pre>
+<p>all files are unpacked into the directory fabio-0.2.2. To install these do</p>
+<div class="highlight-python"><div class="highlight"><pre>cd fabio-0.2.2
+</pre></div>
 </div>
-<p>and install fabio with</p>
-<div class="highlight-python"><pre>python setup.py build
-sudo python setup.py install</pre>
+<p>and install fabio: build it, run the tests and build the wheel package and install it.</p>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py build
+python setup.py bdist_wheel
+sudo pip install dist/fabio-0.2.2*.whl
+</pre></div>
 </div>
 <p>most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.</p>
 </div>
+</div>
 <div class="section" id="development-versions">
 <h2>Development versions<a class="headerlink" href="#development-versions" title="Permalink to this headline">¶</a></h2>
-<p>The newest development version can be obtained by checking it out from the subversion (SVN) repository:</p>
-<div class="highlight-python"><pre>svn checkout https://svn.sourceforge.net/svnroot/fable/fabio/trunk fabio
+<p>The newest development version can be obtained by checking it out from the git repository:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/kif/fabio
 cd fabio
-python setup.py build
-sudo python setup.py install</pre>
+python setup.py build bdist_wheel
+sudo pip install dist/fabio-0.2.2*.whl
+</pre></div>
 </div>
 <p>For Ubuntu/Debian users, you will need:</p>
 <ul class="simple">
@@ -114,28 +195,60 @@ sudo python setup.py install</pre>
 <li>python-numpy</li>
 <li>python-dev</li>
 </ul>
-<div class="highlight-python"><pre>sudo apt-get install python-imaging python-imaging-tk python-numpy</pre>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install python-imaging python-imaging-tk python-numpy
+</pre></div>
 </div>
 <p>We provide also a debian-package builder based on stdeb:</p>
-<div class="highlight-python"><pre>sudo apt-get install python-stdeb
-./build-deb.sh</pre>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install python-stdeb
+./build-deb.sh 3
+</pre></div>
 </div>
-<p>which builds a debian package and installs it in a single command. Handy for testing.</p>
+<p>which builds a couple of debian packages (actually one for python2 and another for python3) and installs them in a single command.
+Handy for testing, but very clean, see hereafter</p>
+</div>
+<div class="section" id="debian-packaging">
+<h2>Debian packaging<a class="headerlink" href="#debian-packaging" title="Permalink to this headline">¶</a></h2>
+<p>FabIO features some helper function to make debian packaging easier:</p>
+<div class="highlight-python"><div class="highlight"><pre>#to create the orig.tar.gz without cython generated C files for Sphinx built documentation:
+python setup.py debian_src
+
+# to create a tarball of all images needed to test the library
+python setup.py debian_testimages
+</pre></div>
+</div>
+<p>Two tarball are created, one with all source code (and only source code) and the other one with all test-data.</p>
 </div>
 <div class="section" id="test-suite">
 <h2>Test suite<a class="headerlink" href="#test-suite" title="Permalink to this headline">¶</a></h2>
 <p>FabIO has a comprehensive test-suite to ensure non regression.
 When you run the test for the first time, many test images will be download and converted into various compressed format like gzip and bzip2 (this takes a lot of time).</p>
 <p>Be sure you have an internet connection and your environment variable http_proxy is correctly set-up. For example if you are behind a firewall/proxy:</p>
-<div class="highlight-python"><pre>export http_proxy=http://proxy.site.org:3128</pre>
+<div class="highlight-python"><div class="highlight"><pre>export http_proxy=http://proxy.site.org:3128
+</pre></div>
 </div>
+<p>Many tests are there to deal with malformed files, don&#8217;t worry if the programs complains in warnings about &#8220;bad files&#8221;,
+it is done on purpose to ensure robustness in FabIO.</p>
+<div class="section" id="run-test-suite-from-installation-directory">
+<h3>Run test suite from installation directory<a class="headerlink" href="#run-test-suite-from-installation-directory" title="Permalink to this headline">¶</a></h3>
 <p>To run the test:</p>
-<div class="highlight-python"><pre>python setup.py test</pre>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py build test
+</pre></div>
 </div>
-<p>Many tests are there to deal with malformed files, don&#8217;t worry if the programs complains in warnings about &#8220;bad files&#8221;, it is done on purpose to ensure robustness in FabIO.</p>
-<p>FabIO comes with 25 test-suites (110 tests in total) representing a coverage of 60%.
+</div>
+<div class="section" id="run-test-suite-from-installed-version">
+<h3>Run test suite from installed version<a class="headerlink" href="#run-test-suite-from-installed-version" title="Permalink to this headline">¶</a></h3>
+<p>Within Python (or ipython):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">fabio</span>
+<span class="n">fabio</span><span class="o">.</span><span class="n">tests</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-coverage">
+<h3>Test coverage<a class="headerlink" href="#test-coverage" title="Permalink to this headline">¶</a></h3>
+<p>FabIO comes with 25 test-suites (113 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with python versions 2.6 and 2.7.</p>
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2 and 3.4.
+Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.</p>
 <table border="1" class="docutils">
 <caption>Test suite coverage</caption>
 <colgroup>
@@ -145,14 +258,14 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <col width="14%" />
 </colgroup>
 <thead valign="bottom">
-<tr><th class="head">Name</th>
+<tr class="row-odd"><th class="head">Name</th>
 <th class="head">Stmts</th>
 <th class="head">Exec</th>
 <th class="head">Cover</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td>fabio/GEimage</td>
+<tr class="row-even"><td>fabio/GEimage</td>
 <td><blockquote class="first last">
 <div>94</div></blockquote>
 </td>
@@ -163,7 +276,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>51%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/HiPiCimage</td>
+<tr class="row-odd"><td>fabio/HiPiCimage</td>
 <td><blockquote class="first last">
 <div>55</div></blockquote>
 </td>
@@ -174,7 +287,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>12%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/OXDimage</td>
+<tr class="row-even"><td>fabio/OXDimage</td>
 <td><blockquote class="first last">
 <div>285</div></blockquote>
 </td>
@@ -185,7 +298,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>95%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/TiffIO</td>
+<tr class="row-odd"><td>fabio/TiffIO</td>
 <td><blockquote class="first last">
 <div>794</div></blockquote>
 </td>
@@ -196,7 +309,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>67%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/__init__</td>
+<tr class="row-even"><td>fabio/__init__</td>
 <td><blockquote class="first last">
 <div>15</div></blockquote>
 </td>
@@ -207,7 +320,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>100%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/adscimage</td>
+<tr class="row-odd"><td>fabio/adscimage</td>
 <td><blockquote class="first last">
 <div>79</div></blockquote>
 </td>
@@ -218,7 +331,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>46%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/binaryimage</td>
+<tr class="row-even"><td>fabio/binaryimage</td>
 <td><blockquote class="first last">
 <div>50</div></blockquote>
 </td>
@@ -229,7 +342,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>30%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/bruker100image</td>
+<tr class="row-odd"><td>fabio/bruker100image</td>
 <td><blockquote class="first last">
 <div>60</div></blockquote>
 </td>
@@ -240,7 +353,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>21%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/brukerimage</td>
+<tr class="row-even"><td>fabio/brukerimage</td>
 <td><blockquote class="first last">
 <div>212</div></blockquote>
 </td>
@@ -251,7 +364,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>80%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/cbfimage</td>
+<tr class="row-odd"><td>fabio/cbfimage</td>
 <td><blockquote class="first last">
 <div>441</div></blockquote>
 </td>
@@ -262,7 +375,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>49%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/compression</td>
+<tr class="row-even"><td>fabio/compression</td>
 <td><blockquote class="first last">
 <div>223</div></blockquote>
 </td>
@@ -273,7 +386,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>60%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/converters</td>
+<tr class="row-odd"><td>fabio/converters</td>
 <td><blockquote class="first last">
 <div>17</div></blockquote>
 </td>
@@ -284,7 +397,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>82%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/dm3image</td>
+<tr class="row-even"><td>fabio/dm3image</td>
 <td><blockquote class="first last">
 <div>133</div></blockquote>
 </td>
@@ -295,7 +408,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>12%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/edfimage</td>
+<tr class="row-odd"><td>fabio/edfimage</td>
 <td><blockquote class="first last">
 <div>596</div></blockquote>
 </td>
@@ -306,7 +419,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>66%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/fabioimage</td>
+<tr class="row-even"><td>fabio/fabioimage</td>
 <td><blockquote class="first last">
 <div>306</div></blockquote>
 </td>
@@ -317,7 +430,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>63%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/fabioutils</td>
+<tr class="row-odd"><td>fabio/fabioutils</td>
 <td><blockquote class="first last">
 <div>322</div></blockquote>
 </td>
@@ -328,7 +441,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>79%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/file_series</td>
+<tr class="row-even"><td>fabio/file_series</td>
 <td><blockquote class="first last">
 <div>140</div></blockquote>
 </td>
@@ -339,7 +452,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>43%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/fit2dmaskimage</td>
+<tr class="row-odd"><td>fabio/fit2dmaskimage</td>
 <td><blockquote class="first last">
 <div>75</div></blockquote>
 </td>
@@ -350,7 +463,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>94%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/fit2dspreadsheetimage</td>
+<tr class="row-even"><td>fabio/fit2dspreadsheetimage</td>
 <td><blockquote class="first last">
 <div>47</div></blockquote>
 </td>
@@ -361,7 +474,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>14%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/hdf5image</td>
+<tr class="row-odd"><td>fabio/hdf5image</td>
 <td><blockquote class="first last">
 <div>146</div></blockquote>
 </td>
@@ -372,7 +485,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>17%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/kcdimage</td>
+<tr class="row-even"><td>fabio/kcdimage</td>
 <td><blockquote class="first last">
 <div>80</div></blockquote>
 </td>
@@ -383,7 +496,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>81%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/mar345image</td>
+<tr class="row-odd"><td>fabio/mar345image</td>
 <td><blockquote class="first last">
 <div>244</div></blockquote>
 </td>
@@ -394,7 +507,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>88%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/marccdimage</td>
+<tr class="row-even"><td>fabio/marccdimage</td>
 <td><blockquote class="first last">
 <div>63</div></blockquote>
 </td>
@@ -405,7 +518,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>88%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/mrcimage</td>
+<tr class="row-odd"><td>fabio/mrcimage</td>
 <td><blockquote class="first last">
 <div>96</div></blockquote>
 </td>
@@ -416,7 +529,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>0%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/openimage</td>
+<tr class="row-even"><td>fabio/openimage</td>
 <td><blockquote class="first last">
 <div>104</div></blockquote>
 </td>
@@ -427,7 +540,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>66%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/pilatusimage</td>
+<tr class="row-odd"><td>fabio/pilatusimage</td>
 <td><blockquote class="first last">
 <div>34</div></blockquote>
 </td>
@@ -438,7 +551,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>14%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/pixiimage</td>
+<tr class="row-even"><td>fabio/pixiimage</td>
 <td><blockquote class="first last">
 <div>95</div></blockquote>
 </td>
@@ -449,7 +562,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>23%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/pnmimage</td>
+<tr class="row-odd"><td>fabio/pnmimage</td>
 <td><blockquote class="first last">
 <div>109</div></blockquote>
 </td>
@@ -460,7 +573,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>19%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/raxisimage</td>
+<tr class="row-even"><td>fabio/raxisimage</td>
 <td><blockquote class="first last">
 <div>98</div></blockquote>
 </td>
@@ -471,7 +584,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>89%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/readbytestream</td>
+<tr class="row-odd"><td>fabio/readbytestream</td>
 <td><blockquote class="first last">
 <div>26</div></blockquote>
 </td>
@@ -482,7 +595,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>19%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/tifimage</td>
+<tr class="row-even"><td>fabio/tifimage</td>
 <td><blockquote class="first last">
 <div>167</div></blockquote>
 </td>
@@ -493,7 +606,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 <div>35%</div></blockquote>
 </td>
 </tr>
-<tr><td>fabio/xsdimage</td>
+<tr class="row-odd"><td>fabio/xsdimage</td>
 <td><blockquote class="first last">
 <div>94</div></blockquote>
 </td>
@@ -508,6 +621,7 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
 </table>
 </div>
 </div>
+</div>
 
 
           </div>
@@ -518,10 +632,29 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Installation</a><ul>
-<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#installation-under-windows">Installation under windows</a><ul>
+<li><a class="reference internal" href="#installation-using-pip">Installation using PIP:</a></li>
+<li><a class="reference internal" href="#manual-installation-under-windows">Manual installation under windows</a></li>
 <li><a class="reference internal" href="#installation-from-sources">Installation from sources</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation-on-macosx">Installation on MacOSX</a><ul>
+<li><a class="reference internal" href="#install-pip">Install PIP</a></li>
+<li><a class="reference internal" href="#get-the-compiler">Get the compiler</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#manual-installation-for-any-operating-system">Manual Installation for any operating system</a><ul>
+<li><a class="reference internal" href="#install-the-dependencies">Install the dependencies</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#development-versions">Development versions</a></li>
-<li><a class="reference internal" href="#test-suite">Test suite</a></li>
+<li><a class="reference internal" href="#debian-packaging">Debian packaging</a></li>
+<li><a class="reference internal" href="#test-suite">Test suite</a><ul>
+<li><a class="reference internal" href="#run-test-suite-from-installation-directory">Run test suite from installation directory</a></li>
+<li><a class="reference internal" href="#run-test-suite-from-installed-version">Run test suite from installed version</a></li>
+<li><a class="reference internal" href="#test-coverage">Test coverage</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -530,8 +663,8 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
   <p class="topless"><a href="getting_started.html"
                         title="previous chapter">Getting Started</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Changelog.html"
-                        title="next chapter">Changelog</a></p>
+  <p class="topless"><a href="performances.html"
+                        title="next chapter">Benchmarks</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/install.txt"
@@ -564,17 +697,17 @@ FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Changelog.html" title="Changelog"
+          <a href="performances.html" title="Benchmarks"
              >next</a> |</li>
         <li class="right" >
           <a href="getting_started.html" title="Getting Started"
              >previous</a> |</li>
-        <li><a href="index.html">FabIO v0.1.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2014, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+        &copy; Copyright 2006-2015, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>
