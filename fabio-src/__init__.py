@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""
-FabIO module
-
-"""
+from __future__ import absolute_import, print_function, division
+__doc__ = """FabIO module"""
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "21/07/2015"
+__date__ = "27/10/2015"
 __status__ = "stable"
-
 
 import logging
 logging.basicConfig()
@@ -31,14 +28,14 @@ from .openimage import openheader as openheader
 
 def tests():
     """
-    Run the FabIO test suite. 
-    
+    Run the FabIO test suite.
+
     If the test-images are not already installed (via the debian package for example),
     they need to be downloaded from sourceforge.net, which make take a while.
     Ensure your network connection is operational and your proxy settings are correct,
     for example:
-    
-    export http_proxy=http://proxy.site.com:3128 
+
+    export http_proxy=http://proxy.site.com:3128
     """
     from . import test
     test.run_tests()
