@@ -10,8 +10,9 @@ python:
 install:
   - "pip install --trusted-host www.edna-site.org -r requirements_travis.txt"
   - "python info_platform.py"
-  - "python setup.py build install"
+  - "python setup.py build"
+  - "pip install ."
 # command to run tests
-script: 
+script:
   - "python setup.py build test"
   - "(cd /tmp && python -c 'import fabio, sys; print(sys.version); fabio.tests()')"
