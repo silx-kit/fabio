@@ -1,4 +1,27 @@
-#!/usr/bin/env python
+#!/usr/bin/env python# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/kif/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -41,7 +64,7 @@ class HiPiCimage(fabioimage):
         self.header['Dim_2'] = Dim_2
         self.header['Dim_1_offset'] = Dim_1_offset
         self.header['Dim_2_offset'] = Dim_2_offset
-        #self.header['Comment'] = Comment
+        # self.header['Comment'] = Comment
         if Image_tag != 'IM' :
             # This does not look like an HiPic file
             logging.warning("no opening.  Corrupt header of HiPic file " + \
@@ -82,7 +105,7 @@ class HiPiCimage(fabioimage):
         block = infile.read(self.dim1 * self.dim2 * self.bpp)
         infile.close()
 
-        #now read the data into the array
+        # now read the data into the array
         try:
             self.data = numpy.reshape(
                 numpy.fromstring(block, bytecode),
@@ -94,8 +117,8 @@ class HiPiCimage(fabioimage):
         self.bytecode = self.data.dtype.type
 
         # Sometimes these files are not saved as 12 bit,
-        # But as 16 bit after bg subtraction - which results 
-        # negative values saved as 16bit. Therefore values higher 
+        # But as 16 bit after bg subtraction - which results
+        # negative values saved as 16bit. Therefore values higher
         # 4095 is really negative values
         if self.data.max() > 4095:
             gt12bit = self.data > 4095

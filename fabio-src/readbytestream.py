@@ -1,5 +1,27 @@
-#!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/kif/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 
 """
 Reads a bytestream
@@ -20,7 +42,7 @@ DATATYPES = {
     ("int", 'y', 1) : numpy.int8,
     ("int", 'y', 2) : numpy.int16,
     ("int", 'y', 4) : numpy.int32,
-    ('float', 'y', 4) : numpy.float32, # does this occur in bruker?
+    ('float', 'y', 4) : numpy.float32,  # does this occur in bruker?
     ('double', 'y', 4): numpy.float64
     }
 
@@ -54,7 +76,7 @@ def readbytestream(fil,
     IT IS USEFUL FOR THE BRUKER FORMAT
     """
     tin = "dunno"
-    length = nbytespp * x * y # bytes per pixel times number of pixels
+    length = nbytespp * x * y  # bytes per pixel times number of pixels
     if datatype in ['float', 'double']:
         signed = 'y'
 

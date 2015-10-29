@@ -1,5 +1,24 @@
-#!/usr/bin/env python
-#coding: utf-8
+# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/kif/fabio
+#
+#    Principal author:       "Brian R. Pauw" "brian@stack.nl"
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """
 
 Authors: Brian R. Pauw
@@ -19,8 +38,8 @@ from __future__ import with_statement, print_function, division
 __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "GPLv3+"
-__copyright__ = ""
-__version__ = "23 Nov 2013"
+__copyright__ = "Brian R. Pauw"
+__date__ = "29/10/2015"
 import logging, struct, os
 import numpy
 from .fabioimage import fabioimage
@@ -48,13 +67,13 @@ class raxisimage(fabioimage):
         self.dim1 = self.dim2 = 0
         self.m = self.maxval = self.stddev = self.minval = None
         self.header_keys = self.header.keys()
-        self.bytecode = 'uint16' #same for all RAXIS images AFAICT
-        self.endianness = '>' #this may be tested for.
+        self.bytecode = 'uint16'  # same for all RAXIS images AFAICT
+        self.endianness = '>'  # this may be tested for.
 
     def swap_needed(self):
         """not sure if this function is needed"""
         endian = self.endianness
-        #Decide if we need to byteswap
+        # Decide if we need to byteswap
         if (endian == '<' and numpy.little_endian) or (endian == '>' and not numpy.little_endian):
             return False
         if (endian == '>' and numpy.little_endian) or (endian == '<' and not numpy.little_endian):
@@ -75,28 +94,28 @@ class raxisimage(fabioimage):
         @param infile: Opened python file (can be stringIO or bzipped file)
         """
         endianness = self.endianness
-        #list of header key to keep the order (when writing)
+        # list of header key to keep the order (when writing)
         RKey, orderList = self.rigakuKeys()
         self.header = {}
         self.header_keys = orderList
 
-        #swapBool=False
+        # swapBool=False
         fs = endianness
-        minHeaderLength = 1400 #from rigaku's def
-        #if (numpy.little_endian and endianness=='>'):
+        minHeaderLength = 1400  # from rigaku's def
+        # if (numpy.little_endian and endianness=='>'):
         #    swapBool=True
-        #file should be open already
-        #fh=open(filename,'rb')
-        infile.seek(0) #hopefully seeking works.
+        # file should be open already
+        # fh=open(filename,'rb')
+        infile.seek(0)  # hopefully seeking works.
         rawHead = infile.read(minHeaderLength)
-        #fh.close() #don't like open files in case of intermediate crash
+        # fh.close() #don't like open files in case of intermediate crash
 
         self.header = dict()
         curByte = 0
         for key in orderList:
             if isinstance(RKey[key], int):
                 # read a number of bytes, convert to char.
-                #if -1, read remainder of header
+                # if -1, read remainder of header
                 if RKey[key] == -1:
                     rByte = len(rawHead) - curByte
                     self.header[key] = struct.unpack(fs + str(rByte) + 's',
@@ -109,13 +128,13 @@ class raxisimage(fabioimage):
                         rawHead[curByte : curByte + rByte])[0]
                 curByte += rByte
             elif RKey[key] == 'float':
-                #read a float, 4 bytes
+                # read a float, 4 bytes
                 rByte = 4
                 self.header[key] = struct.unpack(fs + 'f',
                         rawHead[curByte : curByte + rByte])[0]
                 curByte += rByte
             elif RKey[key] == 'long':
-                #read a long, 4 bytes
+                # read a long, 4 bytes
                 rByte = 4
                 self.header[key] = struct.unpack(fs + 'l',
                         rawHead[curByte : curByte + rByte])[0]
@@ -123,7 +142,7 @@ class raxisimage(fabioimage):
             else:
                 logging.warning('special header data type %s not understood' % Rkey[key])
             if len(rawHead) == curByte:
-                #"end reached"
+                # "end reached"
                 break
 
     def read(self, fname, frame=None):
@@ -136,15 +155,15 @@ class raxisimage(fabioimage):
         endianness = self.endianness
         self.resetvals()
         infile = self._open(fname, 'rb')
-        offset = -1 #read from EOF backward
+        offset = -1  # read from EOF backward
         try:
             self._readheader(infile)
         except:
             raise
 
-        #we read the required bytes from the end of file, using code
-        #lifted from binaryimage
-        #read the image data
+        # we read the required bytes from the end of file, using code
+        # lifted from binaryimage
+        # read the image data
 
         self.dim1 = self.header['X Pixels']
         self.dim2 = self.header['Y Pixels']
@@ -157,14 +176,14 @@ class raxisimage(fabioimage):
         else:
             try:
                 attrs = dir(infile)
-                if "measure_size" in attrs: #Handle specifically gzip
-                    infile.seek(infile.measure_size() - size) #seek from EOF backwards
+                if "measure_size" in attrs:  # Handle specifically gzip
+                    infile.seek(infile.measure_size() - size)  # seek from EOF backwards
                 elif "size" in attrs:
-                    infile.seek(infile.size - size) #seek from EOF backwards
+                    infile.seek(infile.size - size)  # seek from EOF backwards
                 if "len" in attrs:
-                    infile.seek(infile.len - size) #seek from EOF backwards
+                    infile.seek(infile.len - size)  # seek from EOF backwards
                 else:
-                    infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
+                    infile.seek(-size + offset + 1 , os.SEEK_END)  # seek from EOF backwards
 #                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
                 logger.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
@@ -185,9 +204,9 @@ class raxisimage(fabioimage):
             data = data << 1 >> 1  # reset bit #15 to zero
             self.bytecode = numpy.uint32
             data = data.astype(self.bytecode)
-            #Now we do some fixing for Rigaku's refusal to adhere to standards:
+            # Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
-            #multiply by the ratio  defined in the header
+            # multiply by the ratio  defined in the header
             data[di] *= sf
 
         self.data = data
@@ -195,7 +214,7 @@ class raxisimage(fabioimage):
         return self
 
     def rigakuKeys(self):
-        #returns dict of keys and keyLengths
+        # returns dict of keys and keyLengths
         RKey = {
                 'InstrumentType':10,
                 'Version':10,
@@ -224,42 +243,42 @@ class raxisimage(fabioimage):
                 'Generator Current':'float',
                 'Focus':12,
                 'Xray Memo':80,
-                'IP shape':'long', #1= cylindrical, 0=flat. A "long" is overkill.
-                'Oscillation Type':'float', #1=weissenberg. else regular. "float"? really?
+                'IP shape':'long',  # 1= cylindrical, 0=flat. A "long" is overkill.
+                'Oscillation Type':'float',  # 1=weissenberg. else regular. "float"? really?
                 'Reserved Space 2':56,
                 'Crystal Mount (spindle axis)':4,
                 'Crystal Mount (beam axis)':4,
-                'Phi Datum':'float', #degrees
-                'Phi Oscillation Start':'float', #deg
-                'Phi Oscillation Stop':'float',  #deg
+                'Phi Datum':'float',  # degrees
+                'Phi Oscillation Start':'float',  # deg
+                'Phi Oscillation Stop':'float',  # deg
                 'Frame Number':'long',
-                'Exposure Time':'float', #minutes
-                'Direct beam X position':'float', #special, x,y
-                'Direct beam Y position':'float', #special, x,y
-                'Omega Angle':'float', #omega angle
-                'Chi Angle':'float', #omega angle
-                '2Theta Angle':'float', #omega angle
-                'Mu Angle':'float', #omega angle
-                'Image Template':204, #used for storing scan template..
+                'Exposure Time':'float',  # minutes
+                'Direct beam X position':'float',  # special, x,y
+                'Direct beam Y position':'float',  # special, x,y
+                'Omega Angle':'float',  # omega angle
+                'Chi Angle':'float',  # omega angle
+                '2Theta Angle':'float',  # omega angle
+                'Mu Angle':'float',  # omega angle
+                'Image Template':204,  # used for storing scan template..
                 'X Pixels':'long',
                 'Y Pixels':'long',
-                'X Pixel Length':'float', #mm
-                'Y Pixel Length':'float', #mm
+                'X Pixel Length':'float',  # mm
+                'Y Pixel Length':'float',  # mm
                 'Record Length':'long',
                 'Total':'long',
                 'Starting Line':'long',
                 'IP Number':'long',
                 'Photomultiplier Ratio':'float',
                 'Fade Time (to start of read)':'float',
-                'Fade Time (to end of read)':'float', #good that they thought of this, but is it applied?
+                'Fade Time (to end of read)':'float',  # good that they thought of this, but is it applied?
                 'Host Type/Endian':10,
                 'IP Type':10,
-                'Horizontal Scan':'long', #0=left->Right, 1=Rigth->Left
-                'Vertical Scan':'long', #0=down->up, 1=up->down
-                'Front/Back Scan':'long', #0=front, 1=back
+                'Horizontal Scan':'long',  # 0=left->Right, 1=Rigth->Left
+                'Vertical Scan':'long',  # 0=down->up, 1=up->down
+                'Front/Back Scan':'long',  # 0=front, 1=back
                 'Pixel Shift (RAXIS V)':'float',
                 'Even/Odd Intensity Ratio (RAXIS V)':'float',
-                'Magic number':'long', #'RAPID'-specific
+                'Magic number':'long',  # 'RAPID'-specific
                 'Number of Axes':'long',
                 'Goniometer Vector ax.1.1':'float',
                 'Goniometer Vector ax.1.2':'float',
@@ -308,11 +327,11 @@ class raxisimage(fabioimage):
                 'posx':20,
                 'posy':20,
                 'xray':'long',
-                #more values can be added here
+                # more values can be added here
                 'Header Leftovers':-1,
                 }
 
-        #make a list with the items in the right order
+        # make a list with the items in the right order
         orderList = [
                 'InstrumentType',
                 'Version',

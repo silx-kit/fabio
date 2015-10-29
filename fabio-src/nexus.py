@@ -1,5 +1,4 @@
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/kif/fabio
@@ -30,7 +29,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/02/2015"
+__date__ = "29/10/2015"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -86,9 +85,9 @@ def exists(fname):
     """
     if ":" in fname:
         url = urlparse(fname)
-        if url.scheme =="file":
+        if url.scheme == "file":
             return os.path.exists(url.path)
-        elif url.scheme =="nxs":
+        elif url.scheme == "nxs":
             if not os.path.exists(url.path):
                 return False
             try:
@@ -97,7 +96,7 @@ def exists(fname):
                 return False
             else:
                 return bool(nxs.find_data())
-        elif url.scheme =="hdf5":
+        elif url.scheme == "hdf5":
             if not os.path.exists(url.path):
                 return False
             h5 = h5py.File(url.path, "r")
@@ -232,7 +231,7 @@ class Nexus(object):
         if entries :
             entries.sort(key=lambda a: a[1], reverse=True)  # sort entries in decreasing time
             return [self.h5[i[0]] for i in entries]
-        else: #no entries found, try without sorting by time
+        else:  # no entries found, try without sorting by time
             entries = [grp for grp in self.h5
                     if (isinstance(self.h5[grp], h5py.Group) and \
                         "NX_class" in self.h5[grp].attrs and \
@@ -269,7 +268,7 @@ class Nexus(object):
             data = self.get_data(entry)
             if data:
                 if all:
-                    result+=data
+                    result += data
                 else:
                     return data[0]
             for instrument in self.get_class(entry, "NXinstrument"):

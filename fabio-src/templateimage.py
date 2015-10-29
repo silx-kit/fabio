@@ -1,6 +1,29 @@
-#!/usr/bin/env python
-#coding: utf-8
-#This is a template for adding new file formats to FabIO
+# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/kif/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+# This is a template for adding new file formats to FabIO
 
 # We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:
 # 1) inherit from fabioimage overriding the methods _readheader, read and optionally write.
@@ -30,7 +53,7 @@
 #
 # 9) Run pylint on your code and then please go clean it up. Have a go at mine while you are at it.
 #
-#10) Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert
+# 10) Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert
 #    their data into another format
 
 """
@@ -47,7 +70,7 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "GPLv3+"
 __copyright__ = "Institut"
-__version__ = "17 Oct 2012"
+__date__ = "17 Oct 2012"
 
 import logging
 logger = logging.getLogger("templateimage")
@@ -78,7 +101,7 @@ class templateimage(fabioimage):
         
         @param infile: Opened python file (can be stringIO or bipped file)  
         """
-        #list of header key to keep the order (when writing)
+        # list of header key to keep the order (when writing)
         self.header = {}
         self.header_keys = []
 
@@ -94,6 +117,6 @@ class templateimage(fabioimage):
         infile = self._open(fname)
         self._readheader(infile)
 
-        #read the image data
+        # read the image data
         self.data = numpy.zeros((self.dim2, self.dim1), dtype=self.bytecode)
         return self
