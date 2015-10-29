@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "21/01/2015"
+__date__ = "07/09/2015"
 
 PACKAGE = "fabio"
 SOURCES = PACKAGE + "-src"
@@ -96,7 +96,7 @@ class UtilsTest(object):
             home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
         else:
             home = os.path.join(os.path.dirname(TEST_HOME),
-                                      "build", architecture)
+                                "build", architecture)
         logger.info("%s Home is: %s" % (name, home))
         if name in sys.modules:
             logger.info("%s module was already loaded from  %s" % (name, sys.modules[name]))

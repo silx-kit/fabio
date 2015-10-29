@@ -24,8 +24,30 @@ except ImportError:
     Image = None
 from . import fabioutils, converters
 
+try:
+    from six import with_metaclass
+except ImportError:
+    from .third_party.six import with_metaclass
 
-class fabioimage(object):
+try:
+    from collections import OrderedDict
+except ImportError:
+    from .third_party.ordereddict import OrderedDict
+
+
+class FabioMeta(type):
+    """
+    Metaclass used to register all image classes inheriting from fabioImage
+    """
+    # we use __init__ rather than __new__ here because we want
+    # to modify attributes of the class *after* they have been
+    # created
+    def __init__(cls, name, bases, dct):
+        cls.registry[name.lower()] = cls
+        super(FabioMeta, cls).__init__(name, bases, dct)
+
+
+class fabioimage(with_metaclass(FabioMeta, object)):
     """
     A common object for images in fable
     Contains a numpy array (.data) and dict of meta data (.header)
@@ -33,6 +55,28 @@ class fabioimage(object):
 
     _need_a_seek_to_read = False
     _need_a_real_file = False
+    registry = OrderedDict()  # list of child classes ...
+
+    @classmethod
+    def factory(cls, name):
+        """
+        A kind of factory...
+
+        @param name: name of the class to instanciate
+        @type name: str
+        @return: an instance of the class
+        @rtype: fabioimage
+        """
+        name = name.lower()
+        obj = None
+        if name in cls.registry:
+            obj = cls.registry[name]()
+        else:
+            msg = ("FileType %s is unknown !, "
+                   "please check if the filename exists or select one from %s" % (name, cls.registry.keys()))
+            logger.error(msg)
+            raise RuntimeError(msg)
+        return obj
 
     def __init__(self, data=None , header=None):
         """
@@ -360,14 +404,14 @@ class fabioimage(object):
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
             if "name" in dir(fname):
-                self.header["filename"] =self.filename= fname.name
+                self.header["filename"] = self.filename = fname.name
             else:
                 self.filename = self.header["filename"] = "stream"
                 try:
                     setattr(fname, "name", self.filename)
                 except AttributeError:
-                    #cStringIO
-                    logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s"%type(fname))
+                    # cStringIO
+                    logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s" % type(fname))
             return fname
 
         fileObject = None
@@ -431,123 +475,32 @@ class fabioimage(object):
         """
         Convert a fabioimage object into another fabioimage object (with possible conversions)
         @param dest: destination type "EDF", "edfimage" or the class itself
+        @return: instance of the new class
         """
+        other = None
         if type(dest) in fabioutils.StringTypes:
             dest = dest.lower()
-            modules = []
-            for val  in fabioutils.FILETYPES.values():
-                modules += [i + "image" for i in val if i not in modules]
-            klass = None
-            module = None
-            klass_name = None
-            for klass_name in modules:
-                if  klass_name.startswith(dest):
-                    try:
-                        module = sys.modules["fabio." + klass_name]
-                    except KeyError:
-                        try:
-                            module = __import__(klass_name)
-                        except:
-                            logger.error("Failed to import %s", klass_name)
-                        else:
-                            logger.debug("imported %simage", klass_name)
-                    if module is not None:
-                        break
-            if module is not None:
-                if hasattr(module, klass_name):
-                    klass = getattr(module, klass_name)
+            if dest.endswith("image"):
+                dest = dest[:-5]
+            if dest + "image" in self.registry:
+                other = self.factory(dest + "image")
+            # load modules which could be suitable:
+            for pref in fabioutils.FILETYPES.get(dest, []):
+                try:
+                    __import__(".%simage" % pref)
+                    other = self.factory(pref + "image")
+                except:
+                    pass
                 else:
-                    logger.error("Module %s has no image class" % module)
+                    continue
+
         elif isinstance(dest, self.__class__):
-            klass = dest.__class__
+            other = dest.__class__()
         elif ("__new__" in dir(dest)) and isinstance(dest(), fabioimage):
-            klass = dest
+            other = dest()
         else:
-            logger.warning("Unrecognized destination format: %s " % dest)
+            logger.error("Unrecognized destination format: %s " % dest)
             return self
-        if klass is None:
-            logger.warning("Unrecognized destination format: %s " % dest)
-            return self
-        other = klass()  # temporary instance (to be overwritten)
-        other = klass(data=converters.convert_data(self.classname, other.classname, self.data),
-                    header=converters.convert_header(self.classname, other.classname, self.header))
+        other.data = converters.convert_data(self.classname, other.classname, self.data)
+        other.header = converters.convert_header(self.classname, other.classname, self.header)
         return other
-
-def test():
-    """
-    check some basic fabioimage functionality
-    """
-    import time
-    start = time.time()
-
-    dat = numpy.ones((1024, 1024), numpy.uint16)
-    dat = (dat * 50000).astype(numpy.uint16)
-    assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
-    hed = {"Title":"50000 everywhere"}
-    obj = fabioimage(dat, hed)
-
-    assert obj.getmax() == 50000
-    assert obj.getmin() == 50000
-    assert obj.getmean() == 50000 , obj.getmean()
-    assert obj.getstddev() == 0.
-
-    dat2 = numpy.zeros((1024, 1024), numpy.uint16, savespace=1)
-    cord = [ 256, 256, 790, 768 ]
-    slic = obj.make_slice(cord)
-    dat2[slic] = dat2[slic] + 100
-
-    obj = fabioimage(dat2, hed)
-
-    # New object, so...
-    assert obj.maxval is None
-    assert obj.minval is None
-
-    assert obj.getmax() == 100, obj.getmax()
-    assert obj.getmin() == 0 , obj.getmin()
-    npix = (slic[0].stop - slic[0].start) * (slic[1].stop - slic[1].start)
-    obj.resetvals()
-    area1 = obj.integrate_area(cord)
-    obj.resetvals()
-    area2 = obj.integrate_area(slic)
-    assert area1 == area2
-    assert obj.integrate_area(cord) == obj.integrate_area(slic)
-    assert obj.integrate_area(cord) == npix * 100, obj.integrate_area(cord)
-
-
-    def clean():
-        """ clean up the created testfiles"""
-        for name in ["testfile", "testfile.gz", "testfile.bz2"]:
-            try:
-                os.remove(name)
-            except:
-                continue
-
-
-    clean()
-    import gzip, bz2
-    gzip.open("testfile.gz", "wb").write("{ hello }")
-    fout = obj._open("testfile.gz")
-    readin = fout.read()
-    assert readin == "{ hello }", readin + " gzipped file"
-
-
-    bz2.BZ2File("testfilebz", "wb").write("{ hello }")
-    fout = obj._open("testfile.bz2")
-    readin = fout.read()
-    assert readin == "{ hello }", readin + " bzipped file"
-
-    ftest = open("testfile", "wb")
-    ftest.write("{ hello }")
-    assert ftest == obj._open(ftest)
-    ftest.close()
-    fout = obj._open("testfile")
-    readin = fout.read()
-    assert readin == "{ hello }", readin + "plain file"
-    fout.close()
-    ftest.close()
-    clean()
-
-    print ("Passed in %s s" % (time.time() - start))
-
-if __name__ == '__main__':
-    test()

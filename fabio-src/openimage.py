@@ -20,28 +20,28 @@ import sys, logging
 logger = logging.getLogger("openimage")
 from .fabioutils  import FilenameObject
 from .fabioimage import fabioimage
-from . import edfimage
-from . import adscimage
-from . import tifimage
-from . import marccdimage
-from . import mar345image
-from . import fit2dmaskimage
-from . import brukerimage
-from . import bruker100image
-from . import pnmimage
-from . import GEimage
-from . import OXDimage
-from . import dm3image
-from . import HiPiCimage
-from . import pilatusimage
-from . import fit2dspreadsheetimage
-from . import kcdimage
-from . import cbfimage
-from . import xsdimage
-from . import binaryimage
-from . import pixiimage
-from . import hdf5image
-from . import raxisimage
+from .edfimage import edfimage
+from .adscimage import adscimage
+from .tifimage import tifimage
+from .marccdimage import marccdimage
+from .mar345image import mar345image
+from .fit2dmaskimage import fit2dmaskimage
+from .brukerimage import brukerimage
+from .bruker100image import bruker100image
+from .pnmimage import pnmimage
+from .GEimage import GEimage
+from .OXDimage import OXDimage
+from .dm3image import dm3image
+from .HiPiCimage import HiPiCimage
+from .pilatusimage import pilatusimage
+from .fit2dspreadsheetimage import fit2dspreadsheetimage
+from .kcdimage import kcdimage
+from .cbfimage import cbfimage
+from .xsdimage import xsdimage
+from .binaryimage import binaryimage
+from .pixiimage import pixiimage
+from .hdf5image import hdf5image
+from .raxisimage import raxisimage
 
 if sys.version_info[0] < 3:
     bytes = str
@@ -178,15 +178,11 @@ def _openimage(filename):
             traceback.print_exc()
             raise Exception("Fabio could not identify " + filename)
     klass_name = "".join(filetype) + 'image'
-    module = sys.modules.get("fabio." + klass_name, None)
-    if module is not None:
-        if hasattr(module, klass_name):
-            klass = getattr(module, klass_name)
-        else:
-            raise Exception("Module %s has no image class" % module)
-    else:
-        raise Exception("Filetype not known %s %s" % (filename, klass_name))
-    obj = klass()
+    try:
+        obj = fabioimage.factory(klass_name)
+    except RuntimeError as err:
+        logger.error("Filetype not known %s %s" % (filename, klass_name))
+        raise err
 
     if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
         obj.set_url(url)

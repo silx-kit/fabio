@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""
-FabIO module
 
-"""
+from __future__ import absolute_import, print_function, division
+
+__doc__ = """FabIO module"""
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "21/07/2015"
+__date__ = "29/10/2015"
 __status__ = "stable"
 
 
