@@ -1,11 +1,29 @@
 #!/usr/bin/env python
 # coding: utf-8
-
+#
+#    Project: Fable Input/Output
+#             https://github.com/kif/fabio
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 from __future__ import print_function, division, with_statement, absolute_import
 
-"""
-Setup script for python distutils package and fabio
-"""
+__doc__ = """ Setup script for python distutils package and fabio """
 import os
 import sys
 import os.path as op
@@ -75,7 +93,7 @@ def get_version():
     sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
     import _version
     sys.path.pop(0)
-    return _version.version
+    return _version.strictversion
 
 #######################
 # build_doc commandes #
@@ -316,26 +334,7 @@ if os.path.isdir("third_party"):
     package_dir["fabio.third_party"] = "third_party"
     packages.append("fabio.third_party")
 
-
-if __name__ == "__main__":
-    setup(name='fabio',
-          version=get_version(),
-          author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
-          author_email="fable-talk@lists.sourceforge.net",
-          description='Image IO for fable',
-          url="http://fable.wiki.sourceforge.net/fabio",
-          download_url="http://sourceforge.net/projects/fable/files/fabio/",
-          ext_package="fabio",
-          ext_modules=extensions,
-          packages=["fabio", "fabio.third_party", "fabio.test"],
-          package_dir={"fabio": "fabio-src",
-                       "fabio.third_party": "third_party",
-                       "fabio.test": "test"
-                       },
-          test_suite="test",
-          cmdclass=cmdclass,
-          scripts=script_files,
-          classifiers=[
+classifiers = [
               'Development Status :: 5 - Production/Stable',
               'Environment :: Console',
               'Intended Audience :: End Users/Desktop',
@@ -353,4 +352,21 @@ if __name__ == "__main__":
               'Topic :: Scientific/Engineering :: Physics',
               'Topic :: Scientific/Engineering :: Visualization',
               'Topic :: Software Development :: Libraries :: Python Modules',
-                ],)
+                ]
+
+if __name__ == "__main__":
+    setup(name='fabio',
+          version=get_version(),
+          author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
+          author_email="fable-talk@lists.sourceforge.net",
+          description='Image IO for fable',
+          url="http://fable.wiki.sourceforge.net/fabio",
+          download_url="http://sourceforge.net/projects/fable/files/fabio/",
+          ext_package="fabio",
+          ext_modules=extensions,
+          packages=packages,
+          package_dir=package_dir,
+          test_suite="test",
+          cmdclass=cmdclass,
+          scripts=script_files,
+          classifiers=classifiers,)
