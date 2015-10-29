@@ -43,11 +43,11 @@ __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "17 Oct 2012"
 
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 import numpy, logging
 logger = logging.getLogger("binaryimage")
 
-class binaryimage(fabioimage):
+class BinaryImage(FabioImage):
     """
     This simple library has been made for manipulating exotic/unknown files format.
 
@@ -59,7 +59,7 @@ class binaryimage(fabioimage):
     """
 
     def __init__(self, *args, **kwargs):
-        fabioimage.__init__(self, *args, **kwargs)
+        FabioImage.__init__(self, *args, **kwargs)
 
     @staticmethod
     def swap_needed(endian):
@@ -124,4 +124,4 @@ class binaryimage(fabioimage):
         with open(fname, mode="wb") as outfile:
             outfile.write(self.data.tostring())
 
-
+binaryimage = BinaryImage
