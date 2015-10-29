@@ -30,7 +30,7 @@
 debian=$(grep -o '[0-9]*' /etc/issue)
 version=$(cd fabio-src ; python -c"import _version; print(_version.version)"; cd ..)
 strictversion=$(cd fabio-src ; python -c"import _version; print(_version.strictversion)"; cd ..) 
-tarname=pyFAI_${strictversion}.orig.tar.gz
+tarname=fabio_${strictversion}.orig.tar.gz
 if [ -d /usr/lib/ccache ];
 then 
    export PATH=/usr/lib/ccache:$PATH 
