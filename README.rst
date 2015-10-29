@@ -42,12 +42,13 @@ bzip and gzip modules to be present (eg libbz2-dev package for ubuntu)
 Using fabio in your own python programs
 Example:
 
->>> import fabio
->>> obj = fabio.edfimage("mydata0000.edf")
->>> obj.data.shape
-(2048, 2048)
->>> obj.header["Omega"]
-23.5
+..
+  >>> import fabio
+  >>> obj = fabio.edfimage("mydata0000.edf")
+  >>> obj.data.shape
+  (2048, 2048)
+  >>> obj.header["Omega"]
+  23.5
 
 
 Design Specifications

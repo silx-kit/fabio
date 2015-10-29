@@ -1,5 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 
 from __future__ import absolute_import, print_function, division
 
@@ -10,7 +23,6 @@ __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "29/10/2015"
 __status__ = "stable"
-
 
 import logging
 logging.basicConfig()
@@ -31,14 +43,14 @@ from .openimage import openheader as openheader
 
 def tests():
     """
-    Run the FabIO test suite. 
-    
+    Run the FabIO test suite.
+
     If the test-images are not already installed (via the debian package for example),
     they need to be downloaded from sourceforge.net, which make take a while.
     Ensure your network connection is operational and your proxy settings are correct,
     for example:
-    
-    export http_proxy=http://proxy.site.com:3128 
+
+    export http_proxy=http://proxy.site.com:3128
     """
     from . import test
     test.run_tests()
