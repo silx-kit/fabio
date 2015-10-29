@@ -43,8 +43,8 @@ cp dist/${tarname} package
 cd package
 cp ../copyright debian
 tar -xzf ${tarname}
-newname=pyfai_${strictversion}.orig.tar.gz
-directory=pyFAI-${strictversion}
+newname=python-fabio_${strictversion}.orig.tar.gz
+directory=fabio-${strictversion}
 ln -s ${tarname} ${newname}
 cd ${directory}
 cp -r ../debian .
@@ -52,7 +52,7 @@ dch -v ${strictversion}-1 "upstream development build of fabio ${version}"
 dch --bpo "fabio ${version} built for debian ${debian}"
 dpkg-buildpackage -r
 cd ..
-sudo su -c  "dpkg -i *.deb"
+sudo su -c  "dpkg -i python*.deb fabio*.deb"
 #rm -rf ${directory}
 cd ..
 
