@@ -47,7 +47,7 @@ from __future__ import with_statement, print_function, absolute_import
 # Base this on the tifimage (as marccd seems to be tiff with a
 # special header
 
-from .tifimage import tifimage
+from .tifimage import TifImage
 import logging
 logger = logging.getLogger("marccdimage")
 
@@ -312,7 +312,7 @@ def interpret_header(header, fmt, names):
     return hdr
 
 
-class marccdimage(tifimage):
+class MarccdImage(TifImage):
     """ Read in data in mar ccd format, also
         MarMosaic images, including header info """
 

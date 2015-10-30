@@ -33,15 +33,15 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 
 import numpy
 import sys
 import os
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 
-class pixiimage(fabioimage):
+class PixiImage(FabioImage):
     _need_a_seek_to_read = True
 
     def _readheader(self, infile):
@@ -96,7 +96,7 @@ class pixiimage(fabioimage):
 
     def getframe(self, num):
         """
-        Returns a frame as a new fabioimage object
+        Returns a frame as a new FabioImage object
         """
         if num < 0 or num > self.nframes:
             raise Exception("Requested frame number is out of range")
@@ -138,9 +138,11 @@ class pixiimage(fabioimage):
             return newobj
 
 
+pixiimage = PixiImage
+
 
 def demo(fname):
-    i = pixiimage()
+    i = PixiImage()
     i.read(fname)
     import pylab
     pylab.imshow(numpy.log(i.data))

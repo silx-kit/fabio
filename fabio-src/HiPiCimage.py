@@ -38,10 +38,11 @@ Information about the file format from Masakatzu Kobayashi is highly appreciated
 from __future__ import with_statement, print_function
 
 import numpy, logging
-logger = logging.getLogger("HiPiCimage")
-from .fabioimage import fabioimage
+logger = logging.getLogger("HipiciImage")
+from .fabioimage import FabioImage
 
-class HiPiCimage(fabioimage):
+
+class HiPiCimage(FabioImage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
 
 
@@ -127,3 +128,6 @@ class HiPiCimage(fabioimage):
         # ensure the PIL image is reset
         self.pilimage = None
         return self
+
+
+HiPiCimage = HipiciImage

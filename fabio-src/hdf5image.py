@@ -45,7 +45,7 @@ __copyright__ = "Jérôme Kieffer"
 __version__ = "15/02/2015"
 
 import numpy, logging, os, posixpath, sys, copy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 logger = logging.getLogger("hdf5image")
 if sys.version_info[0] < 3:
     bytes = str
@@ -60,7 +60,7 @@ except ImportError:
 from .fabioutils import previous_filename, next_filename
 
 
-class hdf5image(fabioimage):
+class Hdf5Image(FabioImage):
     """
     FabIO image class for Images from an HDF file
     """
@@ -69,9 +69,9 @@ class hdf5image(fabioimage):
         Generic constructor
         """
         if not h5py:
-            raise RuntimeError("fabio.hdf5image cannot be used without h5py. Please install h5py and restart")
+            raise RuntimeError("fabio.Hdf5Image cannot be used without h5py. Please install h5py and restart")
 
-        fabioimage.__init__(self, *arg, **kwargs)
+        FabioImage.__init__(self, *arg, **kwargs)
         self.data = None
         self.header = {}
         self.dim1 = self.dim2 = 0
@@ -146,13 +146,13 @@ class hdf5image(fabioimage):
 
     def getframe(self, num):
         """
-        Returns a frame as a new fabioimage object
+        Returns a frame as a new FabioImage object
         @param num: frame number
         """
         if num < 0 or num > self.nframes:
             raise RuntimeError("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
-        frame = hdf5image(header=self.header.copy())
+        frame = Hdf5Image(header=self.header.copy())
         frame.header_keys = self.header_keys[:]
         for key in ("dim1", "dim2", "nframes", "bytecode", "hdf5", "ds"):
             frame.__setattr__(key, self.__getattribute__(key))
@@ -172,7 +172,7 @@ class hdf5image(fabioimage):
         if self.currentframe < (self.nframes - 1) and self.nframes > 1:
             return self.getframe(self.currentframe + 1)
         else:
-            newobj = hdf5image()
+            newobj = Hdf5Image()
             newobj.read(next_filename(self.filename))
             return newobj
 
@@ -183,6 +183,9 @@ class hdf5image(fabioimage):
         if self.currentframe > 0:
             return self.getframe(self.currentframe - 1)
         else:
-            newobj = hdf5image()
+            newobj = Hdf5Image()
             newobj.read(previous_filename(self.filename))
             return newobj
+
+
+hdf5image = Hdf5Image

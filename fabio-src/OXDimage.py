@@ -45,7 +45,7 @@ from __future__ import with_statement, print_function
 import time, logging, struct
 logger = logging.getLogger("OXDimage")
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .compression import decTY1, compTY1
 from .fabioutils import to_str
 
@@ -73,7 +73,7 @@ DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
                    'NSUPPLEMENT':0
                    }
 
-class OXDimage(fabioimage):
+class OxdImage(FabioImage):
     """
     Oxford Diffraction Sapphire 3 images reader/writer class
 
@@ -503,6 +503,7 @@ class OXDimage(fabioimage):
         print("Exception encountered: 2:%s, 4:%s" % (ex1, ex2))
         return data
 
+OXDimage = OxdImage
 
 class Section(object):
     """

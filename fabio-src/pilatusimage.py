@@ -44,11 +44,11 @@ from __future__ import with_statement, print_function
 # Base this on the tifimage (as Pilatus is tiff with a
 # tiff header
 
-from .tifimage import tifimage
+from .tifimage import TifImage
 
 
-class pilatusimage(tifimage):
-    """ Read in Pilatus format, also 
+class PilatusImage(TifImage):
+    """ Read in Pilatus format, also
         pilatus images, including header info """
 
 
@@ -103,3 +103,5 @@ class pilatusimage(tifimage):
         just with a header
         """
         return tifimage.read(self, fname)
+
+pilatusimage = PilatusImage
