@@ -6,7 +6,7 @@
 # gael.goret@esrf.fr
 #############################################################
 
-""" 
+"""
 FabIO_viewer is a portable diffraction images viewer/converter:
 
 * Written in Python, it combines the functionalities of the I/O library fabIO with a user friendly Qt4 GUI.
@@ -52,7 +52,7 @@ try:
 except ImportError:
     from fabio.third_party.argparse import ArgumentParser
 
-output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img', '*.mar2300', '*.mar3450', '*.marccd', '*.tiff']
+output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img', '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]
 
 #--------------------------------------------------------------------------------------------------------
 # Application Form
@@ -218,7 +218,9 @@ class AppForm(QMainWindow):
             return name
 
     def save_as(self):
-        info = QFileDialog.getSaveFileNameAndFilter(self, "Save active image as", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
+        info = QFileDialog.getSaveFileNameAndFilter(self, "Save active image as",
+                                                    QDir.currentPath(),
+                                                    filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
         if self.data.any():
             if str(info[0]) != '' and str(info[0]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -229,7 +231,9 @@ class AppForm(QMainWindow):
                 QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
 
     def save_data_series_as_multiple_file(self):
-        info = QFileDialog.getSaveFileNameAndFilter(self, "Save data series as multiple files", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
+        info = QFileDialog.getSaveFileNameAndFilter(self, "Save data series as multiple files",
+                                                    QDir.currentPath(),
+                                                    filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -240,7 +244,9 @@ class AppForm(QMainWindow):
                 QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
 
     def save_data_series_as_singlehdf(self):
-        info = QFileDialog.getSaveFileNameAndFilter(self, "Save data series as single high density file", QDir.currentPath(), filter=self.tr("HDF5 archive (*.h5)"))
+        info = QFileDialog.getSaveFileNameAndFilter(self, "Save data series as single high density file",
+                                                    QDir.currentPath(),
+                                                    filter=self.tr("HDF5 archive (*.h5)"))
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -358,6 +364,8 @@ class AppForm(QMainWindow):
             out = fabio.mar345image.mar345image(data=data, header=header)
         elif format_ == '*.img':
             out = fabio.OXDimage.OXDimage(data=data, header=header)
+        elif format_ == '*.sfrm':
+            out = fabio.brukerimage.brukerimage(data=data, header=header)
         else:
             raise Warning("Unknown format: %s" % format_)
         self.statusBar().showMessage('Writing file %s to %s format, please wait ...' % (fname, format_[2:]))
@@ -705,7 +713,7 @@ class AppForm(QMainWindow):
         dial = down_sampling_Dialog()
         thick, start_angle, step_angle = dial.exec_()
         if thick is not None:
-            info = QFileDialog.getSaveFileNameAndFilter(self, "Save downsampled data series as multiple files", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff)"))
+            info = QFileDialog.getSaveFileNameAndFilter(self, "Save downsampled data series as multiple files", QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
             if self.data_series or self.sequential_file_list:
                 if str(info[0]) != '' and str(info[1]) != '':
                     format_ = self.extract_format_from_string(str(info[1]))
