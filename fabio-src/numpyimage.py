@@ -37,16 +37,16 @@ __authors__ = ["Jerome Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF"
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 
 import logging
 logger = logging.getLogger("numpyimage")
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
 
 
-class NumpyImage(fabioimage):
+class NumpyImage(FabioImage):
     """
     FabIO image class for Images for numpy array dumps
     
@@ -127,7 +127,7 @@ The description of the fourth element of the header therefore has become:
         """
         Read and decode the header of an image:
         
-        @param infile: Opened python file (can be stringIO or bipped file)  
+        @param infile: Opened python file (can be stringIO or bzipped file)  
         """
         # list of header key to keep the order (when writing)
         self.header = {}
@@ -138,7 +138,6 @@ The description of the fourth element of the header therefore has become:
         """
         try to read image 
         @param fname: name of the file
-        @param frame: 
         """
 
         self.resetvals()
@@ -146,5 +145,17 @@ The description of the fourth element of the header therefore has become:
         self._readheader(infile)
 
         # read the image data
-        self.data = numpy.zeros((self.dim2, self.dim1), dtype=self.bytecode)
+        self.data = numpy.load(infile)
+        self.bytecode = self.data.dtype
+        self.dim2, self.dim1 = self.data.shape
         return self
+
+    def write(self, fname):
+        """
+        try to write image 
+        @param fname: name of the file 
+        """
+        numpy.save(fnale, self.data)
+
+
+numpyimage = NumpyImage
