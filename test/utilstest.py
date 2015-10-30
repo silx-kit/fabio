@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "LGPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/09/2015"
+__date__ = "30/10/2015"
 
 PACKAGE = "fabio"
 SOURCES = PACKAGE + "-src"
@@ -69,7 +69,8 @@ class UtilsTest(object):
     """
     options = None
     timeout = 60  # timeout in seconds for downloading images
-    url_base = "http://downloads.sourceforge.net/fable"
+    # url_base = "http://downloads.sourceforge.net/fable"
+    url_base = "http://www.edna-site.org/pub/fabio/testimages"
     sem = threading.Semaphore()
     recompiled = False
     reloaded = False
