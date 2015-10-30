@@ -45,7 +45,7 @@ __licence__ = "GPLv3+"
 import numpy
 import struct, logging
 logger = logging.getLogger("GEimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
 
 GE_HEADER_INFO = [
@@ -208,7 +208,7 @@ GE_HEADER_INFO = [
     ]
 
 
-class GEimage(fabioimage):
+class GeImage(FabioImage):
 
     _need_a_seek_to_read = True
 
@@ -288,7 +288,7 @@ class GEimage(fabioimage):
 
     def getframe(self, num):
         """
-        Returns a frame as a new fabioimage object
+        Returns a frame as a new FabioImage object
         """
         if num < 0 or num > self.nframes:
             raise Exception("Requested frame number is out of range")
@@ -296,7 +296,7 @@ class GEimage(fabioimage):
         newheader = {}
         for k in self.header.keys():
             newheader[k] = self.header[k]
-        frame = GEimage(header=newheader)
+        frame = GeImage(header=newheader)
         frame.nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
@@ -311,7 +311,7 @@ class GEimage(fabioimage):
         if self.currentframe < (self.nframes - 1) and self.nframes > 1:
             return self.getframe(self.currentframe + 1)
         else:
-            newobj = GEimage()
+            newobj = GeImage()
             newobj.read(next_filename(
                 self.sequencefilename))
             return newobj
@@ -323,7 +323,7 @@ class GEimage(fabioimage):
         if self.currentframe > 0:
             return self.getframe(self.currentframe - 1)
         else:
-            newobj = GEimage()
+            newobj = GeImage()
             newobj.read(previous_filename(
                 self.sequencefilename))
             return newobj
@@ -339,7 +339,7 @@ def demo():
     image_file = sys.argv[1]
 
     print("init read_GEaSi_data class and load header..")
-    sequence1 = GEimage()
+    sequence1 = GeImage()
     sequence1.read(image_file)
 
     print("TimeBetweenFramesInMicrosecs = ")
@@ -360,7 +360,7 @@ def demo():
             raise ex
 
 
-
+GEimage = GeImage
 
 if __name__ == '__main__':
     demo()

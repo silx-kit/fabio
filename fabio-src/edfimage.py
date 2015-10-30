@@ -45,7 +45,7 @@ from __future__ import with_statement, print_function, absolute_import, division
 import os, logging
 logger = logging.getLogger("edfimage")
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import isAscii, toAscii, nice_int, six
 from .compression import decBzip2, decGzip, decZlib
 
@@ -455,7 +455,7 @@ class Frame(object):
 
 
 
-class edfimage(fabioimage):
+class EdfImage(FabioImage):
     """ Read and try to write the ESRF edf data format """
 
     def __init__(self, data=None , header=None, header_keys=None, frames=None):
@@ -467,18 +467,18 @@ class edfimage(fabioimage):
             logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
             data = None
             dim = 0
-            fabioimage.__init__(self, data, header)
+            FabioImage.__init__(self, data, header)
         if dim == 2:
-            fabioimage.__init__(self, data, header)
+            FabioImage.__init__(self, data, header)
         elif dim == 1 :
             data.shape = (0, len(data))
-            fabioimage.__init__(self, data, header)
+            FabioImage.__init__(self, data, header)
         elif dim == 3 :
-            fabioimage.__init__(self, data[0, :, :], header)
+            FabioImage.__init__(self, data[0, :, :], header)
         elif dim == 4 :
-            fabioimage.__init__(self, data[0, 0, :, :], header)
+            FabioImage.__init__(self, data[0, 0, :, :], header)
         elif dim == 5 :
-            fabioimage.__init__(self, data[0, 0, 0, :, :], header)
+            FabioImage.__init__(self, data[0, 0, 0, :, :], header)
 
         if frames is None:
             frame = Frame(data=self.data, header=self.header,
@@ -491,7 +491,7 @@ class edfimage(fabioimage):
     @staticmethod
     def checkHeader(header=None):
         """
-        Empty for fabioimage but may be populated by others classes
+        Empty for FabioImage but may be populated by others classes
         """
         if not isinstance(header, dict):
             return {}
@@ -646,28 +646,28 @@ class edfimage(fabioimage):
 
 
     def getframe(self, num):
-        """ returns the file numbered 'num' in the series as a fabioimage """
+        """ returns the file numbered 'num' in the series as a FabioImage """
         newImage = None
         if self.nframes == 1:
-            logger.debug("Single frame EDF; having fabioimage default behavour: %s" % num)
-            newImage = fabioimage.getframe(self, num)
+            logger.debug("Single frame EDF; having FabioImage default behavour: %s" % num)
+            newImage = FabioImage.getframe(self, num)
         elif num in range(self.nframes):
-            logger.debug("Multi frame EDF; having edfimage specific behavour: %s/%s" % (num, self.nframes))
-            newImage = edfimage(frames=self.__frames)
+            logger.debug("Multi frame EDF; having EdfImage specific behavour: %s/%s" % (num, self.nframes))
+            newImage = EdfImage(frames=self.__frames)
             newImage.currentframe = num
             newImage.filename = self.filename
         else:
             txt = "Cannot access frame: %s/%s" % (num, self.nframes)
             logger.error(txt)
-            raise ValueError("edfimage.getframe:" + txt)
+            raise ValueError("EdfImage.getframe:" + txt)
         return newImage
 
 
     def previous(self):
-        """ returns the previous file in the series as a fabioimage """
+        """ returns the previous file in the series as a FabioImage """
         newImage = None
         if self.nframes == 1:
-            newImage = fabioimage.previous(self)
+            newImage = FabioImage.previous(self)
         else:
             newFrameId = self.currentframe - 1
             newImage = self.getframe(newFrameId)
@@ -675,10 +675,10 @@ class edfimage(fabioimage):
 
 
     def next(self):
-        """ returns the next file in the series as a fabioimage """
+        """ returns the next file in the series as a FabioImage """
         newImage = None
         if self.nframes == 1:
-            newImage = fabioimage.next(self)
+            newImage = FabioImage.next(self)
         else:
             newFrameId = self.currentframe + 1
             newImage = self.getframe(newFrameId)
@@ -732,10 +732,10 @@ class edfimage(fabioimage):
         This is a special method that will read and return the data from another file ...
         The aim is performances, ... but only supports uncompressed files.
 
-        @return: data from another file using positions from current edfimage
+        @return: data from another file using positions from current EdfImage
         """
         if (filename is None) or not os.path.isfile(filename):
-            raise RuntimeError("edfimage.fastReadData is only valid with another file: %s does not exist" % (filename))
+            raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
         data = None
         frame = self.__frames[self.currentframe]
         with open(filename, "rb")as f:
@@ -752,14 +752,14 @@ class edfimage(fabioimage):
 
     def fastReadROI(self, filename, coords=None):
         """
-        Method reading Region of Interest of another file  based on metadata available in current edfimage.
+        Method reading Region of Interest of another file  based on metadata available in current EdfImage.
         The aim is performances, ... but only supports uncompressed files.
 
-        @return: ROI-data from another file using positions from current edfimage
+        @return: ROI-data from another file using positions from current EdfImage
         @rtype: numpy 2darray
         """
         if (filename is None) or not os.path.isfile(filename):
-            raise RuntimeError("edfimage.fastReadData is only valid with another file: %s does not exist" % (filename))
+            raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
         data = None
         frame = self.__frames[self.currentframe]
 
@@ -965,3 +965,4 @@ class edfimage(fabioimage):
                 self.__frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
 
+edfimage = EdfImage

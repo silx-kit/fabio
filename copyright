@@ -15,7 +15,7 @@ Copyright: 2007-2009 Henning O. Sorensen & Erik Knudsen
                European Synchrotron Radiation Facility
                6 rue Jules Horowitz
                38000 Grenoble, France
-License: GPL-2.0+
+License: GPL-3.0+
 
 Files: debian/*
 Copyright: 2011 Jerome Kieffer <jerome.kieffer@esrf.fr>
