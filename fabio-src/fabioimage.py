@@ -137,8 +137,6 @@ class FabioImage(with_metaclass(FabioMeta, object)):
 
     def get_header_keys(self):
         return list(self.header.keys())
-    header_keys = property(get_header_keys)
-
     def set_header_keys(self, value):
         pass
     header_keys = property(get_header_keys, set_header_keys)
@@ -407,9 +405,6 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         by default pass in a dict of key, values.
         """
         self.header.update(kwds)
-        for key in kwds:
-            if key not in self.header_keys:
-                 self.header_keys.append(key)
 
     def read(self, filename, frame=None):
         """

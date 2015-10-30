@@ -103,7 +103,7 @@ class Dm3Image(FabioImage):
             raise ValueError
 
     def read(self, fname, frame=None):
-        self.header = {}
+        self.header = self.check_header()
         self.resetvals()
         self.infile = self._open(fname, "rb")
         self._readheader()

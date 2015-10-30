@@ -46,7 +46,7 @@ class PixiImage(FabioImage):
 
     def _readheader(self, infile):
         infile.seek(0)
-        self.header = {}
+        self.header = self.check_header()
         byt = infile.read(4)
         framesize = numpy.fromstring(byt, numpy.int32)
         if framesize == 243722:
@@ -65,7 +65,7 @@ class PixiImage(FabioImage):
     def read(self, fname, frame=None):
         if frame is None:
             frame = 0
-        self.header = {}
+        self.header = self.check_header()
         self.resetvals()
         infile = self._open(fname, "rb")
         self.sequencefilename = fname

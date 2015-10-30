@@ -36,7 +36,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli" , "Jon Wright", "Jérôme Kieffer"]
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "GPLv3+"
@@ -217,7 +217,7 @@ class GeImage(FabioImage):
 
         infile.seek(0)
 
-        self.header = {}
+        self.header = self.check_header()
         for name, nbytes, format in GE_HEADER_INFO:
             if format is None:
                 self.header[ name ] = infile.read(nbytes)
@@ -232,7 +232,7 @@ class GeImage(FabioImage):
         """
         if frame is None:
             frame = 0
-        self.header = {}
+        self.header = self.check_header()
         self.resetvals()
         infile = self._open(fname, "rb")
         self.sequencefilename = fname

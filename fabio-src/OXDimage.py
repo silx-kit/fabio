@@ -218,7 +218,7 @@ class OxdImage(FabioImage):
         Read in header into self.header and
             the data   into self.data
         """
-        self.header = {}
+        self.header = self.check_header()
         self.resetvals()
         with self._open(fname) as infile:
             self._readheader(infile)
@@ -288,8 +288,7 @@ class OxdImage(FabioImage):
         """
         linesep = "\r\n"
         for key in DEFAULT_HEADERS:
-            if key not in self.header_keys:
-                self.header_keys.append(key)
+            if key not in self.header:
                 self.header[key] = DEFAULT_HEADERS[key]
 
         if "NX" not in self.header.keys() or "NY" not in self.header.keys():

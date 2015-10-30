@@ -42,7 +42,7 @@ __copyright__ = "Jérôme Kieffer"
 __version__ = "29 Oct 2013"
 
 import numpy, logging, sys
-from .fabioimage import FabioImage, OrderedDict
+from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 logger = logging.getLogger("mrcimage")
 if sys.version_info < (3.0):
@@ -66,18 +66,16 @@ class MrcImage(FabioImage):
         @param infile: Opened python file (can be stringIO or bipped file)
         """
         # list of header key to keep the order (when writing)
-        self.header = OrderedDict()
-        self.header_keys = []
+        self.header = self.check_header()
+
         # header is composed of 56-int32 plus 10x80char lines
         int_block = numpy.fromstring(infile.read(56 * 4), dtype=numpy.int32)
         for key, value in zip(self.KEYS, int_block):
-            self.header_keys.append(key)
             self.header[key] = value
         assert self.header["MAP"] == 542130509  # "MAP " in int32 !
 
         for i in range(10):
             label = "LABEL_%02i" % i
-            self.header_keys.append(label)
             self.header[label] = infile.read(80).strip()
         self.dim1 = self.header["NX"]
         self.dim2 = self.header["NY"]
@@ -154,7 +152,6 @@ class MrcImage(FabioImage):
             raise RuntimeError("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         frame = MrcImage(header=self.header.copy())
-        frame.header_keys = self.header_keys[:]
         for key in ("dim1", "dim2", "nframes", "bytecode", "imagesize", "sequencefilename"):
             frame.__setattr__(key, self.__getattribute__(key))
         with frame._open(self.sequencefilename, "rb") as infile:

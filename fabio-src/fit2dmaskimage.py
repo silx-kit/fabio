@@ -77,7 +77,7 @@ class Fit2dMaskImage(FabioImage):
         self._readheader(fin)
         # Compute image size
         self.bytecode = numpy.uint8
-        self.bpp = len(numpy.array(0, self.bytecode).tostring())
+        self.bpp = numpy.dtype(self.bytecode).itemsize
 
         # integer division
         num_ints = (self.dim1 + 31) // 32

@@ -163,8 +163,9 @@ class RaxisImage(FabioImage):
         self.dim1 = self.header['X Pixels']
         self.dim2 = self.header['Y Pixels']
         self.bytecode = numpy.uint16
+        self.bpp = numpy.dtype(self.bytecode).itemsize
         dims = [self.dim2, self.dim1]
-        size = dims[0] * dims[1] * bpp
+        size = dims[0] * dims[1] * self.bpp
         if offset >= 0:
             infile.seek(offset)
         else:
@@ -203,10 +204,9 @@ class RaxisImage(FabioImage):
             # multiply by the ratio  defined in the header
             # data[di] *= sf
             data[di] = (sf * data[di]).astype(numpy.uint32)
+            self.bpp = numpy.dtype(self.bytecode).itemsize
 
-        self.bpp = numpy.dtype(self.bytecode).itemsize
         self.data = data
-
         return self
 
     def rigakuKeys(self):

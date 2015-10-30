@@ -58,7 +58,7 @@ class PilatusImage(TifImage):
         Gets all entries
         """
 
-        self.header = {}
+        self.header = self.check_header()
 
 #        infile = open(infile)
         hstr = infile.read(4096)

@@ -116,11 +116,9 @@ class Frame(object):
     A class representing a single frame in an EDF file
     """
     def __init__(self, data=None, header=None, header_keys=None, number=None):
-        if header is None:
-            self.header = {}
-        else:
-            self.header = dict(header)
 
+        self.header = FabioImage.check_header(header)
+        # TODO: lot of work #
         if header_keys is None:
             self.header_keys = list(self.header.keys())
         else:

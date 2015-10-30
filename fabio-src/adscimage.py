@@ -88,7 +88,6 @@ class AdscImage(FabioImage):
         while b'}' not in line:
             if b'=' in line:
                 (key, val) = to_str(line).split('=')
-                self.header_keys.append(key.strip())
                 self.header[key.strip()] = val.strip(' ;\n\r')
             line = infile.readline()
             bytesread = bytesread + len(line)
@@ -98,7 +97,7 @@ class AdscImage(FabioImage):
         Write adsc format
         """
         out = b'{\n'
-        for key in self.header_keys:
+        for key in self.header:
             out += b"%s = %s;\n" % (key, self.header[key])
         if self.header.has_key("HEADER_BYTES"):
             pad = int(self.header["HEADER_BYTES"]) - len(out) - 2

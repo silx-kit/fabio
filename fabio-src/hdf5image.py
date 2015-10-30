@@ -73,7 +73,7 @@ class Hdf5Image(FabioImage):
 
         FabioImage.__init__(self, *arg, **kwargs)
         self.data = None
-        self.header = {}
+        self.header = self.check_header()
         self.dim1 = self.dim2 = 0
         self.m = self.maxval = self.stddev = self.minval = None
         self.header_keys = self.header.keys()
