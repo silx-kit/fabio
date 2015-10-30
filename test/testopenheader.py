@@ -31,10 +31,11 @@ import sys
 import os
 import numpy
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -57,14 +58,13 @@ class test1(unittest.TestCase):
                              "Error on file %s" % name)
 
 
-def test_suite_all_openheader():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(test1("testcase"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(test1("testcase"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_openheader()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite)
 
 

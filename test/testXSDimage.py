@@ -31,10 +31,11 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 
@@ -84,19 +85,18 @@ class testXSD(unittest.TestCase):
         0, 3, "matrices are invert of each other")
 
 
-def test_suite_all_XSD():
-    testSuite = unittest.TestSuite()
+def suite():
+    testsuite = unittest.TestSuite()
     if xsdimage is None:
         logger.warning("xsdimage is None ... probably an import error related to lxml. Skipping test")
     else:
-        testSuite.addTest(testXSD("test_read"))
-        testSuite.addTest(testXSD("test_same"))
-        testSuite.addTest(testXSD("test_invert"))
-    return testSuite
+        testsuite.addTest(testXSD("test_read"))
+        testsuite.addTest(testXSD("test_same"))
+        testsuite.addTest(testXSD("test_invert"))
+    return testsuite
 
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_XSD()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())
 

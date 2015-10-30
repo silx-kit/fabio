@@ -35,10 +35,11 @@ import numpy
 import gzip
 import bz2
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -209,33 +210,31 @@ class testPILimage3(testPILimage):
         return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)
 
 
-def test_suite_all_fabio():
-    testSuite = unittest.TestSuite()
+def suite():
+    testsuite = unittest.TestSuite()
 
-    testSuite.addTest(test50000("testgetmax"))
-    testSuite.addTest(test50000("testgetmin"))
-    testSuite.addTest(test50000("testgetmean"))
-    testSuite.addTest(test50000("getstddev"))
+    testsuite.addTest(test50000("testgetmax"))
+    testsuite.addTest(test50000("testgetmin"))
+    testsuite.addTest(test50000("testgetmean"))
+    testsuite.addTest(test50000("getstddev"))
 
-    testSuite.addTest(testslices("testgetmax"))
-    testSuite.addTest(testslices("testgetmin"))
-    testSuite.addTest(testslices("testintegratearea"))
-    testSuite.addTest(testslices("testRebin"))
+    testsuite.addTest(testslices("testgetmax"))
+    testsuite.addTest(testslices("testgetmin"))
+    testsuite.addTest(testslices("testintegratearea"))
+    testsuite.addTest(testslices("testRebin"))
 
-    testSuite.addTest(testopen("testFlat"))
-    testSuite.addTest(testopen("testgz"))
-    testSuite.addTest(testopen("testbz2"))
+    testsuite.addTest(testopen("testFlat"))
+    testsuite.addTest(testopen("testgz"))
+    testsuite.addTest(testopen("testbz2"))
 
     if fabio.fabioimage.Image is not None:
-        testSuite.addTest(testPILimage("testpil"))
-        testSuite.addTest(testPILimage2("testpil"))
-        testSuite.addTest(testPILimage3("testpil"))
+        testsuite.addTest(testPILimage("testpil"))
+        testsuite.addTest(testPILimage2("testpil"))
+        testsuite.addTest(testPILimage3("testpil"))
     else:
         logger.warning("Skipping PIL related tests")
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-
-    mysuite = test_suite_all_fabio()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

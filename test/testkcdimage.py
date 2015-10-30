@@ -31,10 +31,12 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -80,13 +82,12 @@ class testkcd(unittest.TestCase):
         self.assertAlmostEqual(abs(diff).sum(dtype=int), 0, 4)
 
 
-def test_suite_all_kcd():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(testkcd("test_read"))
-    testSuite.addTest(testkcd("test_same"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(testkcd("test_read"))
+    testsuite.addTest(testkcd("test_same"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_kcd()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

@@ -39,10 +39,10 @@ import gzip
 import bz2
 import time
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -97,7 +97,7 @@ class TestCbfReader(unittest.TestCase):
         os.unlink(os.path.join(UtilsTest.tempdir, name))
 
     def test_byte_offset(self):
-        """ check byte offset algorythm"""
+        """ check byte offset algorithm"""
         cbf = fabio.open(self.cbf_filename)
         starter = b"\x0c\x1a\x04\xd5"
         cbs = cbf.cbs
@@ -163,19 +163,18 @@ class TestCbfReader(unittest.TestCase):
             self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s [%s|%s]" % (key, obj.header[key], other.header[key]))
 
 
-def test_suite_all_cbf():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestCbfReader("test_read"))
-    testSuite.addTest(TestCbfReader("test_write"))
-    testSuite.addTest(TestCbfReader("test_byte_offset"))
-    testSuite.addTest(TestCbfReader("test_consitency_manual"))
-    testSuite.addTest(TestCbfReader("test_consitency_convert"))
-    testSuite.addTest(TestCbfReader("test_unicode"))
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestCbfReader("test_read"))
+    testsuite.addTest(TestCbfReader("test_write"))
+    testsuite.addTest(TestCbfReader("test_byte_offset"))
+    testsuite.addTest(TestCbfReader("test_consitency_manual"))
+    testsuite.addTest(TestCbfReader("test_consitency_convert"))
+    testsuite.addTest(TestCbfReader("test_unicode"))
 
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-
-    mysuite = test_suite_all_cbf()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())
+

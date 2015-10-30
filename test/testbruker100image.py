@@ -32,10 +32,10 @@ import os
 import numpy
 import gzip
 import bz2
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 from fabio.bruker100image import bruker100image
@@ -81,13 +81,13 @@ class TestBruker100(unittest.TestCase):
             self.assert_(abs(ref.data - obt.data).max() == 0, "data are the same")
 
 
-def test_suite_all_bruker100():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestBruker100("test_read"))
-    testSuite.addTest(TestBruker100("test_same"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestBruker100("test_read"))
+    testsuite.addTest(TestBruker100("test_same"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_bruker100()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())
+

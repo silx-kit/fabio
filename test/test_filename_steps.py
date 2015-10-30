@@ -29,11 +29,11 @@ Test cases for the Next/Previous ...
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
-
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+import os
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -69,15 +69,14 @@ class TestJump(unittest.TestCase):
             self.assertEqual(res, fabio.jump_filename(name, num))
 
 
-def test_suite_all_steps():
-    testSuite = unittest.TestSuite()
+def suite():
+    testsuite = unittest.TestSuite()
 
-    testSuite.addTest(TestNext("test_next1"))
-    testSuite.addTest(TestPrev("test_prev1"))
-    testSuite.addTest(TestJump("test_jump1"))
-    return testSuite
+    testsuite.addTest(TestNext("test_next1"))
+    testsuite.addTest(TestPrev("test_prev1"))
+    testsuite.addTest(TestJump("test_jump1"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_steps()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

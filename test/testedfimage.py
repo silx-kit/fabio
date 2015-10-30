@@ -35,10 +35,11 @@ import numpy
 import gzip
 import bz2
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -48,25 +49,27 @@ from fabio.third_party import six
 
 class TestFlatEdfs(unittest.TestCase):
     """ test some flat images """
-    BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-    MYHEADER = six.b("{\n%-1020s}\n" % (
-                """Omega = 0.0 ;
-                Dim_1 = 256 ;
-                Dim_2 = 256 ;
-                DataType = FloatValue ;
-                ByteOrder = %s ;
-                Image = 1;
-                History-1 = something=something else;
-                \n\n""" % BYTE_ORDER))
-    MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
-    MYIMAGE[0, 0] = 0
-    MYIMAGE[1, 1] = 20
+    def common_setup(self):
+        self.BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
+        self.MYHEADER = six.b("{\n%-1020s}\n" % (
+                    """Omega = 0.0 ;
+                    Dim_1 = 256 ;
+                    Dim_2 = 256 ;
+                    DataType = FloatValue ;
+                    ByteOrder = %s ;
+                    Image = 1;
+                    History-1 = something=something else;
+                    \n\n""" % self.BYTE_ORDER))
+        self.MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
+        self.MYIMAGE[0, 0] = 0
+        self.MYIMAGE[1, 1] = 20
 
-    assert len(MYIMAGE[0:1, 0:1].tostring()) == 4, \
-    len(MYIMAGE[0:1, 0:1].tostring())
+        assert len(self.MYIMAGE[0:1, 0:1].tostring()) == 4, \
+               len(self.MYIMAGE[0:1, 0:1].tostring())
 
     def setUp(self):
         """ initialize"""
+        self.common_setup()
         self.filename = os.path.join(UtilsTest.tempdir, "im0000.edf")
         if not os.path.isfile(self.filename):
             outf = open(self.filename, "wb")
@@ -74,6 +77,10 @@ class TestFlatEdfs(unittest.TestCase):
             outf.write(self.MYHEADER)
             outf.write(self.MYIMAGE.tostring())
             outf.close()
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.BYTE_ORDER = self.MYHEADER = self.MYIMAGE = None
 
     def test_read(self):
         """ check readable"""
@@ -261,7 +268,7 @@ class TestEdfMultiFrame(unittest.TestCase):
         prev = self.frame1.previous()
         self.assertEqual((prev.data - self.frame0.data).max(), 0, "previous_mono: Same data for frame 0")
 
-    def  test_openimage_multiframes(self):
+    def test_openimage_multiframes(self):
         "test if openimage can directly read first or second frame of a multi-frame"
         self.assertEqual((fabio.open(self.multiFrameFilename).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for default ")
         self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
@@ -352,32 +359,31 @@ class TestEdfRegression(unittest.TestCase):
 #        os.unlink(fname)
 
 
-def test_suite_all_edf():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestFlatEdfs("test_read"))
-    testSuite.addTest(TestFlatEdfs("test_getstats"))
-    testSuite.addTest(TestBzipEdf("test_read"))
-    testSuite.addTest(TestBzipEdf("test_getstats"))
-    testSuite.addTest(TestGzipEdf("test_read"))
-    testSuite.addTest(TestGzipEdf("test_getstats"))
-    testSuite.addTest(TestEdfs("test_read"))
-    testSuite.addTest(TestEdfs("test_rebin"))
-    testSuite.addTest(testedfcompresseddata("test_read"))
-    testSuite.addTest(TestEdfMultiFrame("test_getFrame_multi"))
-    testSuite.addTest(TestEdfMultiFrame("test_getFrame_mono"))
-    testSuite.addTest(TestEdfMultiFrame("test_next_multi"))
-    testSuite.addTest(TestEdfMultiFrame("text_next_mono"))
-    testSuite.addTest(TestEdfMultiFrame("test_previous_multi"))
-    testSuite.addTest(TestEdfMultiFrame("test_openimage_multiframes"))
-    testSuite.addTest(TestEdfFastRead("test_fastread"))
-    testSuite.addTest(TestEdfWrite("testFlat"))
-    testSuite.addTest(TestEdfWrite("testGzip"))
-    testSuite.addTest(TestEdfWrite("testBzip2"))
-    testSuite.addTest(TestEdfRegression("bug_27"))
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestFlatEdfs("test_read"))
+    testsuite.addTest(TestFlatEdfs("test_getstats"))
+    testsuite.addTest(TestBzipEdf("test_read"))
+    testsuite.addTest(TestBzipEdf("test_getstats"))
+    testsuite.addTest(TestGzipEdf("test_read"))
+    testsuite.addTest(TestGzipEdf("test_getstats"))
+    testsuite.addTest(TestEdfs("test_read"))
+    testsuite.addTest(TestEdfs("test_rebin"))
+    testsuite.addTest(testedfcompresseddata("test_read"))
+    testsuite.addTest(TestEdfMultiFrame("test_getFrame_multi"))
+    testsuite.addTest(TestEdfMultiFrame("test_getFrame_mono"))
+    testsuite.addTest(TestEdfMultiFrame("test_next_multi"))
+    testsuite.addTest(TestEdfMultiFrame("text_next_mono"))
+    testsuite.addTest(TestEdfMultiFrame("test_previous_multi"))
+    testsuite.addTest(TestEdfMultiFrame("test_openimage_multiframes"))
+    testsuite.addTest(TestEdfFastRead("test_fastread"))
+    testsuite.addTest(TestEdfWrite("testFlat"))
+    testsuite.addTest(TestEdfWrite("testGzip"))
+    testsuite.addTest(TestEdfWrite("testBzip2"))
+    testsuite.addTest(TestEdfRegression("bug_27"))
 
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_edf()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

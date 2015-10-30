@@ -35,10 +35,11 @@ import numpy
 import gzip
 import logging
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -134,16 +135,15 @@ class TestMar345(unittest.TestCase):
                 print("reading #%s/%s" % (i, N))
 
 
-def test_suite_all_mar345():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestMar345("test_read"))
-    testSuite.addTest(TestMar345("test_write"))
-    testSuite.addTest(TestMar345("test_byteswap_write"))
-    testSuite.addTest(TestMar345("test_memoryleak"))
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestMar345("test_read"))
+    testsuite.addTest(TestMar345("test_write"))
+    testsuite.addTest(TestMar345("test_byteswap_write"))
+    testsuite.addTest(TestMar345("test_memoryleak"))
 
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_mar345()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite)

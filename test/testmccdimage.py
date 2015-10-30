@@ -33,10 +33,11 @@ import sys
 import os
 import numpy
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -110,13 +111,12 @@ class TestFlatMccds(unittest.TestCase):
             self.assertEqual(dim2, obj.dim2, "dim2")
 
 
-def test_suite_all_mccd():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestNormalTiffOK("test_read_openimage"))
-    testSuite.addTest(TestFlatMccds("test_read"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestNormalTiffOK("test_read_openimage"))
+    testsuite.addTest(TestFlatMccds("test_read"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_mccd()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

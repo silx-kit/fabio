@@ -35,10 +35,11 @@ import numpy
 import gzip
 import bz2
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -82,13 +83,13 @@ class TestFlatBinary(unittest.TestCase):
             os.remove(filename)
 
 
-def test_suite_all_flat():
-    testSuite = unittest.TestSuite()
+def suite():
+    testsuite = unittest.TestSuite()
 
-#     testSuite.addTest(TestFlatBinary("test_openimage"))
-    return testSuite
+#     testsuite.addTest(TestFlatBinary("test_openimage"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_flat()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite)
+

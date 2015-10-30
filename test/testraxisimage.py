@@ -34,10 +34,11 @@ import gzip
 import bz2
 import logging
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.raxisimage import raxisimage
@@ -110,15 +111,14 @@ class TestRaxisImage(unittest.TestCase):
                 print("Reading #%s/%s" % (i, N))
 
 
-def test_suite_all_raxis():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestRaxisImage("test_read"))
-    # testSuite.addTest(TestRaxisImage("test_write"))
-    testSuite.addTest(TestRaxisImage("test_memoryleak"))
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestRaxisImage("test_read"))
+    # testsuite.addTest(TestRaxisImage("test_write"))
+    testsuite.addTest(TestRaxisImage("test_memoryleak"))
 
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_raxis()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

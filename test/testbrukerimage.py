@@ -33,10 +33,10 @@ import os
 import numpy
 import gzip
 import bz2
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 from fabio.brukerimage import brukerimage
@@ -200,17 +200,17 @@ class TestRealImg(unittest.TestCase):
                     self.assertEqual(ref.header[key], other.header[key], "value are the same for key %s: was %s now %s" % (key, ref.header[key], other.header[key]))
 
 
-def test_suite_all_bruker():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestBruker("test_read"))
-    testSuite.addTest(TestBzipBruker("test_read"))
-    testSuite.addTest(TestGzipBruker("test_read"))
-    testSuite.addTest(TestRealImg("test_read"))
-    testSuite.addTest(TestRealImg("test_write"))
-    testSuite.addTest(TestBrukerLinear("test_linear"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestBruker("test_read"))
+    testsuite.addTest(TestBzipBruker("test_read"))
+    testsuite.addTest(TestGzipBruker("test_read"))
+    testsuite.addTest(TestRealImg("test_read"))
+    testsuite.addTest(TestRealImg("test_write"))
+    testsuite.addTest(TestBrukerLinear("test_linear"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_bruker()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())
+

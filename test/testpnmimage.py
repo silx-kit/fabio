@@ -30,10 +30,11 @@ Jerome Kieffer, 04/12/2014
 import os
 import sys
 import unittest
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.pnmimage import pnmimage
@@ -68,12 +69,11 @@ class TestPNM(unittest.TestCase):
         self.assertEqual(dim2, obj.dim2, "dim2")
 
 
-def test_suite_all_pnm():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestPNM("test_read"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestPNM("test_read"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_pnm()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

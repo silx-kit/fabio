@@ -36,10 +36,11 @@ import numpy
 import gzip
 import bz2
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -81,16 +82,16 @@ class TestByteOffset(unittest.TestCase):
         self.assertEqual(abs(self.ds - obt_we).max(), 0.0, "weave algo")
 
 
-def test_suite_all_compression():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestByteOffset("testSC"))
-    testSuite.addTest(TestByteOffset("testSC"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestByteOffset("testSC"))
+    testsuite.addTest(TestByteOffset("testSC"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_compression()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())
+
 
 
 

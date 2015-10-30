@@ -32,10 +32,11 @@ import unittest
 import sys
 import os
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -67,13 +68,12 @@ class TestHeaderNotSingleton(unittest.TestCase):
         self.file1 = None
 
 
-def test_suite_all_header():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestHeaderNotSingleton("testheader"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestHeaderNotSingleton("testheader"))
+    return testsuite
 
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_header()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

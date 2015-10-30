@@ -32,10 +32,11 @@ import unittest
 import sys
 import os
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -124,15 +125,14 @@ class TestOxdBig(unittest.TestCase):
         self.assertEqual(abs(df[0] - df[1]).max(), 0, "Data are the same")
 
 
-def test_suite_all_OXD():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestOxd("test_read"))
-    testSuite.addTest(TestOxd("test_write"))
-    testSuite.addTest(TestOxdSame("test_same"))
-    testSuite.addTest(TestOxdBig("test_same"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestOxd("test_read"))
+    testsuite.addTest(TestOxd("test_write"))
+    testsuite.addTest(TestOxdSame("test_same"))
+    testsuite.addTest(TestOxdBig("test_same"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_OXD()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

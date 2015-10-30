@@ -34,10 +34,11 @@ import numpy
 import gzip
 import bz2
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -161,18 +162,17 @@ class TestMskWrite(unittest.TestCase):
             os.unlink(self.filename)
 
 
-def test_suite_all_fit2d():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(TestFaceMask("test_getmatch"))
-    testSuite.addTest(TestClickedMask("test_read"))
-    testSuite.addTest(TestClickedMask("test_getmatch"))
-    testSuite.addTest(TestMskWrite("testFlat"))
-    testSuite.addTest(TestMskWrite("testGzip"))
-    testSuite.addTest(TestMskWrite("testBzip2"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestFaceMask("test_getmatch"))
+    testsuite.addTest(TestClickedMask("test_read"))
+    testsuite.addTest(TestClickedMask("test_getmatch"))
+    testsuite.addTest(TestMskWrite("testFlat"))
+    testsuite.addTest(TestMskWrite("testGzip"))
+    testsuite.addTest(TestMskWrite("testBzip2"))
+    return testsuite
 
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_fit2d()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

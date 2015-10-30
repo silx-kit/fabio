@@ -35,10 +35,11 @@ import unittest
 import sys
 import os
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -114,17 +115,15 @@ class TestFilenames(unittest.TestCase):
             self.assertEqual(name, nname)
 
 
-def test_suite_all_filenames():
-    testSuite = unittest.TestSuite()
+def suite():
+    testsuite = unittest.TestSuite()
 
-    testSuite.addTest(TestFilenames("test_many_cases"))
-    testSuite.addTest(TestFilenames("test_more_cases"))
-    testSuite.addTest(TestFilenames("test_more_cases_jump"))
+    testsuite.addTest(TestFilenames("test_many_cases"))
+    testsuite.addTest(TestFilenames("test_more_cases"))
+    testsuite.addTest(TestFilenames("test_more_cases_jump"))
 
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-
-    mysuite = test_suite_all_filenames()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

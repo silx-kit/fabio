@@ -33,10 +33,11 @@ import sys
 import os
 import numpy
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -210,34 +211,33 @@ class testOXDUNC(testOXD):
         self.fname = UtilsTest.getimage(self.__class__.fname)[:-4]
 
 
-def test_suite_all_openimage():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(testedfbz2("testcase"))
-    testSuite.addTest(testopenedf("testcase"))
-    testSuite.addTest(testedfgz("testcase"))
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(testedfbz2("testcase"))
+    testsuite.addTest(testopenedf("testcase"))
+    testsuite.addTest(testedfgz("testcase"))
 
-    testSuite.addTest(testmccdbz2("testcase"))
-    testSuite.addTest(testopenmccd("testcase"))
-    testSuite.addTest(testmccdgz("testcase"))
+    testsuite.addTest(testmccdbz2("testcase"))
+    testsuite.addTest(testopenmccd("testcase"))
+    testsuite.addTest(testmccdgz("testcase"))
 
-    testSuite.addTest(testmaskbz2("testcase"))
-    testSuite.addTest(testmask("testcase"))
-    testSuite.addTest(testmaskgz("testcase"))
+    testsuite.addTest(testmaskbz2("testcase"))
+    testsuite.addTest(testmask("testcase"))
+    testsuite.addTest(testmaskgz("testcase"))
 
-    testSuite.addTest(testbrukerbz2("testcase"))
-    testSuite.addTest(testbruker("testcase"))
-    testSuite.addTest(testbrukergz("testcase"))
+    testsuite.addTest(testbrukerbz2("testcase"))
+    testsuite.addTest(testbruker("testcase"))
+    testsuite.addTest(testbrukergz("testcase"))
 
-    testSuite.addTest(testadscbz2("testcase"))
-    testSuite.addTest(testadsc("testcase"))
-    testSuite.addTest(testadscgz("testcase"))
+    testsuite.addTest(testadscbz2("testcase"))
+    testsuite.addTest(testadsc("testcase"))
+    testsuite.addTest(testadscgz("testcase"))
 
-    testSuite.addTest(testOXD("testcase"))
-    testSuite.addTest(testOXDUNC("testcase"))
+    testsuite.addTest(testOXD("testcase"))
+    testsuite.addTest(testOXDUNC("testcase"))
 
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_openimage()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

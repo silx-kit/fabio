@@ -30,10 +30,11 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
+
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 
@@ -137,17 +138,16 @@ class testtif_rect(unittest.TestCase):
             self.assertEqual(o1.data.shape, (100, 120))
 
 
-def test_suite_all_tiffimage():
-    testSuite = unittest.TestSuite()
-    testSuite.addTest(testtifimage_packbits("test1"))
-    testSuite.addTest(testtifimage_pilatus("test1"))
-    testSuite.addTest(testtifimage_fit2d("test1"))
-    testSuite.addTest(testgziptif("test1"))
-    testSuite.addTest(testtif_rect("test1"))
-    testSuite.addTest(testtifimage_a0009("test1"))
-    return testSuite
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(testtifimage_packbits("test1"))
+    testsuite.addTest(testtifimage_pilatus("test1"))
+    testsuite.addTest(testtifimage_fit2d("test1"))
+    testsuite.addTest(testgziptif("test1"))
+    testsuite.addTest(testtif_rect("test1"))
+    testsuite.addTest(testtifimage_a0009("test1"))
+    return testsuite
 
 if __name__ == '__main__':
-    mysuite = test_suite_all_tiffimage()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())

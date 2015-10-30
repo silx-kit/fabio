@@ -35,10 +35,10 @@ import numpy
 import gzip
 import bz2
 
-try:
-    from .utilstest import UtilsTest
-except (ValueError, SystemError):
-    from utilstest import UtilsTest
+if __name__ == '__main__':
+    import pkgutil
+    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
@@ -115,25 +115,22 @@ class TestEdfNumbered(unittest.TestCase):
         self.assertEqual(self.fso.len(), 10006)  # +1 for 0000
 
 
-def test_suite_all_series():
-    testSuite = unittest.TestSuite()
+def suite():
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(TestRandomSeries("testfirst"))
+    testsuite.addTest(TestRandomSeries("testlast"))
+    testsuite.addTest(TestRandomSeries("testjump"))
 
-    testSuite.addTest(TestRandomSeries("testfirst"))
-    testSuite.addTest(TestRandomSeries("testlast"))
-    testSuite.addTest(TestRandomSeries("testjump"))
+    testsuite.addTest(TestEdfNumbered("testfirst"))
+    testsuite.addTest(TestEdfNumbered("testprevious"))
+    testsuite.addTest(TestEdfNumbered("testlast"))
+    testsuite.addTest(TestEdfNumbered("testnext"))
+    testsuite.addTest(TestEdfNumbered("testprevjump"))
+    testsuite.addTest(TestEdfNumbered("testnextjump"))
+    testsuite.addTest(TestEdfNumbered("testlen"))
 
-    testSuite.addTest(TestEdfNumbered("testfirst"))
-    testSuite.addTest(TestEdfNumbered("testprevious"))
-    testSuite.addTest(TestEdfNumbered("testlast"))
-    testSuite.addTest(TestEdfNumbered("testnext"))
-    testSuite.addTest(TestEdfNumbered("testprevjump"))
-    testSuite.addTest(TestEdfNumbered("testnextjump"))
-    testSuite.addTest(TestEdfNumbered("testlen"))
-
-    return testSuite
+    return testsuite
 
 if __name__ == '__main__':
-
-    mysuite = test_suite_all_series()
     runner = unittest.TextTestRunner()
-    runner.run(mysuite)
+    runner.run(suite())
