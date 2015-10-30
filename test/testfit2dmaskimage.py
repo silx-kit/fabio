@@ -1,5 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+#    Project: Fable Input Output
+#             https://github.com/kif/fabio
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 """ Test the fit2d mask reader
 
 Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
@@ -99,8 +120,8 @@ class TestMskWrite(unittest.TestCase):
         self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
         if r.header != self.header:
             print("Issue with header in TestMskWrite.testFlat")
-            for k,v in r.header.items():
-                print(k,v,self.header.get(k))
+            for k, v in r.header.items():
+                print(k, v, self.header.get(k))
         else:
             self.assert_(r.header == self.header, "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
@@ -112,8 +133,8 @@ class TestMskWrite(unittest.TestCase):
         r = fabio.open(self.filename)
         if r.header != self.header:
             print("Issue with header in TestMskWrite.testGzip")
-            for k,v in r.header.items():
-                print(k,v,self.header.get(k))
+            for k, v in r.header.items():
+                print(k, v, self.header.get(k))
         else:
             self.assert_(r.header == self.header, "header are OK")
         self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
@@ -127,8 +148,8 @@ class TestMskWrite(unittest.TestCase):
         r = fabio.open(self.filename)
         if r.header != self.header:
             print("Issue with header in TestMskWrite.testBzip2")
-            for k,v in r.header.items():
-                print(k,v,self.header.get(k))
+            for k, v in r.header.items():
+                print(k, v, self.header.get(k))
         else:
             self.assert_(r.header == self.header, "header are OK")
         self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
