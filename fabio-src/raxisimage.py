@@ -39,14 +39,15 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "GPLv3+"
 __copyright__ = "Brian R. Pauw"
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
+
 import logging, struct, os
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 logger = logging.getLogger("raxisimage")
 
 
-class raxisimage(fabioimage):
+class RaxisImage(FabioImage):
     """
     FabIO image class to read Rigaku RAXIS image files.
     Write functions are not planned as there are plenty of more suitable
@@ -61,7 +62,7 @@ class raxisimage(fabioimage):
         """
         Generic constructor
         """
-        fabioimage.__init__(self, *arg, **kwargs)
+        FabioImage.__init__(self, *arg, **kwargs)
         self.data = None
         self.header = {}
         self.dim1 = self.dim2 = 0
@@ -451,3 +452,4 @@ class raxisimage(fabioimage):
         return RKey, orderList
 
 
+raxisimage = RaxisImage

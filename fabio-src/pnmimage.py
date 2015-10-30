@@ -40,7 +40,7 @@ License: GPLv3+
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -48,7 +48,7 @@ __status__ = "stable"
 import numpy
 import logging
 logger = logging.getLogger("pnmimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import six
 
 SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
@@ -56,10 +56,11 @@ SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
 HEADERITEMS = [six.b(i) for i in ('SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL')]
 P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR')]
 
-class pnmimage(fabioimage):
+
+class pnmimage(FabioImage):
     def __init__(self, *arg, **kwargs):
-        fabioimage.__init__(self, *arg, **kwargs)
-        fun = getattr(fabioimage, '__init__', lambda x: None)
+        FabioImage.__init__(self, *arg, **kwargs)
+        fun = getattr(FabioImage, '__init__', lambda x: None)
         fun(self)
         self.data = None
         self.header = {'Subformat':'P5'}
@@ -136,8 +137,8 @@ class pnmimage(fabioimage):
             format = self.header[six.b('SUBFORMAT')]
         decoder_name = "%sdec" % format
 
-        if decoder_name in dir(pnmimage):
-            decoder = getattr(pnmimage, decoder_name)
+        if decoder_name in dir(PnmImage):
+            decoder = getattr(PnmImage, decoder_name)
             self.data = decoder(self, infile, self.bytecode)
         else:
             raise IOError("No decoder named %s for file %s" % (decoder_name, fname))
@@ -204,3 +205,6 @@ class pnmimage(fabioimage):
             return None
         else:
             return data.astype(int)
+
+
+pnmimage = PnmImage

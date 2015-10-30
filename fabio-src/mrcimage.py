@@ -42,13 +42,14 @@ __copyright__ = "Jérôme Kieffer"
 __version__ = "29 Oct 2013"
 
 import numpy, logging, sys
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 logger = logging.getLogger("mrcimage")
 if sys.version_info < (3.0):
     bytes = str
 
-class mrcimage(fabioimage):
+
+class MrcImage(FabioImage):
     """
     FabIO image class for Images from a mrc image stack
     """
@@ -61,7 +62,7 @@ class mrcimage(fabioimage):
         """
         Generic constructor
         """
-        fabioimage.__init__(self, *arg, **kwargs)
+        FabioImage.__init__(self, *arg, **kwargs)
         self.data = None
         self.header = {}
         self.dim1 = self.dim2 = 0
@@ -157,7 +158,7 @@ class mrcimage(fabioimage):
 
     def getframe(self, num):
         """
-        Returns a frame as a new fabioimage object
+        Returns a frame as a new FabioImage object
         @param num: frame number
         """
         if num < 0 or num > self.nframes:
@@ -194,3 +195,5 @@ class mrcimage(fabioimage):
             newobj.read(previous_filename(
                 self.sequencefilename))
             return newobj
+
+mrcimage = MrcImage
