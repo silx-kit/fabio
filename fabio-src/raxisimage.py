@@ -208,7 +208,8 @@ class RaxisImage(FabioImage):
             # Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
             # multiply by the ratio  defined in the header
-            data[di] *= sf
+            # data[di] *= sf
+            data[di] = (sf * data[di]).astype(uint32)
 
         self.data = data
 
