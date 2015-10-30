@@ -209,7 +209,7 @@ class RaxisImage(FabioImage):
             sf = self.header['Photomultiplier Ratio']
             # multiply by the ratio  defined in the header
             # data[di] *= sf
-            data[di] = (sf * data[di]).astype(uint32)
+            data[di] = (sf * data[di]).astype(numpy.uint32)
 
         self.data = data
 

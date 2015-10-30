@@ -37,7 +37,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging, numpy
 logger = logging.getLogger("xsdimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import six
 
 import base64, hashlib
@@ -48,7 +48,7 @@ except ImportError:
     etree = None
 
 
-class xsdimage(fabioimage):
+class XsdImage(FabioImage):
     """
     Read the XSDataImage XML File data format
     """
@@ -59,7 +59,7 @@ class xsdimage(fabioimage):
         @param _strFilename: the name of the file to open
         @type  _strFilename: string
         """
-        fabioimage.__init__(self, data=data, header=header)
+        FabioImage.__init__(self, data=data, header=header)
         self.dims = []
         self.size = None
         self.coding = None
@@ -154,8 +154,8 @@ class xsdimage(fabioimage):
                 self.md5 = j.text
 
 if etree is None:
-    xsdimage = None
+    XsdImage = None
 
-
+xsdimage = XsdImage
 
 

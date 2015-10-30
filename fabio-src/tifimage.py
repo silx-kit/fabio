@@ -109,6 +109,7 @@ baseline_tiff_tags = {
   33432:'Copyright'
   }
 
+
 class TifImage(FabioImage):
     """
     Images in TIF format

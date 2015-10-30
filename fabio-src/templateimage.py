@@ -70,16 +70,15 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "GPLv3+"
 __copyright__ = "Institut"
-__date__ = "17 Oct 2012"
+__date__ = "30/10/2015"
 
 import logging
 logger = logging.getLogger("templateimage")
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
 
-
-class templateimage(fabioimage):
+class TemplateImage(FabioImage):
     """
     FabIO image class for Images for XXX detector
     """
@@ -87,7 +86,7 @@ class templateimage(fabioimage):
         """
         Generic constructor
         """
-        fabioimage.__init__(self, *arg, **kwargs)
+        FabioImage.__init__(self, *arg, **kwargs)
         self.data = None
         self.header = {}
         self.dim1 = self.dim2 = 0
