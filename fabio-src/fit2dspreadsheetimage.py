@@ -31,12 +31,12 @@ Read the fit2d ascii image output
 from __future__ import absolute_import, print_function, with_statement, division
 import numpy
 
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
 
 
 
-class fit2dspreadsheetimage(fabioimage):
+class Fit2dSpreadsheetImage(FabioImage):
     """
     Read a fit2d ascii format
     """
@@ -96,14 +96,4 @@ class fit2dspreadsheetimage(fabioimage):
         self.pilimage = None
         return self
 
-
-if __name__ == "__main__":
-    import sys, time
-    start = time.time()
-    img = fit2dspreadsheetimage()
-    img.read(sys.argv[1])
-    print(time.time() - start)
-    print(img.dim1, img.dim2, img.data.shape)
-    from matplotlib.pylab import imshow, show
-    imshow(img.data.T)
-    show()
+fit2dspreadsheetimage = Fit2dSpreadsheetImage

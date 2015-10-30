@@ -54,12 +54,12 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 
-from .brukerimage import brukerimage
+from .brukerimage import BrukerImage
 from .readbytestream import readbytestream
 
-class bruker100image(brukerimage):
+class Bruker100Image(BrukerImage):
     def __init__(self, data=None , header=None):
-        brukerimage.__init__(self, data, header)
+        BrukerImage.__init__(self, data, header)
         self.version = 100
 
     def toPIL16(self, filename=None):
@@ -135,18 +135,5 @@ class bruker100image(brukerimage):
         raise NotImplementedError
         #TODO: make a writer !!!
 
-if __name__ == '__main__':
-    import sys, time
-    I = bruker100image()
-    b = time.clock()
-    while (sys.argv[1:]):
-        I.read(sys.argv[1])
-        r = I.toPIL16()
-        I.rebin(2, 2)
-        print(sys.argv[1] + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
-            I.getmax(), I.getmin(), I.getmean(), I.getstddev()))
-        print('integrated intensity (%d %d %d %d) =%.3f' % (
-            10, 20, 20, 40, I.integrate_area((10, 20, 20, 40))))
-        sys.argv[1:] = sys.argv[2:]
-    e = time.clock()
-    print (e - b)
+
+bruker100image = Bruker100Image

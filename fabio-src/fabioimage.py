@@ -69,7 +69,7 @@ class FabioMeta(type):
         super(FabioMeta, cls).__init__(name, bases, dct)
 
 
-class fabioimage(with_metaclass(FabioMeta, object)):
+class FabioImage(with_metaclass(FabioMeta, object)):
     """
     A common object for images in fable
     Contains a numpy array (.data) and dict of meta data (.header)
@@ -526,3 +526,5 @@ class fabioimage(with_metaclass(FabioMeta, object)):
         other.data = converters.convert_data(self.classname, other.classname, self.data)
         other.header = converters.convert_header(self.classname, other.classname, self.header)
         return other
+
+fabioimage = FabioImage

@@ -50,10 +50,10 @@ import numpy, logging, sys
 from math import ceil
 import os, getpass, time
 logger = logging.getLogger("brukerimage")
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from .fabioutils import pad, StringTypes
 
-class brukerimage(fabioimage):
+class BrukerImage(FabioImage):
     """
     Read and eventually write ID11 bruker (eg smart6500) images
 
@@ -159,7 +159,7 @@ class brukerimage(fabioimage):
            ]
 
     def __init__(self, data=None , header=None):
-        fabioimage.__init__(self, data, header)
+        FabioImage.__init__(self, data, header)
         self.__bpp_file = None
         self.version = 86
         self.__headerstring__ = ""
@@ -423,26 +423,4 @@ class brukerimage(fabioimage):
         if not "LONGORD" in self.header:
             self.header["LONGORD"] = "0"
 
-
-def test():
-    """ a testcase """
-    import sys, time
-    img = brukerimage()
-    start = time.clock()
-    for filename in sys.argv[1:]:
-        img.read(filename)
-        res = img.toPIL16()
-        img.rebin(2, 2)
-        print(filename + (": max=%d, min=%d, mean=%.2e, stddev=%.2e") % (
-            img.getmax(), img.getmin(), img.getmean(), img.getstddev()))
-        print('integrated intensity (%d %d %d %d) =%.3f' % (
-            10, 20, 20, 40, img.integrate_area((10, 20, 20, 40))))
-    end = time.clock()
-    print (end - start)
-
-
-
-if __name__ == '__main__':
-    test()
-
-
+brukerimage = BrukerImage

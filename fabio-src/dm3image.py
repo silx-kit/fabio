@@ -36,7 +36,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 from __future__ import with_statement, print_function
 import logging
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 logger = logging.getLogger("dm3image")
 
 DATA_TYPES = {  2     :  numpy.int16,
@@ -69,10 +69,10 @@ DATA_BYTES = {  2     :  2,
 
 
 
-class dm3image(fabioimage):
+class Dm3Image(FabioImage):
     """ Read and try to write the dm3 data format """
     def __init__(self, *args, **kwargs):
-        fabioimage.__init__(self, *args, **kwargs)
+        FabioImage.__init__(self, *args, **kwargs)
         self.encoded_datatype = None
         self.no_data_elements = None
         self.grouptag_is_sorted = None
@@ -242,3 +242,4 @@ class dm3image(fabioimage):
     def read_data(self):
         self.encoded_datatype = numpy.fromstring(self.infile.read(4), numpy.uint32).byteswap()
 
+dm3image = Dm3Image
