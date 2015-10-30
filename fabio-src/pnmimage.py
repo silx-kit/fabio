@@ -57,7 +57,7 @@ HEADERITEMS = [six.b(i) for i in ('SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL')]
 P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR')]
 
 
-class pnmimage(FabioImage):
+class PnmImage(FabioImage):
     def __init__(self, *arg, **kwargs):
         FabioImage.__init__(self, *arg, **kwargs)
         fun = getattr(FabioImage, '__init__', lambda x: None)

@@ -42,7 +42,7 @@ logger = logging.getLogger("HipiciImage")
 from .fabioimage import FabioImage
 
 
-class HiPiCimage(FabioImage):
+class HipicImage(FabioImage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
 
 
@@ -130,4 +130,4 @@ class HiPiCimage(FabioImage):
         return self
 
 
-HiPiCimage = HipiciImage
+HiPiCimage = HipicImage
