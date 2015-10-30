@@ -30,17 +30,17 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__data__ = "2014-11-27"
+__data__ = "30/10/2015"
 
 import sys
 import unittest
 from . import utilstest
-from .test_all import test_suite_all
+from . import test_all
 
 
 def run_tests():
     """Run test complete test_suite"""
-    mysuite = test_suite_all()
+    mysuite = test_all.suite()
     runner = unittest.TextTestRunner()
     if not runner.run(mysuite).wasSuccessful():
         print("Test suite failed")

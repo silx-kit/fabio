@@ -160,6 +160,7 @@ class TestEdfs(unittest.TestCase):
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name)
             self.assertEqual(dim1, obj.dim1, "testedfs: %s dim1" % name)
             self.assertEqual(dim2, obj.dim2, "testedfs: %s dim2" % name)
+        obj = None
 
     def test_rebin(self):
         """test the rebin of edfdata"""
@@ -168,6 +169,9 @@ class TestEdfs(unittest.TestCase):
         f.rebin(1024, 1024)
         self.assertEqual(abs(numpy.array([[1547, 1439], [1536, 1494]]) - f.data).max(), 0, "data are the same after rebin")
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.im_dir = None
 
 
 class testedfcompresseddata(unittest.TestCase):
