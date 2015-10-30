@@ -333,7 +333,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         else:
             dataIn = self.data.astype("float64")
             shapeIn = self.data.shape
-            shapeOut = (shapeIn[0] / y_rebin_fact, shapeIn[1] / x_rebin_fact)
+            shapeOut = (shapeIn[0] // y_rebin_fact, shapeIn[1] // x_rebin_fact)
             binsize = y_rebin_fact * x_rebin_fact
             if binsize < 50:  # method faster for small binning (4x4)
                 out = numpy.zeros(shapeOut, dtype="float64")
