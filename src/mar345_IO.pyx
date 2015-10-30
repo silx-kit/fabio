@@ -1,3 +1,29 @@
+# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/kif/fabio
+#
+#    Copyright (C) 2015 European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 """
 New Cython version of mar345_io for preparing the migration to Python3
 
@@ -12,9 +38,9 @@ Future: make those algorithm actually generate strings not go via files;
 
 __authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
-__license__ = "LGPLv3+"
-__copyright__ = "2012-2014, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "21/11/20147"
+__license__ = "MIT"
+__copyright__ = "2012-2015, European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "30/10/2015" 
 
 import cython
 cimport numpy
@@ -28,6 +54,7 @@ cdef extern from "ccp4_pack.h":
     void* ccp4_unpack_string   (void *, void *, size_t, size_t, size_t) nogil
     void* ccp4_unpack_v2_string(void *, void *, size_t, size_t, size_t) nogil
 cdef int PACK_SIZE_HIGH = 8
+
 
 @cython.boundscheck(False)
 def compress_pck(inputArray not None):
@@ -126,7 +153,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     instream = numpy.fromstring(raw[normal_offset:].lstrip(), dtype=numpy.uint8)
     with nogil:
         ################################################################################
-        #      relay to whichever version of ccp4_unpack is appropriate
+        #      rely to whichever version of ccp4_unpack is appropriate
         ################################################################################
         if cversion == 1:
             ccp4_unpack_string(&data[0,0], &instream[0], cdimx, cdimy, 0)

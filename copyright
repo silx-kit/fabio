@@ -46,6 +46,12 @@ Copyright: 2012 Gael Goret <gael.goret@esrf.fr>
                 European Synchrotron Radiation Facility
 License: GPL-3.0+
 
+Files: src/*
+Copyright: 2012-2015 Jerome Kieffer and Gael Goret
+           European Synchrotron Radiation Facility
+License: MIT
+
+
 Files: src/ccp4_pack.*
 Copyright: 1995 Jan Pieter Abrahams
                 MRC Cambridge (UK)
@@ -55,10 +61,6 @@ Copyright: 1995 Jan Pieter Abrahams
                 European Synchrotron Radiation Facility (FR)
 License: LGPL-3.0+
 
-Files: src/mar345_IO.*
-Copyright: 2012 Jerome Kieffer and Gael Goret
-           European Synchrotron Radiation Facility
-License: LGPL-3.0+
 
 Files: test/utilstest.py
 Copyright: 2011 European Synchrotron Radiation Facility
