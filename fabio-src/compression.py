@@ -33,7 +33,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -328,8 +328,8 @@ def compTY1(data):
     diff[0] = fdata[0]
     diff[1:] = fdata[1:] - fdata[:-1]
     adiff = abs(diff)
-    exception32 = (adiff > 32767)  # 2**15-1
-    exception16 = (adiff >= 127) - exception32  # 2**7-1)
+    exception32 = (adiff > (1 << 15) - 1)
+    exception16 = (adiff >= (1 << 7) - 1) ^ exception32
     we16 = numpy.where(exception16)
     we32 = numpy.where(exception32)
     data_16 = diff[we16].astype(numpy.int16)
