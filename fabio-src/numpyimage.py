@@ -111,17 +111,6 @@ The description of the fourth element of the header therefore has become:
 
     
     """
-    def __init__(self, *arg, **kwargs):
-        """
-        Generic constructor
-        """
-        FabioImage.__init__(self, *arg, **kwargs)
-        self.data = None
-        self.header = {}
-        self.dim1 = self.dim2 = 0
-        self.m = self.maxval = self.stddev = self.minval = None
-        self.header_keys = self.header.keys()
-        self.bytecode = None
 
     def _readheader(self, infile):
         """
@@ -132,6 +121,7 @@ The description of the fourth element of the header therefore has become:
         # list of header key to keep the order (when writing)
         self.header = {}
         self.header_keys = []
+        infile.seek(0)
 
     def read(self, fname, frame=None):
         """
@@ -144,7 +134,7 @@ The description of the fourth element of the header therefore has become:
         self._readheader(infile)
 
         # read the image data
-        self.data = numpy.load(infile)
+        self.data = numpy.load(fname)
         self.bytecode = self.data.dtype
         self.dim2, self.dim1 = self.data.shape
         return self
@@ -154,7 +144,7 @@ The description of the fourth element of the header therefore has become:
         try to write image 
         @param fname: name of the file 
         """
-        numpy.save(fnale, self.data)
+        numpy.save(fname, self.data)
 
 
 numpyimage = NumpyImage
