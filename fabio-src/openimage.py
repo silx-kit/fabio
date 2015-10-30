@@ -42,28 +42,29 @@ import sys, logging
 logger = logging.getLogger("openimage")
 from .fabioutils  import FilenameObject
 from .fabioimage import fabioimage
-from .edfimage import edfimage
-from .adscimage import adscimage
-from .tifimage import tifimage
-from .marccdimage import marccdimage
-from .mar345image import mar345image
-from .fit2dmaskimage import fit2dmaskimage
-from .brukerimage import brukerimage
-from .bruker100image import bruker100image
-from .pnmimage import pnmimage
-from .GEimage import GEimage
-from .OXDimage import OXDimage
-from .dm3image import dm3image
-from .HiPiCimage import HiPiCimage
-from .pilatusimage import pilatusimage
-from .fit2dspreadsheetimage import fit2dspreadsheetimage
-from .kcdimage import kcdimage
-from .cbfimage import cbfimage
-from .xsdimage import xsdimage
-from .binaryimage import binaryimage
-from .pixiimage import pixiimage
-from .hdf5image import hdf5image
-from .raxisimage import raxisimage
+from . import edfimage
+from . import adscimage
+from . import tifimage
+from . import marccdimage
+from . import mar345image
+from . import fit2dmaskimage
+from . import brukerimage
+from . import bruker100image
+from . import pnmimage
+from . import GEimage
+from . import OXDimage
+from . import dm3image
+from . import HiPiCimage
+from . import pilatusimage
+from . import fit2dspreadsheetimage
+from . import kcdimage
+from . import cbfimage
+from . import xsdimage
+from . import binaryimage
+from . import pixiimage
+from . import hdf5image
+from . import raxisimage
+from . import numpyimage
 
 if sys.version_info[0] < 3:
     bytes = str
@@ -101,7 +102,8 @@ MAGIC_NUMBERS = [
     (b"<"                  , "xsd"),
     (b"\n\xb8\x03\x00"     , 'pixi'),
     (b"\x89\x48\x44\x46"   , 'hdf5'),
-    (b"R-AXIS"             , 'raxis')
+    (b"R-AXIS"             , 'raxis'),
+    (b"\x93NUMPY"          , 'numpy')
     ]
 
 URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True, "nxs:": True}
