@@ -115,7 +115,7 @@ The description of the fourth element of the header therefore has become:
         """
         Generic constructor
         """
-        fabioimage.__init__(self, *arg, **kwargs)
+        FabioImage.__init__(self, *arg, **kwargs)
         self.data = None
         self.header = {}
         self.dim1 = self.dim2 = 0
@@ -132,7 +132,6 @@ The description of the fourth element of the header therefore has become:
         # list of header key to keep the order (when writing)
         self.header = {}
         self.header_keys = []
-
 
     def read(self, fname, frame=None):
         """
