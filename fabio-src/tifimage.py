@@ -44,7 +44,7 @@ License: GPLv3+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -56,7 +56,7 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 import numpy
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 
 try:
     from PyMca.TiffIO import TiffIO
@@ -109,7 +109,7 @@ baseline_tiff_tags = {
   33432:'Copyright'
   }
 
-class tifimage(fabioimage):
+class TifImage(FabioImage):
     """
     Images in TIF format
     Wraps TiffIO
@@ -119,7 +119,7 @@ class tifimage(fabioimage):
     def __init__(self, *args, **kwds):
         """ Tifimage constructor adds an nbits member attribute """
         self.nbits = None
-        fabioimage.__init__(self, *args, **kwds)
+        FabioImage.__init__(self, *args, **kwds)
         self.lib = None
 
     def _readheader(self, infile):
@@ -142,7 +142,7 @@ class tifimage(fabioimage):
         header = numpy.fromstring(infile.read(64), numpy.uint16)
         self.dim1 = int(header[9])
         self.dim2 = int(header[15])
-#         nbits is not a fabioimage attribute...
+#         nbits is not a FabioImage attribute...
         self.nbits = int(header[21])  # number of bits
 
     def read(self, fname, frame=None):
@@ -200,7 +200,7 @@ class tifimage(fabioimage):
 
     def write(self, fname):
         """
-        Overrides the fabioimage.write method and provides a simple TIFF image writer.
+        Overrides the FabioImage.write method and provides a simple TIFF image writer.
         @param fname: name of the file to save the image to
         @tag_type fname: string or unicode (file?)...
         """
@@ -319,3 +319,6 @@ class Image_File_Directory_entry(object):
                 self.val = struct.unpack_from("d", full_string[self.val_offset:])[0]
         else:
             logger.warning("unrecognized type of strInputentry self: %s tag: %s type: %s TYPE: %s" % (self, baseline_tiff_tags[self.tag], self.tag_type, TYPES[tag_type]))
+
+
+tifimage = TifImage

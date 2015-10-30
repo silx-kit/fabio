@@ -45,23 +45,23 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPLv3+"
 
 
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 import numpy, struct, time, sys, traceback
 import logging
 logger = logging.getLogger("mar345image")
 from .compression import compPCK, decPCK
 
 
-class mar345image(fabioimage):
+class Mar345Image(FabioImage):
     _need_a_real_file = True
     def __init__(self, *args, **kwargs):
-        fabioimage.__init__(self, *args, **kwargs)
+        FabioImage.__init__(self, *args, **kwargs)
         self.numhigh = None
         self.numpixels = None
         self.swap_needed = None
@@ -234,7 +234,7 @@ class mar345image(fabioimage):
     def ascii_header(self, linesep="\n", size=4096):
         """
         Generate the ASCII header for writing
-        
+
         @param linesep: end of line separator
         @param size: size of the header (without the binary header)
         @return: string (unicode) containing the mar345 header
@@ -382,3 +382,4 @@ class mar345image(fabioimage):
             z[:shape[0], :shape[1]] = data
             return z
 
+mar345image = Mar345Image
