@@ -41,7 +41,7 @@ from __future__ import with_statement, print_function, absolute_import
 import sys, logging
 logger = logging.getLogger("openimage")
 from .fabioutils  import FilenameObject
-from .fabioimage import fabioimage
+from .fabioimage import FabioImage
 from . import edfimage
 from . import adscimage
 from . import tifimage
@@ -174,7 +174,7 @@ def _openimage(filename):
         filename = url.path
 
     try:
-        imo = fabioimage()
+        imo = FabioImage()
         byts = imo._open(filename).read(18)
         filetype = do_magic(byts)
         if filetype == "marccd" and filename.find("mccd") == -1:
@@ -203,7 +203,7 @@ def _openimage(filename):
             raise Exception("Fabio could not identify " + filename)
     klass_name = "".join(filetype) + 'image'
     try:
-        obj = fabioimage.factory(klass_name)
+        obj = FabioImage.factory(klass_name)
     except RuntimeError as err:
         logger.error("Filetype not known %s %s" % (filename, klass_name))
         raise err
