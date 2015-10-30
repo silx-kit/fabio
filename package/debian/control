@@ -48,8 +48,6 @@ Section: python
 Depends: ${misc:Depends},
          ${python:Depends},
          python-fabio (>= ${source:Version})
-Breaks: python-fabio 
-Replaces: python-fabio 
 Description: Viewer for images produced by 2D X-ray detector
  FabIO is an I/O library for images produced by 2D X-ray detectors and
  written in Python. FabIO support images detectors from a dozen of
