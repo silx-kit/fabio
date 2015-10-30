@@ -63,12 +63,8 @@ class RaxisImage(FabioImage):
         Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
-        self.data = None
-        self.header = {}
-        self.dim1 = self.dim2 = 0
-        self.m = self.maxval = self.stddev = self.minval = None
-        self.header_keys = self.header.keys()
         self.bytecode = 'uint16'  # same for all RAXIS images AFAICT
+        self.bpp = 2
         self.endianness = '>'  # this may be tested for.
 
     def swap_needed(self):
@@ -97,8 +93,7 @@ class RaxisImage(FabioImage):
         endianness = self.endianness
         # list of header key to keep the order (when writing)
         RKey, orderList = self.rigakuKeys()
-        self.header = {}
-        self.header_keys = orderList
+        self.header = self.check_header()
 
         # swapBool=False
         fs = endianness
@@ -111,7 +106,6 @@ class RaxisImage(FabioImage):
         rawHead = infile.read(minHeaderLength)
         # fh.close() #don't like open files in case of intermediate crash
 
-        self.header = dict()
         curByte = 0
         for key in orderList:
             if isinstance(RKey[key], int):
@@ -170,7 +164,6 @@ class RaxisImage(FabioImage):
         self.dim2 = self.header['Y Pixels']
         self.bytecode = numpy.uint16
         dims = [self.dim2, self.dim1]
-        bpp = numpy.dtype(self.bytecode).itemsize
         size = dims[0] * dims[1] * bpp
         if offset >= 0:
             infile.seek(offset)
@@ -211,6 +204,7 @@ class RaxisImage(FabioImage):
             # data[di] *= sf
             data[di] = (sf * data[di]).astype(numpy.uint32)
 
+        self.bpp = numpy.dtype(self.bytecode).itemsize
         self.data = data
 
         return self

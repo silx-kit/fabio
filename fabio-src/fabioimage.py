@@ -114,13 +114,9 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if type(data) in fabioutils.StringTypes:
             raise Exception("fabioimage.__init__ bad argument - " + \
                             "data should be numpy array")
-        self.data = self.checkData(data)
+        self.data = self.check_data(data)
         self.pilimage = None
-        if header is None:
-            self.header = {}
-        else:
-            self.header = self.checkHeader(header)
-        self.header_keys = list(self.header.keys())  # holds key ordering
+        self.header = self.check_header(header)
         if self.data is not None:
             self.dim2, self.dim1 = self.data.shape
         else:
@@ -139,22 +135,41 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         self.filename = None
         self.filenumber = None
 
-    @staticmethod
-    def checkHeader(header=None):
-        """
-        Empty for fabioimage but may be populated by others classes
-        """
-        if header is None:
-            return {}
-        else:
-            return header
+    def get_header_keys(self):
+        return list(self.header.keys())
+    header_keys = property(get_header_keys)
+
+    def set_header_keys(self, value):
+        pass
+    header_keys = property(get_header_keys, set_header_keys)
+
 
     @staticmethod
-    def checkData(data=None):
+    def check_header(header=None):
         """
-        Empty for fabioimage but may be populated by others classes, especially for format accepting only integers
+        Empty for fabioimage but may be populated by others classes
+        
+        @param header: dict like object 
+        @return: Ordered dict
         """
-        return data
+        if header is None:
+            return OrderedDict()
+        else:
+            return OrderedDict(header)
+
+    @staticmethod
+    def check_data(data=None):
+        """
+        Empty for fabioimage but may be populated by others classes, 
+        especially for format accepting only integers
+        
+        @param data: array like
+        @return: numpy array or None
+        """
+        if data is None:
+            return None
+        else:
+            return data
 
     def getclassname(self):
         """
@@ -223,13 +238,15 @@ class FabioImage(with_metaclass(FabioMeta, object)):
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:
-            self.maxval = self.data.max()
+            if self.data is not None:
+                self.maxval = self.data.max()
         return self.maxval
 
     def getmin(self):
         """ Find min value in self.data, caching for the future """
         if self.minval is None:
-            self.minval = self.data.min()
+            if self.data is not None:
+                self.minval = self.data.min()
         return self.minval
 
     def make_slice(self, coords):
