@@ -2,34 +2,33 @@ Installation
 ============
 
 FabIO can, as any Python module, be installed from its sources,
-available on sourceforge but we advice to use binary
-packages provided for the most common platforms on sourceforge:
-Windows, MacOSX and Linux. Moreover FabIO is part of the common
-Linux distributions Ubuntu (since 11.10) and Debian7 where the
-package is named python-fabio and can be installed via:
+available on the `Python cheese shop <https://pypi.python.org/pypi/fabio/0.2.2>`_
+but we advice to use binary wheels packages provided for the most common platforms:
+Windows, MacOSX. For Debian Linux and its derivatives (Ubuntu, Mint, ...), FabIO
+is part of the distributions and itss package is named *python-fabio* and can be installed via:
 
-::
+.. code::
 
     sudo apt-get install python-fabio
 
-If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP-installable.
+If you are using MS Windows or MacOSX; binary version (as wheel packages) are
+PIP-installable.
 PIP is the Python Installer Program, similar to ``apt-get`` for Python.
-It runs under any architecture and can simply be installed from:
+It runs under any architecture.
+Since Python 2.7.10 and 3.4, PIP is installed together with Python itself.
+If your Python is elder, PIP can be simply `downloaded <https://bootstrap.pypa.io/get-pip.py>`_
+and executed using your standard Python:
 
-https://bootstrap.pypa.io/get-pip.py
-
-then
-
-::
-
-  pip install fabio
+.. code::
+   python get-pip.py
+   pip install fabio
 
 Installation under windows
 --------------------------
 
-Install Python from http://python.org.
+Install `Python <http://python.org>`_ from the official web page.
 I would recommend Python 2.7 in 64 bits version if your operating system allows it.
-Python3 (>=3.2) is OK while less tested.
+Python3 (>=3.2) is OK.
 
 If you are looking for an integrated distribution of Python on Windows,
 WinPython is a good one, the Python2.7, 64 bit version is advised.
@@ -67,42 +66,63 @@ To determine the version of your Python:
 .. highlight:: python
 
     >>> 8 * tuple.__itemsize__
-    
+
 This gives you the architecture width of the Python interpreter
 
 
 Installation from sources
 .........................
 
-Install the required dependencies (via PIP or a repository), then retrieve the Microsoft compiler and install it from:
-http://aka.ms/vcpython27
+Install the required dependencies (via PIP or a repository), then retrieve the
+`Microsoft compiler <http://aka.ms/vcpython27>`_ and install it.
+
+**Nota**: the version of the compiler and the version of the Microsoft SDK
+have to match the Python version you are using.
+This link is for Python2.7.
+Other version of Python require differents compiler and runtime.
 
 Once done, follow the classical procedure (similar to MacOSX or Linux):
-* download sources of FabIO from fable.sourceforge.net.
+* download sources of `the latest release <https://github.com/kif/fabio/releases/latest>`_
+or `the development version <https://github.com/kif/fabio/archive/master.zip>`_.
 * unzip the archive
-* run ``python setup.py build install``
+* open a cmd.exe console in the unzipped archive directory
+* run::
+   pip install setuptools wheel
+   python setup.py build
+   python setup.py test
+   pip install .
+
+
+Testing version of FabIO
+........................
+
+Continuous integration runs the complete test suite on multiple operating
+systems and python version.
+Under Windows, this is done using the
+`AppVeyor cloud service <https://ci.appveyor.com/project/kif/fabio>`_
+Select the environment which matches your setup like
+**Environment: PYTHON=C:\Python34-x64, PYTHON_VERSION=3.4.3, PYTHON_ARCH=64**
+and go to **artifacts** where wheels and MSI-installers are available.
 
 
 Installation on MacOSX
 ----------------------
 
-Python 2.7, 64 bits and numpy are  natively available on MacOSX.
+Python 2.7, 64 bits and numpy are natively available on MacOSX.
 
 Install PIP
 ...........
 
-Download PIP and run:
-https://bootstrap.pypa.io/get-pip.py
+Since MacOSX 10.11, PIP is available as part of the standard python installation.
+For elder MacOSX, `download PIP and run <https://bootstrap.pypa.io/get-pip.py>`_.
+Then install the requirements:
 
-Then install the wheel package manager:
-
-::
-
-    pip install setuptools
-    pip install wheel
-    pip install PIL
-    pip install lxml
-    pip install fabio
+.. code::
+    sudo pip install setuptools
+    sudo pip install wheel
+    sudo pip install PIL
+    sudo pip install lxml
+    sudo pip install fabio
 
 Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
 http://www.riverbankcomputing.co.uk/software/pyqt/download
@@ -163,7 +183,7 @@ and install fabio: build it, run the tests and build the wheel package and insta
     python setup.py build
     python setup.py bdist_wheel
     sudo pip install dist/fabio-0.2.2*.whl
-    
+
 most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.
 
 Development versions
@@ -206,8 +226,8 @@ FabIO features some helper function to make debian packaging easier:
 
     #to create the orig.tar.gz without cython generated C files for Sphinx built documentation:
     python setup.py debian_src
-     
-    # to create a tarball of all images needed to test the library 
+
+    # to create a tarball of all images needed to test the library
     python setup.py debian_testimages
 
 Two tarball are created, one with all source code (and only source code) and the other one with all test-data.
