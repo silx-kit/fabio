@@ -5,9 +5,11 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
+  - "3.5"
 #  - "nightly"
 # command to install dependencies
 install:
+  - "pip install setuptools wheel coveralls"
   - "pip install --trusted-host www.edna-site.org -r requirements_travis.txt"
   - "python info_platform.py"
   - "python setup.py build"
@@ -15,4 +17,7 @@ install:
 # command to run tests
 script:
   - "python setup.py build test"
-  - "(cd /tmp && python -c 'import fabio, sys; print(sys.version); fabio.tests()')"
+  - "coverage run --source=fabio run-tests.py"
+
+after_success:
+    coveralls
