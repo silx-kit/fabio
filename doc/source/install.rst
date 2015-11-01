@@ -254,6 +254,7 @@ There is also a script which builds a bunch of *real* debian packages:
 * *python-fabio-dbg*: debug symbols for Python2
 
 ::
+
    sudo apt-get install cython cython-dbg cython3 cython3-dbg debhelper dh-python \
    python-all-dev python-all-dbg python-h5py \
    python-lxml python-lxml-dbg python-matplotlib python-matplotlib-dbg python-numpy\
