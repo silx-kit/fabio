@@ -109,7 +109,7 @@ class Fit2dMaskImage(FabioImage):
             self.data = numpy.where(result[:, :-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
 #        self.data = numpy.transpose(self.data)
-        self.data = numpy.reshape(self.data.astype(numpy.uint16),
+        self.data = numpy.reshape(self.data.astype(numpy.uint8),
                                     (self.dim2, self.dim1))
         self.pilimage = None
         return self

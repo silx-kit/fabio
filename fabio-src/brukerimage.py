@@ -41,7 +41,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "30/10/2015"
+__date__ = "01/11/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPLv3+"
@@ -260,17 +260,13 @@ class BrukerImage(FabioImage):
                 offset = float(offset)
             except Exception:
                 logger.warning("Error in converting to float data with linear parameter: %s" % self.header["LINEAR"])
-                self.data = data
-            else:
-                if slope == 1 and offset == 0:
-                    self.data = data
-                else:
-                    # TODO: check that the formula is OK, not reverted.
-                    logger.warning("performing correction with slope=%s, offset=%s (LINEAR=%s)" % (slope, offset, self.header["LINEAR"]))
-                    self.data = (data * slope + offset).astype(numpy.float32)
-        else:
-            self.data = data
-        self.data.shape = self.dim1, self.dim2
+                slope = 1
+                offset = 0
+            if (slope != 1) or (offset != 0):
+                # TODO: check that the formula is OK, not reverted.
+                logger.warning("performing correction with slope=%s, offset=%s (LINEAR=%s)" % (slope, offset, self.header["LINEAR"]))
+                data = (data * slope + offset).astype(numpy.float32)
+        self.data = data.reshape(self.dim1, self.dim2)
 
         self.resetvals()
         self.pilimage = None
