@@ -17,7 +17,7 @@ install:
 # command to run tests
 script:
   - "python setup.py build test"
-  - "coverage run --source=fabio run-tests.py"
+  - "coverage run --source=fabio ./run-tests.py"
 
 after_success:
     coveralls
