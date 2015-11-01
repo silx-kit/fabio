@@ -246,12 +246,15 @@ FabIO features some helper function to make debian packaging easier:
 Two tarball are created, one with all source code (and only source code) and the other one with all test-data.
 
 There is also a script which builds a bunch of *real* debian packages:
+
 * *fabio-viewer*: the GUI for visualizing diffraction images
 * *fabio-doc*: the documumentation package
 * *python3-fabio*: library built for Python3
 * *python3-fabio-dbg*: debug symbols for Python3
 * *python-fabio*: library built for Python2
 * *python-fabio-dbg*: debug symbols for Python2
+
+For this, you need a complete debian build environment:
 
 ::
 
