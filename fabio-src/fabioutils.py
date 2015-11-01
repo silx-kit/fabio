@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2015"
+__date__ = "01/11/2015"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -47,7 +47,7 @@ if six.PY2:
     bytes = str
     FileIO = file
     StringTypes = (str, unicode)
-    to_str = lambda s: str(s)
+    to_str = str
 else:
     StringTypes = (str, bytes)
     unicode = str
@@ -390,7 +390,7 @@ def toAscii(name, excluded=None):
             if i in ascii:
                 ascii.remove(i)
             else:
-                logger.error("toAscii: % not in ascii table" % i)
+                logger.error("toAscii: %s not in ascii table" % i)
         dictAscii[excluded] = ascii
     else:
         ascii = dictAscii[excluded]
