@@ -57,6 +57,9 @@ from . import testtifimage
 from . import testXSDimage
 from . import testraxisimage
 from . import testpnmimage
+from . import test_flat_binary
+from . import testnumpyimage
+from . import testcompression
 
 
 def suite():
@@ -83,6 +86,9 @@ def suite():
     testSuite.addTest(testXSDimage.suite())
     testSuite.addTest(testraxisimage.suite())
     testSuite.addTest(testpnmimage.suite())
+    testSuite.addTest(test_flat_binary.suite())
+    testSuite.addTest(testnumpyimage.suite())
+    testSuite.addTest(testcompression.suite())
     return testSuite
 
 
