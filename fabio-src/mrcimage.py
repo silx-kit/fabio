@@ -58,17 +58,6 @@ class MrcImage(FabioImage):
             "CELL_ALPHA", "CELL_BETA", "CELL_GAMMA",
             "MAPC", "MAPR", "MAPS", "DMIN", "DMAX", "DMEAN", "ISPG", "NSYMBT",
             "EXTRA", "ORIGIN", "MAP", "MACHST", "RMS", "NLABL")
-    def __init__(self, *arg, **kwargs):
-        """
-        Generic constructor
-        """
-        FabioImage.__init__(self, *arg, **kwargs)
-        self.data = None
-        self.header = {}
-        self.dim1 = self.dim2 = 0
-        self.m = self.maxval = self.stddev = self.minval = None
-        self.header_keys = self.header.keys()
-        self.bytecode = None
 
     def _readheader(self, infile):
         """
@@ -77,18 +66,16 @@ class MrcImage(FabioImage):
         @param infile: Opened python file (can be stringIO or bipped file)
         """
         # list of header key to keep the order (when writing)
-        self.header = {}
-        self.header_keys = []
+        self.header = self.check_header()
+
         # header is composed of 56-int32 plus 10x80char lines
         int_block = numpy.fromstring(infile.read(56 * 4), dtype=numpy.int32)
         for key, value in zip(self.KEYS, int_block):
-            self.header_keys.append(key)
             self.header[key] = value
         assert self.header["MAP"] == 542130509  # "MAP " in int32 !
 
         for i in range(10):
             label = "LABEL_%02i" % i
-            self.header_keys.append(label)
             self.header[label] = infile.read(80).strip()
         self.dim1 = self.header["NX"]
         self.dim2 = self.header["NY"]
@@ -164,8 +151,7 @@ class MrcImage(FabioImage):
         if num < 0 or num > self.nframes:
             raise RuntimeError("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
-        frame = mrcimage(header=self.header.copy())
-        frame.header_keys = self.header_keys[:]
+        frame = MrcImage(header=self.header.copy())
         for key in ("dim1", "dim2", "nframes", "bytecode", "imagesize", "sequencefilename"):
             frame.__setattr__(key, self.__getattribute__(key))
         with frame._open(self.sequencefilename, "rb") as infile:
@@ -179,9 +165,8 @@ class MrcImage(FabioImage):
         if self.currentframe < (self.nframes - 1) and self.nframes > 1:
             return self.getframe(self.currentframe + 1)
         else:
-            newobj = mrcimage()
-            newobj.read(next_filename(
-                self.sequencefilename))
+            newobj = MrcImage()
+            newobj.read(next_filename(self.sequencefilename))
             return newobj
 
     def previous(self):
@@ -191,7 +176,7 @@ class MrcImage(FabioImage):
         if self.currentframe > 0:
             return self.getframe(self.currentframe - 1)
         else:
-            newobj = mrcimage()
+            newobj = MrcImage()
             newobj.read(previous_filename(
                 self.sequencefilename))
             return newobj

@@ -119,8 +119,7 @@ The description of the fourth element of the header therefore has become:
         @param infile: Opened python file (can be stringIO or bzipped file)  
         """
         # list of header key to keep the order (when writing)
-        self.header = {}
-        self.header_keys = []
+        self.header = self.check_header()
         infile.seek(0)
 
     def read(self, fname, frame=None):
@@ -134,7 +133,7 @@ The description of the fourth element of the header therefore has become:
         self._readheader(infile)
 
         # read the image data
-        self.data = numpy.load(fname)
+        self.data = numpy.load(infile)
         self.bytecode = self.data.dtype
         self.dim2, self.dim1 = self.data.shape
         return self

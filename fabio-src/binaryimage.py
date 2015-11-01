@@ -41,7 +41,7 @@ __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]
 __contact__ = "gael.goret@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__version__ = "17 Oct 2012"
+__version__ = "17/10/2012"
 
 from .fabioimage import FabioImage
 import numpy, logging

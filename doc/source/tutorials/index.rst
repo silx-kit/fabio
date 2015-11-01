@@ -9,4 +9,5 @@ Tutorials on FabIO
 .. toctree::
    :maxdepth: 2
 
+   conversion
    Nexus2cbf

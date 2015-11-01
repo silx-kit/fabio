@@ -92,14 +92,13 @@ class KcdImage(FabioImage):
                 if "=" in one_line:
                     key, val = one_line.split('=' , 1)
                     key = key.strip()
-                    self.header_keys.append(key)
                     self.header[key] = val.strip()
                 else:
                     end_of_headers = True
 
         missing = []
         for item in MINIMUM_KEYS:
-            if item not in self.header_keys:
+            if item not in self.header:
                 missing.append(item)
         if len(missing) > 0:
             logger.debug("KCD file misses the keys " + " ".join(missing))
@@ -110,7 +109,7 @@ class KcdImage(FabioImage):
         Read in header into self.header and
             the data   into self.data
         """
-        self.header = {}
+        self.header = self.check_header()
         self.resetvals()
         with self._open(fname, "rb") as infile:
             self._readheader(infile)

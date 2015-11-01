@@ -87,12 +87,6 @@ class TemplateImage(FabioImage):
         Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
-        self.data = None
-        self.header = {}
-        self.dim1 = self.dim2 = 0
-        self.m = self.maxval = self.stddev = self.minval = None
-        self.header_keys = self.header.keys()
-        self.bytecode = None
 
     def _readheader(self, infile):
         """
@@ -101,8 +95,11 @@ class TemplateImage(FabioImage):
         @param infile: Opened python file (can be stringIO or bipped file)  
         """
         # list of header key to keep the order (when writing)
-        self.header = {}
-        self.header_keys = []
+        self.header = self.check_header()
+        self.dim1 = 1  # x dim
+        self.dim2 = 1  # y dim
+        self.bytecode = "numpy.uint16"
+        self.bpp = numpy.dtype(self.bytecode).itemsize
 
 
     def read(self, fname, frame=None):

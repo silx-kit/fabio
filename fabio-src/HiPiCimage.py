@@ -88,7 +88,7 @@ class HipicImage(FabioImage):
         Read in header into self.header and
             the data   into self.data
         """
-        self.header = {}
+        self.header = self.check_header()
         self.resetvals()
         infile = self._open(fname, "rb")
         self._readheader(infile)

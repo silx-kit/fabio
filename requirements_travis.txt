@@ -6,3 +6,4 @@ wheel
 numpy
 cython
 lxml
+Pillow

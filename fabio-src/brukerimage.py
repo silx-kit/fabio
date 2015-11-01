@@ -41,7 +41,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "29/10/2015"
+__date__ = "30/10/2015"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPLv3+"
@@ -177,7 +177,7 @@ class BrukerImage(FabioImage):
         blocksize = 512
         nhdrblks = 5  # by default we always read 5 blocks of 512
         self.__headerstring__ = infile.read(blocksize * nhdrblks).decode("ASCII")
-        self.header = {}
+        self.header = self.check_header()
         for i in range(0, nhdrblks * blocksize, line):
             if self.__headerstring__[i: i + line].find(":") > 0:
                 key, val = self.__headerstring__[i: i + line].split(":", 1)
@@ -188,7 +188,6 @@ class BrukerImage(FabioImage):
                     self.header[key] = self.header[key] + os.linesep + val
                 else:
                     self.header[key] = val
-                    self.header_keys.append(key)
         # we must have read this in the first 5*512 bytes.
         nhdrblks = int(self.header.get('HDRBLKS', 5))
         self.header['HDRBLKS'] = nhdrblks
@@ -203,7 +202,6 @@ class BrukerImage(FabioImage):
                     self.header[key] = self.header[key] + os.linesep + val
                 else:
                     self.header[key] = val
-                    self.header_keys.append(key)
         # make a (new) header item called "datastart"
         self.header['datastart'] = blocksize * nhdrblks
 

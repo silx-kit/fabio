@@ -60,14 +60,7 @@ P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLT
 class PnmImage(FabioImage):
     def __init__(self, *arg, **kwargs):
         FabioImage.__init__(self, *arg, **kwargs)
-        fun = getattr(FabioImage, '__init__', lambda x: None)
-        fun(self)
-        self.data = None
-        self.header = {'Subformat':'P5'}
-        self.dim1 = self.dim2 = 0
-        self.m = self.maxval = self.stddev = self.minval = None
-        self.header_keys = self.header.keys()
-        self.bytecode = None
+        self.header['Subformat'] = 'P5'
 
     def _readheader(self, f):
         # pnm images have a 3-line header but ignore lines starting with '#'
@@ -83,7 +76,6 @@ class PnmImage(FabioImage):
             self.header[six.b('SUBFORMAT')] = l
 
         if self.header[six.b('SUBFORMAT')] == 'P7':
-            self.header_keys = P7HEADERITEMS
             # this one has a special header
             while six.b('ENDHDR') not in l:
                 l = f.readline()
@@ -93,14 +85,13 @@ class PnmImage(FabioImage):
                     raise IOError('Illegal pam (netpnm p7) headeritem %s' % s[0])
                 self.header[s[0]] = s[1]
         else:
-            self.header_keys = HEADERITEMS
             values = list(l.split())
-            while len(values) < len(self.header_keys):
+            while len(values) < len(HEADERITEMS):
                 l = f.readline()
                 while l[0] == '#':
                     l = f.readline()
                 values += l.split()
-            for k, v in zip(self.header_keys, values):
+            for k, v in zip(HEADERITEMS, values):
                 self.header[k] = v.strip()
 
         # set the dimensions
@@ -125,7 +116,7 @@ class PnmImage(FabioImage):
         @param fname: name of the file
         @param frame: not relevant here! PNM is always single framed
         """
-        self.header = {}
+        self.header = self.check_header()
         self.resetvals()
         infile = self._open(fname)
         self._readheader(infile)
