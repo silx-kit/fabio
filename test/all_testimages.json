@@ -48,7 +48,6 @@
     "NaCl_10_01_0009.sfrm", 
     "somedata_0001.mccd.bz2", 
     "MultiFrame-Frame0.edf.bz2", 
-    "XSDataImage.edf.bz2", 
     "fit2d.tif", 
     "XSDataImageInv.xml", 
     "edfUncompressed_U16.edf.bz2", 
@@ -99,7 +98,7 @@
     "MultiFrame-Frame1.edf.gz", 
     "example.mar2300.gz", 
     "a0009.edf", 
-    "oPPA_5grains_0001.edf.gz", 
+    "XSDataImage.edf.bz2", 
     "oPPA_5grains_0001.edf.bz2", 
     "pilatus2M.edf.bz2", 
     "a0009.tif", 
@@ -133,5 +132,6 @@
     "XSDataImageInv.xml.bz2", 
     "i01f0001.kcd", 
     "image0001.pgm.bz2", 
+    "oPPA_5grains_0001.edf.gz", 
     "pilatus2M.tif"
 ]

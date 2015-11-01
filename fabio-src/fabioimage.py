@@ -145,6 +145,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
             except IndexError as err:
                 print(err)
                 print(self.data)
+                return self._dim1
         else:
             return self._dim1
     def set_dim1(self, value):
@@ -179,7 +180,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
     def get_bytecode(self):
         "Getter for bpp: data superseeds _bytecode"
         if self.data is not None:
-            return self.data.dtype
+            return self.data.dtype.type
         else:
             return self._bytecode
     def set_bytecode(self, value):
@@ -489,9 +490,9 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
             if "name" in dir(fname):
-                self.header["filename"] = self.filename = fname.name
+                self.filename = fname.name
             else:
-                self.filename = self.header["filename"] = "stream"
+                self.filename = "stream"
                 try:
                     setattr(fname, "name", self.filename)
                 except AttributeError:
@@ -504,7 +505,6 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         self.filenumber = fabioutils.extract_filenumber(fname)
 
         if isinstance(fname, fabioutils.StringTypes):
-            self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
                 fileObject = self._compressed_stream(fname,
                                        fabioutils.COMPRESSORS['.gz'],

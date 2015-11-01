@@ -31,8 +31,6 @@ import unittest
 import sys
 import os
 import numpy
-import gzip
-import bz2
 
 if __name__ == '__main__':
     import pkgutil
@@ -110,10 +108,9 @@ class TestMskWrite(unittest.TestCase):
     def setUp(self):
         shape = (199, 211)  # those are prime numbers
         self.data = (numpy.random.random(shape) > 0.6)
-        self.header = {}
+        self.header = fit2dmaskimage.check_header()
 
-    def testFlat(self):
-        self.filename = os.path.join(UtilsTest.tempdir, "random.msk")
+    def atest(self):
         e = fit2dmaskimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
@@ -123,39 +120,26 @@ class TestMskWrite(unittest.TestCase):
             print("Issue with header in TestMskWrite.testFlat")
             for k, v in r.header.items():
                 print(k, v, self.header.get(k))
+            print(e.header)
+            print(r.header)
+            print(self.header)
+
         else:
             self.assert_(r.header == self.header, "header are OK")
         self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+
+
+    def testFlat(self):
+        self.filename = os.path.join(UtilsTest.tempdir, "random.msk")
+        self.atest()
 
     def testGzip(self):
         self.filename = os.path.join(UtilsTest.tempdir, "random.msk.gz")
-        e = fit2dmaskimage(data=self.data, header=self.header)
-        e.write(self.filename)
-        r = fabio.open(self.filename)
-        if r.header != self.header:
-            print("Issue with header in TestMskWrite.testGzip")
-            for k, v in r.header.items():
-                print(k, v, self.header.get(k))
-        else:
-            self.assert_(r.header == self.header, "header are OK")
-        self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
-        self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.atest()
 
     def testBzip2(self):
         self.filename = os.path.join(UtilsTest.tempdir, "random.msk.gz")
-        e = fit2dmaskimage(data=self.data, header=self.header)
-        e.write(self.filename)
-        r = fabio.open(self.filename)
-        if r.header != self.header:
-            print("Issue with header in TestMskWrite.testBzip2")
-            for k, v in r.header.items():
-                print(k, v, self.header.get(k))
-        else:
-            self.assert_(r.header == self.header, "header are OK")
-        self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
-        self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.atest()
 
     def tearDown(self):
         if os.path.isfile(self.filename):

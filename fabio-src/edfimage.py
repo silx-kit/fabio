@@ -45,7 +45,7 @@ from __future__ import with_statement, print_function, absolute_import, division
 import os, logging
 logger = logging.getLogger("edfimage")
 import numpy
-from .fabioimage import FabioImage
+from .fabioimage import FabioImage, OrderedDict
 from .fabioutils import isAscii, toAscii, nice_int, six
 from .compression import decBzip2, decGzip, decZlib
 
@@ -338,7 +338,6 @@ class Frame(object):
     def getByteCode(self):
         if self._bytecode is None:
             self._bytecode = self.data.dtype.type
-
         return self._bytecode
     def setByteCode(self, _iVal):
         self._bytecode = _iVal
@@ -492,7 +491,7 @@ class EdfImage(FabioImage):
         Empty for FabioImage but may be populated by others classes
         """
         if not isinstance(header, dict):
-            return {}
+            return OrderedDict()
         new = {}
         for key, value in header.items():
             new[toAscii(key, ";{}")] = toAscii(value, ";{}")

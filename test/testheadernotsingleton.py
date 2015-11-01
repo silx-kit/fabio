@@ -59,9 +59,9 @@ class TestHeaderNotSingleton(unittest.TestCase):
         image1 = fabio.open(self.file1)
         image2 = fabio.open(file2)
         abs_norm = lambda fn: os.path.normcase(os.path.abspath(fn))
-        self.assertEqual(abs_norm(image1.header['filename']), abs_norm(self.file1))
-        self.assertEqual(abs_norm(image2.header['filename']), abs_norm(file2))
-        self.assertNotEqual(image1.header['filename'], image2.header['filename'])
+        self.assertEqual(abs_norm(image1.filename), abs_norm(self.file1))
+        self.assertEqual(abs_norm(image2.filename), abs_norm(file2))
+        self.assertNotEqual(image1.filename, image2.filename)
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
