@@ -122,7 +122,6 @@ if options.insource:
     import fabio
 
 print("FabIO %s from %s" % (fabio.version, fabio.__path__[0]))
-cov.config.source = fabio.__path__
 fabio.tests()
 
 
