@@ -549,10 +549,13 @@ else:
             if self.__size is None:
                 with self.lock:
                     if self.__size is None:
-                        pos = self.offset
+                        if "offset" in dir(self):
+                            pos = self.offset
+                        elif "tell" in dir(self):
+                            pos = self.tell()
                         end_pos = len(gzip.GzipFile.read(self)) + pos
                         self.seek(pos)
-                        logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, self.offset))
+                        logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, pos))
                         self.__size = end_pos
             return self.__size
 

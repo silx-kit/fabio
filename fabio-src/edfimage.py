@@ -566,7 +566,7 @@ class EdfImage(FabioImage):
                 raise Exception(error)
 
             if  frame.start + size > stream_size:
-                logger.warning("Non complete datablock: got %s, expected %s" % (infile.size - frame.start, size))
+                logger.warning("Non complete datablock: got %s, expected %s" % (stream_size - frame.start, size))
                 bContinue = False
                 break
 
