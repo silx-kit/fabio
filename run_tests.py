@@ -16,7 +16,8 @@ else:
 
 try:
     import h5py
-except Exception as error: print("h5py missing: %s" % error)
+except Exception as error:
+    print("h5py missing: %s" % error)
 else:
     print("h5py %s" % h5py.version.version)
 
@@ -45,7 +46,7 @@ def report_rst(cov, package="fabio", version="0.0.0", base=""):
     import time
     line0 = "Test coverage report for %s" % package
     res = [line0, "=" * len(line0), ""]
-    res.append("Measured on %s version %s, %s" % (package, version, time.strftime("%d/%m/%Y")))
+    res.append("Measured on *%s* version %s, %s" % (package, version, time.strftime("%d/%m/%Y")))
     res += ["",
             ".. csv-table:: Test suite coverage",
             '   :header: "Name", "Stmts", "Exec", "Cover"',
