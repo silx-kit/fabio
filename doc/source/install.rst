@@ -319,44 +319,13 @@ Within Python (or ipython):
 Test coverage
 .............
 
-FabIO comes with 25 test-suites (113 tests in total) representing a coverage of 60%.
+FabIO comes with 27 test-suites (120 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
 FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2, 3.3, 3.4 and 3.5.
 Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
 
-.. csv-table:: Test suite coverage
-   :header: "Name", "Stmts", "Exec", "Cover"
-   :widths: 35, 8, 8, 8
+.. toctree::
+   :maxdepth: 2
+    
+   coverage
 
-   "fabio/GEimage                 ", "   94", "     48", "    51%"
-   "fabio/HiPiCimage              ", "   55", "      7", "    12%"
-   "fabio/OXDimage                ", "  285", "    271", "    95%"
-   "fabio/TiffIO                  ", "  794", "    534", "    67%"
-   "fabio/__init__                ", "   15", "     15", "   100%"
-   "fabio/adscimage               ", "   79", "     37", "    46%"
-   "fabio/binaryimage             ", "   50", "     15", "    30%"
-   "fabio/bruker100image          ", "   60", "     13", "    21%"
-   "fabio/brukerimage             ", "  212", "    171", "    80%"
-   "fabio/cbfimage                ", "  441", "    219", "    49%"
-   "fabio/compression             ", "  223", "    136", "    60%"
-   "fabio/converters              ", "   17", "     14", "    82%"
-   "fabio/dm3image                ", "  133", "     16", "    12%"
-   "fabio/edfimage                ", "  596", "    397", "    66%"
-   "fabio/fabioimage              ", "  306", "    193", "    63%"
-   "fabio/fabioutils              ", "  322", "    256", "    79%"
-   "fabio/file_series             ", "  140", "     61", "    43%"
-   "fabio/fit2dmaskimage          ", "   75", "     71", "    94%"
-   "fabio/fit2dspreadsheetimage   ", "   47", "      7", "    14%"
-   "fabio/hdf5image               ", "  146", "     25", "    17%"
-   "fabio/kcdimage                ", "   80", "     65", "    81%"
-   "fabio/mar345image             ", "  244", "    215", "    88%"
-   "fabio/marccdimage             ", "   63", "     56", "    88%"
-   "fabio/mrcimage                ", "   96", "      0", "     0%"
-   "fabio/openimage               ", "  104", "     69", "    66%"
-   "fabio/pilatusimage            ", "   34", "      5", "    14%"
-   "fabio/pixiimage               ", "   95", "     22", "    23%"
-   "fabio/pnmimage                ", "  109", "     21", "    19%"
-   "fabio/raxisimage              ", "   98", "     88", "    89%"
-   "fabio/readbytestream          ", "   26", "      5", "    19%"
-   "fabio/tifimage                ", "  167", "     60", "    35%"
-   "fabio/xsdimage                ", "   94", "     68", "    72%"
