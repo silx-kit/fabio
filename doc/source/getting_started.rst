@@ -259,6 +259,7 @@ uses extensions as a fallback if that fails.
    "HDF5", "Hierachical data dormat", ".h5", "Yes", "No", "No" 
    "marccd", "MarCCD/Mar165", ".mccd ", "Yes", "No", "No"
    "mar345", "Mar345 image plate", ".mar3450 ", "Yes", "No", "Yes"
+   "numpy", "numpy 2D array", "npy ", "Yes", "No", "Yes"
    "OXD", "Oxford Diffraction", ".img ", "Yes", "No", "Yes"
    "Pixi", "pixi", ". ", "Yes", "No", "No"
    "pilatus", "Dectris Pilatus Tiff", ".tif ", "Yes", "No", "Yes"
