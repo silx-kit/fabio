@@ -154,7 +154,7 @@ class Dm3Image(FabioImage):
         self.tag_is_data = self.readbytes(1, numpy.uint8)[0]
         self.tag_label_length = self.readbytes(2, numpy.uint16)[0]
         logger.debug('does Tag have data ? %s  -  20 = Tag group , 21 = data ', self.tag_is_data)
-        logger.debug('length of tag_label ', self.tag_label_length)
+        logger.debug('length of tag_label %s', self.tag_label_length)
         if self.tag_label_length != 0:
             tag_label = self.infile.read(self.tag_label_length)
         else:

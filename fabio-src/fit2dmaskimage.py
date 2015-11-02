@@ -47,7 +47,6 @@ if sys.version < '3':
 class Fit2dMaskImage(FabioImage):
     """ Read and try to write Andy Hammersley's mask format """
 
-
     def _readheader(self, infile):
         """
         Read in a header from an already open file
@@ -64,8 +63,8 @@ class Fit2dMaskImage(FabioImage):
         # Enforce little endian
         if not numpy.little_endian:
              fit2dhdr.byteswap(True)
-        self.dim1 = fit2dhdr[4]  # 1 less than Andy's fortran
-        self.dim2 = fit2dhdr[5]
+        self._dim1 = fit2dhdr[4]  # 1 less than Andy's fortran
+        self._dim2 = fit2dhdr[5]
 
 
     def read(self, fname, frame=None):
@@ -80,8 +79,8 @@ class Fit2dMaskImage(FabioImage):
         self.bpp = numpy.dtype(self.bytecode).itemsize
 
         # integer division
-        num_ints = (self.dim1 + 31) // 32
-        total = self.dim2 * num_ints * 4
+        num_ints = (self._dim1 + 31) // 32
+        total = self._dim2 * num_ints * 4
         data = fin.read(total)
         assert len(data) == total
         fin.close()
@@ -91,9 +90,9 @@ class Fit2dMaskImage(FabioImage):
         if not numpy.little_endian:
              data.byteswap(True)
 
-        data = numpy.reshape(data, (self.dim2, num_ints * 4))
+        data = numpy.reshape(data, (self._dim2, num_ints * 4))
 
-        result = numpy.zeros((self.dim2, num_ints * 4 * 8), numpy.uint8)
+        result = numpy.zeros((self._dim2, num_ints * 4 * 8), numpy.uint8)
 
         # Unpack using bitwise comparisons to 2**n
         bits = numpy.ones((1), numpy.uint8)
@@ -102,19 +101,16 @@ class Fit2dMaskImage(FabioImage):
             result[:, i::8] = temp.astype(numpy.uint8)
             bits = bits * 2
         # Extra rows needed for packing odd dimensions
-        spares = num_ints * 4 * 8 - self.dim1
+        spares = num_ints * 4 * 8 - self._dim1
         if spares == 0:
-            self.data = numpy.where(result == 0, 0, 1)
+            data = numpy.where(result == 0, 0, 1)
         else:
-            self.data = numpy.where(result[:, :-spares] == 0, 0, 1)
+            data = numpy.where(result[:, :-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
 #        self.data = numpy.transpose(self.data)
-        self.data = numpy.reshape(self.data.astype(numpy.uint16),
-                                    (self.dim2, self.dim1))
+        self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8).reshape(self._dim2, self._dim1)
         self.pilimage = None
         return self
-
-
 
     def write(self, fname):
         """
@@ -139,9 +135,10 @@ class Fit2dMaskImage(FabioImage):
             outfile.write(compact_array.tostring())
 
     @staticmethod
-    def checkData(data=None):
+    def check_data(data=None):
         if data is None:
             return None
         else:
-            return data.astype(int)
+            return (data != 0).astype(numpy.uint8)
+
 fit2dmaskimage = Fit2dMaskImage

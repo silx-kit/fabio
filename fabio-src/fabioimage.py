@@ -48,7 +48,7 @@ from . import fabioutils, converters
 
 try:
     import six
-    six_version = (int(i) for i in six.__version__.split())
+    six_version = tuple(int(i) for i in six.__version__.split() if i.isdigit())
     if six_version < (1, 8):
         for i in ("six", "six.moves"):
             sys.modules.pop(i, None)
@@ -111,18 +111,14 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         Set up initial values
         """
         self._classname = None
+        self._dim1 = self._dim2 = self._bpp = 0
+        self._bytecode = None
         if type(data) in fabioutils.StringTypes:
             raise Exception("fabioimage.__init__ bad argument - " + \
                             "data should be numpy array")
         self.data = self.check_data(data)
         self.pilimage = None
         self.header = self.check_header(header)
-        if self.data is not None:
-            self.dim2, self.dim1 = self.data.shape
-        else:
-            self.dim1 = self.dim2 = 0
-        self.bytecode = None  # numpy typecode
-        self.bpp = 2  # bytes per pixel
         # cache for image statistics
         self.mean = self.maxval = self.stddev = self.minval = None
         # Cache roi
@@ -141,13 +137,63 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         pass
     header_keys = property(get_header_keys, set_header_keys)
 
+    def get_dim1(self):
+        "Getter for dim1: data superseeds _dim1"
+        if self.data is not None:
+            try:
+                return self.data.shape[1]
+            except IndexError as err:
+                print(err)
+                print(self.data)
+                return self._dim1
+        else:
+            return self._dim1
+    def set_dim1(self, value):
+        "Setter for dim1"
+        self._dim1 = value
+    dim1 = property(get_dim1, set_dim1)
+
+    def get_dim2(self):
+        "Getter for dim2: data superseeds _dim2"
+        if self.data is not None:
+            return self.data.shape[0]
+        else:
+            return self._dim2
+    def set_dim2(self, value):
+        "Setter for dim2"
+        self._dim2 = value
+    dim2 = property(get_dim2, set_dim2)
+
+    def get_bpp(self):
+        "Getter for bpp: data superseeds _bpp"
+        if self.data is not None:
+            return numpy.dtype(self.data.dtype).itemsize
+        elif self._bytecode is not None:
+            return numpy.dtype(self._bytecode).itemsize
+        else:
+            return self._bpp
+    def set_bpp(self, value):
+        "Setter for bpp"
+        self._bpp = value
+    bpp = property(get_bpp, set_bpp)
+
+    def get_bytecode(self):
+        "Getter for bpp: data superseeds _bytecode"
+        if self.data is not None:
+            return self.data.dtype.type
+        else:
+            return self._bytecode
+    def set_bytecode(self, value):
+        "Setter for bpp"
+        self._bytecode = value
+    bytecode = property(get_bytecode, set_bytecode)
 
     @staticmethod
     def check_header(header=None):
         """
         Empty for fabioimage but may be populated by others classes
-        
-        @param header: dict like object 
+
+        @param header: dict like object
         @return: Ordered dict
         """
         if header is None:
@@ -158,9 +204,9 @@ class FabioImage(with_metaclass(FabioMeta, object)):
     @staticmethod
     def check_data(data=None):
         """
-        Empty for fabioimage but may be populated by others classes, 
+        Empty for fabioimage but may be populated by others classes,
         especially for format accepting only integers
-        
+
         @param data: array like
         @return: numpy array or None
         """
@@ -444,9 +490,9 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if hasattr(fname, "read") and hasattr(fname, "write"):
             # It is already something we can use
             if "name" in dir(fname):
-                self.header["filename"] = self.filename = fname.name
+                self.filename = fname.name
             else:
-                self.filename = self.header["filename"] = "stream"
+                self.filename = "stream"
                 try:
                     setattr(fname, "name", self.filename)
                 except AttributeError:
@@ -459,7 +505,6 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         self.filenumber = fabioutils.extract_filenumber(fname)
 
         if isinstance(fname, fabioutils.StringTypes):
-            self.header["filename"] = fname
             if os.path.splitext(fname)[1] == ".gz":
                 fileObject = self._compressed_stream(fname,
                                        fabioutils.COMPRESSORS['.gz'],

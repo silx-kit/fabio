@@ -233,6 +233,10 @@ class TestEdfMultiFrame(unittest.TestCase):
         except:
             raise RuntimeError("Cannot read image Frame1File image %s" % self.Frame1File)
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.multiFrameFilename = self.Frame0Filename = self.Frame1Filename = self.ref = self.frame0 = self.frame1 = None
+
     def test_getFrame_multi(self):
         """testedfmultiframe.test_getFrame_multi"""
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_multi: Same data for frame 0")
