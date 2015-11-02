@@ -41,3 +41,4 @@ running Debian 7.
     
 The Python3 version is sometimes twice slower then the Python2 version. As the codebase is the
 same this regression is not due to FabIO but to the programming language itself.
+The Performances obtained using Python3.4 is now again close to the one of Python2.7.
