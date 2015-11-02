@@ -87,7 +87,7 @@ parser.add_argument("-i", "--insource",
 parser.add_argument("-c", "--coverage", dest="coverage",
                     action="store_true", default=False,
                     help="report coverage of fabio code (requires 'coverage' module)")
-parser.add_argument("-v", "--verbose",
+parser.add_argument("-v", "--verbose", default=0,
                     action="count", dest="verbose",
                     help="increase verbosity")
 options = parser.parse_args()
