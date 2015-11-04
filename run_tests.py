@@ -75,6 +75,8 @@ def report_rst(cov, package="fabio", version="0.0.0", base=""):
                (package, tot_sum_lines, tot_sum_hits, 100.0 * tot_sum_hits / tot_sum_lines))
     res.append("")
     return os.linesep.join(res)
+
+
 try:
     from argparse import ArgumentParser
 except ImportError:

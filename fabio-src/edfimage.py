@@ -503,12 +503,12 @@ class EdfImage(FabioImage):
             try:
                 new_max_header_size = int(chunk.split(b";")[0].strip())
             except Exception:
-                logger.warning("Unable to read header size in %s" % chunk)
+                logger.warning("Unable to read header size, got: %s" % chunk)
             else:
                 if new_max_header_size > MAX_HEADER_SIZE:
                     logger.info("Redefining MAX_HEADER_SIZE to %s" % new_max_header_size)
                     MAX_HEADER_SIZE = new_max_header_size
-        while b'}' not in block:
+        while (b'}\r' not in block) and (b'}\n' not in block):
             block = block + infile.read(BLOCKSIZE)
             if len(block) > MAX_HEADER_SIZE:
                 logger.warning("Runaway header in EDF file MAX_HEADER_SIZE: %s \n%s" % (MAX_HEADER_SIZE, block))
