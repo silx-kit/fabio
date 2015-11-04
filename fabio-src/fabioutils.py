@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "01/11/2015"
+__date__ = "04/11/2015"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -445,7 +445,7 @@ class File(FileIO):
     """
     wrapper for "file" with locking
     """
-    def __init__(self, name, mode="rb", buffering=0):
+    def __init__(self, name, mode="rb", buffering=0, temporary=False):
         """file(name[, mode[, buffering]]) -> file object
 
         Open a file.  The mode can be 'r', 'w' or 'a' for reading (default),
@@ -463,6 +463,8 @@ class File(FileIO):
         '\r', '\n', '\r\n' or a tuple containing all the newline types seen.
 
         'U' cannot be combined with 'w' or '+' mode.
+        
+        @param temporary: if True, destroy file at close.
         """
         if six.PY2:
             FileIO.__init__(self, name, mode, buffering)
@@ -470,6 +472,17 @@ class File(FileIO):
             FileIO.__init__(self, name, mode)
         self.lock = _Semaphore()
         self.__size = None
+        self.__temporary = temporary
+
+    def close(self):
+        name = self.name
+        FileIO.close(self)
+        if self.__temporary:
+            try:
+                os.unlink(name)
+            except Exception as err:
+                logger.error("Unable to remove %s: %s" % (name, err))
+                raise(err)
 
     def getSize(self):
         if self.__size is None:

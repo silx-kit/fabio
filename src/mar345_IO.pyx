@@ -40,7 +40,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/10/2015" 
+__date__ = "04/11/2015" 
 
 import cython
 cimport numpy
@@ -81,7 +81,7 @@ def compress_pck(inputArray not None):
         f.seek(0)
         output = f.read()
     os.close(fd)
-    os.remove(name)
+    os.unlink(fname)
     return output
 
 

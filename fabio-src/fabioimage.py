@@ -36,7 +36,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 # get ready for python3
 from __future__ import with_statement, print_function, absolute_import, division
-import os, logging, sys, tempfile, threading
+import os
+import logging
+import sys
+import tempfile
+import threading
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -541,11 +545,10 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         fobj = None
         if self._need_a_real_file and mode[0] == "r":
             fo = python_uncompress(fname, mode)
-#            fobj = os.tmpfile()
             # problem when not administrator under certain flavors of windows
             tmpfd, tmpfn = tempfile.mkstemp()
             os.close(tmpfd)
-            fobj = fabioutils.File(tmpfn, "w+b")
+            fobj = fabioutils.File(tmpfn, "w+b", temporary=True)
             fobj.write(fo.read())
             fo.close()
             fobj.seek(0)
