@@ -40,7 +40,7 @@ License: GPLv3+
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "30/10/2015"
+__date__ = "05/11/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -136,6 +136,24 @@ class PnmImage(FabioImage):
         self.resetvals()
         return self
 
+    def write(self, fname):
+        """
+        try to write image. For now, limited to  
+        @param fname: name of the file 
+        """
+        self.header["SUBFORMAT"] = "P5"
+        self.header["WIDTH"] = self.dim1
+        self.header["HEIGHT"] = self.dim2
+        self.header["MAXVAL"] = self.data.max()
+        header = six.b(" ".join([str(self.header[key]) for key in HEADERITEMS]))
+        with open(fname, "wb") as fobj:
+            fobj.write(header)
+            fobj.write("\x20\x10")
+            if numpy.little_endian:
+                fobj.write(self.data.tostring())
+            else:
+                fobj.write(self.data.byteswap().tostring())
+
     def P1dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
         i = 0
@@ -187,15 +205,16 @@ class PnmImage(FabioImage):
         logger.error(err)
         raise NotImplementedError(err)
 
-    def write(self, filename):
-        raise NotImplementedError('write pnm images is not implemented yet.')
-
     @staticmethod
     def checkData(data=None):
         if data is None:
             return None
         else:
-            return data.astype(int)
+            data = data.clip(0, 65535)
+            if data.max() < 256:
+                return data.astype(numpy.uint8)
+            else:
+                return data.astype(numpy.uint16)
 
 
 pnmimage = PnmImage
