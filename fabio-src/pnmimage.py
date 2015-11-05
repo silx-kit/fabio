@@ -148,7 +148,7 @@ class PnmImage(FabioImage):
         with open(fname, "wb") as fobj:
             fobj.write(six.b("P5 \n"))
             fobj.write(header)
-            fobj.write(" \n")
+            fobj.write(six.b(" \n"))
             if numpy.little_endian:
                 fobj.write(self.data.byteswap().tostring())
             else:
