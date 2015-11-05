@@ -127,7 +127,6 @@ class PnmImage(FabioImage):
         else:
             format = self.header[six.b('SUBFORMAT')]
         decoder_name = "%sdec" % format
-
         if decoder_name in dir(PnmImage):
             decoder = getattr(PnmImage, decoder_name)
             self.data = decoder(self, infile, self.bytecode)
@@ -145,14 +144,15 @@ class PnmImage(FabioImage):
         self.header["WIDTH"] = self.dim1
         self.header["HEIGHT"] = self.dim2
         self.header["MAXVAL"] = self.data.max()
-        header = six.b(" ".join([str(self.header[key]) for key in HEADERITEMS]))
+        header = six.b(" ".join([str(self.header[key]) for key in HEADERITEMS[1:]]))
         with open(fname, "wb") as fobj:
+            fobj.write(six.b("P5 \n"))
             fobj.write(header)
-            fobj.write("\x20\x10")
+            fobj.write(" \n")
             if numpy.little_endian:
-                fobj.write(self.data.tostring())
-            else:
                 fobj.write(self.data.byteswap().tostring())
+            else:
+                fobj.write(self.data.tostring())
 
     def P1dec(self, buf, bytecode):
         data = numpy.zeros((self.dim2, self.dim1))
@@ -206,7 +206,7 @@ class PnmImage(FabioImage):
         raise NotImplementedError(err)
 
     @staticmethod
-    def checkData(data=None):
+    def check_data(data=None):
         if data is None:
             return None
         else:

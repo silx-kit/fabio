@@ -263,7 +263,7 @@ uses extensions as a fallback if that fails.
    "OXD", "Oxford Diffraction", ".img ", "Yes", "No", "Yes"
    "Pixi", "pixi", ". ", "Yes", "No", "No"
    "pilatus", "Dectris Pilatus Tiff", ".tif ", "Yes", "No", "Yes"
-   "PNM", "Portable aNy Map", ".pnm ", "Yes", "No", "No"
+   "PNM", "Portable aNy Map", ".pnm ", "Yes", "No", "Yes"
    "Raxis", "Rigaku Saxs format", ".img", "Yes", "No", "No"
    "TIFF", "Tagged Image File Format", ".tif ", "Yes", "No", "Yes"
 

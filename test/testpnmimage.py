@@ -27,9 +27,12 @@ Test for PNM images.
 
 Jerome Kieffer, 04/12/2014
 """
+__author__ = "Jerome Kieffer"
+__date__ = "05/11/2015"
 import os
 import sys
 import unittest
+import numpy
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
@@ -68,10 +71,21 @@ class TestPNM(unittest.TestCase):
         self.assertEqual(dim1, obj.dim1, "dim1")
         self.assertEqual(dim2, obj.dim2, "dim2")
 
+    def test_write(self):
+        pnmfile = os.path.join(UtilsTest.tempdir, "pnmfile.pnm")
+        shape = (9, 11)
+        size = shape[0] * shape[1]
+        data = numpy.random.randint(0, 65000, size=size).reshape(shape)
+        pnmimage(data=data).save(pnmfile)
+        pnm = openimage(pnmfile)
+        self.assert_(numpy.allclose(data, pnm.data), "data are the same")
+        os.unlink(pnmfile)
+
 
 def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(TestPNM("test_read"))
+    testsuite.addTest(TestPNM("test_write"))
     return testsuite
 
 if __name__ == '__main__':

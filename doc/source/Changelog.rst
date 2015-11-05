@@ -10,7 +10,7 @@ From FabIO-0.2.2 to FabIO-0.3.0:
 - Automatic backported package down to debian-8
 - Compatibility checked with 2.6, 2.7, 3.2, 3.3, 3.4 and 3.5
 - Continuous integration based on appveyor (windows) and travis (linux)
-- Support for numpy 2d-array saved
+- Support for numpy 2d-array and PNM saving
 - Move away from Sourceforge.
 
 From FabIO-0.2.1 to FabIO-0.2.2:
