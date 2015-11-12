@@ -1,28 +1,7 @@
-python-fabio (0.2.2+dfsg-3~bpo8+5) jessie-backports; urgency=low
+python-fabio (0.3.0b3-1) jessie-backports; urgency=low
 
   * Rebuild for jessie-backports.
-  * pyFAI  built for debian 7
-
- -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 29 Oct 2015 16:02:55 +0100
-
-python-fabio (0.2.2+dfsg-3~bpo8+4) jessie-backports; urgency=low
-
-  * Rebuild for jessie-backports.
-  * pyFAI  built for debian 7
-
- -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 29 Oct 2015 16:02:42 +0100
-
-python-fabio (0.2.2+dfsg-3~bpo8+3) jessie-backports; urgency=low
-
-  * Rebuild for jessie-backports.
-  * pyFAI  built for debian 7
-
- -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 29 Oct 2015 16:02:38 +0100
-
-python-fabio (0.2.2+dfsg-3~bpo8+2) jessie-backports; urgency=low
-
-  * Rebuild for jessie-backports.
-  * pyFAI  built for debian 7
+  * new upstream/master 0.3.0 beta
 
  -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 29 Oct 2015 16:02:36 +0100
 
