@@ -44,7 +44,7 @@ License: GPLv3+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "30/10/2015"
+__date__ = "02/12/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -185,17 +185,24 @@ class TifImage(FabioImage):
                     self.lib = "PIL"
                     self.dim1, self.dim2 = self.pilimage.size
                     if self.pilimage.mode in PIL_TO_NUMPY:
-                        self.data = numpy.fromstring(self.pilimage.tostring(), PIL_TO_NUMPY[self.pilimage.mode])
+                        if "tobytes" in dir(self.pilimage):
+                            rawdata = self.pilimage.tobytes()
+                        else:
+                            rawdata = self.pilimage.tostring()
+                        self.data = numpy.fromstring(rawdata, PIL_TO_NUMPY[self.pilimage.mode])
                     else:  # probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
-                        self.data = numpy.fromstring(self.pilimage.convert("F").tostring(), numpy.float32)
+                        data = self.pilimage.convert("F")
+                        if "tobytes" in dir(data):
+                            rawdata = data.tobytes()
+                        else:
+                            rawdata = data.tostring()
+                        self.data = numpy.fromstring(data, numpy.float32)
                     self.data.shape = (self.dim2, self.dim1)
             else:
                 logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
                 self.lib = None
                 infile.seek(0)
 
-        self.bpp = len(numpy.zeros(1, dtype=self.data.dtype).tostring())
-        self.bytecode = self.data.dtype.name
         self.resetvals()
         return self
 
