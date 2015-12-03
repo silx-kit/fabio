@@ -44,7 +44,7 @@ License: GPLv3+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "02/12/2015"
+__date__ = "03/12/2015"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -67,13 +67,22 @@ except ImportError:
         from .third_party.TiffIO import TiffIO
 
 
-PIL_TO_NUMPY = { "I;16": numpy.uint16,
-                   "F": numpy.float32,
-                   "1": numpy.bool,
-                   "I": numpy.int32,
-                   "L": numpy.uint8,
-                    }
-
+PIL_TO_NUMPY = {"I;8": numpy.uint8,
+                "I;16": numpy.uint16,
+                "I;16B": numpy.uint16,  # big endian
+                "I;16L": numpy.uint16,  # little endian
+                "I;32":numpy.uint32,
+                "I;32L":numpy.uint32,  # little endian
+                "I;32B":numpy.uint32,  # big endian
+                "F;32F":numpy.float32,
+                "F;32BF":numpy.float32,  # big endian
+                "F;64F":numpy.float64,
+                "F;64BF": numpy.float64,  # big endian
+                "F": numpy.float32,
+                "1": numpy.bool,
+                "I": numpy.int32,
+                "L": numpy.uint8,
+                }
 LITTLE_ENDIAN = 1234
 BIG_ENDIAN = 3412
 
@@ -183,21 +192,21 @@ class TifImage(FabioImage):
                     infile.seek(0)
                 else:
                     self.lib = "PIL"
-                    self.dim1, self.dim2 = self.pilimage.size
+                    dim1, dim2 = self.pilimage.size
                     if self.pilimage.mode in PIL_TO_NUMPY:
                         if "tobytes" in dir(self.pilimage):
                             rawdata = self.pilimage.tobytes()
                         else:
                             rawdata = self.pilimage.tostring()
-                        self.data = numpy.fromstring(rawdata, PIL_TO_NUMPY[self.pilimage.mode])
+                        data = numpy.fromstring(rawdata, PIL_TO_NUMPY[self.pilimage.mode])
                     else:  # probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
-                        data = self.pilimage.convert("F")
-                        if "tobytes" in dir(data):
-                            rawdata = data.tobytes()
+                        dataf = self.pilimage.convert("F")
+                        if "tobytes" in dir(dataf):
+                            rawdata = dataf.tobytes()
                         else:
-                            rawdata = data.tostring()
-                        self.data = numpy.fromstring(data, numpy.float32)
-                    self.data.shape = (self.dim2, self.dim1)
+                            rawdata = dataf.tostring()
+                        data = numpy.fromstring(rawdata, numpy.float32)
+                    self.data = data.reshape((dim2, dim1))
             else:
                 logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
                 self.lib = None

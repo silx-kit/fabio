@@ -39,7 +39,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "GPLv3+"
 __copyright__ = "Brian R. Pauw"
-__date__ = "30/10/2015"
+__date__ = "02/12/2015"
 
 import logging, struct, os
 import numpy
@@ -163,7 +163,6 @@ class RaxisImage(FabioImage):
         self.dim1 = self.header['X Pixels']
         self.dim2 = self.header['Y Pixels']
         self.bytecode = numpy.uint16
-        self.bpp = numpy.dtype(self.bytecode).itemsize
         dims = [self.dim2, self.dim1]
         size = dims[0] * dims[1] * self.bpp
         if offset >= 0:

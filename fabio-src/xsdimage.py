@@ -83,13 +83,6 @@ class XsdImage(FabioImage):
             self.dim1, self.dim2 = self.dims[:2]
         except:
             raise IOError("XSD file %s is corrupt, no dimensions in it" % fname)
-        try:
-            self.bytecode = numpy.dtype(self.dtype).type
-            self.bpp = len(numpy.array(0, self.bytecode).tostring())
-        except TypeError:
-            self.bytecode = numpy.int32
-            self.bpp = 32
-            logger.warning("Defaulting type to int32")
 
         exp_size = 1
         for i in self.dims:
@@ -110,7 +103,7 @@ class XsdImage(FabioImage):
             assert  hashlib.md5(decData).hexdigest() == self.md5
 
 
-        self.data = numpy.fromstring(decData, dtype=self.bytecode).reshape(tuple(self.dims))
+        self.data = numpy.fromstring(decData, dtype=self.dtype).reshape(tuple(self.dims))
         if not numpy.little_endian:  # by default little endian
             self.data.byteswap(True)
         self.resetvals()
