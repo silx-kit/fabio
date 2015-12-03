@@ -137,18 +137,18 @@ class PnmImage(FabioImage):
 
     def write(self, fname):
         """
-        try to write image. For now, limited to  
-        @param fname: name of the file 
+        try to write image. For now, limited to
+        @param fname: name of the file
         """
-        self.header["SUBFORMAT"] = "P5"
-        self.header["WIDTH"] = self.dim1
-        self.header["HEIGHT"] = self.dim2
-        self.header["MAXVAL"] = self.data.max()
+        self.header[six.b("SUBFORMAT")] = "P5"
+        self.header[six.b("WIDTH")] = self.dim1
+        self.header[six.b("HEIGHT")] = self.dim2
+        self.header[six.b("MAXVAL")] = self.data.max()
         header = six.b(" ".join([str(self.header[key]) for key in HEADERITEMS[1:]]))
         with open(fname, "wb") as fobj:
             fobj.write(six.b("P5 \n"))
             fobj.write(header)
-            fobj.write(" \n")
+            fobj.write(six.b(" \n"))
             if numpy.little_endian:
                 fobj.write(self.data.byteswap().tostring())
             else:

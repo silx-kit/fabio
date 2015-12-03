@@ -194,18 +194,23 @@ class TifImage(FabioImage):
                     self.lib = "PIL"
                     dim1, dim2 = self.pilimage.size
                     if self.pilimage.mode in PIL_TO_NUMPY:
-                        if "tobytes" in dir(self.pilimage):
-                            rawdata = self.pilimage.tobytes()
+                        dtype = PIL_TO_NUMPY[self.pilimage.mode]
+                        pilimage = self.pilimage
+                    else:
+                        dtype = numpy.float32
+                        pilimage = self.pilimage.convert("F")
+                    try:
+                        data = numpy.asarray(pilimage, dtype)
+                    except:  # PIL does not support buffer interface (yet)
+                        if "tobytes" in dir(pilimage):
+                            data = numpy.fromstring(pilimage.tobytes(), dtype=dtype)
                         else:
-                            rawdata = self.pilimage.tostring()
-                        data = numpy.fromstring(rawdata, PIL_TO_NUMPY[self.pilimage.mode])
-                    else:  # probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
-                        dataf = self.pilimage.convert("F")
-                        if "tobytes" in dir(dataf):
-                            rawdata = dataf.tobytes()
-                        else:
-                            rawdata = dataf.tostring()
-                        data = numpy.fromstring(rawdata, numpy.float32)
+                            data = numpy.fromstring(pilimage.tostring(), dtype=dtype)
+                        # byteswap ?
+                        if numpy.dtype(dtype).itemsize > 1:
+                            if (numpy.little_endian and "B" in self.pilimage.mode) or\
+                               (not numpy.little_endian and self.pilimage.mode.endswith("L")):
+                                data.byteswap(True)
                     self.data = data.reshape((dim2, dim1))
             else:
                 logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
@@ -223,7 +228,6 @@ class TifImage(FabioImage):
         """
         tiffIO = TiffIO(fname, mode="w")
         tiffIO.writeImage(self.data, info=self.header, software="fabio.tifimage", date=time.ctime())
-
 
 
 # define a couple of helper classes here:
