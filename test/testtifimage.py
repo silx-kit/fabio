@@ -39,6 +39,38 @@ logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 
 
+class TestTif(unittest.TestCase):
+    # filename dim1 dim2 min max mean stddev
+    TESTIMAGES = """
+    Feb09-bright-00.300s_WAXS.bz2 1042 1042 0 65535 8546.6414 1500.4198
+    Feb09-bright-00.300s_WAXS.gz 1042 1042 0 65535 8546.6414 1500.4198
+    Feb09-bright-00.300s_WAXS 1042 1042 0 65535 8546.6414 1500.4198
+    
+    """
+
+    def test_read(self):
+        """
+        Test the reading of Mar345 images
+        """
+        for line in self.TESTIMAGES.split('\n'):
+            vals = line.strip().split()
+            if not vals:
+                continue
+            name = vals[0]
+            logger.debug("Processing: %s" % name)
+            dim1, dim2 = [int(x) for x in vals[1:3]]
+            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+            obj = fabio.tifimage.TifImage()
+            obj.read(UtilsTest.getimage(name))
+
+            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
+            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
+            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
+            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertEqual(dim1, obj.dim1, "dim1")
+            self.assertEqual(dim2, obj.dim2, "dim2")
+
+
 class testtifimage_pilatus(unittest.TestCase):
     def setUp(self):
         self.fn = {}
@@ -140,6 +172,7 @@ class testtif_rect(unittest.TestCase):
 
 def suite():
     testsuite = unittest.TestSuite()
+    testsuite.addTest(TestTif("test_read"))
     testsuite.addTest(testtifimage_packbits("test1"))
     testsuite.addTest(testtifimage_pilatus("test1"))
     testsuite.addTest(testtifimage_fit2d("test1"))

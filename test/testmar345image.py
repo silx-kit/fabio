@@ -63,6 +63,10 @@ class TestMar345(unittest.TestCase):
         self.mar345 = UtilsTest.getimage("example.mar2300.bz2")[:-4]
         self.mar555 = UtilsTest.getimage("Fe3O4_023_101.mar2560.bz2")[:-4]
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.mar345 = self.mar555 = None
+
     def test_read(self):
         """
         Test the reading of Mar345 images
