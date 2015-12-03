@@ -68,6 +68,7 @@ except ImportError:
 
 
 PIL_TO_NUMPY = { "I;16": numpy.uint16,
+                "I;16B": numpy.uint16,
                    "F": numpy.float32,
                    "1": numpy.bool,
                    "I": numpy.int32,
@@ -185,9 +186,9 @@ class TifImage(FabioImage):
                     self.lib = "PIL"
                     self.dim1, self.dim2 = self.pilimage.size
                     if self.pilimage.mode in PIL_TO_NUMPY:
-                        self.data = numpy.fromstring(self.pilimage.tostring(), PIL_TO_NUMPY[self.pilimage.mode])
+                        self.data = numpy.asarray(self.pilimage, PIL_TO_NUMPY[self.pilimage.mode])
                     else:  # probably RGB or RGBA images: rely on PIL to convert it to greyscale float.
-                        self.data = numpy.fromstring(self.pilimage.convert("F").tostring(), numpy.float32)
+                        self.data = numpy.asarray(self.pilimage.convert("F"), numpy.float32)
                     self.data.shape = (self.dim2, self.dim1)
             else:
                 logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
