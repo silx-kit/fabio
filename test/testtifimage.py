@@ -21,15 +21,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""
-# Tiff Unit tests
+"""Tiff Unit tests"""
 
-#built on testedfimage
-"""
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
+
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
