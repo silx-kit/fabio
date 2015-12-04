@@ -64,32 +64,32 @@ class PilatusImage(TifImage):
         hstr = infile.read(4096)
         # well not very pretty - but seems to find start of
         # header information
-        if (hstr.find('# ') == -1):
+        if (hstr.find(b'# ') == -1):
             return self.header
 
-        hstr = hstr[hstr.index('# '):]
-        hstr = hstr[:hstr.index('\x00')]
-        hstr = hstr.split('#')
+        hstr = hstr[hstr.index(b'# '):]
+        hstr = hstr[:hstr.index(b'\x00')]
+        hstr = hstr.split(b'#')
         go_on = True
         while go_on:
             try:
-                hstr.remove('')
-            except Exception:
+                hstr.remove(b'')
+            except Exception as e:
                 go_on = False
 
         for line in hstr:
-            line = line[1:line.index('\r\n')]
-            if line.find(':') > -1:
-                dump = line.split(':')
+            line = line[1:line.index(b'\r\n')]
+            if line.find(b':') > -1:
+                dump = line.split(b':')
                 self.header[dump[0]] = dump[1]
-            elif line.find('=') > -1:
-                dump = line.split('=')
+            elif line.find(b'=') > -1:
+                dump = line.split(b'=')
                 self.header[dump[0]] = dump[1]
-            elif line.find(' ') > -1:
-                i = line.find(' ')
+            elif line.find(b' ') > -1:
+                i = line.find(b' ')
                 self.header[line[:i]] = line[i:]
-            elif line.find(',') > -1:
-                dump = line.split(',')
+            elif line.find(b',') > -1:
+                dump = line.split(b',')
                 self.header[dump[0]] = dump[1]
 
         return self.header
