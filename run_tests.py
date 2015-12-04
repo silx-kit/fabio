@@ -3,6 +3,7 @@ import sys
 import os
 import logging
 package = "fabio"
+logger = logging.getLogger("test " + package)
 
 print("Python %s %s" % (sys.version, tuple.__itemsize__ * 8))
 
@@ -36,6 +37,7 @@ def report_rst(cov, package="fabio", version="0.0.0", base=""):
     @param cov: test coverage instance
     @return: RST string
     """
+    logger.warning("base: %s" % base)
     import tempfile
     fd, fn = tempfile.mkstemp(suffix=".xml")
     os.close(fd)
@@ -57,8 +59,14 @@ def report_rst(cov, package="fabio", version="0.0.0", base=""):
     for cl in classes:
         name = cl.get("name")
         fname = cl.get("filename")
-        if not os.path.abspath(fname).startswith(base):
+        link = os.path.abspath(os.path.join(base, name + ".py"))
+        if os.name == "posix" and os.path.islink(link):
+            link = os.path.abspath(os.path.join(os.path.dirname(link), os.readlink(link)))
+        if os.path.abspath(fname) != link:
+            if "fabio" in fname:
+                print(fname, name, link)
             continue
+
         lines = cl.find("lines").getchildren()
         hits = [int(i.get("hits")) for i in lines]
 
@@ -71,8 +79,9 @@ def report_rst(cov, package="fabio", version="0.0.0", base=""):
         tot_sum_lines += sum_lines
         tot_sum_hits += sum_hits
     res.append("")
+    cover = 100.0 * tot_sum_hits / tot_sum_lines if tot_sum_lines else 0
     res.append('   "%s total", "%s", "%s", "%.1f %%"' %
-               (package, tot_sum_lines, tot_sum_hits, 100.0 * tot_sum_hits / tot_sum_lines))
+               (package, tot_sum_lines, tot_sum_hits, cover))
     res.append("")
     return os.linesep.join(res)
 
@@ -131,5 +140,6 @@ if options.coverage:
     cov.stop()
     cov.save()
     with open("coverage.rst", "w") as fn:
-        fn.write(report_rst(cov, "fabio", fabio.version, fabio.__path__[0]))
-    print(cov.report())
+        fn.write(report_rst(cov, "fabio", fabio.version,
+                            base=fabio.__path__[0]))
+#     print(cov.report())
