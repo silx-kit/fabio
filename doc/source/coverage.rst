@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 0.3.0-beta3, 05/11/2015
+Measured on *fabio* version 0.3.0-beta4, 04/12/2015
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -33,11 +33,12 @@ Measured on *fabio* version 0.3.0-beta3, 05/11/2015
    "marccdimage", "65", "58", "89.2 %"
    "numpyimage", "26", "26", "100.0 %"
    "openimage", "99", "73", "73.7 %"
-   "pilatusimage", "36", "7", "19.4 %"
+   "pilatusimage", "36", "31", "86.1 %"
    "pixiimage", "98", "25", "25.5 %"
    "pnmimage", "132", "84", "63.6 %"
-   "raxisimage", "103", "94", "91.3 %"
-   "tifimage", "175", "66", "37.7 %"
-   "xsdimage", "98", "71", "72.4 %"
+   "raxisimage", "102", "93", "91.2 %"
+   "readbytestream", "28", "20", "71.4 %"
+   "tifimage", "184", "84", "45.7 %"
+   "xsdimage", "91", "68", "74.7 %"
 
-   "fabio total", "4654", "2994", "64.3 %"
+   "fabio total", "4683", "3052", "65.2 %"
