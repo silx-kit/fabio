@@ -77,7 +77,7 @@ byteOffset_backend = Extension("byte_offset",
                                sources=['src/byte_offset' + ext])
 
 mar345_backend = Extension('mar345_IO',
-                           include_dirs=[np.get_include()],
+                           include_dirs=['include/', np.get_include()],
                            sources=['src/mar345_IO' + ext,
                                     'src/ccp4_pack.c',
                                       ])
