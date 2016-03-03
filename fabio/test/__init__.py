@@ -38,6 +38,12 @@ from . import utilstest
 from . import test_all
 
 
+def suite():
+    test_suite = unittest.TestSuite()
+    test_suite.addTest(test_all.suite())
+    return test_suite
+
+
 def run_tests():
     """Run test complete test_suite"""
     mysuite = test_all.suite()

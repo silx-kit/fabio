@@ -132,9 +132,7 @@ def decGzip(stream):
 
 def decBzip2(stream):
     """
-
     Decompress a chunk of data using the bzip2 algorithm from Python
-
     """
     if bz2 is None:
         raise ImportError("bz2 module is not available")
@@ -143,15 +141,11 @@ def decBzip2(stream):
 
 def decZlib(stream):
     """
-
     Decompress a chunk of data using the zlib algorithm from Python
-
     """
     if zlib is None:
         raise ImportError("zlib module is not available")
     return zlib.decompress(stream)
-
-
 
 
 def decByteOffset_numpy(stream, size=None):
@@ -197,7 +191,7 @@ def decByteOffset_numpy(stream, size=None):
         for res in listnpa:
             if res.dtype != numpy.int8:
                 res.byteswap(True)
-    return  (numpy.hstack(listnpa)).astype("int64").cumsum()
+    return (numpy.hstack(listnpa)).astype("int64").cumsum()
 
 
 def decByteOffset_cython(stream, size=None):
@@ -212,9 +206,9 @@ def decByteOffset_cython(stream, size=None):
     """
     logger.debug("CBF decompression using cython")
     try:
-        from .byte_offset import analyseCython
+        from .ext.byte_offset import analyseCython
     except ImportError as error:
-        logger.error("Failed to import byte_offset cython module, falling back on numpy method")
+        logger.error("Failed to import byte_offset cython module, falling back on numpy method: %s", error)
         return decByteOffset_numpy(stream, size)
     else:
         return analyseCython(stream, size)
@@ -314,6 +308,7 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     return summed.astype(bytecode)
 decKM4CCD = decTY1
 
+
 def compTY1(data):
     """
     Modified byte offset compressor used in Oxford Diffraction images
@@ -340,7 +335,7 @@ def compTY1(data):
     diff[we32] = 128
     diff += 127
     data_8 = diff.astype(numpy.uint8)
-    return  data_8.tostring(), data_16.tostring(), data_32.tostring()
+    return data_8.tostring(), data_16.tostring(), data_32.tostring()
 
 
 def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):
@@ -357,9 +352,9 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_
 
     """
     try:
-        from .mar345_IO import uncompress_pck
-    except ImportError as  error:
-        raise RuntimeError("Unable to import mar345_IO to read compressed dataset")
+        from .ext.mar345_IO import uncompress_pck
+    except ImportError as error:
+        raise RuntimeError("Unable to import mar345_IO to read compressed dataset: %s" % error)
     if "seek" in dir(stream):
         stream.seek(0)
         raw = stream.read()
@@ -378,9 +373,9 @@ def compPCK(data):
 
     """
     try:
-        from .mar345_IO import compress_pck
+        from .ext.mar345_IO import compress_pck
     except ImportError as error:
-        raise RuntimeError("Unable to import mar345_IO to write compressed dataset")
+        raise RuntimeError("Unable to import mar345_IO to write compressed dataset: %s" % error)
     return compress_pck(data)
 
 

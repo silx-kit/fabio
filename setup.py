@@ -38,6 +38,7 @@ import glob
 import shutil
 import numpy
 import time
+import subprocess
 try:
     # setuptools allows the creation of wheels
     from setuptools import setup, Command
@@ -122,7 +123,8 @@ def Extension(name, source=None, can_use_openmp=False, extra_sources=None, **kwa
         include_dirs.add(os.path.join(PROJECT, "ext", "include"))
         include_dirs = list(include_dirs)
     else:
-        include_dirs = [os.path.join(PROJECT, "ext", "include"), os.path.join(PROJECT, "ext"), numpy.get_include()]
+        include_dirs = [os.path.join(PROJECT, "ext", "include"),
+                        os.path.join(PROJECT, "ext"), numpy.get_include()]
 
     if can_use_openmp and USE_OPENMP:
         extra_compile_args = set(kwargs.pop("extra_compile_args", []))
@@ -186,8 +188,6 @@ def get_readme():
 #######################
 # build_doc commandes #
 #######################
-cmdclass = {}
-
 try:
     import sphinx
     import sphinx.util.console
@@ -205,7 +205,6 @@ else:
             # previously installed version
 
             build = self.get_finalized_command('build')
-            print(op.abspath(build.build_lib))
             sys.path.insert(0, op.abspath(build.build_lib))
             # Build the Users Guide in HTML and TeX format
             for builder in ('html', 'latex'):
@@ -240,8 +239,8 @@ cmdclass['test'] = PyTest
 # We subclass the build_ext class in order to handle compiler flags
 # for openmp and opencl etc in a cross platform way
 translator = {
-        #  Compiler
-        #  name, compileflag, linkflag
+        # Compiler
+        # name, compileflag, linkflag
         'msvc': {
                  'openmp': ('/openmp', ' '),
                  'debug': ('/Zi', ' '),
@@ -317,8 +316,8 @@ class sdist_debian(sdist):
         for rm in to_remove:
             self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
         # this is for Cython files specifically
-        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix="src")
-        for pyxf in glob.glob("src/*.pyx"):
+        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix=PROJECT + "ext")
+        for pyxf in glob.glob(PROJECT + "ext/*.pyx"):
             cf = op.splitext(pyxf)[0] + ".c"
             if op.isfile(cf):
                 self.filelist.exclude_pattern(pattern=cf)
@@ -346,6 +345,22 @@ class sdist_debian(sdist):
 cmdclass['debian_src'] = sdist_debian
 
 
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        errno = subprocess.call([sys.executable, 'run_tests.py', '-i'])
+        if errno != 0:
+            raise SystemExit(errno)
+cmdclass['test'] = PyTest
+
+
 class sdist_testimages(sdist):
     """
     Tailor made sdist for debian containing only testimages
@@ -362,7 +377,6 @@ class sdist_testimages(sdist):
     def add_defaults(self):
         print("in sdist_testimages.add_defaults")
         self.filelist.extend([op.join("testimages", i) for i in download_images()])
-        print(self.filelist.files)
 
     def make_release_tree(self, base_dir, files):
         print("in sdist_testimages.make_release_tree")
@@ -419,13 +433,13 @@ setup_requires = ["numpy", "cython"]
 
 
 # adaptation for Debian packaging (without third_party)
-packages = ["fabio", "fabio.test", "fabio.ext"]
-package_dir = {"fabio": "fabio",
-               "fabio.test": "fabio/test",
-               "fabio.ext": "fabio/ext"}
+packages = [PROJECT, PROJECT + ".test", PROJECT + ".ext"]
+package_dir = {PROJECT: PROJECT,
+               PROJECT + ".test": PROJECT + "/test",
+               PROJECT + ".ext": PROJECT + "/ext"}
 if os.path.isdir("third_party"):
-    package_dir["fabio.third_party"] = "third_party"
-    packages.append("fabio.third_party")
+    package_dir[PROJECT + ".third_party"] = "third_party"
+    packages.append(PROJECT + ".third_party")
 
 classifiers = [
               'Development Status :: 5 - Production/Stable',
@@ -448,14 +462,14 @@ classifiers = [
                 ]
 
 if __name__ == "__main__":
-    setup(name='fabio',
+    setup(name=PROJECT,
           version=get_version(),
           author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
           author_email="fable-talk@lists.sourceforge.net",
           description='Image IO for fable',
           url="http://fable.wiki.sourceforge.net/fabio",
           download_url="https://github.com/kif/fabio/releases",
-          #ext_package="fabio",
+          # ext_package="fabio",
           scripts=script_files,
           ext_modules=ext_modules,
           packages=packages,

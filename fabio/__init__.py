@@ -29,12 +29,21 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2015"
+__date__ = "03/03/2016"
 __status__ = "stable"
 
+
+import os
 import logging
 logging.basicConfig()
-from ._version import version, version_info, hexversion
+project = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+try:
+    from ._version import __date__ as date  # noqa
+    from ._version import version, version_info, hexversion, strictversion  # noqa
+except ImportError:
+    raise RuntimeError(
+                       "Do NOT use %s from its sources: build it and use the built version" % project)
+
 from . import fabioimage
 from . import openimage
 from .fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
