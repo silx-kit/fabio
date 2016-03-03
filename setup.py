@@ -70,19 +70,19 @@ else:
 
 
 cf_backend = Extension('cf_io',
-                       include_dirs=[np.get_include()],
+                       include_dirs=['include', np.get_include()],
                        sources=['src/cf_io' + ext, 'src/columnfile.c'])
 byteOffset_backend = Extension("byte_offset",
-                               include_dirs=[np.get_include()],
+                               include_dirs=['include', np.get_include()],
                                sources=['src/byte_offset' + ext])
 
 mar345_backend = Extension('mar345_IO',
-                           include_dirs=[np.get_include()],
+                           include_dirs=['include/', np.get_include()],
                            sources=['src/mar345_IO' + ext,
                                     'src/ccp4_pack.c',
                                       ])
 _cif_backend = Extension('_cif',
-                         include_dirs=[np.get_include()],
+                         include_dirs=['include', np.get_include()],
                          sources=['src/_cif' + ext])
 
 
