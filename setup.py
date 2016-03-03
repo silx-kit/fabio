@@ -24,76 +24,164 @@
 from __future__ import print_function, division, with_statement, absolute_import
 
 __doc__ = """ Setup script for python distutils package and fabio """
+__author__ = "Jerome Kieffer"
+__contact__ = "Jerome.Kieffer@ESRF.eu"
+__license__ = "GPLv3+"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "03/03/2016"
+__status__ = "stable"
+
 import os
 import sys
 import os.path as op
 import glob
 import shutil
-import numpy as np
+import numpy
+import time
 try:
     # setuptools allows the creation of wheels
-    from setuptools import setup, Extension, Command
+    from setuptools import setup, Command
     from setuptools.command.sdist import sdist
+    from setuptools.command.build_ext import build_ext
+    from setuptools.command.install_data import install_data
+    from setuptools.command.install import install
+    from setuptools.command.build_py import build_py as _build_py
 except ImportError:
-    from distutils.core import setup
-    from distutils.core import Extension, Command
+    from distutils.core import setup, Command
     from distutils.command.sdist import sdist
+    from distutils.command.build_ext import build_ext
+    from distutils.command.install_data import install_data
+    from distutils.command.install import install
+    from distutils.command.build_py import build_py as _build_py
+from numpy.distutils.core import Extension as _Extension
 from distutils.filelist import FileList
+
+PROJECT = "fabio"
+install_warning = False
+cmdclass = {}
 
 ################################################################################
 # Remove MANIFEST file ... it needs to be re-generated on the fly
 ################################################################################
-if op.isfile("MANIFEST"):
-    os.unlink("MANIFEST")
+manifest = os.path.join(os.path.dirname(os.path.abspath(__file__)), "MANIFEST")
+if os.path.isfile(manifest):
+    os.unlink(manifest)
 
 
 ################################################################################
 # Check for Cython and use it if it is available
 ################################################################################
-USE_CYTHON = True
-try:
-    import Cython.Compiler.Version
-    from Cython.Distutils import build_ext
-except ImportError:
-    USE_CYTHON = False
-else:
-    if tuple(int(i) for i in Cython.Compiler.Version.version.split(".")[:2]) < (0, 17):
-        USE_CYTHON = False
+
+def check_cython():
+    """
+    Check if cython must be activated fron te command line or the environment.
+    """
+
+    if "WITH_CYTHON" in os.environ and os.environ["WITH_CYTHON"] == "False":
+        print("No Cython requested by environment")
+        return False
+
+    if ("--no-cython" in sys.argv):
+        sys.argv.remove("--no-cython")
+        os.environ["WITH_CYTHON"] = "False"
+        print("No Cython requested by command line")
+        return False
+
+    try:
+        import Cython.Compiler.Version
+    except ImportError:
+        return False
     else:
-        USE_CYTHON = True
+        if Cython.Compiler.Version.version < "0.17":
+            return False
+    return True
 
+
+USE_CYTHON = check_cython()
+USE_OPENMP = False
 if USE_CYTHON:
-    ext = ".pyx"
-else:
-    from distutils.command.build_ext import build_ext
-    ext = ".c"
+    from Cython.Build import cythonize
 
 
-cf_backend = Extension('cf_io',
-                       include_dirs=['include', np.get_include()],
-                       sources=['src/cf_io' + ext, 'src/columnfile.c'])
-byteOffset_backend = Extension("byte_offset",
-                               include_dirs=['include', np.get_include()],
-                               sources=['src/byte_offset' + ext])
+def Extension(name, source=None, can_use_openmp=False, extra_sources=None, **kwargs):
+    """
+    Wrapper for distutils' Extension
+    """
+    if name.startswith(PROJECT + ".ext."):
+        name = name[len(PROJECT) + 5:]
+    if source is None:
+        source = name
+    cython_c_ext = ".pyx" if USE_CYTHON else ".c"
+    sources = [os.path.join(PROJECT, "ext", source + cython_c_ext)]
+    if extra_sources:
+        sources.extend(extra_sources)
+    if "include_dirs" in kwargs:
+        include_dirs = set(kwargs.pop("include_dirs"))
+        include_dirs.add(numpy.get_include())
+        include_dirs.add(os.path.join(PROJECT, "ext"))
+        include_dirs.add(os.path.join(PROJECT, "ext", "include"))
+        include_dirs = list(include_dirs)
+    else:
+        include_dirs = [os.path.join(PROJECT, "ext", "include"), os.path.join(PROJECT, "ext"), numpy.get_include()]
 
-mar345_backend = Extension('mar345_IO',
-                           include_dirs=['include/', np.get_include()],
-                           sources=['src/mar345_IO' + ext,
-                                    'src/ccp4_pack.c',
-                                      ])
-_cif_backend = Extension('_cif',
-                         include_dirs=['include', np.get_include()],
-                         sources=['src/_cif' + ext])
+    if can_use_openmp and USE_OPENMP:
+        extra_compile_args = set(kwargs.pop("extra_compile_args", []))
+        extra_compile_args.add(USE_OPENMP)
+        kwargs["extra_compile_args"] = list(extra_compile_args)
+
+        extra_link_args = set(kwargs.pop("extra_link_args", []))
+        extra_link_args.add(USE_OPENMP)
+        kwargs["extra_link_args"] = list(extra_link_args)
+
+    ext = _Extension(name=PROJECT + ".ext." + name, sources=sources, include_dirs=include_dirs, **kwargs)
+
+    if USE_CYTHON:
+        cext = cythonize([ext], compile_time_env={"HAVE_OPENMP": bool(USE_OPENMP)})
+        if cext:
+            ext = cext[0]
+    return ext
+
+ext_modules = [Extension('cf_io', extra_sources=['fabio/ext/src/columnfile.c']),
+               Extension("byte_offset"),
+               Extension('mar345_IO', extra_sources=['fabio/ext/src/ccp4_pack.c']),
+               Extension('_cif')]
 
 
-extensions = [cf_backend, byteOffset_backend, mar345_backend, _cif_backend]
+##############
+# version.py #
+##############
+class build_py(_build_py):
+    """
+    Enhanced build_py which copies version.py to <PROJECT>._version.py
+    """
+    def find_package_modules(self, package, package_dir):
+        modules = _build_py.find_package_modules(self, package, package_dir)
+        if package == PROJECT:
+            modules.append((PROJECT, '_version', 'version.py'))
+        return modules
+
+cmdclass['build_py'] = build_py
+
+if install_warning:
+    class InstallWarning(install):
+        def __init__(self, *arg, **kwarg):
+            print("The usage of 'python setup.py is deprecated. Please use 'pip install .' instead")
+            time.sleep(0.5)
+            install.__init__(self, *arg, **kwarg)
+    cmdclass['install'] = InstallWarning
 
 
 def get_version():
-    sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
-    import _version
-    sys.path.pop(0)
-    return _version.strictversion
+    import version
+    return version.strictversion
+
+
+def get_readme():
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(dirname, "README.rst"), "r") as fp:
+        long_description = fp.read()
+    return long_description
+
 
 #######################
 # build_doc commandes #
@@ -326,10 +414,15 @@ else:
     script_files = glob.glob("scripts/*")
 
 
+install_requires = ["numpy"]
+setup_requires = ["numpy", "cython"]
+
+
 # adaptation for Debian packaging (without third_party)
-packages = ["fabio", "fabio.test"]
-package_dir = {"fabio": "fabio-src",
-               "fabio.test": "test"}
+packages = ["fabio", "fabio.test", "fabio.ext"]
+package_dir = {"fabio": "fabio",
+               "fabio.test": "fabio/test",
+               "fabio.ext": "fabio/ext"}
 if os.path.isdir("third_party"):
     package_dir["fabio.third_party"] = "third_party"
     packages.append("fabio.third_party")
@@ -362,11 +455,16 @@ if __name__ == "__main__":
           description='Image IO for fable',
           url="http://fable.wiki.sourceforge.net/fabio",
           download_url="https://github.com/kif/fabio/releases",
-          ext_package="fabio",
-          ext_modules=extensions,
+          #ext_package="fabio",
+          scripts=script_files,
+          ext_modules=ext_modules,
           packages=packages,
           package_dir=package_dir,
           test_suite="test",
           cmdclass=cmdclass,
-          scripts=script_files,
-          classifiers=classifiers,)
+          classifiers=classifiers,
+          license="GPL",
+          long_description=get_readme(),
+          install_requires=install_requires,
+          setup_requires=setup_requires,
+          )
