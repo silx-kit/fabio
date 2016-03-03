@@ -1,5 +1,6 @@
 include README.rst
 include MANIFEST.in
+include version.py
 exclude MANIFEST
 include stdeb.cfg
 recursive-include fabio/ext *.c *.h *.pyx
