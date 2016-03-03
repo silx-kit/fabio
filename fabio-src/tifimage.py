@@ -44,12 +44,14 @@ License: GPLv3+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "03/12/2015"
+__date__ = "03/03/2016"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
+
 import time, logging, struct
 logger = logging.getLogger("tifimage")
+
 try:
     from PIL import Image
 except ImportError:
@@ -59,12 +61,12 @@ import numpy
 from .fabioimage import FabioImage
 
 try:
-    from PyMca.TiffIO import TiffIO
+    from .third_party.TiffIO import TiffIO
 except ImportError:
     try:
         from PyMca5.PyMcaIO.TiffIO import TiffIO
     except ImportError:
-        from .third_party.TiffIO import TiffIO
+        from PyMca.TiffIO import TiffIO
 
 
 PIL_TO_NUMPY = {"I;8": numpy.uint8,

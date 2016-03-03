@@ -51,6 +51,8 @@ except ImportError:
 from . import fabioutils, converters
 
 try:
+    from .third_party.six import with_metaclass
+except ImportError:
     import six
     six_version = tuple(int(i) for i in six.__version__.split() if i.isdigit())
     if six_version < (1, 8):
@@ -58,8 +60,7 @@ try:
             sys.modules.pop(i, None)
         raise ImportError("Old version")
     from six import with_metaclass
-except ImportError:
-    from .third_party.six import with_metaclass
+
 
 try:
     from collections import OrderedDict

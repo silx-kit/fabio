@@ -33,7 +33,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "30/10/2015"
+__date__ = "03/03/2016"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -45,12 +45,11 @@ import logging
 logger = logging.getLogger("compression")
 
 try:
+    from .third_party import six
+except ImportError:
     import six
     if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
         raise ImportError("Six version is too old")
-except ImportError:
-    from .third_party import six
-
 
 if six.PY2:
     bytes = str

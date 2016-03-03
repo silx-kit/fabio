@@ -29,18 +29,19 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "04/11/2015"
+__date__ = "03/03/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
 import re, os, logging, threading, sys
 logger = logging.getLogger("fabioutils")
+
 try:
+    from .third_party import six
+except ImportError:
     import six
     if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
         raise ImportError("Six version is too old")
-except ImportError:
-    from .third_party import six
 
 
 if six.PY2:
