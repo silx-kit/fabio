@@ -1,3 +1,10 @@
+python-fabio (0.3.0b3-1~bpo8+1) jessie-backports; urgency=medium
+
+  * Rebuild for jessie-backports.
+  * fabio  built for debian 8
+
+ -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 03 Mar 2016 17:08:44 +0100
+
 python-fabio (0.3.0b3-1) jessie-backports; urgency=low
 
   * Rebuild for jessie-backports.

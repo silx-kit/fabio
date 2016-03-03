@@ -1,9 +1,9 @@
-include README.txt
+include README.rst
 include MANIFEST.in
 exclude MANIFEST
 include stdeb.cfg
+recursive-include fabio/ext *.c *.h *.pyx
 recursive-include src *.c *.h *.pyx
-recursive-include test *.py
 recursive-include doc *
 recursive-include pylint *
 recursive-include scripts *
