@@ -111,11 +111,10 @@ int cf_write_ascii(void *fp, void *cf_handle, unsigned int FLAGS){/*{{{*/
 void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   /*read the first line and figure out how many columns we have*/
   char line[2048];
-  char *fi; /* returned by fgets */
   int i,r;
   int nr_alloc=CF_INIT_ROWS;
   int nc_alloc=CF_INIT_COLS;
-  int ncols,nrows;
+  int ncols;
   char **clabels,**cp;
   double **data,**dp;
   char *p;
@@ -174,11 +173,11 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
     if ((gzgets((gzFile )fp,line,2048))==Z_NULL) {fprintf(stderr,"zlib io error reading file at %s\n",__LINE__);return -1;}
     if(gzeof((gzFile)fp)) break;
   }else{
-    fi=fgets(line,2048,(FILE *)fp);
+    fgets(line,2048,(FILE *)fp);
     if (feof((FILE *)fp)) break;
   }
 #else
-  fi=fgets(line,2048,(FILE *)fp);
+  fgets(line,2048,(FILE *)fp);
   if (feof((FILE *)fp)) break;
 #endif
 

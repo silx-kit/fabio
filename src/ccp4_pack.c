@@ -64,47 +64,10 @@
 
                                             Jan Pieter Abrahams, 6 Jan 1993   */
 
+#include <ccp4_pack.h>
+#include "string.h"
+#include "assert.h"
 
-
-#ifndef _MSC_VER
-#include <stdint.h> 
-#else
-#include "stdint.h" 
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#define PACKIDENTIFIER "\nCCP4 packed image, X: %04d, Y: %04d\n"
-/* This string defines the start of a packed image. An image file is scanned
-   until this string is encountered, the size of the unpacked image is
-   determined from the values of X and Y (which are written out as formatted
-   ascii numbers), and the packed image is expected to start immediately after
-   the null-character ending the string. */
-
-#define V2IDENTIFIER "\nCCP4 packed image V2, X: %04d, Y: %04d\n"
-/* This string defines the start of a packed image. An image file is scanned
-   until this string is encountered, the size of the unpacked image is
-   determined from the values of X and Y (which are written out as formatted
-   ascii numbers), and the packed image is expected to start immediately after
-   the null-character ending the string. */
-
-#define PACKBUFSIZ BUFSIZ
-/* Size of internal buffer in which the packed array is stored during transit
-   form an unpacked image to a packed image on disk. It is set to the size
-   used by the buffered io-routines given in <stdio.h>, but it could be
-   anything. */
-
-#define DIFFBUFSIZ 16384L
-/* Size of the internal buffer in which the differences between neighbouring
-   pixels are stored prior to compression. The image is therefore compressed
-   in DIFFBUFSIZ chunks. Decompression does not need to know what DIFFBUFSIZ
-   was when the image was compressed. By increasing this value, the image
-   can be compressed into a packed image which is a few bytes smaller. Do
-   not decrease the value of DIFFBUFSIZ below 128L. */
-
-#define CCP4_PCK_BLOCK_HEADER_LENGTH 6
-#define CCP4_PCK_BLOCK_HEADER_LENGTH_V2 8
 /*array translating the number of errors per block*/
 static unsigned int CCP4_PCK_ERR_COUNT[] = {1,2,4,8,16,32,64,128};
 /*array translating the number of bits per error*/
@@ -127,29 +90,11 @@ static const unsigned long CCP4_PCK_MASK_32[]={0x00,
   0x1FFFF,   0x3FFFF,   0x7FFFF,   0xFFFFF,   0x1FFFFF,   0x3FFFFF,   0x7FFFFF,   0xFFFFFF,
   0x1FFFFFF, 0x3FFFFFF, 0x7FFFFFF, 0xFFFFFFF, 0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF};
 
-#define pfail_nonzero(a) if ((a)) return NULL;
-#define max(x, y) (((x) > (y)) ? (x) : (y))
-#define min(x, y) (((x) < (y)) ? (x) : (y))
-#define shift_left(x, n)  (((x) & CCP4_PCK_MASK_32[32 - (n)]) << (n))
-/* This macro is included because the C standard does not properly define a
-   left shift: on some machines the bits which are pushed out at the left are
-   popped back in at the right. By masking, the macro prevents this behaviour.
-   If you are sure that your machine does not pops bits back in, you can speed
-   up the code insignificantly by taking out the masking. */
 
-#define shift_right(x, n) (((x) >> (n)) & CCP4_PCK_MASK_32[32 - (n)])
-
-
-void *mar345_read_data(FILE *file, int ocount, int dim1, int dim2);
-void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2);
-void *ccp4_unpack(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
-void *ccp4_unpack_v2(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
-void *ccp4_unpack_string(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
-void *ccp4_unpack_v2_string(void *unpacked_array, void *packed, size_t dim1, size_t dim2, size_t max_num_int);
 
 void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
-	/* first process overflow bytes - for now we just ignore them
-	 * these are stored in 64 byte records*/
+	// first process overflow bytes - for now we just ignore them
+	// * these are stored in 64 byte records
 	int orecords=(int)(ocount/8.0+0.875);
 	int *odata,x,y,version=0;
 	char *c,cbuffer[64]="";
@@ -159,13 +104,11 @@ void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
 	odata=(int*)malloc(64*8*orecords);
 	if (!odata)
 	  return NULL;
-	//pfail_nonzero (orecords-fread(odata,64,orecords,file));
 	memcpy(odata, instring, 64*orecords);
 	t_ = instring + (64*orecords);
-	/* there is no stdout in a gui, sorry*/
-	//printf("have %d overflows in %d recs\n",ocount,orecords);
+	// there is no stdout in a gui, sorry
 
-	/* now after they have been read find the CCP4.....string and compare to dim1*/
+	// now after they have been read find the CCP4.....string and compare to dim1
 	c=cbuffer;
 	while((*c)!=EOF){
 
@@ -173,15 +116,14 @@ void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
 	   c=cbuffer;
 	  }
 
-	//  *c=(char)getc(file);
 	  *c = (char) *t_;
 	  t_++;
 
-	  /*set the next character to a \0 so the string is always terminated*/
+	  // set the next character to a \0 so the string is always terminated
 	  *(c+1)='\0';
 
 	  if (*c=='\n'){
-		/*check for the CCP- string*/
+		// check for the CCP- string
 		x=y=0;
 		sscanf(cbuffer,"CCP4 packed image, X: %04d, Y: %04d", &x,&y);
 		if (x==dim1 || y ==dim2){
@@ -198,12 +140,11 @@ void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
 	  } else
 		c++;
 	}
-	//printf("%d %d %d %d version %d\n",x,y,dim1,dim2,version);
-	/* allocate memory for the arrays*/
+	// allocate memory for the arrays
 	unpacked_array=(unsigned int*) malloc(sizeof(unsigned int)*dim1*dim2);
 	if (!unpacked_array)
 	  return NULL;
-	/*relay to whichever version of ccp4_unpack is appropriate*/
+	// relay to whichever version of ccp4_unpack is appropriate
 
 	switch(version){
 	  case 1:
@@ -215,16 +156,14 @@ void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
 	  default:
 		return NULL;
 	}
-	//printf("finished, %d \n",dim1*dim2*sizeof(unsigned int));
 
-	/*handle overflows*/
+	// handle overflows
 	while (ocount>0){
 	  unsigned int adress,value;
 	  adress=odata[2*ocount-2];
 	  if (adress){
 		value=odata[2*ocount-1];
-		/*adresses start at 1*/
-//		printf("address %d %d\n",address,value);
+		// adresses start at 1
 		unpacked_array[adress-1]=value;
 	  }
 	  ocount--;
@@ -232,14 +171,28 @@ void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
 	return unpacked_array;
 }
 
+// Henri start modif
+// void* mar345_read_data_2(const char* pFilePath, int ocount, int dim1, int dim2){
+//   FILE* f = fopen(pFilePath, "r");
+//   assert(f);
+//   if(!f){
+//     printf("can't find file %s. Unable to read mar345 data\n", pFilePath);
+//     return NULL;
+//   }
 
-/**unpack a new style mar345 image a'la what is done in CBFlib
- * assumes the file is already positioned after the ascii header
- * Perhaps the positioning should be done here as well.
- */
+//   void* res = mar345_read_data(f, ocount, dim1, dim2);
+//   fclose(f);
+//   return res;
+// }
+// Henri end modif
+
+// *unpack a new style mar345 image a'la what is done in CBFlib
+// * assumes the file is already positioned after the ascii header
+// * Perhaps the positioning should be done here as well.
+ 
 void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
-  /* first process overflow bytes - for now we just ignore them
-   * these are stored in 64 byte records*/
+  // first process overflow bytes - for now we just ignore them
+  // these are stored in 64 byte records
   int orecords=(int)(ocount/8.0+0.875);
   int *odata,x,y,version=0;
   char *c,cbuffer[64]="";
@@ -249,10 +202,9 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
   if (!odata)
     return NULL;
   pfail_nonzero (orecords-fread(odata,64,orecords,file));
-  /* there is no stdout in a gui, sorry
-  printf("have %d overflows in %d recs\n",ocount,orecords);
-  */ 
-  /* now after they have been read find the CCP4.....string and compare to dim1*/
+  //  there is no stdout in a gui, sorry
+   
+  // now after they have been read find the CCP4.....string and compare to dim1
   c=cbuffer;
   while((*c)!=EOF){
     
@@ -261,11 +213,11 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
     } 
     
     *c=(char)getc(file);
-    /*set the next character to a \0 so the string is always terminated*/
+    // set the next character to a \0 so the string is always terminated
     *(c+1)='\0';
     
     if (*c=='\n'){
-      /*check for the CCP- string*/
+      // check for the CCP- string
       x=y=0;
       sscanf(cbuffer,"CCP4 packed image, X: %04d, Y: %04d", &x,&y);
       if (x==dim1 || y ==dim2){
@@ -282,11 +234,11 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
     } else
       c++;
   }
-  /* allocate memory for the arrays*/
+   // allocate memory for the arrays
   unpacked_array=(unsigned int*) malloc(sizeof(unsigned int)*dim1*dim2);
   if (!unpacked_array)
     return NULL;
-  /*relay to whichever version of ccp4_unpack is appropriate*/
+  // relay to whichever version of ccp4_unpack is appropriate
   switch(version){
     case 1:
       ccp4_unpack(unpacked_array,(void*)file,dim1,dim2,0);
@@ -298,13 +250,13 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
       return NULL;
   }
   
-  /*handle overflows*/
+  // handle overflows
   while (ocount>0){
     unsigned int adress,value;
     adress=odata[2*ocount-2];
     if (adress){
       value=odata[2*ocount-1];
-      /*adresses start at 1*/
+      // adresses start at 1
       unpacked_array[adress-1]=value;
     }
     ocount--;
@@ -312,10 +264,10 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
   return unpacked_array;
 }
 
-/**unpack a ccp4-style packed array into the memory location pointed to by unpacked_array
- * if this is null allocate memory and return a pointer to it
- * \return NULL if unsuccessful
- * TODO change this to read directly from the FILE to not waste memory*/ 
+// *unpack a ccp4-style packed array into the memory location pointed to by unpacked_array
+// * if this is null allocate memory and return a pointer to it
+// * \return NULL if unsuccessful
+// * TODO change this to read directly from the FILE to not waste memory 
 void * ccp4_unpack(
     void *unpacked_array,
     void *packed,
@@ -329,32 +281,29 @@ void * ccp4_unpack(
   int x4,x3,x2,x1;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   FILE *instream=(FILE *)packed;
-  //printf("file ");
-  /*if no maximum integers are give read the whole nine yards*/
+  // if no maximum integers are give read the whole nine yards
   if (max_num_int==0){
     max_num_int=dim1*dim2;
   }
-  /*if a NULL pointer is passed allocate some new memory*/
+  // if a NULL pointer is passed allocate some new memory
   if (unpacked_array==NULL){
     if ( (unpacked_array=malloc(sizeof(unsigned int)*max_num_int))==NULL){
       errno=ENOMEM;
       return NULL;
     }
   }
-  /*packed bits always start at byte boundary after header*/
+  // packed bits always start at byte boundary after header
   bit_offset=0;
-  /*read the first byte of the current_block*/
+  // read the first byte of the current_block
   t_=(unsigned char)fgetc(instream);
 
-  //printf("%02X \n",t_);
-
-  /*while less than num ints have been unpacked*/
+  // while less than num ints have been unpacked
   i=0;  
   while(i<max_num_int){
     if (num_error==0){
-      /* at the beginning of block - read the 6 block header bits*/
+       // at the beginning of block - read the 6 block header bits
       if (bit_offset>=(8-CCP4_PCK_BLOCK_HEADER_LENGTH)){
-        /*we'll be reading past the next byte boundary*/
+        // we'll be reading past the next byte boundary
         t2=(unsigned char ) fgetc(instream);
         t_=(t_>>bit_offset) + ((unsigned char)t2 <<(8-bit_offset) );
         num_error=CCP4_PCK_ERR_COUNT[t_ & CCP4_PCK_MASK[3]];
@@ -367,22 +316,22 @@ void * ccp4_unpack(
         bit_offset+=CCP4_PCK_BLOCK_HEADER_LENGTH;
       } 
     } else {
-      /*reading the data in the block*/
+      // reading the data in the block
       while(num_error>0){
         err_val=0;
         read_bits=0;
         while(read_bits<num_bits){
           if (bit_offset+(num_bits-read_bits)>=8) {
-            /*read to next full byte boundary and convert*/
+            // read to next full byte boundary and convert
             _conv= (t_>>bit_offset) & CCP4_PCK_MASK[8-bit_offset];
             err_val|= (unsigned int) _conv << read_bits;
             read_bits+=(8-bit_offset);
-            /*have read to byte boundary - set offset to 0 and read next byte*/
+            // have read to byte boundary - set offset to 0 and read next byte
             bit_offset=0;
             t_=(unsigned char) fgetc(instream);
           }
           else {
-            /*must stop before next byte boundary - also this means that these are the last bits in the error*/
+            // must stop before next byte boundary - also this means that these are the last bits in the error
             _conv= (t_ >>bit_offset) & CCP4_PCK_MASK[num_bits-read_bits];
             err_val|= _conv<<read_bits;
             bit_offset+= (num_bits-read_bits);
@@ -390,16 +339,16 @@ void * ccp4_unpack(
           }
           
         }
-        /*if the msb is set, the error is negative -
-         * fill up with 1s to get a 2's compl representation*/
+        // if the msb is set, the error is negative -
+        // * fill up with 1s to get a 2's compl representation
         if (err_val & (1 << (num_bits-1)) )
         {
           err_val|= -1<<(num_bits-1);
         }
-        /*store the current value in the unpacked array*/ 
+        // store the current value in the unpacked array 
         if (i>dim1){
-          /*the current pixel is not in the first row - averaging is possible
-           *n.b. the averaging calculation is performed in the 2's complement domain*/
+          // the current pixel is not in the first row - averaging is possible
+          //  n.b. the averaging calculation is performed in the 2's complement domain
           x4=(int16_t) int_arr[i-1];
           x3=(int16_t) int_arr[i-dim1+1];
           x2=(int16_t) int_arr[i-dim1];
@@ -407,7 +356,7 @@ void * ccp4_unpack(
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
           i=i;
         } else if (i!=0){
-          /*current pixel is in the 1st row but is not first pixel*/
+          // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
         } else {
           int_arr[i]=(uint16_t) err_val;
@@ -415,7 +364,7 @@ void * ccp4_unpack(
         i++;
         num_error--;
       } 
-    }/*else*/
+    }// else
   }
   return (void *) unpacked_array;
 }
@@ -435,19 +384,11 @@ void * ccp4_unpack_string(
   unsigned int *int_arr;
   char *instream = (char *)packed;
 
-//  printf("string ");
-//  int toto;
-//  for (toto=0;toto<16;toto++){
-//	  printf("%02X ",(unsigned char)instream[toto]);
-//  }
-//  printf("\n");
-
-
-  /*if no maximum integers are give read the whole nine yards*/
+  // if no maximum integers are give read the whole nine yards
   if (max_num_int==0){
     max_num_int=dim1*dim2;
   }
-  /*if a NULL pointer is passed allocate some new memory*/
+  // if a NULL pointer is passed allocate some new memory
   if (unpacked_array==NULL){
     if ( (unpacked_array=malloc(sizeof(unsigned int)*max_num_int))==NULL){
       errno=ENOMEM;
@@ -456,19 +397,19 @@ void * ccp4_unpack_string(
   }
   int_arr = (unsigned int *) unpacked_array;
 
-  /*packed bits always start at byte boundary after header*/
+  // packed bits always start at byte boundary after header
   bit_offset=0;
-  /*read the first byte of the current_block*/
+  // read the first byte of the current_block
   t_=(unsigned char)*instream;
   instream++;
-  //printf("%02X \n",t_);
-  /*while less than num ints have been unpacked*/
+  // printf("%02X \n",t_);
+  // while less than num ints have been unpacked
   i=0;
   while(i<max_num_int){
     if (num_error==0){
-      /* at the beginning of block - read the 6 block header bits*/
+      // at the beginning of block - read the 6 block header bits
       if (bit_offset>=(8-CCP4_PCK_BLOCK_HEADER_LENGTH)){
-        /*we'll be reading past the next byte boundary*/
+        // we'll be reading past the next byte boundary
         t2=(unsigned char ) *instream;
         instream++;
         t_=(t_>>bit_offset) + ((unsigned char)t2 <<(8-bit_offset) );
@@ -482,23 +423,23 @@ void * ccp4_unpack_string(
         bit_offset+=CCP4_PCK_BLOCK_HEADER_LENGTH;
       }
     } else {
-      /*reading the data in the block*/
+      // reading the data in the block
       while(num_error>0){
         err_val=0;
         read_bits=0;
         while(read_bits<num_bits){
           if (bit_offset+(num_bits-read_bits)>=8) {
-            /*read to next full byte boundary and convert*/
+            // read to next full byte boundary and convert
             _conv= (t_>>bit_offset) & CCP4_PCK_MASK[8-bit_offset];
             err_val|= (unsigned int) _conv << read_bits;
             read_bits+=(8-bit_offset);
-            /*have read to byte boundary - set offset to 0 and read next byte*/
+            // have read to byte boundary - set offset to 0 and read next byte
             bit_offset=0;
             t_=(unsigned char) *instream;
             instream++;
           }
           else {
-            /*must stop before next byte boundary - also this means that these are the last bits in the error*/
+            // must stop before next byte boundary - also this means that these are the last bits in the error
             _conv= (t_ >>bit_offset) & CCP4_PCK_MASK[num_bits-read_bits];
             err_val|= _conv<<read_bits;
             bit_offset+= (num_bits-read_bits);
@@ -506,16 +447,16 @@ void * ccp4_unpack_string(
           }
 
         }
-        /*if the msb is set, the error is negative -
-         * fill up with 1s to get a 2's compl representation*/
+        // if the msb is set, the error is negative -
+        // fill up with 1s to get a 2's compl representation
         if (err_val & (1 << (num_bits-1)) )
         {
           err_val|= -1<<(num_bits-1);
         }
-        /*store the current value in the unpacked array*/
+        // store the current value in the unpacked array
         if (i>dim1){
-          /*the current pixel is not in the first row - averaging is possible
-           *n.b. the averaging calculation is performed in the 2's complement domain*/
+          // the current pixel is not in the first row - averaging is possible
+          //  n.b. the averaging calculation is performed in the 2's complement domain
           x4=(int16_t) int_arr[i-1];
           x3=(int16_t) int_arr[i-dim1+1];
           x2=(int16_t) int_arr[i-dim1];
@@ -523,7 +464,7 @@ void * ccp4_unpack_string(
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
           i=i;
         } else if (i!=0){
-          /*current pixel is in the 1st row but is not first pixel*/
+          // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
         } else {
           int_arr[i]=(uint16_t) err_val;
@@ -531,7 +472,7 @@ void * ccp4_unpack_string(
         i++;
         num_error--;
       }
-    }/*else*/
+    } //else
   }
   return (void *) unpacked_array;
 }
@@ -550,28 +491,28 @@ void * ccp4_unpack_v2(
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   FILE *instream=(FILE *)packed;
   
-  /*if no maximum integers are give read the whole nine yards*/
+  // if no maximum integers are give read the whole nine yards
   if (max_num_int==0){
     max_num_int=dim1*dim2;
   }
-  /*if a NULL pointer is passed allocate some new memory*/
+  // if a NULL pointer is passed allocate some new memory
   if (unpacked_array==NULL){
     if ( (unpacked_array=malloc(sizeof(unsigned int)*max_num_int))==NULL){
       errno=ENOMEM;
       return NULL;
     }
   }
-  /*packed bits always start at byte boundary after header*/
+  // packed bits always start at byte boundary after header
   bit_offset=0;
-  /*read the first byte of the current_block*/
+  // read the first byte of the current_block
   t_=(unsigned char)fgetc(instream);
-  /*while less than num ints have been unpacked*/
+  // while less than num ints have been unpacked
   i=0;  
   while(i<max_num_int){
     if (num_error==0){
-      /* at the beginning of block - read the 6 block header bits*/
+       // at the beginning of block - read the 6 block header bits
       if (bit_offset>=(8-CCP4_PCK_BLOCK_HEADER_LENGTH_V2)){
-        /*we'll be reading past the next byte boundary*/
+        // we'll be reading past the next byte boundary
         t2=(unsigned char ) fgetc(instream);
         t_=(t_>>bit_offset) + ((unsigned char)t2 <<(8-bit_offset) );
         num_error=CCP4_PCK_ERR_COUNT_V2[t_ & CCP4_PCK_MASK[4]];
@@ -584,22 +525,22 @@ void * ccp4_unpack_v2(
         bit_offset+=CCP4_PCK_BLOCK_HEADER_LENGTH_V2;
       } 
     } else {
-      /*reading the data in the block*/
+      // reading the data in the block
       while(num_error>0){
         err_val=0;
         read_bits=0;
         while(read_bits<num_bits){
           if (bit_offset+(num_bits-read_bits)>=8) {
-            /*read to next full byte boundary and convert*/
+            // read to next full byte boundary and convert
             _conv= (t_>>bit_offset) & CCP4_PCK_MASK[8-bit_offset];
             err_val|= (unsigned int) _conv << read_bits;
             read_bits+=(8-bit_offset);
-            /*have read to byte boundary - set offset to 0 and read next byte*/
+            // have read to byte boundary - set offset to 0 and read next byte
             bit_offset=0;
             t_=(unsigned char) fgetc(instream);
           }
           else {
-            /*must stop before next byte boundary - also this means that these are the last bits in the error*/
+            // must stop before next byte boundary - also this means that these are the last bits in the error
             _conv= (t_ >>bit_offset) & CCP4_PCK_MASK[num_bits-read_bits];
             err_val|= _conv<<read_bits;
             bit_offset+= (num_bits-read_bits);
@@ -607,16 +548,16 @@ void * ccp4_unpack_v2(
           }
           
         }
-        /*if the msb is set, the error is negative -
-         * fill up with 1s to get a 2's compl representation*/
+        // if the msb is set, the error is negative -
+          // fill up with 1s to get a 2's compl representation
         if (err_val & (1 << (num_bits-1)) )
         {
           err_val|= -1<<(num_bits-1);
         }
-        /*store the current value in the unpacked array*/ 
+        // store the current value in the unpacked array 
         if (i>dim1){
-          /*the current pixel is not in the first row - averaging is possible
-           *n.b. the averaging calculation is performed in the 2's complement domain*/
+          // the current pixel is not in the first row - averaging is possible
+          // n.b. the averaging calculation is performed in the 2's complement domain
           x4=(int16_t) int_arr[i-1];
           x3=(int16_t) int_arr[i-dim1+1];
           x2=(int16_t) int_arr[i-dim1];
@@ -624,7 +565,7 @@ void * ccp4_unpack_v2(
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
           i=i;
         } else if (i!=0){
-          /*current pixel is in the 1st row but is not first pixel*/
+          // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
         } else {
           int_arr[i]=(uint16_t) err_val;
@@ -632,7 +573,7 @@ void * ccp4_unpack_v2(
         i++;
         num_error--;
       } 
-    }/*else*/
+    } // else
   }
   return (void *) unpacked_array;
 }
@@ -649,29 +590,29 @@ void * ccp4_unpack_v2_string(
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   char *instream=(char *)packed;
 
-  /*if no maximum integers are give read the whole nine yards*/
+  // if no maximum integers are give read the whole nine yards
   if (max_num_int==0){
     max_num_int=dim1*dim2;
   }
-  /*if a NULL pointer is passed allocate some new memory*/
+  // if a NULL pointer is passed allocate some new memory
   if (unpacked_array==NULL){
     if ( (unpacked_array=malloc(sizeof(unsigned int)*max_num_int))==NULL){
       errno=ENOMEM;
       return NULL;
     }
   }
-  /*packed bits always start at byte boundary after header*/
+  // packed bits always start at byte boundary after header
   bit_offset=0;
-  /*read the first byte of the current_block*/
+  // read the first byte of the current_block
   t_=(unsigned char)*instream;
   instream++;
-  /*while less than num ints have been unpacked*/
+  // while less than num ints have been unpacked
   i=0;
   while(i<max_num_int){
     if (num_error==0){
-      /* at the beginning of block - read the 6 block header bits*/
+       // at the beginning of block - read the 6 block header bits
       if (bit_offset>=(8-CCP4_PCK_BLOCK_HEADER_LENGTH_V2)){
-        /*we'll be reading past the next byte boundary*/
+        // we'll be reading past the next byte boundary
         t2=(unsigned char ) *instream;
         instream++;
         t_=(t_>>bit_offset) + ((unsigned char)t2 <<(8-bit_offset) );
@@ -685,23 +626,23 @@ void * ccp4_unpack_v2_string(
         bit_offset+=CCP4_PCK_BLOCK_HEADER_LENGTH_V2;
       }
     } else {
-      /*reading the data in the block*/
+      // reading the data in the block
       while(num_error>0){
         err_val=0;
         read_bits=0;
         while(read_bits<num_bits){
           if (bit_offset+(num_bits-read_bits)>=8) {
-            /*read to next full byte boundary and convert*/
+            // read to next full byte boundary and convert
             _conv= (t_>>bit_offset) & CCP4_PCK_MASK[8-bit_offset];
             err_val|= (unsigned int) _conv << read_bits;
             read_bits+=(8-bit_offset);
-            /*have read to byte boundary - set offset to 0 and read next byte*/
+            // have read to byte boundary - set offset to 0 and read next byte
             bit_offset=0;
             t_=(unsigned char) *instream;
             instream++;
           }
           else {
-            /*must stop before next byte boundary - also this means that these are the last bits in the error*/
+            // must stop before next byte boundary - also this means that these are the last bits in the error
             _conv= (t_ >>bit_offset) & CCP4_PCK_MASK[num_bits-read_bits];
             err_val|= _conv<<read_bits;
             bit_offset+= (num_bits-read_bits);
@@ -709,16 +650,16 @@ void * ccp4_unpack_v2_string(
           }
 
         }
-        /*if the msb is set, the error is negative -
-         * fill up with 1s to get a 2's compl representation*/
+        // if the msb is set, the error is negative -
+        // fill up with 1s to get a 2's compl representation
         if (err_val & (1 << (num_bits-1)) )
         {
           err_val|= -1<<(num_bits-1);
         }
-        /*store the current value in the unpacked array*/
+        // store the current value in the unpacked array
         if (i>dim1){
-          /*the current pixel is not in the first row - averaging is possible
-           *n.b. the averaging calculation is performed in the 2's complement domain*/
+          // the current pixel is not in the first row - averaging is possible
+          // n.b. the averaging calculation is performed in the 2's complement domain
           x4=(int16_t) int_arr[i-1];
           x3=(int16_t) int_arr[i-dim1+1];
           x2=(int16_t) int_arr[i-dim1];
@@ -726,7 +667,7 @@ void * ccp4_unpack_v2_string(
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
           i=i;
         } else if (i!=0){
-          /*current pixel is in the 1st row but is not first pixel*/
+          // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
         } else {
           int_arr[i]=(uint16_t) err_val;
@@ -734,19 +675,20 @@ void * ccp4_unpack_v2_string(
         i++;
         num_error--;
       }
-    }/*else*/
+    } // else
   }
   return (void *) unpacked_array;
 }
-/*
-#############################################################################
-################### Everything to write Mar345 ##############################
-#############################################################################
-*/
 
-/* Returns the number of bits neccesary to encode the longword-array 'chunk'
-   of size 'n' The size in bits of one encoded element can be 0, 4, 5, 6, 7,
-   8, 16 or 32. */
+
+// #############################################################################
+// ################### Everything to write Mar345 ##############################
+// #############################################################################
+
+
+// Returns the number of bits neccesary to encode the longword-array 'chunk'
+//   of size 'n' The size in bits of one encoded element can be 0, 4, 5, 6, 7,
+//   8, 16 or 32. 
 int bits(		int32_t *chunk,		int n){
   int size, maxsize, i;
 
@@ -771,13 +713,13 @@ int bits(		int32_t *chunk,		int n){
   return(size);
 }
 
-/* Calculates the difference of WORD-sized pixels of an image with the
-   truncated mean value of four of its neighbours. 'x' is the number of fast
-   coordinates of the image 'img', 'y' is the number of slow coordinates,
-   'diffs' will contain the differences, 'done' defines the index of the pixel
-   where calculating the differences should start. A pointer to the last
-   difference is returned. Maximally DIFFBUFSIZ differences are returned in
-   'diffs'.*/
+// Calculates the difference of WORD-sized pixels of an image with the
+//   truncated mean value of four of its neighbours. 'x' is the number of fast
+//   coordinates of the image 'img', 'y' is the number of slow coordinates,
+//   'diffs' will contain the differences, 'done' defines the index of the pixel
+//   where calculating the differences should start. A pointer to the last
+//   difference is returned. Maximally DIFFBUFSIZ differences are returned in
+//   'diffs'.
 int *diff_words(
 		short int *word,
 		int x,
@@ -806,13 +748,13 @@ int *diff_words(
   return(--diffs);
 }
 
-/* Pack 'n' WORDS, starting with 'lng[0]' into the packed array 'target'. The
-   elements of such a packed array do not obey BYTE-boundaries, but are put one
-   behind the other without any spacing. Only the 'bitsiz' number of least
-   significant bits are used. The starting bit of 'target' is 'bit' (bits range
-   from 0 to 7). After completion of 'pack_words()', both '**target' and '*bit'
-   are updated and define the next position in 'target' from which packing
-   could continue. */
+// Pack 'n' WORDS, starting with 'lng[0]' into the packed array 'target'. The
+//   elements of such a packed array do not obey BYTE-boundaries, but are put one
+//   behind the other without any spacing. Only the 'bitsiz' number of least
+//   significant bits are used. The starting bit of 'target' is 'bit' (bits range
+//   from 0 to 7). After completion of 'pack_words()', both '**target' and '*bit'
+//   are updated and define the next position in 'target' from which packing
+//   could continue. 
 void pack_longs(int32_t *lng,
 		int n,
 		char **target,
@@ -851,10 +793,10 @@ void pack_longs(int32_t *lng,
 }
 
 
-/* Packs 'nmbr' LONGs starting at 'lng[0]' into a packed array of 'bitsize'
-   sized elements. If the internal buffer in which the array is packed is full,
-   it is flushed to 'file', making room for more of the packed array. If
-   ('lng == NULL'), the buffer is flushed a swell. */
+// Packs 'nmbr' LONGs starting at 'lng[0]' into a packed array of 'bitsize'
+//   sized elements. If the internal buffer in which the array is packed is full,
+//   it is flushed to 'file', making room for more of the packed array. If
+//   ('lng == NULL'), the buffer is flushed a swell. 
 void pack_chunk(int32_t *lng,
 		int nmbr,
 		int bitsize,
@@ -888,7 +830,7 @@ void pack_chunk(int32_t *lng,
     buffer = NULL;}}
 
 
-/* Pack image 'img', containing 'x * y' WORD-sized pixels into 'filename'. */
+// Pack image 'img', containing 'x * y' WORD-sized pixels into 'filename'. 
 void pack_wordimage_copen(short int *img,
 		int x,
 		int y,
