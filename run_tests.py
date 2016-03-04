@@ -47,8 +47,10 @@ try:
     import importlib
 except:
     importer = __import__
+    old_importer = True
 else:
     importer = importlib.import_module
+    old_importer = False
 
 
 logging.basicConfig(level=logging.WARNING)
@@ -287,11 +289,10 @@ test_module_name = PROJECT_NAME + '.test'
 logger.info('Import %s', test_module_name)
 test_module = importer(test_module_name)
 utilstest = importer(test_module_name + ".utilstest")
-if importer == __import__:
+if old_importer:
     test_module = getattr(test_module, "test")
-    UtilsTest = getattr(utilstest, "test.utilstest.UtilsTest")
-else:
-    UtilsTest = getattr(utilstest, "UtilsTest")
+    utilstest = getattr(utilstest, "test.utilstest")
+UtilsTest = getattr(utilstest, "UtilsTest")
 UtilsTest.image_home = os.path.join(PROJECT_DIR, 'testimages')
 UtilsTest.testimages = os.path.join(PROJECT_DIR, "all_testimages.json")
 
