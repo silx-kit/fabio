@@ -44,7 +44,7 @@ install:
   - "python --version"
   - "python -c \"print(tuple.__itemsize__*8)\""
   # Install the build and runtime dependencies of the project.
-  - "%CMD_IN_ENV% pip install --upgrade pip"
+  - "%CMD_IN_ENV% pip install --upgrade pip --user"
   - "%CMD_IN_ENV% pip install --trusted-host www.edna-site.org -r requirements_appveyor.txt"
   - "%CMD_IN_ENV% python setup.py build test"
   - "%CMD_IN_ENV% python setup.py bdist_wheel bdist_msi"
