@@ -70,16 +70,23 @@ def _copy_files(source, dest, extn):
         if clf.endswith(extn) and clf not in os.listdir(dest):
             _copy(os.path.join(full_src, clf), os.path.join(dest, clf))
 
+if sys.version_info[0] >= 3:  # Python3
+    def execfile(fullpath):
+        "Python3 implementation for execfile"
+        with open(fullpath) as f:
+            code = compile(f.read(), fullpath, 'exec')
+            exec(code)
+
 home = os.path.dirname(os.path.abspath(__file__))
 SCRIPTSPATH = os.path.join(home,
                            'build', _distutils_scripts_name())
 LIBPATH = (os.path.join(home,
                        'build', _distutils_dir_name('lib')))
 
-if (not os.path.isdir(SCRIPTSPATH)) or (not os.path.isdir(LIBPATH)):
-    build = subprocess.Popen([sys.executable, "setup.py", "build"],
-                     shell=False, cwd=os.path.dirname(__file__))
-    print("Build process ended with rc= %s" % build.wait())
+# if (not os.path.isdir(SCRIPTSPATH)) or (not os.path.isdir(LIBPATH)):
+build = subprocess.Popen([sys.executable, "setup.py", "build"],
+                shell=False, cwd=os.path.dirname(os.path.abspath(__file__)))
+print("Build process ended with rc= %s" % build.wait())
 #_copy_files("openCL", os.path.join(LIBPATH, "pyFAI"), ".cl")
 #_copy_files("gui", os.path.join(LIBPATH, "pyFAI"), ".ui")
 #_copy_files("calibration", os.path.join(LIBPATH, "pyFAI", "calibration"), ".D")
@@ -109,13 +116,10 @@ if __name__ == "__main__":
         execfile(fullpath)
     else:
         if os.path.exists(script):
-            with open(script) as f:
-                code = compile(f.read(), script, 'exec')
-                exec(code)
+            execfile(script)
         else:
             for dirname in os.environ.get("PATH", "").split(os.pathsep):
                 fullpath = os.path.join(dirname, script)
                 if os.path.exists(fullpath):
                     execfile(fullpath)
-                    break
 
