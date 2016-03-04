@@ -50,7 +50,7 @@ install:
   - "%CMD_IN_ENV% python setup.py bdist_wheel bdist_msi"
   - ps: "ls dist"
   # Install the generated wheel package to test it
-  - "%CMD_IN_ENV% pip install --pre --find-links dist/ --trusted-host www.edna-site.org --find-links http://www.edna-site.org/pub/wheelhouse fabio"
+  - "%CMD_IN_ENV% pip install --pre --find-links dist/ fabio"
 
 # Not a .NET project, we build fabio in the install step instead
 build: false
@@ -58,8 +58,8 @@ build: false
 test_script:
   # Change to a non-source folder to make sure we run the tests on the
   # installed library.
-  - "%CMD_IN_ENV% python run_test.py -i"
-  - "%CMD_IN_ENV% python run_test.py"
+  - "%CMD_IN_ENV% python run_tests.py -i"
+  - "%CMD_IN_ENV% python run_tests.py"
   - "mkdir empty_folder"
   - "cd empty_folder"
 
