@@ -3,7 +3,7 @@
 
 """
 
-Bootstrap helps you to test FabIO scripts without installing them 
+Bootstrap helps you to test FabIO scripts without installing them
 by patching your PYTHONPATH on the fly
 
 example: ./bootstrap.py ipython
@@ -13,7 +13,7 @@ example: ./bootstrap.py ipython
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "27/11/2014"
+__date__ = "04/03/2016"
 
 TARGET = "fabio"
 
@@ -61,7 +61,7 @@ def _get_available_scripts(path):
 
 def _copy_files(source, dest, extn):
     """
-    copy all files with a given extension from source to destination 
+    copy all files with a given extension from source to destination
     """
     if not os.path.isdir(dest):
         os.makedirs(dest)
@@ -109,7 +109,9 @@ if __name__ == "__main__":
         execfile(fullpath)
     else:
         if os.path.exists(script):
-            execfile(script)
+            with open(script) as f:
+                code = compile(f.read(), script, 'exec')
+                exec(code)
         else:
             for dirname in os.environ.get("PATH", "").split(os.pathsep):
                 fullpath = os.path.join(dirname, script)
