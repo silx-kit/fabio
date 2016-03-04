@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "03/03/2016"
+__date__ = "04/03/2016"
 __license__ = "MIT"
 
 import distutils.util
@@ -280,19 +280,26 @@ if options.memprofile:
 else:
     runner = unittest.TextTestRunner()
 
-logger.warning(
-    "Test %s %s from %s", PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH)
+logger.warning("Test %s %s from %s",
+               PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH)
+
+test_module_name = PROJECT_NAME + '.test'
+logger.info('Import %s', test_module_name)
+test_module = importer(test_module_name)
+utilstest = importer(test_module_name + ".utilstest")
+if importer == __import__:
+    test_module = getattr(test_module, "test")
+    UtilsTest = getattr(utilstest, "test.utilstest.UtilsTest")
+else:
+    UtilsTest = getattr(utilstest, "UtilsTest")
+UtilsTest.image_home = os.path.join(PROJECT_DIR, 'testimages')
+UtilsTest.testimages = os.path.join(PROJECT_DIR, "all_testimages.json")
 
 test_suite = unittest.TestSuite()
+
 if not options.test_name:
     # Do not use test loader to avoid cryptic exception
     # when an error occur during import
-    test_module_name = PROJECT_NAME + '.test'
-    logger.info('Import %s', test_module_name)
-    test_module = importer(test_module_name)
-    if importer == __import__:
-        test_module = getattr(test_module, "test")
-    print(dir(test_module))
     project_test_suite = getattr(test_module, 'suite')
     test_suite.addTest(project_test_suite())
 else:

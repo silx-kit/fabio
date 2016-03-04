@@ -20,9 +20,9 @@
 #define CPP4_PACK_H
 
 #ifndef _MSC_VER
-#include <stdint.h> 
+#include <stdint.h>
 #else
-#include "stdint.h" 
+#include "msvc/stdint.h"
 #endif
 
 #include <stdio.h>
@@ -39,20 +39,20 @@
 //   until this string is encountered, the size of the unpacked image is
 //   determined from the values of X and Y (which are written out as formatted
 //   ascii numbers), and the packed image is expected to start immediately after
-//   the null-character ending the string. 
+//   the null-character ending the string.
 
 #define V2IDENTIFIER "\nCCP4 packed image V2, X: %04d, Y: %04d\n"
 // This string defines the start of a packed image. An image file is scanned
 //   until this string is encountered, the size of the unpacked image is
 //   determined from the values of X and Y (which are written out as formatted
 //   ascii numbers), and the packed image is expected to start immediately after
-//   the null-character ending the string. 
+//   the null-character ending the string.
 
 #define PACKBUFSIZ BUFSIZ
 // Size of internal buffer in which the packed array is stored during transit
 //   form an unpacked image to a packed image on disk. It is set to the size
 //   used by the buffered io-routines given in <stdio.h>, but it could be
-//   anything. 
+//   anything.
 
 #define DIFFBUFSIZ 16384L
 // Size of the internal buffer in which the differences between neighbouring
@@ -60,7 +60,7 @@
 //   in DIFFBUFSIZ chunks. Decompression does not need to know what DIFFBUFSIZ
 //   was when the image was compressed. By increasing this value, the image
 //   can be compressed into a packed image which is a few bytes smaller. Do
-//   not decrease the value of DIFFBUFSIZ below 128L. 
+//   not decrease the value of DIFFBUFSIZ below 128L.
 
 
 #define pfail_nonzero(a) if ((a)) return NULL;
@@ -73,7 +73,7 @@
 //   left shift: on some machines the bits which are pushed out at the left are
 //   popped back in at the right. By masking, the macro prevents this behaviour.
 //   If you are sure that your machine does not pops bits back in, you can speed
-//   up the code insignificantly by taking out the masking. 
+//   up the code insignificantly by taking out the masking.
 
 // read data from a file
 void* mar345_read_data(FILE *file, int ocount, int dim1, int dim2);
