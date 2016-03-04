@@ -201,7 +201,8 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info('Project name: %s' % PROJECT_NAME)
 
-
+if sys.hexversion<34013184: #python2.7
+    sys.path.append("third_party")
 from argparse import ArgumentParser
 
 parser = ArgumentParser(description='Run the tests.')
@@ -288,7 +289,10 @@ if not options.test_name:
     # when an error occur during import
     test_module_name = PROJECT_NAME + '.test'
     logger.info('Import %s', test_module_name)
-    test_module = importlib.import_module(test_module_name)
+    test_module = importer(test_module_name)
+    if importer == __import__:
+        test_module = getattr(test_module, "test")
+    print(dir(test_module))
     project_test_suite = getattr(test_module, 'suite')
     test_suite.addTest(project_test_suite())
 else:
