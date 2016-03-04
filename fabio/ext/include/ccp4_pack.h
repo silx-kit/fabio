@@ -22,7 +22,7 @@
 #ifndef _MSC_VER
 #include <stdint.h>
 #else
-#include "msvc/stdint.h"
+#include "msvc\\stdint.h"
 #endif
 
 #include <stdio.h>
