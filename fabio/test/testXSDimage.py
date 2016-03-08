@@ -80,9 +80,10 @@ class testXSD(unittest.TestCase):
         """ Tests that 2 matrixes are invert """
         m1 = fabio.open(self.fn["XSDataImage.xml"])
         m2 = fabio.open(self.fn["XSDataImageInv.xml"])
-        self.assertAlmostEqual(
-        abs((numpy.matrix(m1.data) * numpy.matrix(m2.data)) - numpy.identity(m1.data.shape[0])).max(),
-        0, 3, "matrices are invert of each other")
+        delta = abs((numpy.matrix(m1.data) * numpy.matrix(m2.data)) - numpy.identity(m1.data.shape[0])).max()
+        if delta >= 1e-3:
+            logger.error("Matrices are not invert of each other !!! prod = %s", numpy.matrix(m1.data) * numpy.matrix(m2.data))
+        self.assert_(delta < 1e-3, "matrices are invert of each other")
 
 
 def suite():

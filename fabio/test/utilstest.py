@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/03/2016"
+__date__ = "08/03/2016"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -75,11 +75,12 @@ class UtilsTest(object):
     name = PACKAGE
     try:
         fabio = __import__("%s.directories" % name)
-        directories = fabio.directories
-        image_home = directories.testimages
+        image_home = fabio.directories.testimages
     except Exception as err:
         logger.warning("in loading directories %s", err)
         image_home = None
+    else:
+        image_home = fabio.directories.testimages
     if image_home is None:
         image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, getpass.getuser()))
         if not os.path.exists(image_home):
@@ -129,12 +130,15 @@ class UtilsTest(object):
         For the RedMine forge, the filename contains a directory name that is removed
         @return: full path of the locally saved file
         """
-        cls.ALL_DOWNLOADED_FILES.add(imagename)
-        try:
-            with open(cls.testimages, "w") as fp:
-                json.dump(list(cls.ALL_DOWNLOADED_FILES), fp, indent=4)
-        except IOError:
-            logger.debug("Unable to save JSON list")
+        if imagename not in cls.ALL_DOWNLOADED_FILES:
+            cls.ALL_DOWNLOADED_FILES.add(imagename)
+            image_list = list(cls.ALL_DOWNLOADED_FILES)
+            image_list.sort()
+            try:
+                with open(cls.testimages, "w") as fp:
+                    json.dump(image_list, fp, indent=4)
+            except IOError:
+                logger.debug("Unable to save JSON list")
         baseimage = os.path.basename(imagename)
         logger.info("UtilsTest.getimage('%s')" % baseimage)
         if not os.path.exists(cls.image_home):
