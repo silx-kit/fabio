@@ -22,22 +22,22 @@ Copyright: 2011 Jerome Kieffer <jerome.kieffer@esrf.fr>
            2013-2014 Picca Frederic-Emmanuel <picca@debian.org>
 License: GPL-2.0+
 
-Files: fabio-src/cbfimage.py
-       fabio-src/hdf5image.py
-       fabio-src/mrcimage.py
-       fabio-src/tifimage.py
-       fabio-src/xsdimage.py
-       src/byte_offset.*
-Copyright: 2011-2014 Jerome Kieffer
+Files: fabio/cbfimage.py
+       fabio/hdf5image.py
+       fabio/mrcimage.py
+       fabio/tifimage.py
+       fabio/xsdimage.py
+       fabio/ext/byte_offset.*
+Copyright: 2011-2016 Jerome Kieffer
                      European Synchrotron Radiation Facility
 License: GPL-3.0+
 
-Files: fabio-src/pixiimage.py
+Files: fabio/pixiimage.py
 Copyright: 2014 Jon Wright, Jérôme Kieffer
                 European Synchrotron Radiation Facility
 License: GPL-3.0+
 
-Files: fabio-src/raxisimage.py
+Files: fabio/raxisimage.py
 Copyright: 2013-2014 Brian R. Pauw <brian@stack.nl>
 License: GPL-3.0+
 
@@ -46,13 +46,14 @@ Copyright: 2012 Gael Goret <gael.goret@esrf.fr>
                 European Synchrotron Radiation Facility
 License: GPL-3.0+
 
-Files: src/*
+Files: fabio/*
 Copyright: 2012-2015 Jerome Kieffer and Gael Goret
            European Synchrotron Radiation Facility
-License: MIT
+License: GPL
 
 
-Files: src/ccp4_pack.*
+Files: fabio/ext/src/ccp4_pack.c
+       fabio/ext/inlcude/ccp4_pack.h
 Copyright: 1995 Jan Pieter Abrahams
                 MRC Cambridge (UK)
            2007-2009 Henning O. Sorensen & Erik Knudsen
@@ -62,9 +63,9 @@ Copyright: 1995 Jan Pieter Abrahams
 License: LGPL-3.0+
 
 
-Files: test/utilstest.py
-Copyright: 2011 European Synchrotron Radiation Facility
-License: LGPL-3.0+
+Files: fabio/test/utilstest.py
+Copyright: 2010-2016 European Synchrotron Radiation Facility
+License: MIT
 
 Files: src/stdint.h
 Copyright: 2006-2008 Alexander Chemeris
