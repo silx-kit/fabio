@@ -33,7 +33,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "03/03/2016"
+__date__ = "21/03/2016"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -148,7 +148,7 @@ def decZlib(stream):
     return zlib.decompress(stream)
 
 
-def decByteOffset_numpy(stream, size=None):
+def decByteOffset_numpy(stream, size=None, dtype="int64"):
     """
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
@@ -191,10 +191,10 @@ def decByteOffset_numpy(stream, size=None):
         for res in listnpa:
             if res.dtype != numpy.int8:
                 res.byteswap(True)
-    return (numpy.hstack(listnpa)).astype("int64").cumsum()
+    return numpy.ascontiguousarray(numpy.hstack(listnpa), dtype).cumsum()
 
 
-def decByteOffset_cython(stream, size=None):
+def decByteOffset_cython(stream, size=None, dtype="int64"):
     """
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
@@ -206,12 +206,15 @@ def decByteOffset_cython(stream, size=None):
     """
     logger.debug("CBF decompression using cython")
     try:
-        from .ext.byte_offset import analyseCython
+        from .ext import byte_offset
     except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method: %s", error)
-        return decByteOffset_numpy(stream, size)
+        return decByteOffset_numpy(stream, size, dtype=dtype)
     else:
-        return analyseCython(stream, size)
+        if dtype == "int32":
+            return byte_offset.analyseCython32(stream, size)
+        else:
+            return byte_offset.analyseCython(stream, size)
 
 decByteOffset = decByteOffset_cython
 

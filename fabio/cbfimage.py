@@ -231,7 +231,7 @@ class CbfImage(FabioImage):
                     logger.error("Checksum of binary data mismatch: expected %s, got %s" % (ref, obt))
 
         if self.header["conversions"] == "x-CBF_BYTE_OFFSET":
-            self.data = numpy.ascontiguousarray(self._readbinary_byte_offset(binary_data), self.bytecode).reshape((self.dim2, self.dim1))
+            self.data = numpy.ascontiguousarray(self._readbinary_byte_offset(binary_data,), self.bytecode).reshape((self.dim2, self.dim1))
         else:
             raise Exception(IOError, "Compression scheme not yet supported, please contact the author")
 
@@ -249,7 +249,7 @@ class CbfImage(FabioImage):
         @return: a linear numpy array without shape and dtype set
         @rtype: numpy array
         """
-        myData = decByteOffset(raw_bytes, size=self.dim1 * self.dim2)
+        myData = decByteOffset(raw_bytes, size=self.dim1 * self.dim2, dtype=self.bytecode)
         assert len(myData) == self.dim1 * self.dim2
         return myData
 

@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2010-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/10/2015" 
+__date__ = "21/03/2016" 
 
 
 cimport numpy
@@ -76,7 +76,7 @@ def analyseCython(bytes stream not None, size=None):
         csize = lenStream
     else:
         csize = < int > size
-    cdef numpy.ndarray[numpy.int64_t, ndim = 1] dataOut = numpy.zeros(csize, dtype=numpy.int64)
+    cdef numpy.ndarray[numpy.int64_t, ndim = 1] dataOut = numpy.empty(csize, dtype=numpy.int64)
     with nogil:
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):
@@ -106,6 +106,67 @@ def analyseCython(bytes stream not None, size=None):
                 else:
                     tmp64a = cstream[i + 1]
                     tmp64  = <numpy.int8_t> cstream[i + 2];
+
+                    current = (tmp64 << 8) | (tmp64a);
+                    i += 3
+            else:
+                current = (<numpy.int8_t> cstream[i])
+                i += 1
+            last += current
+            dataOut[j] = last
+            j += 1
+
+    return dataOut[:j]
+
+
+@cython.boundscheck(False)
+def analyseCython32(bytes stream not None, size=None):
+    """
+    Analyze a stream of char with any length of exception (2 or 4 bytes integers)
+    Optimized for int32 decompression
+    
+    @param stream: bytes (string) representing the compressed data
+    @param size: the size of the output array (of longInts)
+    @return : int64 ndArrays
+    """
+    cdef:
+        int               i = 0
+        int               j = 0
+        numpy.uint8_t     tmp8 = 0
+
+        numpy.int32_t    last = 0
+        numpy.int32_t    current = 0
+        numpy.int32_t    tmp64 = 0
+        numpy.int32_t    tmp64a = 0
+        numpy.int32_t    tmp64b = 0
+        numpy.int32_t    tmp64c = 0
+
+        numpy.uint8_t    key8 = 0x80
+        numpy.uint8_t    key0 = 0x00
+
+        int csize
+        int lenStream = < int > len(stream)
+        numpy.uint8_t[:] cstream = bytearray(stream)
+    if size is None:
+        csize = lenStream
+    else:
+        csize = < int > size
+    cdef numpy.ndarray[numpy.int32_t, ndim = 1] dataOut = numpy.empty(csize, dtype=numpy.int32)
+    with nogil:
+        while (i < lenStream) and (j < csize):
+            if (cstream[i] == key8):
+                if ((cstream[i + 1] == key0) and (cstream[i + 2] == key8)):
+                    # Retrieve the interesting Bytes of data
+                    tmp64c = cstream[i + 3]
+                    tmp64b = cstream[i + 4]
+                    tmp64a = cstream[i + 5]
+                    tmp64  = <numpy.int8_t> cstream[i + 6]
+                    # Assemble data into a 64 bits integer
+                    current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)
+                    i += 7
+                else:
+                    tmp64a = cstream[i + 1]
+                    tmp64  = <numpy.int8_t> cstream[i + 2]
 
                     current = (tmp64 << 8) | (tmp64a);
                     i += 3
