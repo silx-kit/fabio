@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "08/03/2016"
+__date__ = "22/03/2016"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -143,11 +143,32 @@ class UtilsTest(object):
         logger.info("UtilsTest.getimage('%s')" % baseimage)
         if not os.path.exists(cls.image_home):
             os.makedirs(cls.image_home)
-
         fullimagename = os.path.abspath(os.path.join(cls.image_home, baseimage))
-        if not os.path.isfile(fullimagename):
+        if os.path.exists(fullimagename):
+            return fullimagename
+
+        if baseimage.endswith(".bz2"):
+            bzip2name = baseimage
+            basename = baseimage[:-4]
+            gzipname = basename + ".gz"
+        elif baseimage.endswith(".gz"):
+            gzipname = baseimage
+            basename = baseimage[:-3]
+            bzip2name = basename + ".bz2"
+        else:
+            basename = baseimage
+            gzipname = baseimage + "gz2"
+            bzip2name = basename + ".bz2"
+
+        fullimagename_gz = os.path.abspath(os.path.join(cls.image_home, gzipname))
+        fullimagename_raw = os.path.abspath(os.path.join(cls.image_home, basename))
+        fullimagename_bz2 = os.path.abspath(os.path.join(cls.image_home, bzip2name))
+
+        data = None
+
+        if not os.path.isfile(fullimagename_bz2):
             logger.info("Trying to download image %s, timeout set to %ss",
-                        imagename, cls.timeout)
+                        bzip2name, cls.timeout)
             dictProxies = {}
             if "http_proxy" in os.environ:
                 dictProxies['http'] = os.environ["http_proxy"]
@@ -166,56 +187,36 @@ class UtilsTest(object):
             logger.info("Image %s successfully downloaded." % baseimage)
 
             try:
-                with open(fullimagename, "wb") as outfile:
+                with open(fullimagename_bz2, "wb") as outfile:
                     outfile.write(data)
             except IOError:
                 raise IOError("unable to write downloaded \
                     data to disk at %s" % cls.image_home)
 
-            if not os.path.isfile(fullimagename):
+            if not os.path.isfile(fullimagename_bz2):
                 raise RuntimeError("Could not automatically \
                 download test images %s!\n \ If you are behind a firewall, \
                 please set the environment variable http_proxy.\n \
                 Otherwise please try to download the images manually from \n \
                 %s" % (cls.url_base, imagename))
-        else:
-            data = open(fullimagename, "rb").read()
-        fullimagename_bz2 = os.path.splitext(fullimagename)[0] + ".bz2"
-        fullimagename_gz = os.path.splitext(fullimagename)[0] + ".gz"
-        fullimagename_raw = os.path.splitext(fullimagename)[0]
         if not os.path.isfile(fullimagename_raw) or\
-           not os.path.isfile(fullimagename_gz) or\
-           not os.path.isfile(fullimagename_bz2):
-            if imagename.endswith(".bz2"):
-                decompressed = bz2.decompress(data)
-                basename = fullimagename[:-4]
-            elif imagename.endswith(".gz"):
-                decompressed = gzip.open(fullimagename).read()
-                basename = fullimagename[:-3]
-            else:
-                decompressed = data
-                basename = fullimagename
+           not os.path.isfile(fullimagename_gz):
 
-            gzipname = basename + ".gz"
-            bzip2name = basename + ".bz2"
+            if data is None:
+                data = open(fullimagename_bz2, "rb").read()
+            decompressed = bz2.decompress(data)
 
-            if basename != fullimagename:
+            if not os.path.exists(fullimagename_raw):
                 try:
-                    open(basename, "wb").write(decompressed)
+                    open(fullimagename_raw, "wb").write(decompressed)
                 except IOError:
                     raise IOError("unable to write decompressed \
                     data to disk at %s" % cls.image_home)
-            if gzipname != fullimagename:
+            if not os.path.exists(fullimagename_gz):
                 try:
-                    gzip.open(gzipname, "wb").write(decompressed)
+                    gzip.open(fullimagename_gz, "wb").write(decompressed)
                 except IOError:
                     raise IOError("unable to write gzipped \
-                    data to disk at %s" % cls.image_home)
-            if bzip2name != fullimagename:
-                try:
-                    bz2.BZ2File(bzip2name, "wb").write(decompressed)
-                except IOError:
-                    raise IOError("unable to write bzipped2 \
                     data to disk at %s" % cls.image_home)
         return fullimagename
 

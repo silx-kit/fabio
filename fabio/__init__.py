@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/03/2016"
+__date__ = "22/03/2016"
 __status__ = "stable"
 
 
@@ -71,3 +71,11 @@ def tests():
     """
     from . import test
     test.run_tests()
+
+def benchmarks():
+    """
+    Run the benchmarks
+    """
+    from . import benchmark
+    res = benchmark.run()
+    return res
