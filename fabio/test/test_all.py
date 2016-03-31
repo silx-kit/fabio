@@ -61,6 +61,7 @@ from . import test_flat_binary
 from . import testnumpyimage
 from . import testcompression
 from . import testpilatusimage
+from . import test_nexus
 
 
 def suite():
@@ -91,6 +92,7 @@ def suite():
     testSuite.addTest(testnumpyimage.suite())
     testSuite.addTest(testcompression.suite())
     testSuite.addTest(testpilatusimage.suite())
+    testSuite.addTest(test_nexus.suite())
     return testSuite
 
 

@@ -29,7 +29,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2015"
+__date__ = "31/03/2016"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -55,7 +55,7 @@ if sys.version_info[0] < 3:
     bytes = str
     from urlparse import urlparse
 else:
-    from urllib.parse import  urlparse
+    from urllib.parse import urlparse
 
 
 logger = logging.getLogger("fabio.nexus")
@@ -131,7 +131,10 @@ def get_isotime(forceTime=None):
 def from_isotime(text, use_tz=False):
     """
     @param text: string representing the time is iso format
+    @return: Time in second since epoch (float)
     """
+    if isinstance(text, numpy.ndarray):
+        text = text[0]
     text = str(text)
     base = text[:19]
     if use_tz and len(text) == 25:
