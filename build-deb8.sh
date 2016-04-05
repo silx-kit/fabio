@@ -38,10 +38,6 @@ then
    export PATH=/usr/lib/ccache:$PATH
 fi
 
-# Disable to skip tests during build
-#export PYBUILD_DISABLE_python2=test
-#export PYBUILD_DISABLE_python3=test
-#export DEB_BUILD_OPTIONS=nocheck
 
 python setup.py debian_src
 cp -f dist/${tarname} package
@@ -87,6 +83,11 @@ then
   cd testimages
   tar -xzf  ../../python-${project}_${strictversion}.orig-testimages.tar.gz
   cd ..
+else
+  # Disable to skip tests during build
+  export PYBUILD_DISABLE_python2=test
+  export PYBUILD_DISABLE_python3=test
+  export DEB_BUILD_OPTIONS=nocheck
 fi
 
 dch -v ${strictversion}-1 "upstream development build of ${project} ${version}"
