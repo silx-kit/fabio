@@ -3,7 +3,7 @@
 #    Project: Fabio Input/Output
 #             https://github.com/kif/fabio
 #
-#    Copyright (C) 2015 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2016 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -25,34 +25,54 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE
 
-# Script that builds a debian package from this library 
+# Script that builds a debian package from this library
 
+project=fabio
 debian=$(grep -o '[0-9]*' /etc/issue)
 version=$(python -c"import version; print(version.version)")
-strictversion=$(python -c"import version; print(version.strictversion)") 
-tarname=fabio_${strictversion}.orig.tar.gz
+strictversion=$(python -c"import version; print(version.strictversion)")
+tarname=${project}_${strictversion}.orig.tar.gz
+
 if [ -d /usr/lib/ccache ];
-then 
-   export PATH=/usr/lib/ccache:$PATH 
+then
+   export PATH=/usr/lib/ccache:$PATH
 fi
-export PYBUILD_DISABLE_python2=test
-export PYBUILD_DISABLE_python3=test
-export DEB_BUILD_OPTIONS=nocheck
+
+# Disable to skip tests during build
+#export PYBUILD_DISABLE_python2=test
+#export PYBUILD_DISABLE_python3=test
+#export DEB_BUILD_OPTIONS=nocheck
+
 python setup.py debian_src
 cp dist/${tarname} package
 cd package
-cp ../copyright debian
 tar -xzf ${tarname}
-newname=python-fabio_${strictversion}.orig.tar.gz
-directory=fabio-${strictversion}
-ln -s ${tarname} ${newname}
+newname=python-${project}_${strictversion}.orig.tar.gz
+directory=${project}-${strictversion}
+echo tarname $tarname newname $newname
+if [ $tarname != $newname ]
+then
+    ln -s ${tarname} ${newname}
+fi
 cd ${directory}
 cp -r ../debian .
-dch -v ${strictversion}-1 "upstream development build of fabio ${version}"
-dch --bpo "fabio ${version} built for debian ${debian}"
+cp ../../copyright debian
+dch -v ${strictversion}-1 "upstream development build of ${project} ${version}"
+dch --bpo "${project} snapshot ${version} built for debian ${debian}"
 dpkg-buildpackage -r
-cd ..
-sudo su -c  "dpkg -i python*.deb fabio*.deb"
-#rm -rf ${directory}
-cd ..
+rc=$?
+if [ $rc -eq 0 ]
+then
+  cd ..
+  if [ -z $1 ]; 
+  #Provide an option name for avoiding auto-install
+  then 
+    sudo su -c  "dpkg -i *.deb"
+  fi
+  #rm -rf ${directory}
+  cd ..
+else
+  echo Build failed, please investigate ...
+  cd ../..
+fi
 
