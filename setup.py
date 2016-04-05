@@ -216,26 +216,6 @@ else:
     cmdclass['build_doc'] = build_doc
 
 
-class PyTest(Command):
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        import subprocess
-        os.chdir(op.join(op.dirname(op.abspath(__file__)), "test"))
-        errno = subprocess.call([sys.executable, 'test_all.py'])
-        if errno != 0:
-            raise SystemExit(errno)
-        else:
-            os.chdir("..")
-
-cmdclass['test'] = PyTest
-
 # We subclass the build_ext class in order to handle compiler flags
 # for openmp and opencl etc in a cross platform way
 translator = {
@@ -318,7 +298,6 @@ class sdist_debian(sdist):
     Tailor made sdist for debian
     * remove auto-generated doc
     * remove cython generated .c files
-    * add image files from test/testimages/*
     """
     def prune_file_list(self):
         sdist.prune_file_list(self)
@@ -378,8 +357,24 @@ class TestData(Command):
         with tarfile.open(name=arch, mode='w:gz') as tarball:
             for afile in datafiles:
                 tarball.add(os.path.join("testimages", afile), afile)
-
 cmdclass['testimages'] = TestData
+
+
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import subprocess
+        errno = subprocess.call([sys.executable, 'run_tests.py', '-i'])
+        if errno != 0:
+            raise SystemExit(errno)
+cmdclass['test'] = PyTest
 
 
 if sys.platform == "win32":

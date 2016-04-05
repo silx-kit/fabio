@@ -29,7 +29,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "31/03/2016"
+__date__ = "05/04/2016"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -135,7 +135,10 @@ def from_isotime(text, use_tz=False):
     """
     if isinstance(text, numpy.ndarray):
         text = text[0]
-    text = str(text)
+    if (sys.version_info[0] > 2) and isinstance(text, bytes):
+        text = text.decode("utf-8")
+    else:
+        text = str(text)
     base = text[:19]
     if use_tz and len(text) == 25:
         sgn = 1 if  text[:19] == "+" else -1
