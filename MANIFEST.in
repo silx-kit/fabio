@@ -5,7 +5,6 @@ include run_tests.py
 exclude MANIFEST
 include stdeb.cfg
 recursive-include fabio/ext *.c *.h *.pyx
-recursive-include src *.c *.h *.pyx
 recursive-include doc *
 recursive-include pylint *
 recursive-include scripts *

@@ -44,11 +44,11 @@ fi
 #export DEB_BUILD_OPTIONS=nocheck
 
 python setup.py debian_src
-cp dist/${tarname} package
+cp -f dist/${tarname} package
 
 if [ -f dist/${project}-testimages.tar.gz ]
 then
-  cp dist/${project}-testimages.tar.gz package
+  cp -f dist/${project}-testimages.tar.gz package
 fi
 
 cd package
@@ -58,22 +58,34 @@ directory=${project}-${strictversion}
 echo tarname $tarname newname $newname
 if [ $tarname != $newname ]
 then
+  if [ -h $newname ]
+  then
+    rm ${newname}
+  fi
     ln -s ${tarname} ${newname}
 fi
+
+if [ -f ${project}-testimages.tar.gz ]
+then
+  if [ ! -h  python-${project}_${strictversion}.orig-testimages.tar.gz ]
+  then
+    ln -s ${project}-testimages.tar.gz python-${project}_${strictversion}.orig-testimages.tar.gz
+  fi
+fi
+
 cd ${directory}
 cp -r ../debian .
 cp ../../copyright debian
 
 #handle test images
-if [ -f ../${project}-testimages.tar.gz ]
+if [ -f ../python-${project}_${strictversion}.orig-testimages.tar.gz ]
 then
-  ln -s ../${project}-testimages.tar.gz ../python-${project}_${strictversion}.orig-testimages.tar.gz
-  if [! -d testimages ]
+  if [ ! -d testimages ]
   then
     mkdir testimages
   fi
   cd testimages
-  tar -xvzf  ../../python-${project}_${strictversion}.orig-testimages.tar.gz
+  tar -xzf  ../../python-${project}_${strictversion}.orig-testimages.tar.gz
   cd ..
 fi
 
@@ -81,10 +93,10 @@ dch -v ${strictversion}-1 "upstream development build of ${project} ${version}"
 dch --bpo "${project} snapshot ${version} built for debian ${debian}"
 dpkg-buildpackage -r
 rc=$?
-if [ ${rc} -eq 0 ]
+if [ $rc -eq 0 ]
 then
   cd ..
-  if [ -z $1 ];
+  if [ -z $1 ]
   #Provide an option name for avoiding auto-install
   then
     sudo su -c  "dpkg -i *.deb"
