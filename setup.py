@@ -28,7 +28,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/03/2016"
+__date__ = "05/04/2016"
 __status__ = "stable"
 
 import os
@@ -38,7 +38,7 @@ import glob
 import shutil
 import numpy
 import time
-import subprocess
+
 try:
     # setuptools allows the creation of wheels
     from setuptools import setup, Command
@@ -285,21 +285,32 @@ def download_images():
     """
     Download all test images and
     """
-    test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), PROJECT, "test")
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    test_dir = os.path.join(root_dir, PROJECT, "test")
     sys.path.insert(0, test_dir)
     from utilstest import UtilsTest
-    for afile in UtilsTest.ALL_DOWNLOADED_FILES.copy():
+    image_home = os.path.join(root_dir, "testimages")
+    testimages = os.path.join(root_dir, "all_testimages.json")
+    UtilsTest.image_home=image_home
+    UtilsTest.testimages = testimages
+    if os.path.exists(testimages):
+        import json
+        with open(testimages) as f:
+            all_files = set(json.load(f))
+    else:
+        raise(RuntimeError("Please run 'python setup.py build test' to download all images"))
+    for afile in all_files.copy():
         if afile.endswith(".bz2"):
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-4] + ".gz")
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-4])
+            all_files.add(afile[:-4] + ".gz")
+            all_files.add(afile[:-4])
         elif afile.endswith(".gz"):
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-3] + ".bz2")
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-3])
+            all_files.add(afile[:-3] + ".bz2")
+            all_files.add(afile[:-3])
         else:
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile + ".gz")
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile + ".bz2")
-    UtilsTest.download_images()
-    return list(UtilsTest.ALL_DOWNLOADED_FILES)
+            all_files.add(afile + ".gz")
+            all_files.add(afile + ".bz2")
+    UtilsTest.download_images(all_files)
+    return list(all_files)
 
 
 class sdist_debian(sdist):
@@ -345,7 +356,10 @@ class sdist_debian(sdist):
 cmdclass['debian_src'] = sdist_debian
 
 
-class PyTest(Command):
+class TestData(Command):
+    """
+    Tailor made tarball with test data
+    """
     user_options = []
 
     def initialize_options(self):
@@ -355,58 +369,17 @@ class PyTest(Command):
         pass
 
     def run(self):
-        errno = subprocess.call([sys.executable, 'run_tests.py', '-i'])
-        if errno != 0:
-            raise SystemExit(errno)
-cmdclass['test'] = PyTest
+        datafiles = download_images()
+        arch = op.join("dist", PROJECT + "-testimages.tar.gz")
+        print("Building testdata tarball in %s" % arch)
+        if os.path.exists(arch):
+            os.unlink(arch)
+        import tarfile
+        with tarfile.open(name=arch, mode='w:gz') as tarball:
+            for afile in datafiles:
+                tarball.add(os.path.join("testimages", afile), afile)
 
-
-class sdist_testimages(sdist):
-    """
-    Tailor made sdist for debian containing only testimages
-    * remove everything
-    * add image files from testimages/*
-    """
-    to_remove = ["PKG-INFO", "setup.cfg"]
-
-    def run(self):
-        self.filelist = FileList()
-        self.add_defaults()
-        self.make_distribution()
-
-    def add_defaults(self):
-        print("in sdist_testimages.add_defaults")
-        self.filelist.extend([op.join("testimages", i) for i in download_images()])
-
-    def make_release_tree(self, base_dir, files):
-        print("in sdist_testimages.make_release_tree")
-        sdist.make_release_tree(self, base_dir, files)
-        for afile in self.to_remove:
-            dest = os.path.join(base_dir, afile)
-            if os.path.exists(dest):
-                os.unlink(dest)
-
-    def make_distribution(self):
-        print("in sdist_testimages.make_distribution")
-        sdist.make_distribution(self)
-        dest = self.archive_files[0]
-        dirname, basename = op.split(dest)
-        base, ext = op.splitext(basename)
-        while ext in [".zip", ".tar", ".bz2", ".gz", ".Z", ".lz", ".orig"]:
-            base, ext = op.splitext(base)
-        if ext:
-            dest = "".join((base, ext))
-        else:
-            dest = base
-        sp = dest.split("-")
-        base = sp[:-1]
-        nr = sp[-1]
-        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig-testimages.tar.gz")
-        os.rename(self.archive_files[0], debian_arch)
-        self.archive_files = [debian_arch]
-        print("Building debian orig-testimages.tar.gz in %s" % self.archive_files[0])
-
-cmdclass['debian_testimages'] = sdist_testimages
+cmdclass['testimages'] = TestData
 
 
 if sys.platform == "win32":

@@ -45,6 +45,12 @@ fi
 
 python setup.py debian_src
 cp dist/${tarname} package
+
+if [ -f dist/${project}-testimages.tar.gz ]
+then
+  cp dist/${project}-testimages.tar.gz package
+fi
+
 cd package
 tar -xzf ${tarname}
 newname=python-${project}_${strictversion}.orig.tar.gz
@@ -57,6 +63,20 @@ fi
 cd ${directory}
 cp -r ../debian .
 cp ../../copyright debian
+
+#handle test images
+if [-f ../${project}-testimages.tar.gz]
+then
+  ln -s ../${project}-testimages.tar.gz ../python-${project}_${strictversion}.orig-testimages.tar.gz
+  if [! -d testimages ]
+  then
+    mkdir testimages
+  fi
+  cd testimages
+  tar -xvzf  ../../python-${project}_${strictversion}.orig-testimages.tar.gz
+  cd ..
+fi
+
 dch -v ${strictversion}-1 "upstream development build of ${project} ${version}"
 dch --bpo "${project} snapshot ${version} built for debian ${debian}"
 dpkg-buildpackage -r
@@ -64,9 +84,9 @@ rc=$?
 if [ $rc -eq 0 ]
 then
   cd ..
-  if [ -z $1 ]; 
+  if [ -z $1 ];
   #Provide an option name for avoiding auto-install
-  then 
+  then
     sudo su -c  "dpkg -i *.deb"
   fi
   #rm -rf ${directory}
