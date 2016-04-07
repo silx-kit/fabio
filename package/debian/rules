@@ -6,16 +6,15 @@ export PYBUILD_NAME=fabio
 	dh $@ --with python2,python3,sphinxdoc --buildsystem=pybuild
 
 override_dh_clean:
-    # remove the cython generated files distributed by upstream
-	rm -f $(patsubst %.pyx,%.c,$(wildcard src/*.pyx))
+	dh_clean
+	rm -f $(patsubst %.pyx,%.c,$(wildcard fabio/ext/*.pyx))
 	rm -rf build/html
 	rm -rf *.egg-info
-	dh_clean
 
 override_dh_auto_build:
 	dh_auto_build
 	PYBUILD_SYSTEM=custom \
-	PYBUILD_BUILD_ARGS="PYTHONPATH={build_dir} http_proxy='localhost' sphinx-build -N -bhtml doc/source build/html" dh_auto_build  # HTML generator
+	PYBUILD_BUILD_ARGS="PYTHONPATH={build_dir} http_proxy='localhost' sphinx-build -N -bhtml doc/source build/html" dh_auto_build 
 
 # unactive test for now
 override_dh_auto_test:
@@ -26,7 +25,7 @@ override_dh_install:
 	dh_numpy
 	dh_numpy3
 
-	# move the scripts into fabio-viewer
+	# move the scripts to right package
 	dh_install -p fabio-viewer debian/python-fabio/usr/bin usr/
 
 	# remove all scripts installed by pybuild
