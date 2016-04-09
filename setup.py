@@ -28,7 +28,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/04/2016"
+__date__ = "09/04/2016"
 __status__ = "stable"
 
 import os
@@ -349,8 +349,11 @@ class TestData(Command):
 
     def run(self):
         datafiles = download_images()
-        arch = op.join("dist", PROJECT + "-testimages.tar.gz")
+        dist = "dist"
+        arch = op.join(dist, PROJECT + "-testimages.tar.gz")
         print("Building testdata tarball in %s" % arch)
+        if not os.path.isdir(dist):
+            os.mkdir(dist)
         if os.path.exists(arch):
             os.unlink(arch)
         import tarfile
