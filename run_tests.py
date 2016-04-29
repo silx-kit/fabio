@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "04/03/2016"
+__date__ = "11/04/2016"
 __license__ = "MIT"
 
 import distutils.util
@@ -80,6 +80,7 @@ except Exception as error:
     logger.warning("h5py missing: %s" % error)
 else:
     logger.info("h5py %s" % h5py.version.version)
+
 
 class TestResult(unittest.TestResult):
     logger = logging.getLogger("memProf")
@@ -203,7 +204,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info('Project name: %s' % PROJECT_NAME)
 
-if sys.hexversion<34013184: #python2.7
+if sys.hexversion < 34013184:  # python2.7
     sys.path.append("third_party")
 from argparse import ArgumentParser
 
