@@ -103,7 +103,9 @@ dictAscii = {None: [chr(i) for i in range(32, 127)]}
 COMPRESSORS = {}
 
 try:
-    lines = subprocess.check_output(["gzip", "-h"], stderr=subprocess.STDOUT)
+    lines = subprocess.check_output(["gzip", "-h"],
+                                    stderr=subprocess.STDOUT,
+                                    universal_newlines=True)
     if "usage" in lines.lower():
         COMPRESSORS['.gz'] = 'gzip -dc '
     else:
@@ -113,9 +115,11 @@ except subprocess.CalledProcessError as err:
     COMPRESSORS['.gz'] = None
 
 try:
-    lines = subprocess.check_output(["bzip2", "-h"], stderr=subprocess.STDOUT)
+    lines = subprocess.check_output(["bzip2", "-h"],
+                                    stderr=subprocess.STDOUT,
+                                    universal_newlines=True)
     # Looking for "usage"
-    if "sage" in lines.lower():
+    if "usage" in lines.lower():
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
     else:
         COMPRESSORS['.bz2'] = None
