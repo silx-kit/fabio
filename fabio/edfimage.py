@@ -579,7 +579,6 @@ class EdfImage(FabioImage):
                 logger.info("EDF file %s frame %i misses mandatory keys: %s " % (self.filename, i, " ".join(missing)))
         self.currentframe = 0
 
-
     def read(self, fname, frame=None):
         """
         Read in header into self.header and
@@ -624,7 +623,6 @@ class EdfImage(FabioImage):
         """
         return self._frames[self.currentframe].getData()
 
-
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a FabioImage """
         newImage = None
@@ -642,7 +640,6 @@ class EdfImage(FabioImage):
             raise ValueError("EdfImage.getframe:" + txt)
         return newImage
 
-
     def previous(self):
         """ returns the previous file in the series as a FabioImage """
         newImage = None
@@ -652,7 +649,6 @@ class EdfImage(FabioImage):
             newFrameId = self.currentframe - 1
             newImage = self.getframe(newFrameId)
         return newImage
-
 
     def next(self):
         """ returns the next file in the series as a FabioImage """
@@ -693,7 +689,7 @@ class EdfImage(FabioImage):
         if isinstance(frame, Frame):
             self._frames.append(frame)
         elif ("header" in dir(frame)) and ("data" in dir(frame)):
-             self._frames.append(Frame(frame.data, frame.header))
+            self._frames.append(Frame(frame.data, frame.header))
         else:
             self._frames.append(Frame(data, header))
 
