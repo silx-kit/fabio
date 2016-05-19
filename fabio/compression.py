@@ -22,18 +22,18 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""
+"""Compression and decompression algorithm for various formats
+
 Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
-FabIO library containing compression and decompression algorithm for various
 """
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "21/03/2016"
+__date__ = "19/05/2016"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
