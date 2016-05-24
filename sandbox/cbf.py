@@ -36,6 +36,11 @@ def decomp_vec(raw_n):
 src = open("sandbox/cbf.cl").read()
 prg = pyopencl.Program(ctx, src).build()
 
-WG = 1024
+WG = 128
 WS = (size + WG - 1) & ~(WG - 1)
+la = pyopencl.LocalMemory(4 * WG)
+lb = pyopencl.LocalMemory(4 * WG)
+lc = pyopencl.LocalMemory(4 * WG)
+prg.cumsum(queue, (WS,), (WG,), raw_d.data, data_d.data, numpy.int32(size), numpy.int32(size), la, lb, lc)
+
 prg.dec_byte_offset(queue, (WS,), (WG,), raw_d.data, data_d.data, numpy.int32(size), numpy.int32(size), lem_d.data)
