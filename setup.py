@@ -28,16 +28,16 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/04/2016"
+__date__ = "11/04/2016"
 __status__ = "stable"
 
 import os
+import time
 import sys
-import os.path as op
 import glob
 import shutil
 import numpy
-import time
+
 
 try:
     # setuptools allows the creation of wheels
@@ -205,7 +205,7 @@ else:
             # previously installed version
 
             build = self.get_finalized_command('build')
-            sys.path.insert(0, op.abspath(build.build_lib))
+            sys.path.insert(0, os.path.abspath(build.build_lib))
             # Build the Users Guide in HTML and TeX format
             for builder in ('html', 'latex'):
                 self.builder = builder
@@ -271,7 +271,7 @@ def download_images():
     from utilstest import UtilsTest
     image_home = os.path.join(root_dir, "testimages")
     testimages = os.path.join(root_dir, "all_testimages.json")
-    UtilsTest.image_home=image_home
+    UtilsTest.image_home = image_home
     UtilsTest.testimages = testimages
     if os.path.exists(testimages):
         import json
@@ -308,18 +308,18 @@ class sdist_debian(sdist):
         # this is for Cython files specifically
         self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix=PROJECT + "ext")
         for pyxf in glob.glob(PROJECT + "ext/*.pyx"):
-            cf = op.splitext(pyxf)[0] + ".c"
-            if op.isfile(cf):
+            cf = os.path.splitext(pyxf)[0] + ".c"
+            if os.path.isfile(cf):
                 self.filelist.exclude_pattern(pattern=cf)
 
     def make_distribution(self):
         self.prune_file_list()
         sdist.make_distribution(self)
         dest = self.archive_files[0]
-        dirname, basename = op.split(dest)
-        base, ext = op.splitext(basename)
+        dirname, basename = os.path.split(dest)
+        base, ext = os.path.splitext(basename)
         while ext in [".zip", ".tar", ".bz2", ".gz", ".Z", ".lz", ".orig"]:
-            base, ext = op.splitext(base)
+            base, ext = os.path.splitext(base)
         if ext:
             dest = "".join((base, ext))
         else:
@@ -327,7 +327,7 @@ class sdist_debian(sdist):
         sp = dest.split("-")
         base = sp[:-1]
         nr = sp[-1]
-        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig.tar.gz")
+        debian_arch = os.path.join(dirname, "-".join(base) + "_" + nr + ".orig.tar.gz")
         os.rename(self.archive_files[0], debian_arch)
         self.archive_files = [debian_arch]
         print("Building debian .orig.tar.gz in %s" % self.archive_files[0])
@@ -349,8 +349,11 @@ class TestData(Command):
 
     def run(self):
         datafiles = download_images()
-        arch = op.join("dist", PROJECT + "-testimages.tar.gz")
+        dist = "dist"
+        arch = os.path.join(dist, PROJECT + "-testimages.tar.gz")
         print("Building testdata tarball in %s" % arch)
+        if not os.path.isdir(dist):
+            os.mkdir(dist)
         if os.path.exists(arch):
             os.unlink(arch)
         import tarfile
@@ -378,17 +381,17 @@ cmdclass['test'] = PyTest
 
 
 if sys.platform == "win32":
-    root = op.dirname(op.abspath(__file__))
+    root = os.path.dirname(os.path.abspath(__file__))
     tocopy_files = []
     script_files = []
-    for i in os.listdir(op.join(root, "scripts")):
-        if op.isfile(op.join(root, "scripts", i)):
+    for i in os.listdir(os.path.join(root, "scripts")):
+        if os.path.isfile(os.path.join(root, "scripts", i)):
             if i.endswith(".py"):
-                script_files.append(op.join("scripts", i))
+                script_files.append(os.path.join("scripts", i))
             else:
-                tocopy_files.append(op.join("scripts", i))
+                tocopy_files.append(os.path.join("scripts", i))
     for i in tocopy_files:
-        filein = op.join(root, i)
+        filein = os.path.join(root, i)
         if (filein + ".py") not in script_files:
             shutil.copyfile(filein, filein + ".py")
             script_files.append(filein + ".py")

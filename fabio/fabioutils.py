@@ -29,11 +29,15 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/03/2016"
+__date__ = "29/04/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
-import re, os, logging, threading, sys
+import re
+import os
+import logging
+import sys
+import subprocess
 logger = logging.getLogger("fabioutils")
 
 try:
@@ -66,26 +70,26 @@ else:
 
 
 FILETYPES = {
-    # extension NNNimage fabioclass
-    # type consistency - always use a list if one case is
-    'edf'    : ['edf'],
-    'cor'    : ['edf'],
-    'pnm'    : ['pnm'],
-    'pgm'    : ['pnm'],
-    'pbm'    : ['pnm'],
-    'tif'    : ['tif'],
-    'tiff'   : ['tif'],
-    'img'    : ['adsc', 'OXD', 'HiPiC', 'raxis'],
-    'mccd'   : ['marccd'],
-    'mar2300': ['mar345'],
-    'sfrm'   : ['bruker100'],
-    'msk'    : ['fit2dmask'],
-    'spr'    : ['fit2dspreadsheet'],
-    'dm3'    : ['dm3'],
-    'kcd'    : ['kcd'],
-    'cbf'    : ['cbf'],
-    'xml'    : ["xsd"],
-    'xsd'    : ["xsd"],
+                # extension NNNimage fabioclass
+                # type consistency - always use a list if one case is
+                'edf'    : ['edf'],
+                'cor'    : ['edf'],
+                'pnm'    : ['pnm'],
+                'pgm'    : ['pnm'],
+                'pbm'    : ['pnm'],
+                'tif'    : ['tif'],
+                'tiff'   : ['tif'],
+                'img'    : ['adsc', 'OXD', 'HiPiC', 'raxis'],
+                'mccd'   : ['marccd'],
+                'mar2300': ['mar345'],
+                'sfrm'   : ['bruker100'],
+                'msk'    : ['fit2dmask'],
+                'spr'    : ['fit2dspreadsheet'],
+                'dm3'    : ['dm3'],
+                'kcd'    : ['kcd'],
+                'cbf'    : ['cbf'],
+                'xml'    : ["xsd"],
+                'xsd'    : ["xsd"],
              }
 
 # Add bzipped and gzipped
@@ -93,38 +97,41 @@ for key in list(FILETYPES.keys()):
     FILETYPES[key + ".bz2"] = FILETYPES[key]
     FILETYPES[key + ".gz"] = FILETYPES[key]
 
+dictAscii = {None: [chr(i) for i in range(32, 127)]}
 
 # Compressors
-
 COMPRESSORS = {}
 
-
-dictAscii = {None:[chr(i) for i in range(32, 127)],
-           }
-
 try:
-    lines = os.popen("gzip -h 2>&1").read()
-    # Looking for "usage"
-    if "sage" in lines:
+    lines = subprocess.check_output(["gzip", "-h"],
+                                    stderr=subprocess.STDOUT,
+                                    universal_newlines=True)
+    if "usage" in lines.lower():
         COMPRESSORS['.gz'] = 'gzip -dc '
     else:
         COMPRESSORS['.gz'] = None
-except Exception:
+except subprocess.CalledProcessError as err:
+    logger.debug("No gzip utility found: %s", err)
     COMPRESSORS['.gz'] = None
 
 try:
-    lines = os.popen("bzip2 -h 2>&1").read()
+    lines = subprocess.check_output(["bzip2", "-h"],
+                                    stderr=subprocess.STDOUT,
+                                    universal_newlines=True)
     # Looking for "usage"
-    if "sage" in lines:
+    if "usage" in lines.lower():
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
     else:
         COMPRESSORS['.bz2'] = None
-except Exception:
+except subprocess.CalledProcessError as err:
+    logger.debug("No bzip2 utility found: %s", err)
     COMPRESSORS['.bz2'] = None
+
 
 def deprecated(func):
     """
-    used to deprecate a function/method: prints a lot of warning messages to enforce the modifaction of the code
+    used to deprecate a function/method: prints a lot of warning messages to 
+    enforce the modification of the code
     """
     def wrapper(*arg, **kw):
         """
@@ -133,6 +140,7 @@ def deprecated(func):
         logger.warning("%s is Deprecated !!! %s" % (func.func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
         return func(*arg, **kw)
     return wrapper
+
 
 def pad(mystr, pattern=" ", size=80):
     """
@@ -157,18 +165,19 @@ def getnum(name):
     except ValueError:
         return None
 
+
 class FilenameObject(object):
     """
     The 'meaning' of a filename ...
     """
     def __init__(self, stem=None,
-            num=None,
-            directory=None,
-            format=None,
-            extension=None,
-            postnum=None,
-            digits=4,
-            filename=None):
+                 num=None,
+                 directory=None,
+                 format=None,
+                 extension=None,
+                 postnum=None,
+                 digits=4,
+                 filename=None):
         """
         This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...
 
@@ -185,8 +194,6 @@ class FilenameObject(object):
         @param filename: fullpath of an image file to be deconstructed into directory, prefix, num, extension, ...
 
         """
-
-
         self.stem = stem
         self.num = num
         self.format = format
@@ -198,19 +205,18 @@ class FilenameObject(object):
         if filename is not None:
             self.deconstruct_filename(filename)
 
-
     def str(self):
         """ Return a string representation """
         fmt = "stem %s, num %s format %s extension %s " + \
                 "postnum = %s digits %s dir %s"
         return fmt % tuple([str(x) for x in [
-                    self.stem ,
-                    self.num ,
-                    self.format ,
-                    self.extension ,
-                    self.postnum ,
-                    self.digits ,
-                    self.directory ] ])
+                    self.stem,
+                    self.num,
+                    self.format,
+                    self.extension,
+                    self.postnum,
+                    self.digits,
+                    self.directory]])
     __repr__ = str
 
     def tostring(self):
@@ -228,7 +234,6 @@ class FilenameObject(object):
         if self.directory is not None:
             name = os.path.join(self.directory, name)
         return name
-
 
     def deconstruct_filename(self, filename):
         """
@@ -282,7 +287,7 @@ class FilenameObject(object):
                     extn = "." + parts[-1] + extn
                     numstring = ""
                     try:
-                        stem , numstring, postnum = numstem(".".join(parts[:-1]))
+                        stem, numstring, postnum = numstem(".".join(parts[:-1]))
                     except Exception as err:
                         logger.debug("l202: %s" % err)
                         raise
@@ -300,6 +305,7 @@ class FilenameObject(object):
         self.digits = ndigit
         self.compressed = compressed
 
+
 def numstem(name):
     """ cant see how to do without reversing strings
     Match 1 or more digits going backwards from the end of the string
@@ -312,9 +318,10 @@ def numstem(name):
         # return [ r[::-1] for r in res[::-1]]
         if len(res[0]) == len(res[1]) == 0:  # Hack for file without number
             return [res[2], '', '']
-        return [ r for r in res]
+        return [r for r in res]
     except AttributeError:  # no digits found
         return [name, "", ""]
+
 
 # @deprecated
 def deconstruct_filename(filename):
@@ -324,12 +331,14 @@ def deconstruct_filename(filename):
     """
     return FilenameObject(filename=filename)
 
+
 def construct_filename(filename, frame=None):
     "Try to construct the filename for a given frame"
     fobj = FilenameObject(filename=filename)
     if frame is not None:
         fobj.num = frame
     return fobj.tostring()
+
 
 def next_filename(name, padding=True):
     """ increment number """
@@ -339,6 +348,7 @@ def next_filename(name, padding=True):
         fobj.digits = 0
     return fobj.tostring()
 
+
 def previous_filename(name, padding=True):
     """ decrement number """
     fobj = FilenameObject(filename=name)
@@ -346,6 +356,7 @@ def previous_filename(name, padding=True):
     if not padding:
         fobj.digits = 0
     return fobj.tostring()
+
 
 def jump_filename(name, num, padding=True):
     """ jump to number """
@@ -361,6 +372,7 @@ def extract_filenumber(name):
     fobj = FilenameObject(filename=name)
     return fobj.num
 
+
 def isAscii(name, listExcluded=None):
     """
     @param name: string to check
@@ -374,10 +386,11 @@ def isAscii(name, listExcluded=None):
         isascii = False
     else:
         if listExcluded:
-            isascii = not(any(bad in  name for bad in listExcluded))
+            isascii = not(any(bad in name for bad in listExcluded))
         else:
             isascii = True
     return isascii
+
 
 def toAscii(name, excluded=None):
     """
@@ -397,6 +410,7 @@ def toAscii(name, excluded=None):
         ascii = dictAscii[excluded]
     out = [i for i in str(name) if i in ascii]
     return "".join(out)
+
 
 def nice_int(s):
     """
@@ -418,9 +432,9 @@ class BytesIO(six.BytesIO):
     """
     def __init__(self, data, fname=None, mode="r"):
         six.BytesIO.__init__(self, data)
-        if not "closed" in dir(self):
+        if "closed" not in dir(self):
             self.closed = False
-        if fname == None:
+        if fname is None:
             self.name = "fabioStream"
         else:
             self.name = fname
@@ -437,6 +451,7 @@ class BytesIO(six.BytesIO):
                 self.__size = self.tell()
                 self.seek(pos)
         return self.__size
+
     def setSize(self, size):
         self.__size = size
     size = property(getSize, setSize)
@@ -494,13 +509,16 @@ class File(FileIO):
                 self.__size = self.tell()
                 self.seek(pos)
         return self.__size
+
     def setSize(self, size):
         self.__size = size
+
     def __exit__(self, *args, **kwargs):
         """
         Close the file.
         """
         return FileIO.close(self)
+
     def __enter__(self, *args, **kwargs):
         return self
     size = property(getSize, setSize)
@@ -579,7 +597,7 @@ if bz2 is None:
 else:
     class BZ2File(bz2.BZ2File):
         "Wrapper with lock"
-        def __init__(self, name , mode='r', buffering=0, compresslevel=9):
+        def __init__(self, name, mode='r', buffering=0, compresslevel=9):
             """
             BZ2File(name [, mode='r', buffering=0, compresslevel=9]) -> file object
 
@@ -596,26 +614,30 @@ else:
             '\r\n' or a tuple containing all the newline types seen. Universal
             newlines are available only when reading.
             """
-            bz2.BZ2File.__init__(self, name , mode, buffering, compresslevel)
+            bz2.BZ2File.__init__(self, name, mode, buffering, compresslevel)
             self.lock = _Semaphore()
             self.__size = None
+
         def getSize(self):
             if self.__size is None:
                 logger.debug("Measuring size of %s" % self.name)
                 with self.lock:
                     pos = self.tell()
-                    all = self.read()
+                    _ = self.read()
                     self.__size = self.tell()
                     self.seek(pos)
             return self.__size
+
         def setSize(self, value):
             self.__size = value
         size = property(getSize, setSize)
+
         def __exit__(self, *args, **kwargs):
                 """
                 Close the file.
                 """
                 return bz2.BZ2File.close(self)
+
         def __enter__(self, *args, **kwargs):
             return self
 
@@ -626,16 +648,16 @@ class DebugSemaphore(_Semaphore):
     """
     write_lock = _Semaphore()
     blocked = []
+
     def __init__(self, *arg, **kwarg):
         _Semaphore.__init__(self, *arg, **kwarg)
-
 
     def acquire(self, *arg, **kwarg):
         if self._Semaphore__value == 0:
             with self.write_lock:
                 self.blocked.append(id(self))
-                sys.stderr.write(os.linesep.join(["Blocking sem %s" % id(self)] + \
-                                        traceback.format_stack()[:-1] + [""]))
+                sys.stderr.write(os.linesep.join(["Blocking sem %s" % id(self)] +
+                                 traceback.format_stack()[:-1] + [""]))
 
         return _Semaphore.acquire(self, *arg, **kwarg)
 
@@ -653,4 +675,3 @@ class DebugSemaphore(_Semaphore):
 
     def __exit__(self, *arg, **kwarg):
         self.release()
-
