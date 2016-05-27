@@ -161,3 +161,87 @@ kernel void dec_byte_offset(
 
 	}
 }
+
+/**
+ * \brief byte_offset compression for CBF: first pass: measure the size of the elt
+ *
+ *
+ * @param input: input data in 1D as int32
+ * @param output: temporary output as int8 with the size of every single
+ * @param input_size: length of the input
+ *
+ */
+kernel void dec_byte_offset1(
+		global int* input,
+		global char* output,
+		uint input_size)
+{
+	uint gid = get_global_id(0);
+	int current, previous, value;
+	if (gid < input_size)
+	{
+		current =  input[gid];
+		previous = (gid > 0) ? input[gid] : 0;
+		value = abs(current - previous);
+		if (value > 32767)
+		{
+			output[gid] = 7;
+		}
+		else if (value > 127)
+		{
+			output[gid] = 3;
+		}
+		else
+		{
+			output[gid] = 1;
+		}
+	}
+}
+
+/**
+ * \brief byte_offset compression for CBF: Third  pass: store the value at the right place
+ *
+ *
+ * @param input: input data in 1D as int32
+ * @param index: input data with output positions
+ * @param output: output as int8
+ * @param input_size: length of the input
+ *
+ */
+kernel void dec_byte_offset1(
+		global int* input,
+		global char* output,
+		uint input_size)
+{
+	uint gid = get_global_id(0);
+	uint dest;
+	int current, previous, value, absvalue;
+	if (gid < input_size)
+	{
+		current =  input[gid];
+		previous = (gid > 0) ? input[gid] : 0;
+		value = current - previous;
+		absvalue = abs(value);
+		dest = index[gid]
+		if (absvalue > 32767)
+		{
+			output[dest] = -128;
+			output[dest+1] = 0;
+			output[dest+2] = -128;
+			output[dest+3] = ;
+			output[dest+4] = ;
+			output[dest+5] = ;
+			output[dest+6] = ;
+		}
+		else if (absvalue > 127)
+		{
+			output[dest] = -128;
+			output[dest] = ;
+			output[dest] = ;
+		}
+		else
+		{
+			output[dest] = (char) value;
+		}
+	}
+}
