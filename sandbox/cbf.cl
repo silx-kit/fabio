@@ -1,7 +1,7 @@
 
 
 #define SWAP(a,b) {__local int *tmp=a;a=b;b=tmp;}
-static void work_group_scan_inclusive_add( 	__local int *inp_buf,
+static void my_group_scan_inclusive_add( 	__local int *inp_buf,
 											__local int *out_buf,
 											__local int *tmp_buf)
 {
@@ -23,6 +23,22 @@ static void work_group_scan_inclusive_add( 	__local int *inp_buf,
     tmp_buf[lid] = out_buf[lid];
 }
 
+static int my_group_scan_exclusive_add( 	int value,
+											__local int *inp_buf,
+											__local int *out_buf,
+											__local int *tmp_buf)
+{
+	my_group_scan_inclusive_add(inp_buf, out_buf, tmp_buf);
+	uint lid = get_local_id(0);
+
+	out_buf[lid] = (lid >0)? tmp_buf[lid-1] + value : value;
+	int ret_val = tmp_buf[get_local_size(0)-1] + value;
+	barrier(CLK_LOCAL_MEM_FENCE);
+	tmp_buf[lid] = out_buf[lid];
+	barrier(CLK_LOCAL_MEM_FENCE);
+	return ret_val;
+}
+
 kernel void cumsum(
 	global char* input,
 	global int* output,
@@ -41,8 +57,34 @@ kernel void cumsum(
 		}else{
 		a[lid] = 0;
 		}
-	work_group_scan_inclusive_add(a, b, c);
+	my_group_scan_inclusive_add(a, b, c);
 	output[gid] = b[lid];
+}
+static int data_type(uint idx,
+		             global int* input,
+					 uint input_size)
+{
+	int current, previous, value, ret_val=0;
+	if (idx < input_size)
+	{
+		current =  input[idx];
+		previous = (idx > 0) ? input[idx-1] : 0;
+		value = abs(current - previous);
+		if (value > 32767)
+		{
+			ret_val = 7;
+		}
+		else if (value > 127)
+		{
+			ret_val = 3;
+		}
+		else
+		{
+			ret_val = 1;
+		}
+	}
+	return ret_val;
+
 }
 
 /**
@@ -63,16 +105,14 @@ kernel void dec_byte_offset(
 	int output_size,
 	global char * lel,
 	global char * lem,
-	global int * start_pos
-	global int * stop_pos
-	global int * wg_count
+	global int * start_pos,
+	global int * stop_pos,
+	global int * wg_count,
 	local int *local1,
 	local int *local2,
 	local int *local3)
-
-	)
 {
-	uint gs = get_local_size(0);
+	uint ws = get_local_size(0);
 	uint gi = get_group_id(0);
 	uint lid = get_local_id(0);
 	uint idx, valid_items;
@@ -106,7 +146,7 @@ kernel void dec_byte_offset(
 			valid_items = 0;
 			if (lid==0)//serialize scan
 			{
-				uint i=j=0;
+				uint i=0, j=0;
 				int current, last;
 				while (i<ws)
 				{
@@ -123,14 +163,13 @@ kernel void dec_byte_offset(
 							next4 = ((i+4)<ws) ? local1[i+4] : input[input_offset+i+4];
 							next5 = ((i+5)<ws) ? local1[i+5] : input[input_offset+i+5];
 							next6 = ((i+6)<ws) ? local1[i+6] : input[input_offset+i+6];
-							current = (next6 << 24) | (next5 << 16) | (next4 << 8) | (next3)
-							i+=7
+							current = (next6 << 24) | (next5 << 16) | (next4 << 8) | (next3);
+							i+=7;
 						}
 						else
 						{
 							current = (next2 << 8) | (next1);
 							i+=3;
-
 						}
 					}
 					else
@@ -147,20 +186,20 @@ kernel void dec_byte_offset(
 		else
 		{//perform a normal reduction in the workgroup
 			valid_items = ws;
-			work_group_scan_inclusive_add(local1, local2, local3);
+			my_group_scan_inclusive_add(local1, local2, local3);
 		}
 		if (lid<valid_items)
 		{
-			data[output_offset+lid] = local2[lid];
+			output[output_offset+lid] = local2[lid];
 		}
 		input_offset +=  ws;
 		output_offset +=  valid_items;
 		local2[lid] = 0;
 		barrier(CLK_LOCAL_MEM_FENCE);
-
-
 	}
 }
+
+
 
 /**
  * \brief byte_offset compression for CBF: first pass: measure the size of the elt
@@ -171,36 +210,108 @@ kernel void dec_byte_offset(
  * @param input_size: length of the input
  *
  */
-kernel void dec_byte_offset1(
+kernel void comp_byte_offset1(
 		global int* input,
-		global char* output,
+		global int* output,
 		uint input_size)
 {
 	uint gid = get_global_id(0);
-	int current, previous, value;
 	if (gid < input_size)
 	{
-		current =  input[gid];
-		previous = (gid > 0) ? input[gid] : 0;
-		value = abs(current - previous);
-		if (value > 32767)
-		{
-			output[gid] = 7;
-		}
-		else if (value > 127)
-		{
-			output[gid] = 3;
-		}
-		else
-		{
-			output[gid] = 1;
-		}
+		output[gid] = data_type(gid, input, input_size);
 	}
 }
 
 /**
+ * \brief byte_offset compression for CBF: Second pass: cumsum for position calc
+ *
+ *
+ * @param input: input data in 1D as int32.
+ * @param output: output data in 1D as int32.
+ * @param input_size: length of the input
+ * @param nbwg: number of workgroup finished
+ * @param a,b,c: 3 local buffers of the size of the workgroup
+ */
+
+kernel void comp_byte_offset2(
+		global int* input,
+		global int* output,
+		uint input_size,
+		uint chunk,
+		global int* last_wg,
+		global uint* workgroup_counter,
+		__local int *a,
+		__local int *b,
+		__local int *c)
+{
+	uint lid = get_local_id(0);
+	uint gs = get_local_size(0);
+	uint wid = get_group_id(0);
+	uint nbwg = get_num_groups(0);
+	uint to_process = chunk * gs;
+	uint start_process = wid *  to_process;
+	uint end_process;
+	end_process = min(input_size, start_process + to_process);
+	int last = 0;
+	for (uint offset=start_process; offset< end_process; offset+=gs)
+	{
+		uint pos = offset + lid;
+		if (pos<input_size)
+		{
+			a[lid] = data_type(pos, input, input_size);
+		}
+		else
+		{
+			a[lid] = 0;
+		}
+		barrier(CLK_LOCAL_MEM_FENCE);
+		last = my_group_scan_exclusive_add(last, a, b, c);
+		if (pos<input_size)
+			output[pos] = b[lid];
+	}
+	if (lid == 0)
+		last_wg[wid] = last;
+	barrier(CLK_GLOBAL_MEM_FENCE);
+
+	if (lid == 0)
+		a[0] = atomic_inc(workgroup_counter);
+
+	barrier(CLK_LOCAL_MEM_FENCE);
+//	printf("a %d %s\n",a[0],nbwg);
+	if ((a[0]+1) == nbwg) // we are the last work group
+	{
+//		Do a cum_sum of all groups results
+		a[lid] = last_wg[lid];
+		my_group_scan_inclusive_add(a, b, c);
+		last_wg[lid] = b[lid];
+	}
+}
+
+
+//uint workgroup = 0;
+//for (int start_process=0; start_process<input_size; start_process+=to_process)
+//{
+//	last = (workgroup == 0)? 0: last_wg[workgroup-1];
+//	workgroup++;
+//	end_process = min(start_process + to_process, input_size);
+//	for (uint offset=start_process; offset<end_process; offset+=gs)
+//	{
+//		uint pos = offset + lid;
+//		if (pos < end_process)
+//		{
+//			output[pos] += last;
+//		}
+//
+//	}
+//
+//}
+
+
+
+/**
  * \brief byte_offset compression for CBF: Third  pass: store the value at the right place
  *
+ * Nota: This enforces little-endian storage
  *
  * @param input: input data in 1D as int32
  * @param index: input data with output positions
@@ -208,8 +319,9 @@ kernel void dec_byte_offset1(
  * @param input_size: length of the input
  *
  */
-kernel void dec_byte_offset1(
+kernel void comp_byte_offset3(
 		global int* input,
+		global int* index,
 		global char* output,
 		uint input_size)
 {
@@ -222,26 +334,26 @@ kernel void dec_byte_offset1(
 		previous = (gid > 0) ? input[gid] : 0;
 		value = current - previous;
 		absvalue = abs(value);
-		dest = index[gid]
+		dest = index[gid];
 		if (absvalue > 32767)
 		{
 			output[dest] = -128;
 			output[dest+1] = 0;
 			output[dest+2] = -128;
-			output[dest+3] = ;
-			output[dest+4] = ;
-			output[dest+5] = ;
-			output[dest+6] = ;
+			output[dest+3] = value & 255;
+			output[dest+4] = (value >> 8) & 255;
+			output[dest+5] = (value >> 16) & 255;
+			output[dest+6] = value >> 24;
 		}
 		else if (absvalue > 127)
 		{
 			output[dest] = -128;
-			output[dest] = ;
-			output[dest] = ;
+			output[dest+1] = value & 255;
+			output[dest+2] = (value >> 8) | (value >> 24) ;
 		}
 		else
 		{
-			output[dest] = (char) value;
+			output[dest] =  (char) value;
 		}
 	}
 }
