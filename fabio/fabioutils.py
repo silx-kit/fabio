@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/04/2016"
+__date__ = "02/06/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -47,6 +47,8 @@ except ImportError:
     if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
         raise ImportError("Six version is too old")
 
+if sys.platform != "win32":
+    WindowsError = RuntimeError
 
 if six.PY2:
     bytes = str
@@ -110,7 +112,7 @@ try:
         COMPRESSORS['.gz'] = 'gzip -dc '
     else:
         COMPRESSORS['.gz'] = None
-except subprocess.CalledProcessError as err:
+except (subprocess.CalledProcessError, WindowsError)  as err:
     logger.debug("No gzip utility found: %s", err)
     COMPRESSORS['.gz'] = None
 
@@ -123,7 +125,7 @@ try:
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
     else:
         COMPRESSORS['.bz2'] = None
-except subprocess.CalledProcessError as err:
+except (subprocess.CalledProcessError, WindowsError) as err:
     logger.debug("No bzip2 utility found: %s", err)
     COMPRESSORS['.bz2'] = None
 
