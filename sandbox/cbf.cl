@@ -207,7 +207,7 @@ kernel void dec_byte_offset(
 
 
 /**
- * \brief byte_offset compression for CBF: first pass: measure the size of the elt
+ * \brief byte_offset compression for CBF: first pass: measure the size of the elt. UNUSED
  *
  *
  * @param input: input data in 1D as int32
@@ -215,7 +215,7 @@ kernel void dec_byte_offset(
  * @param input_size: length of the input
  *
  */
-kernel void comp_byte_offset1(
+kernel void comp_byte_offset0(
 		global int* input,
 		global int* output,
 		uint input_size)
@@ -228,7 +228,8 @@ kernel void comp_byte_offset1(
 }
 
 /**
- * \brief byte_offset compression for CBF: Second pass: cumsum for position calc
+ * \brief byte_offset compression for CBF: First pass: cumsum for position calc,
+ * merged with stage0
  *
  *
  * @param input: input data in 1D as int32.
@@ -238,7 +239,7 @@ kernel void comp_byte_offset1(
  * @param a,b,c: 3 local buffers of the size of the workgroup
  */
 
-kernel void comp_byte_offset2(
+kernel void comp_byte_offset1(
 		global int* input,
 		global int* output,
 		uint input_size,
@@ -280,9 +281,8 @@ kernel void comp_byte_offset2(
 
 	if (lid == 0)
 		a[0] = atomic_inc(workgroup_counter);
-
+	barrier(CLK_GLOBAL_MEM_FENCE);
 	barrier(CLK_LOCAL_MEM_FENCE);
-//	printf("a %d %s\n",a[0],nbwg);
 	if ((a[0]+1) == nbwg) // we are the last work group
 	{
 //		Do a cum_sum of all groups results
@@ -294,7 +294,7 @@ kernel void comp_byte_offset2(
 
 
 /**
- * \brief byte_offset compression for CBF: Third  pass: store the value at the right place
+ * \brief byte_offset compression for CBF: Second pass: store the value at the right place
  *
  * Nota: This enforces little-endian storage
  *
@@ -307,7 +307,7 @@ kernel void comp_byte_offset2(
  * @param chunk: number of data-point every thread will process
  *
  */
-kernel void comp_byte_offset3(
+kernel void comp_byte_offset2(
 		global int* input,
 		global int* local_index,
 		global int* global_offset,
@@ -320,7 +320,6 @@ kernel void comp_byte_offset3(
 	uint wid = get_group_id(0);
 	uint ws = get_local_size(0);
 	uint lid = get_local_id(0);
-	uint dest;
 	uint to_process = chunk * ws;
 	uint start_process = wid *  to_process;
 	uint end_process;
@@ -329,7 +328,6 @@ kernel void comp_byte_offset3(
 	for (uint offset=start_process; offset< end_process; offset+=ws)
 	{
 		int current, previous, value, absvalue;
-		uint dest;
 		uint pos = offset + lid;
 		if (pos<end_process)
 		{
@@ -337,7 +335,7 @@ kernel void comp_byte_offset3(
 			current = input[pos];
 			value = current - previous;
 			absvalue = abs(value);
-			dest = pos_offset + local_index[pos]; // -1 ?
+			uint dest = pos_offset + local_index[pos];
 			if (dest < output_size)
 			{
 				if (absvalue > 32767)
@@ -354,7 +352,7 @@ kernel void comp_byte_offset3(
 				{
 					output[dest] = -128;
 					output[dest+1] = (char) (value & 255);
-					output[dest+2] = (char) (value >> 8) | (value >> 24) ;
+					output[dest+2] = (char) (value >> 8);
 				}
 				else
 				{
