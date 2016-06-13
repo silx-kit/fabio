@@ -6,12 +6,12 @@ static void my_group_scan_inclusive_add( 	__local int *inp_buf,
 											__local int *tmp_buf)
 {
     uint lid = get_local_id(0);
-    uint gs = get_local_size(0);
+    uint ws = get_local_size(0);
 
     out_buf[lid] = tmp_buf[lid] = inp_buf[lid];
     barrier(CLK_LOCAL_MEM_FENCE);
 
-    for(uint s = 1; s < gs; s <<= 1) {
+    for(uint s = 1; s < ws; s <<= 1) {
         if(lid > (s-1)) {
         	tmp_buf[lid] = out_buf[lid]+out_buf[lid-s];
         } else {
@@ -39,6 +39,9 @@ static int my_group_scan_exclusive_add( 	int value,
 	return ret_val;
 }
 
+/*
+Simple CumSum
+*/
 kernel void cumsum(
 	global char* input,
 	global int* output,
@@ -50,16 +53,22 @@ kernel void cumsum(
 {
 	uint gid = get_global_id(0);
 	uint lid = get_local_id(0);
-	uint gs = get_local_size(0);
+	uint ws = get_local_size(0);
 	if (gid<input_size)
-		{
+	{
 		a[lid] = input[gid];
-		}else{
+	}
+	else
+	{
 		a[lid] = 0;
-		}
+	}
 	my_group_scan_inclusive_add(a, b, c);
-	output[gid] = b[lid];
+	if (gid<input_size)	output[gid] = b[lid];
 }
+
+/*
+ * Function called to determine the data type length per char: 1, 3 or 7
+ */
 static int data_type(uint idx,
 		             global int* input,
 					 uint input_size)
@@ -118,10 +127,6 @@ kernel void dec_byte_offset(
 	uint idx, valid_items;
 	uint input_offset = start_pos[gi];
 	uint output_offset = input_offset;
-	char data;
-	int value;
-	int offset_value=0;
-
 
 	local2[lid] = 0; // counter for exceptions
 	barrier(CLK_LOCAL_MEM_FENCE);
@@ -146,9 +151,9 @@ kernel void dec_byte_offset(
 			valid_items = 0;
 			if (lid==0)//serialize scan
 			{
-				uint i=0, j=0;
+				uint i=0;
 				int current, last;
-				while (i<ws)
+				while (i < ws)
 				{
 					current = local1[i];
 					if (current == -128)
@@ -158,7 +163,7 @@ kernel void dec_byte_offset(
 						next2 = ((i+2)<ws) ? local1[i+2] : input[input_offset+i+2];
 						if ((next1 == 0) && (next2 ==-128)) //32 bits exception
 						{
-							int next1, next2, next3, next4, next5, next6;
+							int next3, next4, next5, next6;
 							next3 = ((i+3)<ws) ? local1[i+3] : input[input_offset+i+3];
 							next4 = ((i+4)<ws) ? local1[i+4] : input[input_offset+i+4];
 							next5 = ((i+5)<ws) ? local1[i+5] : input[input_offset+i+5];
@@ -245,15 +250,15 @@ kernel void comp_byte_offset2(
 		__local int *c)
 {
 	uint lid = get_local_id(0);
-	uint gs = get_local_size(0);
+	uint ws = get_local_size(0);
 	uint wid = get_group_id(0);
 	uint nbwg = get_num_groups(0);
-	uint to_process = chunk * gs;
+	uint to_process = chunk * ws;
 	uint start_process = wid *  to_process;
 	uint end_process;
 	end_process = min(input_size, start_process + to_process);
 	int last = 0;
-	for (uint offset=start_process; offset< end_process; offset+=gs)
+	for (uint offset=start_process; offset< end_process; offset+=ws)
 	{
 		uint pos = offset + lid;
 		if (pos<input_size)
@@ -288,72 +293,74 @@ kernel void comp_byte_offset2(
 }
 
 
-//uint workgroup = 0;
-//for (int start_process=0; start_process<input_size; start_process+=to_process)
-//{
-//	last = (workgroup == 0)? 0: last_wg[workgroup-1];
-//	workgroup++;
-//	end_process = min(start_process + to_process, input_size);
-//	for (uint offset=start_process; offset<end_process; offset+=gs)
-//	{
-//		uint pos = offset + lid;
-//		if (pos < end_process)
-//		{
-//			output[pos] += last;
-//		}
-//
-//	}
-//
-//}
-
-
-
 /**
  * \brief byte_offset compression for CBF: Third  pass: store the value at the right place
  *
  * Nota: This enforces little-endian storage
  *
- * @param input: input data in 1D as int32
- * @param index: input data with output positions
- * @param output: output as int8
+ * @param input: input data in 1D as int8
+ * @param local_index: input data with output positions, reference
+ * @param global_offset: absolute offset of the workgroup, reference
+ * @param output: output as int32
  * @param input_size: length of the input
+ * @param output_size: length of the output, also size of local_index
+ * @param chunk: number of data-point every thread will process
  *
  */
 kernel void comp_byte_offset3(
 		global int* input,
-		global int* index,
+		global int* local_index,
+		global int* global_offset,
 		global char* output,
-		uint input_size)
+		uint input_size,
+		uint output_size,
+		uint chunk)
 {
 	uint gid = get_global_id(0);
+	uint wid = get_group_id(0);
+	uint ws = get_local_size(0);
+	uint lid = get_local_id(0);
 	uint dest;
-	int current, previous, value, absvalue;
-	if (gid < input_size)
+	uint to_process = chunk * ws;
+	uint start_process = wid *  to_process;
+	uint end_process;
+	end_process = min(input_size, start_process + to_process);
+	int pos_offset = (wid > 0) ? global_offset[wid-1] : 0;
+	for (uint offset=start_process; offset< end_process; offset+=ws)
 	{
-		current =  input[gid];
-		previous = (gid > 0) ? input[gid] : 0;
-		value = current - previous;
-		absvalue = abs(value);
-		dest = index[gid];
-		if (absvalue > 32767)
+		int current, previous, value, absvalue;
+		uint dest;
+		uint pos = offset + lid;
+		if (pos<end_process)
 		{
-			output[dest] = -128;
-			output[dest+1] = 0;
-			output[dest+2] = -128;
-			output[dest+3] = value & 255;
-			output[dest+4] = (value >> 8) & 255;
-			output[dest+5] = (value >> 16) & 255;
-			output[dest+6] = value >> 24;
-		}
-		else if (absvalue > 127)
-		{
-			output[dest] = -128;
-			output[dest+1] = value & 255;
-			output[dest+2] = (value >> 8) | (value >> 24) ;
-		}
-		else
-		{
-			output[dest] =  (char) value;
+			previous = (pos>0)? input[pos -1]: 0;
+			current = input[pos];
+			value = current - previous;
+			absvalue = abs(value);
+			dest = pos_offset + local_index[pos]; // -1 ?
+			if (dest < output_size)
+			{
+				if (absvalue > 32767)
+				{
+					output[dest] = -128;
+					output[dest+1] = 0;
+					output[dest+2] = -128;
+					output[dest+3] = (char) (value & 255);
+					output[dest+4] = (char) ((value >> 8) & 255);
+					output[dest+5] = (char) ((value >> 16) & 255);
+					output[dest+6] = (char) (value >> 24);
+				}
+				else if (absvalue > 127)
+				{
+					output[dest] = -128;
+					output[dest+1] = (char) (value & 255);
+					output[dest+2] = (char) (value >> 8) | (value >> 24) ;
+				}
+				else
+				{
+					output[dest] =  (char) value;
+				}
+			}
 		}
 	}
 }
