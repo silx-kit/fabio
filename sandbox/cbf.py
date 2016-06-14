@@ -4,6 +4,9 @@ import numpy
 import fabio
 import pyopencl, pyopencl.array
 import time
+import os
+# os.environ["PYOPENCL_CTX"] = "1:0"
+os.environ["PYOPENCL_COMPILER_OUTPUT"] = "1"
 
 
 def decomp_vec(raw_n):
@@ -24,14 +27,15 @@ def profile(evt, cmt=""):
     evt.wait()
     print("%s Exec time: %.3fms" % (cmt, 1e-6 * (evt.profile.end - evt.profile.start)))
 
+
+
+ctx = pyopencl.create_some_context(interactive=True)
+
+
 fname = "testimages/run2_1_00148.cbf"
 cbf = fabio.cbfimage.CbfImage()
 data = fabio.open(fname).data
 raw = cbf.read(fname, only_raw=True)
-import os
-os.environ["PYOPENCL_CTX"] = "1:0"
-os.environ["PYOPENCL_COMPILER_OUTPUT"] = "1"
-ctx = pyopencl.create_some_context(interactive=False)
 properties = pyopencl.command_queue_properties.PROFILING_ENABLE
 # properties = None
 queue = pyopencl.CommandQueue(ctx, properties=properties)
@@ -46,6 +50,7 @@ tmp1_d = pyopencl.array.zeros_like(data_d)
 tmp2_d = pyopencl.array.zeros_like(data_d)
 tmp3_d = pyopencl.array.zeros_like(data_d)
 lem_d = pyopencl.array.empty_like(data_d)
+zero_d = pyopencl.array.zeros(queue, shape=1, dtype="int32")
 
 src = open("sandbox/cbf.cl").read()
 prg = pyopencl.Program(ctx, src).build()
@@ -58,7 +63,7 @@ for i in range(11):
     lc = pyopencl.LocalMemory(4 * WG)
 
     size = data.size
-    zero_d = pyopencl.array.zeros(queue, shape=1, dtype="int32")
+
     wgsum_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
 
     t0 = time.time()
@@ -67,7 +72,9 @@ for i in range(11):
     size = data.size
     WS = (size + WG - 1) & ~(WG - 1)
     chunk = ((size + WG - 1) // WG + WG - 1) // WG
-    zero_d.set(numpy.zeros(1, dtype="int32"))
+    zero_d.fill(0)
+    tmp2_d.fill(0)
+
     evt = prg.comp_byte_offset1(queue, (WG * WG,), (WG,), data_d.data, tmp2_d.data, numpy.uint32(size), numpy.uint32(chunk), wgsum_d.data, zero_d.data, la, lb, lc)
     profile(evt, "comp_byte_offset1")
 
@@ -75,7 +82,7 @@ for i in range(11):
     tmp_cumsum = wgsum_d.get()
     dest_size = tmp_cumsum[-1]
     print("Size: %s, all=%s" % (dest_size, tmp_cumsum))
-    target_d = pyopencl.array.empty(queue, (dest_size,), dtype="int8")
+    target_d = pyopencl.array.zeros(queue, (dest_size,), dtype="int8")
 
     evt = prg.comp_byte_offset2(queue, (WG * WG,), (WG,),
                                 data_d.data, tmp2_d.data, wgsum_d.data, target_d.data,
