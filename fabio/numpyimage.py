@@ -37,13 +37,12 @@ __authors__ = ["Jerome Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF"
-__date__ = "30/10/2015"
+__date__ = "16/06/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
 import numpy
 from .fabioimage import FabioImage
-
 
 
 class NumpyImage(FabioImage):
@@ -111,6 +110,12 @@ The description of the fourth element of the header therefore has become:
 
     
     """
+    def __init__(self, data=None, header=None):
+        """
+        Set up initial values
+        """
+        FabioImage.__init__(self, data, header)
+        self.all_data = self.data
 
     def _readheader(self, infile):
         """
@@ -133,9 +138,19 @@ The description of the fourth element of the header therefore has become:
         self._readheader(infile)
 
         # read the image data
-        self.data = numpy.load(infile)
-        self.bytecode = self.data.dtype
-        self.dim2, self.dim1 = self.data.shape
+        self.all_data = numpy.load(infile)
+        if self.all_data.ndim > 3:
+            shape = self.all_data.shape[-2:]
+            self.all_data.shape = (-1,) + shape
+        elif self.all_data.ndim < 2:
+            self.all_data.shape = 1, -1
+
+        if self.all_data.ndim == 2:
+            self.data = self.all_data
+        elif self.all_data.ndim == 3:
+            self.nframes = self.data.shape[0]
+            self.data = self.all_data[0]
+            self.currentframe = 0
         return self
 
     def write(self, fname):
@@ -143,7 +158,28 @@ The description of the fourth element of the header therefore has become:
         try to write image 
         @param fname: name of the file 
         """
-        numpy.save(fname, self.data)
+        numpy.save(fname, self.all_data)
 
+    def getframe(self, num):
+        """ returns the frame numbered 'num' in the stack if applicable"""
+        if self.nframes > 1:
+            new_img = None
+            if (num >= 0) and num < self.nframes:
+                data = self.all_data[num]
+                new_img = self.__class__(data=data, header=self.header)
+                new_img.all_data = self.all_data
+            else:
+                raise RuntimeError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+        else:
+            new_img = FabioImage.getframe(self, num)
+        return new_img
+
+    def previous(self):
+        """ returns the previous frame in the series as a fabioimage """
+        return self.getframe(self.currentframe - 1)
+
+    def next(self):
+        """ returns the next frame in the series as a fabioimage """
+        return self.getframe(self.currentframe + 1)
 
 numpyimage = NumpyImage
