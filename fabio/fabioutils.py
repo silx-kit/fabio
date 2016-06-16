@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/04/2016"
+__date__ = "16/06/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -640,6 +640,12 @@ else:
 
         def __enter__(self, *args, **kwargs):
             return self
+
+
+class NotGoodReader(RuntimeError):
+    """The reader used is probably not the good one
+    """
+    pass
 
 
 class DebugSemaphore(_Semaphore):

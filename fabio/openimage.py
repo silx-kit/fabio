@@ -65,12 +65,13 @@ from . import pixiimage
 from . import hdf5image
 from . import raxisimage
 from . import numpyimage
+from . import eigerimage
 
 if sys.version_info[0] < 3:
     bytes = str
     from urlparse import urlparse
 else:
-    from urllib.parse import  urlparse
+    from urllib.parse import urlparse
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -101,12 +102,14 @@ MAGIC_NUMBERS = [
     (b"No"                 , "kcd"),
     (b"<"                  , "xsd"),
     (b"\n\xb8\x03\x00"     , 'pixi'),
+    (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger"),
     (b"\x89\x48\x44\x46"   , 'hdf5'),
     (b"R-AXIS"             , 'raxis'),
-    (b"\x93NUMPY"          , 'numpy')
+    (b"\x93NUMPY"          , 'numpy'),
     ]
 
 URL_PREFIX = {"file:":False, "hdf5:":True, "h5:":True, "nxs:": True}
+
 
 def do_magic(byts):
     """ Try to interpret the bytes starting the file as a magic number """
@@ -128,8 +131,7 @@ def openimage(filename, frame=None):
         try:
             logger.debug("Attempting to open %s" % (filename.tostring()))
             obj = _openimage(filename.tostring())
-            logger.debug("Attempting to read frame %s from %s" % (frame,
-                filename.tostring()))
+            logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename.tostring(), obj.classname))
             obj = obj.read(filename.tostring(), frame)
         except Exception as ex:
             # multiframe file
@@ -142,7 +144,7 @@ def openimage(filename, frame=None):
     else:
         logger.debug("Attempting to open %s" % (filename))
         obj = _openimage(filename)
-        logger.debug("Attempting to read frame %s from %s" % (frame, filename))
+        logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename, obj.classname))
         obj = obj.read(obj.filename, frame)
     return obj
 

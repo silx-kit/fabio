@@ -112,7 +112,7 @@ The description of the fourth element of the header therefore has become:
         Set up initial values
         """
         FabioImage.__init__(self, data, header)
-        self.all_data = self.data
+        self.dataset = self.data
 
     def _readheader(self, infile):
         """
@@ -135,19 +135,22 @@ The description of the fourth element of the header therefore has become:
         self._readheader(infile)
 
         # read the image data
-        self.all_data = numpy.load(infile)
-        if self.all_data.ndim > 3:
-            shape = self.all_data.shape[-2:]
-            self.all_data.shape = (-1,) + shape
-        elif self.all_data.ndim < 2:
-            self.all_data.shape = 1, -1
+        self.dataset = numpy.load(infile)
+        if self.dataset.ndim > 3:
+            shape = self.dataset.shape[-2:]
+            self.dataset.shape = (-1,) + shape
+        elif self.dataset.ndim < 2:
+            self.dataset.shape = 1, -1
 
-        if self.all_data.ndim == 2:
-            self.data = self.all_data
-        elif self.all_data.ndim == 3:
-            self.nframes = self.all_data.shape[0]
-            self.data = self.all_data[0]
-            self.currentframe = 0
+        if self.dataset.ndim == 2:
+            self.data = self.dataset
+        elif self.dataset.ndim == 3:
+            self.nframes = self.dataset.shape[0]
+            if frame is None:
+                frame = 0
+            if frame < self.nframes:
+                self.data = self.dataset[frame]
+            self.currentframe = frame
         return self
 
     def write(self, fname):
@@ -155,16 +158,16 @@ The description of the fourth element of the header therefore has become:
         try to write image 
         @param fname: name of the file 
         """
-        numpy.save(fname, self.all_data)
+        numpy.save(fname, self.dataset)
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
             new_img = None
             if (num >= 0) and num < self.nframes:
-                data = self.all_data[num]
+                data = self.dataset[num]
                 new_img = self.__class__(data=data, header=self.header)
-                new_img.all_data = self.all_data
+                new_img.dataset = self.dataset
                 new_img.nframes = self.nframes
                 new_img.currentframe = num
             else:
