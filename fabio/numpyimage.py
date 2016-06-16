@@ -24,16 +24,13 @@
 
 
 """
-Template for FabIO
-
-Authors: Who are you ?
-email:  Where can you be reached ?
+Generic numpy file reader for FabIO
 
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function, division
 
-__authors__ = ["Jerome Kieffer"]
+__authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF"
@@ -148,7 +145,7 @@ The description of the fourth element of the header therefore has become:
         if self.all_data.ndim == 2:
             self.data = self.all_data
         elif self.all_data.ndim == 3:
-            self.nframes = self.data.shape[0]
+            self.nframes = self.all_data.shape[0]
             self.data = self.all_data[0]
             self.currentframe = 0
         return self

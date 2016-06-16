@@ -22,11 +22,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-
 Test for numpy images.
-
-Jerome Kieffer, 04/12/2014
 """
+__author__ = "Jérôme Kieffer"
+__date__ = "16/06/2016"
 import os
 import sys
 import unittest
@@ -45,7 +44,7 @@ class TestNumpy(unittest.TestCase):
     """basic test"""
 
     def setUp(self):
-        """Download files"""
+        """Generate files"""
 
         self.ary = numpy.random.randint(0, 6500, size=99).reshape(11, 9).astype("uint16")
         self.fn = os.path.join(UtilsTest.tempdir, "numpy.npy")
@@ -78,11 +77,30 @@ class TestNumpy(unittest.TestCase):
         self.assertEqual(11, obj.dim2, "dim2")
         self.assert_(numpy.allclose(obj.data, self.ary), "data")
 
+    def test_multidim(self):
+        for shape in (10,), (10, 15), (10, 15, 20), (10, 15, 20, 25):
+            ary = numpy.random.random(shape).astype("float32")
+            numpy.save(self.fn, ary)
+            obj = openimage(self.fn)
+
+            self.assertEqual(obj.bytecode, numpy.float32, msg="bytecode is OK")
+            self.assertEqual(shape[-1], obj.dim1, "dim1")
+            dim2 = 1 if len(shape) == 1 else shape[-2]
+            self.assertEqual(dim2, obj.dim2, "dim2")
+            nframes = 1
+            if len(shape) > 2:
+                for i in shape[:-2]:
+                    nframes *= i
+            self.assertEqual(nframes, obj.nframes, "nframes")
+            if os.path.exists(self.fn):
+                os.unlink(self.fn)
+
 
 def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(TestNumpy("test_read"))
     testsuite.addTest(TestNumpy("test_write"))
+    testsuite.addTest(TestNumpy("test_multidim"))
     return testsuite
 
 if __name__ == '__main__':
