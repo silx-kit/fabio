@@ -168,6 +168,8 @@ The description of the fourth element of the header therefore has become:
                 data = self.all_data[num]
                 new_img = self.__class__(data=data, header=self.header)
                 new_img.all_data = self.all_data
+                new_img.nframes = self.nframes
+                new_img.currentframe = num
             else:
                 raise RuntimeError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
         else:
