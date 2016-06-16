@@ -31,7 +31,8 @@ project=fabio
 debian=$(grep -o '[0-9]*' /etc/issue)
 version=$(python -c"import version; print(version.version)")
 strictversion=$(python -c"import version; print(version.strictversion)")
-tarname=${project}_${strictversion}.orig.tar.gz
+debianversion=$(python -c"import version; print(version.debianversion)")
+tarname=${project}_${debianversion}.orig.tar.gz
 
 if [ -d /usr/lib/ccache ];
 then
@@ -49,7 +50,7 @@ fi
 
 cd package
 tar -xzf ${tarname}
-newname=python-${project}_${strictversion}.orig.tar.gz
+newname=python-${project}_${debianversion}.orig.tar.gz
 directory=${project}-${strictversion}
 echo tarname $tarname newname $newname
 if [ $tarname != $newname ]
@@ -63,9 +64,9 @@ fi
 
 if [ -f ${project}-testimages.tar.gz ]
 then
-  if [ ! -h  python-${project}_${strictversion}.orig-testimages.tar.gz ]
+  if [ ! -h  python-${project}_${debianversion}.orig-testimages.tar.gz ]
   then
-    ln -s ${project}-testimages.tar.gz python-${project}_${strictversion}.orig-testimages.tar.gz
+    ln -s ${project}-testimages.tar.gz python-${project}_${debianversion}.orig-testimages.tar.gz
   fi
 fi
 
@@ -74,14 +75,14 @@ cp -r ../debian .
 cp ../../copyright debian
 
 #handle test images
-if [ -f ../python-${project}_${strictversion}.orig-testimages.tar.gz ]
+if [ -f ../python-${project}_${debianversion}.orig-testimages.tar.gz ]
 then
   if [ ! -d testimages ]
   then
     mkdir testimages
   fi
   cd testimages
-  tar -xzf  ../../python-${project}_${strictversion}.orig-testimages.tar.gz
+  tar -xzf  ../../python-${project}_${debianversion}.orig-testimages.tar.gz
   cd ..
 else
   # Disable to skip tests during build
@@ -90,7 +91,7 @@ else
   export DEB_BUILD_OPTIONS=nocheck
 fi
 
-dch -v ${strictversion}-1 "upstream development build of ${project} ${version}"
+dch -v ${debianversion}-1 "upstream development build of ${project} ${version}"
 dch --bpo "${project} snapshot ${version} built for debian ${debian}"
 dpkg-buildpackage -r
 rc=$?
