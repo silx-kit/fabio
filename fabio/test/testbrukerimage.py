@@ -71,12 +71,11 @@ OVERFLOWS = [
 
 class TestBruker(unittest.TestCase):
     """basic test"""
-    filename = os.path.join(UtilsTest.tempdir, "image.0000")
 
     def setUp(self):
         """ Generate a test bruker image """
-        if os.path.isfile(self.filename):
-            os.unlink(self.filename)
+        self.filename = os.path.join(UtilsTest.tempdir, "image.0000")
+
         with open(self.filename, 'wb') as fout:
             wrb = 0
             for key, val in MYHEADER.items():
@@ -93,6 +92,11 @@ class TestBruker(unittest.TestCase):
             for ovf in OVERFLOWS:
                 fout.write((ovf[0] + ovf[1]).encode("ASCII"))
             fout.write(b'.' * (512 - (16 * noverfl) % 512))
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        if os.path.exists(self.filename):
+            os.unlink(self.filename)
 
     def test_read(self):
         """ see if we can read the test image """
@@ -143,7 +147,8 @@ class TestBrukerLinear(unittest.TestCase):
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
-        os.unlink(self.filename)
+        if os.path.exists(self.filename):
+            os.unlink(self.filename)
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
@@ -160,6 +165,10 @@ class TestRealImg(unittest.TestCase):
         download images
         """
         self.im_dir = os.path.dirname(UtilsTest.getimage("Cr8F8140k103.0026.bz2"))
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.im_dir = None
 
     def test_read(self):
         """ check we can read bruker images"""
@@ -213,4 +222,3 @@ def suite():
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(suite())
-
