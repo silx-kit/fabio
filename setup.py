@@ -28,7 +28,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/06/2016"
+__date__ = "17/06/2016"
 __status__ = "stable"
 
 import os
@@ -177,11 +177,14 @@ def get_version():
     import version
     return version.strictversion
 
+
 def get_readme():
+    """Provide the long description as an Unicode string"""
     dirname = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(dirname, "README.rst"), "r") as fp:
+
+    with open(os.path.join(dirname, "README.rst"), "rb") as fp:
         long_description = fp.read()
-    return long_description
+    return long_description.decode("utf-8")
 
 
 #######################
