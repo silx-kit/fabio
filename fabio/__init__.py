@@ -41,11 +41,10 @@ try:
     from ._version import __date__ as date  # noqa
     from ._version import version, version_info, hexversion, strictversion  # noqa
 except ImportError:
-    raise RuntimeError(
-                       "Do NOT use %s from its sources: build it and use the built version" % project)
+    raise RuntimeError("Do NOT use %s from its sources: build it and use the built version" % project)
 
 from . import fabioimage
-factory = fabioimage.FabioImage.factory(name)
+factory = fabioimage.FabioImage.factory
 from . import openimage
 from .fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
         previous_filename, next_filename, deconstruct_filename, \
