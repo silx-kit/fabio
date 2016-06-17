@@ -48,8 +48,8 @@ except ImportError:
         raise ImportError("Six version is too old")
 
 if sys.platform != "win32":
-    WindowsError = RuntimeError
-    FileNotFoundError = OSError
+    WindowsError = OSError
+
 if six.PY2:
     bytes = str
     FileIO = file
@@ -112,7 +112,7 @@ try:
         COMPRESSORS['.gz'] = 'gzip -dc '
     else:
         COMPRESSORS['.gz'] = None
-except (subprocess.CalledProcessError, WindowsError, FileNotFoundError) as err:
+except (subprocess.CalledProcessError, WindowsError) as err:
     logger.debug("No gzip utility found: %s", err)
     COMPRESSORS['.gz'] = None
 
@@ -125,7 +125,7 @@ try:
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
     else:
         COMPRESSORS['.bz2'] = None
-except (subprocess.CalledProcessError, WindowsError, FileNotFoundError) as err:
+except (subprocess.CalledProcessError, WindowsError) as err:
     logger.debug("No bzip2 utility found: %s", err)
     COMPRESSORS['.bz2'] = None
 
