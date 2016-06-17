@@ -41,7 +41,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3 compatibility
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "24/05/2016"
+__date__ = "17/06/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPLv3+"
@@ -68,7 +68,7 @@ class BrukerImage(FabioImage):
     """
     bpp_to_numpy = {1: numpy.uint8,
                     2: numpy.uint16,
-                    4: numpy.int32}
+                    4: numpy.uint32}
 
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
     SPACER = "\x1a\x04"  # this is CTRL-Z CTRL-D
