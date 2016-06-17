@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/03/2016"
+__date__ = "17/06/2016"
 __status__ = "stable"
 
 
@@ -45,6 +45,7 @@ except ImportError:
                        "Do NOT use %s from its sources: build it and use the built version" % project)
 
 from . import fabioimage
+factory = fabioimage.FabioImage.factory(name)
 from . import openimage
 from .fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
         previous_filename, next_filename, deconstruct_filename, \
@@ -55,7 +56,6 @@ filename_object = FilenameObject
 
 from .openimage import openimage as open
 from .openimage import openheader as openheader
-
 
 
 def tests():
@@ -71,6 +71,7 @@ def tests():
     """
     from . import test
     test.run_tests()
+
 
 def benchmarks():
     """

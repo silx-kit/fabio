@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/06/2016"
+__date__ = "16/06/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -112,7 +112,7 @@ try:
         COMPRESSORS['.gz'] = 'gzip -dc '
     else:
         COMPRESSORS['.gz'] = None
-except (subprocess.CalledProcessError, WindowsError)  as err:
+except subprocess.CalledProcessError as err:
     logger.debug("No gzip utility found: %s", err)
     COMPRESSORS['.gz'] = None
 
@@ -125,7 +125,7 @@ try:
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
     else:
         COMPRESSORS['.bz2'] = None
-except (subprocess.CalledProcessError, WindowsError) as err:
+except subprocess.CalledProcessError as err:
     logger.debug("No bzip2 utility found: %s", err)
     COMPRESSORS['.bz2'] = None
 
@@ -642,6 +642,12 @@ else:
 
         def __enter__(self, *args, **kwargs):
             return self
+
+
+class NotGoodReader(RuntimeError):
+    """The reader used is probably not the good one
+    """
+    pass
 
 
 class DebugSemaphore(_Semaphore):

@@ -24,26 +24,22 @@
 
 
 """
-Template for FabIO
-
-Authors: Who are you ?
-email:  Where can you be reached ?
+Generic numpy file reader for FabIO
 
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function, division
 
-__authors__ = ["Jerome Kieffer"]
+__authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF"
-__date__ = "30/10/2015"
+__date__ = "17/06/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
 import numpy
 from .fabioimage import FabioImage
-
 
 
 class NumpyImage(FabioImage):
@@ -111,6 +107,33 @@ The description of the fourth element of the header therefore has become:
 
     
     """
+    def __init__(self, data=None, header=None):
+        """
+        Set up initial values
+        """
+        FabioImage.__init__(self, data, header)
+        self.dataset = self.data
+        self.slice_dataset()
+        self.filename = "Numpy_array_%x" % id(self.dataset)
+
+    def slice_dataset(self, frame=None):
+        if self.dataset is None:
+            return
+        if self.dataset.ndim > 3:
+            shape = self.dataset.shape[-2:]
+            self.dataset.shape = (-1,) + shape
+        elif self.dataset.ndim < 2:
+            self.dataset.shape = 1, -1
+
+        if self.dataset.ndim == 2:
+            self.data = self.dataset
+        elif self.dataset.ndim == 3:
+            self.nframes = self.dataset.shape[0]
+            if frame is None:
+                frame = 0
+            if frame < self.nframes:
+                self.data = self.dataset[frame]
+            self.currentframe = frame
 
     def _readheader(self, infile):
         """
@@ -133,9 +156,8 @@ The description of the fourth element of the header therefore has become:
         self._readheader(infile)
 
         # read the image data
-        self.data = numpy.load(infile)
-        self.bytecode = self.data.dtype
-        self.dim2, self.dim1 = self.data.shape
+        self.dataset = numpy.load(infile)
+        self.slice_dataset(frame)
         return self
 
     def write(self, fname):
@@ -143,7 +165,30 @@ The description of the fourth element of the header therefore has become:
         try to write image 
         @param fname: name of the file 
         """
-        numpy.save(fname, self.data)
+        numpy.save(fname, self.dataset)
 
+    def getframe(self, num):
+        """ returns the frame numbered 'num' in the stack if applicable"""
+        if self.nframes > 1:
+            new_img = None
+            if (num >= 0) and num < self.nframes:
+                data = self.dataset[num]
+                new_img = self.__class__(data=data, header=self.header)
+                new_img.dataset = self.dataset
+                new_img.nframes = self.nframes
+                new_img.currentframe = num
+            else:
+                raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+        else:
+            new_img = FabioImage.getframe(self, num)
+        return new_img
+
+    def previous(self):
+        """ returns the previous frame in the series as a fabioimage """
+        return self.getframe(self.currentframe - 1)
+
+    def next(self):
+        """ returns the next frame in the series as a fabioimage """
+        return self.getframe(self.currentframe + 1)
 
 numpyimage = NumpyImage

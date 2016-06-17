@@ -38,20 +38,24 @@ Based on: openbruker,readbruker, readbrukerheader functions in the opendata
 Writer by Jérôme Kieffer, ESRF, Grenoble, France
 
 """
-# get ready for python3
+# get ready for python3 compatibility
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "01/11/2015"
+__date__ = "24/05/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPLv3+"
 
-import numpy, logging, sys
+import logging
+import numpy
 from math import ceil
-import os, getpass, time
+import os
+import getpass
+import time
 logger = logging.getLogger("brukerimage")
 from .fabioimage import FabioImage
 from .fabioutils import pad, StringTypes
+
 
 class BrukerImage(FabioImage):
     """
@@ -62,12 +66,11 @@ class BrukerImage(FabioImage):
     are appliing the right formula and not the reciprocal one.
 
     """
-    bpp_to_numpy = {1:numpy.uint8,
-                    2:numpy.uint16,
-                    4:numpy.uint32}
+    bpp_to_numpy = {1: numpy.uint8,
+                    2: numpy.uint16,
+                    4: numpy.int32}
 
     # needed if you feel like writing - see ImageD11/scripts/edf2bruker.py
-
     SPACER = "\x1a\x04"  # this is CTRL-Z CTRL-D
     HEADERS_KEYS = ["FORMAT",  # Frame format. Always “86” or "100" for Bruker-format frames.
                    "VERSION",  # Header version #, such as: 1 to 17 (6 is obsolete).
@@ -163,7 +166,6 @@ class BrukerImage(FabioImage):
         self.__bpp_file = None
         self.version = 86
         self.__headerstring__ = ""
-
 
     def _readheader(self, infile):
         """
@@ -272,7 +274,6 @@ class BrukerImage(FabioImage):
         self.pilimage = None
         return self
 
-
     def write(self, fname):
         """
         Write a bruker image
@@ -316,8 +317,6 @@ class BrukerImage(FabioImage):
             bruker.write(data.tostring())
             bruker.write(self.gen_overflow().encode("ASCII"))
 
-
-
     def calc_bpp(self, data=None, max_entry=4096):
         """
         Calculate the number of byte per pixel to get an optimal overflow table.
@@ -349,7 +348,7 @@ class BrukerImage(FabioImage):
                 if type(value) in StringTypes:
                     if os.linesep in value:
                         lines = value.split(os.linesep)
-                        for i in lines[:-1] :
+                        for i in lines[:-1]:
                             headers.append((line + str(i)).ljust(80, " "))
                             line = key.ljust(7) + ":"
                         line += str(lines[-1])
@@ -374,7 +373,7 @@ class BrukerImage(FabioImage):
             for i in range(len(headers)):
                 if headers[i].startswith("HDRBLKS"):
                     headers[i] = headers.append(("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " "))
-        res = pad("".join(headers), self.SPACER + "."*78, 512 * int(self.header["HDRBLKS"]))
+        res = pad("".join(headers), self.SPACER + "." * 78, 512 * int(self.header["HDRBLKS"]))
         return res
 
     def gen_overflow(self):
@@ -385,26 +384,26 @@ class BrukerImage(FabioImage):
         flat = self.data.ravel()  # flat memory view
         overflow_pos = numpy.where(flat >= limit)[0]  # list of indexes
         overflow_val = flat[overflow_pos]
-        overflow = "".join(["%09i%07i" % (val, pos) for pos, val  in zip(overflow_pos, overflow_val)])
+        overflow = "".join(["%09i%07i" % (val, pos) for pos, val in zip(overflow_pos, overflow_val)])
         return pad(overflow, ".", 512)
 
     def basic_translate(self, fname=None):
         """
         Does some basic population of the headers so that the writing is possible
         """
-        if not "FORMAT" in self.header:
+        if "FORMAT" not in self.header:
             self.header["FORMAT"] = "86"
-        if not "HDRBLKS" in self.header:
+        if "HDRBLKS" not in self.header:
             self.header["HDRBLKS"] = 5
-        if not "TYPE" in self.header:
+        if "TYPE" not in self.header:
             self.header["TYPE"] = "UNWARPED"
-        if not "USER" in self.header:
+        if "USER" not in self.header:
             self.header["USER"] = getpass.getuser()
-        if not "FILENAM" in self.header:
+        if "FILENAM" not in self.header:
             self.header["FILENAM"] = "%s" % fname
-        if not "CREATED" in self.header:
+        if "CREATED" not in self.header:
             self.header["CREATED"] = time.ctime()
-        if not "NOVERFL" in self.header:
+        if "NOVERFL" not in self.header:
             self.header["NOVERFL"] = "0"
 #        if not "NPIXELB" in self.header:
         self.header["NPIXELB"] = self.calc_bpp()
@@ -412,9 +411,9 @@ class BrukerImage(FabioImage):
         self.header["NROWS"] = self.data.shape[0]
         # if not "NCOLS" in self.header:
         self.header["NCOLS"] = self.data.shape[1]
-        if not "WORDORD" in self.header:
+        if "WORDORD" not in self.header:
             self.header["WORDORD"] = "0"
-        if not "LONGORD" in self.header:
+        if "LONGORD" not in self.header:
             self.header["LONGORD"] = "0"
 
 brukerimage = BrukerImage

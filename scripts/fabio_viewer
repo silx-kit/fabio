@@ -123,11 +123,11 @@ class AppForm(QMainWindow):
             self.h5_loaded = False
             for fname in series:
                 if fname:
+                    extract_fname = self.extract_fname_from_path(fname)
                     if self.sequential_file_mode:
                         self.statusBar().showMessage('Adding path %s to batch image list, please wait ...' % fname)
                         self.log.appendPlainText('Adding path %s to batch image list' % fname)
                         QCoreApplication.processEvents()
-                        extract_fname = self.extract_fname_from_path(fname)
                         self.imagelistWidget.addItem(extract_fname)
                         self.sequential_file_list += [extract_fname]
                         self.sequential_file_dict[extract_fname] = fname
@@ -152,15 +152,28 @@ class AppForm(QMainWindow):
                                 img.header = {'Info': 'No header information available in binary data blocks'}
                             else:
                                 continue
-                        self.data_series += [img.data[:]]
-                        self.header_series += [img.header.copy()]
-                        extract_fname = self.extract_fname_from_path(fname)
-                        self.images_list.addItem(extract_fname)
-                        self.imagelistWidget.addItem(extract_fname)
-                        self.imgDict[extract_fname] = iid
-                        self.sequential_file_list += [extract_fname]
-                        self.sequential_file_dict[extract_fname] = fname
-                        iid += 1
+                        if img.nframes > 1:
+                            for img_idx in range(img.nframes):
+                                frame = img.getframe(img_idx)
+                                self.data_series.append(frame.data[:])
+                                self.header_series.append(frame.header.copy())
+                                frame_name = "%s # %i" % (extract_fname, img_idx)
+                                self.images_list.addItem(frame_name)
+                                self.imagelistWidget.addItem(frame_name)
+                                self.imgDict[frame_name] = iid
+                                self.sequential_file_list += [frame_name]
+                                self.sequential_file_dict[frame_name] = fname
+                                iid += 1
+                        else:
+                            self.data_series.append(img.data[:])
+                            self.header_series.append(img.header.copy())
+                            extract_fname = self.extract_fname_from_path(fname)
+                            self.images_list.addItem(extract_fname)
+                            self.imagelistWidget.addItem(extract_fname)
+                            self.imgDict[extract_fname] = iid
+                            self.sequential_file_list += [extract_fname]
+                            self.sequential_file_dict[extract_fname] = fname
+                            iid += 1
                 self.progressBar.setValue(float(iid + 1) / (total) * 100.)
             self.statusBar().clearMessage()
             self.progressBar.setValue(0)
@@ -191,7 +204,7 @@ class AppForm(QMainWindow):
                 dataset = nxdata.get("data", numpy.zeros(shape=(1, 1, 1)))
                 total = dataset.shape[0]
                 imgDict = {}
-                extract_fname = self.extract_fname_from_path(self.remove_extention_if_present(fname))
+                extract_fname = os.path.basename(os.path.splitext(fname)[0])
                 self.images_list.clear()
                 safeiid = 0
                 for iid in range(total):
@@ -237,7 +250,7 @@ class AppForm(QMainWindow):
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
-                fname = self.remove_extention_if_present(str(info[0]))
+                fname = self.os.path.splitext(str(info[0]))[0]
                 self.convert_and_write_multiple_files(fname, format_)
         else:
             if str(info[0]) != '' and str(info[1]) != '':
@@ -373,14 +386,6 @@ class AppForm(QMainWindow):
         QCoreApplication.processEvents()
         out.write(fname)
         self.statusBar().clearMessage()
-
-    def remove_extention_if_present(self, fname):
-        posslash = fname.rfind("/")
-        posdot = fname.rfind(".")
-        if posdot > posslash:
-            return  fname[:posdot]
-        else:
-            return fname
 
     def convert_and_write_multiple_files(self, fname, format_):
 
@@ -717,7 +722,7 @@ class AppForm(QMainWindow):
             if self.data_series or self.sequential_file_list:
                 if str(info[0]) != '' and str(info[1]) != '':
                     format_ = self.extract_format_from_string(str(info[1]))
-                    fname = self.remove_extention_if_present(str(info[0]))
+                    fname = self.os.path.splitext(str(info[0]))[0]
 
                     if self.sequential_file_mode:
                         total = len(self.sequential_file_list)
@@ -859,6 +864,7 @@ class AppForm(QMainWindow):
             self.log.appendPlainText('Import image %s in the View Mode tab' % item)
             QCoreApplication.processEvents()
             fname = self.sequential_file_dict[item]
+            extract_fname = os.path.splitext(os.path.basename(fname))[0]
             try:
                 img = fabio.open(fname)
             except:
@@ -875,12 +881,29 @@ class AppForm(QMainWindow):
                     img.header = {'Info': 'No header information available in binary data blocks'}
                 else:
                     return
-            self.data_series += [img.data[:]]
-            self.header_series += [img.header.copy()]
-            extract_fname = self.extract_fname_from_path(fname)
-            self.images_list.addItem(extract_fname)
-            self.imgDict[extract_fname] = iid
-            iid += 1
+            if img.nframes > 1:
+                for img_idx in range(img.nframes):
+                    frame = img.getframe(img_idx)
+                    self.data_series.append(frame.data[:])
+                    self.header_series.append(frame.header.copy())
+                    frame_name = "%s # %i" % (extract_fname, img_idx)
+                    self.images_list.addItem(frame_name)
+                    self.imagelistWidget.addItem(frame_name)
+                    self.imgDict[frame_name] = iid
+                    self.sequential_file_list += [frame_name]
+                    self.sequential_file_dict[frame_name] = fname
+                    iid += 1
+            else:
+                self.data_series.append(img.data[:])
+                self.header_series.append(img.header.copy())
+                extract_fname = self.extract_fname_from_path(fname)
+                self.images_list.addItem(extract_fname)
+                self.imagelistWidget.addItem(extract_fname)
+                self.imgDict[extract_fname] = iid
+                self.sequential_file_list += [extract_fname]
+                self.sequential_file_dict[extract_fname] = fname
+                iid += 1
+
         self.statusBar().clearMessage()
         if self.data_series:
             self.select_new_image(None, imgID=0)
