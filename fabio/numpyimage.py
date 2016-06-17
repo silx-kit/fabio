@@ -34,7 +34,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF"
-__date__ = "16/06/2016"
+__date__ = "17/06/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
@@ -113,6 +113,26 @@ The description of the fourth element of the header therefore has become:
         """
         FabioImage.__init__(self, data, header)
         self.dataset = self.data
+        self.slice_dataset()
+
+    def slice_dataset(self, frame=None):
+        if self.dataset is None:
+            return
+        if self.dataset.ndim > 3:
+            shape = self.dataset.shape[-2:]
+            self.dataset.shape = (-1,) + shape
+        elif self.dataset.ndim < 2:
+            self.dataset.shape = 1, -1
+
+        if self.dataset.ndim == 2:
+            self.data = self.dataset
+        elif self.dataset.ndim == 3:
+            self.nframes = self.dataset.shape[0]
+            if frame is None:
+                frame = 0
+            if frame < self.nframes:
+                self.data = self.dataset[frame]
+            self.currentframe = frame
 
     def _readheader(self, infile):
         """
@@ -136,21 +156,7 @@ The description of the fourth element of the header therefore has become:
 
         # read the image data
         self.dataset = numpy.load(infile)
-        if self.dataset.ndim > 3:
-            shape = self.dataset.shape[-2:]
-            self.dataset.shape = (-1,) + shape
-        elif self.dataset.ndim < 2:
-            self.dataset.shape = 1, -1
-
-        if self.dataset.ndim == 2:
-            self.data = self.dataset
-        elif self.dataset.ndim == 3:
-            self.nframes = self.dataset.shape[0]
-            if frame is None:
-                frame = 0
-            if frame < self.nframes:
-                self.data = self.dataset[frame]
-            self.currentframe = frame
+        self.slice_dataset(frame)
         return self
 
     def write(self, fname):
@@ -171,7 +177,7 @@ The description of the fourth element of the header therefore has become:
                 new_img.nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise RuntimeError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+                raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img
