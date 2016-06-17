@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/06/2016"
+__date__ = "17/06/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -49,7 +49,7 @@ except ImportError:
 
 if sys.platform != "win32":
     WindowsError = RuntimeError
-
+    FileNotFoundError = OSError
 if six.PY2:
     bytes = str
     FileIO = file
@@ -112,7 +112,7 @@ try:
         COMPRESSORS['.gz'] = 'gzip -dc '
     else:
         COMPRESSORS['.gz'] = None
-except subprocess.CalledProcessError as err:
+except (subprocess.CalledProcessError, WindowsError, FileNotFoundError) as err:
     logger.debug("No gzip utility found: %s", err)
     COMPRESSORS['.gz'] = None
 
@@ -125,7 +125,7 @@ try:
         COMPRESSORS['.bz2'] = 'bzip2 -dc '
     else:
         COMPRESSORS['.bz2'] = None
-except subprocess.CalledProcessError as err:
+except (subprocess.CalledProcessError, WindowsError, FileNotFoundError) as err:
     logger.debug("No bzip2 utility found: %s", err)
     COMPRESSORS['.bz2'] = None
 
@@ -210,7 +210,7 @@ class FilenameObject(object):
     def str(self):
         """ Return a string representation """
         fmt = "stem %s, num %s format %s extension %s " + \
-                "postnum = %s digits %s dir %s"
+              "postnum = %s digits %s dir %s"
         return fmt % tuple([str(x) for x in [
                     self.stem,
                     self.num,
