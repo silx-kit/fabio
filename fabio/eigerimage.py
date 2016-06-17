@@ -39,12 +39,16 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "GPLv3+"
 __copyright__ = "ESRF"
-__date__ = "16/06/2016"
+__date__ = "17/06/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
 
-import h5py
+try:
+    import h5py
+except ImportError:
+    h5py = None
+
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
 
@@ -58,6 +62,9 @@ class EigerImage(FabioImage):
         """
         Set up initial values
         """
+        if not h5py:
+            raise RuntimeError("fabio.EigerImage cannot be used without h5py. Please install h5py and restart")
+
         FabioImage.__init__(self, data, header)
         self.dataset = data
 

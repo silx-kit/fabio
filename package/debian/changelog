@@ -1,3 +1,23 @@
+python-fabio (0.4.0~alpha-1~bpo8+1) jessie-backports; urgency=medium
+
+  * Rebuild for jessie-backports.
+  * fabio snapshot 0.4.0-dev3 built for debian 8
+
+ -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 16 Jun 2016 12:06:45 +0200
+
+python-fabio (0.4.0~alpha-1) UNRELEASED; urgency=medium
+
+  * upstream development build of fabio 0.4.0-dev3
+
+ -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 16 Jun 2016 12:06:45 +0200
+
+python-fabio (0.3.0b3-1~bpo8+2) jessie-backports; urgency=medium
+
+  * Rebuild for jessie-backports.
+  * fabio snapshot  built for debian 8
+
+ -- Jerome Kieffer <kieffer@lintaillefer.esrf.fr>  Thu, 16 Jun 2016 12:05:29 +0200
+
 python-fabio (0.3.0b3-1~bpo8+1) jessie-backports; urgency=medium
 
   * Rebuild for jessie-backports.

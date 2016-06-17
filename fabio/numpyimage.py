@@ -114,6 +114,7 @@ The description of the fourth element of the header therefore has become:
         FabioImage.__init__(self, data, header)
         self.dataset = self.data
         self.slice_dataset()
+        self.filename = "Numpy_array_%x" % id(self.dataset)
 
     def slice_dataset(self, frame=None):
         if self.dataset is None:
