@@ -37,7 +37,6 @@ import re
 import os
 import logging
 import sys
-import subprocess
 logger = logging.getLogger("fabioutils")
 
 try:
@@ -652,3 +651,15 @@ class DebugSemaphore(_Semaphore):
 
     def __exit__(self, *arg, **kwarg):
         self.release()
+
+
+def exists(path):
+    """Test whether a path exists.
+    
+    Replaces os.path.exists and handles in addition "::" based URI as defined in 
+    http://odo.pydata.org/en/latest/uri.html#separating-parts-with
+    
+    @param path: string
+    @return: boolean
+    """
+    return os.path.exists(path.split("::")[0])

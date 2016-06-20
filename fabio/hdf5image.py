@@ -32,7 +32,9 @@ email:  Jerome.Kieffer@terre-adelie.org
 Specifications:
 input should being the form:
 
-hdf5:///filename?path#slice=[:,:,1]
+filename::path
+
+if the shape>2, it will be re-shaped as 
 
 """
 # Get ready for python3:
@@ -44,14 +46,15 @@ __license__ = "GPLv3+"
 __copyright__ = "Jérôme Kieffer"
 __version__ = "15/02/2015"
 
-import numpy, logging, os, posixpath, sys, copy
+import numpy
+import logging
+import os
+import posixpath
+import sys
 from .fabioimage import FabioImage
 logger = logging.getLogger("hdf5image")
 if sys.version_info[0] < 3:
     bytes = str
-    from urlparse import urlparse
-else:
-    from urllib.parse import  urlparse
 
 try:
     import h5py
@@ -63,6 +66,9 @@ from .fabioutils import previous_filename, next_filename
 class Hdf5Image(FabioImage):
     """
     FabIO image class for Images from an HDF file
+    
+    filename::dataset
+    
     """
     def __init__(self, *arg, **kwargs):
         """
@@ -72,73 +78,52 @@ class Hdf5Image(FabioImage):
             raise RuntimeError("fabio.Hdf5Image cannot be used without h5py. Please install h5py and restart")
 
         FabioImage.__init__(self, *arg, **kwargs)
-        self.data = None
-        self.header = self.check_header()
-        self.dim1 = self.dim2 = 0
-        self.m = self.maxval = self.stddev = self.minval = None
-        self.header_keys = self.header.keys()
-        self.bytecode = None
         self.hdf5 = None
-        self.nframes = None
-        self.url = tuple()
-        self.main_dim = None
-
-    def set_url(self, url):
-        """
-        set the url of the data
-        """
-        self.url = url
-
-    def get_slice(self):
-        if not self.url:
-            return
-        res = []
-        if self.url.fragment.startswith("slice"):
-            for idx, grp in enumerate(self.url.fragment[7:-1].split(",")):
-                ssi = []
-                if not ":" in grp:
-                    self.main_dim = idx
-                for i in grp.split(":"):
-                    if i:
-                        ssi.append(int(i))
-                    else:
-                        ssi.append(None)
-                res.append(slice(*ssi))
-        print(res)
-        return tuple(res)
+        self.dataset = None
 
     def read(self, fname, frame=None):
         """
         try to read image
-        @param fname: name of the file as hdf5:///filename?path#slice=[:,:,1]
+        @param fname: filename::datasetpath
         """
 
         self.resetvals()
-        url = urlparse(fname)
-        if not self.url:
-            self.url = url
-#        if frame:
-#            self.hdf5_location.set_index(frame)
-        self.filename = self.url.path
+        if "::" not in fname:
+            err = "the '::' separator in mandatory for HDF5 container, absent in %s" % fname
+            logger.error(err)
+            raise RuntimeError(err)
+        filename, datapath = fname.split("::", 1)
+
+        self.filename = filename
         if os.path.isfile(self.filename):
             self.hdf5 = h5py.File(self.filename, "r")
         else:
             error = "No such file or directory: %s" % self.filename
             logger.error(error)
             raise RuntimeError(error)
-        self.ds = self.hdf5[self.url.query]
-        if isinstance(self.ds, h5py.Group) and ("data" in self.ds):
-            self.ds = self.ds["data"]
+        try:
+            self.dataset = self.hdf5[datapath]
+        except Exception as err:
+            logger.error("No such datapath %s in %s, %s", datapath, filename, err)
+            raise
+        if isinstance(self.dataset, h5py.Group) and ("data" in self.dataset):
+            datapath = posixpath.join(datapath, "data")
+            logger.warning("The actual dataset is ")
+            self.dataset = self.dataset["data"]
 
-        if self.url.fragment:
-            slices = self.get_slice()
-            self.data = self.ds[self.get_slice()]
-            self.nframes = self.ds.shape[self.main_dim]
+        if self.dataset.ndim == 3:
+            self.nframes = self.dataset.shape[0]
+            if frame is not None:
+                self.currentframe = int(frame)
+            else:
+                self.currentframe = 0
+            self.data = self.dataset[self.currentframe, :, :]
+        elif self.dataset.ndim == 2:
+            self.data = self.dataset[:, :]
         else:
-            self.data = self.ds[:]
-            self.nframes = 1
-        self.dim2, self.dim1 = self.data.shape
-        self.bytecode = str(self.data.dtype)
+            err = "Only 2D and 3D datasets are supported by FabIO, here %sD" % self.dataset.ndim
+            logger.error(err)
+            raise RuntimeError(err)
         return self
 
     def write(self, fname, force_type=numpy.uint16):
@@ -150,26 +135,22 @@ class Hdf5Image(FabioImage):
         @param num: frame number
         """
         if num < 0 or num > self.nframes:
-            raise RuntimeError("Requested frame number is out of range")
+            raise RuntimeError("Requested frame number %i is out of range [0, %i[ " % (num, self.nframes))
         # Do a deep copy of the header to make a new one
-        frame = Hdf5Image(header=self.header.copy())
-        frame.header_keys = self.header_keys[:]
-        for key in ("dim1", "dim2", "nframes", "bytecode", "hdf5", "ds"):
-            frame.__setattr__(key, self.__getattribute__(key))
-        frame.hdf5_location = copy.deepcopy(self.hdf5_location)
-        frame.hdf5_location.set_index(num)
-        if self.hdf5_location.slice:
-            self.data = self.ds[tuple(self.hdf5_location.slice)]
-            self.nframes = self.ds.shape[self.hdf5_location.last_index]
-        else:
-            self.data = self.ds[:]
+        frame = self.__class__(header=self.header)
+        frame.hdf5 = self.hdf5
+        frame.dataset = self.dataset
+        frame.filename = self.filename
+        frame.nframes = self.nframes
+        frame.data = self.dataset[num, :, :]
+        frame.currentframe = num
         return frame
 
     def next(self):
         """
         Get the next image in a series as a fabio image
         """
-        if self.currentframe < (self.nframes - 1) and self.nframes > 1:
+        if self.currentframe < (self.nframes - 1):
             return self.getframe(self.currentframe + 1)
         else:
             newobj = Hdf5Image()

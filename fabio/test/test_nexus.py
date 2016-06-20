@@ -67,7 +67,6 @@ class testNexus(unittest.TestCase):
         os.unlink(fname)
 
 
-
 def suite():
     testsuite = unittest.TestSuite()
     if nexus.h5py is None:

@@ -29,7 +29,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/04/2016"
+__date__ = "20/06/2016"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -39,16 +39,14 @@ Module for handling HDF5 data structure following the NeXuS convention
 Stand-alone module which tries to offer interface to HDF5 via H5Py
 
 """
-import fabio
-import json
 import logging
 import numpy
 import os
 import posixpath
 import sys
-import threading
 import time
 
+from .fabioutils import exists
 from ._version import version
 
 if sys.version_info[0] < 3:
@@ -69,47 +67,6 @@ else:
         h5py._errors.silence_errors()
     except AttributeError:  # old h5py
         pass
-
-
-def exists(fname):
-    """
-    Return True if the filename or dataset locator exist and is valid
-    @param fname: filename or url as a string
-
-    example of url: "hdf5:///example.h5?entry/instrument/data#slice=[:,:,5]"
-
-        foo://example.com:8042/over/there?name=ferret#nose
-         \_/   \______________/\_________/ \_________/ \__/
-          |           |            |            |        |
-       scheme     authority       path        query   fragment
-    """
-    if ":" in fname:
-        url = urlparse(fname)
-        if url.scheme == "file":
-            return os.path.exists(url.path)
-        elif url.scheme == "nxs":
-            if not os.path.exists(url.path):
-                return False
-            try:
-                nxs = Nexus(url.path)
-            except:
-                return False
-            else:
-                return bool(nxs.find_data())
-        elif url.scheme == "hdf5":
-            if not os.path.exists(url.path):
-                return False
-            h5 = h5py.File(url.path, "r")
-            try:
-                dset = h5[url.query]
-            except Exception:
-                return False
-            else:
-                return isinstance(dset, h5py.Dataset)
-
-    else:
-        return os.path.exists(fname)
-
 
 
 def get_isotime(forceTime=None):
@@ -141,7 +98,7 @@ def from_isotime(text, use_tz=False):
         text = str(text)
     base = text[:19]
     if use_tz and len(text) == 25:
-        sgn = 1 if  text[:19] == "+" else -1
+        sgn = 1 if text[:19] == "+" else -1
         tz = 60 * (60 * int(text[20:22]) + int(text[23:25])) * sgn
     else:
         tz = 0
@@ -153,12 +110,13 @@ def is_hdf5(filename):
     Check if a file is actually a HDF5 file
 
     @param filename: this file has better to exist
+    @return: true or False
     """
-    signature = [137, 72, 68, 70, 13, 10, 26, 10]
-    if not os.path.exists(filename):
+    signature = b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a"
+    if not exists(filename):
         raise IOError("No such file %s" % (filename))
-    with open(filename, "rb") as f:
-        sig = [ord(i) for i in f.read(8)]
+    with open(filename.split("::")[0], "rb") as f:
+        sig = f.read(len(signature))
     return sig == signature
 
 
@@ -184,10 +142,10 @@ class Nexus(object):
         if not h5py:
             logger.error("h5py module missing: NeXus not supported")
             raise RuntimeError("H5py module is missing")
-        if os.path.exists(self.filename) and self.mode == "r":
-            self.h5 = h5py.File(self.filename, mode=self.mode)
+        if exists(self.filename) and self.mode == "r":
+            self.h5 = h5py.File(self.filename.split("::")[0], mode=self.mode)
         else:
-            self.h5 = h5py.File(self.filename)
+            self.h5 = h5py.File(self.filename.split("::")[0])
         self.to_close = []
 
     def close(self):
@@ -214,13 +172,13 @@ class Nexus(object):
         @return: HDF5 group of NXclass == NXentry
         """
         for grp_name in self.h5:
-            if  grp_name == name:
+            if grp_name == name:
                 grp = self.h5[grp_name]
-                if isinstance(grp, h5py.Group) and \
-                    "start_time" in grp and  \
-                    "NX_class" in grp.attrs and \
-                    grp.attrs["NX_class"] == "NXentry" :
-                        return grp
+                if (isinstance(grp, h5py.Group) and
+                   "start_time" in grp and
+                    "NX_class" in grp.attrs and
+                    grp.attrs["NX_class"] == "NXentry"):
+                    return grp
 
     def get_entries(self):
         """
@@ -229,23 +187,21 @@ class Nexus(object):
         @return: list of HDF5 groups
         """
         entries = [(grp, from_isotime(self.h5[grp + "/start_time"].value))
-                    for grp in self.h5
-                    if (isinstance(self.h5[grp], h5py.Group) and \
-                        "start_time" in self.h5[grp] and  \
-                        "NX_class" in self.h5[grp].attrs and \
-                        self.h5[grp].attrs["NX_class"] == "NXentry")]
-        if entries :
+                   for grp in self.h5
+                   if (isinstance(self.h5[grp], h5py.Group) and
+                       "start_time" in self.h5[grp] and
+                       "NX_class" in self.h5[grp].attrs and
+                       self.h5[grp].attrs["NX_class"] == "NXentry")]
+        if entries:
             entries.sort(key=lambda a: a[1], reverse=True)  # sort entries in decreasing time
             return [self.h5[i[0]] for i in entries]
         else:  # no entries found, try without sorting by time
             entries = [grp for grp in self.h5
-                    if (isinstance(self.h5[grp], h5py.Group) and \
-                        "NX_class" in self.h5[grp].attrs and \
-                        self.h5[grp].attrs["NX_class"] == "NXentry")]
+                       if (isinstance(self.h5[grp], h5py.Group) and
+                           "NX_class" in self.h5[grp].attrs and
+                           self.h5[grp].attrs["NX_class"] == "NXentry")]
             entries.sort(reverse=True)
             return [self.h5[i] for i in entries]
-
-
 
     def find_detector(self, all=False):
         """
@@ -308,7 +264,6 @@ class Nexus(object):
 
         return result
 
-
     def new_entry(self, entry="entry", program_name="pyFAI", title="description of experiment", force_time=None):
         """
         Create a new entry
@@ -368,7 +323,6 @@ class Nexus(object):
         det_grp = self.new_class(pyFAI_grp, name, "NXdetector")
         return det_grp
 
-
     def get_class(self, grp, class_type="NXcollection"):
         """
         return all sub-groups of the given type within a group
@@ -377,9 +331,9 @@ class Nexus(object):
         @param class_type: name of the NeXus class
         """
         coll = [grp[name] for name in grp
-               if (isinstance(grp[name], h5py.Group) and \
-                   "NX_class" in grp[name].attrs and \
-                   grp[name].attrs["NX_class"] == class_type)]
+                if (isinstance(grp[name], h5py.Group) and
+                    "NX_class" in grp[name].attrs and
+                    grp[name].attrs["NX_class"] == class_type)]
         return coll
 
     def get_data(self, grp, class_type="NXdata"):
@@ -391,9 +345,9 @@ class Nexus(object):
         """
         result = []
         for grp in self.get_class(grp, class_type):
-            result += [grp[name] for name in grp \
-               if (isinstance(grp[name], h5py.Dataset) and \
-                   ("signal" in grp[name].attrs))]
+            result += [grp[name] for name in grp
+                       if (isinstance(grp[name], h5py.Dataset) and
+                       ("signal" in grp[name].attrs))]
         return result
 
     def deep_copy(self, name, obj, where="/", toplevel=None, excluded=None, overwrite=False):
@@ -411,7 +365,7 @@ class Nexus(object):
         if not toplevel:
             toplevel = self.h5[where]
         if isinstance(obj, h5py.Group):
-            if not name in toplevel:
+            if name not in toplevel:
                 grp = toplevel.require_group(name)
                 for k, v in obj.attrs.items():
                         grp.attrs[k] = v
@@ -426,4 +380,3 @@ class Nexus(object):
             toplevel[name] = obj.value
             for k, v in obj.attrs.items():
                 toplevel[name].attrs[k] = v
-

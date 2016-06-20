@@ -62,6 +62,8 @@ from . import testnumpyimage
 from . import testcompression
 from . import testpilatusimage
 from . import test_nexus
+from . import testeigerimage
+from . import testhdf5image
 
 
 def suite():
@@ -93,6 +95,8 @@ def suite():
     testSuite.addTest(testcompression.suite())
     testSuite.addTest(testpilatusimage.suite())
     testSuite.addTest(test_nexus.suite())
+    testSuite.addTest(testeigerimage.suite())
+    testSuite.addTest(testhdf5image.suite())
     return testSuite
 
 
