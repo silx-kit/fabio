@@ -33,7 +33,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "19/05/2016"
+__date__ = "20/06/2016"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -42,7 +42,9 @@ import base64
 import hashlib
 import struct
 import logging
-logger = logging.getLogger("compression")
+import subprocess
+import numpy
+
 
 try:
     from .third_party import six
@@ -50,11 +52,10 @@ except ImportError:
     import six
     if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
         raise ImportError("Six version is too old")
-
 if six.PY2:
     bytes = str
 
-import numpy
+logger = logging.getLogger("compression")
 
 try:
     if sys.version_info < (2, 7):
@@ -77,6 +78,9 @@ except ImportError:
     logger.error("Unable to import zlib module: disabling zlib compression")
     zlib = None
 
+if sys.platform != "win32":
+    WindowsError = OSError
+
 
 def md5sum(blob):
     """
@@ -95,39 +99,78 @@ def endianness():
         return "BIG_ENDIAN"
 
 
+class ExternalCompressors(object):
+    """Class to handle lazy discovery of external compression programs"""
+    COMMANDS = {".bz2": ["bzip2" "-dcf"],
+                ".gz": ["gzip", "-dcf"]
+                }
+
+    def __init__(self):
+        """Empty constructor"""
+        self.compressors = {}
+
+    def __getitem__(self, key):
+        """Implement the dict-like behavior"""
+        if key not in self.compressors:
+            if key in self.COMMANDS:
+                commandline = self.COMMANDS[key]
+                testline = [commandline[0], "-h"]
+                try:
+                    lines = subprocess.check_output(testline,
+                                                    stderr=subprocess.STDOUT,
+                                                    universal_newlines=True)
+                    if "usage" in lines.lower():
+                        self.compressors[key] = commandline
+                    else:
+                        self.compressors[key] = None
+                except (subprocess.CalledProcessError, WindowsError) as err:
+                    logger.debug("No %s utility found: %s", commandline[0], err)
+                    self.compressors[key] = None
+            else:
+                self.compressors[key] = None
+        return self.compressors[key]
+COMPRESSORS = ExternalCompressors()
+
+
 def decGzip(stream):
-    """
+    """Decompress a chunk of data using the gzip algorithm from system or from Python
+    
+    @param stream: compressed data
+    @return: uncompressed stream
 
-    Decompress a chunk of data using the gzip algorithm from Python or alternatives if possible
-
     """
+    def _python_gzip(stream):
+        """Inefficient implementation based on loops in Python"""
+        for i in range(1, 513):
+            try:
+                fileobj = six.BytesIO(stream[:-i])
+                uncompessed = gzip.GzipFile(fileobj=fileobj).read()
+            except IOError:
+                logger.debug("trying with %s bytes less, doesn't work" % i)
+            else:
+                return uncompessed
 
     if gzip is None:
         raise ImportError("gzip module is not available")
     fileobj = six.BytesIO(stream)
     try:
-        rawData = gzip.GzipFile(fileobj=fileobj).read()
+        uncompessed = gzip.GzipFile(fileobj=fileobj).read()
     except IOError:
         logger.warning("Encounter the python-gzip bug with trailing garbage, trying subprocess gzip")
-        try:
-            # This is as an ugly hack against a bug in Python gzip
-            import subprocess
-            sub = subprocess.Popen(["gzip", "-d", "-f"], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-            rawData, err = sub.communicate(input=stream)
-            logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(rawData)))
-        except Exception as error:  # IGNORE:W0703
-            logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
-            for i in range(1, 513):
-                try:
-                    fileobj = six.BytesIO(stream[:-i])
-                    rawData = gzip.GzipFile(fileobj=fileobj).read()
-                except IOError:
-                    logger.debug("trying with %s bytes less, doesn't work" % i)
-                else:
-                    break
-            else:
-                logger.error("I am totally unable to read this gzipped compressed data block, giving up")
-    return rawData
+        cmd = COMPRESSORS[".gz"]
+        if cmd:
+            try:
+                sub = subprocess.Popen(cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                uncompessed, err = sub.communicate(input=stream)
+                logger.debug("Gzip subprocess ended with %s err= %s; I got %s bytes back" % (sub.wait(), err, len(uncompessed)))
+            except OSError as error:
+                logger.warning("Unable to use the subprocess gzip (%s). Is gzip available? " % error)
+                uncompessed = _python_gzip(stream)
+        else:
+            uncompessed = _python_gzip(stream)
+        if uncompessed is None:
+            logger.error("I am totally unable to read this gzipped compressed data block, giving up")
+    return uncompessed
 
 
 def decBzip2(stream):

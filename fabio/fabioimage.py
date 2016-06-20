@@ -68,8 +68,7 @@ except ImportError:
 
 
 class FabioMeta(type):
-    """
-    Metaclass used to register all image classes inheriting from fabioImage
+    """ Metaclass used to register all image classes inheriting from fabioImage
     """
     # we use __init__ rather than __new__ here because we want
     # to modify attributes of the class *after* they have been
@@ -80,8 +79,8 @@ class FabioMeta(type):
 
 
 class FabioImage(with_metaclass(FabioMeta, object)):
-    """
-    A common object for images in fable
+    """A common object for images in fable
+    
     Contains a numpy array (.data) and dict of meta data (.header)
     """
 
@@ -91,10 +90,9 @@ class FabioImage(with_metaclass(FabioMeta, object)):
 
     @classmethod
     def factory(cls, name):
-        """
-        A kind of factory...
+        """A kind of factory... for image_classes
 
-        @param name: name of the class to instanciate
+        @param name: name of the class to instantiate
         @type name: str
         @return: an instance of the class
         @rtype: fabioimage
@@ -111,8 +109,10 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         return obj
 
     def __init__(self, data=None, header=None):
-        """
-        Set up initial values
+        """Set up initial values
+        
+        @param data: numpy array of values
+        @param header: dict or ordereddict with metadata 
         """
         self._classname = None
         self._dim1 = self._dim2 = self._bpp = 0

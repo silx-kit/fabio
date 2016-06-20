@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "17/06/2016"
+__date__ = "20/06/2016"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -58,18 +58,18 @@ Thus 2.1.0a3 is hexversion 0x020100a3.
 
 """
 
-RELEASE_LEVEL_VALUE = { "dev": 0,
+RELEASE_LEVEL_VALUE = {"dev": 0,
                        "alpha": 10,
                        "beta": 11,
                        "gamma": 11,
                        "rc": 12,
-                       "final":15}
+                       "final": 15}
 
 MAJOR = 0
 MINOR = 4
 MICRO = 0
 RELEV = "dev"  # <16
-SERIAL = 4  # <16
+SERIAL = 5  # <16
 
 
 from collections import namedtuple
@@ -80,7 +80,7 @@ version_info = _version_info(MAJOR, MINOR, MICRO, RELEV, SERIAL)
 strictversion = version = debianversion = "%d.%d.%d" % version_info[:3]
 if version_info.releaselevel != "final":
     version += "-%s%s" % version_info[-2:]
-    debianversion += "~alpha" if RELEV == "dev" else "~%s%i" % version_info[-2:]
+    debianversion += "~adev%i" % version_info[-1] if RELEV == "dev" else "~%s%i" % version_info[-2:]
     prerel = "a" if RELEASE_LEVEL_VALUE.get(version_info[3], 0) < 10 else "b"
     if prerel not in "ab":
         prerel = "a"

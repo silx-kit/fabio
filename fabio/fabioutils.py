@@ -47,9 +47,6 @@ except ImportError:
     if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
         raise ImportError("Six version is too old")
 
-if sys.platform != "win32":
-    WindowsError = OSError
-
 if six.PY2:
     bytes = str
     FileIO = file
@@ -61,7 +58,7 @@ else:
     from io import FileIO
     to_str = lambda s: str(s, "ASCII")
 
-from .compression import bz2, gzip
+from .compression import bz2, gzip, COMPRESSORS
 import traceback
 from math import ceil
 
@@ -100,39 +97,6 @@ for key in list(FILETYPES.keys()):
     FILETYPES[key + ".gz"] = FILETYPES[key]
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
-
-
-class ExternalCompressors(object):
-    """Class to handle lazy discovery of external compression programs"""
-    COMMANDS = {".bz2": ["bzip2" "-dc"],
-                ".gz": ["gzip", "-dc"]
-                }
-
-    def __init__(self):
-        """Empty constructor"""
-        self.compressors = {}
-
-    def __getitem__(self, key):
-        """Implement the dict-like behavior"""
-        if key not in self.compressors:
-            if key in self.COMMANDS:
-                commandline = self.COMMANDS[key]
-                testline = [commandline[0], "-h"]
-                try:
-                    lines = subprocess.check_output(testline,
-                                                    stderr=subprocess.STDOUT,
-                                                    universal_newlines=True)
-                    if "usage" in lines.lower():
-                        self.compressors[key] = commandline
-                    else:
-                        self.compressors[key] = None
-                except (subprocess.CalledProcessError, WindowsError) as err:
-                    logger.debug("No %s utility found: %s", commandline[0], err)
-                    self.compressors[key] = None
-            else:
-                self.compressors[key] = None
-        return self.compressors[key]
-COMPRESSORS = ExternalCompressors()
 
 
 def deprecated(func):
