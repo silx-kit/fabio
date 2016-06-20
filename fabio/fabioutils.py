@@ -29,7 +29,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "17/06/2016"
+__date__ = "20/06/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -101,33 +101,38 @@ for key in list(FILETYPES.keys()):
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
 
-# Compressors
-COMPRESSORS = {}
 
-try:
-    lines = subprocess.check_output(["gzip", "-h"],
-                                    stderr=subprocess.STDOUT,
-                                    universal_newlines=True)
-    if "usage" in lines.lower():
-        COMPRESSORS['.gz'] = 'gzip -dc '
-    else:
-        COMPRESSORS['.gz'] = None
-except (subprocess.CalledProcessError, WindowsError) as err:
-    logger.debug("No gzip utility found: %s", err)
-    COMPRESSORS['.gz'] = None
+class ExternalCompressors(object):
+    """Class to handle lazy discovery of external compression programs"""
+    COMMANDS = {".bz2": ["bzip2" "-dc"],
+                ".gz": ["gzip", "-dc"]
+                }
 
-try:
-    lines = subprocess.check_output(["bzip2", "-h"],
-                                    stderr=subprocess.STDOUT,
-                                    universal_newlines=True)
-    # Looking for "usage"
-    if "usage" in lines.lower():
-        COMPRESSORS['.bz2'] = 'bzip2 -dc '
-    else:
-        COMPRESSORS['.bz2'] = None
-except (subprocess.CalledProcessError, WindowsError) as err:
-    logger.debug("No bzip2 utility found: %s", err)
-    COMPRESSORS['.bz2'] = None
+    def __init__(self):
+        """Empty constructor"""
+        self.compressors = {}
+
+    def __getitem__(self, key):
+        """Implement the dict-like behavior"""
+        if key not in self.compressors:
+            if key in self.COMMANDS:
+                commandline = self.COMMANDS[key]
+                testline = [commandline[0], "-h"]
+                try:
+                    lines = subprocess.check_output(testline,
+                                                    stderr=subprocess.STDOUT,
+                                                    universal_newlines=True)
+                    if "usage" in lines.lower():
+                        self.compressors[key] = commandline
+                    else:
+                        self.compressors[key] = None
+                except (subprocess.CalledProcessError, WindowsError) as err:
+                    logger.debug("No %s utility found: %s", commandline[0], err)
+                    self.compressors[key] = None
+            else:
+                self.compressors[key] = None
+        return self.compressors[key]
+COMPRESSORS = ExternalCompressors()
 
 
 def deprecated(func):
@@ -161,7 +166,7 @@ def getnum(name):
     # try to figure out a file number
     # guess it starts at the back
     """
-    stem , num, post_num = numstem(name)
+    stem, num, post_num = numstem(name)
     try:
         return int(num)
     except ValueError:
@@ -175,7 +180,7 @@ class FilenameObject(object):
     def __init__(self, stem=None,
                  num=None,
                  directory=None,
-                 format=None,
+                 format_=None,
                  extension=None,
                  postnum=None,
                  digits=4,
@@ -186,7 +191,7 @@ class FilenameObject(object):
         @param stem: the stem is a kind of prefix (str)
         @param num: image number in the serie (int)
         @param directory: name of the directory (str)
-        @param format: ??
+        @param format_: ??
         @param extension:
         @param postnum:
         @param digits: Number of digits used to print num
@@ -198,7 +203,7 @@ class FilenameObject(object):
         """
         self.stem = stem
         self.num = num
-        self.format = format
+        self.format = format_
         self.extension = extension
         self.digits = digits
         self.postnum = postnum

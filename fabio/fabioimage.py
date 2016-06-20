@@ -40,7 +40,6 @@ import os
 import logging
 import sys
 import tempfile
-import threading
 logger = logging.getLogger("fabioimage")
 import numpy
 try:
@@ -276,15 +275,16 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         # mode map
         size = self.data.shape[:2][::-1]
         typmap = {
-            'float32' : "F"     ,
-            'int32'   : "F;32NS" ,
-            'uint32'  : "F;32N"  ,
-            'int16'   : "F;16NS" ,
-            'uint16'  : "F;16N"  ,
-            'int8'    : "F;8S"  ,
-            'uint8'   : "F;8"  }
+                  'float32': "F",
+                  'int32': "F;32NS",
+                  'uint32': "F;32N",
+                  'int16': "F;16NS",
+                  'uint16': "F;16N",
+                  'int8': "F;8S",
+                  'uint8': "F;8"
+                 }
         if self.data.dtype.name in typmap:
-            mode2 = typmap[ self.data.dtype.name ]
+            mode2 = typmap[self.data.dtype.name]
             mode1 = mode2[0]
         else:
             raise RuntimeError("Unknown numpy type: %s" % (self.data.dtype.type))
@@ -329,11 +329,11 @@ class FabioImage(with_metaclass(FabioMeta, object)):
             # also the (for whichever reason) the image is flipped upside
             # down wrt to the matrix hence these tranformations
             fixme = (self.dim2 - coords[3] - 1,
-                     coords[0] ,
+                     coords[0],
                      self.dim2 - coords[1] - 1,
                      coords[2])
-        return (slice(int(fixme[0]), int(fixme[2]) + 1) ,
-                 slice(int(fixme[1]), int(fixme[3]) + 1))
+        return (slice(int(fixme[0]), int(fixme[2]) + 1),
+                slice(int(fixme[1]), int(fixme[3]) + 1))
 
     def integrate_area(self, coords):
         """
@@ -348,7 +348,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             sli = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                                  isinstance(coords[1], slice):
+                        isinstance(coords[1], slice):
             sli = coords
 
         if sli == self.slice and self.area_sum is not None:
@@ -357,7 +357,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
             self.area_sum = self.roi.sum(dtype=numpy.float)
         else:
             self.slice = sli
-            self.roi = self.data[ self.slice ]
+            self.roi = self.data[self.slice]
             self.area_sum = self.roi.sum(dtype=numpy.float)
         return self.area_sum
 
@@ -378,13 +378,11 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         Add another Image - warning, does not clip to 16 bit images by default
         """
         if not hasattr(other, 'data'):
-            logger.warning('edfimage.add() called with something that ' + \
-                'does not have a data field')
-        assert self.data.shape == other.data.shape , \
-                  'incompatible images - Do they have the same size?'
+            logger.warning('edfimage.add() called with something that '
+                           'does not have a data field')
+        assert self.data.shape == other.data.shape, 'incompatible images - Do they have the same size?'
         self.data = self.data + other.data
         self.resetvals()
-
 
     def resetvals(self):
         """ Reset cache - call on changing data """
@@ -407,8 +405,8 @@ class FabioImage(with_metaclass(FabioMeta, object)):
             raise Exception('Please read in the file you wish to rebin first')
 
         if (self.dim1 % x_rebin_fact != 0) or (self.dim2 % y_rebin_fact != 0):
-            raise RuntimeError('image size is not divisible by rebin factor - ' + \
-                  'skipping rebin')
+            raise RuntimeError('image size is not divisible by rebin factor - '
+                               'skipping rebin')
         else:
             dataIn = self.data.astype("float64")
             shapeIn = self.data.shape
@@ -450,12 +448,12 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         Call the _readheader function...
         """
         # Override the needs asserting that all headers can be read via python modules
-        save_state = self._need_a_real_file , self._need_a_seek_to_read
-        self._need_a_real_file , self._need_a_seek_to_read = False, False
+        save_state = self._need_a_real_file, self._need_a_seek_to_read
+        self._need_a_real_file, self._need_a_seek_to_read = False, False
         fin = self._open(filename)
         self._readheader(fin)
         fin.close()
-        self._need_a_real_file , self._need_a_seek_to_read = save_state
+        self._need_a_real_file, self._need_a_seek_to_read = save_state
 
     def _readheader(self, fik_obj):
         """
@@ -463,7 +461,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         """
         raise Exception("Class has not implemented _readheader method yet")
 
-    def update_header(self , **kwds):
+    def update_header(self, **kwds):
         """
         update the header entries
         by default pass in a dict of key, values.
@@ -490,13 +488,12 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                                  isinstance(coords[1], slice):
+             isinstance(coords[1], slice):
             self.slice = coords
         else:
             logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)
-        self.roi = self.data[ self.slice ]
+        self.roi = self.data[self.slice]
         return self.roi
-
 
     def _open(self, fname, mode="rb"):
         """
@@ -523,16 +520,17 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         self.filenumber = fabioutils.extract_filenumber(fname)
 
         if isinstance(fname, fabioutils.StringTypes):
-            if os.path.splitext(fname)[1] == ".gz":
+            comp_type = os.path.splitext(fname)[-1]
+            if comp_type == ".gz":
                 fileObject = self._compressed_stream(fname,
-                                       fabioutils.COMPRESSORS['.gz'],
-                                       fabioutils.GzipFile,
-                                       mode)
-            elif os.path.splitext(fname)[1] == '.bz2':
+                                                     fabioutils.COMPRESSORS['.gz'],
+                                                     fabioutils.GzipFile,
+                                                     mode)
+            elif comp_type == '.bz2':
                 fileObject = self._compressed_stream(fname,
-                                       fabioutils.COMPRESSORS['.bz2'],
-                                       fabioutils.BZ2File,
-                                       mode)
+                                                     fabioutils.COMPRESSORS['.bz2'],
+                                                     fabioutils.BZ2File,
+                                                     mode)
             #
             # Here we return the file even though it may be bzipped or gzipped
             # but named incorrectly...
