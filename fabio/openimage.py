@@ -67,6 +67,7 @@ from . import hdf5image
 from . import raxisimage
 from . import numpyimage
 from . import eigerimage
+from . import fit2dimage
 
 if sys.version_info[0] < 3:
     bytes = str
@@ -106,6 +107,7 @@ MAGIC_NUMBERS = [
                  (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/hdf5"),
                  (b"R-AXIS", 'raxis'),
                  (b"\x93NUMPY", 'numpy'),
+                 (b"\\$FFF_START", 'fit2d'),
                 ]
 
 

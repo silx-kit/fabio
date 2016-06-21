@@ -62,10 +62,9 @@ class Fit2dMaskImage(FabioImage):
         fit2dhdr = numpy.fromstring(header, numpy.int32)
         # Enforce little endian
         if not numpy.little_endian:
-             fit2dhdr.byteswap(True)
+            fit2dhdr.byteswap(True)
         self._dim1 = fit2dhdr[4]  # 1 less than Andy's fortran
         self._dim2 = fit2dhdr[5]
-
 
     def read(self, fname, frame=None):
         """
@@ -88,7 +87,7 @@ class Fit2dMaskImage(FabioImage):
         # Now to unpack it
         data = numpy.fromstring(data, numpy.uint8)
         if not numpy.little_endian:
-             data.byteswap(True)
+            data.byteswap(True)
 
         data = numpy.reshape(data, (self._dim2, num_ints * 4))
 
@@ -116,7 +115,7 @@ class Fit2dMaskImage(FabioImage):
         """
         Try to write a file
         """
-        header = bytearray(b"\x00"*1024)
+        header = bytearray(b"\x00" * 1024)
         header[0] = 77  # M
         header[4] = 65  # A
         header[8] = 83  # S

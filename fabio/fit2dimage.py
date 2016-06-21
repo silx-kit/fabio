@@ -1,54 +1,74 @@
 # coding: utf-8
 #
-#    Project: X-ray image reader
-#             https://github.com/kif/fabio
+#    Project: FabIO X-ray image reader
 #
+#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#                       Grenoble, France
 #
-#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 
 
 """FabIO reader for Fit2D binary images
+
+TODO: handle big-endian files
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function, division
 
-__authors__ = ["author"]
-__contact__ = "name@institut.org"
-__license__ = "GPLv3+"
-__copyright__ = "Institut"
+__authors__ = ["Jérôme Kieffer"]
+__contact__ = "jerome.kiefer@esrf.fr"
+__license__ = "MIT"
+__copyright__ = "2016-2016 European Synchrotron Radiation Facility"
 __date__ = "21/06/2016"
 
 import logging
-logger = logging.getLogger("templateimage")
+logger = logging.getLogger("fit2dimage")
 import numpy
-from .fabioimage import FabioImage
+from .fabioimage import FabioImage, OrderedDict
 
 
-class TemplateImage(FabioImage):
+def hex_to(stg, type_="int"):
+    """convert a 8-byte-long string (bytes) into an int or a float
+    @param stg: bytes string
+    @param type_: "int" or "float"
+    """
+    value = int(stg, 16)
+    if type_ == "float":
+        value = numpy.array([int("38d1b717", 16)], "int32").view("float32")[0]
+    return value
+
+
+class Fit2dImage(FabioImage):
     """
     FabIO image class for Images for XXX detector
     """
+    BUFFER_SIZE = 512  # size of the buffer
+    PIXELS_PER_CHUNK = 128
+    ENC = "ascii"
+
     def __init__(self, *arg, **kwargs):
         """
         Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
+        self.num_block = None
 
     def _readheader(self, infile):
         """
@@ -57,23 +77,90 @@ class TemplateImage(FabioImage):
         @param infile: Opened python file (can be stringIO or bipped file)  
         """
         # list of header key to keep the order (when writing)
+        header = OrderedDict()
         self.header = self.check_header()
 
+        while True:
+            line = infile.read(self.BUFFER_SIZE)
+            if len(line) < self.BUFFER_SIZE:
+                break
+            if ord(line[0]) != 92:
+                for block_read in range(2, 16):
+                    line = infile.read(self.BUFFER_SIZE)
+                    if ord(line[0]) == 92:
+                        self.BUFFER_SIZE *= block_read
+                        logger.warning("Increase block size to %s ", self.BUFFER_SIZE)
+                        infile.seek(0)
+                        break
+                else:
+                    err = "issue while reading header, expected '\', got %s" % line[0]
+                    logger.error(err)
+                    raise RuntimeError(err)
+            key, line = line.split(":", 1)
+            num_block = hex_to(line[:8])
+            metadatatype = line[8].decode(self.ENC)
+            key = key[1:].decode(self.ENC)
+            if metadatatype == "s":
+                len_value = hex_to(line[9:17])
+                header[key] = line[17:17 + len_value].decode(self.ENC)
+            elif metadatatype == "r":
+                header[key] = hex_to(line[9:17], "float")
+            elif metadatatype == "i":
+                header[key] = hex_to(line[9:17])
+            elif metadatatype == "a" and num_block != 0:  # "a"
+                self.num_block = num_block
+                array_type = line[9].decode(self.ENC)
+                dim1 = hex_to(line[26:34])
+                dim2 = hex_to(line[34:42])
+                if array_type == "i":
+                    bytecode = "int32"
+                    bpp = 4
+                elif array_type == "r":
+                    bytecode = "float32"
+                    bpp = 4
+                elif array_type == "l":
+                    logger.warning("Experimental support for masked images")
+                    bytecode = "int8"
+                    bpp = 1
+                    raw = infile.read(self.num_block * self.BUFFER_SIZE)
+
+                    dim1_pad = (dim1 + 31) // 32
+                    value = numpy.zeros((dim2, dim1_pad * 32), dtype=bytecode)
+                    total = dim2 * dim1_pad * 4
+
+                    data = numpy.fromstring(raw[:total], numpy.uint8)
+                    data.shape = dim2, -1
+                    bits = numpy.ones((1), numpy.uint8)
+                    for i in range(8):
+                        temp = numpy.bitwise_and(bits, data)
+                        value[:, i::8] = temp.astype(numpy.uint8)
+                        bits = bits * 2
+
+                    header[key] = value
+                    header[key + "_raw"] = raw
+                    continue
+                else:
+                    err = "unsupported data type: %s" % array_type
+                    logger.error(err)
+                    raise RuntimeError(err)
+                raw = infile.read(self.num_block * self.BUFFER_SIZE)
+                decoded = numpy.fromstring(raw, bytecode).reshape((-1, self.BUFFER_SIZE // bpp))
+                # There is a bug in this format: throw away 3/4 of the read data:
+                decoded = decoded[:, :self.PIXELS_PER_CHUNK].ravel()
+                header[key] = decoded[:dim1 * dim2].reshape(dim2, dim1)
+        self.header = header
+
     def read(self, fname, frame=None):
-        """
-        try to read image 
+        """try to read image
+         
         @param fname: name of the file
-        @param frame: 
         """
 
         self.resetvals()
-        infile = self._open(fname)
-        self._readheader(infile)
-
-        # read the image data
-        # self.data = numpy.zeros((self.dim2, self.dim1), dtype=self.bytecode)
-        # Nota: dim1, dim2, bytecode and bpp are properties defined by the dataset
+        with self._open(fname) as infile:
+            self._readheader(infile)
+        self.data = self.header.pop("data_array")
         return self
 
 # this is not compatibility with old code:
-templateimage = TemplateImage
+fit2dimage = Fit2dImage
