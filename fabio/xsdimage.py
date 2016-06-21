@@ -1,25 +1,27 @@
 # coding: utf-8
 #
-#    Project: X-ray image reader
-#             https://github.com/kif/fabio
+#    Project: FabIO X-ray image reader
 #
+#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#                       Grenoble, France
 #
-#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 
 """
@@ -32,15 +34,18 @@ XSDimge are XML files containing numpy arrays
 from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
-__license__ = "GPLv3+"
+__license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-import logging, numpy
-logger = logging.getLogger("xsdimage")
+import logging
+import numpy
+import base64
+import hashlib
+
 from .fabioimage import FabioImage
 from .fabioutils import six
 
-import base64, hashlib
+logger = logging.getLogger("xsdimage")
 try:
     from lxml import etree
 except ImportError:
@@ -100,8 +105,7 @@ class XsdImage(FabioImage):
             logger.warning("Unable to recognize the encoding of the data !!! got %s, expected base64, base32 or base16, I assume it is base64 " % self.coding)
             decData = base64.b64decode(self.rawData)
         if self.md5:
-            assert  hashlib.md5(decData).hexdigest() == self.md5
-
+            assert hashlib.md5(decData).hexdigest() == self.md5
 
         self.data = numpy.fromstring(decData, dtype=self.dtype).reshape(tuple(self.dims))
         if not numpy.little_endian:  # by default little endian
@@ -150,5 +154,3 @@ if etree is None:
     XsdImage = None
 
 xsdimage = XsdImage
-
-

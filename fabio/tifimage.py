@@ -1,25 +1,27 @@
 # coding: utf-8
 #
-#    Project: X-ray image reader
-#             https://github.com/kif/fabio
+#    Project: FabIO X-ray image reader
 #
+#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#                       Grenoble, France
 #
-#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 
 """
@@ -38,18 +40,20 @@ Authors:
   European Synchrotron Radiation Facility;
   Grenoble (France)
 
-License: GPLv3+
+License: MIT
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "03/03/2016"
-__license__ = "GPLv3+"
+__date__ = "21/06/2016"
+__license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
 
-import time, logging, struct
+import time
+import logging
+import struct
 logger = logging.getLogger("tifimage")
 
 try:
@@ -73,12 +77,12 @@ PIL_TO_NUMPY = {"I;8": numpy.uint8,
                 "I;16": numpy.uint16,
                 "I;16B": numpy.uint16,  # big endian
                 "I;16L": numpy.uint16,  # little endian
-                "I;32":numpy.uint32,
-                "I;32L":numpy.uint32,  # little endian
-                "I;32B":numpy.uint32,  # big endian
-                "F;32F":numpy.float32,
-                "F;32BF":numpy.float32,  # big endian
-                "F;64F":numpy.float64,
+                "I;32": numpy.uint32,
+                "I;32L": numpy.uint32,  # little endian
+                "I;32B": numpy.uint32,  # big endian
+                "F;32F": numpy.float32,
+                "F;32BF": numpy.float32,  # big endian
+                "F;64F": numpy.float64,
                 "F;64BF": numpy.float64,  # big endian
                 "F": numpy.float32,
                 "1": numpy.bool,
@@ -88,37 +92,39 @@ PIL_TO_NUMPY = {"I;8": numpy.uint8,
 LITTLE_ENDIAN = 1234
 BIG_ENDIAN = 3412
 
-TYPES = {0:'invalid', 1:'byte', 2:'ascii', 3:'short', 4:'long', 5:'rational', 6:'sbyte', 7:'undefined', 8:'sshort', 9:'slong', 10:'srational', 11:'float', 12:'double'}
+TYPES = {0: 'invalid', 1: 'byte', 2: 'ascii', 3: 'short', 4: 'long', 5: 'rational',
+         6: 'sbyte', 7: 'undefined', 8: 'sshort', 9: 'slong', 10: 'srational',
+         11: 'float', 12: 'double'}
 
-TYPESIZES = {0:0, 1:1, 2:1, 3:2, 4:4, 5:8, 6:1, 7:1, 8:2, 9:4, 10:8, 11:4, 12:8}
+TYPESIZES = {0: 0, 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8}
 
 baseline_tiff_tags = {
-  256:'ImageWidth',
-  257:'ImageLength',
-  306:'DateTime',
-  315:'Artist',
-  258:'BitsPerSample',
-  265:'CellLength',
-  264:'CellWidth',
-  259:'Compression',
+                      256: 'ImageWidth',
+                      257: 'ImageLength',
+                      306: 'DateTime',
+                      315: 'Artist',
+                      258: 'BitsPerSample',
+                      265: 'CellLength',
+                      264: 'CellWidth',
+                      259: 'Compression',
 
-  262:'PhotometricInterpretation',
-  296:'ResolutionUnit',
-  282:'XResolution',
-  283:'YResolution',
+                      262: 'PhotometricInterpretation',
+                      296: 'ResolutionUnit',
+                      282: 'XResolution',
+                      283: 'YResolution',
 
-  278:'RowsPerStrip',
-  273:'StripOffset',
-  279:'StripByteCounts',
+                      278: 'RowsPerStrip',
+                      273: 'StripOffset',
+                      279: 'StripByteCounts',
 
-  270:'ImageDescription',
-  271:'Make',
-  272:'Model',
-  320:'ColorMap',
-  305:'Software',
-  339:'SampleFormat',
-  33432:'Copyright'
-  }
+                      270: 'ImageDescription',
+                      271: 'Make',
+                      272: 'Model',
+                      320: 'ColorMap',
+                      305: 'Software',
+                      339: 'SampleFormat',
+                      33432: 'Copyright'
+                     }
 
 
 class TifImage(FabioImage):
@@ -257,6 +263,7 @@ class Tiff_header(object):
             else:
                 self.header[entry.tag] = entry.val
 
+
 class Image_File_Directory(object):
     def __init__(self, instring=None, offset=-1):
         self.entries = []
@@ -264,22 +271,24 @@ class Image_File_Directory(object):
         self.count = None
 
     def unpack(self, instring, offset=-1):
-        if (offset == -1): offset = self.offset
+        if (offset == -1):
+            offset = self.offset
 
         strInput = instring[offset:]
         self.count = struct.unpack_from("H", strInput[:2])[0]
         # 0th IFD contains count-1 entries (count includes the adress of the next IFD)
         for i in range(self.count - 1):
             e = Image_File_Directory_entry().unpack(strInput[2 + 12 * (i + 1):])
-            if (e != None):
+            if (e is not None):
                 self.entries.append(e)
             # extract data associated with tags
             for e in self.entries:
-                if (e.val == None):
+                if (e.val is None):
                     e.extract_data(instring)
         # do we have some more ifds in this file
         offset_next = struct.unpack_from("L", instring[offset + 2 + self.count * 12:])[0]
         return offset_next
+
 
 class Image_File_Directory_entry(object):
     def __init__(self, tag=0, tag_type=0, count=0, offset=0):
@@ -327,18 +336,18 @@ class Image_File_Directory_entry(object):
         elif (TYPES[tag_type] == 'ascii'):
             self.val = full_string[self.val_offset:self.val_offset + max(self.count, 4)]
         elif (TYPES[tag_type] == 'rational'):
-            if self.val_offset != None:
+            if self.val_offset is not None:
                 (num, den) = struct.unpack_from("LL", full_string[self.val_offset:])
                 print(self.val_offset)
                 self.val = float(num) / den
         elif (TYPES[tag_type] == 'srational'):
-            if self.val_offset != None:
+            if self.val_offset is not None:
                 (num, den) = struct.unpack_from("ll", full_string[self.val_offset:])
                 self.val = float(num) / den,
         elif (TYPES[tag_type] == 'float'):
             self.val = struct.unpack_from("f", full_string[self.val_offset:])[0]
         elif (TYPES[tag_type] == 'double'):
-            if  self.val_offset != None:
+            if self.val_offset is not None:
                 self.val = struct.unpack_from("d", full_string[self.val_offset:])[0]
         else:
             logger.warning("unrecognized type of strInputentry self: %s tag: %s type: %s TYPE: %s" % (self, baseline_tiff_tags[self.tag], self.tag_type, TYPES[tag_type]))

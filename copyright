@@ -24,13 +24,15 @@ License: GPL-2.0+
 
 Files: fabio/cbfimage.py
        fabio/hdf5image.py
+       fabio/numpyimage.py
+       fabio/eigerimage.py
+       fabio/nexus.py
        fabio/mrcimage.py
        fabio/tifimage.py
        fabio/xsdimage.py
        fabio/ext/byte_offset.*
-Copyright: 2011-2016 Jerome Kieffer
-                     European Synchrotron Radiation Facility
-License: GPL-3.0+
+Copyright: 2011-2016 European Synchrotron Radiation Facility
+License: MIT
 
 Files: fabio/pixiimage.py
 Copyright: 2014 Jon Wright, Jérôme Kieffer
@@ -63,7 +65,8 @@ Copyright: 1995 Jan Pieter Abrahams
 License: LGPL-3.0+
 
 
-Files: fabio/test/utilstest.py
+Files: version.py
+       fabio/test/utilstest.py
 Copyright: 2010-2016 European Synchrotron Radiation Facility
 License: MIT
 
