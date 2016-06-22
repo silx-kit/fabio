@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "21/06/2016"
+__date__ = "22/06/2016"
 
 import logging
 logger = logging.getLogger("fit2dimage")
@@ -123,21 +123,17 @@ class Fit2dImage(FabioImage):
                     bytecode = "int8"
                     bpp = 1
                     raw = infile.read(self.num_block * self.BUFFER_SIZE)
-
-                    dim1_pad = (dim1 + 31) // 32
-                    value = numpy.zeros((dim2, dim1_pad * 32), dtype=bytecode)
-                    total = dim2 * dim1_pad * 4
-
-                    data = numpy.fromstring(raw[:total], numpy.uint8)
-                    data.shape = dim2, -1
-                    bits = numpy.ones((1), numpy.uint8)
-                    for i in range(8):
-                        temp = numpy.bitwise_and(bits, data)
-                        value[:, i::8] = temp.astype(numpy.uint8)
-                        bits = bits * 2
-
-                    header[key] = value
-                    header[key + "_raw"] = raw
+                    # Fit2d stores 31 pixels per int32
+                    i32 = numpy.fromstring(raw, "int32")
+                    if numpy.little_endian:
+                        # lets's work in big-endian for the moment
+                        i32.byteswap(True)
+                    r32 = numpy.unpackbits(i32.view("uint8")).reshape((-1, 32))
+                    # Remove the sign bit which is the first in big-endian
+                    # all pixels are in reverse order in the group of 31
+                    r31 = r32[:, -1:0:-1]
+                    mask = r31.ravel()[:dim1 * dim2].reshape((dim2, dim1))
+                    header[key] = mask
                     continue
                 else:
                     err = "unsupported data type: %s" % array_type
