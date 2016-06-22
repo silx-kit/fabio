@@ -119,7 +119,6 @@ class Fit2dImage(FabioImage):
                     bytecode = "float32"
                     bpp = 4
                 elif array_type == "l":
-                    logger.warning("Experimental support for masked images")
                     bytecode = "int8"
                     bpp = 1
                     raw = infile.read(self.num_block * self.BUFFER_SIZE)
