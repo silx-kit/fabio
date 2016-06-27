@@ -28,7 +28,6 @@ def profile(evt, cmt=""):
     print("%s Exec time: %.3fms" % (cmt, 1e-6 * (evt.profile.end - evt.profile.start)))
 
 
-
 ctx = pyopencl.create_some_context(interactive=True)
 
 
@@ -57,11 +56,15 @@ prg = pyopencl.Program(ctx, src).build()
 
 for i in range(11):
     WG = 1 << i
+    print("#" * 80)
     print("WG: %s" % WG)
     la = pyopencl.LocalMemory(4 * WG)
     lb = pyopencl.LocalMemory(4 * WG)
     lc = pyopencl.LocalMemory(4 * WG)
-
+    ld = pyopencl.LocalMemory(4)
+    debug1_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
+    debug2_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
+    debug3_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
     size = data.size
 
     wgsum_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
@@ -75,13 +78,20 @@ for i in range(11):
     zero_d.fill(0)
     tmp2_d.fill(0)
 
-    evt = prg.comp_byte_offset1(queue, (WG * WG,), (WG,), data_d.data, tmp2_d.data, numpy.uint32(size), numpy.uint32(chunk), wgsum_d.data, zero_d.data, la, lb, lc)
+    evt = prg.comp_byte_offset1(queue, (WG * WG,), (WG,),
+                                data_d.data, tmp2_d.data, numpy.uint32(size), numpy.uint32(chunk), wgsum_d.data, zero_d.data,
+                                la, lb, lc, ld, debug1_d.data, debug2_d.data, debug3_d.data)
     profile(evt, "comp_byte_offset1")
 
     # Create dest buffers
     tmp_cumsum = wgsum_d.get()
     dest_size = tmp_cumsum[-1]
-    print("Size: %s, all=%s" % (dest_size, tmp_cumsum))
+
+    print("Start process: %s" % debug3_d)
+    print("End process: %s" % debug2_d)
+    print("Total Size: %s" % (dest_size))
+    print("After small cumsum=%s" % (tmp_cumsum))
+    print("Counters= %s" % (debug1_d))
     target_d = pyopencl.array.zeros(queue, (dest_size,), dtype="int8")
 
     evt = prg.comp_byte_offset2(queue, (WG * WG,), (WG,),
