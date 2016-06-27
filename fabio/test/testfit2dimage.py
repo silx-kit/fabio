@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "22/06/2016"
+__date__ = "27/06/2016"
 
 import unittest
 import sys
@@ -81,11 +81,21 @@ class TestFit2DImage(unittest.TestCase):
         sumd = abs(diff).sum(dtype=float)
         self.assertEqual(sumd, 0)
 
+    def test_mask(self):
+        img = fabio.open(UtilsTest.getimage("Pilatus1M.f2d.bz2"))
+        cbf = fabio.open(UtilsTest.getimage("Pilatus1M.cbf.bz2"))
+        msk = fabio.open(UtilsTest.getimage("Pilatus1M.msk.bz2"))
+        diff = abs((img.data).astype("int32") - cbf.data)
+        self.assertEqual(diff.sum(), 0)
+        diff = abs((msk.data).astype("int32") - img.header["data_mask"].astype("int32"))
+        self.assertEqual(diff.sum(), 0)
+
 
 def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(TestFit2DImage("test_read"))
     testsuite.addTest(TestFit2DImage("test_match"))
+    testsuite.addTest(TestFit2DImage("test_mask"))
     return testsuite
 
 
