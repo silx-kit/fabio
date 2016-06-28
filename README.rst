@@ -106,9 +106,11 @@ Known file formats
 * Dectris
   o cbfimage (implements a fast byte offset decompression scheme in python/cython)
   o pilatusimage (fileformat derived from Tiff)
+  * eigerimage (derived from HDF5/NeXus format)
 * ESRF
   o edfimage: The ESRF data Format
   o xsdimage: XML serialized image from EDNA
+  o fit2dimage: Fit2d binary format
   o fit2dmaskimage: Fit2d Mask format
   o fit2dspreadsheetimage: Fit2d ascii tables (spread-sheet)
 * ADSC
@@ -129,6 +131,7 @@ Known file formats
   o OXDimage with TY5 byte offset compression (experimental)
 * Nonius
   o KappaCCD
+* HDF5: generic format for stack of images
 * Raw Binary without compression
 
 Installation
@@ -143,5 +146,5 @@ Please see doc/source/Changelog.rst
 
 .. |Build Status| image:: https://travis-ci.org/kif/fabio.svg?branch=master
    :target: https://travis-ci.org/kif/fabio
-.. |Appveyor Status| image:: https://ci.appveyor.com/api/projects/status/u2nh1ehn4q3m4vuv/branch/master?svg=true
-   :target: https://ci.appveyor.com/project/kif/fabio/branch/master
+.. |Appveyor Status| image:: https://ci.appveyor.com/api/projects/status/4k6lol1vq30qhf66/branch/master?svg=true
+   :target: https://ci.appveyor.com/project/ESRF/fabio/branch/master
