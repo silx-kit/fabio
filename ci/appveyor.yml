@@ -69,9 +69,6 @@ install:
   # Install the generated wheel package to test it
   - "%CMD_IN_ENV% pip install --pre --find-links dist/ fabio"
 
-# Not a .NET project, we build fabio in the install step instead
-build: false
-
 test_script:
   # Change to a non-source folder to make sure we run the tests on the
   # installed library.
