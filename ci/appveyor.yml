@@ -1,13 +1,30 @@
 # AppVeyor.com is a Continuous Integration service to build and run tests under
 # Windows
-# https://ci.appveyor.com/project/kif/fabio
+# https://ci.appveyor.com/project/ESRF/fabio
+
+version: 0.4.{build}
+shallow_clone: true
+build:
+  verbosity: minimal
+
+notifications:
+- provider: Email
+  to:
+  - silx-ci@edna-site.org
+  subject: '[CI] appveyor'
+  on_build_success: false
+  on_build_failure: false
+  on_build_status_changed: true
+
+os:
+    - Visual Studio 2015 - GCE
 
 environment:
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # See: http://stackoverflow.com/a/13751649/163740
-    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\run_with_env.cmd"
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C ci\\run_with_env.cmd"
 #    WHEELHOUSE_UPLOADER_USERNAME: fabio-appveyor
 #    WHEELHOUSE_UPLOADER_SECRET:
 #      secure: plop
@@ -45,7 +62,7 @@ install:
   - "python -c \"print(tuple.__itemsize__*8)\""
   # Install the build and runtime dependencies of the project.
   - "%CMD_IN_ENV% pip install --upgrade pip --user"
-  - "%CMD_IN_ENV% pip install --trusted-host www.edna-site.org -r requirements_appveyor.txt"
+  - "%CMD_IN_ENV% pip install --trusted-host www.silx.org -r ci\\requirements_appveyor.txt"
   - "%CMD_IN_ENV% python setup.py build test"
   - "%CMD_IN_ENV% python setup.py bdist_wheel bdist_msi"
   - ps: "ls dist"
@@ -71,16 +88,4 @@ test_script:
 artifacts:
   # Archive the generated wheel package in the ci.appveyor.com build report.
   - path: dist\*
-
-#on_success:
-#  # Upload the generated wheel package to Rackspace
-#  # On Windows, Apache Libcloud cannot find a standard CA cert bundle so we
-#  # disable the ssl checks.
-#  - "python -m wheelhouse_uploader upload --no-ssl-check --local-folder=dist sklearn-windows-wheels"
-
-#notifications:
-#  - provider: Webhook
-#    url: https://webhooks.gitter.im/e/0dc8e57cd38105aeb1b4
-#    on_build_success: false
-#    on_build_failure: True
 
