@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "21/06/2016"
+__date__ = "28/06/2016"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -63,15 +63,7 @@ except ImportError:
     Image = None
 import numpy
 from .fabioimage import FabioImage
-
-try:
-    from .third_party.TiffIO import TiffIO
-except ImportError:
-    try:
-        from PyMca5.PyMcaIO.TiffIO import TiffIO
-    except ImportError:
-        from PyMca.TiffIO import TiffIO
-
+from .TiffIO import TiffIO
 
 PIL_TO_NUMPY = {"I;8": numpy.uint8,
                 "I;16": numpy.uint16,

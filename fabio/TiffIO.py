@@ -40,20 +40,20 @@ DEBUG = 0
 ALLOW_MULTIPLE_STRIPS = False
 
 TAG_ID = { 256:"NumberOfColumns",  # S or L ImageWidth
-            257:"NumberOfRows",  # S or L ImageHeight
-            258:"BitsPerSample",  # S Number of bits per component
-            259:"Compression",  # SHORT (1 - NoCompression, ...
-            262:"PhotometricInterpretation",  # SHORT (0 - WhiteIsZero, 1 -BlackIsZero, 2 - RGB, 3 - Palette color
-            270:"ImageDescription",  # ASCII
-            273:"StripOffsets",  # S or L, for each strip, the byte offset of the strip
-            277:"SamplesPerPixel",  # SHORT (>=3) only for RGB images
-            278:"RowsPerStrip",  # S or L, number of rows in each back may be not for the last
-            279:"StripByteCounts",  # S or L, The number of bytes in the strip AFTER any compression
-            305:"Software",  # ASCII
-            306:"Date",  # ASCII
-            320:"Colormap",  # Colormap of Palette-color Images
-            339:"SampleFormat",  # SHORT Interpretation of data in each pixel
-            }
+           257:"NumberOfRows",  # S or L ImageHeight
+           258:"BitsPerSample",  # S Number of bits per component
+           259:"Compression",  # SHORT (1 - NoCompression, ...
+           262:"PhotometricInterpretation",  # SHORT (0 - WhiteIsZero, 1 -BlackIsZero, 2 - RGB, 3 - Palette color
+           270:"ImageDescription",  # ASCII
+           273:"StripOffsets",  # S or L, for each strip, the byte offset of the strip
+           277:"SamplesPerPixel",  # SHORT (>=3) only for RGB images
+           278:"RowsPerStrip",  # S or L, number of rows in each back may be not for the last
+           279:"StripByteCounts",  # S or L, The number of bytes in the strip AFTER any compression
+           305:"Software",  # ASCII
+           306:"Date",  # ASCII
+           320:"Colormap",  # Colormap of Palette-color Images
+           339:"SampleFormat",  # SHORT Interpretation of data in each pixel
+           }
 
 # TILES ARE TO BE SUPPORTED TOO ...
 TAG_NUMBER_OF_COLUMNS = 256
