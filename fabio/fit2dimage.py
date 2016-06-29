@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "21/06/2016"
+__date__ = "27/06/2016"
 
 import logging
 logger = logging.getLogger("fit2dimage")
@@ -84,10 +84,10 @@ class Fit2dImage(FabioImage):
             line = infile.read(self.BUFFER_SIZE)
             if len(line) < self.BUFFER_SIZE:
                 break
-            if ord(line[0]) != 92:
+            if line[0:1] != b"\\":
                 for block_read in range(2, 16):
                     line = infile.read(self.BUFFER_SIZE)
-                    if ord(line[0]) == 92:
+                    if line[0:1] == b"\\":
                         self.BUFFER_SIZE *= block_read
                         logger.warning("Increase block size to %s ", self.BUFFER_SIZE)
                         infile.seek(0)
@@ -96,9 +96,10 @@ class Fit2dImage(FabioImage):
                     err = "issue while reading header, expected '\', got %s" % line[0]
                     logger.error(err)
                     raise RuntimeError(err)
-            key, line = line.split(":", 1)
+            key, line = line.split(b":", 1)
             num_block = hex_to(line[:8])
-            metadatatype = line[8].decode(self.ENC)
+            # metadatatype = chr(line[8]) if six.PY3 else line[8].decode(self.ENC)
+            metadatatype = line[8:9].decode(self.ENC)
             key = key[1:].decode(self.ENC)
             if metadatatype == "s":
                 len_value = hex_to(line[9:17])
@@ -109,7 +110,7 @@ class Fit2dImage(FabioImage):
                 header[key] = hex_to(line[9:17])
             elif metadatatype == "a" and num_block != 0:  # "a"
                 self.num_block = num_block
-                array_type = line[9].decode(self.ENC)
+                array_type = line[9:10].decode(self.ENC)
                 dim1 = hex_to(line[26:34])
                 dim2 = hex_to(line[34:42])
                 if array_type == "i":
@@ -119,25 +120,20 @@ class Fit2dImage(FabioImage):
                     bytecode = "float32"
                     bpp = 4
                 elif array_type == "l":
-                    logger.warning("Experimental support for masked images")
                     bytecode = "int8"
                     bpp = 1
                     raw = infile.read(self.num_block * self.BUFFER_SIZE)
-
-                    dim1_pad = (dim1 + 31) // 32
-                    value = numpy.zeros((dim2, dim1_pad * 32), dtype=bytecode)
-                    total = dim2 * dim1_pad * 4
-
-                    data = numpy.fromstring(raw[:total], numpy.uint8)
-                    data.shape = dim2, -1
-                    bits = numpy.ones((1), numpy.uint8)
-                    for i in range(8):
-                        temp = numpy.bitwise_and(bits, data)
-                        value[:, i::8] = temp.astype(numpy.uint8)
-                        bits = bits * 2
-
-                    header[key] = value
-                    header[key + "_raw"] = raw
+                    # Fit2d stores 31 pixels per int32
+                    i32 = numpy.fromstring(raw, "int32")
+                    if numpy.little_endian:
+                        # lets's work in big-endian for the moment
+                        i32.byteswap(True)
+                    r32 = numpy.unpackbits(i32.view("uint8")).reshape((-1, 32))
+                    # Remove the sign bit which is the first in big-endian
+                    # all pixels are in reverse order in the group of 31
+                    r31 = r32[:, -1:0:-1]
+                    mask = r31.ravel()[:dim1 * dim2].reshape((dim2, dim1))
+                    header[key] = mask
                     continue
                 else:
                     err = "unsupported data type: %s" % array_type

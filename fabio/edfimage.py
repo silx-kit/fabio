@@ -42,7 +42,8 @@ Authors:
 """
 # get ready for python3
 from __future__ import with_statement, print_function, absolute_import, division
-import os, logging
+import os
+import logging
 logger = logging.getLogger("edfimage")
 import numpy
 from .fabioimage import FabioImage, OrderedDict
@@ -51,33 +52,33 @@ from .compression import decBzip2, decGzip, decZlib
 
 
 BLOCKSIZE = 512
-DATA_TYPES = {  "SignedByte"    :  numpy.int8,
-                "Signed8"       :  numpy.int8,
-                "UnsignedByte"  :  numpy.uint8,
-                "Unsigned8"     :  numpy.uint8,
-                "SignedShort"   :  numpy.int16,
-                "Signed16"      :  numpy.int16,
-                "UnsignedShort" :  numpy.uint16,
-                "Unsigned16"    :  numpy.uint16,
-                "UnsignedShortInteger" : numpy.uint16,
-                "SignedInteger" :  numpy.int32,
-                "Signed32"      :  numpy.int32,
-                "UnsignedInteger":  numpy.uint32,
-                "Unsigned32"    :  numpy.uint32,
-                "SignedLong"    :  numpy.int32,
-                "UnsignedLong"  :  numpy.uint32,
-                "Signed64"      :  numpy.int64,
-                "Unsigned64"    :  numpy.uint64,
-                "FloatValue"    :  numpy.float32,
-                "FLOATVALUE"    :  numpy.float32,
-                "FLOAT"         :  numpy.float32,  # fit2d
-                "Float"         :  numpy.float32,  # fit2d
-                "FloatIEEE32"   :  numpy.float32,
-                "Float32"       :  numpy.float32,
-                "Double"        :  numpy.float64,
-                "DoubleValue"   :  numpy.float64,
-                "FloatIEEE64"   :  numpy.float64,
-                "DoubleIEEE64"  :  numpy.float64}
+DATA_TYPES = {"SignedByte": numpy.int8,
+              "Signed8": numpy.int8,
+              "UnsignedByte": numpy.uint8,
+              "Unsigned8": numpy.uint8,
+              "SignedShort": numpy.int16,
+              "Signed16": numpy.int16,
+              "UnsignedShort": numpy.uint16,
+              "Unsigned16": numpy.uint16,
+              "UnsignedShortInteger": numpy.uint16,
+              "SignedInteger": numpy.int32,
+              "Signed32": numpy.int32,
+              "UnsignedInteger": numpy.uint32,
+              "Unsigned32": numpy.uint32,
+              "SignedLong": numpy.int32,
+              "UnsignedLong": numpy.uint32,
+              "Signed64": numpy.int64,
+              "Unsigned64": numpy.uint64,
+              "FloatValue": numpy.float32,
+              "FLOATVALUE": numpy.float32,
+              "FLOAT": numpy.float32,  # fit2d
+              "Float": numpy.float32,  # fit2d
+              "FloatIEEE32": numpy.float32,
+              "Float32": numpy.float32,
+              "Double": numpy.float64,
+              "DoubleValue": numpy.float64,
+              "FloatIEEE64": numpy.float64,
+              "DoubleIEEE64": numpy.float64}
 try:
     DATA_TYPES["FloatIEEE128"] = DATA_TYPES["DoubleIEEE128"] = DATA_TYPES["QuadrupleValue"] = numpy.float128
 
@@ -85,17 +86,17 @@ except AttributeError:
     # not in your numpy
     logger.debug("No support for float128 in your code")
 
-NUMPY_EDF_DTYPE = {"int8"       :"SignedByte",
-                   "int16"      :"SignedShort",
-                   "int32"      :"SignedInteger",
-                   "int64"      :"Signed64",
-                   "uint8"      :"UnsignedByte",
-                   "uint16"     :"UnsignedShort",
-                   "uint32"     :"UnsignedInteger",
-                   "uint64"     :"Unsigned64",
-                   "float32"    :"FloatValue",
-                   "float64"    :"DoubleValue",
-                   "float128"   :"QuadrupleValue",
+NUMPY_EDF_DTYPE = {"int8": "SignedByte",
+                   "int16": "SignedShort",
+                   "int32": "SignedInteger",
+                   "int64": "Signed64",
+                   "uint8": "UnsignedByte",
+                   "uint16": "UnsignedShort",
+                   "uint32": "UnsignedInteger",
+                   "uint64": "Unsigned64",
+                   "float32": "FloatValue",
+                   "float64": "DoubleValue",
+                   "float128": "QuadrupleValue",
              }
 
 MINIMUM_KEYS = ['HEADERID',
@@ -110,6 +111,7 @@ DEFAULT_VALUES = {
                   # I do not define default values as they will be calculated at write time
                   # JK20110415
                   }
+
 
 class Frame(object):
     """
@@ -153,7 +155,7 @@ class Frame(object):
 
         for line in block.split(';'):
             if '=' in line:
-                key, val = line.split('=' , 1)
+                key, val = line.split('=', 1)
                 # Why would someone put null bytes in a header?
                 key = key.replace("\x00", " ").strip()
                 self.header[key] = val.replace("\x00", " ").strip()
@@ -193,8 +195,8 @@ class Frame(object):
                 try:
                     dim3 = nice_int(self.header[self.capsHeader[strDim]])
                 except ValueError:
-                    logger.error("Unable to convert to integer %s: %s %s"
-                                  % (strDim, self.capsHeader[strDim], self.header[self.capsHeader[strDim]]))
+                    logger.error("Unable to convert to integer %s: %s %s",
+                                 strDim, self.capsHeader[strDim], self.header[self.capsHeader[strDim]])
                     dim3 = None
                     iDim = None
                 else:
@@ -227,21 +229,19 @@ class Frame(object):
 
         return self.size
 
-
     def swap_needed(self):
         """
         Decide if we need to byteswap
         """
-        if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+        if ('Low' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             return False
-        if ('High'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+        if ('High' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             if self.bpp in [2, 4, 8]:
                 return True
             else:
                 return False
-
 
     def getData(self):
         """
@@ -289,10 +289,10 @@ class Frame(object):
                 elif "GZIP" in compression:
                     rawData = decGzip(fileData)
                     self.size = uncompressed_size
-                elif "BZ" in compression :
+                elif "BZ" in compression:
                     rawData = decBzip2(fileData)
                     self.size = uncompressed_size
-                elif "Z" in compression :
+                elif "Z" in compression:
                     rawData = decZlib(fileData)
                     self.size = uncompressed_size
                 else:
@@ -321,6 +321,7 @@ class Frame(object):
         """Setter for data in edf frame"""
         self._data = npa
     data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
+
     def getByteCode(self):
         if self._bytecode is None:
             self._bytecode = self.data.dtype.type
@@ -400,7 +401,7 @@ class Frame(object):
         header_keys.insert(0, "EDF_BinarySize")
         header["EDF_BinarySize"] = data.nbytes
         header_keys.insert(0, "EDF_DataBlockID")
-        if not "EDF_DataBlockID" in header:
+        if "EDF_DataBlockID" not in header:
             header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
         preciseSize = 4  # 2 before {\n 2 after }\n
         for key in header_keys:
@@ -418,7 +419,7 @@ class Frame(object):
             listHeader.append(line)
         if preciseSize > approxHeaderSize:
             logger.error("I expected the header block only at %s in fact it is %s" % (approxHeaderSize, preciseSize))
-            for  idx, line in enumerate(listHeader[:]):
+            for idx, line in enumerate(listHeader[:]):
                 if line.startswith("EDF_HeaderSize"):
                     headerSize = BLOCKSIZE * (preciseSize // BLOCKSIZE + 1)
                     newline = "EDF_HeaderSize = %5s ;\n" % headerSize
@@ -431,15 +432,14 @@ class Frame(object):
                     break
         else:
             headerSize = approxHeaderSize
-        listHeader.append(" "*(headerSize - preciseSize) + "}\n")
+        listHeader.append(" " * (headerSize - preciseSize) + "}\n")
         return ("".join(listHeader)).encode("ASCII") + data.tostring()
-
 
 
 class EdfImage(FabioImage):
     """ Read and try to write the ESRF edf data format """
 
-    def __init__(self, data=None , header=None, frames=None):
+    def __init__(self, data=None, header=None, frames=None):
         self.currentframe = 0
         self.filesize = None
         try:
@@ -451,14 +451,14 @@ class EdfImage(FabioImage):
             FabioImage.__init__(self, data, header)
         if dim == 2:
             FabioImage.__init__(self, data, header)
-        elif dim == 1 :
+        elif dim == 1:
             data.shape = (1, len(data))
             FabioImage.__init__(self, data, header)
-        elif dim == 3 :
+        elif dim == 3:
             FabioImage.__init__(self, data[0, :, :], header)
-        elif dim == 4 :
+        elif dim == 4:
             FabioImage.__init__(self, data[0, 0, :, :], header)
-        elif dim == 5 :
+        elif dim == 5:
             FabioImage.__init__(self, data[0, 0, 0, :, :], header)
 
         if frames is None:
@@ -493,7 +493,7 @@ class EdfImage(FabioImage):
         if len(block) < BLOCKSIZE:
             logger.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
             return
-        if (block.find(b"{") < 0) :
+        if (block.find(b"{") < 0):
             # This does not look like an edf file
             logger.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
             return
@@ -565,7 +565,7 @@ class EdfImage(FabioImage):
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
-            if  frame.start + size > stream_size:
+            if frame.start + size > stream_size:
                 logger.warning("Non complete datablock: got %s, expected %s" % (stream_size - frame.start, size))
                 bContinue = False
                 break
@@ -606,12 +606,12 @@ class EdfImage(FabioImage):
 
         @return True if needed, False else and None if not understood
         """
-        if self.bpp == 1 :
+        if self.bpp == 1:
             return False
-        if ('Low'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+        if ('Low' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             return False
-        if ('High'  in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
+        if ('High' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
            ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
             return True
 
@@ -743,8 +743,8 @@ class EdfImage(FabioImage):
 
         if len(coords) == 4:
             slice1 = self.make_slice(coords)
-        elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                                  isinstance(coords[1], slice):
+        elif (len(coords) == 2 and isinstance(coords[0], slice) and
+              isinstance(coords[1], slice)):
             slice1 = coords
         else:
             logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)
@@ -753,7 +753,7 @@ class EdfImage(FabioImage):
         start0 = slice1[0].start
         start1 = slice1[1].start
         slice2 = (slice(0, slice1[0].stop - start0, slice1[0].step),
-                   slice(0, slice1[1].stop - start1, slice1[1].step))
+                  slice(0, slice1[1].stop - start1, slice1[1].step))
         start = frame.start + self.bpp * (d1 * start0 + start1)
         size = self.bpp * ((slice2[0].stop) * d1)
         with open(filename, "rb")as f:

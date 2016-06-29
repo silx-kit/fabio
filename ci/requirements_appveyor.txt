@@ -1,0 +1,9 @@
+#List of dependencies used by PIP for AppVeyor (use cache on edna-site)
+--find-links http://www.silx.org/pub/wheelhouse
+
+wheel
+numpy
+Cython
+lxml
+Pillow
+h5py

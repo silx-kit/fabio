@@ -1,9 +1,9 @@
 
 
-#define SWAP(a,b) {__local int *tmp=a;a=b;b=tmp;}
-static void my_group_scan_inclusive_add( 	__local int *inp_buf,
-											__local int *out_buf,
-											__local int *tmp_buf)
+#define SWAP(a,b) {local int *tmp=a;a=b;b=tmp;}
+static void my_group_scan_inclusive_add( 	local int *inp_buf,
+											local int *out_buf,
+											local int *tmp_buf)
 {
     uint lid = get_local_id(0);
     uint ws = get_local_size(0);
@@ -24,9 +24,9 @@ static void my_group_scan_inclusive_add( 	__local int *inp_buf,
 }
 
 static int my_group_scan_exclusive_add( 	int value,
-											__local int *inp_buf,
-											__local int *out_buf,
-											__local int *tmp_buf)
+											local int *inp_buf,
+											local int *out_buf,
+											local int *tmp_buf)
 {
 	my_group_scan_inclusive_add(inp_buf, out_buf, tmp_buf);
 	uint lid = get_local_id(0);
@@ -47,9 +47,9 @@ kernel void cumsum(
 	global int* output,
 	int input_size,
 	int output_size,
-	__local int *a,
-	__local int *b,
-	__local int *c)
+	local int *a,
+	local int *b,
+	local int *c)
 {
 	uint gid = get_global_id(0);
 	uint lid = get_local_id(0);
@@ -246,9 +246,13 @@ kernel void comp_byte_offset1(
 		uint chunk,
 		global int* last_wg,
 		global uint* workgroup_counter,
-		__local int *a,
-		__local int *b,
-		__local int *c)
+		local int *a,
+		local int *b,
+		local int *c,
+		volatile local int *d,
+		global int* ddebug1,
+		global int* ddebug2,
+		global int* ddebug3)
 {
 	uint lid = get_local_id(0);
 	uint ws = get_local_size(0);
@@ -256,8 +260,9 @@ kernel void comp_byte_offset1(
 	uint nbwg = get_num_groups(0);
 	uint to_process = chunk * ws;
 	uint start_process = wid *  to_process;
-	uint end_process;
-	end_process = min(input_size, start_process + to_process);
+	uint end_process = min(input_size, start_process + to_process);
+	ddebug2[wid] = end_process;
+	ddebug3[wid] = start_process;
 	int last = 0;
 	for (uint offset=start_process; offset< end_process; offset+=ws)
 	{
@@ -276,14 +281,12 @@ kernel void comp_byte_offset1(
 			output[pos] = b[lid];
 	}
 	if (lid == 0)
+	{
 		last_wg[wid] = last;
-	barrier(CLK_GLOBAL_MEM_FENCE);
-
-	if (lid == 0)
-		a[0] = atomic_inc(workgroup_counter);
-	barrier(CLK_GLOBAL_MEM_FENCE);
+		ddebug1[wid] = d[0] = atomic_inc(workgroup_counter);
+	}
 	barrier(CLK_LOCAL_MEM_FENCE);
-	if ((a[0]+1) == nbwg) // we are the last work group
+	if ((d[0]+1) == nbwg) // we are the last work group
 	{
 //		Do a cum_sum of all groups results
 		a[lid] = last_wg[lid];
