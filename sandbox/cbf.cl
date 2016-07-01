@@ -21,6 +21,7 @@ static void my_group_scan_inclusive_add( 	local int *inp_buf,
         SWAP(out_buf, tmp_buf);
     }
     tmp_buf[lid] = out_buf[lid];
+    barrier(CLK_LOCAL_MEM_FENCE);
 }
 
 static int my_group_scan_exclusive_add( 	int value,
