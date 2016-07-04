@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2010-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "21/03/2016" 
+__date__ = "19/05/2016" 
 
 
 cimport numpy
@@ -161,7 +161,7 @@ def analyseCython32(bytes stream not None, size=None):
                     tmp64b = cstream[i + 4]
                     tmp64a = cstream[i + 5]
                     tmp64  = <numpy.int8_t> cstream[i + 6]
-                    # Assemble data into a 64 bits integer
+                    # Assemble data into a 32 bits integer
                     current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)
                     i += 7
                 else:
