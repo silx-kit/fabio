@@ -101,6 +101,22 @@ FabIO Package
     :members:
     :undoc-members:
     :show-inheritance:
+
+:mod:`fabio.eigerimage` Module
+------------------------------
+
+.. automodule:: fabio.eigerimage
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    
+:mod:`fabio.fit2dimage` Module
+------------------------------
+
+.. automodule:: fabio.fit2dimage
+    :members:
+    :undoc-members:
+    :show-inheritance:
     
 :mod:`fabio.fit2dmaskimage` Module
 ----------------------------------
@@ -127,8 +143,8 @@ FabIO Package
     :show-inheritance:
 
 
-:mod:`fabio.hdf5mage` Module
-----------------------------
+:mod:`fabio.hdf5image` Module
+-----------------------------
 
 .. automodule:: fabio.hdf5image
     :members:
@@ -171,6 +187,14 @@ FabIO Package
 -------------------------------
 
 .. automodule:: fabio.marccdimage
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`fabio.numpyimage` Module
+------------------------------
+
+.. automodule:: fabio.numpyimage
     :members:
     :undoc-members:
     :show-inheritance:
@@ -255,10 +279,10 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`fabio.third_party.TiffIO` Module
---------------------------------------
+:mod:`fabio.TiffIO` Module
+--------------------------
 
-.. automodule:: fabio.third_party.TiffIO
+.. automodule:: fabio.TiffIO
     :members:
     :undoc-members:
     :show-inheritance:
