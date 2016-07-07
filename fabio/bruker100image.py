@@ -239,7 +239,7 @@ class Bruker100Image(BrukerImage):
                     headers[i] = ("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " ")
         else:
             self.header["HDRBLKS"] = 15
-	    res = pad("".join(headers), self.SPACER + "."*78, 512 * int(self.header["HDRBLKS"]))
+        res = pad("".join(headers), self.SPACER + "." * 78, 512 * int(self.header["HDRBLKS"]))
         return res
 
     def gen_overflow(self):
@@ -268,7 +268,7 @@ class Bruker100Image(BrukerImage):
         """
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
-        nunderf = self.nunderf
+#         nunderf = self.nunderf
         read_bytes = (noverf * bpp + 15) & ~(15)
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
@@ -343,17 +343,18 @@ class Bruker100Image(BrukerImage):
             bpp = 1
             # limit = 255
             nunderFlows = self.nunderFlows
-            temp_data = self.data
-            read_bytes = (nunderFlows * bpp + 15) & ~(15)
+#             temp_data = self.data
+            read_bytes = (nunderFlows * bpp + 15) & ~(15)  # multiple of 16
             dif2usedbyts = read_bytes - (nunderFlows * bpp)
-            pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy_100[bpp])
-            flat = self.data.ravel()  # flat memory view
-            flow_pos_indexes = self.mask_undeflows
+            pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
+#             flat = self.data.ravel()  # flat memory view
+#             flow_pos_indexes = self.mask_undeflows
             flow_vals = (self.ar_underflows)
             # flow_vals[flow_vals<0] = 65535#limit#flow_vals[flow_vals<0]
-            flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy_100[bpp])
+            flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
 
             return flow_vals_paded  # pad(overflow, ".", 512)
+
     def overflows_one_byte(self):
             """
             Generate one-byte overflow table
@@ -361,18 +362,19 @@ class Bruker100Image(BrukerImage):
             bpp = 2
             limit = 255
             nover_one = self.nover_one
-            temp_data = self.data
-            read_bytes = (nover_one * bpp + 15) & ~(15)
+#             temp_data = self.data
+            read_bytes = (nover_one * bpp + 15) & ~(15)  # multiple of 16
             dif2usedbyts = read_bytes - (nover_one * bpp)
-            pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy_100[bpp])
+            pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
             flat = self.data.ravel()  # flat memory view
             flow_pos = (flat >= limit) + (flat < 0)
-            flow_pos_indexes = numpy.where(flow_pos == True)[0]
+#             flow_pos_indexes = numpy.where(flow_pos == True)[0]
             flow_vals = (flat[flow_pos])
             flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
             # print("flow_vals",flow_vals)
-            flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy_100[bpp])
+            flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
             return flow_vals_paded  # pad(overflow, ".", 512)
+
     def overflows_two_byte(self):
         """
         Generate two byte overflow table
@@ -380,17 +382,17 @@ class Bruker100Image(BrukerImage):
 
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
-        nover_two = self.nover_two
-        read_bytes = (noverf * bpp + 15) & ~(15)
+#         nover_two = self.nover_two
+        read_bytes = (noverf * bpp + 15) & ~(15)  # multiple of 16
         dif2usedbyts = read_bytes - (noverf * bpp)
-        pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy_100[bpp])
+        pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
         flat = self.data.ravel()  # flat memory view
 
         underflow_pos = numpy.where(flat < 0)[0]
         underflow_val = flat[underflow_pos]  # [::-1]
         # underflow_val[underflow_val 0] = 65535#limit#flow_vals[flow_vals<0]
 
-        underflow_val = underflow_val.astype(self.bpp_to_numpy_100[bpp])
+        underflow_val = underflow_val.astype(self.bpp_to_numpy[bpp])
         nderflow_val_paded = numpy.hstack((underflow_val, pad_zeros))
 
         return nderflow_val_paded  # pad(overflow, ".", 512)
