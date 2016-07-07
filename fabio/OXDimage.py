@@ -230,8 +230,8 @@ class OxdImage(FabioImage):
                 self.dim1 = int(self.header['NX'])
                 self.dim2 = int(self.header['NY'])
             except:
-                raise Exception("Oxford  file", str(fname) + \
-                                    "is corrupt, cannot read it")
+                raise Exception("Oxford  file", str(fname) +
+                                "is corrupt, cannot read it")
             #
             if self.header['Compression'] == 'TY1':
                 logger.debug("# Compressed with the KM4CCD compression")

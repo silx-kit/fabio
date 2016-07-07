@@ -182,6 +182,8 @@ def _openimage(filename):
                 actual_filename = BytesIO(filename.read())
         else:
             actual_filename = filename
+        url = urlparse("")
+
     else:
         # related to https://github.com/kif/fabio/issues/34
         if (len(url.scheme) == 1 and (sys.platform == "win32")) or url.path.startswith(":"):
