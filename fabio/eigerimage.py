@@ -41,7 +41,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "21/06/2016"
+__date__ = "07/07/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
@@ -96,6 +96,8 @@ class EigerImage(FabioImage):
             self.dataset = h5file["entry/data"]
         except KeyError:
             raise NotGoodReader("Eiger data file contain 'entry/data' structure in the HDF5 file.")
+        if isinstance(self.dataset, h5py.Group) and "data" in self.dataset.keys():
+            self.dataset = self.dataset["data"]
         self.nframes = self.dataset.shape[0]
         self._dim1 = self.dataset[-1]
         self._dim2 = self.dataset[-2]
