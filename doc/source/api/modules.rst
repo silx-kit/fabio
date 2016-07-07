@@ -8,7 +8,7 @@ FabIO Package
 :mod:`fabio` Package
 --------------------
 
-.. automodule:: fabio.__init__
+.. automodule:: fabio
     :members:
     :undoc-members:
     :show-inheritance:
@@ -255,10 +255,10 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`fabio.third_party.TiffIO` Module
---------------------------------------
+:mod:`fabio.TiffIO` Module
+--------------------------
 
-.. automodule:: fabio.third_party.TiffIO
+.. automodule:: fabio.TiffIO
     :members:
     :undoc-members:
     :show-inheritance:

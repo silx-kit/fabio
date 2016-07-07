@@ -32,7 +32,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "20/06/2016"
+__date__ = "07/07/2016"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -74,7 +74,7 @@ MAJOR = 0
 MINOR = 4
 MICRO = 0
 RELEV = "dev"  # <16
-SERIAL = 5  # <16
+SERIAL = 6  # <16
 
 
 from collections import namedtuple

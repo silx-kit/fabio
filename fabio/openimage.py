@@ -41,7 +41,7 @@ from __future__ import with_statement, print_function, absolute_import
 import sys
 import logging
 logger = logging.getLogger("openimage")
-from .fabioutils import FilenameObject, exists
+from .fabioutils import FilenameObject, exists, BytesIO, six
 from .fabioimage import FabioImage
 from . import edfimage
 from . import adscimage
@@ -69,7 +69,7 @@ from . import numpyimage
 from . import eigerimage
 from . import fit2dimage
 
-if sys.version_info[0] < 3:
+if six.PY2:
     bytes = str
     from urlparse import urlparse
 else:
@@ -171,15 +171,26 @@ def _openimage(filename):
     hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
 
     """
-    url = urlparse(filename)
-    # related to https://github.com/kif/fabio/issues/34
-    if (len(url.scheme) == 1 and (sys.platform == "win32")) or url.path.startswith(":"):
-        # this is likely a C: from windows  or filename::path
-        filename = url.scheme + ":" + url.path
+    try:
+        url = urlparse(filename)
+    except AttributeError as err:
+        # Assume we have as input a BytesIO object
+        attrs = dir(filename)
+        if "seek" in attrs and "read" in attrs:
+            if not isinstance(filename, BytesIO):
+                filename.seek(0)
+                actual_filename = BytesIO(filename.read())
+        else:
+            actual_filename = filename
     else:
-        filename = url.path
+        # related to https://github.com/kif/fabio/issues/34
+        if (len(url.scheme) == 1 and (sys.platform == "win32")) or url.path.startswith(":"):
+            # this is likely a C: from windows  or filename::path
+            filename = url.scheme + ":" + url.path
+        else:
+            filename = url.path
+        actual_filename = filename.split("::")[0]
 
-    actual_filename = filename.split("::")[0]
     try:
         imo = FabioImage()
         byts = imo._open(actual_filename).read(18)

@@ -64,7 +64,7 @@ The basic idea is the following:
    perhaps orientation too)
 
 9) Run pylint on your code and then please go clean it up. Have a go at mine 
-   while you are at it.
+   while you are at it, before requesting a pull-request on github.
 
 10) Bask in the warm glow of appreciation when someone unexpectedly learns they 
    don't need to convert their data into another format
@@ -74,9 +74,9 @@ The basic idea is the following:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["author"]
-__contact__ = "<<<name@institut.org>>>"
+__contact__ = "name@institut.org"
 __license__ = "MIT"
-__copyright__ = "<<<Institut>>>"
+__copyright__ = "Institut"
 __date__ = "07/07/2016"
 
 import logging
@@ -116,8 +116,9 @@ class TemplateImage(FabioImage):
         infile = self._open(fname)
         self._readheader(infile)
 
-        # read the image data
-        # self.data = numpy.zeros((self.dim2, self.dim1), dtype=self.bytecode)
+        # read the image data and declare
+        shape = (50, 60)
+        self.data = numpy.zeros(shape, dtype=self.uint16)
         # Nota: dim1, dim2, bytecode and bpp are properties defined by the dataset
         return self
 
