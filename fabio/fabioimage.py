@@ -605,4 +605,14 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         other.header = converters.convert_header(self.classname, other.classname, self.header)
         return other
 
+    def __iter__(self):
+        current_image = self
+        while True:
+            yield current_image
+            try:
+                current_image = current_image.next()
+            except IOError:
+                raise StopIteration
+
+
 fabioimage = FabioImage

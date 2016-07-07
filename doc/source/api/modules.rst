@@ -8,7 +8,7 @@ FabIO Package
 :mod:`fabio` Package
 --------------------
 
-.. automodule:: fabio.__init__
+.. automodule:: fabio
     :members:
     :undoc-members:
     :show-inheritance:

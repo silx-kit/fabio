@@ -21,15 +21,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+"""General purpose utilities functions for fabio
 
+"""
 from __future__ import absolute_import, print_function, with_statement, division
 
-__doc__ = """General purpose utilities functions for fabio"""
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "20/06/2016"
+__date__ = "07/07/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -115,9 +116,14 @@ def deprecated(func):
 def pad(mystr, pattern=" ", size=80):
     """
     Performs the padding of the string to the right size with the right pattern
+    
+    :param mystr: input string
+    :param pattern: the filling pattern
+    :param size: the size of the block
+    :return: the padded string to a multiple of size  
     """
     size = int(size)
-    padded_size = int(ceil(float(len(mystr)) / size) * size)
+    padded_size = (len(mystr) + size - 1) // size * size
     if len(pattern) == 1:
         return mystr.ljust(padded_size, pattern)
     else:

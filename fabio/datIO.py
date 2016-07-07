@@ -35,6 +35,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 # get ready for python3
 from __future__ import with_statement, print_function
 
+
 class fabiodata(object):
     """
     A common class for dataIO in fable

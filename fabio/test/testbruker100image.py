@@ -29,23 +29,21 @@
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
-import numpy
-import gzip
-import bz2
+
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
-from fabio.bruker100image import bruker100image
+from fabio.bruker100image import Bruker100Image
 from fabio.openimage import openimage
 
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """NaCl_10_01_0009.sfrm         512 512 4 4294967286 65570.46 16777087.80
-                NaCl_10_01_0009.sfrm.gz      512 512 4 4294967286 65570.46 16777087.80
-                NaCl_10_01_0009.sfrm.bz2     512 512 4 4294967286 65570.46 16777087.80"""
-REFIMAGE = "NaCl_10_01_0009_set_to_4-bytes.tiff.bz2"
+TESTIMAGES = """NaCl_10_01_0009.sfrm         512 512 -30 5912 34.4626 26.189
+                NaCl_10_01_0009.sfrm.gz      512 512 -30 5912 34.4626 26.189
+                NaCl_10_01_0009.sfrm.bz2     512 512 -30 5912 34.4626 26.189"""
+REFIMAGE = "NaCl_10_01_0009.npy.bz2"
 
 
 class TestBruker100(unittest.TestCase):
@@ -64,7 +62,7 @@ class TestBruker100(unittest.TestCase):
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
-            obj = bruker100image()
+            obj = Bruker100Image()
             obj.read(os.path.join(self.im_dir, name))
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
@@ -80,11 +78,26 @@ class TestBruker100(unittest.TestCase):
             obt = openimage(os.path.join(self.im_dir, line.split()[0]))
             self.assert_(abs(ref.data - obt.data).max() == 0, "data are the same")
 
+    def test_write(self):
+        fname = TESTIMAGES.split()[0]
+        obt = openimage(os.path.join(self.im_dir, fname))
+        name = os.path.basename(fname)
+
+        obj = Bruker100Image(data=obt.data, header=obt.header)
+        obj.write(os.path.join(UtilsTest.tempdir, name))
+        other = openimage(os.path.join(UtilsTest.tempdir, name))
+        self.assertEqual(abs(obt.data - other.data).max(), 0, "data are the same")
+        for key in obt.header:
+            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertEqual(obt.header[key], other.header[key], "value are the same for key %s" % key)
+        os.unlink(os.path.join(UtilsTest.tempdir, name))
+
 
 def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(TestBruker100("test_read"))
     testsuite.addTest(TestBruker100("test_same"))
+    testsuite.addTest(TestBruker100("test_write"))
     return testsuite
 
 if __name__ == '__main__':
