@@ -33,7 +33,7 @@ Installation under windows
 
 Install `Python <http://python.org>`_ from the official web page.
 I would recommend Python 2.7 in 64 bits version if your operating system allows it.
-Python3 (>=3.2) is OK.
+Python3 (>=3.4) is OK.
 
 If you are looking for an integrated scientific Python distribution on Windows,
 `WinPython <https://winpython.github.io/>`_ is a good one, the Python2.7, 64 bit
@@ -169,7 +169,7 @@ Install the dependencies
 Most Linux distribution come with a Python environment configured. Complete
 it with the needed dependencies.
 
-* Python 2.6 - 2.7 or 3.2+
+* Python 2.7 or 3.4+
 * numpy - http://www.numpy.org
 
 For full functionality of FabIO the following modules need to be installed:
@@ -184,6 +184,7 @@ or `the development version <https://github.com/kif/fabio/archive/master.zip>`_.
 * unzip the archive
 * open a terminal in the unzipped archive directory
 * run::
+
    sudo pip install setuptools wheel
    sudo pip install -r requirements.txt
    python setup.py build
@@ -200,7 +201,7 @@ The newest development version can be obtained by checking it out from the git r
 
 ::
 
-    git clone https://github.com/kif/fabio
+    git clone https://github.com/silx-kit/fabio
     cd fabio
     python setup.py build test
     sudo pip install .
@@ -226,27 +227,17 @@ We provide a debian-package builder based on stdeb, building a package for Pytho
 ::
 
 	sudo apt-get install python-stdeb
-	./build-deb.sh
+	./build-deb7.sh
 
 which builds a debian package and installs them in a single command.
 Handy for testing, but very clean, see hereafter
 
 Debian 8 and newer
 ------------------
-FabIO features some helper function to make debian packaging easier:
 
-::
-
-    #to create the orig.tar.gz without cython generated C files for Sphinx built documentation:
-    python setup.py debian_src
-
-    # to create a tarball of all images needed to test the library
-    python setup.py debian_testimages
-
-Two tarball are created, one with all source code (and only source code) and the other one with all test-data.
-
-There is also a script which builds a bunch of *real* debian packages:
-
+There is also a script which builds a bunch of *real* debian packages: *build-deb8.sh*
+It will build a bunch of 6 debian packages::
+ 
 * *fabio-viewer*: the GUI for visualizing diffraction images
 * *fabio-doc*: the documumentation package
 * *python3-fabio*: library built for Python3

@@ -246,17 +246,20 @@ uses extensions as a fallback if that fails.
    :widths: 30, 30, 20, 10, 15, 10
 
    "ADSC", "ADSC Quantum", ".img ", "Yes", "No", "Yes"
-   "Bruker", "Bruker formats", ".sfrm ", "Yes", "No", "Yes"
+   "Bruker86", "Bruker formats", ".sfrm ", "Yes", "No", "Yes"
+   "Bruker100", "Bruker formats", ".sfrm ", "Yes", "No", "Yes"
+   "CBF", "CIF binary files", ".cbf ", "Yes", "No", "Yes"
    "DM3", "Gatan Digital Micrograph ", ".dm3 ", "Yes", "No", "No"
    "EDF", "ESRF data format ", ".edf ", "Yes", "Yes ", "Yes"
    "EDNA-XML", "Used by EDNA", ".xml ", "Yes", "No", "No"
-   "CBF", "CIF binary files", ".cbf ", "Yes", "No", "Yes"
-   "kcd", "Nonius KappaCCD", ".kccd ", "Yes", "No", "No"
-   "fit2d mask", "Used by Fit2D", ".msk ", "Yes", "No", "Yes"
-   "fit2d spreadsheet", "Used by Fit2D", ".spr ", "Yes", "No", "Yes"
+   "Eiger datafile", "Dectris format", ".h5", "Yes", "Yes", "Yes" 
+   "Fit2D", "Fit2D binary format", ".f2d", "Yes", "No", "No"
+   "Fit2D mask", "Fit2D mask", ".msk ", "Yes", "No", "Yes"
+   "Fit2D spreadsheet", "Fit2D Ascii format", ".spr ", "Yes", "No", "Yes"
    "GE", "General Electric", "No", "Yes", "Yes ", "No"
-   "HiPiC", "Hamamatsu CCD", ".tif ", "Yes", "No", "No"
-   "HDF5", "Hierachical data dormat", ".h5", "Yes", "No", "No" 
+   "Hdf5", "Needs the dataset path", ".h5", "Yes", "Yes", "No"
+   "HiPiC", "Hamamatsu CCD", ".tif ", "Yes", "No", "No" 
+   "kcd", "Nonius KappaCCD", ".kccd ", "Yes", "No", "No"
    "marccd", "MarCCD/Mar165", ".mccd ", "Yes", "No", "No"
    "mar345", "Mar345 image plate", ".mar3450 ", "Yes", "No", "Yes"
    "numpy", "numpy 2D array", "npy ", "Yes", "No", "Yes"
@@ -270,17 +273,9 @@ uses extensions as a fallback if that fails.
 Adding new file formats
 .......................
 
-We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:
- 1. inherit from fabioimage overriding the methods _readheader, read and optionally write. Name your new module XXXimage where XXX means something (eg tifimage).
- 2. readheader fills in a dictionary of "name":"value" pairs in self.header. No one expects to find anything much in there.
- 3. read fills in self.data with a numpy array holding the image. Some redundant info which also appears are self.dim1 and self.dim2: the image dimensions, self.bpp is the bytes per pixel and self.bytecode is the numpy.dtype.type of the data.
- 4. The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there in case you have trouble with the transparent handling of bz2 and gz files.
- 5. Register the file type (extension naming) in fabioutils.py:FILETYPES
- 6. Add your new module as an import into fabio.openimage
- 7. Fill out the magic numbers for your format in fabio.openimage if you know them (the characteristic first few bytes in the file)
- 8. Upload a testimage to the file release system and create a unittest testcase which opens an example of your new format, confirming the image has actually been read in successfully (eg check the mean, max, min and esd are all correct, perhaps orientation too)
- 9. Run pylint on your code and then please go clean it up. Have a go at mine while you are at it.
- 10. Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert their data into another format
+We hope it will be relatively easy to add new file formats to FabIO in the future.
+Please refere at the *fabio/templateimage.py* file in the source which describes
+how to add a new format.
 
 
 
