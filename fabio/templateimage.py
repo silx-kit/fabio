@@ -1,70 +1,83 @@
 # coding: utf-8
 #
 #    Project: X-ray image reader
-#             https://github.com/kif/fabio
-#
+#             https://github.com/silx-kit/fabio
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
 #
-#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation files
+#  (the "Software"), to deal in the Software without restriction,
+#  including without limitation the rights to use, copy, modify, merge,
+#  publish, distribute, sublicense, and/or sell copies of the Software,
+#  and to permit persons to whom the Software is furnished to do so,
+#  subject to the following conditions:
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#  OTHER DEALINGS IN THE SOFTWARE.
 
-# This is a template for adding new file formats to FabIO
-#
-# We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:
-# 1) inherit from fabioimage overriding the methods _readheader, read and optionally write.
-#    Name your new module XXXimage where XXX means something (eg tifimage).
-#
-# 2) readheader fills in a dictionary of "name":"value" pairs in self.header.
-#    No one expects to find anything much in there.
-#
-# 3) read fills in self.data with a numpy array holding the image.
-#    Some redundant info which also appears are self.dim1 and self.dim2: the image dimensions,
-#    self.bpp is the bytes per pixel and self.bytecode is the numpy.dtype.type of the data.
-#
-# 4) The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there in case you have
-#    trouble with the transparent handling of bz2 and gz files.
-#
-# 5) Register the file type (extension naming) in fabioutils.FILETYPES
-#
-# 6) Add your new module as an import into fabio.openimage
-#
-# 7) Fill out the magic numbers for your format in fabio.openimage if you know them
-#    (the characteristic first few bytes in the file)
-#
-# 8) Upload a testimage to the file release system and create a unittest testcase
-#    which opens an example of your new format, confirming the image has actually
-#    been read in successfully (eg check the mean, max, min and esd are all correct,
-#    perhaps orientation too)
-#
-# 9) Run pylint on your code and then please go clean it up. Have a go at mine while you are at it.
-#
-# 10) Bask in the warm glow of appreciation when someone unexpectedly learns they don't need to convert
-#    their data into another format
 
-"""FabIO reader for Fit2D binary images
+"""Template for FabIO image reader
+
+This is a template for adding new file formats to FabIO
+
+We hope it will be relatively easy to add new file formats to fabio in the future. 
+The basic idea is the following:
+
+1) inherit from FabioImage overriding the methods _readheader, read and optionally write.
+   Name your new module XXXimage where XXX means something (eg tifimage).
+
+2) readheader fills in a dictionary of "name":"value" pairs in self.header.
+   No one expects to find anything much in there.
+
+3) read fills in self.data with a numpy array holding the image.
+   Some info are automatically exposed from data: 
+   * self.dim1 and self.dim2: the image dimensions,
+   * self.bpp is the bytes per pixel 
+   * self.bytecode is the numpy.dtype.type of the data.
+
+4) The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there 
+   in case you have
+   trouble with the transparent handling of bz2 and gz files.
+
+5) Register the file type (extension naming) in fabioutils.FILETYPES
+   TODO: place this in the class definition soon
+
+6) Add your new module as an import into fabio.openimage. 
+   Your class will be registered automatically.
+
+7) Fill out the magic numbers for your format in fabio.openimage if you know them
+   (the characteristic first few bytes in the file)
+
+8) Upload a testimage to the file release system and create a unittest testcase
+   which opens an example of your new format, confirming the image has actually
+   been read in successfully (eg check the mean, max, min and esd are all correct,
+   perhaps orientation too)
+
+9) Run pylint on your code and then please go clean it up. Have a go at mine 
+   while you are at it.
+
+10) Bask in the warm glow of appreciation when someone unexpectedly learns they 
+   don't need to convert their data into another format
+
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["author"]
-__contact__ = "name@institut.org"
-__license__ = "GPLv3+"
-__copyright__ = "Institut"
-__date__ = "21/06/2016"
+__contact__ = "<<<name@institut.org>>>"
+__license__ = "MIT"
+__copyright__ = "<<<Institut>>>"
+__date__ = "07/07/2016"
 
 import logging
 logger = logging.getLogger("templateimage")
@@ -73,8 +86,9 @@ from .fabioimage import FabioImage
 
 
 class TemplateImage(FabioImage):
-    """
-    FabIO image class for Images for XXX detector
+    """FabIO image class for Images for XXX detector
+    
+    Put some documentation here
     """
     def __init__(self, *arg, **kwargs):
         """
