@@ -41,7 +41,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3 compatibility
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "17/06/2016"
+__date__ = "07/07/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "GPLv3+"
@@ -160,11 +160,11 @@ class BrukerImage(FabioImage):
                     "LEPTOS",  # String for LEPTOS.
                     "CFR",  # Only in 21CFRPart11 mode, writes the checksum for header and image (2str).]
                     ]
+    version = 86
 
     def __init__(self, data=None, header=None):
         FabioImage.__init__(self, data, header)
         self.__bpp_file = None
-        self.version = 86
         self.__headerstring__ = ""
 
     def _readheader(self, infile):

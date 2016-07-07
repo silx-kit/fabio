@@ -29,9 +29,7 @@
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
-import numpy
-import gzip
-import bz2
+
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
@@ -42,10 +40,10 @@ from fabio.bruker100image import bruker100image
 from fabio.openimage import openimage
 
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """NaCl_10_01_0009.sfrm         512 512 4 4294967286 65570.46 16777087.80
-                NaCl_10_01_0009.sfrm.gz      512 512 4 4294967286 65570.46 16777087.80
-                NaCl_10_01_0009.sfrm.bz2     512 512 4 4294967286 65570.46 16777087.80"""
-REFIMAGE = "NaCl_10_01_0009_set_to_4-bytes.tiff.bz2"
+TESTIMAGES = """NaCl_10_01_0009.sfrm         512 512 -30 5912 34.4626 26.189
+                NaCl_10_01_0009.sfrm.gz      512 512 -30 5912 34.4626 26.189
+                NaCl_10_01_0009.sfrm.bz2     512 512 -30 5912 34.4626 26.189"""
+REFIMAGE = "NaCl_10_01_0009.npy.bz2"
 
 
 class TestBruker100(unittest.TestCase):
