@@ -21,21 +21,6 @@ import subprocess
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
 
-root_dir = os.path.abspath("../..")
-build_dir = [os.path.abspath(i) for i in glob.glob('../../build/lib*')]
-# if (not build_dir) or ("__init__.py" not in os.listdir(os.path.join(build_dir[0], "fabio"))):
-curr_dir = os.path.abspath(os.getcwd())
-os.chdir(root_dir)
-errno = subprocess.call([sys.executable, 'setup.py', 'build'])
-if errno != 0:
-    print("Unable to build FabIO, needed for the documentation")
-    raise SystemExit(errno)
-os.chdir(curr_dir)
-build_dir = glob.glob('../../build/lib*')
-sys.path.insert(0, build_dir[0])
-os.environ["PATH"] = os.path.join(root_dir, "scripts") + os.pathsep + os.environ.get("PATH", "")
-os.environ["PYTHONPATH"] = build_dir[0] + os.pathsep + os.environ.get("PYTHONPATH", "")
-
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -261,7 +246,7 @@ re_field = re.compile('@(param|type|rtype|return)')
 
 
 def fix_docstring(app, what, name, obj, options, lines):
-    for i in xrange(len(lines)):
+    for i in range(len(lines)):
         lines[i] = re_field.sub(r':\1', lines[i])
 
 

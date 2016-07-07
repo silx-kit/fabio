@@ -28,7 +28,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "17/06/2016"
+__date__ = "07/07/2016"
 __status__ = "stable"
 
 import os
@@ -197,6 +197,7 @@ try:
     from sphinx.setup_command import BuildDoc
 except ImportError:
     sphinx = None
+
 else:
     # i.e. if sphinx:
     class build_doc(BuildDoc):
@@ -208,6 +209,8 @@ else:
 
             build = self.get_finalized_command('build')
             sys.path.insert(0, os.path.abspath(build.build_lib))
+            script_dir = os.path.abspath("scripts")
+            os.environ["PATH"] = "%s%s%s" % (script_dir, os.pathsep, os.environ.get("PATH", ""))
             # Build the Users Guide in HTML and TeX format
             for builder in ('html', 'latex'):
                 self.builder = builder
@@ -215,6 +218,7 @@ else:
                 self.mkpath(self.builder_target_dir)
                 BuildDoc.run(self)
             sys.path.pop(0)
+            os.environ["PATH"] = os.pathsep.join(os.environ.get("PATH").split(os.pathsep)[1:])
     cmdclass['build_doc'] = build_doc
 
 
