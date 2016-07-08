@@ -89,6 +89,7 @@ FILETYPES = {
                 'cbf'    : ['cbf'],
                 'xml'    : ["xsd"],
                 'xsd'    : ["xsd"],
+                'spe'    : ["spe", "SPE"],
              }
 
 # Add bzipped and gzipped
