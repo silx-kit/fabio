@@ -41,7 +41,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "07/07/2016"
+__date__ = "08/07/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
@@ -99,8 +99,8 @@ class EigerImage(FabioImage):
         if isinstance(self.dataset, h5py.Group) and "data" in self.dataset.keys():
             self.dataset = self.dataset["data"]
         self.nframes = self.dataset.shape[0]
-        self._dim1 = self.dataset[-1]
-        self._dim2 = self.dataset[-2]
+        self._dim1 = self.dataset.shape[-1]
+        self._dim2 = self.dataset.shape[-2]
         if frame is not None:
             self.currentframe = int(frame)
         else:
