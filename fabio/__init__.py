@@ -37,11 +37,11 @@ import os
 import logging
 logging.basicConfig()
 project = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-# try:
-#     from ._version import __date__ as date  # noqa
-#     from ._version import version, version_info, hexversion, strictversion  # noqa
-# except ImportError:
-#     raise RuntimeError("Do NOT use %s from its sources: build it and use the built version" % project)
+try:
+    from ._version import __date__ as date  # noqa
+    from ._version import version, version_info, hexversion, strictversion  # noqa
+except ImportError:
+    raise RuntimeError("Do NOT use %s from its sources: build it and use the built version" % project)
 
 from . import fabioimage
 factory = fabioimage.FabioImage.factory
