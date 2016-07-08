@@ -68,6 +68,7 @@ from . import raxisimage
 from . import numpyimage
 from . import eigerimage
 from . import fit2dimage
+from . import speimage
 
 if six.PY2:
     bytes = str
@@ -193,10 +194,12 @@ def _openimage(filename):
             filename = url.path
         actual_filename = filename.split("::")[0]
 
+    print(actual_filename)
     try:
         imo = FabioImage()
         byts = imo._open(actual_filename).read(18)
         filetype = do_magic(byts, filename)
+        print(filetype)
     except IOError as error:
         logger.error("%s: File probably does not exist", error)
         raise error
@@ -217,6 +220,7 @@ def _openimage(filename):
             import traceback
             traceback.print_exc()
             raise Exception("Fabio could not identify " + filename)
+    print(filetype)
     klass_name = "".join(filetype) + 'image'
     try:
         obj = FabioImage.factory(klass_name)

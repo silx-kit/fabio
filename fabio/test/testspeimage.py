@@ -36,10 +36,10 @@ import sys
 
 import numpy as np
 
-
+from .utilstest import UtilsTest
+logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from fabio.speimage import SpeImage
-from .utilstest import UtilsTest
 
 v2_spe_filename = os.path.join(UtilsTest.image_home, 'v2.SPE')
 v2_converted_spe_file = os.path.join(UtilsTest.image_home, 'v2_converted.SPE')
@@ -61,8 +61,8 @@ class TestSpeImage(unittest.TestCase):
 
     def test_reading_version2_spe(self):
         self.assertEqual(self.v2_spe_file.header['version'], 2)
-        # self.assertEqual(self.v3_spe_file.header['version'], 3)
-        # self.assertEqual(self.v2_converted_spe_file.header['version'], 3)
+        self.assertEqual(self.v3_spe_file.header['version'], 3)
+        self.assertEqual(self.v2_converted_spe_file.header['version'], 3)
 
     def test_calibration(self):
         self.assertGreater(len(self.v2_spe_file.header['x_calibration']), 0)
@@ -119,3 +119,7 @@ class TestSpeImage(unittest.TestCase):
 
         self.assertFalse(np.array_equal(frame1, frame2))
         self.assertEqual(frame1.shape, frame2.shape)
+
+    def test_fabio_integration(self):
+        self.v2_file = fabio.open(v2_spe_filename)
+        self.v3_file = fabio.open(v3_spe_filename)

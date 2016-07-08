@@ -155,7 +155,7 @@ class SpeImage(FabioImage):
 
         # read the image data and declare
         self.data = self._read_data(frame)
-        # Nota: dim1, dim2, bytecode and bpp are properties defined by the dataset
+
         return self
 
     def _get_version(self, infile):
