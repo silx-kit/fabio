@@ -30,18 +30,20 @@ __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
 __date__ = "07/07/2016"
 
-
 import unittest
-import datetime
 import os
 
-from fabio.spe import SpeImage as SpeImage
+import numpy as np
+
+from spe import SpeImage as SpeImage
 
 image_folder = os.path.join(os.path.dirname(__file__), '../../testimages')
 
 v2_spe_filename = os.path.join(image_folder, 'v2.SPE')
 v2_converted_spe_file = os.path.join(image_folder, 'converted_v2.SPE')
-v3_spe_file = os.path.join(image_folder, 'v3.spe')
+v3_spe_filename = os.path.join(image_folder, 'v3.spe')
+v3_custom_roi_filename = os.path.join(image_folder, 'v3_custom_roi.spe')
+v3_2frames_filename = os.path.join(image_folder, 'v3_2frames.spe')
 
 class TestSpeImage(unittest.TestCase):
     def setUp(self):
@@ -49,7 +51,7 @@ class TestSpeImage(unittest.TestCase):
         self.v2_spe_file.read(v2_spe_filename)
 
         self.v3_spe_file = SpeImage()
-        self.v3_spe_file.read(v3_spe_file)
+        self.v3_spe_file.read(v3_spe_filename)
 
         self.v2_converted_spe_file = SpeImage()
         self.v2_converted_spe_file.read(v2_converted_spe_file)
@@ -63,14 +65,12 @@ class TestSpeImage(unittest.TestCase):
         self.assertGreater(len(self.v2_spe_file.header['x_calibration']), 0)
         self.assertGreater(len(self.v3_spe_file.header['x_calibration']), 0)
         self.assertGreater(len(self.v2_converted_spe_file.header['x_calibration']), 0)
+
     #
     def test_time(self):
-        self.assertEqual(self.v2_spe_file.date_time, datetime.datetime(2013, 7, 13, 19, 42, 23))
-        self.assertEqual(self.v3_spe_file.date_time, datetime.datetime(2013, 9, 6, 16, 50, 39, 445678,
-                                                                       self.v3_spe_file.date_time.tzinfo))
-        self.assertEqual(self.v2_converted_spe_file.date_time,
-                         datetime.datetime(2013, 5, 10, 10, 34, 27, 0,
-                                           self.v2_converted_spe_file.date_time.tzinfo))
+        self.assertEqual(self.v2_spe_file.header['time'], "07/13/2013 19:42:23")
+        self.assertEqual(self.v3_spe_file.header['time'], "09/06/2013 16:50:39.445678")
+        self.assertEqual(self.v2_converted_spe_file.header['time'], "05/10/2013 10:34:27")
 
     def test_exposure_time(self):
         self.assertEqual(self.v2_spe_file.header['exposure_time'], 0.5)
@@ -93,20 +93,27 @@ class TestSpeImage(unittest.TestCase):
         self.assertEqual(self.v2_converted_spe_file.header['center_wavelength'], 750)
 
     def test_roi(self):
-        self.assertEqual(self.v3_spe_file.roi_modus, 'CustomRegions')
-        self.assertEqual(self.v3_spe_file.get_roi(), [0, 1023, 0, 99])
+        self.assertEqual(self.v3_spe_file.header['roi'], (0, 1024, 0, 100))
+        self.v3_custom_region = SpeImage()
+        self.v3_custom_region.read(v3_custom_roi_filename)
+        self.assertEqual(self.v3_custom_region.header['roi'], (100, 600, 10, 60))
+        self.assertEqual(len(self.v3_custom_region.header['x_calibration']),
+                         self.v3_custom_region.header['x_dim'])
 
-        self.vers3_spe_file_custom_region = SpeFile(os.path.join(unittest_folder, 'SPE_v3_CustomRegions.spe'))
-        self.assertEqual(self.vers3_spe_file_custom_region.roi_modus, 'CustomRegions')
-        self.assertEqual(self.vers3_spe_file_custom_region.get_roi(), [100, 599, 10, 59])
-        self.assertEqual(len(self.vers3_spe_file_custom_region.x_calibration),
-                         self.vers3_spe_file_custom_region.get_dimension()[0])
+    def test_read_data(self):
+        self.assertEqual(self.v2_spe_file.data.shape, (100, 1340))
+        self.assertEqual(self.v3_spe_file.data.shape, (100, 1024))
+        self.assertEqual(self.v2_converted_spe_file.data.shape, (100, 1340))
 
-        self.vers3_spe_file_full_sensor = SpeFile(os.path.join(unittest_folder, 'SPE_v3_FullSensor.spe'))
-        self.assertEqual(self.vers3_spe_file_full_sensor.roi_modus, 'FullSensor')
-        dimensions = self.vers3_spe_file_full_sensor.get_dimension()
-        self.assertEqual(self.vers3_spe_file_full_sensor.get_roi(),
-                         [0, dimensions[0] - 1, 0, dimensions[1] - 1])
-    #
-    # def test_multiple_frames(self):
-    #     self.spe3_2frames_file = SpeFile(os.path.join(unittest_folder, 'SPE_v3_PIMAX_2frames.spe'))
+    def test_multiple_frames(self):
+
+        self.v3_2frames_file = SpeImage()
+        self.v3_2frames_file.read(v3_2frames_filename)
+        self.assertEqual(self.v3_2frames_file.data.shape, (255, 1024))
+        frame1 = self.v3_2frames_file.data
+
+        self.v3_2frames_file.read(v3_2frames_filename, 1)
+        frame2 = self.v3_2frames_file.data
+
+        self.assertFalse(np.array_equal(frame1, frame2))
+        self.assertEqual(frame1.shape, frame2.shape)

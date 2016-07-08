@@ -25,7 +25,6 @@ from xml.dom.minidom import parseString
 
 import numpy as np
 from numpy.polynomial.polynomial import polyval
-from dateutil import parser
 
 
 class SpeImage(object):
@@ -63,21 +62,19 @@ class SpeImage(object):
             self._get_xml_string()
             self._create_dom_from_xml()
             self.header['time'] = self._read_date_time_from_dom()
+            self.header['roi'] = self._read_roi_from_dom()
             self.header['x_calibration'] = self._read_calibration_from_dom()
             self.header['exposure_time'] = self._read_exposure_from_dom()
             self.header['detector'] = self._read_detector_from_dom()
             self.header['grating'] = self._read_grating_from_dom()
             self.header['center_wavelength'] = self._read_center_wavelength_from_dom()
-            self.header['roi_modus'] = self._read_roi_from_dom()
-
-        print(self.header)
 
     def read(self, fname, frame=None):
         self.filename = fname
         self._infile = open(fname, 'rb')
         self._read_header(self._infile)
 
-        self._read_img()
+        self.data = self._read_data(frame)
         self._infile.close()
 
     def _get_version(self, infile):
@@ -99,8 +96,12 @@ class SpeImage(object):
     def _read_date_time_from_dom(self):
         """Reads the time of collection and saves it date_time field"""
         date_time_str = self.dom.getElementsByTagName('Origin')[0].getAttribute('created')
-        date_time = parser.parse(date_time_str)
-        return date_time.strftime("%m/%d/%Y %H:%M:%S")
+        try:
+            date_time = datetime.datetime.strptime(date_time_str[:-7], "%Y-%m-%dT%H:%M:%S.%f")
+            return date_time.strftime("%m/%d/%Y %H:%M:%S.%f")
+        except ValueError:
+            date_time = datetime.datetime.strptime(date_time_str[:-6], "%Y-%m-%dT%H:%M:%S")
+            return date_time.strftime("%m/%d/%Y %H:%M:%S")
 
     def _read_calibration_from_header(self):
         """Reads the calibration from the header into the x_calibration field"""
@@ -116,21 +117,11 @@ class SpeImage(object):
         wavelengthmapping = calibrations.getElementsByTagName('WavelengthMapping')[0]
         wavelengths = wavelengthmapping.getElementsByTagName('Wavelength')[0]
         wavelength_values = wavelengths.childNodes[0]
-        return np.array([float(i) for i in wavelength_values.toxml().split(',')])
-
-    def _read_roi_from_header(self):
-        return
+        x_calibration = np.array([float(i) for i in wavelength_values.toxml().split(',')])
+        return x_calibration[self.header['roi'][0]:self.header['roi'][1]]
 
     def _read_num_frames_from_header(self):
         self.num_frames = self._read_at(1446, 1, np.int32)[0]
-
-    def _read_num_combined_frames_from_header(self):
-        self._num_combined_frames = 1
-
-    def _create_dom_from_xml(self):
-        """Creates a DOM representation of the xml footer and saves it in the
-        dom field"""
-        self.dom = parseString(self.xml_string)
 
     def _get_xml_string(self):
         """Reads out the xml string from the file end"""
@@ -142,6 +133,11 @@ class SpeImage(object):
         #     for line in self.xml_string:
         #         fid.write(line)
         #     fid.close()
+
+    def _create_dom_from_xml(self):
+        """Creates a DOM representation of the xml footer and saves it in the
+        dom field"""
+        self.dom = parseString(self.xml_string)
 
     def _read_exposure_from_dom(self):
         """Reads th exposure time of the experiment into the exposure_time field"""
@@ -178,6 +174,7 @@ class SpeImage(object):
                 getElementsByTagName('Selected')[0].childNodes[0].toxml()
             return grating.split('[')[1].split(']')[0].replace(',', ' ')
         except IndexError:
+            # try from header:
             return str(self._read_at(650, 1, np.float32)[0])
 
     def _read_center_wavelength_from_dom(self):
@@ -190,6 +187,7 @@ class SpeImage(object):
                 childNodes[0].toxml()
             return float(center_wavelength)
         except IndexError:
+            # try from header
             return float(self._read_at(72, 1, np.float32)[0])
 
     def _read_roi_from_dom(self):
@@ -200,122 +198,68 @@ class SpeImage(object):
         For FullSensor
         roi_x,roi_y, roi_width, roi_height"""
         try:
-            self.roi_modus = str(self.dom.getElementsByTagName('ReadoutControl')[0]. \
+            roi_modus = str(self.dom.getElementsByTagName('ReadoutControl')[0]. \
                                  getElementsByTagName('RegionsOfInterest')[0]. \
                                  getElementsByTagName('Selection')[0]. \
                                  childNodes[0].toxml())
-            if self.roi_modus == 'CustomRegions':
-                self.roi_dom = self.dom.getElementsByTagName('ReadoutControl')[0]. \
+            if roi_modus == 'CustomRegions':
+                roi_dom = self.dom.getElementsByTagName('ReadoutControl')[0]. \
                     getElementsByTagName('RegionsOfInterest')[0]. \
                     getElementsByTagName('CustomRegions')[0]. \
                     getElementsByTagName('RegionOfInterest')[0]
-                self.roi_x = int(self.roi_dom.attributes['x'].value)
-                self.roi_y = int(self.roi_dom.attributes['y'].value)
-                self.roi_width = int(self.roi_dom.attributes['width'].value)
-                self.roi_height = int(self.roi_dom.attributes['height'].value)
-                self.roi_x_binning = int(self.roi_dom.attributes['xBinning'].value)
-                self.roi_y_binning = int(self.roi_dom.attributes['yBinning'].value)
-            elif self.roi_modus == 'FullSensor':
-                self.roi_x = 0
-                self.roi_y = 0
-                self.roi_width = self._xdim
-                self.roi_height = self._ydim
+                roi_x = int(roi_dom.attributes['x'].value)
+                roi_y = int(roi_dom.attributes['y'].value)
+                roi_width = int(roi_dom.attributes['width'].value)
+                roi_height = int(roi_dom.attributes['height'].value)
+            else:
+                roi_x = 0
+                roi_y = 0
+                roi_width = self.header['x_dim']
+                roi_height = self.header['y_dim']
 
         except IndexError:
-            self.roi_x = 0
-            self.roi_y = 0
-            self.roi_width = self._xdim
-            self.roi_height = self._ydim
+            roi_x = 0
+            roi_y = 0
+            roi_width = self.header['x_dim']
+            roi_height = self.header['y_dim']
 
-    def _read_num_combined_frames_from_dom(self):
-        try:
-            self.frame_combination = self.dom.getElementsByTagName('Experiment')[0]. \
-                getElementsByTagName('Devices')[0]. \
-                getElementsByTagName('Cameras')[0]. \
-                getElementsByTagName('FrameCombination')[0]
-            self.num_frames_combined = int(self.frame_combination.getElementsByTagName('FramesCombined')[0]. \
-                                           childNodes[0].toxml())
-        except IndexError:
-            self._read_num_combined_frames_from_header()
-
-    def _select_wavelength_from_roi(self):
-        self.x_calibration = self.x_calibration[self.roi_x: self.roi_x + self.roi_width]
+        return roi_x, roi_x + roi_width, roi_y, roi_y + roi_height
 
     def _read_at(self, pos, size, ntype):
         self._infile.seek(pos)
         return np.fromfile(self._infile, ntype, size)
 
-    def _read_img(self):
-        self.img = self._read_frame(4100)
-        if self.header['num_frames'] > 1:
-            img_temp = []
-            img_temp.append(self.img)
-            for n in range(self.num_frames - 1):
-                img_temp.append(self._read_frame())
-            self.img = img_temp
+    def _read_data(self, frame=None):
+        if frame is None:
+            frame = 0
+        if self.header['data_type'] == 0:
+            number_size = np.float32().itemsize
+        elif self.header['data_type'] == 1:
+            number_size = np.int32().itemsize
+        elif self.header['data_type'] == 2:
+            number_size = np.int16().itemsize
+        elif self.header['data_type'] == 3:
+            number_size = np.int32().itemsize
+        frame_size = self.header['x_dim'] * self.header['y_dim'] * number_size
+        return self._read_frame(4100+frame*frame_size)
 
     def _read_frame(self, pos=None):
-        """Reads in a frame at a specific binary position. The following parameters have to
+        """Reads in a frame at a specific binary position. The following header parameters have to
         be predefined before calling this function:
         datatype - either 0,1,2,3 for float32, int32, int16 or uint16
-        _xdim, _ydim - being the dimensions.
+        x_dim, y_dim - being the dimensions.
         """
         if pos == None:
             pos = self._infile.tell()
         if self.header['data_type'] == 0:
-            img = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.float32)
+            data = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.float32)
         elif self.header['data_type'] == 1:
-            img = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.int32)
+            data = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.int32)
         elif self.header['data_type'] == 2:
-            img = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.int16)
+            data = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.int16)
         elif self.header['data_type'] == 3:
-            img = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.uint16)
-        return img.reshape((self.header['y_dim'] * self.header['x_dim']))
-
-    def get_index_from(self, wavelength):
-        """
-        calculating image index for a given index
-        :param wavelength: wavelength in nm
-        :return: index
-        """
-        result = []
-        xdata = self.x_calibration
-        try:
-            for w in wavelength:
-                try:
-                    base_ind = max(max(np.where(xdata <= w)))
-                    if base_ind < len(xdata) - 1:
-                        result.append(int(np.round((w - xdata[base_ind]) / \
-                                                   (xdata[base_ind + 1] - xdata[base_ind]) \
-                                                   + base_ind)))
-                    else:
-                        result.append(base_ind)
-                except:
-                    result.append(0)
-            return np.array(result)
-        except TypeError:
-            base_ind = max(max(np.where(xdata <= wavelength)))
-            return int(np.round((wavelength - xdata[base_ind]) / \
-                                (xdata[base_ind + 1] - xdata[base_ind]) \
-                                + base_ind))
-
-    def get_wavelength_from(self, index):
-        if isinstance(index, list):
-            result = []
-            for c in index:
-                result.append(self.x_calibration[c])
-            return np.array(result)
-        else:
-            return self.x_calibration[index]
-
-    def get_dimension(self):
-        """Returns (xdim, ydim)"""
-        return (self._xdim, self._ydim)
-
-    def get_roi(self):
-        """Returns the ROI which was defined by WinSpec or Lightfield for datacollection"""
-        return [self.roi_x, self.roi_x + self.roi_width - 1,
-                self.roi_y, self.roi_y + self.roi_height - 1]
+            data = self._read_at(pos, self.header['x_dim'] * self.header['y_dim'], np.uint16)
+        return data.reshape((self.header['y_dim'], self.header['x_dim']))
 
     def get_file_size(self):
         self._infile.seek(0, 2)
