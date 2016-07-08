@@ -44,7 +44,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "21/06/2016"
+__date__ = "08/07/2016"
 
 import numpy
 import logging
@@ -111,14 +111,16 @@ class Hdf5Image(FabioImage):
             logger.warning("The actual dataset is ")
             self.dataset = self.dataset["data"]
 
-        if self.dataset.ndim == 3:
+        # ndim does not exist for external links ?
+        ndim = len(self.dataset.shape)
+        if ndim == 3:
             self.nframes = self.dataset.shape[0]
             if frame is not None:
                 self.currentframe = int(frame)
             else:
                 self.currentframe = 0
             self.data = self.dataset[self.currentframe, :, :]
-        elif self.dataset.ndim == 2:
+        elif ndim == 2:
             self.data = self.dataset[:, :]
         else:
             err = "Only 2D and 3D datasets are supported by FabIO, here %sD" % self.dataset.ndim
