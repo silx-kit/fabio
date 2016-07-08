@@ -96,17 +96,35 @@ class EigerImage(FabioImage):
             self.dataset = h5file["entry/data"]
         except KeyError:
             raise NotGoodReader("Eiger data file contain 'entry/data' structure in the HDF5 file.")
-        if isinstance(self.dataset, h5py.Group) and "data" in self.dataset.keys():
-            self.dataset = self.dataset["data"]
-        self.nframes = self.dataset.shape[0]
-        self._dim1 = self.dataset.shape[-1]
-        self._dim2 = self.dataset.shape[-2]
+        if isinstance(self.dataset, h5py.Group):
+            datasets = [i for i in self.dataset.keys() if i.startswith("data")]
+            if len(datasets) == 1:
+                self.dataset = self.dataset[datasets[0]]
+                self.nframes = self.dataset.shape[0]
+                self._dim1 = self.dataset.shape[-1]
+                self._dim2 = self.dataset.shape[-2]
+            else:
+                datasets.sort()
+                lstds = []
+                try:
+                    for i in datasets:
+                        lstds.append(self.dataset[i])
+                except KeyError:
+                    pass
+                self.dataset = lstds
+                self.nframes = sum(i.shape[0] for i in self.dataset)
+                self._dim1 = self.dataset[0].shape[-1]
+                self._dim2 = self.dataset[0].shape[-2]
+
         if frame is not None:
-            self.currentframe = int(frame)
+            return self.getframe(int(frame))
         else:
             self.currentframe = 0
-        self.data = self.dataset[self.currentframe, :, :]
-        return self
+            if isinstance(self.dataset, list):
+                self.data = self.dataset[0][self.currentframe, :, :]
+            else:
+                self.data = self.dataset[self.currentframe, :, :]
+            return self
 
     def write(self, fname):
         """
@@ -116,15 +134,28 @@ class EigerImage(FabioImage):
         if len(self.dataset.shape) == 2:
             self.dataset.shape = (1,) + self.dataset.shape
         with h5py.File(fname) as h5file:
-            grp = h5file.require_group("entry")
-            grp["data"] = self.dataset
+            grp = h5file.require_group("entry/data")
+            if isinstance(self.dataset, list):
+                for i, ds in enumerate(self.dataset):
+                    grp["data_%06i" % i] = ds
+            else:
+                grp["data"] = self.dataset
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
             new_img = None
             if (num >= 0) and num < self.nframes:
-                data = self.dataset[num]
+                if isinstance(self.dataset, list):
+                    nfr = num
+                    for ds in self.dataset:
+                        if nfr < ds.shape[0]:
+                            data = ds[nfr]
+                            break
+                        else:
+                            nfr -= ds.shape[0]
+                else:
+                    data = self.dataset[num]
                 new_img = self.__class__(data=data, header=self.header)
                 new_img.dataset = self.dataset
                 new_img.nframes = self.nframes

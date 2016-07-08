@@ -32,7 +32,7 @@ from fabio.eigerimage import EigerImage, h5py
 
 def make_hdf5(name, shape=(50, 99, 101)):
     with h5py.File(name) as h:
-        e = h.require_group("entry")
+        e = h.require_group("entry/data")
         if len(shape) == 2:
             e.require_dataset("data", shape, compression="gzip", compression_opts=9, dtype="float32")
         elif len(shape) == 3:
@@ -60,16 +60,16 @@ class TestEiger(unittest.TestCase):
         e.read(self.fn3)
         self.assertEqual(e.dim1, 101, "dim1 OK")
         self.assertEqual(e.dim2, 99, "dim2 OK")
-        self.assertEqual(e.nframes, 50, "nframes OK")
-        self.assertEqual(e.bpp, 4, "nframes OK")
+        self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
+        self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_open(self):
         """ check we can read images from Eiger"""
         e = openimage(self.fn3)
         self.assertEqual(e.dim1, 101, "dim1 OK")
         self.assertEqual(e.dim2, 99, "dim2 OK")
-        self.assertEqual(e.nframes, 50, "nframes OK")
-        self.assertEqual(e.bpp, 4, "nframes OK")
+        self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
+        self.assertEqual(e.bpp, 4, "bpp OK")
 
 
 def suite():
