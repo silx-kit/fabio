@@ -567,8 +567,6 @@ else:
                         logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, pos))
                         self.__size = end_pos
             return self.__size
-        if "size" not in dir(self):
-            size = property(measure_size)
 
 
 if bz2 is None:

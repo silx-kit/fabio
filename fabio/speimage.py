@@ -161,7 +161,13 @@ class SpeImage(FabioImage):
 
     def _get_xml_string(self, infile):
         """Reads out the xml string from the file end"""
-        xml_size = infile.size - self.xml_offset
+        if "size" in dir(infile):
+            size = infile.size
+        elif "measure_size" in dir(infile):
+            size = infile.measure_size()
+        else:
+            raise RuntimeError("Unable to guess the actual size of the file")
+        xml_size = size - self.xml_offset
         xml = self._read_at(infile, self.xml_offset, xml_size, np.byte)
         return ''.join([chr(i) for i in xml])
         # if self.debug:
