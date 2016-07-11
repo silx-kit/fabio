@@ -77,6 +77,7 @@ class EigerImage(FabioImage):
 
         FabioImage.__init__(self, data, header)
         self.dataset = data
+        self.h5 = None
 
     def _readheader(self, infile):
         """
@@ -95,13 +96,13 @@ class EigerImage(FabioImage):
         """
 
         self.resetvals()
-        infile = self._open(fname)
-        self._readheader(infile)
+        with self._open(fname) as infile:
+            self._readheader(infile)
 
         # read the image data
-        h5file = h5py.File(fname, mode="r")
+        self.h5 = h5py.File(fname, mode="r")
         try:
-            self.dataset = h5file["entry/data"]
+            self.dataset = self.h5["entry/data"]
         except KeyError:
             raise NotGoodReader("Eiger data file contain 'entry/data' structure in the HDF5 file.")
         if isinstance(self.dataset, h5py.Group):
@@ -166,6 +167,7 @@ class EigerImage(FabioImage):
                     data = self.dataset[num]
                 new_img = self.__class__(data=data, header=self.header)
                 new_img.dataset = self.dataset
+                new_img.h5 = self.h5
                 new_img.nframes = self.nframes
                 new_img.currentframe = num
             else:
