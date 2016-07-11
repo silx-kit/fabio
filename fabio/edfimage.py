@@ -1,7 +1,7 @@
 # coding: utf-8
 #
 #    Project: X-ray image reader
-#             https://github.com/kif/fabio
+#             https://github.com/silx-kit/fabio
 #
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
@@ -538,7 +538,7 @@ class EdfImage(FabioImage):
         bContinue = True
         attrs = dir(infile)
         if "measure_size" in attrs:
-            # Handle bug #18 (https://github.com/kif/fabio/issues/18)
+            # Handle bug #18 (https://github.com/silx-kit/fabio/issues/18)
             stream_size = infile.measure_size()
         elif "size" in attrs:
             stream_size = infile.size

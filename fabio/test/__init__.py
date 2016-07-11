@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 #    Project: Fable Input Output
-#             https://github.com/kif/fabio
+#             https://github.com/silx-kit/fabio
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
 #

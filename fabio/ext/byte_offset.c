@@ -1609,7 +1609,7 @@ static char __pyx_k_TypeError[] = "TypeError";
 static char __pyx_k_copyright[] = "__copyright__";
 static char __pyx_k_enumerate[] = "enumerate";
 static char __pyx_k_lenStream[] = "lenStream";
-static char __pyx_k_21_03_2016[] = "21/03/2016";
+static char __pyx_k_19_05_2016[] = "19/05/2016";
 static char __pyx_k_IndexError[] = "IndexError";
 static char __pyx_k_ValueError[] = "ValueError";
 static char __pyx_k_analyseTY5[] = "analyseTY5";
@@ -1641,8 +1641,8 @@ static char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous
 static char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
 static char __pyx_k_Cif_Binary_Files_images_are_2D[] = "\nCif Binary Files images are 2D images written by the Pilatus detector and others.\nThey use a modified (simplified) byte-offset algorithm.  This file contains the\ndecompression function from a string to an int64 numpy array.\n";
 static char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
-static char __pyx_k_home_kieffer_workspace_400_fabi[] = "/home/kieffer/workspace-400/fabio-git/fabio/ext/byte_offset.pyx";
 static char __pyx_k_unknown_dtype_code_in_numpy_pxd[] = "unknown dtype code in numpy.pxd (%d)";
+static char __pyx_k_users_kieffer_workspace_400_fab[] = "/users/kieffer/workspace-400/fabio-git/fabio/ext/byte_offset.pyx";
 static char __pyx_k_2010_2015_European_Synchrotron_R[] = "2010-2015, European Synchrotron Radiation Facility, Grenoble, France";
 static char __pyx_k_All_dimensions_preceding_dimensi[] = "All dimensions preceding dimension %d must be indexed and not sliced";
 static char __pyx_k_Buffer_view_does_not_expose_stri[] = "Buffer view does not expose strides";
@@ -1659,8 +1659,8 @@ static char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents 
 static char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
 static char __pyx_k_unable_to_allocate_shape_and_str[] = "unable to allocate shape and strides.";
 static char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
+static PyObject *__pyx_kp_s_19_05_2016;
 static PyObject *__pyx_kp_s_2010_2015_European_Synchrotron_R;
-static PyObject *__pyx_kp_s_21_03_2016;
 static PyObject *__pyx_kp_s_Buffer_view_does_not_expose_stri;
 static PyObject *__pyx_kp_s_Can_only_create_a_buffer_that_is;
 static PyObject *__pyx_kp_s_Cannot_index_with_type_s;
@@ -1715,7 +1715,6 @@ static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
 static PyObject *__pyx_kp_s_got_differing_extents_in_dimensi;
-static PyObject *__pyx_kp_s_home_kieffer_workspace_400_fabi;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_id;
 static PyObject *__pyx_n_s_import;
@@ -1771,6 +1770,7 @@ static PyObject *__pyx_kp_s_unable_to_allocate_array_data;
 static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_unpack;
+static PyObject *__pyx_kp_s_users_kieffer_workspace_400_fab;
 static PyObject *__pyx_n_s_xrange;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_int_0;
@@ -3079,7 +3079,7 @@ static PyObject *__pyx_pf_5fabio_3ext_11byte_offset_2analyseCython32(CYTHON_UNUS
  *                     tmp64b = cstream[i + 4]
  *                     tmp64a = cstream[i + 5]             # <<<<<<<<<<<<<<
  *                     tmp64  = <numpy.int8_t> cstream[i + 6]
- *                     # Assemble data into a 64 bits integer
+ *                     # Assemble data into a 32 bits integer
  */
               __pyx_t_16 = (__pyx_v_i + 5);
               if (__pyx_t_16 < 0) __pyx_t_16 += __pyx_v_cstream.shape[0];
@@ -3089,7 +3089,7 @@ static PyObject *__pyx_pf_5fabio_3ext_11byte_offset_2analyseCython32(CYTHON_UNUS
  *                     tmp64b = cstream[i + 4]
  *                     tmp64a = cstream[i + 5]
  *                     tmp64  = <numpy.int8_t> cstream[i + 6]             # <<<<<<<<<<<<<<
- *                     # Assemble data into a 64 bits integer
+ *                     # Assemble data into a 32 bits integer
  *                     current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)
  */
               __pyx_t_17 = (__pyx_v_i + 6);
@@ -3098,7 +3098,7 @@ static PyObject *__pyx_pf_5fabio_3ext_11byte_offset_2analyseCython32(CYTHON_UNUS
 
               /* "fabio/ext/byte_offset.pyx":165
  *                     tmp64  = <numpy.int8_t> cstream[i + 6]
- *                     # Assemble data into a 64 bits integer
+ *                     # Assemble data into a 32 bits integer
  *                     current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)             # <<<<<<<<<<<<<<
  *                     i += 7
  *                 else:
@@ -3106,7 +3106,7 @@ static PyObject *__pyx_pf_5fabio_3ext_11byte_offset_2analyseCython32(CYTHON_UNUS
               __pyx_v_current = ((((__pyx_v_tmp64 << 24) | (__pyx_v_tmp64a << 16)) | (__pyx_v_tmp64b << 8)) | __pyx_v_tmp64c);
 
               /* "fabio/ext/byte_offset.pyx":166
- *                     # Assemble data into a 64 bits integer
+ *                     # Assemble data into a 32 bits integer
  *                     current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)
  *                     i += 7             # <<<<<<<<<<<<<<
  *                 else:
@@ -17127,8 +17127,8 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
+  {&__pyx_kp_s_19_05_2016, __pyx_k_19_05_2016, sizeof(__pyx_k_19_05_2016), 0, 0, 1, 0},
   {&__pyx_kp_s_2010_2015_European_Synchrotron_R, __pyx_k_2010_2015_European_Synchrotron_R, sizeof(__pyx_k_2010_2015_European_Synchrotron_R), 0, 0, 1, 0},
-  {&__pyx_kp_s_21_03_2016, __pyx_k_21_03_2016, sizeof(__pyx_k_21_03_2016), 0, 0, 1, 0},
   {&__pyx_kp_s_Buffer_view_does_not_expose_stri, __pyx_k_Buffer_view_does_not_expose_stri, sizeof(__pyx_k_Buffer_view_does_not_expose_stri), 0, 0, 1, 0},
   {&__pyx_kp_s_Can_only_create_a_buffer_that_is, __pyx_k_Can_only_create_a_buffer_that_is, sizeof(__pyx_k_Can_only_create_a_buffer_that_is), 0, 0, 1, 0},
   {&__pyx_kp_s_Cannot_index_with_type_s, __pyx_k_Cannot_index_with_type_s, sizeof(__pyx_k_Cannot_index_with_type_s), 0, 0, 1, 0},
@@ -17183,7 +17183,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
   {&__pyx_kp_s_got_differing_extents_in_dimensi, __pyx_k_got_differing_extents_in_dimensi, sizeof(__pyx_k_got_differing_extents_in_dimensi), 0, 0, 1, 0},
-  {&__pyx_kp_s_home_kieffer_workspace_400_fabi, __pyx_k_home_kieffer_workspace_400_fabi, sizeof(__pyx_k_home_kieffer_workspace_400_fabi), 0, 0, 1, 0},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_id, __pyx_k_id, sizeof(__pyx_k_id), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -17239,6 +17238,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_unable_to_allocate_shape_and_str, __pyx_k_unable_to_allocate_shape_and_str, sizeof(__pyx_k_unable_to_allocate_shape_and_str), 0, 0, 1, 0},
   {&__pyx_kp_u_unknown_dtype_code_in_numpy_pxd, __pyx_k_unknown_dtype_code_in_numpy_pxd, sizeof(__pyx_k_unknown_dtype_code_in_numpy_pxd), 0, 1, 0, 0},
   {&__pyx_n_s_unpack, __pyx_k_unpack, sizeof(__pyx_k_unpack), 0, 0, 1, 1},
+  {&__pyx_kp_s_users_kieffer_workspace_400_fab, __pyx_k_users_kieffer_workspace_400_fab, sizeof(__pyx_k_users_kieffer_workspace_400_fab), 0, 0, 1, 0},
   {&__pyx_n_s_xrange, __pyx_k_xrange, sizeof(__pyx_k_xrange), 0, 0, 1, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
@@ -17464,7 +17464,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__18 = PyTuple_Pack(21, __pyx_n_s_stream, __pyx_n_s_size, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_tmp8, __pyx_n_s_last, __pyx_n_s_current, __pyx_n_s_tmp64, __pyx_n_s_tmp64a, __pyx_n_s_tmp64b, __pyx_n_s_tmp64c, __pyx_n_s_tmp64d, __pyx_n_s_tmp64e, __pyx_n_s_tmp64f, __pyx_n_s_tmp64g, __pyx_n_s_key8, __pyx_n_s_key0, __pyx_n_s_csize, __pyx_n_s_lenStream, __pyx_n_s_cstream, __pyx_n_s_dataOut); if (unlikely(!__pyx_tuple__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
-  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(2, 0, 21, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_kieffer_workspace_400_fabi, __pyx_n_s_analyseCython, 46, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(2, 0, 21, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_users_kieffer_workspace_400_fab, __pyx_n_s_analyseCython, 46, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "fabio/ext/byte_offset.pyx":123
  * 
@@ -17476,7 +17476,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__20 = PyTuple_Pack(17, __pyx_n_s_stream, __pyx_n_s_size, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_tmp8, __pyx_n_s_last, __pyx_n_s_current, __pyx_n_s_tmp64, __pyx_n_s_tmp64a, __pyx_n_s_tmp64b, __pyx_n_s_tmp64c, __pyx_n_s_key8, __pyx_n_s_key0, __pyx_n_s_csize, __pyx_n_s_lenStream, __pyx_n_s_cstream, __pyx_n_s_dataOut); if (unlikely(!__pyx_tuple__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(2, 0, 17, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_kieffer_workspace_400_fabi, __pyx_n_s_analyseCython32, 123, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(2, 0, 17, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_users_kieffer_workspace_400_fab, __pyx_n_s_analyseCython32, 123, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "fabio/ext/byte_offset.pyx":184
  * 
@@ -17488,7 +17488,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__22 = PyTuple_Pack(13, __pyx_n_s_stream, __pyx_n_s_size, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_last, __pyx_n_s_current, __pyx_n_s_key8, __pyx_n_s_tmp32a, __pyx_n_s_tmp32b, __pyx_n_s_csize, __pyx_n_s_lenStream, __pyx_n_s_cstream, __pyx_n_s_dataOut); if (unlikely(!__pyx_tuple__22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__22);
   __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 13, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_kieffer_workspace_400_fabi, __pyx_n_s_analyseTY5, 184, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 13, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_users_kieffer_workspace_400_fab, __pyx_n_s_analyseTY5, 184, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "View.MemoryView":276
  *         return self.name
@@ -17713,7 +17713,7 @@ PyMODINIT_FUNC PyInit_byte_offset(void)
  * __contact__ = "jerome.kieffer@esrf.eu"
  * __license__ = "MIT"             # <<<<<<<<<<<<<<
  * __copyright__ = "2010-2015, European Synchrotron Radiation Facility, Grenoble, France"
- * __date__ = "21/03/2016"
+ * __date__ = "19/05/2016"
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_license, __pyx_n_s_MIT) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
@@ -17721,7 +17721,7 @@ PyMODINIT_FUNC PyInit_byte_offset(void)
  * __contact__ = "jerome.kieffer@esrf.eu"
  * __license__ = "MIT"
  * __copyright__ = "2010-2015, European Synchrotron Radiation Facility, Grenoble, France"             # <<<<<<<<<<<<<<
- * __date__ = "21/03/2016"
+ * __date__ = "19/05/2016"
  * 
  */
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_copyright, __pyx_kp_s_2010_2015_European_Synchrotron_R) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -17729,11 +17729,11 @@ PyMODINIT_FUNC PyInit_byte_offset(void)
   /* "fabio/ext/byte_offset.pyx":38
  * __license__ = "MIT"
  * __copyright__ = "2010-2015, European Synchrotron Radiation Facility, Grenoble, France"
- * __date__ = "21/03/2016"             # <<<<<<<<<<<<<<
+ * __date__ = "19/05/2016"             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_date, __pyx_kp_s_21_03_2016) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_date, __pyx_kp_s_19_05_2016) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
   /* "fabio/ext/byte_offset.pyx":42
  * 

@@ -1,7 +1,7 @@
 # coding: utf-8
 #
 #    Project: X-ray image reader
-#             https://github.com/kif/fabio
+#             https://github.com/silx-kit/fabio
 #
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
@@ -186,7 +186,7 @@ def _openimage(filename):
         url = urlparse("")
 
     else:
-        # related to https://github.com/kif/fabio/issues/34
+        # related to https://github.com/silx-kit/fabio/issues/34
         if (len(url.scheme) == 1 and (sys.platform == "win32")) or url.path.startswith(":"):
             # this is likely a C: from windows  or filename::path
             filename = url.scheme + ":" + url.path

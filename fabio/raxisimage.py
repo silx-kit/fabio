@@ -1,7 +1,7 @@
 # coding: utf-8
 #
 #    Project: X-ray image reader
-#             https://github.com/kif/fabio
+#             https://github.com/silx-kit/fabio
 #
 #    Principal author:       "Brian R. Pauw" "brian@stack.nl"
 #

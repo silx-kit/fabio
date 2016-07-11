@@ -2,7 +2,7 @@
 # coding: utf-8
 #
 #    Project: X-ray image reader
-#             https://github.com/kif/fabio
+#             https://github.com/silx-kit/fabio
 #
 #    Copyright (C) 2015 European Synchrotron Radiation Facility, Grenoble, France
 #

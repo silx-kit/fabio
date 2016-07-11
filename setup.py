@@ -2,7 +2,7 @@
 # coding: utf-8
 #
 #    Project: Fable Input/Output
-#             https://github.com/kif/fabio
+#             https://github.com/silx-kit/fabio
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
 #
@@ -452,7 +452,7 @@ if __name__ == "__main__":
           author_email="fable-talk@lists.sourceforge.net",
           description='Image IO for fable',
           url="http://fable.wiki.sourceforge.net/fabio",
-          download_url="https://github.com/kif/fabio/releases",
+          download_url="https://github.com/silx-kit/fabio/releases",
           # ext_package="fabio",
           scripts=script_files,
           ext_modules=ext_modules,
