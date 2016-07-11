@@ -26,12 +26,20 @@
 
 
 """
-Eiger data file reader for FabIO
+Eiger data/master file reader for FabIO
 
 Eiger data files are HDF5 files with one group called "entry" and a dataset 
-called "data" in it. The dataset is usually compressed using LZ4 compression.
+called "data" in it (now in a data group). 
 
-H5py (>2.5) and libhdf5 (>1.8.10) with the compression plugin are needed  
+Those dataset are usually compressed using LZ4 and/or bitshuffle compression:
+
+* https://github.com/nexusformat/HDF5-External-Filter-Plugins/tree/master/LZ4 
+* https://github.com/kiyo-masui/bitshuffle
+
+H5py (>2.5) and libhdf5 (>1.8.10) with the corresponding compression plugin are needed to 
+actually read the data.
+Under windows, those plugins can easily be installed via this repository:     
+https://github.com/silx-kit/hdf5plugin
 
 """
 # Get ready for python3:
@@ -41,7 +49,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "08/07/2016"
+__date__ = "11/07/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")

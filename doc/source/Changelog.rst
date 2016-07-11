@@ -5,11 +5,14 @@ FabIO-0.4.0 (07/2016):
 ......................
 
 - Write support for Bruker100 (contribution from Sigmund Neher)
+- Read support for Princeton instrumentation cameras (contribution from Clemens Percher)
 - Read support for FIT2D binary format
+- Read support for Eiger detector (Dectris) and generic HDF5 (partial)
 - Switch ESRF-contributed file formats to MIT license (more liberal)
 - Drop support for python 2.6, 3.2 and 3.3. Supports only 2.7 and 3.4+
 - Include TiffIO into core of FabIO (no more third-party)
-- Refactor mar345
+- Refactor mar345 (contributed by Henri Payno)
+- Move master repository to silx-kit (https://github.com/silx-kit)
 
 FabIO-0.3.0 (12/2015):
 ......................

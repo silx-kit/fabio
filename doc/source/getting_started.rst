@@ -1,14 +1,15 @@
 Getting Started
 ===============
 
-FabIO is a Python module for reading and handling data from two-dimensional X-ray detectors.
+FabIO is a Python module for reading and handling data from two-dimensional X-ray
+detectors.
 
 
 FabIO is a Python module written for easy and transparent reading
 of raw two-dimensional data from various X-ray detectors. The
 module provides a function for reading any image and returning a
-fabioimage object which contains both metadata (header information)
-and the raw data. All fabioimage object offer additional methods to
+FabioImage object which contains both metadata (header information)
+and the raw data. All FabioImage object offer additional methods to
 extract information about the image and to open other detector
 images from the same data series.
 
@@ -200,6 +201,7 @@ stored in this format but new detectors (Eiger from Dectris) are natively
 saving data in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
 dependency, to be able to read and write such HDF5 files.
+This starts to be available in version 0.4.0.
 
 Conclusion
 ----------
@@ -252,7 +254,7 @@ uses extensions as a fallback if that fails.
    "DM3", "Gatan Digital Micrograph ", ".dm3 ", "Yes", "No", "No"
    "EDF", "ESRF data format ", ".edf ", "Yes", "Yes ", "Yes"
    "EDNA-XML", "Used by EDNA", ".xml ", "Yes", "No", "No"
-   "Eiger datafile", "Dectris format", ".h5", "Yes", "Yes", "Yes" 
+   "Eiger", "Dectris format", ".h5", "Yes", "Yes", "Yes" 
    "Fit2D", "Fit2D binary format", ".f2d", "Yes", "No", "No"
    "Fit2D mask", "Fit2D mask", ".msk ", "Yes", "No", "Yes"
    "Fit2D spreadsheet", "Fit2D Ascii format", ".spr ", "Yes", "No", "Yes"
@@ -268,6 +270,7 @@ uses extensions as a fallback if that fails.
    "pilatus", "Dectris Pilatus Tiff", ".tif ", "Yes", "No", "Yes"
    "PNM", "Portable aNy Map", ".pnm ", "Yes", "No", "Yes"
    "Raxis", "Rigaku Saxs format", ".img", "Yes", "No", "No"
+   "spe", "Princeton instrumentation", ".spe", "Yes, "Yes", "No"
    "TIFF", "Tagged Image File Format", ".tif ", "Yes", "No", "Yes"
 
 Adding new file formats

@@ -7,7 +7,7 @@ Installation
 ============
 
 FabIO can, as any Python module, be installed from its sources,
-available on the `Python cheese shop <https://pypi.python.org/pypi/fabio/0.2.2>`_
+available on the `Python cheese shop <https://pypi.python.org/pypi/fabio>`_
 but we advice to use binary wheels packages provided for the most common platforms:
 Windows, MacOSX. For Debian Linux and its derivatives (Ubuntu, Mint, ...), FabIO
 is part of the distributions and itss package is named *python-fabio* and can be installed via:
@@ -110,7 +110,7 @@ Testing version of FabIO
 Continuous integration runs the complete test suite on multiple operating
 systems and python version.
 Under Windows, this is done using the
-`AppVeyor cloud service <https://ci.appveyor.com/project/kif/fabio>`_
+`AppVeyor cloud service <https://ci.appveyor.com/project/ESRF/fabio>`_
 Select the environment which matches your setup like
 **Environment: PYTHON=C:\Python34-x64, PYTHON_VERSION=3.4.3, PYTHON_ARCH=64**
 and go to **artifacts** where wheels and MSI-installers are available.
@@ -174,7 +174,7 @@ it with the needed dependencies.
 
 For full functionality of FabIO the following modules need to be installed:
 
-* PIL (python imaging library) - http://www.pythonware.com
+* Pillow (python imaging library) - http://www.pythonware.com
 * lxml (library for reading XSDimages)
 * PyQt4 for the fabio_viewer program
 
