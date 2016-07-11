@@ -219,6 +219,7 @@ def _openimage(filename):
             traceback.print_exc()
             raise Exception("Fabio could not identify " + filename)
     klass_name = "".join(filetype) + 'image'
+
     try:
         obj = FabioImage.factory(klass_name)
     except RuntimeError as err:

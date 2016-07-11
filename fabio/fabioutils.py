@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/07/2016"
+__date__ = "11/07/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -89,7 +89,7 @@ FILETYPES = {
                 'cbf'    : ['cbf'],
                 'xml'    : ["xsd"],
                 'xsd'    : ["xsd"],
-                'spe'    : ["spe", "SPE"],
+                'spe'    : ["spe"],
              }
 
 # Add bzipped and gzipped
@@ -226,12 +226,12 @@ class FilenameObject(object):
         ndigit = 4
         num = None
         typ = None
-        if parts[-1] in ["gz", "bz2"]:
+        if parts[-1].lower() in ["gz", "bz2"]:
             extn = "." + parts[-1]
             parts = parts[:-1]
             compressed = True
-        if parts[-1] in FILETYPES.keys():
-            typ = FILETYPES[parts[-1]]
+        if parts[-1].lower() in FILETYPES.keys():
+            typ = FILETYPES[parts[-1].lower()]
             extn = "." + parts[-1] + extn
             try:
                 stem, numstring, postnum = numstem(".".join(parts[:-1]))
@@ -239,7 +239,7 @@ class FilenameObject(object):
                 ndigit = len(numstring)
             except Exception as err:
                 # There is no number - hence make num be None, not 0
-                logger.debug("l176: %s" % err)
+                logger.debug("l242: %s" % err)
                 num = None
                 stem = "".join(parts[:-1])
         else:
@@ -259,14 +259,14 @@ class FilenameObject(object):
                     typ = ['bruker']
                     stem = ".".join(parts[:-1]) + "."
                 except Exception as err:
-                    logger.debug("l196: %s" % err)
+                    logger.debug("l262: %s" % err)
                     typ = None
                     extn = "." + parts[-1] + extn
                     numstring = ""
                     try:
                         stem, numstring, postnum = numstem(".".join(parts[:-1]))
                     except Exception as err:
-                        logger.debug("l202: %s" % err)
+                        logger.debug("l269: %s" % err)
                         raise
                     if numstring.isdigit():
                         num = int(numstring)

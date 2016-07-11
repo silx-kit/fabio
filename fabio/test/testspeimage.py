@@ -141,9 +141,16 @@ class TestSpeImage(unittest.TestCase):
         self.assertEqual(frame1.shape, frame2.shape)
 
     def test_fabio_integration(self):
-        self.v2_file = fabio.open(self.v2_spe_filename)
-        self.v3_file = fabio.open(self.v3_spe_filename)
-
+        v2_file = fabio.open(self.v2_spe_filename)
+        v3_file = fabio.open(self.v3_spe_filename)
+        v2_file_gz = fabio.open(self.v2_spe_filename + ".gz")
+        v3_file_gz = fabio.open(self.v3_spe_filename + ".gz")
+        v2_file_bz = fabio.open(self.v2_spe_filename + ".bz2")
+        v3_file_bz = fabio.open(self.v3_spe_filename + ".bz2")
+        self.assertEqual(abs(v2_file.data - v2_file_gz.data).max(), 0, "v2/gz")
+        self.assertEqual(abs(v3_file.data - v3_file_gz.data).max(), 0, "v3/gz")
+        self.assertEqual(abs(v2_file.data - v2_file_bz.data).max(), 0, "v2/bz")
+        self.assertEqual(abs(v3_file.data - v3_file_bz.data).max(), 0, "v3/bz")
 
 def suite():
     testsuite = unittest.TestSuite()
