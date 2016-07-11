@@ -65,6 +65,7 @@ from . import test_nexus
 from . import testeigerimage
 from . import testhdf5image
 from . import testfit2dimage
+from . import testspeimage
 
 
 def suite():
@@ -99,6 +100,7 @@ def suite():
     testSuite.addTest(testeigerimage.suite())
     testSuite.addTest(testhdf5image.suite())
     testSuite.addTest(testfit2dimage.suite())
+    testSuite.addTest(testspeimage.suite())
     return testSuite
 
 

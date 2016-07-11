@@ -3,7 +3,9 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2016 Univeristy Köln, Germany
+#
+#    Principal author:       Clemens Prescher (c.prescher@uni-koeln.de)
 #
 #  Permission is hereby granted, free of charge, to any person
 #  obtaining a copy of this software and associated documentation files
@@ -26,48 +28,8 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 
-"""Template for FabIO image reader
+"""Princeton instrument SPE image reader for FabIO
 
-This is a template for adding new file formats to FabIO
-
-We hope it will be relatively easy to add new file formats to fabio in the future. 
-The basic idea is the following:
-
-1) inherit from FabioImage overriding the methods _readheader, read and optionally write.
-   Name your new module XXXimage where XXX means something (eg tifimage).
-
-2) readheader fills in a dictionary of "name":"value" pairs in self.header.
-   No one expects to find anything much in there.
-
-3) read fills in self.data with a numpy array holding the image.
-   Some info are automatically exposed from data: 
-   * self.dim1 and self.dim2: the image dimensions,
-   * self.bpp is the bytes per pixel 
-   * self.bytecode is the numpy.dtype.type of the data.
-
-4) The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there 
-   in case you have
-   trouble with the transparent handling of bz2 and gz files.
-
-5) Register the file type (extension naming) in fabioutils.FILETYPES
-   TODO: place this in the class definition soon
-
-6) Add your new module as an import into fabio.openimage. 
-   Your class will be registered automatically.
-
-7) Fill out the magic numbers for your format in fabio.openimage if you know them
-   (the characteristic first few bytes in the file)
-
-8) Upload a testimage to the file release system and create a unittest testcase
-   which opens an example of your new format, confirming the image has actually
-   been read in successfully (eg check the mean, max, min and esd are all correct,
-   perhaps orientation too)
-
-9) Run pylint on your code and then please go clean it up. Have a go at mine 
-   while you are at it, before requesting a pull-request on github.
-
-10) Bask in the warm glow of appreciation when someone unexpectedly learns they 
-   don't need to convert their data into another format
 
 """
 # Get ready for python3:
@@ -77,7 +39,7 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "07/07/2016"
+__date__ = "11/07/2016"
 
 import logging
 

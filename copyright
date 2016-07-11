@@ -22,7 +22,8 @@ Copyright: 2011 Jerome Kieffer <jerome.kieffer@esrf.fr>
            2013-2014 Picca Frederic-Emmanuel <picca@debian.org>
 License: GPL-2.0+
 
-Files: fabio/cbfimage.py
+Files: version.py
+       fabio/cbfimage.py
        fabio/hdf5image.py
        fabio/numpyimage.py
        fabio/eigerimage.py
@@ -33,12 +34,12 @@ Files: fabio/cbfimage.py
        fabio/templateimage.py
        fabio/ext/byte_offset.*
        fabio/TiffIO.py
-Copyright: 2004-2015 European Synchrotron Radiation Facility
+       fabio/test/utilstest.py
+Copyright: 2004-2016 European Synchrotron Radiation Facility
 License: MIT
        
 Files: fabio/pixiimage.py
-Copyright: 2014 Jon Wright, Jérôme Kieffer
-                European Synchrotron Radiation Facility
+Copyright: 2014 European Synchrotron Radiation Facility
 License: GPL-3.0+
 
 Files: fabio/raxisimage.py
@@ -50,7 +51,7 @@ Copyright: 2012 Gael Goret <gael.goret@esrf.fr>
                 European Synchrotron Radiation Facility
 License: GPL-3.0+
 
-Files: fabio/*
+Files: scripts/*
 Copyright: 2012-2015 Jerome Kieffer and Gael Goret
            European Synchrotron Radiation Facility
 License: GPL
@@ -67,10 +68,13 @@ Copyright: 1995 Jan Pieter Abrahams
 License: LGPL-3.0+
 
 
-Files: version.py
-       fabio/test/utilstest.py
-Copyright: 2010-2016 European Synchrotron Radiation Facility
+
+
+Files: fabio/speimage
+       fabio/test/testspeimage
+Copyright: 2016 University Köln, Germany
 License: MIT
+
 
 Files: src/stdint.h
 Copyright: 2006-2008 Alexander Chemeris
