@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 0.4.0, 11/07/2016
+Measured on *fabio* version 0.4.0-dev6, 12/07/2016
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -18,12 +18,12 @@ Measured on *fabio* version 0.4.0, 11/07/2016
    "bruker100image", "247", "165", "66.8 %"
    "brukerimage", "202", "169", "83.7 %"
    "cbfimage", "520", "221", "42.5 %"
-   "compression", "244", "183", "75.0 %"
+   "compression", "255", "191", "74.9 %"
    "converters", "18", "15", "83.3 %"
    "directories", "21", "16", "76.2 %"
    "dm3image", "135", "18", "13.3 %"
    "edfimage", "584", "398", "68.2 %"
-   "eigerimage", "91", "45", "49.5 %"
+   "eigerimage", "101", "54", "53.5 %"
    "ext/__init__", "0", "0", "0.0 %"
    "fabioimage", "325", "241", "74.2 %"
    "fabioutils", "341", "267", "78.3 %"
@@ -46,4 +46,4 @@ Measured on *fabio* version 0.4.0, 11/07/2016
    "tifimage", "181", "62", "34.3 %"
    "xsdimage", "93", "70", "75.3 %"
 
-   "fabio total", "6289", "4154", "66.1 %"
+   "fabio total", "6310", "4171", "66.1 %"

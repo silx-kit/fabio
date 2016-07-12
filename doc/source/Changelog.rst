@@ -12,6 +12,7 @@ FabIO-0.4.0 (07/2016):
 - Drop support for python 2.6, 3.2 and 3.3. Supports only 2.7 and 3.4+
 - Include TiffIO into core of FabIO (no more third-party)
 - Refactor mar345 (contributed by Henri Payno)
+- Enhanced byte-offset compression using Cython
 - Move master repository to silx-kit (https://github.com/silx-kit)
 
 FabIO-0.3.0 (12/2015):
