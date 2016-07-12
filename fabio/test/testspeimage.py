@@ -35,8 +35,8 @@ from __future__ import with_statement, print_function, division
 __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
-__copyright__ = "Clemens Prescher"
-__date__ = "11/07/2016"
+__copyright__ = "Clemens Prescher/Univeristy Köln, Germany"
+__date__ = "12/07/2016"
 
 import unittest
 import os

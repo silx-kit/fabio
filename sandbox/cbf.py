@@ -61,7 +61,7 @@ for i in range(11):
     la = pyopencl.LocalMemory(4 * WG)
     lb = pyopencl.LocalMemory(4 * WG)
     lc = pyopencl.LocalMemory(4 * WG)
-    ld = pyopencl.LocalMemory(4)
+#     ld = pyopencl.LocalMemory(4)
     debug1_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
     debug2_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
     debug3_d = pyopencl.array.zeros(queue, shape=WG, dtype="int32")
@@ -80,7 +80,7 @@ for i in range(11):
 
     evt = prg.comp_byte_offset1(queue, (WG * WG,), (WG,),
                                 data_d.data, tmp2_d.data, numpy.uint32(size), numpy.uint32(chunk), wgsum_d.data, zero_d.data,
-                                la, lb, lc, ld, debug1_d.data, debug2_d.data, debug3_d.data)
+                                la, lb, lc, debug1_d.data, debug2_d.data, debug3_d.data)
     profile(evt, "comp_byte_offset1")
 
     # Create dest buffers

@@ -34,16 +34,112 @@ decompression function from a string to an int64 numpy array.
 __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__copyright__ = "2010-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "19/05/2016" 
+__copyright__ = "2010-2016, European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "12/07/2016"
 
 
 cimport numpy
 import numpy
 import cython
 
+
 @cython.boundscheck(False)
-def analyseCython(bytes stream not None, size=None):
+@cython.wraparound(False)
+def comp_cbf32(data not None):
+    """Compress a dataset using the byte-offset described for Pilatus
+
+    :param data: array of integers
+    :return: numpy array of chars
+    """
+    cdef:
+        numpy.int32_t[::1] ary = numpy.ascontiguousarray(data.ravel(), dtype=numpy.int32)
+        int size = ary.size, i=0, j=0
+        numpy.int8_t[::1] output = numpy.zeros(size*7, dtype=numpy.int8)
+        numpy.int32_t last, current, delta, absdelta
+    last = 0
+    for i in range(size):
+        current = ary[i]
+        delta = current - last
+        absdelta = delta if delta>0 else -delta
+        if absdelta >= 1<<15:
+            output[j] = -128
+            output[j+1] = 0
+            output[j+2] = -128
+            output[j+3] = (delta & 255)
+            output[j+4] = (delta >> 8) & 255
+            output[j+5] = (delta >> 16) & 255
+            output[j+6] = (delta >> 24)
+            j+=7
+        elif absdelta >= 1<<7:
+            output[j] = -128
+            output[j+1] = delta & 255
+            output[j+2] = (delta >> 8) & 255
+            j+=3
+        else:
+            output[j] = delta
+            j+=1
+        last = current
+    return numpy.asarray(output)[:j]
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def comp_cbf(data not None):
+    """Compress a dataset using the byte-offset described for any int64
+
+    :param data: array of integers
+    :return: numpy array of chars
+    """
+    cdef:
+        numpy.int64_t[::1] ary = numpy.ascontiguousarray(data.ravel(), dtype=numpy.int64)
+        int size = ary.size, i=0, j=0
+        numpy.int8_t[::1] output = numpy.zeros(size*15, dtype=numpy.int8)
+        numpy.int64_t last, current, delta, absdelta
+    last = 0
+    for i in range(size):
+        current = ary[i]
+        delta = current - last
+        absdelta = delta if delta>0 else -delta
+        if absdelta >= 1<<31:
+            output[j] = -128
+            output[j+1] = 0
+            output[j+2] = -128
+            output[j+3] = 0
+            output[j+4] = 0
+            output[j+5] = 0
+            output[j+6] = -128
+            output[j+7] = (delta & 255)
+            output[j+8] = (delta >> 8) & 255
+            output[j+9] = (delta >> 16) & 255
+            output[j+10] = (delta >> 24) & 255
+            output[j+11] = (delta >> 32) & 255
+            output[j+12] = (delta >> 40) & 255
+            output[j+13] = (delta >> 48) & 255
+            output[j+14] = (delta >> 56) & 255
+            j+=15
+        elif absdelta >= 1<<15:
+            output[j] = -128
+            output[j+1] = 0
+            output[j+2] = -128
+            output[j+3] = (delta & 255)
+            output[j+4] = (delta >> 8) & 255
+            output[j+5] = (delta >> 16) & 255
+            output[j+6] = (delta >> 24)
+            j+=7
+        elif absdelta >= 1<<7:
+            output[j] = -128
+            output[j+1] = delta & 255
+            output[j+2] = (delta >> 8) & 255
+            j+=3
+        else:
+            output[j] = delta
+            j+=1
+        last = current
+    return numpy.asarray(output)[:j]
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def dec_cbf(bytes stream not None, size=None):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
     @param stream: bytes (string) representing the compressed data
@@ -120,11 +216,11 @@ def analyseCython(bytes stream not None, size=None):
 
 
 @cython.boundscheck(False)
-def analyseCython32(bytes stream not None, size=None):
+def dec_cbf32(bytes stream not None, size=None):
     """
     Analyze a stream of char with any length of exception (2 or 4 bytes integers)
     Optimized for int32 decompression
-    
+
     @param stream: bytes (string) representing the compressed data
     @param size: the size of the output array (of longInts)
     @return : int64 ndArrays
@@ -180,8 +276,8 @@ def analyseCython32(bytes stream not None, size=None):
     return dataOut[:j]
 
 
-#@cython.boundscheck(False)
-def analyseTY5(bytes stream not None, size=None):
+@cython.boundscheck(False)
+def dec_TY5(bytes stream not None, size=None):
     """
     Analyze a stream of char with a TY5 compression scheme and exception (2 or 4 bytes integers)
 

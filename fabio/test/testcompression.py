@@ -8,28 +8,36 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation files
+#  (the "Software"), to deal in the Software without restriction,
+#  including without limitation the rights to use, copy, modify, merge,
+#  publish, distribute, sublicense, and/or sell copies of the Software,
+#  and to permit persons to whom the Software is furnished to do so,
+#  subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#  OTHER DEALINGS IN THE SOFTWARE.
+
 #
+# Get ready for python3:
+from __future__ import with_statement, print_function, division
 
-"""
-# Unit tests
+__authors__ = ["Jérôme Kieffer"]
+__contact__ = "Jerome.Kieffer@esrf.fr"
+__license__ = "MIT"
+__copyright__ = "2011-2016 ESRF"
+__date__ = "12/07/2016"
 
-Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
-28/11/2014
-"""
-
-from __future__ import absolute_import, print_function, with_statement, division
 import unittest
 import sys
 import os
@@ -61,6 +69,7 @@ class TestByteOffset(unittest.TestCase):
     def testComp(self):
         """
         """
+        # first with numpy
         ds = numpy.array([0, 128])
         ref = b"\x00\x80\x80\00"
         self.assertEqual(ref, compression.compByteOffset_numpy(ds), "test +128")
@@ -72,17 +81,46 @@ class TestByteOffset(unittest.TestCase):
         self.assertEqual(ref, compression.compByteOffset_numpy(ds), "test +10 -128")
         self.assertEqual(self.ref, compression.compByteOffset_numpy(self.ds) , "test larger")
 
+        # Then with cython 32 bits
+        ds = numpy.array([0, 128], dtype="int32")
+        ref = b"\x00\x80\x80\00"
+        self.assertEqual(ref, compression.compByteOffset_cython(ds), "test +128")
+        ds = numpy.array([0, -128], dtype="int32")
+        ref = b'\x00\x80\x80\xff'
+        self.assertEqual(ref, compression.compByteOffset_cython(ds), "test -128")
+        ds = numpy.array([10, -128], dtype="int32")
+        ref = b'\n\x80v\xff'
+        self.assertEqual(ref, compression.compByteOffset_cython(ds), "test +10 -128")
+        self.assertEqual(self.ref, compression.compByteOffset_cython(self.ds) , "test larger")
+
+        # Then with cython 64bits
+        ds = numpy.array([0, 128], dtype="int64")
+        ref = b"\x00\x80\x80\00"
+        self.assertEqual(ref, compression.compByteOffset_cython(ds), "test +128")
+        ds = numpy.array([0, -128], dtype="int64")
+        ref = b'\x00\x80\x80\xff'
+        self.assertEqual(ref, compression.compByteOffset_cython(ds), "test -128")
+        ds = numpy.array([10, -128], dtype="int64")
+        ref = b'\n\x80v\xff'
+        self.assertEqual(ref, compression.compByteOffset_cython(ds), "test +10 -128")
+        self.assertEqual(self.ref, compression.compByteOffset_cython(self.ds) , "test larger")
+
     def testSC(self):
-        """test that datasets are unchanged after various comression/decompressions"""
+        """test that datasets are unchanged after various compression/decompressions"""
 
         obt_np = compression.decByteOffset_numpy(compression.compByteOffset_numpy(self.ds))
-        self.assertEqual(abs(self.ds - obt_np).max(), 0.0, "numpy algo")
+        self.assertEqual(abs(self.ds - obt_np).max(), 0.0, "numpy-numpy algo")
         obt_cy = compression.decByteOffset_cython(compression.compByteOffset_numpy(self.ds))
-        self.assertEqual(abs(self.ds - obt_cy).max(), 0.0, "cython algo")
+        self.assertEqual(abs(self.ds - obt_cy).max(), 0.0, "cython-numpy algo")
         obt_cy2 = compression.decByteOffset_cython(compression.compByteOffset_numpy(self.ds), self.ds.size)
-        self.assertEqual(abs(self.ds - obt_cy2).max(), 0.0, "cython algo_orig")
-#         obt_we = compression.decByteOffset_weave(compression.compByteOffset_numpy(self.ds), self.ds.size)
-#         self.assertEqual(abs(self.ds - obt_we).max(), 0.0, "weave algo")
+        self.assertEqual(abs(self.ds - obt_cy2).max(), 0.0, "cython2-numpy algo_orig")
+
+        obt_np = compression.decByteOffset_numpy(compression.compByteOffset_cython(self.ds))
+        self.assertEqual(abs(self.ds - obt_np).max(), 0.0, "numpy-numpy algo")
+        obt_cy = compression.decByteOffset_cython(compression.compByteOffset_cython(self.ds))
+        self.assertEqual(abs(self.ds - obt_cy).max(), 0.0, "cython-numpy algo")
+        obt_cy2 = compression.decByteOffset_cython(compression.compByteOffset_cython(self.ds), self.ds.size)
+        self.assertEqual(abs(self.ds - obt_cy2).max(), 0.0, "cython2-numpy algo_orig")
 
 
 def suite():

@@ -28,17 +28,17 @@
 """
 Eiger data/master file reader for FabIO
 
-Eiger data files are HDF5 files with one group called "entry" and a dataset 
-called "data" in it (now in a data group). 
+Eiger data files are HDF5 files with one group called "entry" and a dataset
+called "data" in it (now in a data group).
 
 Those dataset are usually compressed using LZ4 and/or bitshuffle compression:
 
-* https://github.com/nexusformat/HDF5-External-Filter-Plugins/tree/master/LZ4 
+* https://github.com/nexusformat/HDF5-External-Filter-Plugins/tree/master/LZ4
 * https://github.com/kiyo-masui/bitshuffle
 
-H5py (>2.5) and libhdf5 (>1.8.10) with the corresponding compression plugin are needed to 
+H5py (>2.5) and libhdf5 (>1.8.10) with the corresponding compression plugin are needed to
 actually read the data.
-Under windows, those plugins can easily be installed via this repository:     
+Under windows, those plugins can easily be installed via this repository:
 https://github.com/silx-kit/hdf5plugin
 
 """
@@ -49,7 +49,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "11/07/2016"
+__date__ = "12/07/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
@@ -66,7 +66,7 @@ from .fabioutils import NotGoodReader
 class EigerImage(FabioImage):
     """
     FabIO image class for Images from Eiger data files (HDF5)
-    
+
     """
     def __init__(self, data=None, header=None):
         """
@@ -76,7 +76,7 @@ class EigerImage(FabioImage):
             raise RuntimeError("fabio.EigerImage cannot be used without h5py. Please install h5py and restart")
 
         FabioImage.__init__(self, data, header)
-        self.dataset = data
+        self.dataset = [data]
         self.h5 = None
 
     def __repr__(self):
@@ -88,8 +88,8 @@ class EigerImage(FabioImage):
     def _readheader(self, infile):
         """
         Read and decode the header of an image:
-        
-        @param infile: Opened python file (can be stringIO or bzipped file)  
+
+        @param infile: Opened python file (can be stringIO or bzipped file)
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
@@ -97,7 +97,7 @@ class EigerImage(FabioImage):
 
     def read(self, fname, frame=None):
         """
-        try to read image 
+        try to read image
         @param fname: name of the file
         """
 
@@ -105,52 +105,61 @@ class EigerImage(FabioImage):
         with self._open(fname) as infile:
             self._readheader(infile)
 
+        self.dataset = None
+        lstds = []
         # read the image data
         self.h5 = h5py.File(fname, mode="r")
-        try:
-            self.dataset = self.h5["entry/data"]
-        except KeyError:
-            raise NotGoodReader("Eiger data file contain 'entry/data' structure in the HDF5 file.")
-        if isinstance(self.dataset, h5py.Group):
-            datasets = [i for i in self.dataset.keys() if i.startswith("data")]
-            if len(datasets) == 1:
-                self.dataset = self.dataset[datasets[0]]
-                self.nframes = self.dataset.shape[0]
-                self._dim1 = self.dataset.shape[-1]
-                self._dim2 = self.dataset.shape[-2]
+        if "entry" in self.h5:
+            entry = self.h5["entry"]
+            if "data" in entry:
+                data = entry["data"]
+                if isinstance(data, h5py.Group):
+                    "Newer format /entry/data/data_1"
+                    datasets = [i for i in data.keys() if i.startswith("data")]
+                    datasets.sort()
+                    try:
+                        for i in datasets:
+                            lstds.append(data[i])
+                    except KeyError:
+                        pass
+
+                else:
+                    lstds = [data]
             else:
+                "elder format entry/data_01"
+                datasets = [i for i in entry.keys() if i.startswith("data")]
                 datasets.sort()
-                lstds = []
                 try:
                     for i in datasets:
-                        lstds.append(self.dataset[i])
+                        lstds.append(entry[i])
                 except KeyError:
                     pass
-                self.dataset = lstds
-                self.nframes = sum(i.shape[0] for i in self.dataset)
-                self._dim1 = self.dataset[0].shape[-1]
-                self._dim2 = self.dataset[0].shape[-2]
+
+        if not lstds:
+            raise NotGoodReader("HDF5 file does not contain an Eiger-like structure.")
+
+        self.dataset = lstds
+        self.nframes = sum(i.shape[0] for i in lstds)
+        self._dim1 = self.dataset[0].shape[-1]
+        self._dim2 = self.dataset[0].shape[-2]
 
         if frame is not None:
             return self.getframe(int(frame))
         else:
             self.currentframe = 0
-            if isinstance(self.dataset, list):
-                self.data = self.dataset[0][self.currentframe, :, :]
-            else:
-                self.data = self.dataset[self.currentframe, :, :]
+            self.data = self.dataset[0][self.currentframe, :, :]
             return self
 
     def write(self, fname):
         """
-        try to write image 
-        @param fname: name of the file 
+        try to write image
+        @param fname: name of the file
         """
         if len(self.dataset.shape) == 2:
             self.dataset.shape = (1,) + self.dataset.shape
         with h5py.File(fname) as h5file:
             grp = h5file.require_group("entry/data")
-            if isinstance(self.dataset, list):
+            if len(self.dataset) > 1:
                 for i, ds in enumerate(self.dataset):
                     grp["data_%06i" % i] = ds
             else:
@@ -177,7 +186,7 @@ class EigerImage(FabioImage):
                 new_img.nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise RuntimeError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+                raise IOError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img

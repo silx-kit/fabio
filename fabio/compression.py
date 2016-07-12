@@ -33,7 +33,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
-__date__ = "20/06/2016"
+__date__ = "12/07/2016"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -134,7 +134,7 @@ COMPRESSORS = ExternalCompressors()
 
 def decGzip(stream):
     """Decompress a chunk of data using the gzip algorithm from system or from Python
-    
+
     @param stream: compressed data
     @return: uncompressed stream
 
@@ -255,9 +255,9 @@ def decByteOffset_cython(stream, size=None, dtype="int64"):
         return decByteOffset_numpy(stream, size, dtype=dtype)
     else:
         if dtype == "int32":
-            return byte_offset.analyseCython32(stream, size)
+            return byte_offset.dec_cbf32(stream, size)
         else:
-            return byte_offset.analyseCython(stream, size)
+            return byte_offset.dec_cbf(stream, size)
 
 decByteOffset = decByteOffset_cython
 
@@ -272,11 +272,11 @@ def compByteOffset_numpy(data):
     test = numpy.array([0,1,2,127,0,1,2,128,0,1,2,32767,0,1,2,32768,0,1,2,2147483647,0,1,2,2147483648,0,1,2,128,129,130,32767,32768,128,129,130,32768,2147483647,2147483648])
 
     """
-    flat = data.astype("int64").ravel()
+    flat = numpy.ascontiguousarray(data.ravel(), numpy.int64)
     delta = numpy.zeros_like(flat)
     delta[0] = flat[0]
     delta[1:] = flat[1:] - flat[:-1]
-    mask = ((delta > 127) + (delta < -127))
+    mask = abs(delta) > 127
     exceptions = numpy.nonzero(mask)[0]
     if numpy.little_endian:
         byteswap = False
@@ -288,30 +288,53 @@ def compByteOffset_numpy(data):
         if stop - start > 0:
             binary_blob += delta[start:stop].astype("int8").tostring()
         exc = delta[stop]
-        if (exc > 2147483647) or (exc < -2147483647):  # 2**31-1
+        absexc = abs(exc)
+        if absexc > 2147483647:  # 2**31-1
             binary_blob += b"\x80\x00\x80\x00\x00\x00\x80"
             if byteswap:
                 binary_blob += delta[stop:stop + 1].byteswap().tostring()
             else:
                 binary_blob += delta[stop:stop + 1].tostring()
-        elif (exc > 32767) or (exc < -32767):  # 2**15-1
+        elif absexc > 32767:  # 2**15-1
             binary_blob += b"\x80\x00\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].astype("int32").byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int32).byteswap().tostring()
             else:
-                binary_blob += delta[stop:stop + 1].astype("int32").tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int32).tostring()
         else:  # >127
             binary_blob += b"\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].astype("int16").byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int16).byteswap().tostring()
             else:
-                binary_blob += delta[stop:stop + 1].astype("int16").tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int16).tostring()
         start = stop + 1
     if start < delta.size:
-        binary_blob += delta[start:].astype("int8").tostring()
+        binary_blob += delta[start:].astype(numpy.int8).tostring()
     return binary_blob
 
-compByteOffset = compByteOffset_numpy
+def compByteOffset_cython(data):
+    """
+    Compress a dataset into a string using the byte_offet algorithm
+
+    @param data: ndarray
+    @return: string/bytes with compressed data
+
+    test = numpy.array([0,1,2,127,0,1,2,128,0,1,2,32767,0,1,2,32768,0,1,2,2147483647,0,1,2,2147483648,0,1,2,128,129,130,32767,32768,128,129,130,32768,2147483647,2147483648])
+
+    """
+    logger.debug("CBF compression using cython")
+    try:
+        from .ext import byte_offset
+    except ImportError as error:
+        logger.error("Failed to import byte_offset cython module, falling back on numpy method: %s", error)
+        return compByteOffset_numpy(data)
+    else:
+        if "int32" in str(data.dtype):
+            return byte_offset.comp_cbf32(data).tostring()
+        else:
+            return byte_offset.comp_cbf(data).tostring()
+
+compByteOffset = compByteOffset_cython
 
 
 def decTY1(raw_8, raw_16=None, raw_32=None):
