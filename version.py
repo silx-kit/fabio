@@ -32,7 +32,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/07/2016"
+__date__ = "15/07/2016"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
 __doc__ = """
@@ -73,8 +73,8 @@ RELEASE_LEVEL_VALUE = {"dev": 0,
 MAJOR = 0
 MINOR = 4
 MICRO = 0
-RELEV = "dev"  # <16
-SERIAL = 6  # <16
+RELEV = "final"  # <16
+SERIAL = 0  # <16
 
 
 from collections import namedtuple
@@ -96,4 +96,3 @@ hexversion |= RELEASE_LEVEL_VALUE.get(version_info[3], 0) * 1 << 4
 hexversion |= version_info[2] * 1 << 8
 hexversion |= version_info[1] * 1 << 16
 hexversion |= version_info[0] * 1 << 24
-

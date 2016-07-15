@@ -1,1 +1,0 @@
-TODO: tutorial about the conversion of an HDF5 file produced by the Eiger detector into a bunch of CBF images similar to the  Pilatus detector

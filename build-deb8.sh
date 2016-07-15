@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #    Project: Fabio Input/Output
-#             https://github.com/kif/fabio
+#             https://github.com/silx-kit/fabio
 #
 #    Copyright (C) 2015-2016 European Synchrotron Radiation Facility, Grenoble, France
 #

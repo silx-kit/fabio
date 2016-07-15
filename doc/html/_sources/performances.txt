@@ -2,7 +2,7 @@ Benchmarks
 ==========
 
 Those benchmarks have been done with all data already in cache using a Intel Xeon E5520  @ 2.27GHz
-running Debian 7.
+running Debian 7 and FabIO 0.2.2... Those data are now out-dated.
 
 .. table:: Execution time for reading a file, benchmarked using the ``timeit'' module. 
     :class: w
@@ -39,5 +39,6 @@ running Debian 7.
     | xsdimage      | XSDataImage.xml           | 256kpix|  13.3 ms     | 12.9 ms      | 18.4 ms      |
     +---------------+---------------------------+--------+--------------+--------------+--------------+
     
-The Python3 version is sometimes twice slower then the Python2 version. As the codebase is the
-same this regression is not due to FabIO but to the programming language itself.
+The Python3 version is sometimes twice slower then the Python2 version.
+As the codebase is the same this regression is not due to FabIO but to the programming language itself.
+The Performances obtained using Python3.4 is now again close to the one of Python2.7.

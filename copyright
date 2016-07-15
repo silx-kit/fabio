@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: fabio
 Upstream-Contact: Jérôme Kieffer <kieffer@esrf.eu>
-Source: https://github.com/kif/fabio/releases/tag/v0.2.2
+Source: https://github.com/silx-kit/fabio/releases/tag/v0.4.0
 Files-Excluded: third_party
 
 Files: *
@@ -52,30 +52,19 @@ Copyright: 2012 Gael Goret <gael.goret@esrf.fr>
                 European Synchrotron Radiation Facility
 License: GPL-3.0+
 
-Files: scripts/*
-Copyright: 2012-2015 Jerome Kieffer and Gael Goret
-           European Synchrotron Radiation Facility
-License: GPL
-
-
 Files: fabio/ext/src/ccp4_pack.c
        fabio/ext/inlcude/ccp4_pack.h
 Copyright: 1995 Jan Pieter Abrahams
                 MRC Cambridge (UK)
            2007-2009 Henning O. Sorensen & Erik Knudsen
                 Risoe National Laboratory (DK)
-           2012 Jerome Kieffer and Gael Goret
-                European Synchrotron Radiation Facility (FR)
+           2012-2016 European Synchrotron Radiation Facility (FR)
 License: LGPL-3.0+
-
-
-
 
 Files: fabio/speimage
        fabio/test/testspeimage
 Copyright: 2016 University Köln, Germany
 License: MIT
-
 
 Files: src/stdint.h
 Copyright: 2006-2008 Alexander Chemeris

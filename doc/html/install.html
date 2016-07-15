@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &mdash; FabIO 0.2.2 documentation</title>
+    <title>Installation &mdash; FabIO 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="FabIO 0.2.2 documentation" href="index.html" />
-    <link rel="next" title="Benchmarks" href="performances.html" />
+    <link rel="top" title="FabIO 0.4.0 documentation" href="index.html" />
+    <link rel="next" title="Test coverage report for fabio" href="coverage.html" />
     <link rel="prev" title="Getting Started" href="getting_started.html" /> 
   </head>
   <body>
@@ -39,12 +39,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="performances.html" title="Benchmarks"
+          <a href="coverage.html" title="Test coverage report for fabio"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="getting_started.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,36 +56,35 @@
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>FabIO can, as any Python module, be installed from its sources,
-available on sourceforge but we advice to use binary
-packages provided for the most common platforms on sourceforge:
-Windows, MacOSX and Linux. Moreover FabIO is part of the common
-Linux distributions Ubuntu (since 11.10) and Debian7 where the
-package is named python-fabio and can be installed via:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install python-fabio
+available on the <a class="reference external" href="https://pypi.python.org/pypi/fabio">Python cheese shop</a>
+but we advice to use binary wheels packages provided for the most common platforms:
+Windows, MacOSX. For Debian Linux and its derivatives (Ubuntu, Mint, ...), FabIO
+is part of the distributions and itss package is named <em>python-fabio</em> and can be installed via:</p>
+<div class="code highlight-python"><div class="highlight"><pre>sudo apt-get install python-fabio
 </pre></div>
 </div>
-<p>If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP-installable.
+<p>If you are using MS Windows or MacOSX; binary version (as wheel packages) are
+PIP-installable.
 PIP is the Python Installer Program, similar to <tt class="docutils literal"><span class="pre">apt-get</span></tt> for Python.
-It runs under any architecture and can simply be installed from:</p>
-<p><a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a></p>
-<p>then</p>
-<div class="highlight-python"><div class="highlight"><pre>pip install fabio
-</pre></div>
-</div>
+It runs under any architecture.
+Since Python 2.7.10 and 3.4, PIP is installed together with Python itself.
+If your Python is elder, PIP can be simply <a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">downloaded</a>
+and executed using your standard Python:</p>
 <div class="section" id="installation-under-windows">
 <h2>Installation under windows<a class="headerlink" href="#installation-under-windows" title="Permalink to this headline">¶</a></h2>
-<p>Install Python from <a class="reference external" href="http://python.org">http://python.org</a>.
+<p>Install <a class="reference external" href="http://python.org">Python</a> from the official web page.
 I would recommend Python 2.7 in 64 bits version if your operating system allows it.
-Python3 (&gt;=3.2) is OK while less tested.</p>
-<p>If you are looking for an integrated distribution of Python on Windows,
-WinPython is a good one, the Python2.7, 64 bit version is advised.
-<a class="reference external" href="https://winpython.github.io/">https://winpython.github.io/</a>
-It comes with pip pre-installed and configured.</p>
+Python3 (&gt;=3.4) is OK.</p>
+<p>If you are looking for an integrated scientific Python distribution on Windows,
+<a class="reference external" href="https://winpython.github.io/">WinPython</a> is a good one, the Python2.7, 64 bit</p>
+<blockquote>
+<div>version is advised.</div></blockquote>
+<p>It comes with pip pre-installed and configured.</p>
 <div class="section" id="installation-using-pip">
 <h3>Installation using PIP:<a class="headerlink" href="#installation-using-pip" title="Permalink to this headline">¶</a></h3>
-<p>Download PIP and run:
-<a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a></p>
-<p>Then install the wheel package manager and all dependencies for :</p>
+<p>If you use a Python2 elder than 2.7.10 or a Python3 &lt;3.4, you will need
+<a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">Download PIP</a>.
+Then install the wheel package manager and all dependencies for :</p>
 <div class="highlight-python"><div class="highlight"><pre>python get-pip.py
 pip install setuptools
 pip install wheel
@@ -97,95 +96,153 @@ pip install fabio
 </div>
 <div class="section" id="manual-installation-under-windows">
 <h3>Manual installation under windows<a class="headerlink" href="#manual-installation-under-windows" title="Permalink to this headline">¶</a></h3>
-<p>You will find all the scientific Python stack packaged for Windows on Christopher Gohlke&#8217; page (including FabIO):</p>
-<p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">http://www.lfd.uci.edu/~gohlke/pythonlibs/</a></p>
+<p>You will find all the <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">scientific Python stack packaged for Windows</a> on Christoph
+Gohlke&#8217; page (including FabIO):</p>
 <p>Pay attention to the Python version (both number and architecture).
-DO NOT MIX 32 and 64 bits version.
-To determine the version of your Python:</p>
-<p>This gives you the architecture width of the Python interpreter</p>
+<strong>DO NOT MIX 32 and 64 bits version</strong>.
+To determine the version and architecture width of the Python interpreter:</p>
 </div>
 <div class="section" id="installation-from-sources">
 <h3>Installation from sources<a class="headerlink" href="#installation-from-sources" title="Permalink to this headline">¶</a></h3>
-<p>Install the required dependencies (via PIP or a repository), then retrieve the Microsoft compiler and install it from:
-<a class="reference external" href="http://aka.ms/vcpython27">http://aka.ms/vcpython27</a></p>
-<p>Once done, follow the classical procedure (similar to MacOSX or Linux):
-* download sources of FabIO from fable.sourceforge.net.
-* unzip the archive
-* run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">build</span> <span class="pre">install</span></tt></p>
+<ul>
+<li><p class="first">Retrieve the sources from github:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/silx-kit/fabio/archive/master.zip">The master development branch</a></li>
+<li><a class="reference external" href="https://github.com/silx-kit/fabio/releases/latest">The latest release</a></li>
+</ul>
+</li>
+<li><p class="first">unzip the file in a directory</p>
+</li>
+<li><p class="first">open a console (cmd.exe) in this directory.</p>
+</li>
+<li><p class="first">install the required dependencies using PIP:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install -r ci/requirements_appveyor.txt --trusted-host www.silx.org
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="section" id="get-the-compiler-and-install-it">
+<h4>Get the compiler and install it<a class="headerlink" href="#get-the-compiler-and-install-it" title="Permalink to this headline">¶</a></h4>
+<p>The version of the compiler and the version of the Microsoft SDK
+have to match the Python version you are using. Here are a couple of examples:</p>
+<ul class="simple">
+<li>Python2.7: <a class="reference external" href="http://aka.ms/vcpython27">Microsoft compiler 2008</a></li>
+<li>Python 3.5: <a class="reference external" href="https://go.microsoft.com/fwlink/?LinkId=691978&amp;clcid=0x40c">Microsoft Visual studio community edition 2015</a></li>
+</ul>
+</div>
+<div class="section" id="compile-the-sources">
+<h4>Compile the sources<a class="headerlink" href="#compile-the-sources" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py build
+python setup.py test
+pip install .
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-version-of-fabio">
+<h3>Testing version of FabIO<a class="headerlink" href="#testing-version-of-fabio" title="Permalink to this headline">¶</a></h3>
+<p>Continuous integration runs the complete test suite on multiple operating
+systems and python version.
+Under Windows, this is done using the
+<a class="reference external" href="https://ci.appveyor.com/project/ESRF/fabio">AppVeyor cloud service</a>
+Select the environment which matches your setup like
+<strong>Environment: PYTHON=C:Python34-x64, PYTHON_VERSION=3.4.3, PYTHON_ARCH=64</strong>
+and go to <strong>artifacts</strong> where wheels and MSI-installers are available.</p>
 </div>
 </div>
 <div class="section" id="installation-on-macosx">
 <h2>Installation on MacOSX<a class="headerlink" href="#installation-on-macosx" title="Permalink to this headline">¶</a></h2>
-<p>Python 2.7, 64 bits and numpy are  natively available on MacOSX.</p>
-<div class="section" id="install-pip">
-<h3>Install PIP<a class="headerlink" href="#install-pip" title="Permalink to this headline">¶</a></h3>
-<p>Download PIP and run:
-<a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">https://bootstrap.pypa.io/get-pip.py</a></p>
-<p>Then install the wheel package manager:</p>
-<div class="highlight-python"><div class="highlight"><pre>pip install setuptools
-pip install wheel
-pip install PIL
-pip install lxml
-pip install fabio
-</pre></div>
+<p>Python 2.7, 64 bits and numpy are natively available on MacOSX.</p>
+<div class="section" id="install-via-pip">
+<h3>Install via PIP<a class="headerlink" href="#install-via-pip" title="Permalink to this headline">¶</a></h3>
+<p>Since MacOSX 10.11 (El-Captain), PIP is available as part of the standard python installation.
+For elder MacOSX, <a class="reference external" href="https://bootstrap.pypa.io/get-pip.py">download PIP and run</a>.
+Then install FabIO directly:</p>
+<p><strong>Note:</strong> for now, PyQt4, used by the <em>fabio-viewer</em> is not yet pip-installable.
+You will need to get it from
+<a class="reference external" href="http://www.riverbankcomputing.co.uk/software/pyqt/download">riverbankcomputing</a>.</p>
 </div>
-<p>Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
-<a class="reference external" href="http://www.riverbankcomputing.co.uk/software/pyqt/download">http://www.riverbankcomputing.co.uk/software/pyqt/download</a></p>
-</div>
+<div class="section" id="compile-from-sources">
+<h3>Compile from sources<a class="headerlink" href="#compile-from-sources" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="get-the-compiler">
-<h3>Get the compiler<a class="headerlink" href="#get-the-compiler" title="Permalink to this headline">¶</a></h3>
+<h4>Get the compiler<a class="headerlink" href="#get-the-compiler" title="Permalink to this headline">¶</a></h4>
 <p>Apple provides for free Xcode which contains the compiler needed to build binary extensions.
 Xcode can be installed from the App-store.</p>
+</div>
+<div class="section" id="id1">
+<h4>Compile the sources<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>Once done, follow the classical procedure (similar to Windows or Linux):</p>
+<ul>
+<li><p class="first">Retrieve the sources from github:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/silx-kit/fabio/archive/master.zip">The master development branch</a></li>
+<li><a class="reference external" href="https://github.com/silx-kit/fabio/releases/latest">The latest release</a></li>
+</ul>
+</li>
+<li><p class="first">unzip the file in a directory</p>
+</li>
+<li><p class="first">open a terminal in the unzipped archive directory</p>
+</li>
+<li><p class="first">run:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
+python setup.py build
+python setup.py test
+sudo pip install .
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="section" id="manual-installation-for-any-operating-system">
 <h2>Manual Installation for any operating system<a class="headerlink" href="#manual-installation-for-any-operating-system" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="install-the-dependencies">
 <h3>Install the dependencies<a class="headerlink" href="#install-the-dependencies" title="Permalink to this headline">¶</a></h3>
+<p>Most Linux distribution come with a Python environment configured. Complete
+it with the needed dependencies.</p>
 <ul class="simple">
-<li>Python 2.6 - 2.7 or 3.2+</li>
+<li>Python 2.7 or 3.4+</li>
 <li>numpy - <a class="reference external" href="http://www.numpy.org">http://www.numpy.org</a></li>
 </ul>
 <p>For full functionality of FabIO the following modules need to be installed:</p>
 <ul class="simple">
-<li>PIL (python imaging library) - <a class="reference external" href="http://www.pythonware.com">http://www.pythonware.com</a></li>
+<li>Pillow (python imaging library) - <a class="reference external" href="http://www.pythonware.com">http://www.pythonware.com</a></li>
 <li>lxml (library for reading XSDimages)</li>
 <li>PyQt4 for the fabio_viewer program</li>
 </ul>
-<p>FabIO can be downloaded from the fable download page on sourceforge.net.
-Presently the source code has been distributed as a zip package and a compressed tarball.
-Download either one and unpack it.</p>
-<div class="highlight-python"><div class="highlight"><pre>http://sourceforge.net/projects/fable/files/fabio/
+<p>Once done, follow the classical procedure (similar to Windows or MacOSX):</p>
+<ul>
+<li><p class="first">Retrieve the sources from github:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/silx-kit/fabio/archive/master.zip">The master development branch</a></li>
+<li><a class="reference external" href="https://github.com/silx-kit/fabio/releases/latest">The latest release</a></li>
+</ul>
+</li>
+<li><p class="first">unzip the file in a directory</p>
+</li>
+<li><p class="first">open a terminal in the unzipped archive directory</p>
+</li>
+<li><p class="first">run:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
+python setup.py build
+python setup.py test
+sudo pip install .
 </pre></div>
 </div>
-<p>e.g.</p>
-<div class="highlight-python"><div class="highlight"><pre>tar xvzf fabio-0.2.2.tar.gz
-</pre></div>
-</div>
-<p>or</p>
-<div class="highlight-python"><div class="highlight"><pre>unzip fabio-0.2.2.zip
-</pre></div>
-</div>
-<p>all files are unpacked into the directory fabio-0.2.2. To install these do</p>
-<div class="highlight-python"><div class="highlight"><pre>cd fabio-0.2.2
-</pre></div>
-</div>
-<p>and install fabio: build it, run the tests and build the wheel package and install it.</p>
-<div class="highlight-python"><div class="highlight"><pre>python setup.py build
-python setup.py bdist_wheel
-sudo pip install dist/fabio-0.2.2*.whl
-</pre></div>
-</div>
-<p>most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.</p>
+</li>
+</ul>
+<p>Most likely you will need to gain root privileges (with sudo in front of the
+command) to install packages.</p>
 </div>
 </div>
 <div class="section" id="development-versions">
 <h2>Development versions<a class="headerlink" href="#development-versions" title="Permalink to this headline">¶</a></h2>
 <p>The newest development version can be obtained by checking it out from the git repository:</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/kif/fabio
+<div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/silx-kit/fabio
 cd fabio
-python setup.py build bdist_wheel
-sudo pip install dist/fabio-0.2.2*.whl
+python setup.py build test
+sudo pip install .
 </pre></div>
 </div>
 <p>For Ubuntu/Debian users, you will need:</p>
@@ -198,34 +255,63 @@ sudo pip install dist/fabio-0.2.2*.whl
 <div class="highlight-python"><div class="highlight"><pre>sudo apt-get install python-imaging python-imaging-tk python-numpy
 </pre></div>
 </div>
-<p>We provide also a debian-package builder based on stdeb:</p>
+<div class="section" id="automatic-debian-packaging">
+<h3>Automatic debian packaging<a class="headerlink" href="#automatic-debian-packaging" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="debian-6-and-7">
+<h4>Debian 6 and 7:<a class="headerlink" href="#debian-6-and-7" title="Permalink to this headline">¶</a></h4>
+<p>We provide a debian-package builder based on stdeb, building a package for Python2:</p>
 <div class="highlight-python"><div class="highlight"><pre>sudo apt-get install python-stdeb
-./build-deb.sh 3
+./build-deb7.sh
 </pre></div>
 </div>
-<p>which builds a couple of debian packages (actually one for python2 and another for python3) and installs them in a single command.
+<p>which builds a debian package and installs them in a single command.
 Handy for testing, but very clean, see hereafter</p>
 </div>
-<div class="section" id="debian-packaging">
-<h2>Debian packaging<a class="headerlink" href="#debian-packaging" title="Permalink to this headline">¶</a></h2>
-<p>FabIO features some helper function to make debian packaging easier:</p>
-<div class="highlight-python"><div class="highlight"><pre>#to create the orig.tar.gz without cython generated C files for Sphinx built documentation:
-python setup.py debian_src
-
-# to create a tarball of all images needed to test the library
-python setup.py debian_testimages
+</div>
+</div>
+<div class="section" id="debian-8-and-newer">
+<h2>Debian 8 and newer<a class="headerlink" href="#debian-8-and-newer" title="Permalink to this headline">¶</a></h2>
+<p>There is also a script which builds a bunch of <em>real</em> debian packages: <em>build-deb8.sh</em>
+It will build a bunch of 6 debian packages:</p>
+<div class="highlight-python"><div class="highlight"><pre>* *fabio-viewer*: the GUI for visualizing diffraction images
+* *fabio-doc*: the documumentation package
+* *python3-fabio*: library built for Python3
+* *python3-fabio-dbg*: debug symbols for Python3
+* *python-fabio*: library built for Python2
+* *python-fabio-dbg*: debug symbols for Python2
 </pre></div>
 </div>
-<p>Two tarball are created, one with all source code (and only source code) and the other one with all test-data.</p>
+<p>For this, you need a complete debian build environment:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install cython cython-dbg cython3 cython3-dbg debhelper dh-python \
+python-all-dev python-all-dbg python-h5py \
+python-lxml python-lxml-dbg python-matplotlib python-matplotlib-dbg python-numpy\
+python-numpy-dbg python-qt4 python-qt4-dbg python-sphinx \
+python-sphinxcontrib.programoutput python-tk python-tk-dbg python3-all-dev python3-all-dbg \
+python3-lxml python3-lxml-dbg python3-matplotlib \
+python3-matplotlib-dbg python3-numpy python3-numpy-dbg python3-pyqt4 python3-pyqt4-dbg \
+ python3-sphinx python3-sphinxcontrib.programoutput \
+python3-tk python3-tk-dbg
+
+./build-debian-full.sh
+</pre></div>
+</div>
 </div>
 <div class="section" id="test-suite">
 <h2>Test suite<a class="headerlink" href="#test-suite" title="Permalink to this headline">¶</a></h2>
 <p>FabIO has a comprehensive test-suite to ensure non regression.
 When you run the test for the first time, many test images will be download and converted into various compressed format like gzip and bzip2 (this takes a lot of time).</p>
-<p>Be sure you have an internet connection and your environment variable http_proxy is correctly set-up. For example if you are behind a firewall/proxy:</p>
+<p>Be sure you have an internet connection and your proxy setting are correctly defined in the environment variable <em>http_proxy</em>.
+For example if you are behind a firewall/proxy:</p>
+<p>Under Linux and MacOSX:</p>
 <div class="highlight-python"><div class="highlight"><pre>export http_proxy=http://proxy.site.org:3128
 </pre></div>
 </div>
+<p>Under Windows:</p>
+<div class="highlight-python"><div class="highlight"><pre>set http_proxy=http://proxy.site.org:3128
+</pre></div>
+</div>
+<p>Where <em>proxy.site.org</em> and <em>3128</em> correspond to the proxy server and port on your network.
+At ESRF, you can get this piece of information by phoning to the hotline: 24-24.</p>
 <p>Many tests are there to deal with malformed files, don&#8217;t worry if the programs complains in warnings about &#8220;bad files&#8221;,
 it is done on purpose to ensure robustness in FabIO.</p>
 <div class="section" id="run-test-suite-from-installation-directory">
@@ -238,387 +324,23 @@ it is done on purpose to ensure robustness in FabIO.</p>
 <div class="section" id="run-test-suite-from-installed-version">
 <h3>Run test suite from installed version<a class="headerlink" href="#run-test-suite-from-installed-version" title="Permalink to this headline">¶</a></h3>
 <p>Within Python (or ipython):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">fabio</span>
-<span class="n">fabio</span><span class="o">.</span><span class="n">tests</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">fabio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fabio</span><span class="o">.</span><span class="n">tests</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="test-coverage">
 <h3>Test coverage<a class="headerlink" href="#test-coverage" title="Permalink to this headline">¶</a></h3>
-<p>FabIO comes with 25 test-suites (113 tests in total) representing a coverage of 60%.
+<p>FabIO comes with 33 test-suites (145 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2 and 3.4.
-Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.</p>
-<table border="1" class="docutils">
-<caption>Test suite coverage</caption>
-<colgroup>
-<col width="59%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Stmts</th>
-<th class="head">Exec</th>
-<th class="head">Cover</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>fabio/GEimage</td>
-<td><blockquote class="first last">
-<div>94</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>48</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>51%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/HiPiCimage</td>
-<td><blockquote class="first last">
-<div>55</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>7</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>12%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/OXDimage</td>
-<td><blockquote class="first last">
-<div>285</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>271</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>95%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/TiffIO</td>
-<td><blockquote class="first last">
-<div>794</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>534</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>67%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/__init__</td>
-<td><blockquote class="first last">
-<div>15</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>15</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>100%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/adscimage</td>
-<td><blockquote class="first last">
-<div>79</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>37</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>46%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/binaryimage</td>
-<td><blockquote class="first last">
-<div>50</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>15</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>30%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/bruker100image</td>
-<td><blockquote class="first last">
-<div>60</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>13</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>21%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/brukerimage</td>
-<td><blockquote class="first last">
-<div>212</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>171</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>80%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/cbfimage</td>
-<td><blockquote class="first last">
-<div>441</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>219</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>49%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/compression</td>
-<td><blockquote class="first last">
-<div>223</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>136</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>60%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/converters</td>
-<td><blockquote class="first last">
-<div>17</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>14</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>82%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/dm3image</td>
-<td><blockquote class="first last">
-<div>133</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>16</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>12%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/edfimage</td>
-<td><blockquote class="first last">
-<div>596</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>397</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>66%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/fabioimage</td>
-<td><blockquote class="first last">
-<div>306</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>193</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>63%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/fabioutils</td>
-<td><blockquote class="first last">
-<div>322</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>256</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>79%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/file_series</td>
-<td><blockquote class="first last">
-<div>140</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>61</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>43%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/fit2dmaskimage</td>
-<td><blockquote class="first last">
-<div>75</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>71</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>94%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/fit2dspreadsheetimage</td>
-<td><blockquote class="first last">
-<div>47</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>7</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>14%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/hdf5image</td>
-<td><blockquote class="first last">
-<div>146</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>25</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>17%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/kcdimage</td>
-<td><blockquote class="first last">
-<div>80</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>65</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>81%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/mar345image</td>
-<td><blockquote class="first last">
-<div>244</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>215</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>88%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/marccdimage</td>
-<td><blockquote class="first last">
-<div>63</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>56</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>88%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/mrcimage</td>
-<td><blockquote class="first last">
-<div>96</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>0</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>0%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/openimage</td>
-<td><blockquote class="first last">
-<div>104</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>69</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>66%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/pilatusimage</td>
-<td><blockquote class="first last">
-<div>34</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>5</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>14%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/pixiimage</td>
-<td><blockquote class="first last">
-<div>95</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>22</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>23%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/pnmimage</td>
-<td><blockquote class="first last">
-<div>109</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>21</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>19%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/raxisimage</td>
-<td><blockquote class="first last">
-<div>98</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>88</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>89%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/readbytestream</td>
-<td><blockquote class="first last">
-<div>26</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>5</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>19%</div></blockquote>
-</td>
-</tr>
-<tr class="row-even"><td>fabio/tifimage</td>
-<td><blockquote class="first last">
-<div>167</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>60</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>35%</div></blockquote>
-</td>
-</tr>
-<tr class="row-odd"><td>fabio/xsdimage</td>
-<td><blockquote class="first last">
-<div>94</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>68</div></blockquote>
-</td>
-<td><blockquote class="first last">
-<div>72%</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4 and 3.5.
+Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
+FabIO may run on other untested systems but without warranty.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="coverage.html">Test coverage report for fabio</a></li>
+</ul>
+</div>
 </div>
 </div>
 </div>
@@ -635,20 +357,35 @@ Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.</p>
 <li><a class="reference internal" href="#installation-under-windows">Installation under windows</a><ul>
 <li><a class="reference internal" href="#installation-using-pip">Installation using PIP:</a></li>
 <li><a class="reference internal" href="#manual-installation-under-windows">Manual installation under windows</a></li>
-<li><a class="reference internal" href="#installation-from-sources">Installation from sources</a></li>
+<li><a class="reference internal" href="#installation-from-sources">Installation from sources</a><ul>
+<li><a class="reference internal" href="#get-the-compiler-and-install-it">Get the compiler and install it</a></li>
+<li><a class="reference internal" href="#compile-the-sources">Compile the sources</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-version-of-fabio">Testing version of FabIO</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#installation-on-macosx">Installation on MacOSX</a><ul>
-<li><a class="reference internal" href="#install-pip">Install PIP</a></li>
+<li><a class="reference internal" href="#install-via-pip">Install via PIP</a></li>
+<li><a class="reference internal" href="#compile-from-sources">Compile from sources</a><ul>
 <li><a class="reference internal" href="#get-the-compiler">Get the compiler</a></li>
+<li><a class="reference internal" href="#id1">Compile the sources</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#manual-installation-for-any-operating-system">Manual Installation for any operating system</a><ul>
 <li><a class="reference internal" href="#install-the-dependencies">Install the dependencies</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#development-versions">Development versions</a></li>
-<li><a class="reference internal" href="#debian-packaging">Debian packaging</a></li>
+<li><a class="reference internal" href="#development-versions">Development versions</a><ul>
+<li><a class="reference internal" href="#automatic-debian-packaging">Automatic debian packaging</a><ul>
+<li><a class="reference internal" href="#debian-6-and-7">Debian 6 and 7:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debian-8-and-newer">Debian 8 and newer</a></li>
 <li><a class="reference internal" href="#test-suite">Test suite</a><ul>
 <li><a class="reference internal" href="#run-test-suite-from-installation-directory">Run test suite from installation directory</a></li>
 <li><a class="reference internal" href="#run-test-suite-from-installed-version">Run test suite from installed version</a></li>
@@ -663,8 +400,8 @@ Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.</p>
   <p class="topless"><a href="getting_started.html"
                         title="previous chapter">Getting Started</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="performances.html"
-                        title="next chapter">Benchmarks</a></p>
+  <p class="topless"><a href="coverage.html"
+                        title="next chapter">Test coverage report for fabio</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/install.txt"
@@ -697,16 +434,16 @@ Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="performances.html" title="Benchmarks"
+          <a href="coverage.html" title="Test coverage report for fabio"
              >next</a> |</li>
         <li class="right" >
           <a href="getting_started.html" title="Getting Started"
              >previous</a> |</li>
-        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2015, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+        &copy; Copyright 2006-2016, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

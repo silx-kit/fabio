@@ -1,5 +1,5 @@
 :Author: Jérôme Kieffer
-:Date: 31/10/2015
+:Date: 15/07/2016
 :Keywords: Installation procedure
 :Target: System administrators
 
@@ -61,48 +61,52 @@ http://www.riverbankcomputing.co.uk/software/pyqt/download
 Manual installation under windows
 .................................
 
-You will find all the `scientific Python stack packaged for Windows<http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ on Christoph
+You will find all the `scientific Python stack packaged for Windows <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ on Christoph
 Gohlke' page (including FabIO):
 
 Pay attention to the Python version (both number and architecture).
 **DO NOT MIX 32 and 64 bits version**.
-To determine the version of your Python:
+To determine the version and architecture width of the Python interpreter:
 
 .. highlight:: python
-
-    >>> 8 * tuple.__itemsize__
-
-This gives you the architecture width of the Python interpreter
-
+    
+    >>> import sys
+    >>> print(sys.version)
+    2.7.9 (default, Mar  1 2015, 12:57:24) 
+    >>> print("%s bits"%(8 * tuple.__itemsize__))
+    64 bits
 
 Installation from sources
 .........................
 
-Get the compiler
-^^^^^^^^^^^^^^^^
-Install the required dependencies, then retrieve the
-`Microsoft compiler <http://aka.ms/vcpython27>`_ and install it.
+* Retrieve the sources from github:
 
-**Nota**: the version of the compiler and the version of the Microsoft SDK
-have to match the Python version you are using.
-This link is for Python2.7.
-Other version of Python require differents compiler and runtime.
+  + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
+
+* unzip the file in a directory
+* open a console (cmd.exe) in this directory.
+* install the required dependencies using PIP::
+
+    pip install -r ci/requirements_appveyor.txt --trusted-host www.silx.org
+
+Get the compiler and install it
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The version of the compiler and the version of the Microsoft SDK
+have to match the Python version you are using. Here are a couple of examples:
+
+* Python2.7: `Microsoft compiler 2008 <http://aka.ms/vcpython27>`_
+* Python 3.5: `Microsoft Visual studio community edition 2015 <https://go.microsoft.com/fwlink/?LinkId=691978&clcid=0x40c>`_
 
 Compile the sources
 ^^^^^^^^^^^^^^^^^^^
 
-Once done, follow the classical procedure (similar to MacOSX or Linux):
-* download sources of `the latest release <https://github.com/kif/fabio/releases/latest>`_
-or `the development version <https://github.com/kif/fabio/archive/master.zip>`_.
-* unzip the archive
-* open a cmd.exe console in the unzipped archive directory
-* run::
-   pip install setuptools wheel
-   pip install -r requirements.txt
+::
+
    python setup.py build
    python setup.py test
    pip install .
-
 
 Testing version of FabIO
 ........................
@@ -148,13 +152,17 @@ Compile the sources
 ^^^^^^^^^^^^^^^^^^^
 
 Once done, follow the classical procedure (similar to Windows or Linux):
-* download sources of `the latest release <https://github.com/kif/fabio/releases/latest>`_
-or `the development version <https://github.com/kif/fabio/archive/master.zip>`_.
-* unzip the archive
+
+* Retrieve the sources from github:
+
+  + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
+
+* unzip the file in a directory
 * open a terminal in the unzipped archive directory
 * run::
-   sudo pip install setuptools wheel
-   sudo pip install -r requirements.txt
+
+   sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
    python setup.py build
    python setup.py test
    sudo pip install .
@@ -179,14 +187,17 @@ For full functionality of FabIO the following modules need to be installed:
 * PyQt4 for the fabio_viewer program
 
 Once done, follow the classical procedure (similar to Windows or MacOSX):
-* download sources of `the latest release <https://github.com/kif/fabio/releases/latest>`_
-or `the development version <https://github.com/kif/fabio/archive/master.zip>`_.
-* unzip the archive
+
+* Retrieve the sources from github:
+
+  + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
+
+* unzip the file in a directory
 * open a terminal in the unzipped archive directory
 * run::
 
-   sudo pip install setuptools wheel
-   sudo pip install -r requirements.txt
+   sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
    python setup.py build
    python setup.py test
    sudo pip install .
@@ -303,17 +314,18 @@ Within Python (or ipython):
 
 .. code-block:: python
 
-   import fabio
-   fabio.tests()
+   >>> import fabio
+   >>> fabio.tests()
 
 
 Test coverage
 .............
 
-FabIO comes with 27 test-suites (120 tests in total) representing a coverage of 60%.
+FabIO comes with 33 test-suites (145 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2, 3.3, 3.4 and 3.5.
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4 and 3.5.
 Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
+FabIO may run on other untested systems but without warranty.
 
 .. toctree::
    :maxdepth: 2

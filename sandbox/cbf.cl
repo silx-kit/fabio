@@ -100,110 +100,142 @@ static int data_type(uint idx,
 /**
  * \brief byte_offset decompression for CBF
  *
+ * Stage 0 initialize the size_array to -1
+ * Stage 1 write 0 or 1 to size_array depending on in the pixel size
+ * stage 2 perform a cum_sum on the index to know where to read
+ * stage 3 perform a cum_sum on the values
+ */
+kernel void dec_byte_offset0(
+	global int* indices,
+	int input_size)
+{
+	uint gid = get_group_id(0);
+	if (gid<input_size)
+	{
+		indices[gid] = -1;
+	}
+}
+
+kernel void dec_byte_offset1(
+		global char* input,
+		global int* indices,
+		uint input_size,
+		uint chunk,
+		global int* start_position,
+		global int* end_position,
+		local int *a
+		)
+{
+	uint lid = get_local_id(0);
+	uint ws = get_local_size(0);
+	uint wid = get_group_id(0);
+	uint nbwg = get_num_groups(0);
+	local int exceptions[1];
+	uint to_process = chunk * ws;
+	uint start_process = wid *  to_process;
+	uint actual_start;
+	uint actual_end;
+	uint end_process = min(input_size, start_process + to_process);
+	int last = 0;
+	char first = (wid==0)? 0: 1;
+	for (uint offset=start_process; offset< end_process; offset+=ws)
+	{
+		uint pos = offset + lid;
+		if (pos<input_size)
+		{
+			a[lid] = input[pos];
+		}
+		else
+		{
+			a[lid] = 0;
+		}
+		if (a[lid] == -128)
+		{
+			atomic_inc(exceptions);
+		}
+		barrier(CLK_LOCAL_MEM_FENCE);
+		if (first)
+		{
+			if (exceptions)
+			{
+				printf("TODO");
+			}
+
+		}
+		first = 0;
+	}
+	start_position[wid] = start_process;
+//	ddebug3[wid] = start_process;
+}
+/**
+ * \brief byte_offset decompression for CBF: Second pass: store the value at the right place
+ *
+ * Nota: This enforces little-endian storage
  *
  * @param input: input data in 1D as int8
- * @param output: oupyt as int32
+ * @param local_index: input data with output positions, reference
+ * @param global_offset: absolute offset of the workgroup, reference
+ * @param output: output as int32
  * @param input_size: length of the input
- * @param output_size: length of the output
- * @param lel: length of every element
+ * @param output_size: length of the output, also size of local_index
+ * @param chunk: number of data-point every thread will process
  *
  */
-//kernel void dec_byte_offset(
-//	global char* input,
-//	global int* output,
-//	int input_size,
-//	int output_size,
-//	global char * lel,
-//	global char * lem,
-//	global int * start_pos,
-//	global int * stop_pos,
-//	global int * wg_count,
-//	local int *local1,
-//	local int *local2,
-//	local int *local3)
-//{
-//	uint ws = get_local_size(0);
-//	uint gi = get_group_id(0);
-//	uint lid = get_local_id(0);
-//	uint idx, valid_items;
-//	uint input_offset = start_pos[gi];
-//	uint output_offset = input_offset;
-//
-//	local2[lid] = 0; // counter for exceptions
-//	barrier(CLK_LOCAL_MEM_FENCE);
-//	while (input_offset < input_size)
-//	{
-//		idx = lid + input_offset;
-//		if (idx<input_size)
-//		{
-//			local1[lid] = input[idx];
-//		}
-//		else
-//		{
-//			local1[lid] = 0;
-//		}
-//		if (local1[lid] == -128)
-//		{
-//			atomic_inc(&local2[0]);
-//		}
-//		barrier(CLK_LOCAL_MEM_FENCE);
-//		if (local2[0])
-//		{
-//			valid_items = 0;
-//			if (lid==0)//serialize scan
-//			{
-//				uint i=0;
-//				int current, last = 0;
-//				while (i < ws)
-//				{
-//					current = local1[i];
-//					if (current == -128)
-//					{
-//						int next1, next2;
-//						next1 = ((i+1)<ws) ? local1[i+1] : input[input_offset+i+1];
-//						next2 = ((i+2)<ws) ? local1[i+2] : input[input_offset+i+2];
-//						if ((next1 == 0) && (next2 ==-128)) //32 bits exception
-//						{
-//							int next3, next4, next5, next6;
-//							next3 = ((i+3)<ws) ? local1[i+3] : input[input_offset+i+3];
-//							next4 = ((i+4)<ws) ? local1[i+4] : input[input_offset+i+4];
-//							next5 = ((i+5)<ws) ? local1[i+5] : input[input_offset+i+5];
-//							next6 = ((i+6)<ws) ? local1[i+6] : input[input_offset+i+6];
-//							current = (next6 << 24) | (next5 << 16) | (next4 << 8) | (next3);
-//							i+=7;
-//						}
-//						else
-//						{
-//							current = (next2 << 8) | (next1);
-//							i+=3;
-//						}
-//					}
-//					else
-//					{
-//						i+=1;
-//					}
-//		            last += current;
-//		            local2[valid_items] = last;
-//					valid_items += 1;
-//				}
-//
-//			}
-//		}
-//		else
-//		{//perform a normal reduction in the workgroup
-//			valid_items = ws;
-//			my_group_scan_inclusive_add(local1, local2, local3);
-//		}
-//		if (lid<valid_items)
-//		{
-//			output[output_offset+lid] = local2[lid];
-//		}
-//		input_offset +=  ws;
-//		output_offset +=  valid_items;
-//		local2[lid] = 0;
-//		barrier(CLK_LOCAL_MEM_FENCE);
-//	}
-//}
+kernel void dec_byte_offset2(
+		global int* input,
+		global int* local_index,
+		global int* global_offset,
+		global char* output,
+		uint input_size,
+		uint output_size,
+		uint chunk)
+{
+	uint gid = get_global_id(0);
+	uint wid = get_group_id(0);
+	uint ws = get_local_size(0);
+	uint lid = get_local_id(0);
+	uint to_process = chunk * ws;
+	uint start_process = wid *  to_process;
+	uint end_process;
+	end_process = min(input_size, start_process + to_process);
+	int pos_offset = (wid > 0) ? global_offset[wid-1] : 0;
+	for (uint offset=start_process; offset< end_process; offset+=ws)
+	{
+		int current, previous, value, absvalue;
+		uint pos = offset + lid;
+		if (pos<end_process)
+		{
+			previous = (pos>0)? input[pos -1]: 0;
+			current = input[pos];
+			value = current - previous;
+			absvalue = abs(value);
+			uint dest = pos_offset + local_index[pos];
+			if (dest < output_size)
+			{
+				if (absvalue > 32767)
+				{
+					output[dest] = -128;
+					output[dest+1] = 0;
+					output[dest+2] = -128;
+					output[dest+3] = (char) (value & 255);
+					output[dest+4] = (char) ((value >> 8) & 255);
+					output[dest+5] = (char) ((value >> 16) & 255);
+					output[dest+6] = (char) (value >> 24);
+				}
+				else if (absvalue > 127)
+				{
+					output[dest] = -128;
+					output[dest+1] = (char) (value & 255);
+					output[dest+2] = (char) (value >> 8);
+				}
+				else
+				{
+					output[dest] =  (char) value;
+				}
+			}
+		}
+	}
+}
 
 
 
