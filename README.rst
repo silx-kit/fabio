@@ -177,7 +177,7 @@ Changelog
 
 Please see doc/source/Changelog.rst
 
-.. |Build Status| image:: https://travis-ci.org/kif/fabio.svg?branch=master
-   :target: https://travis-ci.org/kif/fabio
+.. |Build Status| image:: https://travis-ci.org/silx-kit/fabio.svg?branch=master
+   :target: https://travis-ci.org/silx-kit/fabio
 .. |Appveyor Status| image:: https://ci.appveyor.com/api/projects/status/4k6lol1vq30qhf66/branch/master?svg=true
    :target: https://ci.appveyor.com/project/ESRF/fabio/branch/master
