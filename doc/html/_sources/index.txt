@@ -13,6 +13,7 @@ Contents:
 
    getting_started
    install
+   tutorials/index
    performances
    Changelog
    man/fabio_viewer

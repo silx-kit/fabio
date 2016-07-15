@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Benchmarks &mdash; FabIO 0.2.2 documentation</title>
+    <title>Benchmarks &mdash; FabIO 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="FabIO 0.2.2 documentation" href="index.html" />
+    <link rel="top" title="FabIO 0.4.0 documentation" href="index.html" />
     <link rel="next" title="Changelog" href="Changelog.html" />
-    <link rel="prev" title="Installation" href="install.html" /> 
+    <link rel="prev" title="Nexus -&gt; CBF" href="tutorials/Nexus2cbf.html" /> 
   </head>
   <body>
     <div class="related">
@@ -42,9 +42,9 @@
           <a href="Changelog.html" title="Changelog"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation"
+          <a href="tutorials/Nexus2cbf.html" title="Nexus -&gt; CBF"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
   <div class="section" id="benchmarks">
 <h1>Benchmarks<a class="headerlink" href="#benchmarks" title="Permalink to this headline">¶</a></h1>
 <p>Those benchmarks have been done with all data already in cache using a Intel Xeon E5520  &#64; 2.27GHz
-running Debian 7.</p>
+running Debian 7 and FabIO 0.2.2... Those data are now out-dated.</p>
 <table border="1" class="w docutils">
 <caption>Execution time for reading a file, benchmarked using the <a href="#id1"><span class="problematic" id="id2">``</span></a>timeit&#8217;&#8217; module.</caption>
 <colgroup>
@@ -175,8 +175,9 @@ running Debian 7.</p>
 </tr>
 </tbody>
 </table>
-<p>The Python3 version is sometimes twice slower then the Python2 version. As the codebase is the
-same this regression is not due to FabIO but to the programming language itself.</p>
+<p>The Python3 version is sometimes twice slower then the Python2 version.
+As the codebase is the same this regression is not due to FabIO but to the programming language itself.
+The Performances obtained using Python3.4 is now again close to the one of Python2.7.</p>
 </div>
 
 
@@ -186,8 +187,8 @@ same this regression is not due to FabIO but to the programming language itself.
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="install.html"
-                        title="previous chapter">Installation</a></p>
+  <p class="topless"><a href="tutorials/Nexus2cbf.html"
+                        title="previous chapter">Nexus -&gt; CBF</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Changelog.html"
                         title="next chapter">Changelog</a></p>
@@ -226,13 +227,13 @@ same this regression is not due to FabIO but to the programming language itself.
           <a href="Changelog.html" title="Changelog"
              >next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation"
+          <a href="tutorials/Nexus2cbf.html" title="Nexus -&gt; CBF"
              >previous</a> |</li>
-        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2015, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+        &copy; Copyright 2006-2016, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

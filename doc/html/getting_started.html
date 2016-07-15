@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Getting Started &mdash; FabIO 0.2.2 documentation</title>
+    <title>Getting Started &mdash; FabIO 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="FabIO 0.2.2 documentation" href="index.html" />
+    <link rel="top" title="FabIO 0.4.0 documentation" href="index.html" />
     <link rel="next" title="Installation" href="install.html" />
     <link rel="prev" title="Welcome to FabIO’s documentation!" href="index.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to FabIO’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,12 +55,13 @@
             
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>FabIO is a Python module for reading and handling data from two-dimensional X-ray detectors.</p>
+<p>FabIO is a Python module for reading and handling data from two-dimensional X-ray
+detectors.</p>
 <p>FabIO is a Python module written for easy and transparent reading
 of raw two-dimensional data from various X-ray detectors. The
 module provides a function for reading any image and returning a
-fabioimage object which contains both metadata (header information)
-and the raw data. All fabioimage object offer additional methods to
+FabioImage object which contains both metadata (header information)
+and the raw data. All FabioImage object offer additional methods to
 extract information about the image and to open other detector
 images from the same data series.</p>
 <div class="section" id="introduction">
@@ -231,7 +232,8 @@ NeXus format. For now, mainly processed or curated data are
 stored in this format but new detectors (Eiger from Dectris) are natively
 saving data in HDF5. FabIO will rely on H5Py, which
 already provides a good HDF5 binding for Python, as an external
-dependency, to be able to read and write such HDF5 files.</p>
+dependency, to be able to read and write such HDF5 files.
+This starts to be available in version 0.4.0.</p>
 </div>
 <div class="section" id="conclusion">
 <h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
@@ -263,187 +265,12 @@ al., 2006).</p>
 <p>In alphabetical order. The listed filename extensions are typical examples.
 FabIO tries to deduce the actual format from the file itself and only
 uses extensions as a fallback if that fails.</p>
-<table border="1" class="docutils">
-<caption>Supported formats</caption>
-<colgroup>
-<col width="26%" />
-<col width="26%" />
-<col width="17%" />
-<col width="9%" />
-<col width="13%" />
-<col width="9%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Python Module</th>
-<th class="head">Detector / Format</th>
-<th class="head">Extension</th>
-<th class="head">Read</th>
-<th class="head">Multi-image</th>
-<th class="head">Write</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>ADSC</td>
-<td>ADSC Quantum</td>
-<td>.img</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-odd"><td>Bruker</td>
-<td>Bruker formats</td>
-<td>.sfrm</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-even"><td>DM3</td>
-<td>Gatan Digital Micrograph</td>
-<td>.dm3</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-odd"><td>EDF</td>
-<td>ESRF data format</td>
-<td>.edf</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr class="row-even"><td>EDNA-XML</td>
-<td>Used by EDNA</td>
-<td>.xml</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-odd"><td>CBF</td>
-<td>CIF binary files</td>
-<td>.cbf</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-even"><td>kcd</td>
-<td>Nonius KappaCCD</td>
-<td>.kccd</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-odd"><td>fit2d mask</td>
-<td>Used by Fit2D</td>
-<td>.msk</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-even"><td>fit2d spreadsheet</td>
-<td>Used by Fit2D</td>
-<td>.spr</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-odd"><td>GE</td>
-<td>General Electric</td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr class="row-even"><td>HiPiC</td>
-<td>Hamamatsu CCD</td>
-<td>.tif</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-odd"><td>HDF5</td>
-<td>Hierachical data dormat</td>
-<td>.h5</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-even"><td>marccd</td>
-<td>MarCCD/Mar165</td>
-<td>.mccd</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-odd"><td>mar345</td>
-<td>Mar345 image plate</td>
-<td>.mar3450</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-even"><td>OXD</td>
-<td>Oxford Diffraction</td>
-<td>.img</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-odd"><td>Pixi</td>
-<td>pixi</td>
-<td>.</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-even"><td>pilatus</td>
-<td>Dectris Pilatus Tiff</td>
-<td>.tif</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="row-odd"><td>PNM</td>
-<td>Portable aNy Map</td>
-<td>.pnm</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-even"><td>Raxis</td>
-<td>Rigaku Saxs format</td>
-<td>.img</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr class="row-odd"><td>TIFF</td>
-<td>Tagged Image File Format</td>
-<td>.tif</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="section" id="adding-new-file-formats">
 <h3>Adding new file formats<a class="headerlink" href="#adding-new-file-formats" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>We hope it will be relatively easy to add new file formats to fabio in the future. The basic idea is the following:</dt>
-<dd><ol class="first last arabic simple">
-<li>inherit from fabioimage overriding the methods _readheader, read and optionally write. Name your new module XXXimage where XXX means something (eg tifimage).</li>
-<li>readheader fills in a dictionary of &#8220;name&#8221;:&#8221;value&#8221; pairs in self.header. No one expects to find anything much in there.</li>
-<li>read fills in self.data with a numpy array holding the image. Some redundant info which also appears are self.dim1 and self.dim2: the image dimensions, self.bpp is the bytes per pixel and self.bytecode is the numpy.dtype.type of the data.</li>
-<li>The member variables &#8220;_need_a_seek_to_read&#8221; and &#8220;_need_a_real_file&#8221; are there in case you have trouble with the transparent handling of bz2 and gz files.</li>
-<li>Register the file type (extension naming) in fabioutils.py:FILETYPES</li>
-<li>Add your new module as an import into fabio.openimage</li>
-<li>Fill out the magic numbers for your format in fabio.openimage if you know them (the characteristic first few bytes in the file)</li>
-<li>Upload a testimage to the file release system and create a unittest testcase which opens an example of your new format, confirming the image has actually been read in successfully (eg check the mean, max, min and esd are all correct, perhaps orientation too)</li>
-<li>Run pylint on your code and then please go clean it up. Have a go at mine while you are at it.</li>
-<li>Bask in the warm glow of appreciation when someone unexpectedly learns they don&#8217;t need to convert their data into another format</li>
-</ol>
-</dd>
-</dl>
+<p>We hope it will be relatively easy to add new file formats to FabIO in the future.
+Please refere at the <em>fabio/templateimage.py</em> file in the source which describes
+how to add a new format.</p>
 </div>
 </div>
 </div>
@@ -523,11 +350,11 @@ uses extensions as a fallback if that fails.</p>
         <li class="right" >
           <a href="index.html" title="Welcome to FabIO’s documentation!"
              >previous</a> |</li>
-        <li><a href="index.html">FabIO 0.2.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">FabIO 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2006-2015, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
+        &copy; Copyright 2006-2016, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

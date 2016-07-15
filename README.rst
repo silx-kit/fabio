@@ -4,7 +4,7 @@ FabIO: Fable Input/Output library
 Main websites:
 
  * http://fable.sf.net
- * https://gitgub.com/silx-kit/fabio
+ * https://github.com/silx-kit/fabio
 
 
 |Build Status| |Appveyor Status|
@@ -19,22 +19,20 @@ headers (as a python dictionary) and datasets (as a numpy ndarray of integers or
 Getting FabIO
 -------------
 
-FabIO is available from PyPI:
-https://pypi.python.org/pypi/fabio
-But also as Debian/Ubuntu packages, and builds are available
-(windows, linux and MacOSX) from the Fable package at sourceforge:
-http://sourceforge.net/projects/fable/
+FabIO is available from `PyPI <https://pypi.python.org/pypi/fabio>`_.
 
-Documentation is available at:
-http://pythonhosted.org//fabio/
+`Debian/Ubuntu packages <http://www.silx.org/pub/debian/binary/>`_, and
+`wheels <http://www.silx.org/pub/wheelhouse/>`_ are available
+for windows, linux and MacOSX from the silx repository:
+
+Documentation is available at `PythonHosted <http://pythonhosted.org/fabio/>`_,
+Continuous documentation at `ReadTheDocs <http://fabio.readthedocs.io>`_ and
+Nightly build documentation at `silx <http://www.silx.org/doc/fabio/>`_.
 
 Citation:
 ---------
 The general philosophy of the library is described in:
-FabIO: easy access to two-dimensional X-ray detector images in Python
-E. B. Knudsen, H. O. Sørensen, J. P. Wright, G. Goret and J. Kieffer
-Journal of Applied Crystallography, Volume 46, Part 2, pages 537-539.
-http://dx.doi.org/10.1107/S0021889813000150
+`FabIO: easy access to two-dimensional X-ray detector images in Python; E. B. Knudsen, H. O. Sørensen, J. P. Wright, G. Goret and J. Kieffer Journal of Applied Crystallography, Volume 46, Part 2, pages 537-539. <http://dx.doi.org/10.1107/S0021889813000150>`_
 
 Transparent handling of compressed files
 ----------------------------------------
@@ -44,9 +42,8 @@ benchmarking details have been collected at fabio_compressed_speed.
 This means that when your python was configured and built you needed the
 bzip and gzip modules to be present (eg libbz2-dev package for ubuntu)
 Using fabio in your own python programs
-Example:
+Example::
 
-..
   >>> import fabio
   >>> obj = fabio.edfimage("mydata0000.edf")
   >>> obj.data.shape
@@ -63,7 +60,7 @@ Idea:
 .....
 Have a base class for all our 2D diffraction greyscale images.
 This consists of a 2D array (numpy ndarray)
-and a python dictionary (now an ordered dict) of header information in (string key, string value) pairs.
+and a python dictionary (actually an ordered dict) of header information in (string key, string value) pairs.
 
 Class FabioImage
 ................

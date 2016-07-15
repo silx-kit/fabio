@@ -82,7 +82,7 @@ Installation from sources
 * Retrieve the sources from github:
 
   + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
-  + `The latest release <https://github.com/kif/fabio/releases/latest>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
 
 * unzip the file in a directory
 * open a console (cmd.exe) in this directory.
@@ -156,7 +156,7 @@ Once done, follow the classical procedure (similar to Windows or Linux):
 * Retrieve the sources from github:
 
   + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
-  + `The latest release <https://github.com/kif/fabio/releases/latest>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
 
 * unzip the file in a directory
 * open a terminal in the unzipped archive directory
@@ -191,7 +191,7 @@ Once done, follow the classical procedure (similar to Windows or MacOSX):
 * Retrieve the sources from github:
 
   + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
-  + `The latest release <https://github.com/kif/fabio/releases/latest>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
 
 * unzip the file in a directory
 * open a terminal in the unzipped archive directory
