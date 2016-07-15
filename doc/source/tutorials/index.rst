@@ -1,5 +1,5 @@
 :Author: Jérôme Kieffer
-:Date: 01/11/2015
+:Date: 15/07/2016
 :Keywords: Tutorials
 :Target: Advanced users
 
@@ -9,5 +9,4 @@ Tutorials on FabIO
 .. toctree::
    :maxdepth: 2
 
-   conversion
    Nexus2cbf

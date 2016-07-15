@@ -1,7 +1,11 @@
 FabIO: Fable Input/Output library
 =================================
 
-Main website: http://fable.sf.net
+Main websites:
+
+ * http://fable.sf.net
+ * https://gitgub.com/silx-kit/fabio
+
 
 |Build Status| |Appveyor Status|
 
@@ -57,81 +61,113 @@ Name: Fabio = Fable Input/Output
 
 Idea:
 .....
-Have a base class for all our 2D diffraction greyscale images. This consists of a 2D array (numpy ndarray)
-and a python dictionary of header information in (string key, string value) pairs.
+Have a base class for all our 2D diffraction greyscale images.
+This consists of a 2D array (numpy ndarray)
+and a python dictionary (now an ordered dict) of header information in (string key, string value) pairs.
 
-Class fabioimage
+Class FabioImage
 ................
 Needs a name which will not to be confused with an RGB color image.
 
 Class attributes:
+
 * data   					-> 2D array
-* header 					-> dictionary
-* rows, columns, dim1, dim2 -> data.shape
-* header_keys               -> header.keys() used to retain the order of the header when writing an image to disk
-* bytecode                 	-> data.typecode()
+* header 					-> ordered dictionary
+* rows, columns, dim1, dim2 -> data.shape (properties determined on the fly)
+* header_keys               -> property for list(header.keys()), formerly used to retain the order of the header
+* bytecode                 	-> data.typecode() (property)
 * m, minval, maxval, stddev	-> image statistics, could add others, eg roi[slice]
 
 Class methods (functions):
 ..........................
-integrate_area()      -> return sum(self.data) within slice
-rebin(fact)           -> rebins data, adjusts dims
-toPIL16()             -> returns a PILimage
-getheader()           -> returns self.header
-resetvals()           -> resets the statistics
-getmean()             -> (computes) returns self.m
-getmin()              -> (computes) returns self.minval
-getmax()              -> (computes) returns self.maxval
-getstddev()           -> (computes) returns self.stddev
-read()        		  -> read image from file [or stream, or shared memory]
-write()       		  -> write image to file  [or stream, or shared memory]
-readheader()          -> read only the header [much faster for scanning files]
+
+* integrate_area()      -> return sum(self.data) within slice
+* rebin(fact)           -> rebins data, adjusts dims
+* toPIL16()             -> returns a PILimage
+* getheader()           -> returns self.header
+* resetvals()           -> resets the statistics
+* getmean()             -> (computes) returns self.m
+* getmin()              -> (computes) returns self.minval
+* getmax()              -> (computes) returns self.maxval
+* getstddev()           -> (computes) returns self.stddev
+* read()        		-> read image from file [or stream, or shared memory]
+* write()       		-> write image to file  [or stream, or shared memory]
+* readheader()          -> read only the header [much faster for scanning files]
 
 Each individual file format would then inherit all the functionality of this class and just make new read and write methods.
-There are also fileseries related methods (next(), previous(), ...) which return a fabioimage instance of the next/previous frame in a fileserie
+
+There are also fileseries related methods (next(), previous(), ...) which returns a FabioImage instance of the next/previous frame in a fileserie
 
 Other feature:
-    * possibility for using on-the-fly external compression - i.e. if files are stored as something as .gz, .bz2 etc could decompress them, using an external compression mechanism (if available). This is present in fabian but requires that images are edfs.
+
+* possibility for using on-the-fly external compression - i.e. if files are stored as something as .gz, .bz2 etc could decompress them, using an external compression mechanism (if available). This is present in fabian but requires that images are edfs.
 
 
 Known file formats
 ------------------
-* Bruker
-  o brukerimage
-  o bruker100image
-  o kcdimage: Nonius KappaCCD diffractometer
-* Mar Research
-  o marccd (fileformat derived from Tiff)
-  o mar345 imaging plate with PCK compression
-* Dectris
-  o cbfimage (implements a fast byte offset decompression scheme in python/cython)
-  o pilatusimage (fileformat derived from Tiff)
-  * eigerimage (derived from HDF5/NeXus format)
-* ESRF
-  o edfimage: The ESRF data Format
-  o xsdimage: XML serialized image from EDNA
-  o fit2dimage: Fit2d binary format
-  o fit2dmaskimage: Fit2d Mask format
-  o fit2dspreadsheetimage: Fit2d ascii tables (spread-sheet)
-* ADSC
-  o adscimage
+
+* Bruker:
+
+  + BrukerImage
+  + Bruker100Image
+  + KcdImage: Nonius KappaCCD diffractometer
+
+* Mar Research:
+
+  + MarccdImage (fileformat derived from Tiff)
+  + Mar345Image imaging plate with PCK compression
+
+* Dectris:
+
+  + CbfImage (implements a fast byte offset de/compression scheme in python/cython)
+  + PilatusImage (fileformat derived from Tiff)
+  * EigerImage (derived from HDF5/NeXus format)
+
+* ESRF:
+
+  + EdfImage: The ESRF data Format
+  + XsdImage: XML serialized image from EDNA
+  + Fit2dImage: Fit2d binary format
+  + Fit2dmaskImage: Fit2d Mask format
+  + Fit2dSpreadsheetImage: Fit2d ascii tables (spread-sheet)
+
+* ADSC:
+
+  + AdscImage
+
 * GE detector at APS
-  o GEimage
+
+  + GEimage
+
 * PNM
-  o pnmimage
+
+  + PnmImage
+
 * Tiff
-  o tifimage
+
+  + TifImage
+  + TiffIO from PyMca
+
 * D3M
-  o d3mimage
+
+  + D3mImage
+
 * Hamamatsu
-  o HiPiCimage
+
+  + HiPiCImage
+
 * Oxford Diffraction Sapphire 3
-  o OXDimage uncompressed
-  o OXDimage with TY1 byte offset compression
-  o OXDimage with TY5 byte offset compression (experimental)
-* Nonius
-  o KappaCCD
+
+  + OXDimage uncompressed
+  + OXDimage with TY1 byte offset compression
+  + OXDimage with TY5 byte offset compression (experimental)
+
+* Nonius -> now owned by Bruker
+
 * HDF5: generic format for stack of images
+  + Hdf5Image
+  + EigerImage
+
 * Raw Binary without compression
 
 Installation
