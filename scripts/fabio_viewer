@@ -22,7 +22,12 @@ import sys
 import os
 import time
 
-from PyQt4.QtCore import QDir, Qt, QRect, QString, QCoreApplication
+from PyQt4.QtCore import QDir, Qt, QRect, QCoreApplication
+try:
+    from PyQt4.QtCore import QString
+except ImportError:
+    QString = str
+
 from PyQt4.QtGui import QLabel, QVBoxLayout, QWidget, QSplitter, QListWidget, \
                         QComboBox, QApplication, QStyleFactory, QHBoxLayout, \
                         QTabWidget, QPlainTextEdit, QPushButton, QGroupBox, \
