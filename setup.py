@@ -44,14 +44,12 @@ try:
     from setuptools import setup, Command
     from setuptools.command.sdist import sdist
     from setuptools.command.build_ext import build_ext
-    from setuptools.command.install_data import install_data
     from setuptools.command.install import install
     from setuptools.command.build_py import build_py as _build_py
 except ImportError:
     from distutils.core import setup, Command
     from distutils.command.sdist import sdist
     from distutils.command.build_ext import build_ext
-    from distutils.command.install_data import install_data
     from distutils.command.install import install
     from distutils.command.build_py import build_py as _build_py
 from numpy.distutils.core import Extension as _Extension
