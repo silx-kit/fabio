@@ -8,19 +8,25 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
+
 
 """
 
@@ -38,7 +44,10 @@ Authors:
 """
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
-import logging, sys
+
+
+import logging
+import sys
 logger = logging.getLogger("fileseries")
 import traceback as pytraceback
 
@@ -82,7 +91,6 @@ def new_file_series0(first_object, first=None, last=None, step=1):
                 im.filename = next_filename(im.sequencefilename)
             yield None
         yield im
-
 
 
 def new_file_series(first_object, nimages=0, step=1, traceback=False):
@@ -142,9 +150,9 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             yield retVal
             # Avoid cyclic references with exc_info ?
             retVal = None
-            if abort: break
+            if abort:
+                break
         nprocessed += 1
-
 
 
 class file_series(list):
@@ -172,7 +180,6 @@ class file_series(list):
         super(file_series, self).__init__(list_of_strings)
         # track current position in list
         self._current = 0
-
 
     # methods which return a filename
 
@@ -227,7 +234,6 @@ class file_series(list):
 
         """
         return len(self)
-
 
     # Methods which return a fabioimage
 
@@ -341,8 +347,6 @@ class file_series(list):
         return FilenameObject(self.current())
 
 
-
-
 class numbered_file_series(file_series):
     """
     mydata0001.edf = "mydata" + 0001 + ".edf"
@@ -364,10 +368,9 @@ class numbered_file_series(file_series):
         else:
             fmt = "%s%i%s"
 
-        super(numbered_file_series, self).__init__(
-            [ fmt % (stem, i, extension) for i in range(first,
-                                                          last + 1,
-                                                          step) ])
+        super(numbered_file_series, self).__init__([fmt % (stem, i, extension) for i in range(first,
+                                                                                              last + 1,
+                                                                                              step)])
 
 
 class filename_series:
@@ -399,32 +402,35 @@ class filename_series:
     def next_image(self):
         """ returns the next image as a fabioimage """
         return openimage(self.next())
+
     def prev_image(self):
         """ returns the previos image as a fabioimage """
         return openimage(self.previous())
+
     def current_image(self):
         """ returns the current image as a fabioimage"""
         return openimage(self.current())
+
     def jump_image(self, num):
         """ returns the image number as a fabioimage"""
         return openimage(self.jump(num))
+
     # object methods
     def next_object(self):
         """ returns the next filename as a fabio.FilenameObject"""
         self.obj.num += 1
         return self.obj
+
     def previous_object(self):
         """ returns the previous filename as a fabio.FilenameObject"""
         self.obj.num -= 1
         return self.obj
+
     def current_object(self):
         """ returns the current filename as a fabio.FilenameObject"""
         return self.obj
+
     def jump_object(self, num):
         """ returns the filename num as a fabio.FilenameObject"""
         self.obj.num = num
         return self.obj
-
-
-
-

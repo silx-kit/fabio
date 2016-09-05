@@ -41,8 +41,9 @@ __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
 __version__ = "29 Oct 2013"
-
-import numpy, logging, sys
+import logging
+import sys
+import numpy
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 logger = logging.getLogger("mrcimage")
@@ -136,7 +137,7 @@ class MrcImage(FabioImage):
         imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
         infile.seek(self.calc_offset(img_num), 0)
         self.data = numpy.fromstring(infile.read(self.imagesize),
-                                      self.bytecode)
+                                    self.bytecode)
         self.data.shape = self.dim2, self.dim1
         self.currentframe = int(img_num)
         self._makeframename()

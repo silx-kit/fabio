@@ -8,19 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 
 """
 Authors: Jerome Kieffer, ESRF
@@ -32,13 +36,15 @@ Based on the edfimage.py parser.
 # Get ready for python3:
 from __future__ import with_statement, print_function
 
-import numpy, logging
-import os, string
+import numpy
+import logging
+import os
+import string
 from .fabioimage import FabioImage
 from .fabioutils import six
 logger = logging.getLogger("kcdimage")
 
-DATA_TYPES = {"u16"  :  numpy.uint16 }
+DATA_TYPES = {"u16": numpy.uint16 }
 
 MINIMUM_KEYS = [
                 # 'ByteOrder', Assume little by default
@@ -47,7 +53,7 @@ MINIMUM_KEYS = [
                 'Y dimension',
                 'Number of readouts']
 
-DEFAULT_VALUES = { "Data type": "u16" }
+DEFAULT_VALUES = {"Data type": "u16"}
 
 if six.PY2:
     ALPHANUM = string.digits + string.letters + ". "
@@ -58,7 +64,6 @@ else:
 class KcdImage(FabioImage):
     """
     Read the Nonius kcd data format """
-
 
     def _readheader(self, infile):
         """
@@ -71,7 +76,6 @@ class KcdImage(FabioImage):
         for oneChar in one_line.strip():
             if not oneChar in ALPHANUM:
                 asciiHeader = False
-
 
         if asciiHeader is False:
             # This does not look like an KappaCCD file
@@ -90,7 +94,7 @@ class KcdImage(FabioImage):
                 if one_line.strip() == "Binned mode":
                     one_line = "Mode = Binned"
                 if "=" in one_line:
-                    key, val = one_line.split('=' , 1)
+                    key, val = one_line.split('=', 1)
                     key = key.strip()
                     self.header[key] = val.strip()
                 else:
@@ -102,7 +106,6 @@ class KcdImage(FabioImage):
                 missing.append(item)
         if len(missing) > 0:
             logger.debug("KCD file misses the keys " + " ".join(missing))
-
 
     def read(self, fname, frame=None):
         """
@@ -154,7 +157,6 @@ class KcdImage(FabioImage):
         # ensure the PIL image is reset
         self.pilimage = None
         return self
-
 
     @staticmethod
     def checkData(data=None):

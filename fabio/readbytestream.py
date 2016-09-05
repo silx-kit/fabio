@@ -8,23 +8,27 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 
 
-"""
-Reads a bytestream
+
+"""Reads a bytestream
 
 Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
          ESRF          Risoe National Laboratory
@@ -32,19 +36,20 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
 # Get ready for python3:
 from __future__ import with_statement, print_function, division
 
-import numpy, logging
+import logging
+import numpy
 logger = logging.getLogger("readbytestream")
 DATATYPES = {
-    # type  sign bytes
-    ("int", 'n', 1) : numpy.uint8,
-    ("int", 'n', 2) : numpy.uint16,
-    ("int", 'n', 4) : numpy.uint32,
-    ("int", 'y', 1) : numpy.int8,
-    ("int", 'y', 2) : numpy.int16,
-    ("int", 'y', 4) : numpy.int32,
-    ('float', 'y', 4) : numpy.float32,  # does this occur in bruker?
-    ('double', 'y', 4): numpy.float64
-    }
+             # type  sign bytes
+             ("int", 'n', 1): numpy.uint8,
+             ("int", 'n', 2): numpy.uint16,
+             ("int", 'n', 4): numpy.uint32,
+             ("int", 'y', 1): numpy.int8,
+             ("int", 'y', 2): numpy.int16,
+             ("int", 'y', 4): numpy.int32,
+             ('float', 'y', 4): numpy.float32,  # does this occur in bruker?
+             ('double', 'y', 4): numpy.float64
+             }
 
 
 def readbytestream(fil,
@@ -99,7 +104,7 @@ def readbytestream(fil,
 
     arr = numpy.array(numpy.reshape(
             numpy.fromstring(
-                infile.read(length), tin) , (x, y)), typeout)
+                infile.read(length), tin), (x, y)), typeout)
 
     if swap == 'y':
         arr = arr.byteswap()

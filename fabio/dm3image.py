@@ -8,19 +8,24 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation files
+#  (the "Software"), to deal in the Software without restriction,
+#  including without limitation the rights to use, copy, modify, merge,
+#  publish, distribute, sublicense, and/or sell copies of the Software,
+#  and to permit persons to whom the Software is furnished to do so,
+#  subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION W
 
 """
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -34,6 +39,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 # get ready for python3
 from __future__ import with_statement, print_function
+
 import logging
 import numpy
 from .fabioimage import FabioImage
@@ -66,7 +72,6 @@ DATA_BYTES = {  2     :  2,
                 18    :  None,
                 20    :  None
                 }
-
 
 
 class Dm3Image(FabioImage):
@@ -125,20 +130,18 @@ class Dm3Image(FabioImage):
         self.dim1 = dim1_raw / dim1_binning
         self.dim2 = dim2_raw / dim2_binning
         # print dim1,dim2
-        if self.header.has_key('Data'):
+        if "Data" in self.header:
             self.data = self.header['Data'].reshape(self.dim1, self.dim2)
 
     def readbytes(self, bytes_to_read, format, swap=True):
         raw = self.infile.read(bytes_to_read)
-        if format != None:
+        if format is not None:
             data = numpy.fromstring(raw, format)
         else:
             data = raw
         if swap:
             data = data.byteswap()
         return data
-
-
 
     def read_tag_group(self):
 
@@ -165,18 +168,17 @@ class Dm3Image(FabioImage):
             self.header[tag_label] = self.read_tag_type()
             logger.debug("%s: %s", tag_label, self.header[tag_label])
 
-
     def read_tag_type(self):
         if self.infile.read(4) != '%%%%':
             raise IOError
         self.tag_data_type = self.readbytes(4, numpy.uint32)[0]
         logger.debug('data is of type : %s  - 1 = simple, 2= string, 3 = array, >3 structs', self.tag_data_type)
         self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
-        logger.debug('encode type: %s %s', self.tag_encoded_type, DATA_TYPES[ self.tag_encoded_type])
+        logger.debug('encode type: %s %s', self.tag_encoded_type, DATA_TYPES[self.tag_encoded_type])
         if self.tag_data_type == 1:
             # simple type
-            return self.readbytes(DATA_BYTES[ self.tag_encoded_type],
-                                  DATA_TYPES[ self.tag_encoded_type],
+            return self.readbytes(DATA_BYTES[self.tag_encoded_type],
+                                  DATA_TYPES[self.tag_encoded_type],
                                   swap=self.swap)[0]
         # are the data stored in a simple array?
         if self.tag_encoded_type == 20 and self.tag_data_type == 3 :
@@ -201,7 +203,7 @@ class Dm3Image(FabioImage):
             self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
             logger.debug('found array - new tag_encoded_type %s', self.tag_encoded_type)
             if self.tag_encoded_type == 15:  # struct type
-                 # ##type = self.readbytes(4,numpy.int32)
+                # ##type = self.readbytes(4,numpy.int32)
                 struct_name_length = self.readbytes(4, numpy.int32)[0]
                 struct_number_fields = self.readbytes(4, numpy.int32)[0]
                 # print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
@@ -219,7 +221,6 @@ class Dm3Image(FabioImage):
                 dump = self.infile.read(self.no_data_elements * bytes_in_struct)
                 return None
 
-
         if self.tag_encoded_type == 15:  # struct type
             # ##type = self.readbytes(4,numpy.int32)
             struct_name_length = self.readbytes(4, numpy.int32)[0]
@@ -235,8 +236,8 @@ class Dm3Image(FabioImage):
                 # print type(i)
                 field_data = field_data + self.readbytes(field_info[i][0], None, swap=False) + ' '
                 field_data = field_data + '%i  ' % self.readbytes(DATA_BYTES[field_info[i][1]],
-                                                                 DATA_TYPES[field_info[i][1]],
-                                                                 swap=self.swap)[0]
+                                                                  DATA_TYPES[field_info[i][1]],
+                                                                  swap=self.swap)[0]
             return field_data
 
     def read_data(self):

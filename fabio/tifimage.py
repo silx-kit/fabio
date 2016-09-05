@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "28/06/2016"
+__date__ = "05/09/2016"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -175,7 +175,7 @@ class TifImage(FabioImage):
             if self.data.ndim == 2:
                 self.dim2, self.dim1 = self.data.shape
             elif self.data.ndim == 3:
-                self.dim2, self.dim1, ncol = self.data.shape
+                self.dim2, self.dim1, _ = self.data.shape
                 logger.warning("Third dimension is the color")
             else:
                 logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)

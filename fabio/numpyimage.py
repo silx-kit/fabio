@@ -30,9 +30,9 @@ from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
-__license__ = "GPLv3+"
+__license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "21/06/2016"
+__date__ = "05/09/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")

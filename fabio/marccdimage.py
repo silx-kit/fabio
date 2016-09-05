@@ -8,19 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 
 """
 
@@ -46,9 +50,10 @@ from __future__ import with_statement, print_function, absolute_import
 
 # Base this on the tifimage (as marccd seems to be tiff with a
 # special header
-
-from .tifimage import TifImage
 import logging
+import struct
+from .tifimage import TifImage
+
 logger = logging.getLogger("marccdimage")
 
 # Now for the c definition (found on mar webpage)
@@ -225,8 +230,6 @@ typedef struct frame_header_type {
          } frame_header;
 """
 
-import struct
-
 # Convert mar c header file types to python struct module types
 C_TO_STRUCT = {
     "INT32"  : "i",
@@ -263,7 +266,7 @@ def make_format(c_def_string):
         try:
             [typ, name] = decl.split()
         except ValueError:
-            logger.debug("skipping: %s" , line)
+            logger.debug("skipping: %s", line)
             continue
 
         if name.find("[") > -1:
@@ -289,6 +292,7 @@ def make_format(c_def_string):
 # Make these be compiled on loading module
 HEADER_NAMES, HEADER_FORMAT = make_format(CDEFINITION)
 
+
 def interpret_header(header, fmt, names):
     """
     given a format and header interpret it
@@ -298,7 +302,7 @@ def interpret_header(header, fmt, names):
     i = 0
     for name in names:
         if name in hdr:
-            if type(values[i]) == type("string"):
+            if isinstance(values[i], str):
                 hdr[name] = hdr[name] + values[i]
             else:
                 try:
@@ -316,7 +320,6 @@ class MarccdImage(TifImage):
     """ Read in data in mar ccd format, also
         MarMosaic images, including header info """
 
-
     def _readheader(self, infile):
         """
         Parser based approach
@@ -325,8 +328,6 @@ class MarccdImage(TifImage):
         infile.seek(1024)
         hstr = infile.read(3072)
         self.header = interpret_header(hstr, HEADER_FORMAT, HEADER_NAMES)
-
-
 
     def _read(self, fname):
         """

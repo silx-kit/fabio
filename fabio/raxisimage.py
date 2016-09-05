@@ -5,19 +5,23 @@
 #
 #    Principal author:       "Brian R. Pauw" "brian@stack.nl"
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 
 """
 
@@ -37,11 +41,13 @@ from __future__ import with_statement, print_function, division
 
 __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
-__license__ = "GPLv3+"
+__license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "02/12/2015"
+__date__ = "05/09/2016"
 
-import logging, struct, os
+import logging
+import struct
+import os
 import numpy
 from .fabioimage import FabioImage
 logger = logging.getLogger("raxisimage")
@@ -75,7 +81,6 @@ class RaxisImage(FabioImage):
             return False
         if (endian == '>' and numpy.little_endian) or (endian == '<' and not numpy.little_endian):
             return True
-
 
     def _readheader(self, infile):
         """
@@ -114,28 +119,28 @@ class RaxisImage(FabioImage):
                 if RKey[key] == -1:
                     rByte = len(rawHead) - curByte
                     self.header[key] = struct.unpack(fs + str(rByte) + 's',
-                            rawHead[curByte : curByte + rByte])[0]
+                                                     rawHead[curByte: curByte + rByte])[0]
                     curByte += rByte
                     break
 
                 rByte = RKey[key]
                 self.header[key] = struct.unpack(fs + str(rByte) + 's',
-                        rawHead[curByte : curByte + rByte])[0]
+                                                 rawHead[curByte: curByte + rByte])[0]
                 curByte += rByte
             elif RKey[key] == 'float':
                 # read a float, 4 bytes
                 rByte = 4
                 self.header[key] = struct.unpack(fs + 'f',
-                        rawHead[curByte : curByte + rByte])[0]
+                                                 rawHead[curByte: curByte + rByte])[0]
                 curByte += rByte
             elif RKey[key] == 'long':
                 # read a long, 4 bytes
                 rByte = 4
                 self.header[key] = struct.unpack(fs + 'l',
-                        rawHead[curByte : curByte + rByte])[0]
+                                                 rawHead[curByte: curByte + rByte])[0]
                 curByte += rByte
             else:
-                logging.warning('special header data type %s not understood' % Rkey[key])
+                logging.warning('special header data type %s not understood', RKey[key])
             if len(rawHead) == curByte:
                 # "end reached"
                 break
@@ -146,8 +151,6 @@ class RaxisImage(FabioImage):
         @param fname: name of the file
         @param frame:
         """
-
-        endianness = self.endianness
         self.resetvals()
         infile = self._open(fname, 'rb')
         offset = -1  # read from EOF backward
@@ -177,14 +180,14 @@ class RaxisImage(FabioImage):
                 if "len" in attrs:
                     infile.seek(infile.len - size)  # seek from EOF backwards
                 else:
-                    infile.seek(-size + offset + 1 , os.SEEK_END)  # seek from EOF backwards
+                    infile.seek(-size + offset + 1, os.SEEK_END)  # seek from EOF backwards
 #                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
                 logger.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
             except Exception as error:
                 logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
-        if  self.swap_needed():
+        if self.swap_needed():
             data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
         else:
             data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
@@ -211,119 +214,119 @@ class RaxisImage(FabioImage):
     def rigakuKeys(self):
         # returns dict of keys and keyLengths
         RKey = {
-                'InstrumentType':10,
-                'Version':10,
-                'Crystal Name':20,
-                'Crystal System':12,
-                'A':'float',
-                'B':'float',
-                'C':'float',
-                'Alpha':'float',
-                'Beta':'float',
-                'Gamma':'float',
-                'Space Group':12,
-                'Mosaicity':'float',
-                'Memo':80,
-                'Date':12,
-                'Reserved Space 1':84,
-                'User':20,
-                'Xray Target':4,
-                'Wavelength':'float',
-                'Monochromator':20,
-                'Monochromator 2theta':'float',
-                'Collimator':20,
-                'Filter':4,
-                'Crystal-to-detector Distance':'float',
-                'Generator Voltage':'float',
-                'Generator Current':'float',
-                'Focus':12,
-                'Xray Memo':80,
-                'IP shape':'long',  # 1= cylindrical, 0=flat. A "long" is overkill.
-                'Oscillation Type':'float',  # 1=weissenberg. else regular. "float"? really?
-                'Reserved Space 2':56,
-                'Crystal Mount (spindle axis)':4,
-                'Crystal Mount (beam axis)':4,
-                'Phi Datum':'float',  # degrees
-                'Phi Oscillation Start':'float',  # deg
-                'Phi Oscillation Stop':'float',  # deg
-                'Frame Number':'long',
-                'Exposure Time':'float',  # minutes
-                'Direct beam X position':'float',  # special, x,y
-                'Direct beam Y position':'float',  # special, x,y
-                'Omega Angle':'float',  # omega angle
-                'Chi Angle':'float',  # omega angle
-                '2Theta Angle':'float',  # omega angle
-                'Mu Angle':'float',  # omega angle
-                'Image Template':204,  # used for storing scan template..
-                'X Pixels':'long',
-                'Y Pixels':'long',
-                'X Pixel Length':'float',  # mm
-                'Y Pixel Length':'float',  # mm
-                'Record Length':'long',
-                'Total':'long',
-                'Starting Line':'long',
-                'IP Number':'long',
-                'Photomultiplier Ratio':'float',
-                'Fade Time (to start of read)':'float',
-                'Fade Time (to end of read)':'float',  # good that they thought of this, but is it applied?
-                'Host Type/Endian':10,
-                'IP Type':10,
-                'Horizontal Scan':'long',  # 0=left->Right, 1=Rigth->Left
-                'Vertical Scan':'long',  # 0=down->up, 1=up->down
-                'Front/Back Scan':'long',  # 0=front, 1=back
-                'Pixel Shift (RAXIS V)':'float',
-                'Even/Odd Intensity Ratio (RAXIS V)':'float',
-                'Magic number':'long',  # 'RAPID'-specific
-                'Number of Axes':'long',
-                'Goniometer Vector ax.1.1':'float',
-                'Goniometer Vector ax.1.2':'float',
-                'Goniometer Vector ax.1.3':'float',
-                'Goniometer Vector ax.2.1':'float',
-                'Goniometer Vector ax.2.2':'float',
-                'Goniometer Vector ax.2.3':'float',
-                'Goniometer Vector ax.3.1':'float',
-                'Goniometer Vector ax.3.2':'float',
-                'Goniometer Vector ax.3.3':'float',
-                'Goniometer Vector ax.4.1':'float',
-                'Goniometer Vector ax.4.2':'float',
-                'Goniometer Vector ax.4.3':'float',
-                'Goniometer Vector ax.5.1':'float',
-                'Goniometer Vector ax.5.2':'float',
-                'Goniometer Vector ax.5.3':'float',
-                'Goniometer Start ax.1':'float',
-                'Goniometer Start ax.2':'float',
-                'Goniometer Start ax.3':'float',
-                'Goniometer Start ax.4':'float',
-                'Goniometer Start ax.5':'float',
-                'Goniometer End ax.1':'float',
-                'Goniometer End ax.2':'float',
-                'Goniometer End ax.3':'float',
-                'Goniometer End ax.4':'float',
-                'Goniometer End ax.5':'float',
-                'Goniometer Offset ax.1':'float',
-                'Goniometer Offset ax.2':'float',
-                'Goniometer Offset ax.3':'float',
-                'Goniometer Offset ax.4':'float',
-                'Goniometer Offset ax.5':'float',
-                'Goniometer Scan Axis':'long',
-                'Axes Names':40,
-                'file':16,
-                'cmnt':20,
-                'smpl':20,
-                'iext':'long',
-                'reso':'long',
-                'save':'long',
-                'dint':'long',
-                'byte':'long',
-                'init':'long',
-                'ipus':'long',
-                'dexp':'long',
-                'expn':'long',
-                'posx':20,
-                'posy':20,
-                'xray':'long',
+                'InstrumentType': 10,
+                'Version': 10,
+                'Crystal Name': 20,
+                'Crystal System': 12,
+                'A': 'float',
+                'B': 'float',
+                'C': 'float',
+                'Alpha': 'float',
+                'Beta': 'float',
+                'Gamma': 'float',
+                'Space Group': 12,
+                'Mosaicity': 'float',
+                'Memo': 80,
+                'Date': 12,
+                'Reserved Space 1': 84,
+                'User': 20,
+                'Xray Target': 4,
+                'Wavelength': 'float',
+                'Monochromator': 20,
+                'Monochromator 2theta': 'float',
+                'Collimator': 20,
+                'Filter': 4,
+                'Crystal-to-detector Distance': 'float',
+                'Generator Voltage': 'float',
+                'Generator Current': 'float',
+                'Focus': 12,
+                'Xray Memo': 80,
+                'IP shape': 'long',  # 1= cylindrical, 0=flat. A "long" is overkill.
+                'Oscillation Type': 'float',  # 1=weissenberg. else regular. "float"? really?
+                'Reserved Space 2': 56,
+                'Crystal Mount (spindle axis)': 4,
+                'Crystal Mount (beam axis)': 4,
+                'Phi Datum': 'float',  # degrees
+                'Phi Oscillation Start': 'float',  # deg
+                'Phi Oscillation Stop': 'float',  # deg
+                'Frame Number': 'long',
+                'Exposure Time': 'float',  # minutes
+                'Direct beam X position': 'float',  # special, x,y
+                'Direct beam Y position': 'float',  # special, x,y
+                'Omega Angle': 'float',  # omega angle
+                'Chi Angle': 'float',  # omega angle
+                '2Theta Angle': 'float',  # omega angle
+                'Mu Angle': 'float',  # omega angle
+                'Image Template': 204,  # used for storing scan template..
+                'X Pixels': 'long',
+                'Y Pixels': 'long',
+                'X Pixel Length': 'float',  # mm
+                'Y Pixel Length': 'float',  # mm
+                'Record Length': 'long',
+                'Total': 'long',
+                'Starting Line': 'long',
+                'IP Number': 'long',
+                'Photomultiplier Ratio': 'float',
+                'Fade Time (to start of read)': 'float',
+                'Fade Time (to end of read)': 'float',  # good that they thought of this, but is it applied?
+                'Host Type/Endian': 10,
+                'IP Type': 10,
+                'Horizontal Scan': 'long',  # 0=left->Right, 1=Rigth->Left
+                'Vertical Scan': 'long',  # 0=down->up, 1=up->down
+                'Front/Back Scan': 'long',  # 0=front, 1=back
+                'Pixel Shift (RAXIS V)': 'float',
+                'Even/Odd Intensity Ratio (RAXIS V)': 'float',
+                'Magic number': 'long',  # 'RAPID'-specific
+                'Number of Axes': 'long',
+                'Goniometer Vector ax.1.1': 'float',
+                'Goniometer Vector ax.1.2': 'float',
+                'Goniometer Vector ax.1.3': 'float',
+                'Goniometer Vector ax.2.1': 'float',
+                'Goniometer Vector ax.2.2': 'float',
+                'Goniometer Vector ax.2.3': 'float',
+                'Goniometer Vector ax.3.1': 'float',
+                'Goniometer Vector ax.3.2': 'float',
+                'Goniometer Vector ax.3.3': 'float',
+                'Goniometer Vector ax.4.1': 'float',
+                'Goniometer Vector ax.4.2': 'float',
+                'Goniometer Vector ax.4.3': 'float',
+                'Goniometer Vector ax.5.1': 'float',
+                'Goniometer Vector ax.5.2': 'float',
+                'Goniometer Vector ax.5.3': 'float',
+                'Goniometer Start ax.1': 'float',
+                'Goniometer Start ax.2': 'float',
+                'Goniometer Start ax.3': 'float',
+                'Goniometer Start ax.4': 'float',
+                'Goniometer Start ax.5': 'float',
+                'Goniometer End ax.1': 'float',
+                'Goniometer End ax.2': 'float',
+                'Goniometer End ax.3': 'float',
+                'Goniometer End ax.4': 'float',
+                'Goniometer End ax.5': 'float',
+                'Goniometer Offset ax.1': 'float',
+                'Goniometer Offset ax.2': 'float',
+                'Goniometer Offset ax.3': 'float',
+                'Goniometer Offset ax.4': 'float',
+                'Goniometer Offset ax.5': 'float',
+                'Goniometer Scan Axis': 'long',
+                'Axes Names': 40,
+                'file': 16,
+                'cmnt': 20,
+                'smpl': 20,
+                'iext': 'long',
+                'reso': 'long',
+                'save': 'long',
+                'dint': 'long',
+                'byte': 'long',
+                'init': 'long',
+                'ipus': 'long',
+                'dexp': 'long',
+                'expn': 'long',
+                'posx': 20,
+                'posy': 20,
+                'xray': 'long',
                 # more values can be added here
-                'Header Leftovers':-1,
+                'Header Leftovers':-1
                 }
 
         # make a list with the items in the right order
@@ -440,9 +443,7 @@ class RaxisImage(FabioImage):
                 'posy',
                 'xray',
                 'Header Leftovers'
-                ]
-
-
+                 ]
         return RKey, orderList
 
 

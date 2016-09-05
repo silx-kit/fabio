@@ -8,19 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 
 """
 
@@ -44,22 +48,28 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 # Get ready for python3:
 from __future__ import with_statement, print_function, absolute_import
 
-__authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "30/10/2015"
+__authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
+__date__ = "05/09/2016"
 __status__ = "production"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
-__licence__ = "GPLv3+"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
+__licence__ = "MIT"
 
 
-from .fabioimage import FabioImage
-import numpy, struct, time, sys, traceback
+import struct
+import time
+import sys
 import logging
+import numpy
+from .fabioimage import FabioImage
+
+
 logger = logging.getLogger("mar345image")
 from .compression import compPCK, decPCK
 
 
 class Mar345Image(FabioImage):
     _need_a_real_file = True
+
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)
         self.numhigh = None
@@ -109,20 +119,20 @@ class Mar345Image(FabioImage):
         # image dimensions
         self.dim1 = int(struct.unpack(fs, l[4:8])[0])
         # number of high intensity pixels
-        self.numhigh = struct.unpack(fs, l[2 * 4 : (2 + 1) * 4])[0]
+        self.numhigh = struct.unpack(fs, l[2 * 4: (2 + 1) * 4])[0]
         h['NumHigh'] = self.numhigh
         # Image format
-        i = struct.unpack(fs, l[3 * 4 : (3 + 1) * 4])[0]
+        i = struct.unpack(fs, l[3 * 4: (3 + 1) * 4])[0]
         if i == 1:
             h['Format'] = 'compressed'
         elif i == 2:
             h['Format'] = 'spiral'
         else:
             h['Format'] = 'compressed'
-            logger.warning("image format could not be determined" + \
-                "- assuming compressed mar345")
+            logger.warning("image format could not be determined" +
+                           "- assuming compressed mar345")
         # collection mode
-        h['Mode'] = {0:'Dose', 1: 'Time'}[struct.unpack(fs, l[4 * 4:(4 + 1) * 4])[0]]
+        h['Mode'] = {0: 'Dose', 1: 'Time'}[struct.unpack(fs, l[4 * 4:(4 + 1) * 4])[0]]
         # total number of pixels
         self.numpixels = struct.unpack(fs, l[5 * 4:(5 + 1) * 4])[0]
         h['NumPixels'] = str(self.numpixels)
@@ -148,8 +158,8 @@ class Mar345Image(FabioImage):
         # TODO: validate these values against the binaries already read
         l = f.read(128)
         if b'mar research' not in l:
-            logger.warning("the string \"mar research\" should be in " + \
-                "bytes 65-76 of the header but was not")
+            logger.warning("the string \"mar research\" should be in " +
+                           "bytes 65-76 of the header but was not")
             start = 128
         else:
             start = l.index(b'mar research')
@@ -246,8 +256,7 @@ class Mar345Image(FabioImage):
             version = "0.1.1"
         lnsep = len(linesep)
 
-
-        lstout = [ 'mar research'.ljust(64 - lnsep)]
+        lstout = ['mar research'.ljust(64 - lnsep)]
         lstout.append("PROGRAM".ljust(15) + (str(self.header.get("PROGRAM", "FabIO Version %s" % (version))).ljust(49 - lnsep)))
         lstout.append("DATE".ljust(15) + (str(self.header.get("DATE", time.ctime()))).ljust(49 - lnsep))
         key = "SCANNER"
@@ -351,7 +360,6 @@ class Mar345Image(FabioImage):
         lstout.append(key)
         return linesep.join(lstout).ljust(size)
 
-
     def _high_intensity_pixel_records(self):
         flt_data = self.data.flatten()
         pix_location = numpy.where(flt_data > 65535)[0]
@@ -374,7 +382,7 @@ class Mar345Image(FabioImage):
         if data is None:
             return None
         else:
-#            enforce square image
+            #            enforce square image
             shape = data.shape
             assert len(shape) == 2, "image has 2 dimensions"
             mshape = max(shape)

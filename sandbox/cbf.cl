@@ -40,6 +40,20 @@ static int my_group_scan_exclusive_add( 	int value,
 	return ret_val;
 }
 
+static void dummy_sort(local int *data, int left, int right)
+{
+   for (int i = left ; i < right ; i++)
+       for (int j = i + 1; j <= right; j++)
+       {
+           if (data[i] > data[j])
+           {
+               int aux = data[i];
+               data[i] = data[j];
+               data[j] = aux;
+           }
+       }
+}
+
 /*
 Simple CumSum
 */
@@ -123,49 +137,111 @@ kernel void dec_byte_offset1(
 		uint chunk,
 		global int* start_position,
 		global int* end_position,
-		local int *a
+		local int *local_a,
+		local int *local_b
 		)
 {
 	uint lid = get_local_id(0);
 	uint ws = get_local_size(0);
 	uint wid = get_group_id(0);
 	uint nbwg = get_num_groups(0);
+
 	local int exceptions[1];
+	local int local_start[1];
+	local int new_offset[1];
+	local int value_offset[1];
+
 	uint to_process = chunk * ws;
 	uint start_process = wid *  to_process;
-	uint actual_start;
+	uint actual_start = 0;
 	uint actual_end;
 	uint end_process = min(input_size, start_process + to_process);
 	int last = 0;
 	char first = (wid==0)? 0: 1;
+	if (lid == 0)
+	{
+		exceptions[0] = 0;
+		value_offset[0] = 0;
+	}
+	local_b[lid] = ws;
+	barrier(CLK_LOCAL_MEM_FENCE);
+
+
 	for (uint offset=start_process; offset< end_process; offset+=ws)
 	{
 		uint pos = offset + lid;
 		if (pos<input_size)
 		{
-			a[lid] = input[pos];
+			local_a[lid] = input[pos];
 		}
 		else
 		{
-			a[lid] = 0;
+			local_a[lid] = 0;
 		}
-		if (a[lid] == -128)
+		if (local_a[lid] == -128)
 		{
-			atomic_inc(exceptions);
+			int exc_pos;
+			exc_pos = atomic_inc(exceptions);
+			local_b[exc_pos] = lid;
 		}
 		barrier(CLK_LOCAL_MEM_FENCE);
 		if (first)
 		{
-			if (exceptions)
+			if (exceptions[0])
 			{
-				printf("TODO");
+                if (lid==0)
+                {
+                	int last_ext = 0;
+                	dummy_sort(local_b, 0, exceptions[0]);
+                	for (int i=0; i<exceptions[0]; i++)
+                	{
+                		if ((local_b[i]-last_ext)<=4)
+                		{
+                			last_ext = local_b[i];
+                		}
+                		else
+                		{
+                			local_start[0] = last_ext + 5;
+                			break;
+                		}
+                	}
+                }
 			}
-
+			else
+			{
+				local_start[0] = 5;
+			}
+			barrier(CLK_LOCAL_MEM_FENCE);
+			actual_start = local_start[0];
+			start_position[wid] = start_process + local_start[0];
 		}
-		first = 0;
+		else
+		{
+			actual_start = 0;
+		}
+		if ((actual_start==0) && (exceptions[0] == 0))
+		{
+			local_b[lid] = lid + value_offset[0];
+
+			if (lid==0)
+				value_offset[0] = local_b[ws-1]
+		}
+		else
+		{
+			if (lid==0)
+			{
+				for (int i=actual_start, i<ws, i++)
+				{
+
+				}
+			}
+		}
+
+		barrier(CLK_LOCAL_MEM_FENCE);
+		offset += new_offset[0];
+		value_offset=local_b[lid]
+
 	}
-	start_position[wid] = start_process;
-//	ddebug3[wid] = start_process;
 }
 /**
  * \brief byte_offset decompression for CBF: Second pass: store the value at the right place
