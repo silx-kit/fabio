@@ -4594,12 +4594,11 @@ static __Pyx_memviewslice __pyx_f_5fabio_3ext_9mar345_IO_postdec(__Pyx_memviewsl
   /* "fabio/ext/mar345_IO.pyx":259
  *         cnp.int16_t[:] img
  *         cnp.int16_t last, cur, fl0, fl1, fl2
- *     size = img.size             # <<<<<<<<<<<<<<
+ *     size = comp.size             # <<<<<<<<<<<<<<
  *     img = numpy.zeros_like(comp)
  * 
  */
-  if (unlikely(!__pyx_v_img.memview)) { __Pyx_RaiseUnboundLocalError("img"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_img, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_5numpy_int16_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_5numpy_int16_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_comp, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_5numpy_int16_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_5numpy_int16_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_size); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
@@ -4610,7 +4609,7 @@ static __Pyx_memviewslice __pyx_f_5fabio_3ext_9mar345_IO_postdec(__Pyx_memviewsl
 
   /* "fabio/ext/mar345_IO.pyx":260
  *         cnp.int16_t last, cur, fl0, fl1, fl2
- *     size = img.size
+ *     size = comp.size
  *     img = numpy.zeros_like(comp)             # <<<<<<<<<<<<<<
  * 
  *     # First pixel
@@ -4851,7 +4850,7 @@ static __Pyx_memviewslice __pyx_f_5fabio_3ext_9mar345_IO_postdec(__Pyx_memviewsl
  *         last = cur
  *         fl0 = fl1             # <<<<<<<<<<<<<<
  *         fl1 = fl2
- *         fl2 = img[i - width + 1]
+ *         fl2 = img[i - width + 2]
  */
     __pyx_v_fl0 = __pyx_v_fl1;
 
@@ -4859,7 +4858,7 @@ static __Pyx_memviewslice __pyx_f_5fabio_3ext_9mar345_IO_postdec(__Pyx_memviewsl
  *         last = cur
  *         fl0 = fl1
  *         fl1 = fl2             # <<<<<<<<<<<<<<
- *         fl2 = img[i - width + 1]
+ *         fl2 = img[i - width + 2]
  * 
  */
     __pyx_v_fl1 = __pyx_v_fl2;
@@ -4867,11 +4866,11 @@ static __Pyx_memviewslice __pyx_f_5fabio_3ext_9mar345_IO_postdec(__Pyx_memviewsl
     /* "fabio/ext/mar345_IO.pyx":279
  *         fl0 = fl1
  *         fl1 = fl2
- *         fl2 = img[i - width + 1]             # <<<<<<<<<<<<<<
+ *         fl2 = img[i - width + 2]             # <<<<<<<<<<<<<<
  * 
- *     return comp
+ *     return img
  */
-    __pyx_t_11 = ((__pyx_v_i - __pyx_v_width) + 1);
+    __pyx_t_11 = ((__pyx_v_i - __pyx_v_width) + 2);
     __pyx_t_20 = -1;
     if (__pyx_t_11 < 0) {
       __pyx_t_11 += __pyx_v_img.shape[0];
@@ -4885,14 +4884,14 @@ static __Pyx_memviewslice __pyx_f_5fabio_3ext_9mar345_IO_postdec(__Pyx_memviewsl
   }
 
   /* "fabio/ext/mar345_IO.pyx":281
- *         fl2 = img[i - width + 1]
+ *         fl2 = img[i - width + 2]
  * 
- *     return comp             # <<<<<<<<<<<<<<
+ *     return img             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __PYX_INC_MEMVIEW(&__pyx_v_comp, 0);
-  __pyx_r = __pyx_v_comp;
+  __PYX_INC_MEMVIEW(&__pyx_v_img, 0);
+  __pyx_r = __pyx_v_img;
   goto __pyx_L0;
 
   /* "fabio/ext/mar345_IO.pyx":239

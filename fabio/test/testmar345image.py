@@ -138,6 +138,26 @@ class TestMar345(unittest.TestCase):
                 img = fabio.open(self.mar345)
                 print("reading #%s/%s" % (i, N))
 
+    def test_aux(self):
+        """test auxillary functions
+          
+        """
+        size = 1024
+        import fabio.ext.mar345_IO
+        a = numpy.random.randint(0, 32000, size * size).astype("int16")
+        b = fabio.ext.mar345_IO.precomp(a, size)
+        c = fabio.ext.mar345_IO.postdec(b, size)
+        self.assertEqual(abs(c - a).max(), 0, "pre-compression and post-decompression works")
+
+        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(8).astype("int32"))
+        self.assertEqual(a, 32, "8*4")
+
+        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(10).astype("int32"))
+        self.assertEqual(a, 50, "10*5")
+
+        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(50).astype("int32"))
+        self.assertEqual(a, 350, 50 * 7)
+
 
 def suite():
     testsuite = unittest.TestSuite()
@@ -145,6 +165,7 @@ def suite():
     testsuite.addTest(TestMar345("test_write"))
     testsuite.addTest(TestMar345("test_byteswap_write"))
     testsuite.addTest(TestMar345("test_memoryleak"))
+    testsuite.addTest(TestMar345("test_aux"))
 
     return testsuite
 
