@@ -40,7 +40,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/09/2016" 
+__date__ = "07/09/2016" 
 
 import cython
 cimport numpy as cnp
@@ -50,6 +50,10 @@ from cython.parallel import prange
 import numpy
 import os
 import tempfile
+
+cdef cnp.uint8_t[:] CCP4_PCK_BIT_COUNT = numpy.array([0, 4, 5, 6, 7, 8, 16, 32], dtype=numpy.uint8)
+cdef int CCP4_PCK_BLOCK_HEADER_LENGTH = 6
+#cdef cnp.uint8_t[:]  CCP4_PCK_MASK = numpy.array([0, 1, 3, 7, 15, 31, 63, 127, 255], dtype=numpy.uint8)
 
 cdef extern from "ccp4_pack.h":
     void* mar345_read_data_string(char *instream, int ocount, int dim1, int dim2) nogil
@@ -317,3 +321,189 @@ cpdef int calc_nb_bits(cnp.int32_t[:] data):
     else:
         size *= 32
     return size
+
+cdef class UnpackContainer:
+    cdef:
+        readonly int nrow, ncol, position, size
+        cnp.int16_t[:] data 
+    
+    def __cinit__(self, int ncol, int nrow):
+        self.nrow = nrow
+        self.ncol = ncol
+        self.size = nrow * ncol
+        self.data = numpy.zeros(self.size, dtype=numpy.int16)
+        self.position = 0
+    
+    def __dealloc__(self):
+        self.data = None
+        
+    cpdef get(self):
+        """retrieve the populated array"""
+        return numpy.asarray(self.data).reshape((self.ncol, self.nrow))
+    
+    cpdef set_zero(self, int number):
+        "set so many zeros"
+        self.position += number
+    
+    cpdef unpack(self, cnp.uint8_t[:] stream, int offset, int nb_value, int value_size):
+        """unpack a block on data, all the same size
+        
+        :param stream: input stream, already sliced
+        :param offset: number of bits of offset, at the begining of the stream 
+        :param nb_value: number of values to unpack
+        :param value_size: number of bits of each value
+        """
+        cdef:
+            int i, j       # simple counters
+            int value, tmp # value to be stored, under contruction
+            int pos        # position in stream
+            int to_read    # number of bytes to read
+        value = 0
+        pos = 0
+        for i in range(nb_value):
+            tmp = 0
+            # read as many bytes as needed and unpack them to tmp variable
+            to_read = (value_size - offset + 7) % 8
+            for j in range(to_read + 1):
+                tmp |= (stream[pos + j]) << (8 * j)
+            # Remove the lsb of tmp up to offset and apply the mask 
+            cur = (tmp >> offset) & ((1 << value_size) - 1)
+
+            # change sign if most significant bit is 1
+            if cur >> (value_size - 1):
+                cur |= -1 << (value_size - 1)
+            
+            # Update the storage
+            self.data[self.position] = <cnp.int16_t> cur
+            self.position += 1
+            
+            # Update the position in the array
+            offset = offset + value_size
+            pos += offset // 8
+            offset %= 8    
+
+
+def pack_image(img):
+    """Pack an image into a binary compressed block
+    
+    :param img: input image as numpy.int16
+    :return: 1D array of numpy.int8  
+    
+    JPA wrote:
+    ..........
+    Pack image 'img', containing 'x * y' WORD-sized pixels into byte-stream
+    """
+    cdef:
+        int nrow, ncol, size
+        cnp.int16_t[:] raw 
+    assert len(img.shape) == 2
+    nrow = img.shape[0]
+    ncol = img.shape[1]
+    
+    #pre compression: subtract the average of the 4 neighbours
+    raw = precomp(numpy.ascontiguous(img.ravel(), dtype=numpy.int16), ncol)
+    #...
+    return 
+
+
+def unpack_pck(cnp.uint8_t[:] stream, int ncol, int nrow):
+    """Unpack the raw stream and return the image
+    V1 only for now, V2 may be added later
+    
+    :param stream: raw input stream
+    :param ncol: number of columns in the image (i.e width)
+    :param nrow: number if rows in the image (i.e. height)
+    :return: decompressed image
+    """
+    cdef: 
+        int offset, new_offset #Number of bit to offset in the current byte
+        int pos, end_pos #current position and last position of block  in byte stream
+        int size #size of the input stream
+        int value, next # integer values 
+        UnpackContainer cont 
+
+    cont = UnpackContainer(ncol, nrow)
+    size = stream.size
+    # Luckily we start at byte boundary
+    offset = 0
+    pos = 0
+    
+    while pos < (size - 1) and cont.position<(cont.size -1):
+        value = stream[pos]
+        if offset > (8 - CCP4_PCK_BLOCK_HEADER_LENGTH):
+            # wrap around
+            pos += 1
+            next = stream[pos]
+            value |= next << 8
+            offset += CCP4_PCK_BLOCK_HEADER_LENGTH - 8
+        elif offset == (8 - CCP4_PCK_BLOCK_HEADER_LENGTH):
+            # Exactly on the boundary
+            pos += 1
+            offset = 0
+        else:
+            # stay in same byte
+            offset += CCP4_PCK_BLOCK_HEADER_LENGTH
+        
+        # we use 7 as mask: decimal value of 111 
+        nb_val_packed = 1 << ((value >> offset) & 7)   # move from offset, read 3 lsb, take the power of 2
+        nb_bit_per_val = CCP4_PCK_BIT_COUNT[(value >> (3 + offset)) & 7] # read 3 next bits, search in LUT for the size of each element in block
+
+    if nb_bit_per_val == 0:
+        cont.set_zero(nb_val_packed)
+
+    else:
+        nb_bit_in_block = nb_bit_per_val * nb_val_packed
+        end_pos = pos + (new_offset + nb_bit_in_block + 7) // 8
+        cont.unpack(stream[pos: end_pos + 1], offset, nb_val_packed, nb_bit_per_val)
+        pos = (offset + nb_bit_in_block) // 8
+        offset = (offset + nb_bit_in_block) % 8
+
+
+# def parse(stream):
+#     offset =0 
+#     pos = 0
+#     while True:
+#         value = ord(stream[pos])
+#         if offset>2:
+#             pos += 1
+#             next = ord(stream[pos])
+#             value |= next << 8
+#         nb_val_packed = 1 << ((value >> offset) & 7)
+#         nb_bit_per_val = CCP4_PCK_BIT_COUNT[(value >> (3+offset)) & 7]
+#         new_offset = (6 + offset)%8
+#         if new_offset ==0: 
+#             pos += 1
+#         if nb_bit_per_val == 0:
+#             offset = new_offset
+#             print("pos: %i offset:%s 0*%s"%(pos, offset,nb_val_packed))
+#         else:
+#             nb_bit_in_block = nb_bit_per_val * nb_val_packed
+#             end_pos = pos + (new_offset + nb_bit_in_block) // 8
+#             new_offset = (new_offset + nb_bit_in_block) % 8
+#             #pos=end_pos
+#             print("pos: %i offset:%s %s bits x %s "%(pos, offset,nb_bit_per_val, nb_val_packed) + " ".join(format(ord(i),"08b") for i in stream[pos-1:end_pos+1]))
+#             pos=end_pos
+#             offset=new_offset
+
+# def unpack_block(stream, offset, nb_value, value_size):
+#     value = 0
+#     pos = 0
+#     res = []
+#     print(" value size: %s x %s, offset: %s"%(value_size, nb_value, offset))
+#     for i in range(nb_value):
+#         tmp = 0
+#         to_read = (value_size - offset + 7) // 8
+#         print(" to_read: %s offset=%s" % (to_read,offset))
+#         for j in range(to_read + 1):
+#             tmp |= (ord(stream[pos + j])) << ( 8 * j)
+#         cur = (tmp >> offset) & ((1<<value_size) -1)
+# 
+#         #change sign if most significant bit is 1
+#         if cur>>(value_size-1):
+#             cur |= -1<<(value_size-1)
+# 
+#         res.append(check_sign(cur, value_size))
+#         offset = offset + value_size
+#         pos += offset//8
+#         offset %= 8
+#     return res
