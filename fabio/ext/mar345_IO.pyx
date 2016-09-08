@@ -40,16 +40,21 @@ __authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/09/2016" 
+__date__ = "08/09/2016" 
 
 import cython
 cimport numpy as cnp
 
-from cython.parallel import prange
-
 import numpy
 import os
 import tempfile
+
+
+ctypedef fused any_int_t:
+    cnp.int8_t
+    cnp.int16_t
+    cnp.int32_t
+    cnp.int64_t
 
 cdef cnp.uint8_t[:] CCP4_PCK_BIT_COUNT = numpy.array([0, 4, 5, 6, 7, 8, 16, 32], dtype=numpy.uint8)
 cdef int CCP4_PCK_BLOCK_HEADER_LENGTH = 6
@@ -94,7 +99,7 @@ def compress_pck(inputArray not None):
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
-def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):
+def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None, bint use_cython=False):
     """
     Unpack a mar345 compressed image
 
@@ -157,17 +162,23 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
             chigh = 0
     else:
         chigh = < int > overflowPix
-    data = numpy.empty((cdimy, cdimx), dtype=numpy.uint32)   
+
     instream = numpy.fromstring(raw[normal_offset:].lstrip(), dtype=numpy.uint8)
-    with nogil:
-        ################################################################################
-        #      rely to whichever version of ccp4_unpack is appropriate
-        ################################################################################
-        if cversion == 1:
-            ccp4_unpack_string(&data[0,0], &instream[0], cdimx, cdimy, 0)
-        else:
-            # cversion == 2:
-            ccp4_unpack_v2_string(&data[0,0], &instream[0], cdimx, cdimy, 0)
+
+    if use_cython:
+        unpacked = postdec(<cnp.int32_t[::1]> unpack_pck(instream, cdimx, cdimy).data, cdimx)
+        data = numpy.ascontiguousarray(unpacked, numpy.uint32).reshape((cdimy, cdimx))
+    else:
+        data = numpy.empty((cdimy, cdimx), dtype=numpy.uint32)   
+        with nogil:
+            ################################################################################
+            #      rely to whichever version of ccp4_unpack is appropriate
+            ################################################################################
+            if cversion == 1:
+                ccp4_unpack_string(&data[0,0], &instream[0], cdimx, cdimy, 0)
+            else:
+                # cversion == 2:
+                ccp4_unpack_v2_string(&data[0,0], &instream[0], cdimx, cdimy, 0)
 
     if chigh > 0:
         ################################################################################
@@ -201,7 +212,9 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
 # Re-Implementation of the pck compression 
 ################################################################################
 
-cpdef cnp.int16_t[:] precomp(cnp.int16_t[:] img, int width):
+@cython.boundscheck(False)
+@cython.cdivision(True)
+cpdef any_int_t[::1] precomp(any_int_t[::1] img, int width):
     """Pre-compression by subtracting the average value of the four neighbours
     
     Actually it looks a bit more complicated:
@@ -219,15 +232,16 @@ cpdef cnp.int16_t[:] precomp(cnp.int16_t[:] img, int width):
     comp[y, x] =  img[y, x] - (img[y-1, x-1] + img[y-1, x] + img[y-1, x+1] + img[y, x-1]) / 4
     """
     cdef: 
-        int size, i
-        cnp.int16_t[:] comp
-        cnp.int16_t last, cur
+        size_t size, i
+        any_int_t[:] comp
+        any_int_t last, cur, im0, im1, im2
     size = img.size
     comp = numpy.zeros_like(img)
     
     # First pixel
-    comp[0] = last = img[0]
-    
+    comp[0] = last = im0 = img[0]
+    im1 = img[1]
+    im2 = img[2]
     # First line (+ 1 pixel)
     for i in range(1, width + 1):
         cur = img[i]
@@ -235,12 +249,21 @@ cpdef cnp.int16_t[:] precomp(cnp.int16_t[:] img, int width):
         last = cur
     
     # Rest of the image
-    for i in prange(width + 1, size, nogil=True):
-        comp[i] += img[i] - (img[i - 1] + img[i - width + 1] + img[i - width] + img[i - width - 1] + 2) // 4
+    
+    for i in range(width + 1, size):
+        cur = img[i]
+        comp[i] = cur - (last + im0 + im1 + im2 + 2) // 4
+        last = cur
+        im0 = im1
+        im1 = im2
+        im2 = img[i - width + 2]
 
     return comp
 
-cpdef cnp.int16_t[:] postdec(cnp.int16_t[:] comp, int width):
+
+@cython.boundscheck(False)
+@cython.cdivision(True)
+cpdef any_int_t[::1] postdec(any_int_t[::1] comp, int width):
     """Post decompression by adding the average value of the four neighbours
     
     Actually it looks a bit more complicated:
@@ -257,9 +280,9 @@ cpdef cnp.int16_t[:] postdec(cnp.int16_t[:] comp, int width):
     comp[y, x] =  img[y, x] - (img[y-1, x-1] + img[y-1, x] + img[y-1, x+1] + img[y, x-1]) / 4
     """
     cdef: 
-        int size, i
-        cnp.int16_t[:] img
-        cnp.int16_t last, cur, fl0, fl1, fl2
+        size_t size, i
+        any_int_t[:] img
+        any_int_t last, cur, fl0, fl1, fl2
     size = comp.size
     img = numpy.zeros_like(comp)
     
@@ -271,7 +294,7 @@ cpdef cnp.int16_t[:] postdec(cnp.int16_t[:] comp, int width):
         img[i] = cur = comp[i] + last  
         last = cur
     
-    # Rest of the image: not paralle in this case
+    # Rest of the image: not parallel in this case
     fl0 = img[0]
     fl1 = img[1]
     fl2 = img[2]
@@ -285,7 +308,7 @@ cpdef cnp.int16_t[:] postdec(cnp.int16_t[:] comp, int width):
     return img
  
     
-cpdef int calc_nb_bits(cnp.int32_t[:] data):
+cpdef int calc_nb_bits(any_int_t[::1] data):
     """Calculate the number of bits needed to encode the data
     
     :param data: input data, probably slices of a larger array
@@ -298,10 +321,11 @@ cpdef int calc_nb_bits(cnp.int32_t[:] data):
     of size 'n' The size in bits of one encoded element can be 0, 4, 5, 6, 7,
     8, 16 or 32.
      """ 
-    cdef int size, maxsize, i
+    cdef size_t size, maxsize, i
     
     size = data.size
     maxsize = 0
+    
     for i in range(size):
         maxsize = max(maxsize, abs(data[i]))
     if maxsize == 0:
@@ -322,16 +346,17 @@ cpdef int calc_nb_bits(cnp.int32_t[:] data):
         size *= 32
     return size
 
+
 cdef class UnpackContainer:
     cdef:
-        readonly int nrow, ncol, position, size
-        cnp.int16_t[:] data 
+        readonly size_t nrow, ncol, position, size
+        cnp.int32_t[:] data 
     
     def __cinit__(self, int ncol, int nrow):
         self.nrow = nrow
         self.ncol = ncol
         self.size = nrow * ncol
-        self.data = numpy.zeros(self.size, dtype=numpy.int16)
+        self.data = numpy.zeros(self.size, dtype=numpy.int32)
         self.position = 0
     
     def __dealloc__(self):
@@ -344,8 +369,10 @@ cdef class UnpackContainer:
     cpdef set_zero(self, int number):
         "set so many zeros"
         self.position += number
-    
-    cpdef unpack(self, cnp.uint8_t[:] stream, int offset, int nb_value, int value_size):
+        
+    @cython.boundscheck(False)
+    @cython.cdivision(True)
+    cpdef unpack(self, cnp.uint8_t[::1] stream, int pos, int offset, int nb_value, int value_size):
         """unpack a block on data, all the same size
         
         :param stream: input stream, already sliced
@@ -354,33 +381,36 @@ cdef class UnpackContainer:
         :param value_size: number of bits of each value
         """
         cdef:
-            int i, j       # simple counters
-            int value, tmp # value to be stored, under contruction
-            int pos        # position in stream
-            int to_read    # number of bytes to read
+            int i, j        # simple counters
+            int value       # value to be stored
+            cnp.uint64_t tmp# under contruction: needs to be unsigned
+            int to_read     # number of bytes to read
+            int new_offset  # position after read 
         value = 0
-        pos = 0
+
         for i in range(nb_value):
             tmp = 0
             # read as many bytes as needed and unpack them to tmp variable
-            to_read = (value_size - offset + 7) % 8
+            new_offset = value_size + offset 
+            to_read = (new_offset + 7) // 8
+            
             for j in range(to_read + 1):
                 tmp |= (stream[pos + j]) << (8 * j)
-            # Remove the lsb of tmp up to offset and apply the mask 
+            # Remove the lsb of tmp up to offset and apply the mask
+             
             cur = (tmp >> offset) & ((1 << value_size) - 1)
-
+            
             # change sign if most significant bit is 1
             if cur >> (value_size - 1):
                 cur |= -1 << (value_size - 1)
-            
+
             # Update the storage
-            self.data[self.position] = <cnp.int16_t> cur
+            self.data[self.position] = cur
             self.position += 1
             
             # Update the position in the array
-            offset = offset + value_size
-            pos += offset // 8
-            offset %= 8    
+            pos += new_offset // 8
+            offset = new_offset % 8    
 
 
 def pack_image(img):
@@ -394,116 +424,108 @@ def pack_image(img):
     Pack image 'img', containing 'x * y' WORD-sized pixels into byte-stream
     """
     cdef:
-        int nrow, ncol, size
-        cnp.int16_t[:] raw 
+        int nrow, ncol, size, stream_size
+        any_int_t[::1] input_image, raw 
+        cnp.uint8_t[::1] stream
+        int i
+        int nb_val_packed
     assert len(img.shape) == 2
     nrow = img.shape[0]
     ncol = img.shape[1]
     
-    #pre compression: subtract the average of the 4 neighbours
-    raw = precomp(numpy.ascontiguous(img.ravel(), dtype=numpy.int16), ncol)
-    #...
-    return 
+    input_image = numpy.ascontiguousarray(img.ravel())
+    # pre compression: subtract the average of the 4 neighbours
+    raw = precomp(input_image, ncol)
+    
+    # allocation of the output buffer
+    size = nrow * ncol
+    max_stream = ((4 + 1.0 / 128) * size) #worse case, by far !
+    stream = numpy.zeros(max_stream, numpy.uint8_t)
+    
+    while position < size:
+        
+        nb_val_packed = 1
+        while (position + nb_val_packed) < size and nb_val_packed < 128:
+            current_block_size = calc_nb_bits(raw[position: position + nb_val_packed])
+            if position + 2 * nb_val_packed < size:
+                next_bock_size = calc_nb_bits(raw[position+nb_val_packed: position + 2*nb_val_packed])
+            else:
+                break
+            if 2 * max(current_block_size, next_bock_size) < (current_block_size + next_bock_size + CCP4_PCK_BLOCK_HEADER_LENGTH):
+                nb_val_packed *= 2 
+        print(position, nb_val_packed)
+        position += nb_val_packed
+                         
+    return stream
 
 
-def unpack_pck(cnp.uint8_t[:] stream, int ncol, int nrow):
+@cython.boundscheck(False)
+@cython.cdivision(True)
+cpdef UnpackContainer unpack_pck(cnp.uint8_t[:] stream, int ncol, int nrow):
     """Unpack the raw stream and return the image
     V1 only for now, V2 may be added later
     
     :param stream: raw input stream
     :param ncol: number of columns in the image (i.e width)
     :param nrow: number if rows in the image (i.e. height)
-    :return: decompressed image
+    :return: Container with decompressed image
     """
     cdef: 
-        int offset, new_offset #Number of bit to offset in the current byte
+        int offset       #Number of bit to offset in the current byte
         int pos, end_pos #current position and last position of block  in byte stream
-        int size #size of the input stream
-        int value, next # integer values 
-        UnpackContainer cont 
+        int size         #size of the input stream
+        int value, next  # integer values 
+        int nb_val_packed, nb_bit_per_val, nb_bit_in_block
+        UnpackContainer cont #Container with unpacked data 
 
     cont = UnpackContainer(ncol, nrow)
     size = stream.size
+    
     # Luckily we start at byte boundary
     offset = 0
     pos = 0
     
-    while pos < (size - 1) and cont.position<(cont.size -1):
+    while pos < (size - 1) and cont.position < (cont.size -1):
         value = stream[pos]
         if offset > (8 - CCP4_PCK_BLOCK_HEADER_LENGTH):
             # wrap around
             pos += 1
             next = stream[pos]
             value |= next << 8
+            value = value >> offset
             offset += CCP4_PCK_BLOCK_HEADER_LENGTH - 8
         elif offset == (8 - CCP4_PCK_BLOCK_HEADER_LENGTH):
             # Exactly on the boundary
+            value = value >> offset
             pos += 1
             offset = 0
         else:
             # stay in same byte
+            value = value >> offset
             offset += CCP4_PCK_BLOCK_HEADER_LENGTH
         
         # we use 7 as mask: decimal value of 111 
-        nb_val_packed = 1 << ((value >> offset) & 7)   # move from offset, read 3 lsb, take the power of 2
-        nb_bit_per_val = CCP4_PCK_BIT_COUNT[(value >> (3 + offset)) & 7] # read 3 next bits, search in LUT for the size of each element in block
+        nb_val_packed = 1 << (value & 7)   # move from offset, read 3 lsb, take the power of 2
+        nb_bit_per_val = CCP4_PCK_BIT_COUNT[(value >> 3) & 7] # read 3 next bits, search in LUT for the size of each element in block
 
-    if nb_bit_per_val == 0:
-        cont.set_zero(nb_val_packed)
+        if nb_bit_per_val == 0:
+            cont.set_zero(nb_val_packed)
+        else:
+            nb_bit_in_block = nb_bit_per_val * nb_val_packed
+            #
+            #try:
+            cont.unpack(stream, pos, offset, nb_val_packed, nb_bit_per_val)
+#             except IndexError as err:
+#                 print("**IndexError**: %s" % err)
+#                 end_pos = pos + (offset + nb_bit_in_block + 7) // 8
+#                 print(pos, end_pos, stream.size)
+#                 print(offset, nb_val_packed, nb_bit_per_val)
+#                 print(cont.size, cont.position)
+#                 break
+            offset += nb_bit_in_block
+            pos += offset // 8
+            offset %= 8
+#             break
+    return cont
 
-    else:
-        nb_bit_in_block = nb_bit_per_val * nb_val_packed
-        end_pos = pos + (new_offset + nb_bit_in_block + 7) // 8
-        cont.unpack(stream[pos: end_pos + 1], offset, nb_val_packed, nb_bit_per_val)
-        pos = (offset + nb_bit_in_block) // 8
-        offset = (offset + nb_bit_in_block) % 8
-
-
-# def parse(stream):
-#     offset =0 
-#     pos = 0
-#     while True:
-#         value = ord(stream[pos])
-#         if offset>2:
-#             pos += 1
-#             next = ord(stream[pos])
-#             value |= next << 8
-#         nb_val_packed = 1 << ((value >> offset) & 7)
-#         nb_bit_per_val = CCP4_PCK_BIT_COUNT[(value >> (3+offset)) & 7]
-#         new_offset = (6 + offset)%8
-#         if new_offset ==0: 
-#             pos += 1
-#         if nb_bit_per_val == 0:
-#             offset = new_offset
-#             print("pos: %i offset:%s 0*%s"%(pos, offset,nb_val_packed))
-#         else:
-#             nb_bit_in_block = nb_bit_per_val * nb_val_packed
-#             end_pos = pos + (new_offset + nb_bit_in_block) // 8
-#             new_offset = (new_offset + nb_bit_in_block) % 8
-#             #pos=end_pos
-#             print("pos: %i offset:%s %s bits x %s "%(pos, offset,nb_bit_per_val, nb_val_packed) + " ".join(format(ord(i),"08b") for i in stream[pos-1:end_pos+1]))
-#             pos=end_pos
-#             offset=new_offset
-
-# def unpack_block(stream, offset, nb_value, value_size):
-#     value = 0
-#     pos = 0
-#     res = []
-#     print(" value size: %s x %s, offset: %s"%(value_size, nb_value, offset))
-#     for i in range(nb_value):
-#         tmp = 0
-#         to_read = (value_size - offset + 7) // 8
-#         print(" to_read: %s offset=%s" % (to_read,offset))
-#         for j in range(to_read + 1):
-#             tmp |= (ord(stream[pos + j])) << ( 8 * j)
-#         cur = (tmp >> offset) & ((1<<value_size) -1)
-# 
-#         #change sign if most significant bit is 1
-#         if cur>>(value_size-1):
-#             cur |= -1<<(value_size-1)
-# 
-#         res.append(check_sign(cur, value_size))
-#         offset = offset + value_size
-#         pos += offset//8
-#         offset %= 8
-#     return res
+    
