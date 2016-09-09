@@ -40,7 +40,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "08/09/2016" 
+__date__ = "09/09/2016" 
 
 import cython
 cimport numpy as cnp
@@ -113,8 +113,8 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     """
     cdef:
         int cdimx, cdimy, chigh, cversion, records, normal_offset, lenkey, i, stop, idx, value
-        cnp.uint32_t[:, :] data
-        cnp.uint8_t[:] instream
+        cnp.uint32_t[:, ::1] data
+        cnp.uint8_t[::1] instream
         cnp.int32_t[:, :] overflow_data  # handles overflows
         void* out
     end = None
@@ -166,7 +166,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     instream = numpy.fromstring(raw[normal_offset:].lstrip(), dtype=numpy.uint8)
 
     if use_cython:
-        unpacked = postdec(<cnp.int32_t[::1]> unpack_pck(instream, cdimx, cdimy).data, cdimx)
+        unpacked = postdec(unpack_pck(instream, cdimx, cdimy).get1d(), cdimx)
         data = numpy.ascontiguousarray(unpacked, numpy.uint32).reshape((cdimy, cdimx))
     else:
         data = numpy.empty((cdimy, cdimx), dtype=numpy.uint32)   
@@ -233,7 +233,7 @@ cpdef any_int_t[::1] precomp(any_int_t[::1] img, int width):
     """
     cdef: 
         size_t size, i
-        any_int_t[:] comp
+        any_int_t[::1] comp
         any_int_t last, cur, im0, im1, im2
     size = img.size
     comp = numpy.zeros_like(img)
@@ -281,7 +281,7 @@ cpdef any_int_t[::1] postdec(any_int_t[::1] comp, int width):
     """
     cdef: 
         size_t size, i
-        any_int_t[:] img
+        any_int_t[::1] img
         any_int_t last, cur, fl0, fl1, fl2
     size = comp.size
     img = numpy.zeros_like(comp)
@@ -350,7 +350,7 @@ cpdef int calc_nb_bits(any_int_t[::1] data):
 cdef class UnpackContainer:
     cdef:
         readonly size_t nrow, ncol, position, size
-        cnp.int32_t[:] data 
+        cnp.int32_t[::1] data 
     
     def __cinit__(self, int ncol, int nrow):
         self.nrow = nrow
@@ -362,10 +362,14 @@ cdef class UnpackContainer:
     def __dealloc__(self):
         self.data = None
         
-    cpdef get(self):
+    cpdef cnp.int32_t[:, ::1] get(self):
         """retrieve the populated array"""
         return numpy.asarray(self.data).reshape((self.ncol, self.nrow))
-    
+
+    cpdef cnp.int32_t[::1] get1d(self):
+        """retrieve the populated array"""
+        return numpy.asarray(self.data)
+
     cpdef set_zero(self, int number):
         "set so many zeros"
         self.position += number
@@ -425,43 +429,71 @@ def pack_image(img):
     """
     cdef:
         int nrow, ncol, size, stream_size
-        any_int_t[::1] input_image, raw 
+        cnp.int16_t[::1] input_image, raw 
         cnp.uint8_t[::1] stream
-        int i
-        int nb_val_packed
+        size_t i, position
+        size_t nb_val_packed
     assert len(img.shape) == 2
     nrow = img.shape[0]
     ncol = img.shape[1]
     
-    input_image = numpy.ascontiguousarray(img.ravel())
+    input_image = (numpy.ascontiguousarray(img.ravel(), dtype=numpy.int16))
     # pre compression: subtract the average of the 4 neighbours
     raw = precomp(input_image, ncol)
     
     # allocation of the output buffer
     size = nrow * ncol
     max_stream = ((4 + 1.0 / 128) * size) #worse case, by far !
-    stream = numpy.zeros(max_stream, numpy.uint8_t)
-    
+    stream = numpy.zeros(max_stream, numpy.uint8)
+    position = 0
     while position < size:
         
         nb_val_packed = 1
         while (position + nb_val_packed) < size and nb_val_packed < 128:
             current_block_size = calc_nb_bits(raw[position: position + nb_val_packed])
-            if position + 2 * nb_val_packed < size:
-                next_bock_size = calc_nb_bits(raw[position+nb_val_packed: position + 2*nb_val_packed])
+            if (position + 2 * nb_val_packed) < size:
+                next_bock_size = calc_nb_bits(raw[position + nb_val_packed: position + 2 * nb_val_packed])
             else:
                 break
             if 2 * max(current_block_size, next_bock_size) < (current_block_size + next_bock_size + CCP4_PCK_BLOCK_HEADER_LENGTH):
                 nb_val_packed *= 2 
-        print(position, nb_val_packed)
+            else:
+                break
+        print(position, nb_val_packed, current_block_size//nb_val_packed)
         position += nb_val_packed
                          
     return stream
 
+cdef class PackContainer:
+    cdef: 
+        readonly size_t position, offset, allocated
+        cnp.int8_t[::1] data 
+    
+    def __cinit__(self, size_t size=4096):
+        """Constructor of the class
+        
+        :param size: start size of the array
+        """
+        self.position = 0
+        self.offset = 0
+        self.allocated = size
+        self.data = numpy.zeros(self.allocated, dtype=numpy.int32)
+    
+    def __dealloc__(self):
+        self.data = None
+        
+    cpdef cnp.int8_t[::1] get(self):
+        """retrieve the populated array"""
+        if self.offset:
+            end = self.position + 2
+        else:
+            end = self.position + 1
+        return numpy.asarray(self.data[:end])
+
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
-cpdef UnpackContainer unpack_pck(cnp.uint8_t[:] stream, int ncol, int nrow):
+cpdef UnpackContainer unpack_pck(cnp.uint8_t[::1] stream, int ncol, int nrow):
     """Unpack the raw stream and return the image
     V1 only for now, V2 may be added later
     
