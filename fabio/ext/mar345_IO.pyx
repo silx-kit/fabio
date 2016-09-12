@@ -40,7 +40,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2015, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "09/09/2016" 
+__date__ = "12/09/2016" 
 
 import cython
 cimport numpy as cnp
@@ -56,8 +56,12 @@ ctypedef fused any_int_t:
     cnp.int32_t
     cnp.int64_t
 
-cdef cnp.uint8_t[:] CCP4_PCK_BIT_COUNT = numpy.array([0, 4, 5, 6, 7, 8, 16, 32], dtype=numpy.uint8)
-cdef int CCP4_PCK_BLOCK_HEADER_LENGTH = 6
+# Few constants:
+cdef:
+    cnp.uint8_t *CCP4_PCK_BIT_COUNT = [0, 4, 5, 6, 7, 8, 16, 32]
+    cnp.uint8_t *CCP4_BITSIZE = [0, 0, 0, 0, 1, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0, 
+                                 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7]
+    int CCP4_PCK_BLOCK_HEADER_LENGTH = 6
 #cdef cnp.uint8_t[:]  CCP4_PCK_MASK = numpy.array([0, 1, 3, 7, 15, 31, 63, 127, 255], dtype=numpy.uint8)
 
 cdef extern from "ccp4_pack.h":
@@ -208,10 +212,10 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
 #         data.flat[idx] = value.astype(numpy.uint32)
     return numpy.asarray(data)
 
-################################################################################
-# Re-Implementation of the pck compression 
-################################################################################
 
+################################################################################
+# Re-Implementation of the pck compression/decompression 
+################################################################################
 @cython.boundscheck(False)
 @cython.cdivision(True)
 cpdef any_int_t[::1] precomp(any_int_t[::1] img, int width):
@@ -329,22 +333,21 @@ cpdef int calc_nb_bits(any_int_t[::1] data):
     for i in range(size):
         maxsize = max(maxsize, abs(data[i]))
     if maxsize == 0:
-        size = 0
+        return = 0
     elif maxsize < 8:
-        size *= 4
+        return size * 4
     elif maxsize < 16:
-        size *= 5
+        return size * 5
     elif maxsize < 32:
-        size *= 6
+        return size * 6
     elif maxsize < 64:
-        size *= 7
+        return size * 7
     elif maxsize < 128:
-        size *= 8
+        return size * 8
     elif maxsize < 32768:
-        size *= 16
+        return size * 16
     else:
-        size *= 32
-    return size
+        return size *= 32
 
 
 cdef class UnpackContainer:
@@ -362,7 +365,7 @@ cdef class UnpackContainer:
     def __dealloc__(self):
         self.data = None
         
-    cpdef cnp.int32_t[:, ::1] get(self):
+    def [:, ::1] get(self):
         """retrieve the populated array"""
         return numpy.asarray(self.data).reshape((self.ncol, self.nrow))
 
@@ -417,10 +420,11 @@ cdef class UnpackContainer:
             offset = new_offset % 8    
 
 
-def pack_image(img):
+def pack_image(img, do_precomp=True):
     """Pack an image into a binary compressed block
     
     :param img: input image as numpy.int16
+    :param do_precomp: perform the subtraction to the 4 neighbours's average. False is for testing the packing only 
     :return: 1D array of numpy.int8  
     
     JPA wrote:
@@ -430,24 +434,25 @@ def pack_image(img):
     cdef:
         int nrow, ncol, size, stream_size
         cnp.int16_t[::1] input_image, raw 
-        cnp.uint8_t[::1] stream
+        PackContainer container
         size_t i, position
         size_t nb_val_packed
     assert len(img.shape) == 2
     nrow = img.shape[0]
     ncol = img.shape[1]
     
-    input_image = (numpy.ascontiguousarray(img.ravel(), dtype=numpy.int16))
-    # pre compression: subtract the average of the 4 neighbours
-    raw = precomp(input_image, ncol)
+    if do_precomp:
+        input_image = (numpy.ascontiguousarray(img.ravel(), dtype=numpy.int16))
+        # pre compression: subtract the average of the 4 neighbours
+        raw = precomp(input_image, ncol)
+    else:
+        raw = numpy.ascontiguousarray(img.ravel(), dtype=numpy.int16)
     
     # allocation of the output buffer
     size = nrow * ncol
-    max_stream = ((4 + 1.0 / 128) * size) #worse case, by far !
-    stream = numpy.zeros(max_stream, numpy.uint8)
+    container = PackContainer(size)
     position = 0
     while position < size:
-        
         nb_val_packed = 1
         while (position + nb_val_packed) < size and nb_val_packed < 128:
             current_block_size = calc_nb_bits(raw[position: position + nb_val_packed])
@@ -456,18 +461,21 @@ def pack_image(img):
             else:
                 break
             if 2 * max(current_block_size, next_bock_size) < (current_block_size + next_bock_size + CCP4_PCK_BLOCK_HEADER_LENGTH):
-                nb_val_packed *= 2 
+                nb_val_packed *= 2
+                current_block_size *= 2
             else:
                 break
-        print(position, nb_val_packed, current_block_size//nb_val_packed)
+#         print(position, nb_val_packed, current_block_size // nb_val_packed)
+        container.append(raw, position, nb_val_packed, current_block_size)
         position += nb_val_packed
                          
-    return stream
+    return numpy.asarray(container.get())
+
 
 cdef class PackContainer:
     cdef: 
         readonly size_t position, offset, allocated
-        cnp.int8_t[::1] data 
+        cnp.uint8_t[::1] data 
     
     def __cinit__(self, size_t size=4096):
         """Constructor of the class
@@ -477,18 +485,111 @@ cdef class PackContainer:
         self.position = 0
         self.offset = 0
         self.allocated = size
-        self.data = numpy.zeros(self.allocated, dtype=numpy.int32)
+        self.data = numpy.zeros(self.allocated, dtype=numpy.uint8)
     
     def __dealloc__(self):
         self.data = None
         
-    cpdef cnp.int8_t[::1] get(self):
+    cpdef cnp.uint8_t[::1] get(self):
         """retrieve the populated array"""
         if self.offset:
-            end = self.position + 2
-        else:
             end = self.position + 1
+        else:
+            end = self.position
         return numpy.asarray(self.data[:end])
+    
+    cpdef append(self, cnp.int16_t[::1] data, size_t position, size_t nb_val, size_t block_size): 
+        """Append a block of data[position: position+nb_val] to the compressed
+        stream. Only the most significant bits are takes.
+        
+        :param data: input uncompressed image as 1D array
+        :param position: start position of reading of the image
+        :param nb_val: number of value from data to pack in the block
+        :param block_size: number of bits for the whole block
+        
+        The 6 bits header is managed here as well as the stream resizing.
+        """
+        cdef:
+            size_t offset, index, i, bit_per_val, nb_bytes
+            cnp.uint64_t tmp, tostore, mask
+            cnp.int64_t topack
+            
+        bit_per_val = block_size // nb_val
+        
+        # realloc memory if needed
+        nb_bytes = (CCP4_PCK_BLOCK_HEADER_LENGTH + block_size + 7) // 8
+        if self.position + nb_bytes >= self.allocated:
+            self.allocated *= 2
+            new_stream = numpy.zeros(self.allocated, dtype=numpy.uint8)
+            if self.offset:
+                new_stream[:self.position + 1] = self.data[:self.position + 1]
+            else:
+                new_stream[:self.position] = self.data[:self.position]
+            self.data = new_stream
+        
+        if self.offset == 0:
+            tmp = 0
+        else:
+            tmp = self.data[self.position]
+        
+        # append 6 bits of header
+        tmp |= pack_nb_val(nb_val, bit_per_val) << self.offset
+        self.offset += CCP4_PCK_BLOCK_HEADER_LENGTH
+        self.data[self.position] = tmp & (255)
+        if self.offset >= 8:
+            self.position += 1
+            self.offset -= 8 
+            self.data[self.position] = (tmp >> 8) & (255)
+        
+        if bit_per_val == 0:
+            return
+        # now pack every value in input stream" 
+        for i in range(nb_val):
+            topack = data[position + i]
+
+            mask = ((1 << (bit_per_val - 1)) - 1)
+            tmp = (topack & mask)
+            if topack < 0: 
+                # handle the sign
+                tmp |= 1 << (bit_per_val - 1)
+             
+            # read last position
+            if self.offset == 0:
+                tostore = 0
+            else:
+                tostore = self.data[self.position]     
+            
+            tostore |= tmp << self.offset
+            self.offset += bit_per_val
+
+            # Update the array
+            self.data[self.position] = tostore & (255)
+            while self.offset >= 8:
+                tostore = tostore >> 8
+                self.offset -= 8
+                self.position += 1
+                self.data[self.position] = tostore & (255)
+            
+
+cpdef cnp.uint8_t pack_nb_val(cnp.uint8_t nb_val, cnp.uint8_t value_size):
+    """Calculate the header to be stored in 6 bits
+    
+    :param nb_val: number of values to be stored: must be a power of 2 <=128
+    :param value_size: can be 0, 4, 5, 6, 7, 8, 16 or 32, the number of bits per value
+    :return: the header as an unsigned char 
+    
+    """
+    cdef:
+        cnp.uint32_t value, i
+        
+    value = 0 
+    for i in range(8):
+        if (nb_val >> i) == 1:
+            value |= i
+            break
+    value |= (CCP4_BITSIZE[value_size]) << (CCP4_PCK_BLOCK_HEADER_LENGTH >> 1) 
+    # should be 6/2 = 3
+    return value
 
 
 @cython.boundscheck(False)
@@ -503,11 +604,11 @@ cpdef UnpackContainer unpack_pck(cnp.uint8_t[::1] stream, int ncol, int nrow):
     :return: Container with decompressed image
     """
     cdef: 
-        int offset       #Number of bit to offset in the current byte
-        int pos, end_pos #current position and last position of block  in byte stream
-        int size         #size of the input stream
+        size_t offset       #Number of bit to offset in the current byte
+        size_t pos, end_pos #current position and last position of block  in byte stream
+        size_t size         #size of the input stream
         int value, next  # integer values 
-        int nb_val_packed, nb_bit_per_val, nb_bit_in_block
+        size_t nb_val_packed, nb_bit_per_val, nb_bit_in_block
         UnpackContainer cont #Container with unpacked data 
 
     cont = UnpackContainer(ncol, nrow)
@@ -517,7 +618,7 @@ cpdef UnpackContainer unpack_pck(cnp.uint8_t[::1] stream, int ncol, int nrow):
     offset = 0
     pos = 0
     
-    while pos < (size - 1) and cont.position < (cont.size -1):
+    while pos < (size - 1) and cont.position < (cont.size - 1):
         value = stream[pos]
         if offset > (8 - CCP4_PCK_BLOCK_HEADER_LENGTH):
             # wrap around
