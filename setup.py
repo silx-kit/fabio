@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/09/2016"
+__date__ = "13/09/2016"
 __status__ = "stable"
 
 import os
@@ -152,7 +152,7 @@ def Extension(name, source=None, can_use_openmp=False, extra_sources=None, **kwa
 
 ext_modules = [Extension('cf_io', extra_sources=['fabio/ext/src/columnfile.c']),
                Extension("byte_offset"),
-               Extension('mar345_IO', extra_sources=['fabio/ext/src/ccp4_pack.c']),
+               Extension('mar345_IO', extra_sources=['fabio/ext/src/ccp4_pack.c'], can_use_openmp=False),
                Extension('_cif')]
 
 

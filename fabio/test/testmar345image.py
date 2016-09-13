@@ -142,21 +142,55 @@ class TestMar345(unittest.TestCase):
         """test auxillary functions
           
         """
-        size = 1024
+        shape = 120, 130
+        size = shape[0] * shape[1]
         import fabio.ext.mar345_IO
-        a = numpy.random.randint(0, 32000, size * size).astype("int16")
-        b = fabio.ext.mar345_IO.precomp(a, size)
-        c = fabio.ext.mar345_IO.postdec(b, size)
-        self.assertEqual(abs(c - a).max(), 0, "pre-compression and post-decompression works")
+        img = numpy.random.randint(0, 32000, size).astype("int16")
+        b = fabio.ext.mar345_IO.precomp(img, shape[-1])
+        c = fabio.ext.mar345_IO.postdec(b, shape[-1])
+        self.assertEqual(abs(c - img).max(), 0, "pre-compression and post-decompression works")
 
-        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(8).astype("int32"))
+        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(8).astype("int32"), 0, 8)
         self.assertEqual(a, 32, "8*4")
 
-        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(10).astype("int32"))
+        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(10).astype("int32"), 0, 10)
         self.assertEqual(a, 50, "10*5")
 
-        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(50).astype("int32"))
+        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(50).astype("int32"), 0, 50)
         self.assertEqual(a, 350, 50 * 7)
+
+        img.shape = shape
+        cmp_ccp4 = fabio.ext.mar345_IO.compress_pck(img, use_CCP4=True)
+        cmp_fab = fabio.ext.mar345_IO.compress_pck(img, use_CCP4=False)
+        delta = abs(len(cmp_fab) - len(cmp_ccp4))
+        if len(cmp_fab) > len(cmp_ccp4):
+            logger.error("len(fabio): %s len(ccp4):%s", len(cmp_fab), len(cmp_ccp4))
+        self.assertLessEqual(delta, 10, "Compression by FabIO is similar to CCP4")
+        img_c_c = fabio.ext.mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=True)
+        delta = img_c_c - img
+        ok = abs(delta).ravel()
+        if ok.max() > 0:
+            logger.error("img_c_c: %s %s" % numpy.where(delta))
+
+        img_c_f = fabio.ext.mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=False)
+        delta = img_c_f - img
+        ok = abs(delta).ravel()
+        if ok.max() > 0:
+            logger.error("img_c_f: %s %s" % numpy.where(delta))
+
+        img_f_c = fabio.ext.mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=True)
+        delta = img_f_c - img
+        ok = abs(delta).ravel()
+        if ok.max() > 0:
+            logger.error("img_f_c: %s %s" % numpy.where(delta))
+
+        img_f_f = fabio.ext.mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=False)
+        delta = img_f_f - img
+        ok = abs(delta).ravel()
+        if ok.max() > 0:
+            logger.error("img_f_f: %s %s" % numpy.where(delta))
+
+            # self.assert
 
 
 def suite():
