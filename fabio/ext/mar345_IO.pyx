@@ -342,7 +342,7 @@ cpdef inline cnp.uint32_t[::1] postdec(cnp.int32_t[::1] comp, int width):
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef inline int calc_nb_bits(any_int_t[::1] data, cnp.uint32_t start, cnp.uint32_t stop):
+cpdef inline int calc_nb_bits(any_int_t[::1] data, cnp.uint32_t start, cnp.uint32_t stop) nogil:
     """Calculate the number of bits needed to encode the data
     
     :param data: input data, probably slices of a larger array
@@ -424,6 +424,7 @@ def pack_image(img, bint do_precomp=True):
 
     # allocation of the output buffer
     container = PackContainer(size)
+    
     position = 0
     while position < size:
         nb_val_packed = 1
@@ -503,51 +504,50 @@ cdef class PackContainer:
                 new_stream[:self.position] = self.data[:self.position]
             self.data = new_stream
         
-        if self.offset == 0:
-            tmp = 0
-        else:
-            tmp = self.data[self.position]
-        
-        # append 6 bits of header
-        tmp |= pack_nb_val(nb_val, bit_per_val) << self.offset
-        self.offset += CCP4_PCK_BLOCK_HEADER_LENGTH
-        self.data[self.position] = tmp & (255)
-        if self.offset >= 8:
-            self.position += 1
-            self.offset -= 8 
-            self.data[self.position] = (tmp >> 8) & (255)
-
-        if bit_per_val == 0:
-            return
-        # now pack every value in input stream" 
-        for i in range(nb_val):
-            topack = data[position + i]
-
-            mask = ((1 << (bit_per_val - 1)) - 1)
-            tmp = (topack & mask)
-            if topack < 0: 
-                # handle the sign
-                tmp |= 1 << (bit_per_val - 1)
-             
-            # read last position
+        with nogil:
             if self.offset == 0:
-                tostore = 0
+                tmp = 0
             else:
-                tostore = self.data[self.position]     
+                tmp = self.data[self.position]
             
-            tostore |= tmp << self.offset
-            self.offset += bit_per_val
-
-            # Update the array
-            self.data[self.position] = tostore & (255)
-            while self.offset >= 8:
-                tostore = tostore >> 8
-                self.offset -= 8
+            # append 6 bits of header
+            tmp |= pack_nb_val(nb_val, bit_per_val) << self.offset
+            self.offset += CCP4_PCK_BLOCK_HEADER_LENGTH
+            self.data[self.position] = tmp & (255)
+            if self.offset >= 8:
                 self.position += 1
+                self.offset -= 8 
+                self.data[self.position] = (tmp >> 8) & (255)
+    
+            # now pack every value in input stream" 
+            for i in range(nb_val):
+                topack = data[position + i]
+    
+                mask = ((1 << (bit_per_val - 1)) - 1)
+                tmp = (topack & mask)
+                if topack < 0: 
+                    # handle the sign
+                    tmp |= 1 << (bit_per_val - 1)
+                 
+                # read last position
+                if self.offset == 0:
+                    tostore = 0
+                else:
+                    tostore = self.data[self.position]     
+                
+                tostore |= tmp << self.offset
+                self.offset += bit_per_val
+    
+                # Update the array
                 self.data[self.position] = tostore & (255)
+                while self.offset >= 8:
+                    tostore = tostore >> 8
+                    self.offset -= 8
+                    self.position += 1
+                    self.data[self.position] = tostore & (255)
             
 
-cpdef inline cnp.uint8_t pack_nb_val(cnp.uint8_t nb_val, cnp.uint8_t value_size):
+cpdef inline cnp.uint8_t pack_nb_val(cnp.uint8_t nb_val, cnp.uint8_t value_size) nogil:
     """Calculate the header to be stored in 6 bits
     
     :param nb_val: number of values to be stored: must be a power of 2 <=128
@@ -593,7 +593,7 @@ cpdef UnpackContainer unpack_pck(cnp.uint8_t[::1] stream, int ncol, int nrow):
 
     cont = UnpackContainer(ncol, nrow)
     size = stream.size
-    
+
     # Luckily we start at byte boundary
     offset = 0
     pos = 0
@@ -682,30 +682,31 @@ cdef class UnpackContainer:
             cnp.uint64_t tmp         # under contruction: needs to be unsigned
             int to_read              # number of bytes to read
 
-        cur = 0
-        for i in range(nb_value):
-
-            # read as many bytes as needed and unpack them to tmp variable
-            
-            tmp = stream[pos] >> offset
-            
-            new_offset = value_size + offset 
-            to_read = (new_offset + 7) // 8
-            
-            for j in range(1, to_read):
-                tmp |= (stream[pos + j]) << (8 * j - offset)
+        with nogil:
+            cur = 0
+            for i in range(nb_value):
+    
+                # read as many bytes as needed and unpack them to tmp variable
                 
-            # Remove the msb of tmp to keep only the interesting values
-            cur = tmp & ((1 << (value_size)) - 1)
-            
-            # change sign if most significant bit is 1
-            if cur >> (value_size - 1): 
-                cur |= (-1) << (value_size - 1)
+                tmp = stream[pos] >> offset
                 
-            # Update the storage
-            self.data[self.position] = cur
-            self.position += 1
-            
-            # Update the position in the array
-            pos = pos + new_offset // 8
-            offset = new_offset % 8    
+                new_offset = value_size + offset 
+                to_read = (new_offset + 7) // 8
+                
+                for j in range(1, to_read):
+                    tmp |= (stream[pos + j]) << (8 * j - offset)
+                    
+                # Remove the msb of tmp to keep only the interesting values
+                cur = tmp & ((1 << (value_size)) - 1)
+                
+                # change sign if most significant bit is 1
+                if cur >> (value_size - 1): 
+                    cur |= (-1) << (value_size - 1)
+                    
+                # Update the storage
+                self.data[self.position] = cur
+                self.position += 1
+                
+                # Update the position in the array
+                pos = pos + new_offset // 8
+                offset = new_offset % 8    

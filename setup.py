@@ -152,7 +152,7 @@ def Extension(name, source=None, can_use_openmp=False, extra_sources=None, **kwa
 
 ext_modules = [Extension('cf_io', extra_sources=['fabio/ext/src/columnfile.c']),
                Extension("byte_offset"),
-               Extension('mar345_IO', extra_sources=['fabio/ext/src/ccp4_pack.c'], can_use_openmp=False),
+               Extension('mar345_IO', extra_sources=['fabio/ext/src/ccp4_pack.c']),
                Extension('_cif')]
 
 
