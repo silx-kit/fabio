@@ -97,6 +97,8 @@ class TestMar345(unittest.TestCase):
             obj.write(os.path.join(UtilsTest.tempdir, name))
             other = mar345image()
             other.read(os.path.join(UtilsTest.tempdir, name))
+            if abs(obj.data - other.data).max():
+                logger.error("data for %s are not the same %s", line, numpy.where(obj.data - other.data))
             self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
             for key in obj.header:
                 if key == "filename":
@@ -127,6 +129,7 @@ class TestMar345(unittest.TestCase):
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
+    @unittest.skip("very slow test")
     def test_memoryleak(self):
         """
         This test takes a lot of time, so only in debug mode.
@@ -171,26 +174,28 @@ class TestMar345(unittest.TestCase):
         ok = abs(delta).ravel()
         if ok.max() > 0:
             logger.error("img_c_c: %s %s" % numpy.where(delta))
+        self.assertEqual(ok.max(), 0, "Compression CCP4 decompression CCP4")
 
         img_c_f = fabio.ext.mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=False)
         delta = img_c_f - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
             logger.error("img_c_f: %s %s" % numpy.where(delta))
+        self.assertEqual(ok.max(), 0, "Compression CCP4 decompression Cython")
 
         img_f_c = fabio.ext.mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=True)
         delta = img_f_c - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
             logger.error("img_f_c: %s %s" % numpy.where(delta))
+        self.assertEqual(ok.max(), 0, "Compression Cython decompression CCP4")
 
         img_f_f = fabio.ext.mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=False)
         delta = img_f_f - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
             logger.error("img_f_f: %s %s" % numpy.where(delta))
-
-            # self.assert
+        self.assertEqual(ok.max(), 0, "Compression Cython decompression Cython")
 
 
 def suite():
