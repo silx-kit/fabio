@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "13/09/2016"
+__date__ = "15/09/2016"
 __status__ = "stable"
 
 import os
@@ -438,7 +438,7 @@ classifiers = [
               'Intended Audience :: End Users/Desktop',
               'Intended Audience :: Developers',
               'Intended Audience :: Science/Research',
-              "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+              "License :: OSI Approved :: MIT License",
               'Operating System :: MacOS :: MacOS X',
               'Operating System :: Microsoft :: Windows',
               'Operating System :: POSIX',
