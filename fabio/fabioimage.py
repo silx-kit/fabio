@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "05/09/2016"
+__date__ = "16/09/2016"
 
 
 import os
@@ -66,7 +66,7 @@ try:
     from .third_party.six import with_metaclass
 except ImportError:
     import six
-    six_version = tuple(int(i) for i in six.__version__.split() if i.isdigit())
+    six_version = tuple(int(i) for i in six.__version__.split(".") if i.isdigit())
     if six_version < (1, 8):
         for i in ("six", "six.moves"):
             sys.modules.pop(i, None)
