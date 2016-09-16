@@ -43,7 +43,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret", "Thomas Vincent"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/09/2016" 
+__date__ = "16/09/2016" 
 
 import cython
 cimport numpy as cnp
@@ -90,6 +90,7 @@ def compress_pck(image not None, bint use_CCP4=False):
         char* name
         cnp.int16_t[::1] data 
         cnp.int32_t[::1] raw
+        bytes output
         
     assert image.ndim == 2, "Input image shape is 2D"
     size = image.size
@@ -108,7 +109,7 @@ def compress_pck(image not None, bint use_CCP4=False):
         os.close(fd)
         os.unlink(fname)
     else:
-        output = b"\nCCP4 packed image, X: %04d, Y: %04d\n" % (dim1, dim0)
+        output = ("\nCCP4 packed image, X: %04d, Y: %04d\n" % (dim1, dim0)).encode("ASCII")
         raw = precomp(data, dim1)
         cont = pack_image(raw, False)
         output += cont.get().tostring()
