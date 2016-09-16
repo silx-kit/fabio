@@ -8,19 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 
 """
 Authors: Henning O. Sorensen & Erik Knudsen
@@ -34,17 +38,18 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 Information about the file format from Masakatzu Kobayashi is highly appreciated
 """
+
 # Get ready for python3:
 from __future__ import with_statement, print_function
 
-import numpy, logging
+import numpy
+import logging
 logger = logging.getLogger("HipiciImage")
 from .fabioimage import FabioImage
 
 
 class HipicImage(FabioImage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
-
 
     def _readheader(self, infile):
         """
@@ -66,7 +71,7 @@ class HipicImage(FabioImage):
         self.header['Dim_1_offset'] = Dim_1_offset
         self.header['Dim_2_offset'] = Dim_2_offset
         # self.header['Comment'] = Comment
-        if Image_tag != 'IM' :
+        if Image_tag != 'IM':
             # This does not look like an HiPic file
             logging.warning("no opening.  Corrupt header of HiPic file " + \
                             str(infile.name))
@@ -76,7 +81,7 @@ class HipicImage(FabioImage):
             topsplit = topcomment.split(',')
             for line in topsplit:
                 if '=' in line:
-                    key, val = line.split('=' , 1)
+                    key, val = line.split('=', 1)
                     # Users cannot type in significant whitespace
                     key = key.rstrip().lstrip()
                     self.header_keys.append(key)
@@ -97,8 +102,8 @@ class HipicImage(FabioImage):
             self.dim1 = int(self.header['Dim_1'])
             self.dim2 = int(self.header['Dim_2'])
         except:
-            raise Exception("HiPic file", str(fname) + \
-                                "is corrupt, cannot read it")
+            raise Exception("HiPic file", str(fname) +
+                            "is corrupt, cannot read it")
         bytecode = numpy.uint16
         self.bpp = len(numpy.array(0, bytecode).tostring())
 
@@ -113,8 +118,7 @@ class HipicImage(FabioImage):
                 [self.dim2, self.dim1])
         except:
             print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
-            raise IOError(
-              'Size spec in HiPic-header does not match size of image data field')
+            raise IOError('Size spec in HiPic-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
 
         # Sometimes these files are not saved as 12 bit,

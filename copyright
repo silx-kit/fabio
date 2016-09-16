@@ -11,45 +11,19 @@ Copyright: 2007-2009 Henning O. Sorensen & Erik Knudsen
                Frederiksborgvej 399
                DK-4000 Roskilde
                email:erik.knudsen@risoe.dk
-           2009-2015 Jonathan P. Wright, Jerome Kieffer and Gael Goret
+           2009-2016 Jonathan P. Wright, Jerome Kieffer and Gael Goret
                European Synchrotron Radiation Facility
                6 rue Jules Horowitz
                38000 Grenoble, France
-License: GPL-3.0+
+License: MIT
 
 Files: debian/*
 Copyright: 2011 Jerome Kieffer <jerome.kieffer@esrf.fr>
            2013-2014 Picca Frederic-Emmanuel <picca@debian.org>
 License: GPL-2.0+
 
-Files: version.py
-       fabio/cbfimage.py
-       fabio/hdf5image.py
-       fabio/numpyimage.py
-       fabio/eigerimage.py
-       fabio/nexus.py
-       fabio/mrcimage.py
-       fabio/tifimage.py
-       fabio/xsdimage.py
-       fabio/templateimage.py
-       fabio/ext/byte_offset.*
-       fabio/TiffIO.py
-       fabio/test/utilstest.py
-       fabio/test/testcompression
-Copyright: 2004-2016 European Synchrotron Radiation Facility
-License: MIT
-
-Files: fabio/pixiimage.py
-Copyright: 2014 European Synchrotron Radiation Facility
-License: GPL-3.0+
-
 Files: fabio/raxisimage.py
 Copyright: 2013-2014 Brian R. Pauw <brian@stack.nl>
-License: GPL-3.0+
-
-Files: scripts/fabio_viewer
-Copyright: 2012 Gael Goret <gael.goret@esrf.fr>
-                European Synchrotron Radiation Facility
 License: GPL-3.0+
 
 Files: fabio/ext/src/ccp4_pack.c

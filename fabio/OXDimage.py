@@ -8,19 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 
 """
 Reads Oxford Diffraction Sapphire 3 images
@@ -42,7 +46,9 @@ Authors:
 # Get ready for python3:
 from __future__ import with_statement, print_function
 
-import time, logging, struct
+import time
+import logging
+import struct
 logger = logging.getLogger("OXDimage")
 import numpy
 from .fabioimage import FabioImage
@@ -56,12 +62,12 @@ except ImportError:  # naive implementation for very old numpy (v1.0.1 on MacOSX
     deg2rad = lambda x: x * numpy.pi / 180.
 
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
-1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
-2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
-3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
-4: 'Unknown Oxford diffraction detector'}
+                  1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
+                  2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
+                  3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
+                  4: 'Unknown Oxford diffraction detector'}
 
-DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
+DEFAULT_HEADERS = {'Header Version': 'OD SAPPHIRE  3.0',
                    'Compression': "TY1",
                    'Header Size In Bytes': 5120,
                    "ASCII Section size in Byte": 256,
@@ -70,8 +76,9 @@ DEFAULT_HEADERS = {'Header Version':  'OD SAPPHIRE  3.0',
                    "KM4 Section size in Byte": 1024,
                    "Statistic Section in Byte": 512,
                    "History Section in Byte": 2048,
-                   'NSUPPLEMENT':0
+                   'NSUPPLEMENT': 0
                    }
+
 
 class OxdImage(FabioImage):
     """
@@ -104,11 +111,12 @@ class OxdImage(FabioImage):
         block = infile.readline()
         self.header['Time'] = to_str(block[5:29])
         self.header["ASCII Section size in Byte"] = self.header['Header Size In Bytes']\
-                                                - self.header['General Section size in Byte']\
-                                                - self.header['Special Section size in Byte'] \
-                                                - self.header['KM4 Section size in Byte']\
-                                                - self.header['Statistic Section in Byte']\
-                                                - self.header['History Section in Byte']\
+                                                   - self.header['General Section size in Byte']\
+                                                   - self.header['Special Section size in Byte'] \
+                                                   - self.header['KM4 Section size in Byte']\
+                                                   - self.header['Statistic Section in Byte']\
+                                                   - self.header['History Section in Byte']
+
         # Skip to general section (NG) 512 byes long <<<<<<"
         infile.seek(self.header["ASCII Section size in Byte"])
         block = infile.read(self.header['General Section size in Byte'])
@@ -170,7 +178,6 @@ class OxdImage(FabioImage):
         self.header['Kappa step in deg'] = step_angles_deg[2]
         self.header['Phi step in deg'] = step_angles_deg[3]
 
-
         zero_correction_soft_deg = zero_correction_soft_step * step_angles_deg
         self.header['Omega zero corr. in deg'] = zero_correction_soft_deg[0]
         self.header['Theta zero corr. in deg'] = zero_correction_soft_deg[1]
@@ -189,7 +196,6 @@ class OxdImage(FabioImage):
         self.header['Detector tilt e1 in deg'] = struct.unpack("<d", block[640:648])[0]
         self.header['Detector tilt e2 in deg'] = struct.unpack("<d", block[648:656])[0]
         self.header['Detector tilt e3 in deg'] = struct.unpack("<d", block[656:664])[0]
-
 
         # Beam center
         self.header['Beam center x'] = struct.unpack("<d", block[664:672])[0]
@@ -295,15 +301,15 @@ class OxdImage(FabioImage):
             self.header['NX'] = self.dim1
             self.header['NY'] = self.dim2
         ascii_headers = [self.header['Header Version'],
-                       "COMPRESSION=%s (%5.1f)" % (self.header["Compression"], self.getCompressionRatio()),
-                       "NX=%4i NY=%4i OI=%7i OL=%7i " % (self.header["NX"], self.header["NY"], self.header["OI"], self.header["OL"]),
-                       "NHEADER=%7i NG=%7i NS=%7i NK=%7i NS=%7i NH=%7i" % (self.header['Header Size In Bytes'],
-                                                                                 self.header['General Section size in Byte'],
-                                                                                 self.header['Special Section size in Byte'],
-                                                                                 self.header['KM4 Section size in Byte'],
-                                                                                 self.header['Statistic Section in Byte'],
-                                                                                 self.header['History Section in Byte']),
-                        "NSUPPLEMENT=%7i" % (self.header["NSUPPLEMENT"])]
+                         "COMPRESSION=%s (%5.1f)" % (self.header["Compression"], self.getCompressionRatio()),
+                         "NX=%4i NY=%4i OI=%7i OL=%7i " % (self.header["NX"], self.header["NY"], self.header["OI"], self.header["OL"]),
+                         "NHEADER=%7i NG=%7i NS=%7i NK=%7i NS=%7i NH=%7i" % (self.header['Header Size In Bytes'],
+                                                                             self.header['General Section size in Byte'],
+                                                                             self.header['Special Section size in Byte'],
+                                                                             self.header['KM4 Section size in Byte'],
+                                                                             self.header['Statistic Section in Byte'],
+                                                                             self.header['History Section in Byte']),
+                         "NSUPPLEMENT=%7i" % (self.header["NSUPPLEMENT"])]
         if "Time" in self.header:
             ascii_headers.append("TIME=%s" % self.header["Time"])
         else:
@@ -311,7 +317,6 @@ class OxdImage(FabioImage):
             ascii_headers.append("TIME=%s" % time.ctime())
 
         header = (linesep.join(ascii_headers)).ljust(256).encode("ASCII")
-
 
         NG = Section(self.header['General Section size in Byte'], self.header)
         NG.setData('Binning in x', 0, numpy.uint16)
@@ -335,8 +340,8 @@ class OxdImage(FabioImage):
         NS.setData('Monitor counts of overflow raw image 1', 536, numpy.int32)
         NS.setData('Monitor counts of overflow raw image 2', 540, numpy.int32)
         NS.setData('Unwarping', 544, numpy.int32)
-        if 'Detector type' in  self.header:
-            for key, value in  DETECTOR_TYPES.items():
+        if 'Detector type' in self.header:
+            for key, value in DETECTOR_TYPES.items():
                 if value == self.header['Detector type']:
                     NS.setData(None, 548, numpy.int32, default=key)
         NS.setData('Real pixel size x (mm)', 568, numpy.float)
@@ -425,7 +430,6 @@ class OxdImage(FabioImage):
 
         return header
 
-
     def write(self, fname):
         """Write Oxford diffraction images: this is still beta
         Only TY1 compressed images is currently possible
@@ -504,6 +508,7 @@ class OxdImage(FabioImage):
 
 OXDimage = OxdImage
 
+
 class Section(object):
     """
     Small helper class for writing binary headers
@@ -517,11 +522,12 @@ class Section(object):
         self.header = dictHeader
         self.lstChr = bytearray(size)
         self._dictSize = {}
+
     def __repr__(self):
         return bytes(self.lstChr)
 
     def getSize(self, dtype):
-        if not dtype in self._dictSize:
+        if dtype not in self._dictSize:
             self._dictSize[dtype] = len(numpy.zeros(1, dtype=dtype).tostring())
         return self._dictSize[dtype]
 

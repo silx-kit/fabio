@@ -8,23 +8,28 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation files
+#  (the "Software"), to deal in the Software without restriction,
+#  including without limitation the rights to use, copy, modify, merge,
+#  publish, distribute, sublicense, and/or sell copies of the Software,
+#  and to permit persons to whom the Software is furnished to do so,
+#  subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION W
 
 """
 
-License: GPLv3+
+License: MIT
 
 Authors:
 ........
@@ -47,7 +52,7 @@ import logging
 logger = logging.getLogger("edfimage")
 import numpy
 from .fabioimage import FabioImage, OrderedDict
-from .fabioutils import isAscii, toAscii, nice_int, six
+from .fabioutils import isAscii, toAscii, nice_int
 from .compression import decBzip2, decGzip, decZlib
 
 
@@ -97,7 +102,7 @@ NUMPY_EDF_DTYPE = {"int8": "SignedByte",
                    "float32": "FloatValue",
                    "float64": "DoubleValue",
                    "float128": "QuadrupleValue",
-             }
+                   }
 
 MINIMUM_KEYS = ['HEADERID',
                 'IMAGE',
@@ -110,7 +115,7 @@ MINIMUM_KEYS = ['HEADERID',
 DEFAULT_VALUES = {
                   # I do not define default values as they will be calculated at write time
                   # JK20110415
-                  }
+                   }
 
 
 class Frame(object):
@@ -275,7 +280,7 @@ class Frame(object):
                 uncompressed_size = self.bpp
                 for i in dims:
                     uncompressed_size *= i
-                if "OFFSET" in compression :
+                if "OFFSET" in compression:
                     try:
                         import byte_offset  # IGNORE:F0401
                     except ImportError as error:
@@ -326,8 +331,10 @@ class Frame(object):
         if self._bytecode is None:
             self._bytecode = self.data.dtype.type
         return self._bytecode
+
     def setByteCode(self, _iVal):
         self._bytecode = _iVal
+
     bytecode = property(getByteCode, setByteCode)
 
     def getEdfBlock(self, force_type=None, fit2dMode=False):
@@ -776,6 +783,7 @@ class EdfImage(FabioImage):
         Getter for number of frames
         """
         return len(self._frames)
+
     def setNbFrames(self, val):
         """
         Setter for number of frames ... should do nothing. Here just to avoid bugs
@@ -784,12 +792,12 @@ class EdfImage(FabioImage):
             logger.warning("trying to set the number of frames ")
     nframes = property(getNbFrames, setNbFrames, "property: number of frames in EDF file")
 
-
     def getHeader(self):
         """
         Getter for the headers. used by the property header,
         """
         return self._frames[self.currentframe].header
+
     def setHeader(self, _dictHeader):
         """
         Enforces the propagation of the header to the list of frames
@@ -801,6 +809,7 @@ class EdfImage(FabioImage):
         except IndexError:
             if self.currentframe < len(self._frames):
                 self._frames.append(Frame(header=_dictHeader))
+
     def delHeader(self):
         """
         Deleter for edf header
@@ -863,6 +872,7 @@ class EdfImage(FabioImage):
         except IndexError:
             if self.currentframe < len(self._frames):
                 self._frames.append(Frame(data=_data))
+
     def delData(self):
         """
         deleter for edf Data
@@ -877,12 +887,14 @@ class EdfImage(FabioImage):
         @rtype: dict
         """
         return self._frames[self.currentframe].capsHeader
+
     def setCapsHeader(self, _data):
         """
         Enforces the propagation of the header_keys to the list of frames
         @param _data: numpy array representing data
         """
         self._frames[self.currentframe].capsHeader = _data
+
     def delCapsHeader(self):
         """
         deleter for edf capsHeader
@@ -892,6 +904,7 @@ class EdfImage(FabioImage):
 
     def getDim1(self):
         return self._frames[self.currentframe].dim1
+
     def setDim1(self, _iVal):
         try:
             self._frames[self.currentframe].dim1 = _iVal
@@ -902,8 +915,10 @@ class EdfImage(FabioImage):
                 self._frames.append(Frame())
                 self._frames[self.currentframe].dim1 = _iVal
     dim1 = property(getDim1, setDim1)
+
     def getDim2(self):
         return self._frames[self.currentframe].dim2
+
     def setDim2(self, _iVal):
         try:
             self._frames[self.currentframe].dim2 = _iVal
@@ -918,8 +933,10 @@ class EdfImage(FabioImage):
     def getDims(self):
         return self._frames[self.currentframe].dims
     dims = property(getDims)
+
     def getByteCode(self):
         return self._frames[self.currentframe].bytecode
+
     def setByteCode(self, _iVal):
         try:
             self._frames[self.currentframe].bytecode = _iVal
@@ -930,8 +947,10 @@ class EdfImage(FabioImage):
                 self._frames.append(Frame())
                 self._frames[self.currentframe].bytecode = _iVal
     bytecode = property(getByteCode, setByteCode)
+
     def getBpp(self):
         return self._frames[self.currentframe].bpp
+
     def setBpp(self, _iVal):
         try:
             self._frames[self.currentframe].bpp = _iVal

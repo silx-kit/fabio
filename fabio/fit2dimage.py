@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "27/06/2016"
+__date__ = "05/09/2016"
 
 import logging
 logger = logging.getLogger("fit2dimage")
