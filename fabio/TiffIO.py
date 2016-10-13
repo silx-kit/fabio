@@ -27,12 +27,13 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "11/09/2016"
+__date__ = "13/10/2016"
 
 import sys
 import os
 import struct
 import numpy
+import logging
 
 DEBUG = 0
 ALLOW_MULTIPLE_STRIPS = False
@@ -101,6 +102,9 @@ SAMPLE_FORMAT_FLOAT = 3  # floating point
 SAMPLE_FORMAT_VOID = 4  # undefined data, usually assumed UINT
 SAMPLE_FORMAT_COMPLEXINT = 5
 SAMPLE_FORMAT_COMPLEXIEEEFP = 6
+
+
+logger = logging.getLogger(__name__)
 
 
 class TiffIO(object):
@@ -269,7 +273,12 @@ class TiffIO(object):
                 ftype, vfmt = FIELD_TYPE[fieldType]
                 if ftype not in ['ASCII', 'RATIONAL', 'SRATIONAL']:
                     vfmt = st + vfmt
-                    actualValue = struct.unpack(vfmt, valueOffset[0: struct.calcsize(vfmt)])[0]
+                    data = valueOffset[0: struct.calcsize(vfmt)]
+                    if struct.calcsize(vfmt) > len(data):
+                        # Add a 0 padding to have the expected size
+                        logger.warning("Data at tag id '%s' is smaller than expected", tagID)
+                        data = data + "\x00" * (struct.calcsize(vfmt) - len(data))
+                    actualValue = struct.unpack(vfmt, data)[0]
                     valueOffsetList.append(actualValue)
                 else:
                     valueOffsetList.append(valueOffset)
