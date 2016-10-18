@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "13/10/2016"
+__date__ = "18/10/2016"
 
 import sys
 import os
@@ -277,7 +277,7 @@ class TiffIO(object):
                     if struct.calcsize(vfmt) > len(data):
                         # Add a 0 padding to have the expected size
                         logger.warning("Data at tag id '%s' is smaller than expected", tagID)
-                        data = data + "\x00" * (struct.calcsize(vfmt) - len(data))
+                        data = data + b"\x00" * (struct.calcsize(vfmt) - len(data))
                     actualValue = struct.unpack(vfmt, data)[0]
                     valueOffsetList.append(actualValue)
                 else:
