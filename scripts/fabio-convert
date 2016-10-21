@@ -19,6 +19,7 @@ logging.basicConfig()
 import sys
 import os
 import time
+import glob
 
 import fabio
 from fabio.nexus import Nexus
@@ -238,6 +239,23 @@ def is_format_supported(format_name):
         return False
 
 
+def expand_args(args):
+    """
+    Takes an argv and expand it (under Windows, cmd does not convert *.tif into
+    a list of files.
+
+    @param list args: list of files or wildcards
+    @return: list of actual args
+    """
+    new = []
+    for afile in args:
+        if glob.has_magic(afile):
+            new += glob.glob(afile)
+        else:
+            new.append(afile)
+    return new
+
+
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 EXIT_ARGUMENT_FAILURE = 2
@@ -303,6 +321,9 @@ def main():
         if len(args.IMAGE) == 0:
             raise argparse.ArgumentError(None, "No input file specified.")
 
+        # the upper case IMAGE is used for the --help auto-documentation
+        args.images = expand_args(args.IMAGE)
+
         if args.format is None or not args.format.endswith("image"):
 
             if args.format is None:
@@ -330,9 +351,6 @@ def main():
         logger.error(e.message)
         logger.debug("Backtrace", exc_info=True)
         return EXIT_ARGUMENT_FAILURE
-
-    # the upper case IMAGE is used for the --help auto-documentation
-    args.images = args.IMAGE
 
     succeeded = convert_all(args)
     if not succeeded:
