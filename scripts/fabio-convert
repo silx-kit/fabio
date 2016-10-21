@@ -202,26 +202,35 @@ def convert_all(options):
 
 def print_supported_formats():
     """List supported format to the output"""
-    print("Supported file formats:")
+    classes = fabio.fabioimage.fabioimage.__subclasses__()
+    classes.sort(key=lambda c: c.__module__.lower())
 
-    for class_ in fabio.fabioimage.fabioimage.__subclasses__():
-        module = sys.modules[class_.__module__]
+    indentation = "    "
+
+    print("List of writable file formats supported by FabIO version %s" % fabio.version)
+    print()
+
+    for class_ in classes:
         name = class_.__name__.split(".")[-1]
-        if name.endswith("image"):
-            name = name[:-5]
         name = name.lower()
-        print("- %s" % name)
 
-        # FIXME Cleanup/normalize the documentation for this usage
-        indentation = "    "
-        doc = module.__doc__
-        if doc is None:
-            doc = ""
-        doc = doc.strip()
-        doc = doc.replace("\n", "\n" + indentation)
-        doc = indentation + doc
-        print("%s" % doc)
-        print()
+        if not name.endswith("image"):
+            # filter module name
+            continue
+        if hasattr(class_, "WRITE"):
+            # filter IO supporting write
+            if not class_.WRITE:
+                continue
+
+            name = name[:-5]
+        if len(class_.DEFAULT_EXTENTIONS) > 0:
+            extensions = ", ".join(["*." + x for x in class_.DEFAULT_EXTENTIONS])
+            extensions = "(%s)" % extensions
+        else:
+            extensions = ""
+
+        print("- %s %s" % (name, extensions))
+        print("%s%s" % (indentation, class_.DESCRIPTION))
 
 
 def is_format_supported(format_name):
