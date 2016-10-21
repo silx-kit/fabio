@@ -47,6 +47,7 @@ from .fabioimage import FabioImage
 import numpy, logging
 logger = logging.getLogger("binaryimage")
 
+
 class BinaryImage(FabioImage):
     """
     This simple library has been made for manipulating exotic/unknown files format.
@@ -57,6 +58,10 @@ class BinaryImage(FabioImage):
     if offset is set to a negative value, the image is read using the last data but n
     data in the file, skipping any header.
     """
+
+    DESCRIPTION = "Binary format (none-compressed 2D images)"
+
+    DEFAULT_EXTENTIONS = ["bin"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

@@ -55,6 +55,12 @@ class PilatusImage(TifImage):
     """ Read in Pilatus format, also
         pilatus images, including header info """
 
+    DESCRIPTION = "Pilatus file format based on Tiff"
+
+    DEFAULT_EXTENTIONS = ["tif", "tiff"]
+
+    WRITE = False
+
     def _readheader(self, infile):
         """
         Parser based approach

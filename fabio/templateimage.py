@@ -77,7 +77,7 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "07/07/2016"
+__date__ = "21/10/2016"
 
 import logging
 logger = logging.getLogger("templateimage")
@@ -90,6 +90,13 @@ class TemplateImage(FabioImage):
     
     Put some documentation here
     """
+
+    DESCRIPTION = "Name of the file format"
+
+    DEFAULT_EXTENTIONS = []
+
+    WRITE = False
+
     def __init__(self, *arg, **kwargs):
         """
         Generic constructor

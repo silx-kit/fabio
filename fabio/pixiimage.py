@@ -37,7 +37,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/09/2016"
+__date__ = "21/10/2016"
 
 import numpy
 
@@ -47,6 +47,13 @@ from .fabioutils import previous_filename, next_filename
 
 
 class PixiImage(FabioImage):
+
+    DESCRIPTION = "Pixi file format"
+
+    DEFAULT_EXTENTIONS = []
+
+    WRITE = False
+
     _need_a_seek_to_read = True
 
     def _readheader(self, infile):

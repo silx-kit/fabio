@@ -55,6 +55,13 @@ class MrcImage(FabioImage):
     """
     FabIO image class for Images from a mrc image stack
     """
+
+    DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
+
+    DEFAULT_EXTENTIONS = ["mrc"]
+
+    WRITE = False
+
     KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
             "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",
             "CELL_ALPHA", "CELL_BETA", "CELL_GAMMA",

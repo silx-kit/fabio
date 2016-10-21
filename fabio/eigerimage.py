@@ -49,7 +49,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/07/2016"
+__date__ = "21/10/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
@@ -66,8 +66,12 @@ from .fabioutils import NotGoodReader
 class EigerImage(FabioImage):
     """
     FabIO image class for Images from Eiger data files (HDF5)
-
     """
+
+    DESCRIPTION = "Eiger data files based on HDF5"
+
+    DEFAULT_EXTENTIONS = ["h5"]
+
     def __init__(self, data=None, header=None):
         """
         Set up initial values

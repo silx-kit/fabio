@@ -44,7 +44,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "08/07/2016"
+__date__ = "21/10/2016"
 
 import numpy
 import logging
@@ -70,6 +70,13 @@ class Hdf5Image(FabioImage):
     filename::dataset
     
     """
+
+    DESCRIPTION = "Hierarchical Data Format HDF5 flat reader"
+
+    DEFAULT_EXTENTIONS = ["h5"]
+
+    WRITE = False
+
     def __init__(self, *arg, **kwargs):
         """
         Generic constructor

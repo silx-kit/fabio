@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "05/09/2016"
+__date__ = "21/10/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")
@@ -105,6 +105,11 @@ The description of the fourth element of the header therefore has become:
 
     
     """
+
+    DESCRIPTION = "Numpy array file format"
+
+    DEFAULT_EXTENTIONS = ["npy"]
+
     def __init__(self, data=None, header=None):
         """
         Set up initial values

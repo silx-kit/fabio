@@ -76,6 +76,13 @@ DATA_BYTES = {  2     :  2,
 
 class Dm3Image(FabioImage):
     """ Read and try to write the dm3 data format """
+
+    DESCRIPTION = "Digital Micrograph DM3 file format"
+
+    DEFAULT_EXTENTIONS = ["dm3"]
+
+    WRITE = False
+
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)
         self.encoded_datatype = None

@@ -46,7 +46,7 @@
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright",
                "Jérôme Kieffer", "Sigmund Neher" ]
-__date__ = "05/09/2016"
+__date__ = "21/10/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2015-2016 ESRF, 2016 GWDG"
 __licence__ = "MIT"
@@ -68,6 +68,10 @@ from .fabioutils import pad, StringTypes
 
 
 class Bruker100Image(BrukerImage):
+
+    DESCRIPTION = "SFRM File format used by Bruker detectors (version 100)"
+
+    DEFAULT_EXTENTIONS = ["sfrm"]
 
     bpp_to_numpy = {1: numpy.uint8,
                     2: numpy.uint16,
