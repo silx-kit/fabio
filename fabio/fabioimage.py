@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "16/09/2016"
+__date__ = "24/10/2016"
 
 
 import os
@@ -117,7 +117,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         else:
             msg = ("FileType %s is unknown !, "
                    "please check if the filename exists or select one from %s" % (name, cls.registry.keys()))
-            logger.error(msg)
+            logger.debug(msg)
             raise RuntimeError(msg)
         return obj
 
