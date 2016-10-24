@@ -598,15 +598,14 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 dest = dest[:-5]
             if dest + "image" in self.registry:
                 other = self.factory(dest + "image")
-            # load modules which could be suitable:
-            for pref in fabioutils.FILETYPES.get(dest, []):
-                try:
-                    __import__(".%simage" % pref)
-                    other = self.factory(pref + "image")
-                except:
-                    pass
-                else:
-                    continue
+            else:
+                # load modules which could be suitable:
+                for pref in fabioutils.FILETYPES.get(dest, []):
+                    try:
+                        __import__(".%simage" % pref)
+                        other = self.factory(pref + "image")
+                    except:
+                        pass
 
         elif isinstance(dest, self.__class__):
             other = dest.__class__()
