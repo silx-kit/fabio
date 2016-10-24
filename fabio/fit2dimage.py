@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "21/10/2016"
+__date__ = "24/10/2016"
 
 import logging
 logger = logging.getLogger("fit2dimage")
@@ -63,8 +63,6 @@ class Fit2dImage(FabioImage):
     DESCRIPTION = "Fit2d file format"
 
     DEFAULT_EXTENTIONS = ["f2d"]
-
-    WRITE = False
 
     BUFFER_SIZE = 512  # size of the buffer
     PIXELS_PER_CHUNK = 128

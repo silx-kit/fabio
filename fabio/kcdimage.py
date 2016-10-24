@@ -69,8 +69,6 @@ class KcdImage(FabioImage):
 
     DEFAULT_EXTENTIONS = ["kcd"]
 
-    WRITE = False
-
     def _readheader(self, infile):
         """
         Read in a header in some KCD format from an already open file

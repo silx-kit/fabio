@@ -59,8 +59,6 @@ class PilatusImage(TifImage):
 
     DEFAULT_EXTENTIONS = ["tif", "tiff"]
 
-    WRITE = False
-
     def _readheader(self, infile):
         """
         Parser based approach

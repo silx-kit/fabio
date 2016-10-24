@@ -81,8 +81,6 @@ class Dm3Image(FabioImage):
 
     DEFAULT_EXTENTIONS = ["dm3"]
 
-    WRITE = False
-
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)
         self.encoded_datatype = None

@@ -48,8 +48,6 @@ class Fit2dSpreadsheetImage(FabioImage):
 
     DEFAULT_EXTENTIONS = ["spr"]
 
-    WRITE = False
-
     def _readheader(self, infile):
         """
 

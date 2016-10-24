@@ -62,8 +62,6 @@ class XsdImage(FabioImage):
 
     DEFAULT_EXTENTIONS = ["xml", "xsd"]
 
-    WRITE = False
-
     def __init__(self, data=None, header=None, fname=None):
         """
         Constructor of the class XSDataImage.

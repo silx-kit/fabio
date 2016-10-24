@@ -43,7 +43,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "21/10/2016"
+__date__ = "24/10/2016"
 
 import logging
 import struct
@@ -67,8 +67,6 @@ class RaxisImage(FabioImage):
     DESCRIPTION = "Rigaku RAXIS file format"
 
     DEFAULT_EXTENTIONS = ["img"]
-
-    WRITE = False
 
     def __init__(self, *arg, **kwargs):
         """

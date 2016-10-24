@@ -55,8 +55,6 @@ class HipicImage(FabioImage):
 
     DEFAULT_EXTENTIONS = ["img"]
 
-    WRITE = False
-
     def _readheader(self, infile):
         """
         Read in a header from an already open file

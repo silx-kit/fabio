@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "21/10/2016"
+__date__ = "24/10/2016"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -221,8 +221,6 @@ class GeImage(FabioImage):
 
     DEFAULT_EXTENTIONS = []
 
-    WRITE = False
-
     _need_a_seek_to_read = True
 
     def _readheader(self, infile):
@@ -293,11 +291,6 @@ class GeImage(FabioImage):
         self.dim2 , self.dim1 = self.data.shape
         self.currentframe = int(img_num)
         self._makeframename()
-
-
-    def write(self, fname, force_type=numpy.uint16):
-        """ Not yet implemented"""
-        raise Exception("Write is not implemented")
 
     def getframe(self, num):
         """
