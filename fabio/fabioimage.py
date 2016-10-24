@@ -450,7 +450,8 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         """
         To be overwritten - write the file
         """
-        raise Exception("Class has not implemented readheader method yet")
+        module = sys.modules[self.__class__.__module__]
+        raise NotImplementedError("Writing %s format is not implemented" % module.__name__)
 
     def save(self, fname):
         'wrapper for write'
