@@ -54,8 +54,8 @@ CASES = [
     (10001, 'marccd', "data10001.mccd.gz"),
     (10001, 'marccd', "data10001.mccd.bz2"),
     (123, 'marccd', "data123.mccd.gz"),
-    (3, 'tif', "data0003.tif"),
-    (4, 'tif', "data0004.tiff"),
+    (3, 'tif_or_pilatus', "data0003.tif"),
+    (4, 'tif_or_pilatus', "data0004.tiff"),
     (12, 'bruker', "sucrose101.012.gz"),
     (99, 'bruker', "sucrose101.099"),
     (99, 'bruker', "sucrose101.0099"),
@@ -66,10 +66,10 @@ CASES = [
     (670005, 'edf', 'S82P670005.edf'),
     (670005, 'edf', 'S82P670005.edf.gz'),
     # based on only the name it can be either img or oxd
-    (1     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_001.img'),
-    (2     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_002.img.gz'),
-    (3     , 'adsc_or_OXD_or_HiPiC_or_raxis' , 'mb_LP_1_003.img.bz2'),
-    (3     , 'adsc_or_OXD_or_HiPiC_or_raxis' , os.path.join("data", 'mb_LP_1_003.img.bz2')),
+    (1     , 'adsc_or_oxd_or_hipic_or_raxis' , 'mb_LP_1_001.img'),
+    (2     , 'adsc_or_oxd_or_hipic_or_raxis' , 'mb_LP_1_002.img.gz'),
+    (3     , 'adsc_or_oxd_or_hipic_or_raxis' , 'mb_LP_1_003.img.bz2'),
+    (3     , 'adsc_or_oxd_or_hipic_or_raxis' , os.path.join("data", 'mb_LP_1_003.img.bz2')),
     ]
 
 

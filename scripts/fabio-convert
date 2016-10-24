@@ -22,7 +22,6 @@ import time
 import glob
 
 import fabio
-from fabio.nexus import Nexus
 
 try:
     import six
@@ -38,29 +37,29 @@ except ImportError:
 logger = logging.getLogger("fabio-convert")
 
 
-def get_extension_from_format(format):
+def get_default_extension_from_format(format_name):
     """"
-    Get file extension from a fabio format
+    Get a default file extension from a fabio format
 
     :param str format: String format like "edfimage"
     :rtype: str
     """
-    if format.endswith("image"):
-        short_format = format[:-5]
+    class_ = fabio.fabioformats.get_class_by_name(format_name)
+    if class_ is None:
+        raise RuntimeError("Format '%s' unsupported" % format_name)
+
+    extensions = class_.DEFAULT_EXTENTIONS
+    if len(extensions) == 0:
+        # No extensions
+        return ""
     else:
-        short_format = format
-
-    for extension, formats in fabio.fabioutils.FILETYPES.items():
-        if short_format in formats:
-            return extension
-
-    raise ValueError("No extension exists for this file format")
+        return extensions[0]
 
 
 def get_output_filename(input_filename, format):
     basename, _ = os.path.splitext(input_filename)
     try:
-        extension = get_extension_from_format(format)
+        extension = get_default_extension_from_format(format)
         return basename + "." + extension
     except ValueError:
         return basename + "." + "bin"
@@ -202,7 +201,7 @@ def convert_all(options):
 
 def print_supported_formats():
     """List supported format to the output"""
-    classes = fabio.fabioimage.fabioimage.__subclasses__()
+    classes = fabio.fabioformats.get_classes(writer=True)
     classes.sort(key=lambda c: c.__module__.lower())
 
     indentation = "    "
@@ -211,25 +210,13 @@ def print_supported_formats():
     print()
 
     for class_ in classes:
-        name = class_.__name__.split(".")[-1]
-        name = name.lower()
-
-        if not name.endswith("image"):
-            # filter module name
-            continue
-        if hasattr(class_, "WRITE"):
-            # filter IO supporting write
-            if not class_.WRITE:
-                continue
-
-            name = name[:-5]
         if len(class_.DEFAULT_EXTENTIONS) > 0:
             extensions = ", ".join(["*." + x for x in class_.DEFAULT_EXTENTIONS])
             extensions = "(%s)" % extensions
         else:
             extensions = ""
 
-        print("- %s %s" % (name, extensions))
+        print("- %s %s" % (class_.codec_name(), extensions))
         print("%s%s" % (indentation, class_.DESCRIPTION))
 
 

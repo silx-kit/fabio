@@ -47,32 +47,7 @@ import logging
 logger = logging.getLogger("openimage")
 from .fabioutils import FilenameObject, exists, BytesIO, six
 from .fabioimage import FabioImage
-from . import edfimage
-from . import adscimage
-from . import tifimage
-from . import marccdimage
-from . import mar345image
-from . import fit2dmaskimage
-from . import brukerimage
-from . import bruker100image
-from . import pnmimage
-from . import GEimage
-from . import OXDimage
-from . import dm3image
-from . import HiPiCimage
-from . import pilatusimage
-from . import fit2dspreadsheetimage
-from . import kcdimage
-from . import cbfimage
-from . import xsdimage
-from . import binaryimage
-from . import pixiimage
-from . import hdf5image
-from . import raxisimage
-from . import numpyimage
-from . import eigerimage
-from . import fit2dimage
-from . import speimage
+from . import fabioformats
 
 if six.PY2:
     bytes = str

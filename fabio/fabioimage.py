@@ -87,7 +87,8 @@ class FabioMeta(type):
     # to modify attributes of the class *after* they have been
     # created
     def __init__(cls, name, bases, dct):
-        cls.registry[name.lower()] = cls
+        if cls.codec_name() != "fabioimage":
+            cls.registry[cls.codec_name()] = cls
         super(FabioMeta, cls).__init__(name, bases, dct)
 
 
@@ -124,7 +125,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
     @classmethod
     def codec_name(cls):
         """Returns the internal name of the codec"""
-        return cls.__module__.split(".")[-1].lower()
+        return cls.__name__.lower()
 
     def __init__(self, data=None, header=None):
         """Set up initial values
@@ -605,10 +606,10 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 other = self.factory(dest + "image")
             else:
                 # load modules which could be suitable:
-                for pref in fabioutils.FILETYPES.get(dest, []):
+                from . import fabioformats
+                for class_ in fabioformats.get_classes_from_extension(dest):
                     try:
-                        __import__(".%simage" % pref)
-                        other = self.factory(pref + "image")
+                        other = class_()
                     except:
                         pass
 

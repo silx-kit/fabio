@@ -49,24 +49,21 @@ The basic idea is the following:
    in case you have
    trouble with the transparent handling of bz2 and gz files.
 
-5) Register the file type (extension naming) in fabioutils.FILETYPES
-   TODO: place this in the class definition soon
-
-6) Add your new module as an import into fabio.openimage. 
+5) Add your new module as an import into fabio.fabioformats.
    Your class will be registered automatically.
 
-7) Fill out the magic numbers for your format in fabio.openimage if you know them
+6) Fill out the magic numbers for your format in fabio.openimage if you know them
    (the characteristic first few bytes in the file)
 
-8) Upload a testimage to the file release system and create a unittest testcase
+7) Upload a testimage to the file release system and create a unittest testcase
    which opens an example of your new format, confirming the image has actually
    been read in successfully (eg check the mean, max, min and esd are all correct,
    perhaps orientation too)
 
-9) Run pylint on your code and then please go clean it up. Have a go at mine 
+8) Run pylint on your code and then please go clean it up. Have a go at mine 
    while you are at it, before requesting a pull-request on github.
 
-10) Bask in the warm glow of appreciation when someone unexpectedly learns they 
+9) Bask in the warm glow of appreciation when someone unexpectedly learns they 
    don't need to convert their data into another format
 
 """
