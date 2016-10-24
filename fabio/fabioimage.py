@@ -121,6 +121,11 @@ class FabioImage(with_metaclass(FabioMeta, object)):
             raise RuntimeError(msg)
         return obj
 
+    @classmethod
+    def codec_name(cls):
+        """Returns the internal name of the codec"""
+        return cls.__module__.split(".")[-1].lower()
+
     def __init__(self, data=None, header=None):
         """Set up initial values
         
