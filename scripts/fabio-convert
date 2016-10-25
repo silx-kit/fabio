@@ -124,9 +124,9 @@ def convert_one(input_filename, output_filename, options):
             remove_file = True
         elif options.update:
             if is_older(output_filename, input_filename):
-                remove_file = True
-            else:
                 skip_conversion = True
+            else:
+                remove_file = True
         elif is_user_want_to_overwrite_filename(output_filename):
                 remove_file = True
         else:
