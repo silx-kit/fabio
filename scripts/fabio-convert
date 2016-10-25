@@ -41,8 +41,8 @@ def get_default_extension_from_format(format_name):
     """"
     Get a default file extension from a fabio format
 
-    :param str format: String format like "edfimage"
-    :rtype: str
+    @param str format: String format like "edfimage"
+    @rtype: str
     """
     class_ = fabio.fabioformats.get_class_by_name(format_name)
     if class_ is None:
@@ -56,16 +56,29 @@ def get_default_extension_from_format(format_name):
         return extensions[0]
 
 
-def get_output_filename(input_filename, format):
+def get_output_filename(input_filename, format_name):
+    """
+    Returns the output filename from the input filename and the format.
+
+    @param str input_filename: Input filename path
+    @param str format_name: String format like "edfimage"
+    @rtype: str
+    """
     basename, _ = os.path.splitext(input_filename)
-    try:
-        extension = get_default_extension_from_format(format)
-        return basename + "." + extension
-    except ValueError:
-        return basename + "." + "bin"
+    extension = get_default_extension_from_format(format_name)
+    if extension == "":
+        extension = "bin"
+    return basename + "." + extension
 
 
 def is_user_want_to_overwrite_filename(filename):
+    """
+    Ask question in the shell and returns true if the user want to overwrite
+    a file passed in parameter.
+
+    @param str filename: The filename it asks for
+    @rtype: bool
+    """
     while True:
         question = "Do you want to overwrite the file '%s' (y/n): " % filename
         answer = six.moves.input(question)
@@ -78,9 +91,9 @@ def is_user_want_to_overwrite_filename(filename):
 def is_older(filename1, filename2):
     """Returns true if the first file is older than the second one.
 
-    :param str filename1: An existing filename
-    :param str filename2: An existing filename
-    :rtype: bool
+    @param str filename1: An existing filename
+    @param str filename2: An existing filename
+    @rtype: bool
     """
     time1 = os.path.getmtime(filename1)
     time2 = os.path.getmtime(filename2)
@@ -91,11 +104,11 @@ def convert_one(input_filename, output_filename, options):
     """
     Convert a single file using options
 
-    :param str input_filename: The input filename
-    :param str output_filename: The output filename
-    :param object options: List of options provided from the command line
-    :rtype: bool
-    :returns: True is the conversion succeeded
+    @param str input_filename: The input filename
+    @param str output_filename: The output filename
+    @param object options: List of options provided from the command line
+    @rtype: bool
+    @returns: True is the conversion succeeded
     """
     input_filename = os.path.abspath(input_filename)
     input_exists = os.path.exists(input_filename)
@@ -149,30 +162,33 @@ def convert_one(input_filename, output_filename, options):
         return True
 
     try:
+        logger.debug("Load '%s'", input_filename)
         source = fabio.open(input_filename)
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        logger.error("Loading input file '%s' failed cause: \"%s\". Conversion skipped.", e.message, input_filename)
+        logger.error("Loading input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
         logger.debug("Backtrace", exc_info=True)
         return False
 
     try:
+        logger.debug("Convert '%s' into '%s'", input_filename, options.format)
         converted = source.convert(options.format)
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        logger.error("Converting input file '%s' failed cause: \"%s\". Conversion skipped.", e.message, input_filename)
+        logger.error("Converting input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
         logger.debug("Backtrace", exc_info=True)
         return False
 
     try:
+        logger.debug("Write '%s'", output_filename)
         if not options.dry_run:
             converted.write(output_filename)
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        logger.error("Saving output file '%s' failed cause: \"%s\". Conversion skipped.", e.message, output_filename)
+        logger.error("Saving output file '%s' failed cause: \"%s\". Conversion skipped.", output_filename, e.message)
         logger.debug("Backtrace", exc_info=True)
         return False
 
@@ -181,6 +197,12 @@ def convert_one(input_filename, output_filename, options):
 
 
 def convert_all(options):
+    """Convert all the files from the command line.
+
+    @param object options: List of options provided from the command line
+    @rtype: bool
+    @returns: True is the conversion succeeded
+    """
     succeeded = True
     for filename in options.images:
 
@@ -224,8 +246,8 @@ def is_format_supported(format_name):
     """
     Returns true if the file format is supported.
 
-    :param str format_name: Name of the format (for example edfimage)
-    :rtype: bool
+    @param str format_name: Name of the format (for example edfimage)
+    @rtype: bool
     """
     try:
         fabio.fabioimage.FabioImage.factory(format_name)
@@ -289,8 +311,8 @@ def main():
                         + " opened, remove it and try again (this option"
                         + " is ignored when the -n option is also used)")
     group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
-                        help="do not overwrite an existing file (overrides"
-                        + " a previous -i option)")
+                        help="do not overwrite an existing file (this option"
+                        + " is ignored when the -i option is also used)")
     group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
                         help="remove each existing destination file before"
                         + " attempting to open it (contrast with --force)")
