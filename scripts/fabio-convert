@@ -69,7 +69,7 @@ def is_user_want_to_overwrite_filename(filename):
     while True:
         question = "Do you want to overwrite the file '%s' (y/n): " % filename
         answer = six.moves.input(question)
-        answer = answer.lower()
+        answer = answer.strip().lower()
         if answer in ["y", "yes", "n", "no"]:
             break
     return answer in ["y", "yes"]
