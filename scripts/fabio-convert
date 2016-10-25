@@ -319,6 +319,7 @@ def main():
 
         # the upper case IMAGE is used for the --help auto-documentation
         args.images = expand_args(args.IMAGE)
+        args.images.sort()
 
         if args.format is None or not args.format.endswith("image"):
 
