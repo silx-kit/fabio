@@ -26,8 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE
 
-"""
-Reads Oxford Diffraction Sapphire 3 images
+"""Reads Oxford Diffraction Sapphire 3 images
 
 Authors:
 ........
@@ -45,6 +44,11 @@ Authors:
 
 # Get ready for python3:
 from __future__ import with_statement, print_function
+
+__contact__ = "Jerome.Kieffer@esrf.fr"
+__license__ = "MIT"
+__copyright__ = "Jérôme Kieffer"
+__date__ = "26/10/2016"
 
 import time
 import logging
@@ -295,7 +299,7 @@ class OxdImage(FabioImage):
 
     def _writeheader(self):
         """
-        @return a string containing the header for Oxford images
+        :return: a string containing the header for Oxford images
         """
         linesep = "\r\n"
         for key in DEFAULT_HEADERS:
@@ -438,7 +442,7 @@ class OxdImage(FabioImage):
     def write(self, fname):
         """Write Oxford diffraction images: this is still beta
         Only TY1 compressed images is currently possible
-        @param fname: output filename
+        :param fname: output filename
         """
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2
@@ -465,8 +469,8 @@ class OxdImage(FabioImage):
         """
         Attempt to decode TY5 compression scheme
 
-        @param stream: input stream
-        @return: 1D array with data
+        :param stream: input stream
+        :return: 1D array with data
         """
         array_size = self.dim1 * self.dim2
         stream_size = len(stream)
@@ -520,8 +524,8 @@ class Section(object):
     """
     def __init__(self, size, dictHeader):
         """
-        @param size: size of the header section in bytes
-        @param dictHeader: headers of the image
+        :param size: size of the header section in bytes
+        :param dictHeader: headers of the image
         """
         self.size = size
         self.header = dictHeader
@@ -538,9 +542,9 @@ class Section(object):
 
     def setData(self, key, offset, dtype, default=None):
         """
-        @param offset: int, starting position in the section
-        @param key: name of the header key
-        @param dtype: type of the data to insert (defines the size!)
+        :param offset: int, starting position in the section
+        :param key: name of the header key
+        :param dtype: type of the data to insert (defines the size!)
         """
         if key in self.header:
             value = self.header[key]
@@ -549,7 +553,7 @@ class Section(object):
         else:
             value = default
         if value is None:
-            value = "\x00" * self.getSize(dtype)
+            value = b"\x00" * self.getSize(dtype)
         elif numpy.little_endian:
             value = numpy.array(value).astype(dtype).tostring()
         else:
