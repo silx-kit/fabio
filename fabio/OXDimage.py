@@ -86,6 +86,11 @@ class OxdImage(FabioImage):
 
     Note: We assume the binary format is alway little-endian, is this True ?
     """
+
+    DESCRIPTION = "Oxford Diffraction Sapphire 3 file format"
+
+    DEFAULT_EXTENTIONS = ["img"]
+
     def _readheader(self, infile):
 
         infile.seek(0)

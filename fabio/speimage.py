@@ -39,7 +39,7 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "11/07/2016"
+__date__ = "24/10/2016"
 
 import logging
 
@@ -59,6 +59,10 @@ class SpeImage(FabioImage):
     
     Put some documentation here
     """
+
+    DESCRIPTION = "Princeton instrument SPE file format"
+
+    DEFAULT_EXTENTIONS = ["spe"]
 
     def _readheader(self, infile):
         """

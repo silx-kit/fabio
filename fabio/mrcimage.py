@@ -55,6 +55,11 @@ class MrcImage(FabioImage):
     """
     FabIO image class for Images from a mrc image stack
     """
+
+    DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
+
+    DEFAULT_EXTENTIONS = ["mrc"]
+
     KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
             "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",
             "CELL_ALPHA", "CELL_BETA", "CELL_GAMMA",
@@ -141,9 +146,6 @@ class MrcImage(FabioImage):
         self.data.shape = self.dim2, self.dim1
         self.currentframe = int(img_num)
         self._makeframename()
-
-    def write(self, fname, force_type=numpy.uint16):
-        raise NotImplementedError("Write is not implemented")
 
     def getframe(self, num):
         """

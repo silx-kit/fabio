@@ -44,7 +44,7 @@ License: MIT
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "05/09/2016"
+__date__ = "21/10/2016"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -63,6 +63,11 @@ P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLT
 
 
 class PnmImage(FabioImage):
+
+    DESCRIPTION = "PNM file format"
+
+    DEFAULT_EXTENTIONS = ["pnm", "pgm", "pbm"]
+
     def __init__(self, *arg, **kwargs):
         FabioImage.__init__(self, *arg, **kwargs)
         self.header['Subformat'] = 'P5'

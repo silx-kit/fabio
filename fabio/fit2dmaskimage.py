@@ -54,6 +54,10 @@ if sys.version < '3':
 class Fit2dMaskImage(FabioImage):
     """ Read and try to write Andy Hammersley's mask format """
 
+    DESCRIPTION = "Fit2d mask file format"
+
+    DEFAULT_EXTENTIONS = ["msk"]
+
     def _readheader(self, infile):
         """
         Read in a header from an already open file

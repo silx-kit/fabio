@@ -49,7 +49,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "05/09/2016"
+__date__ = "21/10/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -74,6 +74,12 @@ class BrukerImage(FabioImage):
     are appliing the right formula and not the reciprocal one.
 
     """
+
+    DESCRIPTION = "File format used by Bruker detectors (version 86)"
+
+    # There is no extension. It is used as frame counter
+    DEFAULT_EXTENTIONS = []
+
     bpp_to_numpy = {1: numpy.uint8,
                     2: numpy.uint16,
                     4: numpy.uint32}

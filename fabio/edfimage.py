@@ -446,6 +446,10 @@ class Frame(object):
 class EdfImage(FabioImage):
     """ Read and try to write the ESRF edf data format """
 
+    DESCRIPTION = "European Synchrotron Radiation Facility data format"
+
+    DEFAULT_EXTENTIONS = ["edf", "cor"]
+
     def __init__(self, data=None, header=None, frames=None):
         self.currentframe = 0
         self.filesize = None
