@@ -173,12 +173,8 @@ class SpeImage(FabioImage):
             size = infile.measure_size()
         else:
             raise RuntimeError("Unable to guess the actual size of the file")
-        if "__len__" in dir(self.xml_offset):
-            xml_offset = int(self.xml_offset[0])
-        else:
-            xml_offset = self.xml_offset
-        xml_size = size - xml_offset
-        xml = self._read_at(infile, xml_offset, xml_size, np.byte)
+        xml_size = size - self.xml_offset
+        xml = self._read_at(infile, self.xml_offset, xml_size, np.byte)
         return ''.join([chr(i) for i in xml])
         # if self.debug:
         #     fid = open(self.filename + '.xml', 'w')
