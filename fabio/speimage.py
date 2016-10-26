@@ -120,8 +120,8 @@ class SpeImage(FabioImage):
         return self
 
     def _get_version(self, infile):
-        self.xml_offset = self._read_at(infile, 678, 1, np.long)
-        if self.xml_offset == [0]:
+        self.xml_offset = self._read_at(infile, 678, 1, np.long)[0]
+        if self.xml_offset == 0:
             return 2
         else:
             return 3
