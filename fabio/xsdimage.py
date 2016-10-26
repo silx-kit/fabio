@@ -57,6 +57,11 @@ class XsdImage(FabioImage):
     """
     Read the XSDataImage XML File data format
     """
+
+    DESCRIPTION = "XSDataImage XML file format"
+
+    DEFAULT_EXTENTIONS = ["xml", "xsd"]
+
     def __init__(self, data=None, header=None, fname=None):
         """
         Constructor of the class XSDataImage.

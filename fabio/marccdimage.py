@@ -320,6 +320,10 @@ class MarccdImage(TifImage):
     """ Read in data in mar ccd format, also
         MarMosaic images, including header info """
 
+    DESCRIPTION = "File format from MarCCD and MarMosaic images"
+
+    DEFAULT_EXTENTIONS = ["mccd"]
+
     def _readheader(self, infile):
         """
         Parser based approach

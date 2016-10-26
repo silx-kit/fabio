@@ -44,6 +44,10 @@ class Fit2dSpreadsheetImage(FabioImage):
     Read a fit2d ascii format
     """
 
+    DESCRIPTION = "Fit2d spreadsheet ascii file format"
+
+    DEFAULT_EXTENTIONS = ["spr"]
+
     def _readheader(self, infile):
         """
 

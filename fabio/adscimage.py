@@ -43,6 +43,11 @@ logger = logging.getLogger("adscimage")
 
 class AdscImage(FabioImage):
     """ Read an image in ADSC format (quite similar to edf?) """
+
+    DESCRIPTION = "ADSC format (from Area Detector Systems Corporation)"
+
+    DEFAULT_EXTENTIONS = ["img"]
+
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)
 

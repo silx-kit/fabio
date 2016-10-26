@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "05/09/2016"
+__date__ = "21/10/2016"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -124,6 +124,10 @@ class TifImage(FabioImage):
     Images in TIF format
     Wraps TiffIO
     """
+    DESCRIPTION = "Tagged image file format"
+
+    DEFAULT_EXTENTIONS = ["tif", "tiff"]
+
     _need_a_seek_to_read = True
 
     def __init__(self, *args, **kwds):

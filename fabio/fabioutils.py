@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/09/2016"
+__date__ = "24/10/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -74,36 +74,6 @@ if sys.version_info < (3, 3):
     from threading import _Semaphore as _Semaphore
 else:
     from threading import Semaphore as _Semaphore
-
-
-FILETYPES = {
-                # extension NNNimage fabioclass
-                # type consistency - always use a list if one case is
-                'edf'    : ['edf'],
-                'cor'    : ['edf'],
-                'pnm'    : ['pnm'],
-                'pgm'    : ['pnm'],
-                'pbm'    : ['pnm'],
-                'tif'    : ['tif'],
-                'tiff'   : ['tif'],
-                'img'    : ['adsc', 'OXD', 'HiPiC', 'raxis'],
-                'mccd'   : ['marccd'],
-                'mar2300': ['mar345'],
-                'sfrm'   : ['bruker100'],
-                'msk'    : ['fit2dmask'],
-                'spr'    : ['fit2dspreadsheet'],
-                'dm3'    : ['dm3'],
-                'kcd'    : ['kcd'],
-                'cbf'    : ['cbf'],
-                'xml'    : ["xsd"],
-                'xsd'    : ["xsd"],
-                'spe'    : ["spe"],
-             }
-
-# Add bzipped and gzipped
-for key in list(FILETYPES.keys()):
-    FILETYPES[key + ".bz2"] = FILETYPES[key]
-    FILETYPES[key + ".gz"] = FILETYPES[key]
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
 
@@ -224,6 +194,7 @@ class FilenameObject(object):
         """
         Break up a filename to get image type and number
         """
+        from . import fabioformats
         direc, name = os.path.split(filename)
         direc = direc or None
         parts = name.split(".")
@@ -238,8 +209,14 @@ class FilenameObject(object):
             extn = "." + parts[-1]
             parts = parts[:-1]
             compressed = True
-        if parts[-1].lower() in FILETYPES.keys():
-            typ = FILETYPES[parts[-1].lower()]
+        codec_classes = fabioformats.get_classes_from_extension(parts[-1])
+        if len(codec_classes) > 0:
+            typ = []
+            for codec in codec_classes:
+                name = codec.codec_name()
+                if name.endswith("image"):
+                    name = name[:-5]
+                typ.append(name)
             extn = "." + parts[-1] + extn
             try:
                 stem, numstring, postnum = numstem(".".join(parts[:-1]))

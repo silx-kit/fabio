@@ -37,7 +37,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/09/2016"
+__date__ = "24/10/2016"
 
 import numpy
 
@@ -47,6 +47,11 @@ from .fabioutils import previous_filename, next_filename
 
 
 class PixiImage(FabioImage):
+
+    DESCRIPTION = "Pixi file format"
+
+    DEFAULT_EXTENTIONS = []
+
     _need_a_seek_to_read = True
 
     def _readheader(self, infile):
@@ -95,9 +100,6 @@ class PixiImage(FabioImage):
         self.dim2, self.dim1 = self.data.shape
         self.currentframe = int(img_num)
         self._makeframename()
-
-    def write(self, fname, force_type=numpy.uint16):
-        raise Exception("Write is not implemented")
 
     def getframe(self, num):
         """

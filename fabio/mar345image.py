@@ -49,7 +49,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "05/09/2016"
+__date__ = "21/10/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -69,6 +69,10 @@ from .compression import compPCK, decPCK
 
 class Mar345Image(FabioImage):
     _need_a_real_file = True
+
+    DESCRIPTION = "File format from Mar345 imaging plate and Mar555 flat panel"
+
+    DEFAULT_EXTENTIONS = ["mar2300"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

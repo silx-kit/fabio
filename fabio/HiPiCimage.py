@@ -51,6 +51,10 @@ from .fabioimage import FabioImage
 class HipicImage(FabioImage):
     """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
 
+    DESCRIPTION = "HiPic file format from Hamamatsu CCD cameras"
+
+    DEFAULT_EXTENTIONS = ["img"]
+
     def _readheader(self, infile):
         """
         Read in a header from an already open file

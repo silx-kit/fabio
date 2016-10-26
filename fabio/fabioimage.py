@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "16/09/2016"
+__date__ = "24/10/2016"
 
 
 import os
@@ -87,7 +87,8 @@ class FabioMeta(type):
     # to modify attributes of the class *after* they have been
     # created
     def __init__(cls, name, bases, dct):
-        cls.registry[name.lower()] = cls
+        if cls.codec_name() != "fabioimage":
+            cls.registry[cls.codec_name()] = cls
         super(FabioMeta, cls).__init__(name, bases, dct)
 
 
@@ -117,9 +118,14 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         else:
             msg = ("FileType %s is unknown !, "
                    "please check if the filename exists or select one from %s" % (name, cls.registry.keys()))
-            logger.error(msg)
+            logger.debug(msg)
             raise RuntimeError(msg)
         return obj
+
+    @classmethod
+    def codec_name(cls):
+        """Returns the internal name of the codec"""
+        return cls.__name__.lower()
 
     def __init__(self, data=None, header=None):
         """Set up initial values
@@ -450,7 +456,8 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         """
         To be overwritten - write the file
         """
-        raise Exception("Class has not implemented readheader method yet")
+        module = sys.modules[self.__class__.__module__]
+        raise NotImplementedError("Writing %s format is not implemented" % module.__name__)
 
     def save(self, fname):
         'wrapper for write'
@@ -597,15 +604,14 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 dest = dest[:-5]
             if dest + "image" in self.registry:
                 other = self.factory(dest + "image")
-            # load modules which could be suitable:
-            for pref in fabioutils.FILETYPES.get(dest, []):
-                try:
-                    __import__(".%simage" % pref)
-                    other = self.factory(pref + "image")
-                except:
-                    pass
-                else:
-                    continue
+            else:
+                # load modules which could be suitable:
+                from . import fabioformats
+                for class_ in fabioformats.get_classes_from_extension(dest):
+                    try:
+                        other = class_()
+                    except:
+                        pass
 
         elif isinstance(dest, self.__class__):
             other = dest.__class__()

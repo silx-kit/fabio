@@ -43,7 +43,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "05/09/2016"
+__date__ = "24/10/2016"
 
 import logging
 import struct
@@ -62,8 +62,12 @@ class RaxisImage(FabioImage):
     it is used as a *multiply-by* flag rather than a normal image value bit.
     While it is said to multiply by the value specified in the header, there
     is at least one case where this is found not to hold, so YMMV and be careful.
-
     """
+
+    DESCRIPTION = "Rigaku RAXIS file format"
+
+    DEFAULT_EXTENTIONS = ["img"]
+
     def __init__(self, *arg, **kwargs):
         """
         Generic constructor

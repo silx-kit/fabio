@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/03/2016"
+__date__ = "25/10/2016"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -73,6 +73,8 @@ class UtilsTest(object):
     recompiled = False
     reloaded = False
     name = PACKAGE
+    script_dir = None
+
     try:
         fabio = __import__("%s.directories" % name)
         image_home = fabio.directories.testimages
@@ -252,6 +254,26 @@ class UtilsTest(object):
         mylogger.setLevel(level)
         mylogger.debug("tests loaded from file: %s" % basename)
         return mylogger
+
+    @classmethod
+    def script_path(cls, script):
+        """
+        Return the path of the executable and the associated environment
+        """
+        if (sys.platform == "win32") and not script.endswith(".py"):
+                script += ".py"
+        env = dict((str(k), str(v)) for k, v in os.environ.items())
+        env["PYTHONPATH"] = os.pathsep.join(sys.path)
+        paths = os.environ.get("PATH", "").split(os.pathsep)
+        if cls.script_dir is not None:
+            paths.insert(0, cls.script_dir)
+        for i in paths:
+            script_path = os.path.join(i, script)
+            if os.path.exists(script_path):
+                break
+        else:
+            logger.warning("No scipt %s found in path: %s", script, paths)
+        return script_path, env
 
 
 def recursive_delete(dirname):

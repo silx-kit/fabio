@@ -52,7 +52,6 @@ import numpy as np
 from numpy.polynomial.polynomial import polyval
 
 from .fabioimage import FabioImage
-import traceback
 
 
 class SpeImage(FabioImage):
@@ -65,6 +64,9 @@ class SpeImage(FabioImage):
                   2: np.int16,
                   3: np.uint16}
 
+    DESCRIPTION = "Princeton instrument SPE file format"
+
+    DEFAULT_EXTENTIONS = ["spe"]
 
     def _readheader(self, infile):
         """
