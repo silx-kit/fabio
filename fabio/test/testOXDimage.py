@@ -56,6 +56,10 @@ class TestOxd(unittest.TestCase):
         for i in self.fn:
             assert os.path.exists(self.fn[i])
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.fn = {}
+
     def test_read(self):
         "Test reading of compressed OXD images"
         for line in TESTIMAGES.split("\n"):
@@ -101,6 +105,10 @@ class TestOxdSame(unittest.TestCase):
         for i in self.fn:
             assert os.path.exists(self.fn[i])
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.fn = {}
+
     def test_same(self):
         """test if images are actually the same"""
         o1 = fabio.open(self.fn["b191_1_9_1.img"])
@@ -120,9 +128,33 @@ class TestOxdBig(unittest.TestCase):
         for i in self.fn:
             self.assertTrue(os.path.exists(self.fn[i]), self.fn[i])
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.fn = {}
+
     def test_same(self):
         df = [fabio.open(i).data for i in self.fn.values()]
         self.assertEqual(abs(df[0] - df[1]).max(), 0, "Data are the same")
+
+
+class TestConvert(unittest.TestCase):
+    def setUp(self):
+        self.fn = {}
+        for i in ["face.msk"]:
+            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+        for i in self.fn:
+            self.assertTrue(os.path.exists(self.fn[i]), self.fn[i])
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.fn = {}
+
+    def test_convert(self):
+        fn = self.fn["face.msk"]
+        dst = os.path.join(UtilsTest.tempdir, "face.oxd")
+        fabio.open(fn).convert("oxd").save(dst)
+        self.assert_(os.path.exists(dst), "destination file exists")
+        os.unlink(dst)
 
 
 def suite():
@@ -131,6 +163,7 @@ def suite():
     testsuite.addTest(TestOxd("test_write"))
     testsuite.addTest(TestOxdSame("test_same"))
     testsuite.addTest(TestOxdBig("test_same"))
+    testsuite.addTest(TestConvert("test_convert"))
     return testsuite
 
 if __name__ == '__main__':
