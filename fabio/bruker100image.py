@@ -46,7 +46,7 @@
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright",
                "Jérôme Kieffer", "Sigmund Neher" ]
-__date__ = "21/10/2016"
+__date__ = "26/10/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2015-2016 ESRF, 2016 GWDG"
 __licence__ = "MIT"
@@ -252,7 +252,7 @@ class Bruker100Image(BrukerImage):
 
     def gen_overflow(self):
         """
-        Generate an overflow table, including the underflow, marked as 65535 . 
+        Generate an overflow table, including the underflow, marked as 65535 .
         """
         bpp = 2
         limit = 255
@@ -373,7 +373,7 @@ class Bruker100Image(BrukerImage):
 #             temp_data = self.data
             read_bytes = (nover_one * bpp + 15) & ~(15)  # multiple of 16
             dif2usedbyts = read_bytes - (nover_one * bpp)
-            pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
+            pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
             flat = self.data.ravel()  # flat memory view
             flow_pos = (flat >= limit) + (flat < 0)
 #             flow_pos_indexes = numpy.where(flow_pos == True)[0]
@@ -393,7 +393,7 @@ class Bruker100Image(BrukerImage):
 #         nover_two = self.nover_two
         read_bytes = (noverf * bpp + 15) & ~(15)  # multiple of 16
         dif2usedbyts = read_bytes - (noverf * bpp)
-        pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
+        pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
         flat = self.data.ravel()  # flat memory view
 
         underflow_pos = numpy.where(flat < 0)[0]

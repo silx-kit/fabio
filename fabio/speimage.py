@@ -39,7 +39,7 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "24/10/2016"
+__date__ = "26/10/2016"
 
 import logging
 
@@ -55,10 +55,14 @@ from .fabioimage import FabioImage
 
 
 class SpeImage(FabioImage):
-    """FabIO image class for Images for XXX detector
-    
+    """FabIO image class for Images for Princeton/SPE detector
+
     Put some documentation here
     """
+    DATA_TYPES = {0: np.float32,
+                  1: np.int32,
+                  2: np.int16,
+                  3: np.uint16}
 
     DESCRIPTION = "Princeton instrument SPE file format"
 
@@ -67,15 +71,15 @@ class SpeImage(FabioImage):
     def _readheader(self, infile):
         """
         Read and decode the header of an image:
-        
-        @param infile: Opened python file (can be stringIO or bipped file)  
+
+        @param infile: Opened python file (can be stringIO or bipped file)
         """
 
         self.header['version'] = self._get_version(infile)
 
         self.header['data_type'] = self._read_at(infile, 108, 1, np.uint16)[0]
-        self.header['x_dim'] = np.int64(self._read_at(infile, 42, 1, np.int16)[0])
-        self.header['y_dim'] = np.int64(self._read_at(infile, 656, 1, np.int16)[0])
+        self.header['x_dim'] = int(self._read_at(infile, 42, 1, np.int16)[0])
+        self.header['y_dim'] = int(self._read_at(infile, 656, 1, np.int16)[0])
         self.header['num_frames'] = self._read_at(infile, 1446, 1, np.int32)[0]
 
         if self.header['version'] == 2:
@@ -103,9 +107,9 @@ class SpeImage(FabioImage):
 
     def read(self, fname, frame=None):
         """
-        try to read image 
+        try to read image
         @param fname: name of the file
-        @param frame: 
+        @param frame:
         """
 
         self.resetvals()
@@ -281,14 +285,10 @@ class SpeImage(FabioImage):
     def _read_data(self, infile, frame=None):
         if frame is None:
             frame = 0
-        if self.header['data_type'] == 0:
-            number_size = np.float32().itemsize
-        elif self.header['data_type'] == 1:
-            number_size = np.int32().itemsize
-        elif self.header['data_type'] == 2:
-            number_size = np.int16().itemsize
-        elif self.header['data_type'] == 3:
-            number_size = np.int32().itemsize
+        dtype = self.DATA_TYPES.get(self.header['data_type'])
+        if dtype is None:
+            raise RuntimeError("Unsuported data type: %s" % self.header['data_type'])
+        number_size = np.dtype(dtype).itemsize
         frame_size = self.header['x_dim'] * self.header['y_dim'] * number_size
         return self._read_frame(infile, 4100 + frame * frame_size)
 
@@ -300,16 +300,12 @@ class SpeImage(FabioImage):
         """
         if pos is None:
             pos = infile.tell()
-        if self.header['data_type'] == 0:
-            data = self._read_at(infile, pos, self.header['x_dim'] * self.header['y_dim'], np.float32)
-        elif self.header['data_type'] == 1:
-            data = self._read_at(infile, pos, self.header['x_dim'] * self.header['y_dim'], np.int32)
-        elif self.header['data_type'] == 2:
-            data = self._read_at(infile, pos, self.header['x_dim'] * self.header['y_dim'], np.int16)
-        elif self.header['data_type'] == 3:
-            data = self._read_at(infile, pos, self.header['x_dim'] * self.header['y_dim'], np.uint16)
-        else:
+        dtype = self.DATA_TYPES.get(self.header['data_type'])
+
+        if dtype is None:
             return None
+
+        data = self._read_at(infile, pos, self.header['x_dim'] * self.header['y_dim'], dtype)
         return data.reshape((self.header['y_dim'], self.header['x_dim']))
 
 
