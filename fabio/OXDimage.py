@@ -1,4 +1,4 @@
-# coding: utf-8
+﻿# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -64,8 +64,7 @@ except ImportError:  # naive implementation for very old numpy (v1.0.1 on MacOSX
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
                   1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
                   2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
-                  3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
-                  4: 'Unknown Oxford diffraction detector'}
+                  3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)'}
 
 DEFAULT_HEADERS = {'Header Version': 'OD SAPPHIRE  3.0',
                    'Compression': "TY1",
@@ -95,7 +94,7 @@ class OxdImage(FabioImage):
 
         infile.seek(0)
 
-        # Ascii header part 256 byes long
+        # Ascii header part 256 bytes long
         self.header['Header Version'] = to_str(infile.readline()[:-2])
         block = infile.readline()
         self.header['Compression'] = to_str(block[12:15])
@@ -115,12 +114,7 @@ class OxdImage(FabioImage):
         self.header['NSUPPLEMENT'] = int(block[12:19])
         block = infile.readline()
         self.header['Time'] = to_str(block[5:29])
-        self.header["ASCII Section size in Byte"] = self.header['Header Size In Bytes']\
-                                                   - self.header['General Section size in Byte']\
-                                                   - self.header['Special Section size in Byte'] \
-                                                   - self.header['KM4 Section size in Byte']\
-                                                   - self.header['Statistic Section in Byte']\
-                                                   - self.header['History Section in Byte']
+        self.header["ASCII Section size in Byte"] = 256
 
         # Skip to general section (NG) 512 byes long <<<<<<"
         infile.seek(self.header["ASCII Section size in Byte"])
@@ -146,7 +140,8 @@ class OxdImage(FabioImage):
         self.header['Monitor counts of overflow raw image 1'] = struct.unpack("<i", block[536:540])[0]
         self.header['Monitor counts of overflow raw image 2'] = struct.unpack("<i", block[540:544])[0]
         self.header['Unwarping'] = struct.unpack("<i", block[544:548])[0]
-        self.header['Detector type'] = DETECTOR_TYPES[struct.unpack("<i", block[548:552])[0]]
+            self.header['Detector type'] = DETECTOR_TYPES[struct.unpack("<i", block[548:552])[0]]
+            self.header['Detector type'] = 'Unknown Oxford diffraction detector'      
         self.header['Real pixel size x (mm)'] = struct.unpack("<d", block[568:576])[0]
         self.header['Real pixel size y (mm)'] = struct.unpack("<d", block[576:584])[0]
 
@@ -206,9 +201,9 @@ class OxdImage(FabioImage):
         self.header['Beam center x'] = struct.unpack("<d", block[664:672])[0]
         self.header['Beam center y'] = struct.unpack("<d", block[672:680])[0]
         # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
-        self.header['Alpha angle in deg'] = struct.unpack("<d", block[672:680])[0]
+        self.header['Alpha angle in deg'] = struct.unpack("<d", block[680:688])[0]
         # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
-        self.header['Beta angle in deg'] = struct.unpack("<d", block[672:680])[0]
+        self.header['Beta angle in deg'] = struct.unpack("<d", block[688:696])[0]
 
         # Detector distance
         self.header['Distance in mm'] = struct.unpack("<d", block[712:720])[0]
