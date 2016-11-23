@@ -1,46 +1,51 @@
+:Author: Jérôme Kieffer
+:Date: 15/07/2016
+:Keywords: Installation procedure
+:Target: System administrators
+
 Installation
 ============
 
 FabIO can, as any Python module, be installed from its sources,
-available on sourceforge but we advice to use binary
-packages provided for the most common platforms on sourceforge:
-Windows, MacOSX and Linux. Moreover FabIO is part of the common
-Linux distributions Ubuntu (since 11.10) and Debian7 where the
-package is named python-fabio and can be installed via:
+available on the `Python cheese shop <https://pypi.python.org/pypi/fabio>`_
+but we advice to use binary wheels packages provided for the most common platforms:
+Windows, MacOSX. For Debian Linux and its derivatives (Ubuntu, Mint, ...), FabIO
+is part of the distributions and itss package is named *python-fabio* and can be installed via:
 
-::
+.. code::
 
     sudo apt-get install python-fabio
 
-If you are using MS Windows or MacOSX; binary version have been packaged and should be PIP-installable.
+If you are using MS Windows or MacOSX; binary version (as wheel packages) are
+PIP-installable.
 PIP is the Python Installer Program, similar to ``apt-get`` for Python.
-It runs under any architecture and can simply be installed from:
+It runs under any architecture.
+Since Python 2.7.10 and 3.4, PIP is installed together with Python itself.
+If your Python is elder, PIP can be simply `downloaded <https://bootstrap.pypa.io/get-pip.py>`_
+and executed using your standard Python:
 
-https://bootstrap.pypa.io/get-pip.py
-
-then
-
-::
-
-  pip install fabio
+.. code::
+   python get-pip.py
+   pip install fabio
 
 Installation under windows
 --------------------------
 
-Install Python from http://python.org.
+Install `Python <http://python.org>`_ from the official web page.
 I would recommend Python 2.7 in 64 bits version if your operating system allows it.
-Python3 (>=3.2) is OK while less tested.
+Python3 (>=3.4) is OK.
 
-If you are looking for an integrated distribution of Python on Windows,
-WinPython is a good one, the Python2.7, 64 bit version is advised.
-https://winpython.github.io/
+If you are looking for an integrated scientific Python distribution on Windows,
+`WinPython <https://winpython.github.io/>`_ is a good one, the Python2.7, 64 bit
+ version is advised.
+
 It comes with pip pre-installed and configured.
 
 Installation using PIP:
 .......................
-Download PIP and run:
-https://bootstrap.pypa.io/get-pip.py
 
+If you use a Python2 elder than 2.7.10 or a Python3 <3.4, you will need
+`Download PIP <https://bootstrap.pypa.io/get-pip.py>`_.
 Then install the wheel package manager and all dependencies for :
 
 ::
@@ -56,61 +61,111 @@ http://www.riverbankcomputing.co.uk/software/pyqt/download
 Manual installation under windows
 .................................
 
-You will find all the scientific Python stack packaged for Windows on Christopher Gohlke' page (including FabIO):
-
-http://www.lfd.uci.edu/~gohlke/pythonlibs/
+You will find all the `scientific Python stack packaged for Windows <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_ on Christoph
+Gohlke' page (including FabIO):
 
 Pay attention to the Python version (both number and architecture).
-DO NOT MIX 32 and 64 bits version.
-To determine the version of your Python:
+**DO NOT MIX 32 and 64 bits version**.
+To determine the version and architecture width of the Python interpreter:
 
 .. highlight:: python
-
-    >>> 8 * tuple.__itemsize__
     
-This gives you the architecture width of the Python interpreter
-
+    >>> import sys
+    >>> print(sys.version)
+    2.7.9 (default, Mar  1 2015, 12:57:24) 
+    >>> print("%s bits"%(8 * tuple.__itemsize__))
+    64 bits
 
 Installation from sources
 .........................
 
-Install the required dependencies (via PIP or a repository), then retrieve the Microsoft compiler and install it from:
-http://aka.ms/vcpython27
+* Retrieve the sources from github:
 
-Once done, follow the classical procedure (similar to MacOSX or Linux):
-* download sources of FabIO from fable.sourceforge.net.
-* unzip the archive
-* run ``python setup.py build install``
+  + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
+
+* unzip the file in a directory
+* open a console (cmd.exe) in this directory.
+* install the required dependencies using PIP::
+
+    pip install -r ci/requirements_appveyor.txt --trusted-host www.silx.org
+
+Get the compiler and install it
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The version of the compiler and the version of the Microsoft SDK
+have to match the Python version you are using. Here are a couple of examples:
+
+* Python2.7: `Microsoft compiler 2008 <http://aka.ms/vcpython27>`_
+* Python 3.5: `Microsoft Visual studio community edition 2015 <https://go.microsoft.com/fwlink/?LinkId=691978&clcid=0x40c>`_
+
+Compile the sources
+^^^^^^^^^^^^^^^^^^^
+
+::
+
+   python setup.py build
+   python setup.py test
+   pip install .
+
+Testing version of FabIO
+........................
+
+Continuous integration runs the complete test suite on multiple operating
+systems and python version.
+Under Windows, this is done using the
+`AppVeyor cloud service <https://ci.appveyor.com/project/ESRF/fabio>`_
+Select the environment which matches your setup like
+**Environment: PYTHON=C:\Python34-x64, PYTHON_VERSION=3.4.3, PYTHON_ARCH=64**
+and go to **artifacts** where wheels and MSI-installers are available.
 
 
 Installation on MacOSX
 ----------------------
 
-Python 2.7, 64 bits and numpy are  natively available on MacOSX.
+Python 2.7, 64 bits and numpy are natively available on MacOSX.
 
-Install PIP
-...........
+Install via PIP
+...............
 
-Download PIP and run:
-https://bootstrap.pypa.io/get-pip.py
+Since MacOSX 10.11 (El-Captain), PIP is available as part of the standard python installation.
+For elder MacOSX, `download PIP and run <https://bootstrap.pypa.io/get-pip.py>`_.
+Then install FabIO directly:
 
-Then install the wheel package manager:
+.. code::
+    sudo pip install fabio
 
-::
 
-    pip install setuptools
-    pip install wheel
-    pip install PIL
-    pip install lxml
-    pip install fabio
+**Note:** for now, PyQt4, used by the *fabio-viewer* is not yet pip-installable.
+You will need to get it from
+`riverbankcomputing <http://www.riverbankcomputing.co.uk/software/pyqt/download>`_.
 
-Note: for now, PyQt4 is not yet pip-installable. you will need to get it from riverbankcomputing:
-http://www.riverbankcomputing.co.uk/software/pyqt/download
+Compile from sources
+....................
 
 Get the compiler
-................
+^^^^^^^^^^^^^^^^
 Apple provides for free Xcode which contains the compiler needed to build binary extensions.
 Xcode can be installed from the App-store.
+
+Compile the sources
+^^^^^^^^^^^^^^^^^^^
+
+Once done, follow the classical procedure (similar to Windows or Linux):
+
+* Retrieve the sources from github:
+
+  + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
+
+* unzip the file in a directory
+* open a terminal in the unzipped archive directory
+* run::
+
+   sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
+   python setup.py build
+   python setup.py test
+   sudo pip install .
 
 
 Manual Installation for any operating system
@@ -119,52 +174,37 @@ Manual Installation for any operating system
 Install the dependencies
 ........................
 
-* Python 2.6 - 2.7 or 3.2+
+Most Linux distribution come with a Python environment configured. Complete
+it with the needed dependencies.
+
+* Python 2.7 or 3.4+
 * numpy - http://www.numpy.org
 
 For full functionality of FabIO the following modules need to be installed:
 
-* PIL (python imaging library) - http://www.pythonware.com
+* Pillow (python imaging library) - http://www.pythonware.com
 * lxml (library for reading XSDimages)
 * PyQt4 for the fabio_viewer program
 
+Once done, follow the classical procedure (similar to Windows or MacOSX):
+
+* Retrieve the sources from github:
+
+  + `The master development branch <https://github.com/silx-kit/fabio/archive/master.zip>`_
+  + `The latest release <https://github.com/silx-kit/fabio/releases/latest>`_
+
+* unzip the file in a directory
+* open a terminal in the unzipped archive directory
+* run::
+
+   sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
+   python setup.py build
+   python setup.py test
+   sudo pip install .
 
 
-FabIO can be downloaded from the fable download page on sourceforge.net.
-Presently the source code has been distributed as a zip package and a compressed tarball.
-Download either one and unpack it.
-
-::
-
-    http://sourceforge.net/projects/fable/files/fabio/
-
-e.g.
-
-::
-
-    tar xvzf fabio-0.2.2.tar.gz
-
-or
-
-::
-
-    unzip fabio-0.2.2.zip
-
-all files are unpacked into the directory fabio-0.2.2. To install these do
-
-::
-
-     cd fabio-0.2.2
-
-and install fabio: build it, run the tests and build the wheel package and install it.
-
-::
-
-    python setup.py build
-    python setup.py bdist_wheel
-    sudo pip install dist/fabio-0.2.2*.whl
-    
-most likely you will need to gain root privileges (with sudo in front of the command) to install the built package.
+Most likely you will need to gain root privileges (with sudo in front of the
+command) to install packages.
 
 Development versions
 --------------------
@@ -172,10 +212,10 @@ The newest development version can be obtained by checking it out from the git r
 
 ::
 
-    git clone https://github.com/kif/fabio
+    git clone https://github.com/silx-kit/fabio
     cd fabio
-    python setup.py build bdist_wheel
-    sudo pip install dist/fabio-0.2.2*.whl
+    python setup.py build test
+    sudo pip install .
 
 For Ubuntu/Debian users, you will need:
 
@@ -188,29 +228,50 @@ For Ubuntu/Debian users, you will need:
 
     sudo apt-get install python-imaging python-imaging-tk python-numpy
 
-We provide also a debian-package builder based on stdeb:
+Automatic debian packaging
+..........................
+
+Debian 6 and 7:
+^^^^^^^^^^^^^^^
+We provide a debian-package builder based on stdeb, building a package for Python2:
 
 ::
 
 	sudo apt-get install python-stdeb
-	./build-deb.sh 3
+	./build-deb7.sh
 
-which builds a couple of debian packages (actually one for python2 and another for python3) and installs them in a single command.
+which builds a debian package and installs them in a single command.
 Handy for testing, but very clean, see hereafter
 
-Debian packaging
-----------------
-FabIO features some helper function to make debian packaging easier:
+Debian 8 and newer
+------------------
+
+There is also a script which builds a bunch of *real* debian packages: *build-deb8.sh*
+It will build a bunch of 6 debian packages::
+ 
+* *fabio-viewer*: the GUI for visualizing diffraction images
+* *fabio-doc*: the documumentation package
+* *python3-fabio*: library built for Python3
+* *python3-fabio-dbg*: debug symbols for Python3
+* *python-fabio*: library built for Python2
+* *python-fabio-dbg*: debug symbols for Python2
+
+For this, you need a complete debian build environment:
 
 ::
 
-    #to create the orig.tar.gz without cython generated C files for Sphinx built documentation:
-    python setup.py debian_src
-     
-    # to create a tarball of all images needed to test the library 
-    python setup.py debian_testimages
+   sudo apt-get install cython cython-dbg cython3 cython3-dbg debhelper dh-python \
+   python-all-dev python-all-dbg python-h5py \
+   python-lxml python-lxml-dbg python-matplotlib python-matplotlib-dbg python-numpy\
+   python-numpy-dbg python-qt4 python-qt4-dbg python-sphinx \
+   python-sphinxcontrib.programoutput python-tk python-tk-dbg python3-all-dev python3-all-dbg \
+   python3-lxml python3-lxml-dbg python3-matplotlib \
+   python3-matplotlib-dbg python3-numpy python3-numpy-dbg python3-pyqt4 python3-pyqt4-dbg \
+    python3-sphinx python3-sphinxcontrib.programoutput \
+   python3-tk python3-tk-dbg
 
-Two tarball are created, one with all source code (and only source code) and the other one with all test-data.
+   ./build-debian-full.sh
+
 
 Test suite
 ----------
@@ -218,11 +279,19 @@ Test suite
 FabIO has a comprehensive test-suite to ensure non regression.
 When you run the test for the first time, many test images will be download and converted into various compressed format like gzip and bzip2 (this takes a lot of time).
 
-Be sure you have an internet connection and your environment variable http_proxy is correctly set-up. For example if you are behind a firewall/proxy:
+Be sure you have an internet connection and your proxy setting are correctly defined in the environment variable *http_proxy*.
+For example if you are behind a firewall/proxy:
 
-::
+Under Linux and MacOSX::
 
    export http_proxy=http://proxy.site.org:3128
+
+Under Windows::
+
+   set http_proxy=http://proxy.site.org:3128
+
+Where *proxy.site.org* and *3128* correspond to the proxy server and port on your network.
+At ESRF, you can get this piece of information by phoning to the hotline: 24-24.
 
 Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files",
 it is done on purpose to ensure robustness in FabIO.
@@ -245,51 +314,21 @@ Within Python (or ipython):
 
 .. code-block:: python
 
-   import fabio
-   fabio.tests()
+   >>> import fabio
+   >>> fabio.tests()
 
 
 Test coverage
 .............
 
-FabIO comes with 25 test-suites (113 tests in total) representing a coverage of 60%.
+FabIO comes with 33 test-suites (145 tests in total) representing a coverage of 60%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.6, 2.7, 3.2 and 3.4.
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4 and 3.5.
 Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
+FabIO may run on other untested systems but without warranty.
 
-.. csv-table:: Test suite coverage
-   :header: "Name", "Stmts", "Exec", "Cover"
-   :widths: 35, 8, 8, 8
+.. toctree::
+   :maxdepth: 2
+    
+   coverage
 
-   "fabio/GEimage                 ", "   94", "     48", "    51%"
-   "fabio/HiPiCimage              ", "   55", "      7", "    12%"
-   "fabio/OXDimage                ", "  285", "    271", "    95%"
-   "fabio/TiffIO                  ", "  794", "    534", "    67%"
-   "fabio/__init__                ", "   15", "     15", "   100%"
-   "fabio/adscimage               ", "   79", "     37", "    46%"
-   "fabio/binaryimage             ", "   50", "     15", "    30%"
-   "fabio/bruker100image          ", "   60", "     13", "    21%"
-   "fabio/brukerimage             ", "  212", "    171", "    80%"
-   "fabio/cbfimage                ", "  441", "    219", "    49%"
-   "fabio/compression             ", "  223", "    136", "    60%"
-   "fabio/converters              ", "   17", "     14", "    82%"
-   "fabio/dm3image                ", "  133", "     16", "    12%"
-   "fabio/edfimage                ", "  596", "    397", "    66%"
-   "fabio/fabioimage              ", "  306", "    193", "    63%"
-   "fabio/fabioutils              ", "  322", "    256", "    79%"
-   "fabio/file_series             ", "  140", "     61", "    43%"
-   "fabio/fit2dmaskimage          ", "   75", "     71", "    94%"
-   "fabio/fit2dspreadsheetimage   ", "   47", "      7", "    14%"
-   "fabio/hdf5image               ", "  146", "     25", "    17%"
-   "fabio/kcdimage                ", "   80", "     65", "    81%"
-   "fabio/mar345image             ", "  244", "    215", "    88%"
-   "fabio/marccdimage             ", "   63", "     56", "    88%"
-   "fabio/mrcimage                ", "   96", "      0", "     0%"
-   "fabio/openimage               ", "  104", "     69", "    66%"
-   "fabio/pilatusimage            ", "   34", "      5", "    14%"
-   "fabio/pixiimage               ", "   95", "     22", "    23%"
-   "fabio/pnmimage                ", "  109", "     21", "    19%"
-   "fabio/raxisimage              ", "   98", "     88", "    89%"
-   "fabio/readbytestream          ", "   26", "      5", "    19%"
-   "fabio/tifimage                ", "  167", "     60", "    35%"
-   "fabio/xsdimage                ", "   94", "     68", "    72%"

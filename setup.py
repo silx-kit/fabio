@@ -1,87 +1,200 @@
 #!/usr/bin/env python
 # coding: utf-8
+#
+#    Project: Fable Input/Output
+#             https://github.com/silx-kit/fabio
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#  .
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#  .
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
+
+""" Setup script for python distutils package and fabio """
 
 from __future__ import print_function, division, with_statement, absolute_import
 
-"""
-Setup script for python distutils package and fabio
-"""
+
+__author__ = "Jerome Kieffer"
+__contact__ = "Jerome.Kieffer@ESRF.eu"
+__license__ = "MIT"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "15/09/2016"
+__status__ = "stable"
+
 import os
+import time
 import sys
-import os.path as op
 import glob
 import shutil
-import numpy as np
+import numpy
+
+
 try:
     # setuptools allows the creation of wheels
-    from setuptools import setup, Extension, Command
+    from setuptools import setup, Command
     from setuptools.command.sdist import sdist
+    from setuptools.command.build_ext import build_ext
+    from setuptools.command.install import install
+    from setuptools.command.build_py import build_py as _build_py
 except ImportError:
-    from distutils.core import setup
-    from distutils.core import Extension, Command
+    from distutils.core import setup, Command
     from distutils.command.sdist import sdist
+    from distutils.command.build_ext import build_ext
+    from distutils.command.install import install
+    from distutils.command.build_py import build_py as _build_py
+from numpy.distutils.core import Extension as _Extension
 from distutils.filelist import FileList
+
+PROJECT = "fabio"
+install_warning = False
+cmdclass = {}
 
 ################################################################################
 # Remove MANIFEST file ... it needs to be re-generated on the fly
 ################################################################################
-if op.isfile("MANIFEST"):
-    os.unlink("MANIFEST")
+manifest = os.path.join(os.path.dirname(os.path.abspath(__file__)), "MANIFEST")
+if os.path.isfile(manifest):
+    os.unlink(manifest)
 
 
 ################################################################################
 # Check for Cython and use it if it is available
 ################################################################################
-USE_CYTHON = True
-try:
-    import Cython.Compiler.Version
-    from Cython.Distutils import build_ext
-except ImportError:
-    USE_CYTHON = False
-else:
-    if tuple(int(i) for i in Cython.Compiler.Version.version.split(".")[:2]) < (0, 17):
-        USE_CYTHON = False
+
+def check_cython():
+    """
+    Check if cython must be activated fron te command line or the environment.
+    """
+
+    if "WITH_CYTHON" in os.environ and os.environ["WITH_CYTHON"] == "False":
+        print("No Cython requested by environment")
+        return False
+
+    if ("--no-cython" in sys.argv):
+        sys.argv.remove("--no-cython")
+        os.environ["WITH_CYTHON"] = "False"
+        print("No Cython requested by command line")
+        return False
+
+    try:
+        import Cython.Compiler.Version
+    except ImportError:
+        return False
     else:
-        USE_CYTHON = True
+        if Cython.Compiler.Version.version < "0.17":
+            return False
+    return True
 
+
+USE_CYTHON = check_cython()
+USE_OPENMP = False
 if USE_CYTHON:
-    ext = ".pyx"
-else:
-    from distutils.command.build_ext import build_ext
-    ext = ".c"
+    from Cython.Build import cythonize
 
 
-cf_backend = Extension('cf_io',
-                       include_dirs=[np.get_include()],
-                       sources=['src/cf_io' + ext, 'src/columnfile.c'])
-byteOffset_backend = Extension("byte_offset",
-                               include_dirs=[np.get_include()],
-                               sources=['src/byte_offset' + ext])
+def Extension(name, source=None, can_use_openmp=False, extra_sources=None, **kwargs):
+    """
+    Wrapper for distutils' Extension
+    """
+    if name.startswith(PROJECT + ".ext."):
+        name = name[len(PROJECT) + 5:]
+    if source is None:
+        source = name
+    cython_c_ext = ".pyx" if USE_CYTHON else ".c"
+    sources = [os.path.join(PROJECT, "ext", source + cython_c_ext)]
+    if extra_sources:
+        sources.extend(extra_sources)
+    if "include_dirs" in kwargs:
+        include_dirs = set(kwargs.pop("include_dirs"))
+        include_dirs.add(numpy.get_include())
+        include_dirs.add(os.path.join(PROJECT, "ext"))
+        include_dirs.add(os.path.join(PROJECT, "ext", "include"))
+        include_dirs = list(include_dirs)
+    else:
+        include_dirs = [os.path.join(PROJECT, "ext", "include"),
+                        os.path.join(PROJECT, "ext"), numpy.get_include()]
 
-mar345_backend = Extension('mar345_IO',
-                           include_dirs=[np.get_include()],
-                           sources=['src/mar345_IO' + ext,
-                                    'src/ccp4_pack.c',
-                                      ])
-_cif_backend = Extension('_cif',
-                         include_dirs=[np.get_include()],
-                         sources=['src/_cif' + ext])
+    if can_use_openmp and USE_OPENMP:
+        extra_compile_args = set(kwargs.pop("extra_compile_args", []))
+        extra_compile_args.add(USE_OPENMP)
+        kwargs["extra_compile_args"] = list(extra_compile_args)
+
+        extra_link_args = set(kwargs.pop("extra_link_args", []))
+        extra_link_args.add(USE_OPENMP)
+        kwargs["extra_link_args"] = list(extra_link_args)
+
+    ext = _Extension(name=PROJECT + ".ext." + name, sources=sources, include_dirs=include_dirs, **kwargs)
+
+    if USE_CYTHON:
+        cext = cythonize([ext], compile_time_env={"HAVE_OPENMP": bool(USE_OPENMP)})
+        if cext:
+            ext = cext[0]
+    return ext
+
+ext_modules = [Extension('cf_io', extra_sources=['fabio/ext/src/columnfile.c']),
+               Extension("byte_offset"),
+               Extension('mar345_IO', extra_sources=['fabio/ext/src/ccp4_pack.c']),
+               Extension('_cif')]
 
 
-extensions = [cf_backend, byteOffset_backend, mar345_backend, _cif_backend]
+##############
+# version.py #
+##############
+class build_py(_build_py):
+    """
+    Enhanced build_py which copies version.py to <PROJECT>._version.py
+    """
+    def find_package_modules(self, package, package_dir):
+        modules = _build_py.find_package_modules(self, package, package_dir)
+        if package == PROJECT:
+            modules.append((PROJECT, '_version', 'version.py'))
+        return modules
+
+cmdclass['build_py'] = build_py
+
+if install_warning:
+    class InstallWarning(install):
+        def __init__(self, *arg, **kwarg):
+            print("The usage of 'python setup.py is deprecated. Please use 'pip install .' instead")
+            time.sleep(0.5)
+            install.__init__(self, *arg, **kwarg)
+    cmdclass['install'] = InstallWarning
 
 
 def get_version():
-    sys.path.insert(0, op.join(op.dirname(op.abspath(__file__)), "fabio-src"))
-    import _version
-    sys.path.pop(0)
-    return _version.version
+    import version
+    return version.strictversion
+
+
+def get_readme():
+    """Provide the long description as an Unicode string"""
+    dirname = os.path.dirname(os.path.abspath(__file__))
+
+    with open(os.path.join(dirname, "README.rst"), "rb") as fp:
+        long_description = fp.read()
+    return long_description.decode("utf-8")
+
 
 #######################
 # build_doc commandes #
 #######################
-cmdclass = {}
-
 try:
     import sphinx
     import sphinx.util.console
@@ -89,6 +202,7 @@ try:
     from sphinx.setup_command import BuildDoc
 except ImportError:
     sphinx = None
+
 else:
     # i.e. if sphinx:
     class build_doc(BuildDoc):
@@ -99,8 +213,9 @@ else:
             # previously installed version
 
             build = self.get_finalized_command('build')
-            print(op.abspath(build.build_lib))
-            sys.path.insert(0, op.abspath(build.build_lib))
+            sys.path.insert(0, os.path.abspath(build.build_lib))
+            script_dir = os.path.abspath("scripts")
+            os.environ["PATH"] = "%s%s%s" % (script_dir, os.pathsep, os.environ.get("PATH", ""))
             # Build the Users Guide in HTML and TeX format
             for builder in ('html', 'latex'):
                 self.builder = builder
@@ -108,34 +223,15 @@ else:
                 self.mkpath(self.builder_target_dir)
                 BuildDoc.run(self)
             sys.path.pop(0)
+            os.environ["PATH"] = os.pathsep.join(os.environ.get("PATH").split(os.pathsep)[1:])
     cmdclass['build_doc'] = build_doc
 
-
-class PyTest(Command):
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        import subprocess
-        os.chdir(op.join(op.dirname(op.abspath(__file__)), "test"))
-        errno = subprocess.call([sys.executable, 'test_all.py'])
-        if errno != 0:
-            raise SystemExit(errno)
-        else:
-            os.chdir("..")
-
-cmdclass['test'] = PyTest
 
 # We subclass the build_ext class in order to handle compiler flags
 # for openmp and opencl etc in a cross platform way
 translator = {
-        #  Compiler
-        #  name, compileflag, linkflag
+        # Compiler
+        # name, compileflag, linkflag
         'msvc': {
                  'openmp': ('/openmp', ' '),
                  'debug': ('/Zi', ' '),
@@ -180,21 +276,32 @@ def download_images():
     """
     Download all test images and
     """
-    test_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test")
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    test_dir = os.path.join(root_dir, PROJECT, "test")
     sys.path.insert(0, test_dir)
     from utilstest import UtilsTest
-    for afile in UtilsTest.ALL_DOWNLOADED_FILES.copy():
+    image_home = os.path.join(root_dir, "testimages")
+    testimages = os.path.join(root_dir, "all_testimages.json")
+    UtilsTest.image_home = image_home
+    UtilsTest.testimages = testimages
+    if os.path.exists(testimages):
+        import json
+        with open(testimages) as f:
+            all_files = set(json.load(f))
+    else:
+        raise(RuntimeError("Please run 'python setup.py build test' to download all images"))
+    for afile in all_files.copy():
         if afile.endswith(".bz2"):
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-4] + ".gz")
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-4])
+            all_files.add(afile[:-4] + ".gz")
+            all_files.add(afile[:-4])
         elif afile.endswith(".gz"):
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-3] + ".bz2")
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile[:-3])
+            all_files.add(afile[:-3] + ".bz2")
+            all_files.add(afile[:-3])
         else:
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile + ".gz")
-            UtilsTest.ALL_DOWNLOADED_FILES.add(afile + ".bz2")
-    UtilsTest.download_images()
-    return list(UtilsTest.ALL_DOWNLOADED_FILES)
+            all_files.add(afile + ".gz")
+            all_files.add(afile + ".bz2")
+    UtilsTest.download_images(all_files)
+    return list(all_files)
 
 
 class sdist_debian(sdist):
@@ -202,8 +309,13 @@ class sdist_debian(sdist):
     Tailor made sdist for debian
     * remove auto-generated doc
     * remove cython generated .c files
-    * add image files from test/testimages/*
     """
+    @staticmethod
+    def get_debian_name():
+        import version
+        name = "%s_%s" % (PROJECT, version.debianversion)
+        return name
+
     def prune_file_list(self):
         sdist.prune_file_list(self)
         to_remove = ["doc/build", "doc/pdf", "doc/html", "pylint", "epydoc"]
@@ -211,28 +323,28 @@ class sdist_debian(sdist):
         for rm in to_remove:
             self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
         # this is for Cython files specifically
-        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix="src")
-        for pyxf in glob.glob("src/*.pyx"):
-            cf = op.splitext(pyxf)[0] + ".c"
-            if op.isfile(cf):
+        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix=PROJECT + "ext")
+        for pyxf in glob.glob(PROJECT + "ext/*.pyx"):
+            cf = os.path.splitext(pyxf)[0] + ".c"
+            if os.path.isfile(cf):
                 self.filelist.exclude_pattern(pattern=cf)
 
     def make_distribution(self):
         self.prune_file_list()
         sdist.make_distribution(self)
         dest = self.archive_files[0]
-        dirname, basename = op.split(dest)
-        base, ext = op.splitext(basename)
+        dirname, basename = os.path.split(dest)
+        base, ext = os.path.splitext(basename)
         while ext in [".zip", ".tar", ".bz2", ".gz", ".Z", ".lz", ".orig"]:
-            base, ext = op.splitext(base)
+            base, ext = os.path.splitext(base)
         if ext:
             dest = "".join((base, ext))
         else:
             dest = base
-        sp = dest.split("-")
-        base = sp[:-1]
-        nr = sp[-1]
-        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig.tar.gz")
+#         sp = dest.split("-")
+#         base = sp[:-1]
+#         nr = sp[-1]
+        debian_arch = os.path.join(dirname, self.get_debian_name() + ".orig.tar.gz")
         os.rename(self.archive_files[0], debian_arch)
         self.archive_files = [debian_arch]
         print("Building debian .orig.tar.gz in %s" % self.archive_files[0])
@@ -240,67 +352,63 @@ class sdist_debian(sdist):
 cmdclass['debian_src'] = sdist_debian
 
 
-class sdist_testimages(sdist):
+class TestData(Command):
     """
-    Tailor made sdist for debian containing only testimages
-    * remove everything
-    * add image files from testimages/*
+    Tailor made tarball with test data
     """
-    to_remove = ["PKG-INFO", "setup.cfg"]
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
 
     def run(self):
-        self.filelist = FileList()
-        self.add_defaults()
-        self.make_distribution()
+        datafiles = download_images()
+        dist = "dist"
+        arch = os.path.join(dist, PROJECT + "-testimages.tar.gz")
+        print("Building testdata tarball in %s" % arch)
+        if not os.path.isdir(dist):
+            os.mkdir(dist)
+        if os.path.exists(arch):
+            os.unlink(arch)
+        import tarfile
+        with tarfile.open(name=arch, mode='w:gz') as tarball:
+            for afile in datafiles:
+                tarball.add(os.path.join("testimages", afile), afile)
+cmdclass['testimages'] = TestData
 
-    def add_defaults(self):
-        print("in sdist_testimages.add_defaults")
-        self.filelist.extend([op.join("testimages", i) for i in download_images()])
-        print(self.filelist.files)
 
-    def make_release_tree(self, base_dir, files):
-        print("in sdist_testimages.make_release_tree")
-        sdist.make_release_tree(self, base_dir, files)
-        for afile in self.to_remove:
-            dest = os.path.join(base_dir, afile)
-            if os.path.exists(dest):
-                os.unlink(dest)
+class PyTest(Command):
+    user_options = []
 
-    def make_distribution(self):
-        print("in sdist_testimages.make_distribution")
-        sdist.make_distribution(self)
-        dest = self.archive_files[0]
-        dirname, basename = op.split(dest)
-        base, ext = op.splitext(basename)
-        while ext in [".zip", ".tar", ".bz2", ".gz", ".Z", ".lz", ".orig"]:
-            base, ext = op.splitext(base)
-        if ext:
-            dest = "".join((base, ext))
-        else:
-            dest = base
-        sp = dest.split("-")
-        base = sp[:-1]
-        nr = sp[-1]
-        debian_arch = op.join(dirname, "-".join(base) + "_" + nr + ".orig-testimages.tar.gz")
-        os.rename(self.archive_files[0], debian_arch)
-        self.archive_files = [debian_arch]
-        print("Building debian orig-testimages.tar.gz in %s" % self.archive_files[0])
+    def initialize_options(self):
+        pass
 
-cmdclass['debian_testimages'] = sdist_testimages
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import subprocess
+        errno = subprocess.call([sys.executable, 'run_tests.py', '-i'])
+        if errno != 0:
+            raise SystemExit(errno)
+cmdclass['test'] = PyTest
 
 
 if sys.platform == "win32":
-    root = op.dirname(op.abspath(__file__))
+    root = os.path.dirname(os.path.abspath(__file__))
     tocopy_files = []
     script_files = []
-    for i in os.listdir(op.join(root, "scripts")):
-        if op.isfile(op.join(root, "scripts", i)):
+    for i in os.listdir(os.path.join(root, "scripts")):
+        if os.path.isfile(os.path.join(root, "scripts", i)):
             if i.endswith(".py"):
-                script_files.append(op.join("scripts", i))
+                script_files.append(os.path.join("scripts", i))
             else:
-                tocopy_files.append(op.join("scripts", i))
+                tocopy_files.append(os.path.join("scripts", i))
     for i in tocopy_files:
-        filein = op.join(root, i)
+        filein = os.path.join(root, i)
         if (filein + ".py") not in script_files:
             shutil.copyfile(filein, filein + ".py")
             script_files.append(filein + ".py")
@@ -308,40 +416,27 @@ else:
     script_files = glob.glob("scripts/*")
 
 
+install_requires = ["numpy"]
+setup_requires = ["numpy", "cython"]
+
+
 # adaptation for Debian packaging (without third_party)
-packages = ["fabio", "fabio.test"]
-package_dir = {"fabio": "fabio-src",
-               "fabio.test": "test"}
+packages = [PROJECT, PROJECT + ".test", PROJECT + ".ext", PROJECT + ".benchmark"]
+package_dir = {PROJECT: PROJECT,
+               PROJECT + ".test": PROJECT + "/test",
+               PROJECT + ".ext": PROJECT + "/ext",
+               PROJECT + ".benchmark": PROJECT + "/benchmark"}
 if os.path.isdir("third_party"):
-    package_dir["fabio.third_party"] = "third_party"
-    packages.append("fabio.third_party")
+    package_dir[PROJECT + ".third_party"] = "third_party"
+    packages.append(PROJECT + ".third_party")
 
-
-if __name__ == "__main__":
-    setup(name='fabio',
-          version=get_version(),
-          author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
-          author_email="fable-talk@lists.sourceforge.net",
-          description='Image IO for fable',
-          url="http://fable.wiki.sourceforge.net/fabio",
-          download_url="http://sourceforge.net/projects/fable/files/fabio/",
-          ext_package="fabio",
-          ext_modules=extensions,
-          packages=["fabio", "fabio.third_party", "fabio.test"],
-          package_dir={"fabio": "fabio-src",
-                       "fabio.third_party": "third_party",
-                       "fabio.test": "test"
-                       },
-          test_suite="test",
-          cmdclass=cmdclass,
-          scripts=script_files,
-          classifiers=[
+classifiers = [
               'Development Status :: 5 - Production/Stable',
               'Environment :: Console',
               'Intended Audience :: End Users/Desktop',
               'Intended Audience :: Developers',
               'Intended Audience :: Science/Research',
-              "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+              "License :: OSI Approved :: MIT License",
               'Operating System :: MacOS :: MacOS X',
               'Operating System :: Microsoft :: Windows',
               'Operating System :: POSIX',
@@ -353,4 +448,26 @@ if __name__ == "__main__":
               'Topic :: Scientific/Engineering :: Physics',
               'Topic :: Scientific/Engineering :: Visualization',
               'Topic :: Software Development :: Libraries :: Python Modules',
-                ],)
+                ]
+
+if __name__ == "__main__":
+    setup(name=PROJECT,
+          version=get_version(),
+          author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
+          author_email="fable-talk@lists.sourceforge.net",
+          description='Image IO for fable',
+          url="http://fable.wiki.sourceforge.net/fabio",
+          download_url="https://github.com/silx-kit/fabio/releases",
+          # ext_package="fabio",
+          scripts=script_files,
+          ext_modules=ext_modules,
+          packages=packages,
+          package_dir=package_dir,
+          test_suite="test",
+          cmdclass=cmdclass,
+          classifiers=classifiers,
+          license="MIT",
+          long_description=get_readme(),
+          install_requires=install_requires,
+          setup_requires=setup_requires,
+          )
