@@ -245,7 +245,7 @@ class OxdImage(FabioImage):
                                 "is corrupt, cannot read it")
             #
             if self.header['Compression'] == 'TY1':
-                logger.debug("# Compressed with the KM4CCD compression")
+                logger.debug("Compressed with the KM4CCD compression")
                 raw8 = infile.read(self.dim1 * self.dim2)
                 raw16 = None
                 raw32 = None
@@ -258,7 +258,7 @@ class OxdImage(FabioImage):
                 raw_data = decTY1(raw8, raw16, raw32)
                 bytecode = raw_data.dtype
             elif self.header['Compression'] == 'TY5':
-                logger.warning("# Compressed with the TY5 compression")
+                logger.info("Compressed with the TY5 compression")
                 bytecode = numpy.int8
                 self.bpp = 1
                 raw8 = infile.read(self.dim1 * self.dim2)
@@ -267,11 +267,11 @@ class OxdImage(FabioImage):
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
                 else:
-                    self.raw16 = ""
+                    self.raw16 = b""
                 if self.header['OL'] > 0:
                     self.raw32 = infile.read(self.header['OL'] * 4)
                 else:
-                    self.raw32 = ""
+                    self.raw32 = b""
                 self.rest = infile.read()
                 self.blob = raw8 + self.raw16 + self.raw32 + self.rest
                 raw_data = self.dec_TY5(raw8 + self.raw16 + self.raw32)
@@ -280,7 +280,7 @@ class OxdImage(FabioImage):
                 self.bpp = len(numpy.array(0, bytecode).tostring())
                 nbytes = self.dim1 * self.dim2 * self.bpp
                 raw_data = numpy.fromstring(infile.read(nbytes), bytecode)
-                # Always assume littel-endian on the disk
+                # Always assume little-endian on the disk
                 if not numpy.little_endian:
                     raw_data.byteswap(True)
 #         infile.close()
@@ -440,10 +440,13 @@ class OxdImage(FabioImage):
         Only TY1 compressed images is currently possible
         @param fname: output filename
         """
+        if self.header.get("Compression") != "TY1":
+            logger.warning("Enforce TY1 compression")
+            self.header["Compression"] = "TY1"
+    
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2
         self.header["OL"] = len(datablock32) / 4
-        self.header["Compression"] = "TY1"
         with self._open(fname, mode="wb") as outfile:
             outfile.write(self._writeheader())
             outfile.write(datablock8)
@@ -468,6 +471,7 @@ class OxdImage(FabioImage):
         @param stream: input stream
         @return: 1D array with data
         """
+        logger.info("TY5 decompression is slow for now")
         array_size = self.dim1 * self.dim2
         stream_size = len(stream)
         data = numpy.zeros(array_size)
@@ -508,7 +512,7 @@ class OxdImage(FabioImage):
             data[pos_out] = current
             pos_out += 1
 
-        print("Exception encountered: 2:%s, 4:%s" % (ex1, ex2))
+        logger.info("TY5: Exception: 16bits: %s, 32bits: %s", ex1, ex2)
         return data
 
 OXDimage = OxdImage

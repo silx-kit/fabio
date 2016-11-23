@@ -8,26 +8,35 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE
 #
-"""
-# Unit tests
 
-# builds on stuff from ImageD11.test.testpeaksearch
-08/01/2015
+"""
+# Unit tests for OXD image (Oxford diffraction now Rigaku)
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
+__author__ = "Jerome Kieffer"
+__license__ = "MIT"
+__date__ = "2016-11-23"
+__contact__ = "jerome.kieffer@esrf.fr"
+
 import unittest
 import sys
 import os
@@ -45,13 +54,15 @@ from fabio.OXDimage import OXDimage
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = """b191_1_9_1.img  512 512 -500 11975 25.70 90.2526
-                b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526"""
+                b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526
+                100nmfilmonglass_1_1.img 1024 1024 -172 460 44.20 63.0245"""
 
 
 class TestOxd(unittest.TestCase):
     def setUp(self):
         self.fn = {}
-        for i in ["b191_1_9_1.img", "b191_1_9_1_uncompressed.img"]:
+        for l in TESTIMAGES.split("\n"):
+            i = l.split()[0]
             self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
         for i in self.fn:
             assert os.path.exists(self.fn[i])
@@ -80,6 +91,9 @@ class TestOxd(unittest.TestCase):
             name = vals[0]
             obj = OXDimage()
             obj.read(self.fn[name])
+            if obj.header.get("Compression") not in ["NO ", "TY1"]:
+                logger.info("Skip write test for now")
+                continue
             obj.write(os.path.join(UtilsTest.tempdir, name))
             other = OXDimage()
             other.read(os.path.join(UtilsTest.tempdir, name))
