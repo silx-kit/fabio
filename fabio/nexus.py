@@ -41,7 +41,6 @@ __docformat__ = 'restructuredtext'
 import logging
 import numpy
 import os
-# import posixpath
 import sys
 import time
 
@@ -147,13 +146,15 @@ class Nexus(object):
             self.h5 = h5py.File(self.filename.split("::")[0])
         self.to_close = []
 
-    def close(self, endtime="now"):
+    def close(self, endtime=None):
         """Close the filename and update all entries
         
         :param endtime: timestamp in iso-format of the end of the acquisition.
         """
-        if endtime == "now":
+        if endtime is None:
             end_time = get_isotime()
+        elif isinstance(endtime, (int, float)):
+            end_time = get_isotime(endtime)
         for entry in self.to_close:
             entry["end_time"] = end_time
         self.h5.close()
@@ -274,7 +275,8 @@ class Nexus(object):
         :param entry: name of the entry
         :param program_name: value of the field as string
         :param title: value of the field as string
-        :paran force_time: seconds since epoch enforce the start_time
+        :param force_time: seconds since epoch enforce the start_time
+        :param force_name: set to true to prevent the addition of a _0001 suffix
         :return: the corresponding HDF5 group
         """
         if force_name:
