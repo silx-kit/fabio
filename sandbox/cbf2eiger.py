@@ -50,12 +50,59 @@ except:
 logger = logging.getLogger("to_eiger")
 
 
-def save_eiger(input_files, output_file, filter_=None):
+class Reader(Thread):
+    """Reader with input and output queue 
+    """
+    def __init__(self, queue_in, queue_out, quit_event):
+        """Constructor of the class
+        
+        :param queue_in: input queue with (index, filename to read) as input
+        :param queue_out: output queue with (index, FabioImage) as output
+        :param quit_event: the event which tells the thread to end 
+        """
+        Thread.__init__(self)
+        self._queue_in = queue_in
+        self._queue_out = queue_out
+        self._quit_event = quit_event
+
+    def run(self):
+        while not self._quit_event.is_set():
+            plop = self._queue_in.get()
+            if plop is None:
+                break
+            idx, fname = plop
+            try:
+                fimg = fabio.open(fname)
+            except Exception as err:
+                logger.error(err)
+                fimg = None
+            self._queue_out.put((idx, fimg))
+            self._queue_in.task_done()
+
+    @classmethod
+    def build_pool(cls, args, size=1):
+        """Create a pool of worker of a given size. 
+        
+        :param worker: class of the worker (deriving  from Thread) 
+        :param args: arguments to be passed to each of the worker
+        :param size: size of the pool
+        :return: a list of worker 
+        """
+        workers = []
+        for _ in range(size):
+            w = cls(*args)
+            w.start()
+            workers.append(w)
+        return workers
+
+
+def save_eiger(input_files, output_file, filter_=None, nbthreads=None):
     """Save a bunch of files in Eiger-like format
     
     :param input_files: list of input files
     :param output_file: name of the HDF5 file
-    :param filter_: Type of compression filter: "gzip", "lz4" or " 
+    :param filter_: Type of compression filter: "gzip", "lz4" or "bitshuffle"
+    :param nbthreads: number of parallel reader threads  
     """
     assert len(input_files), "Input file list is not empty"
     first_image = input_files[0]
@@ -71,6 +118,13 @@ def save_eiger(input_files, output_file, filter_=None):
     elif filter_ == "bitshuffle":
         kwfilter = {"compression": 32008, "compression_opts": (0, 2)}  # enforce lz4 compression
 
+    if nbthreads:
+        queue_in = Queue()
+        queue_out = Queue()
+        quit_event = Event()
+        pool = Reader.build_pool((queue_in, queue_out, quit_event), nbthreads)
+        for idx, fname in enumerate(input_files[1:]):
+            queue_in.put((idx, fname))
     with nexus.Nexus(output_file) as nxs:
         entry = nxs.new_entry(entry='entry', program_name='fabio',
                               title='converted from single-frame files',
@@ -90,8 +144,25 @@ def save_eiger(input_files, output_file, filter_=None):
 
         ds[0] = fimg.data
         data["sources"] = [numpy.string_(i) for i in input_files]
-        for idx, fname in enumerate(input_files[1:]):
-            ds[idx + 1] = fabio.open(fname).data
+        if nbthreads:
+            for _ in range(len(input_files) - 1):
+                idx, fimg = queue_out.get()
+                if fimg.data is None:
+                    logger.error("Failed reading file: %s", input_files[idx + 1])
+                    continue
+                ds[idx + 1] = fimg.data
+                queue_out.task_done()
+
+            queue_in.join()
+            queue_out.join()
+        else:  # don't use the pool of readers
+            for idx, fname in enumerate(input_files[1:]):
+                ds[idx + 1] = fabio.open(fname).data
+
+    if nbthreads:  # clean up
+        quit_event.set()
+        for _ in pool:
+            queue_in.put(None)
 
 
 if __name__ == "__main__":
@@ -115,5 +186,8 @@ if __name__ == "__main__":
                        help="output file or directory")
     group.add_argument("-f", "--filter", dest='filter', type=str, default=None,
                        help="Compression filter, may be lz4, bitshuffle or gzip")
+    group.add_argument("-n", "--nbthreads", dest='nbthreads', type=int, default=None,
+                       help="Numbre of reader threads in parallel")
+
     opts = parser.parse_args()
-    save_eiger(opts.IMAGE, opts.output, filter_=opts.filter)
+    save_eiger(opts.IMAGE, opts.output, filter_=opts.filter, nbthreads=opts.nbthreads)
