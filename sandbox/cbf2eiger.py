@@ -190,4 +190,6 @@ if __name__ == "__main__":
                        help="Numbre of reader threads in parallel")
 
     opts = parser.parse_args()
-    save_eiger(opts.IMAGE, opts.output, filter_=opts.filter, nbthreads=opts.nbthreads)
+    input_files = [os.path.abspath(i) for i in opts.IMAGE if os.path.exists(i)]
+    input_files.sort()
+    save_eiger(input_files, opts.output, filter_=opts.filter, nbthreads=opts.nbthreads)
