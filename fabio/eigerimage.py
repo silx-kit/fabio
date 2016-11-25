@@ -25,8 +25,7 @@
 #
 
 
-"""
-Eiger data/master file reader for FabIO
+"""Eiger data/master file reader for FabIO
 
 Eiger data files are HDF5 files with one group called "entry" and a dataset
 called "data" in it (now in a data group).
@@ -49,7 +48,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "21/10/2016"
+__date__ = "25/11/2016"
 
 import logging
 logger = logging.getLogger("numpyimage")

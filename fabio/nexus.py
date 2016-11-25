@@ -23,27 +23,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+"""Module for handling HDF5 data structure following the NeXuS convention
 
+Stand-alone module which tries to offer interface to HDF5 via H5Py
+
+"""
 from __future__ import absolute_import, print_function, division
 
 __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/09/2016"
+__date__ = "25/11/2016"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
-__doc__ = """
 
-Module for handling HDF5 data structure following the NeXuS convention
-
-Stand-alone module which tries to offer interface to HDF5 via H5Py
-
-"""
 import logging
 import numpy
 import os
-import posixpath
+# import posixpath
 import sys
 import time
 
@@ -70,17 +68,17 @@ else:
         pass
 
 
-def get_isotime(forceTime=None):
+def get_isotime(force_time=None):
     """
-    @param forceTime: enforce a given time (current by default)
-    @type forceTime: float
-    @return: the current time as an ISO8601 string
-    @rtype: string
+    :param force_time: enforce a given time (current by default)
+    :type force_time: float
+    :return: the current time as an ISO8601 string
+    :rtype: string
     """
-    if forceTime is None:
-        forceTime = time.time()
-    localtime = time.localtime(forceTime)
-    gmtime = time.gmtime(forceTime)
+    if force_time is None:
+        force_time = time.time()
+    localtime = time.localtime(force_time)
+    gmtime = time.gmtime(force_time)
     tz_h = localtime.tm_hour - gmtime.tm_hour
     tz_m = localtime.tm_min - gmtime.tm_min
     return "%s%+03i:%02i" % (time.strftime("%Y-%m-%dT%H:%M:%S", localtime), tz_h, tz_m)
@@ -88,8 +86,8 @@ def get_isotime(forceTime=None):
 
 def from_isotime(text, use_tz=False):
     """
-    @param text: string representing the time is iso format
-    @return: Time in second since epoch (float)
+    :param text: string representing the time is iso format
+    :return: Time in second since epoch (float)
     """
     if isinstance(text, numpy.ndarray):
         text = text[0]
@@ -110,8 +108,8 @@ def is_hdf5(filename):
     """
     Check if a file is actually a HDF5 file
 
-    @param filename: this file has better to exist
-    @return: true or False
+    :param filename: this file has better to exist
+    :return: true or False
     """
     signature = b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a"
     if not exists(filename):
@@ -135,8 +133,8 @@ class Nexus(object):
         """
         Constructor
 
-        @param filename: name of the hdf5 file containing the nexus
-        @param mode: can be r or a
+        :param filename: name of the hdf5 file containing the nexus
+        :param mode: can be r or a
         """
         self.filename = os.path.abspath(filename)
         self.mode = mode
@@ -149,11 +147,13 @@ class Nexus(object):
             self.h5 = h5py.File(self.filename.split("::")[0])
         self.to_close = []
 
-    def close(self):
+    def close(self, endtime="now"):
+        """Close the filename and update all entries
+        
+        :param endtime: timestamp in iso-format of the end of the acquisition.
         """
-        close the filename and update all entries
-        """
-        end_time = get_isotime()
+        if endtime == "now":
+            end_time = get_isotime()
         for entry in self.to_close:
             entry["end_time"] = end_time
         self.h5.close()
@@ -169,8 +169,8 @@ class Nexus(object):
         """
         Retrieves an entry from its name
 
-        @param name: name of the entry to retrieve
-        @return: HDF5 group of NXclass == NXentry
+        :param name: name of the entry to retrieve
+        :return: HDF5 group of NXclass == NXentry
         """
         for grp_name in self.h5:
             if grp_name == name:
@@ -185,7 +185,7 @@ class Nexus(object):
         """
         retrieves all entry sorted the latest first.
 
-        @return: list of HDF5 groups
+        :return: list of HDF5 groups
         """
         entries = [(grp, from_isotime(self.h5[grp + "/start_time"].value))
                    for grp in self.h5
@@ -208,7 +208,7 @@ class Nexus(object):
         """
         Tries to find a detector within a NeXus file, takes the first compatible detector
 
-        @param all: return all detectors found as a list
+        :param all: return all detectors found as a list
         """
         result = []
         for entry in self.get_entries():
@@ -224,7 +224,7 @@ class Nexus(object):
         """
         Tries to find a NXdata within a NeXus file
 
-        @param all: return all detectors found as a list
+        :param all: return all detectors found as a list
         """
         result = []
         for entry in self.get_entries():
@@ -265,25 +265,27 @@ class Nexus(object):
 
         return result
 
-    def new_entry(self, entry="entry", program_name="pyFAI", title="description of experiment", force_time=None):
+    def new_entry(self, entry="entry", program_name="pyFAI",
+                  title="description of experiment",
+                  force_time=None, force_name=False):
         """
         Create a new entry
 
-        @param entry: name of the entry
-        @param program_name: value of the field as string
-        @param title: value of the field as string
-        @force_time: enforce the start_time (as string!)
-        @return: the corresponding HDF5 group
+        :param entry: name of the entry
+        :param program_name: value of the field as string
+        :param title: value of the field as string
+        :paran force_time: seconds since epoch enforce the start_time
+        :return: the corresponding HDF5 group
         """
-        nb_entries = len(self.get_entries())
-        entry_grp = self.h5.require_group("%s_%04i" % (entry, nb_entries))
+        if force_name:
+            entry_grp = self.h5.require_group(entry)
+        else:
+            nb_entries = len(self.get_entries())
+            entry_grp = self.h5.require_group("%s_%04i" % (entry, nb_entries))
         entry_grp.attrs["NX_class"] = "NXentry"
         entry_grp["title"] = numpy.string_(title)
         entry_grp["program_name"] = numpy.string_(program_name)
-        if force_time:
-            entry_grp["start_time"] = numpy.string_(force_time)
-        else:
-            entry_grp["start_time"] = numpy.string_(get_isotime())
+        entry_grp["start_time"] = numpy.string_(get_isotime(force_time))
         self.to_close.append(entry_grp)
         return entry_grp
 
@@ -300,10 +302,10 @@ class Nexus(object):
     def new_class(self, grp, name, class_type="NXcollection"):
         """
         create a new sub-group with  type class_type
-        @param grp: parent group
-        @param name: name of the sub-group
-        @param class_type: NeXus class name
-        @return: subgroup created
+        :param grp: parent group
+        :param name: name of the sub-group
+        :param class_type: NeXus class name
+        :return: subgroup created
         """
         sub = grp.require_group(name)
         sub.attrs["NX_class"] = class_type
@@ -313,9 +315,9 @@ class Nexus(object):
         """
         Create a new entry/pyFAI/Detector
 
-        @param detector: name of the detector
-        @param entry: name of the entry
-        @param subentry: all pyFAI description of detectors should be in a pyFAI sub-entry
+        :param detector: name of the detector
+        :param entry: name of the entry
+        :param subentry: all pyFAI description of detectors should be in a pyFAI sub-entry
         """
         entry_grp = self.new_entry(entry)
         pyFAI_grp = self.new_class(entry_grp, subentry, "NXsubentry")
@@ -328,8 +330,8 @@ class Nexus(object):
         """
         return all sub-groups of the given type within a group
 
-        @param grp: HDF5 group
-        @param class_type: name of the NeXus class
+        :param grp: HDF5 group
+        :param class_type: name of the NeXus class
         """
         coll = [grp[name] for name in grp
                 if (isinstance(grp[name], h5py.Group) and
@@ -341,8 +343,8 @@ class Nexus(object):
         """
         return all dataset of the the NeXus class NXdata
 
-        @param grp: HDF5 group
-        @param class_type: name of the NeXus class
+        :param grp: HDF5 group
+        :param class_type: name of the NeXus class
         """
         result = []
         for grp in self.get_class(grp, class_type):
@@ -356,10 +358,10 @@ class Nexus(object):
         perform a deep copy:
         create a "name" entry in self containing a copy of the object
 
-        @param where: path to the toplevel object (i.e. root)
-        @param  toplevel: firectly the top level Group
-        @param excluded: list of keys to be excluded
-        @param overwrite: replace content if already existing
+        :param where: path to the toplevel object (i.e. root)
+        :param  toplevel: firectly the top level Group
+        :param excluded: list of keys to be excluded
+        :param overwrite: replace content if already existing
         """
         if (excluded is not None) and (name in excluded):
             return
