@@ -279,6 +279,7 @@ class TestEdfMultiFrame(unittest.TestCase):
     def test_openimage_multiframes(self):
         "test if openimage can directly read first or second frame of a multi-frame"
         self.assertEqual((fabio.open(self.multiFrameFilename).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for default ")
+#         print(fabio.open(self.multiFrameFilename, 0).data)
         self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
         self.assertEqual((fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(), 0, "openimage_multiframes: Same data for frame 1")
 

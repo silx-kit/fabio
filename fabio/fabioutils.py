@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/10/2016"
+__date__ = "08/12/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -452,6 +452,12 @@ class File(FileIO):
         self.__size = None
         self.__temporary = temporary
 
+    def __del__(self):
+        """Explicit close at deletion
+        """
+        if hasattr(self, "closed") and not self.closed:
+            self.close()
+
     def close(self):
         name = self.name
         FileIO.close(self)
@@ -476,14 +482,14 @@ class File(FileIO):
         self.__size = size
     size = property(getSize, setSize)
 
+    def __enter__(self, *args, **kwargs):
+        return self
+
     def __exit__(self, *args, **kwargs):
         """
         Close the file.
         """
         return FileIO.close(self)
-
-    def __enter__(self, *args, **kwargs):
-        return self
 
 
 class UnknownCompressedFile(File):
@@ -494,6 +500,11 @@ class UnknownCompressedFile(File):
         logger.warning("No decompressor found for this type of file (are gzip anf bz2 installed ???")
         File.__init__(self, name, mode, buffering)
 
+    def __del__(self):
+        """Explicit close at deletion
+        """
+        if hasattr(self, "closed") and not self.closed:
+            self.close()
 
 if gzip is None:
     GzipFile = UnknownCompressedFile
@@ -534,6 +545,12 @@ else:
             self.lock = _Semaphore()
             self.__size = None
 
+        def __del__(self):
+            """Explicit close at deletion
+            """
+            if hasattr(self, "closed") and not self.closed:
+                self.close()
+
         def __repr__(self):
             return "fabio." + gzip.GzipFile.__repr__(self)
 
@@ -552,6 +569,15 @@ else:
                         logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, pos))
                         self.__size = end_pos
             return self.__size
+
+    def __enter__(self, *args, **kwargs):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        """
+        Close the file.
+        """
+        return gzip.GzipFile.close(self)
 
 
 if bz2 is None:
@@ -579,6 +605,12 @@ else:
             bz2.BZ2File.__init__(self, name, mode, buffering, compresslevel)
             self.lock = _Semaphore()
             self.__size = None
+
+        def __del__(self):
+            """Explicit close at deletion
+            """
+            if hasattr(self, "closed") and not self.closed:
+                self.close()
 
         def getSize(self):
             if self.__size is None:
