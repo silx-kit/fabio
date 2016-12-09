@@ -24,9 +24,9 @@ import glob
 import fabio
 
 try:
-    import six
-except ImportError:
     from fabio.third_party import six
+except ImportError:
+    import six
 
 try:
     import argparse
