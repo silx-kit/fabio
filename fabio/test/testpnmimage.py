@@ -78,7 +78,7 @@ class TestPNM(unittest.TestCase):
         data = numpy.random.randint(0, 65000, size=size).reshape(shape)
         pnmimage(data=data).save(pnmfile)
         pnm = openimage(pnmfile)
-        self.assert_(numpy.allclose(data, pnm.data), "data are the same")
+        self.assertTrue(numpy.allclose(data, pnm.data), "data are the same")
         os.unlink(pnmfile)
 
 

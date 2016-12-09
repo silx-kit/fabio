@@ -315,8 +315,8 @@ class TestEdfWrite(unittest.TestCase):
         e = edfimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
 
     def testGzip(self):
@@ -324,8 +324,8 @@ class TestEdfWrite(unittest.TestCase):
         e = edfimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
 
     def testBzip2(self):
@@ -333,8 +333,8 @@ class TestEdfWrite(unittest.TestCase):
         e = edfimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
 
     def tearDown(self):

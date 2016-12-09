@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "08/12/2016"
+__date__ = "09/12/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -482,10 +482,10 @@ class File(FileIO):
         self.__size = size
     size = property(getSize, setSize)
 
-    def __enter__(self, *args, **kwargs):
+    def __enter__(self):
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args):
         """
         Close the file.
         """
@@ -570,14 +570,14 @@ else:
                         self.__size = end_pos
             return self.__size
 
-    def __enter__(self, *args, **kwargs):
+    def __enter__(self):
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args):
         """
         Close the file.
         """
-        return gzip.GzipFile.close(self)
+        gzip.GzipFile.close(self)
 
 
 if bz2 is None:
@@ -585,15 +585,15 @@ if bz2 is None:
 else:
     class BZ2File(bz2.BZ2File):
         "Wrapper with lock"
-        def __init__(self, name, mode='r', buffering=0, compresslevel=9):
+        def __init__(self, name, mode='r', compresslevel=9):
             """
-            BZ2File(name [, mode='r', buffering=0, compresslevel=9]) -> file object
+            BZ2File(name [, mode='r', compresslevel=9]) -> file object
 
             Open a bz2 file. The mode can be 'r' or 'w', for reading (default) or
             writing. When opened for writing, the file will be created if it doesn't
-            exist, and truncated otherwise. If the buffering argument is given, 0 means
-            unbuffered, and larger numbers specify the buffer size. If compresslevel
-            is given, must be a number between 1 and 9.
+            exist, and truncated otherwise.
+             
+            If compresslevel is given, must be a number between 1 and 9.
 
             Add a 'U' to mode to open the file for input with universal newline
             support. Any line ending in the input file will be seen as a '\n' in
@@ -602,7 +602,7 @@ else:
             '\r\n' or a tuple containing all the newline types seen. Universal
             newlines are available only when reading.
             """
-            bz2.BZ2File.__init__(self, name, mode, buffering, compresslevel)
+            bz2.BZ2File.__init__(self, name, mode, compresslevel)
             self.lock = _Semaphore()
             self.__size = None
 
@@ -626,14 +626,14 @@ else:
             self.__size = value
         size = property(getSize, setSize)
 
-        def __exit__(self, *args, **kwargs):
-                """
-                Close the file.
-                """
-                return bz2.BZ2File.close(self)
-
-        def __enter__(self, *args, **kwargs):
+        def __enter__(self):
             return self
+
+        def __exit__(self, *args):
+            """
+            Close the file.
+            """
+            bz2.BZ2File.close(self)
 
 
 class NotGoodReader(RuntimeError):

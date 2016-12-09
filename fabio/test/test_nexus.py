@@ -50,7 +50,7 @@ class testNexus(unittest.TestCase):
         nex.new_detector("camera")
         self.assertEqual(len(nex.get_entries()), 2, "nexus file has 2 entries")
         nex.close()
-        self.assert_(os.path.exists(fname))
+        self.assertTrue(os.path.exists(fname))
         os.unlink(fname)
 
     def test_from_time(self):
@@ -63,7 +63,7 @@ class testNexus(unittest.TestCase):
         time2 = nexus.from_isotime(entry["bad_time"].value)
         self.assertEqual(time1, time2, "start_time in list does not works !")
         nex.close()
-        self.assert_(os.path.exists(fname))
+        self.assertTrue(os.path.exists(fname))
         os.unlink(fname)
 
 

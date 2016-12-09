@@ -76,7 +76,7 @@ class TestBruker100(unittest.TestCase):
         ref = openimage(os.path.join(self.im_dir, REFIMAGE))
         for line in TESTIMAGES.split("\n"):
             obt = openimage(os.path.join(self.im_dir, line.split()[0]))
-            self.assert_(abs(ref.data - obt.data).max() == 0, "data are the same")
+            self.assertTrue(abs(ref.data - obt.data).max() == 0, "data are the same")
 
     def test_write(self):
         fname = TESTIMAGES.split()[0]

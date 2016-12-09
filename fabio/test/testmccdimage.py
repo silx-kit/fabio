@@ -41,8 +41,8 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
-from fabio.tifimage import tifimage
-from fabio.marccdimage import marccdimage
+from ..tifimage import tifimage
+from ..marccdimage import marccdimage
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

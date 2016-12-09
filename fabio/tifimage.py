@@ -230,8 +230,8 @@ class TifImage(FabioImage):
         @param fname: name of the file to save the image to
         @tag_type fname: string or unicode (file?)...
         """
-        with TiffIO(fname, mode="w") as tiffIO:
-            tiffIO.writeImage(self.data, info=self.header, software="fabio.tifimage", date=time.ctime())
+        with TiffIO(fname, mode="w") as tIO:
+            tIO.writeImage(self.data, info=self.header, software="fabio.tifimage", date=time.ctime())
 
 
 # define a couple of helper classes here:

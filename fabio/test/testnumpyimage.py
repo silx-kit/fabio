@@ -65,7 +65,7 @@ class TestNumpy(unittest.TestCase):
         self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
         self.assertEqual(9, obj.dim1, "dim1")
         self.assertEqual(11, obj.dim2, "dim2")
-        self.assert_(numpy.allclose(obj.data, self.ary), "data")
+        self.assertTrue(numpy.allclose(obj.data, self.ary), "data")
 
     def test_write(self):
         """ check we can write numpy images"""
@@ -75,7 +75,7 @@ class TestNumpy(unittest.TestCase):
         self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
         self.assertEqual(9, obj.dim1, "dim1")
         self.assertEqual(11, obj.dim2, "dim2")
-        self.assert_(numpy.allclose(obj.data, self.ary), "data")
+        self.assertTrue(numpy.allclose(obj.data, self.ary), "data")
 
     def test_multidim(self):
         for shape in (10,), (10, 15), (10, 15, 20), (10, 15, 20, 25):

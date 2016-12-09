@@ -135,7 +135,8 @@ class TiffIO(object):
     def __enter__(self):
         return self
 
-    def __exit__(self):
+    def __exit__(self, type, value, traceback):
+        # TODO: inspace type, value and traceback
         self.close()
 
     def _initInternalVariables(self, fd=None):

@@ -98,7 +98,8 @@ class TestClickedMask(unittest.TestCase):
         self.assertEqual(i.getmax(), 1)
         self.assertEqual(i.getmin(), 0)
         sumd = abs(diff).sum(dtype=float)
-        self.assertEqual(sumd , 0)
+        self.assertEqual(sumd, 0)
+
 
 class TestMskWrite(unittest.TestCase):
     """
@@ -125,9 +126,8 @@ class TestMskWrite(unittest.TestCase):
             print(self.header)
 
         else:
-            self.assert_(r.header == self.header, "header are OK")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
-
+            self.assertTrue(r.header == self.header, "header are OK")
+        self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
 
     def testFlat(self):
         self.filename = os.path.join(UtilsTest.tempdir, "random.msk")
