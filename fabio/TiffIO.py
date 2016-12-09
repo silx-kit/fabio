@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "18/10/2016"
+__date__ = "09/12/2016"
 
 import sys
 import os
@@ -131,6 +131,12 @@ class TiffIO(object):
         self._initInternalVariables(fd)
         self._maxImageCacheLength = cache_length
         self._forceMonoOutput = mono_output
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        self.close()
 
     def _initInternalVariables(self, fd=None):
         if fd is None:
