@@ -585,7 +585,7 @@ if bz2 is None:
 else:
     class BZ2File(bz2.BZ2File):
         "Wrapper with lock"
-        def __init__(self, name, mode='r', buffering=None, compresslevel=9):
+        def __init__(self, name, mode='r', buffering=0, compresslevel=9):
             """
             BZ2File(name [, mode='r', compresslevel=9]) -> file object
 

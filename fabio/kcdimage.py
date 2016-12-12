@@ -39,10 +39,18 @@ from __future__ import with_statement, print_function
 import numpy
 import logging
 import os
+
 import string
 from .fabioimage import FabioImage
 from .fabioutils import six
 logger = logging.getLogger("kcdimage")
+
+import io
+if not hasattr(io, "SEEK_END"):
+    SEEK_END = 2
+else:
+    SEEK_END = io.SEEK_END
+
 
 DATA_TYPES = {"u16": numpy.uint16 }
 
@@ -138,11 +146,23 @@ class KcdImage(FabioImage):
             except KeyError:
                 logger.warning("Defaulting number of ReadOut to 1")
                 nbReadOut = 1
-            fileSize = os.stat(fname)[6]
             expected_size = self.dim1 * self.dim2 * self.bpp * nbReadOut
-            infile.seek(fileSize - expected_size)
-            block = infile.read()
-            assert len(block) == expected_size
+
+            try:
+                infile.seek(-expected_size, SEEK_END)
+            except:
+                logger.warning("seeking from end is not implemeneted for file %s", fname)
+                if hasattr(infile, "measure_size"):
+                    fileSize = infile.measure_size()
+                elif hasattr(infile, "size"):
+                    fileSize = infile.size
+                elif hasattr(infile, "getSize"):
+                    fileSize = infile.getSize()
+                else:
+                    logger.warning("Unable to guess the file-size of %s", fname)
+                    fileSize = os.stat(fname)[6]
+                infile.seek(fileSize - expected_size - infile.tell(), 1)
+            block = infile.read(expected_size)
         # infile.close()
 
         # now read the data into the array
