@@ -37,7 +37,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/10/2016"
+__date__ = "12/12/2016"
 
 import numpy
 
@@ -77,12 +77,12 @@ class PixiImage(FabioImage):
             frame = 0
         self.header = self.check_header()
         self.resetvals()
-        infile = self._open(fname, "rb")
-        self.sequencefilename = fname
-        self._readheader(infile)
-        self.nframes = os.path.getsize(fname) / 487448
-        self._readframe(infile, frame)
-        infile.close()
+        with self._open(fname, "rb") as infile:
+            self.sequencefilename = fname
+            self._readheader(infile)
+            self.nframes = os.path.getsize(fname) / 487448
+            self._readframe(infile, frame)
+        # infile.close()
         return self
 
     def _makeframename(self):

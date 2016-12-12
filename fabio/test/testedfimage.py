@@ -32,8 +32,6 @@ import unittest
 import sys
 import os
 import numpy
-import gzip
-import bz2
 
 if __name__ == '__main__':
     import pkgutil
@@ -43,8 +41,9 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
-from fabio.edfimage import edfimage
-from fabio.third_party import six
+from ..edfimage import edfimage
+from ..third_party import six
+from ..fabioutils import GzipFile, BZ2File
 
 
 class TestFlatEdfs(unittest.TestCase):
@@ -64,8 +63,7 @@ class TestFlatEdfs(unittest.TestCase):
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
 
-        assert len(self.MYIMAGE[0:1, 0:1].tostring()) == 4, \
-               len(self.MYIMAGE[0:1, 0:1].tostring())
+        assert len(self.MYIMAGE[0:1, 0:1].tostring()) == 4, self.MYIMAGE[0:1, 0:1].tostring()
 
     def setUp(self):
         """ initialize"""
@@ -109,7 +107,9 @@ class TestBzipEdf(TestFlatEdfs):
         """set it up"""
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".bz2"):
-                    bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
+            with BZ2File(self.filename + ".bz2", "wb") as f:
+                with open(self.filename, "rb") as d:
+                    f.write(d.read())
         self.filename += ".bz2"
 
 
@@ -119,7 +119,9 @@ class TestGzipEdf(TestFlatEdfs):
         """ set it up """
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
-                    gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
+            with GzipFile(self.filename + ".gz", "wb") as f:
+                with open(self.filename, "rb") as d:
+                    f.write(d.read())
         self.filename += ".gz"
 
 

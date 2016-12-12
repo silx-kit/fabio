@@ -126,7 +126,7 @@ class TestGzipBruker(TestBruker):
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".gz"):
             os.unlink(self.filename + ".gz")
-        with fabioutils.GzipFile(self.filename + ".bz2", "wb") as wf:
+        with fabioutils.GzipFile(self.filename + ".gz", "wb") as wf:
             with open(self.filename, "rb") as rf:
                 wf.write(rf.read())
         self.filename = self.filename + ".gz"

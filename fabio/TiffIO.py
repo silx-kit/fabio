@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "09/12/2016"
+__date__ = "12/12/2016"
 
 import sys
 import os
@@ -135,7 +135,7 @@ class TiffIO(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, *arg):
         # TODO: inspace type, value and traceback
         self.close()
 
