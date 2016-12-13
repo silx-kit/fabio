@@ -77,9 +77,10 @@ class TestPNM(unittest.TestCase):
         size = shape[0] * shape[1]
         data = numpy.random.randint(0, 65000, size=size).reshape(shape)
         pnmimage(data=data).save(pnmfile)
-        pnm = openimage(pnmfile)
-        self.assertTrue(numpy.allclose(data, pnm.data), "data are the same")
-        os.unlink(pnmfile)
+        with openimage(pnmfile) as pnm:
+            self.assertTrue(numpy.allclose(data, pnm.data), "data are the same")
+        if os.path.exists(pnmfile):
+            os.unlink(pnmfile)
 
 
 def suite():
