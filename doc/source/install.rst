@@ -267,11 +267,12 @@ For this, you need a complete debian build environment:
    python-sphinxcontrib.programoutput python-tk python-tk-dbg python3-all-dev python3-all-dbg \
    python3-lxml python3-lxml-dbg python3-matplotlib \
    python3-matplotlib-dbg python3-numpy python3-numpy-dbg python3-pyqt4 python3-pyqt4-dbg \
-    python3-sphinx python3-sphinxcontrib.programoutput \
-   python3-tk python3-tk-dbg
+   python3-sphinx python3-sphinxcontrib.programoutput \
+   python3-tk python3-tk-dbg python3-pil-dbg python3-setuptools devscripts
 
-   ./build-debian-full.sh
+   ./build-deb8.sh
 
+This script works as well on Debian-9 stretch
 
 Test suite
 ----------
