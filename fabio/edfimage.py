@@ -555,6 +555,12 @@ class EdfImage(FabioImage):
             stream_size = infile.size
         elif "len" in attrs:
             stream_size = infile.len
+        else:
+            # Poor-men's size measurement
+            pos = infile.tell()
+            self.seek(0, os.SEEK_END)
+            stream_size = infile.tell()
+            infile.seek(pos)
 
         while bContinue:
             block = self._readHeaderBlock(infile)
@@ -640,11 +646,13 @@ class EdfImage(FabioImage):
         if self.nframes == 1:
             logger.debug("Single frame EDF; having FabioImage default behavior: %s" % num)
             newImage = FabioImage.getframe(self, num)
+            newImage._file = self._file
         elif num < self.nframes:
             logger.debug("Multi frame EDF; having EdfImage specific behavior: %s/%s" % (num, self.nframes))
             newImage = EdfImage(frames=self._frames)
             newImage.currentframe = num
             newImage.filename = self.filename
+            newImage._file = self._file
         else:
             txt = "Cannot access frame: %s/%s" % (num, self.nframes)
             logger.error(txt)

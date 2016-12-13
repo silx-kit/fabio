@@ -52,10 +52,9 @@ class TestFlatBinary(unittest.TestCase):
 
     def setUp(self):
         for filename in self.filenames:
-            f = open(filename, "wb")
-            # A 2048 by 2048 blank image
-            f.write("\0x0" * 2048 * 2048 * 2)
-            f.close()
+            with open(filename, "wb") as f:
+                # A 2048 by 2048 blank image
+                f.write("\0x0" * 2048 * 2048 * 2)
 
     def test_openimage(self):
         """

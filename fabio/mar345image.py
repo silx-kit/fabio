@@ -49,7 +49,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "21/10/2016"
+__date__ = "12/12/2016"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -202,21 +202,18 @@ class Mar345Image(FabioImage):
         return h
 
     def write(self, fname):
-        """Try to write mar345 file. This is still in beta version.
-        It uses CCP4 (LGPL) PCK1 algo from JPA"""
+        """Try to write mar345 file.
+        It uses a MIT implementation of the CCP4 (LGPL) PCK1 algo from JPA"""
         bin_headers = self.binary_header()
         asc_headers = self.ascii_header("\n", 4096 - len(bin_headers)).encode("ASCII")
         hotpixels = self._high_intensity_pixel_records()
         compressed_stream = compPCK(self.data)
-        try:
-            outfile = self._open(fname, mode="wb")
+        with self._open(fname, mode="wb") as outfile:
             outfile.write(bin_headers)
             outfile.write(asc_headers)
             outfile.write(hotpixels)
             outfile.write(compressed_stream)
             outfile.close()
-        except Exception as error:
-            logger.error("Error in writing file %s: %s" % (fname, error))
 
     def binary_header(self):
         """

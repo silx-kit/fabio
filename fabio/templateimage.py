@@ -74,7 +74,7 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "24/10/2016"
+__date__ = "12/12/2016"
 
 import logging
 logger = logging.getLogger("templateimage")
@@ -115,10 +115,10 @@ class TemplateImage(FabioImage):
         """
 
         self.resetvals()
-        infile = self._open(fname)
-        self._readheader(infile)
+        with self._open(fname) as infile:
+            self._readheader(infile)
+            # read the image data and declare it
 
-        # read the image data and declare
         shape = (50, 60)
         self.data = numpy.zeros(shape, dtype=self.uint16)
         # Nota: dim1, dim2, bytecode and bpp are properties defined by the dataset

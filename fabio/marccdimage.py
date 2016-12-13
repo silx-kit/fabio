@@ -339,7 +339,7 @@ class MarccdImage(TifImage):
         ... a marccd image *is a* tif image
         just with a header
         """
-        return tifimage.read(self, fname)
+        return TifImage.read(self, fname)
 
 
 marccdimage = MarccdImage

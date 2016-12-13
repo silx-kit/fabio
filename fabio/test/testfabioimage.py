@@ -32,8 +32,6 @@ import unittest
 import sys
 import os
 import numpy
-import gzip
-import bz2
 
 if __name__ == '__main__':
     import pkgutil
@@ -43,8 +41,9 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
-from fabio.fabioimage import fabioimage
-from fabio.third_party import six
+from ..fabioimage import fabioimage
+from ..third_party import six
+from .. import fabioutils
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -122,11 +121,14 @@ class testopen(unittest.TestCase):
     def setUp(self):
         """ create test files"""
         if not os.path.isfile(self.testfile):
-            open(self.testfile, "wb").write(b"{ hello }")
+            with open(self.testfile, "wb") as f:
+                f.write(b"{ hello }")
         if not os.path.isfile(self.testfile + ".gz"):
-            gzip.open(self.testfile + ".gz", "wb").write(b"{ hello }")
+            with fabioutils.GzipFile(self.testfile + ".gz", "wb") as wf:
+                wf.write(b"{ hello }")
         if not os.path.isfile(self.testfile + ".bz2"):
-            bz2.BZ2File(self.testfile + ".bz2", "wb").write(b"{ hello }")
+            with fabioutils.BZ2File(self.testfile + ".bz2", "wb") as wf:
+                wf.write(b"{ hello }")
         self.obj = fabioimage()
 
     def testFlat(self):
@@ -193,7 +195,7 @@ class testPILimage(unittest.TestCase):
                         else:
                             err = er1
 
-                        self.assertAlmostEquals(err, 0, 6, errstr)
+                        self.assertAlmostEqual(err, 0, 6, errstr)
 
 
 class testPILimage2(testPILimage):

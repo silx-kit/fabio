@@ -167,7 +167,7 @@ class TestConvert(unittest.TestCase):
         fn = self.fn["face.msk"]
         dst = os.path.join(UtilsTest.tempdir, "face.oxd")
         fabio.open(fn).convert("oxd").save(dst)
-        self.assert_(os.path.exists(dst), "destination file exists")
+        self.assertTrue(os.path.exists(dst), "destination file exists")
         os.unlink(dst)
 
 

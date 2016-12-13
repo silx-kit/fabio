@@ -65,33 +65,33 @@ class TestNumpy(unittest.TestCase):
         self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
         self.assertEqual(9, obj.dim1, "dim1")
         self.assertEqual(11, obj.dim2, "dim2")
-        self.assert_(numpy.allclose(obj.data, self.ary), "data")
+        self.assertTrue(numpy.allclose(obj.data, self.ary), "data")
 
     def test_write(self):
         """ check we can write numpy images"""
         ref = NumpyImage(data=self.ary)
         ref.save(self.fn2)
-        obj = openimage(self.fn2)
-        self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
-        self.assertEqual(9, obj.dim1, "dim1")
-        self.assertEqual(11, obj.dim2, "dim2")
-        self.assert_(numpy.allclose(obj.data, self.ary), "data")
+        with openimage(self.fn2) as obj:
+            self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
+            self.assertEqual(9, obj.dim1, "dim1")
+            self.assertEqual(11, obj.dim2, "dim2")
+            self.assertTrue(numpy.allclose(obj.data, self.ary), "data")
 
     def test_multidim(self):
         for shape in (10,), (10, 15), (10, 15, 20), (10, 15, 20, 25):
             ary = numpy.random.random(shape).astype("float32")
             numpy.save(self.fn, ary)
-            obj = openimage(self.fn)
-
-            self.assertEqual(obj.bytecode, numpy.float32, msg="bytecode is OK")
-            self.assertEqual(shape[-1], obj.dim1, "dim1")
-            dim2 = 1 if len(shape) == 1 else shape[-2]
-            self.assertEqual(dim2, obj.dim2, "dim2")
-            nframes = 1
-            if len(shape) > 2:
-                for i in shape[:-2]:
-                    nframes *= i
-            self.assertEqual(nframes, obj.nframes, "nframes")
+            with openimage(self.fn) as obj:
+                self.assertEqual(obj.bytecode, numpy.float32, msg="bytecode is OK")
+                self.assertEqual(shape[-1], obj.dim1, "dim1")
+                dim2 = 1 if len(shape) == 1 else shape[-2]
+                self.assertEqual(dim2, obj.dim2, "dim2")
+                nframes = 1
+                if len(shape) > 2:
+                    for i in shape[:-2]:
+                        nframes *= i
+                    #print(shape,nframes, obj.nframes)
+                    self.assertEqual(nframes, obj.nframes, "nframes")
             if os.path.exists(self.fn):
                 os.unlink(self.fn)
 

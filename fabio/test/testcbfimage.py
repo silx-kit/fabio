@@ -94,7 +94,11 @@ class TestCbfReader(unittest.TestCase):
                 continue
             self.assertTrue(key in other.header, "Key %s is in header" % key)
             self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
-        os.unlink(os.path.join(UtilsTest.tempdir, name))
+        #By destroying the object, one actually closes the file, which is needed under windows.
+        del obj
+        del other
+        if os.path.exists(os.path.join(UtilsTest.tempdir, name)):
+            os.unlink(os.path.join(UtilsTest.tempdir, name))
 
     def test_byte_offset(self):
         """ check byte offset algorithm"""

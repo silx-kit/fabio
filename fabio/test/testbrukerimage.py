@@ -31,15 +31,14 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import numpy
-import gzip
-import bz2
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
-from fabio.brukerimage import brukerimage
+from ..brukerimage import brukerimage
+from .. import fabioutils
 
 # this is actually a violation of the bruker format since the order of
 # the header items is specified
@@ -114,7 +113,9 @@ class TestBzipBruker(TestBruker):
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".bz2"):
             os.unlink(self.filename + ".bz2")
-        bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
+        with fabioutils.BZ2File(self.filename + ".bz2", "wb") as wf:
+            with open(self.filename, "rb") as rf:
+                wf.write(rf.read())
         self.filename = self.filename + ".bz2"
 
 
@@ -125,7 +126,9 @@ class TestGzipBruker(TestBruker):
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".gz"):
             os.unlink(self.filename + ".gz")
-        gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
+        with fabioutils.GzipFile(self.filename + ".gz", "wb") as wf:
+            with open(self.filename, "rb") as rf:
+                wf.write(rf.read())
         self.filename = self.filename + ".gz"
 
 
@@ -143,7 +146,7 @@ class TestBrukerLinear(unittest.TestCase):
         new = brukerimage()
         new.read(self.filename)
         error = abs(new.data - self.data).max()
-        self.assert_(error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error)
+        self.assertTrue(error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error)
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)

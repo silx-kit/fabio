@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "24/10/2016"
+__date__ = "12/12/2016"
 
 
 import os
@@ -136,6 +136,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         self._classname = None
         self._dim1 = self._dim2 = self._bpp = 0
         self._bytecode = None
+        self._file = None
         if type(data) in fabioutils.StringTypes:
             raise Exception("fabioimage.__init__ bad argument - " + \
                             "data should be numpy array")
@@ -153,6 +154,14 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         self.currentframe = 0
         self.filename = None
         self.filenumber = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *arg):
+        # TODO: inspace type, value and traceback
+        if self._file and not self._file.closed:
+            self._file.close()
 
     def get_header_keys(self):
         return list(self.header.keys())
@@ -560,7 +569,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 fileObject = fabioutils.File(fname, mode)
             if "name" not in dir(fileObject):
                 fileObject.name = fname
-
+            self._file = fileObject
         return fileObject
 
     def _compressed_stream(self,

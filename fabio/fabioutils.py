@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/10/2016"
+__date__ = "12/12/2016"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -452,6 +452,12 @@ class File(FileIO):
         self.__size = None
         self.__temporary = temporary
 
+    def __del__(self):
+        """Explicit close at deletion
+        """
+        if hasattr(self, "closed") and not self.closed:
+            self.close()
+
     def close(self):
         name = self.name
         FileIO.close(self)
@@ -476,14 +482,14 @@ class File(FileIO):
         self.__size = size
     size = property(getSize, setSize)
 
-    def __exit__(self, *args, **kwargs):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
         """
         Close the file.
         """
         return FileIO.close(self)
-
-    def __enter__(self, *args, **kwargs):
-        return self
 
 
 class UnknownCompressedFile(File):
@@ -494,6 +500,11 @@ class UnknownCompressedFile(File):
         logger.warning("No decompressor found for this type of file (are gzip anf bz2 installed ???")
         File.__init__(self, name, mode, buffering)
 
+    def __del__(self):
+        """Explicit close at deletion
+        """
+        if hasattr(self, "closed") and not self.closed:
+            self.close()
 
 if gzip is None:
     GzipFile = UnknownCompressedFile
@@ -534,6 +545,12 @@ else:
             self.lock = _Semaphore()
             self.__size = None
 
+        def __del__(self):
+            """Explicit close at deletion
+            """
+            if hasattr(self, "closed") and not self.closed:
+                self.close()
+
         def __repr__(self):
             return "fabio." + gzip.GzipFile.__repr__(self)
 
@@ -553,6 +570,15 @@ else:
                         self.__size = end_pos
             return self.__size
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        """
+        Close the file.
+        """
+        gzip.GzipFile.close(self)
+
 
 if bz2 is None:
     BZ2File = UnknownCompressedFile
@@ -561,13 +587,13 @@ else:
         "Wrapper with lock"
         def __init__(self, name, mode='r', buffering=0, compresslevel=9):
             """
-            BZ2File(name [, mode='r', buffering=0, compresslevel=9]) -> file object
+            BZ2File(name [, mode='r', compresslevel=9]) -> file object
 
             Open a bz2 file. The mode can be 'r' or 'w', for reading (default) or
             writing. When opened for writing, the file will be created if it doesn't
-            exist, and truncated otherwise. If the buffering argument is given, 0 means
-            unbuffered, and larger numbers specify the buffer size. If compresslevel
-            is given, must be a number between 1 and 9.
+            exist, and truncated otherwise.
+             
+            If compresslevel is given, must be a number between 1 and 9.
 
             Add a 'U' to mode to open the file for input with universal newline
             support. Any line ending in the input file will be seen as a '\n' in
@@ -579,6 +605,12 @@ else:
             bz2.BZ2File.__init__(self, name, mode, buffering, compresslevel)
             self.lock = _Semaphore()
             self.__size = None
+
+        def __del__(self):
+            """Explicit close at deletion
+            """
+            if hasattr(self, "closed") and not self.closed:
+                self.close()
 
         def getSize(self):
             if self.__size is None:
@@ -594,14 +626,14 @@ else:
             self.__size = value
         size = property(getSize, setSize)
 
-        def __exit__(self, *args, **kwargs):
-                """
-                Close the file.
-                """
-                return bz2.BZ2File.close(self)
-
-        def __enter__(self, *args, **kwargs):
+        def __enter__(self):
             return self
+
+        def __exit__(self, *args):
+            """
+            Close the file at exit
+            """
+            bz2.BZ2File.close(self)
 
 
 class NotGoodReader(RuntimeError):

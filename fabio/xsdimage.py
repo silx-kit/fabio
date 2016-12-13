@@ -86,8 +86,9 @@ class XsdImage(FabioImage):
         self.header = {}
         self.resetvals()
         self.filename = fname
-        infile = self._open(fname, "rb")
-        self._readheader(infile)
+
+        with self._open(fname, "rb") as infile:
+            self._readheader(infile)
 
         try:
             self.dim1, self.dim2 = self.dims[:2]

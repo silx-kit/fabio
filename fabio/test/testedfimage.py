@@ -32,8 +32,6 @@ import unittest
 import sys
 import os
 import numpy
-import gzip
-import bz2
 
 if __name__ == '__main__':
     import pkgutil
@@ -43,8 +41,9 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
-from fabio.edfimage import edfimage
-from fabio.third_party import six
+from ..edfimage import edfimage
+from ..third_party import six
+from ..fabioutils import GzipFile, BZ2File
 
 
 class TestFlatEdfs(unittest.TestCase):
@@ -64,8 +63,7 @@ class TestFlatEdfs(unittest.TestCase):
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
 
-        assert len(self.MYIMAGE[0:1, 0:1].tostring()) == 4, \
-               len(self.MYIMAGE[0:1, 0:1].tostring())
+        assert len(self.MYIMAGE[0:1, 0:1].tostring()) == 4, self.MYIMAGE[0:1, 0:1].tostring()
 
     def setUp(self):
         """ initialize"""
@@ -109,7 +107,9 @@ class TestBzipEdf(TestFlatEdfs):
         """set it up"""
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".bz2"):
-                    bz2.BZ2File(self.filename + ".bz2", "wb").write(open(self.filename, "rb").read())
+            with BZ2File(self.filename + ".bz2", "wb") as f:
+                with open(self.filename, "rb") as d:
+                    f.write(d.read())
         self.filename += ".bz2"
 
 
@@ -119,7 +119,9 @@ class TestGzipEdf(TestFlatEdfs):
         """ set it up """
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
-                    gzip.open(self.filename + ".gz", "wb").write(open(self.filename, "rb").read())
+            with GzipFile(self.filename + ".gz", "wb") as f:
+                with open(self.filename, "rb") as d:
+                    f.write(d.read())
         self.filename += ".gz"
 
 
@@ -279,6 +281,7 @@ class TestEdfMultiFrame(unittest.TestCase):
     def test_openimage_multiframes(self):
         "test if openimage can directly read first or second frame of a multi-frame"
         self.assertEqual((fabio.open(self.multiFrameFilename).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for default ")
+#         print(fabio.open(self.multiFrameFilename, 0).data)
         self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
         self.assertEqual((fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(), 0, "openimage_multiframes: Same data for frame 1")
 
@@ -314,8 +317,8 @@ class TestEdfWrite(unittest.TestCase):
         e = edfimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
 
     def testGzip(self):
@@ -323,8 +326,8 @@ class TestEdfWrite(unittest.TestCase):
         e = edfimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
 
     def testBzip2(self):
@@ -332,8 +335,8 @@ class TestEdfWrite(unittest.TestCase):
         e = edfimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assert_(r.header["toto"] == self.header["toto"], "header are OK")
-        self.assert_(abs(r.data - self.data).max() == 0, "data are OK")
+        self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
+        self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
         self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
 
     def tearDown(self):

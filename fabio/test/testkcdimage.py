@@ -40,12 +40,13 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
-from fabio.kcdimage     import kcdimage
-from fabio.edfimage     import edfimage
-from fabio.openimage    import openimage
+from ..kcdimage import kcdimage
+from ..edfimage import edfimage
+from ..openimage import openimage
+from ..fabioutils import BZ2File, GzipFile
 
 
-class testkcd(unittest.TestCase):
+class TestKcd(unittest.TestCase):
     """basic test"""
     kcdfilename = 'i01f0001.kcd'
     edffilename = 'i01f0001.edf'
@@ -62,16 +63,20 @@ class testkcd(unittest.TestCase):
     def test_read(self):
         """ check we can read kcd images"""
         vals = self.results.split()
-        name = vals[0]
         dim1, dim2 = [int(x) for x in vals[1:3]]
         mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
-        obj = openimage(self.fn[self.kcdfilename])
-        self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin")
-        self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
-        self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean")
-        self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev")
-        self.assertEqual(dim1, obj.dim1, "dim1")
-        self.assertEqual(dim2, obj.dim2, "dim2")
+        for ext in ["", ".gz", ".bz2"]:
+            try:
+                obj = openimage(self.fn[self.kcdfilename] + ext)
+            except Exception as err:
+                logger.error("unable to read: %s", self.fn[self.kcdfilename] + ext)
+                raise err
+            self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin" + ext)
+            self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax" + ext)
+            self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean" + ext)
+            self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev" + ext)
+            self.assertEqual(dim1, obj.dim1, "dim1" + ext)
+            self.assertEqual(dim2, obj.dim2, "dim2" + ext)
 
     def test_same(self):
         """ see if we can read kcd images and if they are the same as the EDF """
@@ -84,8 +89,9 @@ class testkcd(unittest.TestCase):
 
 def suite():
     testsuite = unittest.TestSuite()
-    testsuite.addTest(testkcd("test_read"))
-    testsuite.addTest(testkcd("test_same"))
+    testsuite.addTest(TestKcd("test_read"))
+    testsuite.addTest(TestKcd("test_same"))
+
     return testsuite
 
 if __name__ == '__main__':

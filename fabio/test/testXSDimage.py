@@ -83,7 +83,7 @@ class testXSD(unittest.TestCase):
         delta = abs((numpy.matrix(m1.data) * numpy.matrix(m2.data)) - numpy.identity(m1.data.shape[0])).max()
         if delta >= 1e-3:
             logger.error("Matrices are not invert of each other !!! prod = %s", numpy.matrix(m1.data) * numpy.matrix(m2.data))
-        self.assert_(delta < 1e-3, "matrices are invert of each other")
+        self.assertTrue(delta < 1e-3, "matrices are invert of each other")
 
 
 def suite():
