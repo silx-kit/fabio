@@ -361,7 +361,7 @@ def main():
             elif filename.format is None or len(filename.format) > 1:
                 formats = [i + "image" for i in filename.format]
                 formats = ', '.join(formats)
-                raise argparse.ArgumentError(None, "This file extension correspond to different file formats: '%s'. You have to specify it using -F.", formats)
+                raise argparse.ArgumentError(None, "This file extension correspond to different file formats: '%s'. You have to specify it using -F." % formats)
             args.format = filename.format[0] + "image"
 
         if not is_format_supported(args.format):
