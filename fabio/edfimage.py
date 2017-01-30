@@ -474,11 +474,7 @@ class EdfImage(FabioImage):
             elif dim == 2:
                 stored_data = data
             elif dim >= 3:
-                logger.warning("Data dimension too big. Only the last 2-dimensions will be used")
-                selection = [0] * dim
-                selection[-1] = slice(None)
-                selection[-2] = slice(None)
-                stored_data = data[selection]
+                raise Exception("Data dimension too big. Only 1d or 2d arrays are supported.")
 
         FabioImage.__init__(self, stored_data, header)
 
