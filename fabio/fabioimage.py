@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/12/2016"
+__date__ = "30/01/2017"
 
 
 import os
@@ -94,7 +94,7 @@ class FabioMeta(type):
 
 class FabioImage(with_metaclass(FabioMeta, object)):
     """A common object for images in fable
-    
+
     Contains a numpy array (.data) and dict of meta data (.header)
     """
 
@@ -129,16 +129,16 @@ class FabioImage(with_metaclass(FabioMeta, object)):
 
     def __init__(self, data=None, header=None):
         """Set up initial values
-        
+
         @param data: numpy array of values
-        @param header: dict or ordereddict with metadata 
+        @param header: dict or ordereddict with metadata
         """
         self._classname = None
         self._dim1 = self._dim2 = self._bpp = 0
         self._bytecode = None
         self._file = None
         if type(data) in fabioutils.StringTypes:
-            raise Exception("fabioimage.__init__ bad argument - " + \
+            raise Exception("fabioimage.__init__ bad argument - " +
                             "data should be numpy array")
         self.data = self.check_data(data)
         self.pilimage = None
@@ -303,14 +303,13 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         # mode map
         size = self.data.shape[:2][::-1]
         typmap = {
-                  'float32': "F",
-                  'int32': "F;32NS",
-                  'uint32': "F;32N",
-                  'int16': "F;16NS",
-                  'uint16': "F;16N",
-                  'int8': "F;8S",
-                  'uint8': "F;8"
-                 }
+            'float32': "F",
+            'int32': "F;32NS",
+            'uint32': "F;32N",
+            'int16': "F;16NS",
+            'uint16': "F;16N",
+            'int8': "F;8S",
+            'uint8': "F;8"}
         if self.data.dtype.name in typmap:
             mode2 = typmap[self.data.dtype.name]
             mode1 = mode2[0]
@@ -376,7 +375,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             sli = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                        isinstance(coords[1], slice):
+                isinstance(coords[1], slice):
             sli = coords
 
         if sli == self.slice and self.area_sum is not None:
@@ -517,7 +516,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-             isinstance(coords[1], slice):
+                isinstance(coords[1], slice):
             self.slice = coords
         else:
             logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)

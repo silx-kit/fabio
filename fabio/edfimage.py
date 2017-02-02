@@ -453,24 +453,30 @@ class EdfImage(FabioImage):
     def __init__(self, data=None, header=None, frames=None):
         self.currentframe = 0
         self.filesize = None
-        try:
-            dim = len(data.shape)
-        except Exception as error:  # IGNORE:W0703
-            logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
-            data = None
-            dim = 0
-            FabioImage.__init__(self, data, header)
-        if dim == 2:
-            FabioImage.__init__(self, data, header)
-        elif dim == 1:
-            data.shape = (1, len(data))
-            FabioImage.__init__(self, data, header)
-        elif dim == 3:
-            FabioImage.__init__(self, data[0, :, :], header)
-        elif dim == 4:
-            FabioImage.__init__(self, data[0, 0, :, :], header)
-        elif dim == 5:
-            FabioImage.__init__(self, data[0, 0, 0, :, :], header)
+
+        if data is None:
+            # In case of creation of an empty instance
+            stored_data = None
+        else:
+            try:
+                dim = len(data.shape)
+            except Exception as error:  # IGNORE:W0703
+                logger.debug("Data don't look like a numpy array (%s), resetting all!!" % error)
+                dim = 0
+
+            if dim == 0:
+                raise Exception("Data with empty shape is unsupported")
+            elif dim == 1:
+                logger.warning("Data in 1d dimension will be stored as a 2d dimension array")
+                # make sure we do not change the shape of the input data
+                stored_data = numpy.array(data, copy=False)
+                stored_data.shape = (1, len(data))
+            elif dim == 2:
+                stored_data = data
+            elif dim >= 3:
+                raise Exception("Data dimension too big. Only 1d or 2d arrays are supported.")
+
+        FabioImage.__init__(self, stored_data, header)
 
         if frames is None:
             frame = Frame(data=self.data, header=self.header,
