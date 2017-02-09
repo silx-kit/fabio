@@ -54,9 +54,10 @@ from fabio.OXDimage import OXDimage
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = [
-    ("b191_1_9_1.img", 512, 512, -500, 11975, 25.70, 90.2526),
-    ("b191_1_9_1_uncompressed.img", 512, 512, -500, 11975, 25.70, 90.2526),
-    ("100nmfilmonglass_1_1.img", 1024, 1024, -172, 460, 44.20, 63.0245)]
+    ("b191_1_9_1.img", 512, 512, -500, 11975, 25.70, 90.2526, "Sapphire2"),
+    ("b191_1_9_1_uncompressed.img", 512, 512, -500, 11975, 25.70, 90.2526, "Sapphire2"),
+    ("100nmfilmonglass_1_1.img", 1024, 1024, -172, 460, 44.20, 63.0245, "Sapphire3"),
+    ("pilatus300k.rod_img", 487, 619, -2, 173075, 27.315, 538.938, "Pilatus")]
 
 
 class TestOxd(unittest.TestCase):
@@ -77,7 +78,8 @@ class TestOxd(unittest.TestCase):
         for vals in TESTIMAGES:
             name = vals[0]
             dim1, dim2 = vals[1:3]
-            mini, maxi, mean, stddev = vals[3:]
+            mini, maxi, mean, stddev = vals[3:7]
+            detector_type = vals[7]
             obj = OXDimage()
             obj.read(self.fn[name])
 
@@ -88,6 +90,9 @@ class TestOxd(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax on " + name)
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean on " + name)
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev on " + name)
+
+            self.assertIn(detector_type, obj.header["Detector type"], "detector type on " + name)
+
     def test_write(self):
         "Test writing with self consistency at the fabio level"
         for vals in TESTIMAGES:
