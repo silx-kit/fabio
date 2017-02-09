@@ -120,12 +120,14 @@ class OxdImage(FabioImage):
         self.header['NSUPPLEMENT'] = int(block[12:19])
         block = infile.readline()
         self.header['Time'] = to_str(block[5:29])
-        self.header["ASCII Section size in Byte"] = self.header['Header Size In Bytes']\
-                                                   - self.header['General Section size in Byte']\
-                                                   - self.header['Special Section size in Byte'] \
-                                                   - self.header['KM4 Section size in Byte']\
-                                                   - self.header['Statistic Section in Byte']\
-                                                   - self.header['History Section in Byte']
+
+        ascii_section_size = self.header['Header Size In Bytes'] - (
+            self.header['General Section size in Byte'] +
+            self.header['Special Section size in Byte'] +
+            self.header['KM4 Section size in Byte'] +
+            self.header['Statistic Section in Byte'] +
+            self.header['History Section in Byte'])
+        self.header["ASCII Section size in Byte"] = ascii_section_size
 
         # Skip to general section (NG) 512 byes long <<<<<<"
         infile.seek(self.header["ASCII Section size in Byte"])
@@ -288,7 +290,7 @@ class OxdImage(FabioImage):
                 # Always assume little-endian on the disk
                 if not numpy.little_endian:
                     raw_data.byteswap(True)
-#         infile.close()
+        # infile.close()
 
         logger.debug('OVER_SHORT2: %s', raw_data.dtype)
         logger.debug("%s" % (raw_data < 0).sum())
@@ -448,7 +450,7 @@ class OxdImage(FabioImage):
         if self.header.get("Compression") != "TY1":
             logger.warning("Enforce TY1 compression")
             self.header["Compression"] = "TY1"
-    
+
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2
         self.header["OL"] = len(datablock32) / 4
@@ -491,7 +493,7 @@ class OxdImage(FabioImage):
             value = raw[pos_inp]
             if value < 254:
                 # this is the normal case
-#               # 1 bytes encode one pixel
+                # 1 bytes encode one pixel
                 current = last + value - 127
                 pos_inp += 1
             elif value == 254:
