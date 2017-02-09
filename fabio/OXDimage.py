@@ -121,12 +121,19 @@ class OxdImage(FabioImage):
         block = infile.readline()
         self.header['Time'] = to_str(block[5:29])
 
-        ascii_section_size = self.header['Header Size In Bytes'] - (
-            self.header['General Section size in Byte'] +
-            self.header['Special Section size in Byte'] +
-            self.header['KM4 Section size in Byte'] +
-            self.header['Statistic Section in Byte'] +
-            self.header['History Section in Byte'])
+        header_version = float(self.header['Header Version'].split()[2])
+        if header_version < 4.0:
+            # for all our test files with header version 3.0
+            # ascii_section_size == 256
+            # but that's a legacy code
+            ascii_section_size = self.header['Header Size In Bytes'] - (
+                self.header['General Section size in Byte'] +
+                self.header['Special Section size in Byte'] +
+                self.header['KM4 Section size in Byte'] +
+                self.header['Statistic Section in Byte'] +
+                self.header['History Section in Byte'])
+        else:
+            ascii_section_size = DEFAULT_HEADERS["ASCII Section size in Byte"]
         self.header["ASCII Section size in Byte"] = ascii_section_size
 
         # Skip to general section (NG) 512 byes long <<<<<<"
