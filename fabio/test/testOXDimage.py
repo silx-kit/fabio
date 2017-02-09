@@ -81,13 +81,13 @@ class TestOxd(unittest.TestCase):
             obj = OXDimage()
             obj.read(self.fn[name])
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
 
+            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin on " + name)
+            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax on " + name)
+            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean on " + name)
+            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev on " + name)
     def test_write(self):
         "Test writing with self consistency at the fabio level"
         for vals in TESTIMAGES:
@@ -100,12 +100,12 @@ class TestOxd(unittest.TestCase):
             obj.write(os.path.join(UtilsTest.tempdir, name))
             other = OXDimage()
             other.read(os.path.join(UtilsTest.tempdir, name))
-            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same for %s" % name)
+            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are not the same for %s" % name)
             for key in obj.header:
                 if key == "filename":
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
-                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
+                self.assertEqual(obj.header[key], other.header[key], "metadata '%s' are not the same for %s" % (key, name))
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
