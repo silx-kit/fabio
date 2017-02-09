@@ -53,17 +53,18 @@ from fabio.OXDimage import OXDimage
 
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
-TESTIMAGES = """b191_1_9_1.img  512 512 -500 11975 25.70 90.2526
-                b191_1_9_1_uncompressed.img  512 512 -500 11975 25.70 90.2526
-                100nmfilmonglass_1_1.img 1024 1024 -172 460 44.20 63.0245"""
+TESTIMAGES = [
+    ("b191_1_9_1.img", 512, 512, -500, 11975, 25.70, 90.2526),
+    ("b191_1_9_1_uncompressed.img", 512, 512, -500, 11975, 25.70, 90.2526),
+    ("100nmfilmonglass_1_1.img", 1024, 1024, -172, 460, 44.20, 63.0245)]
 
 
 class TestOxd(unittest.TestCase):
     def setUp(self):
         self.fn = {}
-        for l in TESTIMAGES.split("\n"):
-            i = l.split()[0]
-            self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
+        for vals in TESTIMAGES:
+            name = vals[0]
+            self.fn[name] = UtilsTest.getimage(name + ".bz2")[:-4]
         for i in self.fn:
             assert os.path.exists(self.fn[i])
 
@@ -73,11 +74,10 @@ class TestOxd(unittest.TestCase):
 
     def test_read(self):
         "Test reading of compressed OXD images"
-        for line in TESTIMAGES.split("\n"):
-            vals = line.split()
+        for vals in TESTIMAGES:
             name = vals[0]
-            dim1, dim2 = [int(x) for x in vals[1:3]]
-            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+            dim1, dim2 = vals[1:3]
+            mini, maxi, mean, stddev = vals[3:]
             obj = OXDimage()
             obj.read(self.fn[name])
 
@@ -90,8 +90,7 @@ class TestOxd(unittest.TestCase):
 
     def test_write(self):
         "Test writing with self consistency at the fabio level"
-        for line in TESTIMAGES.split("\n"):
-            vals = line.split()
+        for vals in TESTIMAGES:
             name = vals[0]
             obj = OXDimage()
             obj.read(self.fn[name])

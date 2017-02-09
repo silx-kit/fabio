@@ -426,9 +426,9 @@ class OxdImage(FabioImage):
         KM.setData('Beam center x', 664, numpy.float64)
         KM.setData('Beam center y', 672, numpy.float64)
         # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
-        KM.setData('Alpha angle in deg', 672, numpy.float64)
+        KM.setData('Alpha angle in deg', 680, numpy.float64)
         # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
-        KM.setData('Beta angle in deg', 672, numpy.float64)
+        KM.setData('Beta angle in deg', 688, numpy.float64)
 
         # Detector distance
         KM.setData('Distance in mm', 712, numpy.float64)
