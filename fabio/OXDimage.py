@@ -48,7 +48,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "26/10/2016"
+__date__ = "09/02/2017"
 
 import time
 import logging
@@ -69,7 +69,8 @@ DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
                   1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
                   2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
                   3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
-                  4: 'Unknown Oxford diffraction detector'}
+                  4: 'Unknown Oxford diffraction detector',
+                  7: 'Pilatus 300K-Dectris'}
 
 DEFAULT_HEADERS = {'Header Version': 'OD SAPPHIRE  3.0',
                    'Compression': "TY1",
@@ -210,9 +211,9 @@ class OxdImage(FabioImage):
         self.header['Beam center x'] = struct.unpack("<d", block[664:672])[0]
         self.header['Beam center y'] = struct.unpack("<d", block[672:680])[0]
         # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
-        self.header['Alpha angle in deg'] = struct.unpack("<d", block[672:680])[0]
+        self.header['Alpha angle in deg'] = struct.unpack("<d", block[680:688])[0]
         # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
-        self.header['Beta angle in deg'] = struct.unpack("<d", block[672:680])[0]
+        self.header['Beta angle in deg'] = struct.unpack("<d", block[688:696])[0]
 
         # Detector distance
         self.header['Distance in mm'] = struct.unpack("<d", block[712:720])[0]
