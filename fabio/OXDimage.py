@@ -48,7 +48,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "26/10/2016"
+__date__ = "09/02/2017"
 
 import time
 import logging
@@ -69,7 +69,8 @@ DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
                   1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
                   2: 'Sapphire3-Kodak (1x1: 0.03mm, 2x2: 0.06mm, 4x4: 0.12mm)',
                   3: 'Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)',
-                  4: 'Unknown Oxford diffraction detector'}
+                  4: 'Unknown Oxford diffraction detector',
+                  7: 'Pilatus 300K-Dectris'}
 
 DEFAULT_HEADERS = {'Header Version': 'OD SAPPHIRE  3.0',
                    'Compression': "TY1",
@@ -119,12 +120,21 @@ class OxdImage(FabioImage):
         self.header['NSUPPLEMENT'] = int(block[12:19])
         block = infile.readline()
         self.header['Time'] = to_str(block[5:29])
-        self.header["ASCII Section size in Byte"] = self.header['Header Size In Bytes']\
-                                                   - self.header['General Section size in Byte']\
-                                                   - self.header['Special Section size in Byte'] \
-                                                   - self.header['KM4 Section size in Byte']\
-                                                   - self.header['Statistic Section in Byte']\
-                                                   - self.header['History Section in Byte']
+
+        header_version = float(self.header['Header Version'].split()[2])
+        if header_version < 4.0:
+            # for all our test files with header version 3.0
+            # ascii_section_size == 256
+            # but that's a legacy code
+            ascii_section_size = self.header['Header Size In Bytes'] - (
+                self.header['General Section size in Byte'] +
+                self.header['Special Section size in Byte'] +
+                self.header['KM4 Section size in Byte'] +
+                self.header['Statistic Section in Byte'] +
+                self.header['History Section in Byte'])
+        else:
+            ascii_section_size = DEFAULT_HEADERS["ASCII Section size in Byte"]
+        self.header["ASCII Section size in Byte"] = ascii_section_size
 
         # Skip to general section (NG) 512 byes long <<<<<<"
         infile.seek(self.header["ASCII Section size in Byte"])
@@ -210,9 +220,9 @@ class OxdImage(FabioImage):
         self.header['Beam center x'] = struct.unpack("<d", block[664:672])[0]
         self.header['Beam center y'] = struct.unpack("<d", block[672:680])[0]
         # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
-        self.header['Alpha angle in deg'] = struct.unpack("<d", block[672:680])[0]
+        self.header['Alpha angle in deg'] = struct.unpack("<d", block[680:688])[0]
         # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
-        self.header['Beta angle in deg'] = struct.unpack("<d", block[672:680])[0]
+        self.header['Beta angle in deg'] = struct.unpack("<d", block[688:696])[0]
 
         # Detector distance
         self.header['Distance in mm'] = struct.unpack("<d", block[712:720])[0]
@@ -287,7 +297,7 @@ class OxdImage(FabioImage):
                 # Always assume little-endian on the disk
                 if not numpy.little_endian:
                     raw_data.byteswap(True)
-#         infile.close()
+        # infile.close()
 
         logger.debug('OVER_SHORT2: %s', raw_data.dtype)
         logger.debug("%s" % (raw_data < 0).sum())
@@ -416,9 +426,9 @@ class OxdImage(FabioImage):
         KM.setData('Beam center x', 664, numpy.float64)
         KM.setData('Beam center y', 672, numpy.float64)
         # Angle (alpha) between kappa rotation axis and e3 (ideally 50 deg)
-        KM.setData('Alpha angle in deg', 672, numpy.float64)
+        KM.setData('Alpha angle in deg', 680, numpy.float64)
         # Angle (beta) between phi rotation axis and e3 (ideally 0 deg)
-        KM.setData('Beta angle in deg', 672, numpy.float64)
+        KM.setData('Beta angle in deg', 688, numpy.float64)
 
         # Detector distance
         KM.setData('Distance in mm', 712, numpy.float64)
@@ -447,7 +457,7 @@ class OxdImage(FabioImage):
         if self.header.get("Compression") != "TY1":
             logger.warning("Enforce TY1 compression")
             self.header["Compression"] = "TY1"
-    
+
         datablock8, datablock16, datablock32 = compTY1(self.data)
         self.header["OI"] = len(datablock16) / 2
         self.header["OL"] = len(datablock32) / 4
@@ -490,7 +500,7 @@ class OxdImage(FabioImage):
             value = raw[pos_inp]
             if value < 254:
                 # this is the normal case
-#               # 1 bytes encode one pixel
+                # 1 bytes encode one pixel
                 current = last + value - 127
                 pos_inp += 1
             elif value == 254:
