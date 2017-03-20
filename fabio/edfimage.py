@@ -660,9 +660,8 @@ class EdfImage(FabioImage):
             newImage.filename = self.filename
             newImage._file = self._file
         else:
-            txt = "Cannot access frame: %s/%s" % (num, self.nframes)
-            logger.error(txt)
-            raise ValueError("EdfImage.getframe:" + txt)
+            raise IOError("EdfImage.getframe: Cannot access frame: %s/%s" %
+                          (num, self.nframes))
         return newImage
 
     def previous(self):
@@ -676,7 +675,10 @@ class EdfImage(FabioImage):
         return newImage
 
     def next(self):
-        """ returns the next file in the series as a FabioImage """
+        """Returns the next file in the series as a fabioimage
+
+        @raise IOError: When there is no next file or image in the series.
+        """
         newImage = None
         if self.nframes == 1:
             newImage = FabioImage.next(self)
