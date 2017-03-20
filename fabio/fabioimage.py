@@ -284,7 +284,10 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
-        """ returns the next file in the series as a fabioimage """
+        """Returns the next file in the series as a fabioimage
+
+        @raise IOError: When there is no next file in the series.
+        """
         from .openimage import openimage
         return openimage(
             fabioutils.next_filename(self.filename))
