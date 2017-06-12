@@ -75,6 +75,12 @@ except ImportError:
     from six import with_metaclass
 
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    from .third_party.ordereddict import OrderedDict
+
+
 class FabioMeta(type):
     """ Metaclass used to register all image classes inheriting from fabioImage
     """
@@ -89,7 +95,7 @@ class FabioMeta(type):
 
 class FabioImage(with_metaclass(FabioMeta, object)):
     """A common object for images in fable
-    
+
     Contains a numpy array (.data) and dict of meta data (.header)
     """
 
@@ -124,16 +130,16 @@ class FabioImage(with_metaclass(FabioMeta, object)):
 
     def __init__(self, data=None, header=None):
         """Set up initial values
-        
+
         @param data: numpy array of values
-        @param header: dict or ordereddict with metadata 
+        @param header: dict or ordereddict with metadata
         """
         self._classname = None
         self._dim1 = self._dim2 = self._bpp = 0
         self._bytecode = None
         self._file = None
         if type(data) in fabioutils.StringTypes:
-            raise Exception("fabioimage.__init__ bad argument - " + \
+            raise Exception("fabioimage.__init__ bad argument - " +
                             "data should be numpy array")
         self.data = self.check_data(data)
         self.pilimage = None
@@ -279,7 +285,10 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
-        """ returns the next file in the series as a fabioimage """
+        """Returns the next file in the series as a fabioimage
+
+        @raise IOError: When there is no next file in the series.
+        """
         from .openimage import openimage
         return openimage(
             fabioutils.next_filename(self.filename))

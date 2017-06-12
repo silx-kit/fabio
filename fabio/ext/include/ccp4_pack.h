@@ -19,7 +19,7 @@
 #ifndef CPP4_PACK_H
 #define CPP4_PACK_H
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
 #include <stdint.h>
 #else
 #include "msvc\\stdint.h"
