@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/12/2016"
+__date__ = "12/06/2017"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -46,7 +46,13 @@ import re
 import os
 import logging
 import sys
+import json
 logger = logging.getLogger("fabioutils")
+
+try:
+    from collections import OrderedDict as _OrderedDict
+except ImportError:
+    from .third_party.ordereddict import OrderedDict as _OrderedDict
 
 try:
     from .third_party import six
@@ -687,3 +693,9 @@ def exists(path):
     @return: boolean
     """
     return os.path.exists(path.split("::")[0])
+
+
+class OrderedDict(_OrderedDict):
+    """Ordered dictionary with pretty print"""
+    def __repr__(self):
+        return json.dumps(self, indent=2)

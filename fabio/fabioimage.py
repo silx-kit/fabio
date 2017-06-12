@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/12/2016"
+__date__ = "12/06/2017"
 
 
 import os
@@ -61,6 +61,7 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 from . import fabioutils, converters
+from .fabioutils import OrderedDict
 
 try:
     from .third_party.six import with_metaclass
@@ -72,12 +73,6 @@ except ImportError:
             sys.modules.pop(i, None)
         raise ImportError("Old version")
     from six import with_metaclass
-
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    from .third_party.ordereddict import OrderedDict
 
 
 class FabioMeta(type):
