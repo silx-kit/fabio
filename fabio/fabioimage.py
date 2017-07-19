@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "30/01/2017"
+__date__ = "12/06/2017"
 
 
 import os
@@ -61,6 +61,7 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 from . import fabioutils, converters
+from .fabioutils import OrderedDict
 
 try:
     from .third_party.six import with_metaclass
@@ -306,13 +307,14 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         # mode map
         size = self.data.shape[:2][::-1]
         typmap = {
-            'float32': "F",
-            'int32': "F;32NS",
-            'uint32': "F;32N",
-            'int16': "F;16NS",
-            'uint16': "F;16N",
-            'int8': "F;8S",
-            'uint8': "F;8"}
+                  'float32': "F",
+                  'int32': "F;32NS",
+                  'uint32': "F;32N",
+                  'int16': "F;16NS",
+                  'uint16': "F;16N",
+                  'int8': "F;8S",
+                  'uint8': "F;8"
+                 }
         if self.data.dtype.name in typmap:
             mode2 = typmap[self.data.dtype.name]
             mode1 = mode2[0]
@@ -378,7 +380,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             sli = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                isinstance(coords[1], slice):
+                        isinstance(coords[1], slice):
             sli = coords
 
         if sli == self.slice and self.area_sum is not None:
@@ -519,7 +521,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                isinstance(coords[1], slice):
+             isinstance(coords[1], slice):
             self.slice = coords
         else:
             logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)
