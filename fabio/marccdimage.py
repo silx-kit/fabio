@@ -54,7 +54,7 @@ import logging
 import struct
 from .tifimage import TifImage
 
-logger = logging.getLogger("marccdimage")
+logger = logging.getLogger(__name__)
 
 # Now for the c definition (found on mar webpage)
 # The following string is therefore copyrighted by Mar I guess

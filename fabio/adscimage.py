@@ -38,7 +38,7 @@ from __future__ import with_statement, print_function
 import numpy, logging
 from .fabioimage import FabioImage
 from .fabioutils import to_str
-logger = logging.getLogger("adscimage")
+logger = logging.getLogger(__name__)
 
 
 class AdscImage(FabioImage):

@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "24/10/2016"
+__date__ = "24/07/2017"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -51,7 +51,7 @@ __licence__ = "MIT"
 import numpy
 import struct
 import logging
-logger = logging.getLogger("GEimage")
+logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
 

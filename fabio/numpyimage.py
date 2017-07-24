@@ -32,10 +32,10 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "21/10/2016"
+__date__ = "24/07/2017"
 
 import logging
-logger = logging.getLogger("numpyimage")
+logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage
 

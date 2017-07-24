@@ -49,7 +49,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "21/10/2016"
+__date__ = "24/07/2017"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -60,7 +60,7 @@ from math import ceil
 import os
 import getpass
 import time
-logger = logging.getLogger("brukerimage")
+logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 from .fabioutils import pad, StringTypes
 

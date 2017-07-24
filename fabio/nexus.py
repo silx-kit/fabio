@@ -34,7 +34,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/11/2016"
+__date__ = "24/07/2017"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 
@@ -54,7 +54,7 @@ else:
     from urllib.parse import urlparse
 
 
-logger = logging.getLogger("fabio.nexus")
+logger = logging.getLogger(__name__)
 try:
     import h5py
 except ImportError as error:

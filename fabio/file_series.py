@@ -48,7 +48,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 
 import logging
 import sys
-logger = logging.getLogger("fileseries")
+logger = logging.getLogger(__name__)
 import traceback as pytraceback
 
 from .fabioutils import FilenameObject, next_filename

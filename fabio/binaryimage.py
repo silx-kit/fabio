@@ -45,7 +45,7 @@ __version__ = "17/10/2012"
 
 from .fabioimage import FabioImage
 import numpy, logging
-logger = logging.getLogger("binaryimage")
+logger = logging.getLogger(__name__)
 
 
 class BinaryImage(FabioImage):
@@ -104,9 +104,9 @@ class BinaryImage(FabioImage):
             try:
                 f.seek(-size + offset + 1, 2)  # seek from EOF backwards
             except IOError:
-                logging.warn('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
+                logger.warn('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
             except:
-                logging.error('Uncommon error encountered when reading file')
+                logger.error('Uncommon error encountered when reading file')
         rawData = f.read(size)
         if  self.swap_needed(endian):
             data = numpy.fromstring(rawData, bytecode).byteswap().reshape(tuple(dims))

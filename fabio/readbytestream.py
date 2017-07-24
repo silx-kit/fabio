@@ -38,7 +38,7 @@ from __future__ import with_statement, print_function, division
 
 import logging
 import numpy
-logger = logging.getLogger("readbytestream")
+logger = logging.getLogger(__name__)
 DATATYPES = {
              # type  sign bytes
              ("int", 'n', 1): numpy.uint8,
@@ -89,7 +89,7 @@ def readbytestream(fil,
     try:
         tin = DATATYPES[key]
     except:
-        logging.warning("datatype,signed,nbytespp " + str(key))
+        logger.warning("datatype,signed,nbytespp " + str(key))
         raise Exception("Unknown combination of types to readbytestream")
 
     # Did we get a string (filename) or a readable stream object?

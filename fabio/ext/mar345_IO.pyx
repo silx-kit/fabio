@@ -52,8 +52,8 @@ import numpy
 import os
 import tempfile
 import logging
-logger = logging.getLogger("mar345_IO")
-                        
+logger = logging.getLogger(__name__)
+
 
 ctypedef fused any_int_t:
     cnp.int8_t

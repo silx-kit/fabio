@@ -45,7 +45,7 @@ import hashlib
 from .fabioimage import FabioImage
 from .fabioutils import six
 
-logger = logging.getLogger("xsdimage")
+logger = logging.getLogger(__name__)
 try:
     from lxml import etree
 except ImportError:

@@ -46,14 +46,14 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/06/2017"
+__date__ = "24/07/2017"
 
 
 import os
 import logging
 import sys
 import tempfile
-logger = logging.getLogger("fabioimage")
+logger = logging.getLogger(__name__)
 import numpy
 try:
     from PIL import Image

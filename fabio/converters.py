@@ -45,7 +45,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
 import logging
-logger = logging.getLogger("converter")
+logger = logging.getLogger(__name__)
 
 
 def convert_data_integer(data):

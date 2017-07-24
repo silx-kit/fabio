@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/06/2017"
+__date__ = "24/07/2017"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -47,7 +47,7 @@ import os
 import logging
 import sys
 import json
-logger = logging.getLogger("fabioutils")
+logger = logging.getLogger(__name__)
 
 try:
     from collections import OrderedDict as _OrderedDict

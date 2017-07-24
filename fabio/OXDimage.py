@@ -48,12 +48,12 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "09/02/2017"
+__date__ = "24/07/2017"
 
 import time
 import logging
 import struct
-logger = logging.getLogger("OXDimage")
+logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage
 from .compression import decTY1, compTY1

@@ -49,7 +49,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "12/12/2016"
+__date__ = "24/07/2017"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -63,7 +63,7 @@ import numpy
 from .fabioimage import FabioImage
 
 
-logger = logging.getLogger("mar345image")
+logger = logging.getLogger(__name__)
 from .compression import compPCK, decPCK
 
 
