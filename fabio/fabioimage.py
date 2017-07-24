@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/06/2017"
+__date__ = "24/07/2017"
 
 
 import os
@@ -102,6 +102,9 @@ class FabioImage(with_metaclass(FabioMeta, object)):
     _need_a_seek_to_read = False
     _need_a_real_file = False
     registry = OrderedDict()  # list of child classes ...
+
+    RESERVED_HEADER_KEYS = []
+    # List of header keys which are reserved by the file format
 
     @classmethod
     def factory(cls, name):
