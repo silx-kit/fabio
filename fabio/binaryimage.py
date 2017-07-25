@@ -130,4 +130,5 @@ class BinaryImage(FabioImage):
         with open(fname, mode="wb") as outfile:
             outfile.write(self.data.tostring())
 
+
 binaryimage = BinaryImage

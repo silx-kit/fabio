@@ -45,32 +45,32 @@ import numpy
 from .fabioimage import FabioImage
 logger = logging.getLogger(__name__)
 
-DATA_TYPES = {  2     :  numpy.int16,
-                4     :  numpy.uint16,
-                3     :  numpy.int32,
-                5     :  numpy.uint32,
-                6     :  numpy.float32,
-                7     :  numpy.float,
-                8     :  numpy.int8,
-                9     :  None,
-                10    :  None,
-                15    :  'Struct',
-                18    :  None,
-                20    :  None
+DATA_TYPES = {  2     : numpy.int16,
+                4     : numpy.uint16,
+                3     : numpy.int32,
+                5     : numpy.uint32,
+                6     : numpy.float32,
+                7     : numpy.float,
+                8     : numpy.int8,
+                9     : None,
+                10    : None,
+                15    : 'Struct',
+                18    : None,
+                20    : None
                 }
 
-DATA_BYTES = {  2     :  2,
-                4     :  2,
-                3     :  4,
-                5     :  4,
-                6     :  4,
-                7     :  8,
-                8     :  1,
-                9     :  None,
-                10    :  None,
-                15    :  'Struct',
-                18    :  None,
-                20    :  None
+DATA_BYTES = {  2     : 2,
+                4     : 2,
+                3     : 4,
+                5     : 4,
+                6     : 4,
+                7     : 8,
+                8     : 1,
+                9     : None,
+                10    : None,
+                15    : 'Struct',
+                18    : None,
+                20    : None
                 }
 
 
@@ -198,8 +198,8 @@ class Dm3Image(FabioImage):
             logger.debug('Data are stored as a simple a array -')
             logger.debug('%s data elemets stored as %s', self.no_data_elements, self.data_type)
             read_no_bytes = DATA_BYTES[self.data_type] * self.no_data_elements
-            format = DATA_TYPES[self.data_type]
-            return self.readbytes(read_no_bytes, format, swap=self.swap)
+            fmt = DATA_TYPES[self.data_type]
+            return self.readbytes(read_no_bytes, fmt, swap=self.swap)
 
         # are the data stored in a complex array ?
         # print 'tag_type + data_type', self.tag_encoded_type,self.tag_data_type

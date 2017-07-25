@@ -41,9 +41,7 @@ from .utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from ..kcdimage import kcdimage
-from ..edfimage import edfimage
 from ..openimage import openimage
-from ..fabioutils import BZ2File, GzipFile
 
 
 class TestKcd(unittest.TestCase):
@@ -93,6 +91,7 @@ def suite():
     testsuite.addTest(TestKcd("test_same"))
 
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

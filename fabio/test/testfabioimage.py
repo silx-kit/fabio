@@ -42,8 +42,8 @@ from .utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from ..fabioimage import fabioimage
-from ..third_party import six
 from .. import fabioutils
+
 
 class test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -148,12 +148,12 @@ class testopen(unittest.TestCase):
 
 
 NAMES = {numpy.uint8:   "numpy.uint8",
-         numpy.int8:    "numpy.int8" ,
+         numpy.int8:    "numpy.int8",
          numpy.uint16:  "numpy.uint16",
-         numpy.int16:   "numpy.int16" ,
-         numpy.uint32:  "numpy.uint32" ,
-         numpy.int32:   "numpy.int32"   ,
-         numpy.float32: "numpy.float32" ,
+         numpy.int16:   "numpy.int16",
+         numpy.uint32:  "numpy.uint32",
+         numpy.int32:   "numpy.int32",
+         numpy.float32: "numpy.float32",
          numpy.float64: "numpy.float64"}
 
 
@@ -179,10 +179,10 @@ class testPILimage(unittest.TestCase):
             name = NAMES[typ]
             for shape in [(10, 20), (431, 1325)]:
                 testdata = self.mkdata(shape, typ)
-                img = fabioimage(testdata, {"title":"Random data"})
+                img = fabioimage(testdata, {"title": "Random data"})
                 pim = img.toPIL16()
-                for i in [ 0, 5, 6, shape[1] - 1 ]:
-                    for j in [0, 5, 7, shape[0] - 1 ]:
+                for i in [0, 5, 6, shape[1] - 1]:
+                    for j in [0, 5, 7, shape[0] - 1]:
                         errstr = name + " %d %d %f %f t=%s" % (
                             i, j, testdata[j, i], pim.getpixel((i, j)), typ)
 
@@ -236,6 +236,7 @@ def suite():
     else:
         logger.warning("Skipping PIL related tests")
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

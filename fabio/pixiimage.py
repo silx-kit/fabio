@@ -161,6 +161,7 @@ def demo(fname):
         pylab.show()
         raw_input()
 
+
 if __name__ == "__main__":
     import sys
     demo(sys.argv[1])

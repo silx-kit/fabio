@@ -152,7 +152,7 @@ class TestEdfs(unittest.TestCase):
             try:
                 obj.read(os.path.join(self.im_dir, name))
             except:
-                print ("Cannot read image", name)
+                print("Cannot read image", name)
                 raise
             self.assertAlmostEqual(mini, obj.getmin(), 2, "testedfs: %s getmin()" % name)
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "testedfs: %s getmax" % name)
@@ -394,6 +394,7 @@ def suite():
     testsuite.addTest(TestEdfRegression("bug_27"))
 
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

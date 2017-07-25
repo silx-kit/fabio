@@ -32,18 +32,15 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/10/2016"
+__date__ = "25/07/2017"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
 
 import os
-import imp
 import sys
 import getpass
-import subprocess
 import threading
-import distutils.util
 import logging
 import bz2
 import gzip
@@ -246,7 +243,7 @@ class UtilsTest(object):
         """
         small helper function that initialized the logger and returns it
         """
-        dirname, basename = os.path.split(os.path.abspath(filename))
+        basename = os.path.basename(os.path.abspath(filename))
         basename = os.path.splitext(basename)[0]
         level = logging.root.level
         mylogger = logging.getLogger(basename)

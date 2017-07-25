@@ -139,4 +139,5 @@ class AdscImage(FabioImage):
         elif "big" in BYTE_ORDER and numpy.little_endian:
             return True
 
+
 adscimage = AdscImage

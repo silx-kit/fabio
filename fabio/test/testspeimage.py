@@ -36,13 +36,11 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher/Univeristy Köln, Germany"
-__date__ = "12/07/2016"
+__date__ = "25/07/2017"
 
 import unittest
-import os
 import sys
-
-import numpy as np
+import numpy
 
 from .utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
@@ -137,7 +135,7 @@ class TestSpeImage(unittest.TestCase):
         self.v3_2frames_file.read(self.v3_2frames_filename, 1)
         frame2 = self.v3_2frames_file.data
 
-        self.assertFalse(np.array_equal(frame1, frame2))
+        self.assertFalse(numpy.array_equal(frame1, frame2))
         self.assertEqual(frame1.shape, frame2.shape)
 
     def test_fabio_integration(self):
@@ -151,6 +149,7 @@ class TestSpeImage(unittest.TestCase):
         self.assertEqual(abs(v3_file.data - v3_file_gz.data).max(), 0, "v3/gz")
         self.assertEqual(abs(v2_file.data - v2_file_bz.data).max(), 0, "v2/bz")
         self.assertEqual(abs(v3_file.data - v3_file_bz.data).max(), 0, "v3/bz")
+
 
 def suite():
     testsuite = unittest.TestSuite()
@@ -166,6 +165,7 @@ def suite():
     testsuite.addTest(TestSpeImage("test_multiple_frames"))
     testsuite.addTest(TestSpeImage("test_fabio_integration"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

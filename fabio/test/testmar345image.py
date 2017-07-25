@@ -32,7 +32,6 @@ import unittest
 import sys
 import os
 import numpy
-import gzip
 import logging
 
 if __name__ == '__main__':
@@ -138,12 +137,11 @@ class TestMar345(unittest.TestCase):
         if logger.getEffectiveLevel() <= logging.INFO:
             logger.debug("Testing for memory leak")
             for i in range(N):
-                img = fabio.open(self.mar345)
+                _img = fabio.open(self.mar345)
                 print("reading #%s/%s" % (i, N))
 
     def test_aux(self):
         """test auxillary functions
-          
         """
         shape = 120, 130
         size = shape[0] * shape[1]
@@ -207,6 +205,7 @@ def suite():
     testsuite.addTest(TestMar345("test_aux"))
 
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

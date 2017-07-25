@@ -100,7 +100,7 @@ def suite():
     testsuite.addTest(TestBruker100("test_write"))
     return testsuite
 
+
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(suite())
-

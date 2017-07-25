@@ -26,7 +26,6 @@
 
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
 if __name__ == '__main__':
     import pkgutil
@@ -35,7 +34,6 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 
-import numpy
 from .. import nexus
 
 
@@ -59,7 +57,7 @@ class testNexus(unittest.TestCase):
         nex = nexus.Nexus(fname)
         entry = nex.new_entry("entry")
         time1 = nexus.from_isotime(entry["start_time"].value)
-        entry["bad_time"] = [entry["start_time"].value]  #this is a list !!!
+        entry["bad_time"] = [entry["start_time"].value]  # this is a list
         time2 = nexus.from_isotime(entry["bad_time"].value)
         self.assertEqual(time1, time2, "start_time in list does not works !")
         nex.close()
@@ -74,11 +72,10 @@ def suite():
     else:
         testsuite.addTest(testNexus("test_nexus"))
         testsuite.addTest(testNexus("test_from_time"))
-#         testsuite.addTest(testNexus("test_invert"))
+        # testsuite.addTest(testNexus("test_invert"))
     return testsuite
 
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(suite())
-

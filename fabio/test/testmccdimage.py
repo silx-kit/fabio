@@ -61,7 +61,7 @@ class TestNormalTiffOK(unittest.TestCase):
 
     def setUp(self):
         """
-        create an image 
+        create an image
         """
         self.image = os.path.join(UtilsTest.tempdir, "tifimagewrite_test0000.tif")
         self.imdata = numpy.zeros((24, 24), numpy.uint16)
@@ -77,7 +77,7 @@ class TestNormalTiffOK(unittest.TestCase):
             logger.info("%s %s" % (type(obj.data), obj.data.dtype))
             logger.info("%s %s" % (obj.data - self.imdata))
         self.assertEqual(obj.data.astype(int).tostring(),
-                          self.imdata.astype(int).tostring())
+                         self.imdata.astype(int).tostring())
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
@@ -116,6 +116,7 @@ def suite():
     testsuite.addTest(TestNormalTiffOK("test_read_openimage"))
     testsuite.addTest(TestFlatMccds("test_read"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

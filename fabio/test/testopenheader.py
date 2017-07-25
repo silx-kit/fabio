@@ -23,13 +23,12 @@
 #
 """
 # Unit tests
-Jerome Kieffer, 04/12/2014 
+Jerome Kieffer, 04/12/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import numpy
 
 if __name__ == '__main__':
     import pkgutil
@@ -63,8 +62,7 @@ def suite():
     testsuite.addTest(test1("testcase"))
     return testsuite
 
+
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(suite)
-
-

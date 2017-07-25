@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -135,6 +135,8 @@ class ExternalCompressors(object):
             else:
                 self.compressors[key] = None
         return self.compressors[key]
+
+
 COMPRESSORS = ExternalCompressors()
 
 
@@ -265,6 +267,7 @@ def decByteOffset_cython(stream, size=None, dtype="int64"):
         else:
             return byte_offset.dec_cbf(stream, size)
 
+
 decByteOffset = decByteOffset_cython
 
 
@@ -341,6 +344,7 @@ def compByteOffset_cython(data):
         else:
             return byte_offset.comp_cbf(data).tostring()
 
+
 compByteOffset = compByteOffset_cython
 
 
@@ -382,6 +386,8 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     else:
         bytecode = "int8"
     return summed.astype(bytecode)
+
+
 decKM4CCD = decTY1
 
 

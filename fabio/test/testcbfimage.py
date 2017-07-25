@@ -34,8 +34,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import numpy
-import gzip
 import bz2
 import time
 
@@ -94,7 +92,7 @@ class TestCbfReader(unittest.TestCase):
                 continue
             self.assertTrue(key in other.header, "Key %s is in header" % key)
             self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
-        #By destroying the object, one actually closes the file, which is needed under windows.
+        # By destroying the object, one actually closes the file, which is needed under windows.
         del obj
         del other
         if os.path.exists(os.path.join(UtilsTest.tempdir, name)):
@@ -178,7 +176,7 @@ def suite():
 
     return testsuite
 
+
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(suite())
-

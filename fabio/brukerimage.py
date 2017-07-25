@@ -47,7 +47,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -427,5 +427,6 @@ class BrukerImage(FabioImage):
             self.header["WORDORD"] = "0"
         if "LONGORD" not in self.header:
             self.header["LONGORD"] = "0"
+
 
 brukerimage = BrukerImage

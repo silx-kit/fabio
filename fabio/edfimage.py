@@ -984,4 +984,5 @@ class EdfImage(FabioImage):
                 self._frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
 
+
 edfimage = EdfImage

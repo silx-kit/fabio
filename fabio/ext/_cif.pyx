@@ -31,7 +31,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2014, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 
 cimport numpy
 import numpy
@@ -77,7 +77,7 @@ def split_tokens(bytes_text):
         else:
             next = b"\n"
             go_on = False
-#         print(i,chr(prev),chr(cur),chr(next),in_comment,in_single_quote,in_double_quote,multiline, start, cur ==SINGLE_QUOTE)
+        # print(i,chr(prev),chr(cur),chr(next),in_comment,in_single_quote,in_double_quote,multiline, start, cur ==SINGLE_QUOTE)
         # Skip comments
         if in_comment:
             if cur in EOL:

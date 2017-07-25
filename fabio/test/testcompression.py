@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2011-2016 ESRF"
-__date__ = "12/07/2016"
+__date__ = "25/07/2017"
 
 import unittest
 import sys
@@ -79,7 +79,7 @@ class TestByteOffset(unittest.TestCase):
         ds = numpy.array([10, -128])
         ref = b'\n\x80v\xff'
         self.assertEqual(ref, compression.compByteOffset_numpy(ds), "test +10 -128")
-        self.assertEqual(self.ref, compression.compByteOffset_numpy(self.ds) , "test larger")
+        self.assertEqual(self.ref, compression.compByteOffset_numpy(self.ds), "test larger")
 
         # Then with cython 32 bits
         ds = numpy.array([0, 128], dtype="int32")
@@ -91,7 +91,7 @@ class TestByteOffset(unittest.TestCase):
         ds = numpy.array([10, -128], dtype="int32")
         ref = b'\n\x80v\xff'
         self.assertEqual(ref, compression.compByteOffset_cython(ds), "test +10 -128")
-        self.assertEqual(self.ref, compression.compByteOffset_cython(self.ds) , "test larger")
+        self.assertEqual(self.ref, compression.compByteOffset_cython(self.ds), "test larger")
 
         # Then with cython 64bits
         ds = numpy.array([0, 128], dtype="int64")
@@ -103,7 +103,7 @@ class TestByteOffset(unittest.TestCase):
         ds = numpy.array([10, -128], dtype="int64")
         ref = b'\n\x80v\xff'
         self.assertEqual(ref, compression.compByteOffset_cython(ds), "test +10 -128")
-        self.assertEqual(self.ref, compression.compByteOffset_cython(self.ds) , "test larger")
+        self.assertEqual(self.ref, compression.compByteOffset_cython(self.ds), "test larger")
 
     def testSC(self):
         """test that datasets are unchanged after various compression/decompressions"""
@@ -129,10 +129,7 @@ def suite():
     testsuite.addTest(TestByteOffset("testComp"))
     return testsuite
 
+
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(suite())
-
-
-
-
