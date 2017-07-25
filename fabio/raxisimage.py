@@ -43,7 +43,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 
 import logging
 import struct
@@ -187,7 +187,7 @@ class RaxisImage(FabioImage):
                     infile.seek(-size + offset + 1, os.SEEK_END)  # seek from EOF backwards
 #                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
-                logger.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
+                logger.warning('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
             except Exception as error:
                 logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)

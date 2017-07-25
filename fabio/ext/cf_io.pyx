@@ -37,7 +37,6 @@ cimport numpy
 import numpy
 import os
 import tempfile
-import sys
 import logging
 logger = logging.getLogger(__name__)
 
