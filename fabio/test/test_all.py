@@ -67,6 +67,7 @@ from . import testhdf5image
 from . import testfit2dimage
 from . import testspeimage
 from . import testfabioconvert
+from . import testjpegimage
 
 
 def suite():
@@ -103,6 +104,7 @@ def suite():
     testSuite.addTest(testfit2dimage.suite())
     testSuite.addTest(testspeimage.suite())
     testSuite.addTest(testfabioconvert.suite())
+    testSuite.addTest(testjpegimage.suite())
     return testSuite
 
 
