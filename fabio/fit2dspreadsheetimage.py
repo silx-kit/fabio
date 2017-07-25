@@ -54,12 +54,9 @@ class Fit2dSpreadsheetImage(FabioImage):
         TODO : test for minimal attributes?
         """
         line = infile.readline()
-        try:
-            items = line.split()
-            xdim = int(items[0])
-            ydim = int(items[1])
-        except:
-            raise
+        items = line.split()
+        xdim = int(items[0])
+        ydim = int(items[1])
         self.header['title'] = line
         self.header['Dim_1'] = xdim
         self.header['Dim_2'] = ydim

@@ -158,10 +158,7 @@ class RaxisImage(FabioImage):
         self.resetvals()
         infile = self._open(fname, 'rb')
         offset = -1  # read from EOF backward
-        try:
-            self._readheader(infile)
-        except:
-            raise
+        self._readheader(infile)
 
         # we read the required bytes from the end of file, using code
         # lifted from binaryimage

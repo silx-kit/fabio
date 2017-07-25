@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -356,12 +356,9 @@ def demo():
 
     while 1:
         start = time.time()
-        try:
-            sequence1 = sequence1.next()
-            print(sequence1.currentframe, sequence1.data.ravel().mean(), \
-                  time.time() - start)
-        except Exception as ex:
-            raise ex
+        sequence1 = sequence1.next()
+        duration = time.time() - start
+        print(sequence1.currentframe, sequence1.data.ravel().mean(), duration)
 
 
 GEimage = GeImage
