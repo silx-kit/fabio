@@ -66,8 +66,8 @@ class HipicImage(FabioImage):
         Dim_2 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
         Dim_1_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
         Dim_2_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        HeaderType = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dump = infile.read(50)
+        _HeaderType = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        _Dump = infile.read(50)
         Comment = infile.read(Comment_len)
         self.header['Image_tag'] = Image_tag
         self.header['Dim_1'] = Dim_1
@@ -77,8 +77,8 @@ class HipicImage(FabioImage):
         # self.header['Comment'] = Comment
         if Image_tag != 'IM':
             # This does not look like an HiPic file
-            logger.warning("no opening.  Corrupt header of HiPic file " + \
-                            str(infile.name))
+            logger.warning("No opening. Corrupt header of HiPic file %s",
+                           str(infile.name))
         Comment_split = Comment[:Comment.find('\x00')].split('\r\n')
 
         for topcomment in Comment_split:

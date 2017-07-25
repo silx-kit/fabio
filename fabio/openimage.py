@@ -210,8 +210,3 @@ def _openimage(filename):
     obj.filename = filename
     # skip the read for read header
     return obj
-
-
-
-
-

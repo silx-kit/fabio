@@ -28,8 +28,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
-
 """Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
          Risoe National Laboratory
@@ -48,7 +46,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 # get ready for python3 compatibility
 from __future__ import absolute_import, print_function, with_statement, division
 
-__authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
+__authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
 __date__ = "24/07/2017"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
@@ -123,30 +121,30 @@ class BrukerImage(FabioImage):
                     "NCOLS",  # Number of pixels/raster, such as 512, 1024, 2048 or 4096
                     "WORDORD",  # Order of bytes in word (0=LSB first)
                     "LONGORD",  # Order of words in a longword (0=LSW first)
-                    "TARGET" ,  # X-ray target material: Cu, Mo, Ag, Fe, Cr, Co, Ni, W, Mn, or other.
+                    "TARGET",  # X-ray target material: Cu, Mo, Ag, Fe, Cr, Co, Ni, W, Mn, or other.
                     "SOURCEK",  # X-ray source voltage in kV
                     "SOURCEM",  # X-ray source current in mA
-                    "FILTER" ,  # Filter/monochromator setting: Such as: Parallel, graphite, Ni Filter, C Filter, Zr Filter,Cross coupled Goebel Mirrors ...
-                    "CELL" ,  # Unit cell A,B,C,ALPHA,BETA,GAMMA
-                    "MATRIX" ,  # 9R Orientation matrix (P3 conventions)
+                    "FILTER",  # Filter/monochromator setting: Such as: Parallel, graphite, Ni Filter, C Filter, Zr Filter,Cross coupled Goebel Mirrors ...
+                    "CELL",  # Unit cell A,B,C,ALPHA,BETA,GAMMA
+                    "MATRIX",  # 9R Orientation matrix (P3 conventions)
                     "LOWTEMP",  # Low temp flag.
                     "TEMP",  # set temperature
                     "HITEMP",  # Acquired at high temperature
-                    "ZOOM" ,  # Zoom: Xc, Yc, Mag used for HI-STAR detectors: 0.5 0.5 1.0
-                    "CENTER" ,  # X, Y of direct beam at 2-theta = 0. These are raw center for raw frames and unwarped center for unwarped frames.
+                    "ZOOM",  # Zoom: Xc, Yc, Mag used for HI-STAR detectors: 0.5 0.5 1.0
+                    "CENTER",  # X, Y of direct beam at 2-theta = 0. These are raw center for raw frames and unwarped center for unwarped frames.
                     "DISTANC",  # Sample-detector distance, cm (see CmToGrid value) Adds: Sample-detector grid/phosphor distance, cm
                     "TRAILER",  # Byte pointer to trailer info
                     "COMPRES",  # Compression scheme ID, if any. Such as: NONE, LINEAR (Linear scale, offset for pixel values, typically 1.0, 0.0).
                     "LINEAR",  # Linear scale (1.0 0.0 for no change; 0.1 0 for divided by 10...)
-                    "PHD" ,  # Discriminator: Pulse height settings. X100 and X1000 only. Stores CCD phosphor efficiency (first field).
-                    "PREAMP" ,  # Preamp gain setting. X100 and X1000 only. SMART: Stores Roper CCD gain table index value.
+                    "PHD",  # Discriminator: Pulse height settings. X100 and X1000 only. Stores CCD phosphor efficiency (first field).
+                    "PREAMP",  # Preamp gain setting. X100 and X1000 only. SMART: Stores Roper CCD gain table index value.
                     "CORRECT",  # Flood table correction filename, UNKNOWN or LINEAR.
                     "WARPFIL",  # Brass plate correction filename, UNKNOWN or LINEAR. Note: A filename here does NOT mean that spatial correction was performed. See TYPE and string “UNWARP” to determine that.
                     "WAVELEN",  # Wavelengths (average, a1, a2)
                     "MAXXY",  # X,Y pixel # of maximum counts (from lower corner of 0,0)
                     "AXIS",  # Scan axis ib Eulerian space (1-4 for 2-theta, omega, phi, chi) (0 =none, 2 = default).
-                    "ENDING" ,  # Actual goniometer angles at end of frame in Eulerian space.
-                    "DETPAR" ,  # Detector position corrections (dX,dY,dDist,Pitch,Roll,Yaw)
+                    "ENDING",  # Actual goniometer angles at end of frame in Eulerian space.
+                    "DETPAR",  # Detector position corrections (dX,dY,dDist,Pitch,Roll,Yaw)
                     "LUT",  # Recommended display lookup table
                     "DISPLIM",  # Recommended display limits
                     "PROGRAM",  # Name and version of program writing frame, such as:
@@ -261,7 +259,7 @@ class BrukerImage(FabioImage):
                 # 16 character overflows:
                 #      9 characters of intensity
                 #      7 character position
-                for i in range(nov):
+                for _ in range(nov):
                     ovfl = infile.read(16)
                     intensity = int(ovfl[0: 9])
                     position = int(ovfl[9: 16])

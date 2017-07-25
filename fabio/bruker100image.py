@@ -44,7 +44,7 @@
 
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
-__authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright",
+__authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright",
                "Jérôme Kieffer", "Sigmund Neher" ]
 __date__ = "24/07/2017"
 __status__ = "production"
@@ -221,7 +221,7 @@ class Bruker100Image(BrukerImage):
                         line += str(value)
                     elif os.linesep in value:
                         lines = value.split(os.linesep)
-                        for i in lines[:-1] :
+                        for i in lines[:-1]:
                             headers.append((line + str(i)).ljust(80, " "))
                             line = key.ljust(7) + ":"
                         line += str(lines[-1])

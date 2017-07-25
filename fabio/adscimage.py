@@ -35,7 +35,8 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 # Get ready for python3:
 from __future__ import with_statement, print_function
-import numpy, logging
+import numpy
+import logging
 from .fabioimage import FabioImage
 from .fabioutils import to_str
 logger = logging.getLogger(__name__)
@@ -79,7 +80,7 @@ class AdscImage(FabioImage):
         try:
             data.shape = (self.dim2, self.dim1)
         except ValueError:
-                raise IOError('Size spec in ADSC-header does not match ' + \
+                raise IOError('Size spec in ADSC-header does not match ' +
                               'size of image data field %sx%s != %s' % (self.dim1, self.dim2, data.size))
         self.data = data
         self.bytecode = numpy.uint16
@@ -104,15 +105,15 @@ class AdscImage(FabioImage):
         out = b'{\n'
         for key in self.header:
             out += b"%s = %s;\n" % (key, self.header[key])
-        if self.header.has_key("HEADER_BYTES"):
+        if "HEADER_BYTES" in self.header:
             pad = int(self.header["HEADER_BYTES"]) - len(out) - 2
         else:
-#             hsize = ((len(out) + 23) // 512 + 1) * 512
+            # hsize = ((len(out) + 23) // 512 + 1) * 512
             hsize = (len(out) + 533) & ~(512 - 1)
             out += b"HEADER_BYTES=%d;\n" % (hsize)
             pad = hsize - len(out) - 2
         out += pad * b' ' + b"}\n"
-        assert len(out) % 512 == 0 , "Header is not multiple of 512"
+        assert len(out) % 512 == 0, "Header is not multiple of 512"
 
         data = self.data.astype(numpy.uint16)
         if self.swap_needed():
@@ -133,9 +134,9 @@ class AdscImage(FabioImage):
             return False
         elif "big" in BYTE_ORDER and not numpy.little_endian:
             return False
-        elif  "little" in BYTE_ORDER and not numpy.little_endian:
+        elif "little" in BYTE_ORDER and not numpy.little_endian:
             return True
-        elif  "big" in BYTE_ORDER and numpy.little_endian:
+        elif "big" in BYTE_ORDER and numpy.little_endian:
             return True
 
 adscimage = AdscImage

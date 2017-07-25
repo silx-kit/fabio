@@ -37,7 +37,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/12/2016"
+__date__ = "24/07/2017"
 
 import numpy
 
@@ -95,7 +95,7 @@ class PixiImage(FabioImage):
         imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
         filepointer.seek(imgstart, 0)
         self.data = numpy.fromstring(filepointer.read(512 * 476 * 2),
-                                      numpy.uint16)
+                                     numpy.uint16)
         self.data.shape = self.header['height'], self.header['width']
         self.dim2, self.dim1 = self.data.shape
         self.currentframe = int(img_num)

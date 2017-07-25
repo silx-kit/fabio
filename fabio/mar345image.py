@@ -88,8 +88,7 @@ class Mar345Image(FabioImage):
         if 'compressed' in self.header['Format']:
             self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, swap_needed=self.swap_needed)
         else:
-            logger.error("cannot handle these formats yet " + \
-                "due to lack of documentation")
+            logger.error("Cannot handle these formats yet due to lack of documentation")
             return None
         self.bytecode = numpy.uint32
         f.close()

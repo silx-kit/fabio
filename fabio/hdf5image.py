@@ -46,7 +46,6 @@ __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
 __date__ = "24/07/2017"
 
-import numpy
 import logging
 import os
 import posixpath
@@ -66,9 +65,8 @@ from .fabioutils import previous_filename, next_filename
 class Hdf5Image(FabioImage):
     """
     FabIO image class for Images from an HDF file
-    
+
     filename::dataset
-    
     """
 
     DESCRIPTION = "Hierarchical Data Format HDF5 flat reader"

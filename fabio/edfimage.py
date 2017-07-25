@@ -112,10 +112,9 @@ MINIMUM_KEYS = ['HEADERID',
                 'DIM_2',
                 'SIZE']  # Size is thought to be essential for writing at least
 
-DEFAULT_VALUES = {
-                  # I do not define default values as they will be calculated at write time
-                  # JK20110415
-                   }
+DEFAULT_VALUES = {}
+# I do not define default values as they will be calculated at write time
+# JK20110415
 
 
 class Frame(object):

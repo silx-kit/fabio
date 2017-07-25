@@ -26,8 +26,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE
 
-
-
 """Reads a bytestream
 
 Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
@@ -67,17 +65,17 @@ def readbytestream(fil,
     offset is the position (in bytes) where the pixel data start
     nbytespp = number of bytes per pixel
     type can be int or float (4 bytes pp) or double (8 bytes pp)
-    signed: normally signed data 'y', but 'n' to try to get back the 
-    right numbers when unsigned data are converted to signed 
+    signed: normally signed data 'y', but 'n' to try to get back the
+    right numbers when unsigned data are converted to signed
     (python once had no unsigned numeric types.)
     swap, normally do not bother, but 'y' to swap bytes
-    typeout is the numpy type to output, normally uint16, 
+    typeout is the numpy type to output, normally uint16,
     but more if overflows occurred
     x and y are the pixel dimensions
-    
+
     TODO : Read in regions of interest
-    
-    PLEASE LEAVE THE STRANGE INTERFACE ALONE - 
+
+    PLEASE LEAVE THE STRANGE INTERFACE ALONE -
     IT IS USEFUL FOR THE BRUKER FORMAT
     """
     tin = "dunno"
@@ -102,9 +100,8 @@ def readbytestream(fil,
 
     infile.seek(offset)
 
-    arr = numpy.array(numpy.reshape(
-            numpy.fromstring(
-                infile.read(length), tin), (x, y)), typeout)
+    data = numpy.fromstring(infile.read(length), tin)
+    arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
 
     if swap == 'y':
         arr = arr.byteswap()

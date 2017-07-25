@@ -62,8 +62,11 @@ from .fabioutils import to_str
 try:
     from numpy import rad2deg, deg2rad
 except ImportError:  # naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)
-    rad2deg = lambda x: 180.0 * x / numpy.pi
-    deg2rad = lambda x: x * numpy.pi / 180.
+    def rad2deg(x):
+        return 180.0 * x / numpy.pi
+
+    def deg2rad(x):
+        return x * numpy.pi / 180.
 
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
                   1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',

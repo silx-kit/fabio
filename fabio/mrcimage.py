@@ -139,10 +139,9 @@ class MrcImage(FabioImage):
         """
         if (img_num > self.nframes or img_num < 0):
             raise RuntimeError("Requested frame number is out of range")
-        imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
+        _imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
         infile.seek(self.calc_offset(img_num), 0)
-        self.data = numpy.fromstring(infile.read(self.imagesize),
-                                    self.bytecode)
+        self.data = numpy.fromstring(infile.read(self.imagesize), self.bytecode)
         self.data.shape = self.dim2, self.dim1
         self.currentframe = int(img_num)
         self._makeframename()

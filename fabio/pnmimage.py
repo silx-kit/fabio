@@ -134,10 +134,10 @@ class PnmImage(FabioImage):
 
         # read the image data
         if six.PY3:
-            format = str(self.header[six.b('SUBFORMAT')], encoding="latin-1")
+            fmt = str(self.header[six.b('SUBFORMAT')], encoding="latin-1")
         else:
-            format = self.header[six.b('SUBFORMAT')]
-        decoder_name = "%sdec" % format
+            fmt = self.header[six.b('SUBFORMAT')]
+        decoder_name = "%sdec" % fmt
         if decoder_name in dir(PnmImage):
             decoder = getattr(PnmImage, decoder_name)
             self.data = decoder(self, infile, self.bytecode)

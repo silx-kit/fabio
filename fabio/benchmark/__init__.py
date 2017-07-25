@@ -21,15 +21,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+"""Benchmark for file reading"""
+
 from __future__ import print_function, division
 
-
-__doc__ = "Benchmark for file reading"
 __author__ = "Jérôme Kieffer"
-__date__ = "22/03/2016"
+__date__ = "24/07/2017"
 __license__ = "MIT"
 __copyright__ = "2016 European Synchrotron Radiation Facility, Grenoble, France"
-
 
 import json
 import sys

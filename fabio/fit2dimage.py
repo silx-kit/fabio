@@ -78,8 +78,8 @@ class Fit2dImage(FabioImage):
     def _readheader(self, infile):
         """
         Read and decode the header of an image:
-        
-        @param infile: Opened python file (can be stringIO or bipped file)  
+
+        @param infile: Opened python file (can be stringIO or bipped file)
         """
         # list of header key to keep the order (when writing)
         header = OrderedDict()
@@ -153,7 +153,7 @@ class Fit2dImage(FabioImage):
 
     def read(self, fname, frame=None):
         """try to read image
-         
+
         @param fname: name of the file
         """
 

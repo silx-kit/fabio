@@ -203,8 +203,8 @@ class CbfImage(FabioImage):
 
     def read_raw_data(self, infile):
         """Read and return the raw data chunk
-        
-        @param infile: opened file are correct position 
+
+        @param infile: opened file are correct position
         @return: raw compressed stream
         """
         if self.CIF_BINARY_BLOCK_KEY not in self.cif:
@@ -224,7 +224,7 @@ class CbfImage(FabioImage):
 
     def read(self, fname, frame=None, check_MD5=True, only_raw=False):
         """Read in header into self.header and the data   into self.data
-        
+
         @param: fname: name of the file
         @return: fabioimage instance
         """
@@ -285,8 +285,7 @@ class CbfImage(FabioImage):
         for key, value in DATA_TYPES.items():
             if value == self.data.dtype:
                 dtype = key
-        binary_block = [
-                        b"--CIF-BINARY-FORMAT-SECTION--",
+        binary_block = [b"--CIF-BINARY-FORMAT-SECTION--",
                         b"Content-Type: application/octet-stream;",
                         b'     conversions="x-CBF_BYTE_OFFSET"',
                         b'Content-Transfer-Encoding: BINARY',
@@ -302,8 +301,7 @@ class CbfImage(FabioImage):
                         b"",
                         self.STARTER + binary_blob,
                         b"",
-                        b"--CIF-BINARY-FORMAT-SECTION----"
-                       ]
+                        b"--CIF-BINARY-FORMAT-SECTION----"]
 
         if "_array_data.header_contents" not in self.header:
             nonCifHeaders = []

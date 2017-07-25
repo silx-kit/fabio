@@ -36,7 +36,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
          Frederiksborgvej 399
          DK-4000 Roskilde
          email:erik.knudsen@risoe.dk
-         
+
          and Jon Wright, ESRF
 """
 # get ready for python3
@@ -88,5 +88,3 @@ class columnfile(fabiodata):
             raise Exception("columnfile: read error, file " + str(fname) + " possibly corrupt")
         self.dims = self.data.shape
         infile.close()
-
-

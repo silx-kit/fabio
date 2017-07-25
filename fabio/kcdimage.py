@@ -52,7 +52,7 @@ else:
     SEEK_END = io.SEEK_END
 
 
-DATA_TYPES = {"u16": numpy.uint16 }
+DATA_TYPES = {"u16": numpy.uint16}
 
 MINIMUM_KEYS = [
                 # 'ByteOrder', Assume little by default
@@ -86,7 +86,7 @@ class KcdImage(FabioImage):
 
         asciiHeader = True
         for oneChar in one_line.strip():
-            if not oneChar in ALPHANUM:
+            if oneChar not in ALPHANUM:
                 asciiHeader = False
 
         if asciiHeader is False:
@@ -97,7 +97,7 @@ class KcdImage(FabioImage):
             one_line = infile.readline()
             try:
                 one_line = one_line.decode("ASCII")
-            except UnicodeDecodeError as err:
+            except UnicodeDecodeError:
                 end_of_headers = True
             else:
                 if len(one_line) > 100:

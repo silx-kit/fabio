@@ -28,11 +28,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """Converter module.
- 
+
 This is for the moment empty (populated only with almost pass through anonymous functions)
-but aims to be populated with more sofisticated translators ...  
+but aims to be populated with more sofisticated translators...
 
 """
 # get ready for python3
@@ -59,23 +58,25 @@ def convert_data_integer(data):
 
 
 CONVERSION_HEADER = {
-                    ("edfimage", "edfimage"): lambda header: header,
-                     }
+    ("edfimage", "edfimage"): lambda header: header,
+}
 
 CONVERSION_DATA = {
-                   ("edfimage", "edfimage"): lambda data: data,
-                   ("edfimage", "cbfimage"): convert_data_integer,
-                   ("edfimage", "mar345image"): convert_data_integer,
-                   ("edfimage", "fit2dmaskimage"): convert_data_integer,
-                   ("edfimage", "kcdimage"): convert_data_integer,
-                   ("edfimage", "OXDimage"): convert_data_integer,
-                   ("edfimage", "pnmimage"): convert_data_integer,
-                  }
+    ("edfimage", "edfimage"): lambda data: data,
+    ("edfimage", "cbfimage"): convert_data_integer,
+    ("edfimage", "mar345image"): convert_data_integer,
+    ("edfimage", "fit2dmaskimage"): convert_data_integer,
+    ("edfimage", "kcdimage"): convert_data_integer,
+    ("edfimage", "OXDimage"): convert_data_integer,
+    ("edfimage", "pnmimage"): convert_data_integer,
+}
 
 
 def convert_data(inp, outp, data):
     """
-    Return data converted to the output format ... over-simplistic implementation for the moment ...
+    Return data converted to the output format ... over-simplistic
+    implementation for the moment...
+
     @param inp,outp: input/output format like "cbfimage"
     @param data(ndarray): the actual dataset to be transformed
     """
@@ -84,8 +85,9 @@ def convert_data(inp, outp, data):
 
 def convert_header(inp, outp, header):
     """
-    return header converted to the output format
+    Return header converted to the output format
+
     @param inp,outp: input/output format like "cbfimage"
-    @param header(dict):the actual set of headers to be transformed 
+    @param header(dict):the actual set of headers to be transformed
     """
     return CONVERSION_HEADER.get((inp, outp), lambda header: header)(header)

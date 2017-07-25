@@ -47,7 +47,6 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 import sys
 import base64
 import hashlib
-import struct
 import logging
 import subprocess
 import numpy
@@ -319,6 +318,7 @@ def compByteOffset_numpy(data):
         binary_blob += delta[start:].astype(numpy.int8).tostring()
     return binary_blob
 
+
 def compByteOffset_cython(data):
     """
     Compress a dataset into a string using the byte_offet algorithm
@@ -453,5 +453,3 @@ def compPCK(data):
     except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to write compressed dataset: %s" % error)
     return compress_pck(data)
-
-

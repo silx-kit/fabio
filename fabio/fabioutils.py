@@ -86,7 +86,7 @@ dictAscii = {None: [chr(i) for i in range(32, 127)]}
 
 def deprecated(func):
     """
-    used to deprecate a function/method: prints a lot of warning messages to 
+    used to deprecate a function/method: prints a lot of warning messages to
     enforce the modification of the code
     """
     def wrapper(*arg, **kw):
@@ -101,11 +101,11 @@ def deprecated(func):
 def pad(mystr, pattern=" ", size=80):
     """
     Performs the padding of the string to the right size with the right pattern
-    
+
     :param mystr: input string
     :param pattern: the filling pattern
     :param size: the size of the block
-    :return: the padded string to a multiple of size  
+    :return: the padded string to a multiple of size
     """
     size = int(size)
     padded_size = (len(mystr) + size - 1) // size * size
@@ -120,7 +120,7 @@ def getnum(name):
     # try to figure out a file number
     # guess it starts at the back
     """
-    stem, num, post_num = numstem(name)
+    _stem, num, _post_num = numstem(name)
     try:
         return int(num)
     except ValueError:
@@ -170,14 +170,14 @@ class FilenameObject(object):
         """ Return a string representation """
         fmt = "stem %s, num %s format %s extension %s " + \
               "postnum = %s digits %s dir %s"
-        return fmt % tuple([str(x) for x in [
-                    self.stem,
-                    self.num,
-                    self.format,
-                    self.extension,
-                    self.postnum,
-                    self.digits,
-                    self.directory]])
+        attrs = [self.stem,
+                 self.num,
+                 self.format,
+                 self.extension,
+                 self.postnum,
+                 self.digits,
+                 self.directory]
+        return fmt % tuple([str(x) for x in attrs])
     __repr__ = str
 
     def tostring(self):
@@ -447,7 +447,7 @@ class File(FileIO):
         '\r', '\n', '\r\n' or a tuple containing all the newline types seen.
 
         'U' cannot be combined with 'w' or '+' mode.
-        
+
         @param temporary: if True, destroy file at close.
         """
         if six.PY2:
@@ -598,7 +598,7 @@ else:
             Open a bz2 file. The mode can be 'r' or 'w', for reading (default) or
             writing. When opened for writing, the file will be created if it doesn't
             exist, and truncated otherwise.
-             
+
             If compresslevel is given, must be a number between 1 and 9.
 
             Add a 'U' to mode to open the file for input with universal newline
@@ -685,10 +685,10 @@ class DebugSemaphore(_Semaphore):
 
 def exists(path):
     """Test whether a path exists.
-    
-    Replaces os.path.exists and handles in addition "::" based URI as defined in 
+
+    Replaces os.path.exists and handles in addition "::" based URI as defined in
     http://odo.pydata.org/en/latest/uri.html#separating-parts-with
-    
+
     @param path: string
     @return: boolean
     """

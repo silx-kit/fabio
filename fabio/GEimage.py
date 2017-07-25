@@ -224,17 +224,16 @@ class GeImage(FabioImage):
     _need_a_seek_to_read = True
 
     def _readheader(self, infile):
-        """ Read a GE image header """
+        """Read a GE image header"""
 
         infile.seek(0)
 
         self.header = self.check_header()
-        for name, nbytes, format in GE_HEADER_INFO:
-            if format is None:
-                self.header[ name ] = infile.read(nbytes)
+        for name, nbytes, fmt in GE_HEADER_INFO:
+            if fmt is None:
+                self.header[name] = infile.read(nbytes)
             else:
-                self.header[ name ] = struct.unpack(format,
-                                                     infile.read(nbytes))[0]
+                self.header[name] = struct.unpack(fmt, infile.read(nbytes))[0]
 
     def read(self, fname, frame=None):
         """
@@ -256,8 +255,7 @@ class GeImage(FabioImage):
     def _makeframename(self):
         """ The thing to be printed for the user to represent a frame inside
         a file """
-        self.filename = "%s$%04d" % (self.sequencefilename,
-                                   self.currentframe)
+        self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
 
     def _readframe(self, filepointer, img_num):
         """
@@ -280,15 +278,15 @@ class GeImage(FabioImage):
         imglength = self.header['NumberOfRowsInFrame'] * \
                     self.header['NumberOfColsInFrame'] * self.bpp
         if self.bpp != 2:
-            logging.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
+            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
 
         data = numpy.fromstring(filepointer.read(imglength), numpy.uint16)
         if not numpy.little_endian:
             data.byteswap(True)
         data.shape = (self.header['NumberOfRowsInFrame'],
-                            self.header['NumberOfColsInFrame'])
+                      self.header['NumberOfColsInFrame'])
         self.data = data
-        self.dim2 , self.dim1 = self.data.shape
+        self.dim2, self.dim1 = self.data.shape
         self.currentframe = int(img_num)
         self._makeframename()
 
@@ -336,7 +334,8 @@ class GeImage(FabioImage):
 
 
 def demo():
-    import sys, time
+    import sys
+    import time
 
     if len(sys.argv) < 2:
         print("USAGE: GE_script.py <GEaSi_raw_image_file>")
@@ -353,7 +352,6 @@ def demo():
     print("AcquisitionTime = ")
     print(sequence1.header['AcquisitionTime'])
 
-
     print("Mean = ", sequence1.data.ravel().mean())
 
     while 1:
@@ -362,7 +360,7 @@ def demo():
             sequence1 = sequence1.next()
             print(sequence1.currentframe, sequence1.data.ravel().mean(), \
                   time.time() - start)
-        except Exception as  ex:
+        except Exception as ex:
             raise ex
 
 

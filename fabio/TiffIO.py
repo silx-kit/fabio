@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/12/2016"
+__date__ = "24/07/2017"
 
 import sys
 import os
@@ -271,7 +271,7 @@ class TiffIO(object):
         fieldTypeList = []
         nValuesList = []
         valueOffsetList = []
-        for i in range(numberOfDirectoryEntries):
+        for _ in range(numberOfDirectoryEntries):
             tagID, fieldType, nValues, valueOffset = struct.unpack(fmt, fd.read(12))
             tagIDList.append(tagID)
             fieldTypeList.append(fieldType)
@@ -313,7 +313,7 @@ class TiffIO(object):
         idx = tagIDList.index(tag)
         nValues = nValuesList[idx]
         output = []
-        ftype, vfmt = FIELD_TYPE[fieldTypeList[idx]]
+        _ftype, vfmt = FIELD_TYPE[fieldTypeList[idx]]
         vfmt = st + "%d%s" % (nValues, vfmt)
         requestedBytes = struct.calcsize(vfmt)
         if nValues == 1:
@@ -1241,7 +1241,7 @@ if __name__ == "__main__":
         tif = TiffIO(filename, mode='wb+')
         data = numpy.arange(10000).astype(dtype)
         data.shape = 100, 100
-        tif.writeImage(data, info={'Title':'1st'})
+        tif.writeImage(data, info={'Title': '1st'})
         tif = None
         if os.path.exists(filename):
             print("Testing image appending")

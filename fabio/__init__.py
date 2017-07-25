@@ -22,9 +22,10 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+"""FabIO module"""
+
 from __future__ import absolute_import, print_function, division
 
-__doc__ = """FabIO module"""
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"

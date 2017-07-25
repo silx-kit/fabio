@@ -330,7 +330,7 @@ class RaxisImage(FabioImage):
                 'posy': 20,
                 'xray': 'long',
                 # more values can be added here
-                'Header Leftovers':-1
+                'Header Leftovers': -1
                 }
 
         # make a list with the items in the right order

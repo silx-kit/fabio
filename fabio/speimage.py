@@ -248,9 +248,9 @@ class SpeImage(FabioImage):
         For FullSensor
         roi_x,roi_y, roi_width, roi_height"""
         try:
-            roi_modus = str(dom.getElementsByTagName('ReadoutControl')[0]. \
-                            getElementsByTagName('RegionsOfInterest')[0]. \
-                            getElementsByTagName('Selection')[0]. \
+            roi_modus = str(dom.getElementsByTagName('ReadoutControl')[0].
+                            getElementsByTagName('RegionsOfInterest')[0].
+                            getElementsByTagName('Selection')[0].
                             childNodes[0].toxml())
             if roi_modus == 'CustomRegions':
                 roi_dom = dom.getElementsByTagName('ReadoutControl')[0]. \

@@ -26,14 +26,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+"""Test suite for all pyFAI modules with timing and memory profiling"""
 
 from __future__ import absolute_import, division, print_function
-__doc__ = """Test suite for all pyFAI modules with timing and memory profiling"""
+
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/10/2015"
+__date__ = "24/07/2017"
 
 
 import sys

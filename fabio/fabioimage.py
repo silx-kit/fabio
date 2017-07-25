@@ -61,7 +61,6 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 from . import fabioutils, converters
-from .fabioutils import OrderedDict
 
 try:
     from .third_party.six import with_metaclass
@@ -73,7 +72,6 @@ except ImportError:
             sys.modules.pop(i, None)
         raise ImportError("Old version")
     from six import with_metaclass
-
 
 try:
     from collections import OrderedDict
@@ -383,7 +381,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             sli = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                        isinstance(coords[1], slice):
+                isinstance(coords[1], slice):
             sli = coords
 
         if sli == self.slice and self.area_sum is not None:
@@ -524,7 +522,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-             isinstance(coords[1], slice):
+                isinstance(coords[1], slice):
             self.slice = coords
         else:
             logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)
