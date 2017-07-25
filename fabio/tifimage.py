@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -334,7 +334,6 @@ class Image_File_Directory_entry(object):
         elif (TYPES[tag_type] == 'rational'):
             if self.val_offset is not None:
                 (num, den) = struct.unpack_from("LL", full_string[self.val_offset:])
-                print(self.val_offset)
                 self.val = float(num) / den
         elif (TYPES[tag_type] == 'srational'):
             if self.val_offset is not None:

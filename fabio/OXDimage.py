@@ -512,7 +512,7 @@ class OxdImage(FabioImage):
                 # this is the special case 2:
                 # if the marker 255 is found the next 4 bytes encode one pixel
                 ex2 += 1
-                print('special case 32 bits.')
+                logger.info('special case 32 bits.')
                 value = raw[pos_inp + 1:pos_inp + 5].view("int32")
                 if not numpy.little_endian:
                     value = value.byteswap(True)
@@ -523,6 +523,7 @@ class OxdImage(FabioImage):
 
         logger.info("TY5: Exception: 16bits: %s, 32bits: %s", ex1, ex2)
         return data
+
 
 OXDimage = OxdImage
 

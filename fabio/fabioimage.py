@@ -46,8 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "24/07/2017"
-
+__date__ = "25/07/2017"
 
 import os
 import logging
@@ -180,7 +179,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 return self.data.shape[-1]
             except IndexError as err:
                 logger.error(err)
-                print(self.data)
+                logger.debug(self.data)
                 return self._dim1
         else:
             return self._dim1
@@ -198,7 +197,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 return self.data.shape[-2]
             except IndexError as err:
                 logger.error(err)
-                print(self.data)
+                logger.debug(self.data)
                 return self._dim2
         else:
             return self._dim2

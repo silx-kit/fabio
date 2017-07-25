@@ -211,7 +211,7 @@ class CbfImage(FabioImage):
             err = "Not key %s in CIF, no CBF image in %s" % (self.CIF_BINARY_BLOCK_KEY, self.filename)
             logger.error(err)
             for kv in self.cif.items():
-                print("%s: %s" % kv)
+                logger.debug("%s: %s", kv)
             raise RuntimeError(err)
         if self.cif[self.CIF_BINARY_BLOCK_KEY] == "CIF Binary Section":
             self.cbs += infile.read(len(self.STARTER) + int(self.header["X-Binary-Size"]) - len(self.cbs) + self.start_binary)
