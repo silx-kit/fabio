@@ -48,7 +48,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 
 import time
 import logging
@@ -58,15 +58,7 @@ import numpy
 from .fabioimage import FabioImage
 from .compression import decTY1, compTY1
 from .fabioutils import to_str
-
-try:
-    from numpy import rad2deg, deg2rad
-except ImportError:  # naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)
-    def rad2deg(x):
-        return 180.0 * x / numpy.pi
-
-    def deg2rad(x):
-        return x * numpy.pi / 180.
+from .utils.mathutils import rad2deg, deg2rad
 
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
                   1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',

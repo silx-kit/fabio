@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/09/2016"
+__date__ = "25/07/2017"
 __status__ = "stable"
 
 import os
@@ -421,11 +421,18 @@ setup_requires = ["numpy", "cython"]
 
 
 # adaptation for Debian packaging (without third_party)
-packages = [PROJECT, PROJECT + ".test", PROJECT + ".ext", PROJECT + ".benchmark"]
+packages = [
+    PROJECT,
+    PROJECT + ".test",
+    PROJECT + ".ext",
+    PROJECT + ".benchmark",
+    PROJECT + ".utils",
+]
 package_dir = {PROJECT: PROJECT,
                PROJECT + ".test": PROJECT + "/test",
                PROJECT + ".ext": PROJECT + "/ext",
-               PROJECT + ".benchmark": PROJECT + "/benchmark"}
+               PROJECT + ".benchmark": PROJECT + "/benchmark",
+               PROJECT + ".utils": PROJECT + "/utils"}
 if os.path.isdir("third_party"):
     package_dir[PROJECT + ".third_party"] = "third_party"
     packages.append(PROJECT + ".third_party")
