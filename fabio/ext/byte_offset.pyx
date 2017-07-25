@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2010-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 
 
 cimport numpy
@@ -198,13 +198,13 @@ def dec_cbf(bytes stream not None, size=None):
                         tmp64a = cstream[i + 5]
                         tmp64  = <numpy.int8_t> cstream[i + 6]
                         # Assemble data into a 64 bits integer
-                        current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c);
+                        current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)
                         i += 7
                 else:
                     tmp64a = cstream[i + 1]
-                    tmp64  = <numpy.int8_t> cstream[i + 2];
+                    tmp64 = <numpy.int8_t> cstream[i + 2]
 
-                    current = (tmp64 << 8) | (tmp64a);
+                    current = (tmp64 << 8) | (tmp64a)
                     i += 3
             else:
                 current = (<numpy.int8_t> cstream[i])
@@ -265,7 +265,7 @@ def dec_cbf32(bytes stream not None, size=None):
                     tmp64a = cstream[i + 1]
                     tmp64  = <numpy.int8_t> cstream[i + 2]
 
-                    current = (tmp64 << 8) | (tmp64a);
+                    current = (tmp64 << 8) | (tmp64a)
                     i += 3
             else:
                 current = (<numpy.int8_t> cstream[i])
@@ -316,9 +316,9 @@ def dec_TY5(bytes stream not None, size=None):
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):
                     tmp32a = cstream[i + 1] - 127
-                    tmp32b = <numpy.int16_t>( <numpy.int8_t> cstream[i + 2] << 8 );
-                    print(tmp32a,tmp32b,(tmp32b|tmp32a))
-                    current = (tmp32b) | (tmp32a);
+                    tmp32b = <numpy.int16_t>( <numpy.int8_t> cstream[i + 2] << 8 )
+                    # print(tmp32a, tmp32b, (tmp32b|tmp32a))
+                    current = (tmp32b) | (tmp32a)
                     i += 3
             else:
                 current = <numpy.int32_t>(<numpy.uint8_t> cstream[i]) - 127

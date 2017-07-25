@@ -76,14 +76,14 @@ def read(py_file, mode="a"):
     "b" for binary
     """
     cdef cf_data *cf__
-    cdef unsigned int flags=0, fd
+    cdef unsigned int flags = 0, fd
 
     # perhaps not const
     cdef int i
     cdef FILE *file
 
     # Here is a big issue !!! and I got an even worse solution !
-    # file=PyFile_AsFile(py_file);
+    # file = PyFile_AsFile(py_file)
     (fd, fname) = tempfile.mkstemp()
     os.fdopen(fd, mode="wb").write(py_file.read())
     os.close(fd)
@@ -97,16 +97,18 @@ def read(py_file, mode="a"):
         cf__ =  <cf_data *> cf_read_ascii(file, NULL, flags)
     else:
         logger.error("Unrecognized mode for columnfile %s (assuming ascii)", mode)
-        cf__ = <cf_data *> cf_read_ascii(file,NULL,flags)
+        cf__ = <cf_data *> cf_read_ascii(file, NULL, flags)
+
     # check for failure to read
     if (cf__ == NULL):
         return None, None
     dims = (cf__.nrows, cf__.ncols)
 
-    # since data may be non-contigous we can't simply create a numpy-array from cf__->data, as Numpy's memory model prohibits it
-    # i.e. py_data=(PyArrayObject*)PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, (void*)(&(cf__->data[0][0])));
+    # since data may be non-contigous we can't simply create a numpy-array from
+    # cf__->data, as Numpy's memory model prohibits it
+    # i.e. py_data=(PyArrayObject*)PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, (void*)(&(cf__->data[0][0])))
     # won't work
-    cdef numpy.ndarray[numpy.float64_t, ndim = 2] py_data = numpy.empty(dims, dtype=numpy.float64)
+    cdef numpy.ndarray[numpy.float64_t, ndim=2] py_data = numpy.empty(dims, dtype=numpy.float64)
     for i in range(cf__.nrows):
         memcpy(&py_data[i, 0], cf__.data[i], cf__.ncols * sizeof(double))
     clabels = []

@@ -43,7 +43,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret", "Thomas Vincent"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/07/2017"
+__date__ = "25/07/2017"
 
 import cython
 cimport numpy as cnp
@@ -85,7 +85,7 @@ def compress_pck(image not None, bint use_CCP4=False):
     :return: binary stream
     """
     cdef:
-        cnp.uint32_t  size, dim0, dim1, i, j,
+        cnp.uint32_t  size, dim0, dim1, i, j
         int fd, ret
         char* name
         cnp.int16_t[::1] data
@@ -235,7 +235,7 @@ cpdef inline cnp.int32_t[::1] precomp(cnp.int16_t[::1] img, cnp.uint32_t width):
 
     * there comes the +2 from ?
     * the first element remains untouched
-    * elements of the first line (+ fist of second) use only former element
+    * elements of the first line (+ first of second) use only former element
 
 
     JPA, the original author wrote:
@@ -245,7 +245,7 @@ cpdef inline cnp.int32_t[::1] precomp(cnp.int16_t[::1] img, cnp.uint32_t width):
 
     comp[y, x] =  img[y, x] - (img[y-1, x-1] + img[y-1, x] + img[y-1, x+1] + img[y, x-1]) / 4
 
-    This part implementes overlows of int16 as the reference implementation is bugged
+    This part implements overlows of int16 as the reference implementation is buggy
     """
     cdef:
         cnp.uint32_t size, i

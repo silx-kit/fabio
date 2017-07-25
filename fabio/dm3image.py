@@ -178,7 +178,7 @@ class Dm3Image(FabioImage):
         if self.infile.read(4) != '%%%%':
             raise IOError
         self.tag_data_type = self.readbytes(4, numpy.uint32)[0]
-        logger.debug('data is of type : %s  - 1 = simple, 2= string, 3 = array, >3 structs', self.tag_data_type)
+        logger.debug('data is of type : %s - 1 = simple, 2 = string, 3 = array, >3 structs', self.tag_data_type)
         self.tag_encoded_type = self.readbytes(4, numpy.uint32)[0]
         logger.debug('encode type: %s %s', self.tag_encoded_type, DATA_TYPES[self.tag_encoded_type])
         if self.tag_data_type == 1:
@@ -213,7 +213,7 @@ class Dm3Image(FabioImage):
                 _struct_name_length = self.readbytes(4, numpy.int32)[0]
                 struct_number_fields = self.readbytes(4, numpy.int32)[0]
                 # print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
-                # print self.infile.read(struct_name_length)
+                # print self.infile.read(_struct_name_length)
                 field_info = []
                 for i in range(struct_number_fields):
                     field_info.append([self.readbytes(4, numpy.int32)[0], self.readbytes(4, numpy.int32)[0]])
@@ -248,5 +248,6 @@ class Dm3Image(FabioImage):
 
     def read_data(self):
         self.encoded_datatype = numpy.fromstring(self.infile.read(4), numpy.uint32).byteswap()
+
 
 dm3image = Dm3Image
