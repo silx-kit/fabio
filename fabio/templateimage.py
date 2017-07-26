@@ -74,10 +74,10 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "12/12/2016"
+__date__ = "24/07/2017"
 
 import logging
-logger = logging.getLogger("templateimage")
+logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage
 

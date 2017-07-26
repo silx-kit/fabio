@@ -46,7 +46,7 @@ import sys
 import numpy
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
-logger = logging.getLogger("mrcimage")
+logger = logging.getLogger(__name__)
 if sys.version_info < (3.0):
     bytes = str
 

@@ -29,13 +29,18 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "20/06/2016"
+__date__ = "24/07/2017"
 __status__ = "stable"
 
 
-import os
+import sys
 import logging
-logging.basicConfig()
+
+if "ps1" in dir(sys):
+    # configure logging with interactive console
+    logging.basicConfig()
+
+import os
 project = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 try:
     from ._version import __date__ as date  # noqa

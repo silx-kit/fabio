@@ -44,7 +44,7 @@ from __future__ import with_statement, print_function
 
 import numpy
 import logging
-logger = logging.getLogger("HipiciImage")
+logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 
 
@@ -77,7 +77,7 @@ class HipicImage(FabioImage):
         # self.header['Comment'] = Comment
         if Image_tag != 'IM':
             # This does not look like an HiPic file
-            logging.warning("no opening.  Corrupt header of HiPic file " + \
+            logger.warning("no opening.  Corrupt header of HiPic file " + \
                             str(infile.name))
         Comment_split = Comment[:Comment.find('\x00')].split('\r\n')
 

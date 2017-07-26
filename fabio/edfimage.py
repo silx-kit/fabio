@@ -49,7 +49,7 @@ Authors:
 from __future__ import with_statement, print_function, absolute_import, division
 import os
 import logging
-logger = logging.getLogger("edfimage")
+logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage, OrderedDict
 from .fabioutils import isAscii, toAscii, nice_int

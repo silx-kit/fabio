@@ -44,7 +44,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "24/10/2016"
+__date__ = "24/07/2017"
 
 import numpy
 import logging
@@ -52,7 +52,7 @@ import os
 import posixpath
 import sys
 from .fabioimage import FabioImage
-logger = logging.getLogger("hdf5image")
+logger = logging.getLogger(__name__)
 if sys.version_info[0] < 3:
     bytes = str
 

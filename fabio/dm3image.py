@@ -43,7 +43,7 @@ from __future__ import with_statement, print_function
 import logging
 import numpy
 from .fabioimage import FabioImage
-logger = logging.getLogger("dm3image")
+logger = logging.getLogger(__name__)
 
 DATA_TYPES = {  2     :  numpy.int16,
                 4     :  numpy.uint16,

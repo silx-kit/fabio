@@ -53,7 +53,7 @@ import os
 import logging
 import sys
 import tempfile
-logger = logging.getLogger("fabioimage")
+logger = logging.getLogger(__name__)
 import numpy
 try:
     from PIL import Image

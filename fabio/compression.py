@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "05/09/2016"
+__date__ = "24/07/2017"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -62,7 +62,7 @@ except ImportError:
 if six.PY2:
     bytes = str
 
-logger = logging.getLogger("compression")
+logger = logging.getLogger(__name__)
 
 try:
     if sys.version_info < (2, 7):

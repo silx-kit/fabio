@@ -33,14 +33,14 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "05/09/2016"
+__date__ = "24/07/2017"
 __status__ = "stable"
 
 import os
 import getpass
 import tempfile
 import logging
-logger = logging.getLogger("fabio.directories")
+logger = logging.getLogger(__name__)
 
 SHARED_TESTIMAGES = "/usr/share/fabio/testimages"
 

@@ -37,7 +37,8 @@ cimport numpy
 import numpy
 import os
 import tempfile
-import sys
+import logging
+logger = logging.getLogger(__name__)
 
 from libc.string cimport memcpy
 from libc.stdio cimport fopen, FILE
@@ -96,7 +97,7 @@ def read(py_file, mode="a"):
     elif "a" in mode:
         cf__ =  <cf_data *> cf_read_ascii(file,NULL,flags)
     else:
-        sys.stderr.write("unrecognized mode for columnfile %s (assuming ascii)\n",mode)
+        logger.error("Unrecognized mode for columnfile %s (assuming ascii)", mode)
         cf__ =  <cf_data *> cf_read_ascii(file,NULL,flags);
 #    check for failure to read
     if (cf__ == NULL):

@@ -46,7 +46,7 @@
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright",
                "Jérôme Kieffer", "Sigmund Neher" ]
-__date__ = "26/10/2016"
+__date__ = "24/07/2017"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2015-2016 ESRF, 2016 GWDG"
 __licence__ = "MIT"
@@ -55,7 +55,7 @@ import numpy
 import logging
 import os
 from math import ceil
-logger = logging.getLogger("bruker100image")
+logger = logging.getLogger(__name__)
 try:
     from PIL import Image
 except ImportError:

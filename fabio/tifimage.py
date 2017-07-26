@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "09/12/2016"
+__date__ = "24/07/2017"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -54,7 +54,7 @@ __status__ = "stable"
 import time
 import logging
 import struct
-logger = logging.getLogger("tifimage")
+logger = logging.getLogger(__name__)
 
 try:
     from PIL import Image

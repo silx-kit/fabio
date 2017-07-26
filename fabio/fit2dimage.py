@@ -36,10 +36,10 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "24/10/2016"
+__date__ = "24/07/2017"
 
 import logging
-logger = logging.getLogger("fit2dimage")
+logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage, OrderedDict
 

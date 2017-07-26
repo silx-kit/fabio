@@ -43,7 +43,7 @@ import os
 import string
 from .fabioimage import FabioImage
 from .fabioutils import six
-logger = logging.getLogger("kcdimage")
+logger = logging.getLogger(__name__)
 
 import io
 if not hasattr(io, "SEEK_END"):

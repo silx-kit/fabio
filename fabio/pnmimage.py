@@ -44,7 +44,7 @@ License: MIT
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "21/10/2016"
+__date__ = "24/07/2017"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -52,7 +52,7 @@ __status__ = "stable"
 import logging
 import numpy
 
-logger = logging.getLogger("pnmimage")
+logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 from .fabioutils import six
 

@@ -44,7 +44,7 @@ from __future__ import with_statement, print_function, absolute_import
 
 import sys
 import logging
-logger = logging.getLogger("openimage")
+logger = logging.getLogger(__name__)
 from .fabioutils import FilenameObject, exists, BytesIO, six
 from .fabioimage import FabioImage
 from . import fabioformats

@@ -39,11 +39,11 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "26/10/2016"
+__date__ = "24/07/2017"
 
 import logging
 
-logger = logging.getLogger("speimage")
+logger = logging.getLogger(__name__)
 
 import datetime
 from xml.dom.minidom import parseString

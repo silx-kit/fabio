@@ -43,14 +43,14 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "24/10/2016"
+__date__ = "25/07/2017"
 
 import logging
 import struct
 import os
 import numpy
 from .fabioimage import FabioImage
-logger = logging.getLogger("raxisimage")
+logger = logging.getLogger(__name__)
 
 
 class RaxisImage(FabioImage):
@@ -144,7 +144,7 @@ class RaxisImage(FabioImage):
                                                  rawHead[curByte: curByte + rByte])[0]
                 curByte += rByte
             else:
-                logging.warning('special header data type %s not understood', RKey[key])
+                logger.warning('special header data type %s not understood', RKey[key])
             if len(rawHead) == curByte:
                 # "end reached"
                 break
@@ -187,7 +187,7 @@ class RaxisImage(FabioImage):
                     infile.seek(-size + offset + 1, os.SEEK_END)  # seek from EOF backwards
 #                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
-                logger.warn('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
+                logger.warning('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
             except Exception as error:
                 logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
