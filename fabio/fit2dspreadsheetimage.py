@@ -74,8 +74,8 @@ class Fit2dSpreadsheetImage(FabioImage):
         try:
             self.dim1 = int(self.header['Dim_1'])
             self.dim2 = int(self.header['Dim_2'])
-        except:
-            raise Exception("file %s is corrupt, cannot read it" % str(fname))
+        except (ValueError, KeyError):
+            raise IOError("file %s is corrupt, cannot read it" % str(fname))
         bytecode = numpy.float32
 
         self.bpp = len(numpy.array(0, bytecode).tostring())

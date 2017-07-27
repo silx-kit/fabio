@@ -132,8 +132,8 @@ class KcdImage(FabioImage):
             try:
                 self.dim1 = int(self.header['X dimension'])
                 self.dim2 = int(self.header['Y dimension'])
-            except:
-                raise Exception("KCD file %s is corrupt, cannot read it" % fname)
+            except (KeyError, ValueError):
+                raise IOError("KCD file %s is corrupt, cannot read it" % fname)
             try:
                 bytecode = DATA_TYPES[self.header['Data type']]
                 self.bpp = len(numpy.array(0, bytecode).tostring())

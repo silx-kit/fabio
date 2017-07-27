@@ -105,9 +105,8 @@ class HipicImage(FabioImage):
         try:
             self.dim1 = int(self.header['Dim_1'])
             self.dim2 = int(self.header['Dim_2'])
-        except:
-            raise Exception("HiPic file", str(fname) +
-                            "is corrupt, cannot read it")
+        except (ValueError, KeyError):
+            raise IOError("HiPic file %s is corrupted, cannot read it" % str(fname))
         bytecode = numpy.uint16
         self.bpp = len(numpy.array(0, bytecode).tostring())
 

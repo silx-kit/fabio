@@ -92,7 +92,7 @@ class XsdImage(FabioImage):
 
         try:
             self.dim1, self.dim2 = self.dims[:2]
-        except:
+        except ValueError:
             raise IOError("XSD file %s is corrupt, no dimensions in it" % fname)
 
         exp_size = 1

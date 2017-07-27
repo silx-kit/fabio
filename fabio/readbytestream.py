@@ -86,8 +86,8 @@ def readbytestream(fil,
     key = (datatype, signed, nbytespp)
     try:
         tin = DATATYPES[key]
-    except:
-        logger.warning("datatype,signed,nbytespp " + str(key))
+    except KeyError:
+        logger.warning("datatype, signed, nbytespp: %s", str(key))
         raise Exception("Unknown combination of types to readbytestream")
 
     # Did we get a string (filename) or a readable stream object?

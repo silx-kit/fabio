@@ -48,7 +48,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 
 import time
 import logging
@@ -249,10 +249,9 @@ class OxdImage(FabioImage):
             try:
                 self.dim1 = int(self.header['NX'])
                 self.dim2 = int(self.header['NY'])
-            except:
-                raise Exception("Oxford  file", str(fname) +
-                                "is corrupt, cannot read it")
-            #
+            except (ValueError, KeyError):
+                raise IOError("Oxford  file %s is corrupted, cannot read it" % str(fname))
+
             if self.header['Compression'] == 'TY1':
                 logger.debug("Compressed with the KM4CCD compression")
                 raw8 = infile.read(self.dim1 * self.dim2)
