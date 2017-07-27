@@ -31,7 +31,7 @@ FabIO class for dealing with JPEG images.
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Valentin Valls"]
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -70,23 +70,23 @@ PIL_TO_NUMPY = {
 # List of reserved keys reached from
 # http://pillow.readthedocs.io/en/3.4.x/handbook/image-file-formats.html#jpeg
 JPEG_RESERVED_HEADER_KEYS = [
-    "JFIF",
-    "JFIF_VERSION",
-    "JFIF_DENSITY",
-    "JFIF_UNIT",
-    "DPI",
-    "ADOBE",
-    "ADOBE_TRANSFORM",
-    "PROGRESSION",
-    "ICC_PROFILE",
-    "EXIF",
-    "QUALITY",
-    "OPTIMIZE",
-    "PROGRESSIVE",
-    "DPI",
-    "EXIF",
-    "SUBSAMPLING",
-    "QTABLES"
+    "jfif",
+    "jfif_version",
+    "jfif_density",
+    "jfif_unit",
+    "dpi",
+    "adobe",
+    "adobe_transform",
+    "progression",
+    "icc_profile",
+    "exif",
+    "quality",
+    "optimize",
+    "progressive",
+    "dpi",
+    "exif",
+    "subsampling",
+    "qtables"
 ]
 
 
