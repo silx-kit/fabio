@@ -44,7 +44,7 @@ License: MIT
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "24/07/2017"
+__date__ = "27/07/2017"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -78,30 +78,29 @@ class PnmImage(FabioImage):
         # 2nd line contains the image pixel dimension
         # 3rd line contains the maximum pixel value (at least for grayscale - check this)
 
-        l = f.readline().strip()
-
-        if l not in SUBFORMATS:
-            raise IOError('unknown subformat of pnm: %s' % l)
+        line = f.readline().strip()
+        if line not in SUBFORMATS:
+            raise IOError('unknown subformat of pnm: %s' % line)
         else:
-            self.header[six.b('SUBFORMAT')] = l
+            self.header[six.b('SUBFORMAT')] = line
 
         if self.header[six.b('SUBFORMAT')] == 'P7':
             # this one has a special header
-            while six.b('ENDHDR') not in l:
-                l = f.readline()
-                while(l[0] == '#'):
-                    l = f.readline()
-                s = l.lsplit(' ', 1)
+            while six.b('ENDHDR') not in line:
+                line = f.readline()
+                while(line[0] == '#'):
+                    line = f.readline()
+                s = line.lsplit(' ', 1)
                 if s[0] not in P7HEADERITEMS:
                     raise IOError('Illegal pam (netpnm p7) headeritem %s' % s[0])
                 self.header[s[0]] = s[1]
         else:
-            values = list(l.split())
+            values = list(line.split())
             while len(values) < len(HEADERITEMS):
-                l = f.readline()
-                while l[0] == '#':
-                    l = f.readline()
-                values += l.split()
+                line = f.readline()
+                while line[0] == '#':
+                    line = f.readline()
+                values += line.split()
             for k, v in zip(HEADERITEMS, values):
                 self.header[k] = v.strip()
 
@@ -191,9 +190,9 @@ class PnmImage(FabioImage):
         return data
 
     def P5dec(self, buf, bytecode):
-        l = buf.read()
+        data = buf.read()
         try:
-            data = numpy.fromstring(l, bytecode)
+            data = numpy.fromstring(data, bytecode)
         except ValueError:
             raise IOError('Size spec in pnm-header does not match size of image data field')
         data.shape = self.dim2, self.dim1
