@@ -75,7 +75,7 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "24/07/2017"
+__date__ = "27/07/2017"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -113,6 +113,7 @@ class TemplateImage(FabioImage):
         Try to read image
 
         @param fname: name of the file
+        @param frame: number of the frame
         """
 
         self.resetvals()
@@ -125,5 +126,6 @@ class TemplateImage(FabioImage):
         # Nota: dim1, dim2, bytecode and bpp are properties defined by the dataset
         return self
 
-# this is not compatibility with old code:
+
+# This is not compatibility with old code:
 templateimage = TemplateImage

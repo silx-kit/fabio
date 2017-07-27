@@ -231,7 +231,7 @@ class Dm3Image(FabioImage):
             # ##type = self.readbytes(4,numpy.int32)
             _struct_name_length = self.readbytes(4, numpy.int32)[0]
             struct_number_fields = self.readbytes(4, numpy.int32)[0]
-            # print 'struct - name_length, number_field',  struct_name_length,struct_number_fields
+            # print 'struct - name_length, number_field', _struct_name_length,struct_number_fields
             # print self.infile.read(struct_name_length)
             field_info = []
             for i in range(struct_number_fields):

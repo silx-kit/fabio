@@ -121,7 +121,7 @@ class HipicImage(FabioImage):
                 numpy.fromstring(block, bytecode),
                 [self.dim2, self.dim1])
         except:
-            logging.debug("%s %s %s %s %s", len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            logger.debug("%s %s %s %s %s", len(block), bytecode, self.bpp, self.dim2, self.dim1)
             raise IOError('Size spec in HiPic-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
 
