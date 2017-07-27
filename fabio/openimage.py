@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 from .fabioutils import FilenameObject, six, BytesIO
 from .fabioimage import FabioImage
 
-# Make sure to load all foramts
+# Make sure to load all formats
 from . import fabioformats  # noqa
 
 
