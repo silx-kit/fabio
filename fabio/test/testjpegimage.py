@@ -82,7 +82,7 @@ class TestJpegImage(unittest.TestCase):
         image.save(filename)
 
         f = open(filename, "r+b")
-        f.write(".")
+        f.write(b".")
         f.close()
 
         image_format = jpegimage.JpegImage()
