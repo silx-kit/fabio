@@ -149,4 +149,5 @@ class Fit2dMaskImage(FabioImage):
         else:
             return (data != 0).astype(numpy.uint8)
 
+
 fit2dmaskimage = Fit2dMaskImage

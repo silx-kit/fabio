@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 
 import os
 import logging
@@ -306,15 +306,13 @@ class FabioImage(with_metaclass(FabioMeta, object)):
             return self.pilimage
         # mode map
         size = self.data.shape[:2][::-1]
-        typmap = {
-                  'float32': "F",
+        typmap = {'float32': "F",
                   'int32': "F;32NS",
                   'uint32': "F;32N",
                   'int16': "F;16NS",
                   'uint16': "F;16N",
                   'int8': "F;8S",
-                  'uint8': "F;8"
-                 }
+                  'uint8': "F;8"}
         if self.data.dtype.name in typmap:
             mode2 = typmap[self.data.dtype.name]
             mode1 = mode2[0]

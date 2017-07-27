@@ -56,39 +56,38 @@ else:
     from urllib.parse import urlparse
 
 MAGIC_NUMBERS = [
-                 # "\42\5a" : 'bzipped'
-                 # "\1f\8b" : 'gzipped'
-                 (b"FORMAT :        86", 'bruker'),
-                 (b"\x4d\x4d\x00\x2a", 'tif'),
-                 # The marCCD and Pilatus formats are both standard tif with a header
-                 # hopefully these byte patterns are unique for the formats
-                 # If not the image will be read, but the is missing
-                 (b"\x49\x49\x2a\x00\x08\x00", 'marccd/tif'),
-                 (b"\x49\x49\x2a\x00\x82\x00", 'pilatus'),
-                 (b"\x49\x49\x2a\x00", 'tif'),
-                 # ADSC must come before edf
-                 (b"{\nHEA", 'adsc'),
-                 (b"{", 'edf'),
-                 (b"\r{", 'edf'),
-                 (b"\n{", 'edf'),
-                 (b"ADEPT", 'GE'),
-                 (b"OD", 'OXD'),
-                 (b"IM", 'HiPiC'),
-                 (b'\x2d\x04', 'mar345'),
-                 (b'\xd2\x04', 'mar345'),
-                 (b'\x04\x2d', 'mar345'),  # some machines may need byteswapping
-                 (b'\x04\xd2', 'mar345'),
-                 # hint : MASK in 32 bit
-                 (b'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00', 'fit2dmask'),
-                 (b'\x00\x00\x00\x03', 'dm3'),
-                 (b"No", "kcd"),
-                 (b"<", "xsd"),
-                 (b"\n\xb8\x03\x00", 'pixi'),
-                 (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/hdf5"),
-                 (b"R-AXIS", 'raxis'),
-                 (b"\x93NUMPY", 'numpy'),
-                 (b"\\$FFF_START", 'fit2d'),
-                ]
+    # "\42\5a" : 'bzipped'
+    # "\1f\8b" : 'gzipped'
+    (b"FORMAT :        86", 'bruker'),
+    (b"\x4d\x4d\x00\x2a", 'tif'),
+    # The marCCD and Pilatus formats are both standard tif with a header
+    # hopefully these byte patterns are unique for the formats
+    # If not the image will be read, but the is missing
+    (b"\x49\x49\x2a\x00\x08\x00", 'marccd/tif'),
+    (b"\x49\x49\x2a\x00\x82\x00", 'pilatus'),
+    (b"\x49\x49\x2a\x00", 'tif'),
+    # ADSC must come before edf
+    (b"{\nHEA", 'adsc'),
+    (b"{", 'edf'),
+    (b"\r{", 'edf'),
+    (b"\n{", 'edf'),
+    (b"ADEPT", 'GE'),
+    (b"OD", 'OXD'),
+    (b"IM", 'HiPiC'),
+    (b'\x2d\x04', 'mar345'),
+    (b'\xd2\x04', 'mar345'),
+    (b'\x04\x2d', 'mar345'),  # some machines may need byteswapping
+    (b'\x04\xd2', 'mar345'),
+    # hint : MASK in 32 bit
+    (b'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00', 'fit2dmask'),
+    (b'\x00\x00\x00\x03', 'dm3'),
+    (b"No", "kcd"),
+    (b"<", "xsd"),
+    (b"\n\xb8\x03\x00", 'pixi'),
+    (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/hdf5"),
+    (b"R-AXIS", 'raxis'),
+    (b"\x93NUMPY", 'numpy'),
+    (b"\\$FFF_START", 'fit2d')]
 
 
 def do_magic(byts, filename):

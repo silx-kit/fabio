@@ -450,7 +450,7 @@ class EdfImage(FabioImage):
     DEFAULT_EXTENTIONS = ["edf", "cor"]
 
     RESERVED_HEADER_KEYS = ['HEADERID', 'IMAGE', 'BYTEORDER', 'DATATYPE',
-                              'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']
+                            'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']
 
     def __init__(self, data=None, header=None, frames=None):
         self.currentframe = 0

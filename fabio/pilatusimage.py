@@ -109,4 +109,5 @@ class PilatusImage(TifImage):
         """
         return TifImage.read(self, fname)
 
+
 pilatusimage = PilatusImage

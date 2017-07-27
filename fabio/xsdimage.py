@@ -156,7 +156,9 @@ class XsdImage(FabioImage):
             if j is not None:
                 self.md5 = j.text
 
+
 if etree is None:
+    # Hide the class if it can't work
     XsdImage = None
 
 xsdimage = XsdImage

@@ -37,17 +37,19 @@ from __future__ import with_statement, print_function, division
 import logging
 import numpy
 logger = logging.getLogger(__name__)
+
+
 DATATYPES = {
-             # type  sign bytes
-             ("int", 'n', 1): numpy.uint8,
-             ("int", 'n', 2): numpy.uint16,
-             ("int", 'n', 4): numpy.uint32,
-             ("int", 'y', 1): numpy.int8,
-             ("int", 'y', 2): numpy.int16,
-             ("int", 'y', 4): numpy.int32,
-             ('float', 'y', 4): numpy.float32,  # does this occur in bruker?
-             ('double', 'y', 4): numpy.float64
-             }
+    # type  sign bytes
+    ("int", 'n', 1): numpy.uint8,
+    ("int", 'n', 2): numpy.uint16,
+    ("int", 'n', 4): numpy.uint32,
+    ("int", 'y', 1): numpy.int8,
+    ("int", 'y', 2): numpy.int16,
+    ("int", 'y', 4): numpy.int32,
+    ('float', 'y', 4): numpy.float32,  # does this occur in bruker?
+    ('double', 'y', 4): numpy.float64
+}
 
 
 def readbytestream(fil,

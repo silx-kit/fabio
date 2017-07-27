@@ -390,4 +390,5 @@ class Mar345Image(FabioImage):
             z[:shape[0], :shape[1]] = data
             return z
 
+
 mar345image = Mar345Image

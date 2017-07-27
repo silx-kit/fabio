@@ -55,11 +55,11 @@ else:
 DATA_TYPES = {"u16": numpy.uint16}
 
 MINIMUM_KEYS = [
-                # 'ByteOrder', Assume little by default
-                'Data type',
-                'X dimension',
-                'Y dimension',
-                'Number of readouts']
+    # 'ByteOrder', Assume little by default
+    'Data type',
+    'X dimension',
+    'Y dimension',
+    'Number of readouts']
 
 DEFAULT_VALUES = {"Data type": "u16"}
 

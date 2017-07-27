@@ -184,4 +184,5 @@ class MrcImage(FabioImage):
                 self.sequencefilename))
             return newobj
 
+
 mrcimage = MrcImage

@@ -90,7 +90,6 @@ class Fit2dSpreadsheetImage(FabioImage):
                     pass
             self.data = numpy.array(vals).astype(bytecode)
             assert self.data.shape == (self.dim2, self.dim1)
-
         except:
             raise IOError("Error reading ascii")
 
@@ -98,5 +97,6 @@ class Fit2dSpreadsheetImage(FabioImage):
         # ensure the PIL image is reset
         self.pilimage = None
         return self
+
 
 fit2dspreadsheetimage = Fit2dSpreadsheetImage
