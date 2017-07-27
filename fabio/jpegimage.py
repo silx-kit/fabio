@@ -38,7 +38,6 @@ __status__ = "stable"
 
 import logging
 logger = logging.getLogger(__name__)
-import numpy
 
 try:
     from PIL import Image
@@ -46,26 +45,7 @@ except ImportError:
     Image = None
 
 from .fabioimage import FabioImage
-
-
-PIL_TO_NUMPY = {
-    "I;8": numpy.uint8,
-    "I;16": numpy.uint16,
-    "I;16B": numpy.uint16,    # big endian
-    "I;16L": numpy.uint16,    # little endian
-    "I;32": numpy.uint32,
-    "I;32L": numpy.uint32,    # little endian
-    "I;32B": numpy.uint32,    # big endian
-    "F;32F": numpy.float32,
-    "F;32BF": numpy.float32,  # big endian
-    "F;64F": numpy.float64,
-    "F;64BF": numpy.float64,  # big endian
-    "F": numpy.float32,
-    "1": numpy.bool,
-    "I": numpy.int32,
-    "L": numpy.uint8,
-}
-
+from .utils import pilutils
 
 # List of reserved keys reached from
 # http://pillow.readthedocs.io/en/3.4.x/handbook/image-file-formats.html#jpeg
@@ -115,34 +95,12 @@ class JpegImage(FabioImage):
             infile.seek(0)
             raise IOError("Error in opening %s with PIL" % filename)
 
-        dim1, dim2 = self.pilimage.size
-        if self.pilimage.mode in PIL_TO_NUMPY:
-            dtype = PIL_TO_NUMPY[self.pilimage.mode]
-            pilimage = self.pilimage
-        else:
-            dtype = numpy.float32
-            pilimage = self.pilimage.convert("F")
-        try:
-            data = numpy.asarray(pilimage, dtype)
-        except:
-            # PIL does not support buffer interface (yet)
-            if hasattr(pilimage, "tobytes"):
-                data = numpy.fromstring(pilimage.tobytes(), dtype=dtype)
-            else:
-                data = numpy.fromstring(pilimage.tostring(), dtype=dtype)
-            # byteswap ?
-            if numpy.dtype(dtype).itemsize > 1:
-                need_swap = False
-                need_swap |= numpy.little_endian and "B" in self.pilimage.mode
-                need_swap |= not numpy.little_endian and self.pilimage.mode.endswith("L")
-                if need_swap:
-                    data.byteswap(True)
+        data = pilutils.get_numpy_array(self.pilimage)
+        self.data = data
 
         if self.pilimage and self.pilimage.info:
             for k, v in self.pilimage.info.items():
                 self.header[k] = v
-
-        self.data = data.reshape((dim2, dim1))
 
     def read(self, filename, frame=None):
         infile = self._open(filename, "rb")

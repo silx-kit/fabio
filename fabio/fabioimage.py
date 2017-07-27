@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "28/07/2017"
+__date__ = "01/08/2017"
 
 import os
 import logging
@@ -54,14 +54,10 @@ import sys
 import tempfile
 logger = logging.getLogger(__name__)
 import numpy
-try:
-    from PIL import Image
-except ImportError:
-    logger.warning("PIL is not installed ... trying to do without")
-    Image = None
 from . import fabioutils, converters
 from .fabioutils import six
 from .third_party.ordereddict import OrderedDict
+from .utils import pilutils
 
 
 class FabioMeta(type):
@@ -282,31 +278,12 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def toPIL16(self, filename=None):
         """
         Convert to Python Imaging Library 16 bit greyscale image
-
         """
-        if not Image:
-            raise RuntimeError("PIL is not installed !!! ")
         if filename:
             self.read(filename)
-        if self.pilimage is not None:
-            return self.pilimage
-        # mode map
-        size = self.data.shape[:2][::-1]
-        typmap = {'float32': "F",
-                  'int32': "F;32NS",
-                  'uint32': "F;32N",
-                  'int16': "F;16NS",
-                  'uint16': "F;16N",
-                  'int8': "F;8S",
-                  'uint8': "F;8"}
-        if self.data.dtype.name in typmap:
-            mode2 = typmap[self.data.dtype.name]
-            mode1 = mode2[0]
-        else:
-            raise RuntimeError("Unknown numpy type: %s" % (self.data.dtype.type))
-        dats = self.data.tostring()
-        self.pilimage = Image.frombuffer(mode1, size, dats, "raw", mode2, 0, 1)
-
+        if self.pilimage is None:
+            # Create and cache the result
+            self.pilimage = pilutils.create_pil_16(self.data)
         return self.pilimage
 
     def getheader(self):
