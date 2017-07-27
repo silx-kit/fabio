@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -51,13 +51,11 @@ import logging
 import subprocess
 import numpy
 
-
 try:
     from .third_party import six
 except ImportError:
     import six
-    if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
-        raise ImportError("Six version is too old")
+
 if six.PY2:
     bytes = str
 

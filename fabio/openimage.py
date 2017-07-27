@@ -45,15 +45,12 @@ from __future__ import with_statement, print_function, absolute_import
 import sys
 import logging
 logger = logging.getLogger(__name__)
-from .fabioutils import FilenameObject, exists, BytesIO, six
+from .fabioutils import FilenameObject, six, BytesIO
 from .fabioimage import FabioImage
-from . import fabioformats
 
-if six.PY2:
-    bytes = str
-    from urlparse import urlparse
-else:
-    from urllib.parse import urlparse
+# Make sure to load all foramts
+from . import fabioformats  # noqa
+
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -151,7 +148,7 @@ def _openimage(filename):
 
     """
     try:
-        url = urlparse(filename)
+        url = six.moves.urllib_parse.urlparse(filename)
     except AttributeError as err:
         # Assume we have as input a BytesIO object
         attrs = dir(filename)
@@ -161,7 +158,7 @@ def _openimage(filename):
                 actual_filename = BytesIO(filename.read())
         else:
             actual_filename = filename
-        url = urlparse("")
+        url = six.moves.urllib_parse.urlparse("")
 
     else:
         # related to https://github.com/silx-kit/fabio/issues/34

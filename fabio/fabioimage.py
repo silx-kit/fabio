@@ -60,17 +60,7 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 from . import fabioutils, converters
-
-try:
-    from .third_party.six import with_metaclass
-except ImportError:
-    import six
-    six_version = tuple(int(i) for i in six.__version__.split(".") if i.isdigit())
-    if six_version < (1, 8):
-        for i in ("six", "six.moves"):
-            sys.modules.pop(i, None)
-        raise ImportError("Old version")
-    from six import with_metaclass
+from .fabioutils import six
 
 try:
     from collections import OrderedDict
@@ -90,7 +80,7 @@ class FabioMeta(type):
         super(FabioMeta, cls).__init__(name, bases, dct)
 
 
-class FabioImage(with_metaclass(FabioMeta, object)):
+class FabioImage(six.with_metaclass(FabioMeta, object)):
     """A common object for images in fable
 
     Contains a numpy array (.data) and dict of meta data (.header)

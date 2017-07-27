@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/07/2017"
+__date__ = "27/07/2017"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -62,11 +62,12 @@ except ImportError:
         raise ImportError("Six version is too old")
 
 if six.PY2:
-    bytes = str
+    bytes_ = str
     FileIO = file
     StringTypes = (str, unicode)
     to_str = str
 else:
+    bytes_ = bytes
     StringTypes = (str, bytes)
     unicode = str
     from io import FileIO
