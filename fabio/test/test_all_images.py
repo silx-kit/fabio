@@ -4,11 +4,18 @@ Check we can read all the test images
 """
 from __future__ import print_function
 
-import glob, os, time, fabio.openimage, gzip, bz2, pstats, sys
+import glob
+import os
+import time
+import fabio.openimage
+import gzip
+import bz2
+import pstats
+import sys
 try:
-    import  cProfile
-except:
-    import  profile as cProfile
+    import cProfile
+except ImportError:
+    import profile as cProfile
 
 times = {}
 images = []
@@ -19,10 +26,11 @@ for fname in glob.glob(os.path.join("testimages", "*")):
 
 images.sort()
 
+
 def shellbench(cmd, imname):
     """
-    The shell appears to be lying about it's performance. It claims 
-    zero time to gunzip a file when it actually takes 200 ms. This is 
+    The shell appears to be lying about it's performance. It claims
+    zero time to gunzip a file when it actually takes 200 ms. This is
     cheating via a cache I suspect. We shall try to avoid this problem
     """
     if sys.platform != "win32":
@@ -43,7 +51,7 @@ for im in images:
     # Network/disk io time first
     start = time.clock()
     the_file = open(im, "rb").read()
-    times[im] = [ time.clock() - start ]
+    times[im] = [time.clock() - start]
     start = time.clock()
     # Network/disk should be cached
     the_file = open(im, "rb").read()

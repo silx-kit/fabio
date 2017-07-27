@@ -27,8 +27,6 @@
 # THE SOFTWARE.
 #
 
-
-
 """
 Author: Andy Hammersley, ESRF
 Translation into python/fabio: Jon Wright, ESRF.
@@ -64,10 +62,10 @@ class Fit2dMaskImage(FabioImage):
         """
         # 1024 bytes gives 256x32 bit integers
         header = infile.read(1024)
-        for i, j in [ (b"M", 0),
-                      (b"A", 4),
-                      (b"S", 8),
-                      (b"K", 12)  ]:
+        for i, j in [(b"M", 0),
+                     (b"A", 4),
+                     (b"S", 8),
+                     (b"K", 12)]:
             if header[j] != i[0]:
                 raise Exception("Not a fit2d mask file")
         fit2dhdr = numpy.fromstring(header, numpy.int32)
@@ -150,5 +148,6 @@ class Fit2dMaskImage(FabioImage):
             return None
         else:
             return (data != 0).astype(numpy.uint8)
+
 
 fit2dmaskimage = Fit2dMaskImage

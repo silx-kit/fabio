@@ -148,7 +148,7 @@ class Nexus(object):
 
     def close(self, endtime=None):
         """Close the filename and update all entries
-        
+
         :param endtime: timestamp in iso-format of the end of the acquisition.
         """
         if endtime is None:
@@ -177,9 +177,9 @@ class Nexus(object):
             if grp_name == name:
                 grp = self.h5[grp_name]
                 if (isinstance(grp, h5py.Group) and
-                   "start_time" in grp and
-                    "NX_class" in grp.attrs and
-                    grp.attrs["NX_class"] == "NXentry"):
+                        "start_time" in grp and
+                        "NX_class" in grp.attrs and
+                        grp.attrs["NX_class"] == "NXentry"):
                     return grp
 
     def get_entries(self):

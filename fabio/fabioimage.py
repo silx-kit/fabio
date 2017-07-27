@@ -46,8 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "24/07/2017"
-
+__date__ = "27/07/2017"
 
 import os
 import logging
@@ -61,19 +60,7 @@ except ImportError:
     logger.warning("PIL is not installed ... trying to do without")
     Image = None
 from . import fabioutils, converters
-from .fabioutils import OrderedDict
-
-try:
-    from .third_party.six import with_metaclass
-except ImportError:
-    import six
-    six_version = tuple(int(i) for i in six.__version__.split(".") if i.isdigit())
-    if six_version < (1, 8):
-        for i in ("six", "six.moves"):
-            sys.modules.pop(i, None)
-        raise ImportError("Old version")
-    from six import with_metaclass
-
+from .fabioutils import six
 
 try:
     from collections import OrderedDict
@@ -93,7 +80,7 @@ class FabioMeta(type):
         super(FabioMeta, cls).__init__(name, bases, dct)
 
 
-class FabioImage(with_metaclass(FabioMeta, object)):
+class FabioImage(six.with_metaclass(FabioMeta, object)):
     """A common object for images in fable
 
     Contains a numpy array (.data) and dict of meta data (.header)
@@ -182,7 +169,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 return self.data.shape[-1]
             except IndexError as err:
                 logger.error(err)
-                print(self.data)
+                logger.debug(self.data)
                 return self._dim1
         else:
             return self._dim1
@@ -200,7 +187,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
                 return self.data.shape[-2]
             except IndexError as err:
                 logger.error(err)
-                print(self.data)
+                logger.debug(self.data)
                 return self._dim2
         else:
             return self._dim2
@@ -309,15 +296,13 @@ class FabioImage(with_metaclass(FabioMeta, object)):
             return self.pilimage
         # mode map
         size = self.data.shape[:2][::-1]
-        typmap = {
-                  'float32': "F",
+        typmap = {'float32': "F",
                   'int32': "F;32NS",
                   'uint32': "F;32N",
                   'int16': "F;16NS",
                   'uint16': "F;16N",
                   'int8': "F;8S",
-                  'uint8': "F;8"
-                 }
+                  'uint8': "F;8"}
         if self.data.dtype.name in typmap:
             mode2 = typmap[self.data.dtype.name]
             mode1 = mode2[0]
@@ -383,7 +368,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             sli = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                        isinstance(coords[1], slice):
+                isinstance(coords[1], slice):
             sli = coords
 
         if sli == self.slice and self.area_sum is not None:
@@ -524,7 +509,7 @@ class FabioImage(with_metaclass(FabioMeta, object)):
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
         elif len(coords) == 2 and isinstance(coords[0], slice) and \
-             isinstance(coords[1], slice):
+                isinstance(coords[1], slice):
             self.slice = coords
         else:
             logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)

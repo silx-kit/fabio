@@ -81,7 +81,7 @@ class PilatusImage(TifImage):
         while go_on:
             try:
                 hstr.remove(b'')
-            except Exception as e:
+            except Exception:
                 go_on = False
 
         for line in hstr:
@@ -108,5 +108,6 @@ class PilatusImage(TifImage):
         just with a header
         """
         return TifImage.read(self, fname)
+
 
 pilatusimage = PilatusImage

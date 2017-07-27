@@ -54,7 +54,7 @@ class TestPrev(unittest.TestCase):
         for name, prev in [["data0001.edf", "data0000.edf"],
                 ["bob1.edf", "bob0.edf"],
                 ["1.edf", "0.edf" ],
-                ["1.mar2300", "0.mar2300" ],
+                ["1.mar2300", "0.mar2300"],
                 ]:
             self.assertEqual(prev, fabio.previous_filename(name))
 
@@ -64,7 +64,7 @@ class TestJump(unittest.TestCase):
         for name, res, num in [["data0001.edf", "data99993.edf", 99993],
                 ["bob1.edf", "bob0.edf", 0],
                 ["1.edf", "123456.edf", 123456],
-                ["mydata001.mar2300.gz", "mydata003.mar2300.gz", 3 ],
+                ["mydata001.mar2300.gz", "mydata003.mar2300.gz", 3],
                 ]:
             self.assertEqual(res, fabio.jump_filename(name, num))
 
@@ -76,6 +76,7 @@ def suite():
     testsuite.addTest(TestPrev("test_prev1"))
     testsuite.addTest(TestJump("test_jump1"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

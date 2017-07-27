@@ -232,19 +232,17 @@ typedef struct frame_header_type {
 
 # Convert mar c header file types to python struct module types
 C_TO_STRUCT = {
-    "INT32"  : "i",
-    "UINT32" : "I",
-    "char"   : "c",
-    "UINT16" : "H"
-    }
+    "INT32": "i",
+    "UINT32": "I",
+    "char": "c",
+    "UINT16": "H"}
 
 # Sizes (bytes) of mar c header objects
 C_SIZES = {
-    "INT32"  : 4,
-    "UINT32" : 4,
-    "char"   : 1,
-    "UINT16" : 2
-    }
+    "INT32": 4,
+    "UINT32": 4,
+    "char": 1,
+    "UINT16": 2}
 
 # This was worked out by trial and error from a trial image I think
 MAXIMAGES = 9
@@ -288,6 +286,7 @@ def make_format(c_def_string):
         except KeyError:
             continue
     return names, fmt
+
 
 # Make these be compiled on loading module
 HEADER_NAMES, HEADER_FORMAT = make_format(CDEFINITION)

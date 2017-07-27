@@ -29,9 +29,6 @@ from __future__ import print_function, with_statement, division
 import unittest
 import sys
 import os
-import numpy
-import gzip
-import bz2
 import logging
 
 if __name__ == '__main__':
@@ -107,7 +104,7 @@ class TestRaxisImage(unittest.TestCase):
         if logger.getEffectiveLevel() <= logging.INFO:
             logger.debug("Testing for memory leak")
             for i in range(N):
-                img = fabio.open(self.mar)
+                _img = fabio.open(self.mar)
                 print("Reading #%s/%s" % (i, N))
 
 
@@ -118,6 +115,7 @@ def suite():
     testsuite.addTest(TestRaxisImage("test_memoryleak"))
 
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

@@ -48,7 +48,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "24/07/2017"
+__date__ = "27/07/2017"
 
 import time
 import logging
@@ -58,12 +58,7 @@ import numpy
 from .fabioimage import FabioImage
 from .compression import decTY1, compTY1
 from .fabioutils import to_str
-
-try:
-    from numpy import rad2deg, deg2rad
-except ImportError:  # naive implementation for very old numpy (v1.0.1 on MacOSX from Risoe)
-    rad2deg = lambda x: 180.0 * x / numpy.pi
-    deg2rad = lambda x: x * numpy.pi / 180.
+from .utils.mathutils import rad2deg, deg2rad
 
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
                   1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',
@@ -254,10 +249,9 @@ class OxdImage(FabioImage):
             try:
                 self.dim1 = int(self.header['NX'])
                 self.dim2 = int(self.header['NY'])
-            except:
-                raise Exception("Oxford  file", str(fname) +
-                                "is corrupt, cannot read it")
-            #
+            except (ValueError, KeyError):
+                raise IOError("Oxford  file %s is corrupted, cannot read it" % str(fname))
+
             if self.header['Compression'] == 'TY1':
                 logger.debug("Compressed with the KM4CCD compression")
                 raw8 = infile.read(self.dim1 * self.dim2)
@@ -517,7 +511,7 @@ class OxdImage(FabioImage):
                 # this is the special case 2:
                 # if the marker 255 is found the next 4 bytes encode one pixel
                 ex2 += 1
-                print('special case 32 bits.')
+                logger.info('special case 32 bits.')
                 value = raw[pos_inp + 1:pos_inp + 5].view("int32")
                 if not numpy.little_endian:
                     value = value.byteswap(True)
@@ -528,6 +522,7 @@ class OxdImage(FabioImage):
 
         logger.info("TY5: Exception: 16bits: %s, 32bits: %s", ex1, ex2)
         return data
+
 
 OXDimage = OxdImage
 

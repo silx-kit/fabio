@@ -51,8 +51,7 @@ class TestFaceMask(unittest.TestCase):
         download images
         """
         self.filename = UtilsTest.getimage("face.msk.bz2")[:-4]
-        self.edffilename = UtilsTest.getimage("face.edf.bz2") [:-4]
-
+        self.edffilename = UtilsTest.getimage("face.edf.bz2")[:-4]
 
     def test_getmatch(self):
         """ test edf and msk are the same """
@@ -82,9 +81,9 @@ class TestClickedMask(unittest.TestCase):
         """ Check it reads a mask OK """
         i = fit2dmaskimage()
         i.read(self.filename)
-        self.assertEqual(i.dim1 , 1024)
-        self.assertEqual(i.dim2 , 1024)
-        self.assertEqual(i.bpp , 1)
+        self.assertEqual(i.dim1, 1024)
+        self.assertEqual(i.dim2, 1024)
+        self.assertEqual(i.bpp, 1)
         self.assertEqual(i.bytecode, numpy.uint8)
         self.assertEqual(i.data.shape, (1024, 1024))
 

@@ -155,10 +155,9 @@ class TestBrukerLinear(unittest.TestCase):
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-
-TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17 
-                Cr8F8140k103.0026.gz   512  512  0  145942 289.37  432.17 
-                Cr8F8140k103.0026.bz2   512  512  0 145942 289.37  432.17 """
+TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17
+                Cr8F8140k103.0026.gz   512  512  0  145942 289.37  432.17
+                Cr8F8140k103.0026.bz2   512  512  0 145942 289.37  432.17"""
 
 
 class TestRealImg(unittest.TestCase):
@@ -221,6 +220,7 @@ def suite():
     testsuite.addTest(TestRealImg("test_write"))
     testsuite.addTest(TestBrukerLinear("test_linear"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

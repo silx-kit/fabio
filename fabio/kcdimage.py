@@ -52,14 +52,14 @@ else:
     SEEK_END = io.SEEK_END
 
 
-DATA_TYPES = {"u16": numpy.uint16 }
+DATA_TYPES = {"u16": numpy.uint16}
 
 MINIMUM_KEYS = [
-                # 'ByteOrder', Assume little by default
-                'Data type',
-                'X dimension',
-                'Y dimension',
-                'Number of readouts']
+    # 'ByteOrder', Assume little by default
+    'Data type',
+    'X dimension',
+    'Y dimension',
+    'Number of readouts']
 
 DEFAULT_VALUES = {"Data type": "u16"}
 
@@ -86,7 +86,7 @@ class KcdImage(FabioImage):
 
         asciiHeader = True
         for oneChar in one_line.strip():
-            if not oneChar in ALPHANUM:
+            if oneChar not in ALPHANUM:
                 asciiHeader = False
 
         if asciiHeader is False:
@@ -97,7 +97,7 @@ class KcdImage(FabioImage):
             one_line = infile.readline()
             try:
                 one_line = one_line.decode("ASCII")
-            except UnicodeDecodeError as err:
+            except UnicodeDecodeError:
                 end_of_headers = True
             else:
                 if len(one_line) > 100:
@@ -132,8 +132,8 @@ class KcdImage(FabioImage):
             try:
                 self.dim1 = int(self.header['X dimension'])
                 self.dim2 = int(self.header['Y dimension'])
-            except:
-                raise Exception("KCD file %s is corrupt, cannot read it" % fname)
+            except (KeyError, ValueError):
+                raise IOError("KCD file %s is corrupt, cannot read it" % fname)
             try:
                 bytecode = DATA_TYPES[self.header['Data type']]
                 self.bpp = len(numpy.array(0, bytecode).tostring())

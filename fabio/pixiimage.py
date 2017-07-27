@@ -37,11 +37,14 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/12/2016"
+__date__ = "25/07/2017"
 
 import numpy
-
 import os
+import logging
+
+logger = logging.getLogger(__name__)
+
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 
@@ -69,7 +72,7 @@ class PixiImage(FabioImage):
             self.header['height'] = height
             self.header['offset'] = offset
         else:
-            print("Pixiimage, bad framesize: %s" % framesize)
+            logger.warning("Pixiimage, bad framesize: %s", framesize)
             raise
 
     def read(self, fname, frame=None):
@@ -95,7 +98,7 @@ class PixiImage(FabioImage):
         imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
         filepointer.seek(imgstart, 0)
         self.data = numpy.fromstring(filepointer.read(512 * 476 * 2),
-                                      numpy.uint16)
+                                     numpy.uint16)
         self.data.shape = self.header['height'], self.header['width']
         self.dim2, self.dim1 = self.data.shape
         self.currentframe = int(img_num)
@@ -143,6 +146,7 @@ class PixiImage(FabioImage):
                 self.sequencefilename))
             return newobj
 
+
 pixiimage = PixiImage
 
 
@@ -160,6 +164,7 @@ def demo(fname):
         pylab.title(i.filename)
         pylab.show()
         raw_input()
+
 
 if __name__ == "__main__":
     import sys

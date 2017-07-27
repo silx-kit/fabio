@@ -66,8 +66,8 @@ class HipicImage(FabioImage):
         Dim_2 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
         Dim_1_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
         Dim_2_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        HeaderType = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dump = infile.read(50)
+        _HeaderType = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        _Dump = infile.read(50)
         Comment = infile.read(Comment_len)
         self.header['Image_tag'] = Image_tag
         self.header['Dim_1'] = Dim_1
@@ -77,8 +77,8 @@ class HipicImage(FabioImage):
         # self.header['Comment'] = Comment
         if Image_tag != 'IM':
             # This does not look like an HiPic file
-            logger.warning("no opening.  Corrupt header of HiPic file " + \
-                            str(infile.name))
+            logger.warning("No opening. Corrupt header of HiPic file %s",
+                           str(infile.name))
         Comment_split = Comment[:Comment.find('\x00')].split('\r\n')
 
         for topcomment in Comment_split:
@@ -105,9 +105,8 @@ class HipicImage(FabioImage):
         try:
             self.dim1 = int(self.header['Dim_1'])
             self.dim2 = int(self.header['Dim_2'])
-        except:
-            raise Exception("HiPic file", str(fname) +
-                            "is corrupt, cannot read it")
+        except (ValueError, KeyError):
+            raise IOError("HiPic file %s is corrupted, cannot read it" % str(fname))
         bytecode = numpy.uint16
         self.bpp = len(numpy.array(0, bytecode).tostring())
 
@@ -121,7 +120,7 @@ class HipicImage(FabioImage):
                 numpy.fromstring(block, bytecode),
                 [self.dim2, self.dim1])
         except:
-            print(len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            logger.debug("%s %s %s %s %s", len(block), bytecode, self.bpp, self.dim2, self.dim1)
             raise IOError('Size spec in HiPic-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
 

@@ -5,7 +5,10 @@ but random access is not allowed."""
 
 # based on Andrew Kuchling's minigzip.py distributed with the zlib module
 import six
-import struct, sys, time, os
+import struct
+import sys
+import time
+import os
 import zlib
 builtins = six.moves.builtins
 BytesIO = six.BytesIO
@@ -19,6 +22,7 @@ __all__ = ["GzipFile", "open"]
 FTEXT, FHCRC, FEXTRA, FNAME, FCOMMENT = 1, 2, 4, 8, 16
 
 READ, WRITE = 1, 2
+
 
 def write32u(output, value):
     # The L format writes the bit pattern correctly whether signed
@@ -38,7 +42,6 @@ def open(filename, mode="rb", compresslevel=9):
 
     """
     return GzipFile(filename, mode, compresslevel)
-
 
 
 class GzipFile(io.BufferedIOBase):
@@ -103,8 +106,10 @@ class GzipFile(io.BufferedIOBase):
             if not isinstance(filename, (str, bytes)):
                 filename = ''
         if mode is None:
-            if hasattr(fileobj, 'mode'): mode = fileobj.mode
-            else: mode = 'rb'
+            if hasattr(fileobj, 'mode'):
+                mode = fileobj.mode
+            else:
+                mode = 'rb'
 
         if mode[0:1] == 'r':
             self.mode = READ
@@ -147,7 +152,7 @@ class GzipFile(io.BufferedIOBase):
         return self.name
 
     def __repr__(self):
-        s = repr(fileobj)
+        s = repr(self.fileobj)
         return '<gzip ' + s[1:-1] + ' ' + hex(id(self)) + '>'
 
     def _check_closed(self):
@@ -312,7 +317,7 @@ class GzipFile(io.BufferedIOBase):
         if buf == b"":
             uncompress = self.decompress.flush()
             self._read_eof()
-            self._add_read_data( uncompress )
+            self._add_read_data(uncompress)
             raise EOFError('Reached EOF')
 
         uncompress = self.decompress.decompress(buf)
@@ -324,7 +329,7 @@ class GzipFile(io.BufferedIOBase):
             # this member, and read a new gzip header.
             # (The number of bytes to seek back is the length of the unused
             # data, minus 8 because _read_eof() will rewind a further 8 bytes)
-            self.fileobj.seek( -len(self.decompress.unused_data)+8, 1)
+            self.fileobj.seek(-len(self.decompress.unused_data) + 8, 1)
 
             # Check the CRC and file size, and set the flag so we read
             # a new member on the next call
@@ -427,8 +432,8 @@ class GzipFile(io.BufferedIOBase):
             if offset < self.offset:
                 raise IOError('Negative seek in write mode')
             count = offset - self.offset
-            chunk = 1024*b"\0"
-            for i in range(count // 1024):
+            chunk = 1024 * b"\0"
+            for _ in range(count // 1024):
                 self.write(chunk)
             self.write((count % 1024) * '\0')
         elif self.mode == READ:
@@ -436,7 +441,7 @@ class GzipFile(io.BufferedIOBase):
                 # for negative seek, rewind and do positive seek
                 self.rewind()
             count = offset - self.offset
-            for i in range(count // 1024):
+            for _ in range(count // 1024):
                 self.read(1024)
             self.read(count % 1024)
 
@@ -482,7 +487,6 @@ class GzipFile(io.BufferedIOBase):
         return b''.join(bufs)  # Return resulting line
 
 
-
 def _test():
     # Act like gzip; with -d, act like gunzip.
     # The input file is not deleted, however, nor are any other gzip
@@ -520,6 +524,7 @@ def _test():
             g.close()
         if f is not sys.stdin:
             f.close()
+
 
 if __name__ == '__main__':
     _test()

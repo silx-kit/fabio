@@ -39,9 +39,8 @@ class TestPilatus(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
     TESTIMAGES = """
     lysb_5mg-1.90s_SAXS.bz2 487 619  0 1300 29.4260 17.7367
-    lysb_5mg-1.90s_SAXS.gz 487 619  0 1300 29.4260 17.7367 
+    lysb_5mg-1.90s_SAXS.gz 487 619  0 1300 29.4260 17.7367
     lysb_5mg-1.90s_SAXS 487 619  0 1300 29.4260 17.7367
-    
     """
 
     def test_read(self):
@@ -71,6 +70,7 @@ def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(TestPilatus("test_read"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

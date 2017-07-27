@@ -34,8 +34,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import numpy
-import gzip
 import bz2
 
 
@@ -52,14 +50,14 @@ from fabio.edfimage import edfimage
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """mb_LP_1_001.img 3072 3072 0.0000 65535. 120.33 147.38 
-                mb_LP_1_001.img.gz  3072 3072 0.0000 65535.  120.33 147.38 
-                mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38 """
+TESTIMAGES = """mb_LP_1_001.img 3072 3072 0.0000 65535. 120.33 147.38
+                mb_LP_1_001.img.gz  3072 3072 0.0000 65535.  120.33 147.38
+                mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38"""
 
 
 class TestMatch(unittest.TestCase):
-    """ 
-    check the ??fit2d?? conversion to edf gives same numbers 
+    """
+    check the ??fit2d?? conversion to edf gives same numbers
     """
     def setUp(self):
         """ Download images """
@@ -110,10 +108,7 @@ def suite():
     testsuite.addTest(TestFlatMccdsAdsc("test_read"))
     return testsuite
 
+
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     runner.run(suite())
-
-
-
-

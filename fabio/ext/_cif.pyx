@@ -24,12 +24,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-__doc__ = "Cif parser helper functions" 
+
+"""Cif parser helper functions"""
+
 __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2014, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/10/2015"
+__date__ = "25/07/2017"
 
 cimport numpy
 import numpy
@@ -39,7 +41,7 @@ import cython
 @cython.boundscheck(False)
 def split_tokens(bytes_text):
     """
-    Separate the text representing a CIF file into a list of tokens. 
+    Separate the text representing a CIF file into a list of tokens.
 
     @param bytes_text: the content of the CIF - file
     @type bytes_text:  8-bit string (str in python2 or bytes in python3)
@@ -48,8 +50,9 @@ def split_tokens(bytes_text):
     """
     cdef:
         unsigned char[:] ary = bytearray(bytes_text)
-        bint in_comment=False, in_single_quote=False, in_double_quote=False, multiline=False, go_on=True
-        int i=-1, start=-1, end=-1, imax
+        bint in_comment = False, in_single_quote = False
+        bint in_double_quote = False, multiline = False, go_on = True
+        int i = -1, start = -1, end = -1, imax
         char prev, next, cur = b"\n"
         bytes EOL = b'\r\n'
         bytes BLANK = b" \t\r\n"
@@ -70,17 +73,17 @@ def split_tokens(bytes_text):
         prev = cur
         cur = next
         if i < imax:
-            next = ary[i+1]
+            next = ary[i + 1]
         else:
             next = b"\n"
             go_on = False
-#         print(i,chr(prev),chr(cur),chr(next),in_comment,in_single_quote,in_double_quote,multiline, start, cur ==SINGLE_QUOTE)
+        # print(i,chr(prev),chr(cur),chr(next),in_comment,in_single_quote,in_double_quote,multiline, start, cur ==SINGLE_QUOTE)
         # Skip comments
-        if in_comment: 
+        if in_comment:
             if cur in EOL:
                 in_comment = False
             continue
-                    
+
         if prev in EOL:
             if cur == HASH:
                 in_comment = True
@@ -93,9 +96,9 @@ def split_tokens(bytes_text):
                 else:
                     multiline = True
                     start = i + 1
-                continue 
+                continue
 
-        if multiline: 
+        if multiline:
             # Handle CBF
             if cur == DASH:
                 if bytes_text[i:i + lbms] == BINARY_MARKER:
@@ -118,7 +121,7 @@ def split_tokens(bytes_text):
                 continue
         if in_single_quote:
             continue
-               
+
         # Handle double quote
         if cur == DOUBLE_QUOTE:
             if (not in_single_quote) and (not in_double_quote) and (start < 0) and (prev in BLANK):
@@ -132,7 +135,7 @@ def split_tokens(bytes_text):
                 continue
         if in_double_quote:
             continue
-        
+
         # Normal fields
         if cur in BLANK:
             if start >= 0:

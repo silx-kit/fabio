@@ -54,12 +54,9 @@ class Fit2dSpreadsheetImage(FabioImage):
         TODO : test for minimal attributes?
         """
         line = infile.readline()
-        try:
-            items = line.split()
-            xdim = int(items[0])
-            ydim = int(items[1])
-        except:
-            raise
+        items = line.split()
+        xdim = int(items[0])
+        ydim = int(items[1])
         self.header['title'] = line
         self.header['Dim_1'] = xdim
         self.header['Dim_2'] = ydim
@@ -77,9 +74,8 @@ class Fit2dSpreadsheetImage(FabioImage):
         try:
             self.dim1 = int(self.header['Dim_1'])
             self.dim2 = int(self.header['Dim_2'])
-        except:
-            raise Exception("file", str(fname) + \
-                                "is corrupt, cannot read it")
+        except (ValueError, KeyError):
+            raise IOError("file %s is corrupt, cannot read it" % str(fname))
         bytecode = numpy.float32
 
         self.bpp = len(numpy.array(0, bytecode).tostring())
@@ -94,7 +90,6 @@ class Fit2dSpreadsheetImage(FabioImage):
                     pass
             self.data = numpy.array(vals).astype(bytecode)
             assert self.data.shape == (self.dim2, self.dim1)
-
         except:
             raise IOError("Error reading ascii")
 
@@ -102,5 +97,6 @@ class Fit2dSpreadsheetImage(FabioImage):
         # ensure the PIL image is reset
         self.pilimage = None
         return self
+
 
 fit2dspreadsheetimage = Fit2dSpreadsheetImage

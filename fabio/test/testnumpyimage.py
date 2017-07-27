@@ -25,7 +25,7 @@
 Test for numpy images.
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "16/06/2016"
+__date__ = "25/07/2017"
 import os
 import sys
 import unittest
@@ -90,7 +90,7 @@ class TestNumpy(unittest.TestCase):
                 if len(shape) > 2:
                     for i in shape[:-2]:
                         nframes *= i
-                    #print(shape,nframes, obj.nframes)
+                    # print(shape,nframes, obj.nframes)
                     self.assertEqual(nframes, obj.nframes, "nframes")
             if os.path.exists(self.fn):
                 os.unlink(self.fn)
@@ -102,6 +102,7 @@ def suite():
     testsuite.addTest(TestNumpy("test_write"))
     testsuite.addTest(TestNumpy("test_multidim"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

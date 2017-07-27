@@ -31,9 +31,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import numpy
-import gzip
-import bz2
 
 if __name__ == '__main__':
     import pkgutil
@@ -79,6 +76,7 @@ def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(TestGE("test_read"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

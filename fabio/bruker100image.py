@@ -44,9 +44,8 @@
 
 # get ready for python3
 from __future__ import absolute_import, print_function, with_statement, division
-__authors__ = ["Henning O. Sorensen" , "Erik Knudsen", "Jon Wright",
-               "Jérôme Kieffer", "Sigmund Neher" ]
-__date__ = "24/07/2017"
+__authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright",
+               "Jérôme Kieffer", "Sigmund Neher"]
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2015-2016 ESRF, 2016 GWDG"
 __licence__ = "MIT"
@@ -137,10 +136,7 @@ class Bruker100Image(BrukerImage):
         '''data is stored in three blocks: data (uint8), overflow (uint32), underflow (int32). The blocks are
         zero paded to a multiple of 16 bits  '''
         with self._open(fname, "rb") as infile:
-            try:
-                self._readheader(infile)
-            except:
-                raise
+            self._readheader(infile)
             rows = self.dim1
             cols = self.dim2
             npixelb = int(self.header['NPIXELB'][0])
@@ -221,7 +217,7 @@ class Bruker100Image(BrukerImage):
                         line += str(value)
                     elif os.linesep in value:
                         lines = value.split(os.linesep)
-                        for i in lines[:-1] :
+                        for i in lines[:-1]:
                             headers.append((line + str(i)).ljust(80, " "))
                             line = key.ljust(7) + ":"
                         line += str(lines[-1])

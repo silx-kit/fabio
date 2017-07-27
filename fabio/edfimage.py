@@ -112,10 +112,9 @@ MINIMUM_KEYS = ['HEADERID',
                 'DIM_2',
                 'SIZE']  # Size is thought to be essential for writing at least
 
-DEFAULT_VALUES = {
-                  # I do not define default values as they will be calculated at write time
-                  # JK20110415
-                   }
+DEFAULT_VALUES = {}
+# I do not define default values as they will be calculated at write time
+# JK20110415
 
 
 class Frame(object):
@@ -451,7 +450,7 @@ class EdfImage(FabioImage):
     DEFAULT_EXTENTIONS = ["edf", "cor"]
 
     RESERVED_HEADER_KEYS = ['HEADERID', 'IMAGE', 'BYTEORDER', 'DATATYPE',
-                              'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']
+                            'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']
 
     def __init__(self, data=None, header=None, frames=None):
         self.currentframe = 0
@@ -984,5 +983,6 @@ class EdfImage(FabioImage):
                 self._frames.append(Frame())
                 self._frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
+
 
 edfimage = EdfImage

@@ -31,7 +31,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import numpy
 
 if __name__ == '__main__':
     import pkgutil
@@ -54,6 +53,7 @@ from fabio.adscimage import adscimage
 class testopenedf(unittest.TestCase):
     """openimage opening edf"""
     fname = "F2K_Seb_Lyso0675.edf.bz2"
+
     def setUp(self):
         self.fname = UtilsTest.getimage(self.__class__.fname)
 
@@ -154,6 +154,7 @@ class testbrukergz(testbruker):
     """openimage opening bruker gzip"""
     fname = "Cr8F8140k103.0026.gz"
 
+
 class testbrukerbz2(testbruker):
     """openimage opening bruker bzip"""
     fname = "Cr8F8140k103.0026.bz2"
@@ -237,6 +238,7 @@ def suite():
     testsuite.addTest(testOXDUNC("testcase"))
 
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

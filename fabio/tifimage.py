@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "24/07/2017"
+__date__ = "27/07/2017"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -65,58 +65,86 @@ import numpy
 from .fabioimage import FabioImage
 from .TiffIO import TiffIO
 
-PIL_TO_NUMPY = {"I;8": numpy.uint8,
-                "I;16": numpy.uint16,
-                "I;16B": numpy.uint16,  # big endian
-                "I;16L": numpy.uint16,  # little endian
-                "I;32": numpy.uint32,
-                "I;32L": numpy.uint32,  # little endian
-                "I;32B": numpy.uint32,  # big endian
-                "F;32F": numpy.float32,
-                "F;32BF": numpy.float32,  # big endian
-                "F;64F": numpy.float64,
-                "F;64BF": numpy.float64,  # big endian
-                "F": numpy.float32,
-                "1": numpy.bool,
-                "I": numpy.int32,
-                "L": numpy.uint8,
-                }
+PIL_TO_NUMPY = {
+    "I;8": numpy.uint8,
+    "I;16": numpy.uint16,
+    "I;16B": numpy.uint16,  # big endian
+    "I;16L": numpy.uint16,  # little endian
+    "I;32": numpy.uint32,
+    "I;32L": numpy.uint32,  # little endian
+    "I;32B": numpy.uint32,  # big endian
+    "F;32F": numpy.float32,
+    "F;32BF": numpy.float32,  # big endian
+    "F;64F": numpy.float64,
+    "F;64BF": numpy.float64,  # big endian
+    "F": numpy.float32,
+    "1": numpy.bool,
+    "I": numpy.int32,
+    "L": numpy.uint8,
+}
+
 LITTLE_ENDIAN = 1234
 BIG_ENDIAN = 3412
 
-TYPES = {0: 'invalid', 1: 'byte', 2: 'ascii', 3: 'short', 4: 'long', 5: 'rational',
-         6: 'sbyte', 7: 'undefined', 8: 'sshort', 9: 'slong', 10: 'srational',
-         11: 'float', 12: 'double'}
+TYPES = {
+    0: 'invalid',
+    1: 'byte',
+    2: 'ascii',
+    3: 'short',
+    4: 'long',
+    5: 'rational',
+    6: 'sbyte',
+    7: 'undefined',
+    8: 'sshort',
+    9: 'slong',
+    10: 'srational',
+    11: 'float',
+    12: 'double'
+}
 
-TYPESIZES = {0: 0, 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8}
+TYPESIZES = {
+    0: 0,
+    1: 1,
+    2: 1,
+    3: 2,
+    4: 4,
+    5: 8,
+    6: 1,
+    7: 1,
+    8: 2,
+    9: 4,
+    10: 8,
+    11: 4,
+    12: 8
+}
 
 baseline_tiff_tags = {
-                      256: 'ImageWidth',
-                      257: 'ImageLength',
-                      306: 'DateTime',
-                      315: 'Artist',
-                      258: 'BitsPerSample',
-                      265: 'CellLength',
-                      264: 'CellWidth',
-                      259: 'Compression',
+    256: 'ImageWidth',
+    257: 'ImageLength',
+    306: 'DateTime',
+    315: 'Artist',
+    258: 'BitsPerSample',
+    265: 'CellLength',
+    264: 'CellWidth',
+    259: 'Compression',
 
-                      262: 'PhotometricInterpretation',
-                      296: 'ResolutionUnit',
-                      282: 'XResolution',
-                      283: 'YResolution',
+    262: 'PhotometricInterpretation',
+    296: 'ResolutionUnit',
+    282: 'XResolution',
+    283: 'YResolution',
 
-                      278: 'RowsPerStrip',
-                      273: 'StripOffset',
-                      279: 'StripByteCounts',
+    278: 'RowsPerStrip',
+    273: 'StripOffset',
+    279: 'StripByteCounts',
 
-                      270: 'ImageDescription',
-                      271: 'Make',
-                      272: 'Model',
-                      320: 'ColorMap',
-                      305: 'Software',
-                      339: 'SampleFormat',
-                      33432: 'Copyright'
-                     }
+    270: 'ImageDescription',
+    271: 'Make',
+    272: 'Model',
+    320: 'ColorMap',
+    305: 'Software',
+    339: 'SampleFormat',
+    33432: 'Copyright'
+}
 
 
 class TifImage(FabioImage):
@@ -140,23 +168,22 @@ class TifImage(FabioImage):
         """
         Try to read Tiff images header...
         """
-#        try:
-#            self.header = { "filename" : infile.name }
-#        except AttributeError:
-#            self.header = {}
-#
-#        t = Tiff_header(infile.read())
-#        self.header = t.header
-#        try:
-#            self.dim1 = int(self.header['ImageWidth'])
-#            self.dim2 = int(self.header['ImageLength'])
-#        except (KeyError):
-#            logger.warning("image dimensions could not be determined from header tags, trying to go on anyway")
-#         read the first 32 bytes to determine size
+        # try:
+        #     self.header = { "filename" : infile.name }
+        # except AttributeError:
+        #     self.header = {}
+        # t = Tiff_header(infile.read())
+        # self.header = t.header
+        # try:
+        #     self.dim1 = int(self.header['ImageWidth'])
+        #     self.dim2 = int(self.header['ImageLength'])
+        # except (KeyError):
+        #     logger.warning("image dimensions could not be determined from header tags, trying to go on anyway")
+        # read the first 32 bytes to determine size
         header = numpy.fromstring(infile.read(64), numpy.uint16)
         self.dim1 = int(header[9])
         self.dim2 = int(header[15])
-#         nbits is not a FabioImage attribute...
+        # nbits is not a FabioImage attribute...
         self.nbits = int(header[21])  # number of bits
 
     def read(self, fname, frame=None):
@@ -334,7 +361,6 @@ class Image_File_Directory_entry(object):
         elif (TYPES[tag_type] == 'rational'):
             if self.val_offset is not None:
                 (num, den) = struct.unpack_from("LL", full_string[self.val_offset:])
-                print(self.val_offset)
                 self.val = float(num) / den
         elif (TYPES[tag_type] == 'srational'):
             if self.val_offset is not None:

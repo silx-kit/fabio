@@ -49,7 +49,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "24/07/2017"
+__date__ = "27/07/2017"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -88,8 +88,7 @@ class Mar345Image(FabioImage):
         if 'compressed' in self.header['Format']:
             self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, swap_needed=self.swap_needed)
         else:
-            logger.error("cannot handle these formats yet " + \
-                "due to lack of documentation")
+            logger.error("Cannot handle these formats yet due to lack of documentation")
             return None
         self.bytecode = numpy.uint32
         f.close()
@@ -104,14 +103,14 @@ class Mar345Image(FabioImage):
         h = {}
 
         # header is 4096 bytes long
-        l = f.read(64)
+        data = f.read(64)
         # the contents of the mar345 header is taken to be as
         # described in
         # http://www.mar-usa.com/support/downloads/mar345_formats.pdf
         # the first 64 bytes are 4-byte integers (but in the CBFlib
         # example image it seems to 128 bytes?)
         # first 4-byte integer is a marker to check endianness
-        if struct.unpack("<i", l[0:4])[0] == 1234:
+        if struct.unpack("<i", data[0:4])[0] == 1234:
             fs = '<i'
             self.swap_needed = not(numpy.little_endian)
             logger.debug("Going for little endian, swap_needed %s" % self.swap_needed)
@@ -121,12 +120,12 @@ class Mar345Image(FabioImage):
             logger.debug("Going for big endian, swap_needed %s" % self.swap_needed)
 
         # image dimensions
-        self.dim1 = int(struct.unpack(fs, l[4:8])[0])
+        self.dim1 = int(struct.unpack(fs, data[4:8])[0])
         # number of high intensity pixels
-        self.numhigh = struct.unpack(fs, l[2 * 4: (2 + 1) * 4])[0]
+        self.numhigh = struct.unpack(fs, data[2 * 4: (2 + 1) * 4])[0]
         h['NumHigh'] = self.numhigh
         # Image format
-        i = struct.unpack(fs, l[3 * 4: (3 + 1) * 4])[0]
+        i = struct.unpack(fs, data[3 * 4: (3 + 1) * 4])[0]
         if i == 1:
             h['Format'] = 'compressed'
         elif i == 2:
@@ -136,40 +135,40 @@ class Mar345Image(FabioImage):
             logger.warning("image format could not be determined" +
                            "- assuming compressed mar345")
         # collection mode
-        h['Mode'] = {0: 'Dose', 1: 'Time'}[struct.unpack(fs, l[4 * 4:(4 + 1) * 4])[0]]
+        h['Mode'] = {0: 'Dose', 1: 'Time'}[struct.unpack(fs, data[4 * 4:(4 + 1) * 4])[0]]
         # total number of pixels
-        self.numpixels = struct.unpack(fs, l[5 * 4:(5 + 1) * 4])[0]
+        self.numpixels = struct.unpack(fs, data[5 * 4:(5 + 1) * 4])[0]
         h['NumPixels'] = str(self.numpixels)
         self.dim2 = self.numpixels // self.dim1
         # pixel dimensions (length,height) in mm
-        h['PixelLength'] = struct.unpack(fs, l[6 * 4:(6 + 1) * 4])[0] / 1000.0
-        h['PixelHeight'] = struct.unpack(fs, l[7 * 4:(7 + 1) * 4])[0] / 1000.0
+        h['PixelLength'] = struct.unpack(fs, data[6 * 4:(6 + 1) * 4])[0] / 1000.0
+        h['PixelHeight'] = struct.unpack(fs, data[7 * 4:(7 + 1) * 4])[0] / 1000.0
         # x-ray wavelength in AA
-        h['Wavelength'] = struct.unpack(fs, l[8 * 4:(8 + 1) * 4])[0] / 1000000.0
+        h['Wavelength'] = struct.unpack(fs, data[8 * 4:(8 + 1) * 4])[0] / 1000000.0
         # used distance
-        h['Distance'] = struct.unpack(fs, l[9 * 4:(9 + 1) * 4])[0] / 1000.0
+        h['Distance'] = struct.unpack(fs, data[9 * 4:(9 + 1) * 4])[0] / 1000.0
         # starting and ending phi
-        h['StartPhi'] = struct.unpack(fs, l[10 * 4:11 * 4])[0] / 1000.0
-        h['EndPhi'] = struct.unpack(fs, l[11 * 4:12 * 4])[0] / 1000.0
+        h['StartPhi'] = struct.unpack(fs, data[10 * 4:11 * 4])[0] / 1000.0
+        h['EndPhi'] = struct.unpack(fs, data[11 * 4:12 * 4])[0] / 1000.0
         # starting and ending omega
-        h['StartOmega'] = struct.unpack(fs, l[12 * 4:13 * 4])[0] / 1000.0
-        h['EndOmega'] = struct.unpack(fs, l[13 * 4:14 * 4])[0] / 1000.0
+        h['StartOmega'] = struct.unpack(fs, data[12 * 4:13 * 4])[0] / 1000.0
+        h['EndOmega'] = struct.unpack(fs, data[13 * 4:14 * 4])[0] / 1000.0
         # Chi and Twotheta angles
-        h['Chi'] = struct.unpack(fs, l[14 * 4:15 * 4])[0] / 1000.0
-        h['TwoTheta'] = struct.unpack(fs, l[15 * 4:16 * 4])[0] / 1000.0
+        h['Chi'] = struct.unpack(fs, data[14 * 4:15 * 4])[0] / 1000.0
+        h['TwoTheta'] = struct.unpack(fs, data[15 * 4:16 * 4])[0] / 1000.0
 
         # the rest of the header is ascii
         # TODO: validate these values against the binaries already read
-        l = f.read(128)
-        if b'mar research' not in l:
+        data = f.read(128)
+        if b'mar research' not in data:
             logger.warning("the string \"mar research\" should be in " +
                            "bytes 65-76 of the header but was not")
             start = 128
         else:
-            start = l.index(b'mar research')
+            start = data.index(b'mar research')
             f.seek(64 + start)
-        l = f.read(4096 - start - 64).strip()
-        for m in l.splitlines():
+        data = f.read(4096 - start - 64).strip()
+        for m in data.splitlines():
             try:
                 m = m.decode("ASCII")
             except UnicodeDecodeError:
@@ -390,5 +389,6 @@ class Mar345Image(FabioImage):
             z = numpy.zeros((mshape, mshape), dtype=int)
             z[:shape[0], :shape[1]] = data
             return z
+
 
 mar345image = Mar345Image

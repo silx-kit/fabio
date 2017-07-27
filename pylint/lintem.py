@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # coding: utf-8
+
+"""This runs pylint on all modules from fabio package"""
+
 from __future__ import with_statement
 
 __author__ = "Jerome Kieffer"
 __email__ = "jerome.kieffer@esrf.fr"
-__doc__ = "This runs pylint on all modules from fabio package"
 __date__ = "20120416"
 __status__ = "production"
 __licence__ = "GPL"
@@ -40,7 +42,7 @@ files = [ os.path.join(installDir, i) for i in os.listdir(installDir) if i.endsw
 
 for f in files:
     outf = os.path.join(pylint_dir, os.path.basename(f) + ".lint")
-    if not os.path.exists(outf) :
+    if not os.path.exists(outf):
         lintit(f, outf)
     elif os.stat(f).st_mtime > os.stat(outf).st_mtime:
         lintit(f, outf)

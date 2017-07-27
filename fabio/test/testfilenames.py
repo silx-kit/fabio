@@ -66,10 +66,10 @@ CASES = [
     (670005, 'edf', 'S82P670005.edf'),
     (670005, 'edf', 'S82P670005.edf.gz'),
     # based on only the name it can be either img or oxd
-    (1     , 'adsc_or_oxd_or_hipic_or_raxis' , 'mb_LP_1_001.img'),
-    (2     , 'adsc_or_oxd_or_hipic_or_raxis' , 'mb_LP_1_002.img.gz'),
-    (3     , 'adsc_or_oxd_or_hipic_or_raxis' , 'mb_LP_1_003.img.bz2'),
-    (3     , 'adsc_or_oxd_or_hipic_or_raxis' , os.path.join("data", 'mb_LP_1_003.img.bz2')),
+    (1, 'adsc_or_oxd_or_hipic_or_raxis', 'mb_LP_1_001.img'),
+    (2, 'adsc_or_oxd_or_hipic_or_raxis', 'mb_LP_1_002.img.gz'),
+    (3, 'adsc_or_oxd_or_hipic_or_raxis', 'mb_LP_1_003.img.bz2'),
+    (3, 'adsc_or_oxd_or_hipic_or_raxis', os.path.join("data", 'mb_LP_1_003.img.bz2')),
     ]
 
 
@@ -98,10 +98,10 @@ class TestFilenames(unittest.TestCase):
         """ loop over CASES """
         for num, typ, name in CASES:
             obj = fabio.FilenameObject(filename=name)
-            self.assertEqual(num, obj.num, name + " num=" + str(num) + \
-                                                 " != obj.num=" + str(obj.num))
+            self.assertEqual(num, obj.num, name + " num=" + str(num) +
+                             " != obj.num=" + str(obj.num))
             self.assertEqual(typ, "_or_".join(obj.format),
-                                 name + " " + "_or_".join(obj.format))
+                             name + " " + "_or_".join(obj.format))
             self.assertEqual(name, obj.tostring(), name + " " + obj.tostring())
 
     def test_more_cases(self):
@@ -123,6 +123,7 @@ def suite():
     testsuite.addTest(TestFilenames("test_more_cases_jump"))
 
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

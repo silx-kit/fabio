@@ -43,7 +43,6 @@ class TestTif(unittest.TestCase):
     Feb09-bright-00.300s_WAXS.bz2 1042 1042 0 65535 8546.6414 1500.4198
     Feb09-bright-00.300s_WAXS.gz 1042 1042 0 65535 8546.6414 1500.4198
     Feb09-bright-00.300s_WAXS 1042 1042 0 65535 8546.6414 1500.4198
-    
     """
 
     def test_read(self):
@@ -122,7 +121,7 @@ class testtifimage_fit2d(unittest.TestCase):
 
 class testtifimage_a0009(unittest.TestCase):
     """
-    test image from ??? with this error 
+    test image from ??? with this error
 a0009.tif TIFF 1024x1024 1024x1024+0+0 16-bit Grayscale DirectClass 2MiB 0.000u 0:00.010
 identify: a0009.tif: invalid TIFF directory; tags are not sorted in ascending order. `TIFFReadDirectory' @ tiff.c/TIFFWarnings/703.
 identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field, calculating from imagelength. `TIFFReadDirectory' @ tiff.c/TIFFWarnings/703.
@@ -178,6 +177,7 @@ def suite():
     testsuite.addTest(testtif_rect("test1"))
     testsuite.addTest(testtifimage_a0009("test1"))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
