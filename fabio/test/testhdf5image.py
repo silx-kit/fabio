@@ -32,6 +32,9 @@ from fabio.hdf5image import Hdf5Image, h5py
 
 
 def make_hdf5(name, shape=(50, 99, 101)):
+    if h5py is None:
+        raise unittest.SkipTest("h5py is not available")
+
     with h5py.File(name) as h:
         e = h.require_group("entry")
         if len(shape) == 2:
@@ -92,10 +95,9 @@ class TestHdf5(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    if h5py is not None:
-        testsuite.addTest(TestHdf5("test_read"))
-        testsuite.addTest(TestHdf5("test_open"))
+    testsuite.addTest(loadTests(TestHdf5))
     return testsuite
 
 

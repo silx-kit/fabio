@@ -146,13 +146,11 @@ class TestMskWrite(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestFaceMask("test_getmatch"))
-    testsuite.addTest(TestClickedMask("test_read"))
-    testsuite.addTest(TestClickedMask("test_getmatch"))
-    testsuite.addTest(TestMskWrite("testFlat"))
-    testsuite.addTest(TestMskWrite("testGzip"))
-    testsuite.addTest(TestMskWrite("testBzip2"))
+    testsuite.addTest(loadTests(TestFaceMask))
+    testsuite.addTest(loadTests(TestClickedMask))
+    testsuite.addTest(loadTests(TestMskWrite))
     return testsuite
 
 

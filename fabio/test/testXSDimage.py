@@ -39,15 +39,19 @@ from .utilstest import UtilsTest
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 
-from fabio.xsdimage import xsdimage
+import fabio.xsdimage
 import numpy
+
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15
                 XSDataImageInv.xml  512 512  -0.2814 0.22705039 2.81e-08  0.010"""
 
 
-class testXSD(unittest.TestCase):
+class TestXSD(unittest.TestCase):
     def setUp(self):
+        if fabio.xsdimage.etree is None:
+            self.skipTest("etree is not available")
+
         self.fn = {}
         for i in ["XSDataImage.edf", "XSDataImage.xml", "XSDataImageInv.xml"]:
             self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
@@ -59,7 +63,7 @@ class testXSD(unittest.TestCase):
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
-            obj = xsdimage()
+            obj = fabio.xsdimage.xsdimage()
             obj.read(self.fn[name])
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
@@ -87,13 +91,9 @@ class testXSD(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    if xsdimage is None:
-        logger.warning("xsdimage is None ... probably an import error related to lxml. Skipping test")
-    else:
-        testsuite.addTest(testXSD("test_read"))
-        testsuite.addTest(testXSD("test_same"))
-        testsuite.addTest(testXSD("test_invert"))
+    testsuite.addTest(loadTests(TestXSD))
     return testsuite
 
 

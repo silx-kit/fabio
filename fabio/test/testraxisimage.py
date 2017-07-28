@@ -77,7 +77,8 @@ class TestRaxisImage(unittest.TestCase):
             self.assertEqual(dim2, obj.dim2, "dim2")
             self.assertNotEqual(obj.dim1, obj.dim2, "dim2!=dim1")
 
-    def test_write(self):
+    def _test_write(self):
+        self.skipTest("Write is not implemented")
         "Test writing with self consistency at the fabio level"
         for line in TESTIMAGES.split("\n"):
             logger.debug("Processing file: %s" % line)
@@ -109,11 +110,9 @@ class TestRaxisImage(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestRaxisImage("test_read"))
-    # testsuite.addTest(TestRaxisImage("test_write"))
-    testsuite.addTest(TestRaxisImage("test_memoryleak"))
-
+    testsuite.addTest(loadTests(TestRaxisImage))
     return testsuite
 
 

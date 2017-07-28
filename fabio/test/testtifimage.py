@@ -68,7 +68,7 @@ class TestTif(unittest.TestCase):
             self.assertEqual(dim2, obj.dim2, "dim2")
 
 
-class testtifimage_pilatus(unittest.TestCase):
+class TestTifImage_Pilatus(unittest.TestCase):
     def setUp(self):
         self.fn = {}
         for i in ["pilatus2M.tif", "pilatus2M.edf"]:
@@ -85,7 +85,7 @@ class testtifimage_pilatus(unittest.TestCase):
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 
-class testtifimage_packbits(unittest.TestCase):
+class TestTifImage_Packbits(unittest.TestCase):
     def setUp(self):
         self.fn = {}
         for i in ["oPPA_5grains_0001.tif", "oPPA_5grains_0001.edf"]:
@@ -102,7 +102,7 @@ class testtifimage_packbits(unittest.TestCase):
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 
-class testtifimage_fit2d(unittest.TestCase):
+class TestTifImage_fit2d(unittest.TestCase):
     def setUp(self):
         self.fn = {}
         for i in ["fit2d.tif", "fit2d.edf"]:
@@ -119,7 +119,7 @@ class testtifimage_fit2d(unittest.TestCase):
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 
-class testtifimage_a0009(unittest.TestCase):
+class TestTifImage_A0009(unittest.TestCase):
     """
     test image from ??? with this error
 a0009.tif TIFF 1024x1024 1024x1024+0+0 16-bit Grayscale DirectClass 2MiB 0.000u 0:00.010
@@ -143,7 +143,7 @@ identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field,
         self.assertEqual(abs(o1 - o2).max(), 0.0)
 
 
-class testgziptif(unittest.TestCase):
+class TestGzipTif(unittest.TestCase):
     def setUp(self):
         self.unzipped = UtilsTest.getimage("oPPA_5grains_0001.tif.bz2")[:-4]
         self.zipped = self.unzipped + ".gz"
@@ -157,7 +157,7 @@ class testgziptif(unittest.TestCase):
         self.assertEqual(o2.data[0, 0], 10)
 
 
-class testtif_rect(unittest.TestCase):
+class TestTif_Rect(unittest.TestCase):
     def setUp(self):
         self.fn = UtilsTest.getimage("testmap1_0002.tif.bz2")[:-4]
 
@@ -168,14 +168,15 @@ class testtif_rect(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestTif("test_read"))
-    testsuite.addTest(testtifimage_packbits("test1"))
-    testsuite.addTest(testtifimage_pilatus("test1"))
-    testsuite.addTest(testtifimage_fit2d("test1"))
-    testsuite.addTest(testgziptif("test1"))
-    testsuite.addTest(testtif_rect("test1"))
-    testsuite.addTest(testtifimage_a0009("test1"))
+    testsuite.addTest(loadTests(TestTif))
+    testsuite.addTest(loadTests(TestGzipTif))
+    testsuite.addTest(loadTests(TestTif_Rect))
+    testsuite.addTest(loadTests(TestTifImage_A0009))
+    testsuite.addTest(loadTests(TestTifImage_fit2d))
+    testsuite.addTest(loadTests(TestTifImage_Packbits))
+    testsuite.addTest(loadTests(TestTifImage_Pilatus))
     return testsuite
 
 

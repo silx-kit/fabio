@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2011-2016 ESRF"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 
 import unittest
 import sys
@@ -124,9 +124,9 @@ class TestByteOffset(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestByteOffset("testSC"))
-    testsuite.addTest(TestByteOffset("testComp"))
+    testsuite.addTest(loadTests(TestByteOffset))
     return testsuite
 
 

@@ -114,19 +114,10 @@ class TestEdfNumbered(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestRandomSeries("testfirst"))
-    testsuite.addTest(TestRandomSeries("testlast"))
-    testsuite.addTest(TestRandomSeries("testjump"))
-
-    testsuite.addTest(TestEdfNumbered("testfirst"))
-    testsuite.addTest(TestEdfNumbered("testprevious"))
-    testsuite.addTest(TestEdfNumbered("testlast"))
-    testsuite.addTest(TestEdfNumbered("testnext"))
-    testsuite.addTest(TestEdfNumbered("testprevjump"))
-    testsuite.addTest(TestEdfNumbered("testnextjump"))
-    testsuite.addTest(TestEdfNumbered("testlen"))
-
+    testsuite.addTest(loadTests(TestRandomSeries))
+    testsuite.addTest(loadTests(TestEdfNumbered))
     return testsuite
 
 

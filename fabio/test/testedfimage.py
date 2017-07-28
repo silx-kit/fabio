@@ -176,7 +176,7 @@ class TestEdfs(unittest.TestCase):
         self.im_dir = None
 
 
-class testedfcompresseddata(unittest.TestCase):
+class TestEdfCompressedData(unittest.TestCase):
     """
     Read some test images with their data-block compressed.
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
@@ -371,28 +371,17 @@ class TestEdfRegression(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestFlatEdfs("test_read"))
-    testsuite.addTest(TestFlatEdfs("test_getstats"))
-    testsuite.addTest(TestBzipEdf("test_read"))
-    testsuite.addTest(TestBzipEdf("test_getstats"))
-    testsuite.addTest(TestGzipEdf("test_read"))
-    testsuite.addTest(TestGzipEdf("test_getstats"))
-    testsuite.addTest(TestEdfs("test_read"))
-    testsuite.addTest(TestEdfs("test_rebin"))
-    testsuite.addTest(testedfcompresseddata("test_read"))
-    testsuite.addTest(TestEdfMultiFrame("test_getFrame_multi"))
-    testsuite.addTest(TestEdfMultiFrame("test_getFrame_mono"))
-    testsuite.addTest(TestEdfMultiFrame("test_next_multi"))
-    testsuite.addTest(TestEdfMultiFrame("text_next_mono"))
-    testsuite.addTest(TestEdfMultiFrame("test_previous_multi"))
-    testsuite.addTest(TestEdfMultiFrame("test_openimage_multiframes"))
-    testsuite.addTest(TestEdfFastRead("test_fastread"))
-    testsuite.addTest(TestEdfWrite("testFlat"))
-    testsuite.addTest(TestEdfWrite("testGzip"))
-    testsuite.addTest(TestEdfWrite("testBzip2"))
-    testsuite.addTest(TestEdfRegression("bug_27"))
-
+    testsuite.addTest(loadTests(TestFlatEdfs))
+    testsuite.addTest(loadTests(TestBzipEdf))
+    testsuite.addTest(loadTests(TestGzipEdf))
+    testsuite.addTest(loadTests(TestEdfs))
+    testsuite.addTest(loadTests(TestEdfCompressedData))
+    testsuite.addTest(loadTests(TestEdfMultiFrame))
+    testsuite.addTest(loadTests(TestEdfFastRead))
+    testsuite.addTest(loadTests(TestEdfWrite))
+    testsuite.addTest(loadTests(TestEdfRegression))
     return testsuite
 
 

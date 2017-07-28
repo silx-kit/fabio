@@ -36,7 +36,7 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher/Univeristy Köln, Germany"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 
 import unittest
 import sys
@@ -152,18 +152,9 @@ class TestSpeImage(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestSpeImage("test_reading_version2_spe"))
-    testsuite.addTest(TestSpeImage("test_calibration"))
-    testsuite.addTest(TestSpeImage("test_time"))
-    testsuite.addTest(TestSpeImage("test_exposure_time"))
-    testsuite.addTest(TestSpeImage("test_detector"))
-    testsuite.addTest(TestSpeImage("test_grating"))
-    testsuite.addTest(TestSpeImage("test_center_wavelength"))
-    testsuite.addTest(TestSpeImage("test_roi"))
-    testsuite.addTest(TestSpeImage("test_read_data"))
-    testsuite.addTest(TestSpeImage("test_multiple_frames"))
-    testsuite.addTest(TestSpeImage("test_fabio_integration"))
+    testsuite.addTest(loadTests(TestSpeImage))
     return testsuite
 
 

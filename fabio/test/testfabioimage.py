@@ -45,7 +45,7 @@ from ..fabioimage import fabioimage
 from .. import fabioutils
 
 
-class test50000(unittest.TestCase):
+class Test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
     def setUp(self):
         """make the image"""
@@ -72,7 +72,7 @@ class test50000(unittest.TestCase):
         self.assertEqual(self.obj.getstddev(), 0)
 
 
-class testslices(unittest.TestCase):
+class TestSlices(unittest.TestCase):
     """check slicing"""
     def setUp(self):
         """make test data"""
@@ -114,7 +114,7 @@ class testslices(unittest.TestCase):
         self.assertEqual(abs(res - fabimg.data).max(), 0, "data are the same after rebin")
 
 
-class testopen(unittest.TestCase):
+class TestOpen(unittest.TestCase):
     """check opening compressed files"""
     testfile = os.path.join(UtilsTest.tempdir, "testfile")
 
@@ -157,9 +157,12 @@ NAMES = {numpy.uint8:   "numpy.uint8",
          numpy.float64: "numpy.float64"}
 
 
-class testPILimage(unittest.TestCase):
+class TestPilImage(unittest.TestCase):
     """ check PIL creation"""
     def setUp(self):
+        if fabio.fabioimage.Image is None:
+            self.skipTest("PIL is not available")
+
         """ list of working numeric types"""
         self.okformats = [numpy.uint8,
                           numpy.int8,
@@ -198,14 +201,14 @@ class testPILimage(unittest.TestCase):
                         self.assertAlmostEqual(err, 0, 6, errstr)
 
 
-class testPILimage2(testPILimage):
+class TestPilImage2(TestPilImage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive and big"""
         return (numpy.random.random(shape) * sys.maxsize / 10).astype(typ)
 
 
-class testPILimage3(testPILimage):
+class TestPilImage3(TestPilImage):
     """ check with different numbers"""
     def mkdata(self, shape, typ):
         """ positive, negative and big"""
@@ -213,28 +216,14 @@ class testPILimage3(testPILimage):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-
-    testsuite.addTest(test50000("testgetmax"))
-    testsuite.addTest(test50000("testgetmin"))
-    testsuite.addTest(test50000("testgetmean"))
-    testsuite.addTest(test50000("getstddev"))
-
-    testsuite.addTest(testslices("testgetmax"))
-    testsuite.addTest(testslices("testgetmin"))
-    testsuite.addTest(testslices("testintegratearea"))
-    testsuite.addTest(testslices("testRebin"))
-
-    testsuite.addTest(testopen("testFlat"))
-    testsuite.addTest(testopen("testgz"))
-    testsuite.addTest(testopen("testbz2"))
-
-    if fabio.fabioimage.Image is not None:
-        testsuite.addTest(testPILimage("testpil"))
-        testsuite.addTest(testPILimage2("testpil"))
-        testsuite.addTest(testPILimage3("testpil"))
-    else:
-        logger.warning("Skipping PIL related tests")
+    testsuite.addTest(loadTests(Test50000))
+    testsuite.addTest(loadTests(TestSlices))
+    testsuite.addTest(loadTests(TestOpen))
+    testsuite.addTest(loadTests(TestPilImage))
+    testsuite.addTest(loadTests(TestPilImage2))
+    testsuite.addTest(loadTests(TestPilImage3))
     return testsuite
 
 

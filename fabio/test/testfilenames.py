@@ -116,12 +116,9 @@ class TestFilenames(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-
-    testsuite.addTest(TestFilenames("test_many_cases"))
-    testsuite.addTest(TestFilenames("test_more_cases"))
-    testsuite.addTest(TestFilenames("test_more_cases_jump"))
-
+    testsuite.addTest(loadTests(TestFilenames))
     return testsuite
 
 

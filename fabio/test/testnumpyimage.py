@@ -25,7 +25,7 @@
 Test for numpy images.
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 import os
 import sys
 import unittest
@@ -97,10 +97,9 @@ class TestNumpy(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestNumpy("test_read"))
-    testsuite.addTest(TestNumpy("test_write"))
-    testsuite.addTest(TestNumpy("test_multidim"))
+    testsuite.addTest(loadTests(TestNumpy))
     return testsuite
 
 

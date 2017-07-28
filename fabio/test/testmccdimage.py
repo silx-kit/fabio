@@ -112,9 +112,10 @@ class TestFlatMccds(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestNormalTiffOK("test_read_openimage"))
-    testsuite.addTest(TestFlatMccds("test_read"))
+    testsuite.addTest(loadTests(TestFlatMccds))
+    testsuite.addTest(loadTests(TestNormalTiffOK))
     return testsuite
 
 

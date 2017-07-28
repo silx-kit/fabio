@@ -34,7 +34,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import bz2
 
 
 if __name__ == '__main__':
@@ -103,9 +102,10 @@ class TestFlatMccdsAdsc(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestMatch("testsame"))
-    testsuite.addTest(TestFlatMccdsAdsc("test_read"))
+    testsuite.addTest(loadTests(TestMatch))
+    testsuite.addTest(loadTests(TestFlatMccdsAdsc))
     return testsuite
 
 

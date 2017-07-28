@@ -28,7 +28,7 @@ Test for PNM images.
 Jerome Kieffer, 04/12/2014
 """
 __author__ = "Jerome Kieffer"
-__date__ = "05/11/2015"
+__date__ = "27/07/2017"
 import os
 import sys
 import unittest
@@ -84,10 +84,11 @@ class TestPNM(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestPNM("test_read"))
-    testsuite.addTest(TestPNM("test_write"))
+    testsuite.addTest(loadTests(TestPNM))
     return testsuite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
