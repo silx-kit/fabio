@@ -94,10 +94,9 @@ class TestBruker100(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestBruker100("test_read"))
-    testsuite.addTest(TestBruker100("test_same"))
-    testsuite.addTest(TestBruker100("test_write"))
+    testsuite.addTest(loadTests(TestBruker100))
     return testsuite
 
 

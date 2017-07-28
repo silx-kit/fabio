@@ -73,8 +73,9 @@ class TestGE(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestGE("test_read"))
+    testsuite.addTest(loadTests(TestGE))
     return testsuite
 
 

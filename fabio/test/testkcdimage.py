@@ -86,10 +86,9 @@ class TestKcd(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestKcd("test_read"))
-    testsuite.addTest(TestKcd("test_same"))
-
+    testsuite.addTest(loadTests(TestKcd))
     return testsuite
 
 

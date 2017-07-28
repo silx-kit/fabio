@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "27/06/2016"
+__date__ = "27/07/2017"
 
 import unittest
 import sys
@@ -92,10 +92,9 @@ class TestFit2DImage(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestFit2DImage("test_read"))
-    testsuite.addTest(TestFit2DImage("test_match"))
-    testsuite.addTest(TestFit2DImage("test_mask"))
+    testsuite.addTest(loadTests(TestFit2DImage))
     return testsuite
 
 

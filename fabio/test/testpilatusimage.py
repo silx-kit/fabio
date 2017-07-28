@@ -67,8 +67,9 @@ class TestPilatus(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestPilatus("test_read"))
+    testsuite.addTest(loadTests(TestPilatus))
     return testsuite
 
 

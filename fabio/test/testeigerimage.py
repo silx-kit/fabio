@@ -31,6 +31,9 @@ from fabio.eigerimage import EigerImage, h5py
 
 
 def make_hdf5(name, shape=(50, 99, 101)):
+    if h5py is None:
+        raise unittest.SkipTest("h5py is not available")
+
     with h5py.File(name) as h:
         e = h.require_group("entry/data")
         if len(shape) == 2:
@@ -73,10 +76,9 @@ class TestEiger(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    if h5py is not None:
-        testsuite.addTest(TestEiger("test_read"))
-        testsuite.addTest(TestEiger("test_open"))
+    testsuite.addTest(loadTests(TestEiger))
     return testsuite
 
 

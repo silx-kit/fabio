@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "25/10/2016"
+__date__ = "27/07/2017"
 __license__ = "MIT"
 
 import distutils.util
@@ -310,8 +310,12 @@ else:
     test_suite.addTest(
         unittest.defaultTestLoader.loadTestsFromNames(options.test_name))
 
+result = runner.run(test_suite)
+for test, reason in result.skipped:
+    logger.warning('Skipped %s (%s): %s',
+                   test.id(), test.shortDescription() or '', reason)
 
-if runner.run(test_suite).wasSuccessful():
+if result.wasSuccessful():
     logger.info("Test suite succeeded")
     exit_status = 0
 else:

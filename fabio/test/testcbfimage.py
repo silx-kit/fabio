@@ -34,7 +34,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
-import bz2
 import time
 
 if __name__ == '__main__':
@@ -166,14 +165,9 @@ class TestCbfReader(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestCbfReader("test_read"))
-    testsuite.addTest(TestCbfReader("test_write"))
-    testsuite.addTest(TestCbfReader("test_byte_offset"))
-    testsuite.addTest(TestCbfReader("test_consitency_manual"))
-    testsuite.addTest(TestCbfReader("test_consitency_convert"))
-    testsuite.addTest(TestCbfReader("test_unicode"))
-
+    testsuite.addTest(loadTests(TestCbfReader))
     return testsuite
 
 

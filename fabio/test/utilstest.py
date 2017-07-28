@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -271,23 +271,3 @@ class UtilsTest(object):
         else:
             logger.warning("No scipt %s found in path: %s", script, paths)
         return script_path, env
-
-
-def recursive_delete(dirname):
-    """
-    Delete everything reachable from the directory named in "top",
-    assuming there are no symbolic links.
-    CAUTION:  This is dangerous!  For example, if top == '/', it
-    could delete all your disk files.
-
-    @param dirname: top directory to delete
-    @type dirname: string
-    """
-    if not os.path.isdir(dirname):
-        return
-    for root, dirs, files in os.walk(dirname, topdown=False):
-        for name in files:
-            os.remove(os.path.join(root, name))
-        for name in dirs:
-            os.rmdir(os.path.join(root, name))
-    os.rmdir(dirname)

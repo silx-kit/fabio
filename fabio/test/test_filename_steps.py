@@ -70,11 +70,11 @@ class TestJump(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-
-    testsuite.addTest(TestNext("test_next1"))
-    testsuite.addTest(TestPrev("test_prev1"))
-    testsuite.addTest(TestJump("test_jump1"))
+    testsuite.addTest(loadTests(TestNext))
+    testsuite.addTest(loadTests(TestPrev))
+    testsuite.addTest(loadTests(TestJump))
     return testsuite
 
 

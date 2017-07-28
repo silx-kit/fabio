@@ -37,7 +37,11 @@ logger = UtilsTest.get_logger(__file__)
 from .. import nexus
 
 
-class testNexus(unittest.TestCase):
+class TestNexus(unittest.TestCase):
+
+    def setUp(self):
+        if nexus.h5py is None:
+            self.skipTest("h5py library is not available. Skipping Nexus test")
 
     def test_nexus(self):
         "Test creation of Nexus files"
@@ -52,7 +56,6 @@ class testNexus(unittest.TestCase):
         os.unlink(fname)
 
     def test_from_time(self):
-        """"""
         fname = os.path.join(UtilsTest.tempdir, "nexus.h5")
         nex = nexus.Nexus(fname)
         entry = nex.new_entry("entry")
@@ -66,13 +69,9 @@ class testNexus(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    if nexus.h5py is None:
-        logger.warning("h5py library is not available. Skipping Nexus test")
-    else:
-        testsuite.addTest(testNexus("test_nexus"))
-        testsuite.addTest(testNexus("test_from_time"))
-        # testsuite.addTest(testNexus("test_invert"))
+    testsuite.addTest(loadTests(TestNexus))
     return testsuite
 
 

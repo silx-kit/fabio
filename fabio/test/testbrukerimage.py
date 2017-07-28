@@ -212,13 +212,13 @@ class TestRealImg(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestBruker("test_read"))
-    testsuite.addTest(TestBzipBruker("test_read"))
-    testsuite.addTest(TestGzipBruker("test_read"))
-    testsuite.addTest(TestRealImg("test_read"))
-    testsuite.addTest(TestRealImg("test_write"))
-    testsuite.addTest(TestBrukerLinear("test_linear"))
+    testsuite.addTest(loadTests(TestBruker))
+    testsuite.addTest(loadTests(TestBzipBruker))
+    testsuite.addTest(loadTests(TestGzipBruker))
+    testsuite.addTest(loadTests(TestRealImg))
+    testsuite.addTest(loadTests(TestBrukerLinear))
     return testsuite
 
 

@@ -69,8 +69,9 @@ class TestHeaderNotSingleton(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestHeaderNotSingleton("testheader"))
+    testsuite.addTest(loadTests(TestHeaderNotSingleton))
     return testsuite
 
 

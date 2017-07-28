@@ -181,9 +181,9 @@ class TestFabioConvert(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(
-        unittest.defaultTestLoader.loadTestsFromTestCase(TestFabioConvert))
+    testsuite.addTest(loadTests(TestFabioConvert))
     return testsuite
 
 

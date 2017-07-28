@@ -176,12 +176,12 @@ class TestConvert(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestOxd("test_read"))
-    testsuite.addTest(TestOxd("test_write"))
-    testsuite.addTest(TestOxdSame("test_same"))
-    testsuite.addTest(TestOxdBig("test_same"))
-    testsuite.addTest(TestConvert("test_convert"))
+    testsuite.addTest(loadTests(TestOxd))
+    testsuite.addTest(loadTests(TestOxdSame))
+    testsuite.addTest(loadTests(TestOxdBig))
+    testsuite.addTest(loadTests(TestConvert))
     return testsuite
 
 

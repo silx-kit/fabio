@@ -80,9 +80,9 @@ class TestFlatBinary(unittest.TestCase):
 
 
 def suite():
+    # loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-
-#     testsuite.addTest(TestFlatBinary("test_openimage"))
+    # testsuite.addTest(loadTests(TestFlatBinary))
     return testsuite
 
 

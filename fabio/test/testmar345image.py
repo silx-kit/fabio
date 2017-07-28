@@ -197,13 +197,9 @@ class TestMar345(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(TestMar345("test_read"))
-    testsuite.addTest(TestMar345("test_write"))
-    testsuite.addTest(TestMar345("test_byteswap_write"))
-    testsuite.addTest(TestMar345("test_memoryleak"))
-    testsuite.addTest(TestMar345("test_aux"))
-
+    testsuite.addTest(loadTests(TestMar345))
     return testsuite
 
 

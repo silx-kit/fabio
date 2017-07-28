@@ -41,7 +41,7 @@ fabio = sys.modules["fabio"]
 from fabio.openimage import openheader
 
 
-class test1(unittest.TestCase):
+class Test1(unittest.TestCase):
     """openheader opening edf"""
     def setUp(self):
         self.name = UtilsTest.getimage("F2K_Seb_Lyso0675_header_only.edf.bz2")[:-4]
@@ -58,8 +58,9 @@ class test1(unittest.TestCase):
 
 
 def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(test1("testcase"))
+    testsuite.addTest(loadTests(Test1))
     return testsuite
 
 
