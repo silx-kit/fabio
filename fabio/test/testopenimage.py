@@ -156,13 +156,13 @@ class TestOpenBruker(unittest.TestCase):
         filename = UtilsTest.getimage(fname)[:-4]
         self.checkFile(filename)
 
-    def testbrukergz(self):
+    def testBrukerGz(self):
         """openimage opening bruker gzip"""
         fname = "Cr8F8140k103.0026.gz"
         filename = UtilsTest.getimage(fname)
         self.checkFile(filename)
 
-    def testbrukerbz2(self):
+    def testBrukerBz2(self):
         """openimage opening bruker bzip"""
         fname = "Cr8F8140k103.0026.bz2"
         filename = UtilsTest.getimage(fname)
