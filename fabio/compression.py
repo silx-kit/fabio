@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "27/07/2017"
+__date__ = "28/07/2017"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -62,10 +62,7 @@ if six.PY2:
 logger = logging.getLogger(__name__)
 
 try:
-    if sys.version_info < (2, 7):
-        from .third_party import gzip
-    else:
-        import gzip
+    from .third_party import gzip
 except ImportError:
     logger.error("Unable to import gzip module: disabling gzip compression")
     gzip = None

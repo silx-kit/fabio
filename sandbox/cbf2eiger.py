@@ -12,7 +12,7 @@ from __future__ import with_statement, print_function
 
 __author__ = u"Jérôme Kieffer"
 __copyright__ = "2016 ESRF"
-__date__ = "25/11/2016"
+__date__ = "28/07/2017"
 __licence__ = "MIT"
 
 import logging
@@ -28,17 +28,8 @@ import fabio
 from fabio import nexus
 import h5py
 
-try:
-    from fabio.third_party import six
-except ImportError:
-    import six
-
-try:
-    import argparse
-except ImportError:
-    from fabio.third_party import argparse
-
-
+from fabio.third_party import six
+from fabio.third_party import argparse
 from threading import Thread, Event
 
 try:

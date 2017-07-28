@@ -51,12 +51,7 @@ from matplotlib.figure import Figure
 import fabio
 
 from fabio.nexus import Nexus
-
-
-try:
-    from argparse import ArgumentParser
-except ImportError:
-    from fabio.third_party.argparse import ArgumentParser
+from fabio.third_party.argparse import ArgumentParser
 
 output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img', '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]
 

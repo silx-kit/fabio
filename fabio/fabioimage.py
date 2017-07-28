@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "27/07/2017"
+__date__ = "28/07/2017"
 
 import os
 import logging
@@ -61,11 +61,7 @@ except ImportError:
     Image = None
 from . import fabioutils, converters
 from .fabioutils import six
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    from .third_party.ordereddict import OrderedDict
+from .third_party.ordereddict import OrderedDict
 
 
 class FabioMeta(type):

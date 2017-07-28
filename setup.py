@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "28/07/2017"
 __status__ = "stable"
 
 import os
@@ -328,6 +328,8 @@ class sdist_debian(sdist):
             cf = os.path.splitext(pyxf)[0] + ".c"
             if os.path.isfile(cf):
                 self.filelist.exclude_pattern(pattern=cf)
+        # do not include third_party/_local files
+        self.filelist.exclude_pattern(pattern="*", prefix="fabio/third_party/_local")
 
     def make_distribution(self):
         self.prune_file_list()
@@ -420,22 +422,23 @@ install_requires = ["numpy"]
 setup_requires = ["numpy", "cython"]
 
 
-# adaptation for Debian packaging (without third_party)
 packages = [
     PROJECT,
     PROJECT + ".test",
     PROJECT + ".ext",
     PROJECT + ".benchmark",
     PROJECT + ".utils",
+    PROJECT + ".third_party",
 ]
 package_dir = {PROJECT: PROJECT,
                PROJECT + ".test": PROJECT + "/test",
                PROJECT + ".ext": PROJECT + "/ext",
                PROJECT + ".benchmark": PROJECT + "/benchmark",
-               PROJECT + ".utils": PROJECT + "/utils"}
-if os.path.isdir("third_party"):
-    package_dir[PROJECT + ".third_party"] = "third_party"
-    packages.append(PROJECT + ".third_party")
+               PROJECT + ".utils": PROJECT + "/utils",
+               PROJECT + ".third_party": PROJECT + "/third_party"}
+if os.path.isdir("fabio/third_party/_local"):
+    package_dir[PROJECT + ".third_party._local"] = PROJECT + "/third_party/_local"
+    packages.append(PROJECT + ".third_party._local")
 
 classifiers = [
               'Development Status :: 5 - Production/Stable',

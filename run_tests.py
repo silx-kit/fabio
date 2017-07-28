@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "27/07/2017"
+__date__ = "28/07/2017"
 __license__ = "MIT"
 
 import distutils.util
@@ -204,8 +204,6 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info('Project name: %s' % PROJECT_NAME)
 
-if sys.hexversion < 34013184:  # python2.7
-    sys.path.append("third_party")
 from argparse import ArgumentParser
 
 parser = ArgumentParser(description='Run the tests.')

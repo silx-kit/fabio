@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/07/2017"
+__date__ = "28/07/2017"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -49,17 +49,8 @@ import sys
 import json
 logger = logging.getLogger(__name__)
 
-try:
-    from collections import OrderedDict as _OrderedDict
-except ImportError:
-    from .third_party.ordereddict import OrderedDict as _OrderedDict
-
-try:
-    from .third_party import six
-except ImportError:
-    import six
-    if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
-        raise ImportError("Six version is too old")
+from .third_party.ordereddict import OrderedDict as _OrderedDict
+from .third_party import six
 
 if six.PY2:
     bytes_ = str
@@ -518,7 +509,7 @@ if gzip is None:
 else:
     class GzipFile(gzip.GzipFile):
         """
-        Just a wrapper forgzip.GzipFile providing the correct seek capabilities for python 2.5
+        Just a wrapper for gzip.GzipFile providing the correct seek capabilities for python 2.5
         """
         def __init__(self, filename=None, mode=None, compresslevel=9, fileobj=None):
             """
