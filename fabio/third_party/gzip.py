@@ -42,11 +42,19 @@ __authors__ = ["Valentin Valls"]
 __license__ = "MIT"
 __date__ = "28/07/2017"
 
-import sys
+import sys as __sys
 
-if sys.version_info < (2, 7):
+if __sys.version_info < (2, 7):
     # Try to import our local version of six
     from ._local.gzip import *  # noqa
 else:
     # Else try to import it from the python path
-    from gzip import *  # noqa
+
+    # Importing star here is not working
+    # from gzip import *  # noqa
+
+    import gzip as __gzip
+    for k, v in __gzip.__dict__.items():
+        if k.startswith("_"):
+            continue
+        vars()[k] = v
