@@ -65,7 +65,8 @@ class TestJpegImage(unittest.TestCase):
             self.skipTest("PIL is not available")
 
     def test_read_uint8(self):
-        data = numpy.random.randint(255, size=(64, 64), dtype=numpy.uint8)
+        data = numpy.random.randint(255, size=(64, 64))
+        data = data.astype(numpy.uint8)
         image = Image.fromarray(data)
         filename = os.path.join(TEST_DIRECTORY, "1.jpg")
         image.save(filename)
@@ -76,7 +77,8 @@ class TestJpegImage(unittest.TestCase):
         self.assertIn("jfif", image.header)
 
     def test_read_failing_file(self):
-        data = numpy.random.randint(255, size=(64, 64), dtype=numpy.uint8)
+        data = numpy.random.randint(255, size=(64, 64))
+        data = data.astype(numpy.uint8)
         image = Image.fromarray(data)
         filename = os.path.join(TEST_DIRECTORY, "2.jpg")
         image.save(filename)
@@ -121,7 +123,8 @@ class TestPilNotAvailable(unittest.TestCase):
         if Image is None:
             self.skipTest("PIL is not available")
 
-        data = numpy.random.randint(255, size=(64, 64), dtype=numpy.uint8)
+        data = numpy.random.randint(255, size=(64, 64))
+        data = data.astype(numpy.uint8)
         image = Image.fromarray(data)
         filename = os.path.join(TEST_DIRECTORY, "10.jpg")
         image.save(filename)
@@ -165,7 +168,8 @@ class TestJpegImageInsideFabio(unittest.TestCase):
             self.skipTest("PIL is not available")
 
     def test_read_uint8(self):
-        data = numpy.random.randint(255, size=(64, 64), dtype=numpy.uint8)
+        data = numpy.random.randint(255, size=(64, 64))
+        data = data.astype(numpy.uint8)
         image = Image.fromarray(data)
         filename = os.path.join(TEST_DIRECTORY, "20.jpg")
         image.save(filename)
