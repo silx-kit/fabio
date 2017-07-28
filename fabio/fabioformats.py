@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "27/07/2017"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -71,6 +71,7 @@ from . import hdf5image  # noqa
 from . import fit2dimage  # noqa
 from . import speimage  # noqa
 from . import jpegimage  # noqa
+from . import jpeg2kimage  # noqa
 
 
 def get_all_classes():
