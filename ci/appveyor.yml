@@ -53,7 +53,7 @@ environment:
 install:
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
-  - "powershell ./install_python.ps1"
+  - "powershell ci\\install_python.ps1"
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
   # Check that we have the expected version and architecture for Python
