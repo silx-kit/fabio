@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/07/2017"
+__date__ = "28/07/2017"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -43,7 +43,7 @@ import getpass
 import threading
 import logging
 import bz2
-import gzip
+from ..third_party import gzip
 import json
 import tempfile
 

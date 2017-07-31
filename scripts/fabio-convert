@@ -22,16 +22,8 @@ import time
 import glob
 
 import fabio
-
-try:
-    from fabio.third_party import six
-except ImportError:
-    import six
-
-try:
-    import argparse
-except ImportError:
-    from fabio.third_party import argparse
+from fabio.third_party import six
+from fabio.third_party import argparse
 
 
 logger = logging.getLogger("fabio-convert")

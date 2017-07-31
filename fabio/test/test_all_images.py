@@ -8,7 +8,7 @@ import glob
 import os
 import time
 import fabio.openimage
-import gzip
+from ..third_party import gzip
 import bz2
 import pstats
 import sys
