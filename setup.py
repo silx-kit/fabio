@@ -505,25 +505,6 @@ class PyTest(Command):
             raise SystemExit(errno)
 
 
-if sys.platform == "win32":
-    root = os.path.dirname(os.path.abspath(__file__))
-    tocopy_files = []
-    script_files = []
-    for i in os.listdir(os.path.join(root, "scripts")):
-        if os.path.isfile(os.path.join(root, "scripts", i)):
-            if i.endswith(".py"):
-                script_files.append(os.path.join("scripts", i))
-            else:
-                tocopy_files.append(os.path.join("scripts", i))
-    for i in tocopy_files:
-        filein = os.path.join(root, i)
-        if (filein + ".py") not in script_files:
-            shutil.copyfile(filein, filein + ".py")
-            script_files.append(filein + ".py")
-else:
-    script_files = glob.glob("scripts/*")
-
-
 # double check classifiers on https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers = [
     'Development Status :: 5 - Production/Stable',
@@ -551,9 +532,17 @@ def get_project_configuration(dry_run):
     install_requires = ["numpy"]
     setup_requires = ["numpy", "cython"]
 
+    console_scripts = [
+        'fabio-convert = fabio.app.convert:main',
+    ]
+
+    gui_scripts = [
+        'fabio_viewer = fabio.app.viewer:main',
+    ]
+
     entry_points = {
-        #'console_scripts': [],
-        # 'gui_scripts': [],
+        'console_scripts': console_scripts,
+        'gui_scripts': gui_scripts,
     }
 
     cmdclass = dict(
@@ -591,8 +580,7 @@ def get_project_configuration(dry_run):
                         setup_requires=setup_requires,
                         cmdclass=cmdclass,
                         zip_safe=False,
-                        # entry_points=entry_points,
-                        scripts=script_files,
+                        entry_points=entry_points,
                         test_suite="test",
                         license="MIT",
                         )

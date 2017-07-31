@@ -1,24 +1,48 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#########################################
-# Command line converter
-# European Synchrotron Radiation Facility
-#########################################
-"""
-FabIO-convert is a portable image converter based on FabIO library.
+# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/silx-kit/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation files
+#  (the "Software"), to deal in the Software without restriction,
+#  including without limitation the rights to use, copy, modify, merge,
+#  publish, distribute, sublicense, and/or sell copies of the Software,
+#  and to permit persons to whom the Software is furnished to do so,
+#  subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#  OTHER DEALINGS IN THE SOFTWARE.
+"""Portable image converter based on FabIO library.
 """
 from __future__ import with_statement, print_function
 
-__author__ = u"Valentin Valls"
-__copyright__ = "2016 ESRF"
+__author__ = "Valentin Valls"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
+__date__ = "31/07/2017"
+__status__ = "production"
 
 import logging
 logging.basicConfig()
 
 import sys
 import os
-import time
 import glob
 
 import fabio
@@ -244,7 +268,7 @@ def is_format_supported(format_name):
     try:
         fabio.fabioimage.FabioImage.factory(format_name)
         return True
-    except RuntimeError as e:
+    except RuntimeError:
         logger.debug("Backtrace", exc_info=True)
         return False
 
@@ -291,32 +315,32 @@ def main():
 
     group = parser.add_argument_group("main arguments")
     group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
-                        help="show the list of available formats and exit")
+                       help="show the list of available formats and exit")
     group.add_argument("-o", "--output", dest='output', type=str,
-                        help="output file or directory")
+                       help="output file or directory")
     group.add_argument("-F", "--output-format", dest="format", type=str, default=None,
-                        help="output format")
+                       help="output format")
 
     group = parser.add_argument_group("optional behaviour arguments")
     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
-                        help="if an existing destination file cannot be"
-                        + " opened, remove it and try again (this option"
-                        + " is ignored when the -n option is also used)")
+                       help="if an existing destination file cannot be" +
+                       " opened, remove it and try again (this option" +
+                       " is ignored when the -n option is also used)")
     group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
-                        help="do not overwrite an existing file (this option"
-                        + " is ignored when the -i option is also used)")
+                       help="do not overwrite an existing file (this option" +
+                       " is ignored when the -i option is also used)")
     group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
-                        help="remove each existing destination file before"
-                        + " attempting to open it (contrast with --force)")
+                       help="remove each existing destination file before" +
+                       " attempting to open it (contrast with --force)")
     group.add_argument("-u", "--update", dest="update", action="store_true", default=False,
-                        help="copy only when the SOURCE file is newer"
-                        + " than the destination file or when the"
-                        + " destination file is missing")
+                       help="copy only when the SOURCE file is newer" +
+                       " than the destination file or when the" +
+                       " destination file is missing")
     group.add_argument("-i", "--interactive", dest="interactive", action="store_true", default=False,
-                        help="prompt before overwrite (overrides a previous -n"
-                        + " option)")
+                       help="prompt before overwrite (overrides a previous -n" +
+                       " option)")
     group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
-                        help="do everything except modifying the file system")
+                       help="do everything except modifying the file system")
 
     try:
         args = parser.parse_args()
@@ -369,6 +393,7 @@ def main():
         return EXIT_FAILURE
 
     return EXIT_SUCCESS
+
 
 if __name__ == "__main__":
     result = main()
