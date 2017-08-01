@@ -30,13 +30,8 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import sys
-import numpy
 import tempfile
 import shutil
-try:
-    from PIL import Image
-except ImportError:
-    Image = None
 
 from .utilstest import UtilsTest
 
@@ -61,31 +56,25 @@ class TestJpegImage(unittest.TestCase):
     """Test the class format"""
 
     def setUp(self):
-        if Image is None:
+        if jpegimage.Image is None:
             self.skipTest("PIL is not available")
 
     def test_read_uint8(self):
-        data = numpy.random.randint(255, size=(64, 64))
-        data = data.astype(numpy.uint8)
-        image = Image.fromarray(data)
-        filename = os.path.join(TEST_DIRECTORY, "1.jpg")
-        image.save(filename)
-
+        filename = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
         image_format = jpegimage.JpegImage()
         image = image_format.read(filename)
-        self.assertEqual(image.data.shape, data.shape)
+        self.assertEqual(image.data.shape, (64, 64))
         self.assertIn("jfif", image.header)
 
     def test_read_failing_file(self):
-        data = numpy.random.randint(255, size=(64, 64))
-        data = data.astype(numpy.uint8)
-        image = Image.fromarray(data)
         filename = os.path.join(TEST_DIRECTORY, "2.jpg")
-        image.save(filename)
+        filename_source = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
 
-        f = open(filename, "r+b")
-        f.write(b".")
-        f.close()
+        with open(filename_source, "r+b") as fsource:
+            with open(filename, "w+b") as ftest:
+                ftest.write(fsource.read())
+                ftest.seek(1)
+                ftest.write(b".")
 
         image_format = jpegimage.JpegImage()
         try:
@@ -120,17 +109,8 @@ class TestJpegImage(unittest.TestCase):
 class TestPilNotAvailable(unittest.TestCase):
 
     def setUp(self):
-        if Image is None:
-            self.skipTest("PIL is not available")
-
-        data = numpy.random.randint(255, size=(64, 64))
-        data = data.astype(numpy.uint8)
-        image = Image.fromarray(data)
-        filename = os.path.join(TEST_DIRECTORY, "10.jpg")
-        image.save(filename)
-
+        filename = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
         self.filename = filename
-        self.data = data
 
         self.old = jpegimage.Image
 
@@ -143,9 +123,11 @@ class TestPilNotAvailable(unittest.TestCase):
         return fabio.open(self.filename)
 
     def test_with_pil(self):
+        if jpegimage.Image is None:
+            self.skipTest("PIL is not available")
         image = self.open_image()
         self.assertIsInstance(image, jpegimage.JpegImage)
-        self.assertEqual(image.data.shape, self.data.shape)
+        self.assertEqual(image.data.shape, (64, 64))
         self.assertIn("jfif", image.header)
 
     def test_without_pil(self):
@@ -154,6 +136,7 @@ class TestPilNotAvailable(unittest.TestCase):
             jpegimage.Image = None
             try:
                 _image = self.open_image()
+                self.fail()
             except IOError:
                 pass
         finally:
@@ -163,20 +146,11 @@ class TestPilNotAvailable(unittest.TestCase):
 class TestJpegImageInsideFabio(unittest.TestCase):
     """Test the format inside the fabio framework"""
 
-    def setUp(self):
-        if Image is None:
-            self.skipTest("PIL is not available")
-
     def test_read_uint8(self):
-        data = numpy.random.randint(255, size=(64, 64))
-        data = data.astype(numpy.uint8)
-        image = Image.fromarray(data)
-        filename = os.path.join(TEST_DIRECTORY, "20.jpg")
-        image.save(filename)
-
+        filename = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
         image = fabio.open(filename)
         self.assertIsInstance(image, jpegimage.JpegImage)
-        self.assertEqual(image.data.shape, data.shape)
+        self.assertEqual(image.data.shape, (64, 64))
         self.assertIn("jfif", image.header)
 
 
