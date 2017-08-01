@@ -58,7 +58,6 @@ logger = logging.getLogger(__name__)
 try:
     from PIL import Image
 except ImportError:
-    logger.warning("PIL is not installed ... trying to do without")
     Image = None
 
 from .brukerimage import BrukerImage

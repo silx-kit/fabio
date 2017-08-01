@@ -43,6 +43,7 @@ logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 from ..fabioimage import fabioimage
 from .. import fabioutils
+from ..utils import pilutils
 
 
 class Test50000(unittest.TestCase):
@@ -160,7 +161,7 @@ NAMES = {numpy.uint8:   "numpy.uint8",
 class TestPilImage(unittest.TestCase):
     """ check PIL creation"""
     def setUp(self):
-        if fabio.fabioimage.Image is None:
+        if pilutils.Image is None:
             self.skipTest("PIL is not available")
 
         """ list of working numeric types"""

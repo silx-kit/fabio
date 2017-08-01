@@ -59,29 +59,11 @@ logger = logging.getLogger(__name__)
 try:
     from PIL import Image
 except ImportError:
-    logger.warning("PIL is not installed ... trying to do without")
     Image = None
 import numpy
+from .utils import pilutils
 from .fabioimage import FabioImage
 from .TiffIO import TiffIO
-
-PIL_TO_NUMPY = {
-    "I;8": numpy.uint8,
-    "I;16": numpy.uint16,
-    "I;16B": numpy.uint16,  # big endian
-    "I;16L": numpy.uint16,  # little endian
-    "I;32": numpy.uint32,
-    "I;32L": numpy.uint32,  # little endian
-    "I;32B": numpy.uint32,  # big endian
-    "F;32F": numpy.float32,
-    "F;32BF": numpy.float32,  # big endian
-    "F;64F": numpy.float64,
-    "F;64BF": numpy.float64,  # big endian
-    "F": numpy.float32,
-    "1": numpy.bool,
-    "I": numpy.int32,
-    "L": numpy.uint8,
-}
 
 LITTLE_ENDIAN = 1234
 BIG_ENDIAN = 3412
@@ -223,26 +205,7 @@ class TifImage(FabioImage):
                     infile.seek(0)
                 else:
                     self.lib = "PIL"
-                    dim1, dim2 = self.pilimage.size
-                    if self.pilimage.mode in PIL_TO_NUMPY:
-                        dtype = PIL_TO_NUMPY[self.pilimage.mode]
-                        pilimage = self.pilimage
-                    else:
-                        dtype = numpy.float32
-                        pilimage = self.pilimage.convert("F")
-                    try:
-                        data = numpy.asarray(pilimage, dtype)
-                    except:  # PIL does not support buffer interface (yet)
-                        if "tobytes" in dir(pilimage):
-                            data = numpy.fromstring(pilimage.tobytes(), dtype=dtype)
-                        else:
-                            data = numpy.fromstring(pilimage.tostring(), dtype=dtype)
-                        # byteswap ?
-                        if numpy.dtype(dtype).itemsize > 1:
-                            if (numpy.little_endian and "B" in self.pilimage.mode) or\
-                               (not numpy.little_endian and self.pilimage.mode.endswith("L")):
-                                data.byteswap(True)
-                    self.data = data.reshape((dim2, dim1))
+                    self.data = pilutils.get_numpy_array(self.pilimage)
             else:
                 logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
                 self.lib = None

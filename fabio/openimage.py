@@ -84,7 +84,14 @@ MAGIC_NUMBERS = [
     (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/hdf5"),
     (b"R-AXIS", 'raxis'),
     (b"\x93NUMPY", 'numpy'),
-    (b"\\$FFF_START", 'fit2d')]
+    (b"\\$FFF_START", 'fit2d'),
+    # Raw JPEG
+    (b"\xFF\xD8\xFF\xDB", "jpeg"),
+    # JFIF format
+    (b"\xFF\xD8\xFF\xE0", "jpeg"),
+    # Exif format
+    (b"\xFF\xD8\xFF\xE1", "jpeg"),
+]
 
 
 def do_magic(byts, filename):
