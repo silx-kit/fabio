@@ -21,7 +21,8 @@ import sys
 import subprocess
 import time
 import unittest
-from . import utilstest
+import os
+import fabio.app.convert
 
 
 class TestFabioConvert(unittest.TestCase):
@@ -73,7 +74,10 @@ class TestFabioConvert(unittest.TestCase):
         self.__oldPath = os.getcwd()
         self.__testPath = self.create_test_env()
         os.chdir(self.__testPath)
-        self.__script, self.__env = utilstest.UtilsTest.script_path("fabio-convert")
+        env = dict((str(k), str(v)) for k, v in os.environ.items())
+        env["PYTHONPATH"] = os.pathsep.join(sys.path)
+        self.__env = env
+        self.__script = fabio.app.convert.__file__
 
     def tearDown(self):
         os.chdir(self.__oldPath)
