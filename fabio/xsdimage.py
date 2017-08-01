@@ -46,11 +46,16 @@ from .fabioimage import FabioImage
 from .fabioutils import six
 
 logger = logging.getLogger(__name__)
+
 try:
-    from lxml import etree
+    import lxml.etree as etree
 except ImportError:
-    logger.warning("lxml library is probably not part of your python installation: disabling xsdimage format")
-    etree = None
+    try:
+        # Try using the standard library
+        import xml.etree.ElementTree as etree
+    except ImportError:
+        logger.warning("xml/lxml library is probably not part of your python installation: disabling xsdimage format")
+        etree = None
 
 
 class XsdImage(FabioImage):
@@ -129,29 +134,29 @@ class XsdImage(FabioImage):
         """
         xml = etree.parse(infile)
         self.dims = []
-        for i in xml.xpath("//shape"):
+        for i in xml.findall(".//shape"):
             try:
                 self.dims.append(int(i.text))
             except ValueError as error:
                 logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
-        for i in xml.xpath("//size"):
+        for i in xml.findall(".//size"):
             try:
                 self.size = int(i.text)
             except Exception as error:
                 logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
         self.dtype = None
-        for i in xml.xpath("//dtype"):
+        for i in xml.findall(".//dtype"):
             self.dtype = i.text
         self.coding = None
-        for i in xml.xpath("//coding"):
+        for i in xml.findall(".//coding"):
             j = i.find("value")
             if j is not None:
                 self.coding = j.text
         self.rawData = None
-        for i in xml.xpath("//data"):
+        for i in xml.findall(".//data"):
             self.rawData = six.b(i.text)
         self.md5 = None
-        for i in xml.xpath("//md5sum"):
+        for i in xml.findall(".//md5sum"):
             j = i.find("value")
             if j is not None:
                 self.md5 = j.text
