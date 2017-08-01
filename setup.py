@@ -35,128 +35,55 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "28/07/2017"
+__date__ = "31/07/2017"
 __status__ = "stable"
 
 import os
-import time
 import sys
 import glob
 import shutil
-import numpy
+import platform
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("fabio.setup")
 
 
+from distutils.command.build import build as _build
 try:
-    # setuptools allows the creation of wheels
-    from setuptools import setup, Command
-    from setuptools.command.sdist import sdist
-    from setuptools.command.build_ext import build_ext
-    from setuptools.command.install import install
+    from setuptools import Command
     from setuptools.command.build_py import build_py as _build_py
+    from setuptools.command.build_ext import build_ext
+    from setuptools.command.sdist import sdist
+    from setuptools.command.install import install
+    logger.info("Use setuptools")
 except ImportError:
-    from distutils.core import setup, Command
-    from distutils.command.sdist import sdist
-    from distutils.command.build_ext import build_ext
-    from distutils.command.install import install
+    try:
+        from numpy.distutils.core import Command
+    except ImportError:
+        from distutils.core import Command
     from distutils.command.build_py import build_py as _build_py
-from numpy.distutils.core import Extension as _Extension
-from distutils.filelist import FileList
+    from distutils.command.build_ext import build_ext
+    from distutils.command.sdist import sdist
+    from distutils.command.install import install
+    logger.info("Use distutils")
+
 
 PROJECT = "fabio"
-install_warning = False
-cmdclass = {}
 
 ################################################################################
 # Remove MANIFEST file ... it needs to be re-generated on the fly
 ################################################################################
+
 manifest = os.path.join(os.path.dirname(os.path.abspath(__file__)), "MANIFEST")
 if os.path.isfile(manifest):
     os.unlink(manifest)
 
 
-################################################################################
-# Check for Cython and use it if it is available
-################################################################################
-
-def check_cython():
-    """
-    Check if cython must be activated fron te command line or the environment.
-    """
-
-    if "WITH_CYTHON" in os.environ and os.environ["WITH_CYTHON"] == "False":
-        print("No Cython requested by environment")
-        return False
-
-    if ("--no-cython" in sys.argv):
-        sys.argv.remove("--no-cython")
-        os.environ["WITH_CYTHON"] = "False"
-        print("No Cython requested by command line")
-        return False
-
-    try:
-        import Cython.Compiler.Version
-    except ImportError:
-        return False
-    else:
-        if Cython.Compiler.Version.version < "0.17":
-            return False
-    return True
-
-
-USE_CYTHON = check_cython()
-USE_OPENMP = False
-if USE_CYTHON:
-    from Cython.Build import cythonize
-
-
-def Extension(name, source=None, can_use_openmp=False, extra_sources=None, **kwargs):
-    """
-    Wrapper for distutils' Extension
-    """
-    if name.startswith(PROJECT + ".ext."):
-        name = name[len(PROJECT) + 5:]
-    if source is None:
-        source = name
-    cython_c_ext = ".pyx" if USE_CYTHON else ".c"
-    sources = [os.path.join(PROJECT, "ext", source + cython_c_ext)]
-    if extra_sources:
-        sources.extend(extra_sources)
-    if "include_dirs" in kwargs:
-        include_dirs = set(kwargs.pop("include_dirs"))
-        include_dirs.add(numpy.get_include())
-        include_dirs.add(os.path.join(PROJECT, "ext"))
-        include_dirs.add(os.path.join(PROJECT, "ext", "include"))
-        include_dirs = list(include_dirs)
-    else:
-        include_dirs = [os.path.join(PROJECT, "ext", "include"),
-                        os.path.join(PROJECT, "ext"), numpy.get_include()]
-
-    if can_use_openmp and USE_OPENMP:
-        extra_compile_args = set(kwargs.pop("extra_compile_args", []))
-        extra_compile_args.add(USE_OPENMP)
-        kwargs["extra_compile_args"] = list(extra_compile_args)
-
-        extra_link_args = set(kwargs.pop("extra_link_args", []))
-        extra_link_args.add(USE_OPENMP)
-        kwargs["extra_link_args"] = list(extra_link_args)
-
-    ext = _Extension(name=PROJECT + ".ext." + name, sources=sources, include_dirs=include_dirs, **kwargs)
-
-    if USE_CYTHON:
-        cext = cythonize([ext], compile_time_env={"HAVE_OPENMP": bool(USE_OPENMP)})
-        if cext:
-            ext = cext[0]
-    return ext
-
-ext_modules = [Extension('cf_io', extra_sources=['fabio/ext/src/columnfile.c']),
-               Extension("byte_offset"),
-               Extension('mar345_IO', extra_sources=['fabio/ext/src/ccp4_pack.c']),
-               Extension('_cif')]
-
-
 ##############
 # version.py #
 ##############
+
 class build_py(_build_py):
     """
     Enhanced build_py which copies version.py to <PROJECT>._version.py
@@ -166,16 +93,6 @@ class build_py(_build_py):
         if package == PROJECT:
             modules.append((PROJECT, '_version', 'version.py'))
         return modules
-
-cmdclass['build_py'] = build_py
-
-if install_warning:
-    class InstallWarning(install):
-        def __init__(self, *arg, **kwarg):
-            print("The usage of 'python setup.py is deprecated. Please use 'pip install .' instead")
-            time.sleep(0.5)
-            install.__init__(self, *arg, **kwarg)
-    cmdclass['install'] = InstallWarning
 
 
 def get_version():
@@ -199,13 +116,14 @@ try:
     import sphinx
     import sphinx.util.console
     sphinx.util.console.color_terminal = lambda: False
-    from sphinx.setup_command import BuildDoc
+    from sphinx.setup_command import BuildDoc as BuildDoc_
 except ImportError:
     sphinx = None
+    BuildDoc = None
 
 else:
     # i.e. if sphinx:
-    class build_doc(BuildDoc):
+    class BuildDoc(BuildDoc_):
 
         def run(self):
             # make sure the python path is pointing to the newly built
@@ -221,52 +139,325 @@ else:
                 self.builder = builder
                 self.builder_target_dir = os.path.join(self.build_dir, builder)
                 self.mkpath(self.builder_target_dir)
-                BuildDoc.run(self)
+                BuildDoc_.run(self)
             sys.path.pop(0)
             os.environ["PATH"] = os.pathsep.join(os.environ.get("PATH").split(os.pathsep)[1:])
-    cmdclass['build_doc'] = build_doc
 
 
-# We subclass the build_ext class in order to handle compiler flags
-# for openmp and opencl etc in a cross platform way
-translator = {
-        # Compiler
-        # name, compileflag, linkflag
-        'msvc': {
-                 'openmp': ('/openmp', ' '),
-                 'debug': ('/Zi', ' '),
-                 'OpenCL': 'OpenCL',
-                },
-        'mingw32': {
-                    'openmp': ('-fopenmp', '-fopenmp'),
-                    'debug': ('-g', '-g'),
-                    'stdc++': 'stdc++',
-                    'OpenCL': 'OpenCL'
-                   },
-        'default': {
-                    'openmp': ('-fopenmp', '-fopenmp'),
-                    'debug': ('-g', '-g'),
-                    'stdc++': 'stdc++',
-                    'OpenCL': 'OpenCL'
-                   }
-              }
+class BuildMan(Command):
+    """Command to build man pages"""
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def entry_points_iterator(self):
+        """Iterate other entry points available on the project."""
+        entry_points = self.distribution.entry_points
+        console_scripts = entry_points.get('console_scripts', [])
+        gui_scripts = entry_points.get('gui_scripts', [])
+        scripts = []
+        scripts.extend(console_scripts)
+        scripts.extend(gui_scripts)
+        for script in scripts:
+            elements = script.split("=")
+            target_name = elements[0].strip()
+            elements = elements[1].split(":")
+            module_name = elements[0].strip()
+            function_name = elements[1].strip()
+            yield target_name, module_name, function_name
+
+    def run(self):
+        build = self.get_finalized_command('build')
+        path = sys.path
+        path.insert(0, os.path.abspath(build.build_lib))
+
+        env = dict((str(k), str(v)) for k, v in os.environ.items())
+        env["PYTHONPATH"] = os.pathsep.join(path)
+
+        import subprocess
+
+        status = subprocess.call(["mkdir", "-p", "build/man"])
+        if status != 0:
+            raise RuntimeError("Fail to create build/man directory")
+
+        import tempfile
+        import stat
+        script_name = None
+
+        entry_points = self.entry_points_iterator()
+        for target_name, module_name, function_name in entry_points:
+            logger.info("Build man for entry-point target '%s'" % target_name)
+            # help2man expect a single executable file to extract the help
+            # we create it, execute it, and delete it at the end
+
+            py3 = sys.version_info >= (3, 0)
+            try:
+                # create a launcher using the right python interpreter
+                script_fid, script_name = tempfile.mkstemp(prefix="%s_" % target_name, text=True)
+                script = os.fdopen(script_fid, 'wt')
+                script.write("#!%s\n" % sys.executable)
+                script.write("import %s as app\n" % module_name)
+                script.write("app.%s()\n" % function_name)
+                script.close()
+                # make it executable
+                mode = os.stat(script_name).st_mode
+                os.chmod(script_name, mode + stat.S_IEXEC)
+
+                # execute help2man
+                man_file = "build/man/%s.1" % target_name
+                command_line = ["help2man", script_name, "-o", man_file]
+                if not py3:
+                    # Before Python 3.4, ArgParser --version was using
+                    # stderr to print the version
+                    command_line.append("--no-discard-stderr")
+
+                p = subprocess.Popen(command_line, env=env)
+                status = p.wait()
+                if status != 0:
+                    raise RuntimeError("Fail to generate '%s' man documentation" % target_name)
+            finally:
+                # clean up the script
+                if script_name is not None:
+                    os.remove(script_name)
 
 
-class build_ext_FabIO(build_ext):
-    def build_extensions(self):
-        if self.compiler.compiler_type in translator:
-            trans = translator[self.compiler.compiler_type]
+# ############################# #
+# numpy.distutils Configuration #
+# ############################# #
+
+def configuration(parent_package='', top_path=None):
+    """Recursive construction of package info to be used in setup().
+
+    See http://docs.scipy.org/doc/numpy/reference/distutils.html#numpy.distutils.misc_util.Configuration
+    """
+    try:
+        from numpy.distutils.misc_util import Configuration
+    except ImportError:
+        raise ImportError(
+            "To install this package, you must install numpy first\n"
+            "(See https://pypi.python.org/pypi/numpy)")
+    config = Configuration(None, parent_package, top_path)
+    config.set_options(
+        ignore_setup_xxx_py=True,
+        assume_default_configuration=True,
+        delegate_options_to_subpackages=True,
+        quiet=True)
+    config.add_subpackage(PROJECT)
+    return config
+
+
+# ############## #
+# Compiler flags #
+# ############## #
+
+class Build(_build):
+    """Command to support more user options for the build."""
+
+    user_options = [
+        ('no-openmp', None,
+         "do not use OpenMP for compiled extension modules"),
+        ('openmp', None,
+         "use OpenMP for the compiled extension modules"),
+        ('no-cython', None,
+         "do not compile Cython extension modules (use default compiled c-files)"),
+        ('force-cython', None,
+         "recompile all Cython extension modules"),
+    ]
+    user_options.extend(_build.user_options)
+
+    boolean_options = ['no-openmp', 'openmp', 'no-cython', 'force-cython']
+    boolean_options.extend(_build.boolean_options)
+
+    def initialize_options(self):
+        _build.initialize_options(self)
+        self.no_openmp = None
+        self.openmp = None
+        self.no_cython = None
+        self.force_cython = None
+
+    def finalize_options(self):
+        _build.finalize_options(self)
+        self.finalize_cython_options(min_version='0.21.1')
+        self.finalize_openmp_options()
+
+    def _parse_env_as_bool(self, key):
+        content = os.environ.get(key, "")
+        value = content.lower()
+        if value in ["1", "true", "yes", "y"]:
+            return True
+        if value in ["0", "false", "no", "n"]:
+            return False
+        if value in ["none", ""]:
+            return None
+        msg = "Env variable '%s' contains '%s'. But a boolean or an empty \
+            string was expected. Variable ignored."
+        logger.warning(msg, key, content)
+        return None
+
+    def finalize_openmp_options(self):
+        """Check if extensions must be compiled with OpenMP.
+
+        The result is stored into the object.
+        """
+        if self.openmp:
+            use_openmp = True
+        elif self.no_openmp:
+            use_openmp = False
         else:
-            trans = translator['default']
+            env_force_cython = self._parse_env_as_bool("WITH_OPENMP")
+            if env_force_cython is not None:
+                use_openmp = env_force_cython
+            else:
+                # Use it by default
+                use_openmp = True
 
-        for e in self.extensions:
-            e.extra_compile_args = [trans[a][0] if a in trans else a
-                                    for a in e.extra_compile_args]
-            e.extra_link_args = [trans[a][1] if a in trans else a
-                                 for a in e.extra_link_args]
-            e.libraries = [trans[arg] for arg in e.libraries if arg in trans]
+        if use_openmp:
+            if platform.system() == "Darwin":
+                # By default Xcode5 & XCode6 do not support OpenMP, Xcode4 is OK.
+                osx = tuple([int(i) for i in platform.mac_ver()[0].split(".")])
+                if osx >= (10, 8):
+                    logger.warning("OpenMP support ignored. Your platform do not support it")
+                    use_openmp = False
+
+        # Remove attributes used by distutils parsing
+        # use 'use_openmp' instead
+        del self.no_openmp
+        del self.openmp
+        self.use_openmp = use_openmp
+
+    def finalize_cython_options(self, min_version=None):
+        """
+        Check if cythonization must be used for the extensions.
+
+        The result is stored into the object.
+        """
+
+        if self.force_cython:
+            use_cython = "force"
+        elif self.no_cython:
+            use_cython = "no"
+        else:
+            env_force_cython = self._parse_env_as_bool("FORCE_CYTHON")
+            env_with_cython = self._parse_env_as_bool("WITH_CYTHON")
+            if env_force_cython is True:
+                use_cython = "force"
+            elif env_with_cython is True:
+                use_cython = "yes"
+            elif env_with_cython is False:
+                use_cython = "no"
+            else:
+                # Use it by default
+                use_cython = "yes"
+
+        if use_cython in ["force", "yes"]:
+            try:
+                import Cython.Compiler.Version
+                if min_version and Cython.Compiler.Version.version < min_version:
+                    msg = "Cython version is too old. At least version is %s \
+                        expected. Cythonization is skipped."
+                    logger.warning(msg, str(min_version))
+                    use_cython = "no"
+            except ImportError:
+                msg = "Cython is not available. Cythonization is skipped."
+                logger.warning(msg)
+                use_cython = "no"
+
+        # Remove attribute used by distutils parsing
+        # use 'use_cython' and 'force_cython' instead
+        del self.no_cython
+        self.force_cython = use_cython == "force"
+        self.use_cython = use_cython in ["force", "yes"]
+
+
+class BuildExt(build_ext):
+    """Handle extension compilation.
+
+    Command-line argument and environment can custom:
+
+    - The use of cython to cythonize files, else a default version is used
+    - Build extension with support of OpenMP (by default it is enabled)
+    - If building with MSVC, compiler flags are converted from gcc flags.
+    """
+
+    COMPILE_ARGS_CONVERTER = {'-fopenmp': '/openmp'}
+
+    LINK_ARGS_CONVERTER = {'-fopenmp': ''}
+
+    description = 'Build pyFAI extensions'
+
+    def finalize_options(self):
+        build_ext.finalize_options(self)
+        build_obj = self.distribution.get_command_obj("build")
+        self.use_openmp = build_obj.use_openmp
+        self.use_cython = build_obj.use_cython
+        self.force_cython = build_obj.force_cython
+
+    def patch_with_default_cythonized_files(self, ext):
+        """Replace cython files by .c or .cpp files in extension's sources.
+
+        It replaces the *.pyx and *.py source files of the extensions
+        to either *.cpp or *.c source files.
+        No compilation is performed.
+
+        :param Extension ext: An extension to patch.
+        """
+        new_sources = []
+        for source in ext.sources:
+            base, file_ext = os.path.splitext(source)
+            if file_ext in ('.pyx', '.py'):
+                if ext.language == 'c++':
+                    cythonized = base + '.cpp'
+                else:
+                    cythonized = base + '.c'
+                if not os.path.isfile(cythonized):
+                    raise RuntimeError("Source file not found: %s. Cython is needed" % cythonized)
+                print("Use default cythonized file for %s" % source)
+                new_sources.append(cythonized)
+            else:
+                new_sources.append(source)
+        ext.sources = new_sources
+
+    def patch_extension(self, ext):
+        """
+        Patch an extension according to requested Cython and OpenMP usage.
+
+        :param Extension ext: An extension
+        """
+        # Cytonize
+        if not self.use_cython:
+            self.patch_with_default_cythonized_files(ext)
+        else:
+            from Cython.Build import cythonize
+            patched_exts = cythonize(
+                [ext],
+                compiler_directives={'embedsignature': True},
+                force=self.force_cython,
+                compile_time_env={"HAVE_OPENMP": self.use_openmp}
+            )
+            ext.sources = patched_exts[0].sources
+
+        # Remove OpenMP flags if OpenMP is disabled
+        if not self.use_openmp:
+            ext.extra_compile_args = [
+                f for f in ext.extra_compile_args if f != '-fopenmp']
+            ext.extra_link_args = [
+                f for f in ext.extra_link_args if f != '-fopenmp']
+
+        # Convert flags from gcc to MSVC if required
+        if self.compiler.compiler_type == 'msvc':
+            ext.extra_compile_args = [self.COMPILE_ARGS_CONVERTER.get(f, f)
+                                      for f in ext.extra_compile_args]
+            ext.extra_link_args = [self.LINK_ARGS_CONVERTER.get(f, f)
+                                   for f in ext.extra_link_args]
+
+    def build_extensions(self):
+        for ext in self.extensions:
+            self.patch_extension(ext)
         build_ext.build_extensions(self)
-cmdclass['build_ext'] = build_ext_FabIO
 
 
 ################################################################################
@@ -343,15 +534,13 @@ class sdist_debian(sdist):
             dest = "".join((base, ext))
         else:
             dest = base
-#         sp = dest.split("-")
-#         base = sp[:-1]
-#         nr = sp[-1]
+        # sp = dest.split("-")
+        # base = sp[:-1]
+        # nr = sp[-1]
         debian_arch = os.path.join(dirname, self.get_debian_name() + ".orig.tar.gz")
         os.rename(self.archive_files[0], debian_arch)
         self.archive_files = [debian_arch]
         print("Building debian .orig.tar.gz in %s" % self.archive_files[0])
-
-cmdclass['debian_src'] = sdist_debian
 
 
 class TestData(Command):
@@ -379,7 +568,6 @@ class TestData(Command):
         with tarfile.open(name=arch, mode='w:gz') as tarball:
             for afile in datafiles:
                 tarball.add(os.path.join("testimages", afile), afile)
-cmdclass['testimages'] = TestData
 
 
 class PyTest(Command):
@@ -396,88 +584,122 @@ class PyTest(Command):
         errno = subprocess.call([sys.executable, 'run_tests.py', '-i'])
         if errno != 0:
             raise SystemExit(errno)
-cmdclass['test'] = PyTest
 
 
-if sys.platform == "win32":
-    root = os.path.dirname(os.path.abspath(__file__))
-    tocopy_files = []
-    script_files = []
-    for i in os.listdir(os.path.join(root, "scripts")):
-        if os.path.isfile(os.path.join(root, "scripts", i)):
-            if i.endswith(".py"):
-                script_files.append(os.path.join("scripts", i))
-            else:
-                tocopy_files.append(os.path.join("scripts", i))
-    for i in tocopy_files:
-        filein = os.path.join(root, i)
-        if (filein + ".py") not in script_files:
-            shutil.copyfile(filein, filein + ".py")
-            script_files.append(filein + ".py")
-else:
-    script_files = glob.glob("scripts/*")
-
-
-install_requires = ["numpy"]
-setup_requires = ["numpy", "cython"]
-
-
-packages = [
-    PROJECT,
-    PROJECT + ".test",
-    PROJECT + ".ext",
-    PROJECT + ".benchmark",
-    PROJECT + ".utils",
-    PROJECT + ".third_party",
-]
-package_dir = {PROJECT: PROJECT,
-               PROJECT + ".test": PROJECT + "/test",
-               PROJECT + ".ext": PROJECT + "/ext",
-               PROJECT + ".benchmark": PROJECT + "/benchmark",
-               PROJECT + ".utils": PROJECT + "/utils",
-               PROJECT + ".third_party": PROJECT + "/third_party"}
-if os.path.isdir("fabio/third_party/_local"):
-    package_dir[PROJECT + ".third_party._local"] = PROJECT + "/third_party/_local"
-    packages.append(PROJECT + ".third_party._local")
-
+# double check classifiers on https://pypi.python.org/pypi?%3Aaction=list_classifiers
 classifiers = [
-              'Development Status :: 5 - Production/Stable',
-              'Environment :: Console',
-              'Intended Audience :: End Users/Desktop',
-              'Intended Audience :: Developers',
-              'Intended Audience :: Science/Research',
-              "License :: OSI Approved :: MIT License",
-              'Operating System :: MacOS :: MacOS X',
-              'Operating System :: Microsoft :: Windows',
-              'Operating System :: POSIX',
-              'Programming Language :: Python',
-              'Programming Language :: Cython',
-              'Programming Language :: C',
-              'Topic :: Scientific/Engineering :: Chemistry',
-              'Topic :: Scientific/Engineering :: Bio-Informatics',
-              'Topic :: Scientific/Engineering :: Physics',
-              'Topic :: Scientific/Engineering :: Visualization',
-              'Topic :: Software Development :: Libraries :: Python Modules',
-                ]
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Console',
+    'Intended Audience :: End Users/Desktop',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    "License :: OSI Approved :: MIT License",
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Programming Language :: Python',
+    'Programming Language :: Cython',
+    'Programming Language :: C',
+    'Topic :: Scientific/Engineering :: Chemistry',
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
+    'Topic :: Scientific/Engineering :: Physics',
+    'Topic :: Scientific/Engineering :: Visualization',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+]
+
+
+def get_project_configuration(dry_run):
+    """Returns project arguments for setup"""
+    install_requires = ["numpy"]
+    setup_requires = ["numpy", "cython"]
+
+    console_scripts = [
+        'fabio-convert = fabio.app.convert:main',
+    ]
+
+    gui_scripts = [
+        'fabio_viewer = fabio.app.viewer:main',
+    ]
+
+    entry_points = {
+        'console_scripts': console_scripts,
+        'gui_scripts': gui_scripts,
+    }
+
+    cmdclass = dict(
+        build_py=build_py,
+        build=Build,
+        build_ext=BuildExt,
+        build_man=BuildMan,
+        debian_src=sdist_debian,
+        testimages=TestData,
+        test=PyTest)
+
+    if BuildDoc is not None:
+        cmdclass['build_doc'] = BuildDoc
+
+    if dry_run:
+        # DRY_RUN implies actions which do not require NumPy
+        #
+        # And they are required to succeed without Numpy for example when
+        # pip is used to install silx when Numpy is not yet present in
+        # the system.
+        setup_kwargs = {}
+    else:
+        config = configuration()
+        setup_kwargs = config.todict()
+
+    setup_kwargs.update(name=PROJECT,
+                        version=get_version(),
+                        url="http://github.com/silx-kit/fabio",
+                        download_url="https://github.com/silx-kit/fabio/releases",
+                        author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
+                        author_email="fable-talk@lists.sourceforge.net",
+                        classifiers=classifiers,
+                        description='Image IO for fable',
+                        long_description=get_readme(),
+                        install_requires=install_requires,
+                        setup_requires=setup_requires,
+                        cmdclass=cmdclass,
+                        zip_safe=False,
+                        entry_points=entry_points,
+                        test_suite="test",
+                        license="MIT",
+                        )
+    return setup_kwargs
+
+
+def setup_package():
+    """Run setup(**kwargs)
+
+    Depending on the command, it either runs the complete setup which depends on numpy,
+    or a *dry run* setup with no dependency on numpy.
+    """
+
+    # Check if action requires build/install
+    dry_run = len(sys.argv) == 1 or (len(sys.argv) >= 2 and (
+        '--help' in sys.argv[1:] or
+        sys.argv[1] in ('--help-commands', 'egg_info', '--version',
+                        'clean', '--name')))
+
+    if dry_run:
+        # DRY_RUN implies actions which do not require dependancies, like NumPy
+        try:
+            from setuptools import setup
+            logger.info("Use setuptools.setup")
+        except ImportError:
+            from distutils.core import setup
+            logger.info("Use distutils.core.setup")
+    else:
+        try:
+            from setuptools import setup
+        except ImportError:
+            from numpy.distutils.core import setup
+            logger.info("Use numpydistutils.setup")
+
+    setup_kwargs = get_project_configuration(dry_run)
+    setup(**setup_kwargs)
+
 
 if __name__ == "__main__":
-    setup(name=PROJECT,
-          version=get_version(),
-          author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
-          author_email="fable-talk@lists.sourceforge.net",
-          description='Image IO for fable',
-          url="http://fable.wiki.sourceforge.net/fabio",
-          download_url="https://github.com/silx-kit/fabio/releases",
-          # ext_package="fabio",
-          scripts=script_files,
-          ext_modules=ext_modules,
-          packages=packages,
-          package_dir=package_dir,
-          test_suite="test",
-          cmdclass=cmdclass,
-          classifiers=classifiers,
-          license="MIT",
-          long_description=get_readme(),
-          install_requires=install_requires,
-          setup_requires=setup_requires,
-          )
+    setup_package()

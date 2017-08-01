@@ -9,11 +9,10 @@ python:
 install:
   - "pip install setuptools wheel"
   - "pip install --trusted-host www.silx.org -r ci/requirements_travis.txt"
-  - "python info_platform.py"
+  - "python ci/info_platform.py"
   - "python setup.py build bdist_wheel"
   - "pip install ."
 # command to run tests
 script:
   - "python setup.py build test"
   - "python ./run_tests.py"
-
