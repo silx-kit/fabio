@@ -26,16 +26,19 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
+from .utilstest import UtilsTest
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
 
 
 class TestMpa(unittest.TestCase):
+    """
+    Test classe for multiwire (mpa) images
+    """
     # filename dim1 dim2 min max mean stddev
     TESTIMAGES = """
     mpa_test.mpa 1024 1024 0 1295 0.8590 18.9393
