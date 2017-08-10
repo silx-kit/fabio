@@ -38,12 +38,11 @@ mpaimage can read ascii and binary .mpa (multiwire) files
 # Get ready for python3:
 from __future__ import with_statement, print_function, division, absolute_import
 
-import numpy
 import logging
-logger = logging.getLogger(__name__)
-
+import numpy
 from .fabioimage import FabioImage
-from .fabioutils import NotGoodReader
+
+logger = logging.getLogger(__name__)
 
 
 class MpaImage(FabioImage):
@@ -100,7 +99,9 @@ class MpaImage(FabioImage):
         infile = self._open(fname, 'r')
         self._readheader(infile)
 
-        if 'ADC1_range' not in self.header.keys() or 'ADC2_range' not in self.header.keys() or 'mpafmt' not in self.header.keys():
+        if ('ADC1_range' not in self.header.keys() or
+                'ADC2_range' not in self.header.keys() or
+                'mpafmt' not in self.header.keys()):
             logger.error('Error in opening %s: badly formatted mpa header.', fname)
             raise IOError
 
@@ -119,7 +120,7 @@ class MpaImage(FabioImage):
                 pos = i
                 break
 
-        img = numpy.array(lines[pos+1:],dtype=float)
+        img = numpy.array(lines[pos+1:], dtype=float)
         self.data = img.reshape((self.dim1, self.dim2))
 
         return self
