@@ -67,7 +67,6 @@ class MpaImage(FabioImage):
         while True:
             line = infile.readline()
             line = line.decode()
-            print(line, type(line))
             if line.find('=') > -1:
                 key, value = line.strip().split('=', 1)
                 key = key.strip()
