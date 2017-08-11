@@ -72,7 +72,7 @@ from . import fit2dimage  # noqa
 from . import speimage  # noqa
 from . import jpegimage  # noqa
 from . import jpeg2kimage  # noqa
-from . import mpaimage # noqa
+from . import mpaimage  # noqa
 
 
 def get_all_classes():
