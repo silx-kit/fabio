@@ -56,44 +56,47 @@ class MpaImage(FabioImage):
 
     def _readheader(self, infile):
         """
-        Read and decode the header of an image:
+        Read and decode the header of an image
 
-        @param infile: Opened python file (can be stringIO or bzipped file)
+        :param infile: Opened python file (can be stringIO or bzipped file)
         """
         # list of header key to keep the order (when writing)
         header_prefix = ''
-        tmp_hdr = {"None" : {}}
+        tmp_hdr = {"None": {}}
 
         while True:
             line = infile.readline()
+            line = line.decode()
+            print(line, type(line))
             if line.find('=') > -1:
-                key = line.strip().split('=')[0]
-                value = '='.join(line.strip().split('=')[1:])
+                key, value = line.strip().split('=', 1)
+                key = key.strip()
                 value = value.strip()
-
                 if header_prefix == '':
                     tmp_hdr["None"][key] = value
                 else:
                     tmp_hdr[header_prefix][key] = value
+            elif line.startswith('[DATA') or line.startswith('[CDAT'):
+                break
             else:
-                if line.startswith('[DATA') or line.startswith('[CDAT'):
-                    break
-                else:
-                    header_prefix = line.strip().strip('[]')
-                    tmp_hdr[header_prefix] = {}
+                header_prefix = line.strip().strip('[]')
+                tmp_hdr[header_prefix] = {}
 
         self.header = {}
-        for key in tmp_hdr:
-            for subkey in tmp_hdr[key]:
+        for key, key_data in tmp_hdr.items():
+            key = str(key)
+            for subkey, subkey_data in key_data.items():
+                subkey = str(subkey)
                 if key == 'None':
-                    self.header[subkey] = tmp_hdr[key][subkey]
+                    self.header[subkey] = subkey_data
                 else:
-                    self.header[key+'_'+subkey] = tmp_hdr[key][subkey]
+                    self.header[key + '_' + subkey] = subkey_data
 
     def read(self, fname, frame=None):
         """
-        try to read image
-        @param fname: name of the file
+        Try to read image
+
+        :param fname: name of the file
         """
 
         infile = self._open(fname, 'r')
@@ -103,7 +106,7 @@ class MpaImage(FabioImage):
                 'ADC2_range' not in self.header.keys() or
                 'mpafmt' not in self.header.keys()):
             logger.error('Error in opening %s: badly formatted mpa header.', fname)
-            raise IOError
+            raise IOError('Error in opening %s: badly formatted mpa header.' % fname)
 
         self.dim1 = int(self.header['ADC1_range'])
         self.dim2 = int(self.header['ADC2_range'])
@@ -116,11 +119,11 @@ class MpaImage(FabioImage):
             lines = infile.readlines()
 
         for i, line in enumerate(lines):
-            if line.startswith('[CDAT'):
+            if line.startswith(b'[CDAT'):
                 pos = i
                 break
 
-        img = numpy.array(lines[pos+1:], dtype=float)
+        img = numpy.array(lines[pos + 1:], dtype=float)
         self.data = img.reshape((self.dim1, self.dim2))
 
         return self
