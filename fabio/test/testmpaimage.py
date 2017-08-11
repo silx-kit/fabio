@@ -39,25 +39,22 @@ class TestMpa(unittest.TestCase):
     """
     Test classe for multiwire (mpa) images
     """
-    # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = """
-    mpa_test.mpa 1024 1024 0 1295 0.8590 18.9393
-    """
+    TESTIMAGES = [
+        # filename dim1 dim2 min max mean stddev
+        ("mpa_test.mpa", 1024, 1024, 0, 1295, 0.8590, 18.9393),
+    ]
 
     def test_read(self):
         """
         Test the reading of multiwire images
         """
-        for line in self.TESTIMAGES.split('\n'):
-            vals = line.strip().split()
-            if not vals:
-                continue
-            name = vals[0]
+        for imageData in self.TESTIMAGES:
+            name, dim1, dim2, mini, maxi, mean, stddev = imageData
             logger.debug("Processing: %s" % name)
-            dim1, dim2 = [int(x) for x in vals[1:3]]
-            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+            path = UtilsTest.getimage(name + ".bz2")[:-4]
+
             obj = fabio.mpaimage.MpaImage()
-            obj.read(UtilsTest.getimage(name))
+            obj.read(path)
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
