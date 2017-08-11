@@ -103,7 +103,7 @@ class TemplateImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bipped file)
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
@@ -112,8 +112,8 @@ class TemplateImage(FabioImage):
         """
         Try to read image
 
-        @param fname: name of the file
-        @param frame: number of the frame
+        :param fname: name of the file
+        :param frame: number of the frame
         """
 
         self.resetvals()

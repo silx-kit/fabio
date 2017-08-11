@@ -43,7 +43,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret", "Thomas Vincent"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "11/08/2017"
 
 import cython
 cimport numpy as cnp
@@ -128,7 +128,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     :param version: PCK version 1 or 2
     :param normal_start: position of the normal value section (can be auto-guessed)
     :param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
-    @return : ndarray of 2D with the right size
+    :return: ndarray of 2D with the right size
     """
     cdef:
         int cdimx, cdimy, chigh, cversion, records, normal_offset, lenkey, i, stop, idx, value

@@ -333,7 +333,7 @@ class BrukerImage(FabioImage):
         """
         Calculate the number of byte per pixel to get an optimal overflow table.
 
-        @return: byte per pixel
+        :return: byte per pixel
         """
         if data is None:
             data = self.data
@@ -350,7 +350,7 @@ class BrukerImage(FabioImage):
     def gen_header(self):
         """
         Generate headers (with some magic and guesses)
-        @param format can be 86 or 100
+        :param format can be 86 or 100
         """
         headers = []
         for key in self.HEADERS_KEYS:

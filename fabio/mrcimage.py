@@ -70,7 +70,7 @@ class MrcImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bipped file)
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
@@ -105,8 +105,8 @@ class MrcImage(FabioImage):
     def read(self, fname, frame=None):
         """
         try to read image
-        @param fname: name of the file
-        @param frame:
+        :param fname: name of the file
+        :param frame:
         """
 
         self.resetvals()
@@ -122,7 +122,7 @@ class MrcImage(FabioImage):
         """
         Calculate the frame position in the file
 
-        @param frame: frame number
+        :param frame: frame number
         """
         assert frame < self.nframes
         return 1024 + frame * self.imagesize
@@ -134,8 +134,8 @@ class MrcImage(FabioImage):
     def _readframe(self, infile, img_num):
         """
         Read a frame an populate data
-        @param infile: opened file
-        @param img_num: frame number (int)
+        :param infile: opened file
+        :param img_num: frame number (int)
         """
         if (img_num > self.nframes or img_num < 0):
             raise RuntimeError("Requested frame number is out of range")
@@ -149,7 +149,7 @@ class MrcImage(FabioImage):
     def getframe(self, num):
         """
         Returns a frame as a new FabioImage object
-        @param num: frame number
+        :param num: frame number
         """
         if num < 0 or num > self.nframes:
             raise RuntimeError("Requested frame number is out of range")

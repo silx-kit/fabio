@@ -134,17 +134,17 @@ class FilenameObject(object):
         """
         This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...
 
-        @param stem: the stem is a kind of prefix (str)
-        @param num: image number in the serie (int)
-        @param directory: name of the directory (str)
-        @param format_: ??
-        @param extension:
-        @param postnum:
-        @param digits: Number of digits used to print num
+        :param stem: the stem is a kind of prefix (str)
+        :param num: image number in the serie (int)
+        :param directory: name of the directory (str)
+        :param format_: ??
+        :param extension:
+        :param postnum:
+        :param digits: Number of digits used to print num
 
         Alternative constructor:
 
-        @param filename: fullpath of an image file to be deconstructed into directory, prefix, num, extension, ...
+        :param filename: fullpath of an image file to be deconstructed into directory, prefix, num, extension, ...
 
         """
         self.stem = stem
@@ -335,9 +335,9 @@ def extract_filenumber(name):
 
 def isAscii(name, listExcluded=None):
     """
-    @param name: string to check
-    @param listExcluded: list of char or string excluded.
-    @return: True of False whether  name is pure ascii or not
+    :param name: string to check
+    :param listExcluded: list of char or string excluded.
+    :return: True of False whether  name is pure ascii or not
     """
     isascii = None
     try:
@@ -354,9 +354,9 @@ def isAscii(name, listExcluded=None):
 
 def toAscii(name, excluded=None):
     """
-    @param name: string to check
-    @param excluded: tuple of char or string excluded (not list: they are mutable).
-    @return: the name with all non valid char removed
+    :param name: string to check
+    :param excluded: tuple of char or string excluded (not list: they are mutable).
+    :return: the name with all non valid char removed
     """
     if excluded not in dictAscii:
         ascii = dictAscii[None][:]
@@ -376,7 +376,7 @@ def nice_int(s):
     """
     Workaround that int('1.0') raises an exception
 
-    @param s: string to be converted to integer
+    :param s: string to be converted to integer
     """
     try:
         return int(s)
@@ -440,7 +440,7 @@ class File(FileIO):
 
         'U' cannot be combined with 'w' or '+' mode.
 
-        @param temporary: if True, destroy file at close.
+        :param temporary: if True, destroy file at close.
         """
         if six.PY2:
             FileIO.__init__(self, name, mode, buffering)
@@ -681,8 +681,8 @@ def exists(path):
     Replaces os.path.exists and handles in addition "::" based URI as defined in
     http://odo.pydata.org/en/latest/uri.html#separating-parts-with
 
-    @param path: string
-    @return: boolean
+    :param path: string
+    :return: boolean
     """
     return os.path.exists(path.split("::")[0])
 

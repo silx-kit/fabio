@@ -81,13 +81,12 @@ class BinaryImage(FabioImage):
         """
         Read a binary image
 
-        @param fname: file name
-        @type fname: string
-        @param dim1: image dimensions (Fast index)
-        @param dim2: image dimensions (Slow index)
-        @param offset: starting position of the data-block. If negative, starts at the end.
-        @param bytecode: can be "int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64",...
-        @param endian:  among short or long endian ("<" or ">")
+        :param str fname: file name
+        :param int dim1: image dimensions (Fast index)
+        :param int dim2: image dimensions (Slow index)
+        :param int offset: starting position of the data-block. If negative, starts at the end.
+        :param bytecode: can be "int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64",...
+        :param endian:  among short or long endian ("<" or ">")
 
         """
         self.filename = fname

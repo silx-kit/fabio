@@ -92,7 +92,7 @@ class EigerImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bzipped file)
+        :param infile: Opened python file (can be stringIO or bzipped file)
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
@@ -101,7 +101,7 @@ class EigerImage(FabioImage):
     def read(self, fname, frame=None):
         """
         try to read image
-        @param fname: name of the file
+        :param fname: name of the file
         """
 
         self.resetvals()
@@ -156,7 +156,7 @@ class EigerImage(FabioImage):
     def write(self, fname):
         """
         try to write image
-        @param fname: name of the file
+        :param fname: name of the file
         """
         if len(self.dataset.shape) == 2:
             self.dataset.shape = (1,) + self.dataset.shape
