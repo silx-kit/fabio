@@ -664,12 +664,12 @@ class CIF(dict):
 
     def tostring(self, _strFilename=None, linesep=os.linesep):
         """
-        Converts a cif dictionnary to a string according to the CIF syntax
+        Converts a cif dictionnary to a string according to the CIF syntax.
 
-        :param str _strFilename: the name of the filename to be appended in the header of the CIF file
-        :param linesep: default line separation: can be "\n" or "\r\n"
+        :param str _strFilename: the name of the filename to be appended in the
+            header of the CIF file.
+        :param linesep: default line separation (can be '\\n' or '\\r\\n').
         :return: a string that corresponds to the content of the CIF-file.
-
         """
         lstStrCif = ["# " + i for i in __version__]
         if "_chemical_name_common" in self:

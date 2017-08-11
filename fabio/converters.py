@@ -77,8 +77,9 @@ def convert_data(inp, outp, data):
     Return data converted to the output format ... over-simplistic
     implementation for the moment...
 
-    :param inp,outp: input/output format like "cbfimage"
-    :param data(ndarray): the actual dataset to be transformed
+    :param str inp: input format (like "cbfimage")
+    :param str outp: output format (like "cbfimage")
+    :param numpy.ndarray data: the actual dataset to be transformed
     """
     return CONVERSION_DATA.get((inp, outp), lambda data: data)(data)
 
@@ -87,7 +88,8 @@ def convert_header(inp, outp, header):
     """
     Return header converted to the output format
 
-    :param inp,outp: input/output format like "cbfimage"
-    :param header(dict):the actual set of headers to be transformed
+    :param str inp: input format (like "cbfimage")
+    :param str outp: output format (like "cbfimage")
+    :param dict header: the actual set of headers to be transformed
     """
     return CONVERSION_HEADER.get((inp, outp), lambda header: header)(header)
