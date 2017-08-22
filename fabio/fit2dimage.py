@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "27/07/2017"
+__date__ = "11/08/2017"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -46,8 +46,9 @@ from .fabioimage import FabioImage, OrderedDict
 
 def hex_to(stg, type_="int"):
     """convert a 8-byte-long string (bytes) into an int or a float
-    @param stg: bytes string
-    @param type_: "int" or "float"
+
+    :param stg: bytes string
+    :param str type_: "int" or "float"
     """
     value = int(stg, 16)
     if type_ == "float":
@@ -79,7 +80,7 @@ class Fit2dImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bipped file)
         """
         # list of header key to keep the order (when writing)
         header = OrderedDict()
@@ -154,7 +155,7 @@ class Fit2dImage(FabioImage):
     def read(self, fname, frame=None):
         """try to read image
 
-        @param fname: name of the file
+        :param fname: name of the file
         """
 
         self.resetvals()

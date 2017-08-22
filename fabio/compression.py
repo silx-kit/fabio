@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "28/07/2017"
+__date__ = "11/08/2017"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -138,8 +138,8 @@ COMPRESSORS = ExternalCompressors()
 def decGzip(stream):
     """Decompress a chunk of data using the gzip algorithm from system or from Python
 
-    @param stream: compressed data
-    @return: uncompressed stream
+    :param stream: compressed data
+    :return: uncompressed stream
 
     """
     def _python_gzip(stream):
@@ -199,9 +199,9 @@ def decByteOffset_numpy(stream, size=None, dtype="int64"):
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
 
-    @param stream: string representing the compressed data
-    @param size: the size of the output array (of longInts)
-    @return: 1D-ndarray
+    :param stream: string representing the compressed data
+    :param size: the size of the output array (of longInts)
+    :return: 1D-ndarray
 
     """
     logger.debug("CBF decompression using Numpy")
@@ -245,9 +245,9 @@ def decByteOffset_cython(stream, size=None, dtype="int64"):
     Analyze a stream of char with any length of exception:
                 2, 4, or 8 bytes integers
 
-    @param stream: string representing the compressed data
-    @param size: the size of the output array (of longInts)
-    @return: 1D-ndarray
+    :param stream: string representing the compressed data
+    :param size: the size of the output array (of longInts)
+    :return: 1D-ndarray
 
     """
     logger.debug("CBF decompression using cython")
@@ -270,8 +270,8 @@ def compByteOffset_numpy(data):
     """
     Compress a dataset into a string using the byte_offet algorithm
 
-    @param data: ndarray
-    @return: string/bytes with compressed data
+    :param data: ndarray
+    :return: string/bytes with compressed data
 
     test = numpy.array([0,1,2,127,0,1,2,128,0,1,2,32767,0,1,2,32768,0,1,2,2147483647,0,1,2,2147483648,0,1,2,128,129,130,32767,32768,128,129,130,32768,2147483647,2147483648])
 
@@ -321,8 +321,8 @@ def compByteOffset_cython(data):
     """
     Compress a dataset into a string using the byte_offet algorithm
 
-    @param data: ndarray
-    @return: string/bytes with compressed data
+    :param data: ndarray
+    :return: string/bytes with compressed data
 
     test = numpy.array([0,1,2,127,0,1,2,128,0,1,2,32767,0,1,2,32768,0,1,2,2147483647,0,1,2,2147483648,0,1,2,128,129,130,32767,32768,128,129,130,32768,2147483647,2147483648])
 
@@ -349,10 +349,10 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
 
     Note: Always expect little endian data on the disk
 
-    @param raw_8:  strings containing raw data with integer 8 bits
-    @param raw_16: strings containing raw data with integer 16 bits
-    @param raw_32: strings containing raw data with integer 32 bits
-    @return: numpy.ndarray
+    :param raw_8:  strings containing raw data with integer 8 bits
+    :param raw_16: strings containing raw data with integer 16 bits
+    :param raw_32: strings containing raw data with integer 32 bits
+    :return: numpy.ndarray
 
     """
     data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
@@ -390,8 +390,8 @@ def compTY1(data):
     """
     Modified byte offset compressor used in Oxford Diffraction images
 
-    @param data: numpy.ndarray with the input data (integers!)
-    @return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size
+    :param data: numpy.ndarray with the input data (integers!)
+    :return: 3-tuple of strings: raw_8,raw_16,raw_32 containing raw data with integer of the given size
 
     """
     fdata = data.ravel()
@@ -419,13 +419,13 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_
     """
     Modified CCP4  pck decompressor used in MAR345 images
 
-    @param raw: input string (bytes in python3)
-    @param dim1,dim2: optional parameters size
-    @param overflowPix: optional parameters: number of overflowed pixels
-    @param version: PCK version 1 or 2
-    @param normal_start: position of the normal value section (can be auto-guessed)
-    @param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
-    @return : ndarray of 2D with the right size
+    :param raw: input string (bytes in python3)
+    :param dim1,dim2: optional parameters size
+    :param overflowPix: optional parameters: number of overflowed pixels
+    :param version: PCK version 1 or 2
+    :param normal_start: position of the normal value section (can be auto-guessed)
+    :param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
+    :return: ndarray of 2D with the right size
 
     """
     try:
@@ -445,8 +445,8 @@ def compPCK(data):
     """
     Modified CCP4  pck compressor used in MAR345 images
 
-    @param data: numpy.ndarray (square array)
-    @return:  compressed stream
+    :param data: numpy.ndarray (square array)
+    :return:  compressed stream
 
     """
     try:

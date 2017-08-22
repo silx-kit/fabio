@@ -43,10 +43,10 @@ def split_tokens(bytes_text):
     """
     Separate the text representing a CIF file into a list of tokens.
 
-    @param bytes_text: the content of the CIF - file
-    @type bytes_text:  8-bit string (str in python2 or bytes in python3)
-    @return: list of all the fields of the CIF
-    @rtype: list
+    :param bytes_text: the content of the CIF - file
+    :type bytes_text:  8-bit string (str in python2 or bytes in python3)
+    :return: list of all the fields of the CIF
+    :rtype: list
     """
     cdef:
         unsigned char[:] ary = bytearray(bytes_text)

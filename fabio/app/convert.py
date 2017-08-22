@@ -57,8 +57,8 @@ def get_default_extension_from_format(format_name):
     """"
     Get a default file extension from a fabio format
 
-    @param str format: String format like "edfimage"
-    @rtype: str
+    :param str format: String format like "edfimage"
+    :rtype: str
     """
     class_ = fabio.fabioformats.get_class_by_name(format_name)
     if class_ is None:
@@ -76,9 +76,9 @@ def get_output_filename(input_filename, format_name):
     """
     Returns the output filename from the input filename and the format.
 
-    @param str input_filename: Input filename path
-    @param str format_name: String format like "edfimage"
-    @rtype: str
+    :param str input_filename: Input filename path
+    :param str format_name: String format like "edfimage"
+    :rtype: str
     """
     basename, _ = os.path.splitext(input_filename)
     extension = get_default_extension_from_format(format_name)
@@ -92,8 +92,8 @@ def is_user_want_to_overwrite_filename(filename):
     Ask question in the shell and returns true if the user want to overwrite
     a file passed in parameter.
 
-    @param str filename: The filename it asks for
-    @rtype: bool
+    :param str filename: The filename it asks for
+    :rtype: bool
     """
     while True:
         question = "Do you want to overwrite the file '%s' (y/n): " % filename
@@ -107,9 +107,9 @@ def is_user_want_to_overwrite_filename(filename):
 def is_older(filename1, filename2):
     """Returns true if the first file is older than the second one.
 
-    @param str filename1: An existing filename
-    @param str filename2: An existing filename
-    @rtype: bool
+    :param str filename1: An existing filename
+    :param str filename2: An existing filename
+    :rtype: bool
     """
     time1 = os.path.getmtime(filename1)
     time2 = os.path.getmtime(filename2)
@@ -120,11 +120,11 @@ def convert_one(input_filename, output_filename, options):
     """
     Convert a single file using options
 
-    @param str input_filename: The input filename
-    @param str output_filename: The output filename
-    @param object options: List of options provided from the command line
-    @rtype: bool
-    @returns: True is the conversion succeeded
+    :param str input_filename: The input filename
+    :param str output_filename: The output filename
+    :param object options: List of options provided from the command line
+    :rtype: bool
+    :returns: True is the conversion succeeded
     """
     input_filename = os.path.abspath(input_filename)
     input_exists = os.path.exists(input_filename)
@@ -215,9 +215,9 @@ def convert_one(input_filename, output_filename, options):
 def convert_all(options):
     """Convert all the files from the command line.
 
-    @param object options: List of options provided from the command line
-    @rtype: bool
-    @returns: True is the conversion succeeded
+    :param object options: List of options provided from the command line
+    :rtype: bool
+    :returns: True is the conversion succeeded
     """
     succeeded = True
     for filename in options.images:
@@ -262,8 +262,8 @@ def is_format_supported(format_name):
     """
     Returns true if the file format is supported.
 
-    @param str format_name: Name of the format (for example edfimage)
-    @rtype: bool
+    :param str format_name: Name of the format (for example edfimage)
+    :rtype: bool
     """
     try:
         fabio.fabioimage.FabioImage.factory(format_name)
@@ -278,8 +278,8 @@ def expand_args(args):
     Takes an argv and expand it (under Windows, cmd does not convert *.tif into
     a list of files.
 
-    @param list args: list of files or wildcards
-    @return: list of actual args
+    :param list args: list of files or wildcards
+    :return: list of actual args
     """
     new = []
     for afile in args:

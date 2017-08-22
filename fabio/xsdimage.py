@@ -71,8 +71,7 @@ class XsdImage(FabioImage):
         """
         Constructor of the class XSDataImage.
 
-        @param _strFilename: the name of the file to open
-        @type  _strFilename: string
+        :param str fname: the name of the file to open
         """
         FabioImage.__init__(self, data=data, header=header)
         self.dims = []
@@ -130,7 +129,7 @@ class XsdImage(FabioImage):
         """
         Read all headers in a file and populate self.header
         data is not yet populated
-        @type infile: file object open in read mode
+        :type infile: file object open in read mode
         """
         xml = etree.parse(infile)
         self.dims = []

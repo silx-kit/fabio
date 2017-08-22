@@ -215,7 +215,7 @@ class RaxisImage(FabioImage):
 
         TODO: It would be useful to have an automatic endianness test in here.
 
-        @param infile: Opened python file (can be stringIO or bzipped file)
+        :param infile: Opened python file (can be stringIO or bzipped file)
         """
         endianness = self.endianness
         # list of header key to keep the order (when writing)
@@ -269,8 +269,8 @@ class RaxisImage(FabioImage):
     def read(self, fname, frame=None):
         """
         try to read image
-        @param fname: name of the file
-        @param frame:
+        :param fname: name of the file
+        :param frame:
         """
         self.resetvals()
         infile = self._open(fname, 'rb')

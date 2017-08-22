@@ -141,7 +141,7 @@ class NumpyImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bzipped file)
+        :param infile: Opened python file (can be stringIO or bzipped file)
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
@@ -151,7 +151,7 @@ class NumpyImage(FabioImage):
         """
         Try to read image
 
-        @param fname: name of the file
+        :param fname: name of the file
         """
 
         self.resetvals()
@@ -167,7 +167,7 @@ class NumpyImage(FabioImage):
         """
         Try to write image
 
-        @param fname: name of the file
+        :param fname: name of the file
         """
         numpy.save(fname, self.dataset)
 
