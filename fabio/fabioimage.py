@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "11/08/2017"
+__date__ = "22/08/2017"
 
 import os
 import logging
@@ -55,8 +55,7 @@ import tempfile
 logger = logging.getLogger(__name__)
 import numpy
 from . import fabioutils, converters
-from .fabioutils import six
-from .third_party.ordereddict import OrderedDict
+from .fabioutils import six, OrderedDict
 from .utils import pilutils
 
 
