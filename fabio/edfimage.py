@@ -146,9 +146,9 @@ class Frame(object):
         """
         Parse the header in some EDF format from an already open file
 
-        @param block: string representing the header block.
-        @type block: string, should be full ascii
-        @return: size of the binary blob
+        :param block: string representing the header block.
+        :type block: string, should be full ascii
+        :return: size of the binary blob
         """
         # reset values ...
         self.header = OrderedDict()
@@ -251,7 +251,7 @@ class Frame(object):
         """
         Unpack a binary blob according to the specification given in the header
 
-        @return: dataset as numpy.ndarray
+        :return: dataset as numpy.ndarray
         """
         data = None
         if self._data is not None:
@@ -338,12 +338,11 @@ class Frame(object):
 
     def getEdfBlock(self, force_type=None, fit2dMode=False):
         """
-        @param force_type: type of the dataset to be enforced like "float64" or "uint16"
-        @type force_type: string or numpy.dtype
-        @param fit2dMode: enforce compatibility with fit2d and starts counting number of images at 1
-        @type fit2dMode: boolean
-        @return: ascii header block + binary data block
-        @rtype: python bytes with the concatenation of the ascii header and the binary data block
+        :param force_type: type of the dataset to be enforced like "float64" or "uint16"
+        :type force_type: string or numpy.dtype
+        :param boolean fit2dMode: enforce compatibility with fit2d and starts counting number of images at 1
+        :return: ascii header block + binary data block
+        :rtype: python bytes with the concatenation of the ascii header and the binary data block
         """
         if force_type is not None:
             data = self.data.astype(force_type)
@@ -504,8 +503,8 @@ class EdfImage(FabioImage):
         """
         Read in a header in some EDF format from an already open file
 
-        @param infile: file object open in read mode
-        @return: string (or None if no header was found.
+        :param infile: file object open in read mode
+        :return: string (or None if no header was found.
         """
         MAX_HEADER_SIZE = BLOCKSIZE * 20
         block = infile.read(BLOCKSIZE)
@@ -551,7 +550,7 @@ class EdfImage(FabioImage):
         """
         Read all headers in a file and populate self.header
         data is not yet populated
-        @type infile: file object open in read mode
+        :type infile: file object open in read mode
         """
         self._frames = []
         bContinue = True
@@ -629,7 +628,7 @@ class EdfImage(FabioImage):
         """
         Decide if we need to byteswap
 
-        @return True if needed, False else and None if not understood
+        :return: True if needed, False else and None if not understood
         """
         if self.bpp == 1:
             return False
@@ -644,7 +643,7 @@ class EdfImage(FabioImage):
         """
         Unpack a binary blob according to the specification given in the header and return the dataset
 
-        @return: dataset as numpy.ndarray
+        :return: dataset as numpy.ndarray
         """
         return self._frames[self.currentframe].getData()
 
@@ -679,7 +678,7 @@ class EdfImage(FabioImage):
     def next(self):
         """Returns the next file in the series as a fabioimage
 
-        @raise IOError: When there is no next file or image in the series.
+        :raise IOError: When there is no next file or image in the series.
         """
         newImage = None
         if self.nframes == 1:
@@ -695,9 +694,7 @@ class EdfImage(FabioImage):
         check we can write zipped also
         mimics that fabian was writing uint16 (we sometimes want floats)
 
-        @param force_type: can be numpy.uint16 or simply "float"
-        @return: None
-
+        :param force_type: can be numpy.uint16 or simply "float"
         """
         # correct for bug #27: read all data before opening the file in write mode
         if fname == self.filename:
@@ -711,9 +708,8 @@ class EdfImage(FabioImage):
     def appendFrame(self, frame=None, data=None, header=None):
         """
         Method used add a frame to an EDF file
-        @param frame: frame to append to edf image
-        @type frame: instance of Frame
-        @return: None
+        :param frame: frame to append to edf image
+        :type frame: instance of Frame
         """
         if isinstance(frame, Frame):
             self._frames.append(frame)
@@ -725,9 +721,7 @@ class EdfImage(FabioImage):
     def deleteFrame(self, frameNb=None):
         """
         Method used to remove a frame from an EDF image. by default the last one is removed.
-        @param frameNb: frame number to remove, by  default the last.
-        @type frameNb: integer
-        @return: None
+        :param int frameNb: frame number to remove, by  default the last.
         """
         if frameNb is None:
             self._frames.pop()
@@ -739,7 +733,7 @@ class EdfImage(FabioImage):
         This is a special method that will read and return the data from another file ...
         The aim is performances, ... but only supports uncompressed files.
 
-        @return: data from another file using positions from current EdfImage
+        :return: data from another file using positions from current EdfImage
         """
         if (filename is None) or not os.path.isfile(filename):
             raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
@@ -762,8 +756,8 @@ class EdfImage(FabioImage):
         Method reading Region of Interest of another file  based on metadata available in current EdfImage.
         The aim is performances, ... but only supports uncompressed files.
 
-        @return: ROI-data from another file using positions from current EdfImage
-        @rtype: numpy 2darray
+        :return: ROI-data from another file using positions from current EdfImage
+        :rtype: numpy 2darray
         """
         if (filename is None) or not os.path.isfile(filename):
             raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
@@ -847,8 +841,8 @@ class EdfImage(FabioImage):
 #     def setHeaderKeys(self, _listtHeader):
 #         """
 #         Enforces the propagation of the header_keys to the list of frames
-#         @param _listtHeader: list of the (ordered) keys in the header
-#         @type _listtHeader: python list
+#         :param _listtHeader: list of the (ordered) keys in the header
+#         :type _listtHeader: python list
 #         """
 #         try:
 #             self._frames[self.currentframe].header_keys = _listtHeader
@@ -867,8 +861,8 @@ class EdfImage(FabioImage):
     def getData(self):
         """
         getter for edf Data
-        @return: data for current frame
-        @rtype: numpy.ndarray
+        :return: data for current frame
+        :rtype: numpy.ndarray
         """
         npaData = None
         try:
@@ -885,7 +879,7 @@ class EdfImage(FabioImage):
     def setData(self, _data):
         """
         Enforces the propagation of the data to the list of frames
-        @param _data: numpy array representing data
+        :param _data: numpy array representing data
         """
         try:
             self._frames[self.currentframe].data = _data
@@ -905,15 +899,15 @@ class EdfImage(FabioImage):
     def getCapsHeader(self):
         """
         getter for edf headers keys in upper case
-        @return: data for current frame
-        @rtype: dict
+        :return: data for current frame
+        :rtype: dict
         """
         return self._frames[self.currentframe].capsHeader
 
     def setCapsHeader(self, _data):
         """
         Enforces the propagation of the header_keys to the list of frames
-        @param _data: numpy array representing data
+        :param _data: numpy array representing data
         """
         self._frames[self.currentframe].capsHeader = _data
 

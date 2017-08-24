@@ -118,8 +118,8 @@ class AppForm(QMainWindow):
 
     def format_header(self, d):
         """
-        @param d: dict containing headers
-        @return: formated string
+        :param d: dict containing headers
+        :return: formated string
         """
         keys = list(d.keys())
         keys.sort()

@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "01/08/2017"
+__date__ = "22/08/2017"
 
 import os
 import logging
@@ -55,8 +55,7 @@ import tempfile
 logger = logging.getLogger(__name__)
 import numpy
 from . import fabioutils, converters
-from .fabioutils import six
-from .third_party.ordereddict import OrderedDict
+from .fabioutils import six, OrderedDict
 from .utils import pilutils
 
 
@@ -89,10 +88,9 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def factory(cls, name):
         """A kind of factory... for image_classes
 
-        @param name: name of the class to instantiate
-        @type name: str
-        @return: an instance of the class
-        @rtype: fabioimage
+        :param str name: name of the class to instantiate
+        :return: an instance of the class
+        :rtype: fabioimage
         """
         name = name.lower()
         obj = None
@@ -113,8 +111,8 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def __init__(self, data=None, header=None):
         """Set up initial values
 
-        @param data: numpy array of values
-        @param header: dict or ordereddict with metadata
+        :param data: numpy array of values
+        :param header: dict or ordereddict with metadata
         """
         self._classname = None
         self._dim1 = self._dim2 = self._bpp = 0
@@ -221,8 +219,8 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         """
         Empty for fabioimage but may be populated by others classes
 
-        @param header: dict like object
-        @return: Ordered dict
+        :param header: dict like object
+        :return: Ordered dict
         """
         if header is None:
             return OrderedDict()
@@ -235,8 +233,8 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         Empty for fabioimage but may be populated by others classes,
         especially for format accepting only integers
 
-        @param data: array like
-        @return: numpy array or None
+        :param data: array like
+        :return: numpy array or None
         """
         if data is None:
             return None
@@ -246,7 +244,7 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def getclassname(self):
         """
         Retrieves the name of the class
-        @return: the name of the class
+        :return: the name of the class
         """
         if self._classname is None:
             self._classname = str(self.__class__).replace("<class '", "").replace("'>", "").split(".")[-1]
@@ -269,7 +267,7 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def next(self):
         """Returns the next file in the series as a fabioimage
 
-        @raise IOError: When there is no next file in the series.
+        :raise IOError: When there is no next file in the series.
         """
         from .openimage import openimage
         return openimage(
@@ -385,14 +383,9 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def rebin(self, x_rebin_fact, y_rebin_fact, keep_I=True):
         """
         Rebin the data and adjust dims
-        @param x_rebin_fact: x binning factor
-        @param y_rebin_fact: y binning factor
-        @param keep_I: shall the signal increase ?
-        @type x_rebin_fact: int
-        @type y_rebin_fact: int
-        @type keep_I: boolean
-
-
+        :param int x_rebin_fact: x binning factor
+        :param int y_rebin_fact: y binning factor
+        :param bool keep_I: shall the signal increase ?
         """
         if self.data is None:
             raise Exception('Please read in the file you wish to rebin first')
@@ -568,8 +561,8 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def convert(self, dest):
         """
         Convert a fabioimage object into another fabioimage object (with possible conversions)
-        @param dest: destination type "EDF", "edfimage" or the class itself
-        @return: instance of the new class
+        :param dest: destination type "EDF", "edfimage" or the class itself
+        :return: instance of the new class
         """
         other = None
         if type(dest) in fabioutils.StringTypes:

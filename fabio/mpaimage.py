@@ -40,7 +40,7 @@ from __future__ import with_statement, print_function, division, absolute_import
 
 import logging
 import numpy
-from .fabioimage import FabioImage
+from .fabioimage import FabioImage, OrderedDict
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class MpaImage(FabioImage):
         """
         # list of header key to keep the order (when writing)
         header_prefix = ''
-        tmp_hdr = {"None": {}}
+        tmp_hdr = OrderedDict([("None", OrderedDict())])
 
         while True:
             line = infile.readline()
@@ -81,7 +81,7 @@ class MpaImage(FabioImage):
                 header_prefix = line.strip().strip('[]')
                 tmp_hdr[header_prefix] = {}
 
-        self.header = {}
+        self.header = OrderedDict()
         for key, key_data in tmp_hdr.items():
             key = str(key)
             for subkey, subkey_data in key_data.items():

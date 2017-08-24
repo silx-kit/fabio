@@ -78,7 +78,7 @@ from . import mpaimage  # noqa
 def get_all_classes():
     """Returns the list of supported codec identified by there fabio classes.
 
-    @rtype: list"""
+    :rtype: list"""
     return fabioimage.FabioImage.registry.values()
 
 
@@ -86,13 +86,13 @@ def get_classes(reader=None, writer=None):
     """
     Return available codecs according to filter
 
-    @param bool reader: True to reach codecs providing reader or False to
+    :param bool reader: True to reach codecs providing reader or False to
         provide codecs which do not provided reader. If None, reader feature is
         not filtered
-    @param bool writer: True to reach codecs providing writer or False to
+    :param bool writer: True to reach codecs providing writer or False to
         provide codecs which do not provided writer. If None, writer feature is
         not filtered
-    @rtype: list
+    :rtype: list
     """
     formats = []
     for f in get_all_classes():
@@ -115,8 +115,8 @@ def get_class_by_name(format_name):
     """
     Get a format class by its name.
 
-    @param str format_name: Format name, for example, "edfimage"
-    @return: instance of the new class
+    :param str format_name: Format name, for example, "edfimage"
+    :return: instance of the new class
     """
     if format_name in fabioimage.FabioImage.registry:
         return fabioimage.FabioImage.registry[format_name]
@@ -132,7 +132,7 @@ def _get_extension_mapping():
     """Returns a dictionary mapping file extension to the list of supported
     formats. The result is cached, do not edit it
 
-    @rtype: dict
+    :rtype: dict
     """
     global _extension_cache
     if _extension_cache is None:
@@ -149,8 +149,8 @@ def get_classes_from_extension(extension):
     """
     Returns list of supported file format classes from a file extension
 
-    @param str extension: File extension, for example "edf"
-    @return: fabio image class
+    :param str extension: File extension, for example "edf"
+    :return: fabio image class
     """
     mapping = _get_extension_mapping()
     extension = extension.lower()
@@ -165,8 +165,8 @@ def is_extension_supported(extension):
     """
     Returns true is the extension is supported.
 
-    @param str format_name: Format name, for example, "edfimage"
-    @return: instance of the new class
+    :param str format_name: Format name, for example, "edfimage"
+    :return: instance of the new class
     """
     mapping = _get_extension_mapping()
     extension = extension.lower()

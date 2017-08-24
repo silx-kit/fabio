@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2010-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "11/08/2017"
 
 
 cimport numpy
@@ -143,9 +143,9 @@ def comp_cbf(data not None):
 def dec_cbf(bytes stream not None, size=None):
     """
     Analyze a stream of char with any length of exception (2,4, or 8 bytes integers)
-    @param stream: bytes (string) representing the compressed data
-    @param size: the size of the output array (of longInts)
-    @return : int64 ndArrays
+    :param stream: bytes (string) representing the compressed data
+    :param size: the size of the output array (of longInts)
+    :return: int64 ndArrays
     """
     cdef:
         int               i = 0
@@ -222,9 +222,9 @@ def dec_cbf32(bytes stream not None, size=None):
     Analyze a stream of char with any length of exception (2 or 4 bytes integers)
     Optimized for int32 decompression
 
-    @param stream: bytes (string) representing the compressed data
-    @param size: the size of the output array (of longInts)
-    @return : int64 ndArrays
+    :param stream: bytes (string) representing the compressed data
+    :param size: the size of the output array (of longInts)
+    :return: int64 ndArrays
     """
     cdef:
         int               i = 0
@@ -284,9 +284,9 @@ def dec_TY5(bytes stream not None, size=None):
 
     TODO: known broken, FIXME
 
-    @param stream: bytes (string) representing the compressed data
-    @param size: the size of the output array (of longInts)
-    @return : int32 ndArrays
+    :param stream: bytes (string) representing the compressed data
+    :param size: the size of the output array (of longInts)
+    :return: int32 ndArrays
     """
 
     cdef:

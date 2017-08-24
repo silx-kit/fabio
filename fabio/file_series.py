@@ -99,15 +99,15 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
     Iterates through all images in a file (if more than 1), then proceeds to
     the next file as determined by fabio.next_filename.
 
-    @param first_object: the starting fabioimage, which will be the first one yielded
+    :param first_object: the starting fabioimage, which will be the first one yielded
         in the sequence
-    @param nimages:  the maximum number of images to consider
+    :param nimages:  the maximum number of images to consider
         step: step size, will yield the first and every step'th image until nimages
         is reached.  (e.g. nimages = 5, step = 2 will yield 3 images (0, 2, 4)
-    @param traceback: if True causes it to print a traceback in the event of an
+    :param traceback: if True causes it to print a traceback in the event of an
         exception (missing image, etc.).  Otherwise the calling routine can handle
         the exception as it chooses
-    @param yields: the next fabioimage in the series.
+    :param yields: the next fabioimage in the series.
         In the event there is an exception, it yields the sys.exec_info for the
         exception instead.  sys.exec_info is a tuple:
         ( exceptionType, exceptionValue, exceptionTraceback )
@@ -174,7 +174,7 @@ class file_series(list):
         """
         Constructor:
 
-        @param list_of_strings: arg should be a list of strings which are filenames
+        :param list_of_strings: arg should be a list of strings which are filenames
 
         """
         super(file_series, self).__init__(list_of_strings)
@@ -241,7 +241,7 @@ class file_series(list):
         """
         First image in a sequence
 
-        @return: fabioimage
+        :return: fabioimage
 
         """
         return openimage(self.first())
@@ -250,7 +250,7 @@ class file_series(list):
         """
         Last image in a sequence
 
-        @return: fabioimage
+        :return: fabioimage
 
         """
         return openimage(self.last())
@@ -259,7 +259,7 @@ class file_series(list):
         """
         Return the next image
 
-        @return: fabioimage
+        :return: fabioimage
 
         """
         return openimage(self.next())
@@ -268,7 +268,7 @@ class file_series(list):
         """
         Return the previous image
 
-        @return: fabioimage
+        :return: fabioimage
 
         """
         return openimage(self.previous())
@@ -277,7 +277,7 @@ class file_series(list):
         """
         Jump to and read image
 
-        @return: fabioimage
+        :return: fabioimage
 
         """
         return openimage(self.jump(num))
@@ -286,7 +286,7 @@ class file_series(list):
         """
         Current image in sequence
 
-        @return: fabioimage
+        :return: fabioimage
 
         """
         return openimage(self.current())
@@ -297,7 +297,7 @@ class file_series(list):
         """
         First image in a sequence
 
-        @return: file_object
+        :return: file_object
         """
         return FilenameObject(self.first())
 
@@ -305,7 +305,7 @@ class file_series(list):
         """
         Last image in a sequence
 
-        @return: file_object
+        :return: file_object
 
         """
         return FilenameObject(self.last())
@@ -314,7 +314,7 @@ class file_series(list):
         """
         Return the next image
 
-        @return: file_object
+        :return: file_object
 
         """
         return FilenameObject(self.next())
@@ -323,7 +323,7 @@ class file_series(list):
         """
         Return the previous image
 
-        @return: file_object
+        :return: file_object
 
         """
         return FilenameObject(self.previous())
@@ -332,7 +332,7 @@ class file_series(list):
         """
         Jump to and read image
 
-        @return: file_object
+        :return: file_object
 
         """
         return FilenameObject(self.jump(num))
@@ -341,7 +341,7 @@ class file_series(list):
         """
         Current image in sequence
 
-        @return: file_object
+        :return: file_object
 
         """
         return FilenameObject(self.current())
@@ -358,9 +358,9 @@ class numbered_file_series(file_series):
         """
         Constructor
 
-        @param stem: first part of the name
-        @param step: in case of every nth file
-        @param padding: possibility for specifying that numbers are not padded with zeroes up to digits
+        :param stem: first part of the name
+        :param step: in case of every nth file
+        :param padding: possibility for specifying that numbers are not padded with zeroes up to digits
 
         """
         if padding == 'Y':

@@ -75,12 +75,12 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "27/07/2017"
+__date__ = "22/08/2017"
 
 import logging
 logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage
+from .fabioimage import FabioImage, OrderedDict
 
 
 class TemplateImage(FabioImage):
@@ -103,7 +103,7 @@ class TemplateImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bipped file)
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
@@ -112,8 +112,8 @@ class TemplateImage(FabioImage):
         """
         Try to read image
 
-        @param fname: name of the file
-        @param frame: number of the frame
+        :param fname: name of the file
+        :param frame: number of the frame
         """
 
         self.resetvals()

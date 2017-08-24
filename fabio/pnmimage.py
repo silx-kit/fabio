@@ -123,8 +123,8 @@ class PnmImage(FabioImage):
     def read(self, fname, frame=None):
         """
         try to read PNM images
-        @param fname: name of the file
-        @param frame: not relevant here! PNM is always single framed
+        :param fname: name of the file
+        :param frame: not relevant here! PNM is always single framed
         """
         self.header = self.check_header()
         self.resetvals()
@@ -148,7 +148,7 @@ class PnmImage(FabioImage):
     def write(self, fname):
         """
         try to write image. For now, limited to
-        @param fname: name of the file
+        :param fname: name of the file
         """
         self.header[six.b("SUBFORMAT")] = "P5"
         self.header[six.b("WIDTH")] = self.dim1

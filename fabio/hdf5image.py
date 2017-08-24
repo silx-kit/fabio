@@ -87,7 +87,7 @@ class Hdf5Image(FabioImage):
     def read(self, fname, frame=None):
         """
         try to read image
-        @param fname: filename::datasetpath
+        :param fname: filename::datasetpath
         """
 
         self.resetvals()
@@ -134,7 +134,7 @@ class Hdf5Image(FabioImage):
     def getframe(self, num):
         """
         Returns a frame as a new FabioImage object
-        @param num: frame number
+        :param num: frame number
         """
         if num < 0 or num > self.nframes:
             raise RuntimeError("Requested frame number %i is out of range [0, %i[ " % (num, self.nframes))

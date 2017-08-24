@@ -80,7 +80,6 @@ class KcdImage(FabioImage):
     def _readheader(self, infile):
         """
         Read in a header in some KCD format from an already open file
-        @
         """
         one_line = infile.readline()
 

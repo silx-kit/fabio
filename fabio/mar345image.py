@@ -216,7 +216,7 @@ class Mar345Image(FabioImage):
 
     def binary_header(self):
         """
-        @return: Binary header of mar345 file
+        :return: Binary header of mar345 file
         """
         self.header["HIGH"] = str(self.nb_overflow_pixels())
         binheader = numpy.zeros(16, "int32")
@@ -245,9 +245,9 @@ class Mar345Image(FabioImage):
         """
         Generate the ASCII header for writing
 
-        @param linesep: end of line separator
-        @param size: size of the header (without the binary header)
-        @return: string (unicode) containing the mar345 header
+        :param linesep: end of line separator
+        :param size: size of the header (without the binary header)
+        :return: string (unicode) containing the mar345 header
 
         """
         try:

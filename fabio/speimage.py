@@ -72,7 +72,7 @@ class SpeImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        @param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bipped file)
         """
 
         self.header['version'] = self._get_version(infile)
@@ -108,8 +108,8 @@ class SpeImage(FabioImage):
     def read(self, fname, frame=None):
         """
         try to read image
-        @param fname: name of the file
-        @param frame:
+        :param fname: name of the file
+        :param frame:
         """
 
         self.resetvals()

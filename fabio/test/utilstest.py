@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "28/07/2017"
+__date__ = "11/08/2017"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -125,9 +125,10 @@ class UtilsTest(object):
         """
         Downloads the requested image from Forge.EPN-campus.eu
 
-        @param: name of the image.
-        For the RedMine forge, the filename contains a directory name that is removed
-        @return: full path of the locally saved file
+        :param str imagename: name of the image.
+            For the RedMine forge, the filename contains a directory name that
+            is removed
+        :return: full path of the locally saved file
         """
         if imagename not in cls.ALL_DOWNLOADED_FILES:
             cls.ALL_DOWNLOADED_FILES.add(imagename)
@@ -224,7 +225,7 @@ class UtilsTest(object):
         """
         Download all images needed for the test/benchmarks
 
-        @param imgs: list of files to download
+        :param imgs: list of files to download
         """
         if not imgs:
             imgs = cls.ALL_DOWNLOADED_FILES

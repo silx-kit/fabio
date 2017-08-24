@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "27/07/2017"
+__date__ = "11/08/2017"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -217,8 +217,8 @@ class TifImage(FabioImage):
     def write(self, fname):
         """
         Overrides the FabioImage.write method and provides a simple TIFF image writer.
-        @param fname: name of the file to save the image to
-        @tag_type fname: string or unicode (file?)...
+
+        :param str fname: name of the file to save the image to
         """
         with TiffIO(fname, mode="w") as tIO:
             tIO.writeImage(self.data, info=self.header, software="fabio.tifimage", date=time.ctime())

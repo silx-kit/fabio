@@ -151,7 +151,7 @@ def _openimage(filename):
     determine which format for a filename
     and return appropriate class which can be used for opening the image
 
-    @param filename: can be an url like:
+    :param filename: can be an url like:
 
     hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
 
