@@ -68,6 +68,7 @@ from . import testfit2dimage
 from . import testspeimage
 from . import testfabioconvert
 from . import testjpegimage
+from . import testmpaimage
 
 
 def suite():
@@ -105,6 +106,7 @@ def suite():
     testSuite.addTest(testspeimage.suite())
     testSuite.addTest(testfabioconvert.suite())
     testSuite.addTest(testjpegimage.suite())
+    testSuite.addTest(testmpaimage.suite())
     return testSuite
 
 
