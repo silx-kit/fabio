@@ -54,7 +54,7 @@ Depends: ${misc:Depends},
          ${shlibs:Depends},
          pymca,
          python-six
-Recommends: fabio-viewer,
+Recommends: fabio-bin,
             python-imaging,
             python-lxml,
             python-matplotlib,

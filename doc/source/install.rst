@@ -249,7 +249,7 @@ Debian 8 and newer
 There is also a script which builds a bunch of *real* debian packages: *build-deb8.sh*
 It will build a bunch of 6 debian packages::
  
-* *fabio-viewer*: the GUI for visualizing diffraction images
+* *fabio-bin*: the GUI for visualizing diffraction images
 * *fabio-doc*: the documumentation package
 * *python3-fabio*: library built for Python3
 * *python3-fabio-dbg*: debug symbols for Python3
