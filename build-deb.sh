@@ -90,13 +90,19 @@ do
     esac
 done
 
-clean_and_unpack()
+clean_up()
 {
-	echo "Clean working dir and unpack new sources"
+	echo "Clean working dir:"
 	# clean up previous build
 	rm -rf ${build_directory}
 	# create the build context
 	mkdir -p ${build_directory}
+}
+
+build_deb_8_plus () {
+	echo "Build for debian 8 or newer using actual packaging" 
+
+	clean_up
 	python setup.py debian_src
 	cp -f dist/${tarname} ${build_directory}
 	if [ -f dist/${project}-testimages.tar.gz ]
@@ -106,18 +112,10 @@ clean_and_unpack()
 	
 	cd ${build_directory}
 	tar -xzf ${tarname}
+	
 	directory=${project}-${strictversion}
-	cd ${directory}
-}
-
-build_deb_8_plus () {
-	echo "Build for debian 8 or newer using actual packaging" 
-
-	clean_and_unpack
-
-	cd ..
 	newname=${deb_name}_${debianversion}.orig.tar.gz
-	#directory=${project}-${strictversion}
+	
 	#echo tarname $tarname newname $newname
 	if [ $tarname != $newname ]
 	then
@@ -182,7 +180,13 @@ build_deb_8_plus () {
 build_deb_7_minus () {
 	echo "Build for debian 7 or older using stdeb"
 
-	clean_and_unpack
+	clean_up
+	
+	python setup.py sdist
+	cp -f dist/${tarname} ${build_directory}
+	cd ${build_directory}
+	tar -xzf ${tarname}
+	cd ${project}-${STRICT_VERSION}
 	
 	if [ $use_python3 = 1 ]
 	then
