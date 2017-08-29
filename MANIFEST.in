@@ -6,7 +6,6 @@ include copyright
 exclude MANIFEST
 include stdeb.cfg
 recursive-include fabio/ext *.c *.h *.pyx
-recursive-include doc *
 recursive-include pylint *
 recursive-include scripts *
 recursive-exclude build *
@@ -15,4 +14,9 @@ recursive-exclude test/tiftest *
 recursive-exclude test/testimages *
 recursive-exclude testimages *
 recursive-exclude fabio.egg-info *
+
+
+#Include doc without checkpoints
+recursive-include doc *
+recursive-exclude doc .ipynb_checkpoints/*.ipynb
 
