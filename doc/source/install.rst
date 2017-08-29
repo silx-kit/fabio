@@ -238,7 +238,7 @@ We provide a debian-package builder based on stdeb, building a package for Pytho
 ::
 
 	sudo apt-get install python-stdeb
-	./build-deb7.sh
+	./build-deb.sh
 
 which builds a debian package and installs them in a single command.
 Handy for testing, but very clean, see hereafter
@@ -322,9 +322,9 @@ Within Python (or ipython):
 Test coverage
 .............
 
-FabIO comes with 33 test-suites (145 tests in total) representing a coverage of 60%.
+FabIO comes with 37 test-suites (179 tests in total) representing a coverage of 66%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4 and 3.5.
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4, 3.6 and 3.6.
 Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
 FabIO may run on other untested systems but without warranty.
 
