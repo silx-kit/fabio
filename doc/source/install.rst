@@ -1,5 +1,5 @@
 :Author: Jérôme Kieffer
-:Date: 15/07/2016
+:Date: 29/08/2017
 :Keywords: Installation procedure
 :Target: System administrators
 
@@ -25,6 +25,7 @@ If your Python is elder, PIP can be simply `downloaded <https://bootstrap.pypa.i
 and executed using your standard Python:
 
 .. code::
+
    python get-pip.py
    pip install fabio
 
@@ -37,7 +38,7 @@ Python3 (>=3.4) is OK.
 
 If you are looking for an integrated scientific Python distribution on Windows,
 `WinPython <https://winpython.github.io/>`_ is a good one, the Python2.7, 64 bit
- version is advised.
+version is advised.
 
 It comes with pip pre-installed and configured.
 
@@ -68,7 +69,7 @@ Pay attention to the Python version (both number and architecture).
 **DO NOT MIX 32 and 64 bits version**.
 To determine the version and architecture width of the Python interpreter:
 
-.. highlight:: python
+.. code-block:: python
     
     >>> import sys
     >>> print(sys.version)
@@ -133,6 +134,7 @@ For elder MacOSX, `download PIP and run <https://bootstrap.pypa.io/get-pip.py>`_
 Then install FabIO directly:
 
 .. code::
+
     sudo pip install fabio
 
 
@@ -238,15 +240,15 @@ We provide a debian-package builder based on stdeb, building a package for Pytho
 ::
 
 	sudo apt-get install python-stdeb
-	./build-deb7.sh
+	./build-deb.sh
 
 which builds a debian package and installs them in a single command.
 Handy for testing, but very clean, see hereafter
 
 Debian 8 and newer
-------------------
+^^^^^^^^^^^^^^^^^^
 
-There is also a script which builds a bunch of *real* debian packages: *build-deb8.sh*
+The same script, *build-deb.sh*, will create *real* debian packages:
 It will build a bunch of 6 debian packages::
  
 * *fabio-bin*: the GUI for visualizing diffraction images
@@ -270,9 +272,9 @@ For this, you need a complete debian build environment:
    python3-sphinx python3-sphinxcontrib.programoutput \
    python3-tk python3-tk-dbg python3-pil-dbg python3-setuptools devscripts
 
-   ./build-deb8.sh
+   ./build-deb.sh
 
-This script works as well on Debian-9 stretch
+This script works the same way with Debian-9 stretch and newer.
 
 Test suite
 ----------
@@ -322,9 +324,9 @@ Within Python (or ipython):
 Test coverage
 .............
 
-FabIO comes with 33 test-suites (145 tests in total) representing a coverage of 60%.
+FabIO comes with 37 test-suites (179 tests in total) representing a coverage of 66%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4 and 3.5.
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4, 3.6 and 3.6.
 Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
 FabIO may run on other untested systems but without warranty.
 

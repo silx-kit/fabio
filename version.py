@@ -26,16 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from __future__ import absolute_import, print_function, division
-
-__author__ = "Jerome Kieffer"
-__contact__ = "Jerome.Kieffer@ESRF.eu"
-__license__ = "MIT"
-__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/10/2016"
-__status__ = "production"
-__docformat__ = 'restructuredtext'
-__doc__ = """
+"""
 
 Module for version handling:
 
@@ -61,19 +52,30 @@ Bits (big endian order)     Meaning
 Thus 2.1.0a3 is hexversion 0x020100a3.
 
 """
+
+
+from __future__ import absolute_import, print_function, division
+
+__author__ = "Jerome Kieffer"
+__contact__ = "Jerome.Kieffer@ESRF.eu"
+__license__ = "MIT"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "29/08/2017"
+__status__ = "production"
+__docformat__ = 'restructuredtext'
 __all__ = ["date", "version_info", "strictversion", "hexversion", "debianversion"]
 
 RELEASE_LEVEL_VALUE = {"dev": 0,
                        "alpha": 10,
                        "beta": 11,
-                       "gamma": 11,
-                       "rc": 12,
+                       "gamma": 12,
+                       "rc": 13,
                        "final": 15}
 
 MAJOR = 0
 MINOR = 5
 MICRO = 0
-RELEV = "dev"  # <16
+RELEV = "final"  # <16
 SERIAL = 0  # <16
 
 

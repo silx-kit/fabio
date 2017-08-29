@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "22/08/2017"
+__date__ = "29/08/2017"
 
 import os
 import logging
@@ -90,7 +90,7 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
 
         :param str name: name of the class to instantiate
         :return: an instance of the class
-        :rtype: fabioimage
+        :rtype: fabio.fabioimage.FabioImage
         """
         name = name.lower()
         obj = None

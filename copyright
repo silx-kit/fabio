@@ -24,7 +24,11 @@ License: GPL-2.0+
 
 Files: fabio/raxisimage.py
 Copyright: 2013-2014 Brian R. Pauw <brian@stack.nl>
-License: GPL-3.0+
+License: MIT
+
+Files: fabio/mpaimage.py
+Copyright: 2017 Jesse Hopkins (CHESS, USA)
+License: MIT
 
 Files: fabio/ext/src/ccp4_pack.c
        fabio/ext/inlcude/ccp4_pack.h
