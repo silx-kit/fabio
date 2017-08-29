@@ -202,9 +202,9 @@ build_deb_7_minus () {
 	fi
 	
 	# move packages to dist directory
-	rm -rf ../../../${dist_directory}
-	mkdir -p ../../../${dist_directory}
-	mv -f deb_dist/*.deb ../../../${dist_directory}
+	rm -rf ${dist_directory}
+	mkdir -p ${dist_directory}
+	mv -f deb_dist/*.deb ${dist_directory}
 	
 	# back to the root
 	cd ../../..
