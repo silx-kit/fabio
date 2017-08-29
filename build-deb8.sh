@@ -49,7 +49,6 @@ then
    export PATH=/usr/lib/ccache:$PATH
 fi
 
-
 usage="usage: $(basename "$0") [options]
 
 Build the Debian ${debian_version} package of the ${project} library.
@@ -149,10 +148,9 @@ dch --bpo "${project} snapshot ${version} built for ${target_system}"
 dpkg-buildpackage -r
 rc=$?
 
-if [ $rc -eq 0 ]
-then
-
+if [ $rc -eq 0 ]; then
   # move packages to dist directory
+  echo Build succeeded...
   rm -rf ${dist_directory}
   mkdir -p ${dist_directory}
   mv ${build_directory}/*.deb ${dist_directory}
@@ -160,13 +158,12 @@ then
   mv ${build_directory}/*.dsc ${dist_directory}
   mv ${build_directory}/*.changes ${dist_directory}
   cd ../../..
-
 else
   echo Build failed, please investigate ...
   exit "$rc"
 fi
 
-if [ $install = 1 ]; then
+if [ $install -eq 1 ]; then
   sudo -v su -c  "dpkg -i ${dist_directory}/*.deb"
 fi
 
