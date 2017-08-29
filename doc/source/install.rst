@@ -25,6 +25,7 @@ If your Python is elder, PIP can be simply `downloaded <https://bootstrap.pypa.i
 and executed using your standard Python:
 
 .. code::
+
    python get-pip.py
    pip install fabio
 
@@ -37,7 +38,7 @@ Python3 (>=3.4) is OK.
 
 If you are looking for an integrated scientific Python distribution on Windows,
 `WinPython <https://winpython.github.io/>`_ is a good one, the Python2.7, 64 bit
- version is advised.
+version is advised.
 
 It comes with pip pre-installed and configured.
 
@@ -68,7 +69,7 @@ Pay attention to the Python version (both number and architecture).
 **DO NOT MIX 32 and 64 bits version**.
 To determine the version and architecture width of the Python interpreter:
 
-.. highlight:: python
+.. code-block:: python
     
     >>> import sys
     >>> print(sys.version)
@@ -133,6 +134,7 @@ For elder MacOSX, `download PIP and run <https://bootstrap.pypa.io/get-pip.py>`_
 Then install FabIO directly:
 
 .. code::
+
     sudo pip install fabio
 
 
