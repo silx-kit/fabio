@@ -3,7 +3,7 @@
 #    Project: Fabio Input/Output
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-2016 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2017 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -73,6 +73,10 @@ do
           ;;
       --install)
           install=1
+          shift
+          ;;
+      --python3)
+          use_python3=1
           shift
           ;;
       -*)
@@ -175,10 +179,10 @@ build_deb_7_minus () {
 	# create the build context
 	mkdir -p ${BUILD_DIRECTORY}
 	python setup.py sdist
-	cp -f dist/${TARNAME} ${BUILD_DIRECTORY}
+	cp -f dist/${tarname} ${BUILD_DIRECTORY}
 	cd ${BUILD_DIRECTORY}
-	tar -xzf ${TARNAME}
-	cd ${PROJECT}-${STRICT_VERSION}
+	tar -xzf ${tarname}
+	cd ${project}-${strictversion}
 	
 	if [ $use_python3 = 1 ]
 	then
@@ -212,5 +216,5 @@ if [ $install -eq 1 ]; then
   sudo -v su -c  "dpkg -i ${dist_directory}/*.deb"
 fi
 
-exit 0
+exit "$rc"
 
