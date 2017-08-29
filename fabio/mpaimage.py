@@ -2,8 +2,8 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
-#                       Grenoble, France
+#    Copyright (C) 2017 Cornell High Energy Synchrotron Source
+#                       Ithaca (New York, USA)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
