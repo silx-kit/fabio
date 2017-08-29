@@ -1,5 +1,5 @@
 :Author: Jérôme Kieffer
-:Date: 15/07/2016
+:Date: 29/08/2017
 :Keywords: Installation procedure
 :Target: System administrators
 
@@ -244,9 +244,9 @@ which builds a debian package and installs them in a single command.
 Handy for testing, but very clean, see hereafter
 
 Debian 8 and newer
-------------------
+^^^^^^^^^^^^^^^^^^
 
-There is also a script which builds a bunch of *real* debian packages: *build-deb8.sh*
+The same script, *build-deb.sh*, will create *real* debian packages:
 It will build a bunch of 6 debian packages::
  
 * *fabio-bin*: the GUI for visualizing diffraction images
@@ -270,9 +270,9 @@ For this, you need a complete debian build environment:
    python3-sphinx python3-sphinxcontrib.programoutput \
    python3-tk python3-tk-dbg python3-pil-dbg python3-setuptools devscripts
 
-   ./build-deb8.sh
+   ./build-deb.sh
 
-This script works as well on Debian-9 stretch
+This script works the same way with Debian-9 stretch and newer.
 
 Test suite
 ----------
