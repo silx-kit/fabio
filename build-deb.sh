@@ -192,12 +192,12 @@ build_deb_7_minus () {
 	if [ $use_python3 = 1 ]
 	then
 	  echo Using Python 2+3
-	  PATH=$CCPATH  python3 setup.py --command-packages=stdeb.command sdist_dsc --with-python2=True --with-python3=True --no-python3-scripts=True build --no-cython bdist_deb
+	  python3 setup.py --command-packages=stdeb.command sdist_dsc --with-python2=True --with-python3=True --no-python3-scripts=True build --no-cython bdist_deb
 	  rc=$?
 	else
 	  echo Using Python 2
 	  # bdist_deb feed /usr/bin using setup.py entry-points
-	  PATH=$CCPATH python setup.py --command-packages=stdeb.command build --no-cython bdist_deb
+	  python setup.py --command-packages=stdeb.command build --no-cython bdist_deb
 	  rc=$?
 	fi
 	
