@@ -1,6 +1,19 @@
 Changelog
 =========
 
+FabIO-0.5.0 (08/2017):
+......................
+
+- All source files are now under MIT license (re-implement PCK/packbits in Cython)
+- Context manager for fabio.open + automatic closing of file.
+- Iterator over all frames in a file.
+- Debian packaging for debian 8 and 9.
+- Use (patched-) ordered dictionaries for storing headers.
+- Many clean up and bug-fixes
+- New formats: mpa, jpeg and jpeg2000
+- Provide "convert" and "viewer" scripts in the fabio-bin debian package.
+
+
 FabIO-0.4.0 (07/2016):
 ......................
 
