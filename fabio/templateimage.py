@@ -75,12 +75,12 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "27/07/2017"
+__date__ = "22/08/2017"
 
 import logging
 logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage
+from .fabioimage import FabioImage, OrderedDict
 
 
 class TemplateImage(FabioImage):
