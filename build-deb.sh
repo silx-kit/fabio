@@ -186,7 +186,7 @@ build_deb_7_minus () {
 	cp -f dist/${tarname} ${build_directory}
 	cd ${build_directory}
 	tar -xzf ${tarname}
-	cd ${project}-${STRICT_VERSION}
+	cd ${project}-${strictversion}
 	
 	if [ $use_python3 = 1 ]
 	then
@@ -201,9 +201,9 @@ build_deb_7_minus () {
 	fi
 	
 	# move packages to dist directory
-	rm -rf ../../../${DIST_DIRECTORY}
-	mkdir -p ../../../${DIST_DIRECTORY}
-	mv -f deb_dist/*.deb ../../../${DIST_DIRECTORY}
+	rm -rf ../../../${dist_directory}
+	mkdir -p ../../../${dist_directory}
+	mv -f deb_dist/*.deb ../../../${dist_directory}
 	
 	# back to the root
 	cd ../../..
