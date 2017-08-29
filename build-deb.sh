@@ -63,6 +63,7 @@ optional arguments:
 "
 
 install=0
+use_python3=0 #used only for stdeb
 
 while :
 do
