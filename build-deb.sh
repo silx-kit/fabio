@@ -32,7 +32,7 @@ source_project=python-fabio
 version=$(python -c"import version; print(version.version)")
 strictversion=$(python -c"import version; print(version.strictversion)")
 debianversion=$(python -c"import version; print(version.debianversion)")
-tarname=${project}_${debianversion}.orig.tar.gz
+
 deb_name=$(echo "$source_project" | tr '[:upper:]' '[:lower:]')
 
 # target system
@@ -102,7 +102,7 @@ clean_up()
 
 build_deb_8_plus () {
 	echo "Build for debian 8 or newer using actual packaging" 
-
+	tarname=${project}_${debianversion}.orig.tar.gz
 	clean_up
 	python setup.py debian_src
 	cp -f dist/${tarname} ${build_directory}
@@ -180,7 +180,7 @@ build_deb_8_plus () {
 
 build_deb_7_minus () {
 	echo "Build for debian 7 or older using stdeb"
-
+	tarname=${project}-${strictversion}.tar.gz
 	clean_up
 	
 	python setup.py sdist
