@@ -35,15 +35,16 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "31/07/2017"
+__date__ = "07/09/2017"
 __status__ = "stable"
 
 import os
 import sys
 import glob
-import shutil
 import platform
 import logging
+import contextlib
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("fabio.setup")
@@ -460,41 +461,6 @@ class BuildExt(build_ext):
         build_ext.build_extensions(self)
 
 
-################################################################################
-# Debian source tree
-################################################################################
-def download_images():
-    """
-    Download all test images and
-    """
-    root_dir = os.path.dirname(os.path.abspath(__file__))
-    test_dir = os.path.join(root_dir, PROJECT, "test")
-    sys.path.insert(0, test_dir)
-    from utilstest import UtilsTest
-    image_home = os.path.join(root_dir, "testimages")
-    testimages = os.path.join(root_dir, "all_testimages.json")
-    UtilsTest.image_home = image_home
-    UtilsTest.testimages = testimages
-    if os.path.exists(testimages):
-        import json
-        with open(testimages) as f:
-            all_files = set(json.load(f))
-    else:
-        raise(RuntimeError("Please run 'python setup.py build test' to download all images"))
-    for afile in all_files.copy():
-        if afile.endswith(".bz2"):
-            all_files.add(afile[:-4] + ".gz")
-            all_files.add(afile[:-4])
-        elif afile.endswith(".gz"):
-            all_files.add(afile[:-3] + ".bz2")
-            all_files.add(afile[:-3])
-        else:
-            all_files.add(afile + ".gz")
-            all_files.add(afile + ".bz2")
-    UtilsTest.download_images(all_files)
-    return list(all_files)
-
-
 class sdist_debian(sdist):
     """
     Tailor made sdist for debian
@@ -556,18 +522,58 @@ class TestData(Command):
         pass
 
     def run(self):
-        datafiles = download_images()
-        dist = "dist"
-        arch = os.path.join(dist, PROJECT + "-testimages.tar.gz")
-        print("Building testdata tarball in %s" % arch)
-        if not os.path.isdir(dist):
-            os.mkdir(dist)
-        if os.path.exists(arch):
-            os.unlink(arch)
-        import tarfile
-        with tarfile.open(name=arch, mode='w:gz') as tarball:
-            for afile in datafiles:
-                tarball.add(os.path.join("testimages", afile), afile)
+        with self.buildEnvironment():
+            datafiles = self.download_images()
+            dist = "dist"
+            arch = os.path.join(dist, PROJECT + "-testimages.tar.gz")
+            print("Building testdata tarball in %s" % arch)
+            if not os.path.isdir(dist):
+                os.mkdir(dist)
+            if os.path.exists(arch):
+                os.unlink(arch)
+            import tarfile
+            with tarfile.open(name=arch, mode='w:gz') as tarball:
+                for afile in datafiles:
+                    tarball.add(os.path.join("testimages", afile), afile)
+
+    @contextlib.contextmanager
+    def buildEnvironment(self):
+        """
+        Patch the actual Python environement to use the build environment.
+        """
+        build = self.get_finalized_command('build')
+        sys.path.insert(0, os.path.abspath(build.build_lib))
+        yield
+        sys.path.pop(0)
+
+    def download_images(self):
+        """
+        Download all test images and
+        """
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+        from fabio.test.utilstest import UtilsTest
+        image_home = os.path.join(root_dir, "testimages")
+        testimages = os.path.join(root_dir, "all_testimages.json")
+        UtilsTest.image_home = image_home
+        UtilsTest.testimages = testimages
+        if os.path.exists(testimages):
+            import json
+            with open(testimages) as f:
+                all_files = set(json.load(f))
+        else:
+            raise(RuntimeError("Please run 'python setup.py build test' to download all images"))
+        for afile in all_files.copy():
+            if afile.endswith(".bz2"):
+                all_files.add(afile[:-4] + ".gz")
+                all_files.add(afile[:-4])
+            elif afile.endswith(".gz"):
+                all_files.add(afile[:-3] + ".bz2")
+                all_files.add(afile[:-3])
+            else:
+                all_files.add(afile + ".gz")
+                all_files.add(afile + ".bz2")
+        UtilsTest.download_images(all_files)
+        return list(all_files)
 
 
 class PyTest(Command):
