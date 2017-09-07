@@ -30,7 +30,7 @@
 Portable diffraction images viewer/converter
 
 * Written in Python, it combines the functionalities of the I/O library fabIO
-  with a user friendly Qt4 GUI.
+  with a user friendly Qt GUI.
 * Image converter is also a light viewer based on the visualization tool
   provided by the module matplotlib.
 """
