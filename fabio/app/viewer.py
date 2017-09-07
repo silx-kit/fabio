@@ -112,6 +112,10 @@ class AppForm(qt.QMainWindow):
     def open_data_series(self, series=None):
         if not series:
             series = qt.QFileDialog.getOpenFileNames(self, 'Select and open series of files')
+            if isinstance(series, tuple):
+                # PyQt5 compatibility
+                series = series[0]
+
         series = [str(f) for f in list(series)]
         total = len(series)
         if len(series) != 0:
@@ -189,6 +193,10 @@ class AppForm(qt.QMainWindow):
 
     def open_h5_data_series(self):  # TODO batch mode compatibility
         fname = qt.QFileDialog.getOpenFileName(self, 'Select and open series of files')
+        if isinstance(fname, tuple):
+            # PyQt5 compatibility
+            fname = fname[0]
+
         fname = str(fname)
         self.h5_loaded = True
         if self.filecheckBox.checkState():
@@ -240,6 +248,7 @@ class AppForm(qt.QMainWindow):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save active image as",
                                                     qt.QDir.currentPath(),
                                                     filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
+
         if self.data.any():
             if str(info[0]) != '' and str(info[0]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -253,6 +262,7 @@ class AppForm(qt.QMainWindow):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as multiple files",
                                                     qt.QDir.currentPath(),
                                                     filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
+
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -266,6 +276,7 @@ class AppForm(qt.QMainWindow):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as single high density file",
                                                     qt.QDir.currentPath(),
                                                     filter=self.tr("HDF5 archive (*.h5)"))
+
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -632,6 +643,10 @@ class AppForm(qt.QMainWindow):
 
     def mask(self):
         fname = qt.QFileDialog.getOpenFileName(self, 'Select and import a boolean mask from binary data block file')
+        if isinstance(fname, tuple):
+            # PyQt5 compatibility
+            fname = fname[0]
+
         fname = str(fname)
         if fname:
             dial = BinDialog(self)
@@ -725,6 +740,7 @@ class AppForm(qt.QMainWindow):
         thick, start_angle, step_angle = dial.exec_()
         if thick is not None:
             info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save downsampled data series as multiple files", qt.QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
+
             if self.data_series or self.sequential_file_list:
                 if str(info[0]) != '' and str(info[1]) != '':
                     format_ = self.extract_format_from_string(str(info[1]))
