@@ -34,7 +34,8 @@ Portable diffraction images viewer/converter
 * Image converter is also a light viewer based on the visualization tool
   provided by the module matplotlib.
 """
-from __future__ import with_statement, print_function
+from __future__ import absolute_import, with_statement, print_function
+
 __version__ = "1.0"
 __author__ = u"Gaël Goret, Jérôme Kieffer"
 __copyright__ = "2015 ESRF"
@@ -45,15 +46,13 @@ import os
 import time
 
 from . import qt
+from .matplotlib import FigureCanvasQTAgg
+from .matplotlib import NavigationToolbar2QT
+from matplotlib.figure import Figure
 
 import numpy
 numpy.seterr(divide='ignore')
 
-import matplotlib
-matplotlib.use("QT4Agg")
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
 import fabio
 
 from fabio.nexus import Nexus
@@ -996,7 +995,7 @@ class AppForm(qt.QMainWindow):
         self.dpi = 100
         # self.fig = Figure((100, 100), dpi=self.dpi)
         self.fig = Figure(dpi=self.dpi)
-        self.canvas = FigureCanvas(self.fig)
+        self.canvas = FigureCanvasQTAgg(self.fig)
         self.canvas.setParent(tab1)
 
         # Since we have only one plot, we can use add_axes
@@ -1010,7 +1009,7 @@ class AppForm(qt.QMainWindow):
         self.canvas.mpl_connect('motion_notify_event', self.on_pick)
 
         # Create the navigation toolbar, tied to the canvas
-        self.mpl_toolbar = NavigationToolbar(self.canvas, tab1, coordinates=False)
+        self.mpl_toolbar = NavigationToolbar2QT(self.canvas, tab1, coordinates=False)
 
         # Other GUI controls
         selector_label = qt.QLabel('Active Image:')
