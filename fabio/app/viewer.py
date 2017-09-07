@@ -102,6 +102,27 @@ class AppForm(qt.QMainWindow):
         res = " \n".join(['%s: %s' % (k, d[k]) for k in keys]) + " \n"
         return res
 
+    def _open(self, filename):
+        """Returns a fabio image if the file can be loaded, else display a
+        dialog to help decoding the file. Else return None."""
+        try:
+            img = fabio.open(filename)
+        except Exception as _:
+            qt.QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\nSwitch to manual procedure.')
+            dial = BinDialog(self)
+            dim1, dim2, offset, bytecode, endian = dial.exec_()
+            if dim1 is not None and dim2 is not None:
+                if endian == 'Short':
+                    endian = '<'
+                else:
+                    endian = '>'
+                img = fabio.binaryimage.binaryimage()
+                img.read(filename, dim1, dim2, offset, bytecode, endian)
+                img.header = {'Info': 'No header information available in binary data blocks'}
+            else:
+                return
+        return img
+
     def open_data_series(self, series=None):
         if not series:
             series = qt.QFileDialog.getOpenFileNames(self, 'Select and open series of files')
@@ -139,22 +160,9 @@ class AppForm(qt.QMainWindow):
                         self.statusBar().showMessage('Opening file %s, please wait ...' % fname)
                         self.log.appendPlainText('Opening file %s' % fname)
                         qt.QCoreApplication.processEvents()
-                        try:
-                            img = fabio.open(fname)
-                        except:
-                            qt.QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or perhaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                            dial = BinDialog(self)
-                            dim1, dim2, offset, bytecode, endian = dial.exec_()
-                            if dim1 is not None and dim2 is not None:
-                                if endian == 'Short':
-                                    endian = '<'
-                                else:
-                                    endian = '>'
-                                img = fabio.binaryimage.binaryimage()
-                                img.read(fname, dim1, dim2, offset, bytecode, endian)
-                                img.header = {'Info': 'No header information available in binary data blocks'}
-                            else:
-                                continue
+                        img = self._open(fname)
+                        if img is None:
+                            continue
                         if img.nframes > 1:
                             for img_idx in range(img.nframes):
                                 frame = img.getframe(img_idx)
@@ -293,22 +301,9 @@ class AppForm(qt.QMainWindow):
             if self.sequential_file_mode:
                 total = len(self.sequential_file_list)
                 tmpfname = self.sequential_file_dict[self.sequential_file_list[0]]
-                try:
-                    img = fabio.open(tmpfname)
-                except:
-                    qt.QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or perhaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                    dial = BinDialog(self)
-                    dim1, dim2, offset, bytecode, endian = dial.exec_()
-                    if dim1 is not None and dim2 is not None:
-                        if endian == 'Short':
-                            endian = '<'
-                        else:
-                            endian = '>'
-                        img = fabio.binaryimage.binaryimage()
-                        img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
-                        img.header = {'Info': 'No header information available in binary data blocks'}
-                    else:
-                        return
+                img = self._open(tmpfname)
+                if img is None:
+                    return
                 data = img.data
             else:
                 total = len(self.data_series)
@@ -324,19 +319,9 @@ class AppForm(qt.QMainWindow):
             if self.sequential_file_mode:
                 for iid, imgkey in enumerate(self.sequential_file_list):
                     tmpfname = self.sequential_file_dict[imgkey]
-                    try:
-                        img = fabio.open(tmpfname)
-                    except:
-                        if dim1 is not None and dim2 is not None:
-                            if endian == 'Short':
-                                endian = '<'
-                            else:
-                                endian = '>'
-                            img = fabio.binaryimage.binaryimage()
-                            img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
-                            img.header = {'Info': 'No header information available in binary data blocks'}
-                        else:
-                            continue
+                    img = self._open(tmpfname)
+                    if img is None:
+                        continue
                     self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
                     self.log.appendPlainText('Converting and saving file %s. saving file number %d' % (tmpfname, iid))
                     qt.QCoreApplication.processEvents()
@@ -403,22 +388,9 @@ class AppForm(qt.QMainWindow):
             ii = 0
             for imgkey in self.sequential_file_list:
                 tmpfname = self.sequential_file_dict[imgkey]
-                try:
-                    img = fabio.open(tmpfname)
-                except:
-                    qt.QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                    dial = BinDialog(self)
-                    dim1, dim2, offset, bytecode, endian = dial.exec_()
-                    if dim1 is not None and dim2 is not None:
-                        if endian == 'Short':
-                            endian = '<'
-                        else:
-                            endian = '>'
-                        img = fabio.binaryimage.binaryimage()
-                        img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
-                        img.header = {'Info': 'No header information available in binary data blocks'}
-                    else:
-                        continue
+                img = self._open(tmpfname)
+                if img is None:
+                    continue
                 self.progressBar.setValue((float(ii + 1) / (total)) * 100.)
                 self.log.appendPlainText('Converting file %s' % tmpfname)
                 qt.QCoreApplication.processEvents()
@@ -747,22 +719,9 @@ class AppForm(qt.QMainWindow):
                             k = i // thick
                             imgkey = self.sequential_file_list[i]
                             tmpfname = self.sequential_file_dict[imgkey]
-                            try:
-                                img = fabio.open(tmpfname)
-                            except:
-                                qt.QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                                dial = BinDialog(self)
-                                dim1, dim2, offset, bytecode, endian = dial.exec_()
-                                if dim1 is not None and dim2 is not None:
-                                    if endian == 'Short':
-                                        endian = '<'
-                                    else:
-                                        endian = '>'
-                                        img = fabio.binaryimage.binaryimage()
-                                        img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
-                                        img.header = {'Info': 'No header information available in binary data blocks'}
-                                else:
-                                    continue
+                            img = self._open(tmpfname)
+                            if img is None:
+                                continue
                             if img.data.shape != stack.shape:
                                 self.log.appendPlainText("Error image shape: %s summed data shape: %s" % (img.data.shape, stack.shape))
                                 continue
@@ -872,22 +831,10 @@ class AppForm(qt.QMainWindow):
             qt.QCoreApplication.processEvents()
             fname = self.sequential_file_dict[item]
             extract_fname = os.path.splitext(os.path.basename(fname))[0]
-            try:
-                img = fabio.open(fname)
-            except:
-                qt.QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\n     ...Switch to manual procedure ')
-                dial = BinDialog(self)
-                dim1, dim2, offset, bytecode, endian = dial.exec_()
-                if dim1 is not None and dim2 is not None:
-                    if endian == 'Short':
-                        endian = '<'
-                    else:
-                        endian = '>'
-                    img = fabio.binaryimage.binaryimage()
-                    img.read(fname, dim1, dim2, offset, bytecode, endian)
-                    img.header = {'Info': 'No header information available in binary data blocks'}
-                else:
-                    return
+            img = self._open(fname)
+            if img is None:
+                return
+
             if img.nframes > 1:
                 for img_idx in range(img.nframes):
                     frame = img.getframe(img_idx)
