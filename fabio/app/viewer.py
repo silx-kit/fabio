@@ -58,7 +58,8 @@ import fabio
 from fabio.nexus import Nexus
 from fabio.third_party.argparse import ArgumentParser
 
-output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img', '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]
+output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img',
+                 '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]
 
 
 class AppForm(qt.QMainWindow):
@@ -108,7 +109,10 @@ class AppForm(qt.QMainWindow):
         try:
             img = fabio.open(filename)
         except Exception as _:
-            qt.QMessageBox.warning(self, 'Message', 'Automatic format recognition procedure failed or pehaps you are trying to open a binary data block...\n\nSwitch to manual procedure.')
+            message = 'Automatic format recognition procedure failed or '\
+                'pehaps you are trying to open a binary data block...\n\n'\
+                'Switch to manual procedure.'
+            qt.QMessageBox.warning(self, 'Message', message)
             dial = BinDialog(self)
             dim1, dim2, offset, bytecode, endian = dial.exec_()
             if dim1 is not None and dim2 is not None:
@@ -149,7 +153,7 @@ class AppForm(qt.QMainWindow):
                 if fname:
                     extract_fname = self.extract_fname_from_path(fname)
                     if self.sequential_file_mode:
-                        self.statusBar().showMessage('Adding path %s to batch image list, please wait ...' % fname)
+                        self.statusBar().showMessage('Adding path %s to batch image list, please wait...' % fname)
                         self.log.appendPlainText('Adding path %s to batch image list' % fname)
                         qt.QCoreApplication.processEvents()
                         self.imagelistWidget.addItem(extract_fname)
@@ -157,7 +161,7 @@ class AppForm(qt.QMainWindow):
                         self.sequential_file_dict[extract_fname] = fname
                         iid += 1
                     else:
-                        self.statusBar().showMessage('Opening file %s, please wait ...' % fname)
+                        self.statusBar().showMessage('Opening file %s, please wait...' % fname)
                         self.log.appendPlainText('Opening file %s' % fname)
                         qt.QCoreApplication.processEvents()
                         img = self._open(fname)
@@ -205,7 +209,8 @@ class AppForm(qt.QMainWindow):
             self.filecheckBox.setCheckState(False)
             self.sequential_file_mode = False
             self.filecheckBox.stateChanged.connect(self.sequential_option)
-            qt.QMessageBox.warning(self, 'Message', 'Sequential file mode is not compatible with hdf5 input file: option removed')
+            message = 'Sequential file mode is not compatible with hdf5 input file: option removed'
+            qt.QMessageBox.warning(self, 'Message', message)
         if fname:
             self.data_series = []
             self.header_series = []
@@ -245,7 +250,16 @@ class AppForm(qt.QMainWindow):
         else:
             return name
 
-    defaultSaveFilter = "binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"
+    defaultSaveFilter = ""\
+        "binary data block (*.bin);;"\
+        "cbf image (*.cbf);;"\
+        "edf image (*.edf);;"\
+        "oxford diffraction image (*.img);;"\
+        "mar2300 image(*.mar2300);;"\
+        "mar3450 image (*.mar3450);;"\
+        "marccd image (*.marccd));;"\
+        "tiff image (*.tiff);;"\
+        "bruker image (*.sfrm)"
 
     def save_as(self):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save active image as",
@@ -258,7 +272,8 @@ class AppForm(qt.QMainWindow):
                 self.convert_and_write(fname, format_, self.data, self.header)
         else:
             if str(info[0]) != '' and str(info[1]) != '':
-                qt.QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
+                message = "Could not save image as file if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
 
     def save_data_series_as_multiple_file(self):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as multiple files",
@@ -271,7 +286,8 @@ class AppForm(qt.QMainWindow):
                 self.convert_and_write_multiple_files(fname, format_)
         else:
             if str(info[0]) != '' and str(info[1]) != '':
-                qt.QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
+                message = "Could not save image as file if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
 
     def save_data_series_as_singlehdf(self):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as single high density file",
@@ -288,7 +304,8 @@ class AppForm(qt.QMainWindow):
                     return
         else:
             if str(info[0]) != '' and str(info[1]) != '':
-                qt.QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
+                message = "Could not save image as file if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
 
     def convert_and_save_to_h5(self, fname):
         """
@@ -313,7 +330,11 @@ class AppForm(qt.QMainWindow):
             else:
                 tmpdata = data
             shape = tmpdata.shape
-            dataset = nxdata.create_dataset("data", shape=(total,) + shape, dtype=numpy.float32, chunks=(1,) + shape, compression="gzip")
+            dataset = nxdata.create_dataset("data",
+                                            shape=(total,) + shape,
+                                            dtype=numpy.float32,
+                                            chunks=(1,) + shape,
+                                            compression="gzip")
             dataset.attrs["interpretation"] = "image"
             dataset.attrs["signal"] = "1"
             if self.sequential_file_mode:
@@ -323,7 +344,8 @@ class AppForm(qt.QMainWindow):
                     if img is None:
                         continue
                     self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
-                    self.log.appendPlainText('Converting and saving file %s. saving file number %d' % (tmpfname, iid))
+                    template = 'Converting and saving file %s. saving file number %d'
+                    self.log.appendPlainText(template % (tmpfname, iid))
                     qt.QCoreApplication.processEvents()
                     if self.transform_data_series:
                         tmpdata = self.apply_queued_transformations(img.data)
@@ -375,7 +397,8 @@ class AppForm(qt.QMainWindow):
             out = fabio.brukerimage.brukerimage(data=data, header=header)
         else:
             raise Warning("Unknown format: %s" % format_)
-        self.statusBar().showMessage('Writing file %s to %s format, please wait ...' % (fname, format_[2:]))
+        template = 'Writing file %s to %s format, please wait...'
+        self.statusBar().showMessage(template % (fname, format_[2:]))
         self.log.appendPlainText('Writing file %s to %s format' % (fname, format_[2:]))
         qt.QCoreApplication.processEvents()
         out.write(fname)
@@ -398,7 +421,8 @@ class AppForm(qt.QMainWindow):
                     tmpdata = self.apply_queued_transformations(img.data)
                 else:
                     tmpdata = img.data
-                self.convert_and_write(('%s_%s%s' % (fname, self.counter_format, format_[1:])) % ii, format_, tmpdata, img.header)
+                filename = ('%s_%s%s' % (fname, self.counter_format, format_[1:])) % ii
+                self.convert_and_write(filename, format_, tmpdata, img.header)
                 ii += 1
         else:
             total = len(self.data_series)
@@ -431,7 +455,8 @@ class AppForm(qt.QMainWindow):
             else:
                 total = len(self.data_series)
                 if not total:
-                    qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                    message = "Could not transform image if no data have been loaded"
+                    qt.QMessageBox.warning(self, 'Warning', message)
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.flipud(self.data_series[i])[:]
@@ -449,7 +474,8 @@ class AppForm(qt.QMainWindow):
                 self.log.appendPlainText('Applying horizontal mirror to current data')
                 self.on_draw()
             else:
-                qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                message = "Could not transform image if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
         self.progressBar.setValue(0)
 
     def vertical_mirror(self):
@@ -462,7 +488,8 @@ class AppForm(qt.QMainWindow):
             else:
                 total = len(self.data_series)
                 if not total:
-                    qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                    message = "Could not transform image if no data have been loaded"
+                    qt.QMessageBox.warning(self, 'Warning', message)
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.fliplr(self.data_series[i])[:]
@@ -479,7 +506,8 @@ class AppForm(qt.QMainWindow):
                 self.log.appendPlainText('Applying vertical mirror to current data')
                 self.on_draw()
             else:
-                qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                message = "Could not transform image if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
         self.progressBar.setValue(0)
 
     def transposition(self):
@@ -492,7 +520,8 @@ class AppForm(qt.QMainWindow):
             else:
                 total = len(self.data_series)
                 if not total:
-                    qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                    message = "Could not transform image if no data have been loaded"
+                    qt.QMessageBox.warning(self, 'Warning', message)
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = self.data_series[i].transpose()[:]
@@ -509,7 +538,8 @@ class AppForm(qt.QMainWindow):
                 self.log.appendPlainText('Applying transposition to current data')
                 self.on_draw()
             else:
-                qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                message = "Could not transform image if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
         self.progressBar.setValue(0)
 
     def rotation_90(self):
@@ -522,7 +552,8 @@ class AppForm(qt.QMainWindow):
             else:
                 total = len(self.data_series)
                 if not total:
-                    qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                    message = "Could not transform image if no data have been loaded"
+                    qt.QMessageBox.warning(self, 'Warning', message)
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i])[:]
@@ -539,7 +570,8 @@ class AppForm(qt.QMainWindow):
                 self.log.appendPlainText('Applying + 90 rotation to current data')
                 self.on_draw()
             else:
-                qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                message = "Could not transform image if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
         self.progressBar.setValue(0)
 
     def rotation_180(self):
@@ -552,7 +584,8 @@ class AppForm(qt.QMainWindow):
             else:
                 total = len(self.data_series)
                 if not total:
-                    qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                    message = "Could not transform image if no data have been loaded"
+                    qt.QMessageBox.warning(self, 'Warning', message)
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i], 2)[:]
@@ -569,7 +602,8 @@ class AppForm(qt.QMainWindow):
                 self.log.appendPlainText('Applying + 180 rotation to current data')
                 self.on_draw()
             else:
-                qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                message = "Could not transform image if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
         self.progressBar.setValue(0)
 
     def rotation_270(self):
@@ -582,7 +616,8 @@ class AppForm(qt.QMainWindow):
             else:
                 total = len(self.data_series)
                 if not total:
-                    qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                    message = "Could not transform image if no data have been loaded"
+                    qt.QMessageBox.warning(self, 'Warning', message)
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i], 3)[:]
@@ -599,11 +634,13 @@ class AppForm(qt.QMainWindow):
                 self.log.appendPlainText('Applying - 90 rotation to current data')
                 self.on_draw()
             else:
-                qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                message = "Could not transform image if no data have been loaded"
+                qt.QMessageBox.warning(self, 'Warning', message)
         self.progressBar.setValue(0)
 
     def mask(self):
-        fname = qt.QFileDialog.getOpenFileName(self, 'Select and import a boolean mask from binary data block file')
+        message = 'Select and import a boolean mask from binary data block file'
+        fname = qt.QFileDialog.getOpenFileName(self, message)
         if isinstance(fname, tuple):
             # PyQt5 compatibility
             fname = fname[0]
@@ -629,12 +666,14 @@ class AppForm(qt.QMainWindow):
                     else:
                         total = len(self.data_series)
                         if not total:
-                            qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                            message = "Could not transform image if no data have been loaded"
+                            qt.QMessageBox.warning(self, 'Warning', message)
                             return
                         for i in range(len(self.data_series)):
                             if self.data_series[i].shape != self.mask.shape:
-                                qt.QMessageBox.warning(self, 'Warning', "Mask and image have different shapes, skipping image %d" % i)
-                                self.log.appendPlainText('Mask and image have different shapes, skipping image %d' % i)
+                                message = "Mask and image have different shapes, skipping image %d" % i
+                                qt.QMessageBox.warning(self, 'Warning', message)
+                                self.log.appendPlainText(message)
                             else:
                                 self.data_series[i] = self.mask * self.data_series[i]
                                 self.progressBar.setValue((float(i + 1) / (total)) * 100.)
@@ -648,17 +687,21 @@ class AppForm(qt.QMainWindow):
                         iid = self.imgDict[str(self.images_list.currentText())]
                         self.data_series[iid] = self.data[:]
                         self.on_draw()
-                        self.statusBar().showMessage('Binary boolean mask loaded and applied', 2000)
-                        self.log.appendPlainText('Binary boolean mask loaded and applied')
+                        message = 'Binary boolean mask loaded and applied'
+                        self.statusBar().showMessage(message, 2000)
+                        self.log.appendPlainText(message)
                         qt.QCoreApplication.processEvents()
                     else:
-                        qt.QMessageBox.warning(self, 'Warning', "Could not transform image if no data have been loaded")
+                        message = "Could not transform image if no data have been loaded"
+                        qt.QMessageBox.warning(self, 'Warning', message)
             else:
                 return
         self.progressBar.setValue(0)
 
     def apply_queued_transformations(self, data):
-        transformations = ['horizontal_mirror', 'vertical_mirror', 'transposition', 'rotation(+90)', 'rotation(+180)', 'rotation(-90)', 'masking', 'downsampling']
+        transformations = ['horizontal_mirror', 'vertical_mirror', 'transposition',
+                           'rotation(+90)', 'rotation(+180)', 'rotation(-90)',
+                           'masking', 'downsampling']
         for t in self.transform_list:
                 if t in transformations:
                     if t == 'horizontal_mirror':
@@ -723,7 +766,8 @@ class AppForm(qt.QMainWindow):
                             if img is None:
                                 continue
                             if img.data.shape != stack.shape:
-                                self.log.appendPlainText("Error image shape: %s summed data shape: %s" % (img.data.shape, stack.shape))
+                                message = "Error image shape: %s summed data shape: %s" % (img.data.shape, stack.shape)
+                                self.log.appendPlainText(message)
                                 continue
                             numpy.add(stack, img.data, stack)
                             self.progressBar.setValue((float(i + 1) / (subtotal)) * 100.)
@@ -735,7 +779,8 @@ class AppForm(qt.QMainWindow):
                                 if format_ in ['*.mar3450', '*.mar2300']:
                                     img.header["PHI_START"] = '%.3f' % (start_angle + step_angle * (i - thick + 1))
                                     img.header["PHI_END"] = '%.3f' % (start_angle + step_angle * (i))
-                                self.convert_and_write(('%s_%s%s' % (fname, self.counter_format, format_[1:])) % k, format_, stack, img.header)
+                                filename = ('%s_%s%s' % (fname, self.counter_format, format_[1:])) % k
+                                self.convert_and_write(filename, format_, stack, img.header)
                                 t1 = time.time()
                                 print('time: %s' % (t1 - t0))
                                 stack = numpy.zeros_like(img.data)
@@ -749,7 +794,8 @@ class AppForm(qt.QMainWindow):
                             k = i // thick
                             data = self.data_series[i]
                             if data.shape != stack.shape:
-                                self.log.appendPlainText("Error image shape: %s summed data shape: %s" % (img.data.shape, stack.shape))
+                                message = "Error image shape: %s summed data shape: %s" % (img.data.shape, stack.shape)
+                                self.log.appendPlainText(message)
                                 continue
                             numpy.add(stack, data, stack)
                             self.progressBar.setValue((float(i + 1) / (subtotal)) * 100.)
@@ -761,14 +807,16 @@ class AppForm(qt.QMainWindow):
                                 if format_ in ['*.mar3450', '*.mar2300']:
                                     self.header_series[i]["PHI_START"] = '%.3f' % (start_angle + step_angle * (i - thick + 1))
                                     self.header_series[i]["PHI_END"] = '%.3f' % (start_angle + step_angle * (i))
-                                self.convert_and_write(('%s_%s%s' % (fname, self.counter_format, format_[1:])) % k, format_, stack, self.header_series[i])
+                                filename = ('%s_%s%s' % (fname, self.counter_format, format_[1:])) % k
+                                self.convert_and_write(filename, format_, stack, self.header_series[i])
                                 stack = numpy.zeros_like(data)
                     self.progressBar.setValue(0)
                     self.log.appendPlainText('Downsampling: Complete')
                     qt.QCoreApplication.processEvents()
             else:
                 if str(info[0]) != '' and str(info[1]) != '':
-                    qt.QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
+                    message = "Could not save image as file if no data have been loaded"
+                    qt.QMessageBox.warning(self, 'Warning', message)
 
     def select_new_image(self, name, imgID=None):
         if imgID is not None:
@@ -795,7 +843,7 @@ class AppForm(qt.QMainWindow):
 
     def on_draw(self):
         """ Redraws the figure"""
-        self.statusBar().showMessage('Loading display ...')
+        self.statusBar().showMessage('Loading display...')
         qt.QCoreApplication.processEvents()
         # clear the axes and redraw a new plot
         self.axes.clear()
@@ -826,7 +874,7 @@ class AppForm(qt.QMainWindow):
             self.headerTextEdit.clear()
             self.axes.clear()
             self.canvas.draw()
-            self.statusBar().showMessage('Import image %s in the View Mode tab, please wait ...' % item)
+            self.statusBar().showMessage('Import image %s in the View Mode tab, please wait...' % item)
             self.log.appendPlainText('Import image %s in the View Mode tab' % item)
             qt.QCoreApplication.processEvents()
             fname = self.sequential_file_dict[item]
@@ -921,7 +969,8 @@ class AppForm(qt.QMainWindow):
             self.filecheckBox.setCheckState(False)
             self.sequential_file_mode = False
             self.filecheckBox.stateChanged.connect(self.sequential_option)
-            qt.QMessageBox.warning(self, 'Message', 'Sequential file mode is not compatible with hdf5 input file: option removed')
+            message = 'Sequential file mode is not compatible with hdf5 input file: option removed'
+            qt.QMessageBox.warning(self, 'Message', message)
 
     def create_main_frame(self):
 
@@ -1199,10 +1248,12 @@ class AppForm(qt.QMainWindow):
                                     tip="Summation over groups of images")
         self.add_actions(self.transform_menu, (action,))
 
+        tip = "Define if transformations are applied to the whole data series (checked)"\
+            " or only to the active image (unchecked) "
         action = self.create_action("&Apply transform to the whole data series",
                                     shortcut='',
                                     slot=self.transformation_options,
-                                    tip="Define if transformations are Applied to the whole data series (checked) or only to the active image (unchecked) ")
+                                    tip=tip)
         action.setCheckable(True)
         self.add_actions(self.transform_menu, (action,))
         self.transform_option_action = action
@@ -1275,7 +1326,8 @@ class CounterFormatOptionDialog(qt.QDialog):  # option doivent refleter l etat d
             if str(self.lineEdit.text()) != '':
                 return str(self.lineEdit.text())
             else:
-                qt.QMessageBox.warning(self, 'Warning', "All informations are mandatory, please fill the blanks")
+                message = "All informations are mandatory, please fill the blanks"
+                qt.QMessageBox.warning(self, 'Warning', message)
         else:
             return self.counter_format
 
@@ -1320,7 +1372,8 @@ class DownSamplingDialog(qt.QDialog):
             if str(self.lineEdit.text()) != '' and str(self.lineEdit2.text()) != '' and str(self.lineEdit3.text()) != '':
                 return int(str(self.lineEdit.text())), float(str(self.lineEdit2.text())), float(str(self.lineEdit3.text()))
             else:
-                qt.QMessageBox.warning(self, 'Warning', "All informations are mandatory, please fill the blanks")
+                message = "All informations are mandatory, please fill the blanks"
+                qt.QMessageBox.warning(self, 'Warning', message)
         else:
             return None, None, None
 
@@ -1367,7 +1420,9 @@ class BinDialog(qt.QDialog):
         label_3.setText("ByteCode:")
         self.comboBox = qt.QComboBox(groupBox)
         self.comboBox.setGeometry(qt.QRect(173, 123, 91, 25))
-        bytecodes = ["int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64", "float32", "float64"]
+        bytecodes = ["int8", "int16", "int32", "int64",
+                     "uint8", "uint16", "uint32", "uint64",
+                     "float32", "float64"]
         for bytecode in bytecodes:
             self.comboBox.addItem(bytecode)
         self.comboBox.setCurrentIndex(2)
@@ -1388,7 +1443,8 @@ class BinDialog(qt.QDialog):
             self.dim2 = int(str(self.lineEdit_2.text()))
             self.offset = int(str(self.lineEdit_3.text()))
         else:
-            qt.QMessageBox.warning(self, 'Warning', "All informations are mandatory, please fill the blanks")
+            message = "All informations are mandatory, please fill the blanks"
+            qt.QMessageBox.warning(self, 'Warning', message)
             return
         self.bytecode = str(self.comboBox.currentText())
         self.endian = str(self.comboBox_2.currentText())
@@ -1405,7 +1461,7 @@ class BinDialog(qt.QDialog):
 
 
 def main():
-    parser = ArgumentParser(prog="fabio_viewer", usage="fabio_viewer img1 img2 ... imgn",
+    parser = ArgumentParser(prog="fabio_viewer", usage="fabio_viewer img1 img2... imgn",
                             description=__doc__,
                             epilog="Based on FabIO version %s" % fabio.version)
     parser.add_argument("images", nargs="*")
