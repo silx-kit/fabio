@@ -60,10 +60,6 @@ from fabio.third_party.argparse import ArgumentParser
 
 output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img', '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]
 
-#--------------------------------------------------------------------------------------------------------
-# Application Form
-#--------------------------------------------------------------------------------------------------------
-
 
 class AppForm(qt.QMainWindow):
     def __init__(self, parent=None):
@@ -95,9 +91,6 @@ class AppForm(qt.QMainWindow):
         self.sequential_file_mode = False
         self.h5_loaded = False
         self.counter_format = '%03d'
-#--------------------------------------------------------------------------------------------------------
-# Opening
-#--------------------------------------------------------------------------------------------------------
 
     def format_header(self, d):
         """
@@ -244,11 +237,12 @@ class AppForm(qt.QMainWindow):
         else:
             return name
 
+    defaultSaveFilter = "binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"
+
     def save_as(self):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save active image as",
-                                                    qt.QDir.currentPath(),
-                                                    filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
-
+                                                       qt.QDir.currentPath(),
+                                                       filter=self.tr(self.defaultSaveFilter))
         if self.data.any():
             if str(info[0]) != '' and str(info[0]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -260,9 +254,8 @@ class AppForm(qt.QMainWindow):
 
     def save_data_series_as_multiple_file(self):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as multiple files",
-                                                    qt.QDir.currentPath(),
-                                                    filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
-
+                                                       qt.QDir.currentPath(),
+                                                       filter=self.tr(self.defaultSaveFilter))
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -274,9 +267,8 @@ class AppForm(qt.QMainWindow):
 
     def save_data_series_as_singlehdf(self):
         info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as single high density file",
-                                                    qt.QDir.currentPath(),
-                                                    filter=self.tr("HDF5 archive (*.h5)"))
-
+                                                       qt.QDir.currentPath(),
+                                                       filter=self.tr("HDF5 archive (*.h5)"))
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -424,7 +416,7 @@ class AppForm(qt.QMainWindow):
                             endian = '>'
                         img = fabio.binaryimage.binaryimage()
                         img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
-                        img.header = {'Info':'No header information available in binary data blocks'}
+                        img.header = {'Info': 'No header information available in binary data blocks'}
                     else:
                         continue
                 self.progressBar.setValue((float(ii + 1) / (total)) * 100.)
@@ -457,9 +449,6 @@ class AppForm(qt.QMainWindow):
                 return fmt
         raise Warning("Unknown format: %s" % format_long)
 
-#--------------------------------------------------------------------------------------------------------
-# Transformation
-#--------------------------------------------------------------------------------------------------------
     def horizontal_mirror(self):
         if self.transform_data_series:
             if self.sequential_file_mode:
@@ -736,11 +725,12 @@ class AppForm(qt.QMainWindow):
         self.transformation_queue.clear()
 
     def downsample(self):
-        dial = down_sampling_Dialog()
+        dial = DownSamplingDialog()
         thick, start_angle, step_angle = dial.exec_()
         if thick is not None:
-            info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save downsampled data series as multiple files", qt.QDir.currentPath(), filter=self.tr("binary data block (*.bin);;cbf image (*.cbf);;edf image (*.edf);;oxford diffraction image (*.img);;mar2300 image(*.mar2300);;mar3450 image (*.mar3450);;marccd image (*.marccd));;tiff image (*.tiff);;bruker image (*.sfrm)"))
-
+            info = qt.QFileDialog.getSaveFileNameAndFilter(self,
+                                                           "Save downsampled data series as multiple files",
+                                                           qt.QDir.currentPath(), filter=self.tr(self.defaultSaveFilter))
             if self.data_series or self.sequential_file_list:
                 if str(info[0]) != '' and str(info[1]) != '':
                     format_ = self.extract_format_from_string(str(info[1]))
@@ -770,7 +760,7 @@ class AppForm(qt.QMainWindow):
                                         endian = '>'
                                         img = fabio.binaryimage.binaryimage()
                                         img.read(tmpfname, dim1, dim2, offset, bytecode, endian)
-                                        img.header = {'Info':'No header information available in binary data blocks'}
+                                        img.header = {'Info': 'No header information available in binary data blocks'}
                                 else:
                                     continue
                             if img.data.shape != stack.shape:
@@ -820,11 +810,6 @@ class AppForm(qt.QMainWindow):
             else:
                 if str(info[0]) != '' and str(info[1]) != '':
                     qt.QMessageBox.warning(self, 'Warning', "Could not save image as file if no data have been loaded")
-
-
-#--------------------------------------------------------------------------------------------------------
-# Miscelaneous
-#--------------------------------------------------------------------------------------------------------
 
     def select_new_image(self, name, imgID=None):
         if imgID is not None:
@@ -932,7 +917,7 @@ class AppForm(qt.QMainWindow):
         self.tabWidget.setCurrentIndex(0)
 
     def set_counter_format_option(self):
-        dial = counter_format_option_Dialog(self.counter_format)
+        dial = CounterFormatOptionDialog(self.counter_format)
         self.counter_format = dial.exec_()
 
     def padd_mar(self, data, format_):
@@ -991,10 +976,6 @@ class AppForm(qt.QMainWindow):
             self.filecheckBox.stateChanged.connect(self.sequential_option)
             qt.QMessageBox.warning(self, 'Message', 'Sequential file mode is not compatible with hdf5 input file: option removed')
 
-#--------------------------------------------------------------------------------------------------------
-# Main Frame
-#--------------------------------------------------------------------------------------------------------
-
     def create_main_frame(self):
 
         self.tabWidget = qt.QTabWidget()
@@ -1002,9 +983,8 @@ class AppForm(qt.QMainWindow):
         self.tabWidget.addTab(tab1, "View Mode")
         tab2 = qt.QWidget()
         self.tabWidget.addTab(tab2, "Batch Mode")
-        #--------------------------------------------------------------------------------------------------------
+
         # Tab 1
-        #--------------------------------------------------------------------------------------------------------
 
         # Create the mpl Figure and FigCanvas objects.
         # 100 dots-per-inch
@@ -1068,9 +1048,7 @@ class AppForm(qt.QMainWindow):
 
         tab1.setLayout(Bighbox)
 
-        #--------------------------------------------------------------------------------------------------------
         # Tab 2
-        #--------------------------------------------------------------------------------------------------------
 
         imagelistvbox = qt.QVBoxLayout()
 
@@ -1177,138 +1155,126 @@ class AppForm(qt.QMainWindow):
 
         qt.QMessageBox.about(self, "About FabIO Viewer", os.linesep.join(msg))
 
-#--------------------------------------------------------------------------------------------------------
-# Menu
-#--------------------------------------------------------------------------------------------------------
-
     def create_menu(self):
-        #0----------------------------------------------
         self.file_menu = self.menuBar().addMenu("&File")
-        #1----------------------------------------------
         self.open_menu = self.file_menu.addMenu("&Open")
-        #2----------------------------------------------
-        load_data_series_action = self.create_action("&Image(s)",
-            shortcut="", slot=self.open_data_series,
-            tip="Load single file and data series (files sequence)")
 
-        self.add_actions(self.open_menu, (load_data_series_action,))
-        #2----------------------------------------------
-        load_h5_data_series_action = self.create_action("&Hdf5 data series",
-            shortcut="", slot=self.open_h5_data_series,
-            tip="Load single file and data series (files sequence)")
+        action = self.create_action("&Image(s)",
+                                    shortcut="",
+                                    slot=self.open_data_series,
+                                    tip="Load single file and data series (files sequence)")
+        self.add_actions(self.open_menu, (action,))
 
-        self.add_actions(self.open_menu, (load_h5_data_series_action,))
-        #1----------------------------------------------
+        action = self.create_action("&Hdf5 data series",
+                                    shortcut="",
+                                    slot=self.open_h5_data_series,
+                                    tip="Load single file and data series (files sequence)")
+        self.add_actions(self.open_menu, (action,))
+
         self.save_as_menu = self.file_menu.addMenu("&Save")
-        #2----------------------------------------------
-        save_as_action = self.create_action("&Active image", slot=self.save_as,
-            shortcut="", tip="Save/Convert the image which is currently displayed")
 
-        self.add_actions(self.save_as_menu, (save_as_action,))
+        action = self.create_action("&Active image",
+                                    slot=self.save_as,
+                                    shortcut="",
+                                    tip="Save/Convert the image which is currently displayed")
+        self.add_actions(self.save_as_menu, (action,))
 
-        #2----------------------------------------------
         self.save_data_series_menu = self.save_as_menu.addMenu("&Data series as")
-        #3----------------------------------------------
-        save_data_series_as_multiplefile_action = self.create_action("&Multiple files", slot=self.save_data_series_as_multiple_file,
-            shortcut="", tip="Save/Convert the set of images currently loaded into the images list")
 
-        self.add_actions(self.save_data_series_menu, (save_data_series_as_multiplefile_action,))
-        #3----------------------------------------------
-        save_data_series_as_singlehdf_action = self.create_action("&Hdf5 archive", slot=self.save_data_series_as_singlehdf,
-            shortcut="", tip="Save/Convert the set of images currently loaded into the images list")
+        action = self.create_action("&Multiple files",
+                                    slot=self.save_data_series_as_multiple_file,
+                                    shortcut="",
+                                    tip="Save/Convert the set of images currently loaded into the images list")
+        self.add_actions(self.save_data_series_menu, (action,))
 
-        self.add_actions(self.save_data_series_menu, (save_data_series_as_singlehdf_action,))
+        action = self.create_action("&Hdf5 archive",
+                                    slot=self.save_data_series_as_singlehdf,
+                                    shortcut="",
+                                    tip="Save/Convert the set of images currently loaded into the images list")
+        self.add_actions(self.save_data_series_menu, (action,))
 
-        #1----------------------------------------------
-        quit_action = self.create_action("&Quit", slot=self.close,
-            shortcut="Ctrl+Q", tip="Close the application")
+        action = self.create_action("&Quit",
+                                    slot=self.close,
+                                    shortcut="Ctrl+Q",
+                                    tip="Close the application")
+        self.add_actions(self.file_menu, (action,))
 
-        self.add_actions(self.file_menu, (quit_action,))
-
-        #1----------------------------------------------
         self.transform_menu = self.menuBar().addMenu("&Transform")
-        #2----------------------------------------------
         self.mirror_menu = self.transform_menu.addMenu("&Mirror")
-        #3----------------------------------------------
-        horizontal_mirror_action = self.create_action("&Horizontal",
-            shortcut='', slot=self.horizontal_mirror,
-            tip="Horizontal mirror")
 
-        self.add_actions(self.mirror_menu, (horizontal_mirror_action,))
+        action = self.create_action("&Horizontal",
+                                    shortcut='',
+                                    slot=self.horizontal_mirror,
+                                    tip="Horizontal mirror")
+        self.add_actions(self.mirror_menu, (action,))
 
-        #3 ----------------------------------------------
-        vertical_mirror_action = self.create_action("&Vertical",
-            shortcut='', slot=self.vertical_mirror,
-            tip="Vertical mirror")
+        action = self.create_action("&Vertical",
+                                    shortcut='',
+                                    slot=self.vertical_mirror,
+                                    tip="Vertical mirror")
+        self.add_actions(self.mirror_menu, (action,))
 
-        self.add_actions(self.mirror_menu, (vertical_mirror_action,))
+        action = self.create_action("&Transposition",
+                                    shortcut='',
+                                    slot=self.transposition,
+                                    tip="Transposition")
+        self.add_actions(self.mirror_menu, (action,))
 
-        #3----------------------------------------------
-        transposition_action = self.create_action("&Transposition",
-            shortcut='', slot=self.transposition,
-            tip="Transposition")
-
-        self.add_actions(self.mirror_menu, (transposition_action,))
-
-        #2----------------------------------------------
         self.rotation_menu = self.transform_menu.addMenu("&Rotation")
 
-        #3----------------------------------------------
-        rotation_90_action = self.create_action("+90",
-            shortcut='', slot=self.rotation_90,
-            tip="Rotation of +90 degrees (counter-clockwise)")
+        action = self.create_action("+90",
+                                    shortcut='',
+                                    slot=self.rotation_90,
+                                    tip="Rotation of +90 degrees (counter-clockwise)")
+        self.add_actions(self.rotation_menu, (action,))
 
-        self.add_actions(self.rotation_menu, (rotation_90_action,))
+        action = self.create_action("+180",
+                                    shortcut='',
+                                    slot=self.rotation_180,
+                                    tip="Rotation of +180 degrees (counter-clockwise)")
+        self.add_actions(self.rotation_menu, (action,))
 
-        #3----------------------------------------------
-        rotation_180_action = self.create_action("+180",
-            shortcut='', slot=self.rotation_180,
-            tip="Rotation of +180 degrees (counter-clockwise)")
+        action = self.create_action("- 90",
+                                    shortcut='',
+                                    slot=self.rotation_270,
+                                    tip="Rotation of -90 degrees (counter-clockwise)")
+        self.add_actions(self.rotation_menu, (action,))
 
-        self.add_actions(self.rotation_menu, (rotation_180_action,))
+        action = self.create_action("&Mask",
+                                    shortcut='',
+                                    slot=self.mask,
+                                    tip="Import a mask from file and apply it to image(s)")
+        self.add_actions(self.transform_menu, (action,))
 
-        #3----------------------------------------------
-        rotation_270_action = self.create_action("- 90",
-            shortcut='', slot=self.rotation_270,
-            tip="Rotation of -90 degrees (counter-clockwise)")
+        action = self.create_action("&Downsample",
+                                    shortcut='',
+                                    slot=self.downsample,
+                                    tip="Summation over groups of images")
+        self.add_actions(self.transform_menu, (action,))
 
-        self.add_actions(self.rotation_menu, (rotation_270_action,))
+        action = self.create_action("&Apply transform to the whole data series",
+                                    shortcut='',
+                                    slot=self.transformation_options,
+                                    tip="Define if transformations are Applied to the whole data series (checked) or only to the active image (unchecked) ")
+        action.setCheckable(True)
+        self.add_actions(self.transform_menu, (action,))
+        self.transform_option_action = action
 
-        #2----------------------------------------------
-        import_mask_action = self.create_action("&Mask",
-            shortcut='', slot=self.mask,
-            tip="Import a mask from file and apply it to image(s)")
-
-        self.add_actions(self.transform_menu, (import_mask_action,))
-        #2----------------------------------------------
-        downsample_action = self.create_action("&Downsample",
-            shortcut='', slot=self.downsample,
-            tip="Summation over groups of images")
-
-        self.add_actions(self.transform_menu, (downsample_action,))
-        #2----------------------------------------------
-        self.transform_option_action = self.create_action("&Apply transform to the whole data series",
-            shortcut='', slot=self.transformation_options,
-            tip="Define if transformations are Applied to the whole data series (checked) or only to the active image (unchecked) ")
-        self.transform_option_action.setCheckable(True)
-
-        self.add_actions(self.transform_menu, (self.transform_option_action,))
-        #0----------------------------------------------
         self.options = self.menuBar().addMenu("&Options")
-        #1----------------------------------------------
-        about_action = self.create_action("&Counter format",
-            shortcut='', slot=self.set_counter_format_option,
-            tip='Allow to define the format for the counter in multiple saving')
 
-        self.add_actions(self.options, (about_action,))
-        #0----------------------------------------------
+        action = self.create_action("&Counter format",
+                                    shortcut='',
+                                    slot=self.set_counter_format_option,
+                                    tip='Allow to define the format for the counter in multiple saving')
+        self.add_actions(self.options, (action,))
+
         self.help_menu = self.menuBar().addMenu("&Help")
-        #1----------------------------------------------
-        about_action = self.create_action("&About",
-            shortcut='F1', slot=self.on_about,
-            tip='About Images Converter')
 
-        self.add_actions(self.help_menu, (about_action,))
+        action = self.create_action("&About",
+                                    shortcut='F1',
+                                    slot=self.on_about,
+                                    tip='About Images Converter')
+        self.add_actions(self.help_menu, (action,))
 
     def add_actions(self, target, actions):
         for action in actions:
@@ -1327,20 +1293,14 @@ class AppForm(qt.QMainWindow):
             action.setToolTip(tip)
             action.setStatusTip(tip)
         if slot is not None:
-# bug debian6: AttributeError: 'QAction' object has no attribute '__getattr__'
-#             action.__getattr__(signal).connect(slot)
             getattr(action, signal).connect(slot)
 
         if checkable:
             action.setCheckable(True)
         return action
 
-#--------------------------------------------------------------------------------------------------------
-# External top level window class
-#--------------------------------------------------------------------------------------------------------
 
-
-class counter_format_option_Dialog(qt.QDialog):  # option doivent refleter l etat des couche du dessous
+class CounterFormatOptionDialog(qt.QDialog):  # option doivent refleter l etat des couche du dessous
     """Dialog containing entry for down sampling"""
     def __init__(self, counter_format, parent=None):
         qt.QDialog.__init__(self, parent)
@@ -1373,7 +1333,7 @@ class counter_format_option_Dialog(qt.QDialog):  # option doivent refleter l eta
             return self.counter_format
 
 
-class down_sampling_Dialog(qt.QDialog):
+class DownSamplingDialog(qt.QDialog):
     """Dialog containing entry for down sampling"""
     def __init__(self, parent=None):
         qt.QDialog.__init__(self, parent)
@@ -1495,10 +1455,6 @@ class BinDialog(qt.QDialog):
             return self.dim1, self.dim2, self.offset, self.bytecode, self.endian
         else:
             return None, None, None, None, None
-
-#--------------------------------------------------------------------------------------------------------
-# Main
-#--------------------------------------------------------------------------------------------------------
 
 
 def main():
