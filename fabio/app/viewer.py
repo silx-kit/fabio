@@ -261,12 +261,22 @@ class AppForm(qt.QMainWindow):
         "tiff image (*.tiff);;"\
         "bruker image (*.sfrm)"
 
+    def _getSaveFileNameAndFilter(self, parent=None, caption='', directory='',
+                                  filter=''):
+        dialog = qt.QFileDialog(parent, caption=caption, directory=directory)
+        dialog.setAcceptMode(qt.QFileDialog.AcceptSave)
+        dialog.setNameFilter(filter)
+        result = dialog.exec_()
+        if not result:
+            return "", ""
+        return dialog.selectedFiles()[0], dialog.selectedNameFilter()
+
     def save_as(self):
-        info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save active image as",
-                                                       qt.QDir.currentPath(),
-                                                       filter=self.tr(self.defaultSaveFilter))
+        info = self._getSaveFileNameAndFilter(self, "Save active image as",
+                                              qt.QDir.currentPath(),
+                                              filter=self.tr(self.defaultSaveFilter))
         if self.data.any():
-            if str(info[0]) != '' and str(info[0]) != '':
+            if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
                 fname = self.add_extention_if_absent(str(info[0]), format_)
                 self.convert_and_write(fname, format_, self.data, self.header)
@@ -276,9 +286,9 @@ class AppForm(qt.QMainWindow):
                 qt.QMessageBox.warning(self, 'Warning', message)
 
     def save_data_series_as_multiple_file(self):
-        info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as multiple files",
-                                                       qt.QDir.currentPath(),
-                                                       filter=self.tr(self.defaultSaveFilter))
+        info = self._getSaveFileNameAndFilter(self, "Save data series as multiple files",
+                                              qt.QDir.currentPath(),
+                                              filter=self.tr(self.defaultSaveFilter))
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -290,9 +300,9 @@ class AppForm(qt.QMainWindow):
                 qt.QMessageBox.warning(self, 'Warning', message)
 
     def save_data_series_as_singlehdf(self):
-        info = qt.QFileDialog.getSaveFileNameAndFilter(self, "Save data series as single high density file",
-                                                       qt.QDir.currentPath(),
-                                                       filter=self.tr("HDF5 archive (*.h5)"))
+        info = self._getSaveFileNameAndFilter(self, "Save data series as single high density file",
+                                              qt.QDir.currentPath(),
+                                              filter=self.tr("HDF5 archive (*.h5)"))
         if self.data_series or self.sequential_file_list:
             if str(info[0]) != '' and str(info[1]) != '':
                 format_ = self.extract_format_from_string(str(info[1]))
@@ -743,9 +753,10 @@ class AppForm(qt.QMainWindow):
         dial = DownSamplingDialog()
         thick, start_angle, step_angle = dial.exec_()
         if thick is not None:
-            info = qt.QFileDialog.getSaveFileNameAndFilter(self,
-                                                           "Save downsampled data series as multiple files",
-                                                           qt.QDir.currentPath(), filter=self.tr(self.defaultSaveFilter))
+            info = self._getSaveFileNameAndFilter(self,
+                                                  "Save downsampled data series as multiple files",
+                                                  qt.QDir.currentPath(),
+                                                  filter=self.tr(self.defaultSaveFilter))
             if self.data_series or self.sequential_file_list:
                 if str(info[0]) != '' and str(info[1]) != '':
                     format_ = self.extract_format_from_string(str(info[1]))
