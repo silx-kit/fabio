@@ -45,9 +45,9 @@ import sys
 import os
 import time
 
-from . import qt
-from .matplotlib import FigureCanvasQTAgg
-from .matplotlib import NavigationToolbar2QT
+from . import _qt as qt
+from ._matplotlib import FigureCanvasQTAgg
+from ._matplotlib import NavigationToolbar2QT
 from matplotlib.figure import Figure
 
 import numpy
