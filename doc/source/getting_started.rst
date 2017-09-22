@@ -213,8 +213,8 @@ and manipulate their data from a wide range of 2D X-ray detectors.
 We welcome contributions to further improve the code and hope to
 add more file formats in the future.
 
-Acknoledgements
-...............
+Acknowledgements
+................
 
 We acknowledge Andy Götz and Kenneth Evans for extensive
 testing when including the FabIO reader in the Fable image viewer
