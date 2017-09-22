@@ -15,7 +15,7 @@ of hdf5 (>= 1.8.10 ), h5py (>= 2.5.0) and those plugins installed:
 -  https://github.com/kiyo-masui/bitshuffle
 
 | Under Windows, those plugins can easily be installed via this
-repository which provides binary DLLs:
+  repository which provides binary DLLs:
 | https://github.com/silx-kit/hdf5plugin
 
 .. code:: python
