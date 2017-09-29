@@ -70,6 +70,7 @@ from . import testfabioconvert
 from . import testjpegimage
 from . import testjpeg2kimage
 from . import testmpaimage
+from . import testdm3image
 
 
 def suite():
@@ -109,6 +110,7 @@ def suite():
     testSuite.addTest(testjpegimage.suite())
     testSuite.addTest(testjpeg2kimage.suite())
     testSuite.addTest(testmpaimage.suite())
+    testSuite.addTest(testdm3image.suite())
     return testSuite
 
 
