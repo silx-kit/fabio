@@ -138,6 +138,7 @@ class Dm3Image(FabioImage):
         # print dim1,dim2
         if "Data" in self.header:
             self.data = self.header['Data'].reshape(self.dim1, self.dim2)
+        return self
 
     def readbytes(self, bytes_to_read, format, swap=True):
         raw = self.infile.read(bytes_to_read)
