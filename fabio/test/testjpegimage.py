@@ -147,6 +147,8 @@ class TestJpegImageInsideFabio(unittest.TestCase):
     """Test the format inside the fabio framework"""
 
     def test_read_uint8(self):
+        if jpegimage.Image is None:
+            self.skipTest("PIL is not available")
         filename = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
         image = fabio.open(filename)
         self.assertIsInstance(image, jpegimage.JpegImage)

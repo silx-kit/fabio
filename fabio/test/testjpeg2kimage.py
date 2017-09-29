@@ -22,7 +22,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
-Test JPEG format
+Test JPEG 2000 format
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
@@ -54,7 +54,12 @@ def isPilUsable():
 
 
 def isGlymurUsable():
-    return jpeg2kimage.glymur is not None
+    if jpeg2kimage.glymur is None:
+        return False
+    import glymur
+    if glymur.version.openjpeg_version_tuple < [1, 5, 0]:
+        return False
+    return True
 
 
 class TestJpeg2KImage(unittest.TestCase):
