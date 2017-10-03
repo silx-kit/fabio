@@ -186,10 +186,11 @@ def _openimage(filename):
         filetype = do_magic(byts, filename)
     except IOError as error:
         imo.close()
-        logger.error("%s: File probably does not exist", error)
+        logger.debug("%s: File probably does not exist", error)
         raise error
     except Exception:
         imo.close()
+        logger.debug("Backtrace", exc_info=True)
         try:
             file_obj = FilenameObject(filename=filename)
             if file_obj is None:
@@ -202,9 +203,7 @@ def _openimage(filename):
             filetype = file_obj.format
 
         except Exception as error:
-            logger.error(error)
-            import traceback
-            traceback.print_exc()
+            logger.debug("Backtrace", exc_info=True)
             raise IOError("Fabio could not identify " + filename)
 
     if filetype is None:
@@ -215,7 +214,7 @@ def _openimage(filename):
     try:
         obj = FabioImage.factory(klass_name)
     except (RuntimeError, Exception):
-        logger.error("Filetype not known %s %s" % (filename, klass_name))
+        logger.debug("Backtrace", exc_info=True)
         raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
 
     if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
