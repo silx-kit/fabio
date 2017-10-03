@@ -185,9 +185,11 @@ def _openimage(filename):
         byts = imo._open(actual_filename).read(18)
         filetype = do_magic(byts, filename)
     except IOError as error:
+        imo.close()
         logger.error("%s: File probably does not exist", error)
         raise error
-    except:
+    except Exception:
+        imo.close()
         try:
             file_obj = FilenameObject(filename=filename)
             if file_obj is None:
