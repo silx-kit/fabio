@@ -178,6 +178,8 @@ def _openimage(filename):
             filename = url.path
         actual_filename = filename.split("::")[0]
 
+    filetype = None
+
     try:
         imo = FabioImage()
         byts = imo._open(actual_filename).read(18)
@@ -202,6 +204,10 @@ def _openimage(filename):
             import traceback
             traceback.print_exc()
             raise Exception("Fabio could not identify " + filename)
+
+    if filetype is None:
+        raise IOError("Fabio could not identify " + filename)
+
     klass_name = "".join(filetype) + 'image'
 
     try:
