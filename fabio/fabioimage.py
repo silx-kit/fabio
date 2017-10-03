@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "29/08/2017"
+__date__ = "03/10/2017"
 
 import os
 import logging
@@ -139,10 +139,14 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
     def __enter__(self):
         return self
 
-    def __exit__(self, *arg):
+    def __exit__(self, exc_type, exc_val, tb):
         # TODO: inspace type, value and traceback
-        if self._file and not self._file.closed:
+        self.close()
+
+    def close(self):
+        if self._file is not None and not self._file.closed:
             self._file.close()
+        self._file = None
 
     def get_header_keys(self):
         return list(self.header.keys())
