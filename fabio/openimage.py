@@ -205,7 +205,7 @@ def _openimage(filename):
             logger.error(error)
             import traceback
             traceback.print_exc()
-            raise Exception("Fabio could not identify " + filename)
+            raise IOError("Fabio could not identify " + filename)
 
     if filetype is None:
         raise IOError("Fabio could not identify " + filename)
@@ -214,9 +214,9 @@ def _openimage(filename):
 
     try:
         obj = FabioImage.factory(klass_name)
-    except RuntimeError as err:
+    except (RuntimeError, Exception):
         logger.error("Filetype not known %s %s" % (filename, klass_name))
-        raise err
+        raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
 
     if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
         obj.set_url(url)
