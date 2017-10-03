@@ -33,7 +33,6 @@ import io
 import fabio
 import tempfile
 import shutil
-import sys
 
 
 class TestFailingFiles(unittest.TestCase):
@@ -52,6 +51,36 @@ class TestFailingFiles(unittest.TestCase):
         f.write(u"Kikoo")
         f.close()
 
+        cls.bad_edf_filename = os.path.join(directory, "bad_edf.edf")
+        f = io.open(cls.bad_edf_filename, "w+b")
+        f.write(b"\r{")
+        f.write(b"\x00\xFF\x99" * 10)
+        f.close()
+
+        cls.bad_edf2_filename = os.path.join(directory, "bad_edf.edf")
+        f = io.open(cls.bad_edf2_filename, "w+b")
+        f.write(b"\n{\n\n}\n")
+        f.write(b"\xFF\x00\x99" * 10)
+        f.close()
+
+        cls.bad_msk_filename = os.path.join(directory, "bad_msk.msk")
+        f = io.open(cls.bad_msk_filename, "w+b")
+        f.write(b'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00')
+        f.write(b"\x00\xFF\x99" * 10)
+        f.close()
+
+        cls.bad_dm3_filename = os.path.join(directory, "bad_dm3.dm3")
+        f = io.open(cls.bad_dm3_filename, "w+b")
+        f.write(b'\x00\x00\x00\x03')
+        f.write(b"\x00\xFF\x99" * 10)
+        f.close()
+
+        cls.bad_npy_filename = os.path.join(directory, "bad_numpy.npy")
+        f = io.open(cls.bad_npy_filename, "w+b")
+        f.write(b"\x93NUMPY")
+        f.write(b"\x00\xFF\x99" * 10)
+        f.close()
+
         cls.missing_filename = os.path.join(directory, "test.missing")
 
     @classmethod
@@ -59,18 +88,27 @@ class TestFailingFiles(unittest.TestCase):
         shutil.rmtree(cls.tmp_directory)
 
     def test_missing_file(self):
-        try:
-            fabio.open(self.missing_filename)
-            self.fail()
-        except IOError:
-            pass
+        self.assertRaises(IOError, fabio.open, self.missing_filename)
 
-    def test_wrong_file(self):
-        try:
-            fabio.open(self.txt_filename)
-            self.fail()
-        except IOError:
-            pass
+    def test_wrong_format(self):
+        self.assertRaises(IOError, fabio.open, self.txt_filename)
+
+    def test_wrong_edf(self):
+        with fabio.open(self.bad_edf_filename) as f:
+            self.assertEqual(f.getNbFrames(), 0)
+
+    def test_wrong_edf2(self):
+        with fabio.open(self.bad_edf2_filename) as f:
+            self.assertEqual(f.getNbFrames(), 0)
+
+    def test_wrong_msk(self):
+        self.assertRaises(ValueError, fabio.open, self.bad_msk_filename)
+
+    def test_wrong_dm3(self):
+        self.assertRaises(ValueError, fabio.open, self.bad_dm3_filename)
+
+    def test_wrong_numpy(self):
+        self.assertRaises(ValueError, fabio.open, self.bad_npy_filename)
 
 
 def suite():
