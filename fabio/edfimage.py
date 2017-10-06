@@ -48,6 +48,7 @@ Authors:
 # get ready for python3
 from __future__ import with_statement, print_function, absolute_import, division
 import os
+import re
 import logging
 logger = logging.getLogger(__name__)
 import numpy
@@ -509,42 +510,59 @@ class EdfImage(FabioImage):
         MAX_HEADER_SIZE = BLOCKSIZE * 20
         block = infile.read(BLOCKSIZE)
         if len(block) < BLOCKSIZE:
-            logger.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
-            return
-        if (block.find(b"{") < 0):
+            logger.debug("Under-short header: only %i bytes in %s", len(block), infile.name)
+            return None
+
+        begin_block = block.find(b"{")
+        if begin_block < 0:
             # This does not look like an edf file
-            logger.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
-            return
-        if b"EDF_HeaderSize" in block:
-            start = block.index(b"EDF_HeaderSize")
-            chunk = block[start:].split(b"=")[1].strip()
+            logger.warning("no opening {. Corrupt header of EDF file %s", infile.name)
+            return None
+
+        start = block.find(b"EDF_HeaderSize", begin_block)
+        if start >= 0:
+            equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
+            end = block.index(b";", equal + 1)
             try:
-                new_max_header_size = int(chunk.split(b";")[0].strip())
+                chunk = block[equal + 1:end].strip()
+                new_max_header_size = int(chunk)
             except Exception:
-                logger.warning("Unable to read header size, got: %s" % chunk)
+                logger.warning("Unable to read header size, got: %s", chunk)
             else:
                 if new_max_header_size > MAX_HEADER_SIZE:
-                    logger.info("Redefining MAX_HEADER_SIZE to %s" % new_max_header_size)
+                    logger.info("Redefining MAX_HEADER_SIZE to %s", new_max_header_size)
                     MAX_HEADER_SIZE = new_max_header_size
-        while (b'}\r' not in block) and (b'}\n' not in block):
-            block = block + infile.read(BLOCKSIZE)
-            if len(block) > MAX_HEADER_SIZE:
-                logger.warning("Runaway header in EDF file MAX_HEADER_SIZE: %s \n%s" % (MAX_HEADER_SIZE, block))
-                return
-        start = block.find(b"{") + 1
-        end = block.find(b"}")
+
+        block_size = len(block)
+        blocks = [block]
+
+        end_pattern = re.compile(b"}[\r\n]")
+
+        while True:
+            end = end_pattern.search(block)
+            if end is not None:
+                end_block = block_size - len(block) + end.start()
+                break
+            block = infile.read(BLOCKSIZE)
+            block_size += len(block)
+            blocks.append(block)
+            if len(block) == 0 or block_size > MAX_HEADER_SIZE:
+                block = b"".join(blocks)
+                logger.warning("Runaway header in EDF file MAX_HEADER_SIZE: %s\n%s", MAX_HEADER_SIZE, block)
+                return None
+
+        block = b"".join(blocks)
 
         # Now it is essential to go to the start of the binary part
-        if block[end: end + 3] == b"}\r\n":
-            offset = end + 3 - len(block)
-        elif block[end: end + 2] == b"}\n":
-            offset = end + 2 - len(block)
+        if block[end_block: end_block + 3] == b"}\r\n":
+            offset = end_block + 3 - len(block)
+        elif block[end_block: end_block + 2] == b"}\n":
+            offset = end_block + 2 - len(block)
         else:
-            logger.error("Unable to locate start of the binary section")
-            offset = None
-        if offset is not None:
-            infile.seek(offset, os.SEEK_CUR)
-        return block[start:end].decode("ASCII")
+            offset = end_block + 2 - len(block)
+
+        infile.seek(offset, os.SEEK_CUR)
+        return block[begin_block:end_block].decode("ASCII")
 
     def _readheader(self, infile):
         """
