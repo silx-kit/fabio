@@ -139,6 +139,7 @@ class Frame(object):
         self.size = None  # size of raw data in file
         self.file = None  # opened file object with locking capabilities !!!
         self.bpp = None
+        self.incomplete_data = False
         self._bytecode = None
         if (number is not None):
             self.iFrame = int(number)
@@ -457,6 +458,7 @@ class EdfImage(FabioImage):
     def __init__(self, data=None, header=None, frames=None):
         self.currentframe = 0
         self.filesize = None
+        self._incomplete_file = False
 
         if data is None:
             # In case of creation of an empty instance
@@ -566,6 +568,14 @@ class EdfImage(FabioImage):
         infile.seek(offset, os.SEEK_CUR)
         return block[begin_block:end_block].decode("ASCII")
 
+    @property
+    def incomplete_file(self):
+        """Returns true if the file is not complete.
+
+        :rtype: bool
+        """
+        return self._incomplete_file
+
     def _readheader(self, infile):
         """
         Read all headers in a file and populate self.header
@@ -577,6 +587,7 @@ class EdfImage(FabioImage):
         while True:
             block = self._readHeaderBlock(infile)
             if block is None:
+                self._incomplete_file = True
                 break
 
             frame = Frame(number=self.nframes)
@@ -591,11 +602,15 @@ class EdfImage(FabioImage):
                 infile.seek(size - 1, os.SEEK_CUR)
                 data = infile.read(1)
                 if len(data) == 0:
+                    self._incomplete_file = True
+                    frame.incomplete_data = True
                     # Out of the file
                     break
             except Exception as error:
                 if isinstance(infile, fabioutils.GzipFile):
                     if compression.is_incomplete_gz_block_exception(error):
+                        self._incomplete_file = True
+                        frame.incomplete_data = True
                         break
                 logger.warning("infile is %s" % infile)
                 logger.warning("Position is %s" % infile.tell())
@@ -986,6 +1001,11 @@ class EdfImage(FabioImage):
                 self._frames.append(Frame())
                 self._frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
+
+    def getIncompleteData(self):
+        return self._frames[self.currentframe].incomplete_data
+
+    incomplete_data = property(getIncompleteData)
 
 
 edfimage = EdfImage

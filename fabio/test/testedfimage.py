@@ -458,6 +458,7 @@ class TestBadFiles(unittest.TestCase):
 
         image = self.open(filename)
         self.assertEqual(image.nframes, 0)
+        self.assertTrue(image.incomplete_file)
 
     def test_wrong_magic(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -475,6 +476,7 @@ class TestBadFiles(unittest.TestCase):
 
         image = self.open(filename)
         self.assertEqual(image.nframes, 0)
+        self.assertTrue(image.incomplete_file)
 
     def test_header_with_no_data(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -483,6 +485,7 @@ class TestBadFiles(unittest.TestCase):
 
         image = self.open(filename)
         self.assertEqual(image.nframes, 0)
+        self.assertTrue(image.incomplete_file)
 
     def test_header_with_half_data(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -491,10 +494,12 @@ class TestBadFiles(unittest.TestCase):
 
         image = self.open(filename)
         self.assertEqual(image.nframes, 1)
+        self.assertTrue(image.incomplete_file)
 
         frame = image
         self.assertEqual(frame.header["Image"], "1")
         self.assertEqual(frame.data[-1].sum(), 0)
+        self.assertTrue(frame.incomplete_data)
 
     def test_full_frame_plus_half_header(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -503,10 +508,12 @@ class TestBadFiles(unittest.TestCase):
 
         image = self.open(filename)
         self.assertEqual(image.nframes, 1)
+        self.assertTrue(image.incomplete_file)
 
         frame = image
         self.assertEqual(frame.header["Image"], "1")
         self.assertEqual(frame.data[-1].sum(), 2560)
+        self.assertFalse(frame.incomplete_data)
 
     def test_full_frame_plus_header_with_no_data(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -515,10 +522,12 @@ class TestBadFiles(unittest.TestCase):
 
         image = self.open(filename)
         self.assertEqual(image.nframes, 1)
+        self.assertTrue(image.incomplete_file)
 
         frame = image
         self.assertEqual(frame.header["Image"], "1")
         self.assertEqual(frame.data[-1].sum(), 2560)
+        self.assertFalse(frame.incomplete_data)
 
     def test_full_frame_plus_header_with_half_data(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -527,13 +536,17 @@ class TestBadFiles(unittest.TestCase):
 
         image = self.open(filename)
         self.assertEqual(image.nframes, 2)
+        self.assertTrue(image.incomplete_file)
 
         frame = image.getframe(0)
         self.assertEqual(frame.header["Image"], "1")
         self.assertEqual(frame.data[-1].sum(), 2560)
+        self.assertFalse(frame.incomplete_data)
+
         frame = image.getframe(1)
         self.assertEqual(frame.header["Image"], "2")
         self.assertEqual(frame.data[-1].sum(), 0)
+        self.assertTrue(frame.incomplete_data)
 
 
 class TestBadGzFiles(TestBadFiles):
