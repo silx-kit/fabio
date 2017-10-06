@@ -71,6 +71,7 @@ from . import testjpegimage
 from . import testjpeg2kimage
 from . import testmpaimage
 from . import testdm3image
+from . import test_failing_files
 
 
 def suite():
@@ -111,6 +112,7 @@ def suite():
     testSuite.addTest(testjpeg2kimage.suite())
     testSuite.addTest(testmpaimage.suite())
     testSuite.addTest(testdm3image.suite())
+    testSuite.addTest(test_failing_files.suite())
     return testSuite
 
 
