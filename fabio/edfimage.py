@@ -55,7 +55,7 @@ import numpy
 from .fabioimage import FabioImage, OrderedDict
 from .fabioutils import isAscii, toAscii, nice_int
 from .compression import decBzip2, decGzip, decZlib
-from . import compression
+from . import compression as compression_module
 from . import fabioutils
 
 
@@ -276,7 +276,13 @@ class Frame(object):
                     return
                 else:
                     self.file.seek(self.start)
-                    fileData = self.file.read(self.size)
+                    try:
+                        fileData = self.file.read(self.size)
+                    except Exception as e:
+                        if isinstance(self.file, fabioutils.GzipFile):
+                            if compression_module.is_incomplete_gz_block_exception(e):
+                                return numpy.zeros(dims)
+                        raise e
 
             if ("COMPRESSION" in self.capsHeader):
                 compression = self.header[self.capsHeader["COMPRESSION"]].upper()
@@ -512,7 +518,13 @@ class EdfImage(FabioImage):
         :return: string (or None if no header was found.
         """
         MAX_HEADER_SIZE = BLOCKSIZE * 20
-        block = infile.read(BLOCKSIZE)
+        try:
+            block = infile.read(BLOCKSIZE)
+        except Exception as e:
+            if isinstance(infile, fabioutils.GzipFile):
+                if compression_module.is_incomplete_gz_block_exception(e):
+                    return None
+            raise e
         if len(block) < BLOCKSIZE:
             logger.debug("Under-short header: only %i bytes in %s", len(block), infile.name)
             return None
@@ -608,7 +620,7 @@ class EdfImage(FabioImage):
                     break
             except Exception as error:
                 if isinstance(infile, fabioutils.GzipFile):
-                    if compression.is_incomplete_gz_block_exception(error):
+                    if compression_module.is_incomplete_gz_block_exception(error):
                         self._incomplete_file = True
                         frame.incomplete_data = True
                         break
