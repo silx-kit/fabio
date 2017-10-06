@@ -251,10 +251,11 @@ class Dm3Image(FabioImage):
             # print field_info
             field_data = b''
             for i in range(struct_number_fields):
-                field_data = field_data + self.readbytes(field_info[i][0], None, swap=False) + b' '
-                field_data = field_data + b'%i  ' % self.readbytes(DATA_BYTES[field_info[i][1]],
-                                                                   DATA_TYPES[field_info[i][1]],
-                                                                   swap=self.swap)[0]
+                field_data += self.readbytes(field_info[i][0], None, swap=False) + b' '
+                data = self.readbytes(DATA_BYTES[field_info[i][1]], DATA_TYPES[field_info[i][1]], swap=self.swap)
+                field_data +=  str(data[0]).encode()+ b" "
+                                                                   
+                                                                   
             return field_data
 
     def read_data(self):
