@@ -536,6 +536,51 @@ class TestBadFiles(unittest.TestCase):
         self.assertEqual(frame.data[-1].sum(), 0)
 
 
+class TestBadGzFiles(TestBadFiles):
+
+    filename_template = "%s.edf.gz"
+
+    @classmethod
+    def write_header(cls, fd, image_number):
+        with GzipFile(fileobj=fd, mode="wb") as gzfd:
+            TestBadFiles.write_header(gzfd, image_number)
+
+    @classmethod
+    def write_data(cls, fd):
+        with GzipFile(fileobj=fd, mode="wb") as gzfd:
+            TestBadFiles.write_data(gzfd)
+
+    def test_wrong_magic(self):
+        # Not a gzipped file
+        self.assertRaises(IOError, super(TestBadGzFiles, self).test_wrong_magic)
+
+    def get_incomplete_gz_block_exception(self):
+        if six.PY2:
+            return IOError
+        elif six.PY3:
+            version = sys.version_info[0:2]
+            if version == (3, 3):
+                import struct
+                return struct.error
+            return EOFError
+
+    def test_half_header(self):
+        exception = self.get_incomplete_gz_block_exception()
+        self.assertRaises(exception, super(TestBadGzFiles, self).test_half_header)
+
+    def test_header_with_half_data(self):
+        exception = self.get_incomplete_gz_block_exception()
+        self.assertRaises(exception, super(TestBadGzFiles, self).test_header_with_half_data)
+
+    def test_full_frame_plus_half_header(self):
+        exception = self.get_incomplete_gz_block_exception()
+        self.assertRaises(exception, super(TestBadGzFiles, self).test_full_frame_plus_half_header)
+
+    def test_full_frame_plus_header_with_half_data(self):
+        exception = self.get_incomplete_gz_block_exception()
+        self.assertRaises(exception, super(TestBadGzFiles, self).test_full_frame_plus_header_with_half_data)
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -549,6 +594,7 @@ def suite():
     testsuite.addTest(loadTests(TestEdfWrite))
     testsuite.addTest(loadTests(TestEdfRegression))
     testsuite.addTest(loadTests(TestBadFiles))
+    testsuite.addTest(loadTests(TestBadGzFiles))
     return testsuite
 
 
