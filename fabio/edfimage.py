@@ -55,6 +55,8 @@ import numpy
 from .fabioimage import FabioImage, OrderedDict
 from .fabioutils import isAscii, toAscii, nice_int
 from .compression import decBzip2, decGzip, decZlib
+from . import compression
+from . import fabioutils
 
 
 BLOCKSIZE = 512
@@ -571,46 +573,35 @@ class EdfImage(FabioImage):
         :type infile: file object open in read mode
         """
         self._frames = []
-        bContinue = True
-        attrs = dir(infile)
-        if "measure_size" in attrs:
-            # Handle bug #18 (https://github.com/silx-kit/fabio/issues/18)
-            stream_size = infile.measure_size()
-        elif "size" in attrs:
-            stream_size = infile.size
-        elif "len" in attrs:
-            stream_size = infile.len
-        else:
-            # Poor-men's size measurement
-            pos = infile.tell()
-            self.seek(0, os.SEEK_END)
-            stream_size = infile.tell()
-            infile.seek(pos)
 
-        while bContinue:
+        while True:
             block = self._readHeaderBlock(infile)
             if block is None:
-                bContinue = False
                 break
+
             frame = Frame(number=self.nframes)
             size = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()
             frame.size = size
             self._frames += [frame]
+
             try:
-                infile.seek(size, os.SEEK_CUR)
+                # skip the data block
+                infile.seek(size - 1, os.SEEK_CUR)
+                data = infile.read(1)
+                if len(data) == 0:
+                    # Out of the file
+                    break
             except Exception as error:
+                if isinstance(infile, fabioutils.GzipFile):
+                    if compression.is_incomplete_gz_block_exception(error):
+                        break
                 logger.warning("infile is %s" % infile)
                 logger.warning("Position is %s" % infile.tell())
                 logger.warning("size is %s" % size)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
-
-            if frame.start + size > stream_size:
-                logger.warning("Non complete datablock: got %s, expected %s" % (stream_size - frame.start, size))
-                bContinue = False
-                break
 
         for i, frame in enumerate(self._frames):
             missing = []
@@ -618,7 +609,7 @@ class EdfImage(FabioImage):
                 if item not in frame.capsHeader:
                     missing.append(item)
             if len(missing) > 0:
-                logger.info("EDF file %s frame %i misses mandatory keys: %s " % (self.filename, i, " ".join(missing)))
+                logger.info("EDF file %s frame %i misses mandatory keys: %s ", self.filename, i, " ".join(missing))
         self.currentframe = 0
 
     def read(self, fname, frame=None):
