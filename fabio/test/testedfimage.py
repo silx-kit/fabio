@@ -456,9 +456,7 @@ class TestBadFiles(unittest.TestCase):
         f = io.open(filename, "wb")
         f.close()
 
-        image = self.open(filename)
-        self.assertEqual(image.nframes, 0)
-        self.assertTrue(image.incomplete_file)
+        self.assertRaises(IOError, self.open, filename)
 
     def test_wrong_magic(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -466,17 +464,14 @@ class TestBadFiles(unittest.TestCase):
         f.write(six.b("\x10\x20\x30"))
         f.close()
 
-        image = self.open(filename)
-        self.assertEqual(image.nframes, 0)
+        self.assertRaises(IOError, self.open, filename)
 
     def test_half_header(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
         size = self.header1 // 2
         self.copy_base(filename, size)
 
-        image = self.open(filename)
-        self.assertEqual(image.nframes, 0)
-        self.assertTrue(image.incomplete_file)
+        self.assertRaises(IOError, self.open, filename)
 
     def test_header_with_no_data(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
@@ -484,7 +479,7 @@ class TestBadFiles(unittest.TestCase):
         self.copy_base(filename, size)
 
         image = self.open(filename)
-        self.assertEqual(image.nframes, 0)
+        self.assertIn(image.nframes, [0, 1])
         self.assertTrue(image.incomplete_file)
 
     def test_header_with_half_data(self):
@@ -521,7 +516,7 @@ class TestBadFiles(unittest.TestCase):
         self.copy_base(filename, size)
 
         image = self.open(filename)
-        self.assertEqual(image.nframes, 1)
+        self.assertIn(image.nframes, [1, 2])
         self.assertTrue(image.incomplete_file)
 
         frame = image
@@ -562,10 +557,6 @@ class TestBadGzFiles(TestBadFiles):
     def write_data(cls, fd):
         with GzipFile(fileobj=fd, mode="wb") as gzfd:
             TestBadFiles.write_data(gzfd)
-
-    def test_wrong_magic(self):
-        # Not a gzipped file
-        self.assertRaises(IOError, super(TestBadGzFiles, self).test_wrong_magic)
 
 
 def suite():
