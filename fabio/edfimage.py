@@ -49,6 +49,7 @@ Authors:
 from __future__ import with_statement, print_function, absolute_import, division
 import os
 import re
+import string
 import logging
 logger = logging.getLogger(__name__)
 import numpy
@@ -160,12 +161,14 @@ class Frame(object):
         calcsize = 1
         self.dims = []
 
+        # Why would someone put null bytes in a header?
+        whitespace = string.whitespace + "\x00"
+
         for line in block.split(';'):
             if '=' in line:
                 key, val = line.split('=', 1)
-                # Why would someone put null bytes in a header?
-                key = key.replace("\x00", " ").strip()
-                self.header[key] = val.replace("\x00", " ").strip()
+                key = key.strip(whitespace)
+                self.header[key] = val.strip(whitespace)
                 self.capsHeader[key.upper()] = key
 
         # Compute image size
