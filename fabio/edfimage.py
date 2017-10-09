@@ -121,6 +121,11 @@ DEFAULT_VALUES = {}
 # JK20110415
 
 
+class MalformedHeaderError(IOError):
+    """Raised when a header is malformed"""
+    pass
+
+
 class Frame(object):
     """
     A class representing a single frame in an EDF file
@@ -512,12 +517,14 @@ class EdfImage(FabioImage):
         return new
 
     @staticmethod
-    def _readHeaderBlock(infile):
+    def _readHeaderBlock(infile, frame_id):
         """
         Read in a header in some EDF format from an already open file
 
-        :param infile: file object open in read mode
+        :param fileid infile: file object open in read mode
+        :param int frame_id: Informative frame ID
         :return: string (or None if no header was found.
+        :raises MalformedHeaderError: If the header can't be read
         """
         MAX_HEADER_SIZE = BLOCKSIZE * 20
         try:
@@ -525,17 +532,28 @@ class EdfImage(FabioImage):
         except Exception as e:
             if isinstance(infile, fabioutils.GzipFile):
                 if compression_module.is_incomplete_gz_block_exception(e):
-                    return None
+                    raise MalformedHeaderError("Incomplete GZ block for header frame %i", frame_id)
             raise e
-        if len(block) < BLOCKSIZE:
-            logger.debug("Under-short header: only %i bytes in %s", len(block), infile.name)
+
+        if len(block) == 0:
+            # end of file
             return None
 
         begin_block = block.find(b"{")
         if begin_block < 0:
-            # This does not look like an edf file
-            logger.warning("no opening {. Corrupt header of EDF file %s", infile.name)
-            return None
+            if len(block) < BLOCKSIZE and len(block.strip()) == 0:
+                # Empty block looks to be a valid end of file
+                return None
+            logger.debug("Malformed header: %s", block)
+            raise MalformedHeaderError("Header frame %i do not contains '{'" % frame_id)
+
+        start = block[0:begin_block]
+        if start.strip() != b"":
+            logger.debug("Malformed header: %s", start)
+            raise MalformedHeaderError("Header frame %i contains non-whitespace before '{'" % frame_id)
+
+        if len(block) < BLOCKSIZE:
+            logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
 
         start = block.find(b"EDF_HeaderSize", begin_block)
         if start >= 0:
@@ -566,8 +584,8 @@ class EdfImage(FabioImage):
             blocks.append(block)
             if len(block) == 0 or block_size > MAX_HEADER_SIZE:
                 block = b"".join(blocks)
-                logger.warning("Runaway header in EDF file MAX_HEADER_SIZE: %s\n%s", MAX_HEADER_SIZE, block)
-                return None
+                logger.debug("Runaway header in EDF file MAX_HEADER_SIZE: %s\n%s", MAX_HEADER_SIZE, block)
+                raise MalformedHeaderError("Runaway header frame %i (max size: %i)" % (frame_id, MAX_HEADER_SIZE))
 
         block = b"".join(blocks)
 
@@ -600,9 +618,19 @@ class EdfImage(FabioImage):
         self._frames = []
 
         while True:
-            block = self._readHeaderBlock(infile)
-            if block is None:
+            try:
+                block = self._readHeaderBlock(infile, len(self._frames))
+            except MalformedHeaderError as e:
+                logger.debug("Backtrace", exc_info=True)
+                if len(self._frames) == 0:
+                    raise IOError("Invalid first header")
                 self._incomplete_file = True
+                break
+
+            if block is None:
+                # end of file
+                if len(self._frames) == 0:
+                    raise IOError("Empty file")
                 break
 
             frame = Frame(number=self.nframes)
