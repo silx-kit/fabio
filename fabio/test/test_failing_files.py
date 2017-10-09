@@ -94,12 +94,10 @@ class TestFailingFiles(unittest.TestCase):
         self.assertRaises(IOError, fabio.open, self.txt_filename)
 
     def test_wrong_edf(self):
-        with fabio.open(self.bad_edf_filename) as f:
-            self.assertEqual(f.getNbFrames(), 0)
+        self.assertRaises(IOError, fabio.open, self.bad_edf_filename)
 
     def test_wrong_edf2(self):
-        with fabio.open(self.bad_edf2_filename) as f:
-            self.assertEqual(f.getNbFrames(), 0)
+        self.assertRaises(IOError, fabio.open, self.bad_edf_filename)
 
     def test_wrong_msk(self):
         self.assertRaises(ValueError, fabio.open, self.bad_msk_filename)
