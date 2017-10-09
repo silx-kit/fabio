@@ -150,11 +150,10 @@ class Frame(object):
         """
         Parse the header in some EDF format from an already open file
 
-        :param block: string representing the header block.
-        :type block: string, should be full ascii
+        :param str block: string representing the header block.
         :return: size of the binary blob
         """
-        # reset values ...
+        # reset values
         self.header = OrderedDict()
         self.capsHeader = {}
         self.size = None
@@ -189,7 +188,7 @@ class Frame(object):
             try:
                 dim2 = nice_int(self.header[self.capsHeader['DIM_2']])
             except ValueError:
-                logger.error("Unable to convert to integer Dim_3: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
+                logger.error("Unable to convert to integer Dim_2: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
                 self.dims.append(dim2)
@@ -575,6 +574,7 @@ class EdfImage(FabioImage):
         elif block[end_block: end_block + 2] == b"}\n":
             offset = end_block + 2 - len(block)
         else:
+            logger.warning("Malformed end of header block")
             offset = end_block + 2 - len(block)
 
         infile.seek(offset, os.SEEK_CUR)
@@ -1014,10 +1014,10 @@ class EdfImage(FabioImage):
                 self._frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
 
-    def getIncompleteData(self):
+    def isIncompleteData(self):
         return self._frames[self.currentframe].incomplete_data
 
-    incomplete_data = property(getIncompleteData)
+    incomplete_data = property(isIncompleteData)
 
 
 edfimage = EdfImage
