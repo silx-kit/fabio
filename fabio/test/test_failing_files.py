@@ -57,7 +57,7 @@ class TestFailingFiles(unittest.TestCase):
         f.write(b"\x00\xFF\x99" * 10)
         f.close()
 
-        cls.bad_edf2_filename = os.path.join(directory, "bad_edf.edf")
+        cls.bad_edf2_filename = os.path.join(directory, "bad_edf2.edf")
         f = io.open(cls.bad_edf2_filename, "w+b")
         f.write(b"\n{\n\n}\n")
         f.write(b"\xFF\x00\x99" * 10)
