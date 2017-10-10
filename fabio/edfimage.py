@@ -679,16 +679,20 @@ class EdfImage(FabioImage):
         self.filename = fname
 
         infile = self._open(fname, "rb")
-        self._readheader(infile)
-        if frame is None:
-            pass
-        elif frame < self.nframes:
-            self = self.getframe(frame)
-        else:
-            logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
-        self.resetvals()
-        # ensure the PIL image is reset
-        self.pilimage = None
+        try:
+            self._readheader(infile)
+            if frame is None:
+                pass
+            elif frame < self.nframes:
+                self = self.getframe(frame)
+            else:
+                logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
+            self.resetvals()
+            # ensure the PIL image is reset
+            self.pilimage = None
+        except Exception as e:
+            infile.close()
+            raise e
         return self
 
     def swap_needed(self):
