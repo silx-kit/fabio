@@ -48,12 +48,16 @@ Authors:
 # get ready for python3
 from __future__ import with_statement, print_function, absolute_import, division
 import os
+import re
+import string
 import logging
 logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage, OrderedDict
 from .fabioutils import isAscii, toAscii, nice_int
 from .compression import decBzip2, decGzip, decZlib
+from . import compression as compression_module
+from . import fabioutils
 
 
 BLOCKSIZE = 512
@@ -117,6 +121,11 @@ DEFAULT_VALUES = {}
 # JK20110415
 
 
+class MalformedHeaderError(IOError):
+    """Raised when a header is malformed"""
+    pass
+
+
 class Frame(object):
     """
     A class representing a single frame in an EDF file
@@ -136,6 +145,7 @@ class Frame(object):
         self.size = None  # size of raw data in file
         self.file = None  # opened file object with locking capabilities !!!
         self.bpp = None
+        self.incomplete_data = False
         self._bytecode = None
         if (number is not None):
             self.iFrame = int(number)
@@ -146,23 +156,24 @@ class Frame(object):
         """
         Parse the header in some EDF format from an already open file
 
-        :param block: string representing the header block.
-        :type block: string, should be full ascii
+        :param str block: string representing the header block.
         :return: size of the binary blob
         """
-        # reset values ...
+        # reset values
         self.header = OrderedDict()
         self.capsHeader = {}
         self.size = None
         calcsize = 1
         self.dims = []
 
+        # Why would someone put null bytes in a header?
+        whitespace = string.whitespace + "\x00"
+
         for line in block.split(';'):
             if '=' in line:
                 key, val = line.split('=', 1)
-                # Why would someone put null bytes in a header?
-                key = key.replace("\x00", " ").strip()
-                self.header[key] = val.replace("\x00", " ").strip()
+                key = key.strip(whitespace)
+                self.header[key] = val.strip(whitespace)
                 self.capsHeader[key.upper()] = key
 
         # Compute image size
@@ -185,7 +196,7 @@ class Frame(object):
             try:
                 dim2 = nice_int(self.header[self.capsHeader['DIM_2']])
             except ValueError:
-                logger.error("Unable to convert to integer Dim_3: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
+                logger.error("Unable to convert to integer Dim_2: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
                 self.dims.append(dim2)
@@ -272,7 +283,13 @@ class Frame(object):
                     return
                 else:
                     self.file.seek(self.start)
-                    fileData = self.file.read(self.size)
+                    try:
+                        fileData = self.file.read(self.size)
+                    except Exception as e:
+                        if isinstance(self.file, fabioutils.GzipFile):
+                            if compression_module.is_incomplete_gz_block_exception(e):
+                                return numpy.zeros(dims)
+                        raise e
 
             if ("COMPRESSION" in self.capsHeader):
                 compression = self.header[self.capsHeader["COMPRESSION"]].upper()
@@ -454,6 +471,7 @@ class EdfImage(FabioImage):
     def __init__(self, data=None, header=None, frames=None):
         self.currentframe = 0
         self.filesize = None
+        self._incomplete_file = False
 
         if data is None:
             # In case of creation of an empty instance
@@ -499,52 +517,97 @@ class EdfImage(FabioImage):
         return new
 
     @staticmethod
-    def _readHeaderBlock(infile):
+    def _readHeaderBlock(infile, frame_id):
         """
         Read in a header in some EDF format from an already open file
 
-        :param infile: file object open in read mode
+        :param fileid infile: file object open in read mode
+        :param int frame_id: Informative frame ID
         :return: string (or None if no header was found.
+        :raises MalformedHeaderError: If the header can't be read
         """
         MAX_HEADER_SIZE = BLOCKSIZE * 20
-        block = infile.read(BLOCKSIZE)
+        try:
+            block = infile.read(BLOCKSIZE)
+        except Exception as e:
+            if isinstance(infile, fabioutils.GzipFile):
+                if compression_module.is_incomplete_gz_block_exception(e):
+                    raise MalformedHeaderError("Incomplete GZ block for header frame %i", frame_id)
+            raise e
+
+        if len(block) == 0:
+            # end of file
+            return None
+
+        begin_block = block.find(b"{")
+        if begin_block < 0:
+            if len(block) < BLOCKSIZE and len(block.strip()) == 0:
+                # Empty block looks to be a valid end of file
+                return None
+            logger.debug("Malformed header: %s", block)
+            raise MalformedHeaderError("Header frame %i do not contains '{'" % frame_id)
+
+        start = block[0:begin_block]
+        if start.strip() != b"":
+            logger.debug("Malformed header: %s", start)
+            raise MalformedHeaderError("Header frame %i contains non-whitespace before '{'" % frame_id)
+
         if len(block) < BLOCKSIZE:
-            logger.debug("Under-short header: only %i bytes in %s" % (len(block), infile.name))
-            return
-        if (block.find(b"{") < 0):
-            # This does not look like an edf file
-            logger.warning("no opening {. Corrupt header of EDF file %s" % infile.name)
-            return
-        if b"EDF_HeaderSize" in block:
-            start = block.index(b"EDF_HeaderSize")
-            chunk = block[start:].split(b"=")[1].strip()
+            logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
+
+        start = block.find(b"EDF_HeaderSize", begin_block)
+        if start >= 0:
+            equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
+            end = block.index(b";", equal + 1)
             try:
-                new_max_header_size = int(chunk.split(b";")[0].strip())
+                chunk = block[equal + 1:end].strip()
+                new_max_header_size = int(chunk)
             except Exception:
-                logger.warning("Unable to read header size, got: %s" % chunk)
+                logger.warning("Unable to read header size, got: %s", chunk)
             else:
                 if new_max_header_size > MAX_HEADER_SIZE:
-                    logger.info("Redefining MAX_HEADER_SIZE to %s" % new_max_header_size)
+                    logger.info("Redefining MAX_HEADER_SIZE to %s", new_max_header_size)
                     MAX_HEADER_SIZE = new_max_header_size
-        while (b'}\r' not in block) and (b'}\n' not in block):
-            block = block + infile.read(BLOCKSIZE)
-            if len(block) > MAX_HEADER_SIZE:
-                logger.warning("Runaway header in EDF file MAX_HEADER_SIZE: %s \n%s" % (MAX_HEADER_SIZE, block))
-                return
-        start = block.find(b"{") + 1
-        end = block.find(b"}")
+
+        block_size = len(block)
+        blocks = [block]
+
+        end_pattern = re.compile(b"}[\r\n]")
+
+        while True:
+            end = end_pattern.search(block)
+            if end is not None:
+                end_block = block_size - len(block) + end.start()
+                break
+            block = infile.read(BLOCKSIZE)
+            block_size += len(block)
+            blocks.append(block)
+            if len(block) == 0 or block_size > MAX_HEADER_SIZE:
+                block = b"".join(blocks)
+                logger.debug("Runaway header in EDF file MAX_HEADER_SIZE: %s\n%s", MAX_HEADER_SIZE, block)
+                raise MalformedHeaderError("Runaway header frame %i (max size: %i)" % (frame_id, MAX_HEADER_SIZE))
+
+        block = b"".join(blocks)
 
         # Now it is essential to go to the start of the binary part
-        if block[end: end + 3] == b"}\r\n":
-            offset = end + 3 - len(block)
-        elif block[end: end + 2] == b"}\n":
-            offset = end + 2 - len(block)
+        if block[end_block: end_block + 3] == b"}\r\n":
+            offset = end_block + 3 - len(block)
+        elif block[end_block: end_block + 2] == b"}\n":
+            offset = end_block + 2 - len(block)
         else:
-            logger.error("Unable to locate start of the binary section")
-            offset = None
-        if offset is not None:
-            infile.seek(offset, os.SEEK_CUR)
-        return block[start:end].decode("ASCII")
+            logger.warning("Malformed end of header block")
+            offset = end_block + 2 - len(block)
+
+        infile.seek(offset, os.SEEK_CUR)
+        return block[begin_block:end_block].decode("ASCII")
+
+    @property
+    def incomplete_file(self):
+        """Returns true if the file is not complete.
+
+        :rtype: bool
+        """
+        return self._incomplete_file
 
     def _readheader(self, infile):
         """
@@ -553,46 +616,50 @@ class EdfImage(FabioImage):
         :type infile: file object open in read mode
         """
         self._frames = []
-        bContinue = True
-        attrs = dir(infile)
-        if "measure_size" in attrs:
-            # Handle bug #18 (https://github.com/silx-kit/fabio/issues/18)
-            stream_size = infile.measure_size()
-        elif "size" in attrs:
-            stream_size = infile.size
-        elif "len" in attrs:
-            stream_size = infile.len
-        else:
-            # Poor-men's size measurement
-            pos = infile.tell()
-            self.seek(0, os.SEEK_END)
-            stream_size = infile.tell()
-            infile.seek(pos)
 
-        while bContinue:
-            block = self._readHeaderBlock(infile)
-            if block is None:
-                bContinue = False
+        while True:
+            try:
+                block = self._readHeaderBlock(infile, len(self._frames))
+            except MalformedHeaderError as e:
+                logger.debug("Backtrace", exc_info=True)
+                if len(self._frames) == 0:
+                    raise IOError("Invalid first header")
+                self._incomplete_file = True
                 break
+
+            if block is None:
+                # end of file
+                if len(self._frames) == 0:
+                    raise IOError("Empty file")
+                break
+
             frame = Frame(number=self.nframes)
             size = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()
             frame.size = size
             self._frames += [frame]
+
             try:
-                infile.seek(size, os.SEEK_CUR)
+                # skip the data block
+                infile.seek(size - 1, os.SEEK_CUR)
+                data = infile.read(1)
+                if len(data) == 0:
+                    self._incomplete_file = True
+                    frame.incomplete_data = True
+                    # Out of the file
+                    break
             except Exception as error:
+                if isinstance(infile, fabioutils.GzipFile):
+                    if compression_module.is_incomplete_gz_block_exception(error):
+                        self._incomplete_file = True
+                        frame.incomplete_data = True
+                        break
                 logger.warning("infile is %s" % infile)
                 logger.warning("Position is %s" % infile.tell())
                 logger.warning("size is %s" % size)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
-
-            if frame.start + size > stream_size:
-                logger.warning("Non complete datablock: got %s, expected %s" % (stream_size - frame.start, size))
-                bContinue = False
-                break
 
         for i, frame in enumerate(self._frames):
             missing = []
@@ -600,7 +667,7 @@ class EdfImage(FabioImage):
                 if item not in frame.capsHeader:
                     missing.append(item)
             if len(missing) > 0:
-                logger.info("EDF file %s frame %i misses mandatory keys: %s " % (self.filename, i, " ".join(missing)))
+                logger.info("EDF file %s frame %i misses mandatory keys: %s ", self.filename, i, " ".join(missing))
         self.currentframe = 0
 
     def read(self, fname, frame=None):
@@ -612,16 +679,20 @@ class EdfImage(FabioImage):
         self.filename = fname
 
         infile = self._open(fname, "rb")
-        self._readheader(infile)
-        if frame is None:
-            pass
-        elif frame < self.nframes:
-            self = self.getframe(frame)
-        else:
-            logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
-        self.resetvals()
-        # ensure the PIL image is reset
-        self.pilimage = None
+        try:
+            self._readheader(infile)
+            if frame is None:
+                pass
+            elif frame < self.nframes:
+                self = self.getframe(frame)
+            else:
+                logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
+            self.resetvals()
+            # ensure the PIL image is reset
+            self.pilimage = None
+        except Exception as e:
+            infile.close()
+            raise e
         return self
 
     def swap_needed(self):
@@ -977,6 +1048,11 @@ class EdfImage(FabioImage):
                 self._frames.append(Frame())
                 self._frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
+
+    def isIncompleteData(self):
+        return self._frames[self.currentframe].incomplete_data
+
+    incomplete_data = property(isIncompleteData)
 
 
 edfimage = EdfImage

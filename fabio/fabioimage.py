@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/10/2017"
+__date__ = "06/10/2017"
 
 import os
 import logging
@@ -147,6 +147,14 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         if self._file is not None and not self._file.closed:
             self._file.close()
         self._file = None
+
+    @property
+    def incomplete_file(self):
+        """Returns true if the readed file is not complete.
+
+        :rtype: bool
+        """
+        return False
 
     def get_header_keys(self):
         return list(self.header.keys())

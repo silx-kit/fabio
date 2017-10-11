@@ -47,39 +47,33 @@ class TestFailingFiles(unittest.TestCase):
     def createResources(cls, directory):
 
         cls.txt_filename = os.path.join(directory, "test.txt")
-        f = io.open(cls.txt_filename, "w+t")
-        f.write(u"Kikoo")
-        f.close()
+        with io.open(cls.txt_filename, "w+t") as f:
+            f.write(u"Kikoo")
 
         cls.bad_edf_filename = os.path.join(directory, "bad_edf.edf")
-        f = io.open(cls.bad_edf_filename, "w+b")
-        f.write(b"\r{")
-        f.write(b"\x00\xFF\x99" * 10)
-        f.close()
+        with io.open(cls.bad_edf_filename, "w+b") as f:
+            f.write(b"\r{")
+            f.write(b"\x00\xFF\x99" * 10)
 
-        cls.bad_edf2_filename = os.path.join(directory, "bad_edf.edf")
-        f = io.open(cls.bad_edf2_filename, "w+b")
-        f.write(b"\n{\n\n}\n")
-        f.write(b"\xFF\x00\x99" * 10)
-        f.close()
+        cls.bad_edf2_filename = os.path.join(directory, "bad_edf2.edf")
+        with io.open(cls.bad_edf2_filename, "w+b") as f:
+            f.write(b"\n{\n\n}\n")
+            f.write(b"\xFF\x00\x99" * 10)
 
         cls.bad_msk_filename = os.path.join(directory, "bad_msk.msk")
-        f = io.open(cls.bad_msk_filename, "w+b")
-        f.write(b'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00')
-        f.write(b"\x00\xFF\x99" * 10)
-        f.close()
+        with io.open(cls.bad_msk_filename, "w+b") as f:
+            f.write(b'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00')
+            f.write(b"\x00\xFF\x99" * 10)
 
         cls.bad_dm3_filename = os.path.join(directory, "bad_dm3.dm3")
-        f = io.open(cls.bad_dm3_filename, "w+b")
-        f.write(b'\x00\x00\x00\x03')
-        f.write(b"\x00\xFF\x99" * 10)
-        f.close()
+        with io.open(cls.bad_dm3_filename, "w+b") as f:
+            f.write(b'\x00\x00\x00\x03')
+            f.write(b"\x00\xFF\x99" * 10)
 
         cls.bad_npy_filename = os.path.join(directory, "bad_numpy.npy")
-        f = io.open(cls.bad_npy_filename, "w+b")
-        f.write(b"\x93NUMPY")
-        f.write(b"\x00\xFF\x99" * 10)
-        f.close()
+        with io.open(cls.bad_npy_filename, "w+b") as f:
+            f.write(b"\x93NUMPY")
+            f.write(b"\x00\xFF\x99" * 10)
 
         cls.missing_filename = os.path.join(directory, "test.missing")
 
@@ -94,12 +88,10 @@ class TestFailingFiles(unittest.TestCase):
         self.assertRaises(IOError, fabio.open, self.txt_filename)
 
     def test_wrong_edf(self):
-        with fabio.open(self.bad_edf_filename) as f:
-            self.assertEqual(f.getNbFrames(), 0)
+        self.assertRaises(IOError, fabio.open, self.bad_edf_filename)
 
     def test_wrong_edf2(self):
-        with fabio.open(self.bad_edf2_filename) as f:
-            self.assertEqual(f.getNbFrames(), 0)
+        self.assertRaises(IOError, fabio.open, self.bad_edf_filename)
 
     def test_wrong_msk(self):
         self.assertRaises(ValueError, fabio.open, self.bad_msk_filename)
