@@ -10,7 +10,6 @@ Build-Depends: cython,
                cython3-dbg,
                debhelper ,
                dh-python,
-               pymca,
                python-all-dev,
                python-imaging,
                python-lxml,
@@ -53,7 +52,6 @@ Section: python
 Depends: ${misc:Depends},
          ${python:Depends},
          ${shlibs:Depends},
-         pymca,
          python-six
 Recommends: fabio-bin,
             python-imaging,
@@ -78,7 +76,6 @@ Section: python
 Depends: ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends},
-         pymca,
          python3-six
 Recommends: python3-lxml,
             python3-matplotlib,
