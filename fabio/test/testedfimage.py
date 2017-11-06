@@ -32,6 +32,11 @@ import unittest
 import sys
 import os
 import numpy
+import tempfile
+import shutil
+import io
+import fabio.edfimage
+
 
 if __name__ == '__main__':
     import pkgutil
@@ -194,18 +199,11 @@ class TestEdfCompressedData(unittest.TestCase):
         refFile = "edfUncompressed_U16.edf"
         gzippedFile = "edfGzip_U16.edf"
         compressedFile = "edfCompressed_U16.edf"
-        try:
-            ref.read(os.path.join(self.im_dir, refFile))
-        except:
-            raise RuntimeError("Cannot read image Uncompressed image %s" % refFile)
-        try:
-            gzipped.read(os.path.join(self.im_dir, gzippedFile))
-        except:
-            raise RuntimeError("Cannot read image gzippedFile image %s" % gzippedFile)
-        try:
-            compressed.read(os.path.join(self.im_dir, compressedFile))
-        except:
-            raise RuntimeError("Cannot read image compressedFile image %s" % compressedFile)
+
+        ref.read(os.path.join(self.im_dir, refFile))
+        gzipped.read(os.path.join(self.im_dir, gzippedFile))
+        compressed.read(os.path.join(self.im_dir, compressedFile))
+
         self.assertEqual((ref.data - gzipped.data).max(), 0, "Gzipped data block is correct")
         self.assertEqual((ref.data - compressed.data).max(), 0, "Zlib compressed data block is correct")
 
@@ -222,57 +220,43 @@ class TestEdfMultiFrame(unittest.TestCase):
         self.ref = edfimage()
         self.frame0 = edfimage()
         self.frame1 = edfimage()
-        try:
-            self.ref.read(self.multiFrameFilename)
-        except:
-            raise RuntimeError("Cannot read image multiFrameFilename image %s" % self.multiFrameFilename)
-        try:
-            self.frame0.read(self.Frame0Filename)
-        except:
-            raise RuntimeError("Cannot read image Frame0File image %s" % self.Frame0File)
-        try:
-            self.frame1.read(self.Frame1Filename)
-        except:
-            raise RuntimeError("Cannot read image Frame1File image %s" % self.Frame1File)
+
+        self.ref.read(self.multiFrameFilename)
+        self.frame0.read(self.Frame0Filename)
+        self.frame1.read(self.Frame1Filename)
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
         self.multiFrameFilename = self.Frame0Filename = self.Frame1Filename = self.ref = self.frame0 = self.frame1 = None
 
     def test_getFrame_multi(self):
-        """testedfmultiframe.test_getFrame_multi"""
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_multi: Same data for frame 0")
         f1_multi = self.ref.getframe(1)
-#        logger.warning("f1_multi.header=%s\nf1_multi.data=  %s" % (f1_multi.header, f1_multi.data))
+        # logger.warning("f1_multi.header=%s\nf1_multi.data=  %s" % (f1_multi.header, f1_multi.data))
         self.assertEqual((f1_multi.data - self.frame1.data).max(), 0, "getFrame_multi: Same data for frame 1")
 
     def test_getFrame_mono(self):
-        "testedfmultiframe.test_getFrame_mono"
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_mono: Same data for frame 0")
         f1_mono = self.frame0.getframe(1)
         self.assertEqual((f1_mono.data - self.frame1.data).max(), 0, "getFrame_mono: Same data for frame 1")
 
     def test_next_multi(self):
-        """testedfmultiframe.test_getFrame_mono"""
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_multi: Same data for frame 0")
         next_ = self.ref.next()
         self.assertEqual((next_.data - self.frame1.data).max(), 0, "next_multi: Same data for frame 1")
 
     def text_next_mono(self):
-        "testedfmultiframe.text_next_mono"
         self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_mono: Same data for frame 0")
         next_ = self.frame0.next()
         self.assertEqual((next_.data - self.frame1.data).max(), 0, "next_mono: Same data for frame 1")
 
     def test_previous_multi(self):
-        """testedfmultiframe.test_previous_multi"""
         f1 = self.ref.getframe(1)
         self.assertEqual((f1.data - self.frame1.data).max(), 0, "previous_multi: Same data for frame 1")
         f0 = f1.previous()
         self.assertEqual((f0.data - self.frame1.data).max(), 0, "previous_multi: Same data for frame 0")
 
     def test_previous_mono(self):
-        "testedfmultiframe.test_previous_mono"
         f1 = self.ref.getframe(1)
         self.assertEqual((f1.data - self.frame1.data).max(), 0, "previous_mono: Same data for frame 1")
         prev = self.frame1.previous()
@@ -281,7 +265,7 @@ class TestEdfMultiFrame(unittest.TestCase):
     def test_openimage_multiframes(self):
         "test if openimage can directly read first or second frame of a multi-frame"
         self.assertEqual((fabio.open(self.multiFrameFilename).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for default ")
-#         print(fabio.open(self.multiFrameFilename, 0).data)
+        # print(fabio.open(self.multiFrameFilename, 0).data)
         self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
         self.assertEqual((fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(), 0, "openimage_multiframes: Same data for frame 1")
 
@@ -367,7 +351,191 @@ class TestEdfRegression(unittest.TestCase):
         obj.write(fname)
 
         del obj
-#        os.unlink(fname)
+
+
+class TestBadFiles(unittest.TestCase):
+
+    filename_template = "%s.edf"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp_directory = tempfile.mkdtemp(prefix=cls.__name__)
+        cls.create_resources()
+
+    @classmethod
+    def tearDownClass(cls):
+        return
+        shutil.rmtree(cls.tmp_directory)
+
+    @classmethod
+    def create_resources(cls):
+        filename = os.path.join(cls.tmp_directory, cls.filename_template % "base")
+        cls.base_filename = filename
+        with io.open(filename, "wb") as fd:
+            cls.write_header(fd, 1)
+            cls.header1 = fd.tell()
+            cls.write_data(fd)
+            cls.data1 = fd.tell()
+            cls.write_header(fd, 2)
+            cls.header2 = fd.tell()
+            cls.write_data(fd)
+            cls.data2 = fd.tell()
+
+    @classmethod
+    def write_header(cls, fd, image_number):
+        byte_order = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
+        byte_order = six.b(byte_order)
+
+        fd.write(six.b("{\n"))
+        fd.write(six.b("Omega = 0.0 ;\n"))
+        fd.write(six.b("Dim_1 = 256 ;\n"))
+        fd.write(six.b("Dim_2 = 256 ;\n"))
+        fd.write(six.b("DataType = FloatValue ;\n"))
+        fd.write(six.b("ByteOrder = %s ;\n" % byte_order))
+        fd.write(six.b("Image = %d ;\n" % image_number))
+        fd.write(six.b("History-1 = something=something else;\n"))
+        fd.write(six.b("}\n"))
+
+    @classmethod
+    def write_data(cls, fd):
+        data = numpy.ones((256, 256), numpy.float32) * 10
+        data[0, 0] = 0
+        data[1, 1] = 20
+        fd.write(data.tostring())
+
+    @classmethod
+    def copy_base(cls, filename, size):
+        with io.open(cls.base_filename, "rb") as fd_base:
+            with io.open(filename, "wb") as fd_result:
+                fd_result.write(fd_base.read(size))
+
+    @classmethod
+    def open(cls, filename):
+        image = fabio.edfimage.EdfImage()
+        image.read(filename)
+        return image
+
+    def test_base(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        size = self.data2
+        self.copy_base(filename, size)
+
+        image = self.open(filename)
+        self.assertEqual(image.nframes, 2)
+
+        frame = image.getframe(0)
+        self.assertEqual(frame.header["Image"], "1")
+        self.assertEqual(frame.data[-1].sum(), 2560)
+        frame = image.getframe(1)
+        self.assertEqual(frame.header["Image"], "2")
+        self.assertEqual(frame.data[-1].sum(), 2560)
+
+    def test_empty(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        f = io.open(filename, "wb")
+        f.close()
+
+        self.assertRaises(IOError, self.open, filename)
+
+    def test_wrong_magic(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        f = io.open(filename, "wb")
+        f.write(six.b("\x10\x20\x30"))
+        f.close()
+
+        self.assertRaises(IOError, self.open, filename)
+
+    def test_half_header(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        size = self.header1 // 2
+        self.copy_base(filename, size)
+
+        self.assertRaises(IOError, self.open, filename)
+
+    def test_header_with_no_data(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        size = self.header1
+        self.copy_base(filename, size)
+
+        image = self.open(filename)
+        self.assertIn(image.nframes, [0, 1])
+        self.assertTrue(image.incomplete_file)
+
+    def test_header_with_half_data(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        size = (self.header1 + self.data1) // 2
+        self.copy_base(filename, size)
+
+        image = self.open(filename)
+        self.assertEqual(image.nframes, 1)
+        self.assertTrue(image.incomplete_file)
+
+        frame = image
+        self.assertEqual(frame.header["Image"], "1")
+        self.assertEqual(frame.data[-1].sum(), 0)
+        self.assertTrue(frame.incomplete_data)
+
+    def test_full_frame_plus_half_header(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        size = (self.data1 + self.header2) // 2
+        self.copy_base(filename, size)
+
+        image = self.open(filename)
+        self.assertEqual(image.nframes, 1)
+        self.assertTrue(image.incomplete_file)
+
+        frame = image
+        self.assertEqual(frame.header["Image"], "1")
+        self.assertEqual(frame.data[-1].sum(), 2560)
+        self.assertFalse(frame.incomplete_data)
+
+    def test_full_frame_plus_header_with_no_data(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        size = self.header2
+        self.copy_base(filename, size)
+
+        image = self.open(filename)
+        self.assertIn(image.nframes, [1, 2])
+        self.assertTrue(image.incomplete_file)
+
+        frame = image
+        self.assertEqual(frame.header["Image"], "1")
+        self.assertEqual(frame.data[-1].sum(), 2560)
+        self.assertFalse(frame.incomplete_data)
+
+    def test_full_frame_plus_header_with_half_data(self):
+        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        size = (self.header2 + self.data2) // 2
+        self.copy_base(filename, size)
+
+        image = self.open(filename)
+        self.assertEqual(image.nframes, 2)
+        self.assertTrue(image.incomplete_file)
+
+        frame = image.getframe(0)
+        self.assertEqual(frame.header["Image"], "1")
+        self.assertEqual(frame.data[-1].sum(), 2560)
+        self.assertFalse(frame.incomplete_data)
+
+        frame = image.getframe(1)
+        self.assertEqual(frame.header["Image"], "2")
+        self.assertEqual(frame.data[-1].sum(), 0)
+        self.assertTrue(frame.incomplete_data)
+
+
+class TestBadGzFiles(TestBadFiles):
+
+    filename_template = "%s.edf.gz"
+
+    @classmethod
+    def write_header(cls, fd, image_number):
+        with GzipFile(fileobj=fd, mode="wb") as gzfd:
+            TestBadFiles.write_header(gzfd, image_number)
+
+    @classmethod
+    def write_data(cls, fd):
+        with GzipFile(fileobj=fd, mode="wb") as gzfd:
+            TestBadFiles.write_data(gzfd)
 
 
 def suite():
@@ -382,6 +550,8 @@ def suite():
     testsuite.addTest(loadTests(TestEdfFastRead))
     testsuite.addTest(loadTests(TestEdfWrite))
     testsuite.addTest(loadTests(TestEdfRegression))
+    testsuite.addTest(loadTests(TestBadFiles))
+    testsuite.addTest(loadTests(TestBadGzFiles))
     return testsuite
 
 

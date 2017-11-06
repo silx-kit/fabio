@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "11/08/2017"
+__date__ = "06/10/2017"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -81,6 +81,25 @@ except ImportError:
 
 if sys.platform != "win32":
     WindowsError = OSError
+
+
+def is_incomplete_gz_block_exception(exception):
+    """True if the exception looks to be generated when a GZ block is
+    incomplete.
+
+    :rtype: bool
+    """
+    if six.PY2:
+        if isinstance(exception, IOError):
+            return "CRC check failed" in exception.args[0]
+    elif six.PY3:
+        version = sys.version_info[0:2]
+        if version == (3, 3):
+            import struct
+            return isinstance(exception, struct.error)
+        return isinstance(exception, EOFError)
+
+    return False
 
 
 def md5sum(blob):

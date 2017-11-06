@@ -28,11 +28,12 @@ Build-Depends: cython,
                python3-sphinx,
                python3-sphinxcontrib.programoutput,
                python-h5py,
-               python3-h5py
+               python3-h5py,
+               help2man
 Standards-Version: 3.9.6
 Vcs-Browser: https://anonscm.debian.org/cgit/debian-science/packages/python-fabio.git
 Vcs-Git: git://anonscm.debian.org/debian-science/packages/python-fabio.git
-Homepage: https://github.com/kif/fabio
+Homepage: https://github.com/silx-kit/fabio
 X-Python-Version: >= 2.5
 X-Python3-Version: >= 3.2
 

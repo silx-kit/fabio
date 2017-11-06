@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "28/07/2017"
+__date__ = "29/09/2017"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -690,4 +690,12 @@ def exists(path):
 class OrderedDict(_OrderedDict):
     """Ordered dictionary with pretty print"""
     def __repr__(self):
-        return json.dumps(self, indent=2)
+        try:
+            res = json.dumps(self, indent=2)
+        except Exception as err:
+            logger.warning("Header is not JSON-serializable: %s", err)
+            tmp = _OrderedDict()
+            for key, value in self.items():
+                tmp[str(key)] = str(value)
+            res = json.dumps(tmp, indent=2)
+        return res
