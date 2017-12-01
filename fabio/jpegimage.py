@@ -76,7 +76,7 @@ class JpegImage(FabioImage):
     """
     DESCRIPTION = "JPEG format"
 
-    DEFAULT_EXTENTIONS = ["jpg", "jpeg"]
+    DEFAULT_EXTENSIONS = ["jpg", "jpeg"]
 
     RESERVED_HEADER_KEYS = JPEG_RESERVED_HEADER_KEYS
 

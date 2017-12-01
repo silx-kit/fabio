@@ -47,7 +47,7 @@ class AdscImage(FabioImage):
 
     DESCRIPTION = "ADSC format (from Area Detector Systems Corporation)"
 
-    DEFAULT_EXTENTIONS = ["img"]
+    DEFAULT_EXTENSIONS = ["img"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

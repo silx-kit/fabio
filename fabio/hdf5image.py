@@ -71,7 +71,7 @@ class Hdf5Image(FabioImage):
 
     DESCRIPTION = "Hierarchical Data Format HDF5 flat reader"
 
-    DEFAULT_EXTENTIONS = ["h5"]
+    DEFAULT_EXTENSIONS = ["h5"]
 
     def __init__(self, *arg, **kwargs):
         """

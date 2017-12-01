@@ -72,7 +72,7 @@ class Mar345Image(FabioImage):
 
     DESCRIPTION = "File format from Mar345 imaging plate and Mar555 flat panel"
 
-    DEFAULT_EXTENTIONS = ["mar2300"]
+    DEFAULT_EXTENSIONS = ["mar2300"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

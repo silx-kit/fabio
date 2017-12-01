@@ -54,7 +54,7 @@ class Fit2dMaskImage(FabioImage):
 
     DESCRIPTION = "Fit2d mask file format"
 
-    DEFAULT_EXTENTIONS = ["msk"]
+    DEFAULT_EXTENSIONS = ["msk"]
 
     def _readheader(self, infile):
         """

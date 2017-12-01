@@ -52,7 +52,7 @@ class MpaImage(FabioImage):
 
     DESCRIPTION = "multiwire data files"
 
-    DEFAULT_EXTENTIONS = ["mpa"]
+    DEFAULT_EXTENSIONS = ["mpa"]
 
     def _readheader(self, infile):
         """

@@ -184,7 +184,7 @@ class RaxisImage(FabioImage):
 
     DESCRIPTION = "Rigaku RAXIS file format"
 
-    DEFAULT_EXTENTIONS = ["img"]
+    DEFAULT_EXTENSIONS = ["img"]
 
     def __init__(self, *arg, **kwargs):
         """
