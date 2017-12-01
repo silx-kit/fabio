@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "06/10/2017"
+__date__ = "01/12/2017"
 
 import os
 import logging
@@ -69,6 +69,24 @@ class FabioMeta(type):
         if cls.codec_name() != "fabioimage":
             cls.registry[cls.codec_name()] = cls
         super(FabioMeta, cls).__init__(name, bases, dct)
+
+    @property
+    def DEFAULT_EXTENTIONS(self):
+        """
+        Compatibility with the wrong typo.
+
+        .. note:: Will be marked as deprecated for the following version 0.7.
+        """
+        return self.DEFAULT_EXTENSIONS
+
+    @DEFAULT_EXTENTIONS.setter
+    def DEFAULT_EXTENTIONS(self, extensions):
+        """
+        Compatibility with the wrong typo.
+
+        .. note:: Will be marked as deprecated for the following version 0.7.
+        """
+        self.DEFAULT_EXTENSIONS = extensions
 
 
 class FabioImage(six.with_metaclass(FabioMeta, object)):
