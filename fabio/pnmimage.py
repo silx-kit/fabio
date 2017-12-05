@@ -66,7 +66,7 @@ class PnmImage(FabioImage):
 
     DESCRIPTION = "PNM file format"
 
-    DEFAULT_EXTENTIONS = ["pnm", "pgm", "pbm"]
+    DEFAULT_EXTENSIONS = ["pnm", "pgm", "pbm"]
 
     def __init__(self, *arg, **kwargs):
         FabioImage.__init__(self, *arg, **kwargs)

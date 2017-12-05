@@ -69,7 +69,7 @@ class Bruker100Image(BrukerImage):
 
     DESCRIPTION = "SFRM File format used by Bruker detectors (version 100)"
 
-    DEFAULT_EXTENTIONS = ["sfrm"]
+    DEFAULT_EXTENSIONS = ["sfrm"]
 
     bpp_to_numpy = {1: numpy.uint8,
                     2: numpy.uint16,

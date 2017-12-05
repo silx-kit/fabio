@@ -107,7 +107,7 @@ class NumpyImage(FabioImage):
 
     DESCRIPTION = "Numpy array file format"
 
-    DEFAULT_EXTENTIONS = ["npy"]
+    DEFAULT_EXTENSIONS = ["npy"]
 
     def __init__(self, data=None, header=None):
         """

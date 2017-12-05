@@ -62,7 +62,7 @@ class BinaryImage(FabioImage):
 
     DESCRIPTION = "Binary format (none-compressed 2D images)"
 
-    DEFAULT_EXTENTIONS = ["bin"]
+    DEFAULT_EXTENSIONS = ["bin"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

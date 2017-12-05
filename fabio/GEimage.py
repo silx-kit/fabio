@@ -219,7 +219,7 @@ class GeImage(FabioImage):
 
     DESCRIPTION = "GE a-Si Angio detector file format"
 
-    DEFAULT_EXTENTIONS = []
+    DEFAULT_EXTENSIONS = []
 
     _need_a_seek_to_read = True
 

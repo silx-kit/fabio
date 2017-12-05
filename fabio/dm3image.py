@@ -80,7 +80,7 @@ class Dm3Image(FabioImage):
 
     DESCRIPTION = "Digital Micrograph DM3 file format"
 
-    DEFAULT_EXTENTIONS = ["dm3"]
+    DEFAULT_EXTENSIONS = ["dm3"]
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)

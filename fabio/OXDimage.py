@@ -89,7 +89,7 @@ class OxdImage(FabioImage):
 
     DESCRIPTION = "Oxford Diffraction Sapphire 3 file format"
 
-    DEFAULT_EXTENTIONS = ["img"]
+    DEFAULT_EXTENSIONS = ["img"]
 
     def _readheader(self, infile):
 
