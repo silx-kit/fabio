@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/07/2017"
+__date__ = "05/12/2017"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -124,6 +124,10 @@ def get_class_by_name(format_name):
         return None
 
 
+_extension_cache_hash = None
+"""Stored value which allow to invalidate the cache"""
+
+
 _extension_cache = None
 """Cache extension mapping"""
 
@@ -135,9 +139,18 @@ def _get_extension_mapping():
     :rtype: dict
     """
     global _extension_cache
+    global _extension_cache_hash
+
+    classes = tuple(get_all_classes())
+    if _extension_cache_hash != hash(classes):
+        # invalidate the cache
+        _extension_cache = None
+
     if _extension_cache is None:
         _extension_cache = {}
-        for codec in get_all_classes():
+        _extension_cache_hash = hash(classes)
+
+        for codec in classes:
             for ext in codec.DEFAULT_EXTENSIONS:
                 if ext not in _extension_cache:
                     _extension_cache[ext] = []
