@@ -224,7 +224,7 @@ class file_series(list):
         Goto a position in sequence
 
         """
-        assert num < len(self) and num > 0, "num out of range"
+        assert num < len(self) and num >= 0, "num out of range"
         self._current = num
         return self[self._current]
 
