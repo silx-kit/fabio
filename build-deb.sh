@@ -110,21 +110,21 @@ do
           ;;
       --debian7)
           debian_version=7
-	  target_system=debian${debian_version}
+          target_system=debian${debian_version}
           dist_directory=${project_directory}/dist/${target_system}
           build_directory=${project_directory}/build/${target_system}
           shift
           ;;
       --debian8)
           debian_version=8
-	  target_system=debian${debian_version}
+          target_system=debian${debian_version}
           dist_directory=${project_directory}/dist/${target_system}
           build_directory=${project_directory}/build/${target_system}
           shift
           ;;
       --debian9)
           debian_version=9
-	  target_system=debian${debian_version}
+          target_system=debian${debian_version}
           dist_directory=${project_directory}/dist/${target_system}
           build_directory=${project_directory}/build/${target_system}
           shift

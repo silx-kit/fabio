@@ -138,7 +138,7 @@ def _get_extension_mapping():
     if _extension_cache is None:
         _extension_cache = {}
         for codec in get_all_classes():
-            for ext in codec.DEFAULT_EXTENTIONS:
+            for ext in codec.DEFAULT_EXTENSIONS:
                 if ext not in _extension_cache:
                     _extension_cache[ext] = []
                 _extension_cache[ext].append(codec)

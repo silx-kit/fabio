@@ -53,7 +53,7 @@ class HipicImage(FabioImage):
 
     DESCRIPTION = "HiPic file format from Hamamatsu CCD cameras"
 
-    DEFAULT_EXTENTIONS = ["img"]
+    DEFAULT_EXTENSIONS = ["img"]
 
     def _readheader(self, infile):
         """

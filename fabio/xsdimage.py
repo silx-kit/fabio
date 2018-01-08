@@ -65,7 +65,7 @@ class XsdImage(FabioImage):
 
     DESCRIPTION = "XSDataImage XML file format"
 
-    DEFAULT_EXTENTIONS = ["xml", "xsd"]
+    DEFAULT_EXTENSIONS = ["xml", "xsd"]
 
     def __init__(self, data=None, header=None, fname=None):
         """

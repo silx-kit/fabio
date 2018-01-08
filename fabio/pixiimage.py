@@ -53,7 +53,7 @@ class PixiImage(FabioImage):
 
     DESCRIPTION = "Pixi file format"
 
-    DEFAULT_EXTENTIONS = []
+    DEFAULT_EXTENSIONS = []
 
     _need_a_seek_to_read = True
 

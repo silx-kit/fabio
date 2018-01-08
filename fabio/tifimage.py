@@ -136,7 +136,7 @@ class TifImage(FabioImage):
     """
     DESCRIPTION = "Tagged image file format"
 
-    DEFAULT_EXTENTIONS = ["tif", "tiff"]
+    DEFAULT_EXTENSIONS = ["tif", "tiff"]
 
     _need_a_seek_to_read = True
 

@@ -46,7 +46,7 @@ class Fit2dSpreadsheetImage(FabioImage):
 
     DESCRIPTION = "Fit2d spreadsheet ascii file format"
 
-    DEFAULT_EXTENTIONS = ["spr"]
+    DEFAULT_EXTENSIONS = ["spr"]
 
     def _readheader(self, infile):
         """

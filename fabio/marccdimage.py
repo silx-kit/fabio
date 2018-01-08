@@ -321,7 +321,7 @@ class MarccdImage(TifImage):
 
     DESCRIPTION = "File format from MarCCD and MarMosaic images"
 
-    DEFAULT_EXTENTIONS = ["mccd"]
+    DEFAULT_EXTENSIONS = ["mccd"]
 
     def _readheader(self, infile):
         """

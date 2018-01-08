@@ -66,7 +66,7 @@ class SpeImage(FabioImage):
 
     DESCRIPTION = "Princeton instrument SPE file format"
 
-    DEFAULT_EXTENTIONS = ["spe"]
+    DEFAULT_EXTENSIONS = ["spe"]
 
     def _readheader(self, infile):
         """

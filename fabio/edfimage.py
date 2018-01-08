@@ -463,7 +463,7 @@ class EdfImage(FabioImage):
 
     DESCRIPTION = "European Synchrotron Radiation Facility data format"
 
-    DEFAULT_EXTENTIONS = ["edf", "cor"]
+    DEFAULT_EXTENSIONS = ["edf", "cor"]
 
     RESERVED_HEADER_KEYS = ['HEADERID', 'IMAGE', 'BYTEORDER', 'DATATYPE',
                             'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']

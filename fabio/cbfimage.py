@@ -84,7 +84,7 @@ class CbfImage(FabioImage):
 
     DESCRIPTION = "Cif Binary Files format (used by the Pilatus detectors and others)"
 
-    DEFAULT_EXTENTIONS = ["cbf"]
+    DEFAULT_EXTENSIONS = ["cbf"]
 
     STARTER = b"\x0c\x1a\x04\xd5"
     PADDING = 512

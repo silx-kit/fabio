@@ -63,7 +63,7 @@ class Fit2dImage(FabioImage):
 
     DESCRIPTION = "Fit2d file format"
 
-    DEFAULT_EXTENTIONS = ["f2d"]
+    DEFAULT_EXTENSIONS = ["f2d"]
 
     BUFFER_SIZE = 512  # size of the buffer
     PIXELS_PER_CHUNK = 128

@@ -58,7 +58,7 @@ class MrcImage(FabioImage):
 
     DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
 
-    DEFAULT_EXTENTIONS = ["mrc"]
+    DEFAULT_EXTENSIONS = ["mrc"]
 
     KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
             "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",

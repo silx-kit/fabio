@@ -91,7 +91,7 @@ class TemplateImage(FabioImage):
 
     DESCRIPTION = "Name of the file format"
 
-    DEFAULT_EXTENTIONS = []
+    DEFAULT_EXTENSIONS = []
 
     def __init__(self, *arg, **kwargs):
         """

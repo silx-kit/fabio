@@ -69,7 +69,7 @@ class EigerImage(FabioImage):
 
     DESCRIPTION = "Eiger data files based on HDF5"
 
-    DEFAULT_EXTENTIONS = ["h5"]
+    DEFAULT_EXTENSIONS = ["h5"]
 
     def __init__(self, data=None, header=None):
         """

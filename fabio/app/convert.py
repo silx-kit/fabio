@@ -64,7 +64,7 @@ def get_default_extension_from_format(format_name):
     if class_ is None:
         raise RuntimeError("Format '%s' unsupported" % format_name)
 
-    extensions = class_.DEFAULT_EXTENTIONS
+    extensions = class_.DEFAULT_EXTENSIONS
     if len(extensions) == 0:
         # No extensions
         return ""
@@ -248,8 +248,8 @@ def print_supported_formats():
     print()
 
     for class_ in classes:
-        if len(class_.DEFAULT_EXTENTIONS) > 0:
-            extensions = ", ".join(["*." + x for x in class_.DEFAULT_EXTENTIONS])
+        if len(class_.DEFAULT_EXTENSIONS) > 0:
+            extensions = ", ".join(["*." + x for x in class_.DEFAULT_EXTENSIONS])
             extensions = "(%s)" % extensions
         else:
             extensions = ""

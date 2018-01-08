@@ -63,7 +63,7 @@ class Jpeg2KImage(FabioImage):
     """
     DESCRIPTION = "JPEG 2000 format"
 
-    DEFAULT_EXTENTIONS = ["jp2", "jpx", "j2k", "jpf", "jpg2"]
+    DEFAULT_EXTENSIONS = ["jp2", "jpx", "j2k", "jpf", "jpg2"]
 
     _need_a_seek_to_read = True
 

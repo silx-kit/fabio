@@ -76,7 +76,7 @@ class BrukerImage(FabioImage):
     DESCRIPTION = "File format used by Bruker detectors (version 86)"
 
     # There is no extension. It is used as frame counter
-    DEFAULT_EXTENTIONS = []
+    DEFAULT_EXTENSIONS = []
 
     bpp_to_numpy = {1: numpy.uint8,
                     2: numpy.uint16,

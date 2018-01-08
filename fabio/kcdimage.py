@@ -75,7 +75,7 @@ class KcdImage(FabioImage):
 
     DESCRIPTION = "KCD file format from Nonius's KappaCCD diffractometer"
 
-    DEFAULT_EXTENTIONS = ["kcd"]
+    DEFAULT_EXTENSIONS = ["kcd"]
 
     def _readheader(self, infile):
         """

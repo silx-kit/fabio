@@ -57,7 +57,7 @@ class PilatusImage(TifImage):
 
     DESCRIPTION = "Pilatus file format based on Tiff"
 
-    DEFAULT_EXTENTIONS = ["tif", "tiff"]
+    DEFAULT_EXTENSIONS = ["tif", "tiff"]
 
     def _readheader(self, infile):
         """
