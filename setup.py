@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/10/2017"
+__date__ = "15/01/2018"
 __status__ = "stable"
 
 import os
@@ -583,7 +583,7 @@ class PyTest(Command):
 
     def run(self):
         import subprocess
-        errno = subprocess.call([sys.executable, 'run_tests.py', '-i'])
+        errno = subprocess.call([sys.executable, 'run_tests.py'])
         if errno != 0:
             raise SystemExit(errno)
 
