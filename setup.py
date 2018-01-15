@@ -35,7 +35,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/09/2017"
+__date__ = "30/10/2017"
 __status__ = "stable"
 
 import os
@@ -178,8 +178,8 @@ class BuildMan(Command):
 
         env = dict((str(k), str(v)) for k, v in os.environ.items())
         env["PYTHONPATH"] = os.pathsep.join(path)
-
-        os.makedirs("build/man")
+        if not os.path.isdir("build/man"):
+            os.makedirs("build/man")
         import subprocess
         import tempfile
         import stat

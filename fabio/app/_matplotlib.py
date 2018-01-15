@@ -32,7 +32,7 @@ to the used backend.
 
 __authors__ = ["T. Vincent"]
 __license__ = "MIT"
-__date__ = "07/09/2017"
+__date__ = "08/01/2018"
 
 
 import sys
@@ -46,7 +46,7 @@ if 'matplotlib' in sys.modules:
         'matplotlib already loaded, setting its backend may not work')
 
 
-from . import qt
+from . import _qt as qt
 
 import matplotlib
 
