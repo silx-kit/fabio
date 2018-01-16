@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 0.5.0, 29/08/2017
+Measured on *fabio* version 0.6.0, 16/01/2018
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -11,22 +11,22 @@ Measured on *fabio* version 0.5.0, 29/08/2017
    "HiPiCimage.py", "62", "12", "19.4 %"
    "OXDimage.py", "355", "328", "92.4 %"
    "TiffIO.py", "816", "574", "70.3 %"
-   "__init__.py", "33", "25", "75.8 %"
-   "_version.py", "34", "32", "94.1 %"
+   "__init__.py", "36", "28", "77.8 %"
+   "_version.py", "34", "27", "79.4 %"
    "adscimage.py", "78", "49", "62.8 %"
    "binaryimage.py", "56", "20", "35.7 %"
    "bruker100image.py", "243", "164", "67.5 %"
    "brukerimage.py", "204", "171", "83.8 %"
    "cbfimage.py", "522", "223", "42.7 %"
-   "compression.py", "250", "189", "75.6 %"
+   "compression.py", "261", "193", "73.9 %"
    "converters.py", "18", "15", "83.3 %"
    "directories.py", "23", "18", "78.3 %"
-   "dm3image.py", "138", "20", "14.5 %"
-   "edfimage.py", "591", "391", "66.2 %"
+   "dm3image.py", "151", "147", "97.4 %"
+   "edfimage.py", "641", "451", "70.4 %"
    "eigerimage.py", "103", "56", "54.4 %"
-   "fabioformats.py", "79", "61", "77.2 %"
-   "fabioimage.py", "314", "241", "76.8 %"
-   "fabioutils.py", "362", "286", "79.0 %"
+   "fabioformats.py", "79", "63", "79.7 %"
+   "fabioimage.py", "323", "247", "76.5 %"
+   "fabioutils.py", "370", "288", "77.8 %"
    "file_series.py", "143", "63", "44.1 %"
    "fit2dimage.py", "92", "77", "83.7 %"
    "fit2dmaskimage.py", "77", "74", "96.1 %"
@@ -40,7 +40,7 @@ Measured on *fabio* version 0.5.0, 29/08/2017
    "mpaimage.py", "55", "50", "90.9 %"
    "nexus.py", "190", "96", "50.5 %"
    "numpyimage.py", "65", "52", "80.0 %"
-   "openimage.py", "89", "57", "64.0 %"
+   "openimage.py", "94", "66", "70.2 %"
    "pilatusimage.py", "38", "33", "86.8 %"
    "pixiimage.py", "98", "27", "27.6 %"
    "pnmimage.py", "135", "86", "63.7 %"
@@ -48,9 +48,11 @@ Measured on *fabio* version 0.5.0, 29/08/2017
    "speimage.py", "163", "158", "96.9 %"
    "tifimage.py", "166", "64", "38.6 %"
    "xsdimage.py", "98", "72", "73.5 %"
-   "convert.py", "213", "30", "14.1 %"
-   "mathutils.py", "11", "6", "54.5 %"
-   "pilutils.py", "46", "30", "65.2 %"
+   "app/__init__.py", "0", "0", "0.0 %"
+   "app/convert.py", "213", "30", "14.1 %"
+   "ext/__init__.py", "0", "0", "0.0 %"
+   "utils/__init__.py", "0", "0", "0.0 %"
+   "utils/mathutils.py", "11", "6", "54.5 %"
+   "utils/pilutils.py", "46", "30", "65.2 %"
 
-   "fabio total", "6871", "4524", "65.8 %"
-
+   "fabio total", "6970", "4732", "67.9 %"
