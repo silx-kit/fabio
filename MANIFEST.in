@@ -5,6 +5,7 @@ include run_tests.py
 include copyright
 exclude MANIFEST
 include stdeb.cfg
+include pyproject.toml
 recursive-include fabio/ext *.c *.h *.pyx
 recursive-include pylint *
 recursive-include scripts *
