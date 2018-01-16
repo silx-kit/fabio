@@ -97,7 +97,10 @@ There are also fileseries related methods (next(), previous(), ...) which return
 
 Other feature:
 
-* possibility for using on-the-fly external compression - i.e. if files are stored as something as .gz, .bz2 etc could decompress them, using an external compression mechanism (if available). This is present in fabian but requires that images are edfs.
+* possibility for using on-the-fly external compression - i.e. if files are
+stored as something as .gz, .bz2 etc could decompress them, using an external
+compression mechanism (if available). This is present in fabian but requires
+that images are edfs.
 
 
 Known file formats
