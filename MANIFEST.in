@@ -12,6 +12,7 @@ recursive-exclude testimages *
 recursive-exclude fabio.egg-info *
 recursive-exclude build *
 recursive-exclude dist *
+recursive-exclude pylint *
 include version.py
 include stdeb.cfg
 include setup.cfg
