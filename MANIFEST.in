@@ -1,21 +1,30 @@
-include README.rst
-include MANIFEST.in
-include version.py
-include run_tests.py
-include copyright
-exclude MANIFEST
-include stdeb.cfg
-include pyproject.toml
+# Patterns to exclude from any directory
+global-exclude *~
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .git
+global-exclude .ipynb_checkpoints
+recursive-include package/debian? *
 recursive-include fabio/ext *.c *.h *.pyx
-recursive-include pylint *
-recursive-include scripts *
-recursive-exclude build *
-recursive-exclude dist *
 recursive-exclude test/tiftest *
 recursive-exclude test/testimages *
 recursive-exclude testimages *
 recursive-exclude fabio.egg-info *
-
+recursive-exclude build *
+recursive-exclude dist *
+recursive-exclude pylint *
+include version.py
+include stdeb.cfg
+include setup.cfg
+exclude MANIFEST
+include MANIFEST.in
+include build-deb.sh
+include run_tests.py
+include bootstrap.py
+include README.rst
+include copyright
+include requirements.txt
+include pyproject.toml
 
 #Include doc without checkpoints
 recursive-include doc *

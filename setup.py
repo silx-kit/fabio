@@ -33,7 +33,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/01/2018"
+__date__ = "16/01/2018"
 __status__ = "stable"
 
 import sys
@@ -472,7 +472,7 @@ class Build(_build):
                 # By default Xcode5 & XCode6 do not support OpenMP, Xcode4 is OK.
                 osx = tuple([int(i) for i in platform.mac_ver()[0].split(".")])
                 if osx >= (10, 8):
-                    logger.warning("OpenMP support ignored. Your platform do not support it")
+                    logger.warning("OpenMP support ignored. Your platform does not support it.")
                     use_openmp = False
 
         # Remove attributes used by distutils parsing
@@ -908,7 +908,7 @@ def get_project_configuration(dry_run):
                         version=get_version(),
                         url="http://github.com/silx-kit/fabio",
                         download_url="https://github.com/silx-kit/fabio/releases",
-                        author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
+                        author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw, Valentin Valls",
                         author_email="fable-talk@lists.sourceforge.net",
                         classifiers=classifiers,
                         description='Image IO for fable',
