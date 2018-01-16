@@ -11,7 +11,8 @@ FabIO-0.6.0 (01/2018):
 - Small clean up and fix on the documentation
 - Update Debian package scripts to support Ubuntu
 - provide dummy "register" decorator to prepare explicit registration in v0.7
-- Last version to support Python2.7. v0.7 will require Python3.4+
+- Last version to support Python2.7 and will be supported until 2020.
+  v0.7 will require Python3.4+
 
 FabIO-0.5.0 (08/2017):
 ......................
