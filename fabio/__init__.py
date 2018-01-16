@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/07/2017"
+__date__ = "16/01/2018"
 __status__ = "stable"
 
 
@@ -61,6 +61,32 @@ filename_object = FilenameObject
 
 from .openimage import openimage as open
 from .openimage import openheader as openheader
+
+
+def register(codec_class):
+    """
+    Register a codec class with the set of formats supported by fabio.
+
+    It is a transitional function to prepare the next comming version of fabio.
+
+    - On the current fabio library, when a module is imported, all the formats
+        inheriting FabioImage are automatically registred. And this function is
+        doing nothing.
+    - On the next fabio library. Importing a module containing classes
+        inheriting FabioImage will not be registered. And this function will
+        register the class.
+
+    The following source code will then provide the same behaviour on both
+    fabio versions, and it is recommended to use it.
+
+    .. code-block:: python
+
+        @fabio.register
+        class MyCodec(fabio.fabioimage.FabioImage):
+            pass
+    """
+    assert(issubclass(codec_class, fabioimage.FabioImage))
+    return codec_class
 
 
 def tests():
