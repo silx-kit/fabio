@@ -46,10 +46,15 @@ def isPilUsable():
     if jpeg2kimage.PIL is None:
         return False
     try:
-        jpeg2kimage.PIL.Image.frombytes("1", (2, 2), b"", decoder_name='jpeg2k')
+        if hasattr(jpeg2kimage.PIL.Image, "frombytes"):
+            frombytes = jpeg2kimage.PIL.Image.frombytes
+        else:
+            frombytes = jpeg2kimage.PIL.Image.frombuffer
+        frombytes("1", (2, 2), b"", decoder_name='jpeg2k')
     except Exception as e:
         if e.args[0] == "decoder jpeg2k not available":
             return False
+        # Skip decoding error
     return True
 
 
