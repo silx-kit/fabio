@@ -96,11 +96,13 @@ class Jpeg2KImage(FabioImage):
         This code was tested with all release 0.8.x
         """
         # image = glymur.Jp2k(filename)
-        # inject a shape  to avoid calling the read function
-        if not glymur.__version__.startswith("0.8."):
+        if glymur.__version__.startswith("0.7."):
+            image = glymur.Jp2k(filename=filename)
+        elif glymur.__version__.startswith("0.8."):
+            # inject a shape  to avoid calling the read function
+            image = glymur.Jp2k(filename=filename, shape=(1, 1))
+        else:
             raise IOError("Glymur version %s is not supported" % glymur.__version__)
-
-        image = glymur.Jp2k(filename=filename, shape=(1, 1))
 
         # Move to the end of the file to know the size
         infile.seek(0, 2)
