@@ -15,4 +15,4 @@ install:
 # command to run tests
 script:
   - "python setup.py build test"
-  - "python ./run_tests.py"
+  - "python ./run_tests.py --installed"

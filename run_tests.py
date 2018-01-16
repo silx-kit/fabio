@@ -2,7 +2,7 @@
 # coding: utf-8
 # /*##########################################################################
 #
-# Copyright (c) 2015-2016 European Synchrotron Radiation Facility
+# Copyright (c) 2015-2018 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -43,22 +43,44 @@ import sys
 import time
 import unittest
 
-try:
-    import importlib
-except:
-    importer = __import__
-    old_importer = True
-else:
-    importer = importlib.import_module
-    old_importer = False
+
+class StreamHandlerUnittestReady(logging.StreamHandler):
+    """The unittest class TestResult redefine sys.stdout/err to capture
+    stdout/err from tests and to display them only when a test fail.
+    This class allow to use unittest stdout-capture by using the last sys.stdout
+    and not a cached one.
+    """
+
+    def emit(self, record):
+        """
+        :type record: logging.LogRecord
+        """
+        self.stream = sys.stderr
+        super(StreamHandlerUnittestReady, self).emit(record)
+
+    def flush(self):
+        pass
 
 
-logging.basicConfig(level=logging.WARNING)
+def createBasicHandler():
+    """Create the handler using the basic configuration"""
+    hdlr = StreamHandlerUnittestReady()
+    fs = logging.BASIC_FORMAT
+    dfs = None
+    fmt = logging.Formatter(fs, dfs)
+    hdlr.setFormatter(fmt)
+    return hdlr
+
+
+# Use an handler compatible with unittests, else use_buffer is not working
+logging.root.addHandler(createBasicHandler())
+logging.captureWarnings(True)
+
 logger = logging.getLogger("run_tests")
 logger.setLevel(logging.WARNING)
 
+logger.info("Python %s %s", sys.version, tuple.__itemsize__ * 8)
 
-logger.info("Python %s %s" % (sys.version, tuple.__itemsize__ * 8))
 
 try:
     import resource
@@ -67,51 +89,103 @@ except ImportError:
     logger.warning("resource module missing")
 
 try:
+    import importlib
+    importer = importlib.import_module
+except ImportError:
+    def importer(name):
+        module = __import__(name)
+        # returns the leaf module, instead of the root module
+        subnames = name.split(".")
+        subnames.pop(0)
+        for subname in subnames:
+            module = getattr(module, subname)
+            return module
+
+
+try:
     import numpy
 except Exception as error:
-    logger.warning("Numpy missing: %s" % error)
+    logger.warning("Numpy missing: %s", error)
 else:
-    logger.info("Numpy %s" % numpy.version.version)
+    logger.info("Numpy %s", numpy.version.version)
 
 
 try:
     import h5py
 except Exception as error:
-    logger.warning("h5py missing: %s" % error)
+    logger.warning("h5py missing: %s", error)
 else:
-    logger.info("h5py %s" % h5py.version.version)
+    logger.info("h5py %s", h5py.version.version)
 
 
-class TestResult(unittest.TestResult):
-    logger = logging.getLogger("memProf")
-    logger.setLevel(logging.DEBUG)
-    logger.handlers.append(logging.FileHandler("profile.log"))
+def get_project_name(root_dir):
+    """Retrieve project name by running python setup.py --name in root_dir.
+
+    :param str root_dir: Directory where to run the command.
+    :return: The name of the project stored in root_dir
+    """
+    logger.debug("Getting project name in %s", root_dir)
+    p = subprocess.Popen([sys.executable, "setup.py", "--name"],
+                         shell=False, cwd=root_dir, stdout=subprocess.PIPE)
+    name, _stderr_data = p.communicate()
+    logger.debug("subprocess ended with rc= %s", p.returncode)
+    return name.split()[-1].decode('ascii')
+
+
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_NAME = get_project_name(PROJECT_DIR)
+logger.info("Project name: %s", PROJECT_NAME)
+
+
+class TextTestResultWithSkipList(unittest.TextTestResult):
+    """Override default TextTestResult to display list of skipped tests at the
+    end
+    """
+
+    def printErrors(self):
+        unittest.TextTestResult.printErrors(self)
+        # Print skipped tests at the end
+        self.printErrorList("SKIPPED", self.skipped)
+
+
+class ProfileTextTestResult(unittest.TextTestRunner.resultclass):
+
+    def __init__(self, *arg, **kwarg):
+        unittest.TextTestRunner.resultclass.__init__(self, *arg, **kwarg)
+        self.logger = logging.getLogger("memProf")
+        self.logger.setLevel(min(logging.INFO, logging.root.level))
+        self.logger.handlers.append(logging.FileHandler("profile.log"))
 
     def startTest(self, test):
-        self.__mem_start = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        unittest.TextTestRunner.resultclass.startTest(self, test)
+        if resource:
+            self.__mem_start = \
+                resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         self.__time_start = time.time()
-        unittest.TestResult.startTest(self, test)
 
     def stopTest(self, test):
-        unittest.TestResult.stopTest(self, test)
-        self.logger.info("Time: %.3fs \t RAM: %.3f Mb\t%s" % (
-            time.time() - self.__time_start,
-            (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss -
-                self.__mem_start) / 1e3,
-            test.id()))
+        unittest.TextTestRunner.resultclass.stopTest(self, test)
+        # see issue 311. For other platform, get size of ru_maxrss in "man getrusage"
+        if sys.platform == "darwin":
+            ratio = 1e-6
+        else:
+            ratio = 1e-3
+        if resource:
+            memusage = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss -
+                        self.__mem_start) * ratio
+        else:
+            memusage = 0
+        self.logger.info("Time: %.3fs \t RAM: %.3f Mb\t%s",
+            time.time() - self.__time_start, memusage, test.id())
 
 
-class ProfileTestRunner(unittest.TextTestRunner):
-    def _makeResult(self):
-        return TestResult(stream=sys.stderr, descriptions=True, verbosity=1)
-
-
-def report_rst(cov, package, version="0.0.0"):
+def report_rst(cov, package, version="0.0.0", base=""):
     """
     Generate a report of test coverage in RST (for Sphinx inclusion)
 
     :param cov: test coverage instance
     :param str package: Name of the package
+    :param str base: base directory of modules to include in the report
     :return: RST string
     """
     import tempfile
@@ -137,7 +211,9 @@ def report_rst(cov, package, version="0.0.0"):
 
     for cl in classes:
         name = cl.get("name")
-        # fname = cl.get("filename")
+        fname = cl.get("filename")
+        if not os.path.abspath(fname).startswith(base):
+            continue
         lines = cl.find("lines").getchildren()
         hits = [int(i.get("hits")) for i in lines]
 
@@ -145,6 +221,9 @@ def report_rst(cov, package, version="0.0.0"):
         sum_lines = len(lines)
 
         cover = 100.0 * sum_hits / sum_lines if sum_lines else 0
+
+        if base:
+            name = os.path.relpath(fname, base)
 
         res.append('   "%s", "%s", "%s", "%.1f %%"' %
                    (name, sum_lines, sum_hits, cover))
@@ -158,18 +237,18 @@ def report_rst(cov, package, version="0.0.0"):
     return os.linesep.join(res)
 
 
-def get_project_name(root_dir):
-    """Retrieve project name by running python setup.py --name in root_dir.
+def is_debug_python():
+    """Returns true if the Python interpreter is in debug mode."""
+    try:
+        import sysconfig
+    except ImportError:  # pragma nocover
+        # Python < 2.7
+        import distutils.sysconfig as sysconfig
 
-    :param str root_dir: Directory where to run the command.
-    :return: The name of the project stored in root_dir
-    """
-    logger.debug("Getting project name in %s" % root_dir)
-    p = subprocess.Popen([sys.executable, "setup.py", "--name"],
-                         shell=False, cwd=root_dir, stdout=subprocess.PIPE)
-    name, stderr_data = p.communicate()
-    logger.debug("subprocess ended with rc= %s" % p.returncode)
-    return name.split()[-1].decode('ascii')
+    if sysconfig.get_config_var("Py_DEBUG"):
+        return True
+
+    return hasattr(sys, "gettotalrefcount")
 
 
 def build_project(name, root_dir):
@@ -184,6 +263,8 @@ def build_project(name, root_dir):
     platform = distutils.util.get_platform()
     architecture = "lib.%s-%i.%i" % (platform,
                                      sys.version_info[0], sys.version_info[1])
+    if is_debug_python():
+        architecture += "-pydebug"
 
     if os.environ.get("PYBUILD_NAME") == name:
         # we are in the debian packaging way
@@ -193,24 +274,20 @@ def build_project(name, root_dir):
     else:
         home = os.path.join(root_dir, "build", architecture)
 
-    logger.warning("Building %s to %s" % (name, home))
+    logger.warning("Building %s to %s", name, home)
     p = subprocess.Popen([sys.executable, "setup.py", "build"],
                          shell=False, cwd=root_dir)
-    logger.debug("subprocess ended with rc= %s" % p.wait())
+    logger.debug("subprocess ended with rc= %s", p.wait())
     return home
 
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_NAME = get_project_name(PROJECT_DIR)
-logger.info('Project name: %s' % PROJECT_NAME)
-
 from argparse import ArgumentParser
-
 parser = ArgumentParser(description='Run the tests.')
 
-parser.add_argument("-i", "--insource",
-                    action="store_true", dest="insource", default=False,
-                    help="Use the build source and not the installed version")
+parser.add_argument("--installed",
+                    action="store_true", dest="installed", default=False,
+                    help=("Test the installed version instead of" +
+                          "building from the source"))
 parser.add_argument("-c", "--coverage", dest="coverage",
                     action="store_true", default=False,
                     help=("Report code coverage" +
@@ -223,55 +300,60 @@ parser.add_argument("-v", "--verbose", default=0,
                     help="Increase verbosity. Option -v prints additional " +
                          "INFO messages. Use -vv for full verbosity, " +
                          "including debug messages and test help strings.")
-parser.add_argument(
-    "test_name", nargs='*', default=(),
-    help="Test names to run (Default: %s.test.suite)" % PROJECT_NAME)
+
+default_test_name = "%s.test.suite" % PROJECT_NAME
+parser.add_argument("test_name", nargs='*',
+                    default=(default_test_name,),
+                    help="Test names to run (Default: %s)" % default_test_name)
 options = parser.parse_args()
 sys.argv = [sys.argv[0]]
 
 
 test_verbosity = 1
+use_buffer = True
 if options.verbose == 1:
     logging.root.setLevel(logging.INFO)
     logger.info("Set log level: INFO")
+    test_verbosity = 2
+    use_buffer = False
 elif options.verbose > 1:
     logging.root.setLevel(logging.DEBUG)
     logger.info("Set log level: DEBUG")
     test_verbosity = 2
-
+    use_buffer = False
 
 if options.coverage:
     logger.info("Running test-coverage")
     import coverage
+    omits = ["*test*", "*third_party*", "*/setup.py",
+             # temporary test modules (silx.math.fit.test.test_fitmanager)
+             "*customfun.py", ]
     try:
-        cov = coverage.Coverage(omit=["*test*", "*third_party*", "*/setup.py"])
+        cov = coverage.Coverage(omit=omits)
     except AttributeError:
-        cov = coverage.coverage(omit=["*test*", "*third_party*", "*/setup.py"])
+        cov = coverage.coverage(omit=omits)
     cov.start()
-
 
 # Prevent importing from source directory
 if (os.path.dirname(os.path.abspath(__file__)) ==
         os.path.abspath(sys.path[0])):
     removed_from_sys_path = sys.path.pop(0)
-    logger.info("Patched sys.path, removed: '%s'" % removed_from_sys_path)
+    logger.info("Patched sys.path, removed: '%s'", removed_from_sys_path)
 
 
 # import module
-if not options.insource:
+if options.installed:  # Use installed version
     try:
         module = importer(PROJECT_NAME)
     except:
-        logger.warning(
-            "%s missing, using built (i.e. not installed) version",
+        raise ImportError(
+            "%s not installed: Cannot run tests on installed version" %
             PROJECT_NAME)
-        options.insource = True
-
-if options.insource:
+else:  # Use built source
     build_dir = build_project(PROJECT_NAME, PROJECT_DIR)
 
     sys.path.insert(0, build_dir)
-    logger.warning("Patched sys.path, added: '%s'" % build_dir)
+    logger.warning("Patched sys.path, added: '%s'", build_dir)
     module = importer(PROJECT_NAME)
 
 
@@ -280,12 +362,14 @@ PROJECT_PATH = module.__path__[0]
 
 
 # Run the tests
+runnerArgs = {}
+runnerArgs["verbosity"] = test_verbosity
+runnerArgs["buffer"] = use_buffer
 if options.memprofile:
-    runner = ProfileTestRunner()
+    runnerArgs["resultclass"] = ProfileTextTestResult
 else:
-    runner = unittest.TextTestRunner(
-        buffer=test_verbosity <= 1,
-        verbosity=test_verbosity)
+    runnerArgs["resultclass"] = TextTestResultWithSkipList
+runner = unittest.TextTestRunner(**runnerArgs)
 
 logger.warning("Test %s %s from %s",
                PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH)
@@ -294,10 +378,6 @@ test_module_name = PROJECT_NAME + '.test'
 logger.info('Import %s', test_module_name)
 test_module = importer(test_module_name)
 utilstest = importer(test_module_name + ".utilstest")
-if old_importer:
-    test_module = getattr(test_module, "test")
-    print(dir(test_module))
-    utilstest = getattr(test_module, "utilstest")
 UtilsTest = getattr(utilstest, "UtilsTest")
 UtilsTest.image_home = os.path.join(PROJECT_DIR, 'testimages')
 UtilsTest.testimages = os.path.join(PROJECT_DIR, "all_testimages.json")
@@ -314,16 +394,14 @@ else:
     test_suite.addTest(
         unittest.defaultTestLoader.loadTestsFromNames(options.test_name))
 
+# Display the result when using CTRL-C
+unittest.installHandler()
+
 result = runner.run(test_suite)
-for test, reason in result.skipped:
-    logger.warning('Skipped %s (%s): %s',
-                   test.id(), test.shortDescription() or '', reason)
 
 if result.wasSuccessful():
-    logger.info("Test suite succeeded")
     exit_status = 0
 else:
-    logger.warning("Test suite failed")
     exit_status = 1
 
 
@@ -331,7 +409,6 @@ if options.coverage:
     cov.stop()
     cov.save()
     with open("coverage.rst", "w") as fn:
-        fn.write(report_rst(cov, PROJECT_NAME, PROJECT_VERSION))
-    print(cov.report())
+        fn.write(report_rst(cov, PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH))
 
 sys.exit(exit_status)

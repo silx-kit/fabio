@@ -1,30 +1,28 @@
-#!/usr/bin/env python
-# coding: utf-8
+#!/usr/bin/python
+# coding: utf8
+# /*##########################################################################
 #
-#    Project: Fable Input/Output
-#             https://github.com/silx-kit/fabio
+# Copyright (c) 2015-2018 European Synchrotron Radiation Facility
 #
-#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#  Permission is hereby granted, free of charge, to any person obtaining a copy
-#  of this software and associated documentation files (the "Software"), to deal
-#  in the Software without restriction, including without limitation the rights
-#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#  copies of the Software, and to permit persons to whom the Software is
-#  furnished to do so, subject to the following conditions:
-#  .
-#  The above copyright notice and this permission notice shall be included in
-#  all copies or substantial portions of the Software.
-#  .
-#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#  THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ###########################################################################*/
 
 """ Setup script for python distutils package and fabio """
 
@@ -35,28 +33,31 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/10/2017"
+__date__ = "15/01/2018"
 __status__ = "stable"
 
-import os
 import sys
-import glob
+import os
 import platform
+import shutil
 import logging
+import glob
 import contextlib
+import io
 
 
 logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger("fabio.setup")
 
 
+from distutils.command.clean import clean as Clean
 from distutils.command.build import build as _build
 try:
     from setuptools import Command
     from setuptools.command.build_py import build_py as _build_py
     from setuptools.command.build_ext import build_ext
     from setuptools.command.sdist import sdist
-    from setuptools.command.install import install
     logger.info("Use setuptools")
 except ImportError:
     try:
@@ -66,24 +67,67 @@ except ImportError:
     from distutils.command.build_py import build_py as _build_py
     from distutils.command.build_ext import build_ext
     from distutils.command.sdist import sdist
-    from distutils.command.install import install
     logger.info("Use distutils")
+
+try:
+    import sphinx
+    import sphinx.util.console
+    sphinx.util.console.color_terminal = lambda: False
+    from sphinx.setup_command import BuildDoc
+except ImportError:
+    sphinx = None
 
 
 PROJECT = "fabio"
 
-################################################################################
-# Remove MANIFEST file ... it needs to be re-generated on the fly
-################################################################################
+if "LANG" not in os.environ and sys.platform == "darwin" and sys.version_info[0] > 2:
+    print("""WARNING: the LANG environment variable is not defined,
+an utf-8 LANG is mandatory to use setup.py, you may face unexpected UnicodeError.
+export LANG=en_US.utf-8
+export LC_ALL=en_US.utf-8
+""")
 
-manifest = os.path.join(os.path.dirname(os.path.abspath(__file__)), "MANIFEST")
-if os.path.isfile(manifest):
-    os.unlink(manifest)
+
+def get_version():
+    """Returns current version number from version.py file"""
+    import version
+    return version.strictversion
 
 
-##############
+def get_readme():
+    """Returns content of README.rst file"""
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(dirname, "README.rst")
+    with io.open(filename, "r", encoding="utf-8") as fp:
+        long_description = fp.read()
+    return long_description
+
+
+# double check classifiers on https://pypi.python.org/pypi?%3Aaction=list_classifiers
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Console',
+    'Intended Audience :: End Users/Desktop',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    "License :: OSI Approved :: MIT License",
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Programming Language :: Python',
+    'Programming Language :: Cython',
+    'Programming Language :: C',
+    'Topic :: Scientific/Engineering :: Chemistry',
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
+    'Topic :: Scientific/Engineering :: Physics',
+    'Topic :: Scientific/Engineering :: Visualization',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+]
+
+
+# ########## #
 # version.py #
-##############
+# ########## #
 
 class build_py(_build_py):
     """
@@ -96,53 +140,46 @@ class build_py(_build_py):
         return modules
 
 
-def get_version():
-    import version
-    return version.strictversion
+########
+# Test #
+########
+
+class PyTest(Command):
+    """Command to start tests running the script: run_tests.py -i"""
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import subprocess
+        errno = subprocess.call([sys.executable, 'run_tests.py'])
+        if errno != 0:
+            raise SystemExit(errno)
 
 
-def get_readme():
-    """Provide the long description as an Unicode string"""
-    dirname = os.path.dirname(os.path.abspath(__file__))
+# ################### #
+# build_doc command   #
+# ################### #
 
-    with open(os.path.join(dirname, "README.rst"), "rb") as fp:
-        long_description = fp.read()
-    return long_description.decode("utf-8")
+if sphinx is None:
+    class SphinxExpectedCommand(Command):
+        """Command to inform that sphinx is missing"""
+        user_options = []
 
+        def initialize_options(self):
+            pass
 
-#######################
-# build_doc commandes #
-#######################
-try:
-    import sphinx
-    import sphinx.util.console
-    sphinx.util.console.color_terminal = lambda: False
-    from sphinx.setup_command import BuildDoc as BuildDoc_
-except ImportError:
-    sphinx = None
-    BuildDoc = None
-
-else:
-    # i.e. if sphinx:
-    class BuildDoc(BuildDoc_):
+        def finalize_options(self):
+            pass
 
         def run(self):
-            # make sure the python path is pointing to the newly built
-            # code so that the documentation is built on this and not a
-            # previously installed version
-
-            build = self.get_finalized_command('build')
-            sys.path.insert(0, os.path.abspath(build.build_lib))
-            script_dir = os.path.abspath("scripts")
-            os.environ["PATH"] = "%s%s%s" % (script_dir, os.pathsep, os.environ.get("PATH", ""))
-            # Build the Users Guide in HTML and TeX format
-            for builder in ('html', 'latex'):
-                self.builder = builder
-                self.builder_target_dir = os.path.join(self.build_dir, builder)
-                self.mkpath(self.builder_target_dir)
-                BuildDoc_.run(self)
-            sys.path.pop(0)
-            os.environ["PATH"] = os.pathsep.join(os.environ.get("PATH").split(os.pathsep)[1:])
+            raise RuntimeError(
+                'Sphinx is required to build or test the documentation.\n'
+                'Please install Sphinx (http://www.sphinx-doc.org).')
 
 
 class BuildMan(Command):
@@ -164,12 +201,54 @@ class BuildMan(Command):
         scripts.extend(console_scripts)
         scripts.extend(gui_scripts)
         for script in scripts:
+            # Remove ending extra dependencies
+            script = script.split("[")[0]
             elements = script.split("=")
             target_name = elements[0].strip()
             elements = elements[1].split(":")
             module_name = elements[0].strip()
             function_name = elements[1].strip()
             yield target_name, module_name, function_name
+
+    def run_targeted_script(self, target_name, script_name, env, log_output=False):
+        """Execute targeted script using --help and --version to help checking
+        errors. help2man is not very helpful to do it for us.
+
+        :return: True is both return code are equal to 0
+        :rtype: bool
+        """
+        import subprocess
+
+        if log_output:
+            extra_args = {}
+        else:
+            try:
+                # Python 3
+                from subprocess import DEVNULL
+            except ImportError:
+                # Python 2
+                import os
+                DEVNULL = open(os.devnull, 'wb')
+            extra_args = {'stdout': DEVNULL, 'stderr': DEVNULL}
+
+        succeeded = True
+        command_line = [sys.executable, script_name, "--help"]
+        if log_output:
+            logger.info("See the following execution of: %s", " ".join(command_line))
+        p = subprocess.Popen(command_line, env=env, **extra_args)
+        status = p.wait()
+        if log_output:
+            logger.info("Return code: %s", status)
+        succeeded = succeeded and status == 0
+        command_line = [sys.executable, script_name, "--version"]
+        if log_output:
+            logger.info("See the following execution of: %s", " ".join(command_line))
+        p = subprocess.Popen(command_line, env=env, **extra_args)
+        status = p.wait()
+        if log_output:
+            logger.info("Return code: %s", status)
+        succeeded = succeeded and status == 0
+        return succeeded
 
     def run(self):
         build = self.get_finalized_command('build')
@@ -211,16 +290,92 @@ class BuildMan(Command):
                     # Before Python 3.4, ArgParser --version was using
                     # stderr to print the version
                     command_line.append("--no-discard-stderr")
+                    # Then we dont know if the documentation will contains
+                    # durtty things
+                    succeeded = self.run_targeted_script(target_name, script_name, env, False)
+                    if not succeeded:
+                        logger.info("Error while generating man file for target '%s'.", target_name)
+                        self.run_targeted_script(target_name, script_name, env, True)
+                        raise RuntimeError("Fail to generate '%s' man documentation" % target_name)
 
                 p = subprocess.Popen(command_line, env=env)
                 status = p.wait()
                 if status != 0:
+                    logger.info("Error while generating man file for target '%s'.", target_name)
+                    self.run_targeted_script(target_name, script_name, env, True)
                     raise RuntimeError("Fail to generate '%s' man documentation" % target_name)
             finally:
                 # clean up the script
                 if script_name is not None:
                     os.remove(script_name)
 
+
+if sphinx is not None:
+    class BuildDocCommand(BuildDoc):
+        """Command to build documentation using sphinx.
+
+        Project should have already be built.
+        """
+
+        def run(self):
+            # make sure the python path is pointing to the newly built
+            # code so that the documentation is built on this and not a
+            # previously installed version
+
+            build = self.get_finalized_command('build')
+            sys.path.insert(0, os.path.abspath(build.build_lib))
+
+            # # Copy .ui files to the path:
+            # dst = os.path.join(
+            #     os.path.abspath(build.build_lib), "silx", "gui")
+            # if not os.path.isdir(dst):
+            #     os.makedirs(dst)
+            # for i in os.listdir("gui"):
+            #     if i.endswith(".ui"):
+            #         src = os.path.join("gui", i)
+            #         idst = os.path.join(dst, i)
+            #         if not os.path.exists(idst):
+            #             shutil.copy(src, idst)
+
+            # Build the Users Guide in HTML and TeX format
+            for builder in ['html', 'latex']:
+                self.builder = builder
+                self.builder_target_dir = os.path.join(self.build_dir, builder)
+                self.mkpath(self.builder_target_dir)
+                BuildDoc.run(self)
+            sys.path.pop(0)
+else:
+    BuildDocCommand = SphinxExpectedCommand
+
+
+# ################### #
+# test_doc command    #
+# ################### #
+
+if sphinx is not None:
+    class TestDocCommand(BuildDoc):
+        """Command to test the documentation using sphynx doctest.
+
+        http://www.sphinx-doc.org/en/1.4.8/ext/doctest.html
+        """
+        def run(self):
+            # make sure the python path is pointing to the newly built
+            # code so that the documentation is built on this and not a
+            # previously installed version
+
+            build = self.get_finalized_command('build')
+            sys.path.insert(0, os.path.abspath(build.build_lib))
+
+            # Build the Users Guide in HTML and TeX format
+            for builder in ['doctest']:
+                self.builder = builder
+                self.builder_target_dir = os.path.join(self.build_dir, builder)
+                self.mkpath(self.builder_target_dir)
+                BuildDoc.run(self)
+            sys.path.pop(0)
+
+else:
+    TestDocCommand = SphinxExpectedCommand
 
 # ############################# #
 # numpy.distutils Configuration #
@@ -246,10 +401,10 @@ def configuration(parent_package='', top_path=None):
     config.add_subpackage(PROJECT)
     return config
 
-
 # ############## #
 # Compiler flags #
 # ############## #
+
 
 class Build(_build):
     """Command to support more user options for the build."""
@@ -384,7 +539,7 @@ class BuildExt(build_ext):
 
     LINK_ARGS_CONVERTER = {'-fopenmp': ''}
 
-    description = 'Build pyFAI extensions'
+    description = 'Build fabio extensions'
 
     def finalize_options(self):
         build_ext.finalize_options(self)
@@ -451,10 +606,113 @@ class BuildExt(build_ext):
             ext.extra_link_args = [self.LINK_ARGS_CONVERTER.get(f, f)
                                    for f in ext.extra_link_args]
 
+    def is_debug_interpreter(self):
+        """
+        Returns true if the script is executed with a debug interpreter.
+
+        It looks to be a non-standard code. It is not working for Windows and
+        Mac. But it have to work at least for Debian interpreters.
+
+        :rtype: bool
+        """
+        if sys.version_info >= (3, 0):
+            # It is normalized on Python 3
+            # But it is not available on Windows CPython
+            if hasattr(sys, "abiflags"):
+                return "d" in sys.abiflags
+        else:
+            # It's a Python 2 interpreter
+            # pydebug is not available on Windows/Mac OS interpreters
+            if hasattr(sys, "pydebug"):
+                return sys.pydebug
+
+        # We can't know if we uses debug interpreter
+        return False
+
+    def patch_compiler(self):
+        """
+        Patch the compiler to:
+        - always compile extensions with debug symboles (-g)
+        - only compile asserts in debug mode (-DNDEBUG)
+
+        Plus numpy.distutils/setuptools/distutils inject a lot of duplicated
+        flags. This function tries to clean up default debug options.
+        """
+        build_obj = self.distribution.get_command_obj("build")
+        if build_obj.debug:
+            debug_mode = build_obj.debug
+        else:
+            # Force debug_mode also when it uses python-dbg
+            # It is needed for Debian packaging
+            debug_mode = self.is_debug_interpreter()
+
+        if self.compiler.compiler_type == "unix":
+            args = list(self.compiler.compiler_so)
+            # clean up debug flags -g is included later in another way
+            must_be_cleaned = ["-DNDEBUG", "-g"]
+            args = filter(lambda x: x not in must_be_cleaned, args)
+            args = list(args)
+
+            # always insert symbols
+            args.append("-g")
+            # only strip asserts in release mode
+            if not debug_mode:
+                args.append('-DNDEBUG')
+            # patch options
+            self.compiler.compiler_so = list(args)
+
     def build_extensions(self):
+        self.patch_compiler()
         for ext in self.extensions:
             self.patch_extension(ext)
         build_ext.build_extensions(self)
+
+
+################################################################################
+# Clean command
+################################################################################
+
+
+class CleanCommand(Clean):
+    description = "Remove build artifacts from the source tree"
+
+    def expand(self, path_list):
+        """Expand a list of path using glob magic.
+
+        :param list[str] path_list: A list of path which may contains magic
+        :rtype: list[str]
+        :returns: A list of path without magic
+        """
+        path_list2 = []
+        for path in path_list:
+            if glob.has_magic(path):
+                iterator = glob.iglob(path)
+                path_list2.extend(iterator)
+            else:
+                path_list2.append(path)
+        return path_list2
+
+    def run(self):
+        Clean.run(self)
+        # really remove the directories
+        # and not only if they are empty
+        to_remove = [self.build_base]
+        to_remove = self.expand(to_remove)
+
+        if not self.dry_run:
+            for path in to_remove:
+                try:
+                    if os.path.isdir(path):
+                        shutil.rmtree(path)
+                    else:
+                        os.remove(path)
+                    logger.info("removing '%s'", path)
+                except OSError:
+                    pass
+
+################################################################################
+# Debian source tree
+################################################################################
 
 
 class sdist_debian(sdist):
@@ -462,6 +720,9 @@ class sdist_debian(sdist):
     Tailor made sdist for debian
     * remove auto-generated doc
     * remove cython generated .c files
+    * remove cython generated .cpp files
+    * remove .bat files
+    * include .l man files
     """
     @staticmethod
     def get_debian_name():
@@ -475,12 +736,17 @@ class sdist_debian(sdist):
         print("Removing files for debian")
         for rm in to_remove:
             self.filelist.exclude_pattern(pattern="*", anchor=False, prefix=rm)
-        # this is for Cython files specifically
-        self.filelist.exclude_pattern(pattern="*.html", anchor=True, prefix=PROJECT + "ext")
-        for pyxf in glob.glob(PROJECT + "ext/*.pyx"):
-            cf = os.path.splitext(pyxf)[0] + ".c"
-            if os.path.isfile(cf):
-                self.filelist.exclude_pattern(pattern=cf)
+
+        # this is for Cython files specifically: remove C & html files
+        search_root = os.path.dirname(os.path.abspath(__file__))
+        for root, _, files in os.walk(search_root):
+            for afile in files:
+                if os.path.splitext(afile)[1].lower() == ".pyx":
+                    base_file = os.path.join(root, afile)[len(search_root) + 1:-4]
+                    self.filelist.exclude_pattern(pattern=base_file + ".c")
+                    self.filelist.exclude_pattern(pattern=base_file + ".cpp")
+                    self.filelist.exclude_pattern(pattern=base_file + ".html")
+
         # do not include third_party/_local files
         self.filelist.exclude_pattern(pattern="*", prefix="fabio/third_party/_local")
 
@@ -583,37 +849,24 @@ class PyTest(Command):
 
     def run(self):
         import subprocess
-        errno = subprocess.call([sys.executable, 'run_tests.py', '-i'])
+        errno = subprocess.call([sys.executable, 'run_tests.py'])
         if errno != 0:
             raise SystemExit(errno)
 
 
-# double check classifiers on https://pypi.python.org/pypi?%3Aaction=list_classifiers
-classifiers = [
-    'Development Status :: 5 - Production/Stable',
-    'Environment :: Console',
-    'Intended Audience :: End Users/Desktop',
-    'Intended Audience :: Developers',
-    'Intended Audience :: Science/Research',
-    "License :: OSI Approved :: MIT License",
-    'Operating System :: MacOS :: MacOS X',
-    'Operating System :: Microsoft :: Windows',
-    'Operating System :: POSIX',
-    'Programming Language :: Python',
-    'Programming Language :: Cython',
-    'Programming Language :: C',
-    'Topic :: Scientific/Engineering :: Chemistry',
-    'Topic :: Scientific/Engineering :: Bio-Informatics',
-    'Topic :: Scientific/Engineering :: Physics',
-    'Topic :: Scientific/Engineering :: Visualization',
-    'Topic :: Software Development :: Libraries :: Python Modules',
-]
-
+# ##### #
+# setup #
+# ##### #
 
 def get_project_configuration(dry_run):
     """Returns project arguments for setup"""
-    install_requires = ["numpy"]
-    setup_requires = ["numpy", "cython"]
+    install_requires = [
+        # for most of the computation
+        "numpy",
+        # for the script launcher
+        "setuptools"]
+
+    setup_requires = ["setuptools", "numpy", "cython"]
 
     console_scripts = [
         'fabio-convert = fabio.app.convert:main',
@@ -629,16 +882,16 @@ def get_project_configuration(dry_run):
     }
 
     cmdclass = dict(
-        build_py=build_py,
         build=Build,
+        build_py=build_py,
+        test=PyTest,
+        build_doc=BuildDocCommand,
+        test_doc=TestDocCommand,
         build_ext=BuildExt,
         build_man=BuildMan,
+        clean=CleanCommand,
         debian_src=sdist_debian,
-        testimages=TestData,
-        test=PyTest)
-
-    if BuildDoc is not None:
-        cmdclass['build_doc'] = BuildDoc
+        testimages=TestData)
 
     if dry_run:
         # DRY_RUN implies actions which do not require NumPy

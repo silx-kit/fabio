@@ -71,8 +71,8 @@ install:
 test_script:
   # Change to a non-source folder to make sure we run the tests on the
   # installed library.
-  - "%CMD_IN_ENV% python run_tests.py -i"
   - "%CMD_IN_ENV% python run_tests.py"
+  - "%CMD_IN_ENV% python run_tests.py --installed"
   - "mkdir empty_folder"
   - "cd empty_folder"
 

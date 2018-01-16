@@ -23,6 +23,20 @@ logging.basicConfig()
 logger = logging.getLogger("bootstrap")
 
 
+def is_debug_python():
+    """Returns true if the Python interpreter is in debug mode."""
+    try:
+        import sysconfig
+    except ImportError:  # pragma nocover
+        # Python < 2.7
+        import distutils.sysconfig as sysconfig
+
+    if sysconfig.get_config_var("Py_DEBUG"):
+        return True
+
+    return hasattr(sys, "gettotalrefcount")
+
+
 def _distutils_dir_name(dname="lib"):
     """
     Returns the name of a distutils build directory
@@ -30,6 +44,8 @@ def _distutils_dir_name(dname="lib"):
     platform = distutils.util.get_platform()
     architecture = "%s.%s-%i.%i" % (dname, platform,
                                     sys.version_info[0], sys.version_info[1])
+    if is_debug_python():
+        architecture += "-pydebug"
     return architecture
 
 
@@ -83,7 +99,9 @@ def run_file(filename, argv):
             logger.info("Patch the sys.argv: %s", sys.argv)
             logger.info("Executing %s.main()", filename)
             print("########### EXECFILE ###########")
-            execfile(filename, globals(), globals())
+            module_globals = globals().copy()
+            module_globals['__file__'] = filename
+            execfile(filename, module_globals, module_globals)
         finally:
             sys.argv = old_argv
     except SyntaxError as error:
@@ -174,8 +192,14 @@ cwd = os.getcwd()
 os.chdir(home)
 build = subprocess.Popen([sys.executable, "setup.py", "build"],
                          shell=False, cwd=os.path.dirname(os.path.abspath(__file__)))
-logger.info("Build process ended with rc= %s", build.wait())
+build_rc = build.wait()
 os.chdir(cwd)
+
+if build_rc == 0:
+    logger.info("Build process ended.")
+else:
+    logger.error("Build process ended with rc=%s", build_rc)
+    sys.exit(-1)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
