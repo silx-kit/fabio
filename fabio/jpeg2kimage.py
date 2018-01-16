@@ -89,8 +89,6 @@ class Jpeg2KImage(FabioImage):
             for k, v in self.pilimage.info.items():
                 self.header[k] = v
 
-        print(self.data)
-
     def _loadGlymurImage(self, filename, infile):
         """
         Hack to use Glymur with Python file object
