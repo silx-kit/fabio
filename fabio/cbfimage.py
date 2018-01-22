@@ -52,7 +52,8 @@ import os
 import logging
 import numpy
 from .fabioimage import FabioImage
-from .compression import compByteOffset, decByteOffset, md5sum, six
+from .compression import compByteOffset, decByteOffset, md5sum
+from .third_party import six
 from .ext._cif import split_tokens
 
 
