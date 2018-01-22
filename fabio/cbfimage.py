@@ -420,7 +420,7 @@ class CifTokenizer(object):
         if token is None:
             return None
         kind, value = token
-        if kind in [self.KEY, self.LOOP]:
+        if kind in [self.SECTION]:
             # Hack cause at this level the cython cif lexer do not provide
             # types: number, string, data... (we dont know if there is quotes:
             # loop_ or 'loop_' is the same, then we assume the file is well
