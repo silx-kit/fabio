@@ -59,11 +59,11 @@ from .ext._cif import split_tokens
 logger = logging.getLogger(__name__)
 
 
-DATA_TYPES = {"signed 8-bit integer"   : "int8",
-              "signed 16-bit integer"  : "int16",
-              "signed 32-bit integer"  : "int32",
-              "signed 64-bit integer"  : "int64",
-              "unsigned 8-bit integer" : "uint8",
+DATA_TYPES = {"signed 8-bit integer": "int8",
+              "signed 16-bit integer": "int16",
+              "signed 32-bit integer": "int32",
+              "signed 64-bit integer": "int64",
+              "unsigned 8-bit integer": "uint8",
               "unsigned 16-bit integer": "uint16",
               "unsigned 32-bit integer": "uint32",
               "unsigned 64-bit integer": "uint64"
