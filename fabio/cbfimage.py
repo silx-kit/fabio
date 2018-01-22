@@ -395,6 +395,8 @@ class CifTokenizer(object):
     def pop_key(self):
         """Pop the following key, else return None"""
         token = self.pop_token()
+        if token is None:
+            return None
         kind, key = token
         if kind != self.KEY:
             # abort
@@ -415,6 +417,8 @@ class CifTokenizer(object):
     def pop_value(self):
         """Pop the field if it is not a special field"""
         token = self.pop_token()
+        if token is None:
+            return None
         kind, value = token
         if kind in [self.KEY, self.LOOP]:
             # Hack cause at this level the cython cif lexer do not provide
