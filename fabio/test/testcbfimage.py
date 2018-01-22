@@ -90,6 +90,26 @@ cccc
         self.assertIn("_ablock", cif)
         self.assertEqual(cif["_ablock"], "aaaa\nbbbb\ncccc")
 
+    def test_section(self):
+        cif = cbfimage.CIF()
+        cif._parseCIF(b"""
+global_foo
+_a = a
+data_foo
+_b = b
+stop_foo
+_c = c
+save_foo
+        """)
+        # expected = ["gloabl_foo", "_a", "data_foo", "_b", "stop_foo", "_c", "save_foo"]
+        expected = ["_a", "_b", "_c"]
+        self.assertEqual(len(cif), 3)
+        # self.assertEqual(cif.index("gloabl_foo"), None)
+        # self.assertEqual(cif.index("save_foo"), None)
+        # self.assertEqual(cif.index("stop_foo"), None)
+        # self.assertEqual(cif.index("data_foo"), None)
+        self.assertEqual(cif._ordered, expected)
+
     def test_struct(self):
         cif = cbfimage.CIF()
         cif._parseCIF(b"""
