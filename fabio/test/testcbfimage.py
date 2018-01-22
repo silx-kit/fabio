@@ -43,11 +43,114 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
-from fabio.cbfimage import cbfimage
+from fabio import cbfimage
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
 from fabio.third_party.six import PY3
 if PY3:
     from fabio.fabioutils import unicode
+
+
+class TestCifReader(unittest.TestCase):
+
+    def test_keyvalue(self):
+        cif = cbfimage.CIF()
+        cif._parseCIF(b"""
+_diffrn.id DLS_I19-1
+_diffrn.crystal_id xtal001
+        """)
+        self.assertEqual(len(cif), 2)
+        self.assertIn("_diffrn.id", cif)
+        self.assertIn("_diffrn.crystal_id", cif)
+        self.assertEqual(cif["_diffrn.id"], "DLS_I19-1")
+        self.assertEqual(cif["_diffrn.crystal_id"], "xtal001")
+
+    def test_keystring(self):
+        cif = cbfimage.CIF()
+        cif._parseCIF(b"""
+_diffrn.id "a b c"
+_diffrn.crystal_id 'a b c'
+        """)
+        self.assertEqual(len(cif), 2)
+        self.assertIn("_diffrn.id", cif)
+        self.assertIn("_diffrn.crystal_id", cif)
+        self.assertEqual(cif["_diffrn.id"], "a b c")
+        self.assertEqual(cif["_diffrn.crystal_id"], "a b c")
+
+    def test_block(self):
+        cif = cbfimage.CIF()
+        cif._parseCIF(b"""
+_ablock
+;
+aaaa
+bbbb
+cccc
+;
+        """)
+        self.assertEqual(len(cif), 1)
+        self.assertIn("_ablock", cif)
+        self.assertEqual(cif["_ablock"], "aaaa\nbbbb\ncccc")
+
+    def test_struct(self):
+        cif = cbfimage.CIF()
+        cif._parseCIF(b"""
+loop_
+_diffrn_radiation.diffrn_id
+_diffrn_radiation.wavelength_id
+_diffrn_radiation.monochromator
+_diffrn_radiation.polarizn_source_ratio
+_diffrn_radiation.polarizn_source_norm
+_diffrn_radiation.div_x_source
+_diffrn_radiation.div_y_source
+_diffrn_radiation.div_x_y_source
+DLS_I19-1 WAVELENGTH1 'Si 111' 0.8 0.0 0.08 0.01 0.00
+        """)
+        print(cif)
+        self.assertEqual(len(cif), 8)
+        self.assertIn("_diffrn_radiation.diffrn_id", cif)
+        self.assertEqual(cif["_diffrn_radiation.diffrn_id"], ["DLS_I19-1"])
+
+    def test_liststruct(self):
+        cif = cbfimage.CIF()
+        cif._parseCIF(b"""
+loop_
+_diffrn_detector_axis.detector_id
+_diffrn_detector_axis.axis_id
+i19-p2m DET_2THETA
+i19-p2m DET_X
+i19-p2m DET_Y
+i19-p2m DET_Z
+        """)
+        print(cif)
+        expected = ["DET_2THETA", "DET_X", "DET_Y", "DET_Z"]
+        self.assertEqual(len(cif), 2)
+        self.assertIn("_diffrn_detector_axis.axis_id", cif)
+        self.assertEqual(cif["_diffrn_detector_axis.axis_id"], expected)
+
+    def test_multi_liststruct(self):
+        cif = cbfimage.CIF()
+        cif._parseCIF(b"""
+loop_
+_diffrn_detector_axis.detector_id
+_diffrn_detector_axis.axis_id
+i19-p2m DET_2THETA
+i19-p2m DET_X
+i19-p2m DET_Y
+i19-p2m DET_Z
+loop_
+_diffrn_detector_axis.detector_id2
+_diffrn_detector_axis.axis_id2
+i19-p2m DET_2THETA
+i19-p2m DET_X
+i19-p2m DET_Y
+i19-p2m DET_Z
+        """)
+        print(cif)
+        expected = ["DET_2THETA", "DET_X", "DET_Y", "DET_Z"]
+        self.assertEqual(len(cif), 4)
+        self.assertIn("_diffrn_detector_axis.axis_id", cif)
+        self.assertIn("_diffrn_detector_axis.axis_id2", cif)
+        self.assertEqual(cif["_diffrn_detector_axis.axis_id"], expected)
+        self.assertEqual(cif["_diffrn_detector_axis.axis_id2"], expected)
 
 
 class TestCbfReader(unittest.TestCase):
@@ -80,10 +183,10 @@ class TestCbfReader(unittest.TestCase):
     def test_write(self):
         "Rest writing with self consistency at the fabio level"
         name = os.path.basename(self.cbf_filename)
-        obj = cbfimage()
+        obj = cbfimage.CbfImage()
         obj.read(self.cbf_filename)
         obj.write(os.path.join(UtilsTest.tempdir, name))
-        other = cbfimage()
+        other = cbfimage.CbfImage()
         other.read(os.path.join(UtilsTest.tempdir, name))
         self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
         for key in obj.header:
@@ -168,6 +271,7 @@ def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestCbfReader))
+    testsuite.addTest(loadTests(TestCifReader))
     return testsuite
 
 

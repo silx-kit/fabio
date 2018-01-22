@@ -335,6 +335,100 @@ class CbfImage(FabioImage):
 ################################################################################
 # CIF class
 ################################################################################
+
+class CifTokenizer(object):
+    """"Sequencial tokenizer to read CIF format."""
+
+    KEY = 1
+    VALUE = 0
+    LOOP = 2
+
+    def __init__(self, fileds):
+        self.__cached_fields = []
+        self.__fileds = iter(fileds)
+
+    def is_end(self):
+        if len(self.__cached_fields) != 0:
+            return False
+        token = self.pop_token()
+        if token is not None:
+            self.push_token(token)
+            return False
+        else:
+            return True
+
+    def push_token(self, token):
+        """Push back a token."""
+        self.__cached_fields.append(token)
+
+    def parse_token(self, binary_string):
+        assert(binary_string != b"")
+
+        if binary_string[0] == CIF.UNDERSCORE:
+            return self.KEY, binary_string.decode("ASCII")
+        lower = binary_string.lower()
+        if lower == CIF.LOOP:
+            return self.LOOP, None
+
+        if binary_string == CIF.DOT:
+            return self.VALUE, ""
+        return self.VALUE, binary_string.decode("ASCII")
+
+    def pop_token(self):
+        """Returns a token with its type."""
+        if len(self.__cached_fields) > 0:
+            return self.__cached_fields.pop()
+        try:
+            binary_string = next(self.__fileds)
+        except StopIteration:
+            return None
+        return self.parse_token(binary_string)
+
+    def pop_key(self):
+        """Pop the following key, else return None"""
+        token = self.pop_token()
+        kind, key = token
+        if kind != self.KEY:
+            # abort
+            self.push_token(token)
+            return None
+        return key
+
+    def pop_following_keys(self):
+        """Pop all the following keys"""
+        keys = []
+        while True:
+            field = self.pop_key()
+            if field is None:
+                break
+            keys.append(field)
+        return keys
+
+    def pop_value(self):
+        """Pop the field if it is not a special field"""
+        token = self.pop_token()
+        kind, value = token
+        if kind != self.VALUE:
+            # abort
+            self.push_token(token)
+            return None
+        return value
+
+    def pop_values(self, count):
+        """Returns the `count` following values. Else returns None if there is
+        not enougth values available."""
+        values = []
+        for _ in range(count):
+            value = self.pop_value()
+            if value is None:
+                # cancel
+                for v in values:
+                    self.push_token((self.VALUE, v))
+                return None
+            values.append(value)
+        return values
+
+
 class CIF(dict):
     """
     This is the CIF class, it represents the CIF dictionary;
@@ -358,6 +452,7 @@ class CIF(dict):
     GLOBAL = numpy.string_("global_")
     DATA = numpy.string_("data_")
     SAVE = numpy.string_("save_")
+    DOT = numpy.string_(".")
 
     def __init__(self, _strFilename=None):
         """
@@ -468,38 +563,33 @@ class CIF(dict):
         :return: Nothing, the data are incorporated at the CIF object dictionary
         :rtype: None
         """
-        loopidx = []
-        looplen = []
-        loop = []
         fields = split_tokens(bytes_text)
 
         logger.debug("After split got %s fields of len: %s", len(fields), [len(i) for i in fields])
 
-        for idx, field in enumerate(fields):
-            if field.lower() == self.LOOP:
-                loopidx.append(idx)
-        if loopidx:
-            for i in loopidx:
-                loopone, length, keys = CIF._analyseOneLoop(fields, i)
-                loop.append([keys, loopone])
-                looplen.append(length)
+        parser = CifTokenizer(fields)
+        while not parser.is_end():
+            kind, token = parser.pop_token()
 
-            for i in range(len(loopidx) - 1, -1, -1):
-                f1 = fields[:loopidx[i]] + fields[loopidx[i] + looplen[i]:]
-                fields = f1
+            if kind == CifTokenizer.KEY:
+                key = token
+                kind, value = parser.pop_token()
+                assert(kind == CifTokenizer.VALUE)
+                self[key] = value
 
-            self[self.LOOP.decode("ASCII")] = loop
-
-        for i in range(len(fields) - 1):
-            if len(fields[i + 1]) == 0:
-                fields[i + 1] = self.QUESTIONMARK
-            if fields[i][0] == self.UNDERSCORE and fields[i + 1][0] != self.UNDERSCORE:
-                try:
-                    data = fields[i + 1].decode("ASCII")
-                except UnicodeError:
-                    logger.warning("Unable to decode in ascii: %s" % fields[i + 1])
-                    data = fields[i + 1]
-                self[(fields[i]).decode("ASCII")] = data
+            elif kind == CifTokenizer.LOOP:
+                keys = parser.pop_following_keys()
+                for k in keys:
+                    self[k] = []
+                while not parser.is_end():
+                    values = parser.pop_values(len(keys))
+                    if values is None:
+                        break
+                    for i, v in enumerate(values):
+                        k = keys[i]
+                        self[k].append(v)
+            else:
+                logger.error("Unexpected token type %d, '%s'. Token skiped" % (kind, token))
 
     @classmethod
     def _splitCIF(cls, bytes_text):
@@ -584,59 +674,6 @@ class CIF(dict):
                     bytes_text = numpy.string_("")
                     break
         return fields
-
-    @classmethod
-    def _analyseOneLoop(cls, fields, start_idx):
-        """Processes one loop in the data extraction of the CIF file
-        :param list fields: list of all the words contained in the cif file
-        :param int start_idx: the starting index corresponding to the "loop_" key
-        :return: the list of loop dictionaries, the length of the data
-            extracted from the fields and the list of all the keys of the loop.
-        :rtype: tuple
-        """
-        loop = []
-        keys = []
-        i = start_idx + 1
-        finished = False
-        while not finished:
-            if fields[i][0] == cls.UNDERSCORE:
-                keys.append(fields[i])
-                i += 1
-            else:
-                finished = True
-        data = []
-        while True:
-            if i >= len(fields):
-                break
-            elif len(fields[i]) == 0:
-                break
-            elif fields[i][0] == cls.UNDERSCORE:
-                break
-            elif fields[i] in (cls.LOOP, cls.STOP, cls.GLOBAL, cls.DATA, cls.SAVE):
-                break
-            else:
-                data.append(fields[i])
-                i += 1
-        k = 0
-
-        if len(data) < len(keys):
-            element = {}
-            for j in keys:
-                if k < len(data):
-                    element[j] = data[k]
-                else:
-                    element[j] = cls.QUESTIONMARK
-                k += 1
-            loop.append(element)
-
-        else:
-            for i in range(int(len(data) / len(keys))):
-                element = {}
-                for j in keys:
-                    element[j] = data[k]
-                    k += 1
-                loop.append(element)
-        return loop, 1 + len(keys) + len(data), keys
 
 ##########################################
 # everything needed to  write a CIF file #
