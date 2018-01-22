@@ -342,6 +342,7 @@ class CifTokenizer(object):
     KEY = 1
     VALUE = 0
     LOOP = 2
+    SECTION = 3
 
     def __init__(self, fileds):
         self.__cached_fields = []
@@ -369,6 +370,13 @@ class CifTokenizer(object):
         lower = binary_string.lower()
         if lower == CIF.LOOP:
             return self.LOOP, None
+
+        is_section = (lower.startswith(CIF.DATA) or
+                      lower.startswith(CIF.SAVE) or
+                      lower.startswith(CIF.STOP) or
+                      lower.startswith(CIF.GLOBAL))
+        if is_section:
+            return self.SECTION, binary_string.decode("ASCII")
 
         if binary_string == CIF.DOT:
             return self.VALUE, ""
@@ -408,6 +416,13 @@ class CifTokenizer(object):
         """Pop the field if it is not a special field"""
         token = self.pop_token()
         kind, value = token
+        if kind in [self.KEY, self.LOOP]:
+            # Hack cause at this level the cython cif lexer do not provide
+            # types: number, string, data... (we dont know if there is quotes:
+            # loop_ or 'loop_' is the same, then we assume the file is well
+            # formed.
+            return self.VALUE, value
+
         if kind != self.VALUE:
             # abort
             self.push_token(token)
@@ -576,6 +591,12 @@ class CIF(dict):
                 kind, value = parser.pop_token()
                 assert(kind == CifTokenizer.VALUE)
                 self[key] = value
+
+            elif kind == CifTokenizer.SECTION:
+                _section_name = token
+                # TODO: Store the section in the header as it is ordered it
+                # can be restituted
+                # self[section_name] = None
 
             elif kind == CifTokenizer.LOOP:
                 keys = parser.pop_following_keys()
