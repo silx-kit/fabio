@@ -160,7 +160,9 @@ class CbfImage(FabioImage):
                 if self.cbs is None:
                     self.cbs = value
             else:
-                self.header[key] = (self.cif[key].strip(" \"\n\r\t"))
+                if isinstance(value, six.string_types):
+                    value = value.strip(" \"\n\r\t")
+                self.header[key] = value
 
     def _read_binary_section_header(self, inStream):
         """
