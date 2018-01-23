@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "11/08/2017"
+__date__ = "23/01/2018"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -203,12 +203,14 @@ class UtilsTest(object):
            not os.path.isfile(fullimagename_gz):
 
             if data is None:
-                data = open(fullimagename_bz2, "rb").read()
+                with open(fullimagename_bz2, "rb") as f:
+                    data = f.read()
             decompressed = bz2.decompress(data)
 
             if not os.path.exists(fullimagename_raw):
                 try:
-                    open(fullimagename_raw, "wb").write(decompressed)
+                    with open(fullimagename_raw, "wb") as fullimage:
+                        fullimage.write(decompressed)
                 except IOError:
                     raise IOError("unable to write decompressed \
                     data to disk at %s" % cls.image_home)
