@@ -12,7 +12,7 @@ but we advice to use binary wheels packages provided for the most common platfor
 Windows, MacOSX. For Debian Linux and its derivatives (Ubuntu, Mint, ...), FabIO
 is part of the distributions and itss package is named *python-fabio* and can be installed via:
 
-.. code::
+.. code-block:: shell
 
     sudo apt-get install python-fabio
 
@@ -24,7 +24,7 @@ Since Python 2.7.10 and 3.4, PIP is installed together with Python itself.
 If your Python is elder, PIP can be simply `downloaded <https://bootstrap.pypa.io/get-pip.py>`_
 and executed using your standard Python:
 
-.. code::
+.. code-block:: shell
 
    python get-pip.py
    pip install fabio
@@ -103,7 +103,7 @@ have to match the Python version you are using. Here are a couple of examples:
 Compile the sources
 ^^^^^^^^^^^^^^^^^^^
 
-::
+.. code-block:: shell
 
    python setup.py build
    python setup.py test
@@ -133,7 +133,7 @@ Since MacOSX 10.11 (El-Captain), PIP is available as part of the standard python
 For elder MacOSX, `download PIP and run <https://bootstrap.pypa.io/get-pip.py>`_.
 Then install FabIO directly:
 
-.. code::
+.. code-block:: shell
 
     sudo pip install fabio
 
@@ -162,7 +162,9 @@ Once done, follow the classical procedure (similar to Windows or Linux):
 
 * unzip the file in a directory
 * open a terminal in the unzipped archive directory
-* run::
+* run:
+
+.. code-block:: shell
 
    sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
    python setup.py build
@@ -197,7 +199,9 @@ Once done, follow the classical procedure (similar to Windows or MacOSX):
 
 * unzip the file in a directory
 * open a terminal in the unzipped archive directory
-* run::
+* run:
+
+.. code-block:: shell
 
    sudo pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
    python setup.py build
@@ -212,7 +216,7 @@ Development versions
 --------------------
 The newest development version can be obtained by checking it out from the git repository:
 
-::
+.. code-block:: shell
 
     git clone https://github.com/silx-kit/fabio
     cd fabio
@@ -237,7 +241,7 @@ Debian 6 and 7:
 ^^^^^^^^^^^^^^^
 We provide a debian-package builder based on stdeb, building a package for Python2:
 
-::
+.. code-block:: shell
 
 	sudo apt-get install python-stdeb
 	./build-deb.sh
@@ -249,7 +253,7 @@ Debian 8 and newer
 ^^^^^^^^^^^^^^^^^^
 
 The same script, *build-deb.sh*, will create *real* debian packages:
-It will build a bunch of 6 debian packages::
+It will build a bunch of 6 debian packages:
  
 * *fabio-bin*: the GUI for visualizing diffraction images
 * *fabio-doc*: the documumentation package
@@ -305,7 +309,7 @@ Run test suite from installation directory
 
 To run the test:
 
-::
+.. code-block:: shell
 
    python setup.py build test
 
