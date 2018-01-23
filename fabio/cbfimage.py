@@ -630,7 +630,7 @@ class CIF(dict):
             loop.append(element)
 
         else:
-            for i in range(int(len(data) / len(keys))):
+            for i in range(len(data) // len(keys)):
                 element = {}
                 for j in keys:
                     element[j] = data[k]
