@@ -55,6 +55,7 @@ from . import fabioformats  # noqa
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
     # "\1f\8b" : 'gzipped'
+    (b"FORMAT :100", 'bruker100'),
     (b"FORMAT :        86", 'bruker'),
     (b"\x4d\x4d\x00\x2a", 'tif'),
     # The marCCD and Pilatus formats are both standard tif with a header
