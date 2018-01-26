@@ -555,6 +555,9 @@ class EdfImage(FabioImage):
         if len(block) < BLOCKSIZE:
             logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
 
+        # skip the open block character
+        begin_block = begin_block + 1
+
         start = block.find(b"EDF_HeaderSize", begin_block)
         if start >= 0:
             equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
