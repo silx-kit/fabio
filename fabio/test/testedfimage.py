@@ -105,6 +105,22 @@ class TestFlatEdfs(unittest.TestCase):
         self.assertEqual(self.obj.getmin(), 0)
         self.assertEqual(self.obj.getmax(), 20)
 
+    def test_headers(self):
+        self.assertEqual(len(self.obj.header), 7)
+        expected_keys = ["Omega", "Dim_1", "Dim_2", "DataType", "ByteOrder", "Image", "History-1"]
+        self.assertEqual(expected_keys, list(self.obj.header.keys()))
+
+        expected_values = {
+            "Omega": "0.0",
+            "Dim_1": "256",
+            "Dim_2": "256",
+            "DataType": "FloatValue",
+            "Image": "1",
+            "History-1": "something=something else"
+        }
+        for k, expected_value in expected_values.items():
+            self.assertEqual(self.obj.header[k], expected_value)
+
 
 class TestBzipEdf(TestFlatEdfs):
     """ same for bzipped versions """
