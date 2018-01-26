@@ -620,7 +620,7 @@ class EdfImage(FabioImage):
         while True:
             try:
                 block = self._readHeaderBlock(infile, len(self._frames))
-            except MalformedHeaderError as e:
+            except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
                     raise IOError("Invalid first header")
