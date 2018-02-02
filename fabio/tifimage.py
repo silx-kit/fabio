@@ -113,6 +113,7 @@ class TifImage(FabioImage):
                 self._set_frame(data, header)
         except Exception as error:
             logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
+            logger.debug("Backtrace", exc_info=True)
         else:
             if self.data.ndim == 2:
                 self.dim2, self.dim1 = self.data.shape
