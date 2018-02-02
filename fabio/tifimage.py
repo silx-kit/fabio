@@ -65,6 +65,19 @@ from .fabioimage import FabioImage
 from .TiffIO import TiffIO
 
 
+class TiffFrame(object):
+    """Frame container for TIFF format"""
+
+    def __init__(self, data, tiff_header):
+        self.tiff_header = tiff_header
+        self.data = data
+
+    @property
+    def header(self):
+        """Default header exposed by fabio"""
+        return self.tiff_header
+
+
 class TifImage(FabioImage):
     """
     Images in TIF format
@@ -80,6 +93,7 @@ class TifImage(FabioImage):
         """ Tifimage constructor adds an nbits member attribute """
         self.nbits = None
         FabioImage.__init__(self, *args, **kwds)
+        self._tiffio = None
         self.lib = None
 
     def _readheader(self, infile):
@@ -92,10 +106,9 @@ class TifImage(FabioImage):
         # nbits is not a FabioImage attribute...
         self.nbits = int(header[21])  # number of bits
 
-    def _set_frame(self, image_data, tiff_header):
+    def _create_frame(self, image_data, tiff_header):
         """Create exposed data from TIFF information"""
-        self.header = tiff_header
-        self.data = image_data
+        return TiffFrame(image_data, tiff_header)
 
     def read(self, fname, frame=None):
         """
@@ -107,10 +120,15 @@ class TifImage(FabioImage):
         self.lib = None
         try:
             tiffIO = TiffIO(infile)
+            self.nframes = tiffIO.getNumberOfImages()
             if tiffIO.getNumberOfImages() > 0:
                 # No support for now of multi-frame tiff images
-                data, header = tiffIO.getImage(0), tiffIO.getInfo(0)
-                self._set_frame(data, header)
+                data = tiffIO.getData(0)
+                header = tiffIO.getInfo(0)
+                frame = self._create_frame(data, header)
+                self.header = frame.header
+                self.data = frame.data
+            self._tiffio = tiffIO
         except Exception as error:
             logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
             logger.debug("Backtrace", exc_info=True)
@@ -152,6 +170,26 @@ class TifImage(FabioImage):
         """
         with TiffIO(fname, mode="w") as tIO:
             tIO.writeImage(self.data, info=self.header, software="fabio.tifimage", date=time.ctime())
+
+    def close(self):
+        if self._tiffio is not None:
+            self._tiffio.close()
+            self._tiffio = None
+        super(TifImage, self).close()
+
+    def getframe(self, num):
+        """Returns the frame `num`.
+
+        This frame is not cached on the image structure.
+        """
+        if self._tiffio is None:
+            raise NotImplementedError("getframe is only implemented for TiffIO lib")
+
+        if 0 <= num < self.nframes:
+            image_data = self._tiffio.getData(num)
+            tiff_header = self._tiffio.getInfo(num)
+            return self._create_frame(image_data, tiff_header)
+        raise Exception("getframe out of range")
 
 
 tifimage = TifImage

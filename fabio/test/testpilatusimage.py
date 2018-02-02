@@ -100,6 +100,20 @@ class TestPilatus(unittest.TestCase):
 
             self.assertEqual(dict(obj.header), expected_values)
 
+    def test_frame(self):
+        for params in self.TESTIMAGES:
+            name = params[0]
+            dim1, dim2 = params[1:3]
+            obj = fabio.pilatusimage.PilatusImage()
+            obj.read(UtilsTest.getimage(name))
+
+            self.assertEqual(obj.nframes, 1)
+            frame = obj.getframe(0)
+            self.assertIsNotNone(frame)
+            self.assertIsNotNone(frame.data)
+            self.assertEqual(frame.data.shape, (dim2, dim1))
+            self.assertEqual(len(frame.header), 12)
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
