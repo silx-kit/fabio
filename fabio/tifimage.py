@@ -62,7 +62,7 @@ except ImportError:
 import numpy
 from .utils import pilutils
 from .fabioimage import FabioImage
-from .TiffIO import TiffIO
+from . import TiffIO
 
 
 class TiffFrame(object):
@@ -110,6 +110,14 @@ class TifImage(FabioImage):
         """Create exposed data from TIFF information"""
         return TiffFrame(image_data, tiff_header)
 
+    def _read_header_from_pil(self, image):
+        header = self.check_header()
+        for num, name in TiffIO.TAG_ID.items():
+            if num in image.tag:
+                name = name[0].lower() + name[1:]
+                header[name] = image.tag[num]
+        return header
+
     def read(self, fname, frame=None):
         """
         Wrapper for TiffIO.
@@ -119,12 +127,12 @@ class TifImage(FabioImage):
         infile.seek(0)
         self.lib = None
         try:
-            tiffIO = TiffIO(infile)
+            tiffIO = TiffIO.TiffIO(infile)
             self.nframes = tiffIO.getNumberOfImages()
             if tiffIO.getNumberOfImages() > 0:
                 # No support for now of multi-frame tiff images
-                data = tiffIO.getData(0)
                 header = tiffIO.getInfo(0)
+                data = tiffIO.getData(0)
                 frame = self._create_frame(data, header)
                 self.header = frame.header
                 self.data = frame.data
@@ -153,7 +161,11 @@ class TifImage(FabioImage):
                     infile.seek(0)
                 else:
                     self.lib = "PIL"
-                    self.data = pilutils.get_numpy_array(self.pilimage)
+                    header = self._read_header_from_pil(self.pilimage)
+                    data = pilutils.get_numpy_array(self.pilimage)
+                    frame = self._create_frame(data, header)
+                    self.header = frame.header
+                    self.data = frame.data
             else:
                 logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
                 self.lib = None
@@ -168,7 +180,7 @@ class TifImage(FabioImage):
 
         :param str fname: name of the file to save the image to
         """
-        with TiffIO(fname, mode="w") as tIO:
+        with TiffIO.TiffIO(fname, mode="w") as tIO:
             tIO.writeImage(self.data, info=self.header, software="fabio.tifimage", date=time.ctime())
 
     def close(self):
