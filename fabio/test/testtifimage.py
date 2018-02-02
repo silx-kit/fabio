@@ -39,24 +39,20 @@ fabio = sys.modules["fabio"]
 
 class TestTif(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = """
-    Feb09-bright-00.300s_WAXS.bz2 1042 1042 0 65535 8546.6414 1500.4198
-    Feb09-bright-00.300s_WAXS.gz 1042 1042 0 65535 8546.6414 1500.4198
-    Feb09-bright-00.300s_WAXS 1042 1042 0 65535 8546.6414 1500.4198
-    """
+    TESTIMAGES = [
+        ("Feb09-bright-00.300s_WAXS.bz2", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
+        ("Feb09-bright-00.300s_WAXS.gz", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
+        ("Feb09-bright-00.300s_WAXS", 1042, 1042, 0, 65535, 8546.6414, 1500.4198)]
 
     def test_read(self):
         """
         Test the reading of Mar345 images
         """
-        for line in self.TESTIMAGES.split('\n'):
-            vals = line.strip().split()
-            if not vals:
-                continue
-            name = vals[0]
+        for params in self.TESTIMAGES:
+            name = params[0]
             logger.debug("Processing: %s" % name)
-            dim1, dim2 = [int(x) for x in vals[1:3]]
-            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+            dim1, dim2 = params[1:3]
+            mini, maxi, mean, stddev = params[3:]
             obj = fabio.tifimage.TifImage()
             obj.read(UtilsTest.getimage(name))
 
