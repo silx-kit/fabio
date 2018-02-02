@@ -37,24 +37,21 @@ fabio = sys.modules["fabio"]
 
 class TestPilatus(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
-    TESTIMAGES = """
-    lysb_5mg-1.90s_SAXS.bz2 487 619  0 1300 29.4260 17.7367
-    lysb_5mg-1.90s_SAXS.gz 487 619  0 1300 29.4260 17.7367
-    lysb_5mg-1.90s_SAXS 487 619  0 1300 29.4260 17.7367
-    """
+    TESTIMAGES = [
+        ("lysb_5mg-1.90s_SAXS.bz2", 487, 619, 0, 1300, 29.4260, 17.7367),
+        ("lysb_5mg-1.90s_SAXS.gz", 487, 619, 0, 1300, 29.4260, 17.7367),
+        ("lysb_5mg-1.90s_SAXS", 487, 619, 0, 1300, 29.4260, 17.7367),
+    ]
 
     def test_read(self):
         """
         Test the reading of Mar345 images
         """
-        for line in self.TESTIMAGES.split('\n'):
-            vals = line.strip().split()
-            if not vals:
-                continue
-            name = vals[0]
+        for params in self.TESTIMAGES:
+            name = params[0]
             logger.debug("Processing: %s" % name)
-            dim1, dim2 = [int(x) for x in vals[1:3]]
-            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+            dim1, dim2 = params[1:3]
+            mini, maxi, mean, stddev = params[3:]
             obj = fabio.pilatusimage.PilatusImage()
             obj.read(UtilsTest.getimage(name))
 
