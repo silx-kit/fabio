@@ -63,6 +63,47 @@ class TestTif(unittest.TestCase):
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
 
+    def test_header(self):
+        for params in self.TESTIMAGES:
+            name = params[0]
+            logger.debug("Processing: %s" % name)
+            obj = fabio.tifimage.TifImage()
+            obj.read(UtilsTest.getimage(name))
+
+            # The key order is not the same depending on Python2 or 3
+            expected_keys = set([
+                'info',
+                'photometricInterpretation',
+                'rowsPerStrip',
+                'nColumns',
+                'compression',
+                'sampleFormat',
+                'imageDescription',
+                'nRows',
+                'colormap',
+                'nBits',
+                'date',
+                'software',
+                'compression_type',
+                'stripOffsets',
+                'stripByteCounts'])
+            self.assertEqual(set(obj.header.keys()), expected_keys)
+
+    def test_frame(self):
+        for params in self.TESTIMAGES:
+            name = params[0]
+            logger.debug("Processing: %s" % name)
+            dim1, dim2 = params[1:3]
+            obj = fabio.tifimage.TifImage()
+            obj.read(UtilsTest.getimage(name))
+
+            self.assertEqual(obj.nframes, 1)
+            frame = obj.getframe(0)
+            self.assertIsNotNone(frame)
+            self.assertIsNotNone(frame.data)
+            self.assertEqual(frame.data.shape, (dim2, dim1))
+            self.assertEqual(len(frame.header.keys()), 15)
+
 
 class TestTifImage_Pilatus(unittest.TestCase):
     def setUp(self):
