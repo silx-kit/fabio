@@ -26,29 +26,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE
 
-"""
-
-Authors:
-........
-* Henning O. Sorensen & Erik Knudsen:
-  Center for Fundamental Research: Metal Structures in Four Dimensions;
-  Risoe National Laboratory;
-  Frederiksborgvej 399;
-  DK-4000 Roskilde;
-  email:erik.knudsen@risoe.dk
-* Jon Wright:
-  European Synchrotron Radiation Facility;
-  Grenoble (France)
-
-"""
-# Get ready for python3:
 from __future__ import with_statement, print_function
 
+__authors__ = ["V. Valls"]
+__license__ = "MIT"
+__date__ = "02/02/2018"
 
-# Base this on the tifimage (as Pilatus is tiff with a
-# tiff header
-
+import re
+import logging
 from .tifimage import TifImage
+
+
+_logger = logging.getLogger(__name__)
 
 
 class PilatusImage(TifImage):
@@ -59,55 +48,64 @@ class PilatusImage(TifImage):
 
     DEFAULT_EXTENSIONS = ["tif", "tiff"]
 
-    def _readheader(self, infile):
+    _keyvalue_spliter = re.compile(b"\s*(?:[,:=]\s*)?")
+    """It allow to split the first white space, colon, coma, or equal
+    character and remove white spaces around"""
+
+    def _create_pilatus_header(self, tiff_header):
         """
-        Parser based approach
-        Gets all entries
+        Parse Pilatus header from a TIFF header.
+
+        The Pilatus header is stored in the metadata ImageDescription (tag 270)
+        as an ASCII text which looks like:
+
+        .. block-code:: python
+
+            imageDescription = '# Pixel_size 172e-6 m x 172e-6 m\r\n'\
+                '# Silicon sensor, thickness 0.000320 m\r\n# Exposure_time 90.000000 s\r\n'\
+                '# Exposure_period 90.000000 s\r\n# Tau = 0 s\r\n'\
+                '# Count_cutoff 1048574 counts\r\n# Threshold_setting 0 eV\r\n'\
+                '# Gain_setting not implemented (vrf = 9.900)\r\n'\
+                '# N_excluded_pixels = 0\r\n# Excluded_pixels: (nil)\r\n'\
+                '# Flat_field: (nil)\r\n# Trim_directory: (nil)\r\n\x00'
+
+        :rtype: OrderedDict
         """
+        if "imageDescription" not in tiff_header:
+            # It is not a Pilatus TIFF image
+            raise IOError("Image is not a Pilatus image")
 
-        self.header = self.check_header()
+        header = self.check_header()
 
-#        infile = open(infile)
-        hstr = infile.read(4096)
-        # well not very pretty - but seems to find start of
-        # header information
-        if (hstr.find(b'# ') == -1):
-            return self.header
+        description = tiff_header["imageDescription"]
+        for line in description.split(b"\n"):
+            index = line.find(b'# ')
+            if index == -1:
+                if line.strip(b" \x00") != b"":
+                    # If it is not an empty line
+                    _logger.debug("Pilatus header line '%s' misformed. Skipped", line)
+                continue
 
-        hstr = hstr[hstr.index(b'# '):]
-        hstr = hstr[:hstr.index(b'\x00')]
-        hstr = hstr.split(b'#')
-        go_on = True
-        while go_on:
-            try:
-                hstr.remove(b'')
-            except Exception:
-                go_on = False
+            line = line[2:].strip()
+            if line == "":
+                # empty line
+                continue
 
-        for line in hstr:
-            line = line[1:line.index(b'\r\n')]
-            if line.find(b':') > -1:
-                dump = line.split(b':')
-                self.header[dump[0]] = dump[1]
-            elif line.find(b'=') > -1:
-                dump = line.split(b'=')
-                self.header[dump[0]] = dump[1]
-            elif line.find(b' ') > -1:
-                i = line.find(b' ')
-                self.header[line[:i]] = line[i:]
-            elif line.find(b',') > -1:
-                dump = line.split(b',')
-                self.header[dump[0]] = dump[1]
+            result = self._keyvalue_spliter.split(line, 1)
+            if len(result) != 2:
+                _logger.debug("Pilatus header line '%s' misformed. Skipped", line)
+                continue
 
-        return self.header
+            key, value = result[0].decode("ascii"), result[1].decode("ascii")
+            header[key] = value
 
-    def _read(self, fname):
-        """
-        inherited from tifimage
-        ... a Pilatus image *is a* tif image
-        just with a header
-        """
-        return TifImage.read(self, fname)
+        return header
+
+    def _set_frame(self, image_data, tiff_header):
+        """Create exposed data from TIFF information"""
+        self.tiff_header = tiff_header
+        self.header = self._create_pilatus_header(tiff_header)
+        self.data = image_data
 
 
 pilatusimage = PilatusImage

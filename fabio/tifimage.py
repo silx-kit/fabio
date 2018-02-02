@@ -92,6 +92,11 @@ class TifImage(FabioImage):
         # nbits is not a FabioImage attribute...
         self.nbits = int(header[21])  # number of bits
 
+    def _set_frame(self, image_data, tiff_header):
+        """Create exposed data from TIFF information"""
+        self.header = tiff_header
+        self.data = image_data
+
     def read(self, fname, frame=None):
         """
         Wrapper for TiffIO.
@@ -104,8 +109,8 @@ class TifImage(FabioImage):
             tiffIO = TiffIO(infile)
             if tiffIO.getNumberOfImages() > 0:
                 # No support for now of multi-frame tiff images
-                self.data = tiffIO.getImage(0)
-                self.header = tiffIO.getInfo(0)
+                data, header = tiffIO.getImage(0), tiffIO.getInfo(0)
+                self._set_frame(data, header)
         except Exception as error:
             logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
         else:

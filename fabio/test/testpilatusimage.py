@@ -26,6 +26,7 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
+
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
@@ -61,6 +62,43 @@ class TestPilatus(unittest.TestCase):
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
             self.assertEqual(dim1, obj.dim1, "dim1")
             self.assertEqual(dim2, obj.dim2, "dim2")
+
+    def test_header(self):
+        for params in self.TESTIMAGES:
+            name = params[0]
+            obj = fabio.pilatusimage.PilatusImage()
+            obj.read(UtilsTest.getimage(name))
+
+            expected_keys = [
+                "Pixel_size",
+                "Silicon",
+                "Exposure_time",
+                "Exposure_period",
+                "Tau",
+                "Count_cutoff",
+                "Threshold_setting",
+                "Gain_setting",
+                "N_excluded_pixels",
+                "Excluded_pixels",
+                "Flat_field",
+                "Trim_directory"]
+            self.assertEqual(list(obj.header.keys()), expected_keys)
+
+            expected_values = {
+                "Pixel_size": "172e-6 m x 172e-6 m",
+                "Silicon": "sensor, thickness 0.000320 m",
+                "Exposure_time": "90.000000 s",
+                "Exposure_period": "90.000000 s",
+                "Tau": "0 s",
+                "Count_cutoff": "1048574 counts",
+                "Threshold_setting": "0 eV",
+                "Gain_setting": "not implemented (vrf = 9.900)",
+                "N_excluded_pixels": "0",
+                "Excluded_pixels": "(nil)",
+                "Flat_field": "(nil)",
+                "Trim_directory": "(nil)"}
+
+            self.assertEqual(dict(obj.header), expected_values)
 
 
 def suite():
