@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "02/02/2018"
+__date__ = "07/02/2018"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -115,7 +115,12 @@ class TifImage(FabioImage):
         for num, name in TiffIO.TAG_ID.items():
             if num in image.tag:
                 name = name[0].lower() + name[1:]
-                header[name] = image.tag[num]
+                value = image.tag[num]
+                # For some PIL version the tag content is a tuple
+                if isinstance(value, tuple) and len(value) == 1:
+                    value = value[0]
+                header[name] = value
+
         return header
 
     def read(self, fname, frame=None):

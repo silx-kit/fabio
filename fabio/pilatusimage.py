@@ -30,7 +30,7 @@ from __future__ import with_statement, print_function
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "02/02/2018"
+__date__ = "07/02/2018"
 
 import re
 import logging
@@ -91,8 +91,6 @@ class PilatusImage(tifimage.TifImage):
         header = self.check_header()
 
         description = tiff_header["imageDescription"]
-        if isinstance(description, tuple):
-            description = description[0]
         if isinstance(description, bytes):
             description = description.decode('utf-8')
         for line in description.split("\n"):
