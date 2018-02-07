@@ -91,8 +91,6 @@ class PilatusImage(tifimage.TifImage):
         header = self.check_header()
 
         description = tiff_header["imageDescription"]
-        if isinstance(description, bytes):
-            description = description.decode('utf-8')
         for line in description.split("\n"):
             index = line.find('# ')
             if index == -1:
