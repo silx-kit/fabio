@@ -61,7 +61,7 @@ class PilatusImage(tifimage.TifImage):
 
     DEFAULT_EXTENSIONS = ["tif", "tiff"]
 
-    _keyvalue_spliter = re.compile(b"\s*(?:[,:=]\s*)?")
+    _keyvalue_spliter = re.compile("\s*(?:[,:=]\s*)?")
     """It allow to split the first white space, colon, coma, or equal
     character and remove white spaces around"""
 
@@ -91,10 +91,14 @@ class PilatusImage(tifimage.TifImage):
         header = self.check_header()
 
         description = tiff_header["imageDescription"]
-        for line in description.split(b"\n"):
-            index = line.find(b'# ')
+        if isinstance(description, tuple):
+            description = description[0]
+        if isinstance(description, bytes):
+            description = description.decode('utf-8')
+        for line in description.split("\n"):
+            index = line.find('# ')
             if index == -1:
-                if line.strip(b" \x00") != b"":
+                if line.strip(" \x00") != "":
                     # If it is not an empty line
                     _logger.debug("Pilatus header line '%s' misformed. Skipped", line)
                 continue
@@ -109,7 +113,7 @@ class PilatusImage(tifimage.TifImage):
                 _logger.debug("Pilatus header line '%s' misformed. Skipped", line)
                 continue
 
-            key, value = result[0].decode("ascii"), result[1].decode("ascii")
+            key, value = result
             header[key] = value
 
         return header
