@@ -115,10 +115,74 @@ class TestPilatus(unittest.TestCase):
             self.assertEqual(len(frame.header), 12)
 
 
+class TestPilatus1M(unittest.TestCase):
+    # filename dim1 dim2 min max mean stddev
+    TESTIMAGES = [
+        ("Pilatus1M.tif.bz2", 981, 1043),
+        ("Pilatus1M.tif", 981, 1043),
+    ]
+
+    def setUp(self):
+        import fabio.utils.pilutils
+        if fabio.utils.pilutils.Image is None:
+            self.skipTest("No TIFF decoder available for LZW")
+
+    def test_read(self):
+        """
+        Test the reading of Mar345 images
+        """
+        for params in self.TESTIMAGES:
+            name = params[0]
+            logger.debug("Processing: %s" % name)
+            dim1, dim2 = params[1:3]
+            obj = fabio.pilatusimage.PilatusImage()
+            obj.read(UtilsTest.getimage(name))
+            self.assertEqual(dim1, obj.dim1, "dim1")
+            self.assertEqual(dim2, obj.dim2, "dim2")
+
+    def test_header(self):
+        for params in self.TESTIMAGES:
+            name = params[0]
+            obj = fabio.pilatusimage.PilatusImage()
+            obj.read(UtilsTest.getimage(name))
+            expected_keys = [
+                "Pixel_size",
+                "Silicon",
+                "Exposure_time",
+                "Exposure_period",
+                "Tau",
+                "Count_cutoff",
+                "Threshold_setting",
+                "Gain_setting",
+                "N_excluded_pixels",
+                "Excluded_pixels",
+                "Flat_field",
+                "Trim_file",
+                "Image_path",
+                "Energy_range",
+                "Detector_distance",
+                "Detector_Voffset",
+                "Beam_xy",
+                "Flux",
+                "Filter_transmission",
+                "Start_angle",
+                "Angle_increment",
+                "Detector_2theta",
+                "Polarization",
+                "Alpha",
+                "Kappa",
+                "Phi",
+                "Chi",
+                "Oscillation_axis",
+                "N_oscillations"]
+            self.assertEqual(list(obj.header.keys()), expected_keys)
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestPilatus))
+    testsuite.addTest(loadTests(TestPilatus1M))
     return testsuite
 
 
