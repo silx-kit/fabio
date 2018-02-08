@@ -23,6 +23,10 @@ import time
 import unittest
 import os
 import fabio.app.convert
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 
 class TestFabioConvert(unittest.TestCase):
@@ -87,28 +91,47 @@ class TestFabioConvert(unittest.TestCase):
     def subprocessFabioConvert(self, *args):
         commandLine = [sys.executable, self.__script]
         commandLine.extend(args)
-        return subprocess.Popen(commandLine, env=self.__env, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        _logger.info("Execute: %s", " ".join(commandLine))
+        p = subprocess.Popen(commandLine, env=self.__env, shell=False,
+                             stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        return p
+
+    def logCommunicate(self, p):
+        out, err = p.communicate()
+        _logger.info("Return code: %d", p.returncode)
+        if p.returncode != 0:
+            _logger.info("stdout:")
+            _logger.info("%s", out)
+            _logger.info("stderr:")
+            _logger.info("%s", err)
+        else:
+            _logger.debug("stdout:")
+            _logger.debug("%s", out)
+            _logger.debug("stderr:")
+            _logger.debug("%s", err)
 
     def testSingleFile(self):
         p = self.subprocessFabioConvert("input/03.edf", "-o=output/03.msk")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/03.msk"))
         image = fabio.open("output/03.msk")
         assert(isinstance(image, fabio.fit2dmaskimage.Fit2dMaskImage))
 
     def testSingleFileToDir(self):
         p = self.subprocessFabioConvert("input/03.edf", "-F=msk", "-o=output")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/03.msk"))
 
     def testSingleFileWithWildcardToDir(self):
         p = self.subprocessFabioConvert("input/03.*", "-F=msk", "-o=output")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/03.msk"))
 
     def testFullFormatName(self):
         p = self.subprocessFabioConvert("input/03.*", "-F=numpyimage", "-o=output")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/03.npy"))
         image = fabio.open("output/03.npy")
         assert(isinstance(image, fabio.numpyimage.NumpyImage))
@@ -117,7 +140,7 @@ class TestFabioConvert(unittest.TestCase):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
         p = self.subprocessFabioConvert("input/*.edf", "-f", "-F=msk", "-o=output")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/01.msk"))
         assert(date1 < os.path.getmtime("output/01.msk"))
         assert(os.path.exists("output/02.msk"))
@@ -128,7 +151,7 @@ class TestFabioConvert(unittest.TestCase):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
         p = self.subprocessFabioConvert("input/*.edf", "--remove-destination", "-F=msk", "-o=output")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/01.msk"))
         assert(date1 < os.path.getmtime("output/01.msk"))
         assert(os.path.exists("output/02.msk"))
@@ -139,7 +162,7 @@ class TestFabioConvert(unittest.TestCase):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
         p = self.subprocessFabioConvert("input/*.edf", "-n", "-F=msk", "-o=output")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/01.msk"))
         assert(date1 == os.path.getmtime("output/01.msk"))
         assert(os.path.exists("output/02.msk"))
@@ -150,7 +173,7 @@ class TestFabioConvert(unittest.TestCase):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
         p = self.subprocessFabioConvert("input/*.edf", "--update", "-F=msk", "-o=output")
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/01.msk"))
         assert(date1 < os.path.getmtime("output/01.msk"))
         assert(os.path.exists("output/02.msk"))
@@ -163,7 +186,7 @@ class TestFabioConvert(unittest.TestCase):
         p = self.subprocessFabioConvert("input/*.edf", "-F=msk", "-o=output")
         p.stdin.write(b'yes\n')
         p.stdin.write(b'no\n')
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/01.msk"))
         assert(date1 < os.path.getmtime("output/01.msk"))
         assert(os.path.exists("output/02.msk"))
@@ -176,7 +199,7 @@ class TestFabioConvert(unittest.TestCase):
         p = self.subprocessFabioConvert("input/*.edf", "-n", "-i", "-F=msk", "-o=output")
         p.stdin.write(b'yes\n')
         p.stdin.write(b'no\n')
-        p.communicate()
+        self.logCommunicate(p)
         assert(os.path.exists("output/01.msk"))
         assert(date1 < os.path.getmtime("output/01.msk"))
         assert(os.path.exists("output/02.msk"))
