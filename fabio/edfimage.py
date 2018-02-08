@@ -555,6 +555,9 @@ class EdfImage(FabioImage):
         if len(block) < BLOCKSIZE:
             logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
 
+        # skip the open block character
+        begin_block = begin_block + 1
+
         start = block.find(b"EDF_HeaderSize", begin_block)
         if start >= 0:
             equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
@@ -620,7 +623,7 @@ class EdfImage(FabioImage):
         while True:
             try:
                 block = self._readHeaderBlock(infile, len(self._frames))
-            except MalformedHeaderError as e:
+            except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
                     raise IOError("Invalid first header")

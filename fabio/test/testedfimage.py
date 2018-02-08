@@ -81,29 +81,45 @@ class TestFlatEdfs(unittest.TestCase):
             outf.write(self.MYIMAGE.tostring())
             outf.close()
 
+        obj = edfimage()
+        obj.read(self.filename)
+        self.obj = obj
+
     def tearDown(self):
+        self.obj.close()
+        self.obj = None
         unittest.TestCase.tearDown(self)
         self.BYTE_ORDER = self.MYHEADER = self.MYIMAGE = None
 
     def test_read(self):
         """ check readable"""
-        obj = edfimage()
-        obj.read(self.filename)
-        self.assertEqual(obj.dim1, 256, msg="dim1!=256 for file: %s" % self.filename)
-        self.assertEqual(obj.dim2, 256, msg="dim2!=256 for file: %s" % self.filename)
-        self.assertEqual(obj.bpp, 4, msg="bpp!=4 for file: %s" % self.filename)
-        self.assertEqual(obj.bytecode, numpy.float32, msg="bytecode!=flot32 for file: %s" % self.filename)
-        self.assertEqual(obj.data.shape, (256, 256), msg="shape!=(256,256) for file: %s" % self.filename)
-        self.assertEqual(obj.header['History-1'],
-                         "something=something else")
+        self.assertEqual(self.obj.dim1, 256, msg="dim1!=256 for file: %s" % self.filename)
+        self.assertEqual(self.obj.dim2, 256, msg="dim2!=256 for file: %s" % self.filename)
+        self.assertEqual(self.obj.bpp, 4, msg="bpp!=4 for file: %s" % self.filename)
+        self.assertEqual(self.obj.bytecode, numpy.float32, msg="bytecode!=flot32 for file: %s" % self.filename)
+        self.assertEqual(self.obj.data.shape, (256, 256), msg="shape!=(256,256) for file: %s" % self.filename)
 
     def test_getstats(self):
         """ test statistics"""
-        obj = edfimage()
-        obj.read(self.filename)
-        self.assertEqual(obj.getmean(), 10)
-        self.assertEqual(obj.getmin(), 0)
-        self.assertEqual(obj.getmax(), 20)
+        self.assertEqual(self.obj.getmean(), 10)
+        self.assertEqual(self.obj.getmin(), 0)
+        self.assertEqual(self.obj.getmax(), 20)
+
+    def test_headers(self):
+        self.assertEqual(len(self.obj.header), 7)
+        expected_keys = ["Omega", "Dim_1", "Dim_2", "DataType", "ByteOrder", "Image", "History-1"]
+        self.assertEqual(expected_keys, list(self.obj.header.keys()))
+
+        expected_values = {
+            "Omega": "0.0",
+            "Dim_1": "256",
+            "Dim_2": "256",
+            "DataType": "FloatValue",
+            "Image": "1",
+            "History-1": "something=something else"
+        }
+        for k, expected_value in expected_values.items():
+            self.assertEqual(self.obj.header[k], expected_value)
 
 
 class TestBzipEdf(TestFlatEdfs):
