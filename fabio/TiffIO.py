@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "07/02/2018"
 
 import sys
 import os
@@ -43,6 +43,7 @@ TAG_ID = {256: "NumberOfColumns",  # S or L ImageWidth
           259: "Compression",  # SHORT (1 - NoCompression, ...
           262: "PhotometricInterpretation",  # SHORT (0 - WhiteIsZero, 1 -BlackIsZero, 2 - RGB, 3 - Palette color
           270: "ImageDescription",  # ASCII
+          272: "Model",  # ASCII
           273: "StripOffsets",  # S or L, for each strip, the byte offset of the strip
           277: "SamplesPerPixel",  # SHORT (>=3) only for RGB images
           278: "RowsPerStrip",  # S or L, number of rows in each back may be not for the last
@@ -60,6 +61,7 @@ TAG_BITS_PER_SAMPLE = 258
 TAG_PHOTOMETRIC_INTERPRETATION = 262
 TAG_COMPRESSION = 259
 TAG_IMAGE_DESCRIPTION = 270
+TAG_MODEL = 272
 TAG_STRIP_OFFSETS = 273
 TAG_SAMPLES_PER_PIXEL = 277
 TAG_ROWS_PER_STRIP = 278
@@ -314,6 +316,29 @@ class TiffIO(object):
         else:
             fd.seek(struct.unpack(st + "I", valueOffsetList[idx])[0])
             output = struct.unpack(vfmt, fd.read(requestedBytes))
+
+        if fieldTypeList[idx] == 2:
+            # That's an ASCII tag
+            cleaned_output = []
+            for raw in output:
+                # remove the trailing \x00
+                index = raw.find(b"\x00")
+                if index != -1:
+                    raw = raw[0:index]
+                # read the data as text
+                try:
+                    text = raw.decode("utf-8")
+                except UnicodeDecodeError:
+                    logger.warning("TIFF file tag %d contains non ASCII/UTF-8 characters. ", tag)
+                    text = raw.decode("utf-8", errors='replace')
+                    # Use a valid ASCII character to limit ferther encoding error
+                    text = text.replace(u"\ufffd", "?")
+
+                cleaned_output.append(text)
+            if isinstance(output, tuple):
+                output = tuple(cleaned_output)
+            else:
+                output = cleaned_output
         return output
 
     def getData(self, nImage, **kw):
@@ -394,8 +419,6 @@ class TiffIO(object):
         else:
             logger.debug("WARNING: Non standard TIFF. Photometric interpretation TAG missing")
         helpString = ""
-        if sys.version > '2.6':
-            helpString = eval('b""')
 
         if TAG_IMAGE_DESCRIPTION in tagIDList:
             imageDescription = self._readIFDEntry(TAG_IMAGE_DESCRIPTION,
@@ -405,29 +428,26 @@ class TiffIO(object):
         else:
             imageDescription = "%d/%d" % (nImage + 1, len(self._IFD))
 
-        if sys.version < '3.0':
-            defaultSoftware = "Unknown Software"
+        if TAG_MODEL in tagIDList:
+            model = self._readIFDEntry(TAG_MODEL,
+                                       tagIDList, fieldTypeList, nValuesList, valueOffsetList)
         else:
-            defaultSoftware = bytes("Unknown Software",
-                                    encoding='utf-8')
+            model = None
+
+        defaultSoftware = "Unknown Software"
+
         if TAG_SOFTWARE in tagIDList:
             software = self._readIFDEntry(TAG_SOFTWARE,
                                           tagIDList, fieldTypeList, nValuesList, valueOffsetList)
-            if type(software) in [type([1]), type((1,))]:
+            if isinstance(software, (tuple, list)):
                 software = helpString.join(software)
         else:
             software = defaultSoftware
 
         if software == defaultSoftware:
             try:
-                if sys.version < '3.0':
-                    if imageDescription.upper().startswith("IMAGEJ"):
-                        software = imageDescription.split("=")[0]
-                else:
-                    tmpString = imageDescription.decode()
-                    if tmpString.upper().startswith("IMAGEJ"):
-                        software = bytes(tmpString.split("=")[0],
-                                         encoding='utf-8')
+                if imageDescription.upper().startswith("IMAGEJ"):
+                    software = imageDescription.split("=")[0]
             except:
                 pass
 
@@ -500,17 +520,14 @@ class TiffIO(object):
         info["colormap"] = colormap
         info["sampleFormat"] = sampleFormat
         info["photometricInterpretation"] = interpretation
+        if model is not None:
+            info["model"] = model
+
         infoDict = {}
-        if sys.version < '3.0':
-            testString = 'PyMca'
-        else:
-            testString = eval('b"PyMca"')
+        testString = 'PyMca'
         if software.startswith(testString):
             # str to make sure python 2.x sees it as string and not unicode
-            if sys.version < '3.0':
-                descriptionString = imageDescription
-            else:
-                descriptionString = str(imageDescription.decode())
+            descriptionString = imageDescription
             # interpret the image description in terms of supplied
             # information at writing time
             items = descriptionString.split('=')
