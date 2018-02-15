@@ -434,30 +434,25 @@ class TiffIO(object):
         else:
             model = None
 
-        defaultSoftware = "Unknown Software"
-
+        software = None
         if TAG_SOFTWARE in tagIDList:
             software = self._readIFDEntry(TAG_SOFTWARE,
                                           tagIDList, fieldTypeList, nValuesList, valueOffsetList)
             if isinstance(software, (tuple, list)):
                 software = helpString.join(software)
         else:
-            software = defaultSoftware
-
-        if software == defaultSoftware:
             try:
                 if imageDescription.upper().startswith("IMAGEJ"):
                     software = imageDescription.split("=")[0]
             except:
                 pass
 
+        date = None
         if TAG_DATE in tagIDList:
             date = self._readIFDEntry(TAG_DATE,
                                       tagIDList, fieldTypeList, nValuesList, valueOffsetList)
             if type(date) in [type([1]), type((1,))]:
                 date = helpString.join(date)
-        else:
-            date = "Unknown Date"
 
         stripOffsets = self._readIFDEntry(TAG_STRIP_OFFSETS,
                                           tagIDList,
@@ -525,7 +520,7 @@ class TiffIO(object):
 
         infoDict = {}
         testString = 'PyMca'
-        if software.startswith(testString):
+        if software is not None and software.startswith(testString):
             # str to make sure python 2.x sees it as string and not unicode
             descriptionString = imageDescription
             # interpret the image description in terms of supplied
