@@ -786,12 +786,7 @@ class TiffIO(object):
 
         return image
 
-    def writeImage(self, image0, info=None, software=None, date=None):
-        if software is None:
-            software = 'PyMca.TiffIO'
-        # if date is None:
-        #    date = time.ctime()
-
+    def writeImage(self, image0, info=None, software='PyMca.TiffIO', date=None):
         self.__makeSureFileIsOpen()
         fd = self.fd
         # prior to do anything, perform some tests
@@ -855,10 +850,10 @@ class TiffIO(object):
         fd.seek(0, os.SEEK_END)
 
         # get the description information from the input information
-        if info is None:
+        if not isinstance(info, dict):
             description = info
         else:
-            description = "%s" % ""
+            description = ""
             for key in info.keys():
                 description += "%s=%s\n" % (key, info[key])
 
