@@ -676,7 +676,7 @@ class TiffIO(object):
                 readout = numpy.fromstring(fd.read(nBytes), dtype)
             if hasattr(nBits, 'index'):
                 readout.shape = -1, nColumns, len(nBits)
-            elif info['colormap'] is not None:
+            elif colormap is not None:
                 readout = colormap[readout]
             else:
                 readout.shape = -1, nColumns
@@ -727,7 +727,7 @@ class TiffIO(object):
                         readout = numpy.fromstring(bufferBytes, dtype)
                     if hasattr(nBits, 'index'):
                         readout.shape = -1, nColumns, len(nBits)
-                    elif info['colormap'] is not None:
+                    elif colormap is not None:
                         readout = colormap[readout]
                         readout.shape = -1, nColumns, 3
                     else:
@@ -1244,9 +1244,9 @@ if __name__ == "__main__":
     for i in range(tif.getNumberOfImages()):
         info = tif.getInfo(i)
         for key in info:
-            if key not in ["colormap"]:
+            if key != 'colormap':
                 print("%s = %s" % (key, info[key]))
-            elif info['colormap'] is not None:
+            elif info[key] is not None:
                 print("RED   %s = %s" % (key, info[key][0:10, 0]))
                 print("GREEN %s = %s" % (key, info[key][0:10, 1]))
                 print("BLUE  %s = %s" % (key, info[key][0:10, 2]))
