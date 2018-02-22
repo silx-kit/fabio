@@ -396,7 +396,11 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
 
     def add(self, other):
         """
-        Add another Image - warning, does not clip to 16 bit images by default
+        Accumulate another fabioimage into  the first image.
+
+        Warning, does not clip to 16 bit images by default
+
+        :param FabioImage other: Another image to accumulate.
         """
         if not hasattr(other, 'data'):
             logger.warning('edfimage.add() called with something that '
