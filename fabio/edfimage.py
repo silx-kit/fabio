@@ -366,6 +366,8 @@ class Frame(object):
         else:
             data = self.data
         fit2dMode = bool(fit2dMode)
+
+        self.capsHeader.clear()
         for key in self.header:
             KEY = key.upper()
             if KEY not in self.capsHeader:
