@@ -249,11 +249,12 @@ class Frame(object):
         """
         Decide if we need to byteswap
         """
-        if ('Low' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
+        byte_order = self.header[self.capsHeader['BYTEORDER']]
+        if ('Low' in byte_order and numpy.little_endian) or \
+           ('High' in byte_order and not numpy.little_endian):
             return False
-        if ('High' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
+        if ('High' in byte_order and numpy.little_endian) or \
+           ('Low' in byte_order and not numpy.little_endian):
             if self.bpp in [2, 4, 8]:
                 return True
             else:
@@ -708,14 +709,7 @@ class EdfImage(FabioImage):
 
         :return: True if needed, False else and None if not understood
         """
-        if self.bpp == 1:
-            return False
-        if ('Low' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            return False
-        if ('High' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            return True
+        return self._frames[self.currentframe].swap_needed()
 
     def unpack(self):
         """
@@ -825,7 +819,7 @@ class EdfImage(FabioImage):
             data.shape = self.data.shape
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if self.swap_needed():
+        if frame.swap_needed():
             data.byteswap(True)
         return data
 
@@ -865,7 +859,7 @@ class EdfImage(FabioImage):
             data.shape = -1, d1
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if self.swap_needed():
+        if frame.swap_needed():
             data.byteswap(True)
         return data[slice2]
 
