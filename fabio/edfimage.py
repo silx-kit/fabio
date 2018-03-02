@@ -134,9 +134,8 @@ class Frame(object):
 
         self.header = EdfImage.check_header(header)
 
-        self.capsHeader = {}
-        for key in self.header:
-            self.capsHeader[key.upper()] = key
+        self._data_compression = None
+        self._data_swap_needed = None
         self._data = data
         self.dims = []
         self.dim1 = 0
@@ -153,51 +152,59 @@ class Frame(object):
         else:
             self.iFrame = 0
 
-    def parseheader(self, block):
+    @property
+    def capsHeader(self):
         """
-        Parse the header in some EDF format from an already open file
+        Returns the mapping from capitalized keys of the header to the original
+        keys.
 
-        :param str block: string representing the header block.
-        :return: size of the binary blob
+        This computation is not cached.
+
+        :rtype: dict
         """
-        # reset values
-        self.header = OrderedDict()
-        self.capsHeader = {}
+        capsHeader = {}
+        for key in self.header:
+            upperkey = key.upper()
+            if upperkey not in capsHeader:
+                capsHeader[upperkey] = key
+        return capsHeader
+
+    def _extract_header_metadata(self, capsHeader=None):
+        """Extract from the header metadata expected to read the data.
+
+        Store them in this frame.
+
+        :param dict capsHeader: Precached mapping from capitalized keys of the
+            header to the original keys.
+        """
         self.size = None
         calcsize = 1
         self.dims = []
 
-        # Why would someone put null bytes in a header?
-        whitespace = string.whitespace + "\x00"
-
-        for line in block.split(';'):
-            if '=' in line:
-                key, val = line.split('=', 1)
-                key = key.strip(whitespace)
-                self.header[key] = val.strip(whitespace)
-                self.capsHeader[key.upper()] = key
+        if capsHeader is None:
+            capsHeader = self.capsHeader
 
         # Compute image size
-        if "SIZE" in self.capsHeader:
+        if "SIZE" in capsHeader:
             try:
-                self.size = nice_int(self.header[self.capsHeader["SIZE"]])
+                self.size = nice_int(self.header[capsHeader["SIZE"]])
             except ValueError:
-                logger.warning("Unable to convert to integer : %s %s " % (self.capsHeader["SIZE"], self.header[self.capsHeader["SIZE"]]))
-        if "DIM_1" in self.capsHeader:
+                logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], self.header[capsHeader["SIZE"]]))
+        if "DIM_1" in capsHeader:
             try:
-                dim1 = nice_int(self.header[self.capsHeader['DIM_1']])
+                dim1 = nice_int(self.header[capsHeader['DIM_1']])
             except ValueError:
-                logger.error("Unable to convert to integer Dim_1: %s %s" % (self.capsHeader["DIM_1"], self.header[self.capsHeader["DIM_1"]]))
+                logger.error("Unable to convert to integer Dim_1: %s %s" % (capsHeader["DIM_1"], self.header[capsHeader["DIM_1"]]))
             else:
                 calcsize *= dim1
                 self.dims.append(dim1)
         else:
             logger.error("No Dim_1 in headers !!!")
-        if "DIM_2" in self.capsHeader:
+        if "DIM_2" in capsHeader:
             try:
-                dim2 = nice_int(self.header[self.capsHeader['DIM_2']])
+                dim2 = nice_int(self.header[capsHeader['DIM_2']])
             except ValueError:
-                logger.error("Unable to convert to integer Dim_2: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
+                logger.error("Unable to convert to integer Dim_2: %s %s" % (capsHeader["DIM_2"], self.header[capsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
                 self.dims.append(dim2)
@@ -207,12 +214,12 @@ class Frame(object):
         # JON: this appears to be for nD images, but we don't treat those
         while iDim is not None:
             strDim = "DIM_%i" % iDim
-            if strDim in self.capsHeader:
+            if strDim in capsHeader:
                 try:
-                    dim3 = nice_int(self.header[self.capsHeader[strDim]])
+                    dim3 = nice_int(self.header[capsHeader[strDim]])
                 except ValueError:
                     logger.error("Unable to convert to integer %s: %s %s",
-                                 strDim, self.capsHeader[strDim], self.header[self.capsHeader[strDim]])
+                                 strDim, capsHeader[strDim], self.header[capsHeader[strDim]])
                     dim3 = None
                     iDim = None
                 else:
@@ -226,8 +233,8 @@ class Frame(object):
                 logger.debug("No Dim_3 -> it is a 2D image")
                 iDim = None
         if self._bytecode is None:
-            if "DATATYPE" in self.capsHeader:
-                self._bytecode = DATA_TYPES[self.header[self.capsHeader['DATATYPE']]]
+            if "DATATYPE" in capsHeader:
+                self._bytecode = DATA_TYPES[self.header[capsHeader['DATATYPE']]]
             else:
                 self._bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
@@ -236,12 +243,51 @@ class Frame(object):
         if (self.size is None):
             self.size = calcsize
         elif (self.size != calcsize):
-            if ("COMPRESSION" in self.capsHeader) and (self.header[self.capsHeader['COMPRESSION']].upper().startswith("NO")):
+            if ("COMPRESSION" in capsHeader) and (self.header[capsHeader['COMPRESSION']].upper().startswith("NO")):
                 logger.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
                 self.size = calcsize
 
         for i, n in enumerate(self.dims):
             setattr(self, "dim%i" % (i + 1), n)
+
+        byte_order = self.header[capsHeader['BYTEORDER']]
+        if ('Low' in byte_order and numpy.little_endian) or \
+           ('High' in byte_order and not numpy.little_endian):
+            self._data_swap_needed = False
+        if ('High' in byte_order and numpy.little_endian) or \
+           ('Low' in byte_order and not numpy.little_endian):
+            if self.bpp in [2, 4, 8]:
+                self._data_swap_needed = True
+            else:
+                self._data_swap_needed = False
+
+        if "COMPRESSION" in capsHeader:
+            self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
+        else:
+            self._data_compression = None
+
+    def parseheader(self, block):
+        """
+        Parse the header in some EDF format from an already open file
+
+        :param str block: string representing the header block.
+        :return: size of the binary blob
+        """
+        # reset values
+        self.header = OrderedDict()
+        capsHeader = {}
+
+        # Why would someone put null bytes in a header?
+        whitespace = string.whitespace + "\x00"
+
+        for line in block.split(';'):
+            if '=' in line:
+                key, val = line.split('=', 1)
+                key = key.strip(whitespace)
+                self.header[key] = val.strip(whitespace)
+                capsHeader[key.upper()] = key
+
+        self._extract_header_metadata(capsHeader)
 
         return self.size
 
@@ -249,16 +295,7 @@ class Frame(object):
         """
         Decide if we need to byteswap
         """
-        byte_order = self.header[self.capsHeader['BYTEORDER']]
-        if ('Low' in byte_order and numpy.little_endian) or \
-           ('High' in byte_order and not numpy.little_endian):
-            return False
-        if ('High' in byte_order and numpy.little_endian) or \
-           ('Low' in byte_order and not numpy.little_endian):
-            if self.bpp in [2, 4, 8]:
-                return True
-            else:
-                return False
+        return self._data_swap_needed
 
     def getData(self):
         """
@@ -273,10 +310,7 @@ class Frame(object):
             data = self._data
         else:
             if self._bytecode is None:
-                if "DATATYPE" in self.capsHeader:
-                    self._bytecode = DATA_TYPES[self.header[self.capsHeader["DATATYPE"]]]
-                else:
-                    self._bytecode = numpy.uint16
+                assert(False)
             dims = self.dims[:]
             dims.reverse()
             with self.file.lock:
@@ -293,8 +327,8 @@ class Frame(object):
                                 return numpy.zeros(dims)
                         raise e
 
-            if ("COMPRESSION" in self.capsHeader):
-                compression = self.header[self.capsHeader["COMPRESSION"]].upper()
+            if self._data_compression is not None:
+                compression = self._data_compression
                 uncompressed_size = self.bpp
                 for i in dims:
                     uncompressed_size *= i
