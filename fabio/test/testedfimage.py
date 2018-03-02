@@ -347,7 +347,7 @@ class TestEdfRegression(unittest.TestCase):
     """
     Test suite to prevent regression
     """
-    def bug_27(self):
+    def test_bug_27(self):
         """
         import fabio
         obj = fabio.open("any.edf")
