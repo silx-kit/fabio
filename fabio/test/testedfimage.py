@@ -368,6 +368,16 @@ class TestEdfRegression(unittest.TestCase):
 
         del obj
 
+    def test_remove_metadata_header(self):
+        filename = UtilsTest.getimage("face.edf.bz2")[0:-4]
+        output_filename = os.path.join(UtilsTest.tempdir, "test_remove_metadata_header.edf")
+
+        image = fabio.open(filename)
+        del image.header["Dim_1"]
+        image.write(output_filename)
+        image2 = fabio.open(output_filename)
+        self.assertEqual(image.dims, image2.dims)
+
 
 class TestBadFiles(unittest.TestCase):
 
