@@ -1148,7 +1148,7 @@ class TiffIO(object):
                 outputIFD += struct.pack(fmt, TAG_IMAGE_DESCRIPTION,
                                          FIELD_TYPE_OUT['s'],
                                          descriptionLength,
-                                         description)
+                                         imageDescription)
 
         if len(stripOffsets) == 1:
             fmt = st + 'HHII'
