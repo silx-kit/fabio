@@ -152,13 +152,10 @@ class Frame(object):
         else:
             self.iFrame = 0
 
-    @property
-    def capsHeader(self):
+    def _compute_capsheader(self):
         """
         Returns the mapping from capitalized keys of the header to the original
         keys.
-
-        This computation is not cached.
 
         :rtype: dict
         """
@@ -182,7 +179,7 @@ class Frame(object):
         self.dims = []
 
         if capsHeader is None:
-            capsHeader = self.capsHeader
+            capsHeader = self._compute_capsheader()
 
         # Compute image size
         if "SIZE" in capsHeader:
@@ -898,7 +895,7 @@ class EdfImage(FabioImage):
         return data[slice2]
 
     ############################################################################
-    # Properties definition for header, data, header_keys and capsHeader
+    # Properties definition for header, data, header_keys
     ############################################################################
 
     def getNbFrames(self):
@@ -977,30 +974,8 @@ class EdfImage(FabioImage):
         deleter for edf Data
         """
         self._frames[self.currentframe].data = None
+
     data = property(getData, setData, delData, "property: data of EDF file")
-
-    def getCapsHeader(self):
-        """
-        getter for edf headers keys in upper case
-        :return: data for current frame
-        :rtype: dict
-        """
-        return self._frames[self.currentframe].capsHeader
-
-    def setCapsHeader(self, _data):
-        """
-        Enforces the propagation of the header_keys to the list of frames
-        :param _data: numpy array representing data
-        """
-        self._frames[self.currentframe].capsHeader = _data
-
-    def delCapsHeader(self):
-        """
-        deleter for edf capsHeader
-        """
-        self._frames[self.currentframe].capsHeader = {}
-
-    capsHeader = property(getCapsHeader, setCapsHeader, delCapsHeader, "property: capsHeader of EDF file, i.e. the keys of the header in UPPER case.")
 
     def getDim1(self):
         return self._frames[self.currentframe].dim1
