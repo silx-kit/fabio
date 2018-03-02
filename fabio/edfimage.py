@@ -108,13 +108,13 @@ NUMPY_EDF_DTYPE = {"int8": "SignedByte",
                    "float128": "QuadrupleValue",
                    }
 
-MINIMUM_KEYS = ['HEADERID',
-                'IMAGE',
-                'BYTEORDER',
-                'DATATYPE',
-                'DIM_1',
-                'DIM_2',
-                'SIZE']  # Size is thought to be essential for writing at least
+MINIMUM_KEYS = set(['HEADERID',
+                    'IMAGE',
+                    'BYTEORDER',
+                    'DATATYPE',
+                    'DIM_1',
+                    'DIM_2',
+                    'SIZE'])  # Size is thought to be essential for writing at least
 
 DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
@@ -701,10 +701,8 @@ class EdfImage(FabioImage):
                 raise Exception(error)
 
         for i, frame in enumerate(self._frames):
-            missing = []
-            for item in MINIMUM_KEYS:
-                if item not in frame.capsHeader:
-                    missing.append(item)
+            capsKeys = set([k.upper() for k in frame.header.keys()])
+            missing = list(MINIMUM_KEYS - capsKeys)
             if len(missing) > 0:
                 logger.info("EDF file %s frame %i misses mandatory keys: %s ", self.filename, i, " ".join(missing))
         self.currentframe = 0
