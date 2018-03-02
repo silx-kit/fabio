@@ -369,15 +369,15 @@ class Frame(object):
             data = self.data
         fit2dMode = bool(fit2dMode)
 
-        self.capsHeader.clear()
+        # Compute map from normalized upper key to original key in the header
+        capsHeader = {}
         for key in self.header:
-            KEY = key.upper()
-            if KEY not in self.capsHeader:
-                self.capsHeader[KEY] = key
+            upperkey = key.upper()
+            if upperkey not in capsHeader:
+                capsHeader[upperkey] = key
 
         header = self.header.copy()
         header_keys = list(self.header.keys())
-        capsHeader = self.capsHeader.copy()
 
         listHeader = ["{\n"]
         # First of all clean up the headers:
