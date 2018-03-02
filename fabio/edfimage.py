@@ -147,6 +147,7 @@ class Frame(object):
         self.bpp = None
         self.incomplete_data = False
         self._bytecode = None
+
         if (number is not None):
             self.iFrame = int(number)
         else:
@@ -341,6 +342,7 @@ class Frame(object):
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
+
     data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
 
     def getByteCode(self):
@@ -378,7 +380,7 @@ class Frame(object):
         capsHeader = self.capsHeader.copy()
 
         listHeader = ["{\n"]
-#        First of all clean up the headers:
+        # First of all clean up the headers:
         for i in capsHeader:
             if "DIM_" in i:
                 header.pop(capsHeader[i])
@@ -394,7 +396,7 @@ class Frame(object):
                 header["EDF_DataBlockID"] = header.pop(capsHeader["EDF_DATABLOCKID"])
                 capsHeader["EDF_DATABLOCKID"] = "EDF_DataBlockID"
 
-#            Then update static headers freshly deleted
+        # Then update static headers freshly deleted
         header_keys.insert(0, "Size")
         header["Size"] = len(data.tostring())
         header_keys.insert(0, "HeaderID")
@@ -867,9 +869,10 @@ class EdfImage(FabioImage):
             data.byteswap(True)
         return data[slice2]
 
-################################################################################
-# Properties definition for header, data, header_keys and capsHeader
-################################################################################
+    ############################################################################
+    # Properties definition for header, data, header_keys and capsHeader
+    ############################################################################
+
     def getNbFrames(self):
         """
         Getter for number of frames
@@ -907,32 +910,8 @@ class EdfImage(FabioImage):
         Deleter for edf header
         """
         self._frames[self.currentframe].header = {}
-    header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
 
-#     def getHeaderKeys(self):
-#         """
-#         Getter for edf header_keys
-#         """
-#         return self._frames[self.currentframe].header_keys
-#     def setHeaderKeys(self, _listtHeader):
-#         """
-#         Enforces the propagation of the header_keys to the list of frames
-#         :param _listtHeader: list of the (ordered) keys in the header
-#         :type _listtHeader: python list
-#         """
-#         try:
-#             self._frames[self.currentframe].header_keys = _listtHeader
-#         except AttributeError:
-#             self._frames = [Frame(header_keys=_listtHeader)]
-#         except IndexError:
-#             if self.currentframe < len(self._frames):
-#                 self._frames.append(Frame(header_keys=_listtHeader))
-#     def delHeaderKeys(self):
-#         """
-#         Deleter for edf header_keys
-#         """
-#         self._frames[self.currentframe].header_keys = []
-#     header_keys = property(getHeaderKeys, setHeaderKeys, delHeaderKeys, "property: header_keys of EDF file")
+    header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
 
     def getData(self):
         """
@@ -992,6 +971,7 @@ class EdfImage(FabioImage):
         deleter for edf capsHeader
         """
         self._frames[self.currentframe].capsHeader = {}
+
     capsHeader = property(getCapsHeader, setCapsHeader, delCapsHeader, "property: capsHeader of EDF file, i.e. the keys of the header in UPPER case.")
 
     def getDim1(self):
