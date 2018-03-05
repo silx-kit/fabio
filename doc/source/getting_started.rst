@@ -274,7 +274,7 @@ uses extensions as a fallback if that fails.
    "PNM", "Portable aNy Map", ".pnm ", "Yes", "No", "Yes"
    "Raxis", "Rigaku Saxs format", ".img", "Yes", "No", "No"
    "spe", "Princeton instrumentation", ".spe", "Yes", "Yes", "No"
-   "TIFF", "Tagged Image File Format", ".tif ", "Yes", "No", "Yes"
+   "TIFF", "Tagged Image File Format", ".tif", "Yes", "Yes", "Yes"
 
 Adding new file formats
 .......................
