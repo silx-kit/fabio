@@ -27,13 +27,15 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/02/2018"
+__date__ = "02/03/2018"
 
 import sys
 import os
 import struct
 import numpy
 import logging
+from fabio.third_party import six
+
 
 ALLOW_MULTIPLE_STRIPS = False
 
@@ -933,21 +935,23 @@ class TiffIO(object):
             while descriptionLength < 4:
                 description = description + " "
                 descriptionLength = len(description)
-            if sys.version >= '3.0':
-                description = bytes(description, 'utf-8')
-            elif isinstance(description, str):
-                try:
-                    description = description.decode('utf-8')
-                except UnicodeDecodeError:
+
+            if isinstance(description, six.text_type):
+                raw = description.encode('utf-8')
+            else:
+                if sys.version >= '3.0':
+                    raw = bytes(description, 'utf-8')
+                elif isinstance(description, str):
                     try:
-                        description = description.decode('latin-1')
+                        raw = description.decode('utf-8')
                     except UnicodeDecodeError:
-                        description = "%s" % description
-                if sys.version > '2.6':
-                    description = description.encode('utf-8', errors="ignore")
-                description = "%s" % description
-            descriptionLength = len(description)
-            imageDescription = struct.pack("%ds" % descriptionLength, description)
+                        try:
+                            raw = description.decode('latin-1')
+                        except UnicodeDecodeError:
+                            raw = description
+                    if sys.version > '2.6':
+                        raw = raw.encode('utf-8', errors="ignore")
+            imageDescription = struct.pack("%ds" % len(raw), raw)
             nDirectoryEntries += 1
 
         # software
@@ -1144,7 +1148,7 @@ class TiffIO(object):
                 outputIFD += struct.pack(fmt, TAG_IMAGE_DESCRIPTION,
                                          FIELD_TYPE_OUT['s'],
                                          descriptionLength,
-                                         description)
+                                         imageDescription)
 
         if len(stripOffsets) == 1:
             fmt = st + 'HHII'

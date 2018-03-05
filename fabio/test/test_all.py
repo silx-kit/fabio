@@ -73,6 +73,7 @@ from . import testmpaimage
 from . import testdm3image
 from . import test_failing_files
 from . import test_formats
+from . import test_image_convert
 
 
 def suite():
@@ -115,6 +116,7 @@ def suite():
     testSuite.addTest(testdm3image.suite())
     testSuite.addTest(test_failing_files.suite())
     testSuite.addTest(test_formats.suite())
+    testSuite.addTest(test_image_convert.suite())
     return testSuite
 
 
