@@ -42,7 +42,7 @@ modification for HDF5 by Jérôme Kieffer
 # Get ready for python3:
 from __future__ import with_statement, print_function, absolute_import
 
-import sys
+import os.path
 import logging
 logger = logging.getLogger(__name__)
 from .fabioutils import FilenameObject, six, BytesIO
@@ -157,27 +157,25 @@ def _openimage(filename):
     hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
 
     """
-    try:
-        url = six.moves.urllib_parse.urlparse(filename)
-    except AttributeError as err:
-        # Assume we have as input a BytesIO object
-        attrs = dir(filename)
-        if "seek" in attrs and "read" in attrs:
-            if not isinstance(filename, BytesIO):
-                filename.seek(0)
-                actual_filename = BytesIO(filename.read())
-        else:
-            actual_filename = filename
-        url = six.moves.urllib_parse.urlparse("")
-
+    url = None
+    if hasattr(filename, "seek") and hasattr(filename, "read"):
+        # Looks to be a file containing filenames
+        if not isinstance(filename, BytesIO):
+            filename.seek(0)
+            actual_filename = BytesIO(filename.read())
     else:
-        # related to https://github.com/silx-kit/fabio/issues/34
-        if (len(url.scheme) == 1 and (sys.platform == "win32")) or url.path.startswith(":"):
-            # this is likely a C: from windows  or filename::path
-            filename = url.scheme + ":" + url.path
+        if os.path.exists(filename):
+            # Already a valid filename
+            actual_filename = filename
         else:
-            filename = url.path
-        actual_filename = filename.split("::")[0]
+            try:
+                url = six.moves.urllib_parse.urlparse(filename)
+                actual_filename = url.path.split("::")[0]
+            except AttributeError as err:
+                actual_filename = filename
+
+    if url is None:
+        url = six.moves.urllib_parse.urlparse("")
 
     try:
         imo = FabioImage()
