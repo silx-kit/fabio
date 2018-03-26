@@ -165,6 +165,7 @@ Known file formats
 * Nonius -> now owned by Bruker
 
 * HDF5: generic format for stack of images
+
   + Hdf5Image
   + EigerImage
 
