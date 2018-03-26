@@ -98,9 +98,9 @@ There are also fileseries related methods (next(), previous(), ...) which return
 Other feature:
 
 * possibility for using on-the-fly external compression - i.e. if files are
-stored as something as .gz, .bz2 etc could decompress them, using an external
-compression mechanism (if available). This is present in fabian but requires
-that images are edfs.
+  stored as something as .gz, .bz2 etc could decompress them, using an external
+  compression mechanism (if available). This is present in fabian but requires
+  that images are edfs.
 
 
 Known file formats
@@ -121,7 +121,7 @@ Known file formats
 
   + CbfImage (implements a fast byte offset de/compression scheme in python/cython)
   + PilatusImage (fileformat derived from Tiff)
-  * EigerImage (derived from HDF5/NeXus format)
+  + EigerImage (derived from HDF5/NeXus format)
 
 * ESRF:
 
