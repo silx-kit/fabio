@@ -241,7 +241,7 @@ class Frame(object):
         if (self.size is None):
             self.size = calcsize
         elif (self.size != calcsize):
-            if ("COMPRESSION" in capsHeader) and (self.header[capsHeader['COMPRESSION']].upper().startswith("NO")):
+            if ("COMPRESSION" not in self.capsHeader) or (self.header[self.capsHeader['COMPRESSION']].upper().startswith("NO")):
                 logger.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
                 self.size = calcsize
 
