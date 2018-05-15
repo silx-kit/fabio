@@ -32,7 +32,7 @@ import unittest
 import sys
 import os
 import numpy
-
+import copy
 if __name__ == '__main__':
     import pkgutil
     __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
@@ -56,6 +56,10 @@ class Test50000(unittest.TestCase):
         hed = {"Title": "50000 everywhere"}
         self.obj = fabioimage(dat, hed)
 
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.obj = None
+
     def testgetmax(self):
         """check max"""
         self.assertEqual(self.obj.getmax(), 50000)
@@ -68,9 +72,17 @@ class Test50000(unittest.TestCase):
         """check mean"""
         self.assertEqual(self.obj.getmean(), 50000)
 
-    def getstddev(self):
+    def testgetstddev(self):
         """check stddev"""
         self.assertEqual(self.obj.getstddev(), 0)
+
+    def testcopy(self):
+        "test the copy statement"
+        c = copy.copy(self.obj)
+        self.assertNotEqual(id(c), id(self.obj), "object differ")
+        self.assertEqual(c.header, self.obj.header, "header are the same")
+        self.assertEqual(abs(c.data - self.obj.data).max(), 0, "data are the same")
+        self.assertEqual(c.filename, self.obj.filename, "filename is the same")
 
 
 class TestSlices(unittest.TestCase):
