@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "01/12/2017"
+__date__ = "15/05/2018"
 
 import os
 import logging
@@ -165,6 +165,13 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         if self._file is not None and not self._file.closed:
             self._file.close()
         self._file = None
+
+    def __copy__(self):
+        other = self.__class__(data=self.data, header=self.header)
+        if self.nframes > 1:
+            logger.warning("Only copying current frame")
+        other.filename = self.filename
+        return other
 
     @property
     def incomplete_file(self):
@@ -614,9 +621,9 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
                     except:
                         pass
 
-        elif isinstance(dest, self.__class__):
+        elif isinstance(dest, FabioImage):
             other = dest.__class__()
-        elif ("__new__" in dir(dest)) and isinstance(dest(), fabioimage):
+        elif ("__new__" in dir(dest)) and isinstance(dest(), FabioImage):
             other = dest()
         else:
             logger.error("Unrecognized destination format: %s " % dest)
