@@ -46,7 +46,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "01/12/2017"
+__date__ = "11/06/2018"
 
 import os
 import logging
@@ -536,32 +536,38 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
                     logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s" % type(fname))
             return fname
 
+        if isinstance(fname, fabioutils.PathTypes):
+            if not isinstance(fname, fabioutils.StringTypes):
+                fname = str(fname)
+        else:
+            raise TypeError("Unsupported type of fname (found %s)" % type(fname))
+
         fileObject = None
         self.filename = fname
         self.filenumber = fabioutils.extract_filenumber(fname)
 
-        if isinstance(fname, fabioutils.StringTypes):
-            comp_type = os.path.splitext(fname)[-1]
-            if comp_type == ".gz":
-                fileObject = self._compressed_stream(fname,
-                                                     fabioutils.COMPRESSORS['.gz'],
-                                                     fabioutils.GzipFile,
-                                                     mode)
-            elif comp_type == '.bz2':
-                fileObject = self._compressed_stream(fname,
-                                                     fabioutils.COMPRESSORS['.bz2'],
-                                                     fabioutils.BZ2File,
-                                                     mode)
-            #
-            # Here we return the file even though it may be bzipped or gzipped
-            # but named incorrectly...
-            #
-            # FIXME - should we fix that or complain about the daft naming?
-            else:
-                fileObject = fabioutils.File(fname, mode)
-            if "name" not in dir(fileObject):
-                fileObject.name = fname
-            self._file = fileObject
+        comp_type = os.path.splitext(fname)[-1]
+        if comp_type == ".gz":
+            fileObject = self._compressed_stream(fname,
+                                                 fabioutils.COMPRESSORS['.gz'],
+                                                 fabioutils.GzipFile,
+                                                 mode)
+        elif comp_type == '.bz2':
+            fileObject = self._compressed_stream(fname,
+                                                 fabioutils.COMPRESSORS['.bz2'],
+                                                 fabioutils.BZ2File,
+                                                 mode)
+        #
+        # Here we return the file even though it may be bzipped or gzipped
+        # but named incorrectly...
+        #
+        # FIXME - should we fix that or complain about the daft naming?
+        else:
+            fileObject = fabioutils.File(fname, mode)
+        if "name" not in dir(fileObject):
+            fileObject.name = fname
+        self._file = fileObject
+
         return fileObject
 
     def _compressed_stream(self,
