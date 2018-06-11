@@ -48,8 +48,12 @@ install:
   # Check that we have the expected version and architecture for Python
   - "python --version"
   - "python -c \"print(tuple.__itemsize__*8)\""
+
+  # Upgrade/install distribution modules
+  - "pip install --upgrade setuptools"
+  - "python -m pip install --upgrade pip"
+
   # Install the build and runtime dependencies of the project.
-  - "pip install --upgrade pip --user"
   - "pip install --trusted-host www.silx.org -r ci\\requirements_appveyor.txt"
   - "python setup.py build test"
   - "python setup.py bdist_wheel bdist_msi"
