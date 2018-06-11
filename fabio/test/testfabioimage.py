@@ -45,6 +45,14 @@ from ..fabioimage import fabioimage
 from .. import fabioutils
 from ..utils import pilutils
 
+try:
+    import pathlib
+except ImportError:
+    try:
+        import pathlib2 as pathlib
+    except ImportError:
+        pathlib = None
+
 
 class Test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -134,18 +142,32 @@ class TestOpen(unittest.TestCase):
 
     def testFlat(self):
         """ no compression"""
-        res = self.obj._open(self.testfile).read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile)
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
     def testgz(self):
         """ gzipped """
-        res = self.obj._open(self.testfile + ".gz").read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile + ".gz")
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
     def testbz2(self):
         """ bzipped"""
-        res = self.obj._open(self.testfile + ".bz2").read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile + ".bz2")
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
+
+    def test_badtype(self):
+        self.assertRaises(TypeError, self.obj._open, None)
+
+    def test_pathlib(self):
+        if pathlib is None:
+            self.skipTest("pathlib is not available")
+        path = pathlib.PurePath(self.testfile + ".bz2")
+        res = self.obj._open(path)
+        self.assertIsNotNone(res)
+        res.close()
 
 
 class TestPilImage(unittest.TestCase):
