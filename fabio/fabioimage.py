@@ -457,6 +457,9 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         """
         To be overwritten - write the file
         """
+        if isinstance(fname, fabioutils.PathTypes):
+            if not isinstance(fname, fabioutils.StringTypes):
+                fname = str(fname)
         module = sys.modules[self.__class__.__module__]
         raise NotImplementedError("Writing %s format is not implemented" % module.__name__)
 
@@ -469,6 +472,9 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         Call the _readheader function...
         """
         # Override the needs asserting that all headers can be read via python modules
+        if isinstance(filename, fabioutils.PathTypes):
+            if not isinstance(filename, fabioutils.StringTypes):
+                filename = str(filename)
         save_state = self._need_a_real_file, self._need_a_seek_to_read
         self._need_a_real_file, self._need_a_seek_to_read = False, False
         fin = self._open(filename)
@@ -505,6 +511,9 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         Method reading Region of Interest.
         This implementation is the trivial one, just doing read and crop
         """
+        if isinstance(filename, fabioutils.PathTypes):
+            if not isinstance(filename, fabioutils.StringTypes):
+                filename = str(filename)
         self.read(filename, frame)
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
