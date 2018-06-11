@@ -148,16 +148,6 @@ class TestOpen(unittest.TestCase):
         self.assertEqual(res, b"{ hello }")
 
 
-NAMES = {numpy.uint8:   "numpy.uint8",
-         numpy.int8:    "numpy.int8",
-         numpy.uint16:  "numpy.uint16",
-         numpy.int16:   "numpy.int16",
-         numpy.uint32:  "numpy.uint32",
-         numpy.int32:   "numpy.int32",
-         numpy.float32: "numpy.float32",
-         numpy.float64: "numpy.float64"}
-
-
 class TestPilImage(unittest.TestCase):
     """ check PIL creation"""
     def setUp(self):
@@ -180,14 +170,13 @@ class TestPilImage(unittest.TestCase):
     def testpil(self):
 
         for typ in self.okformats:
-            name = NAMES[typ]
             for shape in [(10, 20), (431, 1325)]:
                 testdata = self.mkdata(shape, typ)
                 img = fabioimage(testdata, {"title": "Random data"})
                 pim = img.toPIL16()
                 for i in [0, 5, 6, shape[1] - 1]:
                     for j in [0, 5, 7, shape[0] - 1]:
-                        errstr = name + " %d %d %f %f t=%s" % (
+                        errstr = str(typ) + " %d %d %f %f t=%s" % (
                             i, j, testdata[j, i], pim.getpixel((i, j)), typ)
 
                         er1 = img.data[j, i] - pim.getpixel((i, j))
