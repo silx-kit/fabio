@@ -55,6 +55,8 @@ install:
 
   # Install the build and runtime dependencies of the project.
   - "pip install --trusted-host www.silx.org -r ci\\requirements_appveyor.txt"
+
+build_script:
   - "python setup.py build test"
   - "python setup.py bdist_wheel bdist_msi"
   - ps: "ls dist"
