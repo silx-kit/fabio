@@ -172,8 +172,8 @@ class TestEdfs(unittest.TestCase):
             obj = edfimage()
             try:
                 obj.read(os.path.join(self.im_dir, name))
-            except:
-                print("Cannot read image", name)
+            except Exception:
+                logger.error("Cannot read image %s", name)
                 raise
             self.assertAlmostEqual(mini, obj.getmin(), 2, "testedfs: %s getmin()" % name)
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "testedfs: %s getmax" % name)
