@@ -46,6 +46,9 @@ from .. import fabioformats
 
 class TestRegistration(unittest.TestCase):
 
+    def test_not_existing(self):
+        self.assertIsNone(fabioformats.get_class_by_name("myformat0"))
+
     def test_annotation(self):
         @fabio.register
         class MyFormat1(fabio.fabioimage.FabioImage):
