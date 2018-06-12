@@ -61,7 +61,7 @@ build_script:
   - "python setup.py bdist_wheel bdist_msi"
   - ps: "ls dist"
   # Install the generated wheel package to test it
-  - "pip install --pre --find-links dist/ fabio"
+  - "pip install --pre --find-links dist/  --no-cache-dir --no-index fabio"
 
 test_script:
   # Change to a non-source folder to make sure we run the tests on the
