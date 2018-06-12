@@ -108,13 +108,13 @@ NUMPY_EDF_DTYPE = {"int8": "SignedByte",
                    "float128": "QuadrupleValue",
                    }
 
-MINIMUM_KEYS = ['HEADERID',
-                'IMAGE',
-                'BYTEORDER',
-                'DATATYPE',
-                'DIM_1',
-                'DIM_2',
-                'SIZE']  # Size is thought to be essential for writing at least
+MINIMUM_KEYS = set(['HEADERID',
+                    'IMAGE',
+                    'BYTEORDER',
+                    'DATATYPE',
+                    'DIM_1',
+                    'DIM_2',
+                    'SIZE'])  # Size is thought to be essential for writing at least
 
 DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
@@ -134,9 +134,8 @@ class Frame(object):
 
         self.header = EdfImage.check_header(header)
 
-        self.capsHeader = {}
-        for key in self.header:
-            self.capsHeader[key.upper()] = key
+        self._data_compression = None
+        self._data_swap_needed = None
         self._data = data
         self.dims = []
         self.dim1 = 0
@@ -147,56 +146,62 @@ class Frame(object):
         self.bpp = None
         self.incomplete_data = False
         self._bytecode = None
+
         if (number is not None):
             self.iFrame = int(number)
         else:
             self.iFrame = 0
 
-    def parseheader(self, block):
+    def _compute_capsheader(self):
         """
-        Parse the header in some EDF format from an already open file
+        Returns the mapping from capitalized keys of the header to the original
+        keys.
 
-        :param str block: string representing the header block.
-        :return: size of the binary blob
+        :rtype: dict
         """
-        # reset values
-        self.header = OrderedDict()
-        self.capsHeader = {}
+        capsHeader = {}
+        for key in self.header:
+            upperkey = key.upper()
+            if upperkey not in capsHeader:
+                capsHeader[upperkey] = key
+        return capsHeader
+
+    def _extract_header_metadata(self, capsHeader=None):
+        """Extract from the header metadata expected to read the data.
+
+        Store them in this frame.
+
+        :param dict capsHeader: Precached mapping from capitalized keys of the
+            header to the original keys.
+        """
         self.size = None
         calcsize = 1
         self.dims = []
 
-        # Why would someone put null bytes in a header?
-        whitespace = string.whitespace + "\x00"
-
-        for line in block.split(';'):
-            if '=' in line:
-                key, val = line.split('=', 1)
-                key = key.strip(whitespace)
-                self.header[key] = val.strip(whitespace)
-                self.capsHeader[key.upper()] = key
+        if capsHeader is None:
+            capsHeader = self._compute_capsheader()
 
         # Compute image size
-        if "SIZE" in self.capsHeader:
+        if "SIZE" in capsHeader:
             try:
-                self.size = nice_int(self.header[self.capsHeader["SIZE"]])
+                self.size = nice_int(self.header[capsHeader["SIZE"]])
             except ValueError:
-                logger.warning("Unable to convert to integer : %s %s " % (self.capsHeader["SIZE"], self.header[self.capsHeader["SIZE"]]))
-        if "DIM_1" in self.capsHeader:
+                logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], self.header[capsHeader["SIZE"]]))
+        if "DIM_1" in capsHeader:
             try:
-                dim1 = nice_int(self.header[self.capsHeader['DIM_1']])
+                dim1 = nice_int(self.header[capsHeader['DIM_1']])
             except ValueError:
-                logger.error("Unable to convert to integer Dim_1: %s %s" % (self.capsHeader["DIM_1"], self.header[self.capsHeader["DIM_1"]]))
+                logger.error("Unable to convert to integer Dim_1: %s %s" % (capsHeader["DIM_1"], self.header[capsHeader["DIM_1"]]))
             else:
                 calcsize *= dim1
                 self.dims.append(dim1)
         else:
             logger.error("No Dim_1 in headers !!!")
-        if "DIM_2" in self.capsHeader:
+        if "DIM_2" in capsHeader:
             try:
-                dim2 = nice_int(self.header[self.capsHeader['DIM_2']])
+                dim2 = nice_int(self.header[capsHeader['DIM_2']])
             except ValueError:
-                logger.error("Unable to convert to integer Dim_2: %s %s" % (self.capsHeader["DIM_2"], self.header[self.capsHeader["DIM_2"]]))
+                logger.error("Unable to convert to integer Dim_2: %s %s" % (capsHeader["DIM_2"], self.header[capsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
                 self.dims.append(dim2)
@@ -206,12 +211,12 @@ class Frame(object):
         # JON: this appears to be for nD images, but we don't treat those
         while iDim is not None:
             strDim = "DIM_%i" % iDim
-            if strDim in self.capsHeader:
+            if strDim in capsHeader:
                 try:
-                    dim3 = nice_int(self.header[self.capsHeader[strDim]])
+                    dim3 = nice_int(self.header[capsHeader[strDim]])
                 except ValueError:
                     logger.error("Unable to convert to integer %s: %s %s",
-                                 strDim, self.capsHeader[strDim], self.header[self.capsHeader[strDim]])
+                                 strDim, capsHeader[strDim], self.header[capsHeader[strDim]])
                     dim3 = None
                     iDim = None
                 else:
@@ -225,8 +230,8 @@ class Frame(object):
                 logger.debug("No Dim_3 -> it is a 2D image")
                 iDim = None
         if self._bytecode is None:
-            if "DATATYPE" in self.capsHeader:
-                self._bytecode = DATA_TYPES[self.header[self.capsHeader['DATATYPE']]]
+            if "DATATYPE" in capsHeader:
+                self._bytecode = DATA_TYPES[self.header[capsHeader['DATATYPE']]]
             else:
                 self._bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
@@ -235,12 +240,51 @@ class Frame(object):
         if (self.size is None):
             self.size = calcsize
         elif (self.size != calcsize):
-            if ("COMPRESSION" in self.capsHeader) and (self.header[self.capsHeader['COMPRESSION']].upper().startswith("NO")):
+            if ("COMPRESSION" in capsHeader) and (self.header[capsHeader['COMPRESSION']].upper().startswith("NO")):
                 logger.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
                 self.size = calcsize
 
         for i, n in enumerate(self.dims):
             setattr(self, "dim%i" % (i + 1), n)
+
+        byte_order = self.header[capsHeader['BYTEORDER']]
+        if ('Low' in byte_order and numpy.little_endian) or \
+           ('High' in byte_order and not numpy.little_endian):
+            self._data_swap_needed = False
+        if ('High' in byte_order and numpy.little_endian) or \
+           ('Low' in byte_order and not numpy.little_endian):
+            if self.bpp in [2, 4, 8]:
+                self._data_swap_needed = True
+            else:
+                self._data_swap_needed = False
+
+        if "COMPRESSION" in capsHeader:
+            self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
+        else:
+            self._data_compression = None
+
+    def parseheader(self, block):
+        """
+        Parse the header in some EDF format from an already open file
+
+        :param str block: string representing the header block.
+        :return: size of the binary blob
+        """
+        # reset values
+        self.header = OrderedDict()
+        capsHeader = {}
+
+        # Why would someone put null bytes in a header?
+        whitespace = string.whitespace + "\x00"
+
+        for line in block.split(';'):
+            if '=' in line:
+                key, val = line.split('=', 1)
+                key = key.strip(whitespace)
+                self.header[key] = val.strip(whitespace)
+                capsHeader[key.upper()] = key
+
+        self._extract_header_metadata(capsHeader)
 
         return self.size
 
@@ -248,15 +292,7 @@ class Frame(object):
         """
         Decide if we need to byteswap
         """
-        if ('Low' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            return False
-        if ('High' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            if self.bpp in [2, 4, 8]:
-                return True
-            else:
-                return False
+        return self._data_swap_needed
 
     def getData(self):
         """
@@ -271,10 +307,7 @@ class Frame(object):
             data = self._data
         else:
             if self._bytecode is None:
-                if "DATATYPE" in self.capsHeader:
-                    self._bytecode = DATA_TYPES[self.header[self.capsHeader["DATATYPE"]]]
-                else:
-                    self._bytecode = numpy.uint16
+                assert(False)
             dims = self.dims[:]
             dims.reverse()
             with self.file.lock:
@@ -291,8 +324,8 @@ class Frame(object):
                                 return numpy.zeros(dims)
                         raise e
 
-            if ("COMPRESSION" in self.capsHeader):
-                compression = self.header[self.capsHeader["COMPRESSION"]].upper()
+            if self._data_compression is not None:
+                compression = self._data_compression
                 uncompressed_size = self.bpp
                 for i in dims:
                     uncompressed_size *= i
@@ -341,6 +374,7 @@ class Frame(object):
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
+
     data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
 
     def getByteCode(self):
@@ -367,18 +401,18 @@ class Frame(object):
             data = self.data
         fit2dMode = bool(fit2dMode)
 
-        self.capsHeader.clear()
+        # Compute map from normalized upper key to original key in the header
+        capsHeader = {}
         for key in self.header:
-            KEY = key.upper()
-            if KEY not in self.capsHeader:
-                self.capsHeader[KEY] = key
+            upperkey = key.upper()
+            if upperkey not in capsHeader:
+                capsHeader[upperkey] = key
 
         header = self.header.copy()
         header_keys = list(self.header.keys())
-        capsHeader = self.capsHeader.copy()
 
         listHeader = ["{\n"]
-#        First of all clean up the headers:
+        # First of all clean up the headers:
         for i in capsHeader:
             if "DIM_" in i:
                 header.pop(capsHeader[i])
@@ -394,7 +428,7 @@ class Frame(object):
                 header["EDF_DataBlockID"] = header.pop(capsHeader["EDF_DATABLOCKID"])
                 capsHeader["EDF_DATABLOCKID"] = "EDF_DataBlockID"
 
-#            Then update static headers freshly deleted
+        # Then update static headers freshly deleted
         header_keys.insert(0, "Size")
         header["Size"] = len(data.tostring())
         header_keys.insert(0, "HeaderID")
@@ -667,10 +701,8 @@ class EdfImage(FabioImage):
                 raise Exception(error)
 
         for i, frame in enumerate(self._frames):
-            missing = []
-            for item in MINIMUM_KEYS:
-                if item not in frame.capsHeader:
-                    missing.append(item)
+            capsKeys = set([k.upper() for k in frame.header.keys()])
+            missing = list(MINIMUM_KEYS - capsKeys)
             if len(missing) > 0:
                 logger.info("EDF file %s frame %i misses mandatory keys: %s ", self.filename, i, " ".join(missing))
         self.currentframe = 0
@@ -706,14 +738,7 @@ class EdfImage(FabioImage):
 
         :return: True if needed, False else and None if not understood
         """
-        if self.bpp == 1:
-            return False
-        if ('Low' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('High' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            return False
-        if ('High' in self.header[self.capsHeader['BYTEORDER']] and numpy.little_endian) or \
-           ('Low' in self.header[self.capsHeader['BYTEORDER']] and not numpy.little_endian):
-            return True
+        return self._frames[self.currentframe].swap_needed()
 
     def unpack(self):
         """
@@ -823,7 +848,7 @@ class EdfImage(FabioImage):
             data.shape = self.data.shape
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if self.swap_needed():
+        if frame.swap_needed():
             data.byteswap(True)
         return data
 
@@ -863,13 +888,14 @@ class EdfImage(FabioImage):
             data.shape = -1, d1
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if self.swap_needed():
+        if frame.swap_needed():
             data.byteswap(True)
         return data[slice2]
 
-################################################################################
-# Properties definition for header, data, header_keys and capsHeader
-################################################################################
+    ############################################################################
+    # Properties definition for header, data, header_keys
+    ############################################################################
+
     def getNbFrames(self):
         """
         Getter for number of frames
@@ -907,32 +933,8 @@ class EdfImage(FabioImage):
         Deleter for edf header
         """
         self._frames[self.currentframe].header = {}
-    header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
 
-#     def getHeaderKeys(self):
-#         """
-#         Getter for edf header_keys
-#         """
-#         return self._frames[self.currentframe].header_keys
-#     def setHeaderKeys(self, _listtHeader):
-#         """
-#         Enforces the propagation of the header_keys to the list of frames
-#         :param _listtHeader: list of the (ordered) keys in the header
-#         :type _listtHeader: python list
-#         """
-#         try:
-#             self._frames[self.currentframe].header_keys = _listtHeader
-#         except AttributeError:
-#             self._frames = [Frame(header_keys=_listtHeader)]
-#         except IndexError:
-#             if self.currentframe < len(self._frames):
-#                 self._frames.append(Frame(header_keys=_listtHeader))
-#     def delHeaderKeys(self):
-#         """
-#         Deleter for edf header_keys
-#         """
-#         self._frames[self.currentframe].header_keys = []
-#     header_keys = property(getHeaderKeys, setHeaderKeys, delHeaderKeys, "property: header_keys of EDF file")
+    header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
 
     def getData(self):
         """
@@ -970,29 +972,8 @@ class EdfImage(FabioImage):
         deleter for edf Data
         """
         self._frames[self.currentframe].data = None
+
     data = property(getData, setData, delData, "property: data of EDF file")
-
-    def getCapsHeader(self):
-        """
-        getter for edf headers keys in upper case
-        :return: data for current frame
-        :rtype: dict
-        """
-        return self._frames[self.currentframe].capsHeader
-
-    def setCapsHeader(self, _data):
-        """
-        Enforces the propagation of the header_keys to the list of frames
-        :param _data: numpy array representing data
-        """
-        self._frames[self.currentframe].capsHeader = _data
-
-    def delCapsHeader(self):
-        """
-        deleter for edf capsHeader
-        """
-        self._frames[self.currentframe].capsHeader = {}
-    capsHeader = property(getCapsHeader, setCapsHeader, delCapsHeader, "property: capsHeader of EDF file, i.e. the keys of the header in UPPER case.")
 
     def getDim1(self):
         return self._frames[self.currentframe].dim1
