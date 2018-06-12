@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "15/01/2018"
+__date__ = "12/06/2018"
 
 import os
 import logging
@@ -53,32 +53,11 @@ import tempfile
 logger = logging.getLogger(__name__)
 import numpy
 from . import fabioutils, converters
-from .fabioutils import six, OrderedDict
+from .fabioutils import OrderedDict
 from .utils import pilutils
 
 
-class FabioMeta(type):
-
-    @property
-    def DEFAULT_EXTENTIONS(self):
-        """
-        Compatibility with the wrong typo.
-
-        .. note:: Will be marked as deprecated for the following version 0.7.
-        """
-        return self.DEFAULT_EXTENSIONS
-
-    @DEFAULT_EXTENTIONS.setter
-    def DEFAULT_EXTENTIONS(self, extensions):
-        """
-        Compatibility with the wrong typo.
-
-        .. note:: Will be marked as deprecated for the following version 0.7.
-        """
-        self.DEFAULT_EXTENSIONS = extensions
-
-
-class FabioImage(six.with_metaclass(FabioMeta, object)):
+class FabioImage(object):
     """A common object for images in fable
 
     Contains a numpy array (.data) and dict of meta data (.header)
