@@ -70,6 +70,7 @@ class FabioImage(object):
     # List of header keys which are reserved by the file format
 
     @classmethod
+    @fabioutils.deprecated
     def factory(cls, name):
         """A kind of factory... for image_classes
 

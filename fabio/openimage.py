@@ -213,7 +213,7 @@ def _openimage(filename):
     klass_name = "".join(filetype) + 'image'
 
     try:
-        obj = FabioImage.factory(klass_name)
+        obj = fabioformats.factory(klass_name)
     except (RuntimeError, Exception):
         logger.debug("Backtrace", exc_info=True)
         raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
