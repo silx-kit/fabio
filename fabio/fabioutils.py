@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/09/2017"
+__date__ = "12/06/2018"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -85,7 +85,11 @@ def deprecated(func):
         """
         decorator that deprecates the use of a function
         """
-        logger.warning("%s is Deprecated !!! %s" % (func.func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
+        if six.PY3:
+            func_name = func.__name__
+        else:
+            func_name = func.func_name
+        logger.warning("%s is Deprecated !!! %s" % (func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
         return func(*arg, **kw)
     return wrapper
 
