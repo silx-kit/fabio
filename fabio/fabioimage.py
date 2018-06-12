@@ -26,9 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-
 """
-
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
          Risoe National Laboratory
@@ -46,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "01/12/2017"
+__date__ = "15/01/2018"
 
 import os
 import logging
@@ -60,15 +58,6 @@ from .utils import pilutils
 
 
 class FabioMeta(type):
-    """ Metaclass used to register all image classes inheriting from fabioImage
-    """
-    # we use __init__ rather than __new__ here because we want
-    # to modify attributes of the class *after* they have been
-    # created
-    def __init__(cls, name, bases, dct):
-        if cls.codec_name() != "fabioimage":
-            cls.registry[cls.codec_name()] = cls
-        super(FabioMeta, cls).__init__(name, bases, dct)
 
     @property
     def DEFAULT_EXTENTIONS(self):
@@ -97,7 +86,6 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
 
     _need_a_seek_to_read = False
     _need_a_real_file = False
-    registry = OrderedDict()  # list of child classes ...
 
     RESERVED_HEADER_KEYS = []
     # List of header keys which are reserved by the file format
@@ -110,16 +98,8 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
         :return: an instance of the class
         :rtype: fabio.fabioimage.FabioImage
         """
-        name = name.lower()
-        obj = None
-        if name in cls.registry:
-            obj = cls.registry[name]()
-        else:
-            msg = ("FileType %s is unknown !, "
-                   "please check if the filename exists or select one from %s" % (name, cls.registry.keys()))
-            logger.debug(msg)
-            raise RuntimeError(msg)
-        return obj
+        from . import fabioformats
+        return fabioformats.factory(name)
 
     @classmethod
     def codec_name(cls):
@@ -603,11 +583,13 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
             dest = dest.lower()
             if dest.endswith("image"):
                 dest = dest[:-5]
-            if dest + "image" in self.registry:
-                other = self.factory(dest + "image")
+            codec_name = dest + "image"
+            from . import fabioformats
+            codec_class = fabioformats.get_class_by_name(codec_name)
+            if codec_class is not None:
+                other = fabioformats.factory(codec_name)
             else:
                 # load modules which could be suitable:
-                from . import fabioformats
                 for class_ in fabioformats.get_classes_from_extension(dest):
                     try:
                         other = class_()

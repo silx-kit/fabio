@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/01/2018"
+__date__ = "12/06/2018"
 __status__ = "stable"
 
 
@@ -49,9 +49,18 @@ try:
 except ImportError:
     raise RuntimeError("Do NOT use %s from its sources: build it and use the built version" % project)
 
+from . import fabioformats as _fabioformats
+
+# provide a global fabio API
+register = _fabioformats.register
+factory = _fabioformats.factory
+
+# feed the library with all the available formats
+_fabioformats.register_default_formats()
+
 from . import fabioimage
-factory = fabioimage.FabioImage.factory
 from . import openimage
+
 from .fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
     previous_filename, next_filename, deconstruct_filename, \
     extract_filenumber, getnum, construct_filename, exists
@@ -86,6 +95,7 @@ def register(codec_class):
             pass
     """
     assert(issubclass(codec_class, fabioimage.FabioImage))
+    _fabioformats.register(codec_class)
     return codec_class
 
 
