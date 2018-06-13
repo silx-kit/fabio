@@ -28,12 +28,19 @@ test cases for fileseries
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import logging
+import os
+import shutil
+import tempfile
+import numpy
 
 logger = logging.getLogger(__name__)
 
-from ..file_series import numbered_file_series, file_series
+import fabio
+from fabio.file_series import numbered_file_series, file_series
+from fabio.file_series import FileSeries
 
 
 class TestRandomSeries(unittest.TestCase):
@@ -106,11 +113,138 @@ class TestEdfNumbered(unittest.TestCase):
         self.assertEqual(self.fso.len(), 10006)  # +1 for 0000
 
 
+class TestFileSeries(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp_directory = tempfile.mkdtemp(prefix=cls.__name__)
+        cls.create_resources()
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp_directory)
+
+    @classmethod
+    def create_resources(cls):
+        data = (numpy.random.rand(8, 8) * 10).astype(int)
+        data0 = numpy.zeros((8, 8), dtype=int)
+        data1 = numpy.zeros((8, 8), dtype=int) + 1
+        data2 = numpy.zeros((8, 8), dtype=int) + 2
+
+        # Single frame
+        cls.create_edf_file("image_a_000.edf", [data0])
+        cls.create_edf_file("image_a_001.edf", [data1])
+        cls.create_edf_file("image_a_002.edf", [data2])
+
+        # Many frames
+        cls.create_edf_file("image_b_000.edf", [data0, data, data])
+        cls.create_edf_file("image_b_001.edf", [data, data, data1])
+        cls.create_edf_file("image_b_002.edf", [data2])
+
+    @classmethod
+    def get_filename(cls, filename):
+        return os.path.join(cls.tmp_directory, filename)
+
+    @classmethod
+    def create_edf_file(cls, filename, data_list):
+        filename = cls.get_filename(filename)
+        image = fabio.factory("edfimage")
+        for frame_id, data in enumerate(data_list):
+            header = {"frame_id": "%d" % frame_id, "filename": "%s" % filename}
+            if frame_id == 0:
+                image.data = data
+                image.header.update(header)
+            else:
+                image.appendFrame(data=data, header=header)
+        image.write(filename)
+
+    def get_singleframe_files(self):
+        filenames = ["image_a_000.edf", "image_a_001.edf", "image_a_002.edf"]
+        filenames = [self.get_filename(f) for f in filenames]
+        return filenames
+
+    def get_multiframe_files(self):
+        filenames = ["image_b_000.edf", "image_b_001.edf", "image_b_002.edf"]
+        filenames = [self.get_filename(f) for f in filenames]
+        return filenames
+
+    def test_singleframe_nframes(self):
+        filenames = self.get_singleframe_files()
+        serie = FileSeries(filenames=filenames, single_frame=True)
+        self.assertTrue(serie.nframes, 3)
+        serie.close()
+
+    def test_singleframe_nframes2(self):
+        filenames = self.get_singleframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=True)
+        self.assertTrue(serie.nframes, 3)
+        serie.close()
+
+    def test_singleframe_nframes3(self):
+        filenames = self.get_singleframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frame_number=1)
+        self.assertTrue(serie.nframes, 3)
+        serie.close()
+
+    def test_singleframe_getframe(self):
+        filenames = self.get_singleframe_files()
+        serie = FileSeries(filenames=filenames, single_frame=True)
+        self.assertRaises(IndexError, serie.getframe, -1)
+        self.assertEqual(serie.getframe(0).data[0, 0], 0)
+        self.assertEqual(serie.getframe(1).data[0, 0], 1)
+        self.assertEqual(serie.getframe(2).data[0, 0], 2)
+        self.assertRaises(IndexError, serie.getframe, 4)
+        serie.close()
+
+    def test_singleframe_iterframes(self):
+        filenames = self.get_singleframe_files()
+        serie = FileSeries(filenames=filenames, single_frame=True)
+        for frame_id, frame in enumerate(serie.iterframes()):
+            self.assertEqual(frame.data[0, 0], frame_id)
+            self.assertEqual(frame.header["frame_id"], "0")
+            self.assertIn("%03d" % frame_id, frame.header["filename"])
+        self.assertEqual(frame_id, 2)
+        serie.close()
+
+    def test_multiframe_nframes(self):
+        filenames = self.get_multiframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=True)
+        self.assertTrue(serie.nframes, 7)
+        serie.close()
+
+    def test_multiframe_getframe(self):
+        filenames = self.get_multiframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=True)
+        self.assertRaises(IndexError, serie.getframe, -1)
+        self.assertEqual(serie.getframe(0).data[0, 0], 0)
+        self.assertEqual(serie.getframe(5).data[0, 0], 1)
+        self.assertEqual(serie.getframe(6).data[0, 0], 2)
+        self.assertRaises(IndexError, serie.getframe, 7)
+        serie.close()
+
+    def test_multiframe_iterframes(self):
+        filenames = self.get_multiframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=True)
+        for frame_id, frame in enumerate(serie.iterframes()):
+            if frame_id not in [0, 5, 6]:
+                continue
+            expected_frame_id = {0: 0, 5: 2, 6: 0}[frame_id]
+            expected_file_num = {0: 0, 5: 1, 6: 2}[frame_id]
+            expected_data = {0: 0, 5: 1, 6: 2}[frame_id]
+
+            self.assertEqual(frame.data[0, 0], expected_data)
+            self.assertEqual(frame.header["frame_id"], "%d" % expected_frame_id)
+            self.assertIn("%03d" % expected_file_num, frame.header["filename"])
+        self.assertEqual(frame_id, 6)
+        serie.close()
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestRandomSeries))
     testsuite.addTest(loadTests(TestEdfNumbered))
+    testsuite.addTest(loadTests(TestFileSeries))
     return testsuite
 
 
