@@ -468,8 +468,14 @@ class FileSeries(FabioImage):
     This abstraction provide the set of the filenames as the container of
     frames.
 
-    Few options allow to optimize non sequencial iteration, like `single_frame`,
-    or `fixed_frames` or `fixed_frame_number`.
+    Files of the series can be set using a list of filenames, an iterator or a
+    generator. It also support a file series described using
+    :class:`filename_series` or :class:`file_series` objects.
+
+    Options are provided to optimize a non sequencial access or request to the
+    amount of frames. This options (`single_frame`, `fixed_frames` and
+    `fixed_frame_number`) can be used if we know an a priori on the way frames
+    are stored in the files (the exact same amount of frames par file).
     """
     DEFAULT_EXTENSIONS = []
 
@@ -478,10 +484,16 @@ class FileSeries(FabioImage):
         Constructor
 
         :param Union[Generator,Iterator,List] filenames: Ordered list of filenames
-            to process as a file series.
-        :param Union[Bool,None] single_frame:
-        :param Union[Bool,None] fixed_frames:
-        :param Union[Integer,None] fixed_frame_number:
+            to process as a file series. It also can be a generator, and
+            iterator, or `filename_series` or `file_series` objects.
+        :param Union[Bool,None] single_frame: If True, all files are supposed to
+            contain only one frame.
+        :param Union[Bool,None] fixed_frames: If True, all files are supposed to
+            contain the same amount of frames (this fixed amount will be reached
+            from the first file of the serie).
+        :param Union[Integer,None] fixed_frame_number: If set, all files are
+            supposed to contain the same amount of frames (sepecified by this
+            argument)
         """
         if isinstance(filenames, filename_series):
             filenames = _filename_series_adapter(filenames)
