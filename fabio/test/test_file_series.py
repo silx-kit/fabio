@@ -307,6 +307,21 @@ class TestFileSeries(unittest.TestCase):
         self.assertEqual(frame_id, 9)
         serie.close()
 
+    def test_filename_iterator(self):
+        filenames = self.get_anyframe_files()
+        serie = FileSeries(filenames=iter(filenames))
+        self.assertEqual(serie.nframes, 10)
+        serie.close()
+
+    def test_filename_generator(self):
+        def generator():
+            filenames = self.get_anyframe_files()
+            for filename in filenames:
+                yield filename
+        serie = FileSeries(filenames=generator())
+        self.assertEqual(serie.nframes, 10)
+        serie.close()
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
