@@ -39,7 +39,7 @@ import numpy
 logger = logging.getLogger(__name__)
 
 import fabio
-from fabio.file_series import numbered_file_series, file_series
+from fabio.file_series import numbered_file_series, file_series, filename_series
 from fabio.file_series import FileSeries
 
 
@@ -319,6 +319,19 @@ class TestFileSeries(unittest.TestCase):
             for filename in filenames:
                 yield filename
         serie = FileSeries(filenames=generator())
+        self.assertEqual(serie.nframes, 10)
+        serie.close()
+
+    def test_with_numbered_file_series(self):
+        filenames = numbered_file_series(self.get_filename("image_c_"), 0, 3, ".edf", digits=3)
+        serie = FileSeries(filenames=filenames)
+        self.assertEqual(serie.nframes, 10)
+        serie.close()
+
+    def test_with_filename_series(self):
+        first_filename = self.get_filename("image_c_000.edf")
+        filenames = filename_series(first_filename)
+        serie = FileSeries(filenames=filenames)
         self.assertEqual(serie.nframes, 10)
         serie.close()
 

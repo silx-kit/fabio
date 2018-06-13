@@ -47,6 +47,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 
 import logging
 import sys
+import os.path
 logger = logging.getLogger(__name__)
 
 from .fabioutils import FilenameObject, next_filename
@@ -443,6 +444,25 @@ _FileDescription = collections.namedtuple('_FileDescription',
 """Object storing description of a file from a file serie"""
 
 
+def _filename_series_adapter(series):
+    """Adapter to list all available files from a `filename_series` class.
+
+    Without the adaptater `filename_series` will not list the first element,
+    and will loop to the infinite.
+    """
+    assert(isinstance(series, filename_series))
+    filename = series.current()
+    if not os.path.exists(filename):
+        return
+    yield filename
+
+    while True:
+        filename = series.next()
+        if not os.path.exists(filename):
+            return
+        yield filename
+
+
 class FileSeries(FabioImage):
     """Provide a FabioImage as a file series abstraction.
 
@@ -464,6 +484,9 @@ class FileSeries(FabioImage):
         :param Union[Bool,None] fixed_frames:
         :param Union[Integer,None] fixed_frame_number:
         """
+        if isinstance(filenames, filename_series):
+            filenames = _filename_series_adapter(filenames)
+
         if isinstance(filenames, types.ListType):
             self.__filenames = filenames
             self.__filename_generator = None
