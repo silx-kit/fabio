@@ -50,8 +50,8 @@ import sys
 logger = logging.getLogger(__name__)
 
 from .fabioutils import FilenameObject, next_filename
-
 from .openimage import openimage
+from .fabioimage import FabioImage
 
 
 def new_file_series0(first_object, first=None, last=None, step=1):
@@ -432,3 +432,229 @@ class filename_series:
         """ returns the filename num as a fabio.FilenameObject"""
         self.obj.num = num
         return self.obj
+
+
+import types
+import fabio
+import collections
+
+_FileDescription = collections.namedtuple('_FileDescription',
+                                          ['filename', 'file_number', 'first_frame_number', 'nframes'])
+"""Object storing description of a file from a file serie"""
+
+
+class FileSeries(FabioImage):
+    """Provide a FabioImage as a file series abstraction.
+
+    This abstraction provide the set of the filenames as the container of
+    frames.
+
+    Few options allow to optimize non sequencial iteration, like `single_frame`,
+    or `fixed_frames` or `fixed_frame_number`.
+    """
+    DEFAULT_EXTENSIONS = []
+
+    def __init__(self, filenames, single_frame=None, fixed_frames=None, fixed_frame_number=None):
+        """
+        Constructor
+
+        :param Union[Generator,Iterator,List] filenames: Ordered list of filenames
+            to process as a file series.
+        :param Union[Bool,None] single_frame:
+        :param Union[Bool,None] fixed_frames:
+        :param Union[Integer,None] fixed_frame_number:
+        """
+        if isinstance(filenames, types.ListType):
+            self.__filenames = filenames
+            self.__filename_generator = None
+        else:
+            self.__filenames = []
+            self.__filename_generator = filenames
+
+        self.__current_fabio_file_index = -1
+        self.__current_fabio_file = None
+
+        if single_frame is not None:
+            self.__fixed_frames = True
+            self.__fixed_frame_number = 1
+        elif fixed_frame_number is not None:
+            self.__fixed_frames = True
+            self.__fixed_frame_number = int(fixed_frame_number)
+        elif fixed_frames is not None and fixed_frames:
+            self.__fixed_frames = bool(fixed_frames)
+            # We do not yet know the amount of frames per files
+            self.__fixed_frame_number = None
+        else:
+            self.__fixed_frames = False
+            self.__fixed_frame_number = None
+        self.__nframes = None
+
+    def close(self):
+        """Close any IO handler openned."""
+        if self.__current_fabio_file is not None:
+            self.__current_fabio_file.close()
+        self.__current_fabio_file_index = -1
+        self.__current_fabio_file = None
+
+    def __iter_filenames(self):
+        """Returns an iterator throug all filenames of the file series."""
+        for filename in self.__filenames:
+            yield filename
+        if self.__filename_generator is not None:
+            for filename in self.__filename_generator:
+                # Store it in case there is backward requests
+                self.__filenames.append(filename)
+                yield filename
+
+    def iterframes(self):
+        """Returns an iterator throug all frames of all filenames of this
+        file series."""
+        nframes = 0
+        for filename in self.__iter_filenames():
+            image = fabio.open(filename)
+            try:
+                nframes += image.nframes
+                if image.nframes == 0:
+                    # The container is empty
+                    pass
+                elif image.nframes == 1:
+                    yield image
+                else:
+                    for frame_num in range(image.nframes):
+                        frame = image.getframe(frame_num)
+                        yield frame
+            finally:
+                image.close()
+        self.__nframes = nframes
+
+    def __load_all_filenames(self):
+        """Load all filenames using the generator.
+
+        It is needed to know the number of frames.
+
+        .. note:: If the generator do not have endding, it will result an
+            infinite loop.
+        """
+        if self.__filename_generator is not None:
+            try:
+                while True:
+                    next_filename = next(self.__filename_generator)
+                    self.__filenames.append(next_filename)
+            except StopIteration:
+                # No more filenames
+                self.__filename_generator = None
+
+    def __get_filename(self, file_number):
+        """Returns the filename from it's file position.
+
+        :param int file_number: Position of the file in the file series
+        :rtype: str
+        :raise IndexError: It the requested position is out of the available
+            number of files
+        """
+        if file_number < len(self.__filenames):
+            filename = self.__filenames[file_number]
+        elif self.__filename_generator is not None:
+            # feed the filenames using the generator
+            amount = file_number - len(self.__filenames)
+            try:
+                for _ in range(amount):
+                    next_filename = next(self.__filename_generator)
+                    self.__filenames.append(next_filename)
+            except StopIteration:
+                # No more filenames
+                self.__filename_generator = None
+            if file_number < len(self.__filenames):
+                filename = self.__filenames[file_number]
+            else:
+                raise IndexError("File number '%s' is not reachable" % file_number)
+        else:
+            raise IndexError("File number %s is not reachable" % file_number)
+        return filename
+
+    def __get_file(self, file_number):
+        """Returns the opennned FabioImage from it's file position.
+
+        :param int file_number: Position of the file in the file series
+        :rtype: FabioImage
+        :raise IndexError: It the requested position is out of the available
+            number of files
+        """
+        if self.__current_fabio_file_index == file_number:
+            return self.__current_fabio_file
+        filename = self.__get_filename(file_number)
+        if self.__current_fabio_file is not None:
+            self.__current_fabio_file.close()
+        self.__current_fabio_file_index = file_number
+        self.__current_fabio_file = fabio.open(filename)
+        return self.__current_fabio_file
+
+    def __get_file_description(self, frame_number):
+        """Returns file description at the frame number.
+
+        :rtype: _FileDescription
+        """
+        if not self.__fixed_frames:
+            msg = "Generic case unsupported. Fixed frame per files have to be used."
+            raise RuntimeError(msg)
+
+        if self.__fixed_frame_number is None:
+            # The number of frames per files have to be reached
+            fabiofile = self.__get_file(0)
+            self.__fixed_frame_number = fabiofile.nframes
+
+        file_number = frame_number // self.__fixed_frame_number
+        try:
+            filename = self.__get_filename(file_number)
+        except IndexError:
+            raise IndexError("Frame %s is out of range" % frame_number)
+        first_frame = frame_number - (frame_number % self.__fixed_frame_number)
+        nframes = self.__fixed_frame_number
+        return _FileDescription(filename, file_number, first_frame, nframes)
+
+    def getframe(self, num):
+        """Returns the frame numbered `num` in the series as a fabioimage.
+
+        :param int num: The number of the requested frame
+        """
+        if num < 0:
+            raise IndexError("Frame %s is out of range" % num)
+        description = self.__get_file_description(num)
+        fileimage = self.__get_file(description.file_number)
+        if fileimage.nframes == 1:
+            if self.__fixed_frame_number != 1:
+                # If the last file from the multiframe serie only contains a
+                # single image
+                if description.first_frame_number != num:
+                    raise IndexError("Frame %s is out of range" % num)
+            return fileimage
+        else:
+            local_frame = num - description.first_frame_number
+            assert(0 <= local_frame < description.nframes)
+            return fileimage.getframe(local_frame)
+
+    @property
+    def nframes(self):
+        """Returns the number of available frames in the full file series.
+
+        :rtype: int
+        """
+        if self.__nframes is not None:
+            return self.__nframes
+
+        if not self.__fixed_frames:
+            msg = "Generic case unsupported. Fixed frame per files have to be used."
+            raise RuntimeError(msg)
+
+        if self.__fixed_frame_number is None:
+            # The number of frames per files have to be reached
+            fabiofile = self.__get_file(0)
+            self.__fixed_frame_number = fabiofile.nframes
+
+        # The last file can contains less frames
+        self.__load_all_filenames()
+        file_number = len(self.__filenames) - 1
+        fabiofile = self.__get_file(file_number)
+        nframes = self.__fixed_frame_number * (len(self.__filenames) - 1) + fabiofile.nframes
+        self.__nframes = nframes
+        return nframes
