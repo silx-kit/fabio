@@ -435,7 +435,6 @@ class filename_series:
         return self.obj
 
 
-import types
 import fabio
 import collections
 
@@ -487,7 +486,7 @@ class FileSeries(FabioImage):
         if isinstance(filenames, filename_series):
             filenames = _filename_series_adapter(filenames)
 
-        if isinstance(filenames, types.ListType):
+        if isinstance(filenames, list):
             self.__filenames = filenames
             self.__filename_generator = None
         else:
