@@ -473,6 +473,8 @@ class FileSeries(FabioImage):
 
         self.__current_fabio_file_index = -1
         self.__current_fabio_file = None
+        self.__file_descriptions = None
+        self.__current_file_description = None
 
         if single_frame is not None:
             self.__fixed_frames = True
@@ -487,6 +489,8 @@ class FileSeries(FabioImage):
         else:
             self.__fixed_frames = False
             self.__fixed_frame_number = None
+            self.__file_descriptions = []
+
         self.__nframes = None
 
     def close(self):
@@ -589,14 +593,70 @@ class FileSeries(FabioImage):
         self.__current_fabio_file = fabio.open(filename)
         return self.__current_fabio_file
 
+    def __iter_file_descriptions(self):
+        """Iter all file descriptions.
+
+        Use a cached structure which grows according to the requestes.
+        """
+        assert(self.__file_descriptions is not None)
+        for description in self.__file_descriptions:
+            yield description
+
+        # Construct the following descriptions
+        if len(self.__file_descriptions) > 0:
+            description = self.__file_descriptions[-1]
+            last_frame_number = description.first_frame_number + description.nframes
+        else:
+            last_frame_number = 0
+
+        while True:
+            # Get the next file
+            file_number = len(self.__file_descriptions)
+            try:
+                filename = self.__get_filename(file_number)
+            except IndexError:
+                # No more filenames
+                break
+            fabiofile = self.__get_file(file_number)
+            first_frame = last_frame_number
+            nframes = fabiofile.nframes
+            description = _FileDescription(filename, file_number, first_frame, nframes)
+            self.__file_descriptions.append(description)
+            yield description
+            last_frame_number = first_frame + nframes
+
+    def __find_file_description(self, frame_number):
+        """Returns a file description from a cached list of stored descriptions.
+
+        :param int frame_number: A frame number
+        :rtype: _FileDescription
+        """
+        assert(self.__file_descriptions is not None)
+
+        # Check it on the last cached description
+        if self.__current_file_description is not None:
+            description = self.__current_file_description
+            last_frame_number = description.first_frame_number + description.nframes
+            if description.first_frame_number <= frame_number < last_frame_number:
+                return description
+
+        # Check it on the cached list
+        for description in self.__iter_file_descriptions():
+            last_frame_number = description.first_frame_number + description.nframes
+            if description.first_frame_number <= frame_number < last_frame_number:
+                self.__current_file_description = description
+                return description
+
+        raise IndexError("Frame %s is out of range" % frame_number)
+
     def __get_file_description(self, frame_number):
         """Returns file description at the frame number.
 
         :rtype: _FileDescription
         """
         if not self.__fixed_frames:
-            msg = "Generic case unsupported. Fixed frame per files have to be used."
-            raise RuntimeError(msg)
+            description = self.__find_file_description(frame_number)
+            return description
 
         if self.__fixed_frame_number is None:
             # The number of frames per files have to be reached
@@ -622,7 +682,7 @@ class FileSeries(FabioImage):
         description = self.__get_file_description(num)
         fileimage = self.__get_file(description.file_number)
         if fileimage.nframes == 1:
-            if self.__fixed_frame_number != 1:
+            if self.__fixed_frames and self.__fixed_frame_number != 1:
                 # If the last file from the multiframe serie only contains a
                 # single image
                 if description.first_frame_number != num:
@@ -643,8 +703,16 @@ class FileSeries(FabioImage):
             return self.__nframes
 
         if not self.__fixed_frames:
-            msg = "Generic case unsupported. Fixed frame per files have to be used."
-            raise RuntimeError(msg)
+            # General case. All the information is needed
+            # Load all available descriptions
+            for _ in self.__iter_file_descriptions():
+                pass
+            if len(self.__file_descriptions) == 0:
+                self.__nframes = 0
+                return self.__nframes
+            description = self.__file_descriptions[-1]
+            self.__nframes = description.first_frame_number + description.nframes
+            return self.__nframes
 
         if self.__fixed_frame_number is None:
             # The number of frames per files have to be reached
