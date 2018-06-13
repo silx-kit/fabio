@@ -509,6 +509,7 @@ class FileSeries(FabioImage):
                 # Store it in case there is backward requests
                 self.__filenames.append(filename)
                 yield filename
+            self.__filename_generator = None
 
     def iterframes(self):
         """Returns an iterator throug all frames of all filenames of this
@@ -540,13 +541,9 @@ class FileSeries(FabioImage):
             infinite loop.
         """
         if self.__filename_generator is not None:
-            try:
-                while True:
-                    next_filename = next(self.__filename_generator)
-                    self.__filenames.append(next_filename)
-            except StopIteration:
-                # No more filenames
-                self.__filename_generator = None
+            for next_filename in self.__filename_generator:
+                self.__filenames.append(next_filename)
+            self.__filename_generator = None
 
     def __get_filename(self, file_number):
         """Returns the filename from it's file position.
