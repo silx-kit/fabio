@@ -375,7 +375,7 @@ class filename_series:
     """ Much like the others, but created from a string filename """
     def __init__(self, filename):
         """ create from a filename (String)"""
-        self.obj = FilenameObject(filename)
+        self.obj = FilenameObject(filename=filename)
 
     def next(self):
         """ increment number """
