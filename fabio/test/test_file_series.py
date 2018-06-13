@@ -179,6 +179,14 @@ class TestFileSeries(unittest.TestCase):
         filenames = [self.get_filename(f) for f in filenames]
         return filenames
 
+    def test_singleframe_nofiles(self):
+        serie = FileSeries(filenames=[], single_frame=True)
+        self.assertEqual(serie.nframes, 0)
+        for _ in serie.iterframes():
+            self.fail()
+        self.assertRaises(IndexError, serie.getframe, 0)
+        serie.close()
+
     def test_singleframe_nframes(self):
         filenames = self.get_singleframe_files()
         serie = FileSeries(filenames=filenames, single_frame=True)
@@ -217,6 +225,14 @@ class TestFileSeries(unittest.TestCase):
         self.assertEqual(frame_id, 2)
         serie.close()
 
+    def test_multiframe_nofiles(self):
+        serie = FileSeries(filenames=[], fixed_frames=True)
+        self.assertEqual(serie.nframes, 0)
+        for _ in serie.iterframes():
+            self.fail()
+        self.assertRaises(IndexError, serie.getframe, 0)
+        serie.close()
+
     def test_multiframe_nframes(self):
         filenames = self.get_multiframe_files()
         serie = FileSeries(filenames=filenames, fixed_frames=True)
@@ -247,6 +263,14 @@ class TestFileSeries(unittest.TestCase):
             self.assertEqual(frame.header["frame_id"], "%d" % expected_frame_id)
             self.assertIn("%03d" % expected_file_num, frame.header["filename"])
         self.assertEqual(frame_id, 6)
+        serie.close()
+
+    def test_anyframe_nofiles(self):
+        serie = FileSeries(filenames=[], fixed_frames=False)
+        self.assertEqual(serie.nframes, 0)
+        for _ in serie.iterframes():
+            self.fail()
+        self.assertRaises(IndexError, serie.getframe, 0)
         serie.close()
 
     def test_anyframe_nframes(self):

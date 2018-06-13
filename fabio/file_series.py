@@ -716,11 +716,18 @@ class FileSeries(FabioImage):
 
         if self.__fixed_frame_number is None:
             # The number of frames per files have to be reached
-            fabiofile = self.__get_file(0)
+            try:
+                fabiofile = self.__get_file(0)
+            except IndexError:
+                self.__nframes = 0
+                return self.__nframes
             self.__fixed_frame_number = fabiofile.nframes
 
         # The last file can contains less frames
         self.__load_all_filenames()
+        if len(self.__filenames) == 0:
+            self.__nframes = 0
+            return self.__nframes
         file_number = len(self.__filenames) - 1
         fabiofile = self.__get_file(file_number)
         nframes = self.__fixed_frame_number * (len(self.__filenames) - 1) + fabiofile.nframes
