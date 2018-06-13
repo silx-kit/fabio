@@ -557,7 +557,7 @@ class FileSeries(FabioImage):
             filename = self.__filenames[file_number]
         elif self.__filename_generator is not None:
             # feed the filenames using the generator
-            amount = file_number - len(self.__filenames)
+            amount = file_number - len(self.__filenames) + 1
             try:
                 for _ in range(amount):
                     next_filename = next(self.__filename_generator)
