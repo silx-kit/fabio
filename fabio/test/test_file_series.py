@@ -141,6 +141,12 @@ class TestFileSeries(unittest.TestCase):
         cls.create_edf_file("image_b_001.edf", [data, data, data1])
         cls.create_edf_file("image_b_002.edf", [data2])
 
+        # Any frames
+        cls.create_edf_file("image_c_000.edf", [data0, data, data])
+        cls.create_edf_file("image_c_001.edf", [data, data1])
+        cls.create_edf_file("image_c_002.edf", [data, data, data, data])
+        cls.create_edf_file("image_c_003.edf", [data2])
+
     @classmethod
     def get_filename(cls, filename):
         return os.path.join(cls.tmp_directory, filename)
@@ -165,6 +171,11 @@ class TestFileSeries(unittest.TestCase):
 
     def get_multiframe_files(self):
         filenames = ["image_b_000.edf", "image_b_001.edf", "image_b_002.edf"]
+        filenames = [self.get_filename(f) for f in filenames]
+        return filenames
+
+    def get_anyframe_files(self):
+        filenames = ["image_c_000.edf", "image_c_001.edf", "image_c_002.edf", "image_c_003.edf"]
         filenames = [self.get_filename(f) for f in filenames]
         return filenames
 
@@ -236,6 +247,40 @@ class TestFileSeries(unittest.TestCase):
             self.assertEqual(frame.header["frame_id"], "%d" % expected_frame_id)
             self.assertIn("%03d" % expected_file_num, frame.header["filename"])
         self.assertEqual(frame_id, 6)
+        serie.close()
+
+    def test_anyframe_nframes(self):
+        filenames = self.get_anyframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=False)
+        self.assertTrue(serie.nframes, 10)
+        serie.close()
+
+    def test_anyframe_getframe(self):
+        filenames = self.get_anyframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=False)
+        self.assertRaises(IndexError, serie.getframe, -1)
+        self.assertEqual(serie.getframe(0).data[0, 0], 0)
+        # Reach frame 3 to force frame 4 to come from the file description cache
+        serie.getframe(3)
+        self.assertEqual(serie.getframe(4).data[0, 0], 1)
+        self.assertEqual(serie.getframe(9).data[0, 0], 2)
+        self.assertRaises(IndexError, serie.getframe, 10)
+        serie.close()
+
+    def test_anyframe_iterframes(self):
+        filenames = self.get_anyframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=False)
+        for frame_id, frame in enumerate(serie.iterframes()):
+            if frame_id not in [0, 4, 9]:
+                continue
+            expected_frame_id = {0: 0, 4: 1, 9: 0}[frame_id]
+            expected_file_num = {0: 0, 4: 1, 9: 3}[frame_id]
+            expected_data = {0: 0, 4: 1, 9: 2}[frame_id]
+
+            self.assertEqual(frame.data[0, 0], expected_data)
+            self.assertEqual(frame.header["frame_id"], "%d" % expected_frame_id)
+            self.assertIn("%03d" % expected_file_num, frame.header["filename"])
+        self.assertEqual(frame_id, 9)
         serie.close()
 
 
