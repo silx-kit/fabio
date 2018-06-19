@@ -390,7 +390,6 @@ class TestBadFiles(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        return
         shutil.rmtree(cls.tmp_directory)
 
     @classmethod
