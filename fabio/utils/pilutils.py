@@ -90,8 +90,9 @@ def get_numpy_array(pil_image):
         pil_image = pil_image.convert("F")
     try:
         data = numpy.asarray(pil_image, dtype)
-    except:
-        # PIL does not support buffer interface (yet)
+    except Exception:
+        # This PIL version do not support buffer interface
+        logger.debug("Backtrace", exc_info=True)
         if hasattr(pil_image, "tobytes"):
             data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
         else:
