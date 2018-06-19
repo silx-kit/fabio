@@ -684,9 +684,10 @@ class TiffIO(object):
                 readout.shape = -1, nColumns, len(nBits)
             elif info['colormap'] is not None:
                 readout = colormap[readout]
+                readout.shape = -1, nColumns, 3
             else:
                 readout.shape = -1, nColumns
-            image[rowMin:rowMax + 1, :] = readout
+            image[rowMin:rowMax + 1] = readout
         else:
             for i in range(len(stripOffsets)):
                 # the amount of rows
