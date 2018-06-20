@@ -1,0 +1,32 @@
+package:
+  name: fabio
+  version: 0.3.0
+
+source:
+  fn: fabio-0.3.0.tar.gz
+  url: https://pypi.python.org/packages/source/f/fabio/fabio-0.3.0.tar.gz
+  md5: 8c24b5b6d58929809b2bc93ecb13f7fd
+  #git_url: https://github.com/kif/fabio.git
+  #git_tag: master
+  #git_tag: v0.3.0
+
+requirements:
+  build:
+    - python
+    - numpy
+    - cython
+    - pillow
+    - setuptools
+  run:
+    - python
+    - numpy
+    - pillow
+
+test:
+  imports:
+    - fabio
+
+about:
+  license: GPL
+  home: https://github.com/kif/fabio
+  summary: Fable I/O library for diffraction images

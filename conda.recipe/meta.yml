@@ -1,0 +1,27 @@
+package:
+  name: fabio
+  version: {{ environ.get('GIT_DESCRIBE_TAG', '')[1:] }}
+
+source:
+  git_url: ../
+
+requirements:
+  build:
+    - python
+    - numpy
+    - cython
+    - pillow
+    - setuptools
+  run:
+    - python
+    - numpy
+    - pillow
+
+test:
+  imports:
+    - fabio
+
+about:
+  license: GPL
+  home: https://github.com/silx-kit/fabio
+  summary: Fable I/O library for diffraction images
