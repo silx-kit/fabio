@@ -69,7 +69,7 @@ MAGIC_NUMBERS = [
     (b"{", 'edf'),
     (b"\r{", 'edf'),
     (b"\n{", 'edf'),
-    (b"ADEPT", 'GE'),
+    (b"\x00\x00\x00", 'GE'),
     (b"OD", 'OXD'),
     (b"IM", 'HiPiC'),
     (b'\x2d\x04', 'mar345'),
