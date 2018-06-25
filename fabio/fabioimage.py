@@ -166,6 +166,13 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
             self._file.close()
         self._file = None
 
+    def __copy__(self):
+        other = self.__class__(data=self.data, header=self.header)
+        if self.nframes > 1:
+            logger.warning("Only copying current frame")
+        other.filename = self.filename
+        return other
+
     @property
     def incomplete_file(self):
         """Returns true if the readed file is not complete.
@@ -629,9 +636,9 @@ class FabioImage(six.with_metaclass(FabioMeta, object)):
                     except:
                         pass
 
-        elif isinstance(dest, self.__class__):
+        elif isinstance(dest, FabioImage):
             other = dest.__class__()
-        elif ("__new__" in dir(dest)) and isinstance(dest(), fabioimage):
+        elif ("__new__" in dir(dest)) and isinstance(dest(), FabioImage):
             other = dest()
         else:
             logger.error("Unrecognized destination format: %s " % dest)
