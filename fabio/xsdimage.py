@@ -117,9 +117,9 @@ class XsdImage(FabioImage):
         if self.md5:
             assert hashlib.md5(decData).hexdigest() == self.md5
 
-        self.data = numpy.fromstring(decData, dtype=self.dtype).reshape(tuple(self.dims))
+        self.data = numpy.frombuffer(decData, dtype=self.dtype).reshape(tuple(self.dims))
         if not numpy.little_endian:  # by default little endian
-            self.data.byteswap(True)
+            self.data.byteswap(inplace=True)
         self.resetvals()
 #        # ensure the PIL image is reset
         self.pilimage = None

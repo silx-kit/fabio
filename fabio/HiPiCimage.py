@@ -61,12 +61,12 @@ class HipicImage(FabioImage):
 
         """
         Image_tag = infile.read(2)
-        Comment_len = numpy.fromstring(infile.read(2), numpy.uint16)
-        Dim_1 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dim_2 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dim_1_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dim_2_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        _HeaderType = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        Comment_len = numpy.frombuffer(infile.read(2), numpy.uint16)
+        Dim_1 = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        Dim_2 = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        Dim_1_offset = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        Dim_2_offset = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        _HeaderType = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
         _Dump = infile.read(50)
         Comment = infile.read(Comment_len)
         self.header['Image_tag'] = Image_tag
@@ -116,9 +116,7 @@ class HipicImage(FabioImage):
 
         # now read the data into the array
         try:
-            self.data = numpy.reshape(
-                numpy.fromstring(block, bytecode),
-                [self.dim2, self.dim1])
+            self.data = numpy.frombuffer(block, bytecode).copy().reshape((self.dim2, self.dim1))
         except:
             logger.debug("%s %s %s %s %s", len(block), bytecode, self.bpp, self.dim2, self.dim1)
             raise IOError('Size spec in HiPic-header does not match size of image data field')
