@@ -30,7 +30,7 @@
 """
 
 __authors__ = ["Jérôme Kieffer", "Jon Wright"]
-__date__ = "27/07/2017"
+__date__ = "25/06/2018"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -49,11 +49,11 @@ except ImportError:
 PIL_TO_NUMPY = {
     "I;8": numpy.uint8,
     "I;16": numpy.uint16,
-    "I;16B": numpy.uint16,    # big endian
-    "I;16L": numpy.uint16,    # little endian
+    "I;16B": numpy.uint16,  # big endian
+    "I;16L": numpy.uint16,  # little endian
     "I;32": numpy.uint32,
-    "I;32L": numpy.uint32,    # little endian
-    "I;32B": numpy.uint32,    # big endian
+    "I;32L": numpy.uint32,  # little endian
+    "I;32B": numpy.uint32,  # big endian
     "F;32F": numpy.float32,
     "F;32BF": numpy.float32,  # big endian
     "F;64F": numpy.float64,
@@ -93,9 +93,9 @@ def get_numpy_array(pil_image):
     except:
         # PIL does not support buffer interface (yet)
         if hasattr(pil_image, "tobytes"):
-            data = numpy.fromstring(pil_image.tobytes(), dtype=dtype)
+            data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
         else:
-            data = numpy.fromstring(pil_image.tostring(), dtype=dtype)
+            data = numpy.frombuffer(pil_image.tostring(), dtype=dtype).copy()
         # byteswap ?
         if numpy.dtype(dtype).itemsize > 1:
             need_swap = False

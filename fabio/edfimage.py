@@ -364,7 +364,7 @@ class Frame(object):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
-            data = numpy.fromstring(rawData, self._bytecode).reshape(tuple(dims))
+            data = numpy.frombuffer(rawData, self._bytecode).copy().reshape(tuple(dims))
             if self.swap_needed():
                 data.byteswap(True)
             self._data = data
@@ -844,7 +844,7 @@ class EdfImage(FabioImage):
             f.seek(frame.start)
             raw = f.read(frame.size)
         try:
-            data = numpy.fromstring(raw, dtype=self.bytecode)
+            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
             data.shape = self.data.shape
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
@@ -884,7 +884,7 @@ class EdfImage(FabioImage):
             f.seek(start)
             raw = f.read(size)
         try:
-            data = numpy.fromstring(raw, dtype=self.bytecode)
+            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
             data.shape = -1, d1
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)

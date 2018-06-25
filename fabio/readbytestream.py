@@ -102,11 +102,11 @@ def readbytestream(fil,
 
     infile.seek(offset)
 
-    data = numpy.fromstring(infile.read(length), tin)
+    data = numpy.frombuffer(infile.read(length), tin)
     arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
 
     if swap == 'y':
-        arr = arr.byteswap()
+        arr.byteswap(True)
 
     if opened:
         infile.close()

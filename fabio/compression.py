@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "06/10/2017"
+__date__ = "25/06/2018"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -232,23 +232,23 @@ def decByteOffset_numpy(stream, size=None, dtype="int64"):
     while True:
         idx = stream.find(key16)
         if idx == -1:
-            listnpa.append(numpy.fromstring(stream, dtype="int8"))
+            listnpa.append(numpy.frombuffer(stream, dtype=numpy.int8))
             break
-        listnpa.append(numpy.fromstring(stream[:idx], dtype="int8"))
+        listnpa.append(numpy.frombuffer(stream[:idx], dtype=numpy.int8))
 
         if stream[idx + 1:idx + 3] == key32:
             if stream[idx + 3:idx + 7] == key64:
                 # 64 bits int
-                res = numpy.fromstring(stream[idx + 7:idx + 15], dtype="int64")
+                res = numpy.frombuffer(stream[idx + 7:idx + 15], dtype=numpy.int64)
                 listnpa.append(res)
                 shift = 15
             else:
                 # 32 bits int
-                res = numpy.fromstring(stream[idx + 3:idx + 7], dtype="int32")
+                res = numpy.frombuffer(stream[idx + 3:idx + 7], dtype=numpy.int32)
                 listnpa.append(res)
                 shift = 7
         else:  # int16
-            res = numpy.fromstring(stream[idx + 1:idx + 3], dtype="int16")
+            res = numpy.frombuffer(stream[idx + 1:idx + 3], dtype=numpy.int16)
             listnpa.append(res)
             shift = 3
         stream = stream[idx + shift:]
@@ -309,7 +309,7 @@ def compByteOffset_numpy(data):
     binary_blob = b""
     for stop in exceptions:
         if stop - start > 0:
-            binary_blob += delta[start:stop].astype("int8").tostring()
+            binary_blob += delta[start:stop].astype(numpy.int8).tostring()
         exc = delta[stop]
         absexc = abs(exc)
         if absexc > 2147483647:  # 2**31-1
@@ -374,18 +374,17 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     :return: numpy.ndarray
 
     """
-    data = numpy.fromstring(raw_8, dtype="uint8").astype(int)
-    data -= 127
+    data = numpy.frombuffer(raw_8, dtype=numpy.uint8).astype(int) - 127
     if raw_32 is not None:
-        int32 = numpy.fromstring(raw_32, dtype="int32")
+        int32 = numpy.frombuffer(raw_32, dtype=numpy.int32)
         if not numpy.little_endian:
             int32.byteswap(True)
-        exception32 = numpy.nonzero(data == 128)
+        exception32 = numpy.where(data == 128)
     if raw_16 is not None:
-        int16 = numpy.fromstring(raw_16, dtype="int16")
+        int16 = numpy.frombuffer(raw_16, dtype="int16")
         if not numpy.little_endian:
             int16.byteswap(True)
-        exception16 = numpy.nonzero(data == 127)
+        exception16 = numpy.where(data == 127)
         data[exception16] = int16
     if raw_32:
         data[exception32] = int32
