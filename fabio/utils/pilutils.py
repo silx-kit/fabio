@@ -62,6 +62,7 @@ PIL_TO_NUMPY = {
     "1": numpy.bool,
     "I": numpy.int32,
     "L": numpy.uint8,
+    "P": numpy.uint8,
 }
 
 
@@ -89,9 +90,14 @@ def get_numpy_array(pil_image):
         dtype = numpy.float32
         pil_image = pil_image.convert("F")
     try:
-        data = numpy.asarray(pil_image, dtype)
-    except:
-        # PIL does not support buffer interface (yet)
+        if pil_image.mode == 'P':
+            # Indexed color
+            data = numpy.asarray(pil_image.convert("RGB"), dtype)
+        else:
+            data = numpy.asarray(pil_image, dtype)
+    except Exception:
+        # This PIL version do not support buffer interface
+        logger.debug("Backtrace", exc_info=True)
         if hasattr(pil_image, "tobytes"):
             data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
         else:
@@ -103,8 +109,8 @@ def get_numpy_array(pil_image):
             need_swap |= not numpy.little_endian and pil_image.mode.endswith("L")
             if need_swap:
                 data.byteswap(True)
+        data = data.reshape((dim2, dim1))
 
-    data = data.reshape((dim2, dim1))
     return data
 
 

@@ -35,6 +35,7 @@ from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]
+from fabio import tifimage
 
 
 class TestTif(unittest.TestCase):
@@ -204,6 +205,33 @@ class TestTif_Rect(unittest.TestCase):
             self.assertEqual(o1.data.shape, (100, 120))
 
 
+class TestTif_Colormap(unittest.TestCase):
+    def setUp(self):
+        self.fn = UtilsTest.getimage("indexed_color.tif.bz2")[:-4]
+
+    def tearDown(self):
+        tifimage._USE_PIL = True
+        tifimage._USE_TIFFIO = True
+
+    def _test_base(self):
+        for ext in ["", ".gz", ".bz2"]:
+            image = fabio.open(self.fn + ext)
+            self.assertEqual(image.data.shape, (16, 16, 3))
+            self.assertEqual(image.data[0, 0].tolist(), [255, 0, 0])
+            self.assertEqual(image.data[8, 8].tolist(), [0, 252, 255])
+            self.assertEqual(image.data[15, 15].tolist(), [255, 96, 0])
+
+    def test_pil(self):
+        if tifimage.PIL is None:
+            self.skipTest("PIL is not available")
+        tifimage._USE_TIFFIO = False
+        self._test_base()
+
+    def test_tiffio(self):
+        tifimage._USE_PIL = False
+        self._test_base()
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -214,6 +242,7 @@ def suite():
     testsuite.addTest(loadTests(TestTifImage_fit2d))
     testsuite.addTest(loadTests(TestTifImage_Packbits))
     testsuite.addTest(loadTests(TestTifImage_Pilatus))
+    testsuite.addTest(loadTests(TestTif_Colormap))
     return testsuite
 
 

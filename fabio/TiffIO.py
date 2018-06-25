@@ -670,13 +670,14 @@ class TiffIO(object):
         rowStart = 0
         if len(stripOffsets) == 1:
             bytesPerRow = int(stripByteCounts[0] / rowsPerStrip)
+            nBytes = stripByteCounts[0]
             if nRows == rowsPerStrip:
                 actualBytesPerRow = int(image.nbytes / nRows)
                 if actualBytesPerRow != bytesPerRow:
                     logger.warning("Bogus StripByteCounts information")
                     bytesPerRow = actualBytesPerRow
+                    nBytes = (rowMax - rowMin + 1) * bytesPerRow
             fd.seek(stripOffsets[0] + rowMin * bytesPerRow)
-            nBytes = (rowMax - rowMin + 1) * bytesPerRow
             readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
             if self._swap:
                 readout.byteswap(True)
@@ -684,9 +685,10 @@ class TiffIO(object):
                 readout.shape = -1, nColumns, len(nBits)
             elif info['colormap'] is not None:
                 readout = colormap[readout]
+                readout.shape = -1, nColumns, 3
             else:
                 readout.shape = -1, nColumns
-            image[rowMin:rowMax + 1, :] = readout
+            image[...] = readout
         else:
             for i in range(len(stripOffsets)):
                 # the amount of rows
