@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "02/03/2018"
+__date__ = "25/06/2018"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -100,7 +100,7 @@ class TifImage(FabioImage):
         """
         Try to read Tiff images header...
         """
-        header = numpy.fromstring(infile.read(64), numpy.uint16)
+        header = numpy.frombuffer(infile.read(64), numpy.uint16)
         self.dim1 = int(header[9])
         self.dim2 = int(header[15])
         # nbits is not a FabioImage attribute...

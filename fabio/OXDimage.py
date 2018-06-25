@@ -48,7 +48,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "27/07/2017"
+__date__ = "25/06/2018"
 
 import time
 import logging
@@ -166,10 +166,10 @@ class OxdImage(FabioImage):
         self.header['Spatial correction file date'] = to_str(block[0:26].strip(b"\x00"))
         # Angles are in steps due to stepper motors - conversion factor RAD
         # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
-        start_angles_step = numpy.fromstring(block[284:304], numpy.int32)
-        end_angles_step = numpy.fromstring(block[324:344], numpy.int32)
-        step2rad = numpy.fromstring(block[368:408], numpy.float)
-        zero_correction_soft_step = numpy.fromstring(block[512:532], numpy.int32)
+        start_angles_step = numpy.frombuffer(block[284:304], numpy.int32)
+        end_angles_step = numpy.frombuffer(block[324:344], numpy.int32)
+        step2rad = numpy.frombuffer(block[368:408], numpy.float)
+        zero_correction_soft_step = numpy.frombuffer(block[512:532], numpy.int32)
         if not numpy.little_endian:
             start_angles_step.byteswap(True)
             end_angles_step.byteswap(True)
@@ -270,7 +270,7 @@ class OxdImage(FabioImage):
                 bytecode = numpy.int8
                 self.bpp = 1
                 raw8 = infile.read(self.dim1 * self.dim2)
-                raw_data = numpy.fromstring(raw8, bytecode)
+                raw_data = numpy.frombuffer(raw8, bytecode)
 
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
@@ -287,7 +287,7 @@ class OxdImage(FabioImage):
                 bytecode = numpy.int32
                 self.bpp = len(numpy.array(0, bytecode).tostring())
                 nbytes = self.dim1 * self.dim2 * self.bpp
-                raw_data = numpy.fromstring(infile.read(nbytes), bytecode)
+                raw_data = numpy.frombuffer(infile.read(nbytes), bytecode).copy()
                 # Always assume little-endian on the disk
                 if not numpy.little_endian:
                     raw_data.byteswap(True)
@@ -483,7 +483,7 @@ class OxdImage(FabioImage):
         array_size = self.dim1 * self.dim2
         stream_size = len(stream)
         data = numpy.zeros(array_size)
-        raw = numpy.fromstring(stream, dtype="uint8")
+        raw = numpy.frombuffer(stream, dtype=numpy.uint8)
         pos_inp = pos_out = current = ex1 = ex2 = 0
 
         while pos_inp < stream_size and pos_out < array_size:
@@ -501,7 +501,7 @@ class OxdImage(FabioImage):
                 ex1 += 1
                 # this is the special case 1:
                 # if the marker 254 is found the next 2 bytes encode one pixel
-                value = raw[pos_inp + 1:pos_inp + 3].view("int16")
+                value = raw[pos_inp + 1:pos_inp + 3].view(numpy.int16)
                 if not numpy.little_endian:
                     value = value.byteswap(True)
                 current = last + value[0]
@@ -512,7 +512,7 @@ class OxdImage(FabioImage):
                 # if the marker 255 is found the next 4 bytes encode one pixel
                 ex2 += 1
                 logger.info('special case 32 bits.')
-                value = raw[pos_inp + 1:pos_inp + 5].view("int32")
+                value = raw[pos_inp + 1:pos_inp + 5].view(numpy.int32)
                 if not numpy.little_endian:
                     value = value.byteswap(True)
                 current = last + value[0]

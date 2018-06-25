@@ -44,7 +44,7 @@ License: MIT
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "27/07/2017"
+__date__ = "25/06/2018"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -192,7 +192,7 @@ class PnmImage(FabioImage):
     def P5dec(self, buf, bytecode):
         data = buf.read()
         try:
-            data = numpy.fromstring(data, bytecode)
+            data = numpy.frombuffer(data, bytecode).copy()
         except ValueError:
             raise IOError('Size spec in pnm-header does not match size of image data field')
         data.shape = self.dim2, self.dim1

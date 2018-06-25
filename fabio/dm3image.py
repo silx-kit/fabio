@@ -144,11 +144,11 @@ class Dm3Image(FabioImage):
     def readbytes(self, bytes_to_read, format, swap=True):
         raw = self.infile.read(bytes_to_read)
         if format is not None:
-            data = numpy.fromstring(raw, format)
+            data = numpy.frombuffer(raw, format).copy()
         else:
             data = raw
         if swap:
-            data = data.byteswap()
+            data.byteswap(True)
         return data
 
     def read_tag_group(self):
@@ -253,13 +253,11 @@ class Dm3Image(FabioImage):
             for i in range(struct_number_fields):
                 field_data += self.readbytes(field_info[i][0], None, swap=False) + b' '
                 data = self.readbytes(DATA_BYTES[field_info[i][1]], DATA_TYPES[field_info[i][1]], swap=self.swap)
-                field_data +=  str(data[0]).encode()+ b" "
-                                                                   
-                                                                   
+                field_data += str(data[0]).encode() + b" "
             return field_data
 
     def read_data(self):
-        self.encoded_datatype = numpy.fromstring(self.infile.read(4), numpy.uint32).byteswap()
+        self.encoded_datatype = numpy.frombuffer(self.infile.read(4), numpy.uint32).copy().byteswap()
 
 
 dm3image = Dm3Image

@@ -164,7 +164,7 @@ class Bruker100Image(BrukerImage):
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
                 # ar without zeros
-                ar = numpy.fromstring(data_str[:nov * bpp], datatype)
+                ar = numpy.frombuffer(data_str[:nov * bpp], datatype)
                 # insert the the overflow pixels in the image array:
                 lim = (1 << (8 * k)) - 1
 

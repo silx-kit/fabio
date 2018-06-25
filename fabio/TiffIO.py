@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/03/2018"
+__date__ = "25/06/2018"
 
 import sys
 import os
@@ -677,10 +677,9 @@ class TiffIO(object):
                     bytesPerRow = actualBytesPerRow
             fd.seek(stripOffsets[0] + rowMin * bytesPerRow)
             nBytes = (rowMax - rowMin + 1) * bytesPerRow
+            readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
             if self._swap:
-                readout = numpy.fromstring(fd.read(nBytes), dtype).byteswap()
-            else:
-                readout = numpy.fromstring(fd.read(nBytes), dtype)
+                readout.byteswap(True)
             if hasattr(nBits, 'index'):
                 readout.shape = -1, nColumns, len(nBits)
             elif info['colormap'] is not None:
@@ -728,10 +727,10 @@ class TiffIO(object):
                         else:
                             # if read -128 ignore the byte
                             continue
+                    readout = numpy.frombuffer(bufferBytes, dtype).copy()
                     if self._swap:
-                        readout = numpy.fromstring(bufferBytes, dtype).byteswap()
-                    else:
-                        readout = numpy.fromstring(bufferBytes, dtype)
+                        readout.byteswap(True)
+
                     if hasattr(nBits, 'index'):
                         readout.shape = -1, nColumns, len(nBits)
                     elif info['colormap'] is not None:
@@ -741,32 +740,18 @@ class TiffIO(object):
                         readout.shape = -1, nColumns
                     image[rowStart:rowEnd, :] = readout
                 else:
-                    if 1:
-                        # use numpy
-                        if self._swap:
-                            readout = numpy.fromstring(fd.read(nBytes), dtype).byteswap()
-                        else:
-                            readout = numpy.fromstring(fd.read(nBytes), dtype)
-                        if hasattr(nBits, 'index'):
-                            readout.shape = -1, nColumns, len(nBits)
-                        elif colormap is not None:
-                            readout = colormap[readout]
-                            readout.shape = -1, nColumns, 3
-                        else:
-                            readout.shape = -1, nColumns
-                        image[rowStart:rowEnd, :] = readout
+                    readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
+                    if self._swap:
+                        readout.byteswap(True)
+
+                    if hasattr(nBits, 'index'):
+                        readout.shape = -1, nColumns, len(nBits)
+                    elif colormap is not None:
+                        readout = colormap[readout]
+                        readout.shape = -1, nColumns, 3
                     else:
-                        # using struct
-                        readout = numpy.array(struct.unpack(st + "%df" % int(nBytes / 4), fd.read(nBytes)),
-                                              dtype=dtype)
-                        if hasattr(nBits, 'index'):
-                            readout.shape = -1, nColumns, len(nBits)
-                        elif colormap is not None:
-                            readout = colormap[readout]
-                            readout.shape = -1, nColumns, 3
-                        else:
-                            readout.shape = -1, nColumns
-                        image[rowStart:rowEnd, :] = readout
+                        readout.shape = -1, nColumns
+                    image[rowStart:rowEnd, :] = readout
                 rowStart += nRowsToRead
         if close:
             self.__makeSureFileIsClosed()

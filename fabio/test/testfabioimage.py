@@ -45,6 +45,14 @@ from ..fabioimage import fabioimage
 from .. import fabioutils
 from ..utils import pilutils
 
+try:
+    import pathlib
+except ImportError:
+    try:
+        import pathlib2 as pathlib
+    except ImportError:
+        pathlib = None
+
 
 class Test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
@@ -146,28 +154,32 @@ class TestOpen(unittest.TestCase):
 
     def testFlat(self):
         """ no compression"""
-        res = self.obj._open(self.testfile).read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile)
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
     def testgz(self):
         """ gzipped """
-        res = self.obj._open(self.testfile + ".gz").read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile + ".gz")
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
     def testbz2(self):
         """ bzipped"""
-        res = self.obj._open(self.testfile + ".bz2").read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile + ".bz2")
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
+    def test_badtype(self):
+        self.assertRaises(TypeError, self.obj._open, None)
 
-NAMES = {numpy.uint8:   "numpy.uint8",
-         numpy.int8:    "numpy.int8",
-         numpy.uint16:  "numpy.uint16",
-         numpy.int16:   "numpy.int16",
-         numpy.uint32:  "numpy.uint32",
-         numpy.int32:   "numpy.int32",
-         numpy.float32: "numpy.float32",
-         numpy.float64: "numpy.float64"}
+    def test_pathlib(self):
+        if pathlib is None:
+            self.skipTest("pathlib is not available")
+        path = pathlib.PurePath(self.testfile + ".bz2")
+        res = self.obj._open(path)
+        self.assertIsNotNone(res)
+        res.close()
 
 
 class TestPilImage(unittest.TestCase):
@@ -192,14 +204,13 @@ class TestPilImage(unittest.TestCase):
     def testpil(self):
 
         for typ in self.okformats:
-            name = NAMES[typ]
             for shape in [(10, 20), (431, 1325)]:
                 testdata = self.mkdata(shape, typ)
                 img = fabioimage(testdata, {"title": "Random data"})
                 pim = img.toPIL16()
                 for i in [0, 5, 6, shape[1] - 1]:
                     for j in [0, 5, 7, shape[0] - 1]:
-                        errstr = name + " %d %d %f %f t=%s" % (
+                        errstr = str(typ) + " %d %d %f %f t=%s" % (
                             i, j, testdata[j, i], pim.getpixel((i, j)), typ)
 
                         er1 = img.data[j, i] - pim.getpixel((i, j))
