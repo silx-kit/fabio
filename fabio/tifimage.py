@@ -56,13 +56,21 @@ import logging
 logger = logging.getLogger(__name__)
 
 try:
-    from PIL import Image
+    import PIL
 except ImportError:
-    Image = None
+    PIL = None
+
 import numpy
 from .utils import pilutils
 from .fabioimage import FabioImage
 from . import TiffIO
+
+
+_USE_TIFFIO = True
+"""Uses TiffIO library if available"""
+
+_USE_PIL = True
+"""Uses PIL library if available"""
 
 
 class TiffFrame(object):
@@ -123,58 +131,63 @@ class TifImage(FabioImage):
 
         return header
 
+    def _read_with_tiffio(self, infile):
+        tiffIO = TiffIO.TiffIO(infile)
+        self.nframes = tiffIO.getNumberOfImages()
+        if tiffIO.getNumberOfImages() > 0:
+            # No support for now of multi-frame tiff images
+            header = tiffIO.getInfo(0)
+            data = tiffIO.getData(0)
+            frame = self._create_frame(data, header)
+            self.header = frame.header
+            self.data = frame.data
+        self._tiffio = tiffIO
+        if self.data.ndim == 2:
+            self.dim2, self.dim1 = self.data.shape
+        elif self.data.ndim == 3:
+            self.dim2, self.dim1, _ = self.data.shape
+            logger.warning("Third dimension is the color")
+        else:
+            logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
+        self.lib = "TiffIO"
+
+    def _read_with_pil(self, infile):
+        self.pilimage = PIL.Image.open(infile)
+        header = self._read_header_from_pil(self.pilimage)
+        data = pilutils.get_numpy_array(self.pilimage)
+        frame = self._create_frame(data, header)
+        self.header = frame.header
+        self.data = frame.data
+        self.lib = "PIL"
+
     def read(self, fname, frame=None):
         """
         Wrapper for TiffIO.
         """
         infile = self._open(fname, "rb")
         self._readheader(infile)
-        infile.seek(0)
         self.lib = None
-        try:
-            tiffIO = TiffIO.TiffIO(infile)
-            self.nframes = tiffIO.getNumberOfImages()
-            if tiffIO.getNumberOfImages() > 0:
-                # No support for now of multi-frame tiff images
-                header = tiffIO.getInfo(0)
-                data = tiffIO.getData(0)
-                frame = self._create_frame(data, header)
-                self.header = frame.header
-                self.data = frame.data
-            self._tiffio = tiffIO
-        except Exception as error:
-            logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
-            logger.debug("Backtrace", exc_info=True)
-        else:
-            if self.data.ndim == 2:
-                self.dim2, self.dim1 = self.data.shape
-            elif self.data.ndim == 3:
-                self.dim2, self.dim1, _ = self.data.shape
-                logger.warning("Third dimension is the color")
-            else:
-                logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
-            self.lib = "TiffIO"
+        infile.seek(0)
 
-        if (self.lib is None):
-            if Image:
-                try:
-                    infile.seek(0)
-                    self.pilimage = Image.open(infile)
-                except Exception:
-                    logger.error("Error in opening %s  with PIL" % fname)
-                    self.lib = None
-                    infile.seek(0)
-                else:
-                    self.lib = "PIL"
-                    header = self._read_header_from_pil(self.pilimage)
-                    data = pilutils.get_numpy_array(self.pilimage)
-                    frame = self._create_frame(data, header)
-                    self.header = frame.header
-                    self.data = frame.data
-            else:
-                logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
-                self.lib = None
+        if _USE_TIFFIO:
+            try:
+                self._read_with_tiffio(infile)
+            except Exception as error:
                 infile.seek(0)
+                logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
+                logger.debug("Backtrace", exc_info=True)
+
+        if self.lib is None:
+            if _USE_PIL and PIL is not None:
+                try:
+                    self._read_with_pil(infile)
+                except Exception:
+                    infile.seek(0)
+                    logger.error("Error in opening %s  with PIL" % fname)
+                    logger.debug("Backtrace", exc_info=True)
+
+        if self.lib is None:
+            logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
 
         self.resetvals()
         return self
