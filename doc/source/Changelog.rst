@@ -1,6 +1,22 @@
 Changelog
 =========
 
+FabIO-0.6.1 (06/2018):
+......................
+
+- Improve CBF support (support Python3, better support of loops)
+- Improve Bruker100 image detection (contribution from Tomoya Onozuka)
+- Support TIFF multi-frames
+- Improve Pilatus TIFF support (contribution from Mika Pflüger)
+- Improve support of TIFF using indexed colors
+- Support pathlib and pathlib2 as opennable paths
+- Provide a copy operator for single frame images
+- Clean up EDF image API (contribution from Yann Diorcet)
+- Fix parsing of EDF headers
+- Fix convertion from EDF to TIFF
+- Fix support of `#` in filenames
+- Clean up of code and documentation (including contribution from Thomas Kluyver)
+
 FabIO-0.6.0 (01/2018):
 ......................
 
