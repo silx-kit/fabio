@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/09/2017"
+__date__ = "11/06/2018"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -52,6 +52,14 @@ logger = logging.getLogger(__name__)
 from .third_party.ordereddict import OrderedDict as _OrderedDict
 from .third_party import six
 
+try:
+    import pathlib
+except ImportError:
+    try:
+        import pathlib2 as pathlib
+    except ImportError:
+        pathlib = None
+
 if six.PY2:
     bytes_ = str
     FileIO = file
@@ -63,6 +71,11 @@ else:
     unicode = str
     from io import FileIO
     to_str = lambda s: str(s, "ASCII")
+
+PathTypes = StringTypes
+if pathlib is not None:
+    PathTypes += (pathlib.PurePath,)
+
 
 from .compression import bz2, gzip, COMPRESSORS
 import traceback
