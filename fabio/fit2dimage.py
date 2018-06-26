@@ -36,7 +36,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "11/08/2017"
+__date__ = "25/06/2018"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -130,7 +130,7 @@ class Fit2dImage(FabioImage):
                     bpp = 1
                     raw = infile.read(self.num_block * self.BUFFER_SIZE)
                     # Fit2d stores 31 pixels per int32
-                    i32 = numpy.fromstring(raw, "int32")
+                    i32 = numpy.frombuffer(raw, numpy.int32).copy()
                     if numpy.little_endian:
                         # lets's work in big-endian for the moment
                         i32.byteswap(True)
@@ -146,7 +146,7 @@ class Fit2dImage(FabioImage):
                     logger.error(err)
                     raise RuntimeError(err)
                 raw = infile.read(self.num_block * self.BUFFER_SIZE)
-                decoded = numpy.fromstring(raw, bytecode).reshape((-1, self.BUFFER_SIZE // bpp))
+                decoded = numpy.frombuffer(raw, bytecode).copy().reshape((-1, self.BUFFER_SIZE // bpp))
                 # There is a bug in this format: throw away 3/4 of the read data:
                 decoded = decoded[:, :self.PIXELS_PER_CHUNK].ravel()
                 header[key] = decoded[:dim1 * dim2].reshape(dim2, dim1)

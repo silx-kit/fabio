@@ -42,9 +42,10 @@ modification for HDF5 by Jérôme Kieffer
 # Get ready for python3:
 from __future__ import with_statement, print_function, absolute_import
 
-import sys
+import os.path
 import logging
 logger = logging.getLogger(__name__)
+from . import fabioutils
 from .fabioutils import FilenameObject, six, BytesIO
 from .fabioimage import FabioImage
 
@@ -55,6 +56,7 @@ from . import fabioformats  # noqa
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
     # "\1f\8b" : 'gzipped'
+    (b"FORMAT :100", 'bruker100'),
     (b"FORMAT :        86", 'bruker'),
     (b"\x4d\x4d\x00\x2a", 'tif'),
     # The marCCD and Pilatus formats are both standard tif with a header
@@ -117,6 +119,10 @@ def do_magic(byts, filename):
 
 def openimage(filename, frame=None):
     """ Try to open an image """
+    if isinstance(filename, fabioutils.PathTypes):
+        if not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
+
     if isinstance(filename, FilenameObject):
         try:
             logger.debug("Attempting to open %s" % (filename.tostring()))
@@ -141,6 +147,10 @@ def openimage(filename, frame=None):
 
 def openheader(filename):
     """ return only the header"""
+    if isinstance(filename, fabioutils.PathTypes):
+        if not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
+
     obj = _openimage(filename)
     obj.readheader(obj.filename)
     return obj
@@ -156,27 +166,25 @@ def _openimage(filename):
     hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
 
     """
-    try:
-        url = six.moves.urllib_parse.urlparse(filename)
-    except AttributeError as err:
-        # Assume we have as input a BytesIO object
-        attrs = dir(filename)
-        if "seek" in attrs and "read" in attrs:
-            if not isinstance(filename, BytesIO):
-                filename.seek(0)
-                actual_filename = BytesIO(filename.read())
-        else:
-            actual_filename = filename
-        url = six.moves.urllib_parse.urlparse("")
-
+    url = None
+    if hasattr(filename, "seek") and hasattr(filename, "read"):
+        # Looks to be a file containing filenames
+        if not isinstance(filename, BytesIO):
+            filename.seek(0)
+            actual_filename = BytesIO(filename.read())
     else:
-        # related to https://github.com/silx-kit/fabio/issues/34
-        if (len(url.scheme) == 1 and (sys.platform == "win32")) or url.path.startswith(":"):
-            # this is likely a C: from windows  or filename::path
-            filename = url.scheme + ":" + url.path
+        if os.path.exists(filename):
+            # Already a valid filename
+            actual_filename = filename
         else:
-            filename = url.path
-        actual_filename = filename.split("::")[0]
+            try:
+                url = six.moves.urllib_parse.urlparse(filename)
+                actual_filename = url.path.split("::")[0]
+            except AttributeError as err:
+                actual_filename = filename
+
+    if url is None:
+        url = six.moves.urllib_parse.urlparse("")
 
     try:
         imo = FabioImage()

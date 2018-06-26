@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "25/07/2017"
+__date__ = "25/06/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -280,7 +280,7 @@ class GeImage(FabioImage):
         if self.bpp != 2:
             logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
 
-        data = numpy.fromstring(filepointer.read(imglength), numpy.uint16)
+        data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16).copy()
         if not numpy.little_endian:
             data.byteswap(True)
         data.shape = (self.header['NumberOfRowsInFrame'],

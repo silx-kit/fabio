@@ -108,10 +108,9 @@ class BinaryImage(FabioImage):
             except:
                 logger.error('Uncommon error encountered when reading file')
         rawData = f.read(size)
+        data = numpy.frombuffer(rawData, bytecode).copy().reshape(tuple(dims))
         if self.swap_needed(endian):
-            data = numpy.fromstring(rawData, bytecode).byteswap().reshape(tuple(dims))
-        else:
-            data = numpy.fromstring(rawData, bytecode).reshape(tuple(dims))
+            data.byteswap(True)
         self.data = data
         return self
 

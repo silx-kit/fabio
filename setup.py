@@ -908,7 +908,7 @@ def get_project_configuration(dry_run):
                         version=get_version(),
                         url="http://github.com/silx-kit/fabio",
                         download_url="https://github.com/silx-kit/fabio/releases",
-                        author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw",
+                        author="Henning Sorensen, Erik Knudsen, Jon Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw, Valentin Valls",
                         author_email="fable-talk@lists.sourceforge.net",
                         classifiers=classifiers,
                         description='Image IO for fable',

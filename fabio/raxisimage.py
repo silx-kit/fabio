@@ -43,7 +43,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "27/07/2017"
+__date__ = "25/06/2018"
 
 import logging
 import struct
@@ -299,17 +299,14 @@ class RaxisImage(FabioImage):
                     infile.seek(infile.len - size)  # seek from EOF backwards
                 else:
                     infile.seek(-size + offset + 1, os.SEEK_END)  # seek from EOF backwards
-#                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
                 logger.warning('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
             except Exception as error:
                 logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
+        data = numpy.frombuffer(rawData, self.bytecode).copy().reshape(tuple(dims))
         if self.swap_needed():
-            data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
-        else:
-            data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
-#        print(data)
+            data.byteswap(True)
         di = (data >> 15) != 0  # greater than 2^15
         if di.sum() >= 1:
             # find indices for which we need to do the correction (for which

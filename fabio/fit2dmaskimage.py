@@ -68,7 +68,7 @@ class Fit2dMaskImage(FabioImage):
                      (b"K", 12)]:
             if header[j] != i[0]:
                 raise Exception("Not a fit2d mask file")
-        fit2dhdr = numpy.fromstring(header, numpy.int32)
+        fit2dhdr = numpy.frombuffer(header, numpy.int32)
         # Enforce little endian
         if not numpy.little_endian:
             fit2dhdr.byteswap(True)
@@ -94,7 +94,7 @@ class Fit2dMaskImage(FabioImage):
         fin.close()
 
         # Now to unpack it
-        data = numpy.fromstring(data, numpy.uint8)
+        data = numpy.frombuffer(data, numpy.uint8)
         if not numpy.little_endian:
             data.byteswap(True)
 
