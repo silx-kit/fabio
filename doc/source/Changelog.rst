@@ -1,7 +1,7 @@
 Changelog
 =========
 
-FabIO-0.6.1 (06/2018):
+FabIO-0.7.0 (06/2018):
 ......................
 
 - Improve CBF support (support Python3, better support of loops)
