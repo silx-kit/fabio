@@ -176,15 +176,10 @@ def _openimage(filename):
         if os.path.exists(filename):
             # Already a valid filename
             actual_filename = filename
+        elif "::" in filename:
+            actual_filename = filename.split("::")[0]
         else:
-            try:
-                url = six.moves.urllib_parse.urlparse(filename)
-                actual_filename = url.path.split("::")[0]
-            except AttributeError as err:
-                actual_filename = filename
-
-    if url is None:
-        url = six.moves.urllib_parse.urlparse("")
+            actual_filename = filename
 
     try:
         imo = FabioImage()
@@ -227,8 +222,6 @@ def _openimage(filename):
         logger.debug("Backtrace", exc_info=True)
         raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
 
-    if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
-        obj.set_url(url)
     obj.filename = filename
     # skip the read for read header
     return obj
