@@ -65,6 +65,31 @@ class PilatusImage(tifimage.TifImage):
     """It allow to split the first white space, colon, coma, or equal
     character and remove white spaces around"""
 
+    @staticmethod
+    def split(inp, sep=" ", cnt=None):
+        """It allow to split the first white space, colon, coma, or equal
+        character and remove white spaces around
+
+        Rather inefficient but works in python 3.7 unlike _keyvalue_spliter
+        
+        :param inp: input string
+        :param sep: string with all separators
+        :param cnt: number of segment in output
+        """
+        res = []
+        tmp = ""
+        for i,v in enumerate(inp):
+            if v in sep:
+                if tmp:
+                    res.append(tmp)
+                    tmp = ""
+            else:
+                tmp+=v
+            if cnt and (len(res)>=cnt):
+                res.append(inp[i:].strip(sep))
+                break
+        return res
+        
     def _create_pilatus_header(self, tiff_header):
         """
         Parse Pilatus header from a TIFF header.
@@ -104,7 +129,7 @@ class PilatusImage(tifimage.TifImage):
                 # empty line
                 continue
 
-            result = self._keyvalue_spliter.split(line, 1)
+            result = self.split(line, " :=", 1)
             if len(result) != 2:
                 _logger.debug("Pilatus header line '%s' misformed. Skipped", line)
                 continue
