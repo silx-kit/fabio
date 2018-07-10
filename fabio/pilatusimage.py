@@ -30,7 +30,7 @@ from __future__ import with_statement, print_function
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "07/02/2018"
+__date__ = "04/07/2018"
 
 import re
 import logging
@@ -61,7 +61,7 @@ class PilatusImage(tifimage.TifImage):
 
     DEFAULT_EXTENSIONS = ["tif", "tiff"]
 
-    _keyvalue_spliter = re.compile("\s*(?:[,:=]\s*)?")
+    _keyvalue_spliter = re.compile(r"\s*[,:=\s]\s*")
     """It allow to split the first white space, colon, coma, or equal
     character and remove white spaces around"""
 
