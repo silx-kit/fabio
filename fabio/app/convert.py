@@ -35,7 +35,7 @@ from __future__ import with_statement, print_function
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "31/07/2017"
+__date__ = "12/06/2018"
 __status__ = "production"
 
 import logging
@@ -266,7 +266,7 @@ def is_format_supported(format_name):
     :rtype: bool
     """
     try:
-        fabio.fabioimage.FabioImage.factory(format_name)
+        fabio.factory(format_name)
         return True
     except RuntimeError:
         logger.debug("Backtrace", exc_info=True)

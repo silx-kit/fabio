@@ -46,6 +46,32 @@ from .. import fabioformats
 
 class TestRegistration(unittest.TestCase):
 
+    def test_fabio_factory(self):
+        image = fabio.factory("edfimage")
+        self.assertIsNotNone(image)
+
+    def test_fabio_factory_missing_format(self):
+        self.assertRaises(RuntimeError, fabio.factory, "foobarimage")
+
+    def test_fabioformats_factory(self):
+        image = fabioformats.factory("edfimage")
+        self.assertIsNotNone(image)
+
+    def test_fabioformats_factory_missing_format(self):
+        self.assertRaises(RuntimeError, fabioformats.factory, "foobarimage")
+
+    def test_deprecated_fabioimage_factory(self):
+        """Check that it is still working"""
+        image = fabio.fabioimage.FabioImage.factory("edfimage")
+        self.assertIsNotNone(image)
+
+    def test_deprecated_fabioimage_factory_missing_format(self):
+        """Check that it is still working"""
+        self.assertRaises(RuntimeError, fabio.fabioimage.FabioImage.factory, "foobarimage")
+
+    def test_not_existing(self):
+        self.assertIsNone(fabioformats.get_class_by_name("myformat0"))
+
     def test_annotation(self):
         @fabio.register
         class MyFormat1(fabio.fabioimage.FabioImage):
