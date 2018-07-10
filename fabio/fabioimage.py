@@ -126,6 +126,13 @@ class FabioImage(object):
             self._file.close()
         self._file = None
 
+    def __copy__(self):
+        other = self.__class__(data=self.data, header=self.header)
+        if self.nframes > 1:
+            logger.warning("Only copying current frame")
+        other.filename = self.filename
+        return other
+
     @property
     def incomplete_file(self):
         """Returns true if the readed file is not complete.
@@ -417,6 +424,9 @@ class FabioImage(object):
         """
         To be overwritten - write the file
         """
+        if isinstance(fname, fabioutils.PathTypes):
+            if not isinstance(fname, fabioutils.StringTypes):
+                fname = str(fname)
         module = sys.modules[self.__class__.__module__]
         raise NotImplementedError("Writing %s format is not implemented" % module.__name__)
 
@@ -429,6 +439,9 @@ class FabioImage(object):
         Call the _readheader function...
         """
         # Override the needs asserting that all headers can be read via python modules
+        if isinstance(filename, fabioutils.PathTypes):
+            if not isinstance(filename, fabioutils.StringTypes):
+                filename = str(filename)
         save_state = self._need_a_real_file, self._need_a_seek_to_read
         self._need_a_real_file, self._need_a_seek_to_read = False, False
         fin = self._open(filename)
@@ -465,6 +478,9 @@ class FabioImage(object):
         Method reading Region of Interest.
         This implementation is the trivial one, just doing read and crop
         """
+        if isinstance(filename, fabioutils.PathTypes):
+            if not isinstance(filename, fabioutils.StringTypes):
+                filename = str(filename)
         self.read(filename, frame)
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
@@ -496,32 +512,38 @@ class FabioImage(object):
                     logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s" % type(fname))
             return fname
 
+        if isinstance(fname, fabioutils.PathTypes):
+            if not isinstance(fname, fabioutils.StringTypes):
+                fname = str(fname)
+        else:
+            raise TypeError("Unsupported type of fname (found %s)" % type(fname))
+
         fileObject = None
         self.filename = fname
         self.filenumber = fabioutils.extract_filenumber(fname)
 
-        if isinstance(fname, fabioutils.StringTypes):
-            comp_type = os.path.splitext(fname)[-1]
-            if comp_type == ".gz":
-                fileObject = self._compressed_stream(fname,
-                                                     fabioutils.COMPRESSORS['.gz'],
-                                                     fabioutils.GzipFile,
-                                                     mode)
-            elif comp_type == '.bz2':
-                fileObject = self._compressed_stream(fname,
-                                                     fabioutils.COMPRESSORS['.bz2'],
-                                                     fabioutils.BZ2File,
-                                                     mode)
-            #
-            # Here we return the file even though it may be bzipped or gzipped
-            # but named incorrectly...
-            #
-            # FIXME - should we fix that or complain about the daft naming?
-            else:
-                fileObject = fabioutils.File(fname, mode)
-            if "name" not in dir(fileObject):
-                fileObject.name = fname
-            self._file = fileObject
+        comp_type = os.path.splitext(fname)[-1]
+        if comp_type == ".gz":
+            fileObject = self._compressed_stream(fname,
+                                                 fabioutils.COMPRESSORS['.gz'],
+                                                 fabioutils.GzipFile,
+                                                 mode)
+        elif comp_type == '.bz2':
+            fileObject = self._compressed_stream(fname,
+                                                 fabioutils.COMPRESSORS['.bz2'],
+                                                 fabioutils.BZ2File,
+                                                 mode)
+        #
+        # Here we return the file even though it may be bzipped or gzipped
+        # but named incorrectly...
+        #
+        # FIXME - should we fix that or complain about the daft naming?
+        else:
+            fileObject = fabioutils.File(fname, mode)
+        if "name" not in dir(fileObject):
+            fileObject.name = fname
+        self._file = fileObject
+
         return fileObject
 
     def _compressed_stream(self,
@@ -576,9 +598,9 @@ class FabioImage(object):
                     except:
                         pass
 
-        elif isinstance(dest, self.__class__):
+        elif isinstance(dest, FabioImage):
             other = dest.__class__()
-        elif ("__new__" in dir(dest)) and isinstance(dest(), fabioimage):
+        elif ("__new__" in dir(dest)) and isinstance(dest(), FabioImage):
             other = dest()
         else:
             logger.error("Unrecognized destination format: %s " % dest)

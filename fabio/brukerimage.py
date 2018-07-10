@@ -47,7 +47,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "25/07/2017"
+__date__ = "25/06/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -247,7 +247,7 @@ class BrukerImage(FabioImage):
                 logger.warning(errmsg)
                 raise RuntimeError(errmsg)
 
-            data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
+            data = numpy.frombuffer(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb]).copy()
             if not numpy.little_endian and data.dtype.itemsize > 1:
                 data.byteswap(True)
 

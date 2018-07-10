@@ -76,7 +76,7 @@ class MrcImage(FabioImage):
         self.header = self.check_header()
 
         # header is composed of 56-int32 plus 10x80char lines
-        int_block = numpy.fromstring(infile.read(56 * 4), dtype=numpy.int32)
+        int_block = numpy.frombuffer(infile.read(56 * 4), dtype=numpy.int32)
         for key, value in zip(self.KEYS, int_block):
             self.header[key] = value
         assert self.header["MAP"] == 542130509  # "MAP " in int32 !
@@ -141,7 +141,7 @@ class MrcImage(FabioImage):
             raise RuntimeError("Requested frame number is out of range")
         _imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
         infile.seek(self.calc_offset(img_num), 0)
-        self.data = numpy.fromstring(infile.read(self.imagesize), self.bytecode)
+        self.data = numpy.frombuffer(infile.read(self.imagesize), self.bytecode).copy()
         self.data.shape = self.dim2, self.dim1
         self.currentframe = int(img_num)
         self._makeframename()

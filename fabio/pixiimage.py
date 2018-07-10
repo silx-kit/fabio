@@ -37,7 +37,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "25/06/2018"
 
 import numpy
 import os
@@ -61,7 +61,7 @@ class PixiImage(FabioImage):
         infile.seek(0)
         self.header = self.check_header()
         byt = infile.read(4)
-        framesize = numpy.fromstring(byt, numpy.int32)
+        framesize = numpy.frombuffer(byt, numpy.int32)
         if framesize == 243722:
             # life is good
             width = 476
@@ -97,8 +97,8 @@ class PixiImage(FabioImage):
             raise Exception("Bad image number")
         imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
         filepointer.seek(imgstart, 0)
-        self.data = numpy.fromstring(filepointer.read(512 * 476 * 2),
-                                     numpy.uint16)
+        self.data = numpy.frombuffer(filepointer.read(512 * 476 * 2),
+                                     numpy.uint16).copy()
         self.data.shape = self.header['height'], self.header['width']
         self.dim2, self.dim1 = self.data.shape
         self.currentframe = int(img_num)

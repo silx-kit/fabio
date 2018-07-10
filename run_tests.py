@@ -42,6 +42,7 @@ import subprocess
 import sys
 import time
 import unittest
+import collections
 
 
 class StreamHandlerUnittestReady(logging.StreamHandler):
@@ -74,7 +75,11 @@ def createBasicHandler():
 
 # Use an handler compatible with unittests, else use_buffer is not working
 logging.root.addHandler(createBasicHandler())
+
+# Capture all default warnings
 logging.captureWarnings(True)
+import warnings
+warnings.simplefilter('default')
 
 logger = logging.getLogger("run_tests")
 logger.setLevel(logging.WARNING)
@@ -145,7 +150,23 @@ class TextTestResultWithSkipList(unittest.TextTestResult):
     def printErrors(self):
         unittest.TextTestResult.printErrors(self)
         # Print skipped tests at the end
-        self.printErrorList("SKIPPED", self.skipped)
+        self.printGroupedList("SKIPPED", self.skipped)
+
+    def printGroupedList(self, flavour, errors):
+        grouped = collections.OrderedDict()
+
+        for test, err in errors:
+            if err in grouped:
+                grouped[err] = grouped[err] + [test]
+            else:
+                grouped[err] = [test]
+
+        for err, tests in grouped.items():
+            self.stream.writeln(self.separator1)
+            for test in tests:
+                self.stream.writeln("%s: %s" % (flavour, self.getDescription(test)))
+            self.stream.writeln(self.separator2)
+            self.stream.writeln("%s" % err)
 
 
 class ProfileTextTestResult(unittest.TextTestRunner.resultclass):

@@ -45,6 +45,7 @@ from __future__ import with_statement, print_function, absolute_import
 import os.path
 import logging
 logger = logging.getLogger(__name__)
+from . import fabioutils
 from .fabioutils import FilenameObject, six, BytesIO
 from .fabioimage import FabioImage
 
@@ -118,6 +119,10 @@ def do_magic(byts, filename):
 
 def openimage(filename, frame=None):
     """ Try to open an image """
+    if isinstance(filename, fabioutils.PathTypes):
+        if not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
+
     if isinstance(filename, FilenameObject):
         try:
             logger.debug("Attempting to open %s" % (filename.tostring()))
@@ -142,6 +147,10 @@ def openimage(filename, frame=None):
 
 def openheader(filename):
     """ return only the header"""
+    if isinstance(filename, fabioutils.PathTypes):
+        if not isinstance(filename, fabioutils.StringTypes):
+            filename = str(filename)
+
     obj = _openimage(filename)
     obj.readheader(obj.filename)
     return obj
@@ -167,15 +176,10 @@ def _openimage(filename):
         if os.path.exists(filename):
             # Already a valid filename
             actual_filename = filename
+        elif "::" in filename:
+            actual_filename = filename.split("::")[0]
         else:
-            try:
-                url = six.moves.urllib_parse.urlparse(filename)
-                actual_filename = url.path.split("::")[0]
-            except AttributeError as err:
-                actual_filename = filename
-
-    if url is None:
-        url = six.moves.urllib_parse.urlparse("")
+            actual_filename = filename
 
     try:
         imo = FabioImage()
@@ -218,8 +222,6 @@ def _openimage(filename):
         logger.debug("Backtrace", exc_info=True)
         raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
 
-    if url.scheme in ["nxs", "hdf5"] and filetype == "hdf5":
-        obj.set_url(url)
     obj.filename = filename
     # skip the read for read header
     return obj
