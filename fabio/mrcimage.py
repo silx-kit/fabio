@@ -58,7 +58,7 @@ class MrcImage(FabioImage):
 
     DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
 
-    DEFAULT_EXTENSIONS = ["mrc"]
+    DEFAULT_EXTENSIONS = ["mrc","map", "fei"]
 
     KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
             "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",
@@ -79,9 +79,9 @@ class MrcImage(FabioImage):
         int_block = numpy.frombuffer(infile.read(56 * 4), dtype=numpy.int32)
         for key, value in zip(self.KEYS, int_block):
             self.header[key] = value
-        print(self.header["MAP"])
-        #assert self.header["MAP"] == 542130509  # "MAP " in int32 !
-
+        if self.header["MAP"] != 542130509:
+            logger.info("Expected 'MAP ', got %s", self.header["MAP"].tostring())
+        
         for i in range(10):
             label = "LABEL_%02i" % i
             self.header[label] = infile.read(80).strip()
@@ -101,10 +101,8 @@ class MrcImage(FabioImage):
             self.bytecode = numpy.complex64
         elif mode == 6:
             self.bytecode = numpy.uint16
-        print("dim 1 {}", self.dim1)
-        print("dim 2 {}", self.dim2)
-        print("bytecode ", self.bytecode)
-        self.imagesize = self.dim1 * self.dim2 * numpy.dtype(self.bytecode).itemsize
+
+        self.imagesize = int(self.dim1) * self.dim2 * numpy.dtype(self.bytecode).itemsize
 
     def read(self, fname, frame=None):
         """
@@ -144,10 +142,8 @@ class MrcImage(FabioImage):
         if (img_num > self.nframes or img_num < 0):
             raise RuntimeError("Requested frame number is out of range")
         infile.seek(self._calc_offset(img_num), 0)
-        print("image size", self.imagesize, self.dim1, self.dim2, self.dim1 * self.dim2 * 2)
-        self.data = numpy.frombuffer(infile.read(self.imagesize), self.bytecode).copy()
-        print("imqgesize ", self.imagesize, self.data.shape)
-        self.data.shape = self._dim2, self._dim1
+        data = numpy.frombuffer(infile.read(self.imagesize), self.bytecode).copy()
+        self.data = data.reshape((self.dim2, self.dim1))
         self.currentframe = int(img_num)
         self._makeframename()
 

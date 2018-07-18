@@ -267,6 +267,7 @@ uses extensions as a fallback if that fails.
    "marccd", "MarCCD/Mar165", ".mccd ", "Yes", "No", "No"
    "mar345", "Mar345 image plate", ".mar3450 ", "Yes", "No", "Yes"
    "mpa", "Multi-wire detector", ".mpa", "yes", "No", "No"
+   "mrc", "Medical Research Council", ".map", "Yes", "Yes", "No"
    "numpy", "numpy 2D array", ".npy ", "Yes", "No", "Yes"
    "OXD", "Oxford Diffraction", ".img ", "Yes", "No", "Yes"
    "Pixi", "pixi", "", "Yes", "No", "No"
