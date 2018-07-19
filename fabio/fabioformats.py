@@ -88,6 +88,7 @@ _default_codecs = [
     ("jpegimage", "JpegImage"),
     ("jpeg2kimage", "Jpeg2KImage"),
     ("mpaimage", "MpaImage"),
+    ("mrcimage", "MrcImage"),
 ]
 """List of relative module and class names for available formats in fabio.
 Order matter."""

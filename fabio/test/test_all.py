@@ -74,7 +74,7 @@ from . import testdm3image
 from . import test_failing_files
 from . import test_formats
 from . import test_image_convert
-
+from . import testmrcimage
 
 def suite():
     testSuite = unittest.TestSuite()
@@ -117,6 +117,7 @@ def suite():
     testSuite.addTest(test_failing_files.suite())
     testSuite.addTest(test_formats.suite())
     testSuite.addTest(test_image_convert.suite())
+    testSuite.addTest(testmrcimage.suite())
     return testSuite
 
 

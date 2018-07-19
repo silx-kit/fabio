@@ -47,7 +47,7 @@ import numpy
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 logger = logging.getLogger(__name__)
-if sys.version_info < (3.0):
+if sys.version_info < (3,0):
     bytes = str
 
 
@@ -58,7 +58,7 @@ class MrcImage(FabioImage):
 
     DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
 
-    DEFAULT_EXTENSIONS = ["mrc"]
+    DEFAULT_EXTENSIONS = ["mrc","map", "fei"]
 
     KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
             "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",
@@ -79,8 +79,9 @@ class MrcImage(FabioImage):
         int_block = numpy.frombuffer(infile.read(56 * 4), dtype=numpy.int32)
         for key, value in zip(self.KEYS, int_block):
             self.header[key] = value
-        assert self.header["MAP"] == 542130509  # "MAP " in int32 !
-
+        if self.header["MAP"] != 542130509:
+            logger.info("Expected 'MAP ', got %s", self.header["MAP"].tostring())
+        
         for i in range(10):
             label = "LABEL_%02i" % i
             self.header[label] = infile.read(80).strip()
@@ -100,7 +101,8 @@ class MrcImage(FabioImage):
             self.bytecode = numpy.complex64
         elif mode == 6:
             self.bytecode = numpy.uint16
-        self.imagesize = self.dim1 * self.dim2 * numpy.dtype(self.bytecode).itemsize
+
+        self.imagesize = int(self.dim1) * self.dim2 * numpy.dtype(self.bytecode).itemsize
 
     def read(self, fname, frame=None):
         """
@@ -139,10 +141,9 @@ class MrcImage(FabioImage):
         """
         if (img_num > self.nframes or img_num < 0):
             raise RuntimeError("Requested frame number is out of range")
-        _imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
-        infile.seek(self.calc_offset(img_num), 0)
-        self.data = numpy.frombuffer(infile.read(self.imagesize), self.bytecode).copy()
-        self.data.shape = self.dim2, self.dim1
+        infile.seek(self._calc_offset(img_num), 0)
+        data = numpy.frombuffer(infile.read(self.imagesize), self.bytecode).copy()
+        self.data = data.reshape((self.dim2, self.dim1))
         self.currentframe = int(img_num)
         self._makeframename()
 
