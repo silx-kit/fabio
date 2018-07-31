@@ -1,4 +1,5 @@
-#!/usr/bin/env python# coding: utf-8
+#!/usr/bin/env python
+# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
