@@ -1044,24 +1044,25 @@ class EdfImage(FabioImage):
 edfimage = EdfImage
 
 
-def edf_lazy_iterator(fname):
+def edf_lazy_iterator(filename):
     """Iterates over the frames of an EDF multi-frame file.
 
-    This function optimizes sequential access to multi-frame EDF files,
+    This function optimizes sequential access to multi-frame EDF files
     by avoiding to read the whole file at first in order to get the number
-    of frames and an index of frames for faster random access.
+    of frames and build an index of frames for faster random access.
 
     Usage:
 
     >>> from fabio.edfimage import edf_lazy_iterator
+
     >>> for frame in edf_lazy_iterator("multiframe.edf"):
     ...     print('Header:', frame.header)
     ...     print('Data:', frame.data)
 
-    :param str fname: File name of the EDF file to read
+    :param str filename: File name of the EDF file to read
     """
     edf = EdfImage()
-    infile = edf._open(fname, 'rb')
+    infile = edf._open(filename, 'rb')
 
     index = 0
 
@@ -1093,7 +1094,7 @@ def edf_lazy_iterator(fname):
             frame.getData()
         except Exception as error:
             if isinstance(infile, fabioutils.GzipFile):
-                if compression.is_incomplete_gz_block_exception(error):
+                if compression_module.is_incomplete_gz_block_exception(error):
                     frame.incomplete_data = True
                     break
             logger.warning("infile is %s" % infile)
@@ -1106,7 +1107,7 @@ def edf_lazy_iterator(fname):
         capsKeys = set([k.upper() for k in frame.header.keys()])
         missing = list(MINIMUM_KEYS - capsKeys)
         if len(missing) > 0:
-            logger.info("EDF file %s frame %i misses mandatory keys: %s ", fname, index, " ".join(missing))
+            logger.info("EDF file %s frame %i misses mandatory keys: %s ", filename, index, " ".join(missing))
         yield frame
         index += 1
 
