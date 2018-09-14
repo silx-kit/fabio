@@ -288,6 +288,21 @@ class Frame(object):
 
         return self.size
 
+    def _check_header_mandatory_keys(self, filename=''):
+        """Check that frame header contains all mandatory keys
+
+        :param str filename: Name of the EDF file
+        :rtype: bool
+        """
+        capsKeys = set([k.upper() for k in self.header.keys()])
+        missing = list(MINIMUM_KEYS - capsKeys)
+        if len(missing) > 0:
+            logger.info("EDF file %s frame %i misses mandatory keys: %s ",
+                        filename,
+                        self.iFrame,
+                        " ".join(missing))
+        return len(missing) == 0
+
     def swap_needed(self):
         """
         Decide if we need to byteswap
@@ -700,11 +715,8 @@ class EdfImage(FabioImage):
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
-        for i, frame in enumerate(self._frames):
-            capsKeys = set([k.upper() for k in frame.header.keys()])
-            missing = list(MINIMUM_KEYS - capsKeys)
-            if len(missing) > 0:
-                logger.info("EDF file %s frame %i misses mandatory keys: %s ", self.filename, i, " ".join(missing))
+        for frame in self._frames:
+            frame._check_header_mandatory_keys(filename=self.filename)
         self.currentframe = 0
 
     def read(self, fname, frame=None):
@@ -1104,10 +1116,7 @@ def edf_lazy_iterator(filename):
             infile.close()
             raise Exception(error)
 
-        capsKeys = set([k.upper() for k in frame.header.keys()])
-        missing = list(MINIMUM_KEYS - capsKeys)
-        if len(missing) > 0:
-            logger.info("EDF file %s frame %i misses mandatory keys: %s ", filename, index, " ".join(missing))
+        frame._check_header_mandatory_keys(filename=filename)
         yield frame
         index += 1
 
