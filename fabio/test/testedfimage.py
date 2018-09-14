@@ -563,6 +563,40 @@ class TestBadGzFiles(TestBadFiles):
             TestBadFiles.write_data(gzfd)
 
 
+class TestEdfIterator(unittest.TestCase):
+    """Read different EDF files with lazy iterator
+    """
+
+    def test_multi_frame(self):
+        """Test iterator on a multi-frame EDF"""
+        filename = UtilsTest.getimage("MultiFrame.edf.bz2")
+
+        iterator = fabio.edfimage.edf_lazy_iterator(filename)
+        ref = fabio.open(filename)
+
+        for index in range(ref.nframes):
+            frame = next(iterator)
+            ref_frame = ref.getframe(index)
+            self.assertEqual(numpy.abs(ref_frame.data - frame.data).max(), 0, 'Test frame %d data' % index)
+            self.assertEqual(ref_frame.header, frame.header, 'Test frame %d header' % index)
+
+        with self.assertRaises(StopIteration):
+            next(iterator)
+
+    def test_single_frame(self):
+        """Test iterator on a single frame EDF"""
+        filename = UtilsTest.getimage("edfCompressed_U16.edf")
+        iterator = fabio.edfimage.edf_lazy_iterator(filename)
+
+        frame = next(iterator)
+        ref = fabio.open(filename)
+        self.assertEqual((ref.data - frame.data).max(), 0, "Test data")
+        self.assertEqual(ref.header, frame.header, "Test header")
+
+        with self.assertRaises(StopIteration):
+            next(iterator)
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -577,6 +611,7 @@ def suite():
     testsuite.addTest(loadTests(TestEdfRegression))
     testsuite.addTest(loadTests(TestBadFiles))
     testsuite.addTest(loadTests(TestBadGzFiles))
+    testsuite.addTest(loadTests(TestEdfIterator))
     return testsuite
 
 
