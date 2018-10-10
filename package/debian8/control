@@ -23,6 +23,7 @@ Build-Depends: cython,
                python-six,
                python-sphinx,
                python-sphinxcontrib.programoutput,
+               python-nbsphinx
                python3-all-dev,
                python3-all-dbg,
                python3-lxml,
@@ -35,6 +36,7 @@ Build-Depends: cython,
                python3-six,
                python3-sphinx,
                python3-sphinxcontrib.programoutput,
+               python3-nbsphinx,
                help2man,
                devscripts
 Standards-Version: 3.9.6
