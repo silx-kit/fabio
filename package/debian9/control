@@ -1,4 +1,4 @@
-Source: python-fabio
+Source: fabio
 Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
 Uploaders: Jerome Kieffer <jerome.kieffer@esrf.fr>,
            Picca Frédéric-Emmanuel <picca@debian.org>
@@ -28,7 +28,8 @@ Build-Depends: cython,
                python3-sphinxcontrib.programoutput,
                python-h5py,
                python3-h5py,
-               help2man
+               help2man,
+               devscripts
 Standards-Version: 3.9.6
 Vcs-Browser: https://anonscm.debian.org/cgit/debian-science/packages/python-fabio.git
 Vcs-Git: git://anonscm.debian.org/debian-science/packages/python-fabio.git

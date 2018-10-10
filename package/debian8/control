@@ -35,7 +35,8 @@ Build-Depends: cython,
                python3-six,
                python3-sphinx,
                python3-sphinxcontrib.programoutput,
-               help2man
+               help2man,
+               devscripts
 Standards-Version: 3.9.6
 Vcs-Browser: https://anonscm.debian.org/cgit/debian-science/packages/python-fabio.git
 Vcs-Git: git://anonscm.debian.org/debian-science/packages/python-fabio.git
