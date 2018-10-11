@@ -61,6 +61,7 @@ from . import fabioutils
 
 
 BLOCKSIZE = 512
+MAX_BLOCKS = 40
 DATA_TYPES = {"SignedByte": numpy.int8,
               "Signed8": numpy.int8,
               "UnsignedByte": numpy.uint8,
@@ -562,7 +563,7 @@ class EdfImage(FabioImage):
         :return: string (or None if no header was found.
         :raises MalformedHeaderError: If the header can't be read
         """
-        MAX_HEADER_SIZE = BLOCKSIZE * 40
+        MAX_HEADER_SIZE = BLOCKSIZE * MAX_BLOCKS
         try:
             block = infile.read(BLOCKSIZE)
         except Exception as e:
