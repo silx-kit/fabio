@@ -562,7 +562,7 @@ class EdfImage(FabioImage):
         :return: string (or None if no header was found.
         :raises MalformedHeaderError: If the header can't be read
         """
-        MAX_HEADER_SIZE = BLOCKSIZE * 20
+        MAX_HEADER_SIZE = BLOCKSIZE * 40
         try:
             block = infile.read(BLOCKSIZE)
         except Exception as e:
