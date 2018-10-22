@@ -121,6 +121,37 @@ class UtilsTest(object):
                 Otherwise please try to download the images manually from \n %s/%s and put it in in test/testimages." % (cls.url_base, imagename))
 
     @classmethod
+    def getdir(cls, dirname):
+        """Downloads the requested tarball from the server
+        https://www.silx.org/pub/silx/
+        and unzips it into the data directory
+
+        :param: relative name of the image.
+        :return: list of files with their full path.
+        """
+        lodn = dirname.lower()
+        if (lodn.endswith("tar") or lodn.endswith("tgz") or
+            lodn.endswith("tbz2") or lodn.endswith("tar.gz") or
+                lodn.endswith("tar.bz2")):
+            import tarfile
+            engine = tarfile.TarFile.open
+        elif lodn.endswith("zip"):
+            import zipfile
+            engine = zipfile.ZipFile
+        else:
+            raise RuntimeError("Unsupported archive format. Only tar and zip "
+                               "are currently supported")
+        full_path = cls.download_file(dirname)
+        root = os.path.dirname(full_path)
+        with engine(full_path, mode="r") as fd:
+            fd.extractall(cls.image_home)
+            if lodn.endswith("zip"):
+                result = [os.path.join(root, i) for i in fd.namelist()]
+            else:
+                result = [os.path.join(root, i) for i in fd.getnames()]
+        return result
+
+    @classmethod
     def getimage(cls, imagename):
         """
         Downloads the requested image from Forge.EPN-campus.eu
