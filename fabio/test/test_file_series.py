@@ -30,12 +30,8 @@ test cases for fileseries
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
-import os
 import bz2
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)

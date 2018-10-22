@@ -25,13 +25,10 @@
 Test for numpy images.
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "27/07/2017"
+__date__ = "22/10/2018"
 import os
 import sys
 import unittest
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 from .utilstest import UtilsTest
 import numpy
 logger = UtilsTest.get_logger(__file__)

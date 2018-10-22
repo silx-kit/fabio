@@ -37,10 +37,6 @@ import shutil
 import io
 import fabio.edfimage
 
-
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 from .utilstest import UtilsTest
 
 

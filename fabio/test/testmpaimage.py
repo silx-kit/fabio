@@ -27,9 +27,6 @@ import unittest
 import sys
 import os
 from .utilstest import UtilsTest
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 
 logger = UtilsTest.get_logger(__file__)
 fabio = sys.modules["fabio"]

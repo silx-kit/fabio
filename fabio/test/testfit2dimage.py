@@ -33,16 +33,12 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "27/07/2017"
+__date__ = "22/10/2018"
 
 import unittest
 import sys
-import os
 import numpy
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 from .utilstest import UtilsTest
 
 

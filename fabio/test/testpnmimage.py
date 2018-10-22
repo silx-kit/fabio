@@ -28,14 +28,12 @@ Test for PNM images.
 Jerome Kieffer, 04/12/2014
 """
 __author__ = "Jerome Kieffer"
-__date__ = "27/07/2017"
+__date__ = "22/10/2018"
 import os
 import sys
 import unittest
 import numpy
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
