@@ -65,7 +65,7 @@ class TestFlatBinary(unittest.TestCase):
                     nfail += 1
                 else:
                     logger.info("**** Passed: %s" % filename)
-            except:
+            except Exception:
                 logger.warning("failed for: %s" % filename)
                 nfail += 1
         self.assertEqual(nfail, 0, " %s failures out of %s" % (nfail, len(self.filenames)))
