@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "23/01/2018"
+__date__ = "22/10/2018"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -167,31 +167,7 @@ class UtilsTest(object):
         data = None
 
         if not os.path.isfile(fullimagename_bz2):
-            logger.info("Trying to download image %s, timeout set to %ss",
-                        bzip2name, cls.timeout)
-            dictProxies = {}
-            if "http_proxy" in os.environ:
-                dictProxies['http'] = os.environ["http_proxy"]
-                dictProxies['https'] = os.environ["http_proxy"]
-            if "https_proxy" in os.environ:
-                dictProxies['https'] = os.environ["https_proxy"]
-            if dictProxies:
-                proxy_handler = ProxyHandler(dictProxies)
-                opener = build_opener(proxy_handler).open
-            else:
-                opener = urlopen
-
-            logger.info("wget %s/%s" % (cls.url_base, imagename))
-            data = opener("%s/%s" % (cls.url_base, imagename),
-                          data=None, timeout=cls.timeout).read()
-            logger.info("Image %s successfully downloaded." % baseimage)
-
-            try:
-                with open(fullimagename_bz2, "wb") as outfile:
-                    outfile.write(data)
-            except IOError:
-                raise IOError("unable to write downloaded \
-                    data to disk at %s" % cls.image_home)
+            cls.download_file(bzip2name)
 
             if not os.path.isfile(fullimagename_bz2):
                 raise RuntimeError("Could not automatically \
@@ -221,6 +197,45 @@ class UtilsTest(object):
                     raise IOError("unable to write gzipped \
                     data to disk at %s" % cls.image_home)
         return fullimagename
+
+    @classmethod
+    def download_file(cls, filename):
+        """Downloads the requested file from web-server available
+        at https://www.silx.org/pub/silx/
+
+        :param str filename: relative name of the image.
+        :return: full path of the locally saved file.
+        """
+        fullpath = os.path.abspath(os.path.join(cls.image_home, filename))
+        if os.path.exists(fullpath):
+            return fullpath
+
+        logger.info("Trying to download filename %s, timeout set to %ss",
+                    filename, cls.timeout)
+        dictProxies = {}
+        if "http_proxy" in os.environ:
+            dictProxies['http'] = os.environ["http_proxy"]
+            dictProxies['https'] = os.environ["http_proxy"]
+        if "https_proxy" in os.environ:
+            dictProxies['https'] = os.environ["https_proxy"]
+        if dictProxies:
+            proxy_handler = ProxyHandler(dictProxies)
+            opener = build_opener(proxy_handler).open
+        else:
+            opener = urlopen
+
+        logger.info("wget %s/%s" % (cls.url_base, filename))
+        data = opener("%s/%s" % (cls.url_base, filename),
+                      data=None, timeout=cls.timeout).read()
+        logger.info("Filedata %s successfully downloaded." % filename)
+
+        try:
+            with open(fullpath, "wb") as outfile:
+                outfile.write(data)
+        except IOError:
+            raise IOError("Unable to write downloaded \
+                data to disk at %s" % cls.image_home)
+        return fullpath
 
     @classmethod
     def download_images(cls, imgs=None):
