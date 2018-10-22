@@ -130,25 +130,34 @@ class UtilsTest(object):
         :return: list of files with their full path.
         """
         lodn = dirname.lower()
-        if (lodn.endswith("tar") or lodn.endswith("tgz") or
-            lodn.endswith("tbz2") or lodn.endswith("tar.gz") or
-                lodn.endswith("tar.bz2")):
-            import tarfile
-            engine = tarfile.TarFile.open
-        elif lodn.endswith("zip"):
-            import zipfile
-            engine = zipfile.ZipFile
+        supported_extensions = [".tar", ".tgz", ".tbz2", ".tar.gz", ".tar.bz2", ".zip"]
+
+        for ext in supported_extensions:
+            if lodn.endswith(ext):
+                directory_name = dirname[0:-len(ext)]
+                break
         else:
             raise RuntimeError("Unsupported archive format. Only tar and zip "
                                "are currently supported")
+
+        if lodn.endswith(".zip"):
+            import zipfile
+            engine = zipfile.ZipFile
+        else:
+            import tarfile
+            engine = tarfile.TarFile.open
+
         full_path = cls.download_file(dirname)
-        root = os.path.dirname(full_path)
+        directory_home = os.path.join(cls.image_home, directory_name)
+        if not os.path.exists(directory_home):
+            os.mkdir(directory_home)
+
         with engine(full_path, mode="r") as fd:
-            fd.extractall(cls.image_home)
-            if lodn.endswith("zip"):
-                result = [os.path.join(root, i) for i in fd.namelist()]
+            fd.extractall(directory_home)
+            if lodn.endswith(".zip"):
+                result = [os.path.join(directory_home, i) for i in fd.namelist()]
             else:
-                result = [os.path.join(root, i) for i in fd.getnames()]
+                result = [os.path.join(directory_home, i) for i in fd.getnames()]
         return result
 
     @classmethod
