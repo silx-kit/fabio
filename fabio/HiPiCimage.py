@@ -118,8 +118,9 @@ class HipicImage(FabioImage):
         # now read the data into the array
         try:
             self.data = numpy.frombuffer(block, bytecode).copy().reshape((self.dim2, self.dim1))
-        except:
+        except Exception:
             logger.debug("%s %s %s %s %s", len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            logger.debug("Backtrace", exc_info=True)
             raise IOError('Size spec in HiPic-header does not match size of image data field')
         self.bytecode = self.data.dtype.type
 

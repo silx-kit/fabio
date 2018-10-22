@@ -149,7 +149,8 @@ class KcdImage(FabioImage):
 
             try:
                 infile.seek(-expected_size, SEEK_END)
-            except:
+            except Exception:
+                logger.debug("Backtrace", exc_info=True)
                 logger.warning("seeking from end is not implemeneted for file %s", fname)
                 if hasattr(infile, "measure_size"):
                     fileSize = infile.measure_size()

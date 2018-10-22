@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/06/2018"
+__date__ = "22/10/2018"
 
 import os
 import logging
@@ -595,7 +595,7 @@ class FabioImage(object):
                 for class_ in fabioformats.get_classes_from_extension(dest):
                     try:
                         other = class_()
-                    except:
+                    except Exception:
                         pass
 
         elif isinstance(dest, FabioImage):

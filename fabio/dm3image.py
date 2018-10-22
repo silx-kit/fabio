@@ -174,7 +174,8 @@ class Dm3Image(FabioImage):
             # This is data
             try:
                 key = tag_label.decode("latin-1")
-            except:
+            except Exception:
+                # FIXME: Not very safe decodage
                 key = "None"
             value = self.read_tag_type()
             if isinstance(value, binary_type):

@@ -105,7 +105,8 @@ class BinaryImage(FabioImage):
                 f.seek(-size + offset + 1, 2)  # seek from EOF backwards
             except IOError:
                 logger.warning('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
-            except:
+            except Exception:
+                logger.debug("Backtrace", exc_info=True)
                 logger.error('Uncommon error encountered when reading file')
         rawData = f.read(size)
         data = numpy.frombuffer(rawData, bytecode).copy().reshape(tuple(dims))

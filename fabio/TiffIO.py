@@ -450,7 +450,7 @@ class TiffIO(object):
             try:
                 if imageDescription.upper().startswith("IMAGEJ"):
                     software = imageDescription.split("=")[0]
-            except:
+            except Exception:
                 pass
 
         if TAG_DATE in tagIDList:
@@ -569,7 +569,8 @@ class TiffIO(object):
             self._forceMonoOutput = False
             info = self._readInfo(nImage, close=False)
             self._forceMonoOutput = oldMono
-        except:
+        except Exception:
+            logger.debug("Backtrace", exc_info=True)
             self._forceMonoOutput = oldMono
             raise
         compression = info['compression']
@@ -705,7 +706,7 @@ class TiffIO(object):
                 if compression_type == 32773:
                     try:
                         bufferBytes = bytes()
-                    except:
+                    except Exception:
                         # python 2.5 ...
                         bufferBytes = ""
                     # packBits
