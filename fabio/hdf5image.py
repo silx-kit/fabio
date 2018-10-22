@@ -54,9 +54,6 @@ from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 
-if sys.version_info[0] < 3:
-    bytes = str
-
 try:
     import h5py
 except ImportError:

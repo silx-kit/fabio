@@ -41,16 +41,14 @@ __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
 __version__ = "29 Oct 2013"
+
 import logging
-import sys
 import numpy
+
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 
 logger = logging.getLogger(__name__)
-
-if sys.version_info < (3, 0):
-    bytes = str
 
 
 class MrcImage(FabioImage):

@@ -40,7 +40,7 @@ from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "25/06/2018"
+__date__ = "22/10/2018"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -51,15 +51,9 @@ import logging
 import subprocess
 import numpy
 
-try:
-    from .third_party import six
-except ImportError:
-    import six
-
-if six.PY2:
-    bytes = str
-
 logger = logging.getLogger(__name__)
+
+from .third_party import six
 
 try:
     from .third_party import gzip
@@ -454,7 +448,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_
         stream.seek(0)
         raw = stream.read()
     else:
-        raw = bytes(stream)
+        raw = six.binary_type(stream)
 
     return uncompress_pck(raw, dim1, dim2, overflowPix, version, normal_start, swap_needed)
 
