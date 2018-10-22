@@ -1,4 +1,4 @@
-python-fabio (0.3.0b3-1~bpo8+2) jessie-backports; urgency=medium
+fabio (0.3.0b3-1~bpo8+2) jessie-backports; urgency=medium
 
   * Rebuild for jessie-backports.
   * fabio snapshot  built for debian 8
