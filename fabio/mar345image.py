@@ -49,7 +49,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "27/07/2017"
+__date__ = "22/10/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -57,9 +57,10 @@ __licence__ = "MIT"
 
 import struct
 import time
-import sys
 import logging
 import numpy
+
+import fabio
 from .fabioimage import FabioImage
 
 
@@ -250,10 +251,7 @@ class Mar345Image(FabioImage):
         :return: string (unicode) containing the mar345 header
 
         """
-        try:
-            version = sys.modules["fabio"].version
-        except (KeyError, AttributeError):
-            version = "0.1.1"
+        version = fabio.version
         lnsep = len(linesep)
 
         lstout = ['mar research'.ljust(64 - lnsep)]

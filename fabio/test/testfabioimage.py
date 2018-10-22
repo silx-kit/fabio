@@ -37,7 +37,7 @@ from .utilstest import UtilsTest
 
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from ..fabioimage import fabioimage
 from .. import fabioutils
 from ..utils import pilutils

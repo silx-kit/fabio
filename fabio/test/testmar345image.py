@@ -38,7 +38,7 @@ from .utilstest import UtilsTest
 
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.mar345image import mar345image
 
 # filename dim1 dim2 min max mean stddev

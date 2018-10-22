@@ -39,7 +39,7 @@ import time
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.cbfimage import cbfimage
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
 from fabio.third_party.six import PY3

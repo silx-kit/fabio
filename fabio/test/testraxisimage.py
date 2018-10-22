@@ -34,7 +34,7 @@ import logging
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.raxisimage import raxisimage
 
 

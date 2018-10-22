@@ -45,7 +45,7 @@ import os
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.dm3image import Dm3Image
 
 

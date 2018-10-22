@@ -36,7 +36,7 @@ from .utilstest import UtilsTest
 
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from ..kcdimage import kcdimage
 from ..openimage import openimage
 

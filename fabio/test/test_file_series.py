@@ -35,7 +35,7 @@ import bz2
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.file_series import numbered_file_series, file_series
 
 

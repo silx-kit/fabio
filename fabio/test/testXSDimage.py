@@ -33,7 +33,7 @@ import sys
 from .utilstest import UtilsTest
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 
 import fabio.xsdimage
 import numpy

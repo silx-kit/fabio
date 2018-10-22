@@ -39,7 +39,7 @@ from .utilstest import UtilsTest
 
 
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 
 CASES = [
     (1, 'edf', "data0001.edf"),

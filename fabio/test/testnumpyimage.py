@@ -32,7 +32,7 @@ import unittest
 from .utilstest import UtilsTest
 import numpy
 logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.numpyimage import NumpyImage
 from fabio.openimage import openimage
 
