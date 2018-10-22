@@ -39,7 +39,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 """
 # get ready for python3
 from __future__ import with_statement, print_function
-import sys
 import logging
 import numpy
 from .fabioimage import FabioImage
@@ -58,7 +57,7 @@ DATA_TYPES = {2: numpy.int16,
               15: 'Struct',
               18: None,
               20: None
-               }
+              }
 
 DATA_BYTES = {2: 2,
               4: 2,

@@ -45,6 +45,7 @@ import numpy
 import sys
 import struct
 from .fabioimage import FabioImage
+
 if sys.version < '3':
     bytes = str
 

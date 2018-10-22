@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "25/06/2018"
+__date__ = "22/10/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -211,8 +211,7 @@ GE_HEADER_INFO = [
     ('NumberOfColumns128', 2, '<H'),
     ('NumberOfRows128', 2, '<H'),
     ('VFPAquisition', 2000, None),
-    ('Comment', 200, None)
-    ]
+    ('Comment', 200, None)]
 
 
 class GeImage(FabioImage):
@@ -266,17 +265,17 @@ class GeImage(FabioImage):
         """
         if(img_num > self.nframes or img_num < 0):
             raise Exception("Bad image number")
-        imgstart = self.header['StandardHeaderSizeInBytes'] + \
-                   self.header['UserHeaderSizeInBytes'] + \
-                   img_num * self.header['NumberOfRowsInFrame'] * \
-                   self.header['NumberOfColsInFrame'] * \
-                   self.header['ImageDepthInBits'] // 8
+        imgstart = (self.header['StandardHeaderSizeInBytes'] +
+                    self.header['UserHeaderSizeInBytes'] +
+                    img_num * self.header['NumberOfRowsInFrame'] *
+                    self.header['NumberOfColsInFrame'] *
+                    self.header['ImageDepthInBits'] // 8)
         # whence = 0 means seek from start of file
         filepointer.seek(imgstart, 0)
 
         self.bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
-        imglength = self.header['NumberOfRowsInFrame'] * \
-                    self.header['NumberOfColsInFrame'] * self.bpp
+        imglength = (self.header['NumberOfRowsInFrame'] *
+                     self.header['NumberOfColsInFrame'] * self.bpp)
         if self.bpp != 2:
             logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
 

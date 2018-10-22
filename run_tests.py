@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "28/07/2017"
+__date__ = "22/10/2018"
 __license__ = "MIT"
 
 import distutils.util
@@ -197,7 +197,7 @@ class ProfileTextTestResult(unittest.TextTestRunner.resultclass):
         else:
             memusage = 0
         self.logger.info("Time: %.3fs \t RAM: %.3f Mb\t%s",
-            time.time() - self.__time_start, memusage, test.id())
+                         time.time() - self.__time_start, memusage, test.id())
 
 
 def report_rst(cov, package, version="0.0.0", base=""):

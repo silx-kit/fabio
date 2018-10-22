@@ -46,8 +46,10 @@ import sys
 import numpy
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
+
 logger = logging.getLogger(__name__)
-if sys.version_info < (3,0):
+
+if sys.version_info < (3, 0):
     bytes = str
 
 
@@ -58,7 +60,7 @@ class MrcImage(FabioImage):
 
     DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
 
-    DEFAULT_EXTENSIONS = ["mrc","map", "fei"]
+    DEFAULT_EXTENSIONS = ["mrc", "map", "fei"]
 
     KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
             "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",
@@ -81,7 +83,7 @@ class MrcImage(FabioImage):
             self.header[key] = value
         if self.header["MAP"] != 542130509:
             logger.info("Expected 'MAP ', got %s", self.header["MAP"].tostring())
-        
+
         for i in range(10):
             label = "LABEL_%02i" % i
             self.header[label] = infile.read(80).strip()

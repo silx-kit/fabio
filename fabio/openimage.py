@@ -46,7 +46,7 @@ import os.path
 import logging
 logger = logging.getLogger(__name__)
 from . import fabioutils
-from .fabioutils import FilenameObject, six, BytesIO
+from .fabioutils import FilenameObject, BytesIO
 from .fabioimage import FabioImage
 
 # Make sure to load all formats
@@ -166,7 +166,6 @@ def _openimage(filename):
     hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
 
     """
-    url = None
     if hasattr(filename, "seek") and hasattr(filename, "read"):
         # Looks to be a file containing filenames
         if not isinstance(filename, BytesIO):
