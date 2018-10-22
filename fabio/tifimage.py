@@ -46,7 +46,7 @@ License: MIT
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "25/06/2018"
+__date__ = "22/10/2018"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -173,18 +173,21 @@ class TifImage(FabioImage):
             try:
                 self._read_with_tiffio(infile)
             except Exception as error:
-                infile.seek(0)
                 logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
                 logger.debug("Backtrace", exc_info=True)
+                infile.seek(0)
 
         if self.lib is None:
             if _USE_PIL and PIL is not None:
                 try:
                     self._read_with_pil(infile)
                 except Exception:
-                    infile.seek(0)
-                    logger.error("Error in opening %s  with PIL" % fname)
+                    logger.error("Error in opening %s with PIL" % fname)
                     logger.debug("Backtrace", exc_info=True)
+                    if infile.closed:
+                        infile = self._open(fname, "rb")
+                    else:
+                        infile.close()
 
         if self.lib is None:
             logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
