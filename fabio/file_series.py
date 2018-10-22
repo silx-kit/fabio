@@ -49,7 +49,6 @@ from __future__ import absolute_import, print_function, with_statement, division
 import logging
 import sys
 logger = logging.getLogger(__name__)
-import traceback as pytraceback
 
 from .fabioutils import FilenameObject, next_filename
 
@@ -78,10 +77,9 @@ def new_file_series0(first_object, first=None, last=None, step=1):
             newim = im.next()
             im = newim
         except Exception as error:
-            pytraceback.print_exc()
-
             # Skip bad images
             logger.warning("Got a problem here: %s", error)
+            logger.debug("Backtrace", exc_info=True)
             try:
                 im.filename = next_filename(im.filename)
             except Exception as error:
@@ -104,8 +102,8 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
     :param nimages:  the maximum number of images to consider
         step: step size, will yield the first and every step'th image until nimages
         is reached.  (e.g. nimages = 5, step = 2 will yield 3 images (0, 2, 4)
-    :param traceback: if True causes it to print a traceback in the event of an
-        exception (missing image, etc.).  Otherwise the calling routine can handle
+    :param traceback: if True causes it to print a traceback in the event as a
+        logging error. Otherwise the exception is logged as a debug message.
         the exception as it chooses
     :param yields: the next fabioimage in the series.
         In the event there is an exception, it yields the sys.exec_info for the
@@ -115,14 +113,13 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
 
     Suggested usage:
 
-    ::
+    .. code-block:: python
 
         for obj in new_file_series( ... ):
-          if not isinstance(obj, fabio.fabioimage.fabioimage ):
-            # deal with errors like missing images, non readable files, etc
-            # e.g.
-            traceback.print_exception(obj[0], obj[1], obj[2])
-
+            if not isinstance(obj, fabio.fabioimage.FabioImage):
+                # In case of problem (missing images, non readable files, etc)
+                # obj contains the result of exc_info
+                traceback.print_exception(obj[0], obj[1], obj[2])
     """
     im = first_object
     nprocessed = 0
@@ -137,10 +134,12 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             retVal = im
         except Exception as ex:
             retVal = sys.exc_info()
+            # Skip bad images
+            logger.warning("Got a problem here: next() failed %s", ex)
             if(traceback):
-                pytraceback.print_exc()
-                # Skip bad images
-                logger.warning("Got a problem here: next() failed %s", ex)
+                logger.error("Backtrace", exc_info=True)
+            else:
+                logger.debug("Backtrace", exc_info=True)
             # Skip bad images
             try:
                 im.filename = next_filename(im.filename)
