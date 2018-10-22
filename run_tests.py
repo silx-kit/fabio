@@ -366,10 +366,10 @@ if (os.path.dirname(os.path.abspath(__file__)) ==
 if options.installed:  # Use installed version
     try:
         module = importer(PROJECT_NAME)
-    except:
-        raise ImportError(
-            "%s not installed: Cannot run tests on installed version" %
-            PROJECT_NAME)
+    except Exception:
+        logger.error("Cannot run tests on installed version: %s not installed or raising error.",
+                     PROJECT_NAME)
+        raise
 else:  # Use built source
     build_dir = build_project(PROJECT_NAME, PROJECT_DIR)
 
