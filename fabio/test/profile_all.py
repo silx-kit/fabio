@@ -40,7 +40,6 @@ __date__ = "22/10/2018"
 import sys
 import unittest
 import time
-from .utilstest import UtilsTest
 
 from . import test_all
 
@@ -60,9 +59,10 @@ class TestResult(unittest.TestResult):
 
     def stopTest(self, test):
         unittest.TestResult.stopTest(self, test)
-        profiler.info("Time: %.3fs \t RAM: %.3f Mb\t%s" % (time.time() - self.__time_start,
-                                                          (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start) / 1e3,
-                                                          test.id()))
+        params = (time.time() - self.__time_start,
+                  (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start) / 1e3,
+                  test.id())
+        profiler.info("Time: %.3fs \t RAM: %.3f Mb\t%s" % params)
 
 
 class ProfileTestRunner(unittest.TextTestRunner):

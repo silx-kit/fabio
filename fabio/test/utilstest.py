@@ -328,4 +328,3 @@ class UtilsTest(object):
         logger.warning("Script '%s' not found in paths: %s", script, ":".join(paths))
         script_path = script
         return script_path, env
-

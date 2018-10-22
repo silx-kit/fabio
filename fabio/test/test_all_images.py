@@ -12,6 +12,7 @@ from ..third_party import gzip
 import bz2
 import pstats
 import sys
+
 try:
     import cProfile
 except ImportError:
@@ -61,10 +62,9 @@ for im in images:
         fim = fabio.openimage.openimage(im)
     except KeyboardInterrupt:
         raise
-    except:
-        print("Problem with", im)
+    except Exception:
+        print("Problem with image %s" % im)
         continue
-        # raise
     times[im].append(time.clock() - start)
     nt = 3
     ns = 2
@@ -90,8 +90,8 @@ for im in images:
     # Speed ratings in megabytes per second (for fabio)
     MB = len(the_file) / 1024.0 / 1024.0
     try:
-        print(("%.4f "*nt + " "*7 * ns) % tuple(times[im]), "%8.3f" % (MB), im)
-    except:
+        print(("%.4f " * nt + " " * 7 * ns) % tuple(times[im]), "%8.3f" % (MB), im)
+    except Exception:
         print(times[im], MB, im)
         raise
 

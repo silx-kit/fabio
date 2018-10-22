@@ -65,7 +65,7 @@ OVERFLOWS = [
     ["%09d" % 4194304, ("%07d" % (127 * 256 + 128))],
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 127))],
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))]
-    ]
+]
 
 
 class TestBruker(unittest.TestCase):
@@ -152,6 +152,7 @@ class TestBrukerLinear(unittest.TestCase):
         unittest.TestCase.tearDown(self)
         if os.path.exists(self.filename):
             os.unlink(self.filename)
+
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

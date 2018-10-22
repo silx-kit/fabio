@@ -66,7 +66,7 @@ CASES = [
     (2, 'adsc_or_oxd_or_hipic_or_raxis', 'mb_LP_1_002.img.gz'),
     (3, 'adsc_or_oxd_or_hipic_or_raxis', 'mb_LP_1_003.img.bz2'),
     (3, 'adsc_or_oxd_or_hipic_or_raxis', os.path.join("data", 'mb_LP_1_003.img.bz2')),
-    ]
+]
 
 
 MORE_CASES = [
@@ -84,7 +84,7 @@ MORE_CASES = [
     ("image.0123", "image.1234", 123),
     ("mymask.msk", "mymask.msk", None),
     ("data_123.mccd.bz2", "data_001.mccd.bz2", 123)
-    ]
+]
 
 
 class TestFilenames(unittest.TestCase):
