@@ -28,14 +28,11 @@ builds on stuff from ImageD11.test.testpeaksearch
 Jerome Kieffer 04/12/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
+import logging
 
-from .utilstest import UtilsTest
-
-
-logger = UtilsTest.get_logger(__file__)
-import fabio
+logger = logging.getLogger(__name__)
 
 from fabio.openimage import openimage
 from fabio.edfimage import edfimage
@@ -44,6 +41,7 @@ from fabio.fit2dmaskimage import fit2dmaskimage
 from fabio.OXDimage import OXDimage
 from fabio.brukerimage import brukerimage
 from fabio.adscimage import adscimage
+from .utilstest import UtilsTest
 
 
 class TestOpenEdf(unittest.TestCase):

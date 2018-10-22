@@ -28,18 +28,17 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import numpy
 import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from fabio.mar345image import mar345image
+from .utilstest import UtilsTest
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67

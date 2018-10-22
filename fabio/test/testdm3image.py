@@ -39,15 +39,14 @@ __author__ = "jerome Kieffer"
 
 
 import unittest
-import sys
 import os
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from fabio.dm3image import Dm3Image
-
+from .utilstest import UtilsTest
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

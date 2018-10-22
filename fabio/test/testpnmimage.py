@@ -30,16 +30,15 @@ Jerome Kieffer, 04/12/2014
 __author__ = "Jerome Kieffer"
 __date__ = "22/10/2018"
 import os
-import sys
 import unittest
 import numpy
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-import fabio
 from fabio.pnmimage import pnmimage
 from fabio.openimage import openimage
+from .utilstest import UtilsTest
 
 
 class TestPNM(unittest.TestCase):

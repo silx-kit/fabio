@@ -25,12 +25,14 @@
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import os
+import logging
+
+logger = logging.getLogger(__name__)
+
 from .utilstest import UtilsTest
-
-logger = UtilsTest.get_logger(__file__)
-
 from .. import nexus
 
 

@@ -33,14 +33,14 @@ import sys
 import os
 import numpy
 import copy
-from .utilstest import UtilsTest
+import logging
 
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-import fabio
 from ..fabioimage import fabioimage
 from .. import fabioutils
 from ..utils import pilutils
+from .utilstest import UtilsTest
 
 try:
     import pathlib

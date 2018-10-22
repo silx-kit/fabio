@@ -23,13 +23,14 @@
 #
 """Multiwire Unit tests"""
 from __future__ import print_function, with_statement, division, absolute_import
-import unittest
-import sys
-import os
-from .utilstest import UtilsTest
 
-logger = UtilsTest.get_logger(__file__)
+import unittest
+import logging
+
+logger = logging.getLogger(__name__)
+
 import fabio
+from .utilstest import UtilsTest
 
 
 class TestMpa(unittest.TestCase):

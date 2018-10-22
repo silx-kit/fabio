@@ -36,16 +36,17 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher/Univeristy Köln, Germany"
-__date__ = "27/07/2017"
+__date__ = "22/10/2018"
 
 import unittest
-import sys
 import numpy
+import logging
 
-from .utilstest import UtilsTest
-logger = UtilsTest.get_logger(__file__)
+logger = logging.getLogger(__name__)
+
 import fabio
 from fabio.speimage import SpeImage
+from .utilstest import UtilsTest
 
 
 class TestSpeImage(unittest.TestCase):

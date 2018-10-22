@@ -39,14 +39,11 @@ __copyright__ = "2011-2016 ESRF"
 __date__ = "22/10/2018"
 
 import unittest
-import sys
 import numpy
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-import fabio
 from fabio import compression
 
 

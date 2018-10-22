@@ -38,15 +38,14 @@ __date__ = "2016-11-23"
 __contact__ = "jerome.kieffer@esrf.fr"
 
 import unittest
-import sys
 import os
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from fabio.OXDimage import OXDimage
+from .utilstest import UtilsTest
 
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0

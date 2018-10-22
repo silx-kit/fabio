@@ -28,16 +28,18 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
 from .utilstest import UtilsTest
 
 
-logger = UtilsTest.get_logger(__file__)
-import fabio
+logger = logging.getLogger(__name__)
+
 from fabio.GEimage import GEimage
+
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """GE_aSI_detector_image_1529      2048 2048 1515 16353 1833.0311 56.9124
                 GE_aSI_detector_image_1529.gz   2048 2048 1515 16353 1833.0311 56.9124

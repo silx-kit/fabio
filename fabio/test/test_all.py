@@ -25,13 +25,12 @@
 """Test suite for all fabio modules."""
 from __future__ import print_function, with_statement, division, absolute_import
 
-import unittest
 import sys
-from .utilstest import UtilsTest
+import logging
+import unittest
 
-logger = UtilsTest.get_logger(__file__)
+logger = logging.getLogger(__name__)
 
-import fabio
 from . import testfabioimage
 from . import testedfimage
 from . import testcbfimage
@@ -72,6 +71,7 @@ from . import test_failing_files
 from . import test_formats
 from . import test_image_convert
 from . import testmrcimage
+
 
 def suite():
     testSuite = unittest.TestSuite()

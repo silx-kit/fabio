@@ -27,11 +27,12 @@ Test cases for the Next/Previous ...
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
-import unittest
-import sys
-from .utilstest import UtilsTest
 
-logger = UtilsTest.get_logger(__file__)
+import unittest
+import logging
+
+logger = logging.getLogger(__name__)
+
 import fabio
 
 

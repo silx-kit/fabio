@@ -28,18 +28,18 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import numpy
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-import fabio
 from ..tifimage import tifimage
 from ..marccdimage import marccdimage
+from .utilstest import UtilsTest
+
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

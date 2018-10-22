@@ -29,22 +29,20 @@
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
 import numpy
 import tempfile
 import shutil
 import io
-import fabio.edfimage
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from ..edfimage import edfimage
 from ..third_party import six
 from ..fabioutils import GzipFile, BZ2File
+from .utilstest import UtilsTest
 
 
 class TestFlatEdfs(unittest.TestCase):

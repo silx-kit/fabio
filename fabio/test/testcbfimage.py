@@ -31,19 +31,21 @@ http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import time
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from fabio.cbfimage import cbfimage
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
 from fabio.third_party.six import PY3
+from .utilstest import UtilsTest
 if PY3:
+    # FIXME: it have to be removed
     from fabio.fabioutils import unicode
 
 

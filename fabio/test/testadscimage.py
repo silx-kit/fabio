@@ -31,14 +31,15 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
 from .utilstest import UtilsTest
 
-logger = UtilsTest.get_logger(__file__)
-import fabio
+logger = logging.getLogger(__name__)
+
 from fabio.adscimage import adscimage
 from fabio.edfimage import edfimage
 

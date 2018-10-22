@@ -29,14 +29,11 @@ test cases for fileseries
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
-import bz2
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-import fabio
-from fabio.file_series import numbered_file_series, file_series
+from ..file_series import numbered_file_series, file_series
 
 
 class TestRandomSeries(unittest.TestCase):

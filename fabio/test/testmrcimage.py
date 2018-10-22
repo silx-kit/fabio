@@ -28,17 +28,17 @@ Test for MRC file format imagess.
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from ..mrcimage import MrcImage
 from ..openimage import openimage
+from .utilstest import UtilsTest
 
 
 class TestMrc(unittest.TestCase):

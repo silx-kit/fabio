@@ -14,17 +14,14 @@
 
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
+import logging
 
-from .utilstest import UtilsTest
-
-
-logger = UtilsTest.get_logger(__file__)
-import fabio
+logger = logging.getLogger(__name__)
 
 from fabio.openimage import openimage
 from fabio.eigerimage import EigerImage, h5py
+from .utilstest import UtilsTest
 
 
 def make_hdf5(name, shape=(50, 99, 101)):

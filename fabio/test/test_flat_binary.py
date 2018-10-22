@@ -29,12 +29,12 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
+import logging
 
 from .utilstest import UtilsTest
 
-logger = UtilsTest.get_logger(__file__)
+logger = logging.getLogger(__name__)
 import fabio
 
 

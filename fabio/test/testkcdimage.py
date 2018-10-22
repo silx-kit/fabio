@@ -28,17 +28,17 @@ Test for Nonius Kappa CCD cameras.
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from ..kcdimage import kcdimage
 from ..openimage import openimage
+from .utilstest import UtilsTest
 
 
 class TestKcd(unittest.TestCase):

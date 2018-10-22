@@ -36,15 +36,14 @@ __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
 __date__ = "22/10/2018"
 
 import unittest
-import sys
 import numpy
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from fabio.fit2dimage import fit2dimage
+from .utilstest import UtilsTest
 
 
 class TestFit2DImage(unittest.TestCase):

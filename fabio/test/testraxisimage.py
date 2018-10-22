@@ -26,16 +26,16 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division
+
 import unittest
-import sys
 import os
 import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from fabio.raxisimage import raxisimage
+from .utilstest import UtilsTest
 
 
 # filename dim1 dim2 min max mean stddev

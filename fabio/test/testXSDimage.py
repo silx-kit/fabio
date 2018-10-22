@@ -28,15 +28,15 @@
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
-import unittest
-import sys
-from .utilstest import UtilsTest
 
-logger = UtilsTest.get_logger(__file__)
-import fabio
+import unittest
+import numpy
+import logging
+
+logger = logging.getLogger(__name__)
 
 import fabio.xsdimage
-import numpy
+from .utilstest import UtilsTest
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15

@@ -25,14 +25,14 @@
 
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
+import logging
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
 import fabio
 from fabio import tifimage
+from .utilstest import UtilsTest
 
 
 class TestTif(unittest.TestCase):

@@ -26,15 +26,17 @@ Test for numpy images.
 """
 __author__ = "Jérôme Kieffer"
 __date__ = "22/10/2018"
+
 import os
-import sys
 import unittest
-from .utilstest import UtilsTest
 import numpy
-logger = UtilsTest.get_logger(__file__)
-import fabio
+import logging
+
+logger = logging.getLogger(__name__)
+
 from fabio.numpyimage import NumpyImage
 from fabio.openimage import openimage
+from .utilstest import UtilsTest
 
 
 class TestNumpy(unittest.TestCase):
