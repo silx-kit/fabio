@@ -1061,20 +1061,21 @@ class EdfImage(FabioImage):
     @classmethod
     def lazy_iterator(cls, filename):
         """Iterates over the frames of an EDF multi-frame file.
-    
+
         This function optimizes sequential access to multi-frame EDF files
         by avoiding to read the whole file at first in order to get the number
         of frames and build an index of frames for faster random access.
-    
+
         Usage:
-    
-        >>> from fabio.edfimage import edf_lazy_iterator
-    
-        >>> for frame in edf_lazy_iterator("multiframe.edf"):
+
+        >>> from fabio.edfimage import EdfImage
+
+        >>> for frame in EdfImage.lazy_iterator("multiframe.edf"):
         ...     print('Header:', frame.header)
         ...     print('Data:', frame.data)
-    
+
         :param str filename: File name of the EDF file to read
+        :yield: frames one after the other
         """
         edf = cls()
         infile = edf._open(filename, 'rb')
