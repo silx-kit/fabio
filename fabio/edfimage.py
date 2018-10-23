@@ -252,7 +252,7 @@ class Frame(object):
             self.size = calcsize
         elif (self.size != calcsize):
             if self._data_compression is None:
-                logger.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
+                logger.warning("Mismatch between the expected size %s and the calculated one %s", self.size, calcsize)
                 self.size = calcsize
 
         for i, n in enumerate(self.dims):
