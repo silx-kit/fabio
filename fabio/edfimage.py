@@ -1122,4 +1122,3 @@ class EdfImage(FabioImage):
 
 
 edfimage = EdfImage
-edf_lazy_iterator = EdfImage.lazy_iterator
