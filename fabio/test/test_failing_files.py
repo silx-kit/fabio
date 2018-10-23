@@ -88,10 +88,14 @@ class TestFailingFiles(unittest.TestCase):
         self.assertRaises(IOError, fabio.open, self.txt_filename)
 
     def test_wrong_edf(self):
-        self.assertRaises(IOError, fabio.open, self.bad_edf_filename)
+        with self.assertRaises(IOError):
+            image = fabio.open(self.bad_edf_filename)
+            image.data
 
     def test_wrong_edf2(self):
-        self.assertRaises(IOError, fabio.open, self.bad_edf_filename)
+        with self.assertRaises(IOError):
+            image = fabio.open(self.bad_edf2_filename)
+            image.data
 
     def test_wrong_msk(self):
         self.assertRaises(ValueError, fabio.open, self.bad_msk_filename)

@@ -122,6 +122,9 @@ DEFAULT_VALUES = {}
 # JK20110415
 
 
+LAZY_LOADING_ENABLED = True
+
+
 class MalformedHeaderError(IOError):
     """Raised when a header is malformed"""
     pass
@@ -529,6 +532,7 @@ class EdfImage(FabioImage):
         self.currentframe = 0
         self.filesize = None
         self._incomplete_file = False
+        self._frames = None
 
         if data is None:
             # In case of creation of an empty instance
@@ -555,8 +559,8 @@ class EdfImage(FabioImage):
         FabioImage.__init__(self, stored_data, header)
 
         if frames is None:
-            frame = EdfFrame(data=self.data, header=self.header,
-                             number=self.currentframe)
+            frame = EdfFrame(data=super(EdfImage, self).data, header=super(EdfImage, self).header,
+                          number=self.currentframe)
             self._frames = [frame]
         else:
             self._frames = frames
@@ -669,6 +673,19 @@ class EdfImage(FabioImage):
         """
         return self._incomplete_file
 
+    def _synchronize_file(self):
+        """Synchronize the FabioImage with the loaded file in case is was lazy
+        loaded"""
+        if not LAZY_LOADING_ENABLED:
+            return
+        if self._frames is not None:
+            # Already loaded
+            return
+        if self.filename is None:
+            # Image not readed from file
+            return
+        self._read()
+
     def _readheader(self, infile):
         """
         Read all headers in a file and populate self.header
@@ -719,7 +736,7 @@ class EdfImage(FabioImage):
                 logger.warning("Position is %s" % infile.tell())
                 logger.warning("size is %s" % size)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
-                raise Exception(error)
+                raise
 
         for frame in self._frames:
             frame._check_header_mandatory_keys(filename=self.filename)
@@ -733,6 +750,22 @@ class EdfImage(FabioImage):
         self.resetvals()
         self.filename = fname
 
+        if frame is None:
+            if LAZY_LOADING_ENABLED:
+                self._frames = None
+                return self
+
+        self._read(fname, frame)
+        return self
+
+    def _read(self, fname=None, frame=None):
+        """
+        Read in header into self.header and
+            the data   into self.data
+        """
+        # FIXME infile is open here, it should be closed here too
+        if fname is None:
+            fname = self.filename
         infile = self._open(fname, "rb")
         try:
             self._readheader(infile)
@@ -746,9 +779,9 @@ class EdfImage(FabioImage):
             # ensure the PIL image is reset
             self.pilimage = None
         except Exception as e:
+            logger.debug("Backtrace", exc_info=True)
             infile.close()
-            raise e
-        return self
+            raise IOError(e)
 
     def swap_needed(self):
         """
@@ -756,6 +789,7 @@ class EdfImage(FabioImage):
 
         :return: True if needed, False else and None if not understood
         """
+        self._synchronize_file()
         return self._frames[self.currentframe].swap_needed()
 
     def unpack(self):
@@ -764,10 +798,12 @@ class EdfImage(FabioImage):
 
         :return: dataset as numpy.ndarray
         """
+        self._synchronize_file()
         return self._frames[self.currentframe].getData()
 
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a FabioImage """
+        self._synchronize_file()
         newImage = None
         if self.nframes == 1:
             logger.debug("Single frame EDF; having FabioImage default behavior: %s" % num)
@@ -816,6 +852,7 @@ class EdfImage(FabioImage):
         :param force_type: can be numpy.uint16 or simply "float"
         """
         # correct for bug #27: read all data before opening the file in write mode
+        self._synchronize_file()
         if fname == self.filename:
             [(frame.header, frame.data) for frame in self._frames]
             # this is thrown away
@@ -830,6 +867,7 @@ class EdfImage(FabioImage):
         :param frame: frame to append to edf image
         :type frame: instance of Frame
         """
+        self._synchronize_file()
         if isinstance(frame, EdfFrame):
             self._frames.append(frame)
         elif ("header" in dir(frame)) and ("data" in dir(frame)):
@@ -842,6 +880,7 @@ class EdfImage(FabioImage):
         Method used to remove a frame from an EDF image. by default the last one is removed.
         :param int frameNb: frame number to remove, by  default the last.
         """
+        self._synchronize_file()
         if frameNb is None:
             self._frames.pop()
         else:
@@ -854,6 +893,7 @@ class EdfImage(FabioImage):
 
         :return: data from another file using positions from current EdfImage
         """
+        self._synchronize_file()
         if (filename is None) or not os.path.isfile(filename):
             raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
         data = None
@@ -878,6 +918,7 @@ class EdfImage(FabioImage):
         :return: ROI-data from another file using positions from current EdfImage
         :rtype: numpy 2darray
         """
+        self._synchronize_file()
         if (filename is None) or not os.path.isfile(filename):
             raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
         data = None
@@ -917,6 +958,7 @@ class EdfImage(FabioImage):
     def _get_any_frame(self):
         """Returns the current if available, else create and return a new empty
         frame."""
+        self._synchronize_file()
         try:
             return self._frames[self.currentframe]
         except AttributeError:
@@ -934,12 +976,14 @@ class EdfImage(FabioImage):
         """
         Getter for number of frames
         """
+        self._synchronize_file()
         return len(self._frames)
 
     def setNbFrames(self, val):
         """
         Setter for number of frames ... should do nothing. Here just to avoid bugs
         """
+        self._synchronize_file()
         if val != len(self._frames):
             logger.warning("Setting the number of frames is not allowed.")
 
@@ -949,6 +993,7 @@ class EdfImage(FabioImage):
         """
         Getter for the headers. used by the property header,
         """
+        self._synchronize_file()
         return self._frames[self.currentframe].header
 
     def setHeader(self, _dictHeader):
@@ -962,6 +1007,7 @@ class EdfImage(FabioImage):
         """
         Deleter for edf header
         """
+        self._synchronize_file()
         self._frames[self.currentframe].header = {}
 
     header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
@@ -991,11 +1037,13 @@ class EdfImage(FabioImage):
         """
         deleter for edf Data
         """
+        self._synchronize_file()
         self._frames[self.currentframe].data = None
 
     data = property(getData, setData, delData, "property: data of EDF file")
 
     def getDim1(self):
+        self._synchronize_file()
         return self._frames[self.currentframe].dim1
 
     def setDim1(self, iVal=None, _iVal=None):
@@ -1008,6 +1056,7 @@ class EdfImage(FabioImage):
     dim1 = property(getDim1, setDim1)
 
     def getDim2(self):
+        self._synchronize_file()
         return self._frames[self.currentframe].dim2
 
     def setDim2(self, iVal=None, _iVal=None):
@@ -1020,7 +1069,9 @@ class EdfImage(FabioImage):
     dim2 = property(getDim2, setDim2)
 
     def getDims(self):
+        self._synchronize_file()
         return self._frames[self.currentframe].dims
+
     dims = property(getDims)
 
     def getByteCode(self):
@@ -1036,6 +1087,7 @@ class EdfImage(FabioImage):
     bytecode = property(getByteCode, setByteCode)
 
     def getBpp(self):
+        self._synchronize_file()
         return self._frames[self.currentframe].bpp
 
     def setBpp(self, iVal=None, _iVal=None):
@@ -1048,42 +1100,44 @@ class EdfImage(FabioImage):
     bpp = property(getBpp, setBpp)
 
     def isIncompleteData(self):
+        self._synchronize_file()
         return self._frames[self.currentframe].incomplete_data
 
     incomplete_data = property(isIncompleteData)
 
-    @classmethod
-    def lazy_iterator(cls, filename):
+    def frames(self):
         """Iterates over the frames of an EDF multi-frame file.
 
         This function optimizes sequential access to multi-frame EDF files
         by avoiding to read the whole file at first in order to get the number
         of frames and build an index of frames for faster random access.
-
-        Usage:
-
-        >>> from fabio.edfimage import EdfImage
-
-        >>> for frame in EdfImage.lazy_iterator("multiframe.edf"):
-        ...     print('Header:', frame.header)
-        ...     print('Data:', frame.data)
-
-        :param str filename: File name of the EDF file to read
-        :yield: frames one after the other
         """
-        edf = cls()
-        infile = edf._open(filename, 'rb')
+        if self._frames is not None:
+            return iter(self._frames)
+        else:
+            return self._read_and_iter_frames()
+
+    def _read_and_iter_frames(self):
+        filename = self.filename
+        infile = self._open(filename, 'rb')
 
         index = 0
+        frames = []
+
+        # Invalidate the frames
+        # It while raise an error instead of loading again the file
+        # FIXME: it have to be done in a clean way
+        self._frames = ""
 
         while True:
             try:
-                block = cls._readHeaderBlock(infile, index)
+                block = self._readHeaderBlock(infile, index)
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if index == 0:
                     infile.close()
                     raise IOError("Invalid first header")
+                self._incomplete_file = True
                 break
 
             if block is None:
@@ -1112,13 +1166,15 @@ class EdfImage(FabioImage):
                 logger.warning("size is %s" % size)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 infile.close()
-                raise Exception(error)
+                raise
 
+            frames.append(frame)
             frame._check_header_mandatory_keys(filename=filename)
             yield frame
             index += 1
 
         infile.close()
+        self._frames = frames
 
 
 Frame = EdfFrame

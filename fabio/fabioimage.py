@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "22/10/2018"
+__date__ = "23/10/2018"
 
 import os
 import logging
@@ -99,9 +99,9 @@ class FabioImage(object):
         if type(data) in fabioutils.StringTypes:
             raise Exception("fabioimage.__init__ bad argument - " +
                             "data should be numpy array")
-        self.data = self.check_data(data)
+        self._data = self.check_data(data)
+        self._header = self.check_header(header)
         self.pilimage = None
-        self.header = self.check_header(header)
         # cache for image statistics
         self.mean = self.maxval = self.stddev = self.minval = None
         # Cache roi
@@ -109,7 +109,7 @@ class FabioImage(object):
         self.area_sum = None
         self.slice = None
         # New for multiframe files
-        self.nframes = 1
+        self._nframes = 1
         self.currentframe = 0
         self.filename = None
         self.filenumber = None
@@ -132,6 +132,30 @@ class FabioImage(object):
             logger.warning("Only copying current frame")
         other.filename = self.filename
         return other
+
+    def _get_data(self):
+        return self._data
+
+    def _set_data(self, data):
+        self._data = data
+
+    data = property(_get_data, _set_data)
+
+    def _get_header(self):
+        return self._header
+
+    def _set_header(self, header):
+        self._header = header
+
+    header = property(_get_header, _set_header)
+
+    def _get_nframes(self):
+        return self._nframes
+
+    def _set_nframes(self, nframes):
+        self._nframes = nframes
+
+    nframes = property(_get_nframes, _set_nframes)
 
     @property
     def incomplete_file(self):

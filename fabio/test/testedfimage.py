@@ -432,6 +432,8 @@ class TestBadFiles(unittest.TestCase):
     def open(cls, filename):
         image = fabio.edfimage.EdfImage()
         image.read(filename)
+        # force synchronization
+        image.data
         return image
 
     def test_base(self):
@@ -557,7 +559,7 @@ class TestBadGzFiles(TestBadFiles):
             TestBadFiles.write_data(gzfd)
 
 
-class TestEdfIterator(unittest.TestCase):
+class TestEdfLazyIterator(unittest.TestCase):
     """Read different EDF files with lazy iterator
     """
 
@@ -565,7 +567,7 @@ class TestEdfIterator(unittest.TestCase):
         """Test iterator on a multi-frame EDF"""
         filename = UtilsTest.getimage("MultiFrame.edf.bz2")
 
-        iterator = fabio.edfimage.EdfImage.lazy_iterator(filename)
+        iterator = fabio.open(filename).frames()
         ref = fabio.open(filename)
 
         for index in range(ref.nframes):
@@ -580,7 +582,7 @@ class TestEdfIterator(unittest.TestCase):
     def test_single_frame(self):
         """Test iterator on a single frame EDF"""
         filename = UtilsTest.getimage("edfCompressed_U16.edf")
-        iterator = fabio.edfimage.EdfImage.lazy_iterator(filename)
+        iterator = fabio.open(filename).frames()
 
         frame = next(iterator)
         ref = fabio.open(filename)
@@ -605,7 +607,7 @@ def suite():
     testsuite.addTest(loadTests(TestEdfRegression))
     testsuite.addTest(loadTests(TestBadFiles))
     testsuite.addTest(loadTests(TestBadGzFiles))
-    testsuite.addTest(loadTests(TestEdfIterator))
+    testsuite.addTest(loadTests(TestEdfLazyIterator))
     return testsuite
 
 
