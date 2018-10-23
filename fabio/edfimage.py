@@ -770,7 +770,7 @@ class EdfImage(FabioImage):
             newImage._file = self._file
         elif num < self.nframes:
             logger.debug("Multi frame EDF; having EdfImage specific behavior: %s/%s" % (num, self.nframes))
-            newImage = EdfImage(frames=self._frames)
+            newImage = self.__class__(frames=self._frames)
             newImage.currentframe = num
             newImage.filename = self.filename
             newImage._file = self._file
@@ -1053,72 +1053,73 @@ class EdfImage(FabioImage):
 
     incomplete_data = property(isIncompleteData)
 
+    @classmethod
+    def lazy_iterator(cls, filename):
+        """Iterates over the frames of an EDF multi-frame file.
+    
+        This function optimizes sequential access to multi-frame EDF files
+        by avoiding to read the whole file at first in order to get the number
+        of frames and build an index of frames for faster random access.
+    
+        Usage:
+    
+        >>> from fabio.edfimage import edf_lazy_iterator
+    
+        >>> for frame in edf_lazy_iterator("multiframe.edf"):
+        ...     print('Header:', frame.header)
+        ...     print('Data:', frame.data)
+    
+        :param str filename: File name of the EDF file to read
+        """
+        edf = cls()
+        infile = edf._open(filename, 'rb')
+
+        index = 0
+
+        while True:
+            try:
+                block = cls._readHeaderBlock(infile, index)
+            except MalformedHeaderError:
+                logger.debug("Backtrace", exc_info=True)
+                if index == 0:
+                    infile.close()
+                    raise IOError("Invalid first header")
+                break
+
+            if block is None:
+                # end of file
+                if index == 0:
+                    infile.close()
+                    raise IOError("Empty file")
+                break
+
+            frame = Frame(number=index)
+            size = frame.parseheader(block)
+            frame.file = infile
+            frame.start = infile.tell()
+            frame.size = size
+
+            try:
+                # read data
+                frame.getData()
+            except Exception as error:
+                if isinstance(infile, fabioutils.GzipFile):
+                    if compression_module.is_incomplete_gz_block_exception(error):
+                        frame.incomplete_data = True
+                        break
+                logger.warning("infile is %s" % infile)
+                logger.warning("Position is %s" % infile.tell())
+                logger.warning("size is %s" % size)
+                logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
+                infile.close()
+                raise Exception(error)
+
+            frame._check_header_mandatory_keys(filename=filename)
+            yield frame
+            index += 1
+
+        infile.close()
+
 
 edfimage = EdfImage
-
-
-def edf_lazy_iterator(filename):
-    """Iterates over the frames of an EDF multi-frame file.
-
-    This function optimizes sequential access to multi-frame EDF files
-    by avoiding to read the whole file at first in order to get the number
-    of frames and build an index of frames for faster random access.
-
-    Usage:
-
-    >>> from fabio.edfimage import edf_lazy_iterator
-
-    >>> for frame in edf_lazy_iterator("multiframe.edf"):
-    ...     print('Header:', frame.header)
-    ...     print('Data:', frame.data)
-
-    :param str filename: File name of the EDF file to read
-    """
-    edf = EdfImage()
-    infile = edf._open(filename, 'rb')
-
-    index = 0
-
-    while True:
-        try:
-            block = EdfImage._readHeaderBlock(infile, index)
-        except MalformedHeaderError:
-            logger.debug("Backtrace", exc_info=True)
-            if index == 0:
-                infile.close()
-                raise IOError("Invalid first header")
-            break
-
-        if block is None:
-            # end of file
-            if index == 0:
-                infile.close()
-                raise IOError("Empty file")
-            break
-
-        frame = Frame(number=index)
-        size = frame.parseheader(block)
-        frame.file = infile
-        frame.start = infile.tell()
-        frame.size = size
-
-        try:
-            # read data
-            frame.getData()
-        except Exception as error:
-            if isinstance(infile, fabioutils.GzipFile):
-                if compression_module.is_incomplete_gz_block_exception(error):
-                    frame.incomplete_data = True
-                    break
-            logger.warning("infile is %s" % infile)
-            logger.warning("Position is %s" % infile.tell())
-            logger.warning("size is %s" % size)
-            logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
-            infile.close()
-            raise Exception(error)
-
-        frame._check_header_mandatory_keys(filename=filename)
-        yield frame
-        index += 1
-
-    infile.close()
+edf_lazy_iterator = EdfImage.lazy_iterator
