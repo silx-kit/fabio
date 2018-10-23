@@ -571,7 +571,7 @@ class TestEdfIterator(unittest.TestCase):
         """Test iterator on a multi-frame EDF"""
         filename = UtilsTest.getimage("MultiFrame.edf.bz2")
 
-        iterator = fabio.edfimage.edf_lazy_iterator(filename)
+        iterator = fabio.edfimage.EdfImage.lazy_iterator(filename)
         ref = fabio.open(filename)
 
         for index in range(ref.nframes):
@@ -586,7 +586,7 @@ class TestEdfIterator(unittest.TestCase):
     def test_single_frame(self):
         """Test iterator on a single frame EDF"""
         filename = UtilsTest.getimage("edfCompressed_U16.edf")
-        iterator = fabio.edfimage.edf_lazy_iterator(filename)
+        iterator = fabio.edfimage.EdfImage.lazy_iterator(filename)
 
         frame = next(iterator)
         ref = fabio.open(filename)

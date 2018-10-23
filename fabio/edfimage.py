@@ -1063,9 +1063,9 @@ class EdfImage(FabioImage):
 
         Usage:
 
-        >>> from fabio.edfimage import edf_lazy_iterator
-        >>> for frame in edf_lazy_iterator("multiframe.edf"):
+        >>> import fabio
 
+        >>> for frame in fabio.edfimage.EdfImage.lazy_iterator("multiframe.edf"):
         ...     print('Header:', frame.header)
         ...     print('Data:', frame.data)
 
