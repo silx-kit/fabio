@@ -27,17 +27,16 @@
 19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
 from fabio.bruker100image import Bruker100Image
 from fabio.openimage import openimage
+from .utilstest import UtilsTest
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """NaCl_10_01_0009.sfrm         512 512 -30 5912 34.4626 26.189

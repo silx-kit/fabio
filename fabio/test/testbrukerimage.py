@@ -28,17 +28,17 @@
 19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import os
 import numpy
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+import logging
 
-logger = UtilsTest.get_logger(__file__)
+logger = logging.getLogger(__name__)
+
 from ..brukerimage import brukerimage
 from .. import fabioutils
+from .utilstest import UtilsTest
 
 # this is actually a violation of the bruker format since the order of
 # the header items is specified
@@ -65,7 +65,7 @@ OVERFLOWS = [
     ["%09d" % 4194304, ("%07d" % (127 * 256 + 128))],
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 127))],
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))]
-    ]
+]
 
 
 class TestBruker(unittest.TestCase):
@@ -152,6 +152,7 @@ class TestBrukerLinear(unittest.TestCase):
         unittest.TestCase.tearDown(self)
         if os.path.exists(self.filename):
             os.unlink(self.filename)
+
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

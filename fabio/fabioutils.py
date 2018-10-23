@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/06/2018"
+__date__ = "22/10/2018"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -70,7 +70,9 @@ else:
     StringTypes = (str, bytes)
     unicode = str
     from io import FileIO
-    to_str = lambda s: str(s, "ASCII")
+
+    def to_str(s):
+        return str(s, "ASCII")
 
 PathTypes = StringTypes
 if pathlib is not None:
@@ -520,6 +522,7 @@ class UnknownCompressedFile(File):
         """
         if hasattr(self, "closed") and not self.closed:
             self.close()
+
 
 if gzip is None:
     GzipFile = UnknownCompressedFile

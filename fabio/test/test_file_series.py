@@ -29,18 +29,11 @@ test cases for fileseries
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
-import os
-import bz2
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
-from fabio.file_series import numbered_file_series, file_series
+from ..file_series import numbered_file_series, file_series
 
 
 class TestRandomSeries(unittest.TestCase):

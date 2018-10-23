@@ -34,17 +34,12 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/07/2017"
+__date__ = "22/10/2018"
 
 
 import sys
-import os
 import unittest
 import time
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
 
 from . import test_all
 
@@ -64,9 +59,10 @@ class TestResult(unittest.TestResult):
 
     def stopTest(self, test):
         unittest.TestResult.stopTest(self, test)
-        profiler.info("Time: %.3fs \t RAM: %.3f Mb\t%s" % (time.time() - self.__time_start,
-                                                          (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start) / 1e3,
-                                                          test.id()))
+        params = (time.time() - self.__time_start,
+                  (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start) / 1e3,
+                  test.id())
+        profiler.info("Time: %.3fs \t RAM: %.3f Mb\t%s" % params)
 
 
 class ProfileTestRunner(unittest.TextTestRunner):

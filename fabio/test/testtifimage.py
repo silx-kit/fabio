@@ -25,17 +25,14 @@
 
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio import tifimage
+from .utilstest import UtilsTest
 
 
 class TestTif(unittest.TestCase):
@@ -232,6 +229,22 @@ class TestTif_Colormap(unittest.TestCase):
         self._test_base()
 
 
+class TestTif_LibTiffPic(unittest.TestCase):
+    """Test TIFF loading from libtiffpic dataset"""
+
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.files = UtilsTest.getdir("libtiffpic.tar.gz")
+
+    def test_all_images(self):
+        if tifimage.PIL is None:
+            self.skipTest("PIL is not available")
+        for filename in self.files:
+            if filename.endswith(".tif"):
+                with fabio.open(filename):
+                    pass
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -243,6 +256,7 @@ def suite():
     testsuite.addTest(loadTests(TestTifImage_Packbits))
     testsuite.addTest(loadTests(TestTifImage_Pilatus))
     testsuite.addTest(loadTests(TestTif_Colormap))
+    testsuite.addTest(loadTests(TestTif_LibTiffPic))
     return testsuite
 
 

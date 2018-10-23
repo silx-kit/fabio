@@ -33,17 +33,14 @@ import sys
 import os
 import numpy
 import copy
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+import logging
 
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
 from ..fabioimage import fabioimage
 from .. import fabioutils
 from ..utils import pilutils
+from .utilstest import UtilsTest
 
 try:
     import pathlib

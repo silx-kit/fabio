@@ -42,11 +42,10 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "06/01/2015"
 
 import numpy
-import sys
 import struct
+
 from .fabioimage import FabioImage
-if sys.version < '3':
-    bytes = str
+from .third_party import six
 
 
 class Fit2dMaskImage(FabioImage):
@@ -139,7 +138,7 @@ class Fit2dMaskImage(FabioImage):
             order = (1 << i)
             compact_array += large_array[:, i::8] * order
         with self._open(fname, mode="wb") as outfile:
-            outfile.write(bytes(header))
+            outfile.write(six.binary_type(header))
             outfile.write(compact_array.tostring())
 
     @staticmethod

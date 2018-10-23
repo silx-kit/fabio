@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/06/2018"
+__date__ = "22/10/2018"
 
 import sys
 import os
@@ -450,7 +450,7 @@ class TiffIO(object):
             try:
                 if imageDescription.upper().startswith("IMAGEJ"):
                     software = imageDescription.split("=")[0]
-            except:
+            except Exception:
                 pass
 
         if TAG_DATE in tagIDList:
@@ -569,7 +569,8 @@ class TiffIO(object):
             self._forceMonoOutput = False
             info = self._readInfo(nImage, close=False)
             self._forceMonoOutput = oldMono
-        except:
+        except Exception:
+            logger.debug("Backtrace", exc_info=True)
             self._forceMonoOutput = oldMono
             raise
         compression = info['compression']
@@ -662,7 +663,6 @@ class TiffIO(object):
             image = numpy.zeros((nRows, nColumns), dtype=dtype)
 
         fd = self.fd
-        st = self._structChar
         stripOffsets = info["stripOffsets"]  # This contains the file offsets to the data positions
         rowsPerStrip = info["rowsPerStrip"]
         stripByteCounts = info["stripByteCounts"]  # bytes in strip since I do not support compression
@@ -706,7 +706,7 @@ class TiffIO(object):
                 if compression_type == 32773:
                     try:
                         bufferBytes = bytes()
-                    except:
+                    except Exception:
                         # python 2.5 ...
                         bufferBytes = ""
                     # packBits
@@ -1027,11 +1027,11 @@ class TiffIO(object):
                               bitsPerSample * nChannels / 8)
 
         if descriptionLength > 4:
-            stripOffsets0 = endOfFile + dateLength + descriptionLength + \
-                        2 + 12 * nDirectoryEntries + 4
+            stripOffsets0 = (endOfFile + dateLength + descriptionLength +
+                             2 + 12 * nDirectoryEntries + 4)
         else:
-            stripOffsets0 = endOfFile + dateLength + \
-                        2 + 12 * nDirectoryEntries + 4
+            stripOffsets0 = (endOfFile + dateLength +
+                             2 + 12 * nDirectoryEntries + 4)
 
         if softwareLength > 4:
             stripOffsets0 += softwareLength

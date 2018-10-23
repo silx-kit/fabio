@@ -34,7 +34,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "24/07/2017"
+__date__ = "22/10/2018"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 
@@ -46,13 +46,7 @@ import time
 
 from .fabioutils import exists
 from ._version import version
-
-if sys.version_info[0] < 3:
-    bytes = str
-    from urlparse import urlparse
-else:
-    from urllib.parse import urlparse
-
+from .third_party import six
 
 logger = logging.getLogger(__name__)
 try:
@@ -90,7 +84,7 @@ def from_isotime(text, use_tz=False):
     """
     if isinstance(text, numpy.ndarray):
         text = text[0]
-    if (sys.version_info[0] > 2) and isinstance(text, bytes):
+    if six.PY3 and isinstance(text, six.binary_type):
         text = text.decode("utf-8")
     else:
         text = str(text)

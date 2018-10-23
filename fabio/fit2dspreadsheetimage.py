@@ -34,7 +34,11 @@ Read the fit2d ascii image output
 """
 # Get ready for python3:
 from __future__ import absolute_import, print_function, with_statement, division
+
 import numpy
+import logging
+
+_logger = logging.getLogger(__name__)
 
 from .fabioimage import FabioImage
 
@@ -86,11 +90,12 @@ class Fit2dSpreadsheetImage(FabioImage):
             for line in infile.readlines():
                 try:
                     vals.append([float(x) for x in line.split()])
-                except:
+                except Exception:
                     pass
             self.data = numpy.array(vals).astype(bytecode)
             assert self.data.shape == (self.dim2, self.dim1)
-        except:
+        except Exception:
+            _logger.debug("Backtrace", exc_info=True)
             raise IOError("Error reading ascii")
 
         self.resetvals()

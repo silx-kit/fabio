@@ -44,16 +44,15 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "24/07/2017"
+__date__ = "22/10/2018"
 
 import logging
 import os
 import posixpath
 import sys
 from .fabioimage import FabioImage
+
 logger = logging.getLogger(__name__)
-if sys.version_info[0] < 3:
-    bytes = str
 
 try:
     import h5py

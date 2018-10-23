@@ -34,24 +34,19 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 
 from __future__ import print_function, with_statement, division, absolute_import
 
-__date__ = "29/09/2017"
+__date__ = "22/10/2018"
 __author__ = "jerome Kieffer"
 
 
 import unittest
-import sys
 import os
+import logging
 
+logger = logging.getLogger(__name__)
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.dm3image import Dm3Image
-
+from .utilstest import UtilsTest
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

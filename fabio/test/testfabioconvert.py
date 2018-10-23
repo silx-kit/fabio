@@ -12,7 +12,6 @@
 Test for fabio-convert
 """
 
-import fabio
 import numpy
 import os.path
 import tempfile
@@ -21,12 +20,11 @@ import sys
 import subprocess
 import time
 import unittest
-import os
-import fabio.app.convert
 import logging
 
-
 _logger = logging.getLogger(__name__)
+
+import fabio.app.convert
 
 
 class TestFabioConvert(unittest.TestCase):

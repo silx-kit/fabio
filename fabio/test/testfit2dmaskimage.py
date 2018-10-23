@@ -27,20 +27,17 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import numpy
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.fit2dmaskimage import fit2dmaskimage
+from .utilstest import UtilsTest
 
 
 class TestFaceMask(unittest.TestCase):

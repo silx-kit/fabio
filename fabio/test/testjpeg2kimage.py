@@ -27,19 +27,19 @@ Test JPEG 2000 format
 
 from __future__ import print_function, with_statement, division, absolute_import
 
-import sys
 import unittest
 import numpy
+import logging
 try:
     from PIL import Image
 except ImportError:
     Image = None
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from .. import jpeg2kimage
+from .utilstest import UtilsTest
 
 
 def isPilUsable():

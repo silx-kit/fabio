@@ -57,8 +57,9 @@ class AdscImage(FabioImage):
         with self._open(fname, "rb") as infile:
             try:
                 self._readheader(infile)
-            except:
-                raise Exception("Error processing adsc header")
+            except Exception:
+                logger.debug("Backtrace", exc_info=True)
+                raise Exception("Error processing ADSC header")
             # banned by bzip/gzip???
             try:
                 infile.seek(int(self.header['HEADER_BYTES']), 0)

@@ -25,15 +25,14 @@
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import os
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+import logging
+
+logger = logging.getLogger(__name__)
+
 from .utilstest import UtilsTest
-
-logger = UtilsTest.get_logger(__file__)
-
 from .. import nexus
 
 
