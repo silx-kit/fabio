@@ -62,6 +62,8 @@ except ImportError:
 
 depreclog = logging.getLogger("fabio.DEPRECATION")
 
+deprecache = set([])
+
 if six.PY2:
     bytes_ = str
     FileIO = file
@@ -106,9 +108,52 @@ def deprecated(func):
             func_name = func.__name__
         else:
             func_name = func.func_name
-        depreclog.warning("%s is deprecated !!! %s" % (func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
+        deprecated_warning("Function", name=func_name, skip_backtrace_count=1)
         return func(*arg, **kw)
     return wrapper
+
+
+def deprecated_warning(type_, name, reason=None, replacement=None,
+                       since_version=None, only_once=False,
+                       skip_backtrace_count=0):
+    """
+    Decorator that deprecates the use of a function
+
+    :param str type_: Module, function, class ...
+    :param str reason: Reason for deprecating this function
+        (e.g. "feature no longer provided",
+    :param str replacement: Name of replacement function (if the reason for
+        deprecating was to rename the function)
+    :param str since_version: First *silx* version for which the function was
+        deprecated (e.g. "0.5.0").
+    :param bool only_once: If true, the deprecation warning will only be
+        generated one time. Default is true.
+    :param int skip_backtrace_count: Amount of last backtrace to ignore when
+        logging the backtrace
+    """
+    if not depreclog.isEnabledFor(logging.WARNING):
+        # Avoid computation when it is not logged
+        return
+
+    msg = "%s, %s is deprecated"
+    if since_version is not None:
+        msg += " since silx version %s" % since_version
+    msg += "!"
+    if reason is not None:
+        msg += " Reason: %s." % reason
+    if replacement is not None:
+        msg += " Use '%s' instead." % replacement
+    msg = msg + "\n%s"
+    selection = slice(-2 - skip_backtrace_count, -1 - skip_backtrace_count)
+    backtrace = "".join(traceback.format_stack()[selection])
+    backtrace = backtrace.rstrip()
+    if only_once:
+        data = (msg, type_, name, backtrace)
+        if data in deprecache:
+            return
+        else:
+            deprecache.add(data)
+    depreclog.warning(msg, type_, name, backtrace)
 
 
 def pad(mystr, pattern=" ", size=80):
