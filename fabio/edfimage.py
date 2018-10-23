@@ -972,13 +972,16 @@ class EdfImage(FabioImage):
                 npaData = self._frames[self.currentframe].data
         return npaData
 
-    def setData(self, _data):
+    def setData(self, data=None, _data=None):
         """
         Enforces the propagation of the data to the list of frames
-        :param _data: numpy array representing data
+        :param data: numpy array representing data
         """
+        if _data is not None:
+            fabioutils.deprecated_warning("Argument", "'_data'", replacement="argument 'data'", since_version=0.8)
+            data = _data
         try:
-            self._frames[self.currentframe].data = _data
+            self._frames[self.currentframe].data = data
         except AttributeError:
             self._frames = [EdfFrame(data=_data)]
         except IndexError:
