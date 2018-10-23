@@ -559,6 +559,22 @@ class TestBadGzFiles(TestBadFiles):
             TestBadFiles.write_data(gzfd)
 
 
+class _EdfImage_CheckRead(fabio.edfimage.EdfImage):
+    def __init__(self, data=None, header=None, frames=None):
+        fabio.edfimage.EdfImage.__init__(self, data=data, header=header, frames=frames)
+        self._read_count = 0
+
+    def _read(self):
+        result = super(_EdfImage_CheckRead, self)._read()
+        self._read_count += 1
+        return result
+
+    def _read_and_iter_frames(self):
+        result = fabio.edfimage.EdfImage._read_and_iter_frames(self)
+        self._read_count += 1
+        return result
+
+
 class TestEdfLazyIterator(unittest.TestCase):
     """Read different EDF files with lazy iterator
     """
@@ -591,6 +607,33 @@ class TestEdfLazyIterator(unittest.TestCase):
 
         with self.assertRaises(StopIteration):
             next(iterator)
+
+    def test_check_nb_read(self):
+        """Test iterator on a single frame EDF"""
+        filename = UtilsTest.getimage("edfCompressed_U16.edf")
+        image = _EdfImage_CheckRead()
+        image.read(filename)
+
+        self.assertEqual(image._read_count, 0)
+        for _ in image.frames():
+            pass
+        self.assertEqual(image._read_count, 1)
+        for _ in image.frames():
+            pass
+        self.assertEqual(image._read_count, 1)
+
+    def test_check_nb_read2(self):
+        """Test iterator on a single frame EDF"""
+        filename = UtilsTest.getimage("edfCompressed_U16.edf")
+        image = _EdfImage_CheckRead()
+        image.read(filename)
+
+        self.assertEqual(image._read_count, 0)
+        image.data
+        self.assertEqual(image._read_count, 1)
+        for _ in image.frames():
+            pass
+        self.assertEqual(image._read_count, 1)
 
 
 def suite():
