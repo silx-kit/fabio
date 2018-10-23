@@ -236,13 +236,23 @@ class Frame(object):
             else:
                 self._bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
+
+        if "COMPRESSION" in capsHeader:
+            self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
+            if self._data_compression == "NONE":
+                self._data_compression = None
+            elif self._data_compression.startswith("NO"):
+                self._data_compression = None
+        else:
+            self._data_compression = None
+
         self.bpp = len(numpy.array(0, self._bytecode).tostring())
         calcsize *= self.bpp
         if (self.size is None):
             self.size = calcsize
         elif (self.size != calcsize):
-            if ("COMPRESSION" in capsHeader) and (self.header[capsHeader['COMPRESSION']].upper().startswith("NO")):
-                logger.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
+            if self._data_compression is None:
+                logger.warning("Mismatch between the expected size %s and the calculated one %s", self.size, calcsize)
                 self.size = calcsize
 
         for i, n in enumerate(self.dims):
@@ -258,11 +268,6 @@ class Frame(object):
                 self._data_swap_needed = True
             else:
                 self._data_swap_needed = False
-
-        if "COMPRESSION" in capsHeader:
-            self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
-        else:
-            self._data_compression = None
 
     def parseheader(self, block):
         """
