@@ -941,7 +941,8 @@ class EdfImage(FabioImage):
         Setter for number of frames ... should do nothing. Here just to avoid bugs
         """
         if val != len(self._frames):
-            logger.warning("trying to set the number of frames ")
+            logger.warning("Setting the number of frames is not allowed.")
+
     nframes = property(getNbFrames, setNbFrames, "property: number of frames in EDF file")
 
     def getHeader(self):
