@@ -1063,13 +1063,14 @@ class EdfImage(FabioImage):
 
         Usage:
 
-        >>> import fabio
+        >>> from fabio.edfimage import EdfImage
 
-        >>> for frame in fabio.edfimage.EdfImage.lazy_iterator("multiframe.edf"):
+        >>> for frame in EdfImage.lazy_iterator("multiframe.edf"):
         ...     print('Header:', frame.header)
         ...     print('Data:', frame.data)
 
         :param str filename: File name of the EDF file to read
+        :yield: frames one after the other
         """
         edf = cls()
         infile = edf._open(filename, 'rb')
