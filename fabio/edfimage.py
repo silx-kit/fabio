@@ -999,29 +999,37 @@ class EdfImage(FabioImage):
     def getDim1(self):
         return self._frames[self.currentframe].dim1
 
-    def setDim1(self, _iVal):
+    def setDim1(self, iVal=None, _iVal=None):
+        if _iVal is not None:
+            fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
+            iVal = _iVal
         try:
-            self._frames[self.currentframe].dim1 = _iVal
+            self._frames[self.currentframe].dim1 = iVal
         except AttributeError:
             self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
                 self._frames.append(EdfFrame())
                 self._frames[self.currentframe].dim1 = _iVal
+
     dim1 = property(getDim1, setDim1)
 
     def getDim2(self):
         return self._frames[self.currentframe].dim2
 
-    def setDim2(self, _iVal):
+    def setDim2(self, iVal=None, _iVal=None):
+        if _iVal is not None:
+            fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
+            iVal = _iVal
         try:
-            self._frames[self.currentframe].dim2 = _iVal
+            self._frames[self.currentframe].dim2 = iVal
         except AttributeError:
             self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
                 self._frames.append(EdfFrame())
-                self._frames[self.currentframe].dim2 = _iVal
+                self._frames[self.currentframe].dim2 = iVal
+
     dim2 = property(getDim2, setDim2)
 
     def getDims(self):
@@ -1031,29 +1039,37 @@ class EdfImage(FabioImage):
     def getByteCode(self):
         return self._frames[self.currentframe].bytecode
 
-    def setByteCode(self, _iVal):
+    def setByteCode(self, iVal=None, _iVal=None):
+        if _iVal is not None:
+            fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
+            iVal = _iVal
         try:
-            self._frames[self.currentframe].bytecode = _iVal
+            self._frames[self.currentframe].bytecode = iVal
         except AttributeError:
             self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
                 self._frames.append(EdfFrame())
-                self._frames[self.currentframe].bytecode = _iVal
+                self._frames[self.currentframe].bytecode = iVal
+
     bytecode = property(getByteCode, setByteCode)
 
     def getBpp(self):
         return self._frames[self.currentframe].bpp
 
-    def setBpp(self, _iVal):
+    def setBpp(self, iVal=None, _iVal=None):
+        if _iVal is not None:
+            fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
+            iVal = _iVal
         try:
-            self._frames[self.currentframe].bpp = _iVal
+            self._frames[self.currentframe].bpp = iVal
         except AttributeError:
             self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
                 self._frames.append(EdfFrame())
-                self._frames[self.currentframe].bpp = _iVal
+                self._frames[self.currentframe].bpp = iVal
+
     bpp = property(getBpp, setBpp)
 
     def isIncompleteData(self):
