@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/10/2018"
+__date__ = "23/10/2018"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -59,6 +59,8 @@ except ImportError:
         import pathlib2 as pathlib
     except ImportError:
         pathlib = None
+
+depreclog = logging.getLogger("fabio.DEPRECATION")
 
 if six.PY2:
     bytes_ = str
@@ -104,7 +106,7 @@ def deprecated(func):
             func_name = func.__name__
         else:
             func_name = func.func_name
-        logger.warning("%s is Deprecated !!! %s" % (func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
+        depreclog.warning("%s is deprecated !!! %s" % (func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
         return func(*arg, **kw)
     return wrapper
 
