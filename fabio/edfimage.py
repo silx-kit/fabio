@@ -914,6 +914,22 @@ class EdfImage(FabioImage):
     # Properties definition for header, data, header_keys
     ############################################################################
 
+    def _get_any_frame(self):
+        """Returns the current if available, else create and return a new empty
+        frame."""
+        try:
+            return self._frames[self.currentframe]
+        except AttributeError:
+            frame = EdfFrame()
+            self._frames = [frame]
+            return frame
+        except IndexError:
+            if self.currentframe < len(self._frames):
+                frame = EdfFrame()
+                self._frames.append(frame)
+                return frame
+            raise
+
     def getNbFrames(self):
         """
         Getter for number of frames
@@ -938,13 +954,8 @@ class EdfImage(FabioImage):
         """
         Enforces the propagation of the header to the list of frames
         """
-        try:
-            self._frames[self.currentframe].header = _dictHeader
-        except AttributeError:
-            self._frames = [EdfFrame(header=_dictHeader)]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(EdfFrame(header=_dictHeader))
+        frame = self._get_any_frame()
+        frame.header = _dictHeader
 
     def delHeader(self):
         """
@@ -960,16 +971,8 @@ class EdfImage(FabioImage):
         :return: data for current frame
         :rtype: numpy.ndarray
         """
-        npaData = None
-        try:
-            npaData = self._frames[self.currentframe].data
-        except AttributeError:
-            self._frames = [EdfFrame()]
-            npaData = self._frames[self.currentframe].data
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(EdfFrame())
-                npaData = self._frames[self.currentframe].data
+        frame = self._get_any_frame()
+        npaData = frame.data
         return npaData
 
     def setData(self, data=None, _data=None):
@@ -980,13 +983,8 @@ class EdfImage(FabioImage):
         if _data is not None:
             fabioutils.deprecated_warning("Argument", "'_data'", replacement="argument 'data'", since_version=0.8)
             data = _data
-        try:
-            self._frames[self.currentframe].data = data
-        except AttributeError:
-            self._frames = [EdfFrame(data=_data)]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(EdfFrame(data=_data))
+        frame = self._get_any_frame()
+        frame.data = data
 
     def delData(self):
         """
@@ -1003,14 +1001,8 @@ class EdfImage(FabioImage):
         if _iVal is not None:
             fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
             iVal = _iVal
-        try:
-            self._frames[self.currentframe].dim1 = iVal
-        except AttributeError:
-            self._frames = [EdfFrame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(EdfFrame())
-                self._frames[self.currentframe].dim1 = _iVal
+        frame = self._get_any_frame()
+        frame.dim1 = iVal
 
     dim1 = property(getDim1, setDim1)
 
@@ -1021,14 +1013,8 @@ class EdfImage(FabioImage):
         if _iVal is not None:
             fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
             iVal = _iVal
-        try:
-            self._frames[self.currentframe].dim2 = iVal
-        except AttributeError:
-            self._frames = [EdfFrame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(EdfFrame())
-                self._frames[self.currentframe].dim2 = iVal
+        frame = self._get_any_frame()
+        frame.dim2 = iVal
 
     dim2 = property(getDim2, setDim2)
 
@@ -1043,14 +1029,8 @@ class EdfImage(FabioImage):
         if _iVal is not None:
             fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
             iVal = _iVal
-        try:
-            self._frames[self.currentframe].bytecode = iVal
-        except AttributeError:
-            self._frames = [EdfFrame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(EdfFrame())
-                self._frames[self.currentframe].bytecode = iVal
+        frame = self._get_any_frame()
+        frame.bytecode = iVal
 
     bytecode = property(getByteCode, setByteCode)
 
@@ -1061,14 +1041,8 @@ class EdfImage(FabioImage):
         if _iVal is not None:
             fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
             iVal = _iVal
-        try:
-            self._frames[self.currentframe].bpp = iVal
-        except AttributeError:
-            self._frames = [EdfFrame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(EdfFrame())
-                self._frames[self.currentframe].bpp = iVal
+        frame = self._get_any_frame()
+        frame.bpp = iVal
 
     bpp = property(getBpp, setBpp)
 
