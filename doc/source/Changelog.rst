@@ -1,6 +1,19 @@
 Changelog
 =========
 
+FabIO-0.8.0 (10/2018):
+......................
+
+- Increased maximum header size for EDF (contribution from OlivierU38)
+- Fix EDF header (contribution from Yann Diorcet)
+- New explicit registry (no more metaclass)
+- Lazy iterator for EDF (useful for huge multi-frames)
+- Improved JPEG 2000 support via glymur
+- Manylinux1 wheels built against the oldest numpy possible
+- Improved debian packaging
+- clean up repository and tests
+- Fix compilation with Python 3.7, python 2.7 still works but for how long ?
+
 FabIO-0.7.0 (06/2018):
 ......................
 
