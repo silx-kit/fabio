@@ -89,7 +89,7 @@ Depends: ${misc:Depends},
 Recommends: python-dbg,
             python-imaging-dbg,
             python-lxml-dbg,
-            python-matplotlib-dbg
+            python-matplotlib-dbg,
             python-h5py-dbg
 Description: I/O library for images produced by 2D X-ray detector - Python2 debug
  FabIO is an I/O library for images produced by 2D X-ray detectors and
