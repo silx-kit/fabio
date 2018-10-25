@@ -23,7 +23,7 @@ Build-Depends: cython,
                python-six,
                python-sphinx,
                python-sphinxcontrib.programoutput,
-               python-nbsphinx
+               python-nbsphinx,
                python3-all-dev,
                python3-all-dbg,
                python3-lxml,
