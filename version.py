@@ -73,9 +73,9 @@ RELEASE_LEVEL_VALUE = {"dev": 0,
                        "final": 15}
 
 MAJOR = 0
-MINOR = 8
+MINOR = 9
 MICRO = 0
-RELEV = "final"# <16
+RELEV = "dev"  # <16
 SERIAL = 0  # <16
 
 
