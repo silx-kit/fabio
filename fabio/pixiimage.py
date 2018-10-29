@@ -34,7 +34,7 @@ Counters SRL (http://www.pixirad.com/)
 Author: Jon Wright, ESRF.
 """
 
-from __future__ import with_statement, print_function
+from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
@@ -60,20 +60,26 @@ class PixiImage(FabioImage):
 
     _need_a_seek_to_read = True
 
+    _IMAGE_WIDTH = 476
+    _IMAGE_HEIGHT = 512
+    _MAGIC_SIZE = 4
+    _HEADER_SIZE = 24
+    _PIXEL_DEPTH = 2
+    """Each pixel is stored as UINT16"""
+    _PIXEL_COUNT = _IMAGE_WIDTH * _IMAGE_HEIGHT
+    _IMAGE_SIZE = _PIXEL_COUNT * _PIXEL_DEPTH
+    _FRAME_SIZE = _HEADER_SIZE + _IMAGE_SIZE
+
     def _readheader(self, infile):
         infile.seek(0)
         self.header = self.check_header()
         byt = infile.read(4)
         framesize = numpy.frombuffer(byt, numpy.int32)
-        if framesize == 243722:
-            # life is good
-            width = 476
-            height = 512
-            offset = 24
+        if framesize * 2 == self._FRAME_SIZE - self._MAGIC_SIZE:
             self.header['framesize'] = framesize
-            self.header['width'] = width
-            self.header['height'] = height
-            self.header['offset'] = offset
+            self.header['width'] = self._IMAGE_WIDTH
+            self.header['height'] = self._IMAGE_HEIGHT
+            self.header['offset'] = self._HEADER_SIZE
         else:
             logger.warning("Bad framesize: %s", framesize)
             raise
@@ -86,7 +92,7 @@ class PixiImage(FabioImage):
         with self._open(fname, "rb") as infile:
             self.sequencefilename = fname
             self._readheader(infile)
-            self.nframes = os.path.getsize(fname) / 487448
+            self.nframes = os.path.getsize(fname) // self._FRAME_SIZE
             self._readframe(infile, frame)
         # infile.close()
         return self
@@ -98,9 +104,9 @@ class PixiImage(FabioImage):
     def _readframe(self, filepointer, img_num):
         if (img_num > self.nframes or img_num < 0):
             raise Exception("Bad image number")
-        imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
+        imgstart = self.header['offset'] + img_num * self._FRAME_SIZE
         filepointer.seek(imgstart, 0)
-        self.data = numpy.frombuffer(filepointer.read(512 * 476 * 2),
+        self.data = numpy.frombuffer(filepointer.read(self._IMAGE_SIZE),
                                      numpy.uint16).copy()
         self.data.shape = self.header['height'], self.header['width']
         self.dim2, self.dim1 = self.data.shape
