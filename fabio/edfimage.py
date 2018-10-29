@@ -1128,4 +1128,6 @@ class EdfImage(FabioImage):
 
 
 Frame = EdfFrame
+"""Compatibility code with fabio <= 0.8"""
+
 edfimage = EdfImage
