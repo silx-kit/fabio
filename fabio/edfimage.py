@@ -53,8 +53,8 @@ import string
 import logging
 logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage, OrderedDict
-from .fabioutils import isAscii, toAscii, nice_int
+from .fabioimage import FabioImage
+from .fabioutils import isAscii, toAscii, nice_int, OrderedDict
 from .compression import decBzip2, decGzip, decZlib
 from . import compression as compression_module
 from . import fabioutils
