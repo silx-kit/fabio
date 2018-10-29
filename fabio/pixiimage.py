@@ -30,7 +30,7 @@
 """
 Author: Jon Wright, ESRF.
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function
 
 __authors__ = ["Jon Wright", "Jérôme Kieffer"]

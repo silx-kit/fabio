@@ -37,7 +37,7 @@ filename::path
 
 Only supports ndim=2 or 3 (exposed as a stack of images
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]

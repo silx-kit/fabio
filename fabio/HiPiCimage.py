@@ -40,7 +40,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 Information about the file format from Masakatzu Kobayashi is highly appreciated
 """
 
-# Get ready for python3:
 from __future__ import with_statement, print_function
 
 import numpy

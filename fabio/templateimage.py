@@ -68,14 +68,14 @@ The basic idea is the following:
    don't need to convert their data into another format
 
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "22/08/2017"
+__date__ = "29/10/2018"
 
 import logging
 logger = logging.getLogger(__name__)

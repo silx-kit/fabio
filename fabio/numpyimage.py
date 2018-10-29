@@ -25,7 +25,7 @@
 #
 
 """Generic numpy file reader for FabIO"""
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]

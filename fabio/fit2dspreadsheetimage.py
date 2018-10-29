@@ -32,7 +32,7 @@
 Read the fit2d ascii image output
         + Jon Wright, ESRF
 """
-# Get ready for python3:
+
 from __future__ import absolute_import, print_function, with_statement, division
 
 import numpy

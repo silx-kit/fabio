@@ -33,7 +33,7 @@ email:  Jerome.Kieffer@terre-adelie.org
 Specifications from:
 http://ami.scripps.edu/software/mrctools/mrc_specification.php
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function
 
 __authors__ = ["Jérôme Kieffer"]

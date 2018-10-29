@@ -26,14 +26,14 @@
 
 """Test for FabIO reader for Fit2D binary images
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division, absolute_import
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "22/10/2018"
+__date__ = "29/10/2018"
 
 import unittest
 import numpy

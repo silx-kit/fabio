@@ -30,8 +30,9 @@ Authors: Jérôme Kieffer, ESRF
 
 XSDimge are XML files containing numpy arrays
 """
-# Get ready for python3:
+
 from __future__ import absolute_import, print_function, with_statement, division
+
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
