@@ -28,6 +28,9 @@
 
 
 """
+File format to read images from PiXIrad PCDs manufactured by Pixirad Imaging
+Counters SRL (http://www.pixirad.com/)
+
 Author: Jon Wright, ESRF.
 """
 
@@ -148,24 +151,3 @@ class PixiImage(FabioImage):
 
 
 pixiimage = PixiImage
-
-
-def demo(fname):
-    i = PixiImage()
-    i.read(fname)
-    import pylab
-    pylab.imshow(numpy.log(i.data))
-    print("%s\t%s\t%s\t%s" % (i.filename, i.data.max(), i.data.min(), i.data.mean()))
-    pylab.title(i.filename)
-    pylab.show()
-    while 1:
-        i = i.next()
-        pylab.imshow(numpy.log(i.data))
-        pylab.title(i.filename)
-        pylab.show()
-        raw_input()
-
-
-if __name__ == "__main__":
-    import sys
-    demo(sys.argv[1])
