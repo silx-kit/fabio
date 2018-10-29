@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/10/2018"
+__date__ = "29/10/2018"
 
 import sys
 import os
@@ -1223,33 +1223,3 @@ class TiffIO(object):
             outputIFD += stripByteCountsString
 
         return outputIFD
-
-
-if __name__ == "__main__":
-    filename = sys.argv[1]
-    dtype = numpy.uint16
-    if not os.path.exists(filename):
-        print("Testing file creation")
-        tif = TiffIO(filename, mode='wb+')
-        data = numpy.arange(10000).astype(dtype)
-        data.shape = 100, 100
-        tif.writeImage(data, info={'Title': '1st'})
-        tif = None
-        if os.path.exists(filename):
-            print("Testing image appending")
-            tif = TiffIO(filename, mode='rb+')
-            tif.writeImage((data * 2).astype(dtype), info={'Title': '2nd'})
-            tif = None
-    tif = TiffIO(filename)
-    print("Number of images = %d" % tif.getNumberOfImages())
-    for i in range(tif.getNumberOfImages()):
-        info = tif.getInfo(i)
-        for key in info:
-            if key not in ["colormap"]:
-                print("%s = %s" % (key, info[key]))
-            elif info['colormap'] is not None:
-                print("RED   %s = %s" % (key, info[key][0:10, 0]))
-                print("GREEN %s = %s" % (key, info[key][0:10, 1]))
-                print("BLUE  %s = %s" % (key, info[key][0:10, 2]))
-        data = tif.getImage(i)[0, 0:10]
-        print("data [0, 0:10] = ", data)

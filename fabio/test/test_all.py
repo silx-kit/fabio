@@ -72,6 +72,7 @@ from . import test_formats
 from . import test_image_convert
 from . import testmrcimage
 from . import test_pixi_image
+from . import test_tiffio
 
 
 def suite():
@@ -117,6 +118,7 @@ def suite():
     testSuite.addTest(test_image_convert.suite())
     testSuite.addTest(testmrcimage.suite())
     testSuite.addTest(test_pixi_image.suite())
+    testSuite.addTest(test_tiffio.suite())
     return testSuite
 
 
