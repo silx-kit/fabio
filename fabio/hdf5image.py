@@ -44,12 +44,11 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "22/10/2018"
+__date__ = "29/10/2018"
 
 import logging
 import os
 import posixpath
-import sys
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
