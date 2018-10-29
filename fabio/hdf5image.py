@@ -60,6 +60,21 @@ except ImportError:
 from .fabioutils import previous_filename, next_filename
 
 
+class Hdf5Frame(object):
+    """Identify a slice of dataset from an HDF5 file"""
+
+    def __init__(self, hdf5image, frame_num):
+        if not isinstance(hdf5image, Hdf5Image):
+            raise TypeError("Expected class %s", Hdf5Image)
+        self.hdf5 = hdf5image.hdf5
+        self.dataset = hdf5image.dataset
+        self.filename = hdf5image.filename
+        self.nframes = hdf5image.nframes
+        self.data = hdf5image.dataset[frame_num, :, :]
+        self.header = hdf5image.header
+        self.currentframe = frame_num
+
+
 class Hdf5Image(FabioImage):
     """
     FabIO image class for Images from an HDF file
@@ -137,13 +152,7 @@ class Hdf5Image(FabioImage):
         if num < 0 or num > self.nframes:
             raise RuntimeError("Requested frame number %i is out of range [0, %i[ " % (num, self.nframes))
         # Do a deep copy of the header to make a new one
-        frame = self.__class__(header=self.header)
-        frame.hdf5 = self.hdf5
-        frame.dataset = self.dataset
-        frame.filename = self.filename
-        frame.nframes = self.nframes
-        frame.data = self.dataset[num, :, :]
-        frame.currentframe = num
+        frame = Hdf5Frame(self, num)
         return frame
 
     def next(self):
