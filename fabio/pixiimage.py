@@ -72,7 +72,7 @@ class PixiImage(FabioImage):
             self.header['height'] = height
             self.header['offset'] = offset
         else:
-            logger.warning("Pixiimage, bad framesize: %s", framesize)
+            logger.warning("Bad framesize: %s", framesize)
             raise
 
     def read(self, fname, frame=None):
