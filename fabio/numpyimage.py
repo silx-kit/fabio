@@ -25,14 +25,14 @@
 #
 
 """Generic numpy file reader for FabIO"""
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "22/01/2018"
+__date__ = "29/10/2018"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -173,18 +173,18 @@ class NumpyImage(FabioImage):
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
-            new_img = None
+            frame = None
             if (num >= 0) and num < self.nframes:
                 data = self.dataset[num]
-                new_img = self.__class__(data=data, header=self.header)
-                new_img.dataset = self.dataset
-                new_img.nframes = self.nframes
-                new_img.currentframe = num
+                frame = self.__class__(data=data, header=self.header)
+                frame.dataset = self.dataset
+                frame.nframes = self.nframes
+                frame.currentframe = num
             else:
                 raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
         else:
-            new_img = FabioImage.getframe(self, num)
-        return new_img
+            frame = FabioImage.getframe(self, num)
+        return frame
 
     def previous(self):
         """ returns the previous frame in the series as a fabioimage """

@@ -41,14 +41,14 @@ Under windows, those plugins can easily be installed via this repository:
 https://github.com/silx-kit/hdf5plugin
 
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "25/07/2017"
+__date__ = "29/10/2018"
 
 import logging
 logger = logging.getLogger(__name__)

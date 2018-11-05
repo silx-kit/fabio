@@ -31,7 +31,7 @@
 Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
          ESRF          Risoe National Laboratory
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 import logging

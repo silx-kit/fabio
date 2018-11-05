@@ -41,10 +41,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 License: MIT
 """
-# Get ready for python3:
+
 from __future__ import absolute_import, print_function, with_statement, division
+
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "25/06/2018"
+__date__ = "29/10/2018"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"

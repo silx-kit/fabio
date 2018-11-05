@@ -53,8 +53,8 @@ import string
 import logging
 logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage, OrderedDict
-from .fabioutils import isAscii, toAscii, nice_int
+from .fabioimage import FabioImage
+from .fabioutils import isAscii, toAscii, nice_int, OrderedDict
 from .compression import decBzip2, decGzip, decZlib
 from . import compression as compression_module
 from . import fabioutils
@@ -127,7 +127,7 @@ class MalformedHeaderError(IOError):
     pass
 
 
-class Frame(object):
+class EdfFrame(object):
     """
     A class representing a single frame in an EDF file
     """
@@ -555,8 +555,8 @@ class EdfImage(FabioImage):
         FabioImage.__init__(self, stored_data, header)
 
         if frames is None:
-            frame = Frame(data=self.data, header=self.header,
-                          number=self.currentframe)
+            frame = EdfFrame(data=self.data, header=self.header,
+                             number=self.currentframe)
             self._frames = [frame]
         else:
             self._frames = frames
@@ -693,7 +693,7 @@ class EdfImage(FabioImage):
                     raise IOError("Empty file")
                 break
 
-            frame = Frame(number=self.nframes)
+            frame = EdfFrame(number=self.nframes)
             size = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()
@@ -830,12 +830,12 @@ class EdfImage(FabioImage):
         :param frame: frame to append to edf image
         :type frame: instance of Frame
         """
-        if isinstance(frame, Frame):
+        if isinstance(frame, EdfFrame):
             self._frames.append(frame)
         elif ("header" in dir(frame)) and ("data" in dir(frame)):
-            self._frames.append(Frame(frame.data, frame.header))
+            self._frames.append(EdfFrame(frame.data, frame.header))
         else:
-            self._frames.append(Frame(data, header))
+            self._frames.append(EdfFrame(data, header))
 
     def deleteFrame(self, frameNb=None):
         """
@@ -941,10 +941,10 @@ class EdfImage(FabioImage):
         try:
             self._frames[self.currentframe].header = _dictHeader
         except AttributeError:
-            self._frames = [Frame(header=_dictHeader)]
+            self._frames = [EdfFrame(header=_dictHeader)]
         except IndexError:
             if self.currentframe < len(self._frames):
-                self._frames.append(Frame(header=_dictHeader))
+                self._frames.append(EdfFrame(header=_dictHeader))
 
     def delHeader(self):
         """
@@ -964,11 +964,11 @@ class EdfImage(FabioImage):
         try:
             npaData = self._frames[self.currentframe].data
         except AttributeError:
-            self._frames = [Frame()]
+            self._frames = [EdfFrame()]
             npaData = self._frames[self.currentframe].data
         except IndexError:
             if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
+                self._frames.append(EdfFrame())
                 npaData = self._frames[self.currentframe].data
         return npaData
 
@@ -980,10 +980,10 @@ class EdfImage(FabioImage):
         try:
             self._frames[self.currentframe].data = _data
         except AttributeError:
-            self._frames = [Frame(data=_data)]
+            self._frames = [EdfFrame(data=_data)]
         except IndexError:
             if self.currentframe < len(self._frames):
-                self._frames.append(Frame(data=_data))
+                self._frames.append(EdfFrame(data=_data))
 
     def delData(self):
         """
@@ -1000,10 +1000,10 @@ class EdfImage(FabioImage):
         try:
             self._frames[self.currentframe].dim1 = _iVal
         except AttributeError:
-            self._frames = [Frame()]
+            self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
+                self._frames.append(EdfFrame())
                 self._frames[self.currentframe].dim1 = _iVal
     dim1 = property(getDim1, setDim1)
 
@@ -1014,10 +1014,10 @@ class EdfImage(FabioImage):
         try:
             self._frames[self.currentframe].dim2 = _iVal
         except AttributeError:
-            self._frames = [Frame()]
+            self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
+                self._frames.append(EdfFrame())
                 self._frames[self.currentframe].dim2 = _iVal
     dim2 = property(getDim2, setDim2)
 
@@ -1032,10 +1032,10 @@ class EdfImage(FabioImage):
         try:
             self._frames[self.currentframe].bytecode = _iVal
         except AttributeError:
-            self._frames = [Frame()]
+            self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
+                self._frames.append(EdfFrame())
                 self._frames[self.currentframe].bytecode = _iVal
     bytecode = property(getByteCode, setByteCode)
 
@@ -1046,10 +1046,10 @@ class EdfImage(FabioImage):
         try:
             self._frames[self.currentframe].bpp = _iVal
         except AttributeError:
-            self._frames = [Frame()]
+            self._frames = [EdfFrame()]
         except IndexError:
             if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
+                self._frames.append(EdfFrame())
                 self._frames[self.currentframe].bpp = _iVal
     bpp = property(getBpp, setBpp)
 
@@ -1099,7 +1099,7 @@ class EdfImage(FabioImage):
                     raise IOError("Empty file")
                 break
 
-            frame = Frame(number=index)
+            frame = EdfFrame(number=index)
             size = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()
@@ -1126,5 +1126,8 @@ class EdfImage(FabioImage):
 
         infile.close()
 
+
+Frame = EdfFrame
+"""Compatibility code with fabio <= 0.8"""
 
 edfimage = EdfImage

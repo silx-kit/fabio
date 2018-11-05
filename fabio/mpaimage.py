@@ -35,7 +35,6 @@ Author:
 mpaimage can read ascii and binary .mpa (multiwire) files
 """
 
-# Get ready for python3:
 from __future__ import with_statement, print_function, division, absolute_import
 
 import logging

@@ -35,15 +35,13 @@ Available at: http://www.rigaku.com/downloads/software/readimage.html
 
 """
 
-
-# Get ready for python3:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "25/06/2018"
+__date__ = "29/10/2018"
 
 import logging
 import struct

@@ -45,11 +45,11 @@ Supports Mar345 imaging plate and Mar555 flat panel
 Documentation on the format is available from:
 http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "22/10/2018"
+__date__ = "29/10/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"

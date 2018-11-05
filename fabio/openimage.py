@@ -39,7 +39,7 @@ mods for fabio by JPW
 modification for HDF5 by Jérôme Kieffer
 
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, absolute_import
 
 import os.path

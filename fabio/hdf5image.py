@@ -37,19 +37,18 @@ filename::path
 
 Only supports ndim=2 or 3 (exposed as a stack of images
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "22/10/2018"
+__date__ = "29/10/2018"
 
 import logging
 import os
 import posixpath
-import sys
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
@@ -59,6 +58,21 @@ try:
 except ImportError:
     h5py = None
 from .fabioutils import previous_filename, next_filename
+
+
+class Hdf5Frame(object):
+    """Identify a slice of dataset from an HDF5 file"""
+
+    def __init__(self, hdf5image, frame_num):
+        if not isinstance(hdf5image, Hdf5Image):
+            raise TypeError("Expected class %s", Hdf5Image)
+        self.hdf5 = hdf5image.hdf5
+        self.dataset = hdf5image.dataset
+        self.filename = hdf5image.filename
+        self.nframes = hdf5image.nframes
+        self.data = hdf5image.dataset[frame_num, :, :]
+        self.header = hdf5image.header
+        self.currentframe = frame_num
 
 
 class Hdf5Image(FabioImage):
@@ -138,13 +152,7 @@ class Hdf5Image(FabioImage):
         if num < 0 or num > self.nframes:
             raise RuntimeError("Requested frame number %i is out of range [0, %i[ " % (num, self.nframes))
         # Do a deep copy of the header to make a new one
-        frame = self.__class__(header=self.header)
-        frame.hdf5 = self.hdf5
-        frame.dataset = self.dataset
-        frame.filename = self.filename
-        frame.nframes = self.nframes
-        frame.data = self.dataset[num, :, :]
-        frame.currentframe = num
+        frame = Hdf5Frame(self, num)
         return frame
 
     def next(self):

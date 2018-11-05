@@ -34,7 +34,6 @@ data-type, dimensions, byte order and offset
 This simple library has been made for manipulating exotic/unknown files format.
 """
 
-# Get ready for python3:
 from __future__ import with_statement, print_function
 
 __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]

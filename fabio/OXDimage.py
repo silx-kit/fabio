@@ -42,13 +42,12 @@ Authors:
 
 """
 
-# Get ready for python3:
 from __future__ import with_statement, print_function
 
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "25/06/2018"
+__date__ = "29/10/2018"
 
 import time
 import logging

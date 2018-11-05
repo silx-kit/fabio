@@ -32,7 +32,7 @@ Author: Andy Hammersley, ESRF
 Translation into python/fabio: Jon Wright, ESRF.
 Writer: Jérôme Kieffer
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function
 
 __authors__ = ["Jon Wright", "Jérôme Kieffer"]

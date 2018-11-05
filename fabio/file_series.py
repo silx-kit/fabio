@@ -42,9 +42,8 @@ Authors:
 * Jon Wright, ESRF
 
 """
-# Get ready for python3:
-from __future__ import absolute_import, print_function, with_statement, division
 
+from __future__ import absolute_import, print_function, with_statement, division
 
 import logging
 import sys

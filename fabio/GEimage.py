@@ -38,11 +38,11 @@
 
 # modifications by Jon Wright for style, pychecker and fabio
 #
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "22/10/2018"
+__date__ = "29/10/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -332,35 +332,4 @@ class GeImage(FabioImage):
             return newobj
 
 
-def demo():
-    import sys
-    import time
-
-    if len(sys.argv) < 2:
-        print("USAGE: GE_script.py <GEaSi_raw_image_file>")
-        sys.exit()
-
-    image_file = sys.argv[1]
-
-    print("init read_GEaSi_data class and load header..")
-    sequence1 = GeImage()
-    sequence1.read(image_file)
-
-    print("TimeBetweenFramesInMicrosecs = ")
-    print(sequence1.header['TimeBetweenFramesInMicrosecs'])
-    print("AcquisitionTime = ")
-    print(sequence1.header['AcquisitionTime'])
-
-    print("Mean = ", sequence1.data.ravel().mean())
-
-    while 1:
-        start = time.time()
-        sequence1 = sequence1.next()
-        duration = time.time() - start
-        print(sequence1.currentframe, sequence1.data.ravel().mean(), duration)
-
-
 GEimage = GeImage
-
-if __name__ == '__main__':
-    demo()

@@ -33,7 +33,7 @@ Authors: Jerome Kieffer, ESRF
 kcd images are 2D images written by the old KappaCCD diffractometer built by Nonius in the 1990's
 Based on the edfimage.py parser.
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function
 
 import numpy

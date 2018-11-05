@@ -33,7 +33,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 + mods for fabio by JPW
 
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function
 import numpy
 import logging
