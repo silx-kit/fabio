@@ -93,7 +93,6 @@ class Dm3Image(FabioImage):
         self.grouptag_no_tags = None
         self.bytes_in_file = None
         self.tag_label_length = None
-        self.go_on = None
 
     def _readheader(self):
         self.infile.seek(0)
@@ -117,8 +116,8 @@ class Dm3Image(FabioImage):
         self.resetvals()
         self.infile = self._open(fname, "rb")
         self._readheader()
-        self.go_on = True
-        while self.go_on:
+        go_on = True
+        while go_on:
             self.read_tag_group()
             self.read_tag_entry()
             if self.infile.tell() > self.bytes_in_file:
@@ -127,15 +126,18 @@ class Dm3Image(FabioImage):
             while self.tag_is_data == 21:
                 self.read_tag_entry()
                 if self.infile.tell() > self.bytes_in_file:
-                    self.go_on = False
+                    go_on = False
 
-        (dim1_raw, dim2_raw) = self.header['Active Size (pixels)'].split()
-        (dim1_raw, dim2_raw) = (eval(dim1_raw), eval(dim2_raw))
-        (dim1_binning, dim2_binning) = self.header['Binning'].split()
-        (dim1_binning, dim2_binning) = (eval(dim1_binning), eval(dim2_binning))
+        dim_raw = self.header['Active Size (pixels)'].split()
+        dim1_raw = int(dim_raw[0])
+        dim2_raw = int(dim_raw[1])
+        binning_raw = self.header['Binning']
+        try:
+            dim1_binning, dim2_binning = map(int, binning_raw.split())
+        except AttributeError:
+            dim1_binning, dim2_binning = map(lambda x: x * int(binning_raw) * x, (1, 1))
         self.dim1 = dim1_raw // dim1_binning
         self.dim2 = dim2_raw // dim2_binning
-        # print dim1,dim2
         if "Data" in self.header:
             self.data = self.header[u'Data'].reshape(self.dim1, self.dim2)
         return self
