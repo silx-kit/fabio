@@ -93,7 +93,6 @@ class Dm3Image(FabioImage):
         self.grouptag_no_tags = None
         self.bytes_in_file = None
         self.tag_label_length = None
-        self.go_on = None
 
     def _readheader(self):
         self.infile.seek(0)
@@ -117,8 +116,8 @@ class Dm3Image(FabioImage):
         self.resetvals()
         self.infile = self._open(fname, "rb")
         self._readheader()
-        self.go_on = True
-        while self.go_on:
+        go_on = True
+        while go_on:
             self.read_tag_group()
             self.read_tag_entry()
             if self.infile.tell() > self.bytes_in_file:
@@ -127,7 +126,7 @@ class Dm3Image(FabioImage):
             while self.tag_is_data == 21:
                 self.read_tag_entry()
                 if self.infile.tell() > self.bytes_in_file:
-                    self.go_on = False
+                    go_on = False
 
         (dim1_raw, dim2_raw) = self.header['Active Size (pixels)'].split()
         (dim1_raw, dim2_raw) = (eval(dim1_raw), eval(dim2_raw))
