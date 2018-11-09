@@ -133,9 +133,9 @@ class Dm3Image(FabioImage):
         dim2_raw = int(dim_raw[1])
         binning_raw = self.header['Binning']
         try:
-            (dim1_binning,dim2_binning)=map(int,binning_raw.split())
+            dim1_binning, dim2_binning = map(int, binning_raw.split())
         except AttributeError:
-            (dim1_binning,dim2_binning)=map(lambda x: x*int(binning_raw)*x,(1,1))
+            dim1_binning, dim2_binning = map(lambda x: x * int(binning_raw) * x, (1, 1))
         self.dim1 = dim1_raw // dim1_binning
         self.dim2 = dim2_raw // dim2_binning
         if "Data" in self.header:
