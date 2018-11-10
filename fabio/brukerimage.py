@@ -247,7 +247,7 @@ class BrukerImage(FabioImage):
                 logger.warning(errmsg)
                 raise RuntimeError(errmsg)
 
-            data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
+            data = numpy.frombuffer(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
             if not numpy.little_endian and data.dtype.itemsize > 1:
                 data.byteswap(True)
 

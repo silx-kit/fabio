@@ -1,3 +1,4 @@
+
 # The PyMca X-Ray Fluorescence Toolkit
 #
 # Copyright (c) 2004-2015 European Synchrotron Radiation Facility
@@ -678,9 +679,9 @@ class TiffIO(object):
             fd.seek(stripOffsets[0] + rowMin * bytesPerRow)
             nBytes = (rowMax - rowMin + 1) * bytesPerRow
             if self._swap:
-                readout = numpy.fromstring(fd.read(nBytes), dtype).byteswap()
+                readout = numpy.frombuffer(fd.read(nBytes), dtype).byteswap()
             else:
-                readout = numpy.fromstring(fd.read(nBytes), dtype)
+                readout = numpy.frombuffer(fd.read(nBytes), dtype)
             if hasattr(nBits, 'index'):
                 readout.shape = -1, nColumns, len(nBits)
             elif info['colormap'] is not None:
@@ -729,9 +730,9 @@ class TiffIO(object):
                             # if read -128 ignore the byte
                             continue
                     if self._swap:
-                        readout = numpy.fromstring(bufferBytes, dtype).byteswap()
+                        readout = numpy.frombuffer(bufferBytes, dtype).byteswap()
                     else:
-                        readout = numpy.fromstring(bufferBytes, dtype)
+                        readout = numpy.frombuffer(bufferBytes, dtype)
                     if hasattr(nBits, 'index'):
                         readout.shape = -1, nColumns, len(nBits)
                     elif info['colormap'] is not None:
@@ -744,9 +745,9 @@ class TiffIO(object):
                     if 1:
                         # use numpy
                         if self._swap:
-                            readout = numpy.fromstring(fd.read(nBytes), dtype).byteswap()
+                            readout = numpy.frombuffer(fd.read(nBytes), dtype).byteswap()
                         else:
-                            readout = numpy.fromstring(fd.read(nBytes), dtype)
+                            readout = numpy.frombuffer(fd.read(nBytes), dtype)
                         if hasattr(nBits, 'index'):
                             readout.shape = -1, nColumns, len(nBits)
                         elif colormap is not None:

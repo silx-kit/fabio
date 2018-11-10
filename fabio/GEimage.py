@@ -297,7 +297,7 @@ class GeImage(FabioImage):
         if self.bpp != 2:
             logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
 
-        data = numpy.fromstring(filepointer.read(imglength), numpy.uint16)
+        data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16)
         if not numpy.little_endian:
             data.byteswap(True)
         data.shape = (self.header['NumberOfRowsInFrame'],
