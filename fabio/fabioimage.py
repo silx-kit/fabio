@@ -305,6 +305,17 @@ class FabioImage(_FabioArray):
             return self._shape
         return self.data.shape
 
+    @shape.setter
+    def shape(self, value):
+        if self.data is not None:
+            self.data.shape = value
+        else:
+            self._shape = value
+
+    @property
+    def dtype(self):
+        return self.data.dtype
+
     def __enter__(self):
         return self
 

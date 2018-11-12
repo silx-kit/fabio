@@ -78,7 +78,7 @@ class XsdImage(FabioImage):
         self._shape = []
         self.size = None
         self.coding = None
-        self.dtype = None
+        self._dtype = None
         self.rawData = None
         self.md5 = None
         if fname is not None:
@@ -113,7 +113,7 @@ class XsdImage(FabioImage):
         if self.md5:
             assert hashlib.md5(decData).hexdigest() == self.md5
 
-        data = numpy.frombuffer(decData, dtype=self.dtype)
+        data = numpy.frombuffer(decData, dtype=self._dtype)
         data.shape = self.shape
         self.data = data
 
@@ -145,9 +145,9 @@ class XsdImage(FabioImage):
             except Exception as error:
                 logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
 
-        self.dtype = None
+        self._dtype = None
         for i in xml.findall(".//dtype"):
-            self.dtype = numpy.dtype(i.text)
+            self._dtype = numpy.dtype(i.text)
         self.coding = None
         for i in xml.findall(".//coding"):
             j = i.find("value")
