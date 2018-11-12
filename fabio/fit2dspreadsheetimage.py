@@ -81,9 +81,8 @@ class Fit2dSpreadsheetImage(FabioImage):
             self._shape = dim2, dim1
         except (ValueError, KeyError):
             raise IOError("file %s is corrupt, cannot read it" % str(fname))
-        bytecode = numpy.float32
 
-        self._bpp = len(numpy.array(0, bytecode).tostring())
+        self._dtype = numpy.dtype(numpy.float32)
 
         # now read the data into the array
         try:
@@ -93,7 +92,7 @@ class Fit2dSpreadsheetImage(FabioImage):
                     vals.append([float(x) for x in line.split()])
                 except Exception:
                     pass
-            self.data = numpy.array(vals).astype(bytecode)
+            self.data = numpy.array(vals).astype(self._dtype)
             assert self.data.shape == (self.dim2, self.dim1)
         except Exception:
             _logger.debug("Backtrace", exc_info=True)

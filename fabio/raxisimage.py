@@ -189,8 +189,7 @@ class RaxisImage(FabioImage):
         Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
-        self._bytecode = 'uint16'  # same for all RAXIS images AFAICT
-        self._bpp = 2
+        self._dtype = numpy.dtype('uint16')  # same for all RAXIS images AFAICT
         self.endianness = '>'  # this may be tested for.
 
     def swap_needed(self):
@@ -283,9 +282,9 @@ class RaxisImage(FabioImage):
         dim2 = self.header['Y Pixels']
         self._shape = dim2, dim1
 
-        self._bytecode = numpy.uint16
+        self._dtype = numpy.dtype(numpy.uint16)
         dims = [self.dim2, self.dim1]
-        size = dims[0] * dims[1] * self.bpp
+        size = dims[0] * dims[1] * self._dtype.itemsize
         if offset >= 0:
             infile.seek(offset)
         else:
@@ -300,11 +299,11 @@ class RaxisImage(FabioImage):
                 else:
                     infile.seek(-size + offset + 1, os.SEEK_END)  # seek from EOF backwards
             except IOError as error:
-                logger.warning('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
+                logger.warning('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self._dtype.type, error))
             except Exception as error:
                 logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
-        data = numpy.frombuffer(rawData, self.bytecode).copy().reshape(tuple(dims))
+        data = numpy.frombuffer(rawData, self._dtype).copy().reshape(tuple(dims))
         if self.swap_needed():
             data.byteswap(True)
         di = (data >> 15) != 0  # greater than 2^15
@@ -314,17 +313,17 @@ class RaxisImage(FabioImage):
 
             logger.debug("Correct for PM: %s" % di.sum())
             data = data << 1 >> 1  # reset bit #15 to zero
-            self._bytecode = numpy.uint32
-            data = data.astype(self.bytecode)
+            self._dtype = numpy.dtype(numpy.uint32)
+            data = data.astype(self._dtype)
             # Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
             # multiply by the ratio  defined in the header
             # data[di] *= sf
-            data[di] = (sf * data[di]).astype(numpy.uint32)
-            self._bpp = numpy.dtype(self.bytecode).itemsize
+            data[di] = (sf * data[di]).astype(self._dtype)
 
         self.data = data
         self._shape = None
+        self._dtype = None
         return self
 
     def rigakuKeys(self):

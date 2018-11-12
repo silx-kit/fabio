@@ -207,11 +207,8 @@ class _FabioArray(object):
     def bpp(self):
         "Getter for bpp: data superseeds _bpp"
         if self.data is not None:
-            return numpy.dtype(self.data.dtype).itemsize
-        elif self._bytecode is not None:
-            return numpy.dtype(self._bytecode).itemsize
-        else:
-            return self._bpp
+            return self.data.dtype.itemsize
+        return self.dtype.itemsize
 
     def get_bpp(self):
         return self.bpp
@@ -221,10 +218,13 @@ class _FabioArray(object):
         "Getter for bpp: data superseeds _bytecode"
         if self.data is not None:
             return self.data.dtype.type
-        else:
-            return self._bytecode
+        return self.dtype.type
 
     def get_bytecode(self):
+        return self.bytecode
+
+    @fabioutils.deprecated(reason="Prefer using 'bytecode' instead of 'getByteCode'")
+    def getByteCode(self):
         return self.bytecode
 
 
@@ -313,8 +313,7 @@ class FabioImage(_FabioArray):
         super(FabioImage, self).__init__()
         self._classname = None
         self._shape = None
-        self._bpp = 0
-        self._bytecode = None
+        self._dtype = None
         self._file = None
         if type(data) in fabioutils.StringTypes:
             raise TypeError("Data should be numpy array")

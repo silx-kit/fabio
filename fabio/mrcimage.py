@@ -65,6 +65,15 @@ class MrcImage(FabioImage):
             "MAPC", "MAPR", "MAPS", "DMIN", "DMAX", "DMEAN", "ISPG", "NSYMBT",
             "EXTRA", "ORIGIN", "MAP", "MACHST", "RMS", "NLABL")
 
+    _MODE_TO_DTYPE = {
+        0: numpy.int8,
+        1: numpy.int16,
+        2: numpy.float32,
+        3: numpy.complex64,
+        4: numpy.complex64,
+        6: numpy.uint16
+    }
+
     def _readheader(self, infile):
         """
         Read and decode the header of an image:
@@ -90,20 +99,11 @@ class MrcImage(FabioImage):
 
         self.nframes = self.header["NZ"]
         mode = self.header["MODE"]
-        if mode == 0:
-            self._bytecode = numpy.int8
-        elif mode == 1:
-            self._bytecode = numpy.int16
-        elif mode == 2:
-            self._bytecode = numpy.float32
-        elif mode == 3:
-            self._bytecode = numpy.complex64
-        elif mode == 4:
-            self._bytecode = numpy.complex64
-        elif mode == 6:
-            self._bytecode = numpy.uint16
-
-        self.imagesize = dim1 * dim2 * numpy.dtype(self.bytecode).itemsize
+        if mode not in self._MODE_TO_DTYPE:
+            raise IOError("Mode %s unsupported" % mode)
+        dtype = numpy.dtype(self._MODE_TO_DTYPE[mode])
+        self._dtype = dtype
+        self.imagesize = dim1 * dim2 * dtype.itemsize
 
     def read(self, fname, frame=None):
         """
@@ -143,8 +143,12 @@ class MrcImage(FabioImage):
         if (img_num > self.nframes or img_num < 0):
             raise RuntimeError("Requested frame number is out of range")
         infile.seek(self._calc_offset(img_num), 0)
-        data = numpy.frombuffer(infile.read(self.imagesize), self.bytecode).copy()
-        self.data = data.reshape((self.dim2, self.dim1))
+        data_buffer = infile.read(self.imagesize)
+        data = numpy.frombuffer(data_buffer, self._dtype).copy()
+        data.shape = self._shape
+        self.data = data
+        self._shape = None
+        self._dtype = None
         self.currentframe = int(img_num)
         self._makeframename()
 

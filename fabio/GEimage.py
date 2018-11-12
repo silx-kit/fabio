@@ -273,12 +273,12 @@ class GeImage(FabioImage):
         # whence = 0 means seek from start of file
         filepointer.seek(imgstart, 0)
 
-        self._bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
-        imglength = (self.header['NumberOfRowsInFrame'] *
-                     self.header['NumberOfColsInFrame'] * self.bpp)
-        if self.bpp != 2:
-            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
+        bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
+        if bpp != 2:
+            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % bpp)
 
+        imglength = (self.header['NumberOfRowsInFrame'] *
+                     self.header['NumberOfColsInFrame'] * bpp)
         data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16).copy()
         if not numpy.little_endian:
             data.byteswap(True)

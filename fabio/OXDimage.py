@@ -264,13 +264,11 @@ class OxdImage(FabioImage):
 
                 # endianess is handled at the decompression level
                 raw_data = decTY1(raw8, raw16, raw32)
-                bytecode = raw_data.dtype
             elif self.header['Compression'] == 'TY5':
                 logger.info("Compressed with the TY5 compression")
-                bytecode = numpy.int8
-                self._bpp = 1
+                dtype = numpy.dtype(numpy.int8)
                 raw8 = infile.read(self.dim1 * self.dim2)
-                raw_data = numpy.frombuffer(raw8, bytecode)
+                raw_data = numpy.frombuffer(raw8, dtype)
 
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
@@ -284,20 +282,18 @@ class OxdImage(FabioImage):
                 self.blob = raw8 + self.raw16 + self.raw32 + self.rest
                 raw_data = self.dec_TY5(raw8 + self.raw16 + self.raw32)
             else:
-                bytecode = numpy.int32
-                self._bpp = len(numpy.array(0, bytecode).tostring())
-                nbytes = self.dim1 * self.dim2 * self.bpp
-                raw_data = numpy.frombuffer(infile.read(nbytes), bytecode).copy()
+                dtype = numpy.dtype(numpy.int32)
+                nbytes = self.dim1 * self.dim2 * dtype.itemsize
+                raw_data = numpy.frombuffer(infile.read(nbytes), dtype).copy()
                 # Always assume little-endian on the disk
                 if not numpy.little_endian:
                     raw_data.byteswap(True)
-        # infile.close()
 
         logger.debug('OVER_SHORT2: %s', raw_data.dtype)
         logger.debug("%s" % (raw_data < 0).sum())
-        logger.debug("BYTECODE: %s", bytecode)
+        logger.debug("BYTECODE: %s", raw_data.dtype.type)
         self.data = raw_data.reshape((self.dim2, self.dim1))
-        self._bytecode = self.data.dtype.type
+        self._dtype = None
         self.pilimage = None
         return self
 

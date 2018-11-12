@@ -108,21 +108,21 @@ class HipicImage(FabioImage):
             self._shape = dim2, dim1
         except (ValueError, KeyError):
             raise IOError("HiPic file %s is corrupted, cannot read it" % str(fname))
-        bytecode = numpy.uint16
-        self._bpp = len(numpy.array(0, bytecode).tostring())
+        dtype = numpy.dtype(numpy.uint16)
+        self._dtype = dtype
 
         # Read image data
-        block = infile.read(self.dim1 * self.dim2 * self.bpp)
+        block = infile.read(self.dim1 * self.dim2 * dtype.itemsize)
         infile.close()
 
         # now read the data into the array
         try:
-            self.data = numpy.frombuffer(block, bytecode).copy().reshape((self.dim2, self.dim1))
+            self.data = numpy.frombuffer(block, dtype).copy().reshape((self.dim2, self.dim1))
         except Exception:
-            logger.debug("%s %s %s %s %s", len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            logger.debug("%s %s %s %s %s", len(block), dtype, self.bpp, self.dim2, self.dim1)
             logger.debug("Backtrace", exc_info=True)
             raise IOError('Size spec in HiPic-header does not match size of image data field')
-        self._bytecode = self.data.dtype.type
+        self._dtype = None
 
         # Sometimes these files are not saved as 12 bit,
         # But as 16 bit after bg subtraction - which results

@@ -113,11 +113,11 @@ class PnmImage(FabioImage):
         # case construct here!
         m = int(self.header[six.b('MAXVAL')])
         if m < 256:
-            self._bytecode = numpy.uint8
+            self._dtype = numpy.dtype(numpy.uint8)
         elif m < 65536:
-            self._bytecode = numpy.uint16
+            self._dtype = numpy.dtype(numpy.uint16)
         elif m < 2147483648:
-            self._bytecode = numpy.uint32
+            self._dtype = numpy.dtype(numpy.uint32)
             logger.warning('32-bit pixels are not really supported by the netpgm standard')
         else:
             raise IOError('could not figure out what kind of pixels you have')
@@ -141,7 +141,7 @@ class PnmImage(FabioImage):
         decoder_name = "%sdec" % fmt
         if decoder_name in dir(PnmImage):
             decoder = getattr(PnmImage, decoder_name)
-            self.data = decoder(self, infile, self.bytecode)
+            self.data = decoder(self, infile, self._dtype)
         else:
             raise IOError("No decoder named %s for file %s" % (decoder_name, fname))
         self.resetvals()

@@ -141,9 +141,8 @@ class EdfFrame(fabioimage.FabioFrame):
         self.start = None  # Position of start of raw data in file
         self.size = None  # size of raw data in file
         self.file = None  # opened file object with locking capabilities !!!
-        self._bpp = None
+        self._dtype = None
         self.incomplete_data = False
-        self._bytecode = None
 
         if (number is not None):
             self.iFrame = int(number)
@@ -230,12 +229,13 @@ class EdfFrame(fabioimage.FabioFrame):
         shape = tuple(shape)
         self._shape = shape
 
-        if self._bytecode is None:
+        if self._dtype is None:
             if "DATATYPE" in capsHeader:
-                self._bytecode = DATA_TYPES[self.header[capsHeader['DATATYPE']]]
+                bytecode = DATA_TYPES[self.header[capsHeader['DATATYPE']]]
             else:
-                self._bytecode = numpy.uint16
+                bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
+            self._dtype = numpy.dtype(bytecode)
 
         if "COMPRESSION" in capsHeader:
             self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
@@ -246,8 +246,8 @@ class EdfFrame(fabioimage.FabioFrame):
         else:
             self._data_compression = None
 
-        self._bpp = len(numpy.array(0, self._bytecode).tostring())
-        calcsize *= self._bpp
+        bpp = self._dtype.itemsize
+        calcsize *= bpp
         if (self.size is None):
             self.size = calcsize
         elif (self.size != calcsize):
@@ -261,7 +261,7 @@ class EdfFrame(fabioimage.FabioFrame):
             self._data_swap_needed = False
         if ('High' in byte_order and numpy.little_endian) or \
            ('Low' in byte_order and not numpy.little_endian):
-            if self._bpp in [2, 4, 8]:
+            if bpp in [2, 4, 8]:
                 self._data_swap_needed = True
             else:
                 self._data_swap_needed = False
@@ -324,7 +324,7 @@ class EdfFrame(fabioimage.FabioFrame):
         elif self.file is None:
             data = self._data
         else:
-            if self._bytecode is None:
+            if self._dtype is None:
                 assert(False)
             dims = self.dims[:]
             dims.reverse()
@@ -344,7 +344,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
             if self._data_compression is not None:
                 compression = self._data_compression
-                uncompressed_size = self._bpp
+                uncompressed_size = self._dtype.itemsize
                 for i in dims:
                     uncompressed_size *= i
                 if "OFFSET" in compression:
@@ -354,7 +354,7 @@ class EdfFrame(fabioimage.FabioFrame):
                         logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
                         myData = byte_offset.analyseCython(fileData, size=uncompressed_size)
-                        rawData = myData.astype(self._bytecode).tostring()
+                        rawData = myData.astype(self._dtype).tostring()
                         self.size = uncompressed_size
                 elif compression == "NONE":
                     rawData = fileData
@@ -382,11 +382,11 @@ class EdfFrame(fabioimage.FabioFrame):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
-            data = numpy.frombuffer(rawData, self._bytecode).copy().reshape(tuple(dims))
+            data = numpy.frombuffer(rawData, self._dtype).copy().reshape(tuple(dims))
             if self.swap_needed():
                 data.byteswap(True)
             self._data = data
-            self._bytecode = data.dtype.type
+            self._dtype = None
         return data
 
     def setData(self, npa=None):
@@ -394,16 +394,6 @@ class EdfFrame(fabioimage.FabioFrame):
         self._data = npa
 
     data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
-
-    def getByteCode(self):
-        if self._bytecode is None:
-            self._bytecode = self.data.dtype.type
-        return self._bytecode
-
-    def setByteCode(self, _iVal):
-        self._bytecode = _iVal
-
-    bytecode = property(getByteCode, setByteCode)
 
     def getEdfBlock(self, force_type=None, fit2dMode=False):
         """

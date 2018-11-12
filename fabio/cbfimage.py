@@ -197,11 +197,11 @@ class CbfImage(FabioImage):
         except (KeyError, ValueError):
             raise IOError("CBF file %s is corrupt, no dimensions in it" % inStream.name)
         try:
-            self._bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
+            bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
         except KeyError:
-            self._bytecode = "int32"
+            bytecode = "int32"
             logger.warning("Defaulting type to int32")
-        self._bpp = numpy.dtype(self.bytecode).itemsize
+        self._dtype = numpy.dtype(bytecode)
 
     def read_raw_data(self, infile):
         """Read and return the raw data chunk
@@ -250,7 +250,11 @@ class CbfImage(FabioImage):
                     logger.error("Checksum of binary data mismatch: expected %s, got %s" % (ref, obt))
 
         if self.header["conversions"] == "x-CBF_BYTE_OFFSET":
-            self.data = numpy.ascontiguousarray(self._readbinary_byte_offset(binary_data,), self.bytecode).reshape((self.dim2, self.dim1))
+            data = numpy.ascontiguousarray(self._readbinary_byte_offset(binary_data,), self._dtype)
+            data.shape = self._shape
+            self.data = data
+            self._shape = None
+            self._dtype = None
         else:
             raise Exception(IOError, "Compression scheme not yet supported, please contact the author")
 
@@ -267,9 +271,9 @@ class CbfImage(FabioImage):
         :return: a linear numpy array without shape and dtype set
         :rtype: numpy array
         """
-        myData = decByteOffset(raw_bytes, size=self.dim1 * self.dim2, dtype=self.bytecode)
-        assert len(myData) == self.dim1 * self.dim2
-        return myData
+        data = decByteOffset(raw_bytes, size=self.dim1 * self.dim2, dtype=self._dtype)
+        assert len(data) == self.dim1 * self.dim2
+        return data
 
     def write(self, fname):
         """

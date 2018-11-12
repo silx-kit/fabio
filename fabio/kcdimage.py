@@ -136,17 +136,16 @@ class KcdImage(FabioImage):
                 raise IOError("KCD file %s is corrupt, cannot read it" % fname)
             try:
                 bytecode = DATA_TYPES[self.header['Data type']]
-                self._bpp = len(numpy.array(0, bytecode).tostring())
             except KeyError:
                 bytecode = numpy.uint16
-                self._bpp = 2
                 logger.warning("Defaulting type to uint16")
+            self._dtype = numpy.dtype(bytecode)
             try:
                 nbReadOut = int(self.header['Number of readouts'])
             except KeyError:
                 logger.warning("Defaulting number of ReadOut to 1")
                 nbReadOut = 1
-            expected_size = self.dim1 * self.dim2 * self.bpp * nbReadOut
+            expected_size = self.dim1 * self.dim2 * self._dtype.itemsize * nbReadOut
 
             try:
                 infile.seek(-expected_size, SEEK_END)
@@ -172,12 +171,12 @@ class KcdImage(FabioImage):
         for i in range(nbReadOut):
             start = stop
             stop = (i + 1) * expected_size // nbReadOut
-            data = numpy.frombuffer(block[start: stop], bytecode).copy()
+            data = numpy.frombuffer(block[start: stop], self._dtype).copy()
             data.shape = self.dim2, self.dim1
             if not numpy.little_endian:
                 data.byteswap(True)
             self.data += data
-        self._bytecode = self.data.dtype.type
+        self._dtype = None
         self.resetvals()
         # ensure the PIL image is reset
         self.pilimage = None
