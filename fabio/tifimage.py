@@ -44,7 +44,7 @@ Authors:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "29/10/2018"
+__date__ = "12/11/2018"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -60,7 +60,7 @@ except ImportError:
 
 import numpy
 from .utils import pilutils
-from .fabioimage import FabioImage
+from . import fabioimage
 from . import TiffIO
 
 
@@ -71,20 +71,16 @@ _USE_PIL = True
 """Uses PIL library if available"""
 
 
-class TiffFrame(object):
+class TiffFrame(fabioimage.FabioFrame):
     """Frame container for TIFF format"""
 
     def __init__(self, data, tiff_header):
+        super(TiffFrame, self).__init__(data, tiff_header)
+        # also expose the tiff header as 'tiff header' attribute
         self.tiff_header = tiff_header
-        self.data = data
-
-    @property
-    def header(self):
-        """Default header exposed by fabio"""
-        return self.tiff_header
 
 
-class TifImage(FabioImage):
+class TifImage(fabioimage.FabioImage):
     """
     Images in TIF format
     Wraps TiffIO
@@ -98,7 +94,7 @@ class TifImage(FabioImage):
     def __init__(self, *args, **kwds):
         """ Tifimage constructor adds an nbits member attribute """
         self.nbits = None
-        FabioImage.__init__(self, *args, **kwds)
+        fabioimage.FabioImage.__init__(self, *args, **kwds)
         self._tiffio = None
         self.lib = None
 

@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "22/10/2018"
+__date__ = "12/11/2018"
 
 import os
 import logging
@@ -55,6 +55,96 @@ import numpy
 from . import fabioutils, converters
 from .fabioutils import OrderedDict
 from .utils import pilutils
+
+
+class _FabioArray(object):
+    """"Abstract class providing array API used by :class:`FabioImage` and
+    :class:`FabioFrame`"""
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'", skip_backtrace_count=2)
+    def dim1(self):
+        return self.shape[-1]
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'", skip_backtrace_count=2)
+    def dim2(self):
+        return self.shape[-2]
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'", skip_backtrace_count=2)
+    def dim3(self):
+        if len(self.shape) < 3:
+            raise AttributeError("No attribye dim3")
+        return self.shape[-3]
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)", skip_backtrace_count=2)
+    def dims(self):
+        return list(reversed(self.shape))
+
+    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'")
+    def get_dim1(self):
+        return self.dim1
+
+    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'")
+    def get_dim2(self):
+        return self.dim2
+
+    @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    def set_dim1(self, value):
+        pass
+
+    @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    def set_dim2(self, value):
+        pass
+
+
+class FabioFrame(_FabioArray):
+    """Identify a frame"""
+
+    def __init__(self, data=None, header=None):
+        super(FabioFrame, self).__init__()
+        self.data = data
+        self._header = header
+        self._shape = None
+        self._dtype = None
+
+    @property
+    def header(self):
+        """Default header exposed by fabio
+
+        :rtype: dict
+        """
+        return self._header
+
+    @header.setter
+    def header(self, header):
+        """Set the default header exposed by fabio
+
+        :param dict header: The new header
+        """
+        self._header = header
+
+    @property
+    def shape(self):
+        if self._shape is not None:
+            return self._shape
+        return self.data.shape
+
+    @shape.setter
+    def shape(self, shape):
+        if self.data is not None:
+            self.data.shape = shape
+            self._shape = None
+        else:
+            self._shape = shape
+
+    @property
+    def dtype(self):
+        if self._dtype is not None:
+            return self._dtype
+        return self.data.dtype
 
 
 class FabioImage(object):
@@ -384,6 +474,7 @@ class FabioImage(object):
     def rebin(self, x_rebin_fact, y_rebin_fact, keep_I=True):
         """
         Rebin the data and adjust dims
+
         :param int x_rebin_fact: x binning factor
         :param int y_rebin_fact: y binning factor
         :param bool keep_I: shall the signal increase ?
@@ -414,8 +505,8 @@ class FabioImage(object):
         else:
             self.data = out.astype(self.data.dtype)
 
-        self.dim1 = self.dim1 / x_rebin_fact
-        self.dim2 = self.dim2 / y_rebin_fact
+        self._dim1 = self.dim1 / x_rebin_fact
+        self._dim2 = self.dim2 / y_rebin_fact
 
         # update header
         self.update_header()

@@ -53,7 +53,7 @@ import string
 import logging
 logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage
+from . import fabioimage
 from .fabioutils import isAscii, toAscii, nice_int, OrderedDict
 from .compression import decBzip2, decGzip, decZlib
 from . import compression as compression_module
@@ -127,20 +127,17 @@ class MalformedHeaderError(IOError):
     pass
 
 
-class EdfFrame(object):
+class EdfFrame(fabioimage.FabioFrame):
     """
     A class representing a single frame in an EDF file
     """
     def __init__(self, data=None, header=None, number=None):
-
-        self.header = EdfImage.check_header(header)
+        header = EdfImage.check_header(header)
+        super(EdfFrame, self).__init__(data, header=header)
 
         self._data_compression = None
         self._data_swap_needed = None
         self._data = data
-        self.dims = []
-        self.dim1 = 0
-        self.dim2 = 0
         self.start = None  # Position of start of raw data in file
         self.size = None  # size of raw data in file
         self.file = None  # opened file object with locking capabilities !!!
@@ -177,7 +174,7 @@ class EdfFrame(object):
         """
         self.size = None
         calcsize = 1
-        self.dims = []
+        shape = []
 
         if capsHeader is None:
             capsHeader = self._compute_capsheader()
@@ -195,7 +192,7 @@ class EdfFrame(object):
                 logger.error("Unable to convert to integer Dim_1: %s %s" % (capsHeader["DIM_1"], self.header[capsHeader["DIM_1"]]))
             else:
                 calcsize *= dim1
-                self.dims.append(dim1)
+                shape.insert(0, dim1)
         else:
             logger.error("No Dim_1 in headers !!!")
         if "DIM_2" in capsHeader:
@@ -205,7 +202,7 @@ class EdfFrame(object):
                 logger.error("Unable to convert to integer Dim_2: %s %s" % (capsHeader["DIM_2"], self.header[capsHeader["DIM_2"]]))
             else:
                 calcsize *= dim2
-                self.dims.append(dim2)
+                shape.insert(0, dim2)
         else:
             logger.error("No Dim_2 in headers !!!")
         iDim = 3
@@ -224,12 +221,15 @@ class EdfFrame(object):
                     if dim3 > 1:
                         # Otherwise treat dim3==1 as a 2D image
                         calcsize *= dim3
-                        self.dims.append(dim3)
+                        shape.insert(0, dim3)
                     iDim += 1
 
             else:
                 logger.debug("No Dim_3 -> it is a 2D image")
                 iDim = None
+        shape = tuple(shape)
+        self._shape = shape
+
         if self._bytecode is None:
             if "DATATYPE" in capsHeader:
                 self._bytecode = DATA_TYPES[self.header[capsHeader['DATATYPE']]]
@@ -254,9 +254,6 @@ class EdfFrame(object):
             if self._data_compression is None:
                 logger.warning("Mismatch between the expected size %s and the calculated one %s", self.size, calcsize)
                 self.size = calcsize
-
-        for i, n in enumerate(self.dims):
-            setattr(self, "dim%i" % (i + 1), n)
 
         byte_order = self.header[capsHeader['BYTEORDER']]
         if ('Low' in byte_order and numpy.little_endian) or \
@@ -515,7 +512,7 @@ class EdfFrame(object):
         return ("".join(listHeader)).encode("ASCII") + data.tostring()
 
 
-class EdfImage(FabioImage):
+class EdfImage(fabioimage.FabioImage):
     """ Read and try to write the ESRF edf data format """
 
     DESCRIPTION = "European Synchrotron Radiation Facility data format"
@@ -552,7 +549,7 @@ class EdfImage(FabioImage):
             elif dim >= 3:
                 raise Exception("Data dimension too big. Only 1d or 2d arrays are supported.")
 
-        FabioImage.__init__(self, stored_data, header)
+        fabioimage.FabioImage.__init__(self, stored_data, header)
 
         if frames is None:
             frame = EdfFrame(data=self.data, header=self.header,
@@ -771,7 +768,7 @@ class EdfImage(FabioImage):
         newImage = None
         if self.nframes == 1:
             logger.debug("Single frame EDF; having FabioImage default behavior: %s" % num)
-            newImage = FabioImage.getframe(self, num)
+            newImage = fabioimage.FabioImage.getframe(self, num)
             newImage._file = self._file
         elif num < self.nframes:
             logger.debug("Multi frame EDF; having EdfImage specific behavior: %s/%s" % (num, self.nframes))
@@ -788,7 +785,7 @@ class EdfImage(FabioImage):
         """ returns the previous file in the series as a FabioImage """
         newImage = None
         if self.nframes == 1:
-            newImage = FabioImage.previous(self)
+            newImage = fabioimage.FabioImage.previous(self)
         else:
             newFrameId = self.currentframe - 1
             newImage = self.getframe(newFrameId)
@@ -801,7 +798,7 @@ class EdfImage(FabioImage):
         """
         newImage = None
         if self.nframes == 1:
-            newImage = FabioImage.next(self)
+            newImage = fabioimage.FabioImage.next(self)
         else:
             newFrameId = self.currentframe + 1
             newImage = self.getframe(newFrameId)
