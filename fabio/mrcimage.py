@@ -24,6 +24,7 @@
 # THE SOFTWARE.
 #
 
+from __future__ import with_statement, print_function
 
 """MRC image for FabIO
 
@@ -33,8 +34,6 @@ email:  Jerome.Kieffer@terre-adelie.org
 Specifications from:
 http://ami.scripps.edu/software/mrctools/mrc_specification.php
 """
-
-from __future__ import with_statement, print_function
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
