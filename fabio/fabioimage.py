@@ -286,8 +286,7 @@ class FabioImage(_FabioArray):
         self._bytecode = None
         self._file = None
         if type(data) in fabioutils.StringTypes:
-            raise Exception("fabioimage.__init__ bad argument - " +
-                            "data should be numpy array")
+            raise TypeError("Data should be numpy array")
         self.data = self.check_data(data)
         self.pilimage = None
         self.header = self.check_header(header)
