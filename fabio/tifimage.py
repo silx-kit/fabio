@@ -107,6 +107,7 @@ class TifImage(FabioImage):
         Try to read Tiff images header...
         """
         header = numpy.frombuffer(infile.read(64), numpy.uint16)
+        # TODO: this values dim1/dim2 looks to be wrong
         self.dim1 = int(header[9])
         self.dim2 = int(header[15])
         # nbits is not a FabioImage attribute...
