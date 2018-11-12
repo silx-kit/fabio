@@ -196,6 +196,13 @@ class _FabioArray(object):
             self.stddev = self.data.std(dtype=numpy.double)
         return self.stddev
 
+    @property
+    def header_keys(self):
+        return list(self.header.keys())
+
+    def get_header_keys(self):
+        return self.header_keys()
+
 
 class FabioFrame(_FabioArray):
     """Identify a frame"""
@@ -342,14 +349,6 @@ class FabioImage(_FabioArray):
         :rtype: bool
         """
         return False
-
-    def get_header_keys(self):
-        return list(self.header.keys())
-
-    def set_header_keys(self, value):
-        pass
-
-    header_keys = property(get_header_keys, set_header_keys)
 
     def get_bpp(self):
         "Getter for bpp: data superseeds _bpp"
