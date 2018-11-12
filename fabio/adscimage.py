@@ -73,17 +73,17 @@ class AdscImage(FabioImage):
         # infile.close()
 
         # now read the data into the array
-        self.dim1 = int(self.header['SIZE1'])
-        self.dim2 = int(self.header['SIZE2'])
+        self._shape = int(self.header['SIZE2']), int(self.header['SIZE1'])
         data = numpy.frombuffer(binary, numpy.uint16).copy()
         if self.swap_needed():
             data.byteswap(True)
         try:
-            data.shape = (self.dim2, self.dim1)
+            data.shape = self._shape
         except ValueError:
                 raise IOError('Size spec in ADSC-header does not match ' +
                               'size of image data field %sx%s != %s' % (self.dim1, self.dim2, data.size))
         self.data = data
+        self._shape = None
         self.bytecode = numpy.uint16
         self.resetvals()
         return self

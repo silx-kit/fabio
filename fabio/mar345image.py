@@ -49,7 +49,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "29/10/2018"
+__date__ = "12/11/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -121,7 +121,7 @@ class Mar345Image(FabioImage):
             logger.debug("Going for big endian, swap_needed %s" % self.swap_needed)
 
         # image dimensions
-        self.dim1 = int(struct.unpack(fs, data[4:8])[0])
+        dim1 = int(struct.unpack(fs, data[4:8])[0])
         # number of high intensity pixels
         self.numhigh = struct.unpack(fs, data[2 * 4: (2 + 1) * 4])[0]
         h['NumHigh'] = self.numhigh
@@ -140,7 +140,8 @@ class Mar345Image(FabioImage):
         # total number of pixels
         self.numpixels = struct.unpack(fs, data[5 * 4:(5 + 1) * 4])[0]
         h['NumPixels'] = str(self.numpixels)
-        self.dim2 = self.numpixels // self.dim1
+        dim2 = self.numpixels // dim1
+        self._shape = dim2, dim1
         # pixel dimensions (length,height) in mm
         h['PixelLength'] = struct.unpack(fs, data[6 * 4:(6 + 1) * 4])[0] / 1000.0
         h['PixelHeight'] = struct.unpack(fs, data[7 * 4:(7 + 1) * 4])[0] / 1000.0

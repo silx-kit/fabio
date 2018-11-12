@@ -85,8 +85,10 @@ class MrcImage(FabioImage):
         for i in range(10):
             label = "LABEL_%02i" % i
             self.header[label] = infile.read(80).strip()
-        self.dim1 = self.header["NX"]
-        self.dim2 = self.header["NY"]
+        dim1 = int(self.header["NX"])
+        dim2 = int(self.header["NY"])
+        self._shape = dim2, dim1
+
         self.nframes = self.header["NZ"]
         mode = self.header["MODE"]
         if mode == 0:
@@ -102,7 +104,7 @@ class MrcImage(FabioImage):
         elif mode == 6:
             self.bytecode = numpy.uint16
 
-        self.imagesize = int(self.dim1) * self.dim2 * numpy.dtype(self.bytecode).itemsize
+        self.imagesize = dim1 * dim2 * numpy.dtype(self.bytecode).itemsize
 
     def read(self, fname, frame=None):
         """

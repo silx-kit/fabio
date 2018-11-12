@@ -41,7 +41,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "29/10/2018"
+__date__ = "12/11/2018"
 
 import logging
 import struct
@@ -279,8 +279,10 @@ class RaxisImage(FabioImage):
         # lifted from binaryimage
         # read the image data
 
-        self.dim1 = self.header['X Pixels']
-        self.dim2 = self.header['Y Pixels']
+        dim1 = self.header['X Pixels']
+        dim2 = self.header['Y Pixels']
+        self._shape = dim2, dim1
+
         self.bytecode = numpy.uint16
         dims = [self.dim2, self.dim1]
         size = dims[0] * dims[1] * self.bpp
@@ -322,6 +324,7 @@ class RaxisImage(FabioImage):
             self.bpp = numpy.dtype(self.bytecode).itemsize
 
         self.data = data
+        self._shape = None
         return self
 
     def rigakuKeys(self):

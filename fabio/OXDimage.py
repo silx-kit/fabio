@@ -47,7 +47,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "29/10/2018"
+__date__ = "12/11/2018"
 
 import time
 import logging
@@ -246,8 +246,9 @@ class OxdImage(FabioImage):
 
             # Compute image size
             try:
-                self.dim1 = int(self.header['NX'])
-                self.dim2 = int(self.header['NY'])
+                dim1 = int(self.header['NX'])
+                dim2 = int(self.header['NY'])
+                self._shape = dim2, dim1
             except (ValueError, KeyError):
                 raise IOError("Oxford  file %s is corrupted, cannot read it" % str(fname))
 
@@ -485,8 +486,9 @@ class OxdImage(FabioImage):
         raw = numpy.frombuffer(stream, dtype=numpy.uint8)
         pos_inp = pos_out = current = ex1 = ex2 = 0
 
+        dim2 = self.dim2
         while pos_inp < stream_size and pos_out < array_size:
-            if pos_out % self.dim2 == 0:
+            if pos_out % dim2 == 0:
                 last = 0
             else:
                 last = current

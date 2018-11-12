@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "29/10/2018"
+__date__ = "12/11/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -285,7 +285,7 @@ class GeImage(FabioImage):
         data.shape = (self.header['NumberOfRowsInFrame'],
                       self.header['NumberOfColsInFrame'])
         self.data = data
-        self.dim2, self.dim1 = self.data.shape
+        self._shape = None
         self.currentframe = int(img_num)
         self._makeframename()
 

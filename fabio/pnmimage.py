@@ -45,7 +45,7 @@ License: MIT
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "29/10/2018"
+__date__ = "12/11/2018"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -106,8 +106,9 @@ class PnmImage(FabioImage):
                 self.header[k] = v.strip()
 
         # set the dimensions
-        self.dim1 = int(self.header[six.b("WIDTH")])
-        self.dim2 = int(self.header[six.b("HEIGHT")])
+        dim1 = int(self.header[six.b("WIDTH")])
+        dim2 = int(self.header[six.b("HEIGHT")])
+        self._shape = dim2, dim1
         # figure out how many bytes are used to store the data
         # case construct here!
         m = int(self.header[six.b('MAXVAL')])

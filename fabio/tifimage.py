@@ -104,8 +104,9 @@ class TifImage(fabioimage.FabioImage):
         """
         header = numpy.frombuffer(infile.read(64), numpy.uint16)
         # TODO: this values dim1/dim2 looks to be wrong
-        self.dim1 = int(header[9])
-        self.dim2 = int(header[15])
+        dim1 = int(header[9])
+        dim2 = int(header[15])
+        self._shape = dim2, dim1
         # nbits is not a FabioImage attribute...
         self.nbits = int(header[21])  # number of bits
 
@@ -138,10 +139,10 @@ class TifImage(fabioimage.FabioImage):
             self.data = frame.data
         self._tiffio = tiffIO
         if self.data.ndim == 2:
-            self.dim2, self.dim1 = self.data.shape
+            self._shape = None
         elif self.data.ndim == 3:
-            self.dim2, self.dim1, _ = self.data.shape
             logger.warning("Third dimension is the color")
+            self._shape = None
         else:
             logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
         self.lib = "TiffIO"
@@ -153,6 +154,7 @@ class TifImage(fabioimage.FabioImage):
         frame = self._create_frame(data, header)
         self.header = frame.header
         self.data = frame.data
+        self._shape = None
         self.lib = "PIL"
 
     def read(self, fname, frame=None):

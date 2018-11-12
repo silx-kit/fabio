@@ -136,10 +136,11 @@ class Dm3Image(FabioImage):
             dim1_binning, dim2_binning = map(int, binning_raw.split())
         except AttributeError:
             dim1_binning, dim2_binning = map(lambda x: x * int(binning_raw) * x, (1, 1))
-        self.dim1 = dim1_raw // dim1_binning
-        self.dim2 = dim2_raw // dim2_binning
+        self._shape = dim2_raw // dim2_binning, dim1_raw // dim1_binning
         if "Data" in self.header:
-            self.data = self.header[u'Data'].reshape(self.dim1, self.dim2)
+            self.data = self.header[u'Data']
+            self.data.shape = self._shape
+            self._shape = None
         return self
 
     def readbytes(self, bytes_to_read, format, swap=True):

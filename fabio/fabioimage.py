@@ -351,42 +351,6 @@ class FabioImage(_FabioArray):
 
     header_keys = property(get_header_keys, set_header_keys)
 
-    def get_dim1(self):
-        "Getter for dim1: data superseeds _dim1"
-        if self.data is not None:
-            try:
-                return self.data.shape[-1]
-            except IndexError as err:
-                logger.error(err)
-                logger.debug(self.data)
-                return self._dim1
-        else:
-            return self._dim1
-
-    def set_dim1(self, value):
-        "Setter for dim1"
-        self._dim1 = value
-
-    dim1 = property(get_dim1, set_dim1)
-
-    def get_dim2(self):
-        "Getter for dim2: data superseeds _dim2"
-        if self.data is not None:
-            try:
-                return self.data.shape[-2]
-            except IndexError as err:
-                logger.error(err)
-                logger.debug(self.data)
-                return self._dim2
-        else:
-            return self._dim2
-
-    def set_dim2(self, value):
-        "Setter for dim2"
-        self._dim2 = value
-
-    dim2 = property(get_dim2, set_dim2)
-
     def get_bpp(self):
         "Getter for bpp: data superseeds _bpp"
         if self.data is not None:
@@ -525,8 +489,7 @@ class FabioImage(_FabioArray):
         else:
             self.data = out.astype(self.data.dtype)
 
-        self._dim1 = self.dim1 / x_rebin_fact
-        self._dim2 = self.dim2 / y_rebin_fact
+        self._shape = None
 
         # update header
         self.update_header()

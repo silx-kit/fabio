@@ -76,8 +76,9 @@ class Fit2dSpreadsheetImage(FabioImage):
         self._readheader(infile)
         # Compute image size
         try:
-            self.dim1 = int(self.header['Dim_1'])
-            self.dim2 = int(self.header['Dim_2'])
+            dim1 = int(self.header['Dim_1'])
+            dim2 = int(self.header['Dim_2'])
+            self._shape = dim2, dim1
         except (ValueError, KeyError):
             raise IOError("file %s is corrupt, cannot read it" % str(fname))
         bytecode = numpy.float32

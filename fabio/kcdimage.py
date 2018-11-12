@@ -129,8 +129,9 @@ class KcdImage(FabioImage):
             self._readheader(infile)
             # Compute image size
             try:
-                self.dim1 = int(self.header['X dimension'])
-                self.dim2 = int(self.header['Y dimension'])
+                dim1 = int(self.header['X dimension'])
+                dim2 = int(self.header['Y dimension'])
+                self._shape = dim2, dim1
             except (KeyError, ValueError):
                 raise IOError("KCD file %s is corrupt, cannot read it" % fname)
             try:

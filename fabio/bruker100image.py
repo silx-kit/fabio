@@ -118,8 +118,8 @@ class Bruker100Image(BrukerImage):
                 else:
                     self.header[key] = val
         # set the image dimensions
-        self.dim1 = int(self.header['NROWS'].split()[0])
-        self.dim2 = int(self.header['NCOLS'].split()[0])
+        shape = int(self.header['NCOLS'].split()[0]), int(self.header['NROWS'].split()[0])
+        self._shape = shape
         self.version = int(self.header.get('VERSION', "100"))
 
     def toPIL16(self, filename=None):

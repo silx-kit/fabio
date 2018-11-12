@@ -47,7 +47,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "25/06/2018"
+__date__ = "12/11/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -220,8 +220,8 @@ class BrukerImage(FabioImage):
         self.header['datastart'] = blocksize * nhdrblks
 
         # set the image dimensions
-        self.dim1 = int(self.header['NROWS'].split()[0])
-        self.dim2 = int(self.header['NCOLS'].split()[0])
+        shape = int(self.header['NCOLS'].split()[0]), int(self.header['NROWS'].split()[0])
+        self._shape = shape
         self.version = int(self.header.get('VERSION', "86"))
 
     def read(self, fname, frame=None):
