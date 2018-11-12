@@ -75,7 +75,7 @@ class XsdImage(FabioImage):
         :param str fname: the name of the file to open
         """
         FabioImage.__init__(self, data=data, header=header)
-        self.dims = []
+        self._shape = []
         self.size = None
         self.coding = None
         self.dtype = None
@@ -95,13 +95,8 @@ class XsdImage(FabioImage):
         with self._open(fname, "rb") as infile:
             self._readheader(infile)
 
-        try:
-            self.dim1, self.dim2 = self.dims[:2]
-        except ValueError:
-            raise IOError("XSD file %s is corrupt, no dimensions in it" % fname)
-
         exp_size = 1
-        for i in self.dims:
+        for i in self.shape:
             exp_size *= i
         assert exp_size == self.size
 
@@ -118,11 +113,14 @@ class XsdImage(FabioImage):
         if self.md5:
             assert hashlib.md5(decData).hexdigest() == self.md5
 
-        self.data = numpy.frombuffer(decData, dtype=self.dtype).reshape(tuple(self.dims))
+        data = numpy.frombuffer(decData, dtype=self.dtype)
+        data.shape = self.shape
+        self.data = data
+
         if not numpy.little_endian:  # by default little endian
             self.data.byteswap(inplace=True)
         self.resetvals()
-#        # ensure the PIL image is reset
+        # ensure the PIL image is reset
         self.pilimage = None
         return self
 
@@ -133,20 +131,23 @@ class XsdImage(FabioImage):
         :type infile: file object open in read mode
         """
         xml = etree.parse(infile)
-        self.dims = []
+        self._shape = []
         for i in xml.findall(".//shape"):
             try:
-                self.dims.append(int(i.text))
+                self._shape.insert(0, int(i.text))
             except ValueError as error:
                 logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
+        self._shape = tuple(self._shape)
+
         for i in xml.findall(".//size"):
             try:
                 self.size = int(i.text)
             except Exception as error:
                 logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
+
         self.dtype = None
         for i in xml.findall(".//dtype"):
-            self.dtype = i.text
+            self.dtype = numpy.dtype(i.text)
         self.coding = None
         for i in xml.findall(".//coding"):
             j = i.find("value")

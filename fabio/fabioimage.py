@@ -59,7 +59,7 @@ from .utils import pilutils
 
 class _FabioArray(object):
     """"Abstract class providing array API used by :class:`FabioImage` and
-    :class:`FabioFrame`"""
+    :class:`FabioFrame`."""
 
     @property
     @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'", skip_backtrace_count=2)
@@ -93,11 +93,108 @@ class _FabioArray(object):
 
     @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
     def set_dim1(self, value):
-        pass
+        self.shape[-1] = value
 
     @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
     def set_dim2(self, value):
-        pass
+        self.shape[-2] = value
+
+    def resetvals(self):
+        """ Reset cache - call on changing data """
+        self.mean = None
+        self.stddev = None
+        self.maxval = None
+        self.minval = None
+        self.roi = None
+        self.slice = None
+        self.area_sum = None
+
+    def toPIL16(self, filename=None):
+        """
+        Convert to Python Imaging Library 16 bit greyscale image
+        """
+        if filename:
+            self.read(filename)
+        if self.pilimage is None:
+            # Create and cache the result
+            self.pilimage = pilutils.create_pil_16(self.data)
+        return self.pilimage
+
+    def getmax(self):
+        """ Find max value in self.data, caching for the future """
+        if self.maxval is None:
+            if self.data is not None:
+                self.maxval = self.data.max()
+        return self.maxval
+
+    def getmin(self):
+        """ Find min value in self.data, caching for the future """
+        if self.minval is None:
+            if self.data is not None:
+                self.minval = self.data.min()
+        return self.minval
+
+    def make_slice(self, coords):
+        """
+        Convert a len(4) set of coords into a len(2)
+        tuple (pair) of slice objects
+        the latter are immutable, meaning the roi can be cached
+        """
+        assert len(coords) == 4
+        if len(coords) == 4:
+            # fabian edfimage preference
+            if coords[0] > coords[2]:
+                coords[0:3:2] = [coords[2], coords[0]]
+            if coords[1] > coords[3]:
+                coords[1:4:2] = [coords[3], coords[1]]
+            # in fabian: normally coordinates are given as (x,y) whereas
+            # a matrix is given as row,col
+            # also the (for whichever reason) the image is flipped upside
+            # down wrt to the matrix hence these tranformations
+            fixme = (self.dim2 - coords[3] - 1,
+                     coords[0],
+                     self.dim2 - coords[1] - 1,
+                     coords[2])
+        return (slice(int(fixme[0]), int(fixme[2]) + 1),
+                slice(int(fixme[1]), int(fixme[3]) + 1))
+
+    def integrate_area(self, coords):
+        """
+        Sums up a region of interest
+        if len(coords) == 4 -> convert coords to slices
+        if len(coords) == 2 -> use as slices
+        floor -> ? removed as unused in the function.
+        """
+        if self.data is None:
+            # This should return NAN, not zero ?
+            return 0
+        if len(coords) == 4:
+            sli = self.make_slice(coords)
+        elif len(coords) == 2 and isinstance(coords[0], slice) and \
+                isinstance(coords[1], slice):
+            sli = coords
+
+        if sli == self.slice and self.area_sum is not None:
+            pass
+        elif sli == self.slice and self.roi is not None:
+            self.area_sum = self.roi.sum(dtype=numpy.float)
+        else:
+            self.slice = sli
+            self.roi = self.data[self.slice]
+            self.area_sum = self.roi.sum(dtype=numpy.float)
+        return self.area_sum
+
+    def getmean(self):
+        """ return the mean """
+        if self.mean is None:
+            self.mean = self.data.mean(dtype=numpy.double)
+        return self.mean
+
+    def getstddev(self):
+        """ return the standard deviation """
+        if self.stddev is None:
+            self.stddev = self.data.std(dtype=numpy.double)
+        return self.stddev
 
 
 class FabioFrame(_FabioArray):
@@ -147,7 +244,7 @@ class FabioFrame(_FabioArray):
         return self.data.dtype
 
 
-class FabioImage(object):
+class FabioImage(_FabioArray):
     """A common object for images in fable
 
     Contains a numpy array (.data) and dict of meta data (.header)
@@ -182,8 +279,10 @@ class FabioImage(object):
         :param data: numpy array of values
         :param header: dict or ordereddict with metadata
         """
+        super(FabioImage, self).__init__()
         self._classname = None
-        self._dim1 = self._dim2 = self._bpp = 0
+        self._shape = None
+        self._bpp = 0
         self._bytecode = None
         self._file = None
         if type(data) in fabioutils.StringTypes:
@@ -193,16 +292,19 @@ class FabioImage(object):
         self.pilimage = None
         self.header = self.check_header(header)
         # cache for image statistics
-        self.mean = self.maxval = self.stddev = self.minval = None
-        # Cache roi
-        self.roi = None
-        self.area_sum = None
-        self.slice = None
-        # New for multiframe files
+
         self.nframes = 1
         self.currentframe = 0
         self.filename = None
         self.filenumber = None
+
+        self.resetvals()
+
+    @property
+    def shape(self):
+        if self._shape is not None:
+            return self._shape
+        return self.data.shape
 
     def __enter__(self):
         return self
@@ -360,96 +462,9 @@ class FabioImage(object):
         return openimage(
             fabioutils.next_filename(self.filename))
 
-    def toPIL16(self, filename=None):
-        """
-        Convert to Python Imaging Library 16 bit greyscale image
-        """
-        if filename:
-            self.read(filename)
-        if self.pilimage is None:
-            # Create and cache the result
-            self.pilimage = pilutils.create_pil_16(self.data)
-        return self.pilimage
-
     def getheader(self):
         """ returns self.header """
         return self.header
-
-    def getmax(self):
-        """ Find max value in self.data, caching for the future """
-        if self.maxval is None:
-            if self.data is not None:
-                self.maxval = self.data.max()
-        return self.maxval
-
-    def getmin(self):
-        """ Find min value in self.data, caching for the future """
-        if self.minval is None:
-            if self.data is not None:
-                self.minval = self.data.min()
-        return self.minval
-
-    def make_slice(self, coords):
-        """
-        Convert a len(4) set of coords into a len(2)
-        tuple (pair) of slice objects
-        the latter are immutable, meaning the roi can be cached
-        """
-        assert len(coords) == 4
-        if len(coords) == 4:
-            # fabian edfimage preference
-            if coords[0] > coords[2]:
-                coords[0:3:2] = [coords[2], coords[0]]
-            if coords[1] > coords[3]:
-                coords[1:4:2] = [coords[3], coords[1]]
-            # in fabian: normally coordinates are given as (x,y) whereas
-            # a matrix is given as row,col
-            # also the (for whichever reason) the image is flipped upside
-            # down wrt to the matrix hence these tranformations
-            fixme = (self.dim2 - coords[3] - 1,
-                     coords[0],
-                     self.dim2 - coords[1] - 1,
-                     coords[2])
-        return (slice(int(fixme[0]), int(fixme[2]) + 1),
-                slice(int(fixme[1]), int(fixme[3]) + 1))
-
-    def integrate_area(self, coords):
-        """
-        Sums up a region of interest
-        if len(coords) == 4 -> convert coords to slices
-        if len(coords) == 2 -> use as slices
-        floor -> ? removed as unused in the function.
-        """
-        if self.data is None:
-            # This should return NAN, not zero ?
-            return 0
-        if len(coords) == 4:
-            sli = self.make_slice(coords)
-        elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                isinstance(coords[1], slice):
-            sli = coords
-
-        if sli == self.slice and self.area_sum is not None:
-            pass
-        elif sli == self.slice and self.roi is not None:
-            self.area_sum = self.roi.sum(dtype=numpy.float)
-        else:
-            self.slice = sli
-            self.roi = self.data[self.slice]
-            self.area_sum = self.roi.sum(dtype=numpy.float)
-        return self.area_sum
-
-    def getmean(self):
-        """ return the mean """
-        if self.mean is None:
-            self.mean = self.data.mean(dtype=numpy.double)
-        return self.mean
-
-    def getstddev(self):
-        """ return the standard deviation """
-        if self.stddev is None:
-            self.stddev = self.data.std(dtype=numpy.double)
-        return self.stddev
 
     def add(self, other):
         """
@@ -465,11 +480,6 @@ class FabioImage(object):
         assert self.data.shape == other.data.shape, 'incompatible images - Do they have the same size?'
         self.data = self.data + other.data
         self.resetvals()
-
-    def resetvals(self):
-        """ Reset cache - call on changing data """
-        self.mean = self.stddev = self.maxval = self.minval = None
-        self.roi = self.slice = self.area_sum = None
 
     def rebin(self, x_rebin_fact, y_rebin_fact, keep_I=True):
         """
