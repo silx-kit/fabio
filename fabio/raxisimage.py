@@ -189,8 +189,8 @@ class RaxisImage(FabioImage):
         Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
-        self.bytecode = 'uint16'  # same for all RAXIS images AFAICT
-        self.bpp = 2
+        self._bytecode = 'uint16'  # same for all RAXIS images AFAICT
+        self._bpp = 2
         self.endianness = '>'  # this may be tested for.
 
     def swap_needed(self):
@@ -283,7 +283,7 @@ class RaxisImage(FabioImage):
         dim2 = self.header['Y Pixels']
         self._shape = dim2, dim1
 
-        self.bytecode = numpy.uint16
+        self._bytecode = numpy.uint16
         dims = [self.dim2, self.dim1]
         size = dims[0] * dims[1] * self.bpp
         if offset >= 0:
@@ -314,14 +314,14 @@ class RaxisImage(FabioImage):
 
             logger.debug("Correct for PM: %s" % di.sum())
             data = data << 1 >> 1  # reset bit #15 to zero
-            self.bytecode = numpy.uint32
+            self._bytecode = numpy.uint32
             data = data.astype(self.bytecode)
             # Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
             # multiply by the ratio  defined in the header
             # data[di] *= sf
             data[di] = (sf * data[di]).astype(numpy.uint32)
-            self.bpp = numpy.dtype(self.bytecode).itemsize
+            self._bpp = numpy.dtype(self.bytecode).itemsize
 
         self.data = data
         self._shape = None

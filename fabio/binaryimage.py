@@ -90,7 +90,7 @@ class BinaryImage(FabioImage):
         """
         self.filename = fname
         self._shape = dim2, dim1
-        self.bytecode = bytecode
+        self._bytecode = bytecode
         f = open(self.filename, "rb")
         dims = [dim2, dim1]
         bpp = len(numpy.array(0, bytecode).tostring())

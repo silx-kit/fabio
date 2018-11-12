@@ -268,7 +268,7 @@ class OxdImage(FabioImage):
             elif self.header['Compression'] == 'TY5':
                 logger.info("Compressed with the TY5 compression")
                 bytecode = numpy.int8
-                self.bpp = 1
+                self._bpp = 1
                 raw8 = infile.read(self.dim1 * self.dim2)
                 raw_data = numpy.frombuffer(raw8, bytecode)
 
@@ -285,7 +285,7 @@ class OxdImage(FabioImage):
                 raw_data = self.dec_TY5(raw8 + self.raw16 + self.raw32)
             else:
                 bytecode = numpy.int32
-                self.bpp = len(numpy.array(0, bytecode).tostring())
+                self._bpp = len(numpy.array(0, bytecode).tostring())
                 nbytes = self.dim1 * self.dim2 * self.bpp
                 raw_data = numpy.frombuffer(infile.read(nbytes), bytecode).copy()
                 # Always assume little-endian on the disk
@@ -297,7 +297,7 @@ class OxdImage(FabioImage):
         logger.debug("%s" % (raw_data < 0).sum())
         logger.debug("BYTECODE: %s", bytecode)
         self.data = raw_data.reshape((self.dim2, self.dim1))
-        self.bytecode = self.data.dtype.type
+        self._bytecode = self.data.dtype.type
         self.pilimage = None
         return self
 

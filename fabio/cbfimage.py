@@ -197,11 +197,11 @@ class CbfImage(FabioImage):
         except (KeyError, ValueError):
             raise IOError("CBF file %s is corrupt, no dimensions in it" % inStream.name)
         try:
-            self.bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
+            self._bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
         except KeyError:
-            self.bytecode = "int32"
+            self._bytecode = "int32"
             logger.warning("Defaulting type to int32")
-        self.bpp = numpy.dtype(self.bytecode).itemsize
+        self._bpp = numpy.dtype(self.bytecode).itemsize
 
     def read_raw_data(self, infile):
         """Read and return the raw data chunk

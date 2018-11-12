@@ -83,7 +83,7 @@ class Fit2dSpreadsheetImage(FabioImage):
             raise IOError("file %s is corrupt, cannot read it" % str(fname))
         bytecode = numpy.float32
 
-        self.bpp = len(numpy.array(0, bytecode).tostring())
+        self._bpp = len(numpy.array(0, bytecode).tostring())
 
         # now read the data into the array
         try:

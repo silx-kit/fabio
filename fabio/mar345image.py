@@ -91,7 +91,7 @@ class Mar345Image(FabioImage):
         else:
             logger.error("Cannot handle these formats yet due to lack of documentation")
             return None
-        self.bytecode = numpy.uint32
+        self._bytecode = numpy.uint32
         f.close()
         return self
 

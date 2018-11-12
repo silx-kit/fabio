@@ -273,7 +273,7 @@ class GeImage(FabioImage):
         # whence = 0 means seek from start of file
         filepointer.seek(imgstart, 0)
 
-        self.bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
+        self._bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
         imglength = (self.header['NumberOfRowsInFrame'] *
                      self.header['NumberOfColsInFrame'] * self.bpp)
         if self.bpp != 2:

@@ -113,11 +113,11 @@ class PnmImage(FabioImage):
         # case construct here!
         m = int(self.header[six.b('MAXVAL')])
         if m < 256:
-            self.bytecode = numpy.uint8
+            self._bytecode = numpy.uint8
         elif m < 65536:
-            self.bytecode = numpy.uint16
+            self._bytecode = numpy.uint16
         elif m < 2147483648:
-            self.bytecode = numpy.uint32
+            self._bytecode = numpy.uint32
             logger.warning('32-bit pixels are not really supported by the netpgm standard')
         else:
             raise IOError('could not figure out what kind of pixels you have')

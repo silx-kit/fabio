@@ -141,7 +141,7 @@ class EdfFrame(fabioimage.FabioFrame):
         self.start = None  # Position of start of raw data in file
         self.size = None  # size of raw data in file
         self.file = None  # opened file object with locking capabilities !!!
-        self.bpp = None
+        self._bpp = None
         self.incomplete_data = False
         self._bytecode = None
 
@@ -246,8 +246,8 @@ class EdfFrame(fabioimage.FabioFrame):
         else:
             self._data_compression = None
 
-        self.bpp = len(numpy.array(0, self._bytecode).tostring())
-        calcsize *= self.bpp
+        self._bpp = len(numpy.array(0, self._bytecode).tostring())
+        calcsize *= self._bpp
         if (self.size is None):
             self.size = calcsize
         elif (self.size != calcsize):
@@ -261,7 +261,7 @@ class EdfFrame(fabioimage.FabioFrame):
             self._data_swap_needed = False
         if ('High' in byte_order and numpy.little_endian) or \
            ('Low' in byte_order and not numpy.little_endian):
-            if self.bpp in [2, 4, 8]:
+            if self._bpp in [2, 4, 8]:
                 self._data_swap_needed = True
             else:
                 self._data_swap_needed = False
@@ -344,7 +344,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
             if self._data_compression is not None:
                 compression = self._data_compression
-                uncompressed_size = self.bpp
+                uncompressed_size = self._bpp
                 for i in dims:
                     uncompressed_size *= i
                 if "OFFSET" in compression:

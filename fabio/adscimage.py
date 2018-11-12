@@ -84,7 +84,7 @@ class AdscImage(FabioImage):
                               'size of image data field %sx%s != %s' % (self.dim1, self.dim2, data.size))
         self.data = data
         self._shape = None
-        self.bytecode = numpy.uint16
+        self._bytecode = numpy.uint16
         self.resetvals()
         return self
 

@@ -91,17 +91,17 @@ class MrcImage(FabioImage):
         self.nframes = self.header["NZ"]
         mode = self.header["MODE"]
         if mode == 0:
-            self.bytecode = numpy.int8
+            self._bytecode = numpy.int8
         elif mode == 1:
-            self.bytecode = numpy.int16
+            self._bytecode = numpy.int16
         elif mode == 2:
-            self.bytecode = numpy.float32
+            self._bytecode = numpy.float32
         elif mode == 3:
-            self.bytecode = numpy.complex64
+            self._bytecode = numpy.complex64
         elif mode == 4:
-            self.bytecode = numpy.complex64
+            self._bytecode = numpy.complex64
         elif mode == 6:
-            self.bytecode = numpy.uint16
+            self._bytecode = numpy.uint16
 
         self.imagesize = dim1 * dim2 * numpy.dtype(self.bytecode).itemsize
 

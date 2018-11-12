@@ -203,6 +203,30 @@ class _FabioArray(object):
     def get_header_keys(self):
         return self.header_keys()
 
+    @property
+    def bpp(self):
+        "Getter for bpp: data superseeds _bpp"
+        if self.data is not None:
+            return numpy.dtype(self.data.dtype).itemsize
+        elif self._bytecode is not None:
+            return numpy.dtype(self._bytecode).itemsize
+        else:
+            return self._bpp
+
+    def get_bpp(self):
+        return self.bpp
+
+    @property
+    def bytecode(self):
+        "Getter for bpp: data superseeds _bytecode"
+        if self.data is not None:
+            return self.data.dtype.type
+        else:
+            return self._bytecode
+
+    def get_bytecode(self):
+        return self.bytecode
+
 
 class FabioFrame(_FabioArray):
     """Identify a frame"""
@@ -349,32 +373,6 @@ class FabioImage(_FabioArray):
         :rtype: bool
         """
         return False
-
-    def get_bpp(self):
-        "Getter for bpp: data superseeds _bpp"
-        if self.data is not None:
-            return numpy.dtype(self.data.dtype).itemsize
-        elif self._bytecode is not None:
-            return numpy.dtype(self._bytecode).itemsize
-        else:
-            return self._bpp
-
-    def set_bpp(self, value):
-        "Setter for bpp"
-        self._bpp = value
-    bpp = property(get_bpp, set_bpp)
-
-    def get_bytecode(self):
-        "Getter for bpp: data superseeds _bytecode"
-        if self.data is not None:
-            return self.data.dtype.type
-        else:
-            return self._bytecode
-
-    def set_bytecode(self, value):
-        "Setter for bpp"
-        self._bytecode = value
-    bytecode = property(get_bytecode, set_bytecode)
 
     @staticmethod
     def check_header(header=None):
