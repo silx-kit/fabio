@@ -373,7 +373,8 @@ class FabioImage(_FabioArray):
     def _get_frame(self, num):
         """Returns a frame from a number of frame
 
-        This method have to be reimplemented to provide multi frames.
+        This method have to be reimplemented to provide multi frames using a
+        a custom class.
 
         :param int num: Number of frames (0 is the first frame)
         :rtype: FabioFrame
@@ -387,7 +388,17 @@ class FabioImage(_FabioArray):
         if not (0 <= num < self.nframes):
             raise IndexError("Frame number out of range (requested %d, but found %d)" % (num, self.nframes))
 
-        raise NotImplemented("This implementation do not support multiframes. Each format must implement it's own frame provider.")
+        image = self.getframes(num)
+        # Usually it is not a FabioFrame
+        if isinstance(image, FabioFrame):
+            image._set_file_container(self, num)
+            return image
+        else:
+            # This code created extra objects, but avoid to implement many
+            # things on mostly unused formats
+            frame = FabioFrame(image.data, image.header)
+            frame._set_file_container(self, num)
+            return frame
 
     def frames(self):
         """Iterate all available frames stored in this image container.
