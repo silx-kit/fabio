@@ -818,7 +818,7 @@ class EdfImage(fabioimage.FabioImage):
         """
         if isinstance(frame, EdfFrame):
             self._frames.append(frame)
-        elif ("header" in dir(frame)) and ("data" in dir(frame)):
+        elif hasattr(frame, "header") and hasattr(frame, "data"):
             self._frames.append(EdfFrame(frame.data, frame.header))
         else:
             self._frames.append(EdfFrame(data, header))
