@@ -99,11 +99,10 @@ class TestRaxisImage(unittest.TestCase):
         This test takes a lot of time, so only in debug mode.
         """
         N = 1000
-        if logger.getEffectiveLevel() <= logging.INFO:
+        if logger.getEffectiveLevel() == logging.DEBUG:
             logger.debug("Testing for memory leak")
-            for i in range(N):
+            for _ in range(N):
                 _img = fabio.open(self.mar)
-                print("Reading #%s/%s" % (i, N))
 
 
 def suite():
