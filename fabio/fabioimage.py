@@ -50,6 +50,7 @@ import os
 import logging
 import sys
 import tempfile
+import weakref
 logger = logging.getLogger(__name__)
 import numpy
 from . import fabioutils, converters
@@ -239,6 +240,44 @@ class FabioFrame(_FabioArray):
         self._header = header
         self._shape = None
         self._dtype = None
+        self._file_container = None
+        self._file_index = None
+
+    def _set_file_container(self, fabio_image, index):
+        """
+        Set the file container of this frame
+
+        :param FabioImage fabio_image: The fabio image containing this frame
+        :param int index: Index of this frame in the file container (starting
+            from 0)
+        """
+        self._file_container = weakref.ref(fabio_image)
+        self._file_index = index
+
+    @property
+    def file_container(self):
+        """Returns the file containing this frame.
+
+        :rtype: FabioImage
+        """
+        ref = self._file_container
+        if ref is None:
+            return None
+        ref = ref()
+        if ref is None:
+            self._file_container = None
+        return ref
+
+    @property
+    def file_index(self):
+        """Returns the index of this frame in the file container.
+
+        This file is stored as a weakref. If a reference to the file is not
+        stored somewhere, this link is lost.
+
+        :rtype: int
+        """
+        return self._file_index
 
     @property
     def header(self):
@@ -330,6 +369,34 @@ class FabioImage(_FabioArray):
         self.filenumber = None
 
         self.resetvals()
+
+    def _get_frame(self, num):
+        """Returns a frame from a number of frame
+
+        This method have to be reimplemented to provide multi frames.
+
+        :param int num: Number of frames (0 is the first frame)
+        :rtype: FabioFrame
+        :raises IndexError: If the frame number is out of the available range.
+        """
+        if self.nframes == 1 and num == 0:
+            frame = FabioFrame(self.data, self.header)
+            frame._set_file_container(self, num)
+            return frame
+
+        if not (0 <= num < self.nframes):
+            raise IndexError("Frame number out of range (requested %d, but found %d)" % (num, self.nframes))
+
+        raise NotImplemented("This implementation do not support multiframes. Each format must implement it's own frame provider.")
+
+    def frames(self):
+        """Iterate all available frames stored in this image container.
+
+        :rtype: Iterator[FabioFrame]
+        """
+        for num in range(self.nframes):
+            frame = self._get_frame(num)
+            yield frame
 
     @property
     def shape(self):
