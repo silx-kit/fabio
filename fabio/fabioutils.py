@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/11/2018"
+__date__ = "13/11/2018"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -132,12 +132,14 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None, onl
 
 
 def deprecated_warning(type_, name, reason=None, replacement=None,
-                       since_version=None, only_once=False,
+                       since_version=None, only_once=True,
                        skip_backtrace_count=0):
     """
-    Decorator that deprecates the use of a function
+    Function to log a deprecation warning
 
-    :param str type_: Module, function, class ...
+    :param str type_: Nature of the object to be deprecated:
+        "Module", "Function", "Class" ...
+    :param name: Object name.
     :param str reason: Reason for deprecating this function
         (e.g. "feature no longer provided",
     :param str replacement: Name of replacement function (if the reason for
@@ -145,7 +147,7 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
     :param str since_version: First *silx* version for which the function was
         deprecated (e.g. "0.5.0").
     :param bool only_once: If true, the deprecation warning will only be
-        generated one time. Default is true.
+        generated one time for each different call locations. Default is true.
     :param int skip_backtrace_count: Amount of last backtrace to ignore when
         logging the backtrace
     """
@@ -153,17 +155,17 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
         # Avoid computation when it is not logged
         return
 
-    msg = "%s, %s is deprecated"
+    msg = "%s %s is deprecated"
     if since_version is not None:
         msg += " since silx version %s" % since_version
-    msg += "!"
+    msg += "."
     if reason is not None:
         msg += " Reason: %s." % reason
     if replacement is not None:
         msg += " Use '%s' instead." % replacement
-    msg = msg + "\n%s"
-    selection = slice(-2 - skip_backtrace_count, -1 - skip_backtrace_count)
-    backtrace = "".join(traceback.format_stack()[selection])
+    msg += "\n%s"
+    limit = 2 + skip_backtrace_count
+    backtrace = "".join(traceback.format_stack(limit=limit)[0])
     backtrace = backtrace.rstrip()
     if only_once:
         data = (msg, type_, name, backtrace)
