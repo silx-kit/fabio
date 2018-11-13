@@ -40,7 +40,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/11/2018"
+__date__ = "13/11/2018"
 
 import numpy
 import os
@@ -48,11 +48,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .fabioimage import FabioImage
+from . import fabioimage
 from .fabioutils import previous_filename, next_filename
 
 
-class PixiImage(FabioImage):
+class PixiImage(fabioimage.FabioImage):
 
     DESCRIPTION = "Pixi file format"
 
@@ -97,18 +97,39 @@ class PixiImage(FabioImage):
         # infile.close()
         return self
 
+    def _get_frame(self, num):
+        """Inherited function returning a FabioFrame"""
+        if num < 0:
+            raise IndexError("Requested frame id:%d out of bound" % num)
+        if num >= self.nframes:
+            raise IndexError("Requested frame id:%d out of bound" % num)
+
+        newheader = {}
+        for k in self.header.keys():
+            newheader[k] = self.header[k]
+        with self._open(self.filename, "rb") as infile:
+            data = self._readdata(infile, num)
+        frame = fabioimage.FabioFrame(data=data, header=newheader)
+        frame._set_file_container(self, num)
+        return frame
+
     def _makeframename(self):
         self.filename = "%s$%04d" % (self.sequencefilename,
                                      self.currentframe)
 
-    def _readframe(self, filepointer, img_num):
+    def _readdata(self, filepointer, img_num):
         if (img_num > self.nframes or img_num < 0):
             raise Exception("Bad image number")
         imgstart = self.header['offset'] + img_num * self._FRAME_SIZE
         filepointer.seek(imgstart, 0)
-        self.data = numpy.frombuffer(filepointer.read(self._IMAGE_SIZE),
-                                     numpy.uint16).copy()
-        self.data.shape = self.header['height'], self.header['width']
+        data = numpy.frombuffer(filepointer.read(self._IMAGE_SIZE),
+                                numpy.uint16).copy()
+        data.shape = self.header['height'], self.header['width']
+        return data
+
+    def _readframe(self, filepointer, img_num):
+        data = self._readdata(filepointer, img_num)
+        self.data = data
         self._shape = None
         self.currentframe = int(img_num)
         self._makeframename()
