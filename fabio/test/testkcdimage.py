@@ -59,6 +59,7 @@ class TestKcd(unittest.TestCase):
         """ check we can read kcd images"""
         vals = self.results.split()
         dim1, dim2 = [int(x) for x in vals[1:3]]
+        shape = dim2, dim1
         mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
         for ext in ["", ".gz", ".bz2"]:
             try:
@@ -70,8 +71,7 @@ class TestKcd(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax" + ext)
             self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean" + ext)
             self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev" + ext)
-            self.assertEqual(dim1, obj.dim1, "dim1" + ext)
-            self.assertEqual(dim2, obj.dim2, "dim2" + ext)
+            self.assertEqual(shape, obj.shape, "shape" + ext)
 
     def test_same(self):
         """ see if we can read kcd images and if they are the same as the EDF """

@@ -62,29 +62,25 @@ class TestHdf5(unittest.TestCase):
         """ check we can read images from Eiger"""
         e = Hdf5Image()
         e.read(self.fn2)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 1, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 
         e = Hdf5Image()
         e.read(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 
     def test_open(self):
         """ check we can read images from Eiger"""
         e = openimage(self.fn2)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 1, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 
         e = openimage(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 

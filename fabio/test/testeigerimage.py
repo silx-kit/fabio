@@ -55,16 +55,14 @@ class TestEiger(unittest.TestCase):
         """ check we can read images from Eiger"""
         e = EigerImage()
         e.read(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
         self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_open(self):
         """ check we can read images from Eiger"""
         e = openimage(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
         self.assertEqual(e.bpp, 4, "bpp OK")
 
