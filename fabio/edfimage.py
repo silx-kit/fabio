@@ -27,6 +27,8 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION W
 
+from __future__ import with_statement, print_function, absolute_import, division
+
 """
 
 License: MIT
@@ -45,14 +47,15 @@ Authors:
 
 
 """
-# get ready for python3
-from __future__ import with_statement, print_function, absolute_import, division
+
 import os
 import re
 import string
 import logging
-logger = logging.getLogger(__name__)
 import numpy
+
+logger = logging.getLogger(__name__)
+
 from . import fabioimage
 from .fabioutils import isAscii, toAscii, nice_int, OrderedDict
 from .compression import decBzip2, decGzip, decZlib
