@@ -45,7 +45,7 @@ License: MIT
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "12/11/2018"
+__date__ = "13/11/2018"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -153,8 +153,8 @@ class PnmImage(FabioImage):
         :param fname: name of the file
         """
         self.header[six.b("SUBFORMAT")] = "P5"
-        self.header[six.b("WIDTH")] = self.dim1
-        self.header[six.b("HEIGHT")] = self.dim2
+        self.header[six.b("WIDTH")] = self.shape[-1]
+        self.header[six.b("HEIGHT")] = self.shape[-2]
         self.header[six.b("MAXVAL")] = self.data.max()
         header = six.b(" ".join([str(self.header[key]) for key in HEADERITEMS[1:]]))
         with open(fname, "wb") as fobj:
@@ -167,7 +167,7 @@ class PnmImage(FabioImage):
                 fobj.write(self.data.tostring())
 
     def P1dec(self, buf, bytecode):
-        data = numpy.zeros((self.dim2, self.dim1))
+        data = numpy.zeros(self.shape)
         i = 0
         for l in buf:
             try:
@@ -182,7 +182,7 @@ class PnmImage(FabioImage):
         raise NotImplementedError(err)
 
     def P2dec(self, buf, bytecode):
-        data = numpy.zeros((self.dim2, self.dim1))
+        data = numpy.zeros(self.shape)
         i = 0
         for l in buf:
             try:
@@ -197,7 +197,7 @@ class PnmImage(FabioImage):
             data = numpy.frombuffer(data, bytecode).copy()
         except ValueError:
             raise IOError('Size spec in pnm-header does not match size of image data field')
-        data.shape = self.dim2, self.dim1
+        data.shape = self.shape
         if numpy.little_endian:
             data.byteswap(True)
         return data

@@ -86,8 +86,9 @@ class Fit2dMaskImage(FabioImage):
         self._dtype = numpy.dtype(numpy.uint8)
 
         # integer division
-        num_ints = (self.dim1 + 31) // 32
-        total = self.dim2 * num_ints * 4
+        dim2, dim1 = self._shape
+        num_ints = (dim1 + 31) // 32
+        total = dim2 * num_ints * 4
         data = fin.read(total)
         assert len(data) == total
         fin.close()
@@ -97,9 +98,9 @@ class Fit2dMaskImage(FabioImage):
         if not numpy.little_endian:
             data.byteswap(True)
 
-        data = numpy.reshape(data, (self.dim2, num_ints * 4))
+        data = numpy.reshape(data, (dim2, num_ints * 4))
 
-        result = numpy.zeros((self.dim2, num_ints * 4 * 8), numpy.uint8)
+        result = numpy.zeros((dim2, num_ints * 4 * 8), numpy.uint8)
 
         # Unpack using bitwise comparisons to 2**n
         bits = numpy.ones((1), numpy.uint8)
@@ -108,7 +109,7 @@ class Fit2dMaskImage(FabioImage):
             result[:, i::8] = temp.astype(numpy.uint8)
             bits = bits * 2
         # Extra rows needed for packing odd dimensions
-        spares = num_ints * 4 * 8 - self.dim1
+        spares = num_ints * 4 * 8 - dim1
         if spares == 0:
             data = numpy.where(result == 0, 0, 1)
         else:
@@ -125,17 +126,18 @@ class Fit2dMaskImage(FabioImage):
         """
         Try to write a file
         """
+        dim2, dim1 = self.shape
         header = bytearray(b"\x00" * 1024)
         header[0] = 77  # M
         header[4] = 65  # A
         header[8] = 83  # S
         header[12] = 75  # K
         header[24] = 1  # 1
-        header[16:20] = struct.pack("<I", self.dim1)
-        header[20:24] = struct.pack("<I", self.dim2)
-        compact_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 4), dtype=numpy.uint8)
-        large_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 32), dtype=numpy.uint8)
-        large_array[:self.dim2, :self.dim1] = (self.data != 0)
+        header[16:20] = struct.pack("<I", dim1)
+        header[20:24] = struct.pack("<I", dim2)
+        compact_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 4), dtype=numpy.uint8)
+        large_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 32), dtype=numpy.uint8)
+        large_array[:dim2, :dim1] = (self.data != 0)
         for i in range(8):
             order = (1 << i)
             compact_array += large_array[:, i::8] * order

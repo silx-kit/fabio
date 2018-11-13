@@ -106,8 +106,8 @@ class MpaImage(FabioImage):
             logger.error('Error in opening %s: badly formatted mpa header.', fname)
             raise IOError('Error in opening %s: badly formatted mpa header.' % fname)
 
-        dim1 = int(self.header['ADC1_range'])
-        dim2 = int(self.header['ADC2_range'])
+        dim2 = int(self.header['ADC1_range'])
+        dim1 = int(self.header['ADC2_range'])
         self._shape = dim2, dim1
 
         if self.header['mpafmt'] == 'asc':
@@ -123,7 +123,7 @@ class MpaImage(FabioImage):
                 break
 
         img = numpy.array(lines[pos + 1:], dtype=float)
-        self.data = img.reshape((self.dim1, self.dim2))
+        self.data = img.reshape(self._shape)
         self._shape = None
 
         return self

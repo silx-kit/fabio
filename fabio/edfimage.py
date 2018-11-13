@@ -326,8 +326,7 @@ class EdfFrame(fabioimage.FabioFrame):
         else:
             if self._dtype is None:
                 assert(False)
-            dims = self.dims[:]
-            dims.reverse()
+            shape = self.shape
             with self.file.lock:
                 if self.file.closed:
                     logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.filename))
@@ -339,13 +338,13 @@ class EdfFrame(fabioimage.FabioFrame):
                     except Exception as e:
                         if isinstance(self.file, fabioutils.GzipFile):
                             if compression_module.is_incomplete_gz_block_exception(e):
-                                return numpy.zeros(dims)
+                                return numpy.zeros(shape)
                         raise e
 
             if self._data_compression is not None:
                 compression = self._data_compression
                 uncompressed_size = self._dtype.itemsize
-                for i in dims:
+                for i in shape:
                     uncompressed_size *= i
                 if "OFFSET" in compression:
                     try:
@@ -382,7 +381,7 @@ class EdfFrame(fabioimage.FabioFrame):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
-            data = numpy.frombuffer(rawData, self._dtype).copy().reshape(tuple(dims))
+            data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
             if self.swap_needed():
                 data.byteswap(True)
             self._data = data

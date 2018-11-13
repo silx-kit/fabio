@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/11/2018"
+__date__ = "13/11/2018"
 
 import os
 import logging
@@ -62,34 +62,34 @@ class _FabioArray(object):
     :class:`FabioFrame`."""
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'", skip_backtrace_count=2)
+    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'")
     def dim1(self):
         return self.shape[-1]
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'", skip_backtrace_count=2)
+    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'")
     def dim2(self):
         return self.shape[-2]
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'", skip_backtrace_count=2)
+    @fabioutils.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'")
     def dim3(self):
         if len(self.shape) < 3:
             raise AttributeError("No attribye dim3")
         return self.shape[-3]
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)", skip_backtrace_count=2)
+    @fabioutils.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)")
     def dims(self):
         return list(reversed(self.shape))
 
     @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'")
     def get_dim1(self):
-        return self.dim1
+        return self.shape[-1]
 
     @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'")
     def get_dim2(self):
-        return self.dim2
+        return self.shape[-2]
 
     @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
     def set_dim1(self, value):
@@ -151,9 +151,11 @@ class _FabioArray(object):
             # a matrix is given as row,col
             # also the (for whichever reason) the image is flipped upside
             # down wrt to the matrix hence these tranformations
-            fixme = (self.dim2 - coords[3] - 1,
+            dim2, dim1 = self.data.shape
+            # FIXME: This code is just not working dim2 is used in place of dim1
+            fixme = (dim2 - coords[3] - 1,
                      coords[0],
-                     self.dim2 - coords[1] - 1,
+                     dim2 - coords[1] - 1,
                      coords[2])
         return (slice(int(fixme[0]), int(fixme[2]) + 1),
                 slice(int(fixme[1]), int(fixme[3]) + 1))
@@ -462,7 +464,8 @@ class FabioImage(_FabioArray):
         if self.data is None:
             raise Exception('Please read in the file you wish to rebin first')
 
-        if (self.dim1 % x_rebin_fact != 0) or (self.dim2 % y_rebin_fact != 0):
+        dim2, dim1 = self.data.shape
+        if (dim1 % x_rebin_fact != 0) or (dim2 % y_rebin_fact != 0):
             raise RuntimeError('image size is not divisible by rebin factor - '
                                'skipping rebin')
         else:

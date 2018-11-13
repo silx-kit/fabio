@@ -49,7 +49,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "12/11/2018"
+__date__ = "13/11/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -87,7 +87,9 @@ class Mar345Image(FabioImage):
         f = self._open(self.filename, "rb")
         self._readheader(f)
         if 'compressed' in self.header['Format']:
-            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, swap_needed=self.swap_needed)
+            dim2, dim1 = self._shape
+            self.data = decPCK(f, dim1, dim2, self.numhigh, swap_needed=self.swap_needed)
+            self._shape = None
         else:
             logger.error("Cannot handle these formats yet due to lack of documentation")
             return None
@@ -220,14 +222,15 @@ class Mar345Image(FabioImage):
         """
         :return: Binary header of mar345 file
         """
+        dim2, dim1 = self.shape
         self.header["HIGH"] = str(self.nb_overflow_pixels())
         binheader = numpy.zeros(16, "int32")
         binheader[0] = 1234
-        binheader[1] = self.dim1
+        binheader[1] = dim1
         binheader[2] = self.nb_overflow_pixels()
         binheader[3] = 1
         binheader[4] = (self.header.get("MODE", "TIME") == "TIME")
-        binheader[5] = self.dim1 * self.dim2
+        binheader[5] = dim1 * dim2
         binheader[6] = int(self.header.get("PIXEL_LENGTH", 1))
         binheader[7] = int(self.header.get("PIXEL_HEIGHT", 1))
         binheader[8] = int(float(self.header.get("WAVELENGTH", 1)) * 1e6)
@@ -255,6 +258,7 @@ class Mar345Image(FabioImage):
         version = fabio.version
         lnsep = len(linesep)
 
+        dim2, dim1 = self.shape
         lstout = ['mar research'.ljust(64 - lnsep)]
         lstout.append("PROGRAM".ljust(15) + (str(self.header.get("PROGRAM", "FabIO Version %s" % (version))).ljust(49 - lnsep)))
         lstout.append("DATE".ljust(15) + (str(self.header.get("DATE", time.ctime()))).ljust(49 - lnsep))
@@ -263,7 +267,7 @@ class Mar345Image(FabioImage):
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
         key = "FORMAT_TYPE"
         if key in self.header:
-            lstout.append("FORMAT".ljust(15) + ("%s  %s %s" % (self.dim1, self.header[key], self.dim1 * self.dim2)).ljust(49 - lnsep))
+            lstout.append("FORMAT".ljust(15) + ("%s  %s %s" % (dim1, self.header[key], dim1 * dim2)).ljust(49 - lnsep))
         key = "HIGH"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))

@@ -48,7 +48,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/11/2018"
+__date__ = "13/11/2018"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -143,13 +143,13 @@ class EigerImage(FabioImage):
 
         self.dataset = lstds
         self.nframes = sum(i.shape[0] for i in lstds)
-        self._shape = self.dataset[0].shape
 
         if frame is not None:
             return self.getframe(int(frame))
         else:
             self.currentframe = 0
             self.data = self.dataset[0][self.currentframe, :, :]
+            self._shape = None
             return self
 
     def write(self, fname):

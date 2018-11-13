@@ -93,7 +93,9 @@ class Fit2dSpreadsheetImage(FabioImage):
                 except Exception:
                     pass
             self.data = numpy.array(vals).astype(self._dtype)
-            assert self.data.shape == (self.dim2, self.dim1)
+            assert self.data.shape == self._shape
+            self._shape = None
+            self._dtype = None
         except Exception:
             _logger.debug("Backtrace", exc_info=True)
             raise IOError("Error reading ascii")

@@ -81,10 +81,10 @@ class AdscImage(FabioImage):
             data.shape = self._shape
         except ValueError:
                 raise IOError('Size spec in ADSC-header does not match ' +
-                              'size of image data field %sx%s != %s' % (self.dim1, self.dim2, data.size))
+                              'size of image data field %s != %s' % (self._shape, data.size))
         self.data = data
         self._shape = None
-        self._bytecode = numpy.uint16
+        self._dtype = None
         self.resetvals()
         return self
 

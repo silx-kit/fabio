@@ -41,7 +41,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "12/11/2018"
+__date__ = "13/11/2018"
 
 import logging
 import struct
@@ -283,8 +283,8 @@ class RaxisImage(FabioImage):
         self._shape = dim2, dim1
 
         self._dtype = numpy.dtype(numpy.uint16)
-        dims = [self.dim2, self.dim1]
-        size = dims[0] * dims[1] * self._dtype.itemsize
+        shape = self.shape
+        size = shape[0] * shape[1] * self._dtype.itemsize
         if offset >= 0:
             infile.seek(offset)
         else:
@@ -303,7 +303,7 @@ class RaxisImage(FabioImage):
             except Exception as error:
                 logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
-        data = numpy.frombuffer(rawData, self._dtype).copy().reshape(tuple(dims))
+        data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
         if self.swap_needed():
             data.byteswap(True)
         di = (data >> 15) != 0  # greater than 2^15
