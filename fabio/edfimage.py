@@ -550,6 +550,13 @@ class EdfImage(fabioimage.FabioImage):
         else:
             self._frames = frames
 
+    def _get_frame(self, num):
+        if self._frames is None:
+            return IndexError("No frames available")
+        frame = self._frames[num]
+        frame._set_file_container(self, num)
+        return frame
+
     @staticmethod
     def check_header(header=None):
         """

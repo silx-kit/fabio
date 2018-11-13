@@ -36,6 +36,8 @@ import numpy
 logger = logging.getLogger(__name__)
 
 import fabio.fabioimage
+import fabio.edfimage
+from .utilstest import UtilsTest
 
 
 class TestFrames(unittest.TestCase):
@@ -51,6 +53,43 @@ class TestFrames(unittest.TestCase):
                 self.assertEqual(frame.shape, data.shape)
                 self.assertEqual(frame.dtype, data.dtype)
                 self.assertTrue(numpy.array_equal(frame.data, data))
+            else:
+                self.fail()
+
+    def test_virtual_edf_frames(self):
+        header1 = {"foo": "bar"}
+        data1 = numpy.array([[1, 2], [3, 4]], dtype=numpy.uint16)
+        header2 = {"foo": "bar2"}
+        data2 = numpy.array([[1, 2], [3, 4]], dtype=numpy.uint16)
+        image = fabio.edfimage.EdfImage(data=data1, header=header1)
+        image.appendFrame(data=data2, header=header2)
+        frames = [(header1, data1), (header2, data2)]
+        for i, frame in enumerate(image.frames()):
+            header, data = frames[i]
+            if i in [0, 1]:
+                self.assertIsInstance(frame, fabio.fabioimage.FabioFrame)
+                self.assertIs(frame.file_container, image)
+                self.assertEqual(frame.header["foo"], header["foo"])
+                self.assertEqual(frame.file_index, i)
+                self.assertEqual(frame.shape, data.shape)
+                self.assertEqual(frame.dtype, data.dtype)
+                self.assertTrue(numpy.array_equal(frame.data, data))
+            else:
+                self.fail()
+
+    def test_edf_frames(self):
+        filename = UtilsTest.getimage("multiframes.edf.bz2")
+        filename = filename.replace(".bz2", "")
+        image = fabio.open(filename)
+        self.assertEqual(image.nframes, 8)
+        for i, frame in enumerate(image.frames()):
+            if 0 <= i < 8:
+                self.assertIsInstance(frame, fabio.fabioimage.FabioFrame)
+                self.assertIs(frame.file_container, image)
+                self.assertEqual(frame.file_index, i)
+                self.assertEqual(frame.data[0, 0], i)
+                self.assertEqual(frame.shape, (40, 20))
+                self.assertEqual(frame.dtype, numpy.dtype("uint16"))
             else:
                 self.fail()
 
