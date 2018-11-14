@@ -77,8 +77,8 @@ class TestFrames(unittest.TestCase):
             else:
                 self.fail()
 
-    def test_edf_frames(self):
-        filename = UtilsTest.getimage("multiframes.edf.bz2")
+    def test_tiff_frames(self):
+        filename = UtilsTest.getimage("multiframes.tif.bz2")
         filename = filename.replace(".bz2", "")
         image = fabio.open(filename)
         self.assertEqual(image.nframes, 8)
