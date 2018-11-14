@@ -40,7 +40,168 @@ import fabio.edfimage
 from .utilstest import UtilsTest
 
 
-class TestFrames(unittest.TestCase):
+class _CommonTestFrames(unittest.TestCase):
+    """Test generic tests which could append on frame iteration"""
+
+    @classmethod
+    def getMeta(cls):
+        return None
+
+    @classmethod
+    def setUpClass(cls):
+        cls.meta = cls.getMeta()
+        if cls.meta is None:
+            raise unittest.SkipTest("No data test")
+
+    def test_full_iteration(self):
+        image = self.meta.image
+        cache = {}
+        for i, frame in enumerate(image.frames()):
+            cache["data %d" % i] = numpy.array(frame.data)
+            cache["header %d" % i] = frame.header.copy()
+        self.assertEqual(i, self.meta.nframes - 1)
+        for i, frame in enumerate(image.frames()):
+            data = cache.pop("data %d" % i)
+            self.assertTrue(numpy.array_equal(data, frame.data))
+            header = cache.pop("header %d" % i)
+            self.assertEqual(header, frame.header)
+        self.assertEqual(len(cache), 0)
+        self.assertEqual(i, self.meta.nframes - 1)
+
+    def test_abort_iteration(self):
+        image = self.meta.image
+        for i, _frame in enumerate(image.frames()):
+            if i == 2:
+                break
+        for i, _frame in enumerate(image.frames()):
+            pass
+        self.assertEqual(i, self.meta.nframes - 1)
+
+    def test_random_access(self):
+        image = self.meta.image
+        nframes = self.meta.nframes
+        self.assertEqual(image.nframes, nframes)
+
+        # before last
+        frame2 = image._get_frame(nframes - 2)
+        # first
+        frame1 = image._get_frame(0)
+        # last
+        frame3 = image._get_frame(nframes - 1)
+
+        self.assertIsNotNone(frame1)
+        self.assertIsNotNone(frame2)
+        self.assertIsNotNone(frame3)
+        self.assertEqual(frame1.file_index, 0)
+        self.assertEqual(frame2.file_index, nframes - 2)
+        self.assertEqual(frame3.file_index, nframes - 1)
+        self.assertIsNot(frame1, frame2)
+        self.assertIsNot(frame2, frame3)
+        self.assertIsNot(frame3, frame1)
+
+
+class TestVirtualEdf(_CommonTestFrames):
+
+    @classmethod
+    def getMeta(cls):
+        header1 = {"foo": "bar"}
+        data1 = numpy.array([[1, 1], [3, 4]], dtype=numpy.uint16)
+        header2 = {"foo": "bar2"}
+        data2 = numpy.array([[2, 2], [3, 4]], dtype=numpy.uint16)
+        header3 = {"foo": "bar2"}
+        data3 = numpy.array([[3, 3], [3, 4]], dtype=numpy.uint16)
+        image = fabio.edfimage.EdfImage(data=data1, header=header1)
+        image.appendFrame(data=data2, header=header2)
+        image.appendFrame(data=data3, header=header3)
+        frames = [(header1, data1), (header2, data2), (header3, data3)]
+
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = image
+        meta.nframes = 3
+        meta.frames = frames
+        return meta
+
+    def test_content(self):
+        image = self.meta.image
+        frames = self.meta.frames
+        for i, frame in enumerate(image.frames()):
+            header, data = frames[i]
+            if i in [0, 1, 2]:
+                self.assertIsInstance(frame, fabio.fabioimage.FabioFrame)
+                self.assertIs(frame.file_container, image)
+                self.assertEqual(frame.header["foo"], header["foo"])
+                self.assertEqual(frame.file_index, i)
+                self.assertEqual(frame.shape, data.shape)
+                self.assertEqual(frame.dtype, data.dtype)
+                self.assertEqual(frame.data[0, 0], i + 1)
+                self.assertTrue(numpy.array_equal(frame.data, data))
+            else:
+                self.fail()
+
+
+class TestEdf(_CommonTestFrames):
+
+    @classmethod
+    def getMeta(cls):
+        filename = UtilsTest.getimage("multiframes.edf.bz2")
+        filename = filename.replace(".bz2", "")
+        image = fabio.open(filename)
+
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = image
+        meta.nframes = 8
+        return meta
+
+    def test_content(self):
+        image = self.meta.image
+        self.assertEqual(image.nframes, 8)
+        for i, frame in enumerate(image.frames()):
+            if 0 <= i < 8:
+                self.assertIsInstance(frame, fabio.fabioimage.FabioFrame)
+                self.assertIs(frame.file_container, image)
+                self.assertEqual(frame.file_index, i)
+                self.assertEqual(frame.data[0, 0], i)
+                self.assertEqual(frame.shape, (40, 20))
+                self.assertEqual(frame.dtype, numpy.dtype("uint16"))
+            else:
+                self.fail()
+
+
+class TestTiff(_CommonTestFrames):
+
+    @classmethod
+    def getMeta(cls):
+        filename = UtilsTest.getimage("multiframes.tif.bz2")
+        filename = filename.replace(".bz2", "")
+        image = fabio.open(filename)
+
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = image
+        meta.nframes = 8
+        return meta
+
+    def test_content(self):
+        image = self.meta.image
+        self.assertEqual(image.nframes, 8)
+        for i, frame in enumerate(image.frames()):
+            if 0 <= i < 8:
+                self.assertIsInstance(frame, fabio.fabioimage.FabioFrame)
+                self.assertIs(frame.file_container, image)
+                self.assertEqual(frame.file_index, i)
+                self.assertEqual(frame.data[0, 0], i)
+                self.assertEqual(frame.shape, (40, 20))
+                self.assertEqual(frame.dtype, numpy.dtype("uint16"))
+            else:
+                self.fail()
+
+
+class TestFabioImage(unittest.TestCase):
 
     def test_single_frame_iterator(self):
         data = numpy.array([[1, 2], [3, 4]], dtype=numpy.uint16)
@@ -56,48 +217,14 @@ class TestFrames(unittest.TestCase):
             else:
                 self.fail()
 
-    def test_virtual_edf_frames(self):
-        header1 = {"foo": "bar"}
-        data1 = numpy.array([[1, 2], [3, 4]], dtype=numpy.uint16)
-        header2 = {"foo": "bar2"}
-        data2 = numpy.array([[1, 2], [3, 4]], dtype=numpy.uint16)
-        image = fabio.edfimage.EdfImage(data=data1, header=header1)
-        image.appendFrame(data=data2, header=header2)
-        frames = [(header1, data1), (header2, data2)]
-        for i, frame in enumerate(image.frames()):
-            header, data = frames[i]
-            if i in [0, 1]:
-                self.assertIsInstance(frame, fabio.fabioimage.FabioFrame)
-                self.assertIs(frame.file_container, image)
-                self.assertEqual(frame.header["foo"], header["foo"])
-                self.assertEqual(frame.file_index, i)
-                self.assertEqual(frame.shape, data.shape)
-                self.assertEqual(frame.dtype, data.dtype)
-                self.assertTrue(numpy.array_equal(frame.data, data))
-            else:
-                self.fail()
-
-    def test_tiff_frames(self):
-        filename = UtilsTest.getimage("multiframes.tif.bz2")
-        filename = filename.replace(".bz2", "")
-        image = fabio.open(filename)
-        self.assertEqual(image.nframes, 8)
-        for i, frame in enumerate(image.frames()):
-            if 0 <= i < 8:
-                self.assertIsInstance(frame, fabio.fabioimage.FabioFrame)
-                self.assertIs(frame.file_container, image)
-                self.assertEqual(frame.file_index, i)
-                self.assertEqual(frame.data[0, 0], i)
-                self.assertEqual(frame.shape, (40, 20))
-                self.assertEqual(frame.dtype, numpy.dtype("uint16"))
-            else:
-                self.fail()
-
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(loadTests(TestFrames))
+    testsuite.addTest(loadTests(TestFabioImage))
+    testsuite.addTest(loadTests(TestVirtualEdf))
+    testsuite.addTest(loadTests(TestEdf))
+    testsuite.addTest(loadTests(TestTiff))
     return testsuite
 
 
