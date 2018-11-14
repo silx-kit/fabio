@@ -111,8 +111,8 @@ class TestVirtualEdf(_CommonTestFrames):
         header3 = {"foo": "bar2"}
         data3 = numpy.array([[3, 3], [3, 4]], dtype=numpy.uint16)
         image = fabio.edfimage.EdfImage(data=data1, header=header1)
-        image.appendFrame(data=data2, header=header2)
-        image.appendFrame(data=data3, header=header3)
+        image.append_frame(data=data2, header=header2)
+        image.append_frame(data=data3, header=header3)
         frames = [(header1, data1), (header2, data2), (header3, data3)]
 
         class Meta(object):

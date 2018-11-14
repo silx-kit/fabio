@@ -315,7 +315,7 @@ class EdfFrame(fabioimage.FabioFrame):
         """
         return self._data_swap_needed
 
-    def getData(self):
+    def _unpack(self):
         """
         Unpack a binary blob according to the specification given in the header
 
@@ -391,13 +391,35 @@ class EdfFrame(fabioimage.FabioFrame):
             self._dtype = None
         return data
 
+    @property
+    def data(self):
+        """
+        Returns the data after unpacking it if needed.
+
+        :return: dataset as numpy.ndarray
+        """
+        return self._unpack()
+
+    @data.setter
+    def data(self, value):
+        """Setter for data in edf frame"""
+        self._data = value
+
+    @fabioutils.deprecated(reason="Prefer using 'frame.data'")
+    def getData(self):
+        """
+        Returns the data after unpacking it if needed.
+
+        :return: dataset as numpy.ndarray
+        """
+        return self.data
+
+    @fabioutils.deprecated(reason="Prefer using 'frame.data ='")
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
 
-    data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
-
-    def getEdfBlock(self, force_type=None, fit2dMode=False):
+    def get_edf_block(self, force_type=None, fit2dMode=False):
         """
         :param force_type: type of the dataset to be enforced like "float64" or "uint16"
         :type force_type: string or numpy.dtype
@@ -503,6 +525,10 @@ class EdfFrame(fabioimage.FabioFrame):
         listHeader.append(" " * (headerSize - preciseSize) + "}\n")
         return ("".join(listHeader)).encode("ASCII") + data.tostring()
 
+    @fabioutils.deprecated(reason="Prefer using 'getEdfBlock'")
+    def getEdfBlock(self, force_type=None, fit2dMode=False):
+        return self.get_edf_block(force_type, fit2dMode)
+
 
 class EdfImage(fabioimage.FabioImage):
     """ Read and try to write the ESRF edf data format """
@@ -570,7 +596,7 @@ class EdfImage(fabioimage.FabioImage):
         return new
 
     @staticmethod
-    def _readHeaderBlock(infile, frame_id):
+    def _read_header_block(infile, frame_id):
         """
         Read in a header in some EDF format from an already open file
 
@@ -675,7 +701,7 @@ class EdfImage(fabioimage.FabioImage):
 
         while True:
             try:
-                block = self._readHeaderBlock(infile, len(self._frames))
+                block = self._read_header_block(infile, len(self._frames))
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
@@ -818,9 +844,9 @@ class EdfImage(fabioimage.FabioImage):
         with self._open(fname, mode="wb") as outfile:
             for i, frame in enumerate(self._frames):
                 frame.iFrame = i
-                outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
+                outfile.write(frame.get_edf_block(force_type=force_type, fit2dMode=fit2dMode))
 
-    def appendFrame(self, frame=None, data=None, header=None):
+    def append_frame(self, frame=None, data=None, header=None):
         """
         Method used add a frame to an EDF file
         :param frame: frame to append to edf image
@@ -833,7 +859,11 @@ class EdfImage(fabioimage.FabioImage):
         else:
             self._frames.append(EdfFrame(data, header))
 
-    def deleteFrame(self, frameNb=None):
+    @fabioutils.deprecated(reason="Prefer using 'append_frame'")
+    def appendFrame(self, frame=None, data=None, header=None):
+        self.append_frame(frame, data, header)
+
+    def delete_frame(self, frameNb=None):
         """
         Method used to remove a frame from an EDF image. by default the last one is removed.
         :param int frameNb: frame number to remove, by  default the last.
@@ -843,7 +873,11 @@ class EdfImage(fabioimage.FabioImage):
         else:
             self._frames.pop(frameNb)
 
-    def fastReadData(self, filename=None):
+    @fabioutils.deprecated(reason="Prefer using 'delete_frame'")
+    def deleteFrame(self, frameNb=None):
+        self.delete_frame(frameNb)
+
+    def fast_read_data(self, filename=None):
         """
         This is a special method that will read and return the data from another file ...
         The aim is performances, ... but only supports uncompressed files.
@@ -851,7 +885,7 @@ class EdfImage(fabioimage.FabioImage):
         :return: data from another file using positions from current EdfImage
         """
         if (filename is None) or not os.path.isfile(filename):
-            raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
+            raise RuntimeError("EdfImage.fast_read_data is only valid with another file: %s does not exist" % (filename))
         data = None
         frame = self._frames[self.currentframe]
         with open(filename, "rb")as f:
@@ -866,7 +900,11 @@ class EdfImage(fabioimage.FabioImage):
             data.byteswap(True)
         return data
 
-    def fastReadROI(self, filename, coords=None):
+    @fabioutils.deprecated(reason="Prefer using 'fastReadData'")
+    def fastReadData(self, filename):
+        return self.fast_read_data(filename)
+
+    def fast_read_roi(self, filename, coords=None):
         """
         Method reading Region of Interest of another file  based on metadata available in current EdfImage.
         The aim is performances, ... but only supports uncompressed files.
@@ -875,7 +913,7 @@ class EdfImage(fabioimage.FabioImage):
         :rtype: numpy 2darray
         """
         if (filename is None) or not os.path.isfile(filename):
-            raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
+            raise RuntimeError("EdfImage.fast_read_roi is only valid with another file: %s does not exist" % (filename))
         data = None
         frame = self._frames[self.currentframe]
 
@@ -906,6 +944,10 @@ class EdfImage(fabioimage.FabioImage):
             data.byteswap(True)
         return data[slice2]
 
+    @fabioutils.deprecated(reason="Prefer using 'fast_read_roi'")
+    def fastReadROI(self, filename, coords=None):
+        return self.fast_read_roi(filename, coords)
+
     ############################################################################
     # Properties definition for header, data, header_keys
     ############################################################################
@@ -926,12 +968,24 @@ class EdfImage(fabioimage.FabioImage):
                 return frame
             raise
 
+    @property
+    def nframes(self):
+        return len(self._frames)
+
+    @nframes.setter
+    def nframes(self, value):
+        # FIXME: This setter is needed to avoid problems with the super
+        # constructor
+        assert len(self._frames) == value
+
+    @fabioutils.deprecated(reason="Prefer using 'img.nframes'")
     def getNbFrames(self):
         """
         Getter for number of frames
         """
         return len(self._frames)
 
+    @fabioutils.deprecated(reason="This call to 'setNbFrames' does nothing and should be removed")
     def setNbFrames(self, val):
         """
         Setter for number of frames ... should do nothing. Here just to avoid bugs
@@ -939,14 +993,29 @@ class EdfImage(fabioimage.FabioImage):
         if val != len(self._frames):
             logger.warning("Setting the number of frames is not allowed.")
 
-    nframes = property(getNbFrames, setNbFrames, "property: number of frames in EDF file")
+    @property
+    def header(self):
+        frame = self._get_any_frame()
+        return frame.header
 
+    @header.setter
+    def header(self, value):
+        frame = self._get_any_frame()
+        frame.header = value
+
+    @header.deleter
+    def header(self):
+        frame = self._get_any_frame()
+        frame.header = None
+
+    @fabioutils.deprecated(reason="Prefer using 'img.header'")
     def getHeader(self):
         """
         Getter for the headers. used by the property header,
         """
         return self._frames[self.currentframe].header
 
+    @fabioutils.deprecated(reason="Prefer using 'img.header ='")
     def setHeader(self, _dictHeader):
         """
         Enforces the propagation of the header to the list of frames
@@ -954,24 +1023,48 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.header = _dictHeader
 
+    @fabioutils.deprecated(reason="Prefer using 'del img.header'")
     def delHeader(self):
         """
         Deleter for edf header
         """
         self._frames[self.currentframe].header = {}
 
-    header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
+    @property
+    def shape(self):
+        frame = self._get_any_frame()
+        return frame.shape
 
+    @property
+    def dtype(self):
+        frame = self._get_any_frame()
+        return frame.dtype
+
+    @property
+    def data(self):
+        frame = self._get_any_frame()
+        return frame.data
+
+    @data.setter
+    def data(self, value):
+        frame = self._get_any_frame()
+        frame.data = value
+
+    @data.deleter
+    def data(self):
+        frame = self._get_any_frame()
+        frame.data = None
+
+    @fabioutils.deprecated(reason="Prefer using 'img.data'")
     def getData(self):
         """
         getter for edf Data
         :return: data for current frame
         :rtype: numpy.ndarray
         """
-        frame = self._get_any_frame()
-        npaData = frame.data
-        return npaData
+        return self.data
 
+    @fabioutils.deprecated(reason="Prefer using 'img.data ='")
     def setData(self, data=None, _data=None):
         """
         Enforces the propagation of the data to the list of frames
@@ -983,17 +1076,18 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.data = data
 
+    @fabioutils.deprecated(reason="Prefer using 'del img.data'")
     def delData(self):
         """
         deleter for edf Data
         """
         self._frames[self.currentframe].data = None
 
-    data = property(getData, setData, delData, "property: data of EDF file")
-
+    @fabioutils.deprecated(reason="Prefer using 'dim1'")
     def getDim1(self):
-        return self._frames[self.currentframe].dim1
+        return self.dim1
 
+    @fabioutils.deprecated(reason="Setting dim1 is not anymore allowed. If the data is not set use shape instead.")
     def setDim1(self, iVal=None, _iVal=None):
         if _iVal is not None:
             fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
@@ -1001,11 +1095,15 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.dim1 = iVal
 
-    dim1 = property(getDim1, setDim1)
+    @property
+    def dim1(self):
+        return self._frames[self.currentframe].dim1
 
+    @fabioutils.deprecated(reason="Prefer using 'dim2'")
     def getDim2(self):
         return self._frames[self.currentframe].dim2
 
+    @fabioutils.deprecated(reason="Setting dim2 is not anymore allowed. If the data is not set use shape instead.")
     def setDim2(self, iVal=None, _iVal=None):
         if _iVal is not None:
             fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
@@ -1013,40 +1111,49 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.dim2 = iVal
 
-    dim2 = property(getDim2, setDim2)
+    @property
+    def dim2(self):
+        return self._frames[self.currentframe].dim2
 
+    @fabioutils.deprecated(reason="Prefer using 'dims'")
     def getDims(self):
         return self._frames[self.currentframe].dims
-    dims = property(getDims)
 
+    @property
+    def dims(self):
+        return self._frames[self.currentframe].dims
+
+    @fabioutils.deprecated(reason="Prefer using 'bytecode'")
     def getByteCode(self):
+        return self.bytecode
+
+    @fabioutils.deprecated(reason="Setting bytecode is not anymore allowed. If the data is not set use dtype instead.")
+    def setByteCode(self, iVal=None, _iVal=None):
+        raise NotImplementedError("No more implemented")
+
+    @property
+    def bytecode(self):
         return self._frames[self.currentframe].bytecode
 
-    def setByteCode(self, iVal=None, _iVal=None):
-        if _iVal is not None:
-            fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
-            iVal = _iVal
-        frame = self._get_any_frame()
-        frame.bytecode = iVal
-
-    bytecode = property(getByteCode, setByteCode)
-
+    @fabioutils.deprecated(reason="Prefer using 'bpp'")
     def getBpp(self):
         return self._frames[self.currentframe].bpp
 
+    @fabioutils.deprecated(reason="Setting bpp is not anymore allowed. If the data is not set use dtype instead.")
     def setBpp(self, iVal=None, _iVal=None):
-        if _iVal is not None:
-            fabioutils.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
-            iVal = _iVal
-        frame = self._get_any_frame()
-        frame.bpp = iVal
+        raise NotImplementedError("No more implemented")
 
-    bpp = property(getBpp, setBpp)
+    @property
+    def bpp(self):
+        return self._frames[self.currentframe].bpp
 
+    @fabioutils.deprecated(reason="Prefer using 'incomplete_data'")
     def isIncompleteData(self):
-        return self._frames[self.currentframe].incomplete_data
+        return self.incomplete_data
 
-    incomplete_data = property(isIncompleteData)
+    @property
+    def incomplete_data(self):
+        return self._frames[self.currentframe].incomplete_data
 
     @classmethod
     def lazy_iterator(cls, filename):
@@ -1074,7 +1181,7 @@ class EdfImage(fabioimage.FabioImage):
 
         while True:
             try:
-                block = cls._readHeaderBlock(infile, index)
+                block = cls._read_header_block(infile, index)
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if index == 0:
@@ -1097,7 +1204,7 @@ class EdfImage(fabioimage.FabioImage):
 
             try:
                 # read data
-                frame.getData()
+                frame._unpack()
             except Exception as error:
                 if isinstance(infile, fabioutils.GzipFile):
                     if compression_module.is_incomplete_gz_block_exception(error):

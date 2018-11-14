@@ -291,7 +291,7 @@ class TestEdfFastRead(unittest.TestCase):
     def test_fastread(self):
         ref = fabio.open(self.refFilename)
         refdata = ref.data
-        obt = ref.fastReadData(self.fastFilename)
+        obt = ref.fast_read_data(self.fastFilename)
         self.assertEqual(abs(obt - refdata).max(), 0, "testedffastread: Same data")
 
 
