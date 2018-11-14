@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "12/11/2018"
+__date__ = "14/11/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -246,7 +246,7 @@ class GeImage(FabioImage):
         infile = self._open(fname, "rb")
         self.sequencefilename = fname
         self._readheader(infile)
-        self.nframes = self.header['NumberOfFrames']
+        self._nframes = self.header['NumberOfFrames']
         self._readframe(infile, frame)
         infile.close()
         return self
@@ -300,7 +300,7 @@ class GeImage(FabioImage):
         for k in self.header.keys():
             newheader[k] = self.header[k]
         frame = GeImage(header=newheader)
-        frame.nframes = self.nframes
+        frame._nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
         frame._readframe(infile, num)

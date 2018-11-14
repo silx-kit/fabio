@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "13/11/2018"
+__date__ = "14/11/2018"
 
 import os
 import logging
@@ -363,12 +363,20 @@ class FabioImage(_FabioArray):
         self.header = self.check_header(header)
         # cache for image statistics
 
-        self.nframes = 1
+        self._nframes = 1
         self.currentframe = 0
         self.filename = None
         self.filenumber = None
 
         self.resetvals()
+
+    @property
+    def nframes(self):
+        """Returns the number of frames contained in this file
+
+        :rtype: int
+        """
+        return self._nframes
 
     def _get_frame(self, num):
         """Returns a frame from a number of frame

@@ -44,7 +44,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "12/11/2018"
+__date__ = "14/11/2018"
 
 import logging
 import os
@@ -71,7 +71,7 @@ class Hdf5Frame(fabioimage.FabioFrame):
         self.hdf5 = hdf5image.hdf5
         self.dataset = hdf5image.dataset
         self.filename = hdf5image.filename
-        self.nframes = hdf5image.nframes
+        self._nframes = hdf5image.nframes
         self.header = hdf5image.header
         self.currentframe = frame_num
 
@@ -131,7 +131,7 @@ class Hdf5Image(fabioimage.FabioImage):
         # ndim does not exist for external links ?
         ndim = len(self.dataset.shape)
         if ndim == 3:
-            self.nframes = self.dataset.shape[0]
+            self._nframes = self.dataset.shape[0]
             if frame is not None:
                 self.currentframe = int(frame)
             else:

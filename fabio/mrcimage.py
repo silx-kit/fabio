@@ -97,7 +97,7 @@ class MrcImage(FabioImage):
         dim2 = int(self.header["NY"])
         self._shape = dim2, dim1
 
-        self.nframes = self.header["NZ"]
+        self._nframes = self.header["NZ"]
         mode = self.header["MODE"]
         if mode not in self._MODE_TO_DTYPE:
             raise IOError("Mode %s unsupported" % mode)

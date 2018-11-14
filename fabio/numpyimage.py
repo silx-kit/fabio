@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "13/11/2018"
+__date__ = "14/11/2018"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -129,7 +129,7 @@ class NumpyImage(fabioimage.FabioImage):
         if self.dataset.ndim == 2:
             self.data = self.dataset
         elif self.dataset.ndim == 3:
-            self.nframes = self.dataset.shape[0]
+            self._nframes = self.dataset.shape[0]
             if frame is None:
                 frame = 0
             if frame < self.nframes:
@@ -192,7 +192,7 @@ class NumpyImage(fabioimage.FabioImage):
                 data = self.dataset[num]
                 frame = self.__class__(data=data, header=self.header)
                 frame.dataset = self.dataset
-                frame.nframes = self.nframes
+                frame._nframes = self.nframes
                 frame.currentframe = num
             else:
                 raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))

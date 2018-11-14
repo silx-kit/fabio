@@ -129,7 +129,7 @@ class TifImage(fabioimage.FabioImage):
 
     def _read_with_tiffio(self, infile):
         tiffIO = TiffIO.TiffIO(infile)
-        self.nframes = tiffIO.getNumberOfImages()
+        self._nframes = tiffIO.getNumberOfImages()
         if self.nframes > 0:
             # No support for now of multi-frame tiff images
             header = tiffIO.getInfo(0)

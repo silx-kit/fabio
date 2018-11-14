@@ -40,7 +40,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "13/11/2018"
+__date__ = "14/11/2018"
 
 import numpy
 import os
@@ -92,7 +92,7 @@ class PixiImage(fabioimage.FabioImage):
         with self._open(fname, "rb") as infile:
             self.sequencefilename = fname
             self._readheader(infile)
-            self.nframes = os.path.getsize(fname) // self._FRAME_SIZE
+            self._nframes = os.path.getsize(fname) // self._FRAME_SIZE
             self._readframe(infile, frame)
         # infile.close()
         return self
@@ -145,7 +145,7 @@ class PixiImage(fabioimage.FabioImage):
         for k in self.header.keys():
             newheader[k] = self.header[k]
         frame = PixiImage(header=newheader)
-        frame.nframes = self.nframes
+        frame._nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
         frame._readframe(infile, num)

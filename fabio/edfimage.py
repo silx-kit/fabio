@@ -970,13 +970,11 @@ class EdfImage(fabioimage.FabioImage):
 
     @property
     def nframes(self):
-        return len(self._frames)
+        """Returns the number of frames contained in this file
 
-    @nframes.setter
-    def nframes(self, value):
-        # FIXME: This setter is needed to avoid problems with the super
-        # constructor
-        assert len(self._frames) == value
+        :rtype: int
+        """
+        return len(self._frames)
 
     @fabioutils.deprecated(reason="Prefer using 'img.nframes'")
     def getNbFrames(self):
