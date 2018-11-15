@@ -550,8 +550,7 @@ class FileSeries(FabioImage):
         file series."""
         nframes = 0
         for filename in self.__iter_filenames():
-            image = fabio.open(filename)
-            try:
+            with fabio.open(filename) as image:
                 nframes += image.nframes
                 if image.nframes == 0:
                     # The container is empty
@@ -562,8 +561,6 @@ class FileSeries(FabioImage):
                     for frame_num in range(image.nframes):
                         frame = image.get_frame(frame_num)
                         yield frame
-            finally:
-                image.close()
         self.__nframes = nframes
 
     def __load_all_filenames(self):
