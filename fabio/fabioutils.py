@@ -259,6 +259,7 @@ class FilenameObject(object):
                         ndigit = len(numstring)
                 #            raise Exception("Cannot decode "+filename)
 
+        self.codec_classes = codec_classes
         self.stem = stem
         self.num = num
         self.directory = direc
