@@ -48,8 +48,11 @@ from __future__ import absolute_import, print_function, with_statement, division
 import logging
 import sys
 import os.path
+import collections
+
 logger = logging.getLogger(__name__)
 
+import fabio
 from .fabioutils import FilenameObject, next_filename
 from .openimage import openimage
 from .fabioimage import FabioImage
@@ -435,9 +438,6 @@ class filename_series:
         return self.obj
 
 
-import fabio
-import collections
-
 _FileDescription = collections.namedtuple('_FileDescription',
                                           ['filename', 'file_number', 'first_frame_number', 'nframes'])
 """Object storing description of a file from a file serie"""
@@ -555,7 +555,7 @@ class FileSeries(FabioImage):
         for filename in self.__iter_filenames():
 
             if self.use_edf_shortcut:
-                info = fabio.fabioutils.FilenameObject(filename=filename)
+                info = FilenameObject(filename=filename)
                 # It is the supported formats
                 if fabio.edfimage.EdfImage in info.codec_classes:
                     # Custom iterator implementation
