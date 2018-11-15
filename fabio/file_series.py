@@ -526,6 +526,8 @@ class FileSeries(FabioImage):
             self.__file_descriptions = []
 
         self.__nframes = None
+        self.use_edf_shortcut = True
+        """If true a custom file sequencial file reader is used for EDF formats"""
 
     def close(self):
         """Close any IO handler openned."""
@@ -548,8 +550,21 @@ class FileSeries(FabioImage):
     def frames(self):
         """Returns an iterator throug all frames of all filenames of this
         file series."""
+        import fabio.edfimage
         nframes = 0
         for filename in self.__iter_filenames():
+
+            if self.use_edf_shortcut:
+                info = fabio.fabioutils.FilenameObject(filename=filename)
+                # It is the supported formats
+                if fabio.edfimage.EdfImage in info.codec_classes:
+                    # Custom iterator implementation
+                    frames = fabio.edfimage.EdfImage.lazy_iterator(filename)
+                    for frame in frames:
+                        yield frame
+                    continue
+
+            # Default implementation
             with fabio.open(filename) as image:
                 nframes += image.nframes
                 if image.nframes == 0:
