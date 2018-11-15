@@ -24,6 +24,7 @@
 # THE SOFTWARE.
 #
 
+from __future__ import with_statement, print_function
 
 """MRC image for FabIO
 
@@ -33,8 +34,6 @@ email:  Jerome.Kieffer@terre-adelie.org
 Specifications from:
 http://ami.scripps.edu/software/mrctools/mrc_specification.php
 """
-
-from __future__ import with_statement, print_function
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
@@ -66,6 +65,15 @@ class MrcImage(FabioImage):
             "MAPC", "MAPR", "MAPS", "DMIN", "DMAX", "DMEAN", "ISPG", "NSYMBT",
             "EXTRA", "ORIGIN", "MAP", "MACHST", "RMS", "NLABL")
 
+    _MODE_TO_DTYPE = {
+        0: numpy.int8,
+        1: numpy.int16,
+        2: numpy.float32,
+        3: numpy.complex64,
+        4: numpy.complex64,
+        6: numpy.uint16
+    }
+
     def _readheader(self, infile):
         """
         Read and decode the header of an image:
@@ -85,24 +93,17 @@ class MrcImage(FabioImage):
         for i in range(10):
             label = "LABEL_%02i" % i
             self.header[label] = infile.read(80).strip()
-        self.dim1 = self.header["NX"]
-        self.dim2 = self.header["NY"]
-        self.nframes = self.header["NZ"]
-        mode = self.header["MODE"]
-        if mode == 0:
-            self.bytecode = numpy.int8
-        elif mode == 1:
-            self.bytecode = numpy.int16
-        elif mode == 2:
-            self.bytecode = numpy.float32
-        elif mode == 3:
-            self.bytecode = numpy.complex64
-        elif mode == 4:
-            self.bytecode = numpy.complex64
-        elif mode == 6:
-            self.bytecode = numpy.uint16
+        dim1 = int(self.header["NX"])
+        dim2 = int(self.header["NY"])
+        self._shape = dim2, dim1
 
-        self.imagesize = int(self.dim1) * self.dim2 * numpy.dtype(self.bytecode).itemsize
+        self._nframes = self.header["NZ"]
+        mode = self.header["MODE"]
+        if mode not in self._MODE_TO_DTYPE:
+            raise IOError("Mode %s unsupported" % mode)
+        dtype = numpy.dtype(self._MODE_TO_DTYPE[mode])
+        self._dtype = dtype
+        self.imagesize = dim1 * dim2 * dtype.itemsize
 
     def read(self, fname, frame=None):
         """
@@ -142,8 +143,12 @@ class MrcImage(FabioImage):
         if (img_num > self.nframes or img_num < 0):
             raise RuntimeError("Requested frame number is out of range")
         infile.seek(self._calc_offset(img_num), 0)
-        data = numpy.frombuffer(infile.read(self.imagesize), self.bytecode).copy()
-        self.data = data.reshape((self.dim2, self.dim1))
+        data_buffer = infile.read(self.imagesize)
+        data = numpy.frombuffer(data_buffer, self._dtype).copy()
+        data.shape = self._shape
+        self.data = data
+        self._shape = None
+        self._dtype = None
         self.currentframe = int(img_num)
         self._makeframename()
 

@@ -27,6 +27,8 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION W
 
+from __future__ import with_statement, print_function
+
 """
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -37,8 +39,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
-# get ready for python3
-from __future__ import with_statement, print_function
+
 import logging
 import numpy
 from .fabioimage import FabioImage
@@ -136,10 +137,11 @@ class Dm3Image(FabioImage):
             dim1_binning, dim2_binning = map(int, binning_raw.split())
         except AttributeError:
             dim1_binning, dim2_binning = map(lambda x: x * int(binning_raw) * x, (1, 1))
-        self.dim1 = dim1_raw // dim1_binning
-        self.dim2 = dim2_raw // dim2_binning
+        self._shape = dim2_raw // dim2_binning, dim1_raw // dim1_binning
         if "Data" in self.header:
-            self.data = self.header[u'Data'].reshape(self.dim1, self.dim2)
+            self.data = self.header[u'Data']
+            self.data.shape = self._shape
+            self._shape = None
         return self
 
     def readbytes(self, bytes_to_read, format, swap=True):

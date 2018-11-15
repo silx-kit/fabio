@@ -104,12 +104,13 @@ class TestCbfReader(unittest.TestCase):
         startPos = cbs.find(starter) + 4
         data = cbs[startPos: startPos + int(cbf.header["X-Binary-Size"])]
         startTime = time.time()
-        numpyRes = decByteOffset_numpy(data, size=cbf.dim1 * cbf.dim2)
+        size = cbf.shape[0] * cbf.shape[1]
+        numpyRes = decByteOffset_numpy(data, size=size)
         tNumpy = time.time() - startTime
         logger.info("Timing for Numpy method : %.3fs" % tNumpy)
 
         startTime = time.time()
-        cythonRes = decByteOffset_cython(stream=data, size=cbf.dim1 * cbf.dim2)
+        cythonRes = decByteOffset_cython(stream=data, size=size)
         tCython = time.time() - startTime
         delta = abs(numpyRes - cythonRes).max()
         self.assertAlmostEqual(0, delta)

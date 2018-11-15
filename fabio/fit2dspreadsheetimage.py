@@ -76,13 +76,13 @@ class Fit2dSpreadsheetImage(FabioImage):
         self._readheader(infile)
         # Compute image size
         try:
-            self.dim1 = int(self.header['Dim_1'])
-            self.dim2 = int(self.header['Dim_2'])
+            dim1 = int(self.header['Dim_1'])
+            dim2 = int(self.header['Dim_2'])
+            self._shape = dim2, dim1
         except (ValueError, KeyError):
             raise IOError("file %s is corrupt, cannot read it" % str(fname))
-        bytecode = numpy.float32
 
-        self.bpp = len(numpy.array(0, bytecode).tostring())
+        self._dtype = numpy.dtype(numpy.float32)
 
         # now read the data into the array
         try:
@@ -92,8 +92,10 @@ class Fit2dSpreadsheetImage(FabioImage):
                     vals.append([float(x) for x in line.split()])
                 except Exception:
                     pass
-            self.data = numpy.array(vals).astype(bytecode)
-            assert self.data.shape == (self.dim2, self.dim1)
+            self.data = numpy.array(vals).astype(self._dtype)
+            assert self.data.shape == self._shape
+            self._shape = None
+            self._dtype = None
         except Exception:
             _logger.debug("Backtrace", exc_info=True)
             raise IOError("Error reading ascii")

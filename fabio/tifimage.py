@@ -44,7 +44,7 @@ Authors:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "29/10/2018"
+__date__ = "14/11/2018"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -60,7 +60,7 @@ except ImportError:
 
 import numpy
 from .utils import pilutils
-from .fabioimage import FabioImage
+from . import fabioimage
 from . import TiffIO
 
 
@@ -71,20 +71,16 @@ _USE_PIL = True
 """Uses PIL library if available"""
 
 
-class TiffFrame(object):
+class TiffFrame(fabioimage.FabioFrame):
     """Frame container for TIFF format"""
 
     def __init__(self, data, tiff_header):
+        super(TiffFrame, self).__init__(data, tiff_header)
+        # also expose the tiff header as 'tiff header' attribute
         self.tiff_header = tiff_header
-        self.data = data
-
-    @property
-    def header(self):
-        """Default header exposed by fabio"""
-        return self.tiff_header
 
 
-class TifImage(FabioImage):
+class TifImage(fabioimage.FabioImage):
     """
     Images in TIF format
     Wraps TiffIO
@@ -98,7 +94,7 @@ class TifImage(FabioImage):
     def __init__(self, *args, **kwds):
         """ Tifimage constructor adds an nbits member attribute """
         self.nbits = None
-        FabioImage.__init__(self, *args, **kwds)
+        fabioimage.FabioImage.__init__(self, *args, **kwds)
         self._tiffio = None
         self.lib = None
 
@@ -107,8 +103,10 @@ class TifImage(FabioImage):
         Try to read Tiff images header...
         """
         header = numpy.frombuffer(infile.read(64), numpy.uint16)
-        self.dim1 = int(header[9])
-        self.dim2 = int(header[15])
+        # TODO: this values dim1/dim2 looks to be wrong
+        dim1 = int(header[9])
+        dim2 = int(header[15])
+        self._shape = dim2, dim1
         # nbits is not a FabioImage attribute...
         self.nbits = int(header[21])  # number of bits
 
@@ -131,8 +129,8 @@ class TifImage(FabioImage):
 
     def _read_with_tiffio(self, infile):
         tiffIO = TiffIO.TiffIO(infile)
-        self.nframes = tiffIO.getNumberOfImages()
-        if tiffIO.getNumberOfImages() > 0:
+        self._nframes = tiffIO.getNumberOfImages()
+        if self.nframes > 0:
             # No support for now of multi-frame tiff images
             header = tiffIO.getInfo(0)
             data = tiffIO.getData(0)
@@ -141,10 +139,10 @@ class TifImage(FabioImage):
             self.data = frame.data
         self._tiffio = tiffIO
         if self.data.ndim == 2:
-            self.dim2, self.dim1 = self.data.shape
+            self._shape = None
         elif self.data.ndim == 3:
-            self.dim2, self.dim1, _ = self.data.shape
             logger.warning("Third dimension is the color")
+            self._shape = None
         else:
             logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
         self.lib = "TiffIO"
@@ -156,6 +154,7 @@ class TifImage(FabioImage):
         frame = self._create_frame(data, header)
         self.header = frame.header
         self.data = frame.data
+        self._shape = None
         self.lib = "PIL"
 
     def read(self, fname, frame=None):
@@ -210,6 +209,14 @@ class TifImage(FabioImage):
             self._tiffio.close()
             self._tiffio = None
         super(TifImage, self).close()
+
+    def _get_frame(self, num):
+        """Inherited function returning a FabioFrame"""
+        if 0 <= num < self.nframes:
+            frame = self.getframe(num)
+            frame._set_file_container(self, num)
+            return frame
+        raise IndexError("getframe out of range")
 
     def getframe(self, num):
         """Returns the frame `num`.

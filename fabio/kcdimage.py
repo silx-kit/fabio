@@ -129,23 +129,23 @@ class KcdImage(FabioImage):
             self._readheader(infile)
             # Compute image size
             try:
-                self.dim1 = int(self.header['X dimension'])
-                self.dim2 = int(self.header['Y dimension'])
+                dim1 = int(self.header['X dimension'])
+                dim2 = int(self.header['Y dimension'])
+                self._shape = dim2, dim1
             except (KeyError, ValueError):
                 raise IOError("KCD file %s is corrupt, cannot read it" % fname)
             try:
                 bytecode = DATA_TYPES[self.header['Data type']]
-                self.bpp = len(numpy.array(0, bytecode).tostring())
             except KeyError:
                 bytecode = numpy.uint16
-                self.bpp = 2
                 logger.warning("Defaulting type to uint16")
+            self._dtype = numpy.dtype(bytecode)
             try:
                 nbReadOut = int(self.header['Number of readouts'])
             except KeyError:
                 logger.warning("Defaulting number of ReadOut to 1")
                 nbReadOut = 1
-            expected_size = self.dim1 * self.dim2 * self.bpp * nbReadOut
+            expected_size = dim1 * dim2 * self._dtype.itemsize * nbReadOut
 
             try:
                 infile.seek(-expected_size, SEEK_END)
@@ -166,17 +166,18 @@ class KcdImage(FabioImage):
         # infile.close()
 
         # now read the data into the array
-        self.data = numpy.zeros((self.dim2, self.dim1), numpy.int32)
+        self.data = numpy.zeros((dim2, dim1), numpy.int32)
         stop = 0
         for i in range(nbReadOut):
             start = stop
             stop = (i + 1) * expected_size // nbReadOut
-            data = numpy.frombuffer(block[start: stop], bytecode).copy()
-            data.shape = self.dim2, self.dim1
+            data = numpy.frombuffer(block[start: stop], self._dtype).copy()
+            data.shape = dim2, dim1
             if not numpy.little_endian:
                 data.byteswap(True)
             self.data += data
-        self.bytecode = self.data.dtype.type
+        self._dtype = None
+        self._shape = None
         self.resetvals()
         # ensure the PIL image is reset
         self.pilimage = None

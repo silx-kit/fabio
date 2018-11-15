@@ -179,6 +179,7 @@ class TestRealImg(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = brukerimage()
             obj.read(os.path.join(self.im_dir, name))
@@ -186,8 +187,7 @@ class TestRealImg(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
     def test_write(self):
         "Test writing with self consistency at the fabio level"

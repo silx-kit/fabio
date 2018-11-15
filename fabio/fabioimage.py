@@ -44,12 +44,13 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "22/10/2018"
+__date__ = "14/11/2018"
 
 import os
 import logging
 import sys
 import tempfile
+import weakref
 logger = logging.getLogger(__name__)
 import numpy
 from . import fabioutils, converters
@@ -57,7 +58,265 @@ from .fabioutils import OrderedDict
 from .utils import pilutils
 
 
-class FabioImage(object):
+class _FabioArray(object):
+    """"Abstract class providing array API used by :class:`FabioImage` and
+    :class:`FabioFrame`."""
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'")
+    def dim1(self):
+        return self.shape[-1]
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'")
+    def dim2(self):
+        return self.shape[-2]
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'")
+    def dim3(self):
+        if len(self.shape) < 3:
+            raise AttributeError("No attribye dim3")
+        return self.shape[-3]
+
+    @property
+    @fabioutils.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)")
+    def dims(self):
+        return list(reversed(self.shape))
+
+    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'")
+    def get_dim1(self):
+        return self.shape[-1]
+
+    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'")
+    def get_dim2(self):
+        return self.shape[-2]
+
+    @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    def set_dim1(self, value):
+        self.shape[-1] = value
+
+    @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    def set_dim2(self, value):
+        self.shape[-2] = value
+
+    def resetvals(self):
+        """ Reset cache - call on changing data """
+        self.mean = None
+        self.stddev = None
+        self.maxval = None
+        self.minval = None
+        self.roi = None
+        self.slice = None
+        self.area_sum = None
+
+    def toPIL16(self, filename=None):
+        """
+        Convert to Python Imaging Library 16 bit greyscale image
+        """
+        if filename:
+            self.read(filename)
+        if self.pilimage is None:
+            # Create and cache the result
+            self.pilimage = pilutils.create_pil_16(self.data)
+        return self.pilimage
+
+    def getmax(self):
+        """ Find max value in self.data, caching for the future """
+        if self.maxval is None:
+            if self.data is not None:
+                self.maxval = self.data.max()
+        return self.maxval
+
+    def getmin(self):
+        """ Find min value in self.data, caching for the future """
+        if self.minval is None:
+            if self.data is not None:
+                self.minval = self.data.min()
+        return self.minval
+
+    def make_slice(self, coords):
+        """
+        Convert a len(4) set of coords into a len(2)
+        tuple (pair) of slice objects
+        the latter are immutable, meaning the roi can be cached
+        """
+        assert len(coords) == 4
+        if len(coords) == 4:
+            # fabian edfimage preference
+            if coords[0] > coords[2]:
+                coords[0:3:2] = [coords[2], coords[0]]
+            if coords[1] > coords[3]:
+                coords[1:4:2] = [coords[3], coords[1]]
+            # in fabian: normally coordinates are given as (x,y) whereas
+            # a matrix is given as row,col
+            # also the (for whichever reason) the image is flipped upside
+            # down wrt to the matrix hence these tranformations
+            dim2, dim1 = self.data.shape
+            # FIXME: This code is just not working dim2 is used in place of dim1
+            fixme = (dim2 - coords[3] - 1,
+                     coords[0],
+                     dim2 - coords[1] - 1,
+                     coords[2])
+        return (slice(int(fixme[0]), int(fixme[2]) + 1),
+                slice(int(fixme[1]), int(fixme[3]) + 1))
+
+    def integrate_area(self, coords):
+        """
+        Sums up a region of interest
+        if len(coords) == 4 -> convert coords to slices
+        if len(coords) == 2 -> use as slices
+        floor -> ? removed as unused in the function.
+        """
+        if self.data is None:
+            # This should return NAN, not zero ?
+            return 0
+        if len(coords) == 4:
+            sli = self.make_slice(coords)
+        elif len(coords) == 2 and isinstance(coords[0], slice) and \
+                isinstance(coords[1], slice):
+            sli = coords
+
+        if sli == self.slice and self.area_sum is not None:
+            pass
+        elif sli == self.slice and self.roi is not None:
+            self.area_sum = self.roi.sum(dtype=numpy.float)
+        else:
+            self.slice = sli
+            self.roi = self.data[self.slice]
+            self.area_sum = self.roi.sum(dtype=numpy.float)
+        return self.area_sum
+
+    def getmean(self):
+        """ return the mean """
+        if self.mean is None:
+            self.mean = self.data.mean(dtype=numpy.double)
+        return self.mean
+
+    def getstddev(self):
+        """ return the standard deviation """
+        if self.stddev is None:
+            self.stddev = self.data.std(dtype=numpy.double)
+        return self.stddev
+
+    @property
+    def header_keys(self):
+        return list(self.header.keys())
+
+    def get_header_keys(self):
+        return self.header_keys()
+
+    @property
+    def bpp(self):
+        "Getter for bpp: data superseeds _bpp"
+        if self.data is not None:
+            return self.data.dtype.itemsize
+        return self.dtype.itemsize
+
+    def get_bpp(self):
+        return self.bpp
+
+    @property
+    def bytecode(self):
+        "Getter for bpp: data superseeds _bytecode"
+        if self.data is not None:
+            return self.data.dtype.type
+        return self.dtype.type
+
+    def get_bytecode(self):
+        return self.bytecode
+
+    @fabioutils.deprecated(reason="Prefer using 'bytecode' instead of 'getByteCode'")
+    def getByteCode(self):
+        return self.bytecode
+
+
+class FabioFrame(_FabioArray):
+    """Identify a frame"""
+
+    def __init__(self, data=None, header=None):
+        super(FabioFrame, self).__init__()
+        self.data = data
+        self._header = header
+        self._shape = None
+        self._dtype = None
+        self._file_container = None
+        self._file_index = None
+
+    def _set_file_container(self, fabio_image, index):
+        """
+        Set the file container of this frame
+
+        :param FabioImage fabio_image: The fabio image containing this frame
+        :param int index: Index of this frame in the file container (starting
+            from 0)
+        """
+        self._file_container = weakref.ref(fabio_image)
+        self._file_index = index
+
+    @property
+    def file_container(self):
+        """Returns the file containing this frame.
+
+        :rtype: FabioImage
+        """
+        ref = self._file_container
+        if ref is None:
+            return None
+        ref = ref()
+        if ref is None:
+            self._file_container = None
+        return ref
+
+    @property
+    def file_index(self):
+        """Returns the index of this frame in the file container.
+
+        This file is stored as a weakref. If a reference to the file is not
+        stored somewhere, this link is lost.
+
+        :rtype: int
+        """
+        return self._file_index
+
+    @property
+    def header(self):
+        """Default header exposed by fabio
+
+        :rtype: dict
+        """
+        return self._header
+
+    @header.setter
+    def header(self, header):
+        """Set the default header exposed by fabio
+
+        :param dict header: The new header
+        """
+        self._header = header
+
+    @property
+    def shape(self):
+        if self._shape is not None:
+            return self._shape
+        return self.data.shape
+
+    @shape.setter
+    def shape(self, shape):
+        if self.data is not None:
+            self.data.shape = shape
+            self._shape = None
+        else:
+            self._shape = shape
+
+    @property
+    def dtype(self):
+        if self._dtype is not None:
+            return self._dtype
+        return self.data.dtype
+
+
+class FabioImage(_FabioArray):
     """A common object for images in fable
 
     Contains a numpy array (.data) and dict of meta data (.header)
@@ -92,27 +351,88 @@ class FabioImage(object):
         :param data: numpy array of values
         :param header: dict or ordereddict with metadata
         """
+        super(FabioImage, self).__init__()
         self._classname = None
-        self._dim1 = self._dim2 = self._bpp = 0
-        self._bytecode = None
+        self._shape = None
+        self._dtype = None
         self._file = None
         if type(data) in fabioutils.StringTypes:
-            raise Exception("fabioimage.__init__ bad argument - " +
-                            "data should be numpy array")
+            raise TypeError("Data should be numpy array")
         self.data = self.check_data(data)
         self.pilimage = None
         self.header = self.check_header(header)
         # cache for image statistics
-        self.mean = self.maxval = self.stddev = self.minval = None
-        # Cache roi
-        self.roi = None
-        self.area_sum = None
-        self.slice = None
-        # New for multiframe files
-        self.nframes = 1
+
+        self._nframes = 1
         self.currentframe = 0
         self.filename = None
         self.filenumber = None
+
+        self.resetvals()
+
+    @property
+    def nframes(self):
+        """Returns the number of frames contained in this file
+
+        :rtype: int
+        """
+        return self._nframes
+
+    def _get_frame(self, num):
+        """Returns a frame from a number of frame
+
+        This method have to be reimplemented to provide multi frames using a
+        a custom class.
+
+        :param int num: Number of frames (0 is the first frame)
+        :rtype: FabioFrame
+        :raises IndexError: If the frame number is out of the available range.
+        """
+        if self.nframes == 1 and num == 0:
+            frame = FabioFrame(self.data, self.header)
+            frame._set_file_container(self, num)
+            return frame
+
+        if not (0 <= num < self.nframes):
+            raise IndexError("Frame number out of range (requested %d, but found %d)" % (num, self.nframes))
+
+        image = self.getframes(num)
+        # Usually it is not a FabioFrame
+        if isinstance(image, FabioFrame):
+            image._set_file_container(self, num)
+            return image
+        else:
+            # This code created extra objects, but avoid to implement many
+            # things on mostly unused formats
+            frame = FabioFrame(image.data, image.header)
+            frame._set_file_container(self, num)
+            return frame
+
+    def frames(self):
+        """Iterate all available frames stored in this image container.
+
+        :rtype: Iterator[FabioFrame]
+        """
+        for num in range(self.nframes):
+            frame = self._get_frame(num)
+            yield frame
+
+    @property
+    def shape(self):
+        if self._shape is not None:
+            return self._shape
+        return self.data.shape
+
+    @shape.setter
+    def shape(self, value):
+        if self.data is not None:
+            self.data.shape = value
+        else:
+            self._shape = value
+
+    @property
+    def dtype(self):
+        return self.data.dtype
 
     def __enter__(self):
         return self
@@ -140,76 +460,6 @@ class FabioImage(object):
         :rtype: bool
         """
         return False
-
-    def get_header_keys(self):
-        return list(self.header.keys())
-
-    def set_header_keys(self, value):
-        pass
-
-    header_keys = property(get_header_keys, set_header_keys)
-
-    def get_dim1(self):
-        "Getter for dim1: data superseeds _dim1"
-        if self.data is not None:
-            try:
-                return self.data.shape[-1]
-            except IndexError as err:
-                logger.error(err)
-                logger.debug(self.data)
-                return self._dim1
-        else:
-            return self._dim1
-
-    def set_dim1(self, value):
-        "Setter for dim1"
-        self._dim1 = value
-
-    dim1 = property(get_dim1, set_dim1)
-
-    def get_dim2(self):
-        "Getter for dim2: data superseeds _dim2"
-        if self.data is not None:
-            try:
-                return self.data.shape[-2]
-            except IndexError as err:
-                logger.error(err)
-                logger.debug(self.data)
-                return self._dim2
-        else:
-            return self._dim2
-
-    def set_dim2(self, value):
-        "Setter for dim2"
-        self._dim2 = value
-
-    dim2 = property(get_dim2, set_dim2)
-
-    def get_bpp(self):
-        "Getter for bpp: data superseeds _bpp"
-        if self.data is not None:
-            return numpy.dtype(self.data.dtype).itemsize
-        elif self._bytecode is not None:
-            return numpy.dtype(self._bytecode).itemsize
-        else:
-            return self._bpp
-
-    def set_bpp(self, value):
-        "Setter for bpp"
-        self._bpp = value
-    bpp = property(get_bpp, set_bpp)
-
-    def get_bytecode(self):
-        "Getter for bpp: data superseeds _bytecode"
-        if self.data is not None:
-            return self.data.dtype.type
-        else:
-            return self._bytecode
-
-    def set_bytecode(self, value):
-        "Setter for bpp"
-        self._bytecode = value
-    bytecode = property(get_bytecode, set_bytecode)
 
     @staticmethod
     def check_header(header=None):
@@ -270,96 +520,9 @@ class FabioImage(object):
         return openimage(
             fabioutils.next_filename(self.filename))
 
-    def toPIL16(self, filename=None):
-        """
-        Convert to Python Imaging Library 16 bit greyscale image
-        """
-        if filename:
-            self.read(filename)
-        if self.pilimage is None:
-            # Create and cache the result
-            self.pilimage = pilutils.create_pil_16(self.data)
-        return self.pilimage
-
     def getheader(self):
         """ returns self.header """
         return self.header
-
-    def getmax(self):
-        """ Find max value in self.data, caching for the future """
-        if self.maxval is None:
-            if self.data is not None:
-                self.maxval = self.data.max()
-        return self.maxval
-
-    def getmin(self):
-        """ Find min value in self.data, caching for the future """
-        if self.minval is None:
-            if self.data is not None:
-                self.minval = self.data.min()
-        return self.minval
-
-    def make_slice(self, coords):
-        """
-        Convert a len(4) set of coords into a len(2)
-        tuple (pair) of slice objects
-        the latter are immutable, meaning the roi can be cached
-        """
-        assert len(coords) == 4
-        if len(coords) == 4:
-            # fabian edfimage preference
-            if coords[0] > coords[2]:
-                coords[0:3:2] = [coords[2], coords[0]]
-            if coords[1] > coords[3]:
-                coords[1:4:2] = [coords[3], coords[1]]
-            # in fabian: normally coordinates are given as (x,y) whereas
-            # a matrix is given as row,col
-            # also the (for whichever reason) the image is flipped upside
-            # down wrt to the matrix hence these tranformations
-            fixme = (self.dim2 - coords[3] - 1,
-                     coords[0],
-                     self.dim2 - coords[1] - 1,
-                     coords[2])
-        return (slice(int(fixme[0]), int(fixme[2]) + 1),
-                slice(int(fixme[1]), int(fixme[3]) + 1))
-
-    def integrate_area(self, coords):
-        """
-        Sums up a region of interest
-        if len(coords) == 4 -> convert coords to slices
-        if len(coords) == 2 -> use as slices
-        floor -> ? removed as unused in the function.
-        """
-        if self.data is None:
-            # This should return NAN, not zero ?
-            return 0
-        if len(coords) == 4:
-            sli = self.make_slice(coords)
-        elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                isinstance(coords[1], slice):
-            sli = coords
-
-        if sli == self.slice and self.area_sum is not None:
-            pass
-        elif sli == self.slice and self.roi is not None:
-            self.area_sum = self.roi.sum(dtype=numpy.float)
-        else:
-            self.slice = sli
-            self.roi = self.data[self.slice]
-            self.area_sum = self.roi.sum(dtype=numpy.float)
-        return self.area_sum
-
-    def getmean(self):
-        """ return the mean """
-        if self.mean is None:
-            self.mean = self.data.mean(dtype=numpy.double)
-        return self.mean
-
-    def getstddev(self):
-        """ return the standard deviation """
-        if self.stddev is None:
-            self.stddev = self.data.std(dtype=numpy.double)
-        return self.stddev
 
     def add(self, other):
         """
@@ -376,14 +539,10 @@ class FabioImage(object):
         self.data = self.data + other.data
         self.resetvals()
 
-    def resetvals(self):
-        """ Reset cache - call on changing data """
-        self.mean = self.stddev = self.maxval = self.minval = None
-        self.roi = self.slice = self.area_sum = None
-
     def rebin(self, x_rebin_fact, y_rebin_fact, keep_I=True):
         """
         Rebin the data and adjust dims
+
         :param int x_rebin_fact: x binning factor
         :param int y_rebin_fact: y binning factor
         :param bool keep_I: shall the signal increase ?
@@ -391,7 +550,8 @@ class FabioImage(object):
         if self.data is None:
             raise Exception('Please read in the file you wish to rebin first')
 
-        if (self.dim1 % x_rebin_fact != 0) or (self.dim2 % y_rebin_fact != 0):
+        dim2, dim1 = self.data.shape
+        if (dim1 % x_rebin_fact != 0) or (dim2 % y_rebin_fact != 0):
             raise RuntimeError('image size is not divisible by rebin factor - '
                                'skipping rebin')
         else:
@@ -414,8 +574,7 @@ class FabioImage(object):
         else:
             self.data = out.astype(self.data.dtype)
 
-        self.dim1 = self.dim1 / x_rebin_fact
-        self.dim2 = self.dim2 / y_rebin_fact
+        self._shape = None
 
         # update header
         self.update_header()

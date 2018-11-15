@@ -47,7 +47,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "29/10/2018"
+__date__ = "13/11/2018"
 
 import time
 import logging
@@ -246,14 +246,15 @@ class OxdImage(FabioImage):
 
             # Compute image size
             try:
-                self.dim1 = int(self.header['NX'])
-                self.dim2 = int(self.header['NY'])
+                dim1 = int(self.header['NX'])
+                dim2 = int(self.header['NY'])
+                self._shape = dim2, dim1
             except (ValueError, KeyError):
                 raise IOError("Oxford  file %s is corrupted, cannot read it" % str(fname))
 
             if self.header['Compression'] == 'TY1':
                 logger.debug("Compressed with the KM4CCD compression")
-                raw8 = infile.read(self.dim1 * self.dim2)
+                raw8 = infile.read(dim1 * dim2)
                 raw16 = None
                 raw32 = None
                 if self.header['OI'] > 0:
@@ -263,13 +264,11 @@ class OxdImage(FabioImage):
 
                 # endianess is handled at the decompression level
                 raw_data = decTY1(raw8, raw16, raw32)
-                bytecode = raw_data.dtype
             elif self.header['Compression'] == 'TY5':
                 logger.info("Compressed with the TY5 compression")
-                bytecode = numpy.int8
-                self.bpp = 1
-                raw8 = infile.read(self.dim1 * self.dim2)
-                raw_data = numpy.frombuffer(raw8, bytecode)
+                dtype = numpy.dtype(numpy.int8)
+                raw8 = infile.read(dim1 * dim2)
+                raw_data = numpy.frombuffer(raw8, dtype)
 
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
@@ -283,20 +282,18 @@ class OxdImage(FabioImage):
                 self.blob = raw8 + self.raw16 + self.raw32 + self.rest
                 raw_data = self.dec_TY5(raw8 + self.raw16 + self.raw32)
             else:
-                bytecode = numpy.int32
-                self.bpp = len(numpy.array(0, bytecode).tostring())
-                nbytes = self.dim1 * self.dim2 * self.bpp
-                raw_data = numpy.frombuffer(infile.read(nbytes), bytecode).copy()
+                dtype = numpy.dtype(numpy.int32)
+                nbytes = dim1 * dim2 * dtype.itemsize
+                raw_data = numpy.frombuffer(infile.read(nbytes), dtype).copy()
                 # Always assume little-endian on the disk
                 if not numpy.little_endian:
                     raw_data.byteswap(True)
-        # infile.close()
 
         logger.debug('OVER_SHORT2: %s', raw_data.dtype)
         logger.debug("%s" % (raw_data < 0).sum())
-        logger.debug("BYTECODE: %s", bytecode)
-        self.data = raw_data.reshape((self.dim2, self.dim1))
-        self.bytecode = self.data.dtype.type
+        logger.debug("BYTECODE: %s", raw_data.dtype.type)
+        self.data = raw_data.reshape((dim2, dim1))
+        self._dtype = None
         self.pilimage = None
         return self
 
@@ -310,8 +307,9 @@ class OxdImage(FabioImage):
                 self.header[key] = DEFAULT_HEADERS[key]
 
         if "NX" not in self.header.keys() or "NY" not in self.header.keys():
-            self.header['NX'] = self.dim1
-            self.header['NY'] = self.dim2
+            dim2, dim1 = self.shape
+            self.header['NX'] = dim1
+            self.header['NY'] = dim2
         ascii_headers = [self.header['Header Version'],
                          "COMPRESSION=%s (%5.1f)" % (self.header["Compression"], self.getCompressionRatio()),
                          "NX=%4i NY=%4i OI=%7i OL=%7i " % (self.header["NX"], self.header["NY"], self.header["OI"], self.header["OL"]),
@@ -479,14 +477,15 @@ class OxdImage(FabioImage):
         :return: 1D array with data
         """
         logger.info("TY5 decompression is slow for now")
-        array_size = self.dim1 * self.dim2
+        array_size = self._shape[0] * self._shape[1]
         stream_size = len(stream)
         data = numpy.zeros(array_size)
         raw = numpy.frombuffer(stream, dtype=numpy.uint8)
         pos_inp = pos_out = current = ex1 = ex2 = 0
 
+        dim2 = self._shape[0]
         while pos_inp < stream_size and pos_out < array_size:
-            if pos_out % self.dim2 == 0:
+            if pos_out % dim2 == 0:
                 last = 0
             else:
                 last = current

@@ -48,7 +48,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "29/10/2018"
+__date__ = "14/11/2018"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -142,15 +142,14 @@ class EigerImage(FabioImage):
             raise NotGoodReader("HDF5 file does not contain an Eiger-like structure.")
 
         self.dataset = lstds
-        self.nframes = sum(i.shape[0] for i in lstds)
-        self._dim1 = self.dataset[0].shape[-1]
-        self._dim2 = self.dataset[0].shape[-2]
+        self._nframes = sum(i.shape[0] for i in lstds)
 
         if frame is not None:
             return self.getframe(int(frame))
         else:
             self.currentframe = 0
             self.data = self.dataset[0][self.currentframe, :, :]
+            self._shape = None
             return self
 
     def write(self, fname):
@@ -186,7 +185,7 @@ class EigerImage(FabioImage):
                 new_img = self.__class__(data=data, header=self.header)
                 new_img.dataset = self.dataset
                 new_img.h5 = self.h5
-                new_img.nframes = self.nframes
+                new_img._nframes = self.nframes
                 new_img.currentframe = num
             else:
                 raise IOError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))

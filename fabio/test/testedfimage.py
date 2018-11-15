@@ -87,8 +87,7 @@ class TestFlatEdfs(unittest.TestCase):
 
     def test_read(self):
         """ check readable"""
-        self.assertEqual(self.obj.dim1, 256, msg="dim1!=256 for file: %s" % self.filename)
-        self.assertEqual(self.obj.dim2, 256, msg="dim2!=256 for file: %s" % self.filename)
+        self.assertEqual(self.obj.shape, (256, 256), msg="File %s has wrong shape " % self.filename)
         self.assertEqual(self.obj.bpp, 4, msg="bpp!=4 for file: %s" % self.filename)
         self.assertEqual(self.obj.bytecode, numpy.float32, msg="bytecode!=flot32 for file: %s" % self.filename)
         self.assertEqual(self.obj.data.shape, (256, 256), msg="shape!=(256,256) for file: %s" % self.filename)
@@ -162,6 +161,7 @@ class TestEdfs(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = edfimage()
             try:
@@ -175,8 +175,7 @@ class TestEdfs(unittest.TestCase):
             self.assertAlmostEqual(mean, obj.getmean(), 2, "testedfs: %s getmean" % name)
             logger.info("%s StdDev:  exp=%s, obt=%s" % (name, stddev, obj.getstddev()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name)
-            self.assertEqual(dim1, obj.dim1, "testedfs: %s dim1" % name)
-            self.assertEqual(dim2, obj.dim2, "testedfs: %s dim2" % name)
+            self.assertEqual(obj.shape, shape, "testedfs: %s shape" % name)
         obj = None
 
     def test_rebin(self):
@@ -292,7 +291,7 @@ class TestEdfFastRead(unittest.TestCase):
     def test_fastread(self):
         ref = fabio.open(self.refFilename)
         refdata = ref.data
-        obt = ref.fastReadData(self.fastFilename)
+        obt = ref.fast_read_data(self.fastFilename)
         self.assertEqual(abs(obt - refdata).max(), 0, "testedffastread: Same data")
 
 
@@ -370,7 +369,7 @@ class TestEdfRegression(unittest.TestCase):
         del image.header["Dim_1"]
         image.write(output_filename)
         image2 = fabio.open(output_filename)
-        self.assertEqual(image.dims, image2.dims)
+        self.assertEqual(image.shape, image2.shape)
 
 
 class TestBadFiles(unittest.TestCase):

@@ -71,8 +71,9 @@ class Fit2dMaskImage(FabioImage):
         # Enforce little endian
         if not numpy.little_endian:
             fit2dhdr.byteswap(True)
-        self._dim1 = fit2dhdr[4]  # 1 less than Andy's fortran
-        self._dim2 = fit2dhdr[5]
+        dim1 = fit2dhdr[4]  # 1 less than Andy's fortran
+        dim2 = fit2dhdr[5]
+        self._shape = dim2, dim1
 
     def read(self, fname, frame=None):
         """
@@ -82,12 +83,12 @@ class Fit2dMaskImage(FabioImage):
         fin = self._open(fname)
         self._readheader(fin)
         # Compute image size
-        self.bytecode = numpy.uint8
-        self.bpp = numpy.dtype(self.bytecode).itemsize
+        self._dtype = numpy.dtype(numpy.uint8)
 
         # integer division
-        num_ints = (self._dim1 + 31) // 32
-        total = self._dim2 * num_ints * 4
+        dim2, dim1 = self._shape
+        num_ints = (dim1 + 31) // 32
+        total = dim2 * num_ints * 4
         data = fin.read(total)
         assert len(data) == total
         fin.close()
@@ -97,9 +98,9 @@ class Fit2dMaskImage(FabioImage):
         if not numpy.little_endian:
             data.byteswap(True)
 
-        data = numpy.reshape(data, (self._dim2, num_ints * 4))
+        data = numpy.reshape(data, (dim2, num_ints * 4))
 
-        result = numpy.zeros((self._dim2, num_ints * 4 * 8), numpy.uint8)
+        result = numpy.zeros((dim2, num_ints * 4 * 8), numpy.uint8)
 
         # Unpack using bitwise comparisons to 2**n
         bits = numpy.ones((1), numpy.uint8)
@@ -108,14 +109,16 @@ class Fit2dMaskImage(FabioImage):
             result[:, i::8] = temp.astype(numpy.uint8)
             bits = bits * 2
         # Extra rows needed for packing odd dimensions
-        spares = num_ints * 4 * 8 - self._dim1
+        spares = num_ints * 4 * 8 - dim1
         if spares == 0:
             data = numpy.where(result == 0, 0, 1)
         else:
             data = numpy.where(result[:, :-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
-#        self.data = numpy.transpose(self.data)
-        self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8).reshape(self._dim2, self._dim1)
+        # self.data = numpy.transpose(self.data)
+        self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8)
+        self.data.shape = self._shape
+        self._shape = None
         self.pilimage = None
         return self
 
@@ -123,17 +126,18 @@ class Fit2dMaskImage(FabioImage):
         """
         Try to write a file
         """
+        dim2, dim1 = self.shape
         header = bytearray(b"\x00" * 1024)
         header[0] = 77  # M
         header[4] = 65  # A
         header[8] = 83  # S
         header[12] = 75  # K
         header[24] = 1  # 1
-        header[16:20] = struct.pack("<I", self.dim1)
-        header[20:24] = struct.pack("<I", self.dim2)
-        compact_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 4), dtype=numpy.uint8)
-        large_array = numpy.zeros((self.dim2, ((self.dim1 + 31) // 32) * 32), dtype=numpy.uint8)
-        large_array[:self.dim2, :self.dim1] = (self.data != 0)
+        header[16:20] = struct.pack("<I", dim1)
+        header[20:24] = struct.pack("<I", dim2)
+        compact_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 4), dtype=numpy.uint8)
+        large_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 32), dtype=numpy.uint8)
+        large_array[:dim2, :dim1] = (self.data != 0)
         for i in range(8):
             order = (1 << i)
             compact_array += large_array[:, i::8] * order

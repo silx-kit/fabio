@@ -44,12 +44,12 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "29/10/2018"
+__date__ = "14/11/2018"
 
 import logging
 import os
 import posixpath
-from .fabioimage import FabioImage
+from . import fabioimage
 
 logger = logging.getLogger(__name__)
 
@@ -60,22 +60,23 @@ except ImportError:
 from .fabioutils import previous_filename, next_filename
 
 
-class Hdf5Frame(object):
+class Hdf5Frame(fabioimage.FabioFrame):
     """Identify a slice of dataset from an HDF5 file"""
 
     def __init__(self, hdf5image, frame_num):
         if not isinstance(hdf5image, Hdf5Image):
             raise TypeError("Expected class %s", Hdf5Image)
+        data = hdf5image.dataset[frame_num, :, :]
+        super(Hdf5Frame, self).__init__(data=data, header=hdf5image.header)
         self.hdf5 = hdf5image.hdf5
         self.dataset = hdf5image.dataset
         self.filename = hdf5image.filename
-        self.nframes = hdf5image.nframes
-        self.data = hdf5image.dataset[frame_num, :, :]
+        self._nframes = hdf5image.nframes
         self.header = hdf5image.header
         self.currentframe = frame_num
 
 
-class Hdf5Image(FabioImage):
+class Hdf5Image(fabioimage.FabioImage):
     """
     FabIO image class for Images from an HDF file
 
@@ -93,7 +94,7 @@ class Hdf5Image(FabioImage):
         if not h5py:
             raise RuntimeError("fabio.Hdf5Image cannot be used without h5py. Please install h5py and restart")
 
-        FabioImage.__init__(self, *arg, **kwargs)
+        fabioimage.FabioImage.__init__(self, *arg, **kwargs)
         self.hdf5 = None
         self.dataset = None
 
@@ -130,7 +131,7 @@ class Hdf5Image(FabioImage):
         # ndim does not exist for external links ?
         ndim = len(self.dataset.shape)
         if ndim == 3:
-            self.nframes = self.dataset.shape[0]
+            self._nframes = self.dataset.shape[0]
             if frame is not None:
                 self.currentframe = int(frame)
             else:

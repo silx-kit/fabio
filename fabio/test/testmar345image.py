@@ -70,6 +70,7 @@ class TestMar345(unittest.TestCase):
             vals = line.strip().split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = mar345image()
             obj.read(UtilsTest.getimage(name))
@@ -78,8 +79,7 @@ class TestMar345(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape, "shape")
 
     def test_write(self):
         "Test writing with self consistency at the fabio level"

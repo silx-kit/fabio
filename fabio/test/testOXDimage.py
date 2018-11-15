@@ -74,13 +74,13 @@ class TestOxd(unittest.TestCase):
         for vals in TESTIMAGES:
             name = vals[0]
             dim1, dim2 = vals[1:3]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = vals[3:7]
             detector_type = vals[7]
             obj = OXDimage()
             obj.read(self.fn[name])
 
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin on " + name)
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax on " + name)

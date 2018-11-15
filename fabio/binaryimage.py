@@ -89,9 +89,8 @@ class BinaryImage(FabioImage):
 
         """
         self.filename = fname
-        self.dim1 = dim1
-        self.dim2 = dim2
-        self.bytecode = bytecode
+        self._shape = dim2, dim1
+        self._bytecode = bytecode
         f = open(self.filename, "rb")
         dims = [dim2, dim1]
         bpp = len(numpy.array(0, bytecode).tostring())
@@ -112,6 +111,7 @@ class BinaryImage(FabioImage):
         if self.swap_needed(endian):
             data.byteswap(True)
         self.data = data
+        self._shape = None
         return self
 
     def estimate_offset_value(self, fname, dim1, dim2, bytecode="int32"):

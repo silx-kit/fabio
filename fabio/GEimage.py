@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "29/10/2018"
+__date__ = "14/11/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -246,7 +246,7 @@ class GeImage(FabioImage):
         infile = self._open(fname, "rb")
         self.sequencefilename = fname
         self._readheader(infile)
-        self.nframes = self.header['NumberOfFrames']
+        self._nframes = self.header['NumberOfFrames']
         self._readframe(infile, frame)
         infile.close()
         return self
@@ -273,19 +273,19 @@ class GeImage(FabioImage):
         # whence = 0 means seek from start of file
         filepointer.seek(imgstart, 0)
 
-        self.bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
-        imglength = (self.header['NumberOfRowsInFrame'] *
-                     self.header['NumberOfColsInFrame'] * self.bpp)
-        if self.bpp != 2:
-            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
+        bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
+        if bpp != 2:
+            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % bpp)
 
+        imglength = (self.header['NumberOfRowsInFrame'] *
+                     self.header['NumberOfColsInFrame'] * bpp)
         data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16).copy()
         if not numpy.little_endian:
             data.byteswap(True)
         data.shape = (self.header['NumberOfRowsInFrame'],
                       self.header['NumberOfColsInFrame'])
         self.data = data
-        self.dim2, self.dim1 = self.data.shape
+        self._shape = None
         self.currentframe = int(img_num)
         self._makeframename()
 
@@ -300,7 +300,7 @@ class GeImage(FabioImage):
         for k in self.header.keys():
             newheader[k] = self.header[k]
         frame = GeImage(header=newheader)
-        frame.nframes = self.nframes
+        frame._nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
         frame._readframe(infile, num)

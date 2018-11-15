@@ -42,9 +42,8 @@ The basic idea is the following:
 
 3) read fills in self.data with a numpy array holding the image.
    Some info are automatically exposed from data:
-   * self.dim1 and self.dim2: the image dimensions,
-   * self.bpp is the bytes per pixel
-   * self.bytecode is the numpy.dtype.type of the data.
+   * self.shape is the image dimensions,
+   * self.dtype is the numpy.dtype of the data.
 
 4) The member variables "_need_a_seek_to_read" and "_need_a_real_file" are there
    in case you have
@@ -75,7 +74,7 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "29/10/2018"
+__date__ = "13/11/2018"
 
 import logging
 logger = logging.getLogger(__name__)

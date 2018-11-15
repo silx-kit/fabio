@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "29/10/2018"
+__date__ = "13/11/2018"
 
 import unittest
 import numpy
@@ -60,8 +60,7 @@ class TestFit2DImage(unittest.TestCase):
         """ Check it reads a mask OK """
         i = fit2dimage()
         i.read(self.filename)
-        self.assertEqual(i.dim1, 25)
-        self.assertEqual(i.dim2, 28)
+        self.assertEqual(i.shape, (28, 25))
         self.assertEqual(i.bpp, 4)
         self.assertEqual(i.bytecode, numpy.float32)
         self.assertEqual(i.data.shape, (28, 25))

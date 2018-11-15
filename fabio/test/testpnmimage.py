@@ -28,7 +28,7 @@ Test for PNM images.
 Jerome Kieffer, 04/12/2014
 """
 __author__ = "Jerome Kieffer"
-__date__ = "22/10/2018"
+__date__ = "13/11/2018"
 import os
 import unittest
 import numpy
@@ -59,14 +59,14 @@ class TestPNM(unittest.TestCase):
         vals = self.results.split()
         name = vals[0]
         dim1, dim2 = [int(x) for x in vals[1:3]]
+        shape = dim2, dim1
         mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
         obj = openimage(self.fn[name])
         self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin")
         self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
         self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean")
         self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev")
-        self.assertEqual(dim1, obj.dim1, "dim1")
-        self.assertEqual(dim2, obj.dim2, "dim2")
+        self.assertEqual(shape, obj.shape)
 
     def test_write(self):
         pnmfile = os.path.join(UtilsTest.tempdir, "pnmfile.pnm")

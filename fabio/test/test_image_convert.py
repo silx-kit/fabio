@@ -50,11 +50,9 @@ class TestImageConvert(unittest.TestCase):
         image = fabio.open(filename)
         image2 = image.convert("tiff")
         image2.save(output_filename)
-        self.assertEqual(image.dim1, image2.dim1)
-        self.assertEqual(image.dim2, image2.dim2)
+        self.assertEqual(image.shape, image2.shape)
         image3 = fabio.open(output_filename)
-        self.assertEqual(image.dim1, image3.dim1)
-        self.assertEqual(image.dim2, image3.dim2)
+        self.assertEqual(image.shape, image3.shape)
 
 
 def suite():
