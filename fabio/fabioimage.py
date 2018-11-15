@@ -379,8 +379,17 @@ class FabioImage(_FabioArray):
         """
         return self._nframes
 
+    def get_frame(self, num):
+        """Returns a frame from the this fabio image.
+
+        :param int num: Number of frames (0 is the first frame)
+        :rtype: FabioFrame
+        :raises IndexError: If the frame number is out of the available range.
+        """
+        return self._get_frame(num)
+
     def _get_frame(self, num):
-        """Returns a frame from a number of frame
+        """Returns a frame from the this fabio image.
 
         This method have to be reimplemented to provide multi frames using a
         a custom class.
