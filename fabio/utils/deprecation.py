@@ -34,13 +34,21 @@ import sys
 import logging
 import functools
 import traceback
+import six
+
+from .. import _version
 
 depreclog = logging.getLogger("fabio.DEPRECATION")
 
 deprecache = set([])
 
 
-def deprecated(func=None, reason=None, replacement=None, since_version=None, only_once=True, skip_backtrace_count=1):
+_CACHE_VERSIONS = {}
+
+
+def deprecated(func=None, reason=None, replacement=None, since_version=None,
+               only_once=True, skip_backtrace_count=1,
+               deprecated_since=None):
     """
     Decorator that deprecates the use of a function
 
@@ -54,6 +62,8 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None, onl
         generated one time. Default is true.
     :param int skip_backtrace_count: Amount of last backtrace to ignore when
         logging the backtrace
+    :param Union[int,str] deprecated_since: If provided, log it as warning
+        since a version of the library, else log it as debug
     """
     def decorator(func):
         @functools.wraps(func)
@@ -66,7 +76,8 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None, onl
                                replacement=replacement,
                                since_version=since_version,
                                only_once=only_once,
-                               skip_backtrace_count=skip_backtrace_count)
+                               skip_backtrace_count=skip_backtrace_count,
+                               deprecated_since=deprecated_since)
             return func(*args, **kwargs)
         return wrapper
     if func is not None:
@@ -76,7 +87,8 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None, onl
 
 def deprecated_warning(type_, name, reason=None, replacement=None,
                        since_version=None, only_once=True,
-                       skip_backtrace_count=0):
+                       skip_backtrace_count=0,
+                       deprecated_since=None):
     """
     Function to log a deprecation warning
 
@@ -93,6 +105,8 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
         generated one time for each different call locations. Default is true.
     :param int skip_backtrace_count: Amount of last backtrace to ignore when
         logging the backtrace
+    :param Union[int,str] deprecated_since: If provided, log the deprecation
+        as warning since a version of the library, else log it as debug.
     """
     if not depreclog.isEnabledFor(logging.WARNING):
         # Avoid computation when it is not logged
@@ -116,4 +130,18 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
             return
         else:
             deprecache.add(data)
-    depreclog.warning(msg, type_, name, backtrace)
+
+    if deprecated_since is not None:
+        if isinstance(deprecated_since, six.string_types):
+            if deprecated_since not in _CACHE_VERSIONS:
+                hexversion = _version.calc_hexversion(string=deprecated_since)
+                _CACHE_VERSIONS[deprecated_since] = hexversion
+                deprecated_since = hexversion
+        log_as_debug = _version.hexversion < deprecated_since
+    else:
+        log_as_debug = False
+
+    if log_as_debug:
+        depreclog.debug(msg, type_, name, backtrace)
+    else:
+        depreclog.warning(msg, type_, name, backtrace)
