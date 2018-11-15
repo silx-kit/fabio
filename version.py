@@ -63,7 +63,6 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "15/11/2018"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
-__all__ = ["date", "version_info", "strictversion", "hexversion", "debianversion"]
 
 RELEASE_LEVEL_VALUE = {"dev": 0,
                        "alpha": 10,
@@ -93,8 +92,10 @@ if version_info.releaselevel != "final":
         prerel = "a"
     strictversion += prerel + str(version_info[-1])
 
+_PATTERN = None
 
-def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0):
+
+def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0, string=None):
     """Calculate the hexadecimal version number from the tuple version_info:
 
     :param major: integer
@@ -104,6 +105,20 @@ def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0):
     :param serial: integer
     :return: integer always increasing with revision numbers
     """
+    if string is not None:
+        global _PATTERN
+        if _PATTERN is None:
+            import re
+            _PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)(\w+)?$")
+        result = _PATTERN.match(string)
+        if result is None:
+            raise ValueError("'%s' is not a valid version" % string)
+        result = result.groups()
+        major, minor, micro = int(result[0]), int(result[1]), int(result[2])
+        releaselevel = result[3]
+        if releaselevel is None:
+            releaselevel = 0
+
     try:
         releaselevel = int(releaselevel)
     except ValueError:
