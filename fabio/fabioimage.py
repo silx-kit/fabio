@@ -397,7 +397,7 @@ class FabioImage(_FabioArray):
         if not (0 <= num < self.nframes):
             raise IndexError("Frame number out of range (requested %d, but found %d)" % (num, self.nframes))
 
-        image = self.getframes(num)
+        image = self.getframe(num)
         # Usually it is not a FabioFrame
         if isinstance(image, FabioFrame):
             image._set_file_container(self, num)
