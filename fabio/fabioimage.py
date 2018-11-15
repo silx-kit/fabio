@@ -64,40 +64,40 @@ class _FabioArray(object):
     :class:`FabioFrame`."""
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'", deprecated_since="0.10.0beta")
     def dim1(self):
         return self.shape[-1]
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'", deprecated_since="0.10.0beta")
     def dim2(self):
         return self.shape[-2]
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'", deprecated_since="0.10.0beta")
     def dim3(self):
         if len(self.shape) < 3:
             raise AttributeError("No attribye dim3")
         return self.shape[-3]
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)")
+    @deprecation.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)", deprecated_since="0.10.0beta")
     def dims(self):
         return list(reversed(self.shape))
 
-    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'", deprecated_since="0.10.0beta")
     def get_dim1(self):
         return self.shape[-1]
 
-    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'", deprecated_since="0.10.0beta")
     def get_dim2(self):
         return self.shape[-2]
 
-    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2", deprecated_since="0.10.0beta")
     def set_dim1(self, value):
         self.shape[-1] = value
 
-    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2", deprecated_since="0.10.0beta")
     def set_dim2(self, value):
         self.shape[-2] = value
 
@@ -227,7 +227,7 @@ class _FabioArray(object):
     def get_bytecode(self):
         return self.bytecode
 
-    @deprecation.deprecated(reason="Prefer using 'bytecode' instead of 'getByteCode'")
+    @deprecation.deprecated(reason="Prefer using 'bytecode' instead of 'getByteCode'", deprecated_since="0.10.0beta")
     def getByteCode(self):
         return self.bytecode
 

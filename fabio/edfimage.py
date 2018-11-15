@@ -406,7 +406,7 @@ class EdfFrame(fabioimage.FabioFrame):
         """Setter for data in edf frame"""
         self._data = value
 
-    @deprecation.deprecated(reason="Prefer using 'frame.data'")
+    @deprecation.deprecated(reason="Prefer using 'frame.data'", deprecated_since="0.10.0beta")
     def getData(self):
         """
         Returns the data after unpacking it if needed.
@@ -415,7 +415,7 @@ class EdfFrame(fabioimage.FabioFrame):
         """
         return self.data
 
-    @deprecation.deprecated(reason="Prefer using 'frame.data ='")
+    @deprecation.deprecated(reason="Prefer using 'frame.data ='", deprecated_since="0.10.0beta")
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
@@ -526,7 +526,7 @@ class EdfFrame(fabioimage.FabioFrame):
         listHeader.append(" " * (headerSize - preciseSize) + "}\n")
         return ("".join(listHeader)).encode("ASCII") + data.tostring()
 
-    @deprecation.deprecated(reason="Prefer using 'getEdfBlock'")
+    @deprecation.deprecated(reason="Prefer using 'getEdfBlock'", deprecated_since="0.10.0beta")
     def getEdfBlock(self, force_type=None, fit2dMode=False):
         return self.get_edf_block(force_type, fit2dMode)
 
@@ -860,7 +860,7 @@ class EdfImage(fabioimage.FabioImage):
         else:
             self._frames.append(EdfFrame(data, header))
 
-    @deprecation.deprecated(reason="Prefer using 'append_frame'")
+    @deprecation.deprecated(reason="Prefer using 'append_frame'", deprecated_since="0.10.0beta")
     def appendFrame(self, frame=None, data=None, header=None):
         self.append_frame(frame, data, header)
 
@@ -874,7 +874,7 @@ class EdfImage(fabioimage.FabioImage):
         else:
             self._frames.pop(frameNb)
 
-    @deprecation.deprecated(reason="Prefer using 'delete_frame'")
+    @deprecation.deprecated(reason="Prefer using 'delete_frame'", deprecated_since="0.10.0beta")
     def deleteFrame(self, frameNb=None):
         self.delete_frame(frameNb)
 
@@ -901,7 +901,7 @@ class EdfImage(fabioimage.FabioImage):
             data.byteswap(True)
         return data
 
-    @deprecation.deprecated(reason="Prefer using 'fastReadData'")
+    @deprecation.deprecated(reason="Prefer using 'fastReadData'", deprecated_since="0.10.0beta")
     def fastReadData(self, filename):
         return self.fast_read_data(filename)
 
@@ -945,7 +945,7 @@ class EdfImage(fabioimage.FabioImage):
             data.byteswap(True)
         return data[slice2]
 
-    @deprecation.deprecated(reason="Prefer using 'fast_read_roi'")
+    @deprecation.deprecated(reason="Prefer using 'fast_read_roi'", deprecated_since="0.10.0beta")
     def fastReadROI(self, filename, coords=None):
         return self.fast_read_roi(filename, coords)
 
@@ -977,14 +977,14 @@ class EdfImage(fabioimage.FabioImage):
         """
         return len(self._frames)
 
-    @deprecation.deprecated(reason="Prefer using 'img.nframes'")
+    @deprecation.deprecated(reason="Prefer using 'img.nframes'", deprecated_since="0.10.0beta")
     def getNbFrames(self):
         """
         Getter for number of frames
         """
         return len(self._frames)
 
-    @deprecation.deprecated(reason="This call to 'setNbFrames' does nothing and should be removed")
+    @deprecation.deprecated(reason="This call to 'setNbFrames' does nothing and should be removed", deprecated_since="0.10.0beta")
     def setNbFrames(self, val):
         """
         Setter for number of frames ... should do nothing. Here just to avoid bugs
@@ -1007,14 +1007,14 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.header = None
 
-    @deprecation.deprecated(reason="Prefer using 'img.header'")
+    @deprecation.deprecated(reason="Prefer using 'img.header'", deprecated_since="0.10.0beta")
     def getHeader(self):
         """
         Getter for the headers. used by the property header,
         """
         return self._frames[self.currentframe].header
 
-    @deprecation.deprecated(reason="Prefer using 'img.header ='")
+    @deprecation.deprecated(reason="Prefer using 'img.header ='", deprecated_since="0.10.0beta")
     def setHeader(self, _dictHeader):
         """
         Enforces the propagation of the header to the list of frames
@@ -1022,7 +1022,7 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.header = _dictHeader
 
-    @deprecation.deprecated(reason="Prefer using 'del img.header'")
+    @deprecation.deprecated(reason="Prefer using 'del img.header'", deprecated_since="0.10.0beta")
     def delHeader(self):
         """
         Deleter for edf header
@@ -1054,7 +1054,7 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.data = None
 
-    @deprecation.deprecated(reason="Prefer using 'img.data'")
+    @deprecation.deprecated(reason="Prefer using 'img.data'", deprecated_since="0.10.0beta")
     def getData(self):
         """
         getter for edf Data
@@ -1063,7 +1063,7 @@ class EdfImage(fabioimage.FabioImage):
         """
         return self.data
 
-    @deprecation.deprecated(reason="Prefer using 'img.data ='")
+    @deprecation.deprecated(reason="Prefer using 'img.data ='", deprecated_since="0.10.0beta")
     def setData(self, _data=None):
         """
         Enforces the propagation of the data to the list of frames
@@ -1072,18 +1072,18 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._get_any_frame()
         frame.data = _data
 
-    @deprecation.deprecated(reason="Prefer using 'del img.data'")
+    @deprecation.deprecated(reason="Prefer using 'del img.data'", deprecated_since="0.10.0beta")
     def delData(self):
         """
         deleter for edf Data
         """
         self._frames[self.currentframe].data = None
 
-    @deprecation.deprecated(reason="Prefer using 'dim1'")
+    @deprecation.deprecated(reason="Prefer using 'dim1'", deprecated_since="0.10.0beta")
     def getDim1(self):
         return self.dim1
 
-    @deprecation.deprecated(reason="Setting dim1 is not anymore allowed. If the data is not set use shape instead.")
+    @deprecation.deprecated(reason="Setting dim1 is not anymore allowed. If the data is not set use shape instead.", deprecated_since="0.10.0beta")
     def setDim1(self, _iVal=None):
         frame = self._get_any_frame()
         frame.dim1 = _iVal
@@ -1092,11 +1092,11 @@ class EdfImage(fabioimage.FabioImage):
     def dim1(self):
         return self._frames[self.currentframe].dim1
 
-    @deprecation.deprecated(reason="Prefer using 'dim2'")
+    @deprecation.deprecated(reason="Prefer using 'dim2'", deprecated_since="0.10.0beta")
     def getDim2(self):
         return self._frames[self.currentframe].dim2
 
-    @deprecation.deprecated(reason="Setting dim2 is not anymore allowed. If the data is not set use shape instead.")
+    @deprecation.deprecated(reason="Setting dim2 is not anymore allowed. If the data is not set use shape instead.", deprecated_since="0.10.0beta")
     def setDim2(self, _iVal=None):
         frame = self._get_any_frame()
         frame.dim2 = _iVal
@@ -1105,7 +1105,7 @@ class EdfImage(fabioimage.FabioImage):
     def dim2(self):
         return self._frames[self.currentframe].dim2
 
-    @deprecation.deprecated(reason="Prefer using 'dims'")
+    @deprecation.deprecated(reason="Prefer using 'dims'", deprecated_since="0.10.0beta")
     def getDims(self):
         return self._frames[self.currentframe].dims
 
@@ -1113,11 +1113,11 @@ class EdfImage(fabioimage.FabioImage):
     def dims(self):
         return self._frames[self.currentframe].dims
 
-    @deprecation.deprecated(reason="Prefer using 'bytecode'")
+    @deprecation.deprecated(reason="Prefer using 'bytecode'", deprecated_since="0.10.0beta")
     def getByteCode(self):
         return self.bytecode
 
-    @deprecation.deprecated(reason="Setting bytecode is not anymore allowed. If the data is not set use dtype instead.")
+    @deprecation.deprecated(reason="Setting bytecode is not anymore allowed. If the data is not set use dtype instead.", deprecated_since="0.10.0beta")
     def setByteCode(self, iVal=None, _iVal=None):
         raise NotImplementedError("No more implemented")
 
@@ -1125,11 +1125,11 @@ class EdfImage(fabioimage.FabioImage):
     def bytecode(self):
         return self._frames[self.currentframe].bytecode
 
-    @deprecation.deprecated(reason="Prefer using 'bpp'")
+    @deprecation.deprecated(reason="Prefer using 'bpp'", deprecated_since="0.10.0beta")
     def getBpp(self):
         return self._frames[self.currentframe].bpp
 
-    @deprecation.deprecated(reason="Setting bpp is not anymore allowed. If the data is not set use dtype instead.")
+    @deprecation.deprecated(reason="Setting bpp is not anymore allowed. If the data is not set use dtype instead.", deprecated_since="0.10.0beta")
     def setBpp(self, iVal=None, _iVal=None):
         raise NotImplementedError("No more implemented")
 
@@ -1137,7 +1137,7 @@ class EdfImage(fabioimage.FabioImage):
     def bpp(self):
         return self._frames[self.currentframe].bpp
 
-    @deprecation.deprecated(reason="Prefer using 'incomplete_data'")
+    @deprecation.deprecated(reason="Prefer using 'incomplete_data'", deprecated_since="0.10.0beta")
     def isIncompleteData(self):
         return self.incomplete_data
 
