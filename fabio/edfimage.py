@@ -1064,16 +1064,13 @@ class EdfImage(fabioimage.FabioImage):
         return self.data
 
     @deprecation.deprecated(reason="Prefer using 'img.data ='")
-    def setData(self, data=None, _data=None):
+    def setData(self, _data=None):
         """
         Enforces the propagation of the data to the list of frames
         :param data: numpy array representing data
         """
-        if _data is not None:
-            deprecation.deprecated_warning("Argument", "'_data'", replacement="argument 'data'", since_version=0.8)
-            data = _data
         frame = self._get_any_frame()
-        frame.data = data
+        frame.data = _data
 
     @deprecation.deprecated(reason="Prefer using 'del img.data'")
     def delData(self):
@@ -1087,12 +1084,9 @@ class EdfImage(fabioimage.FabioImage):
         return self.dim1
 
     @deprecation.deprecated(reason="Setting dim1 is not anymore allowed. If the data is not set use shape instead.")
-    def setDim1(self, iVal=None, _iVal=None):
-        if _iVal is not None:
-            deprecation.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
-            iVal = _iVal
+    def setDim1(self, _iVal=None):
         frame = self._get_any_frame()
-        frame.dim1 = iVal
+        frame.dim1 = _iVal
 
     @property
     def dim1(self):
@@ -1103,12 +1097,9 @@ class EdfImage(fabioimage.FabioImage):
         return self._frames[self.currentframe].dim2
 
     @deprecation.deprecated(reason="Setting dim2 is not anymore allowed. If the data is not set use shape instead.")
-    def setDim2(self, iVal=None, _iVal=None):
-        if _iVal is not None:
-            deprecation.deprecated_warning("Argument", "'_iVal'", replacement="argument 'iVal'", since_version=0.8)
-            iVal = _iVal
+    def setDim2(self, _iVal=None):
         frame = self._get_any_frame()
-        frame.dim2 = iVal
+        frame.dim2 = _iVal
 
     @property
     def dim2(self):
