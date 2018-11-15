@@ -182,9 +182,9 @@ class TestFileSeries(unittest.TestCase):
     def test_singleframe_nofiles(self):
         serie = FileSeries(filenames=[], single_frame=True)
         self.assertEqual(serie.nframes, 0)
-        for _ in serie.iterframes():
+        for _ in serie.frames():
             self.fail()
-        self.assertRaises(IndexError, serie.getframe, 0)
+        self.assertRaises(IndexError, serie.get_frame, 0)
         serie.close()
 
     def test_singleframe_nframes(self):
@@ -208,17 +208,17 @@ class TestFileSeries(unittest.TestCase):
     def test_singleframe_getframe(self):
         filenames = self.get_singleframe_files()
         serie = FileSeries(filenames=filenames, single_frame=True)
-        self.assertRaises(IndexError, serie.getframe, -1)
-        self.assertEqual(serie.getframe(0).data[0, 0], 0)
-        self.assertEqual(serie.getframe(1).data[0, 0], 1)
-        self.assertEqual(serie.getframe(2).data[0, 0], 2)
-        self.assertRaises(IndexError, serie.getframe, 4)
+        self.assertRaises(IndexError, serie.get_frame, -1)
+        self.assertEqual(serie.get_frame(0).data[0, 0], 0)
+        self.assertEqual(serie.get_frame(1).data[0, 0], 1)
+        self.assertEqual(serie.get_frame(2).data[0, 0], 2)
+        self.assertRaises(IndexError, serie.get_frame, 4)
         serie.close()
 
-    def test_singleframe_iterframes(self):
+    def test_singleframe_frames(self):
         filenames = self.get_singleframe_files()
         serie = FileSeries(filenames=filenames, single_frame=True)
-        for frame_id, frame in enumerate(serie.iterframes()):
+        for frame_id, frame in enumerate(serie.frames()):
             self.assertEqual(frame.data[0, 0], frame_id)
             self.assertEqual(frame.header["frame_id"], "0")
             self.assertIn("%03d" % frame_id, frame.header["filename"])
@@ -228,9 +228,9 @@ class TestFileSeries(unittest.TestCase):
     def test_multiframe_nofiles(self):
         serie = FileSeries(filenames=[], fixed_frames=True)
         self.assertEqual(serie.nframes, 0)
-        for _ in serie.iterframes():
+        for _ in serie.frames():
             self.fail()
-        self.assertRaises(IndexError, serie.getframe, 0)
+        self.assertRaises(IndexError, serie.get_frame, 0)
         serie.close()
 
     def test_multiframe_nframes(self):
@@ -242,17 +242,17 @@ class TestFileSeries(unittest.TestCase):
     def test_multiframe_getframe(self):
         filenames = self.get_multiframe_files()
         serie = FileSeries(filenames=filenames, fixed_frames=True)
-        self.assertRaises(IndexError, serie.getframe, -1)
-        self.assertEqual(serie.getframe(0).data[0, 0], 0)
-        self.assertEqual(serie.getframe(5).data[0, 0], 1)
-        self.assertEqual(serie.getframe(6).data[0, 0], 2)
-        self.assertRaises(IndexError, serie.getframe, 7)
+        self.assertRaises(IndexError, serie.get_frame, -1)
+        self.assertEqual(serie.get_frame(0).data[0, 0], 0)
+        self.assertEqual(serie.get_frame(5).data[0, 0], 1)
+        self.assertEqual(serie.get_frame(6).data[0, 0], 2)
+        self.assertRaises(IndexError, serie.get_frame, 7)
         serie.close()
 
-    def test_multiframe_iterframes(self):
+    def test_multiframe_frames(self):
         filenames = self.get_multiframe_files()
         serie = FileSeries(filenames=filenames, fixed_frames=True)
-        for frame_id, frame in enumerate(serie.iterframes()):
+        for frame_id, frame in enumerate(serie.frames()):
             if frame_id not in [0, 5, 6]:
                 continue
             expected_frame_id = {0: 0, 5: 2, 6: 0}[frame_id]
@@ -268,9 +268,9 @@ class TestFileSeries(unittest.TestCase):
     def test_anyframe_nofiles(self):
         serie = FileSeries(filenames=[], fixed_frames=False)
         self.assertEqual(serie.nframes, 0)
-        for _ in serie.iterframes():
+        for _ in serie.frames():
             self.fail()
-        self.assertRaises(IndexError, serie.getframe, 0)
+        self.assertRaises(IndexError, serie.get_frame, 0)
         serie.close()
 
     def test_anyframe_nframes(self):
@@ -282,19 +282,19 @@ class TestFileSeries(unittest.TestCase):
     def test_anyframe_getframe(self):
         filenames = self.get_anyframe_files()
         serie = FileSeries(filenames=filenames, fixed_frames=False)
-        self.assertRaises(IndexError, serie.getframe, -1)
-        self.assertEqual(serie.getframe(0).data[0, 0], 0)
+        self.assertRaises(IndexError, serie.get_frame, -1)
+        self.assertEqual(serie.get_frame(0).data[0, 0], 0)
         # Reach frame 3 to force frame 4 to come from the file description cache
-        serie.getframe(3)
-        self.assertEqual(serie.getframe(4).data[0, 0], 1)
-        self.assertEqual(serie.getframe(9).data[0, 0], 2)
-        self.assertRaises(IndexError, serie.getframe, 10)
+        serie.get_frame(3)
+        self.assertEqual(serie.get_frame(4).data[0, 0], 1)
+        self.assertEqual(serie.get_frame(9).data[0, 0], 2)
+        self.assertRaises(IndexError, serie.get_frame, 10)
         serie.close()
 
-    def test_anyframe_iterframes(self):
+    def test_anyframe_frames(self):
         filenames = self.get_anyframe_files()
         serie = FileSeries(filenames=filenames, fixed_frames=False)
-        for frame_id, frame in enumerate(serie.iterframes()):
+        for frame_id, frame in enumerate(serie.frames()):
             if frame_id not in [0, 4, 9]:
                 continue
             expected_frame_id = {0: 0, 4: 1, 9: 0}[frame_id]

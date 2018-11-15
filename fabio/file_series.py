@@ -545,7 +545,7 @@ class FileSeries(FabioImage):
                 yield filename
             self.__filename_generator = None
 
-    def iterframes(self):
+    def frames(self):
         """Returns an iterator throug all frames of all filenames of this
         file series."""
         nframes = 0
@@ -560,7 +560,7 @@ class FileSeries(FabioImage):
                     yield image
                 else:
                     for frame_num in range(image.nframes):
-                        frame = image.getframe(frame_num)
+                        frame = image.get_frame(frame_num)
                         yield frame
             finally:
                 image.close()
@@ -703,10 +703,11 @@ class FileSeries(FabioImage):
         nframes = self.__fixed_frame_number
         return _FileDescription(filename, file_number, first_frame, nframes)
 
-    def getframe(self, num):
+    def _get_frame(self, num):
         """Returns the frame numbered `num` in the series as a fabioimage.
 
         :param int num: The number of the requested frame
+        :rtype: FabioFrame
         """
         if num < 0:
             raise IndexError("Frame %s is out of range" % num)
@@ -722,7 +723,7 @@ class FileSeries(FabioImage):
         else:
             local_frame = num - description.first_frame_number
             assert(0 <= local_frame < description.nframes)
-            return fileimage.getframe(local_frame)
+            return fileimage.get_frame(local_frame)
 
     @property
     def nframes(self):
