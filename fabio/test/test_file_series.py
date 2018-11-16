@@ -161,7 +161,7 @@ class TestFileSeries(unittest.TestCase):
                 image.data = data
                 image.header.update(header)
             else:
-                image.appendFrame(data=data, header=header)
+                image.append_frame(data=data, header=header)
         image.write(filename)
 
     def get_singleframe_files(self):
