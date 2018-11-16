@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/06/2018"
+__date__ = "16/11/2018"
 __status__ = "stable"
 
 
@@ -69,6 +69,7 @@ from .fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
 filename_object = FilenameObject
 
 from .openimage import openimage as open
+from .openimage import open_series as open_series
 from .openimage import openheader as openheader
 
 
