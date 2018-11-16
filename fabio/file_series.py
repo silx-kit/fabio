@@ -479,9 +479,9 @@ class FileSeries(FabioImage):
             for frame in serie.frames():
                 frame.data
                 frame.header
-                frame.index                 # index inside the file series
-                frame.file_index            # index inside the file (edf, tif)
-                frame.file_container.fname  # name of the source file
+                frame.index                    # index inside the file series
+                frame.file_index               # index inside the file (edf, tif)
+                frame.file_container.filename  # name of the source file
 
         # Random access to frames
         with FileSeries(filenames) as serie:

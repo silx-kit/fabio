@@ -232,9 +232,9 @@ In case of huge EDF file series a sequencial access to the frames speed up by
         for frame in series.frames():
             frame.data
             frame.header
-            frame.index                 # frame index inside the file series
-            frame.file_index            # frame index inside the edf file
-            frame.file_container.fname  # name of the source file
+            frame.index                    # frame index inside the file series
+            frame.file_index               # frame index inside the edf file
+            frame.file_container.filename  # name of the source file
 
 Examples
 --------
