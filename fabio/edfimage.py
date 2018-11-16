@@ -302,10 +302,8 @@ class EdfFrame(fabioimage.FabioFrame):
         capsKeys = set([k.upper() for k in self.header.keys()])
         missing = list(MINIMUM_KEYS - capsKeys)
         if len(missing) > 0:
-            logger.info("EDF file %s frame %i misses mandatory keys: %s ",
-                        filename,
-                        self.iFrame,
-                        " ".join(missing))
+            msg = "EDF file %s frame %i misses mandatory keys: %s "
+            logger.info(msg, filename, self.index, " ".join(missing))
         return len(missing) == 0
 
     def swap_needed(self):
