@@ -56,6 +56,7 @@ import fabio
 from .fabioutils import FilenameObject, next_filename
 from .openimage import openimage
 from .fabioimage import FabioImage
+from .utils import deprecation
 
 
 def new_file_series0(first_object, first=None, last=None, step=1):
@@ -740,6 +741,10 @@ class FileSeries(FabioImage):
             raise IndexError(msg % (num, local_frame, description.filename))
         frame._set_container(self, num)
         return frame
+
+    @deprecation.deprecated(reason="Replaced by get_frame.", deprecated_since="0.10.0beta")
+    def getframe(self, num):
+        return self.get_frame(num)
 
     @property
     def nframes(self):
