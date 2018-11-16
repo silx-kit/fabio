@@ -725,17 +725,17 @@ class FileSeries(FabioImage):
             raise IndexError("Frame %s is out of range" % num)
         description = self.__get_file_description(num)
         fileimage = self.__get_file(description.file_number)
-        if fileimage.nframes == 1:
-            if self.__fixed_frames and self.__fixed_frame_number != 1:
-                # If the last file from the multiframe serie only contains a
-                # single image
-                if description.first_frame_number != num:
-                    raise IndexError("Frame %s is out of range" % num)
-            return fileimage
-        else:
-            local_frame = num - description.first_frame_number
-            assert(0 <= local_frame < description.nframes)
-            return fileimage.get_frame(local_frame)
+        local_frame = num - description.first_frame_number
+        if not (0 <= local_frame < description.nframes):
+            msg = "Index '%d' (local index '%d' from '%s') is out of range"
+            raise IndexError(msg % (num, local_frame, description.filename))
+        try:
+            frame = fileimage._get_frame(local_frame)
+        except IndexError:
+            logger.debug("Backtrace", exc_info=True)
+            msg = "Index '%d' (local index '%d' from '%s') is out of range"
+            raise IndexError(msg % (num, local_frame, description.filename))
+        return frame
 
     @property
     def nframes(self):
