@@ -455,6 +455,10 @@ def _filename_series_adapter(series):
         return
     yield filename
 
+    if series.obj.num is None:
+        # It's a single filename
+        return
+
     while True:
         filename = series.next()
         if not os.path.exists(filename):
