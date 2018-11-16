@@ -50,12 +50,12 @@ class TestEiger(_CommonTestFrames):
     @classmethod
     def getMeta(cls):
         filename = cls.fn3
-        image = fabio.open(filename)
 
         class Meta(object):
             pass
         meta = Meta()
-        meta.image = image
+        meta.image = None
+        meta.filename = filename
         meta.nframes = 50
         return meta
 
