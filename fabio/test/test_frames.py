@@ -54,7 +54,7 @@ class _CommonTestFrames(unittest.TestCase):
         if cls.meta is None:
             raise unittest.SkipTest("No data test")
 
-    def test_full_iteration(self):
+    def test_frames_full_iteration(self):
         image = self.meta.image
         cache = {}
         for i, frame in enumerate(image.frames()):
@@ -72,7 +72,7 @@ class _CommonTestFrames(unittest.TestCase):
         self.assertEqual(i, self.meta.nframes - 1)
         self.assertEqual(image.nframes, self.meta.nframes)
 
-    def test_abort_iteration(self):
+    def test_frames_abort_iteration(self):
         image = self.meta.image
         for i, _frame in enumerate(image.frames()):
             if i == 2:
@@ -82,7 +82,7 @@ class _CommonTestFrames(unittest.TestCase):
         self.assertEqual(i, self.meta.nframes - 1)
         self.assertEqual(image.nframes, self.meta.nframes)
 
-    def test_random_access(self):
+    def test_frames_random_access(self):
         image = self.meta.image
         nframes = self.meta.nframes
         self.assertEqual(image.nframes, nframes)
