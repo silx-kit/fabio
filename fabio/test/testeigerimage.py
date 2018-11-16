@@ -19,9 +19,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+import fabio
 from fabio.openimage import openimage
 from fabio.eigerimage import EigerImage, h5py
 from .utilstest import UtilsTest
+from .test_frames import _CommonTestFrames
 
 
 def make_hdf5(name, shape=(50, 99, 101)):
@@ -36,14 +38,26 @@ def make_hdf5(name, shape=(50, 99, 101)):
             e.require_dataset("data", shape, chunks=(1,) + shape[1:], compression="gzip", compression_opts=9, dtype="float32")
 
 
-class TestEiger(unittest.TestCase):
+class TestEiger(_CommonTestFrames):
     """basic test"""
 
     @classmethod
     def setUpClass(cls):
-        super(TestEiger, cls).setUpClass()
         cls.fn3 = os.path.join(UtilsTest.tempdir, "eiger3d.h5")
         make_hdf5(cls.fn3, (50, 99, 101))
+        super(TestEiger, cls).setUpClass()
+
+    @classmethod
+    def getMeta(cls):
+        filename = cls.fn3
+        image = fabio.open(filename)
+
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = image
+        meta.nframes = 50
+        return meta
 
     @classmethod
     def tearDownClass(cls):
