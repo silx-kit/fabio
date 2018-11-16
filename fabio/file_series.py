@@ -829,3 +829,23 @@ class FileSeries(FabioImage):
         nframes = self.__fixed_frame_number * (len(self.__filenames) - 1) + fabiofile.nframes
         self.__nframes = nframes
         return nframes
+
+    @property
+    def data(self):
+        # This could provide access to the first or the current frame
+        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
+
+    @property
+    def header(self):
+        # This could provide access to the first or the current frame
+        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
+
+    @property
+    def shape(self):
+        # This could provide access to the first or the current frame
+        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
+
+    @property
+    def dtype(self):
+        # This could provide access to the first or the current frame
+        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
