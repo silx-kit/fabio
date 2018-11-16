@@ -148,10 +148,8 @@ class EdfFrame(fabioimage.FabioFrame):
         self._dtype = None
         self.incomplete_data = False
 
-        if (number is not None):
-            self.iFrame = int(number)
-        else:
-            self.iFrame = 0
+        if number is not None:
+            deprecation.deprecated_warning(reason="Argument 'number' is not used anymore", deprecated_since="0.10.0beta")
 
     def _compute_capsheader(self):
         """
@@ -465,9 +463,9 @@ class EdfFrame(fabioimage.FabioFrame):
         header_keys.insert(0, "Size")
         header["Size"] = len(data.tostring())
         header_keys.insert(0, "HeaderID")
-        header["HeaderID"] = "EH:%06d:000000:000000" % (self.iFrame + fit2dMode)
+        header["HeaderID"] = "EH:%06d:000000:000000" % (self.index + fit2dMode)
         header_keys.insert(0, "Image")
-        header["Image"] = str(self.iFrame + fit2dMode)
+        header["Image"] = str(self.index + fit2dMode)
 
         dims = list(data.shape)
         nbdim = len(dims)
@@ -493,7 +491,7 @@ class EdfFrame(fabioimage.FabioFrame):
         header["EDF_BinarySize"] = data.nbytes
         header_keys.insert(0, "EDF_DataBlockID")
         if "EDF_DataBlockID" not in header:
-            header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
+            header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.index + fit2dMode)
         preciseSize = 4  # 2 before {\n 2 after }\n
         for key in header_keys:
             # Escape keys or values that are no ascii
@@ -529,6 +527,12 @@ class EdfFrame(fabioimage.FabioFrame):
     @deprecation.deprecated(reason="Prefer using 'getEdfBlock'", deprecated_since="0.10.0beta")
     def getEdfBlock(self, force_type=None, fit2dMode=False):
         return self.get_edf_block(force_type, fit2dMode)
+
+    @property
+    @deprecation.deprecated(reason="Prefer using 'index'", deprecated_since="0.10.0beta")
+    def iFrame(self):
+        """Returns the frame index of this frame"""
+        return self._index
 
 
 class EdfImage(fabioimage.FabioImage):
@@ -571,8 +575,7 @@ class EdfImage(fabioimage.FabioImage):
         fabioimage.FabioImage.__init__(self, stored_data, header)
 
         if frames is None:
-            frame = EdfFrame(data=self.data, header=self.header,
-                             number=self.currentframe)
+            frame = EdfFrame(data=self.data, header=self.header)
             self._frames = [frame]
         else:
             self._frames = frames
@@ -717,7 +720,7 @@ class EdfImage(fabioimage.FabioImage):
                     raise IOError("Empty file")
                 break
 
-            frame = EdfFrame(number=self.nframes)
+            frame = EdfFrame()
             size = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()
@@ -845,7 +848,7 @@ class EdfImage(fabioimage.FabioImage):
             # this is thrown away
         with self._open(fname, mode="wb") as outfile:
             for i, frame in enumerate(self._frames):
-                frame.iFrame = i
+                frame._set_container(self, i)
                 outfile.write(frame.get_edf_block(force_type=force_type, fit2dMode=fit2dMode))
 
     def append_frame(self, frame=None, data=None, header=None):
@@ -1187,7 +1190,7 @@ class EdfImage(fabioimage.FabioImage):
                     raise IOError("Empty file")
                 break
 
-            frame = EdfFrame(number=index)
+            frame = EdfFrame()
             frame._set_container(edf, index)
             frame._set_file_container(edf, index)
             size = frame.parseheader(block)
