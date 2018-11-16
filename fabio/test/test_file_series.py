@@ -291,18 +291,45 @@ class TestFileSeries(unittest.TestCase):
         self.assertRaises(IndexError, serie.get_frame, 10)
         serie.close()
 
+    def test_anyframe_getframes(self):
+        filenames = self.get_anyframe_files()
+        serie = FileSeries(filenames=filenames, fixed_frames=False)
+        for frame_id in range(serie.nframes):
+            frame = serie.get_frame(frame_id)
+            if frame_id not in [0, 4, 9]:
+                continue
+            expected_file_frame_id = {0: 0, 4: 1, 9: 0}[frame_id]
+            expected_file_num = {0: 0, 4: 1, 9: 3}[frame_id]
+            expected_data = {0: 0, 4: 1, 9: 2}[frame_id]
+            expected_filename = filenames[expected_file_num]
+
+            self.assertEqual(frame.data[0, 0], expected_data)
+            self.assertEqual(frame.header["frame_id"], "%d" % expected_file_frame_id)
+            self.assertEqual(frame.index, frame_id)
+            self.assertEqual(frame.file_index, expected_file_frame_id)
+            self.assertIs(frame.container, serie)
+            self.assertIs(frame.file_container.filename, expected_filename)
+            self.assertIn("%03d" % expected_file_num, frame.header["filename"])
+        self.assertEqual(frame_id, 9)
+        serie.close()
+
     def test_anyframe_frames(self):
         filenames = self.get_anyframe_files()
         serie = FileSeries(filenames=filenames, fixed_frames=False)
         for frame_id, frame in enumerate(serie.frames()):
             if frame_id not in [0, 4, 9]:
                 continue
-            expected_frame_id = {0: 0, 4: 1, 9: 0}[frame_id]
+            expected_file_frame_id = {0: 0, 4: 1, 9: 0}[frame_id]
             expected_file_num = {0: 0, 4: 1, 9: 3}[frame_id]
             expected_data = {0: 0, 4: 1, 9: 2}[frame_id]
+            expected_filename = filenames[expected_file_num]
 
             self.assertEqual(frame.data[0, 0], expected_data)
-            self.assertEqual(frame.header["frame_id"], "%d" % expected_frame_id)
+            self.assertEqual(frame.header["frame_id"], "%d" % expected_file_frame_id)
+            self.assertEqual(frame.index, frame_id)
+            self.assertEqual(frame.file_index, expected_file_frame_id)
+            self.assertIs(frame.container, serie)
+            self.assertIs(frame.file_container.filename, expected_filename)
             self.assertIn("%03d" % expected_file_num, frame.header["filename"])
         self.assertEqual(frame_id, 9)
         serie.close()
