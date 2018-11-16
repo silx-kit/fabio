@@ -37,6 +37,7 @@ logger = logging.getLogger(__name__)
 
 import fabio.fabioimage
 import fabio.edfimage
+import fabio.file_series
 from .utilstest import UtilsTest
 
 
@@ -223,6 +224,27 @@ class TestFabioImage(unittest.TestCase):
                 self.fail()
 
 
+class TestFileSeries(_CommonTestFrames):
+
+    @classmethod
+    def getMeta(cls):
+        filenames = []
+        filename = UtilsTest.getimage("multiframes.tif.bz2")
+        filename = filename.replace(".bz2", "")
+        filenames.append(filename)
+        filename = UtilsTest.getimage("multiframes.edf.bz2")
+        filename = filename.replace(".bz2", "")
+        filenames.append(filename)
+        image = fabio.file_series.FileSeries(filenames)
+
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = image
+        meta.nframes = 8 * 2
+        return meta
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -230,6 +252,7 @@ def suite():
     testsuite.addTest(loadTests(TestVirtualEdf))
     testsuite.addTest(loadTests(TestEdf))
     testsuite.addTest(loadTests(TestTiff))
+    testsuite.addTest(loadTests(TestFileSeries))
     return testsuite
 
 
