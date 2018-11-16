@@ -56,7 +56,7 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None,
         (e.g. "feature no longer provided",
     :param str replacement: Name of replacement function (if the reason for
         deprecating was to rename the function)
-    :param str since_version: First *silx* version for which the function was
+    :param str since_version: First *fabio* version for which the function was
         deprecated (e.g. "0.5.0").
     :param bool only_once: If true, the deprecation warning will only be
         generated one time. Default is true.
@@ -99,7 +99,7 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
         (e.g. "feature no longer provided",
     :param str replacement: Name of replacement function (if the reason for
         deprecating was to rename the function)
-    :param str since_version: First *silx* version for which the function was
+    :param str since_version: First *fabio* version for which the function was
         deprecated (e.g. "0.5.0").
     :param bool only_once: If true, the deprecation warning will only be
         generated one time for each different call locations. Default is true.
@@ -114,7 +114,7 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
 
     msg = "%s %s is deprecated"
     if since_version is not None:
-        msg += " since silx version %s" % since_version
+        msg += " since fabio version %s" % since_version
     msg += "."
     if reason is not None:
         msg += " Reason: %s." % reason
