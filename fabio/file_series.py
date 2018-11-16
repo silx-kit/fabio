@@ -463,19 +463,63 @@ def _filename_series_adapter(series):
 
 
 class FileSeries(FabioImage):
-    """Provide a FabioImage as a file series abstraction.
+    """Provide a `FabioImage` abstracting a file series.
 
     This abstraction provide the set of the filenames as the container of
     frames.
 
+    .. code-block:: python
+
+        # Sequencial access through all the frames
+        with FileSeries(filenames) as serie:
+            for frame in serie.frames():
+                frame.data
+                frame.header
+                frame.index                 # index inside the file series
+                frame.file_index            # index inside the file (edf, tif)
+                frame.file_container.fname  # name of the source file
+
+        # Random access to frames
+        with FileSeries(filenames) as serie:
+            frame = serie.get_frame(200)
+            frame = serie.get_frame(201)
+            frame = serie.get_frame(10)
+            frame = serie.get_frame(2)
+
     Files of the series can be set using a list of filenames, an iterator or a
-    generator. It also support a file series described using
+    generator. It also supports a file series described using
     :class:`filename_series` or :class:`file_series` objects.
 
-    Options are provided to optimize a non sequencial access or request to the
-    amount of frames. This options (`single_frame`, `fixed_frames` and
+    .. code-block:: python
+
+        # Iterate known files
+        filenames = ["foo.edf", "bar.tif"]
+        serie = FileSeries(filenames=filenames)
+
+        # Iterate all images from foobar_0001.edf to 0003
+        filenames = numbered_file_series("foobar_", 1, 3, ".edf", digits=4)
+        serie = FileSeries(filenames=filenames)
+
+        # Iterate all images from foobar_0000.edf to the last consecutive number found
+        filenames = filename_series("foobar_0000.edf")
+        serie = FileSeries(filenames=filenames)
+
+    Options are provided to optimize a non-sequencial access by providing the
+    amount of frames stored per files. This options (`single_frame`, `fixed_frames` and
     `fixed_frame_number`) can be used if we know an a priori on the way frames
     are stored in the files (the exact same amount of frames par file).
+
+    .. code-block:: python
+
+        # Each files contains a single frame
+        serie = FileSeries(filenames=filenames, single_frame=True)
+
+        # Each files contains a fixed amout of frames.  This value is
+        # automatically found
+        serie = FileSeries(filenames=filenames, fixed_frames=True)
+
+        # Each files contains 100 frames (the last one could contain less)
+        serie = FileSeries(filenames=filenames, fixed_frame_number=100)
     """
     DEFAULT_EXTENSIONS = []
 
