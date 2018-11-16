@@ -28,7 +28,7 @@ from __future__ import absolute_import, print_function, division
 
 __authors__ = ["Jerome Kieffer", "H. Payno", "P. Knobel"]
 __license__ = "MIT"
-__date__ = "15/11/2018"
+__date__ = "16/11/2018"
 
 import sys
 import logging
@@ -137,6 +137,8 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
                 hexversion = _version.calc_hexversion(string=deprecated_since)
                 _CACHE_VERSIONS[deprecated_since] = hexversion
                 deprecated_since = hexversion
+            else:
+                deprecated_since = _CACHE_VERSIONS[deprecated_since]
         log_as_debug = _version.hexversion < deprecated_since
     else:
         log_as_debug = False
