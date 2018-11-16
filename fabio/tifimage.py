@@ -44,7 +44,7 @@ Authors:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "14/11/2018"
+__date__ = "16/11/2018"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -214,6 +214,7 @@ class TifImage(fabioimage.FabioImage):
         """Inherited function returning a FabioFrame"""
         if 0 <= num < self.nframes:
             frame = self.getframe(num)
+            frame._set_container(self, num)
             frame._set_file_container(self, num)
             return frame
         raise IndexError("getframe out of range")

@@ -581,6 +581,7 @@ class EdfImage(fabioimage.FabioImage):
         if self._frames is None:
             return IndexError("No frames available")
         frame = self._frames[num]
+        frame._set_container(self, num)
         frame._set_file_container(self, num)
         return frame
 
@@ -1187,6 +1188,8 @@ class EdfImage(fabioimage.FabioImage):
                 break
 
             frame = EdfFrame(number=index)
+            frame._set_container(edf, index)
+            frame._set_file_container(edf, index)
             size = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()

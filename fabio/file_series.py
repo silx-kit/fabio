@@ -735,6 +735,7 @@ class FileSeries(FabioImage):
             logger.debug("Backtrace", exc_info=True)
             msg = "Index '%d' (local index '%d' from '%s') is out of range"
             raise IndexError(msg % (num, local_frame, description.filename))
+        frame._set_container(self, num)
         return frame
 
     @property
