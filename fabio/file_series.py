@@ -97,7 +97,7 @@ def new_file_series0(first_object, first=None, last=None, step=1):
 
 def new_file_series(first_object, nimages=0, step=1, traceback=False):
     """
-    A generator function that creates a file series starting from a a fabioimage.
+    A generator function that creates a file series starting from a fabioimage.
     Iterates through all images in a file (if more than 1), then proceeds to
     the next file as determined by fabio.next_filename.
 
@@ -371,9 +371,8 @@ class numbered_file_series(file_series):
         else:
             fmt = "%s%i%s"
 
-        super(numbered_file_series, self).__init__([fmt % (stem, i, extension) for i in range(first,
-                                                                                              last + 1,
-                                                                                              step)])
+        strings = [fmt % (stem, i, extension) for i in range(first, last + 1, step)]
+        super(numbered_file_series, self).__init__(strings)
 
 
 class filename_series:
