@@ -551,7 +551,7 @@ class FileSeries(FabioImage):
         """Returns an iterator throug all frames of all filenames of this
         file series."""
         import fabio.edfimage
-        nframes = 0
+        nframe = 0
         for filename in self.__iter_filenames():
 
             if self.use_edf_shortcut:
@@ -561,12 +561,13 @@ class FileSeries(FabioImage):
                     # Custom iterator implementation
                     frames = fabio.edfimage.EdfImage.lazy_iterator(filename)
                     for frame in frames:
+                        frame._set_container(self, nframe)
                         yield frame
+                        nframe += 1
                     continue
 
             # Default implementation
             with fabio.open(filename) as image:
-                nframes += image.nframes
                 if image.nframes == 0:
                     # The container is empty
                     pass
@@ -575,8 +576,10 @@ class FileSeries(FabioImage):
                 else:
                     for frame_num in range(image.nframes):
                         frame = image.get_frame(frame_num)
+                        frame._set_container(self, nframe)
                         yield frame
-        self.__nframes = nframes
+                        nframe += 1
+        self.__nframes = nframe
 
     def __load_all_filenames(self):
         """Load all filenames using the generator.
