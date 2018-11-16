@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "14/11/2018"
+__date__ = "15/11/2018"
 
 import os
 import logging
@@ -56,6 +56,7 @@ import numpy
 from . import fabioutils, converters
 from .fabioutils import OrderedDict
 from .utils import pilutils
+from .utils import deprecation
 
 
 class _FabioArray(object):
@@ -63,40 +64,40 @@ class _FabioArray(object):
     :class:`FabioFrame`."""
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'", deprecated_since="0.10.0beta")
     def dim1(self):
         return self.shape[-1]
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'", deprecated_since="0.10.0beta")
     def dim2(self):
         return self.shape[-2]
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'", deprecated_since="0.10.0beta")
     def dim3(self):
         if len(self.shape) < 3:
             raise AttributeError("No attribye dim3")
         return self.shape[-3]
 
     @property
-    @fabioutils.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)")
+    @deprecation.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)", deprecated_since="0.10.0beta")
     def dims(self):
         return list(reversed(self.shape))
 
-    @fabioutils.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'", deprecated_since="0.10.0beta")
     def get_dim1(self):
         return self.shape[-1]
 
-    @fabioutils.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'")
+    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'", deprecated_since="0.10.0beta")
     def get_dim2(self):
         return self.shape[-2]
 
-    @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2", deprecated_since="0.10.0beta")
     def set_dim1(self, value):
         self.shape[-1] = value
 
-    @fabioutils.deprecated(reason="Prefer using 'shape' instead of dim1/dim2")
+    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2", deprecated_since="0.10.0beta")
     def set_dim2(self, value):
         self.shape[-2] = value
 
@@ -226,7 +227,7 @@ class _FabioArray(object):
     def get_bytecode(self):
         return self.bytecode
 
-    @fabioutils.deprecated(reason="Prefer using 'bytecode' instead of 'getByteCode'")
+    @deprecation.deprecated(reason="Prefer using 'bytecode' instead of 'getByteCode'", deprecated_since="0.10.0beta")
     def getByteCode(self):
         return self.bytecode
 
@@ -329,7 +330,7 @@ class FabioImage(_FabioArray):
     # List of header keys which are reserved by the file format
 
     @classmethod
-    @fabioutils.deprecated
+    @deprecation.deprecated
     def factory(cls, name):
         """A kind of factory... for image_classes
 
