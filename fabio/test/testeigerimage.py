@@ -19,7 +19,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import fabio
 from fabio.openimage import openimage
 from fabio.eigerimage import EigerImage, h5py
 from .utilstest import UtilsTest
