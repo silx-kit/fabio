@@ -50,20 +50,18 @@ class TestPixiImage(unittest.TestCase):
 
         This images was generated using our Python code as specification.
         Then it's not a very good way to test our code.
-
-        FIXME: It would be good to find real images
         """
         frame1 = b"\x01\x00" * 476 + b"\x00\x00" * 476 * 511
         frame2 = b"\x02\x00" * 476 + b"\x00\x00" * 476 * 511
         frame3 = b"\x03\x00" * 476 + b"\x00\x00" * 476 * 511
         header = b"\n\xb8\x03\x00" + b"\x00" * 20
 
-        cls.single_frame = os.path.join(UtilsTest.tempdir, "pixi_1frame.fake")
+        cls.single_frame = os.path.join(UtilsTest.tempdir, "pixi_1frame.dat")
         with open(cls.single_frame, 'wb') as f:
             f.write(header)
             f.write(frame1)
 
-        cls.multi_frame = os.path.join(UtilsTest.tempdir, "pixi_3frame.fake")
+        cls.multi_frame = os.path.join(UtilsTest.tempdir, "pixi_3frame.dat")
         with open(cls.multi_frame, 'wb') as f:
             f.write(header)
             f.write(frame1)
