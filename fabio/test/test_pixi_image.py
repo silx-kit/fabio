@@ -70,6 +70,15 @@ class TestPixiImage(unittest.TestCase):
             f.write(header)
             f.write(frame3)
 
+        template = os.path.join(UtilsTest.tempdir, "pixi_series.dat") + "$%04d"
+        cls.file_series = template % 0
+        frames = [frame1, frame2, frame3]
+        for num, frame in enumerate(frames):
+            filename = template % num
+            with open(filename, 'wb') as f:
+                f.write(header)
+                f.write(frame)
+
     def test_single_frame(self):
         image = fabio.open(self.single_frame)
         self.assertEqual(image.nframes, 1)
@@ -91,6 +100,26 @@ class TestPixiImage(unittest.TestCase):
         self.assertEqual(frame.data[1, 1], 0)
         frame = image.getframe(2)
         self.assertEqual(frame.data[0, 0], 3)
+        self.assertEqual(frame.data[1, 1], 0)
+
+    def test_file_series(self):
+        image = fabio.open(self.file_series)
+        # self.assertEqual(image.nframes, 3)
+        self.assertEqual(image.data.shape, (512, 476))
+        self.assertEqual(image.data[0, 0], 1)
+        self.assertEqual(image.data[1, 1], 0)
+        frame = image.getframe(0)
+        self.assertEqual(frame.data[0, 0], 1)
+        self.assertEqual(frame.data[1, 1], 0)
+        frame = image.getframe(1)
+        self.assertEqual(frame.data[0, 0], 2)
+        self.assertEqual(frame.data[1, 1], 0)
+        frame = image.getframe(2)
+        self.assertEqual(frame.data[0, 0], 3)
+        self.assertEqual(frame.data[1, 1], 0)
+        # use the frame to move to another frame
+        frame = frame.getframe(0)
+        self.assertEqual(frame.data[0, 0], 1)
         self.assertEqual(frame.data[1, 1], 0)
 
 
