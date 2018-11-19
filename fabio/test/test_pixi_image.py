@@ -35,14 +35,26 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from .utilstest import UtilsTest
+from .test_frames import _CommonTestFrames
 
 
-class TestPixiImage(unittest.TestCase):
+class TestPixiImage(_CommonTestFrames):
     """Test the class format"""
 
     @classmethod
     def setUpClass(cls):
         cls.create_fake_images()
+        super(TestPixiImage, cls).setUpClass()
+
+    @classmethod
+    def getMeta(cls):
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = None
+        meta.filename = cls.multi_frame
+        meta.nframes = 3
+        return meta
 
     @classmethod
     def create_fake_images(cls):
@@ -50,20 +62,18 @@ class TestPixiImage(unittest.TestCase):
 
         This images was generated using our Python code as specification.
         Then it's not a very good way to test our code.
-
-        FIXME: It would be good to find real images
         """
         frame1 = b"\x01\x00" * 476 + b"\x00\x00" * 476 * 511
         frame2 = b"\x02\x00" * 476 + b"\x00\x00" * 476 * 511
         frame3 = b"\x03\x00" * 476 + b"\x00\x00" * 476 * 511
         header = b"\n\xb8\x03\x00" + b"\x00" * 20
 
-        cls.single_frame = os.path.join(UtilsTest.tempdir, "pixi_1frame.fake")
+        cls.single_frame = os.path.join(UtilsTest.tempdir, "pixi_1frame.dat")
         with open(cls.single_frame, 'wb') as f:
             f.write(header)
             f.write(frame1)
 
-        cls.multi_frame = os.path.join(UtilsTest.tempdir, "pixi_3frame.fake")
+        cls.multi_frame = os.path.join(UtilsTest.tempdir, "pixi_3frame.dat")
         with open(cls.multi_frame, 'wb') as f:
             f.write(header)
             f.write(frame1)
@@ -71,6 +81,15 @@ class TestPixiImage(unittest.TestCase):
             f.write(frame2)
             f.write(header)
             f.write(frame3)
+
+        template = os.path.join(UtilsTest.tempdir, "pixi_series.dat") + "$%04d"
+        cls.file_series = template % 0
+        frames = [frame1, frame2, frame3]
+        for num, frame in enumerate(frames):
+            filename = template % num
+            with open(filename, 'wb') as f:
+                f.write(header)
+                f.write(frame)
 
     def test_single_frame(self):
         image = fabio.open(self.single_frame)
@@ -93,6 +112,26 @@ class TestPixiImage(unittest.TestCase):
         self.assertEqual(frame.data[1, 1], 0)
         frame = image.getframe(2)
         self.assertEqual(frame.data[0, 0], 3)
+        self.assertEqual(frame.data[1, 1], 0)
+
+    def test_file_series(self):
+        image = fabio.open(self.file_series)
+        # self.assertEqual(image.nframes, 3)
+        self.assertEqual(image.data.shape, (512, 476))
+        self.assertEqual(image.data[0, 0], 1)
+        self.assertEqual(image.data[1, 1], 0)
+        frame = image.getframe(0)
+        self.assertEqual(frame.data[0, 0], 1)
+        self.assertEqual(frame.data[1, 1], 0)
+        frame = image.getframe(1)
+        self.assertEqual(frame.data[0, 0], 2)
+        self.assertEqual(frame.data[1, 1], 0)
+        frame = image.getframe(2)
+        self.assertEqual(frame.data[0, 0], 3)
+        self.assertEqual(frame.data[1, 1], 0)
+        # use the frame to move to another frame
+        frame = frame.getframe(0)
+        self.assertEqual(frame.data[0, 0], 1)
         self.assertEqual(frame.data[1, 1], 0)
 
 

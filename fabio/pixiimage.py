@@ -40,7 +40,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/11/2018"
+__date__ = "19/11/2018"
 
 import numpy
 import os
@@ -90,7 +90,7 @@ class PixiImage(fabioimage.FabioImage):
         self.header = self.check_header()
         self.resetvals()
         with self._open(fname, "rb") as infile:
-            self.sequencefilename = fname
+            self.sequencefilename = fname.split("$")[0]
             self._readheader(infile)
             self._nframes = os.path.getsize(fname) // self._FRAME_SIZE
             self._readframe(infile, frame)
@@ -114,12 +114,14 @@ class PixiImage(fabioimage.FabioImage):
         frame._set_file_container(self, num)
         return frame
 
-    def _makeframename(self):
-        self.filename = "%s$%04d" % (self.sequencefilename,
-                                     self.currentframe)
+    def _make_filename(self, img_num):
+        self.currentframe = int(img_num)
+        if self.nframes == 1:
+            self.filename = "%s$%04d" % (self.sequencefilename,
+                                         self.currentframe)
 
     def _readdata(self, filepointer, img_num):
-        if (img_num > self.nframes or img_num < 0):
+        if (img_num >= self.nframes or img_num < 0):
             raise Exception("Bad image number")
         imgstart = self.header['offset'] + img_num * self._FRAME_SIZE
         filepointer.seek(imgstart, 0)
@@ -132,14 +134,12 @@ class PixiImage(fabioimage.FabioImage):
         data = self._readdata(filepointer, img_num)
         self.data = data
         self._shape = None
-        self.currentframe = int(img_num)
-        self._makeframename()
 
     def getframe(self, num):
         """
         Returns a frame as a new FabioImage object
         """
-        if num < 0 or num > self.nframes:
+        if num < 0:
             raise Exception("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         newheader = {}
@@ -147,10 +147,13 @@ class PixiImage(fabioimage.FabioImage):
             newheader[k] = self.header[k]
         frame = PixiImage(header=newheader)
         frame._nframes = self.nframes
+        frame.filename = self.filename
         frame.sequencefilename = self.sequencefilename
-        infile = frame._open(self.sequencefilename, "rb")
-        frame._readframe(infile, num)
-        infile.close()
+        frame._make_filename(num)
+        with frame._open(frame.filename, "rb") as infile:
+            if frame.nframes == 1:
+                num = 0
+            frame._readframe(infile, num)
         return frame
 
     def next(self):
