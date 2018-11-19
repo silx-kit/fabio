@@ -35,14 +35,26 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from .utilstest import UtilsTest
+from .test_frames import _CommonTestFrames
 
 
-class TestPixiImage(unittest.TestCase):
+class TestPixiImage(_CommonTestFrames):
     """Test the class format"""
 
     @classmethod
     def setUpClass(cls):
         cls.create_fake_images()
+        super(TestPixiImage, cls).setUpClass()
+
+    @classmethod
+    def getMeta(cls):
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = None
+        meta.filename = cls.multi_frame
+        meta.nframes = 3
+        return meta
 
     @classmethod
     def create_fake_images(cls):
