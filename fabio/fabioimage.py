@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "15/11/2018"
+__date__ = "16/11/2018"
 
 import os
 import logging
@@ -243,6 +243,8 @@ class FabioFrame(_FabioArray):
         self._dtype = None
         self._file_container = None
         self._file_index = None
+        self._container = None
+        self._index = None
 
     def _set_file_container(self, fabio_image, index):
         """
@@ -255,9 +257,48 @@ class FabioFrame(_FabioArray):
         self._file_container = weakref.ref(fabio_image)
         self._file_index = index
 
+    def _set_container(self, fabio_image, index):
+        """
+        Set the container of this frame
+
+        :param FabioImage fabio_image: The fabio image containing this frame
+        :param int index: Index of this frame in the file container (starting
+            from 0)
+        """
+        self._container = weakref.ref(fabio_image)
+        self._index = index
+
+    @property
+    def container(self):
+        """Returns the container providing this frame.
+
+        This FabioImage is stored as a weakref. If a reference to the file is
+        not stored by user of the lib, this link is lost.
+
+        :rtype: FabioImage
+        """
+        ref = self._container
+        if ref is None:
+            return None
+        ref = ref()
+        if ref is None:
+            self._container = None
+        return ref
+
+    @property
+    def index(self):
+        """Returns the index of this frame in in it's container.
+
+        :rtype: int
+        """
+        return self._index
+
     @property
     def file_container(self):
-        """Returns the file containing this frame.
+        """Returns the file container providing this frame.
+
+        This FabioImage is stored as a weakref. If a reference to the file is
+        not stored by user of the lib, this link is lost.
 
         :rtype: FabioImage
         """
@@ -271,10 +312,7 @@ class FabioFrame(_FabioArray):
 
     @property
     def file_index(self):
-        """Returns the index of this frame in the file container.
-
-        This file is stored as a weakref. If a reference to the file is not
-        stored somewhere, this link is lost.
+        """Returns the index of this frame in in it's file container.
 
         :rtype: int
         """
@@ -379,8 +417,17 @@ class FabioImage(_FabioArray):
         """
         return self._nframes
 
+    def get_frame(self, num):
+        """Returns a frame from the this fabio image.
+
+        :param int num: Number of frames (0 is the first frame)
+        :rtype: FabioFrame
+        :raises IndexError: If the frame number is out of the available range.
+        """
+        return self._get_frame(num)
+
     def _get_frame(self, num):
-        """Returns a frame from a number of frame
+        """Returns a frame from the this fabio image.
 
         This method have to be reimplemented to provide multi frames using a
         a custom class.
@@ -391,23 +438,26 @@ class FabioImage(_FabioArray):
         """
         if self.nframes == 1 and num == 0:
             frame = FabioFrame(self.data, self.header)
-            frame._set_file_container(self, num)
-            return frame
-
-        if not (0 <= num < self.nframes):
-            raise IndexError("Frame number out of range (requested %d, but found %d)" % (num, self.nframes))
-
-        image = self.getframes(num)
-        # Usually it is not a FabioFrame
-        if isinstance(image, FabioFrame):
-            image._set_file_container(self, num)
-            return image
         else:
-            # This code created extra objects, but avoid to implement many
-            # things on mostly unused formats
-            frame = FabioFrame(image.data, image.header)
-            frame._set_file_container(self, num)
-            return frame
+            if not (0 <= num < self.nframes):
+                raise IndexError("Frame number out of range (requested %d, but found %d)" % (num, self.nframes))
+
+            # Try to use the old getframe API to avoid to implement many
+            # things on mostly unused formats.
+            # This could be avoided by inheriting `_get_frame` on specific
+            # formats.
+
+            image = self.getframe(num)
+            # Usually it is not a FabioFrame
+            if isinstance(image, FabioFrame):
+                frame = image
+            else:
+                # This code created extra
+                frame = FabioFrame(image.data, image.header)
+
+        frame._set_container(self, num)
+        frame._set_file_container(self, num)
+        return frame
 
     def frames(self):
         """Iterate all available frames stored in this image container.

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>300</x>
+      <y>210</y>
+      <w>120</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>FabioImage
+--
++ nframes: int</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>410</x>
+      <y>240</y>
+      <w>220</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+getframe(index)
+m1=1</panel_attributes>
+    <additional_attributes>10.0;60.0;90.0;60.0;90.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>410</x>
+      <y>320</y>
+      <w>110</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=-
+r1=next()
+m1=1
+r2=prevous()
+m2=1</panel_attributes>
+    <additional_attributes>10.0;70.0;90.0;70.0;90.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+</diagram>

@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "14/11/2018"
+__date__ = "16/11/2018"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -177,6 +177,7 @@ class NumpyImage(fabioimage.FabioImage):
                 data = self.dataset[num]
                 header = self.header.copy()
                 frame = fabioimage.FabioFrame(data=data, header=header)
+                frame._set_container(self, num)
                 frame._set_file_container(self, num)
             else:
                 raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))

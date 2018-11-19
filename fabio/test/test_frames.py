@@ -32,11 +32,13 @@ Test frame concept of FabioImage
 import unittest
 import logging
 import numpy
+import contextlib
 
 logger = logging.getLogger(__name__)
 
 import fabio.fabioimage
 import fabio.edfimage
+import fabio.file_series
 from .utilstest import UtilsTest
 
 
@@ -53,51 +55,70 @@ class _CommonTestFrames(unittest.TestCase):
         if cls.meta is None:
             raise unittest.SkipTest("No data test")
 
-    def test_full_iteration(self):
-        image = self.meta.image
-        cache = {}
-        for i, frame in enumerate(image.frames()):
-            cache["data %d" % i] = numpy.array(frame.data)
-            cache["header %d" % i] = frame.header.copy()
-        self.assertEqual(i, self.meta.nframes - 1)
-        for i, frame in enumerate(image.frames()):
-            data = cache.pop("data %d" % i)
-            self.assertTrue(numpy.array_equal(data, frame.data))
-            header = cache.pop("header %d" % i)
-            self.assertEqual(header, frame.header)
-        self.assertEqual(len(cache), 0)
-        self.assertEqual(i, self.meta.nframes - 1)
+    @contextlib.contextmanager
+    def image(self):
+        if hasattr(self.meta, "image"):
+            image = self.meta.image
+            if image is not None:
+                yield image
+                return
 
-    def test_abort_iteration(self):
-        image = self.meta.image
-        for i, _frame in enumerate(image.frames()):
-            if i == 2:
-                break
-        for i, _frame in enumerate(image.frames()):
-            pass
-        self.assertEqual(i, self.meta.nframes - 1)
+        image = fabio.open(self.meta.filename)
+        try:
+            yield image
+        finally:
+            image.close()
 
-    def test_random_access(self):
-        image = self.meta.image
-        nframes = self.meta.nframes
-        self.assertEqual(image.nframes, nframes)
+    def test_frames_full_iteration(self):
+        with self.image() as image:
+            cache = {}
+            for i, frame in enumerate(image.frames()):
+                cache["data %d" % i] = numpy.array(frame.data)
+                cache["header %d" % i] = frame.header.copy()
+                self.assertEqual(i, frame.index)
+            self.assertEqual(i, self.meta.nframes - 1)
+            for i, frame in enumerate(image.frames()):
+                data = cache.pop("data %d" % i)
+                self.assertTrue(numpy.array_equal(data, frame.data))
+                header = cache.pop("header %d" % i)
+                self.assertEqual(header, frame.header)
+                self.assertEqual(i, frame.index)
+            self.assertEqual(len(cache), 0)
+            self.assertEqual(i, self.meta.nframes - 1)
+            self.assertEqual(image.nframes, self.meta.nframes)
 
-        # before last
-        frame2 = image._get_frame(nframes - 2)
-        # first
-        frame1 = image._get_frame(0)
-        # last
-        frame3 = image._get_frame(nframes - 1)
+    def test_frames_abort_iteration(self):
+        with self.image() as image:
+            for i, _frame in enumerate(image.frames()):
+                if i == 2:
+                    break
+            for i, _frame in enumerate(image.frames()):
+                pass
+            self.assertEqual(i, self.meta.nframes - 1)
+            self.assertEqual(image.nframes, self.meta.nframes)
 
-        self.assertIsNotNone(frame1)
-        self.assertIsNotNone(frame2)
-        self.assertIsNotNone(frame3)
-        self.assertEqual(frame1.file_index, 0)
-        self.assertEqual(frame2.file_index, nframes - 2)
-        self.assertEqual(frame3.file_index, nframes - 1)
-        self.assertIsNot(frame1, frame2)
-        self.assertIsNot(frame2, frame3)
-        self.assertIsNot(frame3, frame1)
+    def test_frames_random_access(self):
+        with self.image() as image:
+            nframes = self.meta.nframes
+            self.assertEqual(image.nframes, nframes)
+
+            # before last
+            frame2 = image._get_frame(nframes - 2)
+            # first
+            frame1 = image._get_frame(0)
+            # last
+            frame3 = image._get_frame(nframes - 1)
+
+            self.assertIsNotNone(frame1)
+            self.assertIsNotNone(frame2)
+            self.assertIsNotNone(frame3)
+            self.assertEqual(frame1.index, 0)
+            self.assertEqual(frame2.index, nframes - 2)
+            self.assertEqual(frame3.index, nframes - 1)
+            self.assertIsNot(frame1, frame2)
+            self.assertIsNot(frame2, frame3)
+            self.assertIsNot(frame3, frame1)
+            self.assertEqual(image.nframes, self.meta.nframes)
 
 
 class TestVirtualEdf(_CommonTestFrames):
@@ -218,6 +239,27 @@ class TestFabioImage(unittest.TestCase):
                 self.fail()
 
 
+class TestFileSeries(_CommonTestFrames):
+
+    @classmethod
+    def getMeta(cls):
+        filenames = []
+        filename = UtilsTest.getimage("multiframes.tif.bz2")
+        filename = filename.replace(".bz2", "")
+        filenames.append(filename)
+        filename = UtilsTest.getimage("multiframes.edf.bz2")
+        filename = filename.replace(".bz2", "")
+        filenames.append(filename)
+        image = fabio.file_series.FileSeries(filenames)
+
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = image
+        meta.nframes = 8 * 2
+        return meta
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -225,6 +267,7 @@ def suite():
     testsuite.addTest(loadTests(TestVirtualEdf))
     testsuite.addTest(loadTests(TestEdf))
     testsuite.addTest(loadTests(TestTiff))
+    testsuite.addTest(loadTests(TestFileSeries))
     return testsuite
 
 

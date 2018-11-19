@@ -224,3 +224,44 @@ def _openimage(filename):
     obj.filename = filename
     # skip the read for read header
     return obj
+
+
+def open_series(filenames=None, first_filename=None,
+                single_frame=None, fixed_frames=None, fixed_frame_number=None):
+    """
+    Create an object to iterate frames through a file series.
+
+    This function is a wrapper over `~file_series.FileSeries` to facilitate
+    simple uses of file series iterations.
+
+    :param Union[Generator,Iterator,List] filenames: Ordered list of filenames
+        to process as a file series. It also can be a generator, and
+        iterator, or :class:`~fabio.file_series.filename_series` or
+        `~fabio.file_series.file_series` objects.
+    :param str first_filename: If provided iterate filenames from this filename
+        and try to consecutivelly open next files. If this argument is specified
+        the `filenames` have to unspecified. Internally it uses
+        :class:`~fabio.file_series.filename_series` to iterate the filenames.
+    :param Union[Bool,None] single_frame: If True, all files are supposed to
+        contain only one frame.
+    :param Union[Bool,None] fixed_frames: If True, all files are supposed to
+        contain the same amount of frames (this fixed amount will be reached
+        from the first file of the serie).
+    :param Union[Integer,None] fixed_frame_number: If set, all files are
+        supposed to contain the same amount of frames (sepecified by this
+        argument)
+    :rtype: `~file_series.FileSeries`
+    """
+    # Here to avoid recursive import
+    from . import file_series
+
+    if filenames is not None and first_filename is not None:
+        raise ValueError("'filenames' and 'first_filename' are mutual exclusive")
+
+    if first_filename is not None:
+        filenames = file_series.filename_series(filename=first_filename)
+
+    return file_series.FileSeries(filenames=filenames,
+                                  single_frame=single_frame,
+                                  fixed_frames=fixed_frames,
+                                  fixed_frame_number=fixed_frame_number)

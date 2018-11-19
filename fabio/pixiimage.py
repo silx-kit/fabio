@@ -40,7 +40,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "14/11/2018"
+__date__ = "16/11/2018"
 
 import numpy
 import os
@@ -110,6 +110,7 @@ class PixiImage(fabioimage.FabioImage):
         with self._open(self.filename, "rb") as infile:
             data = self._readdata(infile, num)
         frame = fabioimage.FabioFrame(data=data, header=newheader)
+        frame._set_container(self, num)
         frame._set_file_container(self, num)
         return frame
 

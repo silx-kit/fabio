@@ -74,6 +74,7 @@ from . import testmrcimage
 from . import test_pixi_image
 from . import test_tiffio
 from . import test_frames
+from . import test_fabio
 
 
 def suite():
@@ -121,6 +122,7 @@ def suite():
     testSuite.addTest(test_pixi_image.suite())
     testSuite.addTest(test_tiffio.suite())
     testSuite.addTest(test_frames.suite())
+    testSuite.addTest(test_fabio.suite())
     return testSuite
 
 
