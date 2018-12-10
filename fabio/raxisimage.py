@@ -35,15 +35,13 @@ Available at: http://www.rigaku.com/downloads/software/readimage.html
 
 """
 
-
-# Get ready for python3:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "27/07/2017"
+__date__ = "13/11/2018"
 
 import logging
 import struct
@@ -191,8 +189,7 @@ class RaxisImage(FabioImage):
         Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
-        self.bytecode = 'uint16'  # same for all RAXIS images AFAICT
-        self.bpp = 2
+        self._dtype = numpy.dtype('uint16')  # same for all RAXIS images AFAICT
         self.endianness = '>'  # this may be tested for.
 
     def swap_needed(self):
@@ -281,11 +278,13 @@ class RaxisImage(FabioImage):
         # lifted from binaryimage
         # read the image data
 
-        self.dim1 = self.header['X Pixels']
-        self.dim2 = self.header['Y Pixels']
-        self.bytecode = numpy.uint16
-        dims = [self.dim2, self.dim1]
-        size = dims[0] * dims[1] * self.bpp
+        dim1 = self.header['X Pixels']
+        dim2 = self.header['Y Pixels']
+        self._shape = dim2, dim1
+
+        self._dtype = numpy.dtype(numpy.uint16)
+        shape = self.shape
+        size = shape[0] * shape[1] * self._dtype.itemsize
         if offset >= 0:
             infile.seek(offset)
         else:
@@ -299,17 +298,14 @@ class RaxisImage(FabioImage):
                     infile.seek(infile.len - size)  # seek from EOF backwards
                 else:
                     infile.seek(-size + offset + 1, os.SEEK_END)  # seek from EOF backwards
-#                infile.seek(-size + offset + 1 , os.SEEK_END) #seek from EOF backwards
             except IOError as error:
-                logger.warning('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self.bytecode, error))
+                logger.warning('expected datablock too large, please check bytecode settings: %s, IOError: %s' % (self._dtype.type, error))
             except Exception as error:
                 logger.error('Uncommon error encountered when reading file: %s' % error)
         rawData = infile.read(size)
+        data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
         if self.swap_needed():
-            data = numpy.fromstring(rawData, self.bytecode).byteswap().reshape(tuple(dims))
-        else:
-            data = numpy.fromstring(rawData, self.bytecode).reshape(tuple(dims))
-#        print(data)
+            data.byteswap(True)
         di = (data >> 15) != 0  # greater than 2^15
         if di.sum() >= 1:
             # find indices for which we need to do the correction (for which
@@ -317,16 +313,17 @@ class RaxisImage(FabioImage):
 
             logger.debug("Correct for PM: %s" % di.sum())
             data = data << 1 >> 1  # reset bit #15 to zero
-            self.bytecode = numpy.uint32
-            data = data.astype(self.bytecode)
+            self._dtype = numpy.dtype(numpy.uint32)
+            data = data.astype(self._dtype)
             # Now we do some fixing for Rigaku's refusal to adhere to standards:
             sf = self.header['Photomultiplier Ratio']
             # multiply by the ratio  defined in the header
             # data[di] *= sf
-            data[di] = (sf * data[di]).astype(numpy.uint32)
-            self.bpp = numpy.dtype(self.bytecode).itemsize
+            data[di] = (sf * data[di]).astype(self._dtype)
 
         self.data = data
+        self._shape = None
+        self._dtype = None
         return self
 
     def rigakuKeys(self):

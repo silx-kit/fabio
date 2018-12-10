@@ -23,16 +23,14 @@
 #
 """Multiwire Unit tests"""
 from __future__ import print_function, with_statement, division, absolute_import
-import unittest
-import sys
-import os
-from .utilstest import UtilsTest
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import unittest
+import logging
+
+logger = logging.getLogger(__name__)
+
+import fabio
+from .utilstest import UtilsTest
 
 
 class TestMpa(unittest.TestCase):
@@ -50,6 +48,7 @@ class TestMpa(unittest.TestCase):
         """
         for imageData in self.TESTIMAGES:
             name, dim1, dim2, mini, maxi, mean, stddev = imageData
+            shape = dim2, dim1
             logger.debug("Processing: %s" % name)
             path = UtilsTest.getimage(name + ".bz2")[:-4]
 
@@ -60,8 +59,7 @@ class TestMpa(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
 
 def suite():

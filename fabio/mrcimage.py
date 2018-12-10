@@ -24,6 +24,7 @@
 # THE SOFTWARE.
 #
 
+from __future__ import with_statement, print_function
 
 """MRC image for FabIO
 
@@ -33,22 +34,20 @@ email:  Jerome.Kieffer@terre-adelie.org
 Specifications from:
 http://ami.scripps.edu/software/mrctools/mrc_specification.php
 """
-# Get ready for python3:
-from __future__ import with_statement, print_function
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
 __version__ = "29 Oct 2013"
+
 import logging
-import sys
 import numpy
+
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
+
 logger = logging.getLogger(__name__)
-if sys.version_info < (3.0):
-    bytes = str
 
 
 class MrcImage(FabioImage):
@@ -58,13 +57,22 @@ class MrcImage(FabioImage):
 
     DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
 
-    DEFAULT_EXTENSIONS = ["mrc"]
+    DEFAULT_EXTENSIONS = ["mrc", "map", "fei"]
 
     KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
             "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",
             "CELL_ALPHA", "CELL_BETA", "CELL_GAMMA",
             "MAPC", "MAPR", "MAPS", "DMIN", "DMAX", "DMEAN", "ISPG", "NSYMBT",
             "EXTRA", "ORIGIN", "MAP", "MACHST", "RMS", "NLABL")
+
+    _MODE_TO_DTYPE = {
+        0: numpy.int8,
+        1: numpy.int16,
+        2: numpy.float32,
+        3: numpy.complex64,
+        4: numpy.complex64,
+        6: numpy.uint16
+    }
 
     def _readheader(self, infile):
         """
@@ -76,31 +84,26 @@ class MrcImage(FabioImage):
         self.header = self.check_header()
 
         # header is composed of 56-int32 plus 10x80char lines
-        int_block = numpy.fromstring(infile.read(56 * 4), dtype=numpy.int32)
+        int_block = numpy.frombuffer(infile.read(56 * 4), dtype=numpy.int32)
         for key, value in zip(self.KEYS, int_block):
             self.header[key] = value
-        assert self.header["MAP"] == 542130509  # "MAP " in int32 !
+        if self.header["MAP"] != 542130509:
+            logger.info("Expected 'MAP ', got %s", self.header["MAP"].tostring())
 
         for i in range(10):
             label = "LABEL_%02i" % i
             self.header[label] = infile.read(80).strip()
-        self.dim1 = self.header["NX"]
-        self.dim2 = self.header["NY"]
-        self.nframes = self.header["NZ"]
+        dim1 = int(self.header["NX"])
+        dim2 = int(self.header["NY"])
+        self._shape = dim2, dim1
+
+        self._nframes = self.header["NZ"]
         mode = self.header["MODE"]
-        if mode == 0:
-            self.bytecode = numpy.int8
-        elif mode == 1:
-            self.bytecode = numpy.int16
-        elif mode == 2:
-            self.bytecode = numpy.float32
-        elif mode == 3:
-            self.bytecode = numpy.complex64
-        elif mode == 4:
-            self.bytecode = numpy.complex64
-        elif mode == 6:
-            self.bytecode = numpy.uint16
-        self.imagesize = self.dim1 * self.dim2 * numpy.dtype(self.bytecode).itemsize
+        if mode not in self._MODE_TO_DTYPE:
+            raise IOError("Mode %s unsupported" % mode)
+        dtype = numpy.dtype(self._MODE_TO_DTYPE[mode])
+        self._dtype = dtype
+        self.imagesize = dim1 * dim2 * dtype.itemsize
 
     def read(self, fname, frame=None):
         """
@@ -139,10 +142,13 @@ class MrcImage(FabioImage):
         """
         if (img_num > self.nframes or img_num < 0):
             raise RuntimeError("Requested frame number is out of range")
-        _imgstart = self.header['offset'] + img_num * (512 * 476 * 2 + 24)
-        infile.seek(self.calc_offset(img_num), 0)
-        self.data = numpy.fromstring(infile.read(self.imagesize), self.bytecode)
-        self.data.shape = self.dim2, self.dim1
+        infile.seek(self._calc_offset(img_num), 0)
+        data_buffer = infile.read(self.imagesize)
+        data = numpy.frombuffer(data_buffer, self._dtype).copy()
+        data.shape = self._shape
+        self.data = data
+        self._shape = None
+        self._dtype = None
         self.currentframe = int(img_num)
         self._makeframename()
 

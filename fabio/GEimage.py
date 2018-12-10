@@ -38,11 +38,11 @@
 
 # modifications by Jon Wright for style, pychecker and fabio
 #
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "25/07/2017"
+__date__ = "14/11/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -211,8 +211,7 @@ GE_HEADER_INFO = [
     ('NumberOfColumns128', 2, '<H'),
     ('NumberOfRows128', 2, '<H'),
     ('VFPAquisition', 2000, None),
-    ('Comment', 200, None)
-    ]
+    ('Comment', 200, None)]
 
 
 class GeImage(FabioImage):
@@ -260,6 +259,7 @@ class GeImage(FabioImage):
         infile = self._open(fname, "rb")
         self.sequencefilename = fname
         self._readheader(infile)
+
         # obsolete for now # self.nframes = self.header['NumberOfFrames']
         file_size = os.stat(fname).st_size
         assert numpy.remainder(file_size, self._BytesPerFrame) == self._HeaderNBytes, \
@@ -283,27 +283,27 @@ class GeImage(FabioImage):
         """
         if(img_num > self.nframes or img_num < 0):
             raise Exception("Bad image number")
-        imgstart = self.header['StandardHeaderSizeInBytes'] + \
-                   self.header['UserHeaderSizeInBytes'] + \
-                   img_num * self.header['NumberOfRowsInFrame'] * \
-                   self.header['NumberOfColsInFrame'] * \
-                   self.header['ImageDepthInBits'] // 8
+        imgstart = (self.header['StandardHeaderSizeInBytes'] +
+                    self.header['UserHeaderSizeInBytes'] +
+                    img_num * self.header['NumberOfRowsInFrame'] *
+                    self.header['NumberOfColsInFrame'] *
+                    self.header['ImageDepthInBits'] // 8)
         # whence = 0 means seek from start of file
         filepointer.seek(imgstart, 0)
 
-        self.bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
-        imglength = self.header['NumberOfRowsInFrame'] * \
-                    self.header['NumberOfColsInFrame'] * self.bpp
-        if self.bpp != 2:
-            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
+        bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
+        if bpp != 2:
+            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % bpp)
 
-        data = numpy.fromstring(filepointer.read(imglength), numpy.uint16)
+        imglength = (self.header['NumberOfRowsInFrame'] *
+                     self.header['NumberOfColsInFrame'] * bpp)
+        data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16).copy()
         if not numpy.little_endian:
             data.byteswap(True)
         data.shape = (self.header['NumberOfRowsInFrame'],
                       self.header['NumberOfColsInFrame'])
         self.data = data
-        self.dim2, self.dim1 = self.data.shape
+        self._shape = None
         self.currentframe = int(img_num)
         self._makeframename()
 
@@ -318,7 +318,7 @@ class GeImage(FabioImage):
         for k in self.header.keys():
             newheader[k] = self.header[k]
         frame = GeImage(header=newheader)
-        frame.nframes = self.nframes
+        frame._nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
         frame._readframe(infile, num)
@@ -350,35 +350,4 @@ class GeImage(FabioImage):
             return newobj
 
 
-def demo():
-    import sys
-    import time
-
-    if len(sys.argv) < 2:
-        print("USAGE: GE_script.py <GEaSi_raw_image_file>")
-        sys.exit()
-
-    image_file = sys.argv[1]
-
-    print("init read_GEaSi_data class and load header..")
-    sequence1 = GeImage()
-    sequence1.read(image_file)
-
-    print("TimeBetweenFramesInMicrosecs = ")
-    print(sequence1.header['TimeBetweenFramesInMicrosecs'])
-    print("AcquisitionTime = ")
-    print(sequence1.header['AcquisitionTime'])
-
-    print("Mean = ", sequence1.data.ravel().mean())
-
-    while 1:
-        start = time.time()
-        sequence1 = sequence1.next()
-        duration = time.time() - start
-        print(sequence1.currentframe, sequence1.data.ravel().mean(), duration)
-
-
 GEimage = GeImage
-
-if __name__ == '__main__':
-    demo()

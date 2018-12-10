@@ -28,21 +28,17 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import numpy
 import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.mar345image import mar345image
+from .utilstest import UtilsTest
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67
@@ -74,6 +70,7 @@ class TestMar345(unittest.TestCase):
             vals = line.strip().split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = mar345image()
             obj.read(UtilsTest.getimage(name))
@@ -82,8 +79,7 @@ class TestMar345(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape, "shape")
 
     def test_write(self):
         "Test writing with self consistency at the fabio level"

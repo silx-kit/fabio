@@ -1,4 +1,5 @@
-#!/usr/bin/env python# coding: utf-8
+#!/usr/bin/env python
+# coding: utf-8
 #
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
@@ -39,7 +40,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 Information about the file format from Masakatzu Kobayashi is highly appreciated
 """
 
-# Get ready for python3:
 from __future__ import with_statement, print_function
 
 import numpy
@@ -61,12 +61,12 @@ class HipicImage(FabioImage):
 
         """
         Image_tag = infile.read(2)
-        Comment_len = numpy.fromstring(infile.read(2), numpy.uint16)
-        Dim_1 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dim_2 = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dim_1_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        Dim_2_offset = numpy.fromstring(infile.read(2), numpy.uint16)[0]
-        _HeaderType = numpy.fromstring(infile.read(2), numpy.uint16)[0]
+        Comment_len = numpy.frombuffer(infile.read(2), numpy.uint16)
+        Dim_1 = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        Dim_2 = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        Dim_1_offset = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        Dim_2_offset = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
+        _HeaderType = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
         _Dump = infile.read(50)
         Comment = infile.read(Comment_len)
         self.header['Image_tag'] = Image_tag
@@ -103,26 +103,27 @@ class HipicImage(FabioImage):
         self._readheader(infile)
         # Compute image size
         try:
-            self.dim1 = int(self.header['Dim_1'])
-            self.dim2 = int(self.header['Dim_2'])
+            dim1 = int(self.header['Dim_1'])
+            dim2 = int(self.header['Dim_2'])
+            self._shape = dim2, dim1
         except (ValueError, KeyError):
             raise IOError("HiPic file %s is corrupted, cannot read it" % str(fname))
-        bytecode = numpy.uint16
-        self.bpp = len(numpy.array(0, bytecode).tostring())
+        dtype = numpy.dtype(numpy.uint16)
+        self._dtype = dtype
 
         # Read image data
-        block = infile.read(self.dim1 * self.dim2 * self.bpp)
+        block = infile.read(dim1 * dim2 * dtype.itemsize)
         infile.close()
 
         # now read the data into the array
         try:
-            self.data = numpy.reshape(
-                numpy.fromstring(block, bytecode),
-                [self.dim2, self.dim1])
-        except:
-            logger.debug("%s %s %s %s %s", len(block), bytecode, self.bpp, self.dim2, self.dim1)
+            self.data = numpy.frombuffer(block, dtype).copy().reshape((dim2, dim1))
+        except Exception:
+            logger.debug("%s %s %s %s %s", len(block), dtype, self.bpp, dim2, dim1)
+            logger.debug("Backtrace", exc_info=True)
             raise IOError('Size spec in HiPic-header does not match size of image data field')
-        self.bytecode = self.data.dtype.type
+        self._dtype = None
+        self._shape = None
 
         # Sometimes these files are not saved as 12 bit,
         # But as 16 bit after bg subtraction - which results

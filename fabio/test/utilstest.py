@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "23/01/2018"
+__date__ = "22/10/2018"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -121,6 +121,46 @@ class UtilsTest(object):
                 Otherwise please try to download the images manually from \n %s/%s and put it in in test/testimages." % (cls.url_base, imagename))
 
     @classmethod
+    def getdir(cls, dirname):
+        """Downloads the requested tarball from the server
+        https://www.silx.org/pub/silx/
+        and unzips it into the data directory
+
+        :param: relative name of the image.
+        :return: list of files with their full path.
+        """
+        lodn = dirname.lower()
+        supported_extensions = [".tar", ".tgz", ".tbz2", ".tar.gz", ".tar.bz2", ".zip"]
+
+        for ext in supported_extensions:
+            if lodn.endswith(ext):
+                directory_name = dirname[0:-len(ext)]
+                break
+        else:
+            raise RuntimeError("Unsupported archive format. Only tar and zip "
+                               "are currently supported")
+
+        if lodn.endswith(".zip"):
+            import zipfile
+            engine = zipfile.ZipFile
+        else:
+            import tarfile
+            engine = tarfile.TarFile.open
+
+        full_path = cls.download_file(dirname)
+        directory_home = os.path.join(cls.image_home, directory_name)
+        if not os.path.exists(directory_home):
+            os.mkdir(directory_home)
+
+        with engine(full_path, mode="r") as fd:
+            fd.extractall(directory_home)
+            if lodn.endswith(".zip"):
+                result = [os.path.join(directory_home, i) for i in fd.namelist()]
+            else:
+                result = [os.path.join(directory_home, i) for i in fd.getnames()]
+        return result
+
+    @classmethod
     def getimage(cls, imagename):
         """
         Downloads the requested image from Forge.EPN-campus.eu
@@ -167,31 +207,7 @@ class UtilsTest(object):
         data = None
 
         if not os.path.isfile(fullimagename_bz2):
-            logger.info("Trying to download image %s, timeout set to %ss",
-                        bzip2name, cls.timeout)
-            dictProxies = {}
-            if "http_proxy" in os.environ:
-                dictProxies['http'] = os.environ["http_proxy"]
-                dictProxies['https'] = os.environ["http_proxy"]
-            if "https_proxy" in os.environ:
-                dictProxies['https'] = os.environ["https_proxy"]
-            if dictProxies:
-                proxy_handler = ProxyHandler(dictProxies)
-                opener = build_opener(proxy_handler).open
-            else:
-                opener = urlopen
-
-            logger.info("wget %s/%s" % (cls.url_base, imagename))
-            data = opener("%s/%s" % (cls.url_base, imagename),
-                          data=None, timeout=cls.timeout).read()
-            logger.info("Image %s successfully downloaded." % baseimage)
-
-            try:
-                with open(fullimagename_bz2, "wb") as outfile:
-                    outfile.write(data)
-            except IOError:
-                raise IOError("unable to write downloaded \
-                    data to disk at %s" % cls.image_home)
+            cls.download_file(bzip2name)
 
             if not os.path.isfile(fullimagename_bz2):
                 raise RuntimeError("Could not automatically \
@@ -223,6 +239,45 @@ class UtilsTest(object):
         return fullimagename
 
     @classmethod
+    def download_file(cls, filename):
+        """Downloads the requested file from web-server available
+        at https://www.silx.org/pub/silx/
+
+        :param str filename: relative name of the image.
+        :return: full path of the locally saved file.
+        """
+        fullpath = os.path.abspath(os.path.join(cls.image_home, filename))
+        if os.path.exists(fullpath):
+            return fullpath
+
+        logger.info("Trying to download filename %s, timeout set to %ss",
+                    filename, cls.timeout)
+        dictProxies = {}
+        if "http_proxy" in os.environ:
+            dictProxies['http'] = os.environ["http_proxy"]
+            dictProxies['https'] = os.environ["http_proxy"]
+        if "https_proxy" in os.environ:
+            dictProxies['https'] = os.environ["https_proxy"]
+        if dictProxies:
+            proxy_handler = ProxyHandler(dictProxies)
+            opener = build_opener(proxy_handler).open
+        else:
+            opener = urlopen
+
+        logger.info("wget %s/%s" % (cls.url_base, filename))
+        data = opener("%s/%s" % (cls.url_base, filename),
+                      data=None, timeout=cls.timeout).read()
+        logger.info("Filedata %s successfully downloaded." % filename)
+
+        try:
+            with open(fullpath, "wb") as outfile:
+                outfile.write(data)
+        except IOError:
+            raise IOError("Unable to write downloaded \
+                data to disk at %s" % cls.image_home)
+        return fullpath
+
+    @classmethod
     def download_images(cls, imgs=None):
         """
         Download all images needed for the test/benchmarks
@@ -240,20 +295,6 @@ class UtilsTest(object):
                     fn = fn + ".bz2"
                 print("  actually " + fn)
             cls.getimage(fn)
-
-    @classmethod
-    def get_logger(cls, filename=__file__):
-        """
-        small helper function that initialized the logger and returns it
-        """
-        basename = os.path.basename(os.path.abspath(filename))
-        basename = os.path.splitext(basename)[0]
-        level = logging.root.level
-        mylogger = logging.getLogger(basename)
-        logger.setLevel(level)
-        mylogger.setLevel(level)
-        mylogger.debug("tests loaded from file: %s" % basename)
-        return mylogger
 
     @classmethod
     def script_path(cls, script):
@@ -287,4 +328,3 @@ class UtilsTest(object):
         logger.warning("Script '%s' not found in paths: %s", script, ":".join(paths))
         script_path = script
         return script_path, env
-

@@ -27,29 +27,34 @@ Test JPEG 2000 format
 
 from __future__ import print_function, with_statement, division, absolute_import
 
-import sys
 import unittest
 import numpy
+import logging
 try:
     from PIL import Image
 except ImportError:
     Image = None
 
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from .. import jpeg2kimage
+from .utilstest import UtilsTest
 
 
 def isPilUsable():
     if jpeg2kimage.PIL is None:
         return False
     try:
-        jpeg2kimage.PIL.Image.frombytes("1", (2, 2), b"", decoder_name='jpeg2k')
+        if hasattr(jpeg2kimage.PIL.Image, "frombytes"):
+            frombytes = jpeg2kimage.PIL.Image.frombytes
+        else:
+            frombytes = jpeg2kimage.PIL.Image.frombuffer
+        frombytes("1", (2, 2), b"", decoder_name='jpeg2k')
     except Exception as e:
         if e.args[0] == "decoder jpeg2k not available":
             return False
+        # Skip decoding error
     return True
 
 

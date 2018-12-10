@@ -28,24 +28,23 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-#
-# Get ready for python3:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher/Univeristy Köln, Germany"
-__date__ = "27/07/2017"
+__date__ = "29/10/2018"
 
 import unittest
-import sys
 import numpy
+import logging
 
-from .utilstest import UtilsTest
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+logger = logging.getLogger(__name__)
+
+import fabio
 from fabio.speimage import SpeImage
+from .utilstest import UtilsTest
 
 
 class TestSpeImage(unittest.TestCase):

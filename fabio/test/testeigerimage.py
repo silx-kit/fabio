@@ -14,20 +14,15 @@
 
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
-
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+logger = logging.getLogger(__name__)
 
 from fabio.openimage import openimage
 from fabio.eigerimage import EigerImage, h5py
+from .utilstest import UtilsTest
+from .test_frames import _CommonTestFrames
 
 
 def make_hdf5(name, shape=(50, 99, 101)):
@@ -42,14 +37,26 @@ def make_hdf5(name, shape=(50, 99, 101)):
             e.require_dataset("data", shape, chunks=(1,) + shape[1:], compression="gzip", compression_opts=9, dtype="float32")
 
 
-class TestEiger(unittest.TestCase):
+class TestEiger(_CommonTestFrames):
     """basic test"""
 
     @classmethod
     def setUpClass(cls):
-        super(TestEiger, cls).setUpClass()
         cls.fn3 = os.path.join(UtilsTest.tempdir, "eiger3d.h5")
         make_hdf5(cls.fn3, (50, 99, 101))
+        super(TestEiger, cls).setUpClass()
+
+    @classmethod
+    def getMeta(cls):
+        filename = cls.fn3
+
+        class Meta(object):
+            pass
+        meta = Meta()
+        meta.image = None
+        meta.filename = filename
+        meta.nframes = 50
+        return meta
 
     @classmethod
     def tearDownClass(cls):
@@ -61,16 +68,14 @@ class TestEiger(unittest.TestCase):
         """ check we can read images from Eiger"""
         e = EigerImage()
         e.read(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
         self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_open(self):
         """ check we can read images from Eiger"""
         e = openimage(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
         self.assertEqual(e.bpp, 4, "bpp OK")
 

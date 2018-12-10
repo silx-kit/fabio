@@ -31,7 +31,7 @@
 Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
          ESRF          Risoe National Laboratory
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 import logging
@@ -102,11 +102,11 @@ def readbytestream(fil,
 
     infile.seek(offset)
 
-    data = numpy.fromstring(infile.read(length), tin)
+    data = numpy.frombuffer(infile.read(length), tin)
     arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
 
     if swap == 'y':
-        arr = arr.byteswap()
+        arr.byteswap(True)
 
     if opened:
         infile.close()

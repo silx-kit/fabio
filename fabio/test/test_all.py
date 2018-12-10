@@ -25,16 +25,12 @@
 """Test suite for all fabio modules."""
 from __future__ import print_function, with_statement, division, absolute_import
 
-import unittest
 import sys
-import os
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+import logging
+import unittest
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+logger = logging.getLogger(__name__)
+
 from . import testfabioimage
 from . import testedfimage
 from . import testcbfimage
@@ -74,6 +70,11 @@ from . import testdm3image
 from . import test_failing_files
 from . import test_formats
 from . import test_image_convert
+from . import testmrcimage
+from . import test_pixi_image
+from . import test_tiffio
+from . import test_frames
+from . import test_fabio
 
 
 def suite():
@@ -117,6 +118,11 @@ def suite():
     testSuite.addTest(test_failing_files.suite())
     testSuite.addTest(test_formats.suite())
     testSuite.addTest(test_image_convert.suite())
+    testSuite.addTest(testmrcimage.suite())
+    testSuite.addTest(test_pixi_image.suite())
+    testSuite.addTest(test_tiffio.suite())
+    testSuite.addTest(test_frames.suite())
+    testSuite.addTest(test_fabio.suite())
     return testSuite
 
 

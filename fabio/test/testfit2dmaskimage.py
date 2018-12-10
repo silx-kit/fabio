@@ -27,20 +27,17 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import numpy
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.fit2dmaskimage import fit2dmaskimage
+from .utilstest import UtilsTest
 
 
 class TestFaceMask(unittest.TestCase):
@@ -58,9 +55,7 @@ class TestFaceMask(unittest.TestCase):
         i = fit2dmaskimage()
         i.read(self.filename)
         j = fabio.open(self.edffilename)
-        # print "edf: dim1",oe.dim1,"dim2",oe.dim2
-        self.assertEqual(i.dim1, j.dim1)
-        self.assertEqual(i.dim2, j.dim2)
+        self.assertEqual(i.shape, j.shape)
         self.assertEqual(i.data.shape, j.data.shape)
         diff = j.data - i.data
         sumd = abs(diff).sum(dtype=float)
@@ -81,8 +76,7 @@ class TestClickedMask(unittest.TestCase):
         """ Check it reads a mask OK """
         i = fit2dmaskimage()
         i.read(self.filename)
-        self.assertEqual(i.dim1, 1024)
-        self.assertEqual(i.dim2, 1024)
+        self.assertEqual(i.shape, (1024, 1024))
         self.assertEqual(i.bpp, 1)
         self.assertEqual(i.bytecode, numpy.uint8)
         self.assertEqual(i.data.shape, (1024, 1024))
@@ -114,8 +108,7 @@ class TestMskWrite(unittest.TestCase):
         e = fit2dmaskimage(data=self.data, header=self.header)
         e.write(self.filename)
         r = fabio.open(self.filename)
-        self.assertEqual(e.dim1, r.dim1, "dim1 are the same")
-        self.assertEqual(e.dim2, r.dim2, "dim2 are the same")
+        self.assertEqual(e.shape, r.shape, "shape are the same")
         if r.header != self.header:
             print("Issue with header in TestMskWrite.testFlat")
             for k, v in r.header.items():

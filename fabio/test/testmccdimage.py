@@ -28,21 +28,18 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import numpy
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
 from ..tifimage import tifimage
 from ..marccdimage import marccdimage
+from .utilstest import UtilsTest
+
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
@@ -100,6 +97,7 @@ class TestFlatMccds(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = marccdimage()
             obj.read(self.fn[name])
@@ -107,8 +105,7 @@ class TestFlatMccds(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape, "dim1")
 
 
 def suite():

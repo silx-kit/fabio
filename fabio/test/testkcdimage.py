@@ -28,20 +28,17 @@ Test for Nonius Kappa CCD cameras.
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from ..kcdimage import kcdimage
 from ..openimage import openimage
+from .utilstest import UtilsTest
 
 
 class TestKcd(unittest.TestCase):
@@ -62,6 +59,7 @@ class TestKcd(unittest.TestCase):
         """ check we can read kcd images"""
         vals = self.results.split()
         dim1, dim2 = [int(x) for x in vals[1:3]]
+        shape = dim2, dim1
         mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
         for ext in ["", ".gz", ".bz2"]:
             try:
@@ -73,8 +71,7 @@ class TestKcd(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax" + ext)
             self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean" + ext)
             self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev" + ext)
-            self.assertEqual(dim1, obj.dim1, "dim1" + ext)
-            self.assertEqual(dim2, obj.dim2, "dim2" + ext)
+            self.assertEqual(shape, obj.shape, "shape" + ext)
 
     def test_same(self):
         """ see if we can read kcd images and if they are the same as the EDF """

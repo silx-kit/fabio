@@ -31,18 +31,14 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 
 CASES = [
     (1, 'edf', "data0001.edf"),
@@ -70,7 +66,7 @@ CASES = [
     (2, 'adsc_or_oxd_or_hipic_or_raxis', 'mb_LP_1_002.img.gz'),
     (3, 'adsc_or_oxd_or_hipic_or_raxis', 'mb_LP_1_003.img.bz2'),
     (3, 'adsc_or_oxd_or_hipic_or_raxis', os.path.join("data", 'mb_LP_1_003.img.bz2')),
-    ]
+]
 
 
 MORE_CASES = [
@@ -88,7 +84,7 @@ MORE_CASES = [
     ("image.0123", "image.1234", 123),
     ("mymask.msk", "mymask.msk", None),
     ("data_123.mccd.bz2", "data_001.mccd.bz2", 123)
-    ]
+]
 
 
 class TestFilenames(unittest.TestCase):

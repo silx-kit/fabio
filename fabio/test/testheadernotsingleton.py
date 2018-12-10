@@ -28,19 +28,16 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 import shutil
+from .utilstest import UtilsTest
 
 
 class TestHeaderNotSingleton(unittest.TestCase):
@@ -58,10 +55,13 @@ class TestHeaderNotSingleton(unittest.TestCase):
             shutil.copy(self.file1, file2)
         image1 = fabio.open(self.file1)
         image2 = fabio.open(file2)
-        abs_norm = lambda fn: os.path.normcase(os.path.abspath(fn))
-        self.assertEqual(abs_norm(image1.filename), abs_norm(self.file1))
-        self.assertEqual(abs_norm(image2.filename), abs_norm(file2))
+
+        self.assertEqual(self.abs_norm(image1.filename), self.abs_norm(self.file1))
+        self.assertEqual(self.abs_norm(image2.filename), self.abs_norm(file2))
         self.assertNotEqual(image1.filename, image2.filename)
+
+    def abs_norm(self, fn):
+        return os.path.normcase(os.path.abspath(fn))
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)

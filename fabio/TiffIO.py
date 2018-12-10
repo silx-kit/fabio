@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/03/2018"
+__date__ = "29/10/2018"
 
 import sys
 import os
@@ -450,7 +450,7 @@ class TiffIO(object):
             try:
                 if imageDescription.upper().startswith("IMAGEJ"):
                     software = imageDescription.split("=")[0]
-            except:
+            except Exception:
                 pass
 
         if TAG_DATE in tagIDList:
@@ -569,7 +569,8 @@ class TiffIO(object):
             self._forceMonoOutput = False
             info = self._readInfo(nImage, close=False)
             self._forceMonoOutput = oldMono
-        except:
+        except Exception:
+            logger.debug("Backtrace", exc_info=True)
             self._forceMonoOutput = oldMono
             raise
         compression = info['compression']
@@ -662,7 +663,6 @@ class TiffIO(object):
             image = numpy.zeros((nRows, nColumns), dtype=dtype)
 
         fd = self.fd
-        st = self._structChar
         stripOffsets = info["stripOffsets"]  # This contains the file offsets to the data positions
         rowsPerStrip = info["rowsPerStrip"]
         stripByteCounts = info["stripByteCounts"]  # bytes in strip since I do not support compression
@@ -670,24 +670,25 @@ class TiffIO(object):
         rowStart = 0
         if len(stripOffsets) == 1:
             bytesPerRow = int(stripByteCounts[0] / rowsPerStrip)
+            nBytes = stripByteCounts[0]
             if nRows == rowsPerStrip:
                 actualBytesPerRow = int(image.nbytes / nRows)
                 if actualBytesPerRow != bytesPerRow:
                     logger.warning("Bogus StripByteCounts information")
                     bytesPerRow = actualBytesPerRow
+                    nBytes = (rowMax - rowMin + 1) * bytesPerRow
             fd.seek(stripOffsets[0] + rowMin * bytesPerRow)
-            nBytes = (rowMax - rowMin + 1) * bytesPerRow
+            readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
             if self._swap:
-                readout = numpy.fromstring(fd.read(nBytes), dtype).byteswap()
-            else:
-                readout = numpy.fromstring(fd.read(nBytes), dtype)
+                readout.byteswap(True)
             if hasattr(nBits, 'index'):
                 readout.shape = -1, nColumns, len(nBits)
             elif info['colormap'] is not None:
                 readout = colormap[readout]
+                readout.shape = -1, nColumns, 3
             else:
                 readout.shape = -1, nColumns
-            image[rowMin:rowMax + 1, :] = readout
+            image[...] = readout
         else:
             for i in range(len(stripOffsets)):
                 # the amount of rows
@@ -705,7 +706,7 @@ class TiffIO(object):
                 if compression_type == 32773:
                     try:
                         bufferBytes = bytes()
-                    except:
+                    except Exception:
                         # python 2.5 ...
                         bufferBytes = ""
                     # packBits
@@ -728,10 +729,10 @@ class TiffIO(object):
                         else:
                             # if read -128 ignore the byte
                             continue
+                    readout = numpy.frombuffer(bufferBytes, dtype).copy()
                     if self._swap:
-                        readout = numpy.fromstring(bufferBytes, dtype).byteswap()
-                    else:
-                        readout = numpy.fromstring(bufferBytes, dtype)
+                        readout.byteswap(True)
+
                     if hasattr(nBits, 'index'):
                         readout.shape = -1, nColumns, len(nBits)
                     elif info['colormap'] is not None:
@@ -741,32 +742,18 @@ class TiffIO(object):
                         readout.shape = -1, nColumns
                     image[rowStart:rowEnd, :] = readout
                 else:
-                    if 1:
-                        # use numpy
-                        if self._swap:
-                            readout = numpy.fromstring(fd.read(nBytes), dtype).byteswap()
-                        else:
-                            readout = numpy.fromstring(fd.read(nBytes), dtype)
-                        if hasattr(nBits, 'index'):
-                            readout.shape = -1, nColumns, len(nBits)
-                        elif colormap is not None:
-                            readout = colormap[readout]
-                            readout.shape = -1, nColumns, 3
-                        else:
-                            readout.shape = -1, nColumns
-                        image[rowStart:rowEnd, :] = readout
+                    readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
+                    if self._swap:
+                        readout.byteswap(True)
+
+                    if hasattr(nBits, 'index'):
+                        readout.shape = -1, nColumns, len(nBits)
+                    elif colormap is not None:
+                        readout = colormap[readout]
+                        readout.shape = -1, nColumns, 3
                     else:
-                        # using struct
-                        readout = numpy.array(struct.unpack(st + "%df" % int(nBytes / 4), fd.read(nBytes)),
-                                              dtype=dtype)
-                        if hasattr(nBits, 'index'):
-                            readout.shape = -1, nColumns, len(nBits)
-                        elif colormap is not None:
-                            readout = colormap[readout]
-                            readout.shape = -1, nColumns, 3
-                        else:
-                            readout.shape = -1, nColumns
-                        image[rowStart:rowEnd, :] = readout
+                        readout.shape = -1, nColumns
+                    image[rowStart:rowEnd, :] = readout
                 rowStart += nRowsToRead
         if close:
             self.__makeSureFileIsClosed()
@@ -1040,11 +1027,11 @@ class TiffIO(object):
                               bitsPerSample * nChannels / 8)
 
         if descriptionLength > 4:
-            stripOffsets0 = endOfFile + dateLength + descriptionLength + \
-                        2 + 12 * nDirectoryEntries + 4
+            stripOffsets0 = (endOfFile + dateLength + descriptionLength +
+                             2 + 12 * nDirectoryEntries + 4)
         else:
-            stripOffsets0 = endOfFile + dateLength + \
-                        2 + 12 * nDirectoryEntries + 4
+            stripOffsets0 = (endOfFile + dateLength +
+                             2 + 12 * nDirectoryEntries + 4)
 
         if softwareLength > 4:
             stripOffsets0 += softwareLength
@@ -1236,33 +1223,3 @@ class TiffIO(object):
             outputIFD += stripByteCountsString
 
         return outputIFD
-
-
-if __name__ == "__main__":
-    filename = sys.argv[1]
-    dtype = numpy.uint16
-    if not os.path.exists(filename):
-        print("Testing file creation")
-        tif = TiffIO(filename, mode='wb+')
-        data = numpy.arange(10000).astype(dtype)
-        data.shape = 100, 100
-        tif.writeImage(data, info={'Title': '1st'})
-        tif = None
-        if os.path.exists(filename):
-            print("Testing image appending")
-            tif = TiffIO(filename, mode='rb+')
-            tif.writeImage((data * 2).astype(dtype), info={'Title': '2nd'})
-            tif = None
-    tif = TiffIO(filename)
-    print("Number of images = %d" % tif.getNumberOfImages())
-    for i in range(tif.getNumberOfImages()):
-        info = tif.getInfo(i)
-        for key in info:
-            if key not in ["colormap"]:
-                print("%s = %s" % (key, info[key]))
-            elif info['colormap'] is not None:
-                print("RED   %s = %s" % (key, info[key][0:10, 0]))
-                print("GREEN %s = %s" % (key, info[key][0:10, 1]))
-                print("BLUE  %s = %s" % (key, info[key][0:10, 2]))
-        data = tif.getImage(i)[0, 0:10]
-        print("data [0, 0:10] = ", data)

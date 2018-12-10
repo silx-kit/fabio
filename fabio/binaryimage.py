@@ -34,7 +34,6 @@ data-type, dimensions, byte order and offset
 This simple library has been made for manipulating exotic/unknown files format.
 """
 
-# Get ready for python3:
 from __future__ import with_statement, print_function
 
 __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]
@@ -90,9 +89,8 @@ class BinaryImage(FabioImage):
 
         """
         self.filename = fname
-        self.dim1 = dim1
-        self.dim2 = dim2
-        self.bytecode = bytecode
+        self._shape = dim2, dim1
+        self._bytecode = bytecode
         f = open(self.filename, "rb")
         dims = [dim2, dim1]
         bpp = len(numpy.array(0, bytecode).tostring())
@@ -105,14 +103,15 @@ class BinaryImage(FabioImage):
                 f.seek(-size + offset + 1, 2)  # seek from EOF backwards
             except IOError:
                 logger.warning('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
-            except:
+            except Exception:
+                logger.debug("Backtrace", exc_info=True)
                 logger.error('Uncommon error encountered when reading file')
         rawData = f.read(size)
+        data = numpy.frombuffer(rawData, bytecode).copy().reshape(tuple(dims))
         if self.swap_needed(endian):
-            data = numpy.fromstring(rawData, bytecode).byteswap().reshape(tuple(dims))
-        else:
-            data = numpy.fromstring(rawData, bytecode).reshape(tuple(dims))
+            data.byteswap(True)
         self.data = data
+        self._shape = None
         return self
 
     def estimate_offset_value(self, fname, dim1, dim2, bytecode="int32"):

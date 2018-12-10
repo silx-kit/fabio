@@ -118,8 +118,8 @@ class Bruker100Image(BrukerImage):
                 else:
                     self.header[key] = val
         # set the image dimensions
-        self.dim1 = int(self.header['NROWS'].split()[0])
-        self.dim2 = int(self.header['NCOLS'].split()[0])
+        shape = int(self.header['NROWS'].split()[0]), int(self.header['NCOLS'].split()[0])
+        self._shape = shape
         self.version = int(self.header.get('VERSION', "100"))
 
     def toPIL16(self, filename=None):
@@ -128,7 +128,7 @@ class Bruker100Image(BrukerImage):
 
         if filename:
             self.read(filename)
-        PILimage = Image.frombuffer("F", (self.dim1, self.dim2), self.data, "raw", "F;16", 0, -1)
+        PILimage = Image.frombuffer("F", self.shape, self.data, "raw", "F;16", 0, -1)
         return PILimage
 
     def read(self, fname, frame=None):
@@ -136,8 +136,7 @@ class Bruker100Image(BrukerImage):
         zero paded to a multiple of 16 bits  '''
         with self._open(fname, "rb") as infile:
             self._readheader(infile)
-            rows = self.dim1
-            cols = self.dim2
+            rows, cols = self.shape
             npixelb = int(self.header['NPIXELB'][0])
             # you had to read the Bruker docs to know this!
 
@@ -164,7 +163,7 @@ class Bruker100Image(BrukerImage):
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
                 # ar without zeros
-                ar = numpy.fromstring(data_str[:nov * bpp], datatype)
+                ar = numpy.frombuffer(data_str[:nov * bpp], datatype)
                 # insert the the overflow pixels in the image array:
                 lim = (1 << (8 * k)) - 1
 

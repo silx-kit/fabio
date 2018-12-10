@@ -26,19 +26,16 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division
+
 import unittest
-import sys
 import os
 import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.raxisimage import raxisimage
+from .utilstest import UtilsTest
 
 
 # filename dim1 dim2 min max mean stddev
@@ -65,6 +62,7 @@ class TestRaxisImage(unittest.TestCase):
             name = vals[0]
             logger.debug("Testing file %s" % name)
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = raxisimage()
             obj.read(os.path.join(os.path.dirname(self.mar), name))
@@ -73,9 +71,7 @@ class TestRaxisImage(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
-            self.assertNotEqual(obj.dim1, obj.dim2, "dim2!=dim1")
+            self.assertEqual(shape, obj.shape)
 
     def _test_write(self):
         self.skipTest("Write is not implemented")
@@ -102,11 +98,10 @@ class TestRaxisImage(unittest.TestCase):
         This test takes a lot of time, so only in debug mode.
         """
         N = 1000
-        if logger.getEffectiveLevel() <= logging.INFO:
+        if logger.getEffectiveLevel() == logging.DEBUG:
             logger.debug("Testing for memory leak")
-            for i in range(N):
+            for _ in range(N):
                 _img = fabio.open(self.mar)
-                print("Reading #%s/%s" % (i, N))
 
 
 def suite():

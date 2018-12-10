@@ -33,7 +33,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 + mods for fabio by JPW
 
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function
 import numpy
 import logging
@@ -57,8 +57,9 @@ class AdscImage(FabioImage):
         with self._open(fname, "rb") as infile:
             try:
                 self._readheader(infile)
-            except:
-                raise Exception("Error processing adsc header")
+            except Exception:
+                logger.debug("Backtrace", exc_info=True)
+                raise Exception("Error processing ADSC header")
             # banned by bzip/gzip???
             try:
                 infile.seek(int(self.header['HEADER_BYTES']), 0)
@@ -72,18 +73,18 @@ class AdscImage(FabioImage):
         # infile.close()
 
         # now read the data into the array
-        self.dim1 = int(self.header['SIZE1'])
-        self.dim2 = int(self.header['SIZE2'])
-        data = numpy.fromstring(binary, numpy.uint16)
+        self._shape = int(self.header['SIZE2']), int(self.header['SIZE1'])
+        data = numpy.frombuffer(binary, numpy.uint16).copy()
         if self.swap_needed():
             data.byteswap(True)
         try:
-            data.shape = (self.dim2, self.dim1)
+            data.shape = self._shape
         except ValueError:
                 raise IOError('Size spec in ADSC-header does not match ' +
-                              'size of image data field %sx%s != %s' % (self.dim1, self.dim2, data.size))
+                              'size of image data field %s != %s' % (self._shape, data.size))
         self.data = data
-        self.bytecode = numpy.uint16
+        self._shape = None
+        self._dtype = None
         self.resetvals()
         return self
 

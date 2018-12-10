@@ -29,26 +29,20 @@
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
-import sys
 import os
 import numpy
 import tempfile
 import shutil
 import io
-import fabio.edfimage
+import logging
 
+logger = logging.getLogger(__name__)
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
-
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from ..edfimage import edfimage
 from ..third_party import six
 from ..fabioutils import GzipFile, BZ2File
+from .utilstest import UtilsTest
 
 
 class TestFlatEdfs(unittest.TestCase):
@@ -93,8 +87,7 @@ class TestFlatEdfs(unittest.TestCase):
 
     def test_read(self):
         """ check readable"""
-        self.assertEqual(self.obj.dim1, 256, msg="dim1!=256 for file: %s" % self.filename)
-        self.assertEqual(self.obj.dim2, 256, msg="dim2!=256 for file: %s" % self.filename)
+        self.assertEqual(self.obj.shape, (256, 256), msg="File %s has wrong shape " % self.filename)
         self.assertEqual(self.obj.bpp, 4, msg="bpp!=4 for file: %s" % self.filename)
         self.assertEqual(self.obj.bytecode, numpy.float32, msg="bytecode!=flot32 for file: %s" % self.filename)
         self.assertEqual(self.obj.data.shape, (256, 256), msg="shape!=(256,256) for file: %s" % self.filename)
@@ -168,6 +161,7 @@ class TestEdfs(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = edfimage()
             try:
@@ -181,8 +175,7 @@ class TestEdfs(unittest.TestCase):
             self.assertAlmostEqual(mean, obj.getmean(), 2, "testedfs: %s getmean" % name)
             logger.info("%s StdDev:  exp=%s, obt=%s" % (name, stddev, obj.getstddev()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name)
-            self.assertEqual(dim1, obj.dim1, "testedfs: %s dim1" % name)
-            self.assertEqual(dim2, obj.dim2, "testedfs: %s dim2" % name)
+            self.assertEqual(obj.shape, shape, "testedfs: %s shape" % name)
         obj = None
 
     def test_rebin(self):
@@ -298,7 +291,7 @@ class TestEdfFastRead(unittest.TestCase):
     def test_fastread(self):
         ref = fabio.open(self.refFilename)
         refdata = ref.data
-        obt = ref.fastReadData(self.fastFilename)
+        obt = ref.fast_read_data(self.fastFilename)
         self.assertEqual(abs(obt - refdata).max(), 0, "testedffastread: Same data")
 
 
@@ -376,7 +369,7 @@ class TestEdfRegression(unittest.TestCase):
         del image.header["Dim_1"]
         image.write(output_filename)
         image2 = fabio.open(output_filename)
-        self.assertEqual(image.dims, image2.dims)
+        self.assertEqual(image.shape, image2.shape)
 
 
 class TestBadFiles(unittest.TestCase):
@@ -563,6 +556,40 @@ class TestBadGzFiles(TestBadFiles):
             TestBadFiles.write_data(gzfd)
 
 
+class TestEdfIterator(unittest.TestCase):
+    """Read different EDF files with lazy iterator
+    """
+
+    def test_multi_frame(self):
+        """Test iterator on a multi-frame EDF"""
+        filename = UtilsTest.getimage("MultiFrame.edf.bz2")
+
+        iterator = fabio.edfimage.EdfImage.lazy_iterator(filename)
+        ref = fabio.open(filename)
+
+        for index in range(ref.nframes):
+            frame = next(iterator)
+            ref_frame = ref.getframe(index)
+            self.assertEqual(numpy.abs(ref_frame.data - frame.data).max(), 0, 'Test frame %d data' % index)
+            self.assertEqual(ref_frame.header, frame.header, 'Test frame %d header' % index)
+
+        with self.assertRaises(StopIteration):
+            next(iterator)
+
+    def test_single_frame(self):
+        """Test iterator on a single frame EDF"""
+        filename = UtilsTest.getimage("edfCompressed_U16.edf")
+        iterator = fabio.edfimage.EdfImage.lazy_iterator(filename)
+
+        frame = next(iterator)
+        ref = fabio.open(filename)
+        self.assertEqual((ref.data - frame.data).max(), 0, "Test data")
+        self.assertEqual(ref.header, frame.header, "Test header")
+
+        with self.assertRaises(StopIteration):
+            next(iterator)
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -577,6 +604,7 @@ def suite():
     testsuite.addTest(loadTests(TestEdfRegression))
     testsuite.addTest(loadTests(TestBadFiles))
     testsuite.addTest(loadTests(TestBadGzFiles))
+    testsuite.addTest(loadTests(TestEdfIterator))
     return testsuite
 
 

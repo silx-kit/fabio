@@ -26,29 +26,24 @@
 
 """Test for FabIO reader for Fit2D binary images
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division, absolute_import
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "27/07/2017"
+__date__ = "13/11/2018"
 
 import unittest
-import sys
-import os
 import numpy
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.fit2dimage import fit2dimage
+from .utilstest import UtilsTest
 
 
 class TestFit2DImage(unittest.TestCase):
@@ -65,8 +60,7 @@ class TestFit2DImage(unittest.TestCase):
         """ Check it reads a mask OK """
         i = fit2dimage()
         i.read(self.filename)
-        self.assertEqual(i.dim1, 25)
-        self.assertEqual(i.dim2, 28)
+        self.assertEqual(i.shape, (28, 25))
         self.assertEqual(i.bpp, 4)
         self.assertEqual(i.bytecode, numpy.float32)
         self.assertEqual(i.data.shape, (28, 25))

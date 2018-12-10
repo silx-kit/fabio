@@ -28,17 +28,17 @@
 19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import os
 import numpy
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+import logging
 
-logger = UtilsTest.get_logger(__file__)
+logger = logging.getLogger(__name__)
+
 from ..brukerimage import brukerimage
 from .. import fabioutils
+from .utilstest import UtilsTest
 
 # this is actually a violation of the bruker format since the order of
 # the header items is specified
@@ -65,7 +65,7 @@ OVERFLOWS = [
     ["%09d" % 4194304, ("%07d" % (127 * 256 + 128))],
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 127))],
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))]
-    ]
+]
 
 
 class TestBruker(unittest.TestCase):
@@ -153,6 +153,7 @@ class TestBrukerLinear(unittest.TestCase):
         if os.path.exists(self.filename):
             os.unlink(self.filename)
 
+
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17
@@ -178,6 +179,7 @@ class TestRealImg(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = brukerimage()
             obj.read(os.path.join(self.im_dir, name))
@@ -185,8 +187,7 @@ class TestRealImg(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
     def test_write(self):
         "Test writing with self consistency at the fabio level"

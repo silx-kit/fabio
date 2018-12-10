@@ -31,18 +31,15 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
-
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
 from .utilstest import UtilsTest
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+logger = logging.getLogger(__name__)
+
 from fabio.adscimage import adscimage
 from fabio.edfimage import edfimage
 
@@ -89,6 +86,7 @@ class TestFlatMccdsAdsc(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = adscimage()
             obj.read(os.path.join(self.im_dir, name))
@@ -97,8 +95,7 @@ class TestFlatMccdsAdsc(unittest.TestCase):
             got_mean = obj.getmean()
             self.assertAlmostEqual(mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
 
 def suite():

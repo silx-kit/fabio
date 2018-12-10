@@ -31,22 +31,21 @@ http://pilatus.web.psi.ch/DATA/DATASETS/insulin_0.2/
 19/01/2015
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
 import time
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.cbfimage import cbfimage
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
 from fabio.third_party.six import PY3
+from .utilstest import UtilsTest
 if PY3:
+    # FIXME: it have to be removed
     from fabio.fabioutils import unicode
 
 
@@ -105,12 +104,13 @@ class TestCbfReader(unittest.TestCase):
         startPos = cbs.find(starter) + 4
         data = cbs[startPos: startPos + int(cbf.header["X-Binary-Size"])]
         startTime = time.time()
-        numpyRes = decByteOffset_numpy(data, size=cbf.dim1 * cbf.dim2)
+        size = cbf.shape[0] * cbf.shape[1]
+        numpyRes = decByteOffset_numpy(data, size=size)
         tNumpy = time.time() - startTime
         logger.info("Timing for Numpy method : %.3fs" % tNumpy)
 
         startTime = time.time()
-        cythonRes = decByteOffset_cython(stream=data, size=cbf.dim1 * cbf.dim2)
+        cythonRes = decByteOffset_cython(stream=data, size=size)
         tCython = time.time() - startTime
         delta = abs(numpyRes - cythonRes).max()
         self.assertAlmostEqual(0, delta)

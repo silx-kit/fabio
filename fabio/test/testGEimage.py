@@ -28,19 +28,18 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
-import unittest
-import sys
-import os
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+import unittest
+import os
+import logging
+
 from .utilstest import UtilsTest
 
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+logger = logging.getLogger(__name__)
+
 from fabio.GEimage import GEimage
+
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """GE_aSI_detector_image_1529      2048 2048 1515 16353 1833.0311 56.9124
                 GE_aSI_detector_image_1529.gz   2048 2048 1515 16353 1833.0311 56.9124
@@ -60,6 +59,7 @@ class TestGE(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = GEimage()
             obj.read(os.path.join(os.path.dirname(self.GE), name))
@@ -68,8 +68,7 @@ class TestGE(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean")
             self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev")
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
 
 def suite():

@@ -38,18 +38,14 @@ __date__ = "2016-11-23"
 __contact__ = "jerome.kieffer@esrf.fr"
 
 import unittest
-import sys
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 from fabio.OXDimage import OXDimage
+from .utilstest import UtilsTest
 
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
@@ -78,13 +74,13 @@ class TestOxd(unittest.TestCase):
         for vals in TESTIMAGES:
             name = vals[0]
             dim1, dim2 = vals[1:3]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = vals[3:7]
             detector_type = vals[7]
             obj = OXDimage()
             obj.read(self.fn[name])
 
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin on " + name)
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax on " + name)

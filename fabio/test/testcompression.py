@@ -28,29 +28,20 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-#
-# Get ready for python3:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2011-2016 ESRF"
-__date__ = "27/07/2017"
+__date__ = "29/10/2018"
 
 import unittest
-import sys
-import os
 import numpy
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
 from fabio import compression
 
 

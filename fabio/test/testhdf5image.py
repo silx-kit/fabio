@@ -13,22 +13,17 @@
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
 import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
-
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+logger = logging.getLogger(__name__)
 
 from fabio.fabioutils import exists
 from fabio.openimage import openimage
 from fabio.hdf5image import Hdf5Image, h5py
+from .utilstest import UtilsTest
 
 
 def make_hdf5(name, shape=(50, 99, 101)):
@@ -67,29 +62,25 @@ class TestHdf5(unittest.TestCase):
         """ check we can read images from Eiger"""
         e = Hdf5Image()
         e.read(self.fn2)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 1, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 
         e = Hdf5Image()
         e.read(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 
     def test_open(self):
         """ check we can read images from Eiger"""
         e = openimage(self.fn2)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 1, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 
         e = openimage(self.fn3)
-        self.assertEqual(e.dim1, 101, "dim1 OK")
-        self.assertEqual(e.dim2, 99, "dim2 OK")
+        self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 

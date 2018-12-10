@@ -25,19 +25,18 @@
 Test for numpy images.
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "27/07/2017"
+__date__ = "13/11/2018"
+
 import os
-import sys
 import unittest
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
 import numpy
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import logging
+
+logger = logging.getLogger(__name__)
+
 from fabio.numpyimage import NumpyImage
 from fabio.openimage import openimage
+from .utilstest import UtilsTest
 
 
 class TestNumpy(unittest.TestCase):
@@ -63,8 +62,7 @@ class TestNumpy(unittest.TestCase):
         obj = openimage(self.fn)
 
         self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
-        self.assertEqual(9, obj.dim1, "dim1")
-        self.assertEqual(11, obj.dim2, "dim2")
+        self.assertEqual(obj.shape, (11, 9))
         self.assertTrue(numpy.allclose(obj.data, self.ary), "data")
 
     def test_write(self):
@@ -73,8 +71,7 @@ class TestNumpy(unittest.TestCase):
         ref.save(self.fn2)
         with openimage(self.fn2) as obj:
             self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
-            self.assertEqual(9, obj.dim1, "dim1")
-            self.assertEqual(11, obj.dim2, "dim2")
+            self.assertEqual(obj.shape, (11, 9))
             self.assertTrue(numpy.allclose(obj.data, self.ary), "data")
 
     def test_multidim(self):
@@ -83,9 +80,9 @@ class TestNumpy(unittest.TestCase):
             numpy.save(self.fn, ary)
             with openimage(self.fn) as obj:
                 self.assertEqual(obj.bytecode, numpy.float32, msg="bytecode is OK")
-                self.assertEqual(shape[-1], obj.dim1, "dim1")
+                self.assertEqual(shape[-1], obj.shape[-1], "dim1")
                 dim2 = 1 if len(shape) == 1 else shape[-2]
-                self.assertEqual(dim2, obj.dim2, "dim2")
+                self.assertEqual(dim2, obj.shape[-2], "dim2")
                 nframes = 1
                 if len(shape) > 2:
                     for i in shape[:-2]:

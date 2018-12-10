@@ -23,17 +23,14 @@
 #
 """Pilatus Tiff Unit tests"""
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
-import os
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
+logger = logging.getLogger(__name__)
+
+import fabio
 from .utilstest import UtilsTest
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
 
 
 class TestPilatus(unittest.TestCase):
@@ -52,6 +49,7 @@ class TestPilatus(unittest.TestCase):
             name = params[0]
             logger.debug("Processing: %s" % name)
             dim1, dim2 = params[1:3]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
             obj = fabio.pilatusimage.PilatusImage()
             obj.read(UtilsTest.getimage(name))
@@ -60,8 +58,7 @@ class TestPilatus(unittest.TestCase):
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
     def test_header(self):
         for params in self.TESTIMAGES:
@@ -135,10 +132,10 @@ class TestPilatus1M(unittest.TestCase):
             name = params[0]
             logger.debug("Processing: %s" % name)
             dim1, dim2 = params[1:3]
+            shape = dim2, dim1
             obj = fabio.pilatusimage.PilatusImage()
             obj.read(UtilsTest.getimage(name))
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape, "dim2")
 
     def test_header(self):
         for params in self.TESTIMAGES:

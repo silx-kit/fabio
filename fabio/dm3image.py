@@ -27,6 +27,8 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION W
 
+from __future__ import with_statement, print_function
+
 """
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -37,9 +39,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
-# get ready for python3
-from __future__ import with_statement, print_function
-import sys
+
 import logging
 import numpy
 from .fabioimage import FabioImage
@@ -58,7 +58,7 @@ DATA_TYPES = {2: numpy.int16,
               15: 'Struct',
               18: None,
               20: None
-               }
+              }
 
 DATA_BYTES = {2: 2,
               4: 2,
@@ -94,7 +94,6 @@ class Dm3Image(FabioImage):
         self.grouptag_no_tags = None
         self.bytes_in_file = None
         self.tag_label_length = None
-        self.go_on = None
 
     def _readheader(self):
         self.infile.seek(0)
@@ -118,8 +117,8 @@ class Dm3Image(FabioImage):
         self.resetvals()
         self.infile = self._open(fname, "rb")
         self._readheader()
-        self.go_on = True
-        while self.go_on:
+        go_on = True
+        while go_on:
             self.read_tag_group()
             self.read_tag_entry()
             if self.infile.tell() > self.bytes_in_file:
@@ -128,27 +127,31 @@ class Dm3Image(FabioImage):
             while self.tag_is_data == 21:
                 self.read_tag_entry()
                 if self.infile.tell() > self.bytes_in_file:
-                    self.go_on = False
+                    go_on = False
 
-        (dim1_raw, dim2_raw) = self.header['Active Size (pixels)'].split()
-        (dim1_raw, dim2_raw) = (eval(dim1_raw), eval(dim2_raw))
-        (dim1_binning, dim2_binning) = self.header['Binning'].split()
-        (dim1_binning, dim2_binning) = (eval(dim1_binning), eval(dim2_binning))
-        self.dim1 = dim1_raw // dim1_binning
-        self.dim2 = dim2_raw // dim2_binning
-        # print dim1,dim2
+        dim_raw = self.header['Active Size (pixels)'].split()
+        dim1_raw = int(dim_raw[0])
+        dim2_raw = int(dim_raw[1])
+        binning_raw = self.header['Binning']
+        try:
+            dim1_binning, dim2_binning = map(int, binning_raw.split())
+        except AttributeError:
+            dim1_binning, dim2_binning = map(lambda x: x * int(binning_raw) * x, (1, 1))
+        self._shape = dim2_raw // dim2_binning, dim1_raw // dim1_binning
         if "Data" in self.header:
-            self.data = self.header[u'Data'].reshape(self.dim1, self.dim2)
+            self.data = self.header[u'Data']
+            self.data.shape = self._shape
+            self._shape = None
         return self
 
     def readbytes(self, bytes_to_read, format, swap=True):
         raw = self.infile.read(bytes_to_read)
         if format is not None:
-            data = numpy.fromstring(raw, format)
+            data = numpy.frombuffer(raw, format).copy()
         else:
             data = raw
         if swap:
-            data = data.byteswap()
+            data.byteswap(True)
         return data
 
     def read_tag_group(self):
@@ -175,7 +178,8 @@ class Dm3Image(FabioImage):
             # This is data
             try:
                 key = tag_label.decode("latin-1")
-            except:
+            except Exception:
+                # FIXME: Not very safe decodage
                 key = "None"
             value = self.read_tag_type()
             if isinstance(value, binary_type):
@@ -253,13 +257,11 @@ class Dm3Image(FabioImage):
             for i in range(struct_number_fields):
                 field_data += self.readbytes(field_info[i][0], None, swap=False) + b' '
                 data = self.readbytes(DATA_BYTES[field_info[i][1]], DATA_TYPES[field_info[i][1]], swap=self.swap)
-                field_data +=  str(data[0]).encode()+ b" "
-                                                                   
-                                                                   
+                field_data += str(data[0]).encode() + b" "
             return field_data
 
     def read_data(self):
-        self.encoded_datatype = numpy.fromstring(self.infile.read(4), numpy.uint32).byteswap()
+        self.encoded_datatype = numpy.frombuffer(self.infile.read(4), numpy.uint32).copy().byteswap()
 
 
 dm3image = Dm3Image

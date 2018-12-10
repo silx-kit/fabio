@@ -28,19 +28,15 @@
 """
 
 from __future__ import print_function, with_statement, division, absolute_import
-import unittest
-import sys
-import os
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
 
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import unittest
+import numpy
+import logging
+
+logger = logging.getLogger(__name__)
 
 import fabio.xsdimage
-import numpy
+from .utilstest import UtilsTest
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15
@@ -62,6 +58,7 @@ class TestXSD(unittest.TestCase):
             vals = line.split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
             obj = fabio.xsdimage.xsdimage()
             obj.read(self.fn[name])
@@ -71,8 +68,7 @@ class TestXSD(unittest.TestCase):
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
             logger.info("%s %s %s" % (name, stddev, obj.getstddev()))
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
-            self.assertEqual(dim1, obj.dim1, "dim1")
-            self.assertEqual(dim2, obj.dim2, "dim2")
+            self.assertEqual(shape, obj.shape)
 
     def test_same(self):
         """ test if an image is the same as the EDF equivalent"""

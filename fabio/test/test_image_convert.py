@@ -29,12 +29,12 @@ from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os
-import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .utilstest import UtilsTest
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+import fabio
 
 
 class TestImageConvert(unittest.TestCase):
@@ -50,11 +50,9 @@ class TestImageConvert(unittest.TestCase):
         image = fabio.open(filename)
         image2 = image.convert("tiff")
         image2.save(output_filename)
-        self.assertEqual(image.dim1, image2.dim1)
-        self.assertEqual(image.dim2, image2.dim2)
+        self.assertEqual(image.shape, image2.shape)
         image3 = fabio.open(output_filename)
-        self.assertEqual(image.dim1, image3.dim1)
-        self.assertEqual(image.dim2, image3.dim2)
+        self.assertEqual(image.shape, image3.shape)
 
 
 def suite():

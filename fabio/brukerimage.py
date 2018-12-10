@@ -47,7 +47,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "25/07/2017"
+__date__ = "13/11/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -220,8 +220,8 @@ class BrukerImage(FabioImage):
         self.header['datastart'] = blocksize * nhdrblks
 
         # set the image dimensions
-        self.dim1 = int(self.header['NROWS'].split()[0])
-        self.dim2 = int(self.header['NCOLS'].split()[0])
+        shape = int(self.header['NROWS'].split()[0]), int(self.header['NCOLS'].split()[0])
+        self._shape = shape
         self.version = int(self.header.get('VERSION', "86"))
 
     def read(self, fname, frame=None):
@@ -234,8 +234,7 @@ class BrukerImage(FabioImage):
             except Exception as err:
                 raise RuntimeError("Unable to parse Bruker headers: %s" % err)
 
-            rows = self.dim1
-            cols = self.dim2
+            rows, cols = self._shape
 
             try:
                 # you had to read the Bruker docs to know this!
@@ -247,7 +246,7 @@ class BrukerImage(FabioImage):
                 logger.warning(errmsg)
                 raise RuntimeError(errmsg)
 
-            data = numpy.fromstring(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb])
+            data = numpy.frombuffer(infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb]).copy()
             if not numpy.little_endian and data.dtype.itemsize > 1:
                 data.byteswap(True)
 
@@ -280,7 +279,7 @@ class BrukerImage(FabioImage):
                 # TODO: check that the formula is OK, not reverted.
                 logger.warning("performing correction with slope=%s, offset=%s (LINEAR=%s)" % (slope, offset, self.header["LINEAR"]))
                 data = (data * slope + offset).astype(numpy.float32)
-        self.data = data.reshape(self.dim1, self.dim2)
+        self.data = data.reshape(self._shape)
 
         self.resetvals()
         self.pilimage = None
