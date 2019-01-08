@@ -154,11 +154,12 @@ class Bruker100Image(BrukerImage):
             self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
                                        datatype="int", signed='n', swap='n')
             # now process the overflows
-            for k, nover in enumerate(self.header['NOVERFL'].split()):
+            noverfl_values = [int(f) for f in self.header['NOVERFL'].split()]
+
+            for k, nov in enumerate(noverfl_values):
                 if k == 0:
                     # read the set of "underflow pixels" - these will be completely disregarded for now
                     continue
-                nov = int(nover)
                 if nov <= 0:
                     continue
                 bpp = 1 << k  # (2 ** k)
@@ -187,14 +188,14 @@ class Bruker100Image(BrukerImage):
                 logger.debug("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
 
         # replace zeros with values from underflow block
-        if int(self.header["NOVERFL"].split()[0]) > 0:
+        if noverfl_values[0] > 0:
             flat = self.data.ravel()
             self.mask_undeflows = numpy.where(flat == 0)[0]
             self.mask_no_undeflows = numpy.where(self.data != 0)
             flat.put(self.mask_undeflows, self.ar_underflows)
 
         # add baseline
-        if int(self.header["NOVERFL"].split()[0]) != -1:
+        if noverfl_values[0] != -1:
             baseline = int(self.header["NEXP"].split()[2])
             self.data[self.mask_no_undeflows] += baseline
 
