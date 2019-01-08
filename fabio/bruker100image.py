@@ -268,7 +268,7 @@ class Bruker100Image(BrukerImage):
         pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
         flat = self.data.ravel()  # flat memory view
         flow_pos = numpy.logical_or(flat >= limit, flat < 0)
-#         flow_pos_indexes = numpy.where(flow_pos)[0]
+        # flow_pos_indexes = numpy.where(flow_pos)[0]
         flow_vals = (flat[flow_pos])
 
         flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
@@ -281,7 +281,7 @@ class Bruker100Image(BrukerImage):
         """
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
-#         nunderf = self.nunderf
+        # nunderf = self.nunderf
         read_bytes = (noverf * bpp + 15) & ~(15)
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
@@ -356,12 +356,12 @@ class Bruker100Image(BrukerImage):
             bpp = 1
             # limit = 255
             nunderFlows = self.nunderFlows
-#             temp_data = self.data
+            # temp_data = self.data
             read_bytes = (nunderFlows * bpp + 15) & ~(15)  # multiple of 16
             dif2usedbyts = read_bytes - (nunderFlows * bpp)
             pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
-#             flat = self.data.ravel()  # flat memory view
-#             flow_pos_indexes = self.mask_undeflows
+            # flat = self.data.ravel()  # flat memory view
+            # flow_pos_indexes = self.mask_undeflows
             flow_vals = (self.ar_underflows)
             # flow_vals[flow_vals<0] = 65535#limit#flow_vals[flow_vals<0]
             flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
@@ -375,13 +375,13 @@ class Bruker100Image(BrukerImage):
             bpp = 2
             limit = 255
             nover_one = self.nover_one
-#             temp_data = self.data
+            # temp_data = self.data
             read_bytes = (nover_one * bpp + 15) & ~(15)  # multiple of 16
             dif2usedbyts = read_bytes - (nover_one * bpp)
             pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
             flat = self.data.ravel()  # flat memory view
             flow_pos = (flat >= limit) + (flat < 0)
-#             flow_pos_indexes = numpy.where(flow_pos == True)[0]
+            # flow_pos_indexes = numpy.where(flow_pos == True)[0]
             flow_vals = (flat[flow_pos])
             flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
             # print("flow_vals",flow_vals)
@@ -395,7 +395,7 @@ class Bruker100Image(BrukerImage):
 
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
-#         nover_two = self.nover_two
+        # nover_two = self.nover_two
         read_bytes = (noverf * bpp + 15) & ~(15)  # multiple of 16
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
