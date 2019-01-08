@@ -132,8 +132,16 @@ class Bruker100Image(BrukerImage):
         return PILimage
 
     def read(self, fname, frame=None):
-        '''data is stored in three blocks: data (uint8), overflow (uint32), underflow (int32). The blocks are
-        zero paded to a multiple of 16 bits  '''
+        """Read the data.
+
+        Data is stored in three blocks:
+
+        - data (uint8)
+        - overflow (uint32)
+        - underflow (int32).
+
+        The blocks are zero padded to a multiple of 16 bits.
+        """
         with self._open(fname, "rb") as infile:
             self._readheader(infile)
             rows, cols = self.shape
@@ -177,18 +185,18 @@ class Bruker100Image(BrukerImage):
                 else:  # only working because nov = - is treated bevor
                     self.ar_underflows = ar
                 logger.debug("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
-#         infile.close()
+
         # replace zeros with values from underflow block
         if int(self.header["NOVERFL"].split()[0]) > 0:
             flat = self.data.ravel()
             self.mask_undeflows = numpy.where(flat == 0)[0]
             self.mask_no_undeflows = numpy.where(self.data != 0)
             flat.put(self.mask_undeflows, self.ar_underflows)
-        # add basline
+
+        # add baseline
         if int(self.header["NOVERFL"].split()[0]) != -1:
             baseline = int(self.header["NEXP"].split()[2])
             self.data[self.mask_no_undeflows] += baseline
-        # print(self.data.max(), self.data.min(), self.data[numpy.where(self.data==0)].shape)
 
         self.resetvals()
         return self
