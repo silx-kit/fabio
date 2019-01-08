@@ -91,11 +91,11 @@ class Bruker100Image(BrukerImage):
         line = 80
         blocksize = 512
         nhdrblks = 5  # by default we always read 5 blocks of 512
-        self.__headerstring__ = infile.read(blocksize * nhdrblks).decode("ASCII")
+        self.__headerstring = infile.read(blocksize * nhdrblks).decode("ASCII")
         self.header = self.check_header()
         for i in range(0, nhdrblks * blocksize, line):
-            if self.__headerstring__[i: i + line].find(":") > 0:
-                key, val = self.__headerstring__[i: i + line].split(":", 1)
+            if self.__headerstring[i: i + line].find(":") > 0:
+                key, val = self.__headerstring[i: i + line].split(":", 1)
                 key = key.strip()  # remove the whitespace (why?)
                 val = val.strip()
                 if key in self.header:
@@ -107,10 +107,10 @@ class Bruker100Image(BrukerImage):
         nhdrblks = int(self.header['HDRBLKS'])
         self.header['HDRBLKS'] = nhdrblks
         # Now read in the rest of the header blocks, appending
-        self.__headerstring__ += infile.read(blocksize * (nhdrblks - 5)).decode("ASCII")
+        self.__headerstring += infile.read(blocksize * (nhdrblks - 5)).decode("ASCII")
         for i in range(5 * blocksize, nhdrblks * blocksize, line):
-            if self.__headerstring__[i: i + line].find(":") > 0:  # as for first 512 bytes of header
-                key, val = self.__headerstring__[i: i + line].split(":", 1)
+            if self.__headerstring[i: i + line].find(":") > 0:  # as for first 512 bytes of header
+                key, val = self.__headerstring[i: i + line].split(":", 1)
                 key = key.strip()
                 val = val.strip()
                 if key in self.header:
