@@ -54,11 +54,8 @@ import numpy
 import logging
 import os
 from math import ceil
+
 logger = logging.getLogger(__name__)
-try:
-    from PIL import Image
-except ImportError:
-    Image = None
 
 from .brukerimage import BrukerImage
 from .readbytestream import readbytestream
@@ -121,15 +118,6 @@ class Bruker100Image(BrukerImage):
         shape = int(self.header['NROWS'].split()[0]), int(self.header['NCOLS'].split()[0])
         self._shape = shape
         self.version = int(self.header.get('VERSION', "100"))
-
-    def toPIL16(self, filename=None):
-        if not Image:
-            raise RuntimeError("PIL is not installed !!! ")
-
-        if filename:
-            self.read(filename)
-        PILimage = Image.frombuffer("F", self.shape, self.data, "raw", "F;16", 0, -1)
-        return PILimage
 
     def read(self, fname, frame=None):
         """Read the data.
