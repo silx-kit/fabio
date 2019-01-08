@@ -153,19 +153,15 @@ class Bruker100Image(BrukerImage):
             # The total size is nbytes * nrows * ncolumns.
             self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
                                        datatype="int", signed='n', swap='n')
+
             # now process the overflows
             noverfl_values = [int(f) for f in self.header['NOVERFL'].split()]
 
             for k, nov in enumerate(noverfl_values):
-                if k == 0:
-                    # read the set of "underflow pixels" - these will be completely disregarded for now
-                    continue
                 if nov <= 0:
                     continue
-                bpp = 1 << k  # (2 ** k)
+                bpp = 1 << k
                 datatype = self.bpp_to_numpy[bpp]
-                # upgrade data type
-                self.data = self.data.astype(datatype)
                 # pad nov*bpp to a multiple of 16 bytes
                 nbytes = (nov * bpp + 15) & ~(15)
 
@@ -173,8 +169,16 @@ class Bruker100Image(BrukerImage):
                 data_str = infile.read(nbytes)
                 # ar without zeros
                 ar = numpy.frombuffer(data_str[:nov * bpp], datatype)
+                if k == 0:
+                    # read the set of "underflow pixels" - these will be completely disregarded for now
+                    self.ar_underflows = ar
+                    continue
+
                 # insert the the overflow pixels in the image array:
                 lim = (1 << (8 * k)) - 1
+
+                # upgrade data type
+                self.data = self.data.astype(datatype)
 
                 # generate an array comprising of the indices into data.ravel()
                 # where its value equals lim.
@@ -183,8 +187,6 @@ class Bruker100Image(BrukerImage):
                 # now put values from ar into those indices
                 if k != 0:
                     flat.put(mask, ar)
-                else:  # only working because nov = - is treated bevor
-                    self.ar_underflows = ar
                 logger.debug("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
 
         # replace zeros with values from underflow block
