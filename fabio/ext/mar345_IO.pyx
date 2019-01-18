@@ -43,7 +43,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret", "Thomas Vincent"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "11/08/2017"
+__date__ = "18/01/2019"
 
 import cython
 cimport numpy as cnp
@@ -66,7 +66,7 @@ cdef:
     cnp.uint8_t *CCP4_PCK_BIT_COUNT = [0, 4, 5, 6, 7, 8, 16, 32]
     cnp.uint8_t *CCP4_BITSIZE = [0, 0, 0, 0, 1, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0,
                                  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7]
-    int CCP4_PCK_BLOCK_HEADER_LENGTH = 6
+    unsigned int CCP4_PCK_BLOCK_HEADER_LENGTH = 6
 
 
 cdef extern from "ccp4_pack.h":
@@ -679,7 +679,8 @@ cdef class UnpackContainer:
         :param value_size: number of bits of each value
         """
         cdef:
-            cnp.uint32_t i, j        # simple counters
+            cnp.uint32_t i           # simple counters
+            int j
             cnp.uint32_t new_offset  # position after read
             cnp.int64_t cur, tmp2    # value to be stored
             cnp.uint64_t tmp         # under contruction: needs to be unsigned
