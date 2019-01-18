@@ -46,7 +46,7 @@ __copyright__ = "2012-2016, European Synchrotron Radiation Facility, Grenoble, F
 __date__ = "18/01/2019"
 
 import cython
-cimport numpy as cnp
+cimport numpy as cnumpy
 
 import numpy
 import os
@@ -56,15 +56,15 @@ logger = logging.getLogger(__name__)
 
 
 ctypedef fused any_int_t:
-    cnp.int8_t
-    cnp.int16_t
-    cnp.int32_t
-    cnp.int64_t
+    cnumpy.int8_t
+    cnumpy.int16_t
+    cnumpy.int32_t
+    cnumpy.int64_t
 
 # Few constants:
 cdef:
-    cnp.uint8_t *CCP4_PCK_BIT_COUNT = [0, 4, 5, 6, 7, 8, 16, 32]
-    cnp.uint8_t *CCP4_BITSIZE = [0, 0, 0, 0, 1, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0,
+    cnumpy.uint8_t *CCP4_PCK_BIT_COUNT = [0, 4, 5, 6, 7, 8, 16, 32]
+    cnumpy.uint8_t *CCP4_BITSIZE = [0, 0, 0, 0, 1, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0,
                                  6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7]
     unsigned int CCP4_PCK_BLOCK_HEADER_LENGTH = 6
 
@@ -85,11 +85,11 @@ def compress_pck(image not None, bint use_CCP4=False):
     :return: binary stream
     """
     cdef:
-        cnp.uint32_t  size, dim0, dim1, i, j
+        cnumpy.uint32_t  size, dim0, dim1, i, j
         int fd, ret
         char* name
-        cnp.int16_t[::1] data
-        cnp.int32_t[::1] raw
+        cnumpy.int16_t[::1] data
+        cnumpy.int32_t[::1] raw
         bytes output
 
     assert image.ndim == 2, "Input image shape is 2D"
@@ -132,10 +132,10 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     """
     cdef:
         int cdimx, cdimy, chigh, cversion, records, normal_offset, lenkey, i, stop, idx, value
-        cnp.uint32_t[:, ::1] data
-        cnp.uint8_t[::1] instream
-        cnp.int32_t[::1] unpacked
-        cnp.int32_t[:, ::1] overflow_data  # handles overflows
+        cnumpy.uint32_t[:, ::1] data
+        cnumpy.uint8_t[::1] instream
+        cnumpy.int32_t[::1] unpacked
+        cnumpy.int32_t[:, ::1] overflow_data  # handles overflows
         void* out
     end = None
     key1 = b"CCP4 packed image, X: "
@@ -216,7 +216,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
             idx = overflow_data[i, 0] - 1     # indexes are even values (-1 because 1 based counting)
             value = overflow_data[i, 1]  # values are odd values
             if (idx >= 0) and (idx < cdimx * cdimy):
-                data[idx // cdimx, idx % cdimx] = <cnp.uint32_t> value
+                data[idx // cdimx, idx % cdimx] = <cnumpy.uint32_t> value
     return numpy.asarray(data)
 
 
@@ -228,7 +228,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef inline cnp.int32_t[::1] precomp(cnp.int16_t[::1] img, cnp.uint32_t width):
+cpdef inline cnumpy.int32_t[::1] precomp(cnumpy.int16_t[::1] img, cnumpy.uint32_t width):
     """Pre-compression by subtracting the average value of the four neighbours
 
     Actually it looks a bit more complicated:
@@ -248,9 +248,9 @@ cpdef inline cnp.int32_t[::1] precomp(cnp.int16_t[::1] img, cnp.uint32_t width):
     This part implements overlows of int16 as the reference implementation is buggy
     """
     cdef:
-        cnp.uint32_t size, i
-        cnp.int32_t[::1] comp
-        cnp.int16_t last, cur, im0, im1, im2
+        cnumpy.uint32_t size, i
+        cnumpy.int32_t[::1] comp
+        cnumpy.int16_t last, cur, im0, im1, im2
     size = img.size
     comp = numpy.zeros(size, dtype=numpy.int32)
 
@@ -269,7 +269,7 @@ cpdef inline cnp.int32_t[::1] precomp(cnp.int16_t[::1] img, cnp.uint32_t width):
         # Rest of the image
         for i in range(width + 1, size):
             cur = img[i]
-            comp[i] = <cnp.int16_t> (cur - (last + im0 + im1 + im2 + 2) // 4)
+            comp[i] = <cnumpy.int16_t> (cur - (last + im0 + im1 + im2 + 2) // 4)
             last = cur
             im0 = im1
             im1 = im2
@@ -282,7 +282,7 @@ cpdef inline cnp.int32_t[::1] precomp(cnp.int16_t[::1] img, cnp.uint32_t width):
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef inline cnp.uint32_t[::1] postdec(cnp.int32_t[::1] comp, int width):
+cpdef inline cnumpy.uint32_t[::1] postdec(cnumpy.int32_t[::1] comp, int width):
     """Post decompression by adding the average value of the four neighbours
 
     Actually it looks a bit more complicated:
@@ -301,9 +301,9 @@ cpdef inline cnp.uint32_t[::1] postdec(cnp.int32_t[::1] comp, int width):
     This part implementes overlows of int16 as the reference implementation is bugged
     """
     cdef:
-        cnp.uint32_t size, i
-        cnp.uint32_t[::1] img
-        cnp.int16_t last, cur, fl0, fl1, fl2
+        cnumpy.uint32_t size, i
+        cnumpy.uint32_t[::1] img
+        cnumpy.int16_t last, cur, fl0, fl1, fl2
     size = comp.size
 
     img = numpy.zeros(size, dtype=numpy.uint32)
@@ -327,7 +327,7 @@ cpdef inline cnp.uint32_t[::1] postdec(cnp.int32_t[::1] comp, int width):
             # overflow expected here.
             cur = comp[i] + (last + fl0 + fl1 + fl2 + 2) // 4
             # ensures the data is cropped at 16 bits!
-            img[i] = <cnp.uint16_t> cur
+            img[i] = <cnumpy.uint16_t> cur
             last = cur
             fl0 = fl1
             fl1 = fl2
@@ -345,7 +345,7 @@ cpdef inline cnp.uint32_t[::1] postdec(cnp.int32_t[::1] comp, int width):
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef inline int calc_nb_bits(any_int_t[::1] data, cnp.uint32_t start, cnp.uint32_t stop) nogil:
+cpdef inline int calc_nb_bits(any_int_t[::1] data, cnumpy.uint32_t start, cnumpy.uint32_t stop) nogil:
     """Calculate the number of bits needed to encode the data
 
     :param data: input data, probably slices of a larger array
@@ -361,7 +361,7 @@ cpdef inline int calc_nb_bits(any_int_t[::1] data, cnp.uint32_t start, cnp.uint3
     8, 16 or 32.
      """
     cdef:
-        cnp.uint32_t size, maxsize, i, abs_data
+        cnumpy.uint32_t size, maxsize, i, abs_data
         any_int_t read_data
 
     size = stop - start
@@ -405,13 +405,13 @@ def pack_image(img, bint do_precomp=True):
     Pack image 'img', containing 'x * y' WORD-sized pixels into byte-stream
     """
     cdef:
-        cnp.uint32_t nrow, ncol, size, stream_size
-        cnp.int16_t[::1] input_image
-        cnp.int32_t[::1] raw
+        cnumpy.uint32_t nrow, ncol, size, stream_size
+        cnumpy.int16_t[::1] input_image
+        cnumpy.int32_t[::1] raw
         PackContainer container
-        cnp.uint32_t i, position
-        cnp.uint32_t nb_val_packed
-        cnp.uint32_t current_block_size, next_bock_size
+        cnumpy.uint32_t i, position
+        cnumpy.uint32_t nb_val_packed
+        cnumpy.uint32_t current_block_size, next_bock_size
 
     if do_precomp:
         assert len(img.shape) == 2
@@ -450,10 +450,10 @@ def pack_image(img, bint do_precomp=True):
 
 cdef class PackContainer:
     cdef:
-        readonly cnp.uint32_t position, offset, allocated
-        cnp.uint8_t[::1] data
+        readonly cnumpy.uint32_t position, offset, allocated
+        cnumpy.uint8_t[::1] data
 
-    def __cinit__(self, cnp.uint32_t size=4096):
+    def __cinit__(self, cnumpy.uint32_t size=4096):
         """Constructor of the class
 
         :param size: start size of the array
@@ -478,7 +478,7 @@ cdef class PackContainer:
     @cython.wraparound(False)
     @cython.cdivision(True)
     @cython.initializedcheck(False)
-    cpdef append(self, cnp.int32_t[::1] data, cnp.uint32_t position, cnp.uint32_t nb_val, cnp.uint32_t block_size):
+    cpdef append(self, cnumpy.int32_t[::1] data, cnumpy.uint32_t position, cnumpy.uint32_t nb_val, cnumpy.uint32_t block_size):
         """Append a block of data[position: position+nb_val] to the compressed
         stream. Only the most significant bits are takes.
 
@@ -490,9 +490,9 @@ cdef class PackContainer:
         The 6 bits header is managed here as well as the stream resizing.
         """
         cdef:
-            cnp.uint32_t offset, index, i, bit_per_val, nb_bytes
-            cnp.uint64_t tmp, tostore, mask
-            cnp.int64_t topack
+            cnumpy.uint32_t offset, index, i, bit_per_val, nb_bytes
+            cnumpy.uint64_t tmp, tostore, mask
+            cnumpy.int64_t topack
 
         bit_per_val = block_size // nb_val
 
@@ -550,7 +550,7 @@ cdef class PackContainer:
                     self.data[self.position] = tostore & (255)
 
 
-cpdef inline cnp.uint8_t pack_nb_val(cnp.uint8_t nb_val, cnp.uint8_t value_size) nogil:
+cpdef inline cnumpy.uint8_t pack_nb_val(cnumpy.uint8_t nb_val, cnumpy.uint8_t value_size) nogil:
     """Calculate the header to be stored in 6 bits
 
     :param nb_val: number of values to be stored: must be a power of 2 <=128
@@ -558,7 +558,7 @@ cpdef inline cnp.uint8_t pack_nb_val(cnp.uint8_t nb_val, cnp.uint8_t value_size)
     :return: the header as an unsigned char
     """
     cdef:
-        cnp.uint32_t value, i
+        cnumpy.uint32_t value, i
 
     value = 0
     for i in range(8):
@@ -577,7 +577,7 @@ cpdef inline cnp.uint8_t pack_nb_val(cnp.uint8_t nb_val, cnp.uint8_t value_size)
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef UnpackContainer unpack_pck(cnp.uint8_t[::1] stream, int ncol, int nrow):
+cpdef UnpackContainer unpack_pck(cnumpy.uint8_t[::1] stream, int ncol, int nrow):
     """Unpack the raw stream and return the image
     V1 only for now, V2 may be added later
 
@@ -587,11 +587,11 @@ cpdef UnpackContainer unpack_pck(cnp.uint8_t[::1] stream, int ncol, int nrow):
     :return: Container with decompressed image
     """
     cdef:
-        cnp.uint32_t offset        # Number of bit to offset in the current byte
-        cnp.uint32_t pos, end_pos  # current position and last position of block  in byte stream
-        cnp.uint32_t size          # size of the input stream
-        cnp.int32_t value, next    # integer values
-        cnp.uint32_t nb_val_packed, nb_bit_per_val, nb_bit_in_block
+        cnumpy.uint32_t offset        # Number of bit to offset in the current byte
+        cnumpy.uint32_t pos, end_pos  # current position and last position of block  in byte stream
+        cnumpy.uint32_t size          # size of the input stream
+        cnumpy.int32_t value, next    # integer values
+        cnumpy.uint32_t nb_val_packed, nb_bit_per_val, nb_bit_in_block
         UnpackContainer cont       # Container with unpacked data
 
     cont = UnpackContainer(ncol, nrow)
@@ -640,8 +640,8 @@ cpdef UnpackContainer unpack_pck(cnp.uint8_t[::1] stream, int ncol, int nrow):
 
 cdef class UnpackContainer:
     cdef:
-        readonly cnp.uint32_t nrow, ncol, position, size
-        readonly cnp.int32_t[::1] data
+        readonly cnumpy.uint32_t nrow, ncol, position, size
+        readonly cnumpy.int32_t[::1] data
         # readonly list debug
 
     def __cinit__(self, int ncol, int nrow):
@@ -658,7 +658,7 @@ cdef class UnpackContainer:
         """retrieve the populated array"""
         return numpy.asarray(self.data).reshape((self.nrow, self.ncol))
 
-    cpdef cnp.int32_t[::1] get1d(self):
+    cpdef cnumpy.int32_t[::1] get1d(self):
         """retrieve the populated array"""
         return self.data
 
@@ -670,7 +670,7 @@ cdef class UnpackContainer:
     @cython.wraparound(False)
     @cython.cdivision(True)
     @cython.initializedcheck(False)
-    cpdef unpack(self, cnp.uint8_t[::1] stream, cnp.uint32_t pos, cnp.uint32_t offset, cnp.uint32_t nb_value, cnp.uint32_t value_size):
+    cpdef unpack(self, cnumpy.uint8_t[::1] stream, cnumpy.uint32_t pos, cnumpy.uint32_t offset, cnumpy.uint32_t nb_value, cnumpy.uint32_t value_size):
         """unpack a block on data, all the same size
 
         :param stream: input stream, already sliced
@@ -679,11 +679,11 @@ cdef class UnpackContainer:
         :param value_size: number of bits of each value
         """
         cdef:
-            cnp.uint32_t i           # simple counters
+            cnumpy.uint32_t i           # simple counters
             int j
-            cnp.uint32_t new_offset  # position after read
-            cnp.int64_t cur, tmp2    # value to be stored
-            cnp.uint64_t tmp         # under contruction: needs to be unsigned
+            cnumpy.uint32_t new_offset  # position after read
+            cnumpy.int64_t cur, tmp2    # value to be stored
+            cnumpy.uint64_t tmp         # under contruction: needs to be unsigned
             int to_read              # number of bytes to read
 
         with nogil:
