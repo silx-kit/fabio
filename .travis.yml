@@ -18,9 +18,19 @@ matrix:
 
 # command to install dependencies
 install:
-  - "pip install setuptools wheel"
-  - "pip install --trusted-host www.silx.org -r ci/requirements_travis.txt"
+  # Upgrade distribution modules
+  - "python -m pip install --upgrade pip"
+  - "pip install --upgrade setuptools"
+  - "pip install --upgrade wheel"
+
+  # Install build dependencies
+  - "pip install -r ci/requirements_travis.txt --upgrade"
+
+  # Print Python info
   - "python ci/info_platform.py"
+  - "pip list"
+
+  # Generate source package or wheel
   - "python setup.py build bdist_wheel"
   - "pip install ."
 
