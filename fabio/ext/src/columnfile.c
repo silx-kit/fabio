@@ -27,9 +27,10 @@ int compression_yes(char *fname){
 
 void cf_free( cf_data *p){
   int i;
+  unsigned int ui;
   if (p!=NULL){
-    for (i=0;i<p->nralloc;i++){
-      if (p->data[i]!=NULL) free(p->data[i]);
+    for (ui=0;ui<p->nralloc;ui++){
+      if (p->data[ui]!=NULL) free(p->data[ui]);
     }
     if( p->data!=NULL){free(p->data);}
     for (i=0;i<p->ncols;i++){
