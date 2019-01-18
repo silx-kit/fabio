@@ -292,16 +292,11 @@ def dec_TY5(bytes stream not None, size=None):
     cdef:
         int               i = 0
         int               j = 0
-        cnumpy.int32_t     last = 0
-        cnumpy.int32_t     current = 0
-
-        # cnumpy.uint8_t     tmp8 = 0
-        cnumpy.uint8_t     key8 = 0xfe  # 127+127
-
+        cnumpy.int32_t    last = 0
+        cnumpy.int32_t    current = 0
+        cnumpy.uint8_t    key8 = 0xfe  # 127+127
         cnumpy.int32_t    tmp32a = 0
         cnumpy.int32_t    tmp32b = 0
-        # cnumpy.int32_t    tmp32c = 0
-        # cnumpy.int32_t    tmp32d = 0
 
         int csize
         int lenStream = len(stream)
@@ -311,13 +306,12 @@ def dec_TY5(bytes stream not None, size=None):
     else:
         csize = < int > size
 
-    cdef cnumpy.ndarray[cnumpy.int32_t, ndim = 1] dataOut = numpy.zeros(csize, dtype=numpy.int32)
+    cdef cnumpy.ndarray[cnumpy.int32_t, ndim=1] dataOut = numpy.zeros(csize, dtype=numpy.int32)
     if True:
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):
                     tmp32a = cstream[i + 1] - 127
                     tmp32b = <cnumpy.int16_t>( <cnumpy.int8_t> cstream[i + 2] << 8 )
-                    # print(tmp32a, tmp32b, (tmp32b|tmp32a))
                     current = (tmp32b) | (tmp32a)
                     i += 3
             else:
@@ -327,32 +321,3 @@ def dec_TY5(bytes stream not None, size=None):
             dataOut[j] = last
             j += 1
     return dataOut[:j]
-
-#                 # determines the current position in the bitstream
-#                 position=headersize+columnnumber*row+column+offset
-#                 value=float(file[position])-127
-#                 if value<127:
-#                         # this is the normal case
-#                         # two bytes encode one pixel
-#                         basevalue=value+basevalue
-#                         data[row][column]=basevalue
-#                 elif value==127:
-#                         # this is the special case 1
-#                         # if the marker 127 is found the next four bytes encode one pixel
-#                         if float(file[position+2]) < 127:
-#                                 # resulting value is positive
-#                                 value=(float(file[position+1]))+255*(float(file[position+2]))
-#                         elif float(file[position+2]) > 127:
-#                                 # resulting value is negative
-#                                 value=float(file[position+1])+255*(float(file[position+2])-256)
-#                         basevalue=value+basevalue
-#                         data[row][column]=basevalue
-#                         offset=offset+2
-#                 if float(file[position+0])+float(file[position+1])==510:
-#                         # this is the special case 1
-#                         # i do not know what is going on
-#                         print('special case i can not explain.')
-#                         offset=offset+8
-#                 if basevalue > 500:
-#                         # just a way to cut off very high intensities
-#                         data[row][column]=500
