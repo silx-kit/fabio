@@ -31,9 +31,8 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2014, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/07/2017"
+__date__ = "18/01/2019"
 
-cimport numpy
 import numpy
 import cython
 
