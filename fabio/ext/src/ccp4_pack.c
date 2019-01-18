@@ -277,7 +277,7 @@ void * ccp4_unpack(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   int x4,x3,x2,x1;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   FILE *instream=(FILE *)packed;
@@ -378,7 +378,7 @@ void * ccp4_unpack_string(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   int x4,x3,x2,x1;
   unsigned int *int_arr;
   char *instream = (char *)packed;
@@ -485,7 +485,7 @@ void * ccp4_unpack_v2(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   unsigned int x4=0,x3=0,x2=0,x1=0;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   FILE *instream=(FILE *)packed;
@@ -584,7 +584,7 @@ void * ccp4_unpack_v2_string(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   unsigned int x4=0,x3=0,x2=0,x1=0;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   char *instream=(char *)packed;
