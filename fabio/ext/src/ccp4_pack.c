@@ -489,7 +489,7 @@ void * ccp4_unpack_v2(
   unsigned int x4=0,x3=0,x2=0,x1=0;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   FILE *instream=(FILE *)packed;
-  
+
   // if no maximum integers are give read the whole nine yards
   if (max_num_int==0){
     max_num_int=dim1*dim2;
@@ -506,7 +506,7 @@ void * ccp4_unpack_v2(
   // read the first byte of the current_block
   t_=(unsigned char)fgetc(instream);
   // while less than num ints have been unpacked
-  i=0;  
+  i=0;
   while(i<max_num_int){
     if (num_error==0){
        // at the beginning of block - read the 6 block header bits
@@ -522,7 +522,7 @@ void * ccp4_unpack_v2(
         num_error=CCP4_PCK_ERR_COUNT_V2[ (t_>>bit_offset) & CCP4_PCK_MASK[4] ];
         num_bits=CCP4_PCK_BIT_COUNT_V2[ (t_>>(4+bit_offset)) & CCP4_PCK_MASK[4] ];
         bit_offset+=CCP4_PCK_BLOCK_HEADER_LENGTH_V2;
-      } 
+      }
     } else {
       // reading the data in the block
       while(num_error>0){
@@ -571,7 +571,7 @@ void * ccp4_unpack_v2(
         }
         i++;
         num_error--;
-      } 
+      }
     } // else
   }
   return (void *) unpacked_array;
