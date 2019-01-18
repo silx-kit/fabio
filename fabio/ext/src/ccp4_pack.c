@@ -298,7 +298,7 @@ void * ccp4_unpack(
   t_=(unsigned char)fgetc(instream);
 
   // while less than num ints have been unpacked
-  i=0;  
+  i=0;
   while(i<max_num_int){
     if (num_error==0){
        // at the beginning of block - read the 6 block header bits
@@ -337,7 +337,7 @@ void * ccp4_unpack(
             bit_offset+= (num_bits-read_bits);
             read_bits=num_bits;
           }
-          
+
         }
         // if the msb is set, the error is negative -
         // * fill up with 1s to get a 2's compl representation
@@ -546,7 +546,7 @@ void * ccp4_unpack_v2(
             bit_offset+= (num_bits-read_bits);
             read_bits=num_bits;
           }
-          
+
         }
         // if the msb is set, the error is negative -
           // fill up with 1s to get a 2's compl representation
