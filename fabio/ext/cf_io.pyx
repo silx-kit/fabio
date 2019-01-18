@@ -108,7 +108,7 @@ def read(py_file, mode="a"):
     # cf__->data, as Numpy's memory model prohibits it
     # i.e. py_data=(PyArrayObject*)PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, (void*)(&(cf__->data[0][0])))
     # won't work
-    cdef cnumpy.ndarray[cnumpy.float64_t, ndim=2] py_data = numpy.empty(dims, dtype=numpy.float64)
+    cdef cnumpy.float64_t[:, ::1] py_data = numpy.empty(dims, dtype=numpy.float64)
     for i in range(cf__.nrows):
         memcpy(&py_data[i, 0], cf__.data[i], cf__.ncols * sizeof(double))
     clabels = []
@@ -116,4 +116,4 @@ def read(py_file, mode="a"):
         clabels.append(str(cf__.clabels[i]))
     cf_free(cf__)
 
-    return py_data, clabels
+    return numpy.asarray(py_data), clabels
