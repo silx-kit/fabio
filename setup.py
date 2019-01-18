@@ -586,7 +586,8 @@ class BuildExt(build_ext):
             from Cython.Build import cythonize
             patched_exts = cythonize(
                 [ext],
-                compiler_directives={'embedsignature': True},
+                compiler_directives={'embedsignature': True,
+                                     'language_level': 3},
                 force=self.force_cython,
                 compile_time_env={"HAVE_OPENMP": self.use_openmp}
             )
