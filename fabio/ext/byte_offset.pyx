@@ -35,10 +35,10 @@ __author__ = "Jerome Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2010-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "11/08/2017"
+__date__ = "18/01/2019"
 
 
-cimport numpy
+cimport numpy as cnumpy
 import numpy
 import cython
 
@@ -52,10 +52,10 @@ def comp_cbf32(data not None):
     :return: numpy array of chars
     """
     cdef:
-        numpy.int32_t[::1] ary = numpy.ascontiguousarray(data.ravel(), dtype=numpy.int32)
+        cnumpy.int32_t[::1] ary = numpy.ascontiguousarray(data.ravel(), dtype=numpy.int32)
         int size = ary.size, i = 0, j = 0
-        numpy.int8_t[::1] output = numpy.zeros(size * 7, dtype=numpy.int8)
-        numpy.int32_t last, current, delta, absdelta
+        cnumpy.int8_t[::1] output = numpy.zeros(size * 7, dtype=numpy.int8)
+        cnumpy.int32_t last, current, delta, absdelta
     last = 0
     for i in range(size):
         current = ary[i]
@@ -91,10 +91,10 @@ def comp_cbf(data not None):
     :return: numpy array of chars
     """
     cdef:
-        numpy.int64_t[::1] ary = numpy.ascontiguousarray(data.ravel(), dtype=numpy.int64)
+        cnumpy.int64_t[::1] ary = numpy.ascontiguousarray(data.ravel(), dtype=numpy.int64)
         int size = ary.size, i = 0, j = 0
-        numpy.int8_t[::1] output = numpy.zeros(size * 15, dtype=numpy.int8)
-        numpy.int64_t last, current, delta, absdelta
+        cnumpy.int8_t[::1] output = numpy.zeros(size * 15, dtype=numpy.int8)
+        cnumpy.int64_t last, current, delta, absdelta
     last = 0
     for i in range(size):
         current = ary[i]
@@ -150,30 +150,30 @@ def dec_cbf(bytes stream not None, size=None):
     cdef:
         int               i = 0
         int               j = 0
-        numpy.uint8_t     tmp8 = 0
+        cnumpy.uint8_t     tmp8 = 0
 
-        numpy.int64_t    last = 0
-        numpy.int64_t    current = 0
-        numpy.int64_t    tmp64 = 0
-        numpy.int64_t    tmp64a = 0
-        numpy.int64_t    tmp64b = 0
-        numpy.int64_t    tmp64c = 0
-        numpy.int64_t    tmp64d = 0
-        numpy.int64_t    tmp64e = 0
-        numpy.int64_t    tmp64f = 0
-        numpy.int64_t    tmp64g = 0
+        cnumpy.int64_t    last = 0
+        cnumpy.int64_t    current = 0
+        cnumpy.int64_t    tmp64 = 0
+        cnumpy.int64_t    tmp64a = 0
+        cnumpy.int64_t    tmp64b = 0
+        cnumpy.int64_t    tmp64c = 0
+        cnumpy.int64_t    tmp64d = 0
+        cnumpy.int64_t    tmp64e = 0
+        cnumpy.int64_t    tmp64f = 0
+        cnumpy.int64_t    tmp64g = 0
 
-        numpy.uint8_t    key8 = 0x80
-        numpy.uint8_t    key0 = 0x00
+        cnumpy.uint8_t    key8 = 0x80
+        cnumpy.uint8_t    key0 = 0x00
 
         int csize
         int lenStream = < int > len(stream)
-        numpy.uint8_t[:] cstream = bytearray(stream)
+        cnumpy.uint8_t[:] cstream = bytearray(stream)
     if size is None:
         csize = lenStream
     else:
         csize = < int > size
-    cdef numpy.ndarray[numpy.int64_t, ndim = 1] dataOut = numpy.empty(csize, dtype=numpy.int64)
+    cdef cnumpy.ndarray[cnumpy.int64_t, ndim = 1] dataOut = numpy.empty(csize, dtype=numpy.int64)
     with nogil:
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):
@@ -187,7 +187,7 @@ def dec_cbf(bytes stream not None, size=None):
                         tmp64c = cstream[i + 11]
                         tmp64b = cstream[i + 12]
                         tmp64a = cstream[i + 13]
-                        tmp64  = <numpy.int8_t> cstream[i + 14]
+                        tmp64  = <cnumpy.int8_t> cstream[i + 14]
                         # Assemble data into a 64 bits integer
                         current = (tmp64 << 56) | (tmp64a << 48) | (tmp64b << 40) | (tmp64c << 32) | (tmp64d << 24) | (tmp64e << 16) | (tmp64f << 8) | (tmp64g)
                         i += 15
@@ -196,18 +196,18 @@ def dec_cbf(bytes stream not None, size=None):
                         tmp64c = cstream[i + 3]
                         tmp64b = cstream[i + 4]
                         tmp64a = cstream[i + 5]
-                        tmp64  = <numpy.int8_t> cstream[i + 6]
+                        tmp64  = <cnumpy.int8_t> cstream[i + 6]
                         # Assemble data into a 64 bits integer
                         current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)
                         i += 7
                 else:
                     tmp64a = cstream[i + 1]
-                    tmp64 = <numpy.int8_t> cstream[i + 2]
+                    tmp64 = <cnumpy.int8_t> cstream[i + 2]
 
                     current = (tmp64 << 8) | (tmp64a)
                     i += 3
             else:
-                current = (<numpy.int8_t> cstream[i])
+                current = (<cnumpy.int8_t> cstream[i])
                 i += 1
             last += current
             dataOut[j] = last
@@ -229,26 +229,26 @@ def dec_cbf32(bytes stream not None, size=None):
     cdef:
         int               i = 0
         int               j = 0
-        numpy.uint8_t     tmp8 = 0
+        cnumpy.uint8_t     tmp8 = 0
 
-        numpy.int32_t    last = 0
-        numpy.int32_t    current = 0
-        numpy.int32_t    tmp64 = 0
-        numpy.int32_t    tmp64a = 0
-        numpy.int32_t    tmp64b = 0
-        numpy.int32_t    tmp64c = 0
+        cnumpy.int32_t    last = 0
+        cnumpy.int32_t    current = 0
+        cnumpy.int32_t    tmp64 = 0
+        cnumpy.int32_t    tmp64a = 0
+        cnumpy.int32_t    tmp64b = 0
+        cnumpy.int32_t    tmp64c = 0
 
-        numpy.uint8_t    key8 = 0x80
-        numpy.uint8_t    key0 = 0x00
+        cnumpy.uint8_t    key8 = 0x80
+        cnumpy.uint8_t    key0 = 0x00
 
         int csize
         int lenStream = < int > len(stream)
-        numpy.uint8_t[:] cstream = bytearray(stream)
+        cnumpy.uint8_t[:] cstream = bytearray(stream)
     if size is None:
         csize = lenStream
     else:
         csize = < int > size
-    cdef numpy.ndarray[numpy.int32_t, ndim = 1] dataOut = numpy.empty(csize, dtype=numpy.int32)
+    cdef cnumpy.ndarray[cnumpy.int32_t, ndim = 1] dataOut = numpy.empty(csize, dtype=numpy.int32)
     with nogil:
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):
@@ -257,18 +257,18 @@ def dec_cbf32(bytes stream not None, size=None):
                     tmp64c = cstream[i + 3]
                     tmp64b = cstream[i + 4]
                     tmp64a = cstream[i + 5]
-                    tmp64  = <numpy.int8_t> cstream[i + 6]
+                    tmp64  = <cnumpy.int8_t> cstream[i + 6]
                     # Assemble data into a 32 bits integer
                     current = (tmp64 << 24) | (tmp64a << 16) | (tmp64b << 8) | (tmp64c)
                     i += 7
                 else:
                     tmp64a = cstream[i + 1]
-                    tmp64  = <numpy.int8_t> cstream[i + 2]
+                    tmp64  = <cnumpy.int8_t> cstream[i + 2]
 
                     current = (tmp64 << 8) | (tmp64a)
                     i += 3
             else:
-                current = (<numpy.int8_t> cstream[i])
+                current = (<cnumpy.int8_t> cstream[i])
                 i += 1
             last += current
             dataOut[j] = last
@@ -292,67 +292,32 @@ def dec_TY5(bytes stream not None, size=None):
     cdef:
         int               i = 0
         int               j = 0
-        numpy.int32_t     last = 0
-        numpy.int32_t     current = 0
-
-        # numpy.uint8_t     tmp8 = 0
-        numpy.uint8_t     key8 = 0xfe  # 127+127
-
-        numpy.int32_t    tmp32a = 0
-        numpy.int32_t    tmp32b = 0
-        # numpy.int32_t    tmp32c = 0
-        # numpy.int32_t    tmp32d = 0
+        cnumpy.int32_t    last = 0
+        cnumpy.int32_t    current = 0
+        cnumpy.uint8_t    key8 = 0xfe  # 127+127
+        cnumpy.int32_t    tmp32a = 0
+        cnumpy.int32_t    tmp32b = 0
 
         int csize
         int lenStream = len(stream)
-        numpy.uint8_t[:] cstream = bytearray(stream)
+        cnumpy.uint8_t[:] cstream = bytearray(stream)
     if size is None:
         csize = lenStream
     else:
         csize = < int > size
 
-    cdef numpy.ndarray[numpy.int32_t, ndim = 1] dataOut = numpy.zeros(csize, dtype=numpy.int32)
+    cdef cnumpy.ndarray[cnumpy.int32_t, ndim=1] dataOut = numpy.zeros(csize, dtype=numpy.int32)
     if True:
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):
                     tmp32a = cstream[i + 1] - 127
-                    tmp32b = <numpy.int16_t>( <numpy.int8_t> cstream[i + 2] << 8 )
-                    # print(tmp32a, tmp32b, (tmp32b|tmp32a))
+                    tmp32b = <cnumpy.int16_t>( <cnumpy.int8_t> cstream[i + 2] << 8 )
                     current = (tmp32b) | (tmp32a)
                     i += 3
             else:
-                current = <numpy.int32_t>(<numpy.uint8_t> cstream[i]) - 127
+                current = <cnumpy.int32_t>(<cnumpy.uint8_t> cstream[i]) - 127
                 i += 1
             last += current
             dataOut[j] = last
             j += 1
     return dataOut[:j]
-
-#                 # determines the current position in the bitstream
-#                 position=headersize+columnnumber*row+column+offset
-#                 value=float(file[position])-127
-#                 if value<127:
-#                         # this is the normal case
-#                         # two bytes encode one pixel
-#                         basevalue=value+basevalue
-#                         data[row][column]=basevalue
-#                 elif value==127:
-#                         # this is the special case 1
-#                         # if the marker 127 is found the next four bytes encode one pixel
-#                         if float(file[position+2]) < 127:
-#                                 # resulting value is positive
-#                                 value=(float(file[position+1]))+255*(float(file[position+2]))
-#                         elif float(file[position+2]) > 127:
-#                                 # resulting value is negative
-#                                 value=float(file[position+1])+255*(float(file[position+2])-256)
-#                         basevalue=value+basevalue
-#                         data[row][column]=basevalue
-#                         offset=offset+2
-#                 if float(file[position+0])+float(file[position+1])==510:
-#                         # this is the special case 1
-#                         # i do not know what is going on
-#                         print('special case i can not explain.')
-#                         offset=offset+8
-#                 if basevalue > 500:
-#                         # just a way to cut off very high intensities
-#                         data[row][column]=500

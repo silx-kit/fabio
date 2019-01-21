@@ -24,7 +24,7 @@
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "01/08/2017"
+__date__ = "18/01/2019"
 
 import os
 import numpy
@@ -55,7 +55,6 @@ def configuration(parent_package='', top_path=None):
     config.add_extension(
         name="_cif",
         sources=["_cif.pyx"],
-        include_dirs=[numpy.get_include()],
         language='c')
 
     return config

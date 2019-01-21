@@ -1,24 +1,37 @@
 language: python
-python:
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-#  - "3.7"
+
 # Enable 3.7 without globally enabling sudo and dist: xenial for other build jobs
 matrix:
   include:
+   - python: 2.7
+     os: linux
+   - python: 3.4
+     os: linux
+   - python: 3.5
+     os: linux
+   - python: 3.6
+     os: linux
    - python: 3.7
      dist: xenial
 
 # command to install dependencies
 install:
-  - "pip install setuptools wheel"
-  - "pip install --trusted-host www.silx.org -r ci/requirements_travis.txt"
+  # Upgrade distribution modules
+  - "python -m pip install --upgrade pip"
+  - "pip install --upgrade setuptools"
+  - "pip install --upgrade wheel"
+
+  # Install build dependencies
+  - "pip install -r ci/requirements_travis.txt --upgrade"
+
+  # Print Python info
   - "python ci/info_platform.py"
+  - "pip list"
+
+  # Generate source package or wheel
   - "python setup.py build bdist_wheel"
   - "pip install ."
+
 # command to run tests
 script:
   - "python setup.py build test"
