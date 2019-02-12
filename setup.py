@@ -33,7 +33,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/01/2018"
+__date__ = "12/02/2019"
 __status__ = "stable"
 
 import sys
@@ -91,8 +91,9 @@ export LC_ALL=en_US.utf-8
 def get_version():
     """Returns current version number from version.py file"""
     dirname = os.path.dirname(os.path.abspath(__file__))
-    sys.path.append(dirname)
+    sys.path.insert(0, dirname)
     import version
+    sys.path = sys.path[1:]
     return version.strictversion
 
 
