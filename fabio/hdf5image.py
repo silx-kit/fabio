@@ -44,7 +44,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "14/11/2018"
+__date__ = "01/03/2019"
 
 import logging
 import os
@@ -177,6 +177,11 @@ class Hdf5Image(fabioimage.FabioImage):
             newobj = Hdf5Image()
             newobj.read(previous_filename(self.filename))
             return newobj
+
+    def close(self):
+        if self.hdf5 is not None:
+            self.hdf5.close()
+            self.dataset = None
 
 
 hdf5image = Hdf5Image

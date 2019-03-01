@@ -48,7 +48,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "14/11/2018"
+__date__ = "01/03/2019"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -200,6 +200,11 @@ class EigerImage(FabioImage):
     def next(self):
         """ returns the next frame in the series as a fabioimage """
         return self.getframe(self.currentframe + 1)
+
+    def close(self):
+        if self.h5 is not None:
+            self.h5.close()
+            self.dataset = None
 
 
 eigerimage = EigerImage
