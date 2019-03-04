@@ -111,18 +111,20 @@ class _FabioArray(object):
         self.slice = None
         self.area_sum = None
 
+    @deprecation.deprecated(reason="Not maintained", replacement="fabio.utils.pilutils.create_pil_16", since_version="0.9")
     def toPIL16(self, filename=None):
         """
-        Convert the image to Python Imaging Library 16-bits greyscale image
+        Convert the image to Python Imaging Library 16-bits greyscale image.
         """
         if filename:
             self.read(filename)
         return pilutils.create_pil_16(self.data)
 
     @property
+    @deprecation.deprecated(reason="Not maintained", replacement="fabio.utils.pilutils.create_pil_16", since_version="0.9")
     def pilimage(self):
         """
-        Convert the image to Python Imaging Library 16-bits greyscale image
+        Convert the image to Python Imaging Library 16-bits greyscale image.
         """
         return self.toPIL16()
 
