@@ -101,9 +101,9 @@ class Dm3Image(FabioImage):
         assert file_format == 3, 'Wrong file type '
         self.bytes_in_file = self.readbytes(4, numpy.uint32)[0]
         self.byte_order = self.readbytes(4, numpy.uint32)[0]  # 0 = big, 1= little
-        logger.info('read dm3 file - file format %s' % file_format)
-        logger.info('Bytes in file: %s' % self.bytes_in_file)
-        logger.info('Byte order: %s  - 0 = bigEndian , 1 = littleEndian' % self.byte_order)
+        logger.debug('read dm3 file - file format %s' % file_format)
+        logger.debug('Bytes in file: %s' % self.bytes_in_file)
+        logger.debug('Byte order: %s  - 0 = bigEndian , 1 = littleEndian' % self.byte_order)
 
         if self.byte_order == 0:
             self.swap = True
