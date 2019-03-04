@@ -47,7 +47,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 from __future__ import absolute_import, print_function, with_statement, division
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "13/11/2018"
+__date__ = "04/03/2019"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -282,7 +282,6 @@ class BrukerImage(FabioImage):
         self.data = data.reshape(self._shape)
 
         self.resetvals()
-        self.pilimage = None
         return self
 
     def write(self, fname):

@@ -772,8 +772,6 @@ class EdfImage(fabioimage.FabioImage):
             else:
                 logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
             self.resetvals()
-            # ensure the PIL image is reset
-            self.pilimage = None
         except Exception as e:
             infile.close()
             raise e

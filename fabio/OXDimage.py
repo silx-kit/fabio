@@ -47,7 +47,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "13/11/2018"
+__date__ = "04/03/2019"
 
 import time
 import logging
@@ -294,7 +294,6 @@ class OxdImage(FabioImage):
         logger.debug("BYTECODE: %s", raw_data.dtype.type)
         self.data = raw_data.reshape((dim2, dim1))
         self._dtype = None
-        self.pilimage = None
         return self
 
     def _writeheader(self):
