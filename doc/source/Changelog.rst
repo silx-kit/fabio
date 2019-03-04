@@ -1,6 +1,17 @@
 Changelog
 =========
 
+FabIO-0.9.0 (03/2019):
+......................
+- Separate the concept of FabioFrame from FabioImage
+- Generator for file-series and multi-frame formats
+- Improve code coverage on PiXi image
+- Clean up TiffIO (remove tests & demo from source)
+- Improved binning handling in DM3 images
+- Implement deprecaton warnings ala *silx*
+- Enhanced tests
+- Enhanced installation on unsupported architectures
+
 FabIO-0.8.0 (10/2018):
 ......................
 
