@@ -282,7 +282,6 @@ class BrukerImage(FabioImage):
         self.data = data.reshape(self._shape)
 
         self.resetvals()
-        self.pilimage = None
         return self
 
     def write(self, fname):

@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "16/11/2018"
+__date__ = "04/03/2019"
 
 import os
 import logging
@@ -111,16 +111,22 @@ class _FabioArray(object):
         self.slice = None
         self.area_sum = None
 
+    @deprecation.deprecated(reason="Not maintained", replacement="fabio.utils.pilutils.create_pil_16", since_version="0.9")
     def toPIL16(self, filename=None):
         """
-        Convert to Python Imaging Library 16 bit greyscale image
+        Convert the image to Python Imaging Library 16-bits greyscale image.
         """
         if filename:
             self.read(filename)
-        if self.pilimage is None:
-            # Create and cache the result
-            self.pilimage = pilutils.create_pil_16(self.data)
-        return self.pilimage
+        return pilutils.create_pil_16(self.data)
+
+    @property
+    @deprecation.deprecated(reason="Not maintained", replacement="fabio.utils.pilutils.create_pil_16", since_version="0.9")
+    def pilimage(self):
+        """
+        Convert the image to Python Imaging Library 16-bits greyscale image.
+        """
+        return self.toPIL16()
 
     def getmax(self):
         """ Find max value in self.data, caching for the future """
@@ -398,7 +404,6 @@ class FabioImage(_FabioArray):
         if type(data) in fabioutils.StringTypes:
             raise TypeError("Data should be numpy array")
         self.data = self.check_data(data)
-        self.pilimage = None
         self.header = self.check_header(header)
         # cache for image statistics
 

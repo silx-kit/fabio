@@ -101,8 +101,6 @@ class Fit2dSpreadsheetImage(FabioImage):
             raise IOError("Error reading ascii")
 
         self.resetvals()
-        # ensure the PIL image is reset
-        self.pilimage = None
         return self
 
 

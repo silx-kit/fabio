@@ -179,8 +179,6 @@ class KcdImage(FabioImage):
         self._dtype = None
         self._shape = None
         self.resetvals()
-        # ensure the PIL image is reset
-        self.pilimage = None
         return self
 
     @staticmethod

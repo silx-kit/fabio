@@ -44,7 +44,7 @@ Authors:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "16/11/2018"
+__date__ = "04/03/2019"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -148,9 +148,9 @@ class TifImage(fabioimage.FabioImage):
         self.lib = "TiffIO"
 
     def _read_with_pil(self, infile):
-        self.pilimage = PIL.Image.open(infile)
-        header = self._read_header_from_pil(self.pilimage)
-        data = pilutils.get_numpy_array(self.pilimage)
+        pilimage = PIL.Image.open(infile)
+        header = self._read_header_from_pil(pilimage)
+        data = pilutils.get_numpy_array(pilimage)
         frame = self._create_frame(data, header)
         self.header = frame.header
         self.data = frame.data

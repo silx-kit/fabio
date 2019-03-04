@@ -119,7 +119,6 @@ class Fit2dMaskImage(FabioImage):
         self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8)
         self.data.shape = self._shape
         self._shape = None
-        self.pilimage = None
         return self
 
     def write(self, fname):
