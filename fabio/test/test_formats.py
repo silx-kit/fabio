@@ -35,6 +35,8 @@ import logging
 logger = logging.getLogger(__name__)
 import fabio
 from .. import fabioformats
+from ..utils import deprecation
+from ..utils import testutils
 
 
 class TestRegistration(unittest.TestCase):
@@ -53,11 +55,13 @@ class TestRegistration(unittest.TestCase):
     def test_fabioformats_factory_missing_format(self):
         self.assertRaises(RuntimeError, fabioformats.factory, "foobarimage")
 
+    @testutils.test_logging(deprecation.depreclog, warning=1)
     def test_deprecated_fabioimage_factory(self):
         """Check that it is still working"""
         image = fabio.fabioimage.FabioImage.factory("edfimage")
         self.assertIsNotNone(image)
 
+    @testutils.test_logging(deprecation.depreclog, warning=1)
     def test_deprecated_fabioimage_factory_missing_format(self):
         """Check that it is still working"""
         self.assertRaises(RuntimeError, fabio.fabioimage.FabioImage.factory, "foobarimage")

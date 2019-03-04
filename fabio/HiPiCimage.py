@@ -132,9 +132,6 @@ class HipicImage(FabioImage):
         if self.data.max() > 4095:
             gt12bit = self.data > 4095
             self.data = self.data - gt12bit * (2 ** 16 - 1)
-
-        # ensure the PIL image is reset
-        self.pilimage = None
         return self
 
 
