@@ -184,11 +184,10 @@ class Dm3Image(FabioImage):
             value = self.read_tag_type()
             if isinstance(value, binary_type):
                 value = value.decode()
-            if key == "None":
-                logger.info("%s: %s", key, value)
-            else:
-                logger.debug("%s: %s", key, value)
-                self.header[key] = value
+            logger.debug("%s: %s", key, value)
+            if key in self.header:
+                logger.debug("Key '%s' already exists with value %s. Overwrited with %s.", key, self.header[key], value)
+            self.header[key] = value
 
     def read_tag_type(self):
         if self.infile.read(4) != b'%%%%':
