@@ -172,7 +172,7 @@ class Dm3Image(FabioImage):
         if self.tag_label_length != 0:
             tag_label = self.infile.read(self.tag_label_length)
         else:
-            tag_label = None
+            tag_label = b""
 
         if self.tag_is_data == 21:
             # This is data
