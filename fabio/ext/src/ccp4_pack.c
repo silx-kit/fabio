@@ -461,7 +461,6 @@ void * ccp4_unpack_string(
           x2=(int16_t) int_arr[i-dim1];
           x1=(int16_t) int_arr[i-dim1-1];
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
-          i=i;
         } else if (i!=0){
           // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
@@ -562,7 +561,6 @@ void * ccp4_unpack_v2(
           x2=(int16_t) int_arr[i-dim1];
           x1=(int16_t) int_arr[i-dim1-1];
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
-          i=i;
         } else if (i!=0){
           // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
@@ -664,7 +662,6 @@ void * ccp4_unpack_v2_string(
           x2=(int16_t) int_arr[i-dim1];
           x1=(int16_t) int_arr[i-dim1-1];
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
-          i=i;
         } else if (i!=0){
           // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);

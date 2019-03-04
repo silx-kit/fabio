@@ -248,7 +248,7 @@ cpdef inline cnumpy.int32_t[::1] precomp(cnumpy.int16_t[::1] img, cnumpy.uint32_
     This part implements overlows of int16 as the reference implementation is buggy
     """
     cdef:
-        cnumpy.uint32_t size, i
+        int size, i
         cnumpy.int32_t[::1] comp
         cnumpy.int16_t last, cur, im0, im1, im2
     size = img.size
@@ -301,7 +301,7 @@ cpdef inline cnumpy.uint32_t[::1] postdec(cnumpy.int32_t[::1] comp, int width):
     This part implementes overlows of int16 as the reference implementation is bugged
     """
     cdef:
-        cnumpy.uint32_t size, i
+        int size, i
         cnumpy.uint32_t[::1] img
         cnumpy.int16_t last, cur, fl0, fl1, fl2
     size = comp.size
