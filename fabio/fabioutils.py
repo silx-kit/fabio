@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/11/2018"
+__date__ = "17/01/2019"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -120,6 +120,10 @@ def getnum(name):
         return int(num)
     except ValueError:
         return None
+
+
+COMPRESSED_EXTENSIONS = set(["gz", "bz2"])
+"""Set of compressed file extensions provided by Fabio"""
 
 
 class FilenameObject(object):
@@ -206,7 +210,7 @@ class FilenameObject(object):
         ndigit = 4
         num = None
         typ = None
-        if parts[-1].lower() in ["gz", "bz2"]:
+        if parts[-1].lower() in COMPRESSED_EXTENSIONS:
             extn = "." + parts[-1]
             parts = parts[:-1]
             compressed = True
@@ -704,3 +708,12 @@ class OrderedDict(_OrderedDict):
                 tmp[str(key)] = str(value)
             res = json.dumps(tmp, indent=2)
         return res
+
+
+AVAILABLE_COMPRESSED_EXTENSIONS = set([])
+"""Set of available compressed file extensions. Do not contains extensions for
+uninstalled optional dependancies."""
+if GzipFile != UnknownCompressedFile:
+    AVAILABLE_COMPRESSED_EXTENSIONS.add("gz")
+if BZ2File != UnknownCompressedFile:
+    AVAILABLE_COMPRESSED_EXTENSIONS.add("bz2")
