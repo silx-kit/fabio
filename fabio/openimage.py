@@ -120,7 +120,7 @@ def do_magic(byts, filename):
 def openimage(filename, frame=None):
     """Open an image.
 
-    It returns a class which can be used as a context manager to close the file
+    It returns a FabioImage-class instance which can be used as a context manager to close the file
     at the termination.
 
     .. code-block:: python
