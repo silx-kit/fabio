@@ -375,7 +375,7 @@ class numbered_file_series(file_series):
         super(numbered_file_series, self).__init__(strings)
 
 
-class filename_series:
+class filename_series(object):
     """ Much like the others, but created from a string filename """
     def __init__(self, filename):
         """ create from a filename (String)"""
