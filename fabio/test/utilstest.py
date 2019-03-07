@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/10/2018"
+__date__ = "07/03/2019"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -58,47 +58,45 @@ logger = logging.getLogger("%s.utilstest" % PACKAGE)
 TEST_HOME = os.path.dirname(os.path.abspath(__file__))
 
 
-class UtilsTest(object):
-    """
-    Static class providing useful stuff for preparing tests.
-    """
-    options = None
-    timeout = 60  # timeout in seconds for downloading images
-    # url_base = "http://downloads.sourceforge.net/fable"
-    url_base = "http://www.edna-site.org/pub/fabio/testimages"
-    sem = threading.Semaphore()
-    recompiled = False
-    reloaded = False
-    name = PACKAGE
-    script_dir = None
+class TestOptions(object):
 
-    try:
-        fabio = __import__("%s.directories" % name)
-        image_home = fabio.directories.testimages
-    except Exception as err:
-        logger.warning("in loading directories %s", err)
-        image_home = None
-    else:
-        image_home = fabio.directories.testimages
-    if image_home is None:
-        image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, getpass.getuser()))
-        if not os.path.exists(image_home):
-            os.makedirs(image_home)
-    testimages = os.path.join(image_home, "all_testimages.json")
-    if os.path.exists(testimages):
-        with open(testimages) as f:
-            ALL_DOWNLOADED_FILES = set(json.load(f))
-    else:
-        ALL_DOWNLOADED_FILES = set()
-    tempdir = tempfile.mkdtemp("_" + getpass.getuser(), name + "_")
+    def __init__(self):
+        self.options = None
+        self.timeout = 60  # timeout in seconds for downloading images
+        # url_base = "http://downloads.sourceforge.net/fable"
+        self.url_base = "http://www.edna-site.org/pub/fabio/testimages"
+        self.sem = threading.Semaphore()
+        self.recompiled = False
+        self.reloaded = False
+        self.name = PACKAGE
+        self.script_dir = None
 
-    @classmethod
-    def deep_reload(cls):
-        cls.fabio = __import__(cls.name)
-        return cls.fabio
+        try:
+            fabio = __import__("%s.directories" % self.name)
+            image_home = fabio.directories.testimages
+        except Exception as err:
+            logger.warning("in loading directories %s", err)
+            image_home = None
+        else:
+            image_home = fabio.directories.testimages
+        if image_home is None:
+            image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (self.name, getpass.getuser()))
+            if not os.path.exists(image_home):
+                os.makedirs(image_home)
+        testimages = os.path.join(image_home, "all_testimages.json")
+        if os.path.exists(testimages):
+            with open(testimages) as f:
+                self.ALL_DOWNLOADED_FILES = set(json.load(f))
+        else:
+            self.ALL_DOWNLOADED_FILES = set()
 
-    @classmethod
-    def forceBuild(cls, remove_first=True):
+        self._tempdir = None
+
+    def deep_reload(self):
+        self.fabio = __import__(self.name)
+        return self.fabio
+
+    def forceBuild(self, remove_first=True):
         """
         Force the recompilation of FabIO
 
@@ -106,8 +104,7 @@ class UtilsTest(object):
         """
         return
 
-    @classmethod
-    def timeoutDuringDownload(cls, imagename=None):
+    def timeoutDuringDownload(self, imagename=None):
             """
             Function called after a timeout in the download part ...
             just raise an Exception.
@@ -118,10 +115,9 @@ class UtilsTest(object):
                 download test images!\n \ If you are behind a firewall, \
                 please set both environment variable http_proxy and https_proxy.\
                 This even works under windows ! \n \
-                Otherwise please try to download the images manually from \n %s/%s and put it in in test/testimages." % (cls.url_base, imagename))
+                Otherwise please try to download the images manually from \n %s/%s and put it in in test/testimages." % (self.url_base, imagename))
 
-    @classmethod
-    def getdir(cls, dirname):
+    def getdir(self, dirname):
         """Downloads the requested tarball from the server
         https://www.silx.org/pub/silx/
         and unzips it into the data directory
@@ -147,8 +143,8 @@ class UtilsTest(object):
             import tarfile
             engine = tarfile.TarFile.open
 
-        full_path = cls.download_file(dirname)
-        directory_home = os.path.join(cls.image_home, directory_name)
+        full_path = self.download_file(dirname)
+        directory_home = os.path.join(self.image_home, directory_name)
         if not os.path.exists(directory_home):
             os.mkdir(directory_home)
 
@@ -160,8 +156,7 @@ class UtilsTest(object):
                 result = [os.path.join(directory_home, i) for i in fd.getnames()]
         return result
 
-    @classmethod
-    def getimage(cls, imagename):
+    def getimage(self, imagename):
         """
         Downloads the requested image from Forge.EPN-campus.eu
 
@@ -170,20 +165,20 @@ class UtilsTest(object):
             is removed
         :return: full path of the locally saved file
         """
-        if imagename not in cls.ALL_DOWNLOADED_FILES:
-            cls.ALL_DOWNLOADED_FILES.add(imagename)
-            image_list = list(cls.ALL_DOWNLOADED_FILES)
+        if imagename not in self.ALL_DOWNLOADED_FILES:
+            self.ALL_DOWNLOADED_FILES.add(imagename)
+            image_list = list(self.ALL_DOWNLOADED_FILES)
             image_list.sort()
             try:
-                with open(cls.testimages, "w") as fp:
+                with open(self.testimages, "w") as fp:
                     json.dump(image_list, fp, indent=4)
             except IOError:
                 logger.debug("Unable to save JSON list")
         baseimage = os.path.basename(imagename)
         logger.info("UtilsTest.getimage('%s')" % baseimage)
-        if not os.path.exists(cls.image_home):
-            os.makedirs(cls.image_home)
-        fullimagename = os.path.abspath(os.path.join(cls.image_home, baseimage))
+        if not os.path.exists(self.image_home):
+            os.makedirs(self.image_home)
+        fullimagename = os.path.abspath(os.path.join(self.image_home, baseimage))
         if os.path.exists(fullimagename):
             return fullimagename
 
@@ -200,21 +195,21 @@ class UtilsTest(object):
             gzipname = baseimage + "gz2"
             bzip2name = basename + ".bz2"
 
-        fullimagename_gz = os.path.abspath(os.path.join(cls.image_home, gzipname))
-        fullimagename_raw = os.path.abspath(os.path.join(cls.image_home, basename))
-        fullimagename_bz2 = os.path.abspath(os.path.join(cls.image_home, bzip2name))
+        fullimagename_gz = os.path.abspath(os.path.join(self.image_home, gzipname))
+        fullimagename_raw = os.path.abspath(os.path.join(self.image_home, basename))
+        fullimagename_bz2 = os.path.abspath(os.path.join(self.image_home, bzip2name))
 
         data = None
 
         if not os.path.isfile(fullimagename_bz2):
-            cls.download_file(bzip2name)
+            self.download_file(bzip2name)
 
             if not os.path.isfile(fullimagename_bz2):
                 raise RuntimeError("Could not automatically \
                 download test images %s!\n \ If you are behind a firewall, \
                 please set the environment variable http_proxy.\n \
                 Otherwise please try to download the images manually from \n \
-                %s" % (cls.url_base, imagename))
+                %s" % (self.url_base, imagename))
         if not os.path.isfile(fullimagename_raw) or\
            not os.path.isfile(fullimagename_gz):
 
@@ -229,29 +224,28 @@ class UtilsTest(object):
                         fullimage.write(decompressed)
                 except IOError:
                     raise IOError("unable to write decompressed \
-                    data to disk at %s" % cls.image_home)
+                    data to disk at %s" % self.image_home)
             if not os.path.exists(fullimagename_gz):
                 try:
                     gzip.open(fullimagename_gz, "wb").write(decompressed)
                 except IOError:
                     raise IOError("unable to write gzipped \
-                    data to disk at %s" % cls.image_home)
+                    data to disk at %s" % self.image_home)
         return fullimagename
 
-    @classmethod
-    def download_file(cls, filename):
+    def download_file(self, filename):
         """Downloads the requested file from web-server available
         at https://www.silx.org/pub/silx/
 
         :param str filename: relative name of the image.
         :return: full path of the locally saved file.
         """
-        fullpath = os.path.abspath(os.path.join(cls.image_home, filename))
+        fullpath = os.path.abspath(os.path.join(self.image_home, filename))
         if os.path.exists(fullpath):
             return fullpath
 
         logger.info("Trying to download filename %s, timeout set to %ss",
-                    filename, cls.timeout)
+                    filename, self.timeout)
         dictProxies = {}
         if "http_proxy" in os.environ:
             dictProxies['http'] = os.environ["http_proxy"]
@@ -264,9 +258,9 @@ class UtilsTest(object):
         else:
             opener = urlopen
 
-        logger.info("wget %s/%s" % (cls.url_base, filename))
-        data = opener("%s/%s" % (cls.url_base, filename),
-                      data=None, timeout=cls.timeout).read()
+        logger.info("wget %s/%s" % (self.url_base, filename))
+        data = opener("%s/%s" % (self.url_base, filename),
+                      data=None, timeout=self.timeout).read()
         logger.info("Filedata %s successfully downloaded." % filename)
 
         try:
@@ -274,18 +268,17 @@ class UtilsTest(object):
                 outfile.write(data)
         except IOError:
             raise IOError("Unable to write downloaded \
-                data to disk at %s" % cls.image_home)
+                data to disk at %s" % self.image_home)
         return fullpath
 
-    @classmethod
-    def download_images(cls, imgs=None):
+    def download_images(self, imgs=None):
         """
         Download all images needed for the test/benchmarks
 
         :param imgs: list of files to download
         """
         if not imgs:
-            imgs = cls.ALL_DOWNLOADED_FILES
+            imgs = self.ALL_DOWNLOADED_FILES
         for fn in imgs:
             print("Downloading from internet: %s" % fn)
             if fn[-4:] != ".bz2":
@@ -294,10 +287,9 @@ class UtilsTest(object):
                 else:
                     fn = fn + ".bz2"
                 print("  actually " + fn)
-            cls.getimage(fn)
+            self.getimage(fn)
 
-    @classmethod
-    def script_path(cls, script):
+    def script_path(self, script):
         """
         Returns the path of the executable and the associated environment
 
@@ -312,8 +304,8 @@ class UtilsTest(object):
         env = dict((str(k), str(v)) for k, v in os.environ.items())
         env["PYTHONPATH"] = os.pathsep.join(sys.path)
         paths = os.environ.get("PATH", "").split(os.pathsep)
-        if cls.script_dir is not None:
-            paths.insert(0, cls.script_dir)
+        if self.script_dir is not None:
+            paths.insert(0, self.script_dir)
 
         for base in paths:
             # clean up extra quotes from paths
@@ -328,3 +320,39 @@ class UtilsTest(object):
         logger.warning("Script '%s' not found in paths: %s", script, ":".join(paths))
         script_path = script
         return script_path, env
+
+    def _initialize_tmpdir(self):
+        """Initialize the temporary directory"""
+        if not self._tempdir:
+            with self.sem:
+                if not self._tempdir:
+                    self._tempdir = tempfile.mkdtemp("_" + getpass.getuser(),
+                                                     self.name + "_")
+
+    @property
+    def tempdir(self):
+        if not self._tempdir:
+            self._initialize_tmpdir()
+        return self._tempdir
+
+    def clean_up(self):
+        """Removes the temporary directory (and all its content !)"""
+        with self.sem:
+            if not self._tempdir:
+                return
+            if not os.path.isdir(self._tempdir):
+                return
+            for root, dirs, files in os.walk(self._tempdir, topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
+            os.rmdir(self._tempdir)
+            self._tempdir = None
+
+
+test_options = TestOptions()
+"""Singleton containing util context of whole the tests"""
+
+UtilsTest = test_options
+"""For compatibility"""
