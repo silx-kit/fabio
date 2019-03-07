@@ -302,8 +302,12 @@ class EdfFrame(fabioimage.FabioFrame):
         capsKeys = set([k.upper() for k in self.header.keys()])
         missing = list(MINIMUM_KEYS - capsKeys)
         if len(missing) > 0:
-            msg = "EDF file %s frame %i misses mandatory keys: %s "
-            logger.info(msg, filename, self.index, " ".join(missing))
+            msg = "EDF file %s%s misses mandatory keys: %s "
+            if self.index is not None:
+                frame = " (frame %i)" % self.index
+            else:
+                frame = ""
+            logger.info(msg, filename, frame, " ".join(missing))
         return len(missing) == 0
 
     def swap_needed(self):
@@ -768,8 +772,6 @@ class EdfImage(fabioimage.FabioImage):
             else:
                 logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
             self.resetvals()
-            # ensure the PIL image is reset
-            self.pilimage = None
         except Exception as e:
             infile.close()
             raise e
