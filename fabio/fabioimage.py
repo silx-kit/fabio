@@ -144,6 +144,12 @@ class _FabioArray(object):
         """
         return self.toPIL16()
 
+    @pilimage.setter
+    @deprecation.deprecated(reason="Setting pilimage not supported. This attrbute is not cached anymore", deprecated_since="0.10.0beta")
+    def pilimage(self, value):
+        if value is not None:
+            raise ValueError("Setting pilimage attribute is not supported")
+
     def getmax(self):
         """ Find max value in self.data, caching for the future """
         if self.maxval is None:

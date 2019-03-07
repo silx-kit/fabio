@@ -246,6 +246,12 @@ class TestDeprecatedFabioImage(unittest.TestCase):
         # It should not change anything
         self.assertEqual(image.shape, data.shape)
 
+    def test_cleanup_pilimage_cache(self):
+        data = numpy.array(numpy.arange(3 * 10)).reshape(3, 10)
+        image = FabioImage(data=data)
+        # It was a way to force clean up of the cache
+        image.pilimage = None
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
