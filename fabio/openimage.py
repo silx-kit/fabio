@@ -118,7 +118,22 @@ def do_magic(byts, filename):
 
 
 def openimage(filename, frame=None):
-    """ Try to open an image """
+    """Open an image.
+
+    It returns a class which can be used as a context manager to close the file
+    at the termination.
+
+    .. code-block:: python
+
+        with fabio.open("image.edf") as i:
+            print(i.nframes)
+            print(i.data)
+
+    :param Union[str,FilenameObject] filename: A filename or a filename
+        iterator.
+    :param Union[int,None] frame: A specific frame inside this file.
+    :rtype: FabioImage
+    """
     if isinstance(filename, fabioutils.PathTypes):
         if not isinstance(filename, fabioutils.StringTypes):
             filename = str(filename)
@@ -231,13 +246,13 @@ def open_series(filenames=None, first_filename=None,
     """
     Create an object to iterate frames through a file series.
 
-    This function is a wrapper over `~file_series.FileSeries` to facilitate
+    This function is a wrapper over :class:`~file_series.FileSeries` to facilitate
     simple uses of file series iterations.
 
     :param Union[Generator,Iterator,List] filenames: Ordered list of filenames
         to process as a file series. It also can be a generator, and
         iterator, or :class:`~fabio.file_series.filename_series` or
-        `~fabio.file_series.file_series` objects.
+        :class:`~fabio.file_series.file_series` objects.
     :param str first_filename: If provided iterate filenames from this filename
         and try to consecutivelly open next files. If this argument is specified
         the `filenames` have to unspecified. Internally it uses
@@ -250,7 +265,7 @@ def open_series(filenames=None, first_filename=None,
     :param Union[Integer,None] fixed_frame_number: If set, all files are
         supposed to contain the same amount of frames (sepecified by this
         argument)
-    :rtype: `~file_series.FileSeries`
+    :rtype: :class:`~file_series.FileSeries`
     """
     # Here to avoid recursive import
     from . import file_series

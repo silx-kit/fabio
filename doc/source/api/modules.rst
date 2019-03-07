@@ -9,9 +9,7 @@ FabIO Package
 --------------------
 
 .. automodule:: fabio
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    :members: open, open_series, register, benchmarks, tests
 
 :mod:`fabio.fabioimage` Module
 ------------------------------
