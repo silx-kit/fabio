@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "13/11/2018"
+__date__ = "07/03/2019"
 
 import unittest
 import numpy
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from fabio.fit2dimage import fit2dimage
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 
 class TestFit2DImage(unittest.TestCase):

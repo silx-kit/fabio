@@ -28,7 +28,7 @@ Test for PNM images.
 Jerome Kieffer, 04/12/2014
 """
 __author__ = "Jerome Kieffer"
-__date__ = "13/11/2018"
+__date__ = "07/03/2019"
 import os
 import unittest
 import numpy
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 from fabio.pnmimage import pnmimage
 from fabio.openimage import openimage
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 
 class TestPNM(unittest.TestCase):

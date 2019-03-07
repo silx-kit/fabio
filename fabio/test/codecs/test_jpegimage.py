@@ -36,8 +36,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from .. import jpegimage
-from .utilstest import UtilsTest
+from ... import jpegimage
+from ..utilstest import UtilsTest
 
 TEST_DIRECTORY = None
 # Temporary directory where storing test data

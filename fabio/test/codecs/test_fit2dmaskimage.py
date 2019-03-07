@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from fabio.fit2dmaskimage import fit2dmaskimage
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 
 class TestFaceMask(unittest.TestCase):

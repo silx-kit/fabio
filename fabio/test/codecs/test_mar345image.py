@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from fabio.mar345image import mar345image
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67
@@ -139,52 +139,52 @@ class TestMar345(unittest.TestCase):
     def test_aux(self):
         """test auxillary functions
         """
+        from fabio.ext import mar345_IO
         shape = 120, 130
         size = shape[0] * shape[1]
-        import fabio.ext.mar345_IO
         img = numpy.random.randint(0, 32000, size).astype("int16")
-        b = fabio.ext.mar345_IO.precomp(img, shape[-1])
-        c = fabio.ext.mar345_IO.postdec(b, shape[-1])
+        b = mar345_IO.precomp(img, shape[-1])
+        c = mar345_IO.postdec(b, shape[-1])
         self.assertEqual(abs(c - img).max(), 0, "pre-compression and post-decompression works")
 
-        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(8).astype("int32"), 0, 8)
+        a = mar345_IO.calc_nb_bits(numpy.arange(8).astype("int32"), 0, 8)
         self.assertEqual(a, 32, "8*4")
 
-        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(10).astype("int32"), 0, 10)
+        a = mar345_IO.calc_nb_bits(numpy.arange(10).astype("int32"), 0, 10)
         self.assertEqual(a, 50, "10*5")
 
-        a = fabio.ext.mar345_IO.calc_nb_bits(numpy.arange(50).astype("int32"), 0, 50)
+        a = mar345_IO.calc_nb_bits(numpy.arange(50).astype("int32"), 0, 50)
         self.assertEqual(a, 350, 50 * 7)
 
         img.shape = shape
-        cmp_ccp4 = fabio.ext.mar345_IO.compress_pck(img, use_CCP4=True)
-        cmp_fab = fabio.ext.mar345_IO.compress_pck(img, use_CCP4=False)
+        cmp_ccp4 = mar345_IO.compress_pck(img, use_CCP4=True)
+        cmp_fab = mar345_IO.compress_pck(img, use_CCP4=False)
         delta = abs(len(cmp_fab) - len(cmp_ccp4))
         if len(cmp_fab) > len(cmp_ccp4):
             logger.error("len(fabio): %s len(ccp4):%s", len(cmp_fab), len(cmp_ccp4))
         self.assertLessEqual(delta, 10, "Compression by FabIO is similar to CCP4")
-        img_c_c = fabio.ext.mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=True)
+        img_c_c = mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=True)
         delta = img_c_c - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
             logger.error("img_c_c: %s %s" % numpy.where(delta))
         self.assertEqual(ok.max(), 0, "Compression CCP4 decompression CCP4")
 
-        img_c_f = fabio.ext.mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=False)
+        img_c_f = mar345_IO.uncompress_pck(cmp_ccp4, overflowPix=False, use_CCP4=False)
         delta = img_c_f - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
             logger.error("img_c_f: %s %s" % numpy.where(delta))
         self.assertEqual(ok.max(), 0, "Compression CCP4 decompression Cython")
 
-        img_f_c = fabio.ext.mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=True)
+        img_f_c = mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=True)
         delta = img_f_c - img
         ok = abs(delta).ravel()
         if ok.max() > 0:
             logger.error("img_f_c: %s %s" % numpy.where(delta))
         self.assertEqual(ok.max(), 0, "Compression Cython decompression CCP4")
 
-        img_f_f = fabio.ext.mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=False)
+        img_f_f = mar345_IO.uncompress_pck(cmp_fab, overflowPix=False, use_CCP4=False)
         delta = img_f_f - img
         ok = abs(delta).ravel()
         if ok.max() > 0:

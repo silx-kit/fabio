@@ -36,9 +36,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ..tifimage import tifimage
-from ..marccdimage import marccdimage
-from .utilstest import UtilsTest
+from ...tifimage import tifimage
+from ...marccdimage import marccdimage
+from ..utilstest import UtilsTest
 
 
 # statistics come from fit2d I think

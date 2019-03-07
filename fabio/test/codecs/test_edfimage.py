@@ -39,10 +39,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from ..edfimage import edfimage
-from ..third_party import six
-from ..fabioutils import GzipFile, BZ2File
-from .utilstest import UtilsTest
+from ...edfimage import edfimage
+from ...third_party import six
+from ...fabioutils import GzipFile, BZ2File
+from ..utilstest import UtilsTest
 
 
 class TestFlatEdfs(unittest.TestCase):

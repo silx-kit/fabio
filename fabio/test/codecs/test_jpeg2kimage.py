@@ -38,8 +38,8 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 import fabio
-from .. import jpeg2kimage
-from .utilstest import UtilsTest
+from ... import jpeg2kimage
+from ..utilstest import UtilsTest
 
 
 def isPilUsable():

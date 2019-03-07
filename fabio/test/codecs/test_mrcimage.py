@@ -36,9 +36,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from ..mrcimage import MrcImage
-from ..openimage import openimage
-from .utilstest import UtilsTest
+from ...mrcimage import MrcImage
+from ...openimage import openimage
+from ..utilstest import UtilsTest
 
 
 class TestMrc(unittest.TestCase):

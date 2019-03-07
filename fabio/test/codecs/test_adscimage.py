@@ -36,7 +36,7 @@ import unittest
 import os
 import logging
 
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 

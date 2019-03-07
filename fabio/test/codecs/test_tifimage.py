@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from fabio import tifimage
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 
 class TestTif(unittest.TestCase):

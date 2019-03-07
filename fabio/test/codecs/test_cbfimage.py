@@ -42,11 +42,7 @@ logger = logging.getLogger(__name__)
 import fabio
 from fabio.cbfimage import cbfimage
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
-from fabio.third_party.six import PY3
-from .utilstest import UtilsTest
-if PY3:
-    # FIXME: it have to be removed
-    from fabio.fabioutils import unicode
+from ..utilstest import UtilsTest
 
 
 class TestCbfReader(unittest.TestCase):
@@ -152,7 +148,7 @@ class TestCbfReader(unittest.TestCase):
         """
         Test if an image can be read and saved to an unicode named
         """
-        name = unicode(os.path.basename(self.cbf_filename))
+        name = u"%s" % os.path.basename(self.cbf_filename)
         obj = fabio.open(self.cbf_filename)
         obj.write(os.path.join(UtilsTest.tempdir, name))
         other = fabio.open(os.path.join(UtilsTest.tempdir, name))

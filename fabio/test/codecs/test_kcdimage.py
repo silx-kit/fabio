@@ -36,9 +36,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from ..kcdimage import kcdimage
-from ..openimage import openimage
-from .utilstest import UtilsTest
+from ...kcdimage import kcdimage
+from ...openimage import openimage
+from ..utilstest import UtilsTest
 
 
 class TestKcd(unittest.TestCase):
