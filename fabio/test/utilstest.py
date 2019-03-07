@@ -52,8 +52,8 @@ try:  # Python3
     from urllib.request import urlopen, ProxyHandler, build_opener
 except ImportError:  # Python2
     from urllib2 import urlopen, ProxyHandler, build_opener
-logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger("%s.utilstest" % PACKAGE)
+
+logger = logging.getLogger(__name__)
 
 TEST_HOME = os.path.dirname(os.path.abspath(__file__))
 
