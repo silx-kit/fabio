@@ -29,7 +29,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os
-import tempfile
 import shutil
 import logging
 
@@ -45,7 +44,8 @@ TEST_DIRECTORY = None
 
 def setUpModule():
     global TEST_DIRECTORY
-    TEST_DIRECTORY = tempfile.mkdtemp(prefix="%s_data_" % __name__)
+    TEST_DIRECTORY = os.path.join(UtilsTest.tempdir, __name__)
+    os.makedirs(TEST_DIRECTORY)
 
 
 def tearDownModule():
