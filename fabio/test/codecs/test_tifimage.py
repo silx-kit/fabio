@@ -234,7 +234,7 @@ class TestTif_LibTiffPic(unittest.TestCase):
 
     def setUp(self):
         unittest.TestCase.setUp(self)
-        self.files = UtilsTest.getdir("libtiffpic.tar.gz")
+        self.files = UtilsTest.resources.getdir("libtiffpic.tar.gz")
 
     def test_all_images(self):
         if tifimage.PIL is None:
