@@ -236,6 +236,17 @@ class TestPilImage3(TestPilImage):
         return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)
 
 
+class TestDeprecatedFabioImage(unittest.TestCase):
+
+    def test_patch_dim(self):
+        data = numpy.array(numpy.arange(3 * 10)).reshape(3, 10)
+        image = FabioImage(data=data)
+        # Usecase found in some projects
+        image.dim2, image.dim1 = data.shape
+        # It should not change anything
+        self.assertEqual(image.shape, data.shape)
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -245,6 +256,7 @@ def suite():
     testsuite.addTest(loadTests(TestPilImage))
     testsuite.addTest(loadTests(TestPilImage2))
     testsuite.addTest(loadTests(TestPilImage3))
+    testsuite.addTest(loadTests(TestDeprecatedFabioImage))
     return testsuite
 
 
