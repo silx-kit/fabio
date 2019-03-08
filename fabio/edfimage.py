@@ -148,6 +148,9 @@ class EdfFrame(fabioimage.FabioFrame):
         self._dtype = None
         self.incomplete_data = False
 
+        self._data_size = None
+        """Store the real size of the data, if any."""
+
         if number is not None:
             deprecation.deprecated_warning(reason="Argument 'number' is not used anymore", deprecated_since="0.10.0beta")
 
@@ -250,12 +253,16 @@ class EdfFrame(fabioimage.FabioFrame):
 
         bpp = self._dtype.itemsize
         calcsize *= bpp
+
         if (self.size is None):
             self.size = calcsize
-        elif (self.size != calcsize):
-            if self._data_compression is None:
-                logger.warning("Mismatch between the expected size %s and the calculated one %s", self.size, calcsize)
+        elif self._data_compression is None:
+            if self.size < calcsize:
+                logger.warning("Malformed file. The specified size of the data block is smaller than the expected size (%i < %i). Size is set to the the calculated one. This frame (and following) could be broken.", self.size, calcsize)
                 self.size = calcsize
+            elif self.size > calcsize:
+                # The data block is padded, store here the real data size
+                self._data_size = calcsize
 
         byte_order = self.header[capsHeader['BYTEORDER']]
         if ('Low' in byte_order and numpy.little_endian) or \
@@ -385,6 +392,8 @@ class EdfFrame(fabioimage.FabioFrame):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
+            if self._data_size is not None:
+                rawData = rawData[0:self._data_size]
             data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
             if self.swap_needed():
                 data.byteswap(True)
