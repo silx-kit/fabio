@@ -393,7 +393,6 @@ class EdfFrame(fabioimage.FabioFrame):
                 else:
                     logger.warning("Unknown compression scheme %s" % compression)
                     rawData = fileData
-
             else:
                 rawData = fileData
 
