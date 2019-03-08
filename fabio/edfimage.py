@@ -404,6 +404,7 @@ class EdfFrame(fabioimage.FabioFrame):
                 rawData += b"\x00" * (expected - obtained)
             elif expected < obtained:
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+                logger.debug("Data: %s" % rawData[expected:])
                 rawData = rawData[:expected]
             # Do not reshape the full rawData buffer, use only the size of the recuperated data
             count = self.size // self._dtype.itemsize
