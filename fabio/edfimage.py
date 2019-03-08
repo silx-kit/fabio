@@ -402,7 +402,7 @@ class EdfFrame(fabioimage.FabioFrame):
             if expected > obtained:
                 logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
                 rawData += b"\x00" * (expected - obtained)
-            elif expected < len(rawData):
+            elif expected < obtained:
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
             # Do not reshape the full rawData buffer, use only the size of the recuperated data
