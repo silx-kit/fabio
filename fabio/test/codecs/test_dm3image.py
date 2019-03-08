@@ -34,7 +34,7 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 
 from __future__ import print_function, with_statement, division, absolute_import
 
-__date__ = "04/03/2019"
+__date__ = "07/03/2019"
 __author__ = "jerome Kieffer"
 
 
@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from fabio.dm3image import Dm3Image
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

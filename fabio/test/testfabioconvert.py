@@ -14,7 +14,6 @@ Test for fabio-convert
 
 import numpy
 import os.path
-import tempfile
 import shutil
 import sys
 import subprocess
@@ -25,12 +24,14 @@ import logging
 _logger = logging.getLogger(__name__)
 
 import fabio.app.convert
+from .utilstest import UtilsTest
 
 
 class TestFabioConvert(unittest.TestCase):
 
     def create_test_env(self):
-        path = tempfile.mkdtemp()
+        path = os.path.join(UtilsTest.tempdir, self.id())
+        os.makedirs(path)
         os.mkdir(os.path.join(path, "input"))
         os.mkdir(os.path.join(path, "output"))
 

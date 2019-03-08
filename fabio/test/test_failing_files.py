@@ -31,8 +31,9 @@ import unittest
 import os
 import io
 import fabio
-import tempfile
 import shutil
+
+from .utilstest import UtilsTest
 
 
 class TestFailingFiles(unittest.TestCase):
@@ -40,7 +41,8 @@ class TestFailingFiles(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.tmp_directory = tempfile.mkdtemp()
+        cls.tmp_directory = os.path.join(UtilsTest.tempdir, cls.__name__)
+        os.makedirs(cls.tmp_directory)
         cls.createResources(cls.tmp_directory)
 
     @classmethod

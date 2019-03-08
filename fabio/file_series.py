@@ -375,11 +375,21 @@ class numbered_file_series(file_series):
         super(numbered_file_series, self).__init__(strings)
 
 
-class filename_series:
+class filename_series(object):
+    """Iterator through a list of files indexed by a number.
+
+    Supports `next`, `prevous` and jump accessors.
+
+    :param Union[str,FilenameObject] filename: The first filename of the
+        iteration.
+    """
     """ Much like the others, but created from a string filename """
     def __init__(self, filename):
         """ create from a filename (String)"""
-        self.obj = FilenameObject(filename=filename)
+        if isinstance(filename, FilenameObject):
+            self.obj = filename
+        else:
+            self.obj = FilenameObject(filename=filename)
 
     def next(self):
         """ increment number """

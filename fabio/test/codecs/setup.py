@@ -30,8 +30,7 @@ from numpy.distutils.misc_util import Configuration
 
 
 def configuration(parent_package='', top_path=None):
-    config = Configuration('test', parent_package, top_path)
-    config.add_subpackage("codecs")
+    config = Configuration('codecs', parent_package, top_path)
     return config
 
 

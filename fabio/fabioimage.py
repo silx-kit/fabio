@@ -44,7 +44,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "04/03/2019"
+__date__ = "07/03/2019"
 
 import os
 import logging
@@ -73,6 +73,16 @@ class _FabioArray(object):
     def dim2(self):
         return self.shape[-2]
 
+    @dim1.setter
+    @deprecation.deprecated(reason="dim1 should not be updated", deprecated_since="0.10.0beta")
+    def dim1(self, value):
+        self.__set_dim1(value)
+
+    @dim2.setter
+    @deprecation.deprecated(reason="dim2 should not be updated", deprecated_since="0.10.0beta")
+    def dim2(self, value):
+        self.__set_dim2(value)
+
     @property
     @deprecation.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'", deprecated_since="0.10.0beta")
     def dim3(self):
@@ -93,13 +103,19 @@ class _FabioArray(object):
     def get_dim2(self):
         return self.shape[-2]
 
-    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(reason="dim1 should not be updated", deprecated_since="0.10.0beta")
     def set_dim1(self, value):
-        self.shape[-1] = value
+        self.__set_dim1(value)
 
-    @deprecation.deprecated(reason="Prefer using 'shape' instead of dim1/dim2", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(reason="dim2 should not be updated", deprecated_since="0.10.0beta")
     def set_dim2(self, value):
-        self.shape[-2] = value
+        self.__set_dim2(value)
+
+    def __set_dim1(self, value):
+        self.data.shape = self.data.shape[:-2] + (-1, value)
+
+    def __set_dim2(self, value):
+        self.data.shape = self.data.shape[:-2] + (value, -1)
 
     def resetvals(self):
         """ Reset cache - call on changing data """
@@ -127,6 +143,12 @@ class _FabioArray(object):
         Convert the image to Python Imaging Library 16-bits greyscale image.
         """
         return self.toPIL16()
+
+    @pilimage.setter
+    @deprecation.deprecated(reason="Setting pilimage not supported. This attrbute is not cached anymore", deprecated_since="0.10.0beta")
+    def pilimage(self, value):
+        if value is not None:
+            raise ValueError("Setting pilimage attribute is not supported")
 
     def getmax(self):
         """ Find max value in self.data, caching for the future """

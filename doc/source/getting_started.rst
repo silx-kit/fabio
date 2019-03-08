@@ -181,26 +181,26 @@ optimize, and it is difficult to custom the list of the files.
 FabIO file series
 .................
 
-This way introduces a real :class:`~fabio.fabioimage.FabioFrame` as composition
+This design introduces a real :class:`~fabio.fabioimage.FabioFrame` as composition
 of all :class:`~fabio.fabioimage.FabioImage`.
 
 .. image:: img/fabioframes.png
 
 For single frames images, :class:`~fabio.fabioimage.FabioImage` still provides
-access to the data of the first and only one frame. But the method :meth:`~fabio.fabioimage.FabioImage.get_frame`
-(with an underscore, no `getframe`) provides access to any frames contained in the file.
-A file containing a single data, also contains a single frame with this same data
+access to the data of to the first (and only one) frame. But the method :meth:`~fabio.fabioimage.FabioImage.get_frame`
+(with an underscore, not :meth:`~fabio.fabioimage.FabioImage.getframe`) provides access to any frames contained in the file.
+A file containing a single data, also contains a single frame object. Both provide the same data
 (there is 2 ways to access to this data).
 
-To iterate other many files we have to use a :class:`~fabio.file_series.FileSeries`
-object which is a :class:`~fabio.fabioimage.FabioImage`.
+To iterate other many files a :class:`~fabio.file_series.FileSeries` can be used.
+This object is a :class:`~fabio.fabioimage.FabioImage` which a set of file as a single container of frame.
 The hi-level function :func:`~fabio.open_series` is provided to hide the complexity.
 
-This function (or this class) allows different ways to custom the files to iterate.
+This function (or this class) allows different ways to custom the file iteration.
 Plus optional informnation to describe the way frames as stored in files in order
 to optimize the random access.
 
-Methodes provided allow to reach frames 
+Methodes provided allow to reach frames
 using a sequencial access (:meth:`~fabio.fabioimage.FabioImage.frames`)
 or using a random access (:meth:`~fabio.fabioimage.FabioImage.get_frame`).
 

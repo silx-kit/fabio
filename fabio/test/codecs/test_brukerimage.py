@@ -36,9 +36,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ..brukerimage import brukerimage
-from .. import fabioutils
-from .utilstest import UtilsTest
+from ...brukerimage import brukerimage
+from ... import fabioutils
+from ..utilstest import UtilsTest
 
 # this is actually a violation of the bruker format since the order of
 # the header items is specified

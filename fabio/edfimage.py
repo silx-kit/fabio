@@ -142,9 +142,14 @@ class EdfFrame(fabioimage.FabioFrame):
         self._data_compression = None
         self._data_swap_needed = None
         self._data = data
-        self.start = None  # Position of start of raw data in file
-        self.size = None  # size of raw data in file
-        self.file = None  # opened file object with locking capabilities !!!
+        self.start = None
+        """Position of start of raw data in file"""
+        self.size = None
+        """Size of raw data block in file (including padding)"""
+        self._data_size = None
+        """Size of the util raw data if different than `size` (without padding)"""
+        self.file = None
+        """Opened file object with locking capabilities"""
         self._dtype = None
         self.incomplete_data = False
 
@@ -250,12 +255,16 @@ class EdfFrame(fabioimage.FabioFrame):
 
         bpp = self._dtype.itemsize
         calcsize *= bpp
+
         if (self.size is None):
             self.size = calcsize
-        elif (self.size != calcsize):
-            if self._data_compression is None:
-                logger.warning("Mismatch between the expected size %s and the calculated one %s", self.size, calcsize)
+        elif self._data_compression is None:
+            if self.size < calcsize:
+                logger.warning("Malformed file. The specified size of the data block is smaller than the expected size (%i < %i). Size is set to the the calculated one. This frame (and following) could be broken.", self.size, calcsize)
                 self.size = calcsize
+            elif self.size > calcsize:
+                # The data block is padded, store here the real data size
+                self._data_size = calcsize
 
         byte_order = self.header[capsHeader['BYTEORDER']]
         if ('Low' in byte_order and numpy.little_endian) or \
@@ -385,6 +394,8 @@ class EdfFrame(fabioimage.FabioFrame):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
+            if self._data_size is not None:
+                rawData = rawData[0:self._data_size]
             data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
             if self.swap_needed():
                 data.byteswap(True)

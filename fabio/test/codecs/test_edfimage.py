@@ -31,7 +31,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import numpy
-import tempfile
 import shutil
 import io
 import logging
@@ -39,10 +38,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from ..edfimage import edfimage
-from ..third_party import six
-from ..fabioutils import GzipFile, BZ2File
-from .utilstest import UtilsTest
+from ...edfimage import edfimage
+from ...third_party import six
+from ...fabioutils import GzipFile, BZ2File
+from ..utilstest import UtilsTest
 
 
 class TestFlatEdfs(unittest.TestCase):
@@ -378,7 +377,8 @@ class TestBadFiles(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.tmp_directory = tempfile.mkdtemp(prefix=cls.__name__)
+        cls.tmp_directory = os.path.join(UtilsTest.tempdir, cls.__name__)
+        os.makedirs(cls.tmp_directory)
         cls.create_resources()
 
     @classmethod
