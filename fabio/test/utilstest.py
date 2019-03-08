@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/03/2019"
+__date__ = "08/03/2019"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -43,7 +43,7 @@ import getpass
 import threading
 import logging
 import tempfile
-from .ExternalResources import ExternalResources
+from ..utils.ExternalResources import ExternalResources
 
 logger = logging.getLogger(__name__)
 
