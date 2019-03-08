@@ -142,14 +142,16 @@ class EdfFrame(fabioimage.FabioFrame):
         self._data_compression = None
         self._data_swap_needed = None
         self._data = data
-        self.start = None  # Position of start of raw data in file
-        self.size = None  # size of raw data in file
-        self.file = None  # opened file object with locking capabilities !!!
+        self.start = None
+        """Position of start of raw data in file"""
+        self.size = None
+        """Size of raw data block in file (including padding)"""
+        self._data_size = None
+        """Size of the util raw data if different than `size` (without padding)"""
+        self.file = None
+        """Opened file object with locking capabilities"""
         self._dtype = None
         self.incomplete_data = False
-
-        self._data_size = None
-        """Store the real size of the data, if any."""
 
         if number is not None:
             deprecation.deprecated_warning(reason="Argument 'number' is not used anymore", deprecated_since="0.10.0beta")
