@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 
 from fabio.dtrekimage import DtrekImage
 from fabio.edfimage import EdfImage
+from fabio.utils import testutils
 
 
 # statistics come from fit2d I think
@@ -73,7 +74,7 @@ class TestMatch(unittest.TestCase):
         self.assertEqual(abs(diff).max(), 0.0, "asdc data == edf data")
 
 
-class TestFlatMccdsAdsc(unittest.TestCase):
+class TestFlatMccdsAdsc(testutils.ParametricTestCase):
     """
     """
     def setUp(self):
@@ -95,15 +96,16 @@ class TestFlatMccdsAdsc(unittest.TestCase):
     def test_read(self):
         """ check we can read flat ADSC images"""
         for datainfo in TESTIMAGES:
-            name, shape, mini, maxi, mean, stddev = datainfo
-            obj = DtrekImage()
-            obj.read(os.path.join(self.im_dir, name))
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
-            got_mean = obj.getmean()
-            self.assertAlmostEqual(mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
-            self.assertEqual(shape, obj.shape)
+            with self.subTest(datainfo=datainfo):
+                name, shape, mini, maxi, mean, stddev = datainfo
+                obj = DtrekImage()
+                obj.read(os.path.join(self.im_dir, name))
+                self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
+                self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
+                got_mean = obj.getmean()
+                self.assertAlmostEqual(mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean))
+                self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
+                self.assertEqual(shape, obj.shape)
 
 
 def suite():
