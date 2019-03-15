@@ -200,11 +200,11 @@ class DtrekImage(FabioImage):
             if pad < 0:
                 logger.warning("HEADER_BYTES have to be patched.")
                 minimal_hsize = hsize - pad
-                hsize = minimal_hsize + 512 & ~(512 - 1)
+                hsize = (minimal_hsize + 512) & ~(512 - 1)
                 pad = hsize - minimal_hsize
         else:
             minimal_hsize = len(out) + MINIMAL_HEADER_SIZE
-            hsize = minimal_hsize + 512 & ~(512 - 1)
+            hsize = (minimal_hsize + 512) & ~(512 - 1)
             pad = hsize - minimal_hsize
 
         out = HEADER_START + (HEADER_BYTES_TEMPLATE % hsize) + out + HEADER_END + (b' ' * pad)
