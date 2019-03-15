@@ -74,11 +74,14 @@ class TestMatch(unittest.TestCase):
         self.assertEqual(abs(diff).max(), 0.0, "asdc data == edf data")
 
 
-class TestFlatMccdsAdsc(testutils.ParametricTestCase):
+class TestRealSamples(testutils.ParametricTestCase):
     """
+    Test real samples stored in our archive.
     """
-    def setUp(self):
-        """ Download images """
+
+    @classmethod
+    def setUpClass(cls):
+        """Prefetch images"""
         download = []
         for datainfo in TESTIMAGES:
             name = datainfo[0]
@@ -91,7 +94,7 @@ class TestFlatMccdsAdsc(testutils.ParametricTestCase):
         download = list(set(download))
         for name in download:
             os.path.dirname(UtilsTest.getimage(name))
-        self.im_dir = UtilsTest.resources.data_home
+        cls.im_dir = UtilsTest.resources.data_home
 
     def test_read(self):
         """ check we can read flat ADSC images"""
@@ -112,7 +115,7 @@ def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestMatch))
-    testsuite.addTest(loadTests(TestFlatMccdsAdsc))
+    testsuite.addTest(loadTests(TestRealSamples))
     return testsuite
 
 
