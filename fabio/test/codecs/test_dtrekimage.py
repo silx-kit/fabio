@@ -23,12 +23,7 @@
 #
 
 """
-# Unit tests
-
-# builds on stuff from ImageD11.test.testpeaksearch
-
-Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
-28/11/2014
+Unit tests for the d*TREK format.
 """
 from __future__ import print_function, with_statement, division, absolute_import
 
