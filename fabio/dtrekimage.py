@@ -100,8 +100,12 @@ class DtrekImage(FabioImage):
         # Read information of the binary data type
         data_type = self.header.get("Data_type", None)
         if data_type is None:
-            # Not needed, but compatibility with old supported files, in case
-            logger.warning("Data_type key is expected. Fallback to unsigner integer 16-bits.")
+            # Compatibility with old supported files
+            data_type = self.header.get("TYPE", None)
+            if data_type is not None and data_type == "unsigned_short":
+                pass
+            else:
+                logger.warning("Data_type key is expected. Fallback to unsigner integer 16-bits.")
             numpy_type = numpy.uint16
         else:
             if data_type not in _DATA_TYPES:
