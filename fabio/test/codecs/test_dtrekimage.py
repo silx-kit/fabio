@@ -49,7 +49,9 @@ from fabio.utils import testutils
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = [("mb_LP_1_001.img", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
               ("mb_LP_1_001.img.gz", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
-              ("mb_LP_1_001.img.bz2", (3072, 3072), 0.0000, 65535., 120.33, 147.38)]
+              ("mb_LP_1_001.img.bz2", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
+              ("HSA_1_5mg_C1_0004.img", (385, 775), -2, 2127, 69.25, 59.52),
+              ]
 
 
 class TestMatch(unittest.TestCase):
