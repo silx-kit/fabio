@@ -72,7 +72,13 @@ class AdscImage(FabioImage):
             binary = infile.read()
         # infile.close()
 
-        dtype = numpy.dtype(numpy.uint16)
+        # NOTE: Used by the d*TREK format
+        data_mode = self.header.get("PXD_DETECTOR_ACQUISITION_DATAMODE", None)
+        if data_mode == "Combined 31bit":
+            dtype = numpy.dtype(numpy.uint32)
+        else:
+            dtype = numpy.dtype(numpy.uint16)
+
         # now read the data into the array
         self._shape = int(self.header['SIZE2']), int(self.header['SIZE1'])
         data = numpy.frombuffer(binary, dtype).copy()
