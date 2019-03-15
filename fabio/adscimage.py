@@ -92,7 +92,7 @@ class AdscImage(FabioImage):
         """ read an adsc header """
         line = infile.readline()
         bytesread = len(line)
-        while b'}' not in line:
+        while not line.startswith(b'}'):
             if b'=' in line:
                 (key, val) = to_str(line).split('=')
                 self.header[key.strip()] = val.strip(' ;\n\r')
