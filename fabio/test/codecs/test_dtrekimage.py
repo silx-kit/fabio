@@ -46,9 +46,9 @@ from fabio.edfimage import EdfImage
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """mb_LP_1_001.img 3072 3072 0.0000 65535. 120.33 147.38
-                mb_LP_1_001.img.gz  3072 3072 0.0000 65535.  120.33 147.38
-                mb_LP_1_001.img.bz2 3072 3072 0.0000 65535.  120.33 147.38"""
+TESTIMAGES = [("mb_LP_1_001.img", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
+              ("mb_LP_1_001.img.gz", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
+              ("mb_LP_1_001.img.bz2", (3072, 3072), 0.0000, 65535., 120.33, 147.38)]
 
 
 class TestMatch(unittest.TestCase):
@@ -78,16 +78,24 @@ class TestFlatMccdsAdsc(unittest.TestCase):
     """
     def setUp(self):
         """ Download images """
-        self.im_dir = os.path.dirname(UtilsTest.getimage("mb_LP_1_001.img.bz2"))
+        download = []
+        for datainfo in TESTIMAGES:
+            name = datainfo[0]
+            if name.endswith(".bz2"):
+                download.append(name)
+            elif name.endswith(".gz"):
+                download.append(name[:-3] + ".bz2")
+            else:
+                download.append(name + ".bz2")
+        download = list(set(download))
+        for name in download:
+            os.path.dirname(UtilsTest.getimage(name))
+        self.im_dir = UtilsTest.resources.data_home
 
     def test_read(self):
         """ check we can read flat ADSC images"""
-        for line in TESTIMAGES.split("\n"):
-            vals = line.split()
-            name = vals[0]
-            dim1, dim2 = [int(x) for x in vals[1:3]]
-            shape = dim2, dim1
-            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+        for datainfo in TESTIMAGES:
+            name, shape, mini, maxi, mean, stddev = datainfo
             obj = DtrekImage()
             obj.read(os.path.join(self.im_dir, name))
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
