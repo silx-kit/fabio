@@ -199,9 +199,9 @@ def _openimage(filename):
         imo = FabioImage()
         with imo._open(actual_filename) as f:
             magic_bytes = f.read(18)
-    except IOError as error:
-        logger.debug("%s: File probably does not exist", error)
-        raise error
+    except IOError:
+        logger.debug("Backtrace", exc_info=True)
+        raise
     else:
         imo = None
 
