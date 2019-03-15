@@ -146,29 +146,73 @@ class DtrekImage(FabioImage):
 
     def write(self, fname):
         """
-        Write adsc format
+        Write d*TREK format
         """
-        out = b'{\n'
-        for key in self.header:
-            out += b"%s = %s;\n" % (key, self.header[key])
-        if "HEADER_BYTES" in self.header:
-            pad = int(self.header["HEADER_BYTES"]) - len(out) - 2
-        else:
-            # hsize = ((len(out) + 23) // 512 + 1) * 512
-            hsize = (len(out) + 533) & ~(512 - 1)
-            out += b"HEADER_BYTES=%d;\n" % (hsize)
-            pad = hsize - len(out) - 2
-        out += pad * b' ' + b"}\n"
-        assert len(out) % 512 == 0, "Header is not multiple of 512"
 
-        data = self.data.astype(numpy.uint16)
+        # From specification
+        HEADER_START = b"{\n"
+        HEADER_END = b"}\n\x0C\n"
+        HEADER_BYTES_TEMPLATE = b"HEADER_BYTES=% 5d;\n"
+        # start + end + header_bytes_key + header_bytes_value + header_bytes_end
+        MINIMAL_HEADER_SIZE = 2 + 4 + 13 + 5 + 2
+
+        data = self.data
+
+        dtrek_data_type = None
+        for key, value in _DATA_TYPES.items():
+            if data.dtype.type == value:
+                dtrek_data_type = key
+                break
+
+        if dtrek_data_type is None:
+            if data.dtype.kind == 'f':
+                dtrek_data_type = "float IEEE"
+            elif data.dtype.kind == 'u':
+                dtrek_data_type = "unsigned long int"
+            elif data.dtype.kind == 'i':
+                dtrek_data_type = "long int"
+            else:
+                raise TypeError("Unsupported data type %s", data.dtype)
+            new_dtype = numpy.dtype(_DATA_TYPES[dtrek_data_type])
+            logger.warning("Data type %s unsupported. Store it as %s.", data.dtype, new_dtype)
+            data = data.astype(new_dtype)
+
         if self.swap_needed():
-            data.byteswap(True)
+            # Do not swap the data stored in the object
+            data = data.byteswap()
+
+        # Patch header to match the data
+        self.header["Data_type"] = dtrek_data_type
+        size2, size1 = data.shape
+        self.header['SIZE1'] = str(size1)
+        self.header['SIZE2'] = str(size2)
+
+        out = b""
+        for key in self.header:
+            if key == "HEADER_BYTES":
+                continue
+            out += b"%s = %s;\n" % (key.encode("utf-8"), self.header[key].encode("utf-8"))
+
+        # FIXME: This code do not take into account the size of "HEADER_BYTES"
+        if "HEADER_BYTES" in self.header:
+            hsize = int(self.header["HEADER_BYTES"])
+            pad = hsize - len(out) - MINIMAL_HEADER_SIZE
+            if pad < 0:
+                logger.warning("HEADER_BYTES have to be patched.")
+                minimal_hsize = hsize - pad
+                hsize = minimal_hsize + 512 & ~(512 - 1)
+                pad = hsize - minimal_hsize
+        else:
+            minimal_hsize = len(out) + MINIMAL_HEADER_SIZE
+            hsize = minimal_hsize + 512 & ~(512 - 1)
+            pad = hsize - minimal_hsize
+
+        out = HEADER_START + (HEADER_BYTES_TEMPLATE % hsize) + out + HEADER_END + (b' ' * pad)
+        assert len(out) % 512 == 0, "Header is not multiple of 512"
 
         with open(fname, "wb") as outf:
             outf.write(out)
             outf.write(data.tostring())
-        # outf.close()
 
     def swap_needed(self):
         if "BYTE_ORDER" not in self.header:
