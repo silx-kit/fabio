@@ -215,16 +215,17 @@ class DtrekImage(FabioImage):
             outf.write(data.tostring())
 
     def swap_needed(self):
+        """
+        Returns True if the header does not use the same endianness than the
+        system.
+
+        :rtype: bool
+        """
         if "BYTE_ORDER" not in self.header:
             logger.warning("No byte order specified, assuming little_endian")
-            BYTE_ORDER = "little_endian"
+            byte_order = "little_endian"
         else:
-            BYTE_ORDER = self.header["BYTE_ORDER"]
-        if "little" in BYTE_ORDER and numpy.little_endian:
-            return False
-        elif "big" in BYTE_ORDER and not numpy.little_endian:
-            return False
-        elif "little" in BYTE_ORDER and not numpy.little_endian:
-            return True
-        elif "big" in BYTE_ORDER and numpy.little_endian:
-            return True
+            byte_order = self.header["BYTE_ORDER"]
+
+        little_endian = "little" in byte_order
+        return little_endian != numpy.little_endian
