@@ -37,9 +37,27 @@ Authors: Henning O. Sorensen & Erik Knudsen
 from __future__ import with_statement, print_function
 import numpy
 import logging
+
 from .fabioimage import FabioImage
 from .fabioutils import to_str
+
 logger = logging.getLogger(__name__)
+
+
+_DATA_TYPES = {
+    "signed char": numpy.int8,
+    "unsigned char": numpy.uint8,
+    "short int": numpy.int16,
+    "unsigned short int": numpy.uint16,
+    "long int": numpy.int32,
+    "unsigned long int": numpy.uint32,
+    "float IEEE": numpy.float32,
+    # Valid but unsupported
+    "Compressed": None,
+    # Valid but unsupported
+    "Other_type": None,
+}
+"""Mapping from Data_type content to numpy equicalent"""
 
 
 class DtrekImage(FabioImage):
@@ -78,14 +96,28 @@ class DtrekImage(FabioImage):
                 infile = self._open(fname, "rb")
                 infile.read(int(self.header['HEADER_BYTES']))
             binary = infile.read()
-        # infile.close()
 
-        dtype = numpy.dtype(numpy.uint16)
-        # now read the data into the array
+        # Read information of the binary data type
+        data_type = self.header.get("Data_type", None)
+        if data_type is None:
+            # Not needed, but compatibility with old supported files, in case
+            logger.warning("Data_type key is expected. Fallback to unsigner integer 16-bits.")
+            numpy_type = numpy.uint16
+        else:
+            if data_type not in _DATA_TYPES:
+                raise IOError("Data_type key contains an invalid/unsupported value: %s", data_type)
+            numpy_type = _DATA_TYPES[data_type]
+            if type is None:
+                raise IOError("Data_type %s is not supported by fabio", data_type)
+
+        # Stored in case data reading fails
+        self._dtype = numpy.dtype(numpy_type)
         self._shape = int(self.header['SIZE2']), int(self.header['SIZE1'])
-        data = numpy.frombuffer(binary, dtype).copy()
+
+        # Read the data into the array
+        data = numpy.frombuffer(binary, numpy_type).copy()
         if self.swap_needed():
-            data.byteswap(True)
+            data.byteswap(inplace=True)
         try:
             data.shape = self._shape
         except ValueError:
