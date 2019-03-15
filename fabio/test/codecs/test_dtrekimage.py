@@ -35,11 +35,14 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import logging
+import numpy
+import shutil
 
 from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
+import fabio
 from fabio.dtrekimage import DtrekImage
 from fabio.edfimage import EdfImage
 from fabio.utils import testutils
@@ -74,6 +77,54 @@ class TestMatch(unittest.TestCase):
         logger.debug("im1 min %s %s max %s %s " % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max()))
         logger.debug("delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean()))
         self.assertEqual(abs(diff).max(), 0.0, "asdc data == edf data")
+
+
+class TestDtrekImplementation(testutils.ParametricTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp_directory = os.path.join(UtilsTest.tempdir, cls.__name__)
+        os.makedirs(cls.tmp_directory)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp_directory)
+
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+
+    def test_write_and_read(self):
+        configs = [
+            (numpy.uint16, "little_endian", None),
+            (numpy.uint16, "big_endian", None),
+            (numpy.uint32, "little_endian", None),
+            (numpy.int32, "little_endian", None),
+            (numpy.float32, "little_endian", None),
+            (numpy.float32, "little_endian", None),
+            # Data have to be converted before storage
+            (numpy.uint64, "little_endian", numpy.uint32),
+            (numpy.int64, "little_endian", numpy.int32),
+            (numpy.float16, "little_endian", numpy.float32),
+        ]
+        for config in configs:
+            with self.subTest(config=config):
+                input_type, byte_order, output_type = config
+                if output_type is None:
+                    output_type = input_type
+
+                header = {}
+                header["BYTE_ORDER"] = byte_order
+                data = numpy.arange(5 * 10).reshape(5, 10)
+                data = data.astype(input_type)
+                obj = DtrekImage(data=data, header=header)
+                filename = os.path.join(self.tmp_directory, "saved_%s.img" % hash(config))
+                obj.save(filename)
+                self.assertEqual(obj.data.dtype.type, input_type)
+                obj2 = fabio.open(filename)
+                self.assertEqual(obj2.data.dtype.type, output_type)
+                self.assertEqual(obj.shape, obj2.shape)
+                if input_type == output_type:
+                    numpy.testing.assert_array_almost_equal(obj.data, obj2.data)
 
 
 class TestRealSamples(testutils.ParametricTestCase):
@@ -118,6 +169,7 @@ def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestMatch))
     testsuite.addTest(loadTests(TestRealSamples))
+    testsuite.addTest(loadTests(TestDtrekImplementation))
     return testsuite
 
 
