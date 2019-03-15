@@ -72,9 +72,10 @@ class AdscImage(FabioImage):
             binary = infile.read()
         # infile.close()
 
+        dtype = numpy.dtype(numpy.uint16)
         # now read the data into the array
         self._shape = int(self.header['SIZE2']), int(self.header['SIZE1'])
-        data = numpy.frombuffer(binary, numpy.uint16).copy()
+        data = numpy.frombuffer(binary, dtype).copy()
         if self.swap_needed():
             data.byteswap(True)
         try:
