@@ -35,12 +35,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from fabio.openimage import openimage
-from fabio.edfimage import edfimage
-from fabio.marccdimage import marccdimage
-from fabio.fit2dmaskimage import fit2dmaskimage
+from fabio.edfimage import EdfImage
+from fabio.marccdimage import MarccdImage
+from fabio.fit2dmaskimage import Fit2dMaskImage
 from fabio.OXDimage import OXDimage
-from fabio.brukerimage import brukerimage
-from fabio.adscimage import adscimage
+from fabio.brukerimage import BrukerImage
+from fabio.dtrekimage import DtrekImage
 from .utilstest import UtilsTest
 
 
@@ -50,7 +50,7 @@ class TestOpenEdf(unittest.TestCase):
     def checkFile(self, filename):
         """ check we can read EDF image with openimage"""
         obj = openimage(filename)
-        obj2 = edfimage()
+        obj2 = EdfImage()
         obj2.read(filename)
         self.assertEqual(obj.data[10, 10], obj2.data[10, 10])
         self.assertEqual(type(obj), type(obj2))
@@ -78,7 +78,7 @@ class TestOpenMccd(unittest.TestCase):
     def checkFile(self, filename):
         """ check we can read it"""
         obj = openimage(filename)
-        obj2 = marccdimage()
+        obj2 = MarccdImage()
         obj2.read(filename)
         self.assertEqual(obj.data[10, 10], obj2.data[10, 10])
         self.assertEqual(type(obj), type(obj2))
@@ -106,7 +106,7 @@ class TestOpenMask(unittest.TestCase):
     def checkFile(self, filename):
         """ check we can read Fit2D mask with openimage"""
         obj = openimage(filename)
-        obj2 = fit2dmaskimage()
+        obj2 = Fit2dMaskImage()
         obj2.read(filename)
         self.assertEqual(obj.data[10, 10], obj2.data[10, 10])
         self.assertEqual(type(obj), type(obj2))
@@ -138,7 +138,7 @@ class TestOpenBruker(unittest.TestCase):
     def checkFile(self, filename):
         """ check we can read it"""
         obj = openimage(filename)
-        obj2 = brukerimage()
+        obj2 = BrukerImage()
         obj2.read(filename)
         self.assertEqual(obj.data[10, 10], obj2.data[10, 10])
         self.assertEqual(type(obj), type(obj2))
@@ -163,13 +163,13 @@ class TestOpenBruker(unittest.TestCase):
         self.checkFile(filename)
 
 
-class TestOpenAdsc(unittest.TestCase):
+class TestOpenDtrek(unittest.TestCase):
     """openimage opening adsc"""
 
     def checkFile(self, filename):
         """ check we can read it"""
         obj = openimage(filename)
-        obj2 = adscimage()
+        obj2 = DtrekImage()
         obj2.read(filename)
         self.assertEqual(obj.data[10, 10], obj2.data[10, 10])
         self.assertEqual(type(obj), type(obj2))
@@ -222,7 +222,7 @@ class TestOpenOxd(unittest.TestCase):
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(loadTests(TestOpenAdsc))
+    testsuite.addTest(loadTests(TestOpenDtrek))
     testsuite.addTest(loadTests(TestOpenBruker))
     testsuite.addTest(loadTests(TestOpenEdf))
     testsuite.addTest(loadTests(TestOpenMask))

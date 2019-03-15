@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/06/2018"
+__date__ = "15/03/2019"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -60,7 +60,7 @@ except ImportError:
 
 _default_codecs = [
     ("edfimage", "EdfImage"),
-    ("adscimage", "AdscImage"),
+    ("dtrekimage", "DtrekImage"),
     ("tifimage", "TifImage"),
     ("marccdimage", "MarccdImage"),
     ("mar345image", "Mar345Image"),
@@ -89,6 +89,8 @@ _default_codecs = [
     ("jpeg2kimage", "Jpeg2KImage"),
     ("mpaimage", "MpaImage"),
     ("mrcimage", "MrcImage"),
+    # For compatibility (maybe not needed)
+    ("adscimage", "AdscImage"),
 ]
 """List of relative module and class names for available formats in fabio.
 Order matter."""

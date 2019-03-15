@@ -40,8 +40,8 @@ from ..utilstest import UtilsTest
 
 logger = logging.getLogger(__name__)
 
-from fabio.adscimage import adscimage
-from fabio.edfimage import edfimage
+from fabio.dtrekimage import DtrekImage
+from fabio.edfimage import EdfImage
 
 
 # statistics come from fit2d I think
@@ -62,9 +62,9 @@ class TestMatch(unittest.TestCase):
 
     def testsame(self):
         """test ADSC image match to EDF"""
-        im1 = edfimage()
+        im1 = EdfImage()
         im1.read(self.fn_edf)
-        im2 = adscimage()
+        im2 = DtrekImage()
         im2.read(self.fn_adsc)
         diff = (im1.data.astype("float32") - im2.data.astype("float32"))
         logger.debug("type: %s %s shape %s %s " % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape))
@@ -88,7 +88,7 @@ class TestFlatMccdsAdsc(unittest.TestCase):
             dim1, dim2 = [int(x) for x in vals[1:3]]
             shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
-            obj = adscimage()
+            obj = DtrekImage()
             obj.read(os.path.join(self.im_dir, name))
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")

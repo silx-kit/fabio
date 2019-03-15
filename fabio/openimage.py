@@ -65,8 +65,8 @@ MAGIC_NUMBERS = [
     (b"\x49\x49\x2a\x00\x08\x00", 'marccd/tif'),
     (b"\x49\x49\x2a\x00\x82\x00", 'pilatus'),
     (b"\x49\x49\x2a\x00", 'tif'),
-    # ADSC must come before edf
-    (b"{\nHEA", 'adsc'),
+    # d*TREK must come before edf
+    (b"{\nHEA", 'dtrek'),
     (b"{", 'edf'),
     (b"\r{", 'edf'),
     (b"\n{", 'edf'),

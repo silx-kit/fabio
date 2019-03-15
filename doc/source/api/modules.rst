@@ -91,6 +91,13 @@ FabIO Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`fabio.dtrekimage` Module
+------------------------------
+
+.. automodule:: fabio.dtrekimage
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 :mod:`fabio.edfimage` Module
 ----------------------------

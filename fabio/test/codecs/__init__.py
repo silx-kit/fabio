@@ -40,7 +40,7 @@ from .. import utilstest
 def suite():
     from . import test_edfimage
     from . import test_cbfimage
-    from . import test_adscimage
+    from . import test_dtrekimage
     from . import test_fit2dmaskimage
     from . import test_geimage
     from . import test_mar345image
@@ -69,7 +69,7 @@ def suite():
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_edfimage.suite())
     testSuite.addTest(test_cbfimage.suite())
-    testSuite.addTest(test_adscimage.suite())
+    testSuite.addTest(test_dtrekimage.suite())
     testSuite.addTest(test_fit2dmaskimage.suite())
     testSuite.addTest(test_geimage.suite())
     testSuite.addTest(test_mar345image.suite())
