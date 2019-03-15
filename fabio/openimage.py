@@ -221,7 +221,7 @@ def _openimage(filename):
                 raise Exception("openimage failed on magic bytes & name guess")
             filetype = file_obj.format
 
-        except Exception as error:
+        except Exception:
             logger.debug("Backtrace", exc_info=True)
             raise IOError("Fabio could not identify " + filename)
 
