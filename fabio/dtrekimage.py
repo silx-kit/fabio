@@ -90,16 +90,9 @@ class DtrekImage(FabioImage):
                 self._readheader(infile)
             except Exception:
                 logger.debug("Backtrace", exc_info=True)
-                raise Exception("Error processing ADSC header")
-            # banned by bzip/gzip???
-            try:
-                infile.seek(int(self.header['HEADER_BYTES']), 0)
-            except TypeError:
-                # Gzipped does not allow a seek and read header is not
-                # promising to stop in the right place
-                infile.close()
-                infile = self._open(fname, "rb")
-                infile.read(int(self.header['HEADER_BYTES']))
+                raise IOError("Error processing d*TREK header")
+
+            # FIXME: It would be good to read only the expected data
             binary = infile.read()
 
         # Read information of the binary data type
