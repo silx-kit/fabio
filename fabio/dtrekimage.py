@@ -134,7 +134,11 @@ class DtrekImage(FabioImage):
             # Read the data into the array
             data = numpy.frombuffer(binary, numpy_type).copy()
             if self.swap_needed():
-                data.byteswap(inplace=True)
+                try:
+                    data.byteswap(inplace=True)
+                except TypeError:
+                    # Older numpy without inplace
+                    data = data.byteswap()
             try:
                 data.shape = self._shape
             except ValueError:
