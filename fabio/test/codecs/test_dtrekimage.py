@@ -45,10 +45,14 @@ from fabio.utils import testutils
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = [("mb_LP_1_001.img", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
-              ("mb_LP_1_001.img.gz", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
-              ("mb_LP_1_001.img.bz2", (3072, 3072), 0.0000, 65535., 120.33, 147.38),
-              ("HSA_1_5mg_C1_0004.img", (385, 775), -2, 2127, 69.25, 59.52),
+TESTIMAGES = [("mb_LP_1_001.img", (3072, 3072), 0.0000, 65535., 120.33, 147.38,
+               {"BEAM_CENTER_Y": "157.500000"}),
+              ("mb_LP_1_001.img.gz", (3072, 3072), 0.0000, 65535., 120.33, 147.38,
+               {"BEAM_CENTER_Y": "157.500000"}),
+              ("mb_LP_1_001.img.bz2", (3072, 3072), 0.0000, 65535., 120.33, 147.38,
+               {"BEAM_CENTER_Y": "157.500000"}),
+              ("HSA_1_5mg_C1_0004.img", (385, 775), -2, 2127, 69.25, 59.52,
+               {"WAVELENGTH": "1.0 1.541870"}),
               ]
 
 
@@ -169,7 +173,7 @@ class TestRealSamples(testutils.ParametricTestCase):
         """ check we can read flat ADSC images"""
         for datainfo in TESTIMAGES:
             with self.subTest(datainfo=datainfo):
-                name, shape, mini, maxi, mean, stddev = datainfo
+                name, shape, mini, maxi, mean, stddev, keys = datainfo
                 obj = DtrekImage()
                 obj.read(os.path.join(self.im_dir, name))
                 self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
@@ -177,6 +181,9 @@ class TestRealSamples(testutils.ParametricTestCase):
                 got_mean = obj.getmean()
                 self.assertAlmostEqual(mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean))
                 self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
+                for key, value in keys.items():
+                    self.assertIn(key, obj.header)
+                    self.assertEqual(value, obj.header[key])
                 self.assertEqual(shape, obj.shape)
 
 
