@@ -36,10 +36,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 from __future__ import with_statement, print_function
 import numpy
+import re
+
 import logging
 
 from .fabioimage import FabioImage
-from .fabioutils import to_str
 
 logger = logging.getLogger(__name__)
 
@@ -75,8 +76,12 @@ class DtrekImage(FabioImage):
 
     DEFAULT_EXTENSIONS = ["img"]
 
+    _keyvalue_pattern = None
+
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)
+        if DtrekImage._keyvalue_pattern is None:
+            DtrekImage._keyvalue_pattern = re.compile(b"[^\n]+")
 
     def read(self, fname, frame=None):
         """ read in the file """
@@ -148,16 +153,53 @@ class DtrekImage(FabioImage):
         self.resetvals()
         return self
 
+    def _split_meta(self, line):
+        """Split a line into key and value.
+
+        :param bytes line: A line of bytes
+        :rtype: Tuple[str,str]
+        """
+        if b"=" not in line:
+            raise ValueError("No meta")
+        line = line.decode("ascii")
+        key, value = line.split('=')
+        return key.strip(), value.strip(' ;\n\r')
+
     def _readheader(self, infile):
-        """ read an adsc header """
-        line = infile.readline()
-        bytesread = len(line)
-        while not line.startswith(b'}'):
-            if b'=' in line:
-                (key, val) = to_str(line).split('=')
-                self.header[key.strip()] = val.strip(' ;\n\r')
-            line = infile.readline()
-            bytesread = bytesread + len(line)
+        """Read a d*TREK header.
+
+        After the execusion of this function, the cursor on infile will point
+        at the end of the header (at the start of the binary data block).
+
+        :param FileObject infile: A file object pointing at the first character
+            of the header.
+        """
+        header_line = infile.readline()
+        assert(header_line.startswith(b"{"))
+        header_bytes_line = infile.readline()
+        key, header_bytes = self._split_meta(header_bytes_line)
+        assert(key == "HEADER_BYTES")
+        self.header[key] = header_bytes
+        header_bytes = int(header_bytes)
+
+        # Read the remining block
+        # For robustness, cause that's in fact a const
+        header_bytes -= len(header_line) + len(header_bytes_line)
+        header_block = infile.read(header_bytes)
+
+        for line in DtrekImage._keyvalue_pattern.finditer(header_block):
+            line = line.group(0)
+            if line.startswith(b'}'):
+                # Remining part is padding
+                return
+            try:
+                key, value = self._split_meta(line)
+                self.header[key] = value
+            except ValueError:
+                pass
+
+        # It means there was no end of block
+        logger.warning("The end of block '}' was not reachable. File may be corrupted.")
 
     def write(self, fname):
         """
