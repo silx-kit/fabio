@@ -167,7 +167,7 @@ class DtrekImage(FabioImage):
         # From specification
         HEADER_START = b"{\n"
         HEADER_END = b"}\n\x0C\n"
-        HEADER_BYTES_TEMPLATE = b"HEADER_BYTES=% 5d;\n"
+        HEADER_BYTES_TEMPLATE = "HEADER_BYTES=% 5d;\n"
         # start + end + header_bytes_key + header_bytes_value + header_bytes_end
         MINIMAL_HEADER_SIZE = 2 + 4 + 13 + 5 + 2
 
@@ -208,7 +208,8 @@ class DtrekImage(FabioImage):
         for key in self.header:
             if key == "HEADER_BYTES":
                 continue
-            out += b"%s = %s;\n" % (key.encode("utf-8"), self.header[key].encode("utf-8"))
+            line = "%s= %s;\n" % (key, self.header[key])
+            out += line.encode("utf-8")
 
         # FIXME: This code do not take into account the size of "HEADER_BYTES"
         if "HEADER_BYTES" in self.header:
@@ -224,7 +225,8 @@ class DtrekImage(FabioImage):
             hsize = (minimal_hsize + 512) & ~(512 - 1)
             pad = hsize - minimal_hsize
 
-        out = HEADER_START + (HEADER_BYTES_TEMPLATE % hsize) + out + HEADER_END + (b' ' * pad)
+        header_bytes = HEADER_BYTES_TEMPLATE % hsize
+        out = HEADER_START + header_bytes.encode("ascii") + out + HEADER_END + (b' ' * pad)
         assert len(out) % 512 == 0, "Header is not multiple of 512"
 
         with open(fname, "wb") as outf:
