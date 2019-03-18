@@ -105,7 +105,7 @@ class DtrekImage(FabioImage):
             if data_type is not None and data_type == "unsigned_short":
                 pass
             else:
-                logger.warning("Data_type key is expected. Fallback to unsigner integer 16-bits.")
+                logger.warning("Data_type key is mandatory. Fallback to unsigner integer 16-bits.")
             numpy_type = numpy.uint16
         else:
             if data_type not in _DATA_TYPES:
@@ -116,17 +116,32 @@ class DtrekImage(FabioImage):
 
         # Stored in case data reading fails
         self._dtype = numpy.dtype(numpy_type)
-        self._shape = int(self.header['SIZE2']), int(self.header['SIZE1'])
 
-        # Read the data into the array
-        data = numpy.frombuffer(binary, numpy_type).copy()
-        if self.swap_needed():
-            data.byteswap(inplace=True)
-        try:
-            data.shape = self._shape
-        except ValueError:
-                raise IOError('Size spec in ADSC-header does not match ' +
-                              'size of image data field %s != %s' % (self._shape, data.size))
+        dim = self.header.get("DIM", None)
+        if dim is None:
+            logger.warning("DIM key is mandatory. Fallback using DIM=2.")
+            dim = 2
+        else:
+            dim = int(dim)
+
+        shape = []
+        for i in range(dim):
+            value = int(self.header['SIZE%d' % (i + 1)])
+            shape.insert(0, value)
+        self._shape = shape
+
+        if sum(shape) == 0:
+            data = None
+        else:
+            # Read the data into the array
+            data = numpy.frombuffer(binary, numpy_type).copy()
+            if self.swap_needed():
+                data.byteswap(inplace=True)
+            try:
+                data.shape = self._shape
+            except ValueError:
+                    raise IOError('Size spec in d*TREK header does not match ' +
+                                  'size of image data field %s != %s' % (self._shape, data.size))
         self.data = data
         self._shape = None
         self._dtype = None
@@ -177,15 +192,17 @@ class DtrekImage(FabioImage):
             logger.warning("Data type %s unsupported. Store it as %s.", data.dtype, new_dtype)
             data = data.astype(new_dtype)
 
-        if self.swap_needed():
-            # Do not swap the data stored in the object
+        byte_order = self._get_dtrek_byte_order()
+        little_endian = byte_order == "little_endian"
+        if little_endian != numpy.little_endian:
             data = data.byteswap()
 
         # Patch header to match the data
         self.header["Data_type"] = dtrek_data_type
-        size2, size1 = data.shape
-        self.header['SIZE1'] = str(size1)
-        self.header['SIZE2'] = str(size2)
+        self.header['DIM'] = str(len(data.shape))
+        for i, size in enumerate(reversed(data.shape)):
+            self.header['SIZE%d' % (i + 1)] = str(size)
+        self.header["BYTE_ORDER"] = byte_order
 
         out = b""
         for key in self.header:
@@ -214,18 +231,36 @@ class DtrekImage(FabioImage):
             outf.write(out)
             outf.write(data.tostring())
 
-    def swap_needed(self):
+    def _get_dtrek_byte_order(self, default_little_endian=None):
+        """Returns the byte order value in d*TREK format."""
+        if "BYTE_ORDER" not in self.header:
+            if default_little_endian is None:
+                logger.warning("No byte order specified, assuming little_endian")
+                little_endian = True
+            else:
+                little_endian = default_little_endian
+        else:
+            byte_order = self.header["BYTE_ORDER"]
+            little_endian = "little" in byte_order
+            big_endian = "big" in byte_order
+            if not little_endian and not big_endian:
+                logger.warning("Invalid BYTE_ORDER value. Found '%s', assuming little_endian", byte_order)
+                little_endian = True
+
+        if little_endian:
+            return "little_endian"
+        else:
+            return "big_endian"
+
+        return byte_order
+
+    def swap_needed(self, check=True):
         """
         Returns True if the header does not use the same endianness than the
         system.
 
         :rtype: bool
         """
-        if "BYTE_ORDER" not in self.header:
-            logger.warning("No byte order specified, assuming little_endian")
-            byte_order = "little_endian"
-        else:
-            byte_order = self.header["BYTE_ORDER"]
-
-        little_endian = "little" in byte_order
+        byte_order = self._get_dtrek_byte_order()
+        little_endian = byte_order == "little_endian"
         return little_endian != numpy.little_endian
