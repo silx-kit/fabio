@@ -88,6 +88,19 @@ class TestDtrekImplementation(testutils.ParametricTestCase):
     def setUp(self):
         unittest.TestCase.setUp(self)
 
+    def test_write_and_read_cube(self):
+        input_type = numpy.uint16
+        data = numpy.arange(5 * 10 * 2).reshape(5, 10, 2)
+        data = data.astype(input_type)
+        obj = DtrekImage(data=data)
+        filename = os.path.join(self.tmp_directory, "cube.img")
+        obj.save(filename)
+        self.assertEqual(obj.data.dtype.type, input_type)
+        obj2 = fabio.open(filename)
+        self.assertEqual(obj2.data.dtype.type, input_type)
+        self.assertEqual(obj.shape, obj2.shape)
+        numpy.testing.assert_array_almost_equal(obj.data, obj2.data)
+
     def test_write_and_read(self):
         configs = [
             (numpy.uint16, "little_endian", None),
