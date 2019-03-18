@@ -172,37 +172,44 @@ class DtrekImage(FabioImage):
         MINIMAL_HEADER_SIZE = 2 + 4 + 13 + 5 + 2
 
         data = self.data
+        if data is not None:
+            dtrek_data_type = None
+            for key, value in _DATA_TYPES.items():
+                if data.dtype.type == value:
+                    dtrek_data_type = key
+                    break
 
-        dtrek_data_type = None
-        for key, value in _DATA_TYPES.items():
-            if data.dtype.type == value:
-                dtrek_data_type = key
-                break
+            if dtrek_data_type is None:
+                if data.dtype.kind == 'f':
+                    dtrek_data_type = "float IEEE"
+                elif data.dtype.kind == 'u':
+                    dtrek_data_type = "unsigned long int"
+                elif data.dtype.kind == 'i':
+                    dtrek_data_type = "long int"
+                else:
+                    raise TypeError("Unsupported data type %s", data.dtype)
+                new_dtype = numpy.dtype(_DATA_TYPES[dtrek_data_type])
+                logger.warning("Data type %s unsupported. Store it as %s.", data.dtype, new_dtype)
+                data = data.astype(new_dtype)
 
-        if dtrek_data_type is None:
-            if data.dtype.kind == 'f':
-                dtrek_data_type = "float IEEE"
-            elif data.dtype.kind == 'u':
-                dtrek_data_type = "unsigned long int"
-            elif data.dtype.kind == 'i':
-                dtrek_data_type = "long int"
-            else:
-                raise TypeError("Unsupported data type %s", data.dtype)
-            new_dtype = numpy.dtype(_DATA_TYPES[dtrek_data_type])
-            logger.warning("Data type %s unsupported. Store it as %s.", data.dtype, new_dtype)
-            data = data.astype(new_dtype)
+            byte_order = self._get_dtrek_byte_order()
+            little_endian = byte_order == "little_endian"
+            if little_endian != numpy.little_endian:
+                data = data.byteswap()
 
-        byte_order = self._get_dtrek_byte_order()
-        little_endian = byte_order == "little_endian"
-        if little_endian != numpy.little_endian:
-            data = data.byteswap()
-
-        # Patch header to match the data
-        self.header["Data_type"] = dtrek_data_type
-        self.header['DIM'] = str(len(data.shape))
-        for i, size in enumerate(reversed(data.shape)):
-            self.header['SIZE%d' % (i + 1)] = str(size)
-        self.header["BYTE_ORDER"] = byte_order
+            # Patch header to match the data
+            self.header["Data_type"] = dtrek_data_type
+            self.header['DIM'] = str(len(data.shape))
+            for i, size in enumerate(reversed(data.shape)):
+                self.header['SIZE%d' % (i + 1)] = str(size)
+            self.header["BYTE_ORDER"] = byte_order
+        else:
+            # No data
+            self.header["Data_type"] = "long int"
+            self.header['DIM'] = "2"
+            self.header["SIZE1"] = "0"
+            self.header["SIZE2"] = "0"
+            self.header["BYTE_ORDER"] = "little_endian"
 
         out = b""
         for key in self.header:
@@ -231,7 +238,8 @@ class DtrekImage(FabioImage):
 
         with open(fname, "wb") as outf:
             outf.write(out)
-            outf.write(data.tostring())
+            if data is not None:
+                outf.write(data.tostring())
 
     def _get_dtrek_byte_order(self, default_little_endian=None):
         """Returns the byte order value in d*TREK format."""

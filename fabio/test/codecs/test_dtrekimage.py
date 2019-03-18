@@ -101,6 +101,14 @@ class TestDtrekImplementation(testutils.ParametricTestCase):
         self.assertEqual(obj.shape, obj2.shape)
         numpy.testing.assert_array_almost_equal(obj.data, obj2.data)
 
+    def test_write_and_read_empty(self):
+        obj = DtrekImage(data=None)
+        filename = os.path.join(self.tmp_directory, "cube.img")
+        obj.save(filename)
+        obj2 = fabio.open(filename)
+        self.assertEqual(obj2.data, None)
+        self.assertEqual(obj.data, obj2.data)
+
     def test_write_and_read(self):
         configs = [
             (numpy.uint16, "little_endian", None),
