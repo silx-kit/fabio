@@ -192,7 +192,7 @@ class DtrekImage(FabioImage):
                 logger.warning("Data type %s unsupported. Store it as %s.", data.dtype, new_dtype)
                 data = data.astype(new_dtype)
 
-            byte_order = self._get_dtrek_byte_order()
+            byte_order = self._get_dtrek_byte_order(default_little_endian=numpy.little_endian)
             little_endian = byte_order == "little_endian"
             if little_endian != numpy.little_endian:
                 data = data.byteswap()
