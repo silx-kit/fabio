@@ -54,10 +54,11 @@ class Fit2dSpreadsheetImage(FabioImage):
 
     def _readheader(self, infile):
         """
-
-        TODO : test for minimal attributes?
+        Read the header of the file
         """
         line = infile.readline()
+        while line.startswith(b"#"):
+            line = infile.readline()
         items = line.split()
         xdim = int(items[0])
         ydim = int(items[1])
