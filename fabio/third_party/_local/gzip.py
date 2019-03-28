@@ -4,7 +4,7 @@ The user of the file doesn't have to worry about the compression,
 but random access is not allowed."""
 
 # based on Andrew Kuchling's minigzip.py distributed with the zlib module
-import six
+from fabio.third_party import six
 import struct
 import sys
 import time

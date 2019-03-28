@@ -28,13 +28,13 @@ from __future__ import absolute_import, print_function, division
 
 __authors__ = ["Jerome Kieffer", "H. Payno", "P. Knobel"]
 __license__ = "MIT"
-__date__ = "16/11/2018"
+__date__ = "28/03/2019"
 
 import sys
 import logging
 import functools
 import traceback
-import six
+from fabio.third_party import six
 
 from .. import _version
 
