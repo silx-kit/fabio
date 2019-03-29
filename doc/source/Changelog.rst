@@ -3,16 +3,18 @@ Changelog
 
 FabIO-0.9.0 (03/2019):
 ......................
+
 - Separate the concept of FabioFrame from FabioImage
 - FileSeries are available from fabio.open_series
 - Shape and dtype are directly exposed
+- Support d*TREK format which is a superset of ADSC
 - Improve code coverage on PiXi image
-- Major refactoring of EdfImage (for better performances)
+- Major refactoring of EdfImage (for better performances, padding, ...)
 - Clean up TiffIO (remove tests & demo from source)
 - Improved binning handling in DM3 images, and more quiet
 - Implement deprecation warnings àla *silx*
 - Enhanced installation on unsupported architectures
-- Enhanced tests
+- Enhanced tests (spr, Fit2dSpreadsheet, Rigaku, ...)
 - Tested on Python (2.7, 3.4), 3.5, 3.6 & 3.7 on mac, win & linux
 
 FabIO-0.8.0 (10/2018):
