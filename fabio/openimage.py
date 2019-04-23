@@ -67,6 +67,13 @@ MAGIC_NUMBERS = [
     (b"\x49\x49\x2a\x00", 'tif'),
     # d*TREK must come before edf
     (b"{\nHEA", 'dtrek'),
+    # EDF_ types
+    (b"\x0d\x0a\x7b\x0d\x0a\x45\x44\x46",'edf'),  # EDF3 (can be interpreted like EDF1 but refused by fit2d)
+    (b"\x0a\x7b\x0d\x0a\x45\x44\x46",'edf'),      # EDF2 (can be interpreted like EDF1 but refused by fit2d)
+    (b"\x7b\x0d\x0a\x45\x44\x46",'edf'),          # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
+    (b"\x7b\x0a",'edf'),                          # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
+    (b"\x0a\x7b\x0a",'edf'),                      # EDFU (EDF unknown source, V1.xx)
+    # conventional
     (b"{", 'edf'),
     (b"\r{", 'edf'),
     (b"\n{", 'edf'),
