@@ -45,7 +45,6 @@ Authors:
   European Synchrotron Radiation Facility;
   Grenoble (France)
 
-
 """
 
 import os
@@ -121,10 +120,218 @@ MINIMUM_KEYS = set(['HEADERID',
                     'DIM_2',
                     'SIZE'])  # Size is thought to be essential for writing at least
 
+MINIMUM_KEYS2 = set([ 'EDF_DATABLOCKID', # Replaces HeaderID and distinguishes Error and Image frames
+                      'EDF_BINARYSIZE',  # Replaces Size
+                      'BYTEORDER', 
+                      'DATATYPE',
+                      'DIM_1',
+                      'DIM_2'])
+
 DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
 # JK20110415
 
+def get_data_rank(header=None,capsHeader=None):
+    '''Get the rank of data array by searching for DIM_nn with the highest index
+       in the header dictionary. Missing DIM_NN are set to 1, except DIM_1 
+       which has the default 0.
+       :param: dict header 
+       :param: dict capsHeader (optional)
+       :return: int rank
+    '''
+    if header is None:
+        header={}
+    if capsHeader is None:
+        capsHeader={}
+        for key in header:
+           capsHeader[key.upper()] = key
+    rank=0
+    if capsHeader is not None:
+        rank=0
+        for key in capsHeader:
+            if key[0:4]=="DIM_":
+                try:
+                    index=int(key[4:])
+                except ValueError:
+                    logger.error("Unable converting index of {} to integer.".format(key))
+                if index>rank:
+                    rank=index
+    return(rank)
+
+def get_data_shape(rank=0,header=None,capsHeader=None):
+    '''
+    Returns a tuple with the number of dimensions up to the given rank.
+    The dimensions DIM_i are read from the header dictionary. If
+    the corresponding value is missing, the following defaults are 
+    used: DIM_1=0, all others 1.
+    The shape tuple is filled from the end to the beginning with the values
+    of DIM_i, i.e. shape[0] is equal to value of DIM_rank, shape[rank-i] is 
+    equal to the value of DIM_i (e.g. for rank==2, shape[0]==value(DIM_2), 
+    shape[1]==value(DIM_1)).
+    '''
+    if rank is None:
+        rank = 0
+    if header is None:
+        header={}
+    if capsHeader is None:
+        capsHeader={}
+        for key in header:
+           capsHeader[key.upper()] = key
+    shape=[]
+    for irank in range(1,rank+1):
+        strDim = "DIM_{:d}".format(irank)
+        if strDim in capsHeader:
+            try:
+                dimi = nice_int(header[capsHeader[strDim]])
+            except ValueError:
+                logger.error("Unable converting value of {} to integer: {}".format(capsHeader[strDim], header[capsHeader[strDim]]))
+        else:
+            if irank==1:
+                dimi=0
+            else:
+                dimi=1
+        shape.insert(0,dimi)
+
+    return(tuple(shape))
+
+def get_data_counts(shape=None):
+    '''
+    Counts all items specified by shape
+    '''
+    if shape is None:
+      shape=()
+    counts=1
+    for ishape in range(0,len(shape)):
+        counts*=shape[ishape]
+    return(counts)
+
+def split_datablockid(block_id=None):
+    '''
+       Analyzes an EDFn blockid string.
+
+       All EDFn (n>0) headers start with the keyword EDF_DataBlockID or
+       with EDF_DataFormatVersion, if it is a general block. The
+       chain_number of a general block is 0, for all other blocks
+       the block_id must be interpreted.
+
+       :param str block_id :
+           <block_id_number>.<interpretation>.<data_type>[.<chain_number>] 
+       :return int block_id_number, str interpretation, str data_type, 
+           int chain_number
+
+       split_datablockid splits the value of EDF_DataBlockID =
+          <block_id_number>.<interpretation>.<data_type>[.<chain_number>]
+       in block_id_number, interpretation, data_type and chain_number and
+       returns block_id_number, data_interpretation, data_type, chain_number,
+       e.g. 1.Image.Psd => 1, Image, Psd, 1,
+       and '1.Image.Error' => 1, 'Image', 'Error', -1
+
+       Currently, only Image.Psd and Image.Error are used (chain_number +-1)
+       The default interpretation is "Image", the default chain number is 1.
+
+       int block_id_number: positive or negative integer
+       str interpretation: ('None', 'Image'), default 'Image'
+       str data_type: ('None', 'Psd', 'Error'), default 'Psd'
+       int chain_number: default: 1. multiplied with -1 if data_type == 'Error'
+
+       Primary scientific data blocks (Psd) have positive chain numbers,
+       associated error data blocks have identical, but negative chain numbers.
+       The interpretation of an error data block can be specified individually
+       with a keyword, e.g. ErrorType = ('None','Variance','StdDev'). But 
+       without an explicit specification the contents of error blocks are 
+       interpreted as variance data. 'None' means that the ErrorType has not 
+       been set. In this case the default interpretation ('Variance') will be 
+       used.
+
+       If chain_number is 1, the block_id_number is equal to the EDF0 "Image" 
+       number.
+
+       The default block_id_number is 1.
+       The default chain_number is 1.
+       If data_type is "Error" the returned chain_number is multiplied by -1
+
+       block_id         block_id_number  interpretation  data_type  chain_number
+       n.Image.Psd      n                Image           Psd        +1          
+       n.Image.Error    n                Image           Error      -1          
+       n.Image.Psd.m    n                Image           Psd        +m          
+       n.Image.Error.m  n                Image           Error      -m          
+
+    '''
+
+    logger.debug("split_datablockid({})".format(block_id))
+
+    block_id_number = None
+    data_interpretation = "Image"
+    data_type = None
+    chain_number = 1
+
+    if block_id is not None:
+        parts = block_id.split(".")
+
+        if len(parts) > 0:
+            n_str = parts[0]
+            try: 
+               block_id_number = int(n_str)
+            except ValueError:
+               block_id_number = None
+            if len(parts) > 1:
+                data_interpretation_str = parts[1]
+                if len(data_interpretation_str) != 0:
+                    if data_interpretation_str != 'None':
+                        data_interpretation = data_interpretation_str
+                if data_interpretation not in ('Image'):  # simple tuple
+                  logger.warning("split_datablockid: Invalid data_interpretation {}".format(data_interpretation))
+
+                if len(parts) > 2:
+                    data_type_str = parts[2]
+                    if len(data_type_str) != 0:
+                        if data_type_str != 'None':
+                            data_type = data_type_str
+                    if data_type == "Psd":
+                        chain_number = 1
+                    elif data_type == "Error":
+                        chain_number = -1
+                    if len(parts) > 3:
+                        chain_number_str = parts[3]
+                        try: 
+                            chain_number = int(chain_number_str)
+                        except ValueError:
+                            chain_number = 1
+                        if data_type == "Error":
+                            chain_number = -chain_number
+
+    logger.debug("split_datablockid({}) returns block_id_number={}, data_interpretation={}, data_type={}, chain_number={}".format(block_id,block_id_number, data_interpretation, data_type, chain_number))
+
+    return block_id_number, data_interpretation, data_type, chain_number
+
+def get_frame_idx( frames ):
+    '''
+    This function determines from the list of frames the number of Psd frames.
+    It is identical to the index where new Psd or Error frames must be inserted.
+    Psd frame indices are counted from the beginning of the list, Error frame
+    indices are counted from the end of the list.
+    '''
+
+    # Check wether the last frame is a Psd frame, if yes stop, there are no 
+    # error frames. If the last frame is an Error frame, start checking from 
+    # the center of the list
+    frame_idx = len(frames)
+    if frame_idx>0:
+        # Stop, if the last frame is a Psd frame
+        if frames[frame_idx-1]._chain_number<0:
+            # If the last frame is an Error frame, the insertion point 
+            # is expected to be in the middle
+            frame_idx = frame_idx // 2
+            # Count down until a Psd frame is found
+            for frame_idx in range(frame_idx//2,0,-1):
+                if frames[frame_idx]._chain_number>0:
+                    break
+            # Count up until the first Error Frame
+            for frame_idx in range(frame_idx,len(frames),1):
+                if frames[frame_idx]._chain_number<0:
+                    break
+
+    return frame_idx
 
 class MalformedHeaderError(IOError):
     """Raised when a header is malformed"""
@@ -139,19 +346,31 @@ class EdfFrame(fabioimage.FabioFrame):
         header = EdfImage.check_header(header)
         super(EdfFrame, self).__init__(data, header=header)
 
+        # Just preset chain_number to 0, so that it is not 
+        # counted by get_frame_idx
+        self._chain_number = 0
+        self._block_id_number = None
+
         self._data_compression = None
         self._data_swap_needed = None
         self._data = data
         self.start = None
-        """Position of start of raw data in file"""
+        """Start position of the raw data blob in the file"""
+        self.blobsize = None
+        """Size of the raw data blob in the file (including padding)"""
         self.size = None
-        """Size of raw data block in file (including padding)"""
-        self._data_size = None
-        """Size of the util raw data if different than `size` (without padding)"""
+        """Size of the retrieved data (after unpacking and decompressing)"""
         self.file = None
         """Opened file object with locking capabilities"""
         self._dtype = None
         self.incomplete_data = False
+        self.bfname = None
+        """If set, the data must be read from this file and not from the blob
+           The external file must be located in the same folder as the edf data 
+           file. It must be different from the edf data file."""
+        self.bfstart = 0
+        """Start position of the raw data in the external file."""
+        self.bfsize = None    # Number of bytes to read from the file
 
         if number is not None:
             deprecation.deprecated_warning(reason="Argument 'number' is not used anymore", deprecated_since="0.10.0beta")
@@ -178,62 +397,22 @@ class EdfFrame(fabioimage.FabioFrame):
         :param dict capsHeader: Precached mapping from capitalized keys of the
             header to the original keys.
         """
-        self.size = None
-        calcsize = 1
-        shape = []
 
         if capsHeader is None:
             capsHeader = self._compute_capsheader()
 
-        # Compute image size
+        # Compute blobsize
         if "SIZE" in capsHeader:
             try:
-                self.size = nice_int(self.header[capsHeader["SIZE"]])
+                self.blobsize = nice_int(self.header[capsHeader["SIZE"]])
             except ValueError:
                 logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], self.header[capsHeader["SIZE"]]))
-        if "DIM_1" in capsHeader:
-            try:
-                dim1 = nice_int(self.header[capsHeader['DIM_1']])
-            except ValueError:
-                logger.error("Unable to convert to integer Dim_1: %s %s" % (capsHeader["DIM_1"], self.header[capsHeader["DIM_1"]]))
-            else:
-                calcsize *= dim1
-                shape.insert(0, dim1)
-        else:
-            logger.error("No Dim_1 in headers !!!")
-        if "DIM_2" in capsHeader:
-            try:
-                dim2 = nice_int(self.header[capsHeader['DIM_2']])
-            except ValueError:
-                logger.error("Unable to convert to integer Dim_2: %s %s" % (capsHeader["DIM_2"], self.header[capsHeader["DIM_2"]]))
-            else:
-                calcsize *= dim2
-                shape.insert(0, dim2)
-        else:
-            logger.error("No Dim_2 in headers !!!")
-        iDim = 3
-        # JON: this appears to be for nD images, but we don't treat those
-        while iDim is not None:
-            strDim = "DIM_%i" % iDim
-            if strDim in capsHeader:
-                try:
-                    dim3 = nice_int(self.header[capsHeader[strDim]])
-                except ValueError:
-                    logger.error("Unable to convert to integer %s: %s %s",
-                                 strDim, capsHeader[strDim], self.header[capsHeader[strDim]])
-                    dim3 = None
-                    iDim = None
-                else:
-                    if dim3 > 1:
-                        # Otherwise treat dim3==1 as a 2D image
-                        calcsize *= dim3
-                        shape.insert(0, dim3)
-                    iDim += 1
 
-            else:
-                logger.debug("No Dim_3 -> it is a 2D image")
-                iDim = None
-        shape = tuple(shape)
+        rank=get_data_rank(self.header,capsHeader)
+        shape=get_data_shape(rank,self.header,capsHeader)
+        counts=get_data_counts(shape)
+
+        # self._shape is used in fabioimage 
         self._shape = shape
 
         if self._dtype is None:
@@ -254,18 +433,83 @@ class EdfFrame(fabioimage.FabioFrame):
             self._data_compression = None
 
         bpp = self._dtype.itemsize
-        calcsize *= bpp
+        calcsize = counts*bpp
+        if (self.blobsize is None):
+            '''In some edf files the blobsize is not written. 
+               For uncompressed data it can be set to the calculated size.
+            '''
+            if self._data_compression is None:
+                self.blobsize = calcsize
+
+        # If EDF_BinaryFileName is set in header, read EDF_BinaryFileSize bytes (default shape*bpp)
+        # starting at EDF_BinaryFilePosition (default 0), EDF_BinaryFileSize
+        # The contents of the file is as specified in the header. The parameters
+        # EDF_BinaryFilePosition and the EDF_BinaryFileSize are valid for the
+        # uncompressed file. All EDF_ keys are case sensitive.
+        # A path is not allowed in EDF_BinaryFileName.
+        # The binary file must be in the same directory as the input file:
+        infile = self.file.name
+        dirname = os.path.dirname(infile)
+        if "EDF_BinaryFileName" in self.header:
+            # remove a path that could have been given by error
+            # Attention: This currently forbids storing binary files in a subdirectory
+            self.bfname = os.path.basename(self.header["EDF_BinaryFileName"])
+            # add dirname
+            if dirname != "":
+                self.bfname = dirname + '/' + self.bfname
+        else:
+            self.bfname = None
+        if "EDF_BinaryFilePosition" in self.header:
+            self.bfstart = int(self.header["EDF_BinaryFilePosition"])
+        else:
+            self.bfstart = 0
+        if "EDF_BinaryFileSize" in self.header:
+            self.bfsize = int(self.header["EDF_BinaryFileSize"])
+        else:
+            self.bfsize = calcsize
+
+        if self._data_compression is None:
+            '''The binary size can only be calculated for uncompressed data'''
+            if self.bfname is None:
+                if (self.blobsize < calcsize):
+                    '''The edf binary block can store up to self.blobsize bytes. If
+                       the required size is smaller, all data can be stored inside 
+                       the blob, otherwise, if the actual blobsize is too small,
+                       the data must be truncated.
+                    '''
+                    logger.warning("Malformed file: The physical size of the binary block {} is too small {}. This and the following frames could be broken.".format(self.blobsize, calcsize))
+            else:
+                if (self.bfsize < calcsize):
+                    '''The size of the binary file is smaller than expected.
+                    '''
+                    logger.warning("The size available in the binary file {} is smaller than required {}.".format(self.bfsize, calcsize))
 
         if (self.size is None):
+            # preset with the calculated size, will be updated after decompressing
             self.size = calcsize
-        elif self._data_compression is None:
-            if self.size < calcsize:
-                logger.warning("Malformed file. The specified size of the data block is smaller than the expected size (%i < %i). Size is set to the the calculated one. This frame (and following) could be broken.", self.size, calcsize)
-                self.size = calcsize
-            elif self.size > calcsize:
-                # The data block is padded, store here the real data size
-                self._data_size = calcsize
 
+        #+++++++++++++++++++++++++++++
+        #PB: ATTENTION, weird!:
+        # little_endian==LowByteFirst, big_endian==HighByteFirst
+        # Why should _data_swap_needed depend on bpp?
+        # little_endian==1 means starting with least significant byte == LowByteFirst
+        # LowByteFirst&&little_endian => no swap
+        # HighByteFirst&&(!little_endian) => no swap
+        # otherwise swap needed
+        #
+        #byte_order = self.header[capsHeader['BYTEORDER']]
+        #if ('Low' in byte_order):
+        #    little_endian=True
+        #else:
+        #    little_endian=False
+        #
+        #if ( little_endian==numpy.little_endian ):
+        #    self._data_swap_needed = False
+        #else:
+        #    self._data_swap_needed = True
+
+        # the byteorder is not required here, only when importing
+        # the data, setting self._data_swap_needed should be postponed
         byte_order = self.header[capsHeader['BYTEORDER']]
         if ('Low' in byte_order and numpy.little_endian) or \
            ('High' in byte_order and not numpy.little_endian):
@@ -277,12 +521,15 @@ class EdfFrame(fabioimage.FabioFrame):
             else:
                 self._data_swap_needed = False
 
-    def parseheader(self, block):
+
+    # before parseheader
+    def _parseheader(self, block, defaultheader=None):
         """
         Parse the header in some EDF format from an already open file
 
         :param str block: string representing the header block.
-        :return: size of the binary blob
+        :param dict defaultheader: header values to include as default
+        :return capitalized header
         """
         # reset values
         self.header = OrderedDict()
@@ -291,16 +538,26 @@ class EdfFrame(fabioimage.FabioFrame):
         # Why would someone put null bytes in a header?
         whitespace = string.whitespace + "\x00"
 
+        # Start with the keys of the actual block
         for line in block.split(';'):
             if '=' in line:
                 key, val = line.split('=', 1)
                 key = key.strip(whitespace)
                 self.header[key] = val.strip(whitespace)
-                capsHeader[key.upper()] = key
 
-        self._extract_header_metadata(capsHeader)
+        # In a second step append all missing keys in the general header
+        if defaultheader is not None:
+            for key in defaultheader:
+                # exceptions
+                # EDF_*, Size, Image, Error, HeaderID
+                if ( key[0:4] != "EDF_" ) and (key.upper() not in [ "SIZE", "IMAGE", "ERROR", "HEADERID" ]):
+                    if (key not in self.header):
+                      self.header[key] = defaultheader[key]
 
-        return self.size
+        for key in self.header:
+            capsHeader[key.upper()] = key
+
+        return capsHeader
 
     def _check_header_mandatory_keys(self, filename=''):
         """Check that frame header contains all mandatory keys
@@ -309,14 +566,21 @@ class EdfFrame(fabioimage.FabioFrame):
         :rtype: bool
         """
         capsKeys = set([k.upper() for k in self.header.keys()])
-        missing = list(MINIMUM_KEYS - capsKeys)
+
+        # Try first alternative set (for EDF1, EDF2, EDF3, ...)
+        missing = list(MINIMUM_KEYS2 - capsKeys)
+
         if len(missing) > 0:
-            msg = "EDF file %s%s misses mandatory keys: %s "
+           # Try now standard set (for EDF0, EDFU)
+            missing = list(MINIMUM_KEYS - capsKeys)
+
+        if len(missing) > 0:
+            msg = "EDF file {}{} misses mandatory keys: {} "
             if self.index is not None:
-                frame = " (frame %i)" % self.index
+                frame = " (frame {:d})".format(self.index)
             else:
                 frame = ""
-            logger.info(msg, filename, frame, " ".join(missing))
+            logger.info(msg.format(filename,frame," ".join(missing)))
         return len(missing) == 0
 
     def swap_needed(self):
@@ -327,7 +591,8 @@ class EdfFrame(fabioimage.FabioFrame):
 
     def _unpack(self):
         """
-        Unpack a binary blob according to the specification given in the header
+        Unpack an internal or external binary blob according to the 
+        specification given in the header
 
         :return: dataset as numpy.ndarray
         """
@@ -340,19 +605,37 @@ class EdfFrame(fabioimage.FabioFrame):
             if self._dtype is None:
                 assert(False)
             shape = self.shape
-            with self.file.lock:
-                if self.file.closed:
-                    logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.filename))
-                    return
+
+            if self.bfname is None:
+
+                with self.file.lock:
+                    if self.file.closed:
+                        logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.filename))
+                        return
+                    else:
+                        self.file.seek(self.start)
+                        try:
+                            fileData = self.file.read(self.blobsize)
+                        except Exception as e:
+                            if isinstance(self.file, fabioutils.GzipFile):
+                                if compression_module.is_incomplete_gz_block_exception(e):
+                                    return numpy.zeros(shape)
+                            raise e
+
+            else:
+                # Read binary data from an external file
+                if os.path.exists(self.bfname):
+                    with open(self.bfname, "rb") as f:
+                        f.seek(self.bfstart)
+                        fileData = f.read(self.bfsize)
+                elif os.path.exists(self.bfname+".gz"):
+                    import gzip
+                    # Try self.bfname+".gz" if self.bfname does not exist
+                    with gzip.open(self.bfname+".gz", "rb") as f:
+                        f.seek(self.bfstart)
+                        fileData = f.read(self.bfsize)
                 else:
-                    self.file.seek(self.start)
-                    try:
-                        fileData = self.file.read(self.size)
-                    except Exception as e:
-                        if isinstance(self.file, fabioutils.GzipFile):
-                            if compression_module.is_incomplete_gz_block_exception(e):
-                                return numpy.zeros(shape)
-                        raise e
+                    raise IOError("The binary file {} of {} does not exist".format(self.bfname,self.file.filename))
 
             if self._data_compression is not None:
                 compression = self._data_compression
@@ -394,9 +677,9 @@ class EdfFrame(fabioimage.FabioFrame):
             elif expected < len(rawData):
                 logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
-            if self._data_size is not None:
-                rawData = rawData[0:self._data_size]
-            data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
+            # count = get_data_counts(shape)
+            count = self.size//self._dtype.itemsize
+            data = numpy.frombuffer(rawData, self._dtype, count).copy().reshape(shape)
             if self.swap_needed():
                 data.byteswap(True)
             self._data = data
@@ -553,12 +836,12 @@ class EdfImage(fabioimage.FabioImage):
 
     DESCRIPTION = "European Synchrotron Radiation Facility data format"
 
-    DEFAULT_EXTENSIONS = ["edf", "cor"]
+    DEFAULT_EXTENSIONS = ["edf", "cor", "ehf"]
 
     RESERVED_HEADER_KEYS = ['HEADERID', 'IMAGE', 'BYTEORDER', 'DATATYPE',
                             'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']
 
-    def __init__(self, data=None, header=None, frames=None):
+    def __init__(self, data=None, header=None, frames=None, generalframe=None):
         self.currentframe = 0
         self.filesize = None
         self._incomplete_file = False
@@ -587,11 +870,21 @@ class EdfImage(fabioimage.FabioImage):
 
         fabioimage.FabioImage.__init__(self, stored_data, header)
 
+        # frames
         if frames is None:
             frame = EdfFrame(data=self.data, header=self.header)
             self._frames = [frame]
         else:
             self._frames = frames
+
+        # initialize _frame_idx (insertion position of frames)
+        # error frames are accessed from the end, i.e. errorframe_id = nframes-frame_id-1,
+        # e.g. nframes=10, frame_id = 0 => errorframe_id=9
+        #      nframes=10, frame_id = 4 => errorframe_id=5
+        self._frame_idx = get_frame_idx( self._frames )
+
+        # generalframe
+        self.generalframe = generalframe
 
     def _get_frame(self, num):
         if self._frames is None:
@@ -604,7 +897,7 @@ class EdfImage(fabioimage.FabioImage):
     @staticmethod
     def check_header(header=None):
         """
-        Empty for FabioImage but may be populated by others classes
+        Empty for FabioImage but may be populated by other classes
         """
         if not isinstance(header, dict):
             return OrderedDict()
@@ -620,9 +913,23 @@ class EdfImage(fabioimage.FabioImage):
 
         :param fileid infile: file object open in read mode
         :param int frame_id: Informative frame ID
-        :return: string (or None if no header was found.
+        :return str header block, 
+                int header_size, 
+                int binary_size, 
+                int chain_number, 
+                int block_id_number 
+                in case of an error all return values are None
         :raises MalformedHeaderError: If the header can't be read
         """
+
+        header_size=None
+        binary_size=None
+
+        # the default block_id_number is frame_id+1
+        block_id_number=frame_id+1
+        # the default chain is 1 (primary scientific data)
+        chain_number=1
+
         MAX_HEADER_SIZE = BLOCKSIZE * MAX_BLOCKS
         try:
             block = infile.read(BLOCKSIZE)
@@ -634,15 +941,15 @@ class EdfImage(fabioimage.FabioImage):
 
         if len(block) == 0:
             # end of file
-            return None
+            return None, None, None, None, None
 
         begin_block = block.find(b"{")
         if begin_block < 0:
             if len(block) < BLOCKSIZE and len(block.strip()) == 0:
                 # Empty block looks to be a valid end of file
-                return None
+                return None, None, None, None, None
             logger.debug("Malformed header: %s", block)
-            raise MalformedHeaderError("Header frame %i do not contains '{'" % frame_id)
+            raise MalformedHeaderError("Header frame %i does not contain '{'" % frame_id)
 
         start = block[0:begin_block]
         if start.strip() != b"":
@@ -655,29 +962,74 @@ class EdfImage(fabioimage.FabioImage):
         # skip the open block character
         begin_block = begin_block + 1
 
+        # if the header block starts with EDF_DataFormatVersion, it is a general block
+        start = block.find(b"EDF_DataFormatVersion", begin_block)
+        if start >= 0:
+            # This is a general block!
+            equal = block.index(b"=", start + len(b"EDF_DataFormatVersion"))
+            end = block.index(b";", equal + 1)
+            chunk = block[equal + 1:end].strip()
+            # The general block has the chain_number 0
+            block_id_number=0
+            chain_number=0
+        else:
+            start = block.find(b"EDF_DataBlockID", begin_block)
+            if start >= 0:
+                # This is a data block!
+                equal = block.index(b"=", start + len(b"EDF_DataBlockID"))
+                end = block.index(b";", equal + 1)
+                chunk = block[equal + 1:end].strip()
+                block_id_number,data_interpretation,data_type,chain_number=split_datablockid(chunk.decode("ASCII"))
+
+        start = block.find(b"EDF_BinarySize", begin_block)
+        if start >= 0:
+            equal = block.index(b"=", start + len(b"EDF_BinarySize"))
+            end = block.index(b";", equal + 1)
+            try:
+                chunk = block[equal + 1:end].strip()
+                binary_size = int(chunk)
+            except Exception:
+                logger.warning("Unable to read binary size, got: %s", chunk)
+                binary_size = None
+
         start = block.find(b"EDF_HeaderSize", begin_block)
         if start >= 0:
             equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
             end = block.index(b";", equal + 1)
             try:
                 chunk = block[equal + 1:end].strip()
-                new_max_header_size = int(chunk)
+                header_size = int(chunk)
             except Exception:
                 logger.warning("Unable to read header size, got: %s", chunk)
             else:
-                if new_max_header_size > MAX_HEADER_SIZE:
-                    logger.info("Redefining MAX_HEADER_SIZE to %s", new_max_header_size)
-                    MAX_HEADER_SIZE = new_max_header_size
+                if header_size > MAX_HEADER_SIZE:
+                    logger.info("Redefining MAX_HEADER_SIZE to %s", header_size)
+                    MAX_HEADER_SIZE = header_size
 
         block_size = len(block)
         blocks = [block]
 
-        end_pattern = re.compile(b"}[\r\n]")
+        #PB: the edf header MUST stop with "\n" after a closing curly brace. 
+        #There is no other possibility! 
+        #The space between the closing curly brace and the terminating "\n" can
+        #be padded with white spaces (\s+)?, typically a single "\r"
+        #The edf header cannot stop with "\r" alone because a following "\n" 
+        #would then be become a part of the binary blob.
+        #The end pattern must be defined as
+        #
+        #  end_pattern = re.compile(b"}(\s+)?\n")
+        #
+        #This matches "}\r\n" and "}\n", but not "}\r" alone
+        #
+        #  old: end_pattern = re.compile(b"}[\r\n]")
+        #
+        end_pattern = re.compile(b"}(\s+)?\n")
 
         while True:
             end = end_pattern.search(block)
             if end is not None:
                 end_block = block_size - len(block) + end.start()
+                #PB: start_blob = block_size - len(block) + end.end()
                 break
             block = infile.read(BLOCKSIZE)
             block_size += len(block)
@@ -690,6 +1042,8 @@ class EdfImage(fabioimage.FabioImage):
         block = b"".join(blocks)
 
         # Now it is essential to go to the start of the binary part
+        # PB: with the above regular expression end.end() is the end
+        #     offset = start_blob - len(block)
         if block[end_block: end_block + 3] == b"}\r\n":
             offset = end_block + 3 - len(block)
         elif block[end_block: end_block + 2] == b"}\n":
@@ -699,7 +1053,30 @@ class EdfImage(fabioimage.FabioImage):
             offset = end_block + 2 - len(block)
 
         infile.seek(offset, os.SEEK_CUR)
-        return block[begin_block:end_block].decode("ASCII")
+
+        # PB: return the header block AND header_size, binary_size, chain_number, block_id_number
+        if header_size is None:
+            header_size = block_size
+        if binary_size is None:
+            if chain_number == 0:
+                # this is a general block
+                binary_size = 0
+            else:
+                # it must be an EDF0 or EDFU file without EDF_ header keys
+                # look for the keyword Size 
+                #pass
+                start = block.find(b"Size", begin_block)
+                if start >= 0:
+                    equal = block.index(b"=", start + len(b"Size"))
+                    end = block.index(b";", equal + 1)
+                    try:
+                        chunk = block[equal + 1:end].strip()
+                        binary_size = int(chunk)
+                    except Exception:
+                        logger.warning("Unable to read binary size from Size, got: %s", chunk)
+                        binary_size = None
+
+        return block[begin_block:end_block].decode("ASCII"), header_size, binary_size, chain_number, block_id_number
 
     @property
     def incomplete_file(self):
@@ -716,10 +1093,19 @@ class EdfImage(fabioimage.FabioImage):
         :type infile: file object open in read mode
         """
         self._frames = []
+        self.generalframe = None
+        self._frame_idx = 0
+
+        header_size = None
+        binary_size = None
+
+        # the default chain is 1 (primary scientific data)
+        chain_number = 1
+        block_id_number = None
 
         while True:
             try:
-                block = self._read_header_block(infile, len(self._frames))
+                block, header_size, binary_size, chain_number, block_id_number = self._read_header_block(infile, len(self._frames))
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
@@ -734,15 +1120,56 @@ class EdfImage(fabioimage.FabioImage):
                 break
 
             frame = EdfFrame()
-            size = frame.parseheader(block)
+            # The file descriptor is used in _extract_header_metadata and must be defined before using it
             frame.file = infile
+
+            frame._chain_number=chain_number
+            frame._block_id_number=block_id_number
+
+            # PB, better use frame._set_container(self,len(self._frames))?  #++++++++++++++
+            frame._index=len(self._frames)
+
+            includeheader=None
+            if frame._chain_number!=0:
+                # This is not a general block, include a general header
+                if self.generalframe is not None:
+                    includeheader=self.generalframe._header
+
+            capsHeader = frame._parseheader(block,includeheader)
+
+            if binary_size is None:
+                if "SIZE" in capsHeader:
+                    try:
+                        frame.blobsize = nice_int(frame.header[capsHeader["SIZE"]])
+                    except ValueError:
+                        logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], frame.header[capsHeader["SIZE"]]))
+            else:
+                frame.blobsize = binary_size
+
             frame.start = infile.tell()
-            frame.size = size
-            self._frames += [frame]
+
+            if frame._chain_number!=0:
+                # This is not a general block
+                frame._extract_header_metadata(capsHeader)
+
+            if frame._chain_number==0:
+                # This is a general block
+                self.generalframe = frame
+            elif frame._chain_number>0:
+                # add a psd frame
+                self._frames.insert(self._frame_idx,frame)
+                self._frame_idx+=1
+            else:
+                # add an error frame
+                self._frames.insert(self._frame_idx,frame)
+
+            if frame._chain_number!=0:
+                # Check the header information, because it is a standard block
+                frame._check_header_mandatory_keys(filename=self.filename)
 
             try:
                 # skip the data block
-                infile.seek(size - 1, os.SEEK_CUR)
+                infile.seek(frame.blobsize - 1, os.SEEK_CUR)
                 data = infile.read(1)
                 if len(data) == 0:
                     self._incomplete_file = True
@@ -756,13 +1183,11 @@ class EdfImage(fabioimage.FabioImage):
                         frame.incomplete_data = True
                         break
                 logger.warning("infile is %s" % infile)
-                logger.warning("Position is %s" % infile.tell())
-                logger.warning("size is %s" % size)
+                logger.warning("position is %s" % infile.tell())
+                logger.warning("blobsize is %s" % frame.blobsize)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
-        for frame in self._frames:
-            frame._check_header_mandatory_keys(filename=self.filename)
         self.currentframe = 0
 
     def read(self, fname, frame=None):
@@ -812,7 +1237,7 @@ class EdfImage(fabioimage.FabioImage):
             newImage = fabioimage.FabioImage.getframe(self, num)
             newImage._file = self._file
         elif num < self.nframes:
-            logger.debug("Multi frame EDF; having EdfImage specific behavior: %s/%s" % (num, self.nframes))
+            logger.debug("Multi frame EDF; having EdfImage specific behavior: 0 <= {} < {}".format(num, self.nframes))
             newImage = self.__class__(frames=self._frames)
             newImage.currentframe = num
             newImage.filename = self.filename
@@ -896,7 +1321,8 @@ class EdfImage(fabioimage.FabioImage):
     def fast_read_data(self, filename=None):
         """
         This is a special method that will read and return the data from another file ...
-        The aim is performances, ... but only supports uncompressed files.
+        The aim is performances, ... but will certainly fail on compressed files.
+        To be used with care!
 
         :return: data from another file using positions from current EdfImage
         """
@@ -906,7 +1332,7 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._frames[self.currentframe]
         with open(filename, "rb")as f:
             f.seek(frame.start)
-            raw = f.read(frame.size)
+            raw = f.read(frame.blobsize)
         try:
             data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
             data.shape = self.data.shape
@@ -983,6 +1409,22 @@ class EdfImage(fabioimage.FabioImage):
                 self._frames.append(frame)
                 return frame
             raise
+
+    @property
+    def npsdframes(self):
+        """Returns the number of psd frames contained in this file
+
+        :rtype: int
+        """
+        return self._frame_idx
+
+    @property
+    def nerrorframes(self):
+        """Returns the number of error frames contained in this file
+
+        :rtype: int
+        """
+        return  len(self._frames)-self._frame_idx
 
     @property
     def nframes(self):
@@ -1161,12 +1603,15 @@ class EdfImage(fabioimage.FabioImage):
         return self._frames[self.currentframe].incomplete_data
 
     @classmethod
-    def lazy_iterator(cls, filename):
+    def lazy_iterator(cls, filename, select=0):
         """Iterates over the frames of an EDF multi-frame file.
 
         This function optimizes sequential access to multi-frame EDF files
         by avoiding to read the whole file at first in order to get the number
         of frames and build an index of frames for faster random access.
+
+        The parameter select allows looping over all frames (0, default),
+        Psd frames (1) or Error frames (-1).
 
         Usage:
 
@@ -1177,6 +1622,9 @@ class EdfImage(fabioimage.FabioImage):
         ...     print('Data:', frame.data)
 
         :param str filename: File name of the EDF file to read
+        :select int : 0 iterate over all frames (default), 
+                      1 iterate over Psd frames only, 
+                     -1 iterate over Error frames only
         :yield: frames one after the other
         """
         edf = cls()
@@ -1184,9 +1632,14 @@ class EdfImage(fabioimage.FabioImage):
 
         index = 0
 
+        header_size = None
+        binary_size = None
+        chain_number = 1
+        block_id_number = None
+
         while True:
             try:
-                block = cls._read_header_block(infile, index)
+                block, header_size, binary_size, chain_number, block_id_number = edf._read_header_block(infile, index)
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if index == 0:
@@ -1202,31 +1655,78 @@ class EdfImage(fabioimage.FabioImage):
                 break
 
             frame = EdfFrame()
+            frame.file = infile
+            frame._chain_number = chain_number
+            frame._block_id_number = block_id_number
             frame._set_container(edf, index)
             frame._set_file_container(edf, index)
-            size = frame.parseheader(block)
-            frame.file = infile
+
+            includeheader=None
+            if frame._chain_number!=0:
+                # This is a standard block, include the general header
+                if edf.generalframe is not None:
+                    includeheader=edf.generalframe._header
+
+            capsHeader = frame._parseheader(block,includeheader)
+            
+            if binary_size is None:
+                # Try again computing blobsize
+                if "SIZE" in capsHeader:
+                    try:
+                        blobsize = nice_int(frame.header[capsHeader["SIZE"]])
+                    except ValueError:
+                        logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], frame.header[capsHeader["SIZE"]]))
+            else:
+                blobsize = binary_size
+
+            if frame._chain_number!=0:
+                # This is a standard block, get the metadata
+                frame._extract_header_metadata(capsHeader)
+
             frame.start = infile.tell()
-            frame.size = size
+            frame.blobsize = blobsize
 
-            try:
-                # read data
-                frame._unpack()
-            except Exception as error:
-                if isinstance(infile, fabioutils.GzipFile):
-                    if compression_module.is_incomplete_gz_block_exception(error):
-                        frame.incomplete_data = True
-                        break
-                logger.warning("infile is %s" % infile)
-                logger.warning("Position is %s" % infile.tell())
-                logger.warning("size is %s" % size)
-                logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
-                infile.close()
-                raise Exception(error)
+            if frame._chain_number!=0: 
+                # This is a standard block, get the binary data
+                try:
+                    # read data
+                    frame._unpack()
+                except Exception as error:
+                    if isinstance(infile, fabioutils.GzipFile):
+                        if compression_module.is_incomplete_gz_block_exception(error):
+                            frame.incomplete_data = True
+                            break
+                    logger.warning("infile is %s" % infile)
+                    logger.warning("position is %s" % infile.tell())
+                    logger.warning("blobsize is %s" % blobsize)
+                    logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
+                    infile.close()
+                    raise Exception(error)
 
-            frame._check_header_mandatory_keys(filename=filename)
-            yield frame
-            index += 1
+                frame._check_header_mandatory_keys(filename=filename)
+
+                if select==0:
+                    # iterate over all frames
+                    yield frame
+                    index += 1
+                elif select>0:
+                    # Iterate over Psd Frames
+                    if frame._chain_number>0:
+                        yield frame
+                        index += 1
+                else:
+                    # Iterate over Error Frames
+                    if frame._chain_number<0:
+                        yield frame
+                        index += 1
+
+            else:
+                # There can be only a single general block
+                edf.generalframe = frame
+                if frame.blobsize > 0:
+                    # Skip the blob
+                    blobend = frame.start+frame.blobsize
+                    frame.file.seek(blobend)
 
         infile.close()
 
