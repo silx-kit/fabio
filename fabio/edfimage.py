@@ -675,7 +675,7 @@ class EdfFrame(fabioimage.FabioFrame):
                 logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
                 rawData += "\x00".encode("ascii") * (expected - obtained)
             elif expected < len(rawData):
-                logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+                logger.info("Data stream is padded : %s > required %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
             # count = get_data_counts(shape)
             count = self.size//self._dtype.itemsize
@@ -832,7 +832,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
 
 class EdfImage(fabioimage.FabioImage):
-    """ Read and try to write the ESRF edf data format """
+    """ Read and try to write the ESRF data format (edf) """
 
     DESCRIPTION = "European Synchrotron Radiation Facility data format"
 
@@ -845,6 +845,7 @@ class EdfImage(fabioimage.FabioImage):
         self.currentframe = 0
         self.filesize = None
         self._incomplete_file = False
+        self._blockboundary = BLOCKSIZE
 
         if data is None:
             # In case of creation of an empty instance
@@ -956,6 +957,12 @@ class EdfImage(fabioimage.FabioImage):
             logger.debug("Malformed header: %s", start)
             raise MalformedHeaderError("Header frame %i contains non-whitespace before '{'" % frame_id)
 
+        # This warning is misleading, if EDF_BlockBoundary has been set in
+        # the general header
+        # in __init__: self._blockboundary = BLOCKSIZE
+        # move this warning after reading "EDF_HeaderSize"
+        # if chain_number == 0, try reading self._blockboundary from EDF_BlockBoundary
+        # now check self._blockboundary (instead of BLOCKSIZE)
         if len(block) < BLOCKSIZE:
             logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
 
@@ -1009,21 +1016,31 @@ class EdfImage(fabioimage.FabioImage):
         block_size = len(block)
         blocks = [block]
 
-        #PB: the edf header MUST stop with "\n" after a closing curly brace. 
-        #There is no other possibility! 
-        #The space between the closing curly brace and the terminating "\n" can
-        #be padded with white spaces (\s+)?, typically a single "\r"
-        #The edf header cannot stop with "\r" alone because a following "\n" 
-        #would then be become a part of the binary blob.
-        #The end pattern must be defined as
-        #
-        #  end_pattern = re.compile(b"}(\s+)?\n")
-        #
-        #This matches "}\r\n" and "}\n", but not "}\r" alone
-        #
+        #PB: the edf header MUST stop with "\n" after a closing
+        # curly brace {.
         #  old: end_pattern = re.compile(b"}[\r\n]")
+        # This matches "}\r\n", "}\n" and "}\r". The latter is
+        # not a possible end pattern.
         #
-        end_pattern = re.compile(b"}(\s+)?\n")
+        # A single \r is allowed as fill character, i.e. \r{0,1}:
+        #   new: end_pattern = re.compile(b'}(\r{0,1})\n')
+        #
+        # This matches "}\r\n" and "}\n", but not "}\r" alone
+        # The maximum length of the header end pattern is 3 bytes,
+        # For finding all sequences of that type the
+        # header end pattern must be parsed with an overlap of
+        # 2 bytes, e.g.
+        #
+        # buffer1: <header>"}"
+        # buffer2:          "\r\n"<binary>
+        # buffer3:                       "{\r\n"<header>
+        #
+        # reading BUFFERSIZE+2 bytes,
+        # buffer1: <header>"}\r\n"
+        # buffer2:          "\r\n"<binary>
+        # buffer3:                       "{\r\n"<header>
+
+        end_pattern = re.compile(b'}(\r{0,1})\n')
 
         while True:
             end = end_pattern.search(block)
@@ -1059,22 +1076,36 @@ class EdfImage(fabioimage.FabioImage):
             header_size = block_size
         if binary_size is None:
             if chain_number == 0:
-                # this is a general block
+                # this is a general block, the default of binary_size is zero
                 binary_size = 0
             else:
                 # it must be an EDF0 or EDFU file without EDF_ header keys
-                # look for the keyword Size 
-                #pass
-                start = block.find(b"Size", begin_block)
-                if start >= 0:
-                    equal = block.index(b"=", start + len(b"Size"))
-                    end = block.index(b";", equal + 1)
-                    try:
-                        chunk = block[equal + 1:end].strip()
-                        binary_size = int(chunk)
-                    except Exception:
-                        logger.warning("Unable to read binary size from Size, got: %s", chunk)
-                        binary_size = None
+                # use _extract_header_metadata and search the keyword Size
+                pass
+
+            ##    searching the keyword Size is too complicated before the full header is read
+            ##    searchkey = b"Size ="
+            ##    start = block.find(searchkey, begin_block)
+            ##    if start >= 0:
+            ##        ### already searched: equal = block.index(b"=", start + len(searchkey)
+            ##        key_ok=True
+            ##        # It must be verified that searchkey is not part of a longer
+            ##        # word, e.g. "EDF_HeaderSize =", then key_ok becomes False
+            ##        if (start > 0):
+            ##            byte_around=string.whitespace.encode() + b';' + b'{'
+            ##            if block[start-1] not in byte_around:
+            ##                key_ok=False
+            ##
+            ##        if key_ok:
+            ##            equal = start + len(searchkey)
+            ##            end = block.index(b";", equal + 1)
+            ##            try:
+            ##                chunk = block[equal + 1:end].strip()
+            ##                binary_size = int(chunk)
+            ##            except Exception:
+            ##                logger.warning("Unable to read binary size from Size, got: %s", chunk)
+            ##                binary_size = None
+
 
         return block[begin_block:end_block].decode("ASCII"), header_size, binary_size, chain_number, block_id_number
 
