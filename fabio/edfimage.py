@@ -957,8 +957,7 @@ class EdfImage(fabioimage.FabioImage):
             logger.debug("Malformed header: %s", start)
             raise MalformedHeaderError("Header frame %i contains non-whitespace before '{'" % frame_id)
 
-        # This warning is misleading, if EDF_BlockBoundary has been set in
-        # the general header
+        # Try defining EDF_BlockBoundary in the general header
         # in __init__: self._blockboundary = BLOCKSIZE
         # move this warning after reading "EDF_HeaderSize"
         # if chain_number == 0, try reading self._blockboundary from EDF_BlockBoundary
@@ -1046,9 +1045,34 @@ class EdfImage(fabioimage.FabioImage):
             end = end_pattern.search(block)
             if end is not None:
                 end_block = block_size - len(block) + end.start()
-                #PB: start_blob = block_size - len(block) + end.end()
+                start_blob = block_size - len(block) + end.end()
+                offset = start_blob - block_size
                 break
-            block = infile.read(BLOCKSIZE)
+
+            # end is None: the header end pattern could be distributed across 
+            # two blocks if '}' or '}\r' is found at the end of the first block.
+            nextblock = infile.read(BLOCKSIZE)
+
+            if block[-1:] == b'}':
+                if nextblock[:1] == b'\n':
+                    end_block = block_size
+                    start_blob = block_size + 1
+                    offset = start_blob - block_size - len(nextblock)
+                    break
+                elif nextblock[:2] == b'\r\n':
+                    end_block = block_size
+                    start_blob = block_size + 2
+                    offset = start_blob - block_size - len(nextblock)
+                    break
+            elif block[-2:] == b'}\r':
+                if nextblock[:1] == b'\n':
+                    end_block = block_size - 1
+                    start_blob = block_size + 1
+                    offset = start_blob - block_size - len(nextblock)
+                    break
+
+            block = nextblock
+
             block_size += len(block)
             blocks.append(block)
             if len(block) == 0 or block_size > MAX_HEADER_SIZE:
@@ -1058,17 +1082,7 @@ class EdfImage(fabioimage.FabioImage):
 
         block = b"".join(blocks)
 
-        # Now it is essential to go to the start of the binary part
-        # PB: with the above regular expression end.end() is the end
-        #     offset = start_blob - len(block)
-        if block[end_block: end_block + 3] == b"}\r\n":
-            offset = end_block + 3 - len(block)
-        elif block[end_block: end_block + 2] == b"}\n":
-            offset = end_block + 2 - len(block)
-        else:
-            logger.warning("Malformed end of header block")
-            offset = end_block + 2 - len(block)
-
+        # Go to the start of the binary blob
         infile.seek(offset, os.SEEK_CUR)
 
         # PB: return the header block AND header_size, binary_size, chain_number, block_id_number
@@ -1082,30 +1096,6 @@ class EdfImage(fabioimage.FabioImage):
                 # it must be an EDF0 or EDFU file without EDF_ header keys
                 # use _extract_header_metadata and search the keyword Size
                 pass
-
-            ##    searching the keyword Size is too complicated before the full header is read
-            ##    searchkey = b"Size ="
-            ##    start = block.find(searchkey, begin_block)
-            ##    if start >= 0:
-            ##        ### already searched: equal = block.index(b"=", start + len(searchkey)
-            ##        key_ok=True
-            ##        # It must be verified that searchkey is not part of a longer
-            ##        # word, e.g. "EDF_HeaderSize =", then key_ok becomes False
-            ##        if (start > 0):
-            ##            byte_around=string.whitespace.encode() + b';' + b'{'
-            ##            if block[start-1] not in byte_around:
-            ##                key_ok=False
-            ##
-            ##        if key_ok:
-            ##            equal = start + len(searchkey)
-            ##            end = block.index(b";", equal + 1)
-            ##            try:
-            ##                chunk = block[equal + 1:end].strip()
-            ##                binary_size = int(chunk)
-            ##            except Exception:
-            ##                logger.warning("Unable to read binary size from Size, got: %s", chunk)
-            ##                binary_size = None
-
 
         return block[begin_block:end_block].decode("ASCII"), header_size, binary_size, chain_number, block_id_number
 
