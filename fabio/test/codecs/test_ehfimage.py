@@ -329,5 +329,13 @@ class EhfCases(unittest.TestCase):
         test_00(self,"07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz",avglist)
 
 
+def suite():
+    loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
+    testsuite = unittest.TestSuite()
+    testsuite.addTest(loadTests(EhfCases))
+    return testsuite
+
+
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())
