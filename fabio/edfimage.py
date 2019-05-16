@@ -122,7 +122,7 @@ MINIMUM_KEYS = set(['HEADERID',
 
 MINIMUM_KEYS2 = set([ 'EDF_DATABLOCKID', # Replaces HeaderID and distinguishes Error and Image frames
                       'EDF_BINARYSIZE',  # Replaces Size
-                      'BYTEORDER', 
+                      'BYTEORDER',
                       'DATATYPE',
                       'DIM_1',
                       'DIM_2'])
@@ -133,9 +133,9 @@ DEFAULT_VALUES = {}
 
 def get_data_rank(header=None,capsHeader=None):
     '''Get the rank of data array by searching for DIM_nn with the highest index
-       in the header dictionary. Missing DIM_NN are set to 1, except DIM_1 
+       in the header dictionary. Missing DIM_NN are set to 1, except DIM_1
        which has the default 0.
-       :param: dict header 
+       :param: dict header
        :param: dict capsHeader (optional)
        :return: int rank
     '''
@@ -162,11 +162,11 @@ def get_data_shape(rank=0,header=None,capsHeader=None):
     '''
     Returns a tuple with the number of dimensions up to the given rank.
     The dimensions DIM_i are read from the header dictionary. If
-    the corresponding value is missing, the following defaults are 
+    the corresponding value is missing, the following defaults are
     used: DIM_1=0, all others 1.
     The shape tuple is filled from the end to the beginning with the values
-    of DIM_i, i.e. shape[0] is equal to value of DIM_rank, shape[rank-i] is 
-    equal to the value of DIM_i (e.g. for rank==2, shape[0]==value(DIM_2), 
+    of DIM_i, i.e. shape[0] is equal to value of DIM_rank, shape[rank-i] is
+    equal to the value of DIM_i (e.g. for rank==2, shape[0]==value(DIM_2),
     shape[1]==value(DIM_1)).
     '''
     if rank is None:
@@ -215,8 +215,8 @@ def split_datablockid(block_id=None):
        the block_id must be interpreted.
 
        :param str block_id :
-           <block_id_number>.<interpretation>.<data_type>[.<chain_number>] 
-       :return int block_id_number, str interpretation, str data_type, 
+           <block_id_number>.<interpretation>.<data_type>[.<chain_number>]
+       :return int block_id_number, str interpretation, str data_type,
            int chain_number
 
        split_datablockid splits the value of EDF_DataBlockID =
@@ -237,13 +237,13 @@ def split_datablockid(block_id=None):
        Primary scientific data blocks (Psd) have positive chain numbers,
        associated error data blocks have identical, but negative chain numbers.
        The interpretation of an error data block can be specified individually
-       with a keyword, e.g. ErrorType = ('None','Variance','StdDev'). But 
-       without an explicit specification the contents of error blocks are 
-       interpreted as variance data. 'None' means that the ErrorType has not 
-       been set. In this case the default interpretation ('Variance') will be 
+       with a keyword, e.g. ErrorType = ('None','Variance','StdDev'). But
+       without an explicit specification the contents of error blocks are
+       interpreted as variance data. 'None' means that the ErrorType has not
+       been set. In this case the default interpretation ('Variance') will be
        used.
 
-       If chain_number is 1, the block_id_number is equal to the EDF0 "Image" 
+       If chain_number is 1, the block_id_number is equal to the EDF0 "Image"
        number.
 
        The default block_id_number is 1.
@@ -251,10 +251,10 @@ def split_datablockid(block_id=None):
        If data_type is "Error" the returned chain_number is multiplied by -1
 
        block_id         block_id_number  interpretation  data_type  chain_number
-       n.Image.Psd      n                Image           Psd        +1          
-       n.Image.Error    n                Image           Error      -1          
-       n.Image.Psd.m    n                Image           Psd        +m          
-       n.Image.Error.m  n                Image           Error      -m          
+       n.Image.Psd      n                Image           Psd        +1
+       n.Image.Error    n                Image           Error      -1
+       n.Image.Psd.m    n                Image           Psd        +m
+       n.Image.Error.m  n                Image           Error      -m
 
     '''
 
@@ -270,7 +270,7 @@ def split_datablockid(block_id=None):
 
         if len(parts) > 0:
             n_str = parts[0]
-            try: 
+            try:
                block_id_number = int(n_str)
             except ValueError:
                block_id_number = None
@@ -293,7 +293,7 @@ def split_datablockid(block_id=None):
                         chain_number = -1
                     if len(parts) > 3:
                         chain_number_str = parts[3]
-                        try: 
+                        try:
                             chain_number = int(chain_number_str)
                         except ValueError:
                             chain_number = 1
@@ -312,14 +312,14 @@ def get_frame_idx( frames ):
     indices are counted from the end of the list.
     '''
 
-    # Check wether the last frame is a Psd frame, if yes stop, there are no 
-    # error frames. If the last frame is an Error frame, start checking from 
+    # Check wether the last frame is a Psd frame, if yes stop, there are no
+    # error frames. If the last frame is an Error frame, start checking from
     # the center of the list
     frame_idx = len(frames)
     if frame_idx>0:
         # Stop, if the last frame is a Psd frame
         if frames[frame_idx-1]._chain_number<0:
-            # If the last frame is an Error frame, the insertion point 
+            # If the last frame is an Error frame, the insertion point
             # is expected to be in the middle
             frame_idx = frame_idx // 2
             # Count down until a Psd frame is found
@@ -346,7 +346,7 @@ class EdfFrame(fabioimage.FabioFrame):
         header = EdfImage.check_header(header)
         super(EdfFrame, self).__init__(data, header=header)
 
-        # Just preset chain_number to 0, so that it is not 
+        # Just preset chain_number to 0, so that it is not
         # counted by get_frame_idx
         self._chain_number = 0
         self._block_id_number = None
@@ -366,7 +366,7 @@ class EdfFrame(fabioimage.FabioFrame):
         self.incomplete_data = False
         self.bfname = None
         """If set, the data must be read from this file and not from the blob
-           The external file must be located in the same folder as the edf data 
+           The external file must be located in the same folder as the edf data
            file. It must be different from the edf data file."""
         self.bfstart = 0
         """Start position of the raw data in the external file."""
@@ -412,7 +412,7 @@ class EdfFrame(fabioimage.FabioFrame):
         shape=get_data_shape(rank,self.header,capsHeader)
         counts=get_data_counts(shape)
 
-        # self._shape is used in fabioimage 
+        # self._shape is used in fabioimage
         self._shape = shape
 
         if self._dtype is None:
@@ -435,7 +435,7 @@ class EdfFrame(fabioimage.FabioFrame):
         bpp = self._dtype.itemsize
         calcsize = counts*bpp
         if (self.blobsize is None):
-            '''In some edf files the blobsize is not written. 
+            '''In some edf files the blobsize is not written.
                For uncompressed data it can be set to the calculated size.
             '''
             if self._data_compression is None:
@@ -473,7 +473,7 @@ class EdfFrame(fabioimage.FabioFrame):
             if self.bfname is None:
                 if (self.blobsize < calcsize):
                     '''The edf binary block can store up to self.blobsize bytes. If
-                       the required size is smaller, all data can be stored inside 
+                       the required size is smaller, all data can be stored inside
                        the blob, otherwise, if the actual blobsize is too small,
                        the data must be truncated.
                     '''
@@ -591,7 +591,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
     def _unpack(self):
         """
-        Unpack an internal or external binary blob according to the 
+        Unpack an internal or external binary blob according to the
         specification given in the header
 
         :return: dataset as numpy.ndarray
@@ -914,11 +914,11 @@ class EdfImage(fabioimage.FabioImage):
 
         :param fileid infile: file object open in read mode
         :param int frame_id: Informative frame ID
-        :return str header block, 
-                int header_size, 
-                int binary_size, 
-                int chain_number, 
-                int block_id_number 
+        :return str header block,
+                int header_size,
+                int binary_size,
+                int chain_number,
+                int block_id_number
                 in case of an error all return values are None
         :raises MalformedHeaderError: If the header can't be read
         """
@@ -1049,7 +1049,7 @@ class EdfImage(fabioimage.FabioImage):
                 offset = start_blob - block_size
                 break
 
-            # end is None: the header end pattern could be distributed across 
+            # end is None: the header end pattern could be distributed across
             # two blocks if '}' or '}\r' is found at the end of the first block.
             nextblock = infile.read(BLOCKSIZE)
 
@@ -1643,8 +1643,8 @@ class EdfImage(fabioimage.FabioImage):
         ...     print('Data:', frame.data)
 
         :param str filename: File name of the EDF file to read
-        :select int : 0 iterate over all frames (default), 
-                      1 iterate over Psd frames only, 
+        :select int : 0 iterate over all frames (default),
+                      1 iterate over Psd frames only,
                      -1 iterate over Error frames only
         :yield: frames one after the other
         """
@@ -1689,7 +1689,7 @@ class EdfImage(fabioimage.FabioImage):
                     includeheader=edf.generalframe._header
 
             capsHeader = frame._parseheader(block,includeheader)
-            
+
             if binary_size is None:
                 # Try again computing blobsize
                 if "SIZE" in capsHeader:
@@ -1707,7 +1707,7 @@ class EdfImage(fabioimage.FabioImage):
             frame.start = infile.tell()
             frame.blobsize = blobsize
 
-            if frame._chain_number!=0: 
+            if frame._chain_number!=0:
                 # This is a standard block, get the binary data
                 try:
                     # read data
