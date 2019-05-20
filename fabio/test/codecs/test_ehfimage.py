@@ -25,7 +25,7 @@
 # Unit tests
 Reading extended edf files ("ehf-files") with fabio.module edfimage.py
 
-12/04/2019 PB
+16/05/2019 PB
 """
 from __future__ import print_function, with_statement, division, absolute_import
 import unittest
@@ -68,7 +68,7 @@ def fopen(filename=None,frameno=None):
         else:
             npsdframes=nframes
             nerrorframes=0
-        
+
         if frameno >= npsdframes:
             logging.warning("Psd frame {} out of range: 0 <= {} < {}".format(frameno,frameno,npsdframes))
 
@@ -89,7 +89,7 @@ def fopen(filename=None,frameno=None):
             frame=fabio.fabioimage.FabioFrame(data=data, header=header)
         else:
             raise IOError("fopen: Cannot access frame: {} (0<=frame<{})".format(frameno, nframes))
-        
+
     return(frame)
 
 #============================================
@@ -151,7 +151,7 @@ def test_00(self,filename,avglist=None,keylist=None):
                 key=keylist[frameno]
             else:
                 key=keylist[-1]
-    
+
             if key in frame.header:
                logging.debug("filename={}, frameno={}: '{}' = {}".format(filename,frameno,key,frame.header[key]))
             else:
@@ -208,7 +208,7 @@ class EhfCases(unittest.TestCase):
     def setUp(self):
         global ROOT
         unittest.TestCase.setUp(self)
-        self.files = UtilsTest.resources.getdir("ehf_images.tar.bz2")
+        self.files = UtilsTest.resources.getdir("ehf_images2.tar.bz2")
         ROOT = os.path.join(self.files[0], "..")
 
     def test_edfblocktypes(self):
@@ -236,9 +236,9 @@ class EhfCases(unittest.TestCase):
 
     def test_edfsingle_raw_bf_gblk(self):
         """
-        Reading an uncompressed edf-single-frame-file with references to data 
+        Reading an uncompressed edf-single-frame-file with references to data
         in externally saved dataframes.
-        Check average data value, and verify that the key ExperimentInfo is 
+        Check average data value, and verify that the key ExperimentInfo is
         correctly read from the general block.
 
         """
@@ -249,13 +249,13 @@ class EhfCases(unittest.TestCase):
     def test_edfmulti_raw_bf_gblk(self):
         """
         Reading an uncompressed edf-multi-frame-file with references to data
-        in externally saved dataframes and checking the average of each frame. 
+        in externally saved dataframes and checking the average of each frame.
         Some header values are modified for checking the robustness.
-        frames 0..16: Test reading from a multi frame edf file with links to 
+        frames 0..16: Test reading from a multi frame edf file with links to
                       external binary files (ehf)
-        frame 17:     Test reading without EDF_BinaryFileSize => must be 
+        frame 17:     Test reading without EDF_BinaryFileSize => must be
                       estimated from data size
-        frame 18:     Test reading with EDF_BinaryFileSize bigger than required 
+        frame 18:     Test reading with EDF_BinaryFileSize bigger than required
                       => currently an unnecessary info is given
         """
         avglist=[9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
@@ -263,7 +263,7 @@ class EhfCases(unittest.TestCase):
 
     def test_edfmulti_raw_dark_raw_bf_gblk(self):
         """
-        Linking data of several frames to different parts of a single external 
+        Linking data of several frames to different parts of a single external
         binary file.
         rh28a_saxs_00003_dark_binned.ehf:
           WARNING:fabio.edfimage:Under-short header frame 2: only 311 bytes
@@ -282,8 +282,8 @@ class EhfCases(unittest.TestCase):
     def test_edfsingle_raw_bf_gblk_gz(self):
         """
         Test reading gzipped data files linking to an external binary data file.
-        Check that the extension .gz is added to the name of the external binary 
-        data file if it cannot be opened with the binary file name found in the 
+        Check that the extension .gz is added to the name of the external binary
+        data file if it cannot be opened with the binary file name found in the
         header. Both files are gzipped.
         """
         avglist=[25743.2]
@@ -292,8 +292,8 @@ class EhfCases(unittest.TestCase):
     def test_edfsingle_raw_bf_gblk_gz(self):
         """
         Test reading gzipped data files linking to an external binary data file.
-        Check that the extension .gz is added to the name of the external binary 
-        data file if it cannot be opened with the binary file name found in the 
+        Check that the extension .gz is added to the name of the external binary
+        data file if it cannot be opened with the binary file name found in the
         header. The binary data file is not compressed.
         """
         avglist=[25743.2]
@@ -311,22 +311,104 @@ class EhfCases(unittest.TestCase):
 
     def test_edfmulti_raw_bf_gblk_gz(self):
         """
-        Test reading the files of the test test_edfmulti_raw_bf_gblk after 
+        Test reading the files of the test test_edfmulti_raw_bf_gblk after
         gzipping.
         Test reading from multi frame files, like test_edfmulti_raw_bf_gblk, but
         but with all files gzipped.
-        frames 0..16: Test reading from a multi frame edf file with links to 
+        frames 0..16: Test reading from a multi frame edf file with links to
                       external binary files (ehf)
-        frame 17:     Test reading without EDF_BinaryFileSize => should be 
+        frame 17:     Test reading without EDF_BinaryFileSize => should be
                       estimated from data size
-        frame 18:     Test reading with EDF_BinaryFileSize bigger than required 
+        frame 18:     Test reading with EDF_BinaryFileSize bigger than required
                       => currently an unnecessary info is given
-        frame 19:     Test reading with a wrong EDF_BinaryFileSize that excceeds 
-                      the real file size. => data must only be read to the end 
+        frame 19:     Test reading with a wrong EDF_BinaryFileSize that excceeds
+                      the real file size. => data must only be read to the end
                       of the binary data file.
         """
         avglist=[9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
         test_00(self,"07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz",avglist)
+
+    def test_pitfalls(self):
+        """
+        multi5+headerblob_edf1.edf.gz
+        multi5+headerblob+headerendinheader_edf1.edf.gz
+        multi5+pitfalls_edf1.edf.gz
+        multi5+headerblob_edf0.edf.gz
+        multi5+headerblob+headerendinheader_edf0.edf.gz
+        multi5+pitfalls_edf0.edf.gz
+        """
+
+        # edf1 file => must always work
+        avglist=[0,1,2,3,4]
+        test_00(self,"08_pitfalls/multi5+pitfalls_edf1.edf.gz",avglist)
+
+        # edf1 file with header end pattern in binary blob => must always work
+        avglist=[18312,18312,18312,18312,18312]
+        test_00(self,"08_pitfalls/multi5+headerblob_edf1.edf.gz",avglist)
+
+        # edf1 file with header end pattern in Title value and binary blob
+        # => must always work
+        test_00(self,"08_pitfalls/multi5+headerblob+headerendinheader_edf1.edf.gz",avglist)
+
+        # edf0 file => must always work
+        avglist=[0,1,2,3,4]
+        test_00(self,"08_pitfalls/multi5+pitfalls_edf0.edf.gz",avglist)
+
+        # edf0 file with header end pattern in binary blob => must always work
+        avglist=[18312,18312,18312,18312,18312]
+        test_00(self,"08_pitfalls/multi5+headerblob_edf0.edf.gz",avglist)
+
+        # edf0 file with header end pattern in Title value and binary blob
+        # => usually fails, because the header end pattern is searched
+        # by parsing each byte of the header.
+        # The next test usually fails, because the value of the header key
+        # "Title" contains a header end pattern.
+        # There is no safe way of reading such files.
+        # When writing the files it must be checked that no special
+        # characters are written to header values, especially
+        # not '{', '}', ';'.
+        # Searching the end_marker in a header in steps of BLOCKSIZE
+        # instead of searching through the whole header byte for
+        # byte would allow reading most of such files, but success is not
+        # guaranteed. => Do not write special character to the header
+        # test_00(self,"08_pitfalls/multi5+headerblob+headerendinheader_edf0.edf.gz",avglist)
+
+    def test_special(self):
+        """
+        09_special/face_ok.edf.gz
+        09_special/face_headerendatboundary1.edf.gz
+        09_special/face_headerendatboundary2.edf.gz
+        09_special/face_headerendatboundary3.edf.gz
+        09_special/face_tooshort.edf.gz
+        """
+
+        avglist=[0.178897]
+        test_00(self,"09_special/face_ok.edf.gz",avglist)
+
+        # The next 3 tests check that edf files can be
+        # read where the header end pattern spreads over a
+        # BLOCKSIZE boundary. This is usually not a problem
+        # for header blocks that are padded to multiples of BLOCKSIZE
+        # and that are aligned to BLOCKSIZE boundaries.
+        # This error can happen if edf header are modified with
+        # an editor.
+        # The following tests will fail if distributed  header end
+        # patterns are not recognized.
+        avglist=[0.178897]
+        # header end character '}' at BLOCKSIZE-1 followed by '\n' at BLOCKSIZE
+        test_00(self,"09_special/face_headerendatboundary1.edf.gz",avglist)
+        # first part of header end pattern '}\r' at BLOCKSIZE-2 followed by '\n' at BLOCKSIZE
+        test_00(self,"09_special/face_headerendatboundary2.edf.gz",avglist)
+        # header end character '}' at BLOCKSIZE-1 followed by '\n' at BLOCKSIZE
+        test_00(self,"09_special/face_headerendatboundary3.edf.gz",avglist)
+
+        # Here, the binary blob is too short
+        # like 09_special/face_headerendatboundary1.edf.gz, but in addition
+        # the binary blob is too short by 1 byte.
+        # Currently, an error message is shown and the data
+        # is truncated
+        # avglist=[0.178897]
+        # test_00(self,"09_special/face_tooshort.edf.gz",avglist)
 
 
 def suite():

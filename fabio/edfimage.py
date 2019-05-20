@@ -610,7 +610,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
                 with self.file.lock:
                     if self.file.closed:
-                        logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.filename))
+                        logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.name))
                         return
                     else:
                         self.file.seek(self.start)
@@ -635,7 +635,7 @@ class EdfFrame(fabioimage.FabioFrame):
                         f.seek(self.bfstart)
                         fileData = f.read(self.bfsize)
                 else:
-                    raise IOError("The binary file {} of {} does not exist".format(self.bfname,self.file.filename))
+                    raise IOError("The binary file {} of {} does not exist".format(self.bfname,self.file.name))
 
             if self._data_compression is not None:
                 compression = self._data_compression
@@ -672,7 +672,7 @@ class EdfFrame(fabioimage.FabioFrame):
             expected = self.size
             obtained = len(rawData)
             if expected > obtained:
-                logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
+                logger.error("Data stream is incomplete: {} < expected {} bytes (filename {})".format(obtained, expected,self.file.name))
                 rawData += "\x00".encode("ascii") * (expected - obtained)
             elif expected < len(rawData):
                 logger.info("Data stream is padded : %s > required %s bytes" % (obtained, expected))
@@ -908,9 +908,29 @@ class EdfImage(fabioimage.FabioImage):
         return new
 
     @staticmethod
-    def _read_header_block(infile, frame_id):
+    def _read_header_block(infile, frame_id, blockboundary=BLOCKSIZE):
         """
         Read in a header in some EDF format from an already open file
+        File format specific EDF_* header keys must be written at the
+        beginning of a block before the first non EDF_* key, otherwise
+        they could be ignored.
+        If used, the EDF_* header keys are expected to start either with
+        EDF_DataFormatVersion or EDF_DataBlockID and to appear in the
+        following order:
+        General Block
+            EDF_DataFormatVersion
+            EDF_DataBlocks
+            EDF_BlockBoundary
+            EDF_BinaryFileSize (0: default)
+        Data Block
+            EDF_DataBlockID
+            EDF_BinarySize
+            EDF_HeaderSize
+            EDF_BinaryFileName
+            EDF_BinaryFilePosition
+            EDF_BinaryFileSize
+        As an additional restriction, _read_header_block expects them
+        in the first 512 bytes of a block.
 
         :param fileid infile: file object open in read mode
         :param int frame_id: Informative frame ID
@@ -918,7 +938,8 @@ class EdfImage(fabioimage.FabioImage):
                 int header_size,
                 int binary_size,
                 int chain_number,
-                int block_id_number
+                int block_id_number,
+                int blockboundary
                 in case of an error all return values are None
         :raises MalformedHeaderError: If the header can't be read
         """
@@ -931,6 +952,9 @@ class EdfImage(fabioimage.FabioImage):
         # the default chain is 1 (primary scientific data)
         chain_number=1
 
+        if blockboundary is None:
+            blockboundary = BLOCKSIZE
+
         MAX_HEADER_SIZE = BLOCKSIZE * MAX_BLOCKS
         try:
             block = infile.read(BLOCKSIZE)
@@ -942,13 +966,13 @@ class EdfImage(fabioimage.FabioImage):
 
         if len(block) == 0:
             # end of file
-            return None, None, None, None, None
+            return None, None, None, None, None, None
 
         begin_block = block.find(b"{")
         if begin_block < 0:
             if len(block) < BLOCKSIZE and len(block.strip()) == 0:
                 # Empty block looks to be a valid end of file
-                return None, None, None, None, None
+                return None, None, None, None, None, None
             logger.debug("Malformed header: %s", block)
             raise MalformedHeaderError("Header frame %i does not contain '{'" % frame_id)
 
@@ -956,14 +980,6 @@ class EdfImage(fabioimage.FabioImage):
         if start.strip() != b"":
             logger.debug("Malformed header: %s", start)
             raise MalformedHeaderError("Header frame %i contains non-whitespace before '{'" % frame_id)
-
-        # Try defining EDF_BlockBoundary in the general header
-        # in __init__: self._blockboundary = BLOCKSIZE
-        # move this warning after reading "EDF_HeaderSize"
-        # if chain_number == 0, try reading self._blockboundary from EDF_BlockBoundary
-        # now check self._blockboundary (instead of BLOCKSIZE)
-        if len(block) < BLOCKSIZE:
-            logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
 
         # skip the open block character
         begin_block = begin_block + 1
@@ -978,6 +994,18 @@ class EdfImage(fabioimage.FabioImage):
             # The general block has the chain_number 0
             block_id_number=0
             chain_number=0
+
+            start = block.find(b"EDF_BlockBoundary", end)
+            if start >= 0:
+                # Here is the blockboundary
+                equal = block.index(b"=", start + len(b"EDF_BlockBoundary"))
+                end = block.index(b";", equal + 1)
+                try:
+                    chunk = block[equal + 1:end].strip()
+                    blockboundary = int(chunk)
+                except Exception:
+                    logger.warning("Unable to read blockboundary, got: %s", chunk)
+                    blockboundary = BLOCKSIZE
         else:
             start = block.find(b"EDF_DataBlockID", begin_block)
             if start >= 0:
@@ -1015,29 +1043,21 @@ class EdfImage(fabioimage.FabioImage):
         block_size = len(block)
         blocks = [block]
 
-        #PB: the edf header MUST stop with "\n" after a closing
+        # The following warning is only informative. edfimage.py does not use
+        # blockboundary when reading files.
+        if block_size < blockboundary:
+            logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
+
+        #The edf header MUST stop with "\n" after a closing
         # curly brace {.
-        #  old: end_pattern = re.compile(b"}[\r\n]")
-        # This matches "}\r\n", "}\n" and "}\r". The latter is
-        # not a possible end pattern.
         #
         # A single \r is allowed as fill character, i.e. \r{0,1}:
-        #   new: end_pattern = re.compile(b'}(\r{0,1})\n')
+        #   end_pattern = re.compile(b'}(\r{0,1})\n')
         #
         # This matches "}\r\n" and "}\n", but not "}\r" alone
         # The maximum length of the header end pattern is 3 bytes,
-        # For finding all sequences of that type the
-        # header end pattern must be parsed with an overlap of
-        # 2 bytes, e.g.
-        #
-        # buffer1: <header>"}"
-        # buffer2:          "\r\n"<binary>
-        # buffer3:                       "{\r\n"<header>
-        #
-        # reading BUFFERSIZE+2 bytes,
-        # buffer1: <header>"}\r\n"
-        # buffer2:          "\r\n"<binary>
-        # buffer3:                       "{\r\n"<header>
+        # Additional checks are needed for locating header end
+        # patterns that are distributed across two blocks.
 
         end_pattern = re.compile(b'}(\r{0,1})\n')
 
@@ -1085,7 +1105,7 @@ class EdfImage(fabioimage.FabioImage):
         # Go to the start of the binary blob
         infile.seek(offset, os.SEEK_CUR)
 
-        # PB: return the header block AND header_size, binary_size, chain_number, block_id_number
+        # PB: return the header block AND header_size, binary_size, chain_number, block_id_number, blockboundary
         if header_size is None:
             header_size = block_size
         if binary_size is None:
@@ -1097,7 +1117,7 @@ class EdfImage(fabioimage.FabioImage):
                 # use _extract_header_metadata and search the keyword Size
                 pass
 
-        return block[begin_block:end_block].decode("ASCII"), header_size, binary_size, chain_number, block_id_number
+        return block[begin_block:end_block].decode("ASCII"), header_size, binary_size, chain_number, block_id_number, blockboundary
 
     @property
     def incomplete_file(self):
@@ -1126,7 +1146,7 @@ class EdfImage(fabioimage.FabioImage):
 
         while True:
             try:
-                block, header_size, binary_size, chain_number, block_id_number = self._read_header_block(infile, len(self._frames))
+                block, header_size, binary_size, chain_number, block_id_number, self._blockboundary = self._read_header_block(infile, len(self._frames), self._blockboundary)
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
@@ -1660,7 +1680,7 @@ class EdfImage(fabioimage.FabioImage):
 
         while True:
             try:
-                block, header_size, binary_size, chain_number, block_id_number = edf._read_header_block(infile, index)
+                block, header_size, binary_size, chain_number, block_id_number, edf._blockboundary = edf._read_header_block(infile, index, edf._blockboundary)
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if index == 0:
