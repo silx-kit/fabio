@@ -158,7 +158,7 @@ class NumpyImage(fabioimage.FabioImage):
         self._readheader(infile)
 
         # read the image data
-        self.dataset = numpy.load(infile)
+        self.dataset = numpy.load(infile, allow_pickle=True)
         self.slice_dataset(frame)
         return self
 
