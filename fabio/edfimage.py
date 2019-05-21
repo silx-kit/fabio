@@ -333,6 +333,18 @@ def get_frame_idx( frames ):
 
     return frame_idx
 
+def get_block_id_numbers( frames ):
+    '''
+    This function extracts from the list of frames the list of block_id_numbers.
+    img._block_id_numbers[:img._frame_idx] returns the list of psd block ids
+    img._block_id_numbers[img._frame_idx:] returns the list of error block ids
+    '''
+    block_id_numbers = []
+    for nframe in range(len(frames)):
+        block_id_numbers.append(frames[nframe]._block_id_number)
+
+    return block_id_numbers
+
 class MalformedHeaderError(IOError):
     """Raised when a header is malformed"""
     pass
@@ -884,6 +896,8 @@ class EdfImage(fabioimage.FabioImage):
         #      nframes=10, frame_id = 4 => errorframe_id=5
         self._frame_idx = get_frame_idx( self._frames )
 
+        self._block_id_numbers = get_block_id_numbers( self._frames )
+
         # generalframe
         self.generalframe = generalframe
 
@@ -1136,6 +1150,7 @@ class EdfImage(fabioimage.FabioImage):
         self._frames = []
         self.generalframe = None
         self._frame_idx = 0
+        self._block_id_numbers = []
 
         header_size = None
         binary_size = None
@@ -1199,10 +1214,12 @@ class EdfImage(fabioimage.FabioImage):
             elif frame._chain_number>0:
                 # add a psd frame
                 self._frames.insert(self._frame_idx,frame)
+                self._block_id_numbers.insert(self._frame_idx,frame._block_id_number)
                 self._frame_idx+=1
             else:
                 # add an error frame
                 self._frames.insert(self._frame_idx,frame)
+                self._block_id_numbers.insert(self._frame_idx,frame._block_id_number)
 
             if frame._chain_number!=0:
                 # Check the header information, because it is a standard block
