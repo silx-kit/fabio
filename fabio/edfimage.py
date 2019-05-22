@@ -144,10 +144,10 @@ class EdfFrame(fabioimage.FabioFrame):
         self._data = data
         self.start = None
         """Position of start of raw data in file"""
+        self.blobsize = None
+        """Size of the raw data blob in the file"""
         self.size = None
-        """Size of raw data block in file (including padding)"""
-        self._data_size = None
-        """Size of the util raw data if different than `size` (without padding)"""
+        """Size of the uncompressed data"""
         self.file = None
         """Opened file object with locking capabilities"""
         self._dtype = None
@@ -178,7 +178,8 @@ class EdfFrame(fabioimage.FabioFrame):
         :param dict capsHeader: Precached mapping from capitalized keys of the
             header to the original keys.
         """
-        self.size = None
+        self.blobsize = None
+        # Here calcsize is only a guess!
         calcsize = 1
         shape = []
 
@@ -188,7 +189,7 @@ class EdfFrame(fabioimage.FabioFrame):
         # Compute image size
         if "SIZE" in capsHeader:
             try:
-                self.size = nice_int(self.header[capsHeader["SIZE"]])
+                self.blobsize = nice_int(self.header[capsHeader["SIZE"]])
             except ValueError:
                 logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], self.header[capsHeader["SIZE"]]))
         if "DIM_1" in capsHeader:
@@ -256,15 +257,24 @@ class EdfFrame(fabioimage.FabioFrame):
         bpp = self._dtype.itemsize
         calcsize *= bpp
 
-        if (self.size is None):
-            self.size = calcsize
-        elif self._data_compression is None:
-            if self.size < calcsize:
-                logger.warning("Malformed file. The specified size of the data block is smaller than the expected size (%i < %i). Size is set to the the calculated one. This frame (and following) could be broken.", self.size, calcsize)
+        # Checks can be done only for uncompressed data
+        if self._data_compression is None:
+            if self.blobsize is None:
+                # In some edf files the blobsize is not written.
+                # For uncompressed data it can be set to the calculated size.
+                self.blobsize = calcsize
+
+            elif self.blobsize < calcsize:
+                # The EDF binary block can store up to self.blobsize bytes.
+                # If the required blobsize is smaller, there is no
+                # problem and the data can be stored, otherwise if the available blobsize is too small the data must be
+                # truncated
+                logger.warning("Malformed file. The specified size of the data block is smaller than the expected size (%i < %i). This frame and the following could be broken.", self.size, calcsize)
                 self.size = calcsize
-            elif self.size > calcsize:
-                # The data block is padded, store here the real data size
-                self._data_size = calcsize
+
+        if self.size is None:
+            # Preset with the calculated size, will be updated after decompressing
+            self.size = calcsize
 
         byte_order = self.header[capsHeader['BYTEORDER']]
         if ('Low' in byte_order and numpy.little_endian) or \
@@ -282,7 +292,8 @@ class EdfFrame(fabioimage.FabioFrame):
         Parse the header in some EDF format from an already open file
 
         :param str block: string representing the header block.
-        :return: size of the binary blob
+        :return: Size of the binary blob
+        :rtype: int
         """
         # reset values
         self.header = OrderedDict()
@@ -300,7 +311,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
         self._extract_header_metadata(capsHeader)
 
-        return self.size
+        return self.blobsize
 
     def _check_header_mandatory_keys(self, filename=''):
         """Check that frame header contains all mandatory keys
@@ -347,7 +358,7 @@ class EdfFrame(fabioimage.FabioFrame):
                 else:
                     self.file.seek(self.start)
                     try:
-                        fileData = self.file.read(self.size)
+                        fileData = self.file.read(self.blobsize)
                     except Exception as e:
                         if isinstance(self.file, fabioutils.GzipFile):
                             if compression_module.is_incomplete_gz_block_exception(e):
@@ -382,7 +393,6 @@ class EdfFrame(fabioimage.FabioFrame):
                 else:
                     logger.warning("Unknown compression scheme %s" % compression)
                     rawData = fileData
-
             else:
                 rawData = fileData
 
@@ -390,13 +400,15 @@ class EdfFrame(fabioimage.FabioFrame):
             obtained = len(rawData)
             if expected > obtained:
                 logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
-                rawData += "\x00".encode("ascii") * (expected - obtained)
-            elif expected < len(rawData):
-                logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+                rawData += b"\x00" * (expected - obtained)
+            elif expected < obtained:
+                if self._data_compression is not None:
+                    logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+                logger.debug("Data: %s" % rawData[expected:])
                 rawData = rawData[:expected]
-            if self._data_size is not None:
-                rawData = rawData[0:self._data_size]
-            data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
+            # Do not reshape the full rawData buffer, use only the size of the recuperated data
+            count = self.size // self._dtype.itemsize
+            data = numpy.frombuffer(rawData, self._dtype, count).copy().reshape(shape)
             if self.swap_needed():
                 data.byteswap(True)
             self._data = data
@@ -642,7 +654,7 @@ class EdfImage(fabioimage.FabioImage):
                 # Empty block looks to be a valid end of file
                 return None
             logger.debug("Malformed header: %s", block)
-            raise MalformedHeaderError("Header frame %i do not contains '{'" % frame_id)
+            raise MalformedHeaderError("Header frame %i does not contain '{'" % frame_id)
 
         start = block[0:begin_block]
         if start.strip() != b"":
@@ -734,15 +746,15 @@ class EdfImage(fabioimage.FabioImage):
                 break
 
             frame = EdfFrame()
-            size = frame.parseheader(block)
+            blobsize = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()
-            frame.size = size
+            frame.blobsize = blobsize
             self._frames += [frame]
 
             try:
                 # skip the data block
-                infile.seek(size - 1, os.SEEK_CUR)
+                infile.seek(blobsize - 1, os.SEEK_CUR)
                 data = infile.read(1)
                 if len(data) == 0:
                     self._incomplete_file = True
@@ -757,7 +769,7 @@ class EdfImage(fabioimage.FabioImage):
                         break
                 logger.warning("infile is %s" % infile)
                 logger.warning("Position is %s" % infile.tell())
-                logger.warning("size is %s" % size)
+                logger.warning("Blobsize is %s" % blobsize)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
@@ -906,7 +918,7 @@ class EdfImage(fabioimage.FabioImage):
         frame = self._frames[self.currentframe]
         with open(filename, "rb")as f:
             f.seek(frame.start)
-            raw = f.read(frame.size)
+            raw = f.read(frame.blobsize)
         try:
             data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
             data.shape = self.data.shape
@@ -1204,10 +1216,10 @@ class EdfImage(fabioimage.FabioImage):
             frame = EdfFrame()
             frame._set_container(edf, index)
             frame._set_file_container(edf, index)
-            size = frame.parseheader(block)
+            blobsize = frame.parseheader(block)
             frame.file = infile
             frame.start = infile.tell()
-            frame.size = size
+            frame.blobsize = blobsize
 
             try:
                 # read data
@@ -1219,7 +1231,7 @@ class EdfImage(fabioimage.FabioImage):
                         break
                 logger.warning("infile is %s" % infile)
                 logger.warning("Position is %s" % infile.tell())
-                logger.warning("size is %s" % size)
+                logger.warning("Blobsize is %s" % blobsize)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 infile.close()
                 raise Exception(error)
