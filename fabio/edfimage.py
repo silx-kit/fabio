@@ -45,6 +45,7 @@ Authors:
   European Synchrotron Radiation Facility;
   Grenoble (France)
 
+
 """
 
 import os
@@ -193,6 +194,8 @@ def get_data_shape(rank=0,header=None,capsHeader=None):
         shape.insert(0,dimi)
 
     return(tuple(shape))
+# JON: this appears to be for nD images, but we don't treat those
+# PB38k: yes, it is done for the general case and is also valid for special cases with nD<=3D
 
 def get_data_counts(shape=None):
     '''
@@ -345,6 +348,7 @@ def get_block_id_numbers( frames ):
 
     return block_id_numbers
 
+
 class MalformedHeaderError(IOError):
     """Raised when a header is malformed"""
     pass
@@ -409,6 +413,10 @@ class EdfFrame(fabioimage.FabioFrame):
         :param dict capsHeader: Precached mapping from capitalized keys of the
             header to the original keys.
         """
+        self.blobsize = None
+        # Here calcsize is only a guess!
+        calcsize = 1
+        shape = []
 
         if capsHeader is None:
             capsHeader = self._compute_capsheader()
@@ -533,8 +541,6 @@ class EdfFrame(fabioimage.FabioFrame):
             else:
                 self._data_swap_needed = False
 
-
-    # before parseheader
     def _parseheader(self, block, defaultheader=None):
         """
         Parse the header in some EDF format from an already open file
@@ -557,7 +563,7 @@ class EdfFrame(fabioimage.FabioFrame):
                 key = key.strip(whitespace)
                 self.header[key] = val.strip(whitespace)
 
-        # In a second step append all missing keys in the general header
+        # In a second step copy all missing keys from the general header
         if defaultheader is not None:
             for key in defaultheader:
                 # exceptions
@@ -677,7 +683,6 @@ class EdfFrame(fabioimage.FabioFrame):
                 else:
                     logger.warning("Unknown compression scheme %s" % compression)
                     rawData = fileData
-
             else:
                 rawData = fileData
 
@@ -686,7 +691,7 @@ class EdfFrame(fabioimage.FabioFrame):
             if expected > obtained:
                 logger.error("Data stream is incomplete: {} < expected {} bytes (filename {})".format(obtained, expected,self.file.name))
                 rawData += "\x00".encode("ascii") * (expected - obtained)
-            elif expected < len(rawData):
+            elif expected < obtained:
                 logger.info("Data stream is padded : %s > required %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
             # count = get_data_counts(shape)
@@ -943,7 +948,7 @@ class EdfImage(fabioimage.FabioImage):
             EDF_BinaryFileName
             EDF_BinaryFilePosition
             EDF_BinaryFileSize
-        As an additional restriction, _read_header_block expects them
+        As an additional restriction, _read_header_block needs them
         in the first 512 bytes of a block.
 
         :param fileid infile: file object open in read mode
@@ -1083,8 +1088,12 @@ class EdfImage(fabioimage.FabioImage):
                 offset = start_blob - block_size
                 break
 
-            # end is None: the header end pattern could be distributed across
-            # two blocks if '}' or '}\r' is found at the end of the first block.
+            # PB38k: Searching the end_pattern in the whole block intends
+            # that it could be located anywhere. However, for some files
+            # the end_pattern search fails, if the end_pattern is distributed
+            # across two blocks. The next tests check whether '}' or '}\r' is
+            # located at the end of the first block and the remaining pattern
+            # at the start of the next block.
             nextblock = infile.read(BLOCKSIZE)
 
             if block[-1:] == b'}':
@@ -1119,7 +1128,8 @@ class EdfImage(fabioimage.FabioImage):
         # Go to the start of the binary blob
         infile.seek(offset, os.SEEK_CUR)
 
-        # PB: return the header block AND header_size, binary_size, chain_number, block_id_number, blockboundary
+        # PB38k: return the header block AND header_size, binary_size,
+        #        chain_number, block_id_number, blockboundary
         if header_size is None:
             header_size = block_size
         if binary_size is None:
@@ -1182,7 +1192,7 @@ class EdfImage(fabioimage.FabioImage):
             frame._chain_number=chain_number
             frame._block_id_number=block_id_number
 
-            # PB, better use frame._set_container(self,len(self._frames))?  #++++++++++++++
+            # PB38k: any need for frame._set_container(self,len(self._frames))?
             frame._index=len(self._frames)
 
             includeheader=None
@@ -1379,8 +1389,9 @@ class EdfImage(fabioimage.FabioImage):
     def fast_read_data(self, filename=None):
         """
         This is a special method that will read and return the data from another file ...
-        The aim is performances, ... but will certainly fail on compressed files.
-        To be used with care!
+        The aim is performance, ... but it will certainly fail on compressed files.
+        PB38k: To be used with care! Could be made safer by testing the expected positions of
+        header start/end markers.
 
         :return: data from another file using positions from current EdfImage
         """
@@ -1768,12 +1779,12 @@ class EdfImage(fabioimage.FabioImage):
                     yield frame
                     index += 1
                 elif select>0:
-                    # Iterate over Psd Frames
+                    # Iterate over Psd frames
                     if frame._chain_number>0:
                         yield frame
                         index += 1
                 else:
-                    # Iterate over Error Frames
+                    # Iterate over Error frames
                     if frame._chain_number<0:
                         yield frame
                         index += 1
