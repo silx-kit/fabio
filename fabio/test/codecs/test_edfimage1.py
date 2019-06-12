@@ -92,21 +92,29 @@ def fopen(filename=None,frameno=None):
 
     return(frame)
 
+def get_data_counts(shape=None):
+    '''
+    Counts all items specified by shape
+    '''
+    if shape is None:
+      shape=()
+    counts=1
+    for ishape in range(0,len(shape)):
+        counts*=shape[ishape]
+    return(counts)
+
 #============================================
 
-ROOT = None
-
-def test_00(self,filename,avglist=None,keylist=None):
+# Hint: Must be defined outside the test case class, otherwise used as test
+def test_00(cls,filename,avglist=None,keylist=None):
     """
-    Checks the shape of the data arrays.
+    Checks the correct shape of the data arrays.
     Compares the mean value of each data frame array, with the number given in avglist.
     filename: name of file to test
     avglist: list of average values for each frame, stops, if not equal
     keylist: list of keys to read, stops, if not available
     If avglist or keylist is shorter than frameno, the last value in the list is used.
     """
-    global ROOT
-    filename = os.path.join(ROOT, filename)
     image=fabio.open(filename)
 
     nframes=image.nframes
@@ -124,10 +132,10 @@ def test_00(self,filename,avglist=None,keylist=None):
         frame=fopen(filename,frameno)
 
         # check data shape
-        counts=fabio.edfimage.get_data_counts(frame.shape)
-        data_counts=fabio.edfimage.get_data_counts(frame.data.shape)
+        counts=get_data_counts(frame.shape)
+        data_counts=get_data_counts(frame.data.shape)
 
-        self.assertEqual(counts, data_counts,"A:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
+        cls.assertEqual(counts, data_counts,"A:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
            format(filename,frameno,frame.shape,frame.data.shape))
 
         # calculate mean value
@@ -142,7 +150,7 @@ def test_00(self,filename,avglist=None,keylist=None):
                avg=avglist[frameno]
            else:
                avg=avglist[-1]
-           self.assertLessEqual(abs(fmean-avg),abs(fmean+avg)*5e-6,"B:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
+           cls.assertLessEqual(abs(fmean-avg),abs(fmean+avg)*5e-6,"B:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
                format(filename,frameno,fmean,avg))
 
         # read a key to read from keylist
@@ -157,17 +165,17 @@ def test_00(self,filename,avglist=None,keylist=None):
             else:
                logging.debug("filename={}, frameno={}: '{}' = None".format(filename,frameno,key))
 
-            self.assertIn(key,frame.header,"C:filename={},frameno={}: Missing expected header key '{}'".format(filename,frameno,key))
+            cls.assertIn(key,frame.header,"C:filename={},frameno={}: Missing expected header key '{}'".format(filename,frameno,key))
 
     #error data
     for frameno in range(0,nerrorframes):
         frame=fopen(filename,-frameno-1)
 
         # check data shape
-        counts=fabio.edfimage.get_data_counts(frame.shape)
-        data_counts=fabio.edfimage.get_data_counts(frame.data.shape)
+        counts=get_data_counts(frame.shape)
+        data_counts=get_data_counts(frame.data.shape)
 
-        self.assertEqual(counts, data_counts,"D:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
+        cls.assertEqual(counts, data_counts,"D:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
            format(filename,frameno,frame.shape,frame.data.shape))
 
         # calculate mean value
@@ -183,7 +191,7 @@ def test_00(self,filename,avglist=None,keylist=None):
                avg=avglist[nframes-frameno-1]
            else:
                avg=avglist[-1]
-           self.assertLessEqual(abs(fmean-avg),abs(fmean+avg)*5e-6,"E:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
+           cls.assertLessEqual(abs(fmean-avg),abs(fmean+avg)*5e-6,"E:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
                format(filename,frameno,fmean,avg))
 
         # read a key to read from keylist
@@ -198,7 +206,7 @@ def test_00(self,filename,avglist=None,keylist=None):
             else:
                logging.debug("filename={},frameno={}: key=None".format(filename,frameno,key))
 
-            self.assertIn(key,frame.header,"F:filename={},frameno={}: Missing expected header key '{}'".format(filename,frameno,key))
+            cls.assertIn(key,frame.header,"F:filename={},frameno={}: Missing expected header key '{}'".format(filename,frameno,key))
 
 
 class EdfBlockBoundaryCases(unittest.TestCase):
@@ -207,10 +215,9 @@ class EdfBlockBoundaryCases(unittest.TestCase):
     """
 
     def setUp(self):
-        global ROOT
         unittest.TestCase.setUp(self)
         self.files = UtilsTest.resources.getdir("ehf_images2.tar.bz2")
-        ROOT = os.path.join(self.files[0], "..")
+        self.root = os.path.join(self.files[0], "..")
 
     def test_special(self):
         """
@@ -222,7 +229,8 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         """
 
         avglist=[0.178897]
-        test_00(self,"09_special/face_ok.edf.gz",avglist)
+        filename = os.path.join(self.root,"09_special/face_ok.edf.gz")
+        test_00(self,filename,avglist)
 
         # The next 3 tests check that edf files can be
         # read where the header end pattern spreads over a
@@ -235,11 +243,14 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # patterns are not recognized.
         avglist=[0.178897]
         # header end character '}' at BLOCKSIZE-1 followed by '\n' at BLOCKSIZE
-        test_00(self,"09_special/face_headerendatboundary1.edf.gz",avglist)
+        filename = os.path.join(self.root,"09_special/face_headerendatboundary1.edf.gz")
+        test_00(self,filename,avglist)
         # first part of header end pattern '}\r' at BLOCKSIZE-2 followed by '\n' at BLOCKSIZE
-        test_00(self,"09_special/face_headerendatboundary2.edf.gz",avglist)
+        filename = os.path.join(self.root,"09_special/face_headerendatboundary2.edf.gz")
+        test_00(self,filename,avglist)
         # header end character '}' at BLOCKSIZE-1 followed by '\n' at BLOCKSIZE
-        test_00(self,"09_special/face_headerendatboundary3.edf.gz",avglist)
+        filename = os.path.join(self.root,"09_special/face_headerendatboundary3.edf.gz")
+        test_00(self,filename,avglist)
 
         # Here, the binary blob is too short
         # like 09_special/face_headerendatboundary1.edf.gz, but in addition
@@ -247,7 +258,8 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # Currently, an error message is shown and the data
         # is truncated
         # avglist=[0.178897]
-        # test_00(self,"09_special/face_tooshort.edf.gz",avglist)
+        # filename = os.path.join(self.root,"09_special/face_tooshort.edf.gz")
+        # test_00(self,filename,avglist)
 
 
 def suite():

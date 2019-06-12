@@ -63,6 +63,7 @@ from . import compression as compression_module
 from . import fabioutils
 from .utils import deprecation
 
+from collections import namedtuple
 
 BLOCKSIZE = 512
 MAX_BLOCKS = 40
@@ -114,7 +115,7 @@ NUMPY_EDF_DTYPE = {"int8": "SignedByte",
                    }
 
 MINIMUM_KEYS = set(['HEADERID',
-                    'IMAGE',
+                    'IMAGE',  # Image numbers are used for sorting and must be different
                     'BYTEORDER',
                     'DATATYPE',
                     'DIM_1',
@@ -125,96 +126,7 @@ DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
 # JK20110415
 
-# PB38k20190607:
-#        The next three functions generalize and replace code in
-#        EdfFrame._extract_meta_data. They could be defined as
-#        internal methods of the EdfFrame class.
-def get_data_rank(header=None,capsHeader=None):
-    '''
-    Get the rank of data array by searching for DIM_nn with the highest index
-    in the header dictionary. Missing DIM_NN are set to 1, except DIM_1
-    which has the default 0.
-
-    :param: dict header
-    :param: dict capsHeader (optional)
-    :return: int rank
-    '''
-    if header is None:
-        header={}
-    if capsHeader is None:
-        capsHeader={}
-        for key in header:
-           capsHeader[key.upper()] = key
-    rank=0
-    if capsHeader is not None:
-        rank=0
-        for key in capsHeader:
-            if key[0:4]=="DIM_":
-                try:
-                    index=int(key[4:])
-                except ValueError:
-                    logger.error("Unable converting index of {} to integer.".format(key))
-                if index>rank:
-                    rank=index
-    return(rank)
-
-def get_data_shape(rank=0,header=None,capsHeader=None):
-    '''
-    Returns a tuple with the number of dimensions up to the given rank.
-    The dimensions DIM_i are read from the header dictionary. If
-    the corresponding value is missing, the following defaults are
-    used: DIM_1=0, all others 1.
-    The shape tuple is filled from the end to the beginning with the values
-    of DIM_i, i.e. shape[0] is equal to value of DIM_rank, shape[rank-i] is
-    equal to the value of DIM_i (e.g. for rank==2, shape[0]==value(DIM_2),
-    shape[1]==value(DIM_1)).
-
-    :param: int rank
-    :param: dict header
-    :param: dict capsHeader (optional)
-    :return: tuple shape
-    '''
-    if rank is None:
-        rank = 0
-    if header is None:
-        header={}
-    if capsHeader is None:
-        capsHeader={}
-        for key in header:
-           capsHeader[key.upper()] = key
-    shape=[]
-    for irank in range(1,rank+1):
-        strDim = "DIM_{:d}".format(irank)
-        if strDim in capsHeader:
-            try:
-                dimi = nice_int(header[capsHeader[strDim]])
-            except ValueError:
-                logger.error("Unable converting value of {} to integer: {}".format(capsHeader[strDim], header[capsHeader[strDim]]))
-        else:
-            if irank==1:
-                dimi=0
-            else:
-                dimi=1
-        shape.insert(0,dimi)
-
-    return(tuple(shape))
-# JON: this appears to be for nD images, but we don't treat those
-# PB38k20190607: if needed, it could be checked with get_data_rank(shape)<3
-
-def get_data_counts(shape=None):
-    '''
-    Counts items specified by shape (returns 1 for shape==None)
-
-    :param: tuple shape
-    :return: int counts
-    '''
-    if shape is None:
-      shape=()
-    counts=1
-    for ishape in range(0,len(shape)):
-        counts*=shape[ishape]
-    return(counts)
-
+HeaderBlockType = namedtuple("HeaderBlockType", "header_block, header_size, binary_size")
 
 
 class MalformedHeaderError(IOError):
@@ -247,6 +159,103 @@ class EdfFrame(fabioimage.FabioFrame):
         if number is not None:
             deprecation.deprecated_warning(reason="Argument 'number' is not used anymore", deprecated_since="0.10.0beta")
 
+    @staticmethod
+    def get_data_rank(header=None,capsHeader=None):
+        '''
+        Get the rank of the data array by searching the header for the
+        key DIM_i with the highest index i. The smallest index of
+        DIM_i is 1 (1-based). The highest index is equal to the rank.
+
+        :param: dict header
+        :param: dict capsHeader (optional)
+        :return: int rank
+        '''
+        if header is None:
+            header={}
+        if capsHeader is None:
+            capsHeader={}
+            for key in header:
+               capsHeader[key.upper()] = key
+        rank=0
+        if capsHeader is not None:
+            rank=0
+            for key in capsHeader:
+                if key[0:4]=="DIM_":
+                    try:
+                        index=int(key[4:])
+                    except ValueError:
+                        logger.error("Unable converting index of {} to integer.".format(key))
+                    if index>rank:
+                        rank=index
+        return(rank)
+
+    @staticmethod
+    def get_data_shape(rank=0,header=None,capsHeader=None):
+        '''
+        Returns a tuple with the number of dimensions up to the given rank.
+        The dimensions DIM_i are read from the header dictionary. The
+        values of missing DIM_i keys are set to 1, except DIM_1 which has
+        the default 0.
+
+        The DIM_i header indices are 1-based and are equal to the number of
+        elements in each dimension of a data array, starting with DIM_1 as
+        the number of elements of a linear array, DIM_2 is the number of
+        stacked linear arrays with DIM_1 elements, etc. (FORTRAN-type
+        indexing).
+
+        The shape tuple is filled from the end to the beginning with the values
+        of DIM_i, i.e. shape[0] is equal to value of DIM_rank, shape[rank-i] is
+        equal to the value of DIM_i (e.g. for rank==2, shape[0]==value(DIM_2),
+        shape[1]==value(DIM_1)). The returned shape tuple can be used with
+        numpy arrays.
+
+        :param: int rank
+        :param: dict header
+        :param: dict capsHeader (optional)
+        :return: tuple shape
+        '''
+        if rank is None:
+            rank = 0
+        if header is None:
+            header={}
+        if capsHeader is None:
+            capsHeader={}
+            for key in header:
+               capsHeader[key.upper()] = key
+        shape=[]
+        for irank in range(1,rank+1):
+            strDim = "DIM_{:d}".format(irank)
+            if strDim in capsHeader:
+                try:
+                    dimi = nice_int(header[capsHeader[strDim]])
+                except ValueError:
+                    logger.error("Unable converting value of {} to integer: {}".format(capsHeader[strDim], header[capsHeader[strDim]]))
+            else:
+                if irank==1:
+                    dimi=0
+                else:
+                    dimi=1
+            shape.insert(0,dimi)
+
+        return(tuple(shape))
+    # JON: this appears to be for nD images, but we don't treat those
+    # PB38k20190607: if needed, it could be checked with get_data_rank(shape)<3
+
+    @staticmethod
+    def get_data_counts(shape=None):
+        '''
+        Counts items specified by shape (returns 1 for shape==None)
+
+        :param: tuple shape
+        :return: int counts
+        '''
+        if shape is None:
+          shape=()
+        counts=1
+        for ishape in range(0,len(shape)):
+            counts*=shape[ishape]
+        return(counts)
+
     def _compute_capsheader(self):
         """
         Returns the mapping from capitalized keys of the header to the original
@@ -270,7 +279,7 @@ class EdfFrame(fabioimage.FabioFrame):
             header to the original keys.
         """
         self.blobsize = None
-        # Here calcsize is only a guess!
+        # Here, calcsize starts with a guess!
         calcsize = 1
         shape = []
 
@@ -284,13 +293,14 @@ class EdfFrame(fabioimage.FabioFrame):
             except ValueError:
                 logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], self.header[capsHeader["SIZE"]]))
 
-        rank=get_data_rank(self.header,capsHeader)
-        shape=get_data_shape(rank,self.header,capsHeader)
-        counts=get_data_counts(shape)
+        rank=self.get_data_rank(self.header,capsHeader)
+        shape=self.get_data_shape(rank,self.header,capsHeader)
+        counts=self.get_data_counts(shape)
 
         #PB38k20190607:
         #       if rank<3: logger.debug("No Dim_3 -> it is a 2D image")
-        #       could be added here, but does not seem to be useful.
+        #       could be added here, but does not seem to be necessary
+        #       To force the data to rank==2, rank can be set to 2.
 
         # self._shape is used in fabioimage
         self._shape = shape
@@ -369,18 +379,26 @@ class EdfFrame(fabioimage.FabioFrame):
             else:
                 self._data_swap_needed = False
 
-    #PB38k20190607:
-    # This function has been renamed from parseheader to _parseheader,
-    # because it returns the capitalized header and not the
-    # blobsize, which should be taken from _read_header_block or
-    # if not returned there explicitely from capsHeader after
-    # calling _parseheader.
-    def _parseheader(self, block):
+    # renamed from _parseheader
+    def _create_header(self, header_block):
         """
-        Parse the header in some EDF format from an already open file
+        Creates self.header as an ordered dictionary and populates it
+        with the key-value pairs found in the input string
+        header_block. The input header_block is split at each
+        semicolon in lines. These lines are then split at the first
+        equal sign in key-value pairs. All key-value pairs are added
+        to the OrderedDict self.header.
 
-        :param str block: string representing the header block.
-        :return: capitalized header
+        Attention, it must be absolutely prevented that header values
+        contain semicolons. In that case the value would be split
+        there instead at the end of the actual line. The result of
+        the operation on the rest of the file would be unpredictable.
+        Values must be cleaned from semicolons before writing
+        them actually to edf files.
+
+        :param str header_block: a single string representing the read
+                          header block.
+        :return: dict capsHeader
         """
         # reset values
         self.header = OrderedDict()
@@ -389,8 +407,8 @@ class EdfFrame(fabioimage.FabioFrame):
         # Why would someone put null bytes in a header?
         whitespace = string.whitespace + "\x00"
 
-        # Start with the keys of the actual block
-        for line in block.split(';'):
+        # Start with the keys of the input header_block
+        for line in header_block.split(';'):
             if '=' in line:
                 key, val = line.split('=', 1)
                 key = key.strip(whitespace)
@@ -715,26 +733,28 @@ class EdfImage(fabioimage.FabioImage):
             new[toAscii(key, ";{}")] = toAscii(value, ";{}")
         return new
 
-    # PB38k20190607: _read_header_block reads a single header and
-    # interpretes immediately the EDF_ specification keys.
-    # These values (header_size, binary_size) must be defined
-    # at the beginning of the header and are interpreted and
-    # returned as additional return values
-    # For the moment no change, only EDF_HeaderSize is interpreted.
     @staticmethod
     def _read_header_block(infile, frame_id):
         """
-        Read in a header in some EDF format from an already open file
+        Reads the header block of the EDF frame frame_id as ASCII
+        characters and returns it as a single string.
+
+        The first 512 bytes (given by BLOCKSIZE) of the header can
+        contain edf-specification keys starting with EDF_.
+        These keys are interpreted and returned and returned together
+        with the header_block in a named tuple.
 
         :param fileid infile: file object open in read mode
-        :param int frame_id: Informative frame ID
-        :return str header block,
-                int header_size,
-                int binary_size,
+        :param int frame_id: frame ID number
+               This parameter is only used as debugging output. In all
+               cases the header is read from the current position of the
+               infile pointer, independent of the given frame_id.
+        :return namedtuple("HeaderBlockType", "header_block, header_size, binary_size")
                 in case of an error all return values are None
         :raises MalformedHeaderError: If the header can't be read
         """
 
+        header_block=None
         header_size=None
         binary_size=None
 
@@ -749,13 +769,13 @@ class EdfImage(fabioimage.FabioImage):
 
         if len(block) == 0:
             # end of file
-            return None, None, None
+            return HeaderBlockType(None,None,None)
 
         begin_block = block.find(b"{")
         if begin_block < 0:
             if len(block) < BLOCKSIZE and len(block.strip()) == 0:
                 # Empty block looks to be a valid end of file
-                return None, None, None
+                return HeaderBlockType(None,None,None)
             logger.debug("Malformed header: %s", block)
             raise MalformedHeaderError("Header frame %i does not contain '{'" % frame_id)
 
@@ -771,7 +791,7 @@ class EdfImage(fabioimage.FabioImage):
         # skip the open block character
         begin_block = begin_block + 1
 
-        # PB38k20190607: place for reading other EDF_ keys, must be done later
+        # PB38k20190607: place for reading other EDF_ keys, will be included later
 
         start = block.find(b"EDF_HeaderSize", begin_block)
         if start >= 0:
@@ -855,11 +875,13 @@ class EdfImage(fabioimage.FabioImage):
         # Go to the start of the binary blob
         infile.seek(offset, os.SEEK_CUR)
 
-        # PB38k20190607: return the header block AND header_size, binary_size
+        # PB38k20190607: return the header_block, header_size, binary_size as a named tuple
+        header_block = block[begin_block:end_block].decode("ASCII")
+
         if header_size is None:
             header_size = block_size
 
-        return block[begin_block:end_block].decode("ASCII"), header_size, binary_size
+        return HeaderBlockType(header_block,header_size,binary_size)
 
     @property
     def incomplete_file(self):
@@ -877,12 +899,9 @@ class EdfImage(fabioimage.FabioImage):
         """
         self._frames = []
 
-        header_size = None
-        binary_size = None
-
         while True:
             try:
-                block, header_size, binary_size, = self._read_header_block(infile, len(self._frames))
+                value = self._read_header_block(infile, len(self._frames))
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
@@ -890,7 +909,7 @@ class EdfImage(fabioimage.FabioImage):
                 self._incomplete_file = True
                 break
 
-            if block is None:
+            if value.header_block is None:
                 # end of file
                 if len(self._frames) == 0:
                     raise IOError("Empty file")
@@ -903,28 +922,29 @@ class EdfImage(fabioimage.FabioImage):
             # PB38k20190607: any need for frame._set_container(self,len(self._frames))?
             frame._index=len(self._frames)
 
-            capsHeader = frame._parseheader(block)
+            capsHeader = frame._create_header(value.header_block)
 
-            if binary_size is None:
+            # get frame.blobsize
+            if value.binary_size is None:
                 if "SIZE" in capsHeader:
                     try:
                         frame.blobsize = nice_int(frame.header[capsHeader["SIZE"]])
                     except ValueError:
                         logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], frame.header[capsHeader["SIZE"]]))
             else:
-                frame.blobsize = binary_size
+                frame.blobsize = value.binary_size
 
             frame.start = infile.tell()
 
             # PB38k20190607: currently, there are no additional header
-            # values to be inserted from a general block. capsHeader is therefore
+            # values to be included from a general header. capsHeader is therefore
             # complete for checking and extracting metadata.
             frame._extract_header_metadata(capsHeader)
 
             # PB38k20190607: add a standard frame
             self._frames += [frame]
 
-            # PB38k20190607: Check the header information, because it is a standard block
+            # PB38k20190607: Check the information of the complete header
             frame._check_header_mandatory_keys(filename=self.filename)
 
             try:
@@ -1373,7 +1393,7 @@ class EdfImage(fabioimage.FabioImage):
 
         while True:
             try:
-                block, header_size, binary_size = cls._read_header_block(infile, index)
+                value = cls._read_header_block(infile, index)
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if index == 0:
@@ -1381,7 +1401,7 @@ class EdfImage(fabioimage.FabioImage):
                     raise IOError("Invalid first header")
                 break
 
-            if block is None:
+            if value.header_block is None:
                 # end of file
                 if index == 0:
                     infile.close()
@@ -1393,9 +1413,9 @@ class EdfImage(fabioimage.FabioImage):
             frame._set_container(edf, index)
             frame._set_file_container(edf, index)
 
-            capsHeader = frame._parseheader(block)
+            capsHeader = frame._create_header(value.header_block)
 
-            if binary_size is None:
+            if value.binary_size is None:
                 # Try again computing blobsize
                 if "SIZE" in capsHeader:
                     try:
@@ -1403,15 +1423,15 @@ class EdfImage(fabioimage.FabioImage):
                     except ValueError:
                         logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], frame.header[capsHeader["SIZE"]]))
             else:
-                blobsize = binary_size
+                blobsize = value.binary_size
 
-            # PB38k20190607: Assume a standard block, get the metadata
+            # PB38k20190607: Assume a standard header, get the metadata
             frame._extract_header_metadata(capsHeader)
 
             frame.start = infile.tell()
             frame.blobsize = blobsize
 
-            # This is a standard block, get the binary data
+            # This is a standard header, get the binary data
             try:
                 # read data
                 frame._unpack()
