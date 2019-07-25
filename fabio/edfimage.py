@@ -593,7 +593,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
         # Then update static headers freshly deleted
         header_keys.insert(0, "Size")
-        header["Size"] = len(data.tostring())
+        header["Size"] = data.nbytes
         header_keys.insert(0, "HeaderID")
         header["HeaderID"] = "EH:%06d:000000:000000" % (self.index + fit2dMode)
         header_keys.insert(0, "Image")
