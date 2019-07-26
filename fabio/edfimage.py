@@ -387,11 +387,11 @@ class EdfFrame(fabioimage.FabioFrame):
         header_block. The input header_block is split at each
         semicolon in lines. These lines are then split at the first
         equal sign in key-value pairs. All key-value pairs are added
-        to the OrderedDict self.header. 
+        to the OrderedDict self.header.
 
         With the exception of keys starting with EDF_ and without the
-        reserved keys "SIZE", "IMAGE", "HEADERID" all key-value pairs 
-        in the dictionary defaultheader that are missing in 
+        reserved keys "SIZE", "IMAGE", "HEADERID" all key-value pairs
+        in the dictionary defaultheader that are missing in
         self.header are copied.
 
         Attention, it must be absolutely prevented that header values
