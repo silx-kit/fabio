@@ -219,6 +219,29 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         self.files = UtilsTest.resources.getdir("ehf_images2.tar.bz2")
         self.root = os.path.join(self.files[0], "..")
 
+    def test_edfblocktypes(self):
+        """
+        Test reading (gzipped) extended edf multi frame data files with and without a general block
+        The files have been prepared with make_multiedfs.sh.
+        The pixel values of each frame are equal to the frame number for checking reading the correct data.
+        multi5.edf.gz:      5 frames without general block, preset frameno
+        multi5+gblk.edf.gz: 5 frames starting with general block, preset to frameno,
+                            DefaultKey added to the general block, it must be available for all frames
+        multi5_gzip.edf      : like multi5.edf.gz, but with internal compression
+        multi5+gblk_gzip.edf : like multi5+gblk.edf.gz, but with internal compression
+        """
+
+        avglist=[0.,1.,2.,3.,4.]
+        filename = os.path.join(self.root,"00_edfblocktypes/multi5.edf.gz")
+        test_00(self,filename,avglist)
+        keylist=["DefaultKey"] # the defaultkey is coming from the general block
+        filename = os.path.join(self.root,"00_edfblocktypes/multi5+gblk.edf.gz")
+        test_00(self,filename,avglist,keylist)
+        filename = os.path.join(self.root,"00_edfblocktypes/multi5+gblk_gzip.edf")
+        test_00(self,filename,avglist)
+        filename = os.path.join(self.root,"00_edfblocktypes/multi5_gzip.edf")
+        test_00(self,filename,avglist)
+
     def test_special(self):
         """
         09_special/face_ok.edf.gz
