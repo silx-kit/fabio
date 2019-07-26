@@ -46,7 +46,7 @@ import os.path
 import logging
 logger = logging.getLogger(__name__)
 from . import fabioutils
-from .fabioutils import FilenameObject, BytesIO
+from .fabioutils import FilenameObject, BytesIO, NotGoodReader
 from .fabioimage import FabioImage
 
 # Make sure to load all formats
@@ -105,17 +105,39 @@ def do_magic(byts, filename):
             if "/" in format_type:
                 if format_type == "eiger/hdf5":
                     if "::" in filename:
-                        return "hdf5"
+                        return ["hdf5"]
                     else:
-                        return "eiger"
+                        return ["eiger", "soleil"]
                 elif format_type == "marccd/tif":
                     if "mccd" in filename.split("."):
-                        return "marccd"
+                        return ["marccd"]
                     else:
-                        return "tif"
-            return format_type
-    raise Exception("Could not interpret magic string")
+                        return ["tif"]
+            return [format_type]
+    return None
 
+
+def openimage_str(filename, frame):
+    logger.debug("Attempting to open %s" % (filename))
+    objs = _openimage(filename)
+    for obj in objs:
+        try:
+            return obj.read(filename, frame)
+        except NotGoodReader as ex:
+            pass
+    raise NotGoodReader("Did not found a good reader for {}".format(filename))
+
+def openimage_PathTypes(filename, frame):
+    if not isinstance(filename, fabioutils.StringTypes):
+        filename = str(filename)
+    openimage_str(filename, frame)
+
+def openimage_FilenameObject(filename, frame):
+    try:
+        return openimage_str(filename.tostring(), frame)
+    except Exception as ex:
+        logger.debug("Exception %s, trying name %s" % (ex, filename.stem))
+        return openimage_str(filename.stem, filename.num)
 
 def openimage(filename, frame=None):
     """Open an image.
@@ -134,31 +156,14 @@ def openimage(filename, frame=None):
     :param Union[int,None] frame: A specific frame inside this file.
     :rtype: FabioImage
     """
-    if isinstance(filename, fabioutils.PathTypes):
-        if not isinstance(filename, fabioutils.StringTypes):
-            filename = str(filename)
-
-    if isinstance(filename, FilenameObject):
-        try:
-            logger.debug("Attempting to open %s" % (filename.tostring()))
-            obj = _openimage(filename.tostring())
-            logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename.tostring(), obj.classname))
-            obj = obj.read(filename.tostring(), frame)
-        except Exception as ex:
-            # multiframe file
-            # logger.debug( "DEBUG: multiframe file, start # %d"%(
-            #    filename.num)
-            logger.debug("Exception %s, trying name %s" % (ex, filename.stem))
-            obj = _openimage(filename.stem)
-            logger.debug("Reading frame %s from %s" % (filename.num, filename.stem))
-            obj.read(filename.stem, frame=filename.num)
-    else:
-        logger.debug("Attempting to open %s" % (filename))
-        obj = _openimage(filename)
-        logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename, obj.classname))
-        obj = obj.read(obj.filename, frame)
-    return obj
-
+    if isinstance(filename, str):
+        return openimage_str(filename, frame)
+    elif isinstance(filename, unicode):
+        return openimage_str(str(filename), frame)
+    elif isinstance(filename, fabioutils.PathTypes):
+        return openimage_PathTypes(filename, frame)
+    elif isinstance(filename, FilenameObject):
+        return openimage_FilenameObject(filename, frame)
 
 def openheader(filename):
     """ return only the header"""
@@ -166,10 +171,13 @@ def openheader(filename):
         if not isinstance(filename, fabioutils.StringTypes):
             filename = str(filename)
 
-    obj = _openimage(filename)
-    obj.readheader(obj.filename)
-    return obj
-
+    objs = _openimage(filename)
+    for obj in objs:
+        try:
+            obj.readheader(obj.filename)
+            return obj
+        except NotGoodReader:
+            pass
 
 def _openimage(filename):
     """
@@ -205,10 +213,8 @@ def _openimage(filename):
     else:
         imo = None
 
-    filetype = None
-    try:
-        filetype = do_magic(magic_bytes, filename)
-    except Exception:
+    filetypes = do_magic(magic_bytes, filename)
+    if filetypes is None:
         logger.debug("Backtrace", exc_info=True)
         try:
             file_obj = FilenameObject(filename=filename)
@@ -219,27 +225,33 @@ def _openimage(filename):
                isinstance(file_obj.format, list):
                 # one of OXD/ADSC - should have got in previous
                 raise Exception("openimage failed on magic bytes & name guess")
-            filetype = file_obj.format
-
+            if file_obj.format is not None:
+                filetypes = [file_obj.format]
         except Exception:
             logger.debug("Backtrace", exc_info=True)
             raise IOError("Fabio could not identify " + filename)
 
-    if filetype is None:
+    if filetypes is None:
         raise IOError("Fabio could not identify " + filename)
 
-    klass_name = "".join(filetype) + 'image'
+    objs = []
+    for filetype in filetypes:
+        klass_name = "".join(filetype) + 'image'
+        try:
+            obj = fabioformats.factory(klass_name)
+            objs.append(obj)
+        except (RuntimeError, Exception):
+            pass
 
-    try:
-        obj = fabioformats.factory(klass_name)
-    except (RuntimeError, Exception):
+    if len(objs) == 0:
         logger.debug("Backtrace", exc_info=True)
-        raise IOError("Filename %s can't be read as format %s" % (filename, klass_name))
+        raise IOError("Filename %s can't be read as format %s" % (filename, filetypes))
 
-    obj.filename = filename
+    for obj in objs:
+        obj.filename = filename
+
     # skip the read for read header
-    return obj
-
+    return objs
 
 def open_series(filenames=None, first_filename=None,
                 single_frame=None, fixed_frames=None, fixed_frame_number=None):

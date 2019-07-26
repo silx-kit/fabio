@@ -82,6 +82,7 @@ _default_codecs = [
     ("raxisimage", "RaxisImage"),
     ("numpyimage", "NumpyImage"),
     ("eigerimage", "EigerImage"),
+    ("soleilimage", "SoleilImage"),
     ("hdf5image", "Hdf5Image"),
     ("fit2dimage", "Fit2dImage"),
     ("speimage", "SpeImage"),
