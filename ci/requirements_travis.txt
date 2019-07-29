@@ -8,3 +8,5 @@ numpy
 cython
 Pillow
 lxml
+lxml<4.4.0; python_version == '3.4'
+lxml>=4.4.0; python_version=='2.7' or python_version>'3.5' 
