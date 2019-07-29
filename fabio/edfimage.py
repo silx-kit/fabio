@@ -126,7 +126,7 @@ DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
 # JK20110415
 
-HeaderBlockType = namedtuple("HeaderBlockType", "header_block, header_size, binary_size")
+HeaderBlockType = namedtuple("HeaderBlockType", "header_block, header_size, binary_size, data_format_version")
 
 
 class MalformedHeaderError(IOError):
@@ -380,7 +380,7 @@ class EdfFrame(fabioimage.FabioFrame):
                 self._data_swap_needed = False
 
     # renamed from _parseheader
-    def _create_header(self, header_block):
+    def _create_header(self, header_block, defaultheader=None):
         """
         Creates self.header as an ordered dictionary and populates it
         with the key-value pairs found in the input string
@@ -388,6 +388,11 @@ class EdfFrame(fabioimage.FabioFrame):
         semicolon in lines. These lines are then split at the first
         equal sign in key-value pairs. All key-value pairs are added
         to the OrderedDict self.header.
+
+        With the exception of keys starting with EDF_ and without the
+        reserved keys "SIZE", "IMAGE", "HEADERID" all key-value pairs
+        in the dictionary defaultheader that are missing in
+        self.header are copied.
 
         Attention, it must be absolutely prevented that header values
         contain semicolons. In that case the value would be split
@@ -398,6 +403,7 @@ class EdfFrame(fabioimage.FabioFrame):
 
         :param str header_block: a single string representing the read
                           header block.
+        :param dict defaultheader: header values to include as default
         :return: dict capsHeader
         """
         # reset values
@@ -414,8 +420,14 @@ class EdfFrame(fabioimage.FabioFrame):
                 key = key.strip(whitespace)
                 self.header[key] = val.strip(whitespace)
 
-        # In a second step copy all missing keys from the general header
-        # PB38k20190607: to be done in a later version
+        # In a second step copy all missing keys from the default header
+        if defaultheader is not None:
+            for key in defaultheader:
+                # exceptions
+                # EDF_*, Size, Image, HeaderID
+                if ( key[0:4] != "EDF_" ) and (key.upper() not in [ "SIZE", "IMAGE", "HEADERID" ]):
+                    if (key not in self.header):
+                      self.header[key] = defaultheader[key]
 
         for key in self.header:
             capsHeader[key.upper()] = key
@@ -677,7 +689,7 @@ class EdfImage(fabioimage.FabioImage):
     RESERVED_HEADER_KEYS = ['HEADERID', 'IMAGE', 'BYTEORDER', 'DATATYPE',
                             'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']
 
-    def __init__(self, data=None, header=None, frames=None):
+    def __init__(self, data=None, header=None, frames=None, generalframe=None):
         self.currentframe = 0
         self.filesize = None
         self._incomplete_file = False
@@ -712,6 +724,9 @@ class EdfImage(fabioimage.FabioImage):
             self._frames = [frame]
         else:
             self._frames = frames
+
+        # generalframe
+        self.generalframe = generalframe
 
     def _get_frame(self, num):
         if self._frames is None:
@@ -749,10 +764,12 @@ class EdfImage(fabioimage.FabioImage):
                This parameter is only used as debugging output. In all
                cases the header is read from the current position of the
                infile pointer, independent of the given frame_id.
-        :return namedtuple("HeaderBlockType", "header_block, header_size, binary_size")
+        :return namedtuple("HeaderBlockType", "header_block, header_size, binary_size, data_format_version")
                 in case of an error all return values are None
         :raises MalformedHeaderError: If the header can't be read
         """
+
+        data_format_version=None
 
         header_block=None
         header_size=None
@@ -769,13 +786,13 @@ class EdfImage(fabioimage.FabioImage):
 
         if len(block) == 0:
             # end of file
-            return HeaderBlockType(None,None,None)
+            return HeaderBlockType(None,None,None,None)
 
         begin_block = block.find(b"{")
         if begin_block < 0:
             if len(block) < BLOCKSIZE and len(block.strip()) == 0:
                 # Empty block looks to be a valid end of file
-                return HeaderBlockType(None,None,None)
+                return HeaderBlockType(None,None,None,None)
             logger.debug("Malformed header: %s", block)
             raise MalformedHeaderError("Header frame %i does not contain '{'" % frame_id)
 
@@ -791,7 +808,14 @@ class EdfImage(fabioimage.FabioImage):
         # skip the open block character
         begin_block = begin_block + 1
 
-        # PB38k20190607: place for reading other EDF_ keys, will be included later
+        # if the header block starts with EDF_DataFormatVersion, it is a general block
+        start = block.find(b"EDF_DataFormatVersion", begin_block)
+        if start >= 0:
+            # This is a general block!
+            equal = block.index(b"=", start + len(b"EDF_DataFormatVersion"))
+            end = block.index(b";", equal + 1)
+            chunk = block[equal + 1:end].strip()
+            data_format_version=chunk.decode("ASCII")
 
         start = block.find(b"EDF_HeaderSize", begin_block)
         if start >= 0:
@@ -875,13 +899,13 @@ class EdfImage(fabioimage.FabioImage):
         # Go to the start of the binary blob
         infile.seek(offset, os.SEEK_CUR)
 
-        # PB38k20190607: return the header_block, header_size, binary_size as a named tuple
+        # PB38k20190607: return the header_block, header_size, binary_size, data_format_version as a named tuple
         header_block = block[begin_block:end_block].decode("ASCII")
 
         if header_size is None:
             header_size = block_size
 
-        return HeaderBlockType(header_block,header_size,binary_size)
+        return HeaderBlockType(header_block,header_size,binary_size,data_format_version)
 
     @property
     def incomplete_file(self):
@@ -898,6 +922,7 @@ class EdfImage(fabioimage.FabioImage):
         :type infile: file object open in read mode
         """
         self._frames = []
+        self.generalframe = None
 
         while True:
             try:
@@ -915,6 +940,11 @@ class EdfImage(fabioimage.FabioImage):
                     raise IOError("Empty file")
                 break
 
+            if value.data_format_version is None:
+                is_general_header = False
+            else:
+                is_general_header = True
+
             frame = EdfFrame()
             # The file descriptor is used in _extract_header_metadata and must be defined before using it
             frame.file = infile
@@ -922,7 +952,13 @@ class EdfImage(fabioimage.FabioImage):
             # PB38k20190607: any need for frame._set_container(self,len(self._frames))?
             frame._index=len(self._frames)
 
-            capsHeader = frame._create_header(value.header_block)
+            defaultheader=None
+            if not is_general_header:
+                # This is not a general block, include a general header
+                if self.generalframe is not None:
+                    defaultheader=self.generalframe._header
+
+            capsHeader = frame._create_header(value.header_block,defaultheader)
 
             # get frame.blobsize
             if value.binary_size is None:
@@ -936,16 +972,20 @@ class EdfImage(fabioimage.FabioImage):
 
             frame.start = infile.tell()
 
-            # PB38k20190607: currently, there are no additional header
-            # values to be included from a general header. capsHeader is therefore
-            # complete for checking and extracting metadata.
-            frame._extract_header_metadata(capsHeader)
+            if not is_general_header:
+                # This is not a general block
+                frame._extract_header_metadata(capsHeader)
 
-            # PB38k20190607: add a standard frame
-            self._frames += [frame]
+            if is_general_header:
+                # This is a general block
+                self.generalframe = frame
+            else:
+                # PB38k20190607: add a standard frame
+                self._frames += [frame]
 
-            # PB38k20190607: Check the information of the complete header
-            frame._check_header_mandatory_keys(filename=self.filename)
+            if not is_general_header:
+                # Check the header information, because it is a standard frame
+                frame._check_header_mandatory_keys(filename=self.filename)
 
             try:
                 # skip the data block
@@ -1408,12 +1448,23 @@ class EdfImage(fabioimage.FabioImage):
                     raise IOError("Empty file")
                 break
 
+            if value.data_format_version is None:
+                is_general_header = False
+            else:
+                is_general_header = True
+
             frame = EdfFrame()
             frame.file = infile
             frame._set_container(edf, index)
             frame._set_file_container(edf, index)
 
-            capsHeader = frame._create_header(value.header_block)
+            defaultheader=None
+            if not is_general_header:
+                # This is a standard block, use the general header as default
+                if edf.generalframe is not None:
+                    defaultheader=edf.generalframe._header
+
+            capsHeader = frame._create_header(value.header_block,defaultheader)
 
             if value.binary_size is None:
                 # Try again computing blobsize
@@ -1425,32 +1476,43 @@ class EdfImage(fabioimage.FabioImage):
             else:
                 blobsize = value.binary_size
 
-            # PB38k20190607: Assume a standard header, get the metadata
-            frame._extract_header_metadata(capsHeader)
+            if not is_general_header:
+                # This is a standard block, get the metadata
+                frame._extract_header_metadata(capsHeader)
 
             frame.start = infile.tell()
             frame.blobsize = blobsize
 
-            # This is a standard header, get the binary data
-            try:
-                # read data
-                frame._unpack()
-            except Exception as error:
-                if isinstance(infile, fabioutils.GzipFile):
-                    if compression_module.is_incomplete_gz_block_exception(error):
-                        frame.incomplete_data = True
-                        break
-                logger.warning("infile is %s" % infile)
-                logger.warning("position is %s" % infile.tell())
-                logger.warning("blobsize is %s" % blobsize)
-                logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
-                infile.close()
-                raise Exception(error)
+            if not is_general_header:
+                # This is a standard block, get the binary data
+                try:
+                    # read data
+                    frame._unpack()
+                except Exception as error:
+                    if isinstance(infile, fabioutils.GzipFile):
+                        if compression_module.is_incomplete_gz_block_exception(error):
+                            frame.incomplete_data = True
+                            break
+                    logger.warning("infile is %s" % infile)
+                    logger.warning("position is %s" % infile.tell())
+                    logger.warning("blobsize is %s" % blobsize)
+                    logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
+                    infile.close()
+                    raise Exception(error)
 
-            frame._check_header_mandatory_keys(filename=filename)
+                frame._check_header_mandatory_keys(filename=filename)
 
-            yield frame
-            index += 1
+                # iterate over all frames
+                yield frame
+                index += 1
+
+            else:
+                # There can be only a single general block
+                edf.generalframe = frame
+                if frame.blobsize > 0:
+                    # Skip the blob
+                    blobend = frame.start+frame.blobsize
+                    frame.file.seek(blobend)
 
         infile.close()
 
