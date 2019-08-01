@@ -122,6 +122,13 @@ MINIMUM_KEYS = set(['HEADERID',
                     'DIM_2',
                     'SIZE'])  # Size is thought to be essential for writing at least
 
+MINIMUM_KEYS2 = set([ 'EDF_DATABLOCKID', # Replaces HeaderID
+                      'EDF_BINARYSIZE',  # Replaces Size
+                      'BYTEORDER',
+                      'DATATYPE',
+                      'DIM_1',
+                      'DIM_2'])
+
 DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
 # JK20110415
@@ -155,6 +162,13 @@ class EdfFrame(fabioimage.FabioFrame):
         """Opened file object with locking capabilities"""
         self._dtype = None
         self.incomplete_data = False
+        self.bfname = None
+        """If set, the data must be read from this file and not from the blob
+           The external file must be located in the same folder as the edf data
+           file. It must be different from the edf data file."""
+        self.bfstart = 0
+        """Start position of the raw data in the external file."""
+        self.bfsize = None    # Number of bytes to read from the file
 
         if number is not None:
             deprecation.deprecated_warning(reason="Argument 'number' is not used anymore", deprecated_since="0.10.0beta")
@@ -275,10 +289,46 @@ class EdfFrame(fabioimage.FabioFrame):
 
         Store them in this frame.
 
+        For reading binary data from an external file self.bfname, self.bfsize
+        and self.bfstart are updated with the values of the header values
+        EDF_BinaryFileName, EDF_BinaryFileSize and EDF_BinaryFilePosition.
+        All EDF_ keys are case sensitive. The external file must be different
+        from the actual file!
+
+        If bfname is set _unpack(self) will read the binary data from the file bfname
+        instead of reading it from the binary blob of the current frame.
+
+        EDF_BinaryFileName sets bfname (if not set, use the binary blob),
+        EDF_BinaryFileSize sets bfsize (default shape*bpp, i.e. read as much as needed),
+        EDF_BinaryFilePosition sets bfstart (default 0, i.e. read from the start of the file)
+
+        The binary file is searched in the same folder as the edf input file.
+        Only the basename without path is used. A path cannot be specified.
+        It is automatically removed.
+
+        Attention: The length of the binary file name string in the header
+        is not explicitly restricted and could therefore exceed the first 512 bytes
+        of a header, where the keywords EDF_DataBlockID | EDF_DataFormatVersion,
+        EDF_BinarySize and EDF_HeaderSize are expected.
+
+        The keywords EDF_BinaryFileName, EDF_BinaryFileSize, EDF_BinaryFilePosition
+        musst always be written AFTER these keywords.  Therefore, bfname, bfsize
+        and bfstart can only be updated when the full header has been read.
+
+        The parameters EDF_BinaryFilePosition and EDF_BinaryFileSize specify the
+        file called EDF_BinaryFileName as it is, eventually with an internally applied
+        compression (keyword Compression). If the file is externally compressed, i.e.
+        if a compression suffix is appended to bfname, e.g. .gz, .bz etc. it will first
+        be decompressed to bfname before using bfstart and bfsize.
+
         :param dict capsHeader: Precached mapping from capitalized keys of the
             header to the original keys.
         """
-        self.blobsize = None
+
+        ###PB38k: self.blobsize is already initialized with __init__
+        ### self.blobsize could be already set!
+        ### setting it to None here would set it later to calcsize!
+        ### self.blobsize = None
         # Here, calcsize starts with a guess!
         calcsize = 1
         shape = []
@@ -331,6 +381,42 @@ class EdfFrame(fabioimage.FabioFrame):
                 # In some edf files the blobsize is not written.
                 # For uncompressed data it can be set to the calculated size.
                 self.blobsize = calcsize
+
+        infile = self.file.name
+        dirname = os.path.dirname(infile)
+
+        if "EDF_BinaryFileName" in self.header:
+            # remove a path
+            self.bfname = os.path.basename(self.header["EDF_BinaryFileName"])
+            # add dirname of opened edf-file
+            if dirname != "":
+                self.bfname = dirname + '/' + self.bfname
+        else:
+            self.bfname = None
+        if "EDF_BinaryFilePosition" in self.header:
+            self.bfstart = int(self.header["EDF_BinaryFilePosition"])
+        else:
+            self.bfstart = 0
+        if "EDF_BinaryFileSize" in self.header:
+            self.bfsize = int(self.header["EDF_BinaryFileSize"])
+        else:
+            self.bfsize = calcsize
+
+        if self._data_compression is None:
+            '''The binary size can only be calculated for uncompressed data'''
+            if self.bfname is None:
+                if (self.blobsize < calcsize):
+                    '''The edf binary block can store up to self.blobsize bytes. If
+                       the required size is smaller, all data can be stored inside
+                       the blob, otherwise, if the actual blobsize is too small,
+                       the data must be truncated.
+                    '''
+                    logger.warning("Malformed file: The physical size of the binary block {} is too small {}. This and the following frames could be broken.".format(self.blobsize, calcsize))
+            else:
+                if (self.bfsize < calcsize):
+                    '''The size of the binary file is smaller than expected.
+                    '''
+                    logger.warning("The size available in the binary file {} is smaller than required {}.".format(self.bfsize, calcsize))
 
         if self.size is None:
             # preset with the calculated size, will be updated later
@@ -414,14 +500,21 @@ class EdfFrame(fabioimage.FabioFrame):
         :rtype: bool
         """
         capsKeys = set([k.upper() for k in self.header.keys()])
-        missing = list(MINIMUM_KEYS - capsKeys)
+
+        # Try first alternative set (for EDF1, EDF2, EDF3, ...)
+        missing = list(MINIMUM_KEYS2 - capsKeys)
+
         if len(missing) > 0:
-            msg = "EDF file %s%s misses mandatory keys: %s "
+           # Try now standard set (for EDF0, EDFU)
+            missing = list(MINIMUM_KEYS - capsKeys)
+
+        if len(missing) > 0:
+            msg = "EDF file {}{} misses mandatory keys: {} "
             if self.index is not None:
-                frame = " (frame %i)" % self.index
+                frame = " (frame {:d})".format(self.index)
             else:
                 frame = ""
-            logger.info(msg, filename, frame, " ".join(missing))
+            logger.info(msg.format(filename,frame," ".join(missing)))
         return len(missing) == 0
 
     def swap_needed(self):
@@ -433,6 +526,7 @@ class EdfFrame(fabioimage.FabioFrame):
     def _unpack(self):
         """
         Unpack a binary blob according to the specification given in the header
+        If self.bfname is set unpack it from an external file.
 
         :return: dataset as numpy.ndarray
         """
@@ -445,19 +539,37 @@ class EdfFrame(fabioimage.FabioFrame):
             if self._dtype is None:
                 assert(False)
             shape = self.shape
-            with self.file.lock:
-                if self.file.closed:
-                    logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.filename))
-                    return
+
+            if self.bfname is None:
+
+                with self.file.lock:
+                    if self.file.closed:
+                        logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.name))
+                        return
+                    else:
+                        self.file.seek(self.start)
+                        try:
+                            fileData = self.file.read(self.blobsize)
+                        except Exception as e:
+                            if isinstance(self.file, fabioutils.GzipFile):
+                                if compression_module.is_incomplete_gz_block_exception(e):
+                                    return numpy.zeros(shape)
+                            raise e
+
+            else:
+                # Read binary data from an external file
+                if os.path.exists(self.bfname):
+                    with open(self.bfname, "rb") as f:
+                        f.seek(self.bfstart)
+                        fileData = f.read(self.bfsize)
+                elif os.path.exists(self.bfname+".gz"):
+                    import gzip
+                    # Try self.bfname+".gz" if self.bfname does not exist
+                    with gzip.open(self.bfname+".gz", "rb") as f:
+                        f.seek(self.bfstart)
+                        fileData = f.read(self.bfsize)
                 else:
-                    self.file.seek(self.start)
-                    try:
-                        fileData = self.file.read(self.blobsize)
-                    except Exception as e:
-                        if isinstance(self.file, fabioutils.GzipFile):
-                            if compression_module.is_incomplete_gz_block_exception(e):
-                                return numpy.zeros(shape)
-                        raise e
+                    raise IOError("The binary file {} of {} does not exist".format(self.bfname,self.file.name))
 
             if self._data_compression is not None:
                 compression = self._data_compression
@@ -972,14 +1084,10 @@ class EdfImage(fabioimage.FabioImage):
                     raise IOError("Empty file")
                 break
 
-            if self.generalframe is None:
-                if value.data_format_version is None:
-                    is_general_header = False
-                else:
-                    # There can be only a single general header
-                    is_general_header = True
-            else:
+            if value.data_format_version is None:
                 is_general_header = False
+            else:
+                is_general_header = True
 
             frame = EdfFrame()
             # The file descriptor is used in _extract_header_metadata and must be defined before using it
@@ -1014,6 +1122,8 @@ class EdfImage(fabioimage.FabioImage):
 
             if is_general_header:
                 # This is a general block
+                if self.generalframe is not None:
+                    logger.warning("_readheader: Overwriting an existing general frame (file={},frame={}).".format(frame.file,frame._index))
                 self.generalframe = frame
             else:
                 # Add a standard frame
@@ -1095,13 +1205,14 @@ class EdfImage(fabioimage.FabioImage):
             newImage = fabioimage.FabioImage.getframe(self, num)
             newImage._file = self._file
         elif num < self.nframes:
-            logger.debug("Multi frame EDF; having EdfImage specific behavior: %s/%s" % (num, self.nframes))
+            logger.debug("Multi frame EDF; having EdfImage specific behavior frame %s: 0<=frame<%s" %
+                         (num, self.nframes))
             newImage = self.__class__(frames=self._frames)
             newImage.currentframe = num
             newImage.filename = self.filename
             newImage._file = self._file
         else:
-            raise IOError("EdfImage.getframe: Cannot access frame: %s/%s" %
+            raise IOError("EdfImage.getframe: Cannot access frame %s: 0<=frame<%s" %
                           (num, self.nframes))
         return newImage
 
