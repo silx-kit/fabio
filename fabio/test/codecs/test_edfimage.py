@@ -31,7 +31,6 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import numpy
-import tempfile
 import shutil
 import io
 import logging
@@ -39,10 +38,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from ..edfimage import edfimage
-from ..third_party import six
-from ..fabioutils import GzipFile, BZ2File
-from .utilstest import UtilsTest
+from ...edfimage import edfimage
+from ...third_party import six
+from ...fabioutils import GzipFile, BZ2File
+from ..utilstest import UtilsTest
 
 
 class TestFlatEdfs(unittest.TestCase):
@@ -378,7 +377,8 @@ class TestBadFiles(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.tmp_directory = tempfile.mkdtemp(prefix=cls.__name__)
+        cls.tmp_directory = os.path.join(UtilsTest.tempdir, cls.__name__)
+        os.makedirs(cls.tmp_directory)
         cls.create_resources()
 
     @classmethod
@@ -556,6 +556,39 @@ class TestBadGzFiles(TestBadFiles):
             TestBadFiles.write_data(gzfd)
 
 
+class TestSphere2SaxsSamples(unittest.TestCase):
+    """Test some samples from sphere2saxs"""
+
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.samples = UtilsTest.resources.getdir("sphere2saxs_output.tar.bz2")
+
+    SAMPLES = {
+        "multi.edf": (5, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
+        "multi.edf.gz": (5, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
+        "sphere.edf": (1, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
+        "sphere.edf.gz": (1, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
+    }
+
+    def test_all_images(self):
+        for filename in self.samples:
+            if not os.path.isfile(filename):
+                continue
+            with fabio.open(filename) as f:
+                logger.debug("Reading file %s", filename)
+                expected_data = self.SAMPLES[os.path.basename(filename)]
+                nframes, shape, dtype, datainfo = expected_data
+                self.assertEqual(f.nframes, nframes)
+                self.assertEqual(f.shape, shape)
+                self.assertEqual(f.dtype, dtype)
+                vmin, vmean, vmax, vstd = datainfo
+                self.assertEqual(f.dtype, dtype)
+                self.assertAlmostEqual(f.data.min(), vmin, places=4)
+                self.assertAlmostEqual(f.data.mean(), vmean, places=4)
+                self.assertAlmostEqual(f.data.max(), vmax, places=4)
+                self.assertAlmostEqual(f.data.std(), vstd, places=4)
+
+
 class TestEdfIterator(unittest.TestCase):
     """Read different EDF files with lazy iterator
     """
@@ -605,6 +638,7 @@ def suite():
     testsuite.addTest(loadTests(TestBadFiles))
     testsuite.addTest(loadTests(TestBadGzFiles))
     testsuite.addTest(loadTests(TestEdfIterator))
+    testsuite.addTest(loadTests(TestSphere2SaxsSamples))
     return testsuite
 
 

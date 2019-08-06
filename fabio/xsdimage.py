@@ -120,8 +120,6 @@ class XsdImage(FabioImage):
         if not numpy.little_endian:  # by default little endian
             self.data.byteswap(inplace=True)
         self.resetvals()
-        # ensure the PIL image is reset
-        self.pilimage = None
         return self
 
     def _readheader(self, infile):

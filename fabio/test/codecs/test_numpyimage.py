@@ -25,7 +25,7 @@
 Test for numpy images.
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "13/11/2018"
+__date__ = "07/03/2019"
 
 import os
 import unittest
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 from fabio.numpyimage import NumpyImage
 from fabio.openimage import openimage
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 
 class TestNumpy(unittest.TestCase):

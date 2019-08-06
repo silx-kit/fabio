@@ -29,15 +29,14 @@ from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os
-import tempfile
 import shutil
 import logging
 
 logger = logging.getLogger(__name__)
 
 import fabio
-from .. import jpegimage
-from .utilstest import UtilsTest
+from ... import jpegimage
+from ..utilstest import UtilsTest
 
 TEST_DIRECTORY = None
 # Temporary directory where storing test data
@@ -45,7 +44,8 @@ TEST_DIRECTORY = None
 
 def setUpModule():
     global TEST_DIRECTORY
-    TEST_DIRECTORY = tempfile.mkdtemp(prefix="%s_data_" % __name__)
+    TEST_DIRECTORY = os.path.join(UtilsTest.tempdir, __name__)
+    os.makedirs(TEST_DIRECTORY)
 
 
 def tearDownModule():

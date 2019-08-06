@@ -90,7 +90,7 @@ class PixiImage(fabioimage.FabioImage):
         self.header = self.check_header()
         self.resetvals()
         with self._open(fname, "rb") as infile:
-            self.sequencefilename = fname.split("$")[0]
+            self.sequencefilename = fname.rsplit("$", 1)[0]
             self._readheader(infile)
             self._nframes = os.path.getsize(fname) // self._FRAME_SIZE
             self._readframe(infile, frame)

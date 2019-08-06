@@ -33,7 +33,6 @@ import unittest
 import logging
 import os
 import shutil
-import tempfile
 import numpy
 
 logger = logging.getLogger(__name__)
@@ -41,6 +40,7 @@ logger = logging.getLogger(__name__)
 import fabio
 from fabio.file_series import numbered_file_series, file_series, filename_series
 from fabio.file_series import FileSeries
+from .utilstest import UtilsTest
 
 
 class TestRandomSeries(unittest.TestCase):
@@ -117,7 +117,8 @@ class TestFileSeries(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.tmp_directory = tempfile.mkdtemp(prefix=cls.__name__)
+        cls.tmp_directory = os.path.join(UtilsTest.tempdir, cls.__name__)
+        os.makedirs(cls.tmp_directory)
         cls.create_resources()
 
     @classmethod

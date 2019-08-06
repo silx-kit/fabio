@@ -46,6 +46,7 @@ X-Python3-Version: >= 3.2
 Package: fabio-bin
 Architecture: all
 Section: python
+Replaces: fabio-viewer
 Depends: ${misc:Depends},
          ${python:Depends},
          python-fabio (>= ${source:Version})
@@ -61,7 +62,7 @@ Depends: ${misc:Depends},
          ${shlibs:Depends},
          python-six
 Recommends: fabio-bin,
-            python-imaging,
+            python-pil,
             python-lxml,
             python-matplotlib,
             python-h5py
@@ -100,9 +101,10 @@ Description: I/O library for images produced by 2D X-ray detector - Python3
  .
  This is the Python 3 version of the package.
 
-Package: python-fabio-doc
+Package: fabio-doc
 Architecture: all
 Section: doc
+Replaces: python-fabio-doc
 Depends: ${misc:Depends},
          ${sphinxdoc:Depends}
 Description: I/O library for images produced by 2D X-ray detector - documentation

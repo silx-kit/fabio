@@ -31,7 +31,7 @@ FabIO class for dealing with JPEG images.
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Valentin Valls"]
-__date__ = "27/07/2017"
+__date__ = "04/03/2019"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -90,16 +90,17 @@ class JpegImage(FabioImage):
     def _readWithPil(self, filename, infile):
         try:
             infile.seek(0)
-            self.pilimage = Image.open(infile)
+            pilimage = Image.open(infile)
         except Exception:
+            pilimage = None
             infile.seek(0)
             raise IOError("Error in opening %s with PIL" % filename)
 
-        data = pilutils.get_numpy_array(self.pilimage)
+        data = pilutils.get_numpy_array(pilimage)
         self.data = data
 
-        if self.pilimage and self.pilimage.info:
-            for k, v in self.pilimage.info.items():
+        if pilimage and pilimage.info:
+            for k, v in pilimage.info.items():
                 self.header[k] = v
 
     def read(self, filename, frame=None):

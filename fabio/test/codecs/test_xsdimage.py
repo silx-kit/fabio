@@ -36,7 +36,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio.xsdimage
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15

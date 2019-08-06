@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from fabio.raxisimage import raxisimage
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 
 # filename dim1 dim2 min max mean stddev

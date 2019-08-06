@@ -101,9 +101,9 @@ class Dm3Image(FabioImage):
         assert file_format == 3, 'Wrong file type '
         self.bytes_in_file = self.readbytes(4, numpy.uint32)[0]
         self.byte_order = self.readbytes(4, numpy.uint32)[0]  # 0 = big, 1= little
-        logger.info('read dm3 file - file format %s' % file_format)
-        logger.info('Bytes in file: %s' % self.bytes_in_file)
-        logger.info('Byte order: %s  - 0 = bigEndian , 1 = littleEndian' % self.byte_order)
+        logger.debug('read dm3 file - file format %s' % file_format)
+        logger.debug('Bytes in file: %s' % self.bytes_in_file)
+        logger.debug('Byte order: %s  - 0 = bigEndian , 1 = littleEndian' % self.byte_order)
 
         if self.byte_order == 0:
             self.swap = True
@@ -172,23 +172,22 @@ class Dm3Image(FabioImage):
         if self.tag_label_length != 0:
             tag_label = self.infile.read(self.tag_label_length)
         else:
-            tag_label = None
+            tag_label = b""
 
         if self.tag_is_data == 21:
             # This is data
             try:
                 key = tag_label.decode("latin-1")
             except Exception:
-                # FIXME: Not very safe decodage
-                key = "None"
+                key = tag_label.decode("latin-1", "replace")
+                logger.warning("Non-valid latin-1 key renamed into '%s'" % key)
             value = self.read_tag_type()
             if isinstance(value, binary_type):
                 value = value.decode()
-            if key == "None":
-                logger.info("%s: %s", key, value)
-            else:
-                logger.debug("%s: %s", key, value)
-                self.header[key] = value
+            logger.debug("%s: %s", key, value)
+            if key in self.header:
+                logger.debug("Key '%s' already exists with value %s. Overwrited with %s.", key, self.header[key], value)
+            self.header[key] = value
 
     def read_tag_type(self):
         if self.infile.read(4) != b'%%%%':

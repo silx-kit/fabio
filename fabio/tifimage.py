@@ -44,7 +44,7 @@ Authors:
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "16/11/2018"
+__date__ = "13/06/2019"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -148,9 +148,9 @@ class TifImage(fabioimage.FabioImage):
         self.lib = "TiffIO"
 
     def _read_with_pil(self, infile):
-        self.pilimage = PIL.Image.open(infile)
-        header = self._read_header_from_pil(self.pilimage)
-        data = pilutils.get_numpy_array(self.pilimage)
+        pilimage = PIL.Image.open(infile)
+        header = self._read_header_from_pil(pilimage)
+        data = pilutils.get_numpy_array(pilimage)
         frame = self._create_frame(data, header)
         self.header = frame.header
         self.data = frame.data
@@ -170,7 +170,7 @@ class TifImage(fabioimage.FabioImage):
             try:
                 self._read_with_tiffio(infile)
             except Exception as error:
-                logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
+                logger.warning("Unable to read %s with TiffIO due to %s, trying PIL", fname, error)
                 logger.debug("Backtrace", exc_info=True)
                 infile.seek(0)
 
@@ -178,8 +178,8 @@ class TifImage(fabioimage.FabioImage):
             if _USE_PIL and PIL is not None:
                 try:
                     self._read_with_pil(infile)
-                except Exception:
-                    logger.error("Error in opening %s with PIL" % fname)
+                except Exception as error:
+                    logger.error("Error in opening %s with PIL: %s", fname, error)
                     logger.debug("Backtrace", exc_info=True)
                     if infile.closed:
                         infile = self._open(fname, "rb")

@@ -30,7 +30,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 
 class TestMpa(unittest.TestCase):

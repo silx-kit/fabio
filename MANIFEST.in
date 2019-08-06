@@ -4,7 +4,7 @@ global-exclude *.pyc
 global-exclude *.pyo
 global-exclude .git
 global-exclude .ipynb_checkpoints
-recursive-include package/debian? *
+recursive-include package/debian* *
 recursive-include fabio/ext *.c *.h *.pyx
 recursive-exclude test/tiftest *
 recursive-exclude test/testimages *

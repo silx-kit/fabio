@@ -34,7 +34,7 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 
 from __future__ import print_function, with_statement, division, absolute_import
 
-__date__ = "13/11/2018"
+__date__ = "07/03/2019"
 __author__ = "jerome Kieffer"
 
 
@@ -46,13 +46,13 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from fabio.dm3image import Dm3Image
-from .utilstest import UtilsTest
+from ..utilstest import UtilsTest
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = """ref_d20x_310mm.dm3     2048 2048 -31842.354 23461.672 569.38782 1348.4183
-                ref_d20x_310mm.dm3.gz  2048 2048 -31842.354 23461.672 569.38782 1348.4183
-                ref_d20x_310mm.dm3.bz2 2048 2048 -31842.354 23461.672 569.38782 1348.4183"""
+TESTIMAGES = [("ref_d20x_310mm.dm3", (2048, 2048), -31842.354, 23461.672, 569.38782, 1348.4183),
+              ("ref_d20x_310mm.dm3.gz", (2048, 2048), -31842.354, 23461.672, 569.38782, 1348.4183),
+              ("ref_d20x_310mm.dm3.bz2", (2048, 2048), -31842.354, 23461.672, 569.38782, 1348.4183)]
 
 
 class TestDm3Image(unittest.TestCase):
@@ -64,12 +64,8 @@ class TestDm3Image(unittest.TestCase):
 
     def test_read(self):
         """ check we can read dm3 images"""
-        for line in TESTIMAGES.split("\n"):
-            vals = line.split()
-            name = vals[0]
-            dim1, dim2 = [int(x) for x in vals[1:3]]
-            shape = dim2, dim1
-            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+        for info in TESTIMAGES:
+            name, shape, mini, maxi, mean, stddev = info
             fname = os.path.join(self.im_dir, name)
             obj1 = Dm3Image()
             obj1.read(fname)

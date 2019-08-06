@@ -12,8 +12,8 @@ Build-Depends: cython,
                dh-python,
                python-all-dev,
                python-all-dbg,
-               python-imaging,
-               python-imaging-dbg,
+               python-pil,
+               python-pil-dbg,
                python-lxml,
                python-lxml-dbg,
                python-numpy,
@@ -24,6 +24,8 @@ Build-Depends: cython,
                python-sphinxcontrib.programoutput,
                python-nbsphinx,
                python3-all-dev,
+               python3-pil,
+               python3-pil-dbg,
                python3-all-dbg,
                python3-lxml,
                python3-lxml-dbg,
@@ -34,8 +36,10 @@ Build-Depends: cython,
                python3-setuptools,
                python3-six,
                python3-sphinx,
-               python3-sphinxcontrib.programoutput,
                python3-nbsphinx,
+               python3-sphinxcontrib.programoutput,
+               python-h5py,
+               python3-h5py,
                help2man,
                devscripts
 Standards-Version: 3.9.6
@@ -48,6 +52,7 @@ X-Python3-Version: >= 3.2
 Package: fabio-bin
 Architecture: all
 Section: python
+Replaces: fabio-viewer
 Depends: ${misc:Depends},
          ${python:Depends},
          python-fabio (>= ${source:Version})
@@ -63,7 +68,7 @@ Depends: ${misc:Depends},
          ${shlibs:Depends},
          python-six
 Recommends: fabio-bin,
-            python-imaging,
+            python-pil,
             python-lxml,
             python-matplotlib,
             python-h5py
@@ -87,9 +92,9 @@ Depends: ${misc:Depends},
          ${shlibs:Depends},
          python-fabio (= ${binary:Version})
 Recommends: python-dbg,
-            python-imaging-dbg,
+            python-pil-dbg,
             python-lxml-dbg,
-            python-matplotlib-dbg
+            python-matplotlib-dbg,
             python-h5py-dbg
 Description: I/O library for images produced by 2D X-ray detector - Python2 debug
  FabIO is an I/O library for images produced by 2D X-ray detectors and
@@ -148,9 +153,10 @@ Description: I/O library for images produced by 2D X-ray detector - Python3 debu
  This package contains the extension built for the Python 3 debug
  interpreter.
 
-Package: python-fabio-doc
+Package: fabio-doc
 Architecture: all
 Section: doc
+Replaces: python-fabio-doc
 Depends: ${misc:Depends},
          ${sphinxdoc:Depends}
 Description: I/O library for images produced by 2D X-ray detector - documentation

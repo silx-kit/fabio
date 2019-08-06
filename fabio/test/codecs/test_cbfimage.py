@@ -42,27 +42,18 @@ logger = logging.getLogger(__name__)
 import fabio
 from fabio.cbfimage import cbfimage
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
-from fabio.third_party.six import PY3
-from .utilstest import UtilsTest
-if PY3:
-    # FIXME: it have to be removed
-    from fabio.fabioutils import unicode
+from ..utilstest import UtilsTest
 
 
 class TestCbfReader(unittest.TestCase):
     """ test cbf image reader """
 
-    def __init__(self, methodName):
-        "Constructor of the class"
-        unittest.TestCase.__init__(self, methodName)
-        self.edf_filename = os.path.join(UtilsTest.image_home, "run2_1_00148.edf")
-        self.cbf_filename = os.path.join(UtilsTest.image_home, "run2_1_00148.cbf")
-
     def setUp(self):
         """Download images"""
-
-        UtilsTest.getimage(os.path.basename(self.edf_filename + ".bz2"))
-        UtilsTest.getimage(os.path.basename(self.cbf_filename + ".bz2"))
+        self.edf_filename = "run2_1_00148.edf.bz2"
+        self.edf_filename = UtilsTest.getimage(self.edf_filename)[:-4]
+        self.cbf_filename = "run2_1_00148.cbf.bz2"
+        self.cbf_filename = UtilsTest.getimage(self.cbf_filename)[:-4]
 
     def test_read(self):
         """ check whole reader"""
@@ -152,7 +143,7 @@ class TestCbfReader(unittest.TestCase):
         """
         Test if an image can be read and saved to an unicode named
         """
-        name = unicode(os.path.basename(self.cbf_filename))
+        name = u"%s" % os.path.basename(self.cbf_filename)
         obj = fabio.open(self.cbf_filename)
         obj.write(os.path.join(UtilsTest.tempdir, name))
         other = fabio.open(os.path.join(UtilsTest.tempdir, name))

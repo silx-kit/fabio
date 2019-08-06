@@ -34,8 +34,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import fabio
-from .utilstest import UtilsTest
-from .test_frames import _CommonTestFrames
+from ..utilstest import UtilsTest
+from ..test_frames import _CommonTestFrames
 
 
 class TestPixiImage(_CommonTestFrames):

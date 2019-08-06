@@ -48,7 +48,7 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
     gzFile gzfp=gzopen(fname,"wbh");
     if (gzfp==NULL) return -1;
     status=-1;
-    if (FLAGS && CF_BIN){
+    if (FLAGS & CF_BIN){
       status=cf_write_bin_gz(gzfp,cf_handle);
     }else{
       status=cf_write_ascii_gz(gzfp,cf_handle);
@@ -62,7 +62,7 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
     FILE *fp=fopen(fname,"wb");
     if (fp==NULL) return -1;
     status=-1;
-    if (FLAGS && CF_BIN){
+    if (FLAGS & CF_BIN){
       /*status=cf_write_bin(fp,cf_handle);
         */
     }else{

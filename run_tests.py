@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "22/10/2018"
+__date__ = "18/03/2019"
 __license__ = "MIT"
 
 import distutils.util
@@ -214,9 +214,13 @@ def report_rst(cov, package, version="0.0.0", base=""):
     os.close(fd)
     cov.xml_report(outfile=fn)
 
-    from lxml import etree
+    try:
+        from lxml import etree
+    except ImportError:
+        import xml.etree.ElementTree as etree
+
     xml = etree.parse(fn)
-    classes = xml.xpath("//class")
+    classes = xml.findall(".//class")
 
     line0 = "Test coverage report for %s" % package
     res = [line0, "=" * len(line0), ""]
@@ -398,11 +402,6 @@ logger.warning("Test %s %s from %s",
 test_module_name = PROJECT_NAME + '.test'
 logger.info('Import %s', test_module_name)
 test_module = importer(test_module_name)
-utilstest = importer(test_module_name + ".utilstest")
-UtilsTest = getattr(utilstest, "UtilsTest")
-UtilsTest.image_home = os.path.join(PROJECT_DIR, 'testimages')
-UtilsTest.testimages = os.path.join(PROJECT_DIR, "all_testimages.json")
-UtilsTest.script_dir = os.path.join(PROJECT_DIR, "scripts")
 
 test_suite = unittest.TestSuite()
 

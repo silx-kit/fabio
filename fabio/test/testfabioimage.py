@@ -37,7 +37,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ..fabioimage import fabioimage
+from ..fabioimage import FabioImage
 from .. import fabioutils
 from ..utils import pilutils
 from .utilstest import UtilsTest
@@ -59,7 +59,7 @@ class Test50000(unittest.TestCase):
         dat = (dat * 50000).astype(numpy.uint16)
         assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
         hed = {"Title": "50000 everywhere"}
-        self.obj = fabioimage(dat, hed)
+        self.obj = FabioImage(dat, hed)
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
@@ -97,7 +97,7 @@ class TestSlices(unittest.TestCase):
         dat2 = numpy.zeros((1024, 1024), numpy.uint16)
         hed = {"Title": "zeros and 100"}
         self.cord = [256, 256, 790, 768]
-        self.obj = fabioimage(dat2, hed)
+        self.obj = FabioImage(dat2, hed)
         self.slic = slic = self.obj.make_slice(self.cord)
         # Note - d2 is modified *after* fabioimage is made
         dat2[slic] = dat2[slic] + 100
@@ -127,7 +127,7 @@ class TestSlices(unittest.TestCase):
         """Test the rebin method"""
         big = numpy.arange(64).reshape((8, 8))
         res = numpy.array([[13, 17], [45, 49]])
-        fabimg = fabioimage(data=big, header={})
+        fabimg = FabioImage(data=big, header={})
         fabimg.rebin(4, 4)
         self.assertEqual(abs(res - fabimg.data).max(), 0, "data are the same after rebin")
 
@@ -147,7 +147,7 @@ class TestOpen(unittest.TestCase):
         if not os.path.isfile(self.testfile + ".bz2"):
             with fabioutils.BZ2File(self.testfile + ".bz2", "wb") as wf:
                 wf.write(b"{ hello }")
-        self.obj = fabioimage()
+        self.obj = FabioImage()
 
     def testFlat(self):
         """ no compression"""
@@ -203,7 +203,7 @@ class TestPilImage(unittest.TestCase):
         for typ in self.okformats:
             for shape in [(10, 20), (431, 1325)]:
                 testdata = self.mkdata(shape, typ)
-                img = fabioimage(testdata, {"title": "Random data"})
+                img = FabioImage(testdata, {"title": "Random data"})
                 pim = img.toPIL16()
                 for i in [0, 5, 6, shape[1] - 1]:
                     for j in [0, 5, 7, shape[0] - 1]:
@@ -236,6 +236,23 @@ class TestPilImage3(TestPilImage):
         return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)
 
 
+class TestDeprecatedFabioImage(unittest.TestCase):
+
+    def test_patch_dim(self):
+        data = numpy.array(numpy.arange(3 * 10)).reshape(3, 10)
+        image = FabioImage(data=data)
+        # Usecase found in some projects
+        image.dim2, image.dim1 = data.shape
+        # It should not change anything
+        self.assertEqual(image.shape, data.shape)
+
+    def test_cleanup_pilimage_cache(self):
+        data = numpy.array(numpy.arange(3 * 10)).reshape(3, 10)
+        image = FabioImage(data=data)
+        # It was a way to force clean up of the cache
+        image.pilimage = None
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -245,6 +262,7 @@ def suite():
     testsuite.addTest(loadTests(TestPilImage))
     testsuite.addTest(loadTests(TestPilImage2))
     testsuite.addTest(loadTests(TestPilImage3))
+    testsuite.addTest(loadTests(TestDeprecatedFabioImage))
     return testsuite
 
 

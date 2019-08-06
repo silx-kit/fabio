@@ -31,7 +31,7 @@ FabIO class for dealing with JPEG 2000 images.
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Valentin Valls"]
-__date__ = "28/07/2017"
+__date__ = "04/03/2019"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -81,12 +81,12 @@ class Jpeg2KImage(FabioImage):
 
     def _readWithPil(self, filename, infile):
         """Read data using PIL"""
-        self.pilimage = PIL.Image.open(infile)
-        data = pilutils.get_numpy_array(self.pilimage)
+        pilimage = PIL.Image.open(infile)
+        data = pilutils.get_numpy_array(pilimage)
         self.data = data
 
-        if self.pilimage and self.pilimage.info:
-            for k, v in self.pilimage.info.items():
+        if pilimage and pilimage.info:
+            for k, v in pilimage.info.items():
                 self.header[k] = v
 
     def _loadGlymurImage(self, filename, infile):
