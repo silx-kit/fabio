@@ -70,7 +70,11 @@ MAGIC_NUMBERS = [
     (b"{", 'edf'),
     (b"\r{", 'edf'),
     (b"\n{", 'edf'),
-    (b"\x00\x00\x00", 'GE'),
+    # had to add a special case for GE here because they blanked out
+    # the default header for the GE's at APS with the firmware 
+    # update as of 2018
+    (b"ADEPT", 'GE'),
+    (b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 'GE'),
     (b"OD", 'OXD'),
     (b"IM", 'HiPiC'),
     (b'\x2d\x04', 'mar345'),
