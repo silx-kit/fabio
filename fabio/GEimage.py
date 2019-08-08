@@ -268,7 +268,7 @@ class GeImage(FabioImage):
         file_size = os.stat(fname).st_size
         assert numpy.remainder(file_size, self._BytesPerFrame) == self._HeaderNBytes, \
             "file is incorrect size"
-        self.nframes = file_size//self._BytesPerFrame
+        self._nframes = file_size//self._BytesPerFrame
         self._readframe(infile, frame)
         infile.close()
         return self
@@ -285,7 +285,7 @@ class GeImage(FabioImage):
         # raises an exception if you give an invalid image
         # otherwise fills in self.data
         """
-        if(img_num > self.nframes or img_num < 0):
+        if(img_num >= self.nframes or img_num < 0):
             raise Exception("Bad image number")
         imgstart = (self.header['StandardHeaderSizeInBytes'] +
                     self.header['UserHeaderSizeInBytes'] +
@@ -315,13 +315,14 @@ class GeImage(FabioImage):
         """
         Returns a frame as a new FabioImage object
         """
-        if num < 0 or num > self.nframes:
+        if num < 0 or num >= self.nframes:
             raise Exception("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         newheader = {}
         for k in self.header.keys():
             newheader[k] = self.header[k]
         frame = GeImage(header=newheader)
+        # ??? isn't this a single frame by contruction?
         frame._nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
