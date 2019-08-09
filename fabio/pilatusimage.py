@@ -30,7 +30,7 @@ from __future__ import with_statement, print_function
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "07/02/2018"
+__date__ = "12/11/2018"
 
 import re
 import logging
@@ -46,11 +46,8 @@ class PilatusTiffFrame(tifimage.TiffFrame):
     def __init__(self, data, tiff_header, pilatus_header):
         super(PilatusTiffFrame, self).__init__(data, tiff_header)
         self.pilatus_header = pilatus_header
-
-    @property
-    def header(self):
-        """Default header exposed by fabio"""
-        return self.pilatus_header
+        # Override the header
+        self._header = pilatus_header
 
 
 class PilatusImage(tifimage.TifImage):
@@ -61,7 +58,7 @@ class PilatusImage(tifimage.TifImage):
 
     DEFAULT_EXTENSIONS = ["tif", "tiff"]
 
-    _keyvalue_spliter = re.compile("\s*(?:[,:=]\s*)?")
+    _keyvalue_spliter = re.compile(r"\s*[,:=\s]\s*")
     """It allow to split the first white space, colon, coma, or equal
     character and remove white spaces around"""
 

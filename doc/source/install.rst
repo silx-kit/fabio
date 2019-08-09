@@ -254,7 +254,7 @@ Debian 8 and newer
 
 The same script, *build-deb.sh*, will create *real* debian packages:
 It will build a bunch of 6 debian packages:
- 
+
 * *fabio-bin*: the GUI for visualizing diffraction images
 * *fabio-doc*: the documumentation package
 * *python3-fabio*: library built for Python3
@@ -287,7 +287,7 @@ FabIO has a comprehensive test-suite to ensure non regression.
 When you run the test for the first time, many test images will be download and converted into various compressed format like gzip and bzip2 (this takes a lot of time).
 
 Be sure you have an internet connection and your proxy setting are correctly defined in the environment variable *http_proxy*.
-For example if you are behind a firewall/proxy:
+For example if you are behind a firewall/proxy (No more needed at ESRF):
 
 Under Linux and MacOSX::
 
@@ -328,9 +328,9 @@ Within Python (or ipython):
 Test coverage
 .............
 
-FabIO comes with 37 test-suites (179 tests in total) representing a coverage of 66%.
+FabIO comes with 49 test-suites (295 tests in total) representing a coverage of 73%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4, 3.6 and 3.6.
+FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 2.7, 3.4, 3.5, 3.6 and 3.7.
 Under linux it has been tested on i386, x86_64, arm, ppc, ppc64le.
 FabIO may run on other untested systems but without warranty.
 

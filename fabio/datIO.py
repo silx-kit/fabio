@@ -42,6 +42,10 @@ Authors: Henning O. Sorensen & Erik Knudsen
 # get ready for python3
 from __future__ import with_statement, print_function
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class fabiodata(object):
     """
@@ -80,11 +84,13 @@ class columnfile(fabiodata):
         from .ext import cf_io
         try:
             infile = open(fname, 'rb')
-        except:
+        except Exception:
+            logger.debug("Backtrace", exc_info=True)
             raise Exception("columnfile: file" + str(fname) + "not found.")
         try:
             (self.data, self.clabels) = cf_io.read(infile)
-        except:
+        except Exception:
+            logger.debug("Backtrace", exc_info=True)
             raise Exception("columnfile: read error, file " + str(fname) + " possibly corrupt")
         self.dims = self.data.shape
         infile.close()

@@ -28,23 +28,46 @@
 28/11/2014
 """
 from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
-import sys
-import os
+import logging
 
-
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
-
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
+logger = logging.getLogger(__name__)
+import fabio
 from .. import fabioformats
+from ..utils import deprecation
+from ..utils import testutils
 
 
 class TestRegistration(unittest.TestCase):
+
+    def test_fabio_factory(self):
+        image = fabio.factory("edfimage")
+        self.assertIsNotNone(image)
+
+    def test_fabio_factory_missing_format(self):
+        self.assertRaises(RuntimeError, fabio.factory, "foobarimage")
+
+    def test_fabioformats_factory(self):
+        image = fabioformats.factory("edfimage")
+        self.assertIsNotNone(image)
+
+    def test_fabioformats_factory_missing_format(self):
+        self.assertRaises(RuntimeError, fabioformats.factory, "foobarimage")
+
+    @testutils.test_logging(deprecation.depreclog, warning=1)
+    def test_deprecated_fabioimage_factory(self):
+        """Check that it is still working"""
+        image = fabio.fabioimage.FabioImage.factory("edfimage")
+        self.assertIsNotNone(image)
+
+    @testutils.test_logging(deprecation.depreclog, warning=1)
+    def test_deprecated_fabioimage_factory_missing_format(self):
+        """Check that it is still working"""
+        self.assertRaises(RuntimeError, fabio.fabioimage.FabioImage.factory, "foobarimage")
+
+    def test_not_existing(self):
+        self.assertIsNone(fabioformats.get_class_by_name("myformat0"))
 
     def test_annotation(self):
         @fabio.register

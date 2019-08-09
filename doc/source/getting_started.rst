@@ -8,8 +8,8 @@ detectors.
 FabIO is a Python module written for easy and transparent reading
 of raw two-dimensional data from various X-ray detectors. The
 module provides a function for reading any image and returning a
-FabioImage object which contains both metadata (header information)
-and the raw data. All FabioImage object offer additional methods to
+:class:`FabioImage` object which contains both metadata (header information)
+and the raw data. All `FabioImage` object offer additional methods to
 extract information about the image and to open other detector
 images from the same data series.
 
@@ -85,15 +85,15 @@ This code has to be compiled for each computer architecture and
 offers excellent performance. FabIO is only dependent on the NumPy
 module and has extra features if two other optional Python modules
 are available. For reading XML files (that are used in EDNA) the
-Lxml module is required and the Python Image Library, PIL
+lxml module is required and the Python Image Library, `PIL`
 is needed for producing a PIL image for displaying the image
 in graphical user interfaces and several image-processing
 operations that are not re-implemented in FabIO. A variety of
-useful image processing is also available in the scipy.ndimage
-module and in scikits-image.
+useful image processing is also available in the `scipy.ndimage`
+module and in `scikits-image`.
 
 Images can also be displayed in a convenient interactive manner
-using matplotlib and an IPython shell , which
+using `matplotlib` and an `IPython` shell , which
 is mainly used for developing data analysis algorithms. Reading and
 writing procedure of the various TIFF formats is based on the
 TiffIO code from PyMCA.
@@ -127,35 +127,44 @@ if the output format only accepts integers.
 
 FabIO methods
 .............
-
 One strength of the implementation in an object oriented language
 is the possibility to combine functions (or methods) together with
-data appropriate for specific formats. In addition to the header
-information and image data, every `fabioimage` instance (returned
-by `fabio.open`) has methods inherited from `fabioimage` which
+data appropriate for specific formats.
+
+.. image:: img/fabioimage.png
+
+In addition to the :attr:`~fabio.fabioimage.FabioImage.header` information and
+image :attr:`~fabio.fabioimage.FabioImage.data`,
+every :class:`~fabio.fabioimage.FabioImage` instance (returned
+by :py:func:`fabio.open`) has methods inherited from :class:`~fabio.fabioimage.FabioImage` which
 provide information about the image minimum, maximum and mean
-values. In addition there are methods which return the file number,
-name etc. Some of the most important methods are specific for
-certain formats because the methods are related to how frames in a
-sequence are handled; these methods are `img.next()`,
-`img.previous()`, and `img.getframe(n)`. The behaviour of such
-methods varies depending on the image format: for single-frame
-format (like mar345), `img.next()` will return the image in next
-file; for multi-frame format (like GE), `img.next()` will return
+values.
+
+.. code-block:: python
+
+   import fabio
+   image = fabio.open('image.tif')
+   print(image.header)       # print the header
+   print(image.data.mean())  # print mean intensity of the data
+   image.close()
+
+
+FabIO old-fashion file series
+.............................
+
+.. image:: img/fabioimage_old.png
+
+Multi-frames for certain file formats are handled using file series.
+
+A set of methodes, specific for certain formats provide access to the data
+through a series of files. These methods are :meth:`~fabio.fabioimage.FabioImage.next`,
+:meth:`~fabio.fabioimage.FabioImage.previous`, and :meth:`~fabio.fabioimage.FabioImage.getframe`.
+The behaviour of such methods varies depending on the image format: for single-frame
+format (like mar345), :meth:`~fabio.fabioimage.FabioImage.next` will return the image in next
+file; for multi-frame format (like GE), :meth:`~fabio.fabioimage.FabioImage.next` will return
 the next frame within the same file. For formats which are possibly
 multi-framed like EDF, the behaviour depends on the actual number
-of frames per file (accessible via the `img.nframes` attribute).
-
-Usage
------
-
-Examples
-........
-
-In this section we have collected some basic examples of how FabIO
-can be employed.
-
-Opening an image:
+of frames per file (accessible via the :attr:`~fabio.fabioimage.FabioImage.nframes` attribute).
 
 .. code-block:: python
 
@@ -163,9 +172,75 @@ Opening an image:
     im100 = fabio.open('Quartz_0100.tif') # Open image file
     print(im0.data[1024,1024])            # Check a pixel value
     im101 = im100.next()                  # Open next image
-    im270 = im1.getframe(270)             # Jump to file number 270: Quartz_0270.tif
+    im270 = im100.getframe(270)           # Jump to file number 270: Quartz_0270.tif
 
-Normalising the intensity to a value in the header:
+This conveniant way to iterate through many files have limitation. It is not
+working in case of many frames per files, the read access is difficult to
+optimize, and it is difficult to custom the list of the files.
+
+FabIO file series
+.................
+
+This design introduces a real :class:`~fabio.fabioimage.FabioFrame` as composition
+of all :class:`~fabio.fabioimage.FabioImage`.
+
+.. image:: img/fabioframes.png
+
+For single frames images, :class:`~fabio.fabioimage.FabioImage` still provides
+access to the data of to the first (and only one) frame. But the method :meth:`~fabio.fabioimage.FabioImage.get_frame`
+(with an underscore, not :meth:`~fabio.fabioimage.FabioImage.getframe`) provides access to any frames contained in the file.
+A file containing a single data, also contains a single frame object. Both provide the same data
+(there is 2 ways to access to this data).
+
+To iterate other many files a :class:`~fabio.file_series.FileSeries` can be used.
+This object is a :class:`~fabio.fabioimage.FabioImage` which a set of file as a single container of frame.
+The hi-level function :func:`~fabio.open_series` is provided to hide the complexity.
+
+This function (or this class) allows different ways to custom the file iteration.
+Plus optional informnation to describe the way frames as stored in files in order
+to optimize the random access.
+
+Methodes provided allow to reach frames
+using a sequencial access (:meth:`~fabio.fabioimage.FabioImage.frames`)
+or using a random access (:meth:`~fabio.fabioimage.FabioImage.get_frame`).
+
+.. code-block:: python
+
+    # Random access
+    import fabio
+    # The first filename of consecutive filenames while foobar_xxxx.edf exists
+    filename = "foobar_0000.edf"
+    with fabio.open_series(first_filename=filename) as series:
+        frame1 = series.get_frame(1)
+        frame100 = series.get_frame(100)
+        frame19 = series.get_frame(19)
+
+Usually, in case of a random access only accessed data have to be decoded, but the file
+have to be fully read to index the frames (depending of the codec, then the file
+format).
+
+In case of huge EDF file series a sequencial access to the frames speed up by
+2 the reading time.
+
+.. code-block:: python
+
+    # Sequencial access
+    import fabio
+    # The first filename of consecutive filenames while foobar_xxxx.edf exists
+    filename = "foobar_0000.edf"
+    with fabio.open_series(first_filename=filename) as series:
+        for frame in series.frames():
+            frame.data
+            frame.header
+            frame.index                    # frame index inside the file series
+            frame.file_index               # frame index inside the edf file
+            frame.file_container.filename  # name of the source file
+
+Examples
+--------
+
+Normalising the intensity to a value in the header
+..................................................
 
 .. code-block:: python
 
@@ -174,20 +249,30 @@ Normalising the intensity to a value in the header:
     {'ByteOrder': 'LowByteFirst',
      'DATE (scan begin)': 'Mon Jun 28 21:22:16 2010',
      'ESRFCurrent': '198.099',
-    ...
+     ...
     }
     # Normalise to beam current and save data
     srcur = float(img.header['ESRFCurrent'])
     img.data *= 200.0/srcur
     img.write('normed_0001.edf')
 
-Interactive viewing with matplotlib:
+Interactive viewing with matplotlib
+...................................
 
 .. code-block:: python
 
     from matplotlib import pyplot       # Load matplotlib
     pyplot.imshow(img.data)             # Display as an image
     pyplot.show()                       # Show GUI window
+
+Converting a TIFF to an EDF
+...........................
+
+.. code-block:: python
+
+   import fabio
+   image = fabio.open("my.tiff")
+   image.convert("edf").save("my.edf")
 
 Future and perspectives
 -----------------------
@@ -267,6 +352,7 @@ uses extensions as a fallback if that fails.
    "marccd", "MarCCD/Mar165", ".mccd ", "Yes", "No", "No"
    "mar345", "Mar345 image plate", ".mar3450 ", "Yes", "No", "Yes"
    "mpa", "Multi-wire detector", ".mpa", "yes", "No", "No"
+   "mrc", "Medical Research Council", ".map", "Yes", "Yes", "No"
    "numpy", "numpy 2D array", ".npy ", "Yes", "No", "Yes"
    "OXD", "Oxford Diffraction", ".img ", "Yes", "No", "Yes"
    "Pixi", "pixi", "", "Yes", "No", "No"

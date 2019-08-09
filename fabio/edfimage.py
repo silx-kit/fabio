@@ -27,6 +27,8 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION W
 
+from __future__ import with_statement, print_function, absolute_import, division
+
 """
 
 License: MIT
@@ -45,22 +47,26 @@ Authors:
 
 
 """
-# get ready for python3
-from __future__ import with_statement, print_function, absolute_import, division
+
 import os
 import re
 import string
 import logging
-logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage, OrderedDict
-from .fabioutils import isAscii, toAscii, nice_int
+
+logger = logging.getLogger(__name__)
+
+from . import fabioimage
+from .fabioutils import isAscii, toAscii, nice_int, OrderedDict
 from .compression import decBzip2, decGzip, decZlib
 from . import compression as compression_module
 from . import fabioutils
+from .utils import deprecation
 
+from collections import namedtuple
 
 BLOCKSIZE = 512
+MAX_BLOCKS = 40
 DATA_TYPES = {"SignedByte": numpy.int8,
               "Signed8": numpy.int8,
               "UnsignedByte": numpy.uint8,
@@ -109,7 +115,7 @@ NUMPY_EDF_DTYPE = {"int8": "SignedByte",
                    }
 
 MINIMUM_KEYS = set(['HEADERID',
-                    'IMAGE',
+                    'IMAGE',  # Image numbers are used for sorting and must be different
                     'BYTEORDER',
                     'DATATYPE',
                     'DIM_1',
@@ -120,37 +126,135 @@ DEFAULT_VALUES = {}
 # I do not define default values as they will be calculated at write time
 # JK20110415
 
+HeaderBlockType = namedtuple("HeaderBlockType", "header, header_size, binary_size, data_format_version")
+
 
 class MalformedHeaderError(IOError):
     """Raised when a header is malformed"""
     pass
 
 
-class Frame(object):
+class EdfFrame(fabioimage.FabioFrame):
     """
     A class representing a single frame in an EDF file
     """
     def __init__(self, data=None, header=None, number=None):
-
-        self.header = EdfImage.check_header(header)
+        header = EdfImage.check_header(header)
+        super(EdfFrame, self).__init__(data, header=header)
 
         self._data_compression = None
         self._data_swap_needed = None
         self._data = data
-        self.dims = []
-        self.dim1 = 0
-        self.dim2 = 0
-        self.start = None  # Position of start of raw data in file
-        self.size = None  # size of raw data in file
-        self.file = None  # opened file object with locking capabilities !!!
-        self.bpp = None
+        self.start = None
+        """Start position of the raw data blob in the file"""
+        self.blobsize = None
+        """Size of the raw data blob in the file (including padding)"""
+        self.size = None
+        """Size of the retrieved data (after unpacking and decompressing)"""
+        self.file = None
+        """Opened file object with locking capabilities"""
+        self._dtype = None
         self.incomplete_data = False
-        self._bytecode = None
 
-        if (number is not None):
-            self.iFrame = int(number)
-        else:
-            self.iFrame = 0
+        if number is not None:
+            deprecation.deprecated_warning(reason="Argument 'number' is not used anymore", deprecated_since="0.10.0beta")
+
+    @staticmethod
+    def get_data_rank(header=None,capsHeader=None):
+        '''
+        Get the rank of the data array by searching the header for the
+        key DIM_i with the highest index i. The smallest index of
+        DIM_i is 1 (1-based). The highest index is equal to the rank.
+
+        :param: dict header
+        :param: dict capsHeader (optional)
+        :return: int rank
+        '''
+        if header is None:
+            header={}
+        if capsHeader is None:
+            capsHeader={}
+            for key in header:
+               capsHeader[key.upper()] = key
+        rank=0
+        if capsHeader is not None:
+            rank=0
+            for key in capsHeader:
+                if key[0:4]=="DIM_":
+                    try:
+                        index=int(key[4:])
+                    except ValueError:
+                        logger.error("Unable converting index of {} to integer.".format(key))
+                    if index>rank:
+                        rank=index
+        return(rank)
+
+    @staticmethod
+    def get_data_shape(rank=0,header=None,capsHeader=None):
+        '''
+        Returns a tuple with the number of dimensions up to the given rank.
+        The dimensions DIM_i are read from the header dictionary. The
+        values of missing DIM_i keys are set to 1, except DIM_1 which has
+        the default 0.
+
+        The DIM_i header indices are 1-based and are equal to the number of
+        elements in each dimension of a data array, starting with DIM_1 as
+        the number of elements of a linear array, DIM_2 is the number of
+        stacked linear arrays with DIM_1 elements, etc. (FORTRAN-type
+        indexing).
+
+        The shape tuple is filled from the end to the beginning with the values
+        of DIM_i, i.e. shape[0] is equal to value of DIM_rank, shape[rank-i] is
+        equal to the value of DIM_i (e.g. for rank==2, shape[0]==value(DIM_2),
+        shape[1]==value(DIM_1)). The returned shape tuple can be used with
+        numpy arrays.
+
+        :param: int rank
+        :param: dict header
+        :param: dict capsHeader (optional)
+        :return: tuple shape
+        '''
+        if rank is None:
+            rank = 0
+        if header is None:
+            header={}
+        if capsHeader is None:
+            capsHeader={}
+            for key in header:
+               capsHeader[key.upper()] = key
+        shape=[]
+        for irank in range(1,rank+1):
+            strDim = "DIM_{:d}".format(irank)
+            if strDim in capsHeader:
+                try:
+                    dimi = nice_int(header[capsHeader[strDim]])
+                except ValueError:
+                    logger.error("Unable converting value of {} to integer: {}".format(capsHeader[strDim], header[capsHeader[strDim]]))
+            else:
+                if irank==1:
+                    dimi=0
+                else:
+                    dimi=1
+            shape.insert(0,dimi)
+
+        return(tuple(shape))
+    # JON: this appears to be for nD images, but we don't treat those
+    # PB38k20190607: if needed, it could be checked with get_data_rank(shape)<3
+
+    @staticmethod
+    def get_data_counts(shape=None):
+        '''
+        Counts items specified by shape (returns 1 for shape==None)
+
+        :param: tuple shape
+        :return: int counts
+        '''
+        if shape is None:
+          shape=()
+        counts=1
+        for ishape in range(0,len(shape)):
+            counts*=shape[ishape]
+        return(counts)
 
     def _compute_capsheader(self):
         """
@@ -174,78 +278,90 @@ class Frame(object):
         :param dict capsHeader: Precached mapping from capitalized keys of the
             header to the original keys.
         """
-        self.size = None
+        self.blobsize = None
+        # Here, calcsize starts with a guess!
         calcsize = 1
-        self.dims = []
+        shape = []
 
         if capsHeader is None:
             capsHeader = self._compute_capsheader()
 
-        # Compute image size
+        # Compute blobsize
         if "SIZE" in capsHeader:
             try:
-                self.size = nice_int(self.header[capsHeader["SIZE"]])
+                self.blobsize = nice_int(self.header[capsHeader["SIZE"]])
             except ValueError:
                 logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], self.header[capsHeader["SIZE"]]))
-        if "DIM_1" in capsHeader:
-            try:
-                dim1 = nice_int(self.header[capsHeader['DIM_1']])
-            except ValueError:
-                logger.error("Unable to convert to integer Dim_1: %s %s" % (capsHeader["DIM_1"], self.header[capsHeader["DIM_1"]]))
-            else:
-                calcsize *= dim1
-                self.dims.append(dim1)
-        else:
-            logger.error("No Dim_1 in headers !!!")
-        if "DIM_2" in capsHeader:
-            try:
-                dim2 = nice_int(self.header[capsHeader['DIM_2']])
-            except ValueError:
-                logger.error("Unable to convert to integer Dim_2: %s %s" % (capsHeader["DIM_2"], self.header[capsHeader["DIM_2"]]))
-            else:
-                calcsize *= dim2
-                self.dims.append(dim2)
-        else:
-            logger.error("No Dim_2 in headers !!!")
-        iDim = 3
-        # JON: this appears to be for nD images, but we don't treat those
-        while iDim is not None:
-            strDim = "DIM_%i" % iDim
-            if strDim in capsHeader:
-                try:
-                    dim3 = nice_int(self.header[capsHeader[strDim]])
-                except ValueError:
-                    logger.error("Unable to convert to integer %s: %s %s",
-                                 strDim, capsHeader[strDim], self.header[capsHeader[strDim]])
-                    dim3 = None
-                    iDim = None
-                else:
-                    if dim3 > 1:
-                        # Otherwise treat dim3==1 as a 2D image
-                        calcsize *= dim3
-                        self.dims.append(dim3)
-                    iDim += 1
 
-            else:
-                logger.debug("No Dim_3 -> it is a 2D image")
-                iDim = None
-        if self._bytecode is None:
+        rank=self.get_data_rank(self.header,capsHeader)
+        shape=self.get_data_shape(rank,self.header,capsHeader)
+        counts=self.get_data_counts(shape)
+
+        #PB38k20190607:
+        #       if rank<3: logger.debug("No Dim_3 -> it is a 2D image")
+        #       could be added here, but does not seem to be necessary
+        #       To force the data to rank==2, rank can be set to 2.
+
+        # self._shape is used in fabioimage
+        self._shape = shape
+
+        if self._dtype is None:
             if "DATATYPE" in capsHeader:
-                self._bytecode = DATA_TYPES[self.header[capsHeader['DATATYPE']]]
+                bytecode = DATA_TYPES[self.header[capsHeader['DATATYPE']]]
             else:
-                self._bytecode = numpy.uint16
+                bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
-        self.bpp = len(numpy.array(0, self._bytecode).tostring())
-        calcsize *= self.bpp
-        if (self.size is None):
-            self.size = calcsize
-        elif (self.size != calcsize):
-            if ("COMPRESSION" in capsHeader) and (self.header[capsHeader['COMPRESSION']].upper().startswith("NO")):
-                logger.info("Mismatch between the expected size %s and the calculated one %s" % (self.size, calcsize))
-                self.size = calcsize
+            self._dtype = numpy.dtype(bytecode)
 
-        for i, n in enumerate(self.dims):
-            setattr(self, "dim%i" % (i + 1), n)
+        if "COMPRESSION" in capsHeader:
+            self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
+            if self._data_compression == "NONE":
+                self._data_compression = None
+            elif self._data_compression.startswith("NO"):
+                self._data_compression = None
+        else:
+            self._data_compression = None
+
+        bpp = self._dtype.itemsize
+        calcsize = counts*bpp
+
+        # only if blobsize is None it can be replaced with calcsize
+        if self.blobsize is None:
+            if self._data_compression is None:
+                # In some edf files the blobsize is not written.
+                # For uncompressed data it can be set to the calculated size.
+                self.blobsize = calcsize
+
+        if self.size is None:
+            # preset with the calculated size, will be updated later
+            # with a better value when it becomes available, e.g.
+            # after decompression
+            self.size = calcsize
+
+        #+++++++++++++++++++++++++++++
+        # PB38k20190607: ATTENTION, weird!:
+        # little_endian^=LowByteFirst, big_endian^=HighByteFirst
+        # Why should _data_swap_needed depend on bpp?
+        # little_endian==True means starting with least significant byte,
+        # i.e. LowByteFirst
+        # LowByteFirst&&little_endian => no swap
+        # HighByteFirst&&(!little_endian) => no swap
+        # otherwise swap needed
+        # How to perform byte swapping on data with specific bpps
+        # should be internally decided by the byte swapping function.
+        # PB38k20190607: proposing the following change:
+        #
+        #byte_order = self.header[capsHeader['BYTEORDER']]
+        #if ('Low' in byte_order):
+        #    little_endian=True
+        #else:
+        #    little_endian=False
+        #
+        #if ( little_endian==numpy.little_endian ):
+        #    self._data_swap_needed = False
+        #else:
+        #    self._data_swap_needed = True
+        #+++++++++++++++++++++++++++++
 
         byte_order = self.header[capsHeader['BYTEORDER']]
         if ('Low' in byte_order and numpy.little_endian) or \
@@ -253,40 +369,60 @@ class Frame(object):
             self._data_swap_needed = False
         if ('High' in byte_order and numpy.little_endian) or \
            ('Low' in byte_order and not numpy.little_endian):
-            if self.bpp in [2, 4, 8]:
+            if bpp in [2, 4, 8]:
                 self._data_swap_needed = True
             else:
                 self._data_swap_needed = False
 
-        if "COMPRESSION" in capsHeader:
-            self._data_compression = self.header[capsHeader["COMPRESSION"]].upper()
-        else:
-            self._data_compression = None
-
-    def parseheader(self, block):
+    # renamed from _parseheader
+    def _create_header(self, inputheader, defaultheader=None):
         """
-        Parse the header in some EDF format from an already open file
+        Create self.header as an ordered dictionary and initialize it
+        with the inputheader. Copy all key-value pairs of defaultheader
+        to self.header that are missing in the inputheader and that are
+        not starting with EDF_, nor with the reserved keys "SIZE", "IMAGE",
+        "HEADERID".
 
-        :param str block: string representing the header block.
-        :return: size of the binary blob
+        :param OrderedDict inputheader: the input header
+        :param dict defaultheader: header values to include as default
+        :return: dict capsHeader
         """
         # reset values
         self.header = OrderedDict()
         capsHeader = {}
 
-        # Why would someone put null bytes in a header?
-        whitespace = string.whitespace + "\x00"
+        self.header = inputheader
 
-        for line in block.split(';'):
-            if '=' in line:
-                key, val = line.split('=', 1)
-                key = key.strip(whitespace)
-                self.header[key] = val.strip(whitespace)
-                capsHeader[key.upper()] = key
+        # Include all missing key value pairs from the default header
+        if defaultheader is not None:
+            for key in defaultheader:
+                # exceptions
+                # EDF_*, Size, Image, HeaderID
+                if ( key[0:4] != "EDF_" ) and (key.upper() not in [ "SIZE", "IMAGE", "HEADERID" ]):
+                    if (key not in self.header):
+                      self.header[key] = defaultheader[key]
 
-        self._extract_header_metadata(capsHeader)
+        for key in self.header:
+            capsHeader[key.upper()] = key
 
-        return self.size
+        return capsHeader
+
+    def _check_header_mandatory_keys(self, filename=''):
+        """Check that frame header contains all mandatory keys
+
+        :param str filename: Name of the EDF file
+        :rtype: bool
+        """
+        capsKeys = set([k.upper() for k in self.header.keys()])
+        missing = list(MINIMUM_KEYS - capsKeys)
+        if len(missing) > 0:
+            msg = "EDF file %s%s misses mandatory keys: %s "
+            if self.index is not None:
+                frame = " (frame %i)" % self.index
+            else:
+                frame = ""
+            logger.info(msg, filename, frame, " ".join(missing))
+        return len(missing) == 0
 
     def swap_needed(self):
         """
@@ -294,7 +430,7 @@ class Frame(object):
         """
         return self._data_swap_needed
 
-    def getData(self):
+    def _unpack(self):
         """
         Unpack a binary blob according to the specification given in the header
 
@@ -306,10 +442,9 @@ class Frame(object):
         elif self.file is None:
             data = self._data
         else:
-            if self._bytecode is None:
+            if self._dtype is None:
                 assert(False)
-            dims = self.dims[:]
-            dims.reverse()
+            shape = self.shape
             with self.file.lock:
                 if self.file.closed:
                     logger.error("file: %s from %s is closed. Cannot read data." % (self.file, self.file.filename))
@@ -317,17 +452,17 @@ class Frame(object):
                 else:
                     self.file.seek(self.start)
                     try:
-                        fileData = self.file.read(self.size)
+                        fileData = self.file.read(self.blobsize)
                     except Exception as e:
                         if isinstance(self.file, fabioutils.GzipFile):
                             if compression_module.is_incomplete_gz_block_exception(e):
-                                return numpy.zeros(dims)
+                                return numpy.zeros(shape)
                         raise e
 
             if self._data_compression is not None:
                 compression = self._data_compression
-                uncompressed_size = self.bpp
-                for i in dims:
+                uncompressed_size = self._dtype.itemsize
+                for i in shape:
                     uncompressed_size *= i
                 if "OFFSET" in compression:
                     try:
@@ -336,7 +471,7 @@ class Frame(object):
                         logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
                         myData = byte_offset.analyseCython(fileData, size=uncompressed_size)
-                        rawData = myData.astype(self._bytecode).tostring()
+                        rawData = myData.astype(self._dtype).tostring()
                         self.size = uncompressed_size
                 elif compression == "NONE":
                     rawData = fileData
@@ -352,7 +487,6 @@ class Frame(object):
                 else:
                     logger.warning("Unknown compression scheme %s" % compression)
                     rawData = fileData
-
             else:
                 rawData = fileData
 
@@ -360,34 +494,48 @@ class Frame(object):
             obtained = len(rawData)
             if expected > obtained:
                 logger.error("Data stream is incomplete: %s < expected %s bytes" % (obtained, expected))
-                rawData += "\x00".encode("ascii") * (expected - obtained)
-            elif expected < len(rawData):
-                logger.info("Data stream contains trailing junk : %s > expected %s bytes" % (obtained, expected))
+                rawData += b"\x00" * (expected - obtained)
+            elif expected < obtained:
+                logger.info("Data stream is padded : %s > required %s bytes" % (obtained, expected))
                 rawData = rawData[:expected]
-            data = numpy.fromstring(rawData, self._bytecode).reshape(tuple(dims))
+            # PB38k20190607: explicit way: count = get_data_counts(shape)
+            count = self.size // self._dtype.itemsize
+            data = numpy.frombuffer(rawData, self._dtype, count).copy().reshape(shape)
             if self.swap_needed():
                 data.byteswap(True)
             self._data = data
-            self._bytecode = data.dtype.type
+            self._dtype = None
         return data
 
+    @property
+    def data(self):
+        """
+        Returns the data after unpacking it if needed.
+
+        :return: dataset as numpy.ndarray
+        """
+        return self._unpack()
+
+    @data.setter
+    def data(self, value):
+        """Setter for data in edf frame"""
+        self._data = value
+
+    @deprecation.deprecated(reason="Prefer using 'frame.data'", deprecated_since="0.10.0beta")
+    def getData(self):
+        """
+        Returns the data after unpacking it if needed.
+
+        :return: dataset as numpy.ndarray
+        """
+        return self.data
+
+    @deprecation.deprecated(reason="Prefer using 'frame.data ='", deprecated_since="0.10.0beta")
     def setData(self, npa=None):
         """Setter for data in edf frame"""
         self._data = npa
 
-    data = property(getData, setData, "property: (edf)frame.data, uncompress the datablock when needed")
-
-    def getByteCode(self):
-        if self._bytecode is None:
-            self._bytecode = self.data.dtype.type
-        return self._bytecode
-
-    def setByteCode(self, _iVal):
-        self._bytecode = _iVal
-
-    bytecode = property(getByteCode, setByteCode)
-
-    def getEdfBlock(self, force_type=None, fit2dMode=False):
+    def get_edf_block(self, force_type=None, fit2dMode=False):
         """
         :param force_type: type of the dataset to be enforced like "float64" or "uint16"
         :type force_type: string or numpy.dtype
@@ -430,11 +578,11 @@ class Frame(object):
 
         # Then update static headers freshly deleted
         header_keys.insert(0, "Size")
-        header["Size"] = len(data.tostring())
+        header["Size"] = data.nbytes
         header_keys.insert(0, "HeaderID")
-        header["HeaderID"] = "EH:%06d:000000:000000" % (self.iFrame + fit2dMode)
+        header["HeaderID"] = "EH:%06d:000000:000000" % (self.index + fit2dMode)
         header_keys.insert(0, "Image")
-        header["Image"] = str(self.iFrame + fit2dMode)
+        header["Image"] = str(self.index + fit2dMode)
 
         dims = list(data.shape)
         nbdim = len(dims)
@@ -460,7 +608,7 @@ class Frame(object):
         header["EDF_BinarySize"] = data.nbytes
         header_keys.insert(0, "EDF_DataBlockID")
         if "EDF_DataBlockID" not in header:
-            header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.iFrame + fit2dMode)
+            header["EDF_DataBlockID"] = "%i.Image.Psd" % (self.index + fit2dMode)
         preciseSize = 4  # 2 before {\n 2 after }\n
         for key in header_keys:
             # Escape keys or values that are no ascii
@@ -493,8 +641,18 @@ class Frame(object):
         listHeader.append(" " * (headerSize - preciseSize) + "}\n")
         return ("".join(listHeader)).encode("ASCII") + data.tostring()
 
+    @deprecation.deprecated(reason="Prefer using 'getEdfBlock'", deprecated_since="0.10.0beta")
+    def getEdfBlock(self, force_type=None, fit2dMode=False):
+        return self.get_edf_block(force_type, fit2dMode)
 
-class EdfImage(FabioImage):
+    @property
+    @deprecation.deprecated(reason="Prefer using 'index'", deprecated_since="0.10.0beta")
+    def iFrame(self):
+        """Returns the frame index of this frame"""
+        return self._index
+
+
+class EdfImage(fabioimage.FabioImage):
     """ Read and try to write the ESRF edf data format """
 
     DESCRIPTION = "European Synchrotron Radiation Facility data format"
@@ -504,7 +662,7 @@ class EdfImage(FabioImage):
     RESERVED_HEADER_KEYS = ['HEADERID', 'IMAGE', 'BYTEORDER', 'DATATYPE',
                             'DIM_1', 'DIM_2', 'DIM_3', 'SIZE']
 
-    def __init__(self, data=None, header=None, frames=None):
+    def __init__(self, data=None, header=None, frames=None, generalframe=None):
         self.currentframe = 0
         self.filesize = None
         self._incomplete_file = False
@@ -531,19 +689,30 @@ class EdfImage(FabioImage):
             elif dim >= 3:
                 raise Exception("Data dimension too big. Only 1d or 2d arrays are supported.")
 
-        FabioImage.__init__(self, stored_data, header)
+        fabioimage.FabioImage.__init__(self, stored_data, header)
 
+        # frames
         if frames is None:
-            frame = Frame(data=self.data, header=self.header,
-                          number=self.currentframe)
+            frame = EdfFrame(data=self.data, header=self.header)
             self._frames = [frame]
         else:
             self._frames = frames
 
+        # generalframe
+        self.generalframe = generalframe
+
+    def _get_frame(self, num):
+        if self._frames is None:
+            return IndexError("No frames available")
+        frame = self._frames[num]
+        frame._set_container(self, num)
+        frame._set_file_container(self, num)
+        return frame
+
     @staticmethod
     def check_header(header=None):
         """
-        Empty for FabioImage but may be populated by others classes
+        Empty for FabioImage but may be populated by other classes
         """
         if not isinstance(header, dict):
             return OrderedDict()
@@ -553,16 +722,52 @@ class EdfImage(FabioImage):
         return new
 
     @staticmethod
-    def _readHeaderBlock(infile, frame_id):
+    def _read_header_block(infile, frame_id):
         """
-        Read in a header in some EDF format from an already open file
+        Reads the header block of the EDF frame frame_id as an
+        ASCII string and returns the found key-value pairs in
+        the OrderedDict header.
+
+        The header block string is split at each semicolon in
+        lines. These lines are split at the first equal sign
+        in key-value pairs and then added to the header in the
+        order of appearance.
+
+        The results are returned in the named tuple HeaderBlockType.
+
+        Attention, it must be absolutely prevented that header values
+        contain semicolons. In that case the value would be split
+        there instead at the end of the actual line. The result of
+        the operation on the rest of the file would be unpredictable.
+        Values must be cleaned from semicolons before writing
+        them actually to edf files.
+
+        edf-format specification keys starting with EDF_ are
+        expected at the beginning of the block. They must not
+        be preceded by standard header values, i.e. without EDF_.
+        EDF_ keys are case sensitive.
+
+        Only the keyword EDF_HeaderSize is directly read from the
+        file. All other edf-specification keys are read from the
+        header dictionary.
 
         :param fileid infile: file object open in read mode
-        :param int frame_id: Informative frame ID
-        :return: string (or None if no header was found.
+        :param int frame_id: frame ID number
+               This parameter is only used as debugging output. In all
+               cases the header is read from the current position of the
+               infile pointer, independent of the given frame_id.
+        :return namedtuple("HeaderBlockType", "header, header_size, binary_size, data_format_version")
+                in case of an error all return values are None
         :raises MalformedHeaderError: If the header can't be read
         """
-        MAX_HEADER_SIZE = BLOCKSIZE * 20
+
+        data_format_version=None
+
+        header_block=None
+        header_size=None
+        binary_size=None
+
+        MAX_HEADER_SIZE = BLOCKSIZE * MAX_BLOCKS
         try:
             block = infile.read(BLOCKSIZE)
         except Exception as e:
@@ -573,52 +778,111 @@ class EdfImage(FabioImage):
 
         if len(block) == 0:
             # end of file
-            return None
+            return HeaderBlockType(None,None,None,None)
 
         begin_block = block.find(b"{")
         if begin_block < 0:
             if len(block) < BLOCKSIZE and len(block.strip()) == 0:
                 # Empty block looks to be a valid end of file
-                return None
+                return HeaderBlockType(None,None,None,None)
             logger.debug("Malformed header: %s", block)
-            raise MalformedHeaderError("Header frame %i do not contains '{'" % frame_id)
+            raise MalformedHeaderError("Header frame %i does not contain '{'" % frame_id)
+
+        # PB38k20190730: removed unnecessary warning, also short headers can be correctly interpreted
+        # if len(block) < BLOCKSIZE:
+        #     logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
 
         start = block[0:begin_block]
         if start.strip() != b"":
             logger.debug("Malformed header: %s", start)
             raise MalformedHeaderError("Header frame %i contains non-whitespace before '{'" % frame_id)
 
-        if len(block) < BLOCKSIZE:
-            logger.warning("Under-short header frame %i: only %i bytes", frame_id, len(block))
-
         # skip the open block character
         begin_block = begin_block + 1
 
+        # before reading the header, read EDF_HeaderSize for checking
+        # whether it has a specific size
+        # EDF_HeaderSize could be used for reading the full header at once
+        # Update MAX_HEADER_SIZE with EDF_HeaderSize, if necessary for
+        # avoiding unnecessary warnings
         start = block.find(b"EDF_HeaderSize", begin_block)
         if start >= 0:
-            equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
-            end = block.index(b";", equal + 1)
-            try:
-                chunk = block[equal + 1:end].strip()
-                new_max_header_size = int(chunk)
-            except Exception:
-                logger.warning("Unable to read header size, got: %s", chunk)
-            else:
-                if new_max_header_size > MAX_HEADER_SIZE:
-                    logger.info("Redefining MAX_HEADER_SIZE to %s", new_max_header_size)
-                    MAX_HEADER_SIZE = new_max_header_size
+            # Check that EDF_HeaderSize starts inside this header
+            end_pattern = re.compile(b'}(\r{0,1})\n')
+            end = end_pattern.search(block)
+            if end is not None:
+                if start < end.start():
+                    equal = block.index(b"=", start + len(b"EDF_HeaderSize"))
+                    end = block.index(b";", equal + 1)
+                    try:
+                        chunk = block[equal + 1:end].strip()
+                        max_header_size = int(chunk)
+                    except Exception:
+                        logger.warning("Unable to read header size, got: %s", chunk)
+                    else:
+                        if max_header_size > MAX_HEADER_SIZE:
+                            logger.info("Redefining MAX_HEADER_SIZE to %s", max_header_size)
+                            MAX_HEADER_SIZE = max_header_size
+
+        # All other EDF_ keys should be read from the header dictionary. Then
+        # there is no danger of reading behind the end of the header.
 
         block_size = len(block)
         blocks = [block]
 
-        end_pattern = re.compile(b"}[\r\n]")
+        # The edf header MUST stop with "\n" after a closing
+        # curly brace { and never directly after "\r".
+        #
+        # A single \r is allowed as fill character, i.e. \r{0,1}:
+        #   end_pattern = re.compile(b'}(\r{0,1})\n')
+        #
+        # Different to the original expression b'}[\r\n]' this
+        # one matches only "}\r\n" and "}\n", but not "}\r" alone.
+        # start_blob, end_block and offset can be calculated
+        # directly after a succesful search.
+        #
+        # The maximum length of the header end pattern is 3 bytes,
+        # Additional checks are needed for locating header end
+        # patterns that are distributed across two blocks.
+
+        end_pattern = re.compile(b'}(\r{0,1})\n')
 
         while True:
             end = end_pattern.search(block)
             if end is not None:
                 end_block = block_size - len(block) + end.start()
+                start_blob = block_size - len(block) + end.end()
+                offset = start_blob - block_size
                 break
-            block = infile.read(BLOCKSIZE)
+
+            # PB38k20190607: Searching the end_pattern in the whole block
+            # intends that it could be located anywhere. However, for some files
+            # the end_pattern search fails, if the end_pattern is distributed
+            # across two blocks. The next tests check whether '}' or '}\r' is
+            # located at the end of the first block and the remaining pattern
+            # at the start of the next block.
+            nextblock = infile.read(BLOCKSIZE)
+
+            if block[-1:] == b'}':
+                if nextblock[:1] == b'\n':
+                    end_block = block_size
+                    start_blob = block_size + 1
+                    offset = start_blob - block_size - len(nextblock)
+                    break
+                elif nextblock[:2] == b'\r\n':
+                    end_block = block_size
+                    start_blob = block_size + 2
+                    offset = start_blob - block_size - len(nextblock)
+                    break
+            elif block[-2:] == b'}\r':
+                if nextblock[:1] == b'\n':
+                    end_block = block_size - 1
+                    start_blob = block_size + 1
+                    offset = start_blob - block_size - len(nextblock)
+                    break
+
+            block = nextblock
+
             block_size += len(block)
             blocks.append(block)
             if len(block) == 0 or block_size > MAX_HEADER_SIZE:
@@ -628,17 +892,52 @@ class EdfImage(FabioImage):
 
         block = b"".join(blocks)
 
-        # Now it is essential to go to the start of the binary part
-        if block[end_block: end_block + 3] == b"}\r\n":
-            offset = end_block + 3 - len(block)
-        elif block[end_block: end_block + 2] == b"}\n":
-            offset = end_block + 2 - len(block)
-        else:
-            logger.warning("Malformed end of header block")
-            offset = end_block + 2 - len(block)
-
+        # Go to the start of the binary blob
         infile.seek(offset, os.SEEK_CUR)
-        return block[begin_block:end_block].decode("ASCII")
+
+        header_block = block[begin_block:end_block].decode("ASCII")
+
+        # create header
+        header = OrderedDict()
+
+        # Why would someone put null bytes in a header?
+        whitespace = string.whitespace + "\x00"
+
+        # Start with the keys of the input header_block
+        for line in header_block.split(';'):
+            if '=' in line:
+                key, val = line.split('=', 1)
+                key = key.strip(whitespace)
+                header[key] = val.strip(whitespace)
+
+        # Read EDF_ keys
+        # if the header block starts with EDF_DataFormatVersion, it is a general block
+        if "EDF_DataFormatVersion" in header:
+            data_format_version = header["EDF_DataFormatVersion"]
+
+        if "EDF_BinarySize" in header:
+            try:
+                binary_size = int(header["EDF_BinarySize"])
+            except Exception:
+                logger.warning("Unable to read binary size, got: %s", header["EDF_BinarySize"])
+                binary_size = None
+
+        # Set defaults
+        if header_size is None:
+            # use the actually found value instead of EDF_HeaderSize
+            header_size = block_size
+        if binary_size is None:
+            # only the first header in a file can be a general block!
+            if data_format_version is not None:
+                # this is a general block, the default of binary_size is zero
+                binary_size = 0
+            else:
+                # it must be an EDF0 or EDFU file without EDF_ header keys
+                # use _extract_header_metadata and search the keyword Size
+                pass
+
+        # PB38k20190730: return the header, header_size, binary_size, data_format_version as a named tuple
+        return HeaderBlockType(header,header_size,binary_size,data_format_version)
 
     @property
     def incomplete_file(self):
@@ -655,10 +954,11 @@ class EdfImage(FabioImage):
         :type infile: file object open in read mode
         """
         self._frames = []
+        self.generalframe = None
 
         while True:
             try:
-                block = self._readHeaderBlock(infile, len(self._frames))
+                value = self._read_header_block(infile, len(self._frames))
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
@@ -666,22 +966,66 @@ class EdfImage(FabioImage):
                 self._incomplete_file = True
                 break
 
-            if block is None:
+            if value.header is None:
                 # end of file
                 if len(self._frames) == 0:
                     raise IOError("Empty file")
                 break
 
-            frame = Frame(number=self.nframes)
-            size = frame.parseheader(block)
+            if self.generalframe is None:
+                if value.data_format_version is None:
+                    is_general_header = False
+                else:
+                    # There can be only a single general header
+                    is_general_header = True
+            else:
+                is_general_header = False
+
+            frame = EdfFrame()
+            # The file descriptor is used in _extract_header_metadata and must be defined before using it
             frame.file = infile
+
+            # PB38k20190607: any need for frame._set_container(self,len(self._frames))?
+            frame._index=len(self._frames)
+
+            defaultheader=None
+            if not is_general_header:
+                # This is not a general block, include a general header
+                if self.generalframe is not None:
+                    defaultheader=self.generalframe._header
+
+            capsHeader = frame._create_header(value.header,defaultheader)
+
+            # get frame.blobsize
+            if value.binary_size is None:
+                if "SIZE" in capsHeader:
+                    try:
+                        frame.blobsize = nice_int(frame.header[capsHeader["SIZE"]])
+                    except ValueError:
+                        logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], frame.header[capsHeader["SIZE"]]))
+            else:
+                frame.blobsize = value.binary_size
+
             frame.start = infile.tell()
-            frame.size = size
-            self._frames += [frame]
+
+            if not is_general_header:
+                # This is not a general block
+                frame._extract_header_metadata(capsHeader)
+
+            if is_general_header:
+                # This is a general block
+                self.generalframe = frame
+            else:
+                # Add a standard frame
+                self._frames += [frame]
+
+            if not is_general_header:
+                # Check the full header information, if it is a standard frame
+                frame._check_header_mandatory_keys(filename=self.filename)
 
             try:
                 # skip the data block
-                infile.seek(size - 1, os.SEEK_CUR)
+                infile.seek(frame.blobsize - 1, os.SEEK_CUR)
                 data = infile.read(1)
                 if len(data) == 0:
                     self._incomplete_file = True
@@ -695,16 +1039,13 @@ class EdfImage(FabioImage):
                         frame.incomplete_data = True
                         break
                 logger.warning("infile is %s" % infile)
-                logger.warning("Position is %s" % infile.tell())
-                logger.warning("size is %s" % size)
+                logger.warning("position is %s" % infile.tell())
+                logger.warning("blobsize is %s" % frame.blobsize)
                 logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
                 raise Exception(error)
 
-        for i, frame in enumerate(self._frames):
-            capsKeys = set([k.upper() for k in frame.header.keys()])
-            missing = list(MINIMUM_KEYS - capsKeys)
-            if len(missing) > 0:
-                logger.info("EDF file %s frame %i misses mandatory keys: %s ", self.filename, i, " ".join(missing))
+        # PB38k20190607: _check_header_mandatory_keys is already
+        # done for each frame in the above loop
         self.currentframe = 0
 
     def read(self, fname, frame=None):
@@ -725,8 +1066,6 @@ class EdfImage(FabioImage):
             else:
                 logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
             self.resetvals()
-            # ensure the PIL image is reset
-            self.pilimage = None
         except Exception as e:
             infile.close()
             raise e
@@ -753,11 +1092,11 @@ class EdfImage(FabioImage):
         newImage = None
         if self.nframes == 1:
             logger.debug("Single frame EDF; having FabioImage default behavior: %s" % num)
-            newImage = FabioImage.getframe(self, num)
+            newImage = fabioimage.FabioImage.getframe(self, num)
             newImage._file = self._file
         elif num < self.nframes:
             logger.debug("Multi frame EDF; having EdfImage specific behavior: %s/%s" % (num, self.nframes))
-            newImage = EdfImage(frames=self._frames)
+            newImage = self.__class__(frames=self._frames)
             newImage.currentframe = num
             newImage.filename = self.filename
             newImage._file = self._file
@@ -770,7 +1109,7 @@ class EdfImage(FabioImage):
         """ returns the previous file in the series as a FabioImage """
         newImage = None
         if self.nframes == 1:
-            newImage = FabioImage.previous(self)
+            newImage = fabioimage.FabioImage.previous(self)
         else:
             newFrameId = self.currentframe - 1
             newImage = self.getframe(newFrameId)
@@ -783,7 +1122,7 @@ class EdfImage(FabioImage):
         """
         newImage = None
         if self.nframes == 1:
-            newImage = FabioImage.next(self)
+            newImage = fabioimage.FabioImage.next(self)
         else:
             newFrameId = self.currentframe + 1
             newImage = self.getframe(newFrameId)
@@ -803,23 +1142,27 @@ class EdfImage(FabioImage):
             # this is thrown away
         with self._open(fname, mode="wb") as outfile:
             for i, frame in enumerate(self._frames):
-                frame.iFrame = i
-                outfile.write(frame.getEdfBlock(force_type=force_type, fit2dMode=fit2dMode))
+                frame._set_container(self, i)
+                outfile.write(frame.get_edf_block(force_type=force_type, fit2dMode=fit2dMode))
 
-    def appendFrame(self, frame=None, data=None, header=None):
+    def append_frame(self, frame=None, data=None, header=None):
         """
         Method used add a frame to an EDF file
         :param frame: frame to append to edf image
         :type frame: instance of Frame
         """
-        if isinstance(frame, Frame):
+        if isinstance(frame, EdfFrame):
             self._frames.append(frame)
-        elif ("header" in dir(frame)) and ("data" in dir(frame)):
-            self._frames.append(Frame(frame.data, frame.header))
+        elif hasattr(frame, "header") and hasattr(frame, "data"):
+            self._frames.append(EdfFrame(frame.data, frame.header))
         else:
-            self._frames.append(Frame(data, header))
+            self._frames.append(EdfFrame(data, header))
 
-    def deleteFrame(self, frameNb=None):
+    @deprecation.deprecated(reason="Prefer using 'append_frame'", deprecated_since="0.10.0beta")
+    def appendFrame(self, frame=None, data=None, header=None):
+        self.append_frame(frame, data, header)
+
+    def delete_frame(self, frameNb=None):
         """
         Method used to remove a frame from an EDF image. by default the last one is removed.
         :param int frameNb: frame number to remove, by  default the last.
@@ -829,7 +1172,11 @@ class EdfImage(FabioImage):
         else:
             self._frames.pop(frameNb)
 
-    def fastReadData(self, filename=None):
+    @deprecation.deprecated(reason="Prefer using 'delete_frame'", deprecated_since="0.10.0beta")
+    def deleteFrame(self, frameNb=None):
+        self.delete_frame(frameNb)
+
+    def fast_read_data(self, filename=None):
         """
         This is a special method that will read and return the data from another file ...
         The aim is performances, ... but only supports uncompressed files.
@@ -837,14 +1184,14 @@ class EdfImage(FabioImage):
         :return: data from another file using positions from current EdfImage
         """
         if (filename is None) or not os.path.isfile(filename):
-            raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
+            raise RuntimeError("EdfImage.fast_read_data is only valid with another file: %s does not exist" % (filename))
         data = None
         frame = self._frames[self.currentframe]
         with open(filename, "rb")as f:
             f.seek(frame.start)
-            raw = f.read(frame.size)
+            raw = f.read(frame.blobsize)
         try:
-            data = numpy.fromstring(raw, dtype=self.bytecode)
+            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
             data.shape = self.data.shape
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
@@ -852,7 +1199,11 @@ class EdfImage(FabioImage):
             data.byteswap(True)
         return data
 
-    def fastReadROI(self, filename, coords=None):
+    @deprecation.deprecated(reason="Prefer using 'fastReadData'", deprecated_since="0.10.0beta")
+    def fastReadData(self, filename):
+        return self.fast_read_data(filename)
+
+    def fast_read_roi(self, filename, coords=None):
         """
         Method reading Region of Interest of another file  based on metadata available in current EdfImage.
         The aim is performances, ... but only supports uncompressed files.
@@ -861,7 +1212,7 @@ class EdfImage(FabioImage):
         :rtype: numpy 2darray
         """
         if (filename is None) or not os.path.isfile(filename):
-            raise RuntimeError("EdfImage.fastReadData is only valid with another file: %s does not exist" % (filename))
+            raise RuntimeError("EdfImage.fast_read_roi is only valid with another file: %s does not exist" % (filename))
         data = None
         frame = self._frames[self.currentframe]
 
@@ -884,7 +1235,7 @@ class EdfImage(FabioImage):
             f.seek(start)
             raw = f.read(size)
         try:
-            data = numpy.fromstring(raw, dtype=self.bytecode)
+            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
             data.shape = -1, d1
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
@@ -892,153 +1243,317 @@ class EdfImage(FabioImage):
             data.byteswap(True)
         return data[slice2]
 
+    @deprecation.deprecated(reason="Prefer using 'fast_read_roi'", deprecated_since="0.10.0beta")
+    def fastReadROI(self, filename, coords=None):
+        return self.fast_read_roi(filename, coords)
+
     ############################################################################
     # Properties definition for header, data, header_keys
     ############################################################################
 
+    def _get_any_frame(self):
+        """Returns the current if available, else create and return a new empty
+        frame."""
+        try:
+            return self._frames[self.currentframe]
+        except AttributeError:
+            frame = EdfFrame()
+            self._frames = [frame]
+            return frame
+        except IndexError:
+            if self.currentframe < len(self._frames):
+                frame = EdfFrame()
+                self._frames.append(frame)
+                return frame
+            raise
+
+    @property
+    def nframes(self):
+        """Returns the number of frames contained in this file
+
+        :rtype: int
+        """
+        return len(self._frames)
+
+    @deprecation.deprecated(reason="Prefer using 'img.nframes'", deprecated_since="0.10.0beta")
     def getNbFrames(self):
         """
         Getter for number of frames
         """
         return len(self._frames)
 
+    @deprecation.deprecated(reason="This call to 'setNbFrames' does nothing and should be removed", deprecated_since="0.10.0beta")
     def setNbFrames(self, val):
         """
         Setter for number of frames ... should do nothing. Here just to avoid bugs
         """
         if val != len(self._frames):
-            logger.warning("trying to set the number of frames ")
-    nframes = property(getNbFrames, setNbFrames, "property: number of frames in EDF file")
+            logger.warning("Setting the number of frames is not allowed.")
 
+    @property
+    def header(self):
+        frame = self._get_any_frame()
+        return frame.header
+
+    @header.setter
+    def header(self, value):
+        frame = self._get_any_frame()
+        frame.header = value
+
+    @header.deleter
+    def header(self):
+        frame = self._get_any_frame()
+        frame.header = None
+
+    @deprecation.deprecated(reason="Prefer using 'img.header'", deprecated_since="0.10.0beta")
     def getHeader(self):
         """
         Getter for the headers. used by the property header,
         """
         return self._frames[self.currentframe].header
 
+    @deprecation.deprecated(reason="Prefer using 'img.header ='", deprecated_since="0.10.0beta")
     def setHeader(self, _dictHeader):
         """
         Enforces the propagation of the header to the list of frames
         """
-        try:
-            self._frames[self.currentframe].header = _dictHeader
-        except AttributeError:
-            self._frames = [Frame(header=_dictHeader)]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(Frame(header=_dictHeader))
+        frame = self._get_any_frame()
+        frame.header = _dictHeader
 
+    @deprecation.deprecated(reason="Prefer using 'del img.header'", deprecated_since="0.10.0beta")
     def delHeader(self):
         """
         Deleter for edf header
         """
         self._frames[self.currentframe].header = {}
 
-    header = property(getHeader, setHeader, delHeader, "property: header of EDF file")
+    @property
+    def shape(self):
+        frame = self._get_any_frame()
+        return frame.shape
 
+    @property
+    def dtype(self):
+        frame = self._get_any_frame()
+        return frame.dtype
+
+    @property
+    def data(self):
+        frame = self._get_any_frame()
+        return frame.data
+
+    @data.setter
+    def data(self, value):
+        frame = self._get_any_frame()
+        frame.data = value
+
+    @data.deleter
+    def data(self):
+        frame = self._get_any_frame()
+        frame.data = None
+
+    @deprecation.deprecated(reason="Prefer using 'img.data'", deprecated_since="0.10.0beta")
     def getData(self):
         """
         getter for edf Data
         :return: data for current frame
         :rtype: numpy.ndarray
         """
-        npaData = None
-        try:
-            npaData = self._frames[self.currentframe].data
-        except AttributeError:
-            self._frames = [Frame()]
-            npaData = self._frames[self.currentframe].data
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
-                npaData = self._frames[self.currentframe].data
-        return npaData
+        return self.data
 
-    def setData(self, _data):
+    @deprecation.deprecated(reason="Prefer using 'img.data ='", deprecated_since="0.10.0beta")
+    def setData(self, _data=None):
         """
         Enforces the propagation of the data to the list of frames
-        :param _data: numpy array representing data
+        :param data: numpy array representing data
         """
-        try:
-            self._frames[self.currentframe].data = _data
-        except AttributeError:
-            self._frames = [Frame(data=_data)]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(Frame(data=_data))
+        frame = self._get_any_frame()
+        frame.data = _data
 
+    @deprecation.deprecated(reason="Prefer using 'del img.data'", deprecated_since="0.10.0beta")
     def delData(self):
         """
         deleter for edf Data
         """
         self._frames[self.currentframe].data = None
 
-    data = property(getData, setData, delData, "property: data of EDF file")
-
+    @deprecation.deprecated(reason="Prefer using 'dim1'", deprecated_since="0.10.0beta")
     def getDim1(self):
+        return self.dim1
+
+    @deprecation.deprecated(reason="Setting dim1 is not anymore allowed. If the data is not set use shape instead.", deprecated_since="0.10.0beta")
+    def setDim1(self, _iVal=None):
+        frame = self._get_any_frame()
+        frame.dim1 = _iVal
+
+    @property
+    def dim1(self):
         return self._frames[self.currentframe].dim1
 
-    def setDim1(self, _iVal):
-        try:
-            self._frames[self.currentframe].dim1 = _iVal
-        except AttributeError:
-            self._frames = [Frame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
-                self._frames[self.currentframe].dim1 = _iVal
-    dim1 = property(getDim1, setDim1)
-
+    @deprecation.deprecated(reason="Prefer using 'dim2'", deprecated_since="0.10.0beta")
     def getDim2(self):
         return self._frames[self.currentframe].dim2
 
-    def setDim2(self, _iVal):
-        try:
-            self._frames[self.currentframe].dim2 = _iVal
-        except AttributeError:
-            self._frames = [Frame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
-                self._frames[self.currentframe].dim2 = _iVal
-    dim2 = property(getDim2, setDim2)
+    @deprecation.deprecated(reason="Setting dim2 is not anymore allowed. If the data is not set use shape instead.", deprecated_since="0.10.0beta")
+    def setDim2(self, _iVal=None):
+        frame = self._get_any_frame()
+        frame.dim2 = _iVal
 
+    @property
+    def dim2(self):
+        return self._frames[self.currentframe].dim2
+
+    @deprecation.deprecated(reason="Prefer using 'dims'", deprecated_since="0.10.0beta")
     def getDims(self):
         return self._frames[self.currentframe].dims
-    dims = property(getDims)
 
+    @property
+    def dims(self):
+        return self._frames[self.currentframe].dims
+
+    @deprecation.deprecated(reason="Prefer using 'bytecode'", deprecated_since="0.10.0beta")
     def getByteCode(self):
+        return self.bytecode
+
+    @deprecation.deprecated(reason="Setting bytecode is not anymore allowed. If the data is not set use dtype instead.", deprecated_since="0.10.0beta")
+    def setByteCode(self, iVal=None, _iVal=None):
+        raise NotImplementedError("No more implemented")
+
+    @property
+    def bytecode(self):
         return self._frames[self.currentframe].bytecode
 
-    def setByteCode(self, _iVal):
-        try:
-            self._frames[self.currentframe].bytecode = _iVal
-        except AttributeError:
-            self._frames = [Frame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
-                self._frames[self.currentframe].bytecode = _iVal
-    bytecode = property(getByteCode, setByteCode)
-
+    @deprecation.deprecated(reason="Prefer using 'bpp'", deprecated_since="0.10.0beta")
     def getBpp(self):
         return self._frames[self.currentframe].bpp
 
-    def setBpp(self, _iVal):
-        try:
-            self._frames[self.currentframe].bpp = _iVal
-        except AttributeError:
-            self._frames = [Frame()]
-        except IndexError:
-            if self.currentframe < len(self._frames):
-                self._frames.append(Frame())
-                self._frames[self.currentframe].bpp = _iVal
-    bpp = property(getBpp, setBpp)
+    @deprecation.deprecated(reason="Setting bpp is not anymore allowed. If the data is not set use dtype instead.", deprecated_since="0.10.0beta")
+    def setBpp(self, iVal=None, _iVal=None):
+        raise NotImplementedError("No more implemented")
 
+    @property
+    def bpp(self):
+        return self._frames[self.currentframe].bpp
+
+    @deprecation.deprecated(reason="Prefer using 'incomplete_data'", deprecated_since="0.10.0beta")
     def isIncompleteData(self):
+        return self.incomplete_data
+
+    @property
+    def incomplete_data(self):
         return self._frames[self.currentframe].incomplete_data
 
-    incomplete_data = property(isIncompleteData)
+    @classmethod
+    def lazy_iterator(cls, filename):
+        """Iterates over the frames of an EDF multi-frame file.
 
+        This function optimizes sequential access to multi-frame EDF files
+        by avoiding to read the whole file at first in order to get the number
+        of frames and build an index of frames for faster random access.
+
+        Usage:
+
+        >>> from fabio.edfimage import EdfImage
+
+        >>> for frame in EdfImage.lazy_iterator("multiframe.edf"):
+        ...     print('Header:', frame.header)
+        ...     print('Data:', frame.data)
+
+        :param str filename: File name of the EDF file to read
+        :yield: frames one after the other
+        """
+        edf = cls()
+        infile = edf._open(filename, 'rb')
+
+        index = 0
+
+        while True:
+            try:
+                value = cls._read_header_block(infile, index)
+            except MalformedHeaderError:
+                logger.debug("Backtrace", exc_info=True)
+                if index == 0:
+                    infile.close()
+                    raise IOError("Invalid first header")
+                break
+
+            if value.header is None:
+                # end of file
+                if index == 0:
+                    infile.close()
+                    raise IOError("Empty file")
+                break
+
+            if value.data_format_version is None:
+                is_general_header = False
+            else:
+                is_general_header = True
+
+            frame = EdfFrame()
+            frame.file = infile
+            frame._set_container(edf, index)
+            frame._set_file_container(edf, index)
+
+            defaultheader=None
+            if not is_general_header:
+                # This is a standard block, use the general header as default
+                if edf.generalframe is not None:
+                    defaultheader=edf.generalframe._header
+
+            capsHeader = frame._create_header(value.header,defaultheader)
+
+            if value.binary_size is None:
+                # Try again computing blobsize
+                if "SIZE" in capsHeader:
+                    try:
+                        blobsize = nice_int(frame.header[capsHeader["SIZE"]])
+                    except ValueError:
+                        logger.warning("Unable to convert to integer : %s %s " % (capsHeader["SIZE"], frame.header[capsHeader["SIZE"]]))
+            else:
+                blobsize = value.binary_size
+
+            if not is_general_header:
+                # This is a standard block, get the metadata
+                frame._extract_header_metadata(capsHeader)
+
+            frame.start = infile.tell()
+            frame.blobsize = blobsize
+
+            if not is_general_header:
+                # This is a standard block, get the binary data
+                try:
+                    # read data
+                    frame._unpack()
+                except Exception as error:
+                    if isinstance(infile, fabioutils.GzipFile):
+                        if compression_module.is_incomplete_gz_block_exception(error):
+                            frame.incomplete_data = True
+                            break
+                    logger.warning("infile is %s" % infile)
+                    logger.warning("position is %s" % infile.tell())
+                    logger.warning("blobsize is %s" % blobsize)
+                    logger.error("It seams this error occurs under windows when reading a (large-) file over network: %s ", error)
+                    infile.close()
+                    raise Exception(error)
+
+                frame._check_header_mandatory_keys(filename=filename)
+
+                # iterate over all frames
+                yield frame
+                index += 1
+
+            else:
+                # There can be only a single general block
+                edf.generalframe = frame
+                if frame.blobsize > 0:
+                    # Skip the blob
+                    blobend = frame.start+frame.blobsize
+                    frame.file.seek(blobend)
+
+        infile.close()
+
+
+Frame = EdfFrame
+"""Compatibility code with fabio <= 0.8"""
 
 edfimage = EdfImage

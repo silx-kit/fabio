@@ -24,13 +24,14 @@
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "31/07/2017"
+__date__ = "07/03/2019"
 
 from numpy.distutils.misc_util import Configuration
 
 
 def configuration(parent_package='', top_path=None):
     config = Configuration('test', parent_package, top_path)
+    config.add_subpackage("codecs")
     return config
 
 

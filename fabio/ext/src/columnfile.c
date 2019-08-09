@@ -27,9 +27,10 @@ int compression_yes(char *fname){
 
 void cf_free( cf_data *p){
   int i;
+  unsigned int ui;
   if (p!=NULL){
-    for (i=0;i<p->nralloc;i++){
-      if (p->data[i]!=NULL) free(p->data[i]);
+    for (ui=0;ui<p->nralloc;ui++){
+      if (p->data[ui]!=NULL) free(p->data[ui]);
     }
     if( p->data!=NULL){free(p->data);}
     for (i=0;i<p->ncols;i++){
@@ -47,7 +48,7 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
     gzFile gzfp=gzopen(fname,"wbh");
     if (gzfp==NULL) return -1;
     status=-1;
-    if (FLAGS && CF_BIN){
+    if (FLAGS & CF_BIN){
       status=cf_write_bin_gz(gzfp,cf_handle);
     }else{
       status=cf_write_ascii_gz(gzfp,cf_handle);
@@ -61,7 +62,7 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
     FILE *fp=fopen(fname,"wb");
     if (fp==NULL) return -1;
     status=-1;
-    if (FLAGS && CF_BIN){
+    if (FLAGS & CF_BIN){
       /*status=cf_write_bin(fp,cf_handle);
         */
     }else{

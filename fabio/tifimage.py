@@ -39,14 +39,12 @@ Authors:
 * Jérôme Kieffer:
   European Synchrotron Radiation Facility;
   Grenoble (France)
-
-License: MIT
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "02/03/2018"
+__date__ = "13/06/2019"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -56,29 +54,33 @@ import logging
 logger = logging.getLogger(__name__)
 
 try:
-    from PIL import Image
+    import PIL
 except ImportError:
-    Image = None
+    PIL = None
+
 import numpy
 from .utils import pilutils
-from .fabioimage import FabioImage
+from . import fabioimage
 from . import TiffIO
 
 
-class TiffFrame(object):
+_USE_TIFFIO = True
+"""Uses TiffIO library if available"""
+
+_USE_PIL = True
+"""Uses PIL library if available"""
+
+
+class TiffFrame(fabioimage.FabioFrame):
     """Frame container for TIFF format"""
 
     def __init__(self, data, tiff_header):
+        super(TiffFrame, self).__init__(data, tiff_header)
+        # also expose the tiff header as 'tiff header' attribute
         self.tiff_header = tiff_header
-        self.data = data
-
-    @property
-    def header(self):
-        """Default header exposed by fabio"""
-        return self.tiff_header
 
 
-class TifImage(FabioImage):
+class TifImage(fabioimage.FabioImage):
     """
     Images in TIF format
     Wraps TiffIO
@@ -92,7 +94,7 @@ class TifImage(FabioImage):
     def __init__(self, *args, **kwds):
         """ Tifimage constructor adds an nbits member attribute """
         self.nbits = None
-        FabioImage.__init__(self, *args, **kwds)
+        fabioimage.FabioImage.__init__(self, *args, **kwds)
         self._tiffio = None
         self.lib = None
 
@@ -101,8 +103,10 @@ class TifImage(FabioImage):
         Try to read Tiff images header...
         """
         header = numpy.frombuffer(infile.read(64), numpy.uint16)
-        self.dim1 = int(header[9])
-        self.dim2 = int(header[15])
+        # TODO: this values dim1/dim2 looks to be wrong
+        dim1 = int(header[9])
+        dim2 = int(header[15])
+        self._shape = dim2, dim1
         # nbits is not a FabioImage attribute...
         self.nbits = int(header[21])  # number of bits
 
@@ -123,58 +127,67 @@ class TifImage(FabioImage):
 
         return header
 
+    def _read_with_tiffio(self, infile):
+        tiffIO = TiffIO.TiffIO(infile)
+        self._nframes = tiffIO.getNumberOfImages()
+        if self.nframes > 0:
+            # No support for now of multi-frame tiff images
+            header = tiffIO.getInfo(0)
+            data = tiffIO.getData(0)
+            frame = self._create_frame(data, header)
+            self.header = frame.header
+            self.data = frame.data
+        self._tiffio = tiffIO
+        if self.data.ndim == 2:
+            self._shape = None
+        elif self.data.ndim == 3:
+            logger.warning("Third dimension is the color")
+            self._shape = None
+        else:
+            logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
+        self.lib = "TiffIO"
+
+    def _read_with_pil(self, infile):
+        pilimage = PIL.Image.open(infile)
+        header = self._read_header_from_pil(pilimage)
+        data = pilutils.get_numpy_array(pilimage)
+        frame = self._create_frame(data, header)
+        self.header = frame.header
+        self.data = frame.data
+        self._shape = None
+        self.lib = "PIL"
+
     def read(self, fname, frame=None):
         """
         Wrapper for TiffIO.
         """
         infile = self._open(fname, "rb")
         self._readheader(infile)
-        infile.seek(0)
         self.lib = None
-        try:
-            tiffIO = TiffIO.TiffIO(infile)
-            self.nframes = tiffIO.getNumberOfImages()
-            if tiffIO.getNumberOfImages() > 0:
-                # No support for now of multi-frame tiff images
-                header = tiffIO.getInfo(0)
-                data = tiffIO.getData(0)
-                frame = self._create_frame(data, header)
-                self.header = frame.header
-                self.data = frame.data
-            self._tiffio = tiffIO
-        except Exception as error:
-            logger.warning("Unable to read %s with TiffIO due to %s, trying PIL" % (fname, error))
-            logger.debug("Backtrace", exc_info=True)
-        else:
-            if self.data.ndim == 2:
-                self.dim2, self.dim1 = self.data.shape
-            elif self.data.ndim == 3:
-                self.dim2, self.dim1, _ = self.data.shape
-                logger.warning("Third dimension is the color")
-            else:
-                logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
-            self.lib = "TiffIO"
+        infile.seek(0)
 
-        if (self.lib is None):
-            if Image:
-                try:
-                    infile.seek(0)
-                    self.pilimage = Image.open(infile)
-                except Exception:
-                    logger.error("Error in opening %s  with PIL" % fname)
-                    self.lib = None
-                    infile.seek(0)
-                else:
-                    self.lib = "PIL"
-                    header = self._read_header_from_pil(self.pilimage)
-                    data = pilutils.get_numpy_array(self.pilimage)
-                    frame = self._create_frame(data, header)
-                    self.header = frame.header
-                    self.data = frame.data
-            else:
-                logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
-                self.lib = None
+        if _USE_TIFFIO:
+            try:
+                self._read_with_tiffio(infile)
+            except Exception as error:
+                logger.warning("Unable to read %s with TiffIO due to %s, trying PIL", fname, error)
+                logger.debug("Backtrace", exc_info=True)
                 infile.seek(0)
+
+        if self.lib is None:
+            if _USE_PIL and PIL is not None:
+                try:
+                    self._read_with_pil(infile)
+                except Exception as error:
+                    logger.error("Error in opening %s with PIL: %s", fname, error)
+                    logger.debug("Backtrace", exc_info=True)
+                    if infile.closed:
+                        infile = self._open(fname, "rb")
+                    else:
+                        infile.close()
+
+        if self.lib is None:
+            logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
 
         self.resetvals()
         return self
@@ -196,6 +209,15 @@ class TifImage(FabioImage):
             self._tiffio.close()
             self._tiffio = None
         super(TifImage, self).close()
+
+    def _get_frame(self, num):
+        """Inherited function returning a FabioFrame"""
+        if 0 <= num < self.nframes:
+            frame = self.getframe(num)
+            frame._set_container(self, num)
+            frame._set_file_container(self, num)
+            return frame
+        raise IndexError("getframe out of range")
 
     def getframe(self, num):
         """Returns the frame `num`.

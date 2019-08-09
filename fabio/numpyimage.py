@@ -25,22 +25,22 @@
 #
 
 """Generic numpy file reader for FabIO"""
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "22/01/2018"
+__date__ = "16/11/2018"
 
 import logging
 logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage
+from . import fabioimage
 
 
-class NumpyImage(FabioImage):
+class NumpyImage(fabioimage.FabioImage):
     """
     FabIO image class for Images for numpy array dumps
 
@@ -112,7 +112,7 @@ class NumpyImage(FabioImage):
         """
         Set up initial values
         """
-        FabioImage.__init__(self, data, header)
+        fabioimage.FabioImage.__init__(self, data, header)
         self.dataset = self.data
         self.slice_dataset()
         self.filename = "Numpy_array_%x" % id(self.dataset)
@@ -129,7 +129,7 @@ class NumpyImage(FabioImage):
         if self.dataset.ndim == 2:
             self.data = self.dataset
         elif self.dataset.ndim == 3:
-            self.nframes = self.dataset.shape[0]
+            self._nframes = self.dataset.shape[0]
             if frame is None:
                 frame = 0
             if frame < self.nframes:
@@ -158,7 +158,7 @@ class NumpyImage(FabioImage):
         self._readheader(infile)
 
         # read the image data
-        self.dataset = numpy.load(infile)
+        self.dataset = numpy.load(infile, allow_pickle=True)
         self.slice_dataset(frame)
         return self
 
@@ -170,21 +170,36 @@ class NumpyImage(FabioImage):
         """
         numpy.save(fname, self.dataset)
 
-    def getframe(self, num):
-        """ returns the frame numbered 'num' in the stack if applicable"""
+    def _get_frame(self, num):
+        """Inherited function returning a FabioFrame"""
         if self.nframes > 1:
-            new_img = None
             if (num >= 0) and num < self.nframes:
                 data = self.dataset[num]
-                new_img = self.__class__(data=data, header=self.header)
-                new_img.dataset = self.dataset
-                new_img.nframes = self.nframes
-                new_img.currentframe = num
+                header = self.header.copy()
+                frame = fabioimage.FabioFrame(data=data, header=header)
+                frame._set_container(self, num)
+                frame._set_file_container(self, num)
             else:
                 raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
         else:
-            new_img = FabioImage.getframe(self, num)
-        return new_img
+            frame = fabioimage.FabioImage._get_frame(self, num)
+        return frame
+
+    def getframe(self, num):
+        """ returns the frame numbered 'num' in the stack if applicable"""
+        if self.nframes > 1:
+            frame = None
+            if (num >= 0) and num < self.nframes:
+                data = self.dataset[num]
+                frame = self.__class__(data=data, header=self.header)
+                frame.dataset = self.dataset
+                frame._nframes = self.nframes
+                frame.currentframe = num
+            else:
+                raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+        else:
+            frame = fabioimage.FabioImage.getframe(self, num)
+        return frame
 
     def previous(self):
         """ returns the previous frame in the series as a fabioimage """

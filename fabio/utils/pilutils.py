@@ -30,7 +30,7 @@
 """
 
 __authors__ = ["Jérôme Kieffer", "Jon Wright"]
-__date__ = "27/07/2017"
+__date__ = "25/06/2018"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -49,11 +49,11 @@ except ImportError:
 PIL_TO_NUMPY = {
     "I;8": numpy.uint8,
     "I;16": numpy.uint16,
-    "I;16B": numpy.uint16,    # big endian
-    "I;16L": numpy.uint16,    # little endian
+    "I;16B": numpy.uint16,  # big endian
+    "I;16L": numpy.uint16,  # little endian
     "I;32": numpy.uint32,
-    "I;32L": numpy.uint32,    # little endian
-    "I;32B": numpy.uint32,    # big endian
+    "I;32L": numpy.uint32,  # little endian
+    "I;32B": numpy.uint32,  # big endian
     "F;32F": numpy.float32,
     "F;32BF": numpy.float32,  # big endian
     "F;64F": numpy.float64,
@@ -62,6 +62,7 @@ PIL_TO_NUMPY = {
     "1": numpy.bool,
     "I": numpy.int32,
     "L": numpy.uint8,
+    "P": numpy.uint8,
 }
 
 
@@ -89,13 +90,18 @@ def get_numpy_array(pil_image):
         dtype = numpy.float32
         pil_image = pil_image.convert("F")
     try:
-        data = numpy.asarray(pil_image, dtype)
-    except:
-        # PIL does not support buffer interface (yet)
-        if hasattr(pil_image, "tobytes"):
-            data = numpy.fromstring(pil_image.tobytes(), dtype=dtype)
+        if pil_image.mode == 'P':
+            # Indexed color
+            data = numpy.asarray(pil_image.convert("RGB"), dtype)
         else:
-            data = numpy.fromstring(pil_image.tostring(), dtype=dtype)
+            data = numpy.asarray(pil_image, dtype)
+    except Exception:
+        # This PIL version do not support buffer interface
+        logger.debug("Backtrace", exc_info=True)
+        if hasattr(pil_image, "tobytes"):
+            data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
+        else:
+            data = numpy.frombuffer(pil_image.tostring(), dtype=dtype).copy()
         # byteswap ?
         if numpy.dtype(dtype).itemsize > 1:
             need_swap = False
@@ -103,8 +109,8 @@ def get_numpy_array(pil_image):
             need_swap |= not numpy.little_endian and pil_image.mode.endswith("L")
             if need_swap:
                 data.byteswap(True)
+        data = data.reshape((dim2, dim1))
 
-    data = data.reshape((dim2, dim1))
     return data
 
 

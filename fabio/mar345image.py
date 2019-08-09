@@ -45,11 +45,11 @@ Supports Mar345 imaging plate and Mar555 flat panel
 Documentation on the format is available from:
 http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
-# Get ready for python3:
+
 from __future__ import with_statement, print_function, absolute_import
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "27/07/2017"
+__date__ = "13/11/2018"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
 __licence__ = "MIT"
@@ -57,9 +57,10 @@ __licence__ = "MIT"
 
 import struct
 import time
-import sys
 import logging
 import numpy
+
+import fabio
 from .fabioimage import FabioImage
 
 
@@ -86,11 +87,13 @@ class Mar345Image(FabioImage):
         f = self._open(self.filename, "rb")
         self._readheader(f)
         if 'compressed' in self.header['Format']:
-            self.data = decPCK(f, self.dim1, self.dim2, self.numhigh, swap_needed=self.swap_needed)
+            dim2, dim1 = self._shape
+            self.data = decPCK(f, dim1, dim2, self.numhigh, swap_needed=self.swap_needed)
+            self._shape = None
         else:
             logger.error("Cannot handle these formats yet due to lack of documentation")
             return None
-        self.bytecode = numpy.uint32
+        self._bytecode = numpy.uint32
         f.close()
         return self
 
@@ -120,7 +123,7 @@ class Mar345Image(FabioImage):
             logger.debug("Going for big endian, swap_needed %s" % self.swap_needed)
 
         # image dimensions
-        self.dim1 = int(struct.unpack(fs, data[4:8])[0])
+        dim1 = int(struct.unpack(fs, data[4:8])[0])
         # number of high intensity pixels
         self.numhigh = struct.unpack(fs, data[2 * 4: (2 + 1) * 4])[0]
         h['NumHigh'] = self.numhigh
@@ -139,7 +142,8 @@ class Mar345Image(FabioImage):
         # total number of pixels
         self.numpixels = struct.unpack(fs, data[5 * 4:(5 + 1) * 4])[0]
         h['NumPixels'] = str(self.numpixels)
-        self.dim2 = self.numpixels // self.dim1
+        dim2 = self.numpixels // dim1
+        self._shape = dim2, dim1
         # pixel dimensions (length,height) in mm
         h['PixelLength'] = struct.unpack(fs, data[6 * 4:(6 + 1) * 4])[0] / 1000.0
         h['PixelHeight'] = struct.unpack(fs, data[7 * 4:(7 + 1) * 4])[0] / 1000.0
@@ -218,14 +222,15 @@ class Mar345Image(FabioImage):
         """
         :return: Binary header of mar345 file
         """
+        dim2, dim1 = self.shape
         self.header["HIGH"] = str(self.nb_overflow_pixels())
         binheader = numpy.zeros(16, "int32")
         binheader[0] = 1234
-        binheader[1] = self.dim1
+        binheader[1] = dim1
         binheader[2] = self.nb_overflow_pixels()
         binheader[3] = 1
         binheader[4] = (self.header.get("MODE", "TIME") == "TIME")
-        binheader[5] = self.dim1 * self.dim2
+        binheader[5] = dim1 * dim2
         binheader[6] = int(self.header.get("PIXEL_LENGTH", 1))
         binheader[7] = int(self.header.get("PIXEL_HEIGHT", 1))
         binheader[8] = int(float(self.header.get("WAVELENGTH", 1)) * 1e6)
@@ -250,12 +255,10 @@ class Mar345Image(FabioImage):
         :return: string (unicode) containing the mar345 header
 
         """
-        try:
-            version = sys.modules["fabio"].version
-        except (KeyError, AttributeError):
-            version = "0.1.1"
+        version = fabio.version
         lnsep = len(linesep)
 
+        dim2, dim1 = self.shape
         lstout = ['mar research'.ljust(64 - lnsep)]
         lstout.append("PROGRAM".ljust(15) + (str(self.header.get("PROGRAM", "FabIO Version %s" % (version))).ljust(49 - lnsep)))
         lstout.append("DATE".ljust(15) + (str(self.header.get("DATE", time.ctime()))).ljust(49 - lnsep))
@@ -264,7 +267,7 @@ class Mar345Image(FabioImage):
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))
         key = "FORMAT_TYPE"
         if key in self.header:
-            lstout.append("FORMAT".ljust(15) + ("%s  %s %s" % (self.dim1, self.header[key], self.dim1 * self.dim2)).ljust(49 - lnsep))
+            lstout.append("FORMAT".ljust(15) + ("%s  %s %s" % (dim1, self.header[key], dim1 * dim2)).ljust(49 - lnsep))
         key = "HIGH"
         if key in self.header:
             lstout.append(key.ljust(15) + str(self.header[key]).ljust(49 - lnsep))

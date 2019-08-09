@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/07/2017"
+__date__ = "15/03/2019"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -42,44 +42,98 @@ import logging
 _logger = logging.getLogger(__name__)
 
 from . import fabioimage
+from .fabioutils import OrderedDict
 
-# Note: The order of the import is important for the import sequence
-from . import edfimage  # noqa
-from . import adscimage  # noqa
-from . import tifimage  # noqa
-from . import marccdimage  # noqa
-from . import mar345image  # noqa
-from . import fit2dmaskimage  # noqa
-from . import brukerimage  # noqa
-from . import bruker100image  # noqa
-from . import pnmimage  # noqa
-from . import GEimage  # noqa
-from . import OXDimage  # noqa
-from . import dm3image  # noqa
-from . import HiPiCimage  # noqa
-from . import pilatusimage  # noqa
-from . import fit2dspreadsheetimage  # noqa
-from . import kcdimage  # noqa
-from . import cbfimage  # noqa
-from . import xsdimage  # noqa
-from . import binaryimage  # noqa
-from . import pixiimage  # noqa
-from . import raxisimage  # noqa
-from . import numpyimage  # noqa
-from . import eigerimage  # noqa
-from . import hdf5image  # noqa
-from . import fit2dimage  # noqa
-from . import speimage  # noqa
-from . import jpegimage  # noqa
-from . import jpeg2kimage  # noqa
-from . import mpaimage  # noqa
+try:
+    import importlib
+    importer = importlib.import_module
+except ImportError:
+    def importer(module_name):
+        module = __import__(module_name)
+        # returns the leaf module, instead of the root module
+        names = module_name.split(".")
+        names.pop(0)
+        for name in names:
+            module = getattr(module, name)
+        return module
+
+
+_default_codecs = [
+    ("edfimage", "EdfImage"),
+    ("dtrekimage", "DtrekImage"),
+    ("tifimage", "TifImage"),
+    ("marccdimage", "MarccdImage"),
+    ("mar345image", "Mar345Image"),
+    ("fit2dmaskimage", "Fit2dMaskImage"),
+    ("brukerimage", "BrukerImage"),
+    ("bruker100image", "Bruker100Image"),
+    ("pnmimage", "PnmImage"),
+    ("GEimage", "GeImage"),
+    ("OXDimage", "OxdImage"),
+    ("dm3image", "Dm3Image"),
+    ("HiPiCimage", "HipicImage"),
+    ("pilatusimage", "PilatusImage"),
+    ("fit2dspreadsheetimage", "Fit2dSpreadsheetImage"),
+    ("kcdimage", "KcdImage"),
+    ("cbfimage", "CbfImage"),
+    ("xsdimage", "XsdImage"),
+    ("binaryimage", "BinaryImage"),
+    ("pixiimage", "PixiImage"),
+    ("raxisimage", "RaxisImage"),
+    ("numpyimage", "NumpyImage"),
+    ("eigerimage", "EigerImage"),
+    ("hdf5image", "Hdf5Image"),
+    ("fit2dimage", "Fit2dImage"),
+    ("speimage", "SpeImage"),
+    ("jpegimage", "JpegImage"),
+    ("jpeg2kimage", "Jpeg2KImage"),
+    ("mpaimage", "MpaImage"),
+    ("mrcimage", "MrcImage"),
+    # For compatibility (maybe not needed)
+    ("adscimage", "AdscImage"),
+]
+"""List of relative module and class names for available formats in fabio.
+Order matter."""
+
+
+_registry = OrderedDict()
+"""Contains all registered codec classes indexed by codec name."""
+
+_extension_cache = None
+"""Cache extension mapping"""
+
+
+def register(codec_class):
+    """Register a class format to the core fabio library"""
+    global _extension_cache
+    if not issubclass(codec_class, fabioimage.FabioImage):
+        raise AssertionError("Expected subclass of FabioImage class but found %s" % type(codec_class))
+    _registry[codec_class.codec_name()] = codec_class
+    # clean u[p the cache
+    _extension_cache = None
+
+
+def register_default_formats():
+    """Register all available default image classes provided by fabio.
+
+    If a format is already registered, it will be overwriten
+    """
+    # we use __init__ rather than __new__ here because we want
+    # to modify attributes of the class *after* they have been
+    # created
+    for module_name, class_name in _default_codecs:
+        module = importer("fabio." + module_name)
+        codec_class = getattr(module, class_name)
+        if codec_class is None:
+            raise RuntimeError("Class name '%s' from mudule '%s' not found" % (class_name, module_name))
+        register(codec_class)
 
 
 def get_all_classes():
     """Returns the list of supported codec identified by there fabio classes.
 
     :rtype: list"""
-    return fabioimage.FabioImage.registry.values()
+    return _registry.values()
 
 
 def get_classes(reader=None, writer=None):
@@ -118,14 +172,10 @@ def get_class_by_name(format_name):
     :param str format_name: Format name, for example, "edfimage"
     :return: instance of the new class
     """
-    if format_name in fabioimage.FabioImage.registry:
-        return fabioimage.FabioImage.registry[format_name]
+    if format_name in _registry:
+        return _registry[format_name]
     else:
         return None
-
-
-_extension_cache = None
-"""Cache extension mapping"""
 
 
 def _get_extension_mapping():
@@ -138,6 +188,8 @@ def _get_extension_mapping():
     if _extension_cache is None:
         _extension_cache = {}
         for codec in get_all_classes():
+            if not hasattr(codec, "DEFAULT_EXTENSIONS"):
+                continue
             for ext in codec.DEFAULT_EXTENSIONS:
                 if ext not in _extension_cache:
                     _extension_cache[ext] = []
@@ -171,3 +223,22 @@ def is_extension_supported(extension):
     mapping = _get_extension_mapping()
     extension = extension.lower()
     return extension in mapping
+
+
+def factory(name):
+    """Factory of image using name of the codec class.
+
+    :param str name: name of the class to instantiate
+    :return: an instance of the class
+    :rtype: fabio.fabioimage.FabioImage
+    """
+    name = name.lower()
+    obj = None
+    if name in _registry:
+        obj = _registry[name]()
+    else:
+        msg = ("FileType %s is unknown !, "
+               "please check if the filename exists or select one from %s" % (name, _registry.keys()))
+        _logger.debug(msg)
+        raise RuntimeError(msg)
+    return obj

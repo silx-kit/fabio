@@ -42,7 +42,7 @@
 from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "25/07/2017"
+__date__ = "14/11/2018"
 __status__ = "production"
 __copyright__ = "2007 APS; 2010-2015 ESRF"
 __licence__ = "MIT"
@@ -224,29 +224,34 @@ class GeImage(FabioImage):
     _need_a_seek_to_read = True
 
     _HeaderNBytes = 8192
+    _UserHeaderSizeInBytes = 0
     _NumberOfRowsInFrame = 2048
     _NumberOfColsInFrame = 2048
     _ImageDepthInBytes = 2
+    _ImageDepthInBits = 8 * _ImageDepthInBytes
     _BytesPerFrame = _ImageDepthInBytes \
         * _NumberOfRowsInFrame \
         * _NumberOfRowsInFrame
 
     def _readheader(self, infile):
         """Read a GE image header"""
-
+        aps_img_format = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        
         infile.seek(0)
-
         self.header = self.check_header()
-        self.header['StandardHeaderSizeInBytes'] = self._HeaderNBytes
-        self.header['UserHeaderSizeInBytes'] = 0
-        self.header['NumberOfRowsInFrame'] = 2048
-        self.header['NumberOfColsInFrame'] = 2048
-        self.header['ImageDepthInBits'] = 16
-        # obsolete for now # for name, nbytes, fmt in GE_HEADER_INFO:
-        # obsolete for now #     if fmt is None:
-        # obsolete for now #         self.header[name] = infile.read(nbytes)
-        # obsolete for now #     else:
-        # obsolete for now #         self.header[name] = struct.unpack(fmt, infile.read(nbytes))[0]
+        for name, nbytes, fmt in GE_HEADER_INFO:
+            if fmt is None:
+                self.header[name] = infile.read(nbytes)
+            else:
+                self.header[name] = struct.unpack(fmt, infile.read(nbytes))[0]
+        if self.header["ImageFormat"] == aps_img_format:
+            # FIXME for now have to assume we have a bastardized GE file from
+            # Argonne, where they blanked the header with all zeros
+            self.header['StandardHeaderSizeInBytes'] = self._HeaderNBytes
+            self.header['UserHeaderSizeInBytes'] = self._UserHeaderSizeInBytes
+            self.header['NumberOfRowsInFrame'] = self._NumberOfRowsInFrame
+            self.header['NumberOfColsInFrame'] = self._NumberOfColsInFrame
+            self.header['ImageDepthInBits'] = self._ImageDepthInBits            
 
     def read(self, fname, frame=None):
         """
@@ -260,11 +265,12 @@ class GeImage(FabioImage):
         infile = self._open(fname, "rb")
         self.sequencefilename = fname
         self._readheader(infile)
+
         # obsolete for now # self.nframes = self.header['NumberOfFrames']
         file_size = os.stat(fname).st_size
         assert numpy.remainder(file_size, self._BytesPerFrame) == self._HeaderNBytes, \
             "file is incorrect size"
-        self.nframes = file_size//self._BytesPerFrame
+        self._nframes = file_size//self._BytesPerFrame
         self._readframe(infile, frame)
         infile.close()
         return self
@@ -281,29 +287,29 @@ class GeImage(FabioImage):
         # raises an exception if you give an invalid image
         # otherwise fills in self.data
         """
-        if(img_num > self.nframes or img_num < 0):
+        if(img_num >= self.nframes or img_num < 0):
             raise Exception("Bad image number")
-        imgstart = self.header['StandardHeaderSizeInBytes'] + \
-                   self.header['UserHeaderSizeInBytes'] + \
-                   img_num * self.header['NumberOfRowsInFrame'] * \
-                   self.header['NumberOfColsInFrame'] * \
-                   self.header['ImageDepthInBits'] // 8
+        imgstart = (self.header['StandardHeaderSizeInBytes'] +
+                    self.header['UserHeaderSizeInBytes'] +
+                    img_num * self.header['NumberOfRowsInFrame'] *
+                    self.header['NumberOfColsInFrame'] *
+                    self.header['ImageDepthInBits'] // 8)
         # whence = 0 means seek from start of file
         filepointer.seek(imgstart, 0)
 
-        self.bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
-        imglength = self.header['NumberOfRowsInFrame'] * \
-                    self.header['NumberOfColsInFrame'] * self.bpp
-        if self.bpp != 2:
-            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % self.bpp)
+        bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
+        if bpp != 2:
+            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % bpp)
 
-        data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16)
+        imglength = (self.header['NumberOfRowsInFrame'] *
+                     self.header['NumberOfColsInFrame'] * bpp)
+        data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16).copy()
         if not numpy.little_endian:
             data.byteswap(True)
         data.shape = (self.header['NumberOfRowsInFrame'],
                       self.header['NumberOfColsInFrame'])
         self.data = data
-        self.dim2, self.dim1 = self.data.shape
+        self._shape = None
         self.currentframe = int(img_num)
         self._makeframename()
 
@@ -311,14 +317,15 @@ class GeImage(FabioImage):
         """
         Returns a frame as a new FabioImage object
         """
-        if num < 0 or num > self.nframes:
+        if num < 0 or num >= self.nframes:
             raise Exception("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         newheader = {}
         for k in self.header.keys():
             newheader[k] = self.header[k]
         frame = GeImage(header=newheader)
-        frame.nframes = self.nframes
+        # ??? isn't this a single frame by contruction?
+        frame._nframes = self.nframes
         frame.sequencefilename = self.sequencefilename
         infile = frame._open(self.sequencefilename, "rb")
         frame._readframe(infile, num)
@@ -350,35 +357,4 @@ class GeImage(FabioImage):
             return newobj
 
 
-def demo():
-    import sys
-    import time
-
-    if len(sys.argv) < 2:
-        print("USAGE: GE_script.py <GEaSi_raw_image_file>")
-        sys.exit()
-
-    image_file = sys.argv[1]
-
-    print("init read_GEaSi_data class and load header..")
-    sequence1 = GeImage()
-    sequence1.read(image_file)
-
-    print("TimeBetweenFramesInMicrosecs = ")
-    print(sequence1.header['TimeBetweenFramesInMicrosecs'])
-    print("AcquisitionTime = ")
-    print(sequence1.header['AcquisitionTime'])
-
-    print("Mean = ", sequence1.data.ravel().mean())
-
-    while 1:
-        start = time.time()
-        sequence1 = sequence1.next()
-        duration = time.time() - start
-        print(sequence1.currentframe, sequence1.data.ravel().mean(), duration)
-
-
 GEimage = GeImage
-
-if __name__ == '__main__':
-    demo()

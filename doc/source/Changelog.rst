@@ -1,6 +1,51 @@
 Changelog
 =========
 
+FabIO-0.9.0 (03/2019):
+......................
+
+- Separate the concept of FabioFrame from FabioImage
+- FileSeries are available from fabio.open_series
+- Shape and dtype are directly exposed
+- Support d*TREK format which is a superset of ADSC
+- Improve code coverage on PiXi image
+- Major refactoring of EdfImage (for better performances, padding, ...)
+- Clean up TiffIO (remove tests & demo from source)
+- Improved binning handling in DM3 images, and more quiet
+- Implement deprecation warnings àla *silx*
+- Enhanced installation on unsupported architectures
+- Enhanced tests (spr, Fit2dSpreadsheet, Rigaku, ...)
+- Tested on Python (2.7, 3.4), 3.5, 3.6 & 3.7 on mac, win & linux
+
+FabIO-0.8.0 (10/2018):
+......................
+
+- Increased maximum header size for EDF (contribution from OlivierU38)
+- Fix EDF header (contribution from Yann Diorcet)
+- New explicit registry (no more metaclass)
+- Lazy iterator for EDF (useful for huge multi-frames)
+- Improved JPEG 2000 support via glymur
+- Manylinux1 wheels built against the oldest numpy possible
+- Improved debian packaging
+- clean up repository and tests
+- Fix compilation with Python 3.7, python 2.7 still works but for how long ?
+
+FabIO-0.7.0 (06/2018):
+......................
+
+- Improve CBF support (support Python3, better support of loops)
+- Improve Bruker100 image detection (contribution from Tomoya Onozuka)
+- Support TIFF multi-frames
+- Improve Pilatus TIFF support (contribution from Mika Pflüger)
+- Improve support of TIFF using indexed colors
+- Support pathlib and pathlib2 as opennable paths
+- Provide a copy operator for single frame images
+- Clean up EDF image API (contribution from Yann Diorcet)
+- Fix parsing of EDF headers
+- Fix convertion from EDF to TIFF
+- Fix support of `#` in filenames
+- Clean up of code and documentation (including contribution from Thomas Kluyver)
+
 FabIO-0.6.0 (01/2018):
 ......................
 

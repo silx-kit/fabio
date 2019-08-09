@@ -32,18 +32,23 @@ import unittest
 import sys
 import os
 import numpy
+import copy
+import logging
 
-if __name__ == '__main__':
-    import pkgutil
-    __path__ = pkgutil.extend_path([os.path.dirname(__file__)], "fabio.test")
-from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
-
-logger = UtilsTest.get_logger(__file__)
-fabio = sys.modules["fabio"]
-from ..fabioimage import fabioimage
+from ..fabioimage import FabioImage
 from .. import fabioutils
 from ..utils import pilutils
+from .utilstest import UtilsTest
+
+try:
+    import pathlib
+except ImportError:
+    try:
+        import pathlib2 as pathlib
+    except ImportError:
+        pathlib = None
 
 
 class Test50000(unittest.TestCase):
@@ -54,7 +59,11 @@ class Test50000(unittest.TestCase):
         dat = (dat * 50000).astype(numpy.uint16)
         assert dat.dtype.char == numpy.ones((1), numpy.uint16).dtype.char
         hed = {"Title": "50000 everywhere"}
-        self.obj = fabioimage(dat, hed)
+        self.obj = FabioImage(dat, hed)
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.obj = None
 
     def testgetmax(self):
         """check max"""
@@ -68,9 +77,17 @@ class Test50000(unittest.TestCase):
         """check mean"""
         self.assertEqual(self.obj.getmean(), 50000)
 
-    def getstddev(self):
+    def testgetstddev(self):
         """check stddev"""
         self.assertEqual(self.obj.getstddev(), 0)
+
+    def testcopy(self):
+        "test the copy statement"
+        c = copy.copy(self.obj)
+        self.assertNotEqual(id(c), id(self.obj), "object differ")
+        self.assertEqual(c.header, self.obj.header, "header are the same")
+        self.assertEqual(abs(c.data - self.obj.data).max(), 0, "data are the same")
+        self.assertEqual(c.filename, self.obj.filename, "filename is the same")
 
 
 class TestSlices(unittest.TestCase):
@@ -80,7 +97,7 @@ class TestSlices(unittest.TestCase):
         dat2 = numpy.zeros((1024, 1024), numpy.uint16)
         hed = {"Title": "zeros and 100"}
         self.cord = [256, 256, 790, 768]
-        self.obj = fabioimage(dat2, hed)
+        self.obj = FabioImage(dat2, hed)
         self.slic = slic = self.obj.make_slice(self.cord)
         # Note - d2 is modified *after* fabioimage is made
         dat2[slic] = dat2[slic] + 100
@@ -110,7 +127,7 @@ class TestSlices(unittest.TestCase):
         """Test the rebin method"""
         big = numpy.arange(64).reshape((8, 8))
         res = numpy.array([[13, 17], [45, 49]])
-        fabimg = fabioimage(data=big, header={})
+        fabimg = FabioImage(data=big, header={})
         fabimg.rebin(4, 4)
         self.assertEqual(abs(res - fabimg.data).max(), 0, "data are the same after rebin")
 
@@ -130,32 +147,36 @@ class TestOpen(unittest.TestCase):
         if not os.path.isfile(self.testfile + ".bz2"):
             with fabioutils.BZ2File(self.testfile + ".bz2", "wb") as wf:
                 wf.write(b"{ hello }")
-        self.obj = fabioimage()
+        self.obj = FabioImage()
 
     def testFlat(self):
         """ no compression"""
-        res = self.obj._open(self.testfile).read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile)
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
     def testgz(self):
         """ gzipped """
-        res = self.obj._open(self.testfile + ".gz").read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile + ".gz")
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
     def testbz2(self):
         """ bzipped"""
-        res = self.obj._open(self.testfile + ".bz2").read()
-        self.assertEqual(res, b"{ hello }")
+        res = self.obj._open(self.testfile + ".bz2")
+        self.assertEqual(res.read(), b"{ hello }")
+        res.close()
 
+    def test_badtype(self):
+        self.assertRaises(TypeError, self.obj._open, None)
 
-NAMES = {numpy.uint8:   "numpy.uint8",
-         numpy.int8:    "numpy.int8",
-         numpy.uint16:  "numpy.uint16",
-         numpy.int16:   "numpy.int16",
-         numpy.uint32:  "numpy.uint32",
-         numpy.int32:   "numpy.int32",
-         numpy.float32: "numpy.float32",
-         numpy.float64: "numpy.float64"}
+    def test_pathlib(self):
+        if pathlib is None:
+            self.skipTest("pathlib is not available")
+        path = pathlib.PurePath(self.testfile + ".bz2")
+        res = self.obj._open(path)
+        self.assertIsNotNone(res)
+        res.close()
 
 
 class TestPilImage(unittest.TestCase):
@@ -180,14 +201,13 @@ class TestPilImage(unittest.TestCase):
     def testpil(self):
 
         for typ in self.okformats:
-            name = NAMES[typ]
             for shape in [(10, 20), (431, 1325)]:
                 testdata = self.mkdata(shape, typ)
-                img = fabioimage(testdata, {"title": "Random data"})
+                img = FabioImage(testdata, {"title": "Random data"})
                 pim = img.toPIL16()
                 for i in [0, 5, 6, shape[1] - 1]:
                     for j in [0, 5, 7, shape[0] - 1]:
-                        errstr = name + " %d %d %f %f t=%s" % (
+                        errstr = str(typ) + " %d %d %f %f t=%s" % (
                             i, j, testdata[j, i], pim.getpixel((i, j)), typ)
 
                         er1 = img.data[j, i] - pim.getpixel((i, j))
@@ -216,6 +236,23 @@ class TestPilImage3(TestPilImage):
         return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)
 
 
+class TestDeprecatedFabioImage(unittest.TestCase):
+
+    def test_patch_dim(self):
+        data = numpy.array(numpy.arange(3 * 10)).reshape(3, 10)
+        image = FabioImage(data=data)
+        # Usecase found in some projects
+        image.dim2, image.dim1 = data.shape
+        # It should not change anything
+        self.assertEqual(image.shape, data.shape)
+
+    def test_cleanup_pilimage_cache(self):
+        data = numpy.array(numpy.arange(3 * 10)).reshape(3, 10)
+        image = FabioImage(data=data)
+        # It was a way to force clean up of the cache
+        image.pilimage = None
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -225,6 +262,7 @@ def suite():
     testsuite.addTest(loadTests(TestPilImage))
     testsuite.addTest(loadTests(TestPilImage2))
     testsuite.addTest(loadTests(TestPilImage3))
+    testsuite.addTest(loadTests(TestDeprecatedFabioImage))
     return testsuite
 
 

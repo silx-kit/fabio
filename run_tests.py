@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "28/07/2017"
+__date__ = "18/03/2019"
 __license__ = "MIT"
 
 import distutils.util
@@ -75,7 +75,11 @@ def createBasicHandler():
 
 # Use an handler compatible with unittests, else use_buffer is not working
 logging.root.addHandler(createBasicHandler())
+
+# Capture all default warnings
 logging.captureWarnings(True)
+import warnings
+warnings.simplefilter('default')
 
 logger = logging.getLogger("run_tests")
 logger.setLevel(logging.WARNING)
@@ -193,7 +197,7 @@ class ProfileTextTestResult(unittest.TextTestRunner.resultclass):
         else:
             memusage = 0
         self.logger.info("Time: %.3fs \t RAM: %.3f Mb\t%s",
-            time.time() - self.__time_start, memusage, test.id())
+                         time.time() - self.__time_start, memusage, test.id())
 
 
 def report_rst(cov, package, version="0.0.0", base=""):
@@ -210,9 +214,13 @@ def report_rst(cov, package, version="0.0.0", base=""):
     os.close(fd)
     cov.xml_report(outfile=fn)
 
-    from lxml import etree
+    try:
+        from lxml import etree
+    except ImportError:
+        import xml.etree.ElementTree as etree
+
     xml = etree.parse(fn)
-    classes = xml.xpath("//class")
+    classes = xml.findall(".//class")
 
     line0 = "Test coverage report for %s" % package
     res = [line0, "=" * len(line0), ""]
@@ -362,10 +370,10 @@ if (os.path.dirname(os.path.abspath(__file__)) ==
 if options.installed:  # Use installed version
     try:
         module = importer(PROJECT_NAME)
-    except:
-        raise ImportError(
-            "%s not installed: Cannot run tests on installed version" %
-            PROJECT_NAME)
+    except Exception:
+        logger.error("Cannot run tests on installed version: %s not installed or raising error.",
+                     PROJECT_NAME)
+        raise
 else:  # Use built source
     build_dir = build_project(PROJECT_NAME, PROJECT_DIR)
 
@@ -394,11 +402,6 @@ logger.warning("Test %s %s from %s",
 test_module_name = PROJECT_NAME + '.test'
 logger.info('Import %s', test_module_name)
 test_module = importer(test_module_name)
-utilstest = importer(test_module_name + ".utilstest")
-UtilsTest = getattr(utilstest, "UtilsTest")
-UtilsTest.image_home = os.path.join(PROJECT_DIR, 'testimages')
-UtilsTest.testimages = os.path.join(PROJECT_DIR, "all_testimages.json")
-UtilsTest.script_dir = os.path.join(PROJECT_DIR, "scripts")
 
 test_suite = unittest.TestSuite()
 

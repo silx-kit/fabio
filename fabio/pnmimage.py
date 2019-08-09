@@ -41,10 +41,11 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 License: MIT
 """
-# Get ready for python3:
+
 from __future__ import absolute_import, print_function, with_statement, division
+
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "27/07/2017"
+__date__ = "13/11/2018"
 __license__ = "MIT+"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -105,17 +106,18 @@ class PnmImage(FabioImage):
                 self.header[k] = v.strip()
 
         # set the dimensions
-        self.dim1 = int(self.header[six.b("WIDTH")])
-        self.dim2 = int(self.header[six.b("HEIGHT")])
+        dim1 = int(self.header[six.b("WIDTH")])
+        dim2 = int(self.header[six.b("HEIGHT")])
+        self._shape = dim2, dim1
         # figure out how many bytes are used to store the data
         # case construct here!
         m = int(self.header[six.b('MAXVAL')])
         if m < 256:
-            self.bytecode = numpy.uint8
+            self._dtype = numpy.dtype(numpy.uint8)
         elif m < 65536:
-            self.bytecode = numpy.uint16
+            self._dtype = numpy.dtype(numpy.uint16)
         elif m < 2147483648:
-            self.bytecode = numpy.uint32
+            self._dtype = numpy.dtype(numpy.uint32)
             logger.warning('32-bit pixels are not really supported by the netpgm standard')
         else:
             raise IOError('could not figure out what kind of pixels you have')
@@ -139,7 +141,7 @@ class PnmImage(FabioImage):
         decoder_name = "%sdec" % fmt
         if decoder_name in dir(PnmImage):
             decoder = getattr(PnmImage, decoder_name)
-            self.data = decoder(self, infile, self.bytecode)
+            self.data = decoder(self, infile, self._dtype)
         else:
             raise IOError("No decoder named %s for file %s" % (decoder_name, fname))
         self.resetvals()
@@ -151,8 +153,8 @@ class PnmImage(FabioImage):
         :param fname: name of the file
         """
         self.header[six.b("SUBFORMAT")] = "P5"
-        self.header[six.b("WIDTH")] = self.dim1
-        self.header[six.b("HEIGHT")] = self.dim2
+        self.header[six.b("WIDTH")] = self.shape[-1]
+        self.header[six.b("HEIGHT")] = self.shape[-2]
         self.header[six.b("MAXVAL")] = self.data.max()
         header = six.b(" ".join([str(self.header[key]) for key in HEADERITEMS[1:]]))
         with open(fname, "wb") as fobj:
@@ -165,7 +167,7 @@ class PnmImage(FabioImage):
                 fobj.write(self.data.tostring())
 
     def P1dec(self, buf, bytecode):
-        data = numpy.zeros((self.dim2, self.dim1))
+        data = numpy.zeros(self.shape)
         i = 0
         for l in buf:
             try:
@@ -180,7 +182,7 @@ class PnmImage(FabioImage):
         raise NotImplementedError(err)
 
     def P2dec(self, buf, bytecode):
-        data = numpy.zeros((self.dim2, self.dim1))
+        data = numpy.zeros(self.shape)
         i = 0
         for l in buf:
             try:
@@ -192,10 +194,10 @@ class PnmImage(FabioImage):
     def P5dec(self, buf, bytecode):
         data = buf.read()
         try:
-            data = numpy.fromstring(data, bytecode)
+            data = numpy.frombuffer(data, bytecode).copy()
         except ValueError:
             raise IOError('Size spec in pnm-header does not match size of image data field')
-        data.shape = self.dim2, self.dim1
+        data.shape = self.shape
         if numpy.little_endian:
             data.byteswap(True)
         return data

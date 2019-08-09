@@ -80,9 +80,11 @@ static unsigned int CCP4_PCK_BIT_COUNT_V2[]= {0,4,5,6,7,8,9,10,11,12,13,14,15,16
 static const unsigned char CCP4_PCK_MASK[]={0x00,
   0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF};
 
+/* JK: unused constant hence commented out
 static const unsigned int CCP4_PCK_MASK_16[]={0x00,
   0x01,  0x03,  0x07,  0x0F,  0x1F,   0x3F,   0x7F,   0xFF,
   0x1FF, 0x3FF, 0x7FF, 0xFFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
+*/
 
 static const unsigned long CCP4_PCK_MASK_32[]={0x00,
   0x01,      0x03,      0x07,      0x0F,      0x1F,       0x3F,       0x7F,       0xFF,
@@ -277,7 +279,7 @@ void * ccp4_unpack(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   int x4,x3,x2,x1;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   FILE *instream=(FILE *)packed;
@@ -298,7 +300,7 @@ void * ccp4_unpack(
   t_=(unsigned char)fgetc(instream);
 
   // while less than num ints have been unpacked
-  i=0;  
+  i=0;
   while(i<max_num_int){
     if (num_error==0){
        // at the beginning of block - read the 6 block header bits
@@ -337,7 +339,7 @@ void * ccp4_unpack(
             bit_offset+= (num_bits-read_bits);
             read_bits=num_bits;
           }
-          
+
         }
         // if the msb is set, the error is negative -
         // * fill up with 1s to get a 2's compl representation
@@ -354,7 +356,6 @@ void * ccp4_unpack(
           x2=(int16_t) int_arr[i-dim1];
           x1=(int16_t) int_arr[i-dim1-1];
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
-          i=i;
         } else if (i!=0){
           // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
@@ -379,7 +380,7 @@ void * ccp4_unpack_string(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   int x4,x3,x2,x1;
   unsigned int *int_arr;
   char *instream = (char *)packed;
@@ -462,7 +463,6 @@ void * ccp4_unpack_string(
           x2=(int16_t) int_arr[i-dim1];
           x1=(int16_t) int_arr[i-dim1-1];
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
-          i=i;
         } else if (i!=0){
           // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
@@ -486,11 +486,11 @@ void * ccp4_unpack_v2(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   unsigned int x4=0,x3=0,x2=0,x1=0;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   FILE *instream=(FILE *)packed;
-  
+
   // if no maximum integers are give read the whole nine yards
   if (max_num_int==0){
     max_num_int=dim1*dim2;
@@ -507,7 +507,7 @@ void * ccp4_unpack_v2(
   // read the first byte of the current_block
   t_=(unsigned char)fgetc(instream);
   // while less than num ints have been unpacked
-  i=0;  
+  i=0;
   while(i<max_num_int){
     if (num_error==0){
        // at the beginning of block - read the 6 block header bits
@@ -523,7 +523,7 @@ void * ccp4_unpack_v2(
         num_error=CCP4_PCK_ERR_COUNT_V2[ (t_>>bit_offset) & CCP4_PCK_MASK[4] ];
         num_bits=CCP4_PCK_BIT_COUNT_V2[ (t_>>(4+bit_offset)) & CCP4_PCK_MASK[4] ];
         bit_offset+=CCP4_PCK_BLOCK_HEADER_LENGTH_V2;
-      } 
+      }
     } else {
       // reading the data in the block
       while(num_error>0){
@@ -546,7 +546,7 @@ void * ccp4_unpack_v2(
             bit_offset+= (num_bits-read_bits);
             read_bits=num_bits;
           }
-          
+
         }
         // if the msb is set, the error is negative -
           // fill up with 1s to get a 2's compl representation
@@ -563,7 +563,6 @@ void * ccp4_unpack_v2(
           x2=(int16_t) int_arr[i-dim1];
           x1=(int16_t) int_arr[i-dim1-1];
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
-          i=i;
         } else if (i!=0){
           // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);
@@ -572,7 +571,7 @@ void * ccp4_unpack_v2(
         }
         i++;
         num_error--;
-      } 
+      }
     } // else
   }
   return (void *) unpacked_array;
@@ -585,7 +584,7 @@ void * ccp4_unpack_v2_string(
 
   uint8_t t_,t2,_conv;
   int err_val,bit_offset,num_error=0,num_bits=0,read_bits;
-  int i;
+  unsigned int i;
   unsigned int x4=0,x3=0,x2=0,x1=0;
   unsigned int *int_arr=(unsigned int *) unpacked_array;
   char *instream=(char *)packed;
@@ -665,7 +664,6 @@ void * ccp4_unpack_v2_string(
           x2=(int16_t) int_arr[i-dim1];
           x1=(int16_t) int_arr[i-dim1-1];
           int_arr[i]=(uint16_t) (err_val + (x4 + x3 + x2 + x1 +2) /4 );
-          i=i;
         } else if (i!=0){
           // current pixel is in the 1st row but is not first pixel
           int_arr[i]=(uint16_t) (err_val + int_arr[i-1]);

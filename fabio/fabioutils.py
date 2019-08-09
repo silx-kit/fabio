@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/09/2017"
+__date__ = "17/01/2019"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -47,10 +47,20 @@ import os
 import logging
 import sys
 import json
+import functools
+
 logger = logging.getLogger(__name__)
 
 from .third_party.ordereddict import OrderedDict as _OrderedDict
 from .third_party import six
+
+try:
+    import pathlib
+except ImportError:
+    try:
+        import pathlib2 as pathlib
+    except ImportError:
+        pathlib = None
 
 if six.PY2:
     bytes_ = str
@@ -62,7 +72,14 @@ else:
     StringTypes = (str, bytes)
     unicode = str
     from io import FileIO
-    to_str = lambda s: str(s, "ASCII")
+
+    def to_str(s):
+        return str(s, "ASCII")
+
+PathTypes = StringTypes
+if pathlib is not None:
+    PathTypes += (pathlib.PurePath,)
+
 
 from .compression import bz2, gzip, COMPRESSORS
 import traceback
@@ -74,20 +91,6 @@ else:
     from threading import Semaphore as _Semaphore
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
-
-
-def deprecated(func):
-    """
-    used to deprecate a function/method: prints a lot of warning messages to
-    enforce the modification of the code
-    """
-    def wrapper(*arg, **kw):
-        """
-        decorator that deprecates the use of a function
-        """
-        logger.warning("%s is Deprecated !!! %s" % (func.func_name, os.linesep.join([""] + traceback.format_stack()[:-1])))
-        return func(*arg, **kw)
-    return wrapper
 
 
 def pad(mystr, pattern=" ", size=80):
@@ -117,6 +120,10 @@ def getnum(name):
         return int(num)
     except ValueError:
         return None
+
+
+COMPRESSED_EXTENSIONS = set(["gz", "bz2"])
+"""Set of compressed file extensions provided by Fabio"""
 
 
 class FilenameObject(object):
@@ -203,7 +210,7 @@ class FilenameObject(object):
         ndigit = 4
         num = None
         typ = None
-        if parts[-1].lower() in ["gz", "bz2"]:
+        if parts[-1].lower() in COMPRESSED_EXTENSIONS:
             extn = "." + parts[-1]
             parts = parts[:-1]
             compressed = True
@@ -256,6 +263,7 @@ class FilenameObject(object):
                         ndigit = len(numstring)
                 #            raise Exception("Cannot decode "+filename)
 
+        self.codec_classes = codec_classes
         self.stem = stem
         self.num = num
         self.directory = direc
@@ -504,6 +512,7 @@ class UnknownCompressedFile(File):
         if hasattr(self, "closed") and not self.closed:
             self.close()
 
+
 if gzip is None:
     GzipFile = UnknownCompressedFile
 else:
@@ -699,3 +708,12 @@ class OrderedDict(_OrderedDict):
                 tmp[str(key)] = str(value)
             res = json.dumps(tmp, indent=2)
         return res
+
+
+AVAILABLE_COMPRESSED_EXTENSIONS = set([])
+"""Set of available compressed file extensions. Do not contains extensions for
+uninstalled optional dependancies."""
+if GzipFile != UnknownCompressedFile:
+    AVAILABLE_COMPRESSED_EXTENSIONS.add("gz")
+if BZ2File != UnknownCompressedFile:
+    AVAILABLE_COMPRESSED_EXTENSIONS.add("bz2")

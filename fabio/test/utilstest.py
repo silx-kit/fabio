@@ -32,7 +32,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "23/01/2018"
+__date__ = "08/03/2019"
 
 PACKAGE = "fabio"
 DATA_KEY = "FABIO_DATA"
@@ -42,63 +42,42 @@ import sys
 import getpass
 import threading
 import logging
-import bz2
-from ..third_party import gzip
-import json
 import tempfile
+from ..utils.ExternalResources import ExternalResources
 
-
-try:  # Python3
-    from urllib.request import urlopen, ProxyHandler, build_opener
-except ImportError:  # Python2
-    from urllib2 import urlopen, ProxyHandler, build_opener
-logging.basicConfig(level=logging.WARNING)
-logger = logging.getLogger("%s.utilstest" % PACKAGE)
+logger = logging.getLogger(__name__)
 
 TEST_HOME = os.path.dirname(os.path.abspath(__file__))
 
 
-class UtilsTest(object):
-    """
-    Static class providing useful stuff for preparing tests.
-    """
-    options = None
-    timeout = 60  # timeout in seconds for downloading images
-    # url_base = "http://downloads.sourceforge.net/fable"
-    url_base = "http://www.edna-site.org/pub/fabio/testimages"
-    sem = threading.Semaphore()
-    recompiled = False
-    reloaded = False
-    name = PACKAGE
-    script_dir = None
+class TestOptions(object):
 
-    try:
-        fabio = __import__("%s.directories" % name)
-        image_home = fabio.directories.testimages
-    except Exception as err:
-        logger.warning("in loading directories %s", err)
-        image_home = None
-    else:
-        image_home = fabio.directories.testimages
-    if image_home is None:
-        image_home = os.path.join(tempfile.gettempdir(), "%s_testimages_%s" % (name, getpass.getuser()))
-        if not os.path.exists(image_home):
-            os.makedirs(image_home)
-    testimages = os.path.join(image_home, "all_testimages.json")
-    if os.path.exists(testimages):
-        with open(testimages) as f:
-            ALL_DOWNLOADED_FILES = set(json.load(f))
-    else:
-        ALL_DOWNLOADED_FILES = set()
-    tempdir = tempfile.mkdtemp("_" + getpass.getuser(), name + "_")
+    def __init__(self):
+        self.options = None
+        self.timeout = 60  # timeout in seconds for downloading images
+        # url_base = "http://forge.epn-campus.eu/attachments/download"
+        self.url_base = "http://www.edna-site.org/pub/fabio/testimages"
+        self.resources = ExternalResources(PACKAGE,
+                                           timeout=self.timeout,
+                                           env_key=DATA_KEY,
+                                           url_base=self.url_base)
+        self.sem = threading.Semaphore()
+        self.recompiled = False
+        self.reloaded = False
+        self.name = PACKAGE
+        self.script_dir = None
+        self.installed = False
 
-    @classmethod
-    def deep_reload(cls):
-        cls.fabio = __import__(cls.name)
-        return cls.fabio
+        self.download_images = self.resources.download_all
+        self.getimage = self.resources.get_file_and_repack
 
-    @classmethod
-    def forceBuild(cls, remove_first=True):
+        self._tempdir = None
+
+    def deep_reload(self):
+        self.fabio = __import__(self.name)
+        return self.fabio
+
+    def forceBuild(self, remove_first=True):
         """
         Force the recompilation of FabIO
 
@@ -106,157 +85,17 @@ class UtilsTest(object):
         """
         return
 
-    @classmethod
-    def timeoutDuringDownload(cls, imagename=None):
-            """
-            Function called after a timeout in the download part ...
-            just raise an Exception.
-            """
-            if imagename is None:
-                imagename = "2252/testimages.tar.bz2 unzip it "
-            raise RuntimeError("Could not automatically \
-                download test images!\n \ If you are behind a firewall, \
-                please set both environment variable http_proxy and https_proxy.\
-                This even works under windows ! \n \
-                Otherwise please try to download the images manually from \n %s/%s and put it in in test/testimages." % (cls.url_base, imagename))
-
-    @classmethod
-    def getimage(cls, imagename):
-        """
-        Downloads the requested image from Forge.EPN-campus.eu
-
-        :param str imagename: name of the image.
-            For the RedMine forge, the filename contains a directory name that
-            is removed
-        :return: full path of the locally saved file
-        """
-        if imagename not in cls.ALL_DOWNLOADED_FILES:
-            cls.ALL_DOWNLOADED_FILES.add(imagename)
-            image_list = list(cls.ALL_DOWNLOADED_FILES)
-            image_list.sort()
-            try:
-                with open(cls.testimages, "w") as fp:
-                    json.dump(image_list, fp, indent=4)
-            except IOError:
-                logger.debug("Unable to save JSON list")
-        baseimage = os.path.basename(imagename)
-        logger.info("UtilsTest.getimage('%s')" % baseimage)
-        if not os.path.exists(cls.image_home):
-            os.makedirs(cls.image_home)
-        fullimagename = os.path.abspath(os.path.join(cls.image_home, baseimage))
-        if os.path.exists(fullimagename):
-            return fullimagename
-
-        if baseimage.endswith(".bz2"):
-            bzip2name = baseimage
-            basename = baseimage[:-4]
-            gzipname = basename + ".gz"
-        elif baseimage.endswith(".gz"):
-            gzipname = baseimage
-            basename = baseimage[:-3]
-            bzip2name = basename + ".bz2"
+    def script_path(self, script_name, module_name):
+        """Returns the script path according to it's location"""
+        if self.installed:
+            script = self.get_installed_script_path(script_name)
         else:
-            basename = baseimage
-            gzipname = baseimage + "gz2"
-            bzip2name = basename + ".bz2"
+            import importlib
+            module = importlib.import_module(module_name)
+            script = module.__file__
+        return script
 
-        fullimagename_gz = os.path.abspath(os.path.join(cls.image_home, gzipname))
-        fullimagename_raw = os.path.abspath(os.path.join(cls.image_home, basename))
-        fullimagename_bz2 = os.path.abspath(os.path.join(cls.image_home, bzip2name))
-
-        data = None
-
-        if not os.path.isfile(fullimagename_bz2):
-            logger.info("Trying to download image %s, timeout set to %ss",
-                        bzip2name, cls.timeout)
-            dictProxies = {}
-            if "http_proxy" in os.environ:
-                dictProxies['http'] = os.environ["http_proxy"]
-                dictProxies['https'] = os.environ["http_proxy"]
-            if "https_proxy" in os.environ:
-                dictProxies['https'] = os.environ["https_proxy"]
-            if dictProxies:
-                proxy_handler = ProxyHandler(dictProxies)
-                opener = build_opener(proxy_handler).open
-            else:
-                opener = urlopen
-
-            logger.info("wget %s/%s" % (cls.url_base, imagename))
-            data = opener("%s/%s" % (cls.url_base, imagename),
-                          data=None, timeout=cls.timeout).read()
-            logger.info("Image %s successfully downloaded." % baseimage)
-
-            try:
-                with open(fullimagename_bz2, "wb") as outfile:
-                    outfile.write(data)
-            except IOError:
-                raise IOError("unable to write downloaded \
-                    data to disk at %s" % cls.image_home)
-
-            if not os.path.isfile(fullimagename_bz2):
-                raise RuntimeError("Could not automatically \
-                download test images %s!\n \ If you are behind a firewall, \
-                please set the environment variable http_proxy.\n \
-                Otherwise please try to download the images manually from \n \
-                %s" % (cls.url_base, imagename))
-        if not os.path.isfile(fullimagename_raw) or\
-           not os.path.isfile(fullimagename_gz):
-
-            if data is None:
-                with open(fullimagename_bz2, "rb") as f:
-                    data = f.read()
-            decompressed = bz2.decompress(data)
-
-            if not os.path.exists(fullimagename_raw):
-                try:
-                    with open(fullimagename_raw, "wb") as fullimage:
-                        fullimage.write(decompressed)
-                except IOError:
-                    raise IOError("unable to write decompressed \
-                    data to disk at %s" % cls.image_home)
-            if not os.path.exists(fullimagename_gz):
-                try:
-                    gzip.open(fullimagename_gz, "wb").write(decompressed)
-                except IOError:
-                    raise IOError("unable to write gzipped \
-                    data to disk at %s" % cls.image_home)
-        return fullimagename
-
-    @classmethod
-    def download_images(cls, imgs=None):
-        """
-        Download all images needed for the test/benchmarks
-
-        :param imgs: list of files to download
-        """
-        if not imgs:
-            imgs = cls.ALL_DOWNLOADED_FILES
-        for fn in imgs:
-            print("Downloading from internet: %s" % fn)
-            if fn[-4:] != ".bz2":
-                if fn[-3:] == ".gz":
-                    fn = fn[:-2] + "bz2"
-                else:
-                    fn = fn + ".bz2"
-                print("  actually " + fn)
-            cls.getimage(fn)
-
-    @classmethod
-    def get_logger(cls, filename=__file__):
-        """
-        small helper function that initialized the logger and returns it
-        """
-        basename = os.path.basename(os.path.abspath(filename))
-        basename = os.path.splitext(basename)[0]
-        level = logging.root.level
-        mylogger = logging.getLogger(basename)
-        logger.setLevel(level)
-        mylogger.setLevel(level)
-        mylogger.debug("tests loaded from file: %s" % basename)
-        return mylogger
-
-    @classmethod
-    def script_path(cls, script):
+    def get_installed_script_path(self, script):
         """
         Returns the path of the executable and the associated environment
 
@@ -268,23 +107,54 @@ class UtilsTest(object):
         else:
             available_extensions = [""]
 
-        env = dict((str(k), str(v)) for k, v in os.environ.items())
-        env["PYTHONPATH"] = os.pathsep.join(sys.path)
         paths = os.environ.get("PATH", "").split(os.pathsep)
-        if cls.script_dir is not None:
-            paths.insert(0, cls.script_dir)
-
         for base in paths:
             # clean up extra quotes from paths
             if base.startswith('"') and base.endswith('"'):
                 base = base[1:-1]
             for file_extension in available_extensions:
                 script_path = os.path.join(base, script + file_extension)
+                print(script_path)
                 if os.path.exists(script_path):
                     # script found
-                    return script_path, env
+                    return script_path
         # script not found
         logger.warning("Script '%s' not found in paths: %s", script, ":".join(paths))
         script_path = script
-        return script_path, env
+        return script_path
 
+    def _initialize_tmpdir(self):
+        """Initialize the temporary directory"""
+        if not self._tempdir:
+            with self.sem:
+                if not self._tempdir:
+                    self._tempdir = tempfile.mkdtemp("_" + getpass.getuser(),
+                                                     self.name + "_")
+
+    @property
+    def tempdir(self):
+        if not self._tempdir:
+            self._initialize_tmpdir()
+        return self._tempdir
+
+    def clean_up(self):
+        """Removes the temporary directory (and all its content !)"""
+        with self.sem:
+            if not self._tempdir:
+                return
+            if not os.path.isdir(self._tempdir):
+                return
+            for root, dirs, files in os.walk(self._tempdir, topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
+            os.rmdir(self._tempdir)
+            self._tempdir = None
+
+
+test_options = TestOptions()
+"""Singleton containing util context of whole the tests"""
+
+UtilsTest = test_options
+"""For compatibility"""

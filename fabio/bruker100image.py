@@ -54,11 +54,8 @@ import numpy
 import logging
 import os
 from math import ceil
+
 logger = logging.getLogger(__name__)
-try:
-    from PIL import Image
-except ImportError:
-    Image = None
 
 from .brukerimage import BrukerImage
 from .readbytestream import readbytestream
@@ -91,11 +88,11 @@ class Bruker100Image(BrukerImage):
         line = 80
         blocksize = 512
         nhdrblks = 5  # by default we always read 5 blocks of 512
-        self.__headerstring__ = infile.read(blocksize * nhdrblks).decode("ASCII")
+        self.__headerstring = infile.read(blocksize * nhdrblks).decode("ASCII")
         self.header = self.check_header()
         for i in range(0, nhdrblks * blocksize, line):
-            if self.__headerstring__[i: i + line].find(":") > 0:
-                key, val = self.__headerstring__[i: i + line].split(":", 1)
+            if self.__headerstring[i: i + line].find(":") > 0:
+                key, val = self.__headerstring[i: i + line].split(":", 1)
                 key = key.strip()  # remove the whitespace (why?)
                 val = val.strip()
                 if key in self.header:
@@ -107,10 +104,10 @@ class Bruker100Image(BrukerImage):
         nhdrblks = int(self.header['HDRBLKS'])
         self.header['HDRBLKS'] = nhdrblks
         # Now read in the rest of the header blocks, appending
-        self.__headerstring__ += infile.read(blocksize * (nhdrblks - 5)).decode("ASCII")
+        self.__headerstring += infile.read(blocksize * (nhdrblks - 5)).decode("ASCII")
         for i in range(5 * blocksize, nhdrblks * blocksize, line):
-            if self.__headerstring__[i: i + line].find(":") > 0:  # as for first 512 bytes of header
-                key, val = self.__headerstring__[i: i + line].split(":", 1)
+            if self.__headerstring[i: i + line].find(":") > 0:  # as for first 512 bytes of header
+                key, val = self.__headerstring[i: i + line].split(":", 1)
                 key = key.strip()
                 val = val.strip()
                 if key in self.header:
@@ -118,26 +115,24 @@ class Bruker100Image(BrukerImage):
                 else:
                     self.header[key] = val
         # set the image dimensions
-        self.dim1 = int(self.header['NROWS'].split()[0])
-        self.dim2 = int(self.header['NCOLS'].split()[0])
+        shape = int(self.header['NROWS'].split()[0]), int(self.header['NCOLS'].split()[0])
+        self._shape = shape
         self.version = int(self.header.get('VERSION', "100"))
 
-    def toPIL16(self, filename=None):
-        if not Image:
-            raise RuntimeError("PIL is not installed !!! ")
-
-        if filename:
-            self.read(filename)
-        PILimage = Image.frombuffer("F", (self.dim1, self.dim2), self.data, "raw", "F;16", 0, -1)
-        return PILimage
-
     def read(self, fname, frame=None):
-        '''data is stored in three blocks: data (uint8), overflow (uint32), underflow (int32). The blocks are
-        zero paded to a multiple of 16 bits  '''
+        """Read the data.
+
+        Data is stored in three blocks:
+
+        - data (uint8)
+        - overflow (uint32)
+        - underflow (int32).
+
+        The blocks are zero padded to a multiple of 16 bits.
+        """
         with self._open(fname, "rb") as infile:
             self._readheader(infile)
-            rows = self.dim1
-            cols = self.dim2
+            rows, cols = self.shape
             npixelb = int(self.header['NPIXELB'][0])
             # you had to read the Bruker docs to know this!
 
@@ -146,18 +141,15 @@ class Bruker100Image(BrukerImage):
             # The total size is nbytes * nrows * ncolumns.
             self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
                                        datatype="int", signed='n', swap='n')
+
             # now process the overflows
-            for k, nover in enumerate(self.header['NOVERFL'].split()):
-                if k == 0:
-                    # read the set of "underflow pixels" - these will be completely disregarded for now
-                    continue
-                nov = int(nover)
+            noverfl_values = [int(f) for f in self.header['NOVERFL'].split()]
+
+            for k, nov in enumerate(noverfl_values):
                 if nov <= 0:
                     continue
-                bpp = 1 << k  # (2 ** k)
+                bpp = 1 << k
                 datatype = self.bpp_to_numpy[bpp]
-                # upgrade data type
-                self.data = self.data.astype(datatype)
                 # pad nov*bpp to a multiple of 16 bytes
                 nbytes = (nov * bpp + 15) & ~(15)
 
@@ -165,8 +157,16 @@ class Bruker100Image(BrukerImage):
                 data_str = infile.read(nbytes)
                 # ar without zeros
                 ar = numpy.frombuffer(data_str[:nov * bpp], datatype)
+                if k == 0:
+                    # read the set of "underflow pixels" - these will be completely disregarded for now
+                    self.ar_underflows = ar
+                    continue
+
                 # insert the the overflow pixels in the image array:
                 lim = (1 << (8 * k)) - 1
+
+                # upgrade data type
+                self.data = self.data.astype(datatype)
 
                 # generate an array comprising of the indices into data.ravel()
                 # where its value equals lim.
@@ -175,21 +175,19 @@ class Bruker100Image(BrukerImage):
                 # now put values from ar into those indices
                 if k != 0:
                     flat.put(mask, ar)
-                else:  # only working because nov = - is treated bevor
-                    self.ar_underflows = ar
                 logger.debug("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
-#         infile.close()
+
         # replace zeros with values from underflow block
-        if int(self.header["NOVERFL"].split()[0]) > 0:
+        if noverfl_values[0] > 0:
             flat = self.data.ravel()
             self.mask_undeflows = numpy.where(flat == 0)[0]
             self.mask_no_undeflows = numpy.where(self.data != 0)
             flat.put(self.mask_undeflows, self.ar_underflows)
-        # add basline
-        if int(self.header["NOVERFL"].split()[0]) != -1:
+
+        # add baseline
+        if noverfl_values[0] != -1:
             baseline = int(self.header["NEXP"].split()[2])
             self.data[self.mask_no_undeflows] += baseline
-        # print(self.data.max(), self.data.min(), self.data[numpy.where(self.data==0)].shape)
 
         self.resetvals()
         return self
@@ -258,7 +256,7 @@ class Bruker100Image(BrukerImage):
         pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
         flat = self.data.ravel()  # flat memory view
         flow_pos = numpy.logical_or(flat >= limit, flat < 0)
-#         flow_pos_indexes = numpy.where(flow_pos)[0]
+        # flow_pos_indexes = numpy.where(flow_pos)[0]
         flow_vals = (flat[flow_pos])
 
         flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
@@ -271,7 +269,7 @@ class Bruker100Image(BrukerImage):
         """
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
-#         nunderf = self.nunderf
+        # nunderf = self.nunderf
         read_bytes = (noverf * bpp + 15) & ~(15)
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
@@ -346,12 +344,12 @@ class Bruker100Image(BrukerImage):
             bpp = 1
             # limit = 255
             nunderFlows = self.nunderFlows
-#             temp_data = self.data
+            # temp_data = self.data
             read_bytes = (nunderFlows * bpp + 15) & ~(15)  # multiple of 16
             dif2usedbyts = read_bytes - (nunderFlows * bpp)
             pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
-#             flat = self.data.ravel()  # flat memory view
-#             flow_pos_indexes = self.mask_undeflows
+            # flat = self.data.ravel()  # flat memory view
+            # flow_pos_indexes = self.mask_undeflows
             flow_vals = (self.ar_underflows)
             # flow_vals[flow_vals<0] = 65535#limit#flow_vals[flow_vals<0]
             flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
@@ -365,13 +363,13 @@ class Bruker100Image(BrukerImage):
             bpp = 2
             limit = 255
             nover_one = self.nover_one
-#             temp_data = self.data
+            # temp_data = self.data
             read_bytes = (nover_one * bpp + 15) & ~(15)  # multiple of 16
             dif2usedbyts = read_bytes - (nover_one * bpp)
             pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
             flat = self.data.ravel()  # flat memory view
             flow_pos = (flat >= limit) + (flat < 0)
-#             flow_pos_indexes = numpy.where(flow_pos == True)[0]
+            # flow_pos_indexes = numpy.where(flow_pos == True)[0]
             flow_vals = (flat[flow_pos])
             flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
             # print("flow_vals",flow_vals)
@@ -385,7 +383,7 @@ class Bruker100Image(BrukerImage):
 
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
-#         nover_two = self.nover_two
+        # nover_two = self.nover_two
         read_bytes = (noverf * bpp + 15) & ~(15)  # multiple of 16
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
