@@ -47,7 +47,7 @@ from __future__ import with_statement, print_function
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "04/03/2019"
+__date__ = "19/08/2019"
 
 import time
 import logging
@@ -268,8 +268,7 @@ class OxdImage(FabioImage):
                 logger.info("Compressed with the TY5 compression")
                 dtype = numpy.dtype(numpy.int8)
                 raw8 = infile.read(dim1 * dim2)
-                raw_data = numpy.frombuffer(raw8, dtype)
-
+                
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
                 else:
@@ -449,8 +448,8 @@ class OxdImage(FabioImage):
             self.header["Compression"] = "TY1"
 
         datablock8, datablock16, datablock32 = compTY1(self.data)
-        self.header["OI"] = len(datablock16) / 2
-        self.header["OL"] = len(datablock32) / 4
+        self.header["OI"] = len(datablock16) // 2
+        self.header["OL"] = len(datablock32) // 4
         with self._open(fname, mode="wb") as outfile:
             outfile.write(self._writeheader())
             outfile.write(datablock8)
