@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/11/2018"
+__date__ = "19/08/2019"
 __status__ = "stable"
 
 
@@ -52,7 +52,6 @@ except ImportError:
 from . import fabioformats as _fabioformats
 
 # provide a global fabio API
-register = _fabioformats.register
 factory = _fabioformats.factory
 
 # feed the library with all the available formats

@@ -226,7 +226,7 @@ class Bruker100Image(BrukerImage):
                             line = key.ljust(7) + ":"
                         line += value[72 * (i + 1):]
                 elif "__len__" in dir(value):
-                    f = "\%.%is" % 72 // len(value) - 1
+                    f = "%%.%is" % (72 // len(value) - 1)
                     line += " ".join([f % i for i in value])
                 else:
                     line += str(value)
