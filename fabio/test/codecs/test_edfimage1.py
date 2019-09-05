@@ -242,6 +242,158 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(self.root,"00_edfblocktypes/multi5_gzip.edf")
         test_00(self,filename,avglist)
 
+    def test_edfsingle_raw_bf_gblk(self):
+        """
+        Reading an uncompressed edf-single-frame-file with references to data
+        in externally saved dataframes.
+        Check average data value, and verify that the key ExperimentInfo is
+        correctly read from the general block.
+
+        """
+        avglist=[25743.2]
+        filename = os.path.join(self.root,"01_single_raw_bf_gblk/pj19_frelon_00028_raw.ehf")
+        keylist=["ExperimentInfo"]
+        test_00(self,filename,avglist,keylist)
+
+    def test_edfmulti_raw_bf_gblk(self):
+        """
+        Reading an uncompressed edf-multi-frame-file with references to data
+        in externally saved dataframes and checking the average of each frame.
+        Some header values are modified for checking the robustness.
+        frames 0..16: Test reading from a multi frame edf file with links to
+                      external binary files (ehf)
+        frame 17:     Test reading without EDF_BinaryFileSize => must be
+                      estimated from data size
+        frame 18:     Test reading with EDF_BinaryFileSize bigger than required
+                      => currently an unnecessary info is given
+        """
+        avglist=[9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
+        filename = os.path.join(self.root,"02_multi_raw_bf_gblk/rh28a_saxs_00022_raw_binned.ehf")
+        test_00(self,filename,avglist)
+
+    def test_edfmulti_raw_dark_raw_bf_gblk(self):
+        """
+        Linking data of several frames to different parts of a single external
+        binary file.
+        rh28a_saxs_00003_dark_binned.ehf:
+          WARNING:fabio.edfimage:Under-short header frame 2: only 311 bytes
+             => this should disappear when reading EDF_BlockBoundary
+          INFO:fabio.edfimage:Data stream is padded : 29184 > required 28800 bytes
+            => unnecessary, it cannot be avoided, e.g. for saving byte arrays of odd length
+        rh28a_saxs_00003_raw_binned.ehf:
+          INFO:fabio.edfimage:Data stream is padded : 29184 > required 28800 bytes
+            => unnecessary, feature, e.g. for saving byte arrays of odd length
+        """
+        avglist=[2487.36, 2488.28, 2488.11]
+        filename = os.path.join(self.root,"03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_dark_binned.ehf")
+        test_00(self,filename,avglist)
+        avglist=[9651.25]
+        filename = os.path.join(self.root,"03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_raw_binned.ehf")
+        test_00(self,filename,avglist)
+
+    def test_edfsingle_raw_bf_gblk_gz(self):
+        """
+        Test reading gzipped data files linking to an external binary data file.
+        Check that the extension .gz is added to the name of the external binary
+        data file if it cannot be opened with the binary file name found in the
+        header. Both files are gzipped.
+        """
+        avglist=[25743.2]
+        filename = os.path.join(self.root,"04_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
+        test_00(self,filename,avglist)
+
+    def test_edfsingle_raw_bf_gblk_gz(self):
+        """
+        Test reading gzipped data files linking to an external binary data file.
+        Check that the extension .gz is added to the name of the external binary
+        data file if it cannot be opened with the binary file name found in the
+        header. The binary data file is not compressed.
+        """
+        avglist=[25743.2]
+        filename = os.path.join(self.root,"05_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
+        test_00(self,filename,avglist)
+
+    def test_edf6_single_raw_bf_gblk_gz(self):
+        """
+        Test reading gzipped data files linking to an external binary data file.
+        Check that the extension .gz is added to the name of the external binary
+        data file if it cannot be opened with the binary file name found in the
+        header. Only the binary data file is gzipped.
+        """
+        avglist=[25743.2]
+        filename = os.path.join(self.root,"06_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf")
+        test_00(self,filename,avglist)
+
+    def test_edfmulti_raw_bf_gblk_gz(self):
+        """
+        Test reading the files of the test test_edfmulti_raw_bf_gblk after
+        gzipping.
+        Test reading from multi frame files, like test_edfmulti_raw_bf_gblk, but
+        but with all files gzipped.
+        frames 0..16: Test reading from a multi frame edf file with links to
+                      external binary files (ehf)
+        frame 17:     Test reading without EDF_BinaryFileSize => should be
+                      estimated from data size
+        frame 18:     Test reading with EDF_BinaryFileSize bigger than required
+                      => currently an unnecessary info is given
+        frame 19:     Test reading with a wrong EDF_BinaryFileSize that excceeds
+                      the real file size. => data must only be read to the end
+                      of the binary data file.
+        """
+        avglist=[9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
+        filename = os.path.join(self.root,"07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz")
+        test_00(self,filename,avglist)
+
+    def test_pitfalls(self):
+        """
+        multi5+headerblob_edf1.edf.gz
+        multi5+headerblob+headerendinheader_edf1.edf.gz
+        multi5+pitfalls_edf1.edf.gz
+        multi5+headerblob_edf0.edf.gz
+        multi5+headerblob+headerendinheader_edf0.edf.gz
+        multi5+pitfalls_edf0.edf.gz
+        """
+
+        # edf1 file => must always work
+        avglist=[0,1,2,3,4]
+        filename = os.path.join(self.root,"08_pitfalls/multi5+pitfalls_edf1.edf.gz")
+        test_00(self,filename,avglist)
+
+        # edf1 file with header end pattern in binary blob => must always work
+        avglist=[18312,18312,18312,18312,18312]
+        filename = os.path.join(self.root,"08_pitfalls/multi5+headerblob_edf1.edf.gz")
+        test_00(self,filename,avglist)
+
+        # edf1 file with header end pattern in Title value and binary blob
+        # => must always work
+        filename = os.path.join(self.root,"08_pitfalls/multi5+headerblob+headerendinheader_edf1.edf.gz")
+        test_00(self,filename,avglist)
+
+        # edf0 file => must always work
+        avglist=[0,1,2,3,4]
+        filename = os.path.join(self.root,"08_pitfalls/multi5+pitfalls_edf0.edf.gz")
+        test_00(self,filename,avglist)
+
+        # edf0 file with header end pattern in binary blob => must always work
+        avglist=[18312,18312,18312,18312,18312]
+        filename = os.path.join(self.root,"08_pitfalls/multi5+headerblob_edf0.edf.gz")
+        test_00(self,filename,avglist)
+
+        # edf0 file with header end pattern in Title value and binary blob
+        # => usually fails, because the header end pattern is searched
+        # by parsing each byte of the header.
+        # The next test usually fails, because the value of the header key
+        # "Title" contains a header end pattern.
+        # There is no safe way of reading such files.
+        # When writing the files it must be checked that no special
+        # characters are written to header values, especially
+        # not '{', '}', ';'.
+        # Searching the end_marker in a header in steps of BLOCKSIZE
+        # instead of searching through the whole header byte for
+        # byte would allow reading most of such files, but success is not
+        # guaranteed. => Do not write special character to the header
+        # test_00(self,"08_pitfalls/multi5+headerblob+headerendinheader_edf0.edf.gz",avglist)
+
     def test_special(self):
         """
         09_special/face_ok.edf.gz
@@ -284,6 +436,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # filename = os.path.join(self.root,"09_special/face_tooshort.edf.gz")
         # test_00(self,filename,avglist)
 
+    # test files 10 and 11 for testing with to be copied and added later
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
