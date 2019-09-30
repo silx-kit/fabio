@@ -21,8 +21,10 @@ matrix:
      dist: xenial
    - python: 3.7
      os: linux-ppc64le
+     dist: bionic
    - python: 3.7
      os: linux-arm64
+     dist: bionic
      
 # command to install dependencies
 install:
