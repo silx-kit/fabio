@@ -32,9 +32,9 @@ install:
   - "pip install --upgrade wheel"
 
   # Install build dependencies: HDF5 PATH needed for PPC64le
-  - "if [ -d /usr/lib/powerpc64le-linux-gnu/hdf5/serial/ ]; then export HDF5_DIR=/usr/lib/powerpc64le-linux-gnu/hdf5/serial/; fi"
+  - "if [ $TRAVIS_ARCH -eq 'ppc64le' ]; then export HDF5_DIR=/usr/lib/powerpc64le-linux-gnu/hdf5/serial; fi"
   - "env"
-  - "dpkg -l |grep -i hdf5"
+  - "dpkg -l"
   - "ls /usr/lib/powerpc64le-linux-gnu/hdf5"
   - "ls /usr/lib/powerpc64le-linux-gnu/hdf5/serial"
   - "pip install -r ci/requirements_travis.txt --upgrade"
