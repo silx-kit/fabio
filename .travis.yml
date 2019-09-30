@@ -37,8 +37,8 @@ install:
   - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then export HDF5_DIR=/usr/lib/powerpc64le-linux-gnu/hdf5/serial; fi"
   - "env"
   - "dpkg -l"
-  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then ls /usr/lib/powerpc64le-linux-gnu/hdf5; fi"
-  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then ls /usr/lib/powerpc64le-linux-gnu/hdf5/serial; fi"
+  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /proc/cpuinfo; fi"
+  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /var/lib/dpkg/info/libhdf5-*.list; fi"
   - "pip install -r ci/requirements_travis.txt --upgrade"
 
   # Print Python info
