@@ -31,7 +31,8 @@ install:
   - "pip install --upgrade setuptools"
   - "pip install --upgrade wheel"
 
-  # Install build dependencies
+  # Install build dependencies: HDF5 PATH needed for PPC64le
+  - "if [ -d /usr/lib/powerpc64le-linux-gnu/hdf5/serial/ ]; then export HDF5_DIR=/usr/lib/powerpc64le-linux-gnu/hdf5/serial/; fi"
   - "pip install -r ci/requirements_travis.txt --upgrade"
 
   # Print Python info
