@@ -38,7 +38,7 @@ install:
   - "env"
   - "dpkg -l"
   - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /proc/cpuinfo; fi"
-  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /var/lib/dpkg/info/libhdf5-*.list; fi"
+  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /etc/issue; fi"
   - "pip install -r ci/requirements_travis.txt --upgrade"
 
   # Print Python info
