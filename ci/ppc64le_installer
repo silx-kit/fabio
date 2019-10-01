@@ -8,4 +8,10 @@ set -x
 
 wget http://www.silx.org/pub/ppc64le/HDF5-1.10.5-ppc64le.tar.gz
 tar -xvzf HDF5-1.10.5-ppc64le.tar.gz
-export HDF_PATH=${PWD}/HDF5-1.10.5
+export HDF5_DIR=${PWD}/HDF5-1.10.5
+
+# Some more debugging
+cat /etc/issue
+cat /proc/cpuinfo
+env
+dpkg -l
