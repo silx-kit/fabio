@@ -4,7 +4,7 @@ addons:
   apt:
     update: true
   packages:
-    libhdf5-serial-dev
+    libhdf5-dev
 
 # Enable 3.7 without globally enabling sudo and dist: xenial for other build jobs
 matrix:
@@ -21,10 +21,10 @@ matrix:
      dist: xenial
    - python: 3.7
      os: linux-ppc64le
-     dist: bionic
+     dist: xenial
    - python: 3.7
      os: linux-arm64
-     dist: bionic
+     dist: xenial
      
 # command to install dependencies
 install:
@@ -34,10 +34,11 @@ install:
   - "pip install --upgrade wheel"
 
   # Install build dependencies: HDF5 PATH needed for PPC64le
-  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then export HDF5_DIR=/usr/lib/powerpc64le-linux-gnu/hdf5/serial; fi"
+  #- "if [ $TRAVIS_ARCH = 'ppc64le' ]; then export HDF5_DIR=/usr/lib/powerpc64le-linux-gnu/hdf5; fi"
   - "env"
   - "dpkg -l"
   - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /proc/cpuinfo; fi"
+  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /etc/issue; fi"
   - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then cat /etc/issue; fi"
   - "pip install -r ci/requirements_travis.txt --upgrade"
 
