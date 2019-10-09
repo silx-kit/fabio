@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# This script contains the specific part for CI on IBM power computer (ppc64le)
+
+wget http://www.silx.org/pub/ppc64le/HDF5-1.10.5-xenial-ppc64le.tar.gz
+tar -xzf HDF5-1.10.5-xenial-ppc64le.tar.gz
+export HDF5_DIR=${PWD}/HDF5-1.10.5
+
+# Some more debugging
+cat /etc/issue
+cat /proc/cpuinfo

@@ -1,5 +1,9 @@
 language: python
 
+addons:
+  apt:
+    update: true
+
 # Enable 3.7 without globally enabling sudo and dist: xenial for other build jobs
 matrix:
   include:
@@ -13,7 +17,13 @@ matrix:
      os: linux
    - python: 3.7
      dist: xenial
-
+   - python: 3.7
+     os: linux-ppc64le
+     dist: xenial
+   - python: 3.7
+     os: linux-arm64
+     dist: xenial
+     
 # command to install dependencies
 install:
   # Upgrade distribution modules
@@ -21,7 +31,8 @@ install:
   - "pip install --upgrade setuptools"
   - "pip install --upgrade wheel"
 
-  # Install build dependencies
+  # Install build dependencies: HDF5 directory setup here which is needed for PPC64le
+  - "if [ $TRAVIS_ARCH = 'ppc64le' ]; then source ci/ppc64le_installer; fi"
   - "pip install -r ci/requirements_travis.txt --upgrade"
 
   # Print Python info
