@@ -158,7 +158,7 @@ class NumpyImage(fabioimage.FabioImage):
         self._readheader(infile)
 
         # read the image data
-        self.dataset = numpy.load(infile, allow_pickle=True)
+        self.dataset = numpy.load(infile, allow_pickle=False)
         self.slice_dataset(frame)
         return self
 
@@ -168,6 +168,8 @@ class NumpyImage(fabioimage.FabioImage):
 
         :param fname: name of the file
         """
+        if self.dataset is None and self.data is not None:
+            self.dataset = self.data
         numpy.save(fname, self.dataset)
 
     def _get_frame(self, num):
@@ -208,6 +210,5 @@ class NumpyImage(fabioimage.FabioImage):
     def next(self):
         """ returns the next frame in the series as a fabioimage """
         return self.getframe(self.currentframe + 1)
-
 
 numpyimage = NumpyImage
