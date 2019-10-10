@@ -117,6 +117,7 @@ class TestFabioConvert(unittest.TestCase):
         assert(os.path.exists("output/03.msk"))
         image = fabio.open("output/03.msk")
         assert(isinstance(image, fabio.fit2dmaskimage.Fit2dMaskImage))
+        assert(image.data.shape == (100, 100))
 
     def testSingleFileToDir(self):
         p = self.subprocessFabioConvert("input/03.edf", "-F=msk", "-o=output")
@@ -134,6 +135,7 @@ class TestFabioConvert(unittest.TestCase):
         assert(os.path.exists("output/03.npy"))
         image = fabio.open("output/03.npy")
         assert(isinstance(image, fabio.numpyimage.NumpyImage))
+        assert(image.data.shape == (100, 100))
 
     def testForceOption(self):
         date1 = os.path.getmtime("output/01.msk")
