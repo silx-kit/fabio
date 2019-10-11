@@ -106,6 +106,7 @@ class EsperantoImage(FabioImage):
             if not line[-2:] == self.HEADER_SEPARATOR:
                 raise RuntimeError("Unable to read esperanto header: Ivalid format of line %d." % (line_num + 1))
 
+            line = line.rstrip()
             split_line = line.split(' ')
             key = split_line[0]
 
@@ -203,7 +204,7 @@ class EsperantoImage(FabioImage):
                                                 (self.header["ESPERANTO_FORMAT"], len(self.header)))
         HEADER = header_top
         for header_key in self.header:
-            if header_key == "ESPERANTO_FORMAT":
+            if header_key == "ESPERANTO_FORMAT" or header_key not in self.HEADER_KEYS:
                 continue
             header_val = self.header[header_key]
             HEADER += self._formatheaderline(header_key + ' ' + header_val)
