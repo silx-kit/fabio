@@ -49,11 +49,11 @@ class EsperantoImage(FabioImage):
     HEADER_SEPARATOR = "\x0d\x0a"
 
     HEADER_KEYS = ["IMAGE",
-                   "SPECIAL_CDD_1",
-                   "SPECIAL_CDD_2",
-                   "SPECIAL_CDD_3",
-                   "SPECIAL_CDD_4",
-                   "SPECIAL_CDD_5",
+                   "SPECIAL_CCD_1",
+                   "SPECIAL_CCD_2",
+                   "SPECIAL_CCD_3",
+                   "SPECIAL_CCD_4",
+                   "SPECIAL_CCD_5",
                    "TIME",
                    "MONITOR",
                    "AUTORUN",
@@ -66,7 +66,10 @@ class EsperantoImage(FabioImage):
                    "GONIOMODEL_2",
                    "WAVELENGHTH",
                    "MONOCHROMATOR",
-                   "HISTORY"]
+                   "HISTORY",
+                   "ESPERANTO_FORMAT",
+                   "WAVELENGTH",
+                   "ABSTORUN"]
 
     PIXEL_FORMATS = {"4BYTE_LONG" : "int32"}
     PIXEL_FORMATS_REVERSE = {"int32" : "4BYTE_LONG"}
@@ -109,9 +112,11 @@ class EsperantoImage(FabioImage):
             line = line.rstrip()
             split_line = line.split(' ')
             key = split_line[0]
+            if key.rstrip() == '':
+                continue
 
-            if key not in self.HEADER_KEYS:
-                raise RuntimeError("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
+            # if key not in self.HEADER_KEYS:
+            #     raise RuntimeError("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
 
             self.header[key] = ' '.join(split_line[1:])
 
@@ -200,11 +205,13 @@ class EsperantoImage(FabioImage):
         if "ESPERANTO_FORMAT" not in self.header: # default format
             self.header["ESPERANTO_FORMAT"] = "ESPERANTO FORMAT 1.1"
 
+        self.header = dict(filter(self.header, lambda elem : elem[0] in HEADER_KEYS))
+
         header_top = self._formatheaderline("%s CONSISTING OF %d LINES OF 256 BYTE EACH" %
                                                 (self.header["ESPERANTO_FORMAT"], len(self.header)))
         HEADER = header_top
         for header_key in self.header:
-            if header_key == "ESPERANTO_FORMAT" or header_key not in self.HEADER_KEYS:
+            if header_key == "ESPERANTO_FORMAT": #or header_key not in self.HEADER_KEYS:
                 continue
             header_val = self.header[header_key]
             HEADER += self._formatheaderline(header_key + ' ' + header_val)
