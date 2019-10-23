@@ -53,10 +53,10 @@ import numpy
 
 logger = logging.getLogger(__name__)
 
-from .third_party import six
+from ..third_party import six
 
 try:
-    from .third_party import gzip
+    from ..third_party import gzip
 except ImportError:
     logger.error("Unable to import gzip module: disabling gzip compression")
     gzip = None
@@ -265,7 +265,7 @@ def decByteOffset_cython(stream, size=None, dtype="int64"):
     """
     logger.debug("CBF decompression using cython")
     try:
-        from .ext import byte_offset
+        from ..ext import byte_offset
     except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method: %s", error)
         return decByteOffset_numpy(stream, size, dtype=dtype)
@@ -342,7 +342,7 @@ def compByteOffset_cython(data):
     """
     logger.debug("CBF compression using cython")
     try:
-        from .ext import byte_offset
+        from ..ext import byte_offset
     except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method: %s", error)
         return compByteOffset_numpy(data)
@@ -441,7 +441,7 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_
 
     """
     try:
-        from .ext.mar345_IO import uncompress_pck
+        from ..ext.mar345_IO import uncompress_pck
     except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to read compressed dataset: %s" % error)
     if "seek" in dir(stream):
@@ -462,7 +462,7 @@ def compPCK(data):
 
     """
     try:
-        from .ext.mar345_IO import compress_pck
+        from ..ext.mar345_IO import compress_pck
     except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to write compressed dataset: %s" % error)
     return compress_pck(data)

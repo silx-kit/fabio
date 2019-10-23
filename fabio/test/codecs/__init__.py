@@ -67,6 +67,7 @@ def suite():
     from . import test_dm3image
     from . import test_mrcimage
     from . import test_pixiimage
+    from . import test_esperantoimage
 
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_edfimage.suite())
@@ -98,6 +99,7 @@ def suite():
     testSuite.addTest(test_dm3image.suite())
     testSuite.addTest(test_mrcimage.suite())
     testSuite.addTest(test_pixiimage.suite())
+    testSuite.addTest(test_esperantoimage.suite())
     return testSuite
 
 

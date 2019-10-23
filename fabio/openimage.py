@@ -102,6 +102,7 @@ MAGIC_NUMBERS = [
     (b"\xFF\xD8\xFF\xE1", "jpeg"),
     # JPEG 2000 (from RFC 3745)
     (b"\x00\x00\x00\x0C\x6A\x50\x20\x20\x0D\x0A\x87\x0A", "jpeg2k"),
+    (b"ESPERANTO FORMAT", "esperanto"),
 ]
 
 

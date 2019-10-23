@@ -1,7 +1,12 @@
 # coding: utf-8
-# /*##########################################################################
 #
-# Copyright (c) 2015-2016 European Synchrotron Radiation Facility
+#    Project: X-ray image reader
+#             https://github.com/silx-kit/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,31 +24,6 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ###########################################################################*/
+# THE SOFTWARE
 
-__authors__ = ["V. Valls"]
-__license__ = "MIT"
-__date__ = "31/07/2017"
-
-from numpy.distutils.misc_util import Configuration
-
-
-def configuration(parent_package='', top_path=None):
-    config = Configuration('fabio', parent_package, top_path)
-    config.add_subpackage('app')
-    config.add_subpackage('benchmark')
-    config.add_subpackage('ext')
-    config.add_subpackage('test')
-    config.add_subpackage('third_party')
-    config.add_subpackage('utils')
-    config.add_subpackage('compression')
-
-    return config
-
-
-if __name__ == "__main__":
-    from numpy.distutils.core import setup
-
-    setup(configuration=configuration)
+from .compression import *

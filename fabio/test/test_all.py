@@ -49,6 +49,7 @@ from . import test_tiffio
 from . import test_frames
 from . import test_fabio
 from . import codecs
+from . import test_agi_bitfield
 
 
 def suite():
@@ -71,6 +72,7 @@ def suite():
     testSuite.addTest(test_frames.suite())
     testSuite.addTest(test_fabio.suite())
     testSuite.addTest(codecs.suite())
+    testSuite.addTest(test_agi_bitfield.suite())
     return testSuite
 
 

@@ -89,6 +89,7 @@ _default_codecs = [
     ("jpeg2kimage", "Jpeg2KImage"),
     ("mpaimage", "MpaImage"),
     ("mrcimage", "MrcImage"),
+    ("esperantoimage", "EsperantoImage"),
     # For compatibility (maybe not needed)
     ("adscimage", "AdscImage"),
 ]
