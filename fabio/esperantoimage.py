@@ -30,7 +30,7 @@ from __future__ import with_statement, print_function, division
 __authors__ = ["Florian Plaswig"]
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "10/10/2019"
+__date__ = "23/10/2019"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -94,7 +94,7 @@ class EsperantoImage(FabioImage):
             raise RuntimeError("Unable to read esperanto header: Invalid format of first line")
 
         try:
-            header_line_count = int(top_line.split(' ')[5])
+            header_line_count = int(top_line.split()[5])
         except Exception as err:
             raise RuntimeError("Unable to determine header size: %s" % err)
 
