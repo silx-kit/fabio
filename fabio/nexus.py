@@ -182,7 +182,7 @@ class Nexus(object):
 
         :return: list of HDF5 groups
         """
-        entries = [(grp, from_isotime(self.h5[grp + "/start_time"].value))
+        entries = [(grp, from_isotime(self.h5[grp + "/start_time"][()]))
                    for grp in self.h5
                    if (isinstance(self.h5[grp], h5py.Group) and
                        "start_time" in self.h5[grp] and
