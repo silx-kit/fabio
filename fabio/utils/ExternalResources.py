@@ -22,6 +22,7 @@
 # THE SOFTWARE.
 #
 # ###########################################################################*/
+from fileinput import filename
 """Access to external resources.
 
 Module imported from silx project to avoid cyclic dependancy.
@@ -29,7 +30,7 @@ Module imported from silx project to avoid cyclic dependancy.
 
 __authors__ = ["Thomas Vincent", "J. Kieffer"]
 __license__ = "MIT"
-__date__ = "07/03/2019"
+__date__ = "23/10/2019"
 
 
 import os
@@ -171,12 +172,11 @@ class ExternalResources(object):
 
             if not os.path.isfile(fullfilename):
                 raise RuntimeError(
-                    "Could not automatically \
-                    download test images %s!\n \ If you are behind a firewall, \
-                    please set both environment variable http_proxy and https_proxy.\
-                    This even works under windows ! \n \
-                    Otherwise please try to download the images manually from \n%s/%s"
-                    % (filename, self.url_base, filename))
+                    ("Could not automatically download test images %s!"%filename)+
+                    "If you are behind a firewall, please set both environment variable http_proxy and https_proxy."+
+                    "This works even under windows !"+
+                    "Otherwise please try to download the images manually from"+
+                    "%s/%s"% (self.url_base, filename))
 
         if filename not in self.all_data:
             self.all_data.add(filename)
@@ -268,11 +268,11 @@ class ExternalResources(object):
         if not os.path.isfile(fullimagename_bz2):
             self.getfile(bzip2name)
             if not os.path.isfile(fullimagename_bz2):
-                raise RuntimeError("Could not automatically \
-                download test images %s!\n \ If you are behind a firewall, \
-                please set the environment variable http_proxy.\n \
-                Otherwise please try to download the images manually from \n \
-                %s" % (self.url_base, filename))
+                raise RuntimeError(
+                    ("Could not automatically download test images %s!"%filename) +
+                    "If you are behind a firewall, please set the environment variable http_proxy and https_proxy." +
+                    "Otherwise please try to download the images manually from" +
+                    "%s/%s" % (self.url_base, filename))
 
         raw_file_exists = os.path.isfile(fullimagename_raw)
         gz_file_exists = os.path.isfile(fullimagename_gz)
