@@ -36,6 +36,7 @@ import logging
 logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage
+from .compression import agi_bitfield
 
 
 class EsperantoImage(FabioImage):
@@ -71,14 +72,12 @@ class EsperantoImage(FabioImage):
                    "WAVELENGTH",
                    "ABSTORUN"]
 
-    PIXEL_FORMATS = {"4BYTE_LONG" : "int32"}
-    PIXEL_FORMATS_REVERSE = {"int32" : "4BYTE_LONG"}
-
     def __init__(self, *arg, **kwargs):
         """
         Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
+        self.format = ""
 
     def _readheader(self, infile):
         """
@@ -87,7 +86,6 @@ class EsperantoImage(FabioImage):
         :param infile: Opened python file (can be stringIO or bipped file)
         """
         self.header = self.check_header()
-
 
         # read the first line of the header
         top_line = infile.read(256).decode('ascii')
@@ -135,15 +133,10 @@ class EsperantoImage(FabioImage):
         if 256 > width > 4096 or width % 4 != 0 or 256 > height > 4096 or height % 4 != 0:
             logger.warning("The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues.")
 
-        self.shape = (height, width) # WARNING: This might be wrong
+        self.shape = (height, width)
 
-        format = self.header["IMAGE"].split(' ')[4][1:-1]
-
-        if format in self.PIXEL_FORMATS:
-            self._dtype = numpy.dtype(self.PIXEL_FORMATS[format])
-        else:
-            raise RuntimeError("Pixel format %s not supported." % format)
-
+        self.format = self.header["IMAGE"].split(' ')[4][1:-1]
+        self._dtype = "int32"
 
     def read(self, fname, frame=None):
         """
@@ -157,14 +150,22 @@ class EsperantoImage(FabioImage):
         with self._open(fname) as infile:
             self._readheader(infile)
 
-            try:
-                pixelsize = self._dtype.itemsize
-                pixelcount = self.shape[0] * self.shape[1]
+            if self.format == "4BYTE_LONG":
+                try:
+                    pixelsize = 4
+                    pixelcount = self.shape[0] * self.shape[1]
 
-                data = numpy.frombuffer(infile.read(pixelsize * pixelcount), dtype=self._dtype).copy()
-                self.data = numpy.reshape(data, self.shape)
-            except Exception as err:
-                raise RuntimeError("Exception while reading pixel data %s." % err)
+                    data = numpy.frombuffer(infile.read(pixelsize * pixelcount), dtype=self._dtype).copy()
+                    self.data = numpy.reshape(data, self.shape)
+                except Exception as err:
+                    raise RuntimeError("Exception while reading pixel data %s." % err)
+            elif self.format == "AGI_BITFIELD":
+                try:
+                    data = agi_bitfield.decompress(infile.read(), self.shape)
+                except Exception as err:
+                    raise RuntimeError("Exception while decompressing pixel data %s." % err)
+            else:
+                raise RuntimeError("Format not supported %s." % self.format)
 
         return self
 
@@ -183,13 +184,13 @@ class EsperantoImage(FabioImage):
 
         # create header
         if "IMAGE" not in self.header: # create image entry
-            dtype_info = '"%s"' % self.PIXEL_FORMATS_REVERSE[str(self.dtype)]
+            dtype_info = '"%s"' % self.format
             dx, dy = self.shape
 
             self.header["IMAGE"] = "%d %d 1 1 %s" % (dx, dy, dtype_info)
 
         else: # update image entry
-            dtype_info = '"%s"' % self.PIXEL_FORMATS_REVERSE[str(self.dtype)]
+            dtype_info = '"4BYTE_LONG"'
             dx, dy = self.shape
             split = self.header["IMAGE"].split(' ')
 
@@ -205,7 +206,7 @@ class EsperantoImage(FabioImage):
         if "ESPERANTO_FORMAT" not in self.header: # default format
             self.header["ESPERANTO_FORMAT"] = "ESPERANTO FORMAT 1.1"
 
-        self.header = dict(filter(self.header, lambda elem : elem[0] in HEADER_KEYS))
+        self.header = dict(filter(self.header, lambda elem: elem[0] in self.HEADER_KEYS))
 
         header_top = self._formatheaderline("%s CONSISTING OF %d LINES OF 256 BYTE EACH" %
                                                 (self.header["ESPERANTO_FORMAT"], len(self.header)))
@@ -219,8 +220,12 @@ class EsperantoImage(FabioImage):
 
         with self._open(fname, "wb") as outfile:
             outfile.write(HEADER)
-            outfile.write(self.data.tostring())
-
+            if self.format == "4BYTE_LONG":
+                outfile.write(self.data.tobytes())
+            elif self.format == "AGI_BITFIELD":
+                outfile.write(agi_bitfield.compress(self.data))
+            else:
+                raise RuntimeError("Format not supported %s." % self.format)
 
 # This is not compatibility with old code:
 esperantoimage = EsperantoImage

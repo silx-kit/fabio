@@ -37,3 +37,6 @@ nosetests.xml
 .project
 .pydevproject
 .settings
+
+# generated c files
+*.c
