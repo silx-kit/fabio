@@ -44,7 +44,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "01/03/2019"
+__date__ = "23/10/2019"
 
 import logging
 import os
@@ -113,7 +113,7 @@ class Hdf5Image(fabioimage.FabioImage):
 
         self.filename = filename
         if os.path.isfile(self.filename):
-            self.hdf5 = h5py.File(self.filename, "r")
+            self.hdf5 = h5py.File(self.filename, mode="r")
         else:
             error = "No such file or directory: %s" % self.filename
             logger.error(error)

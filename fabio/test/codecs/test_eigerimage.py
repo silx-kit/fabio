@@ -29,7 +29,7 @@ def make_hdf5(name, shape=(50, 99, 101)):
     if h5py is None:
         raise unittest.SkipTest("h5py is not available")
 
-    with h5py.File(name) as h:
+    with h5py.File(name, mode="w") as h:
         e = h.require_group("entry/data")
         if len(shape) == 2:
             e.require_dataset("data", shape, compression="gzip", compression_opts=9, dtype="float32")
