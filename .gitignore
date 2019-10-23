@@ -38,5 +38,6 @@ nosetests.xml
 .pydevproject
 .settings
 
-# generated c files
+# generated c files, i.e. all except the ones in the src directory
 *.c
+!fabio/ext/src/*.c
