@@ -58,9 +58,9 @@ class TestNexus(unittest.TestCase):
         fname = os.path.join(UtilsTest.tempdir, "nexus.h5")
         nex = nexus.Nexus(fname)
         entry = nex.new_entry("entry")
-        time1 = nexus.from_isotime(entry["start_time"].value)
-        entry["bad_time"] = [entry["start_time"].value]  # this is a list
-        time2 = nexus.from_isotime(entry["bad_time"].value)
+        time1 = nexus.from_isotime(entry["start_time"][()])
+        entry["bad_time"] = [entry["start_time"][()]]  # this is a list
+        time2 = nexus.from_isotime(entry["bad_time"][()])
         self.assertEqual(time1, time2, "start_time in list does not works !")
         nex.close()
         self.assertTrue(os.path.exists(fname))
