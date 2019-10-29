@@ -48,7 +48,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "01/03/2019"
+__date__ = "23/10/2019"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -159,7 +159,7 @@ class EigerImage(FabioImage):
         """
         if len(self.dataset.shape) == 2:
             self.dataset.shape = (1,) + self.dataset.shape
-        with h5py.File(fname) as h5file:
+        with h5py.File(fname, mode="w") as h5file:
             grp = h5file.require_group("entry/data")
             if len(self.dataset) > 1:
                 for i, ds in enumerate(self.dataset):

@@ -34,7 +34,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/10/2018"
+__date__ = "23/10/2019"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 
@@ -137,7 +137,7 @@ class Nexus(object):
         if exists(self.filename) and self.mode == "r":
             self.h5 = h5py.File(self.filename.split("::")[0], mode=self.mode)
         else:
-            self.h5 = h5py.File(self.filename.split("::")[0])
+            self.h5 = h5py.File(self.filename.split("::")[0], mode="w")
         self.to_close = []
 
     def close(self, endtime=None):
@@ -182,7 +182,7 @@ class Nexus(object):
 
         :return: list of HDF5 groups
         """
-        entries = [(grp, from_isotime(self.h5[grp + "/start_time"].value))
+        entries = [(grp, from_isotime(self.h5[grp + "/start_time"][()]))
                    for grp in self.h5
                    if (isinstance(self.h5[grp], h5py.Group) and
                        "start_time" in self.h5[grp] and
