@@ -30,7 +30,7 @@ from __future__ import with_statement, print_function, division
 __authors__ = ["Florian Plaswig"]
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "24/10/2019"
+__date__ = "23/10/2019"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -98,28 +98,25 @@ class EsperantoImage(FabioImage):
         except Exception as err:
             raise RuntimeError("Unable to determine header size: %s" % err)
 
-        self.header["ESPERANTO_FORMAT"] = ' '.join(top_line.split()[:2])
+        self.header["ESPERANTO_FORMAT"] = ' '.join(top_line.split(' ')[:2])
 
         # read the remaining lines
         for line_num in range(1, header_line_count):
             line = infile.read(256).decode('ascii')
-            
+
             if not line[-2:] == self.HEADER_SEPARATOR:
-                msg = "Unable to read esperanto header: Invalid format of line %d." % (line_num + 1)
-                if line_num ==  header_line_count -1:
-                    # last line is most of the time not like the other
-                    logger.debug(msg)
-                else:
-                    logger.warning(msg)
+                raise RuntimeError("Unable to read esperanto header: Ivalid format of line %d." % (line_num + 1))
 
             line = line.rstrip()
-            split_line = line.split(maxsplit=1)
-            if split_line:
-                key = split_line[0]
-                if len(split_line) == 1:
-                    self.header[key] = ""  
-                else:
-                    self.header[key] = split_line[1].strip() 
+            split_line = line.split(' ')
+            key = split_line[0]
+            if key.rstrip() == '':
+                continue
+
+            # if key not in self.HEADER_KEYS:
+            #     raise RuntimeError("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
+
+            self.header[key] = ' '.join(split_line[1:])
 
         # extract necessary data
         if "IMAGE" not in self.header:
