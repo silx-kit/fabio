@@ -30,13 +30,17 @@ from __future__ import with_statement, print_function, division
 __authors__ = ["Florian Plaswig"]
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "24/10/2019"
+__date__ = "29/10/2019"
 
+import sys
 import logging
 logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage
 from .compression import agi_bitfield
+
+if sys.version_info[0]<3:
+    raise ImportError("EsperantoImage is not compatible with Python2, please upgrade")
 
 
 class EsperantoImage(FabioImage):
@@ -163,8 +167,9 @@ class EsperantoImage(FabioImage):
                 except Exception as err:
                     raise RuntimeError("Exception while reading pixel data %s." % err)
             elif self.format == "AGI_BITFIELD":
+                self.raw_data = infile.read()
                 try:
-                    data = agi_bitfield.decompress(infile.read(), self.shape)
+                    data = agi_bitfield.decompress(self.raw_data, self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while decompressing pixel data %s." % err)
             else:
