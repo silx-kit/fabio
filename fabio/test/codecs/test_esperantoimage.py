@@ -14,11 +14,7 @@
 
 from __future__ import print_function, with_statement, division, absolute_import
 
-import sys
-try:
-    import fabio.esperantoimage
-except ImportError:
-    pass
+import fabio.esperantoimage
 from ..utilstest import UtilsTest
 
 import unittest
@@ -26,7 +22,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@unittest.skipIf(sys.version_info[0]<3, "Python3 minimum")
+
 class TestEsperanto(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
     TESTIMAGES = [

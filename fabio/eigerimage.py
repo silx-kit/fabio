@@ -159,7 +159,7 @@ class EigerImage(FabioImage):
         """
         if len(self.dataset.shape) == 2:
             self.dataset.shape = (1,) + self.dataset.shape
-        with h5py.File(fname, "w") as h5file:
+        with h5py.File(fname, mode="w") as h5file:
             grp = h5file.require_group("entry/data")
             if len(self.dataset) > 1:
                 for i, ds in enumerate(self.dataset):

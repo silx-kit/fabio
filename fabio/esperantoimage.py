@@ -30,17 +30,13 @@ from __future__ import with_statement, print_function, division
 __authors__ = ["Florian Plaswig"]
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "29/10/2019"
+__date__ = "10/10/2019"
 
-import sys
 import logging
 logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage
 from .compression import agi_bitfield
-
-if sys.version_info[0]<3:
-    raise ImportError("EsperantoImage is not compatible with Python2, please upgrade")
 
 
 class EsperantoImage(FabioImage):
@@ -98,32 +94,29 @@ class EsperantoImage(FabioImage):
             raise RuntimeError("Unable to read esperanto header: Invalid format of first line")
 
         try:
-            header_line_count = int(top_line.split()[5])
+            header_line_count = int(top_line.split(' ')[5])
         except Exception as err:
             raise RuntimeError("Unable to determine header size: %s" % err)
 
-        self.header["ESPERANTO_FORMAT"] = ' '.join(top_line.split()[:2])
+        self.header["ESPERANTO_FORMAT"] = ' '.join(top_line.split(' ')[:2])
 
         # read the remaining lines
         for line_num in range(1, header_line_count):
             line = infile.read(256).decode('ascii')
-            
+
             if not line[-2:] == self.HEADER_SEPARATOR:
-                msg = "Unable to read esperanto header: Invalid format of line %d." % (line_num + 1)
-                if line_num ==  header_line_count -1:
-                    # last line is most of the time not like the other
-                    logger.debug(msg)
-                else:
-                    logger.warning(msg)
+                raise RuntimeError("Unable to read esperanto header: Ivalid format of line %d." % (line_num + 1))
 
             line = line.rstrip()
-            split_line = line.split(maxsplit=1)
-            if split_line:
-                key = split_line[0]
-                if len(split_line) == 1:
-                    self.header[key] = ""  
-                else:
-                    self.header[key] = split_line[1].strip() 
+            split_line = line.split(' ')
+            key = split_line[0]
+            if key.rstrip() == '':
+                continue
+
+            # if key not in self.HEADER_KEYS:
+            #     raise RuntimeError("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
+
+            self.header[key] = ' '.join(split_line[1:])
 
         # extract necessary data
         if "IMAGE" not in self.header:
@@ -169,7 +162,7 @@ class EsperantoImage(FabioImage):
                 self.raw_data = infile.read()
                 logger.warning("AGI_BITFIELD decompression is known to be apporximative ... use those data with caution !")
                 try:
-                    data = agi_bitfield.decompress(self.raw_data, self.shape)
+                    data = agi_bitfield.decompress(infile.read(), self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while decompressing pixel data %s." % err)
             else:

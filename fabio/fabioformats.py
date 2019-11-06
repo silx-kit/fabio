@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2019"
+__date__ = "15/03/2019"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -123,12 +123,7 @@ def register_default_formats():
     # to modify attributes of the class *after* they have been
     # created
     for module_name, class_name in _default_codecs:
-        try:
-            module = importer("fabio." + module_name)
-        except ImportError as err:
-            _logger.warning("Unable to import %s: %s", module_name, err)
-            continue
-        
+        module = importer("fabio." + module_name)
         codec_class = getattr(module, class_name)
         if codec_class is None:
             raise RuntimeError("Class name '%s' from mudule '%s' not found" % (class_name, module_name))
