@@ -161,13 +161,13 @@ class EsperantoImage(FabioImage):
                 try:
                     pixelsize = 4
                     pixelcount = self.shape[0] * self.shape[1]
-
                     data = numpy.frombuffer(infile.read(pixelsize * pixelcount), dtype=self._dtype).copy()
                     self.data = numpy.reshape(data, self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while reading pixel data %s." % err)
             elif self.format == "AGI_BITFIELD":
                 self.raw_data = infile.read()
+                logger.warning("AGI_BITFIELD decompression is known to be apporximative ... use those data with caution !")
                 try:
                     data = agi_bitfield.decompress(self.raw_data, self.shape)
                 except Exception as err:
