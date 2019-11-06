@@ -87,8 +87,8 @@ def decompress(comp_frame, dimensions):
 
 def decompress_row(buffer, row_length):
     """decompress a single row
-    :param buffer io.BytesIO
-    :param row_length int
+    :param buffer: io.BytesIO
+    :param row_length: int
     :returns list
     """
 
@@ -99,7 +99,7 @@ def decompress_row(buffer, row_length):
 
     pixels = [first_pixel]
 
-    for field in range(0, n_fields):
+    for field in range(n_fields):
         lb = unpack("B", buffer.read(1))
         len_b, len_a = read_len_byte(lb)
 
@@ -112,7 +112,7 @@ def decompress_row(buffer, row_length):
         pixels += field_a
         pixels += field_b
 
-    for restpx in range(0, n_restpx):
+    for restpx in range(n_restpx):
         pixels.append(read_escaped(buffer))
 
     return pixels
