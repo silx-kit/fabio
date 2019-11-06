@@ -162,7 +162,7 @@ class EsperantoImage(FabioImage):
                 self.raw_data = infile.read()
                 logger.warning("AGI_BITFIELD decompression is known to be apporximative ... use those data with caution !")
                 try:
-                    data = agi_bitfield.decompress(infile.read(), self.shape)
+                    data = agi_bitfield.decompress(self.raw_data, self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while decompressing pixel data %s." % err)
             else:
