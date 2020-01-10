@@ -3,7 +3,7 @@
 #    Project: Fabio Input/Output
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-2017 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2020 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -44,15 +44,6 @@ then
     #we are probably on a ubuntu platform
         debian_version=$(cat /etc/debian_version | cut -d/ -f1)
         case $debian_version in
-            squeeze)
-                debian_version=6
-                ;;
-            wheezy)
-                debian_version=7
-                ;;
-            jessie)
-                debian_version=8
-                ;;
             stretch)
                 debian_version=9
                 ;;
@@ -91,13 +82,12 @@ optional arguments:
     --help     show this help text
     --install  install the packages generated at the end of
                the process using 'sudo dpkg'
-    --debian7  Simulate a debian7 system (fail-safe)
-    --debian8  Simulate a debian 8 Jessie system
     --debian9  Simulate a debian 9 Stretch system
+    --debian10 Simulate a debian 10 Buster system
+    --debian11 Simulate a debian 11 Bullseye system
 "
 
 install=0
-use_python3=0 #used only for stdeb
 
 while :
 do
@@ -110,26 +100,22 @@ do
           install=1
           shift
           ;;
-      --python3)
-          use_python3=1
-          shift
-          ;;
-      --debian7)
-          debian_version=7
-          target_system=debian${debian_version}
-          dist_directory=${project_directory}/dist/${target_system}
-          build_directory=${project_directory}/build/${target_system}
-          shift
-          ;;
-      --debian8)
-          debian_version=8
-          target_system=debian${debian_version}
-          dist_directory=${project_directory}/dist/${target_system}
-          build_directory=${project_directory}/build/${target_system}
-          shift
-          ;;
       --debian9)
           debian_version=9
+          target_system=debian${debian_version}
+          dist_directory=${project_directory}/dist/${target_system}
+          build_directory=${project_directory}/build/${target_system}
+          shift
+          ;;
+      --debian10)
+          debian_version=10
+          target_system=debian${debian_version}
+          dist_directory=${project_directory}/dist/${target_system}
+          build_directory=${project_directory}/build/${target_system}
+          shift
+          ;;
+      --debian11)
+          debian_version=11
           target_system=debian${debian_version}
           dist_directory=${project_directory}/dist/${target_system}
           build_directory=${project_directory}/build/${target_system}
@@ -155,8 +141,7 @@ clean_up()
     mkdir -p ${build_directory}
 }
 
-build_deb_8_plus () {
-    echo "Build for debian 8 or newer using actual packaging" 
+build_deb() {
     tarname=${project}_${debianversion}.orig.tar.gz
     clean_up
     python3 setup.py debian_src
@@ -219,6 +204,9 @@ build_deb_8_plus () {
         10)
             debian_name=buster
             ;;
+        11)
+            debian_name=bullseye
+            ;;
     esac
 
     dch -v ${debianversion}-1 "upstream development build of ${project} ${version}"
@@ -243,44 +231,8 @@ build_deb_8_plus () {
     fi
 }
 
-build_deb_7_minus () {
-    echo "Build for debian 7 or older using stdeb"
-    tarname=${project}-${strictversion}.tar.gz
-    clean_up
-    
-    python setup.py sdist
-    cp -f dist/${tarname} ${build_directory}
-    cd ${build_directory}
-    tar -xzf ${tarname}
-    cd ${project}-${strictversion}
-    
-    if [ $use_python3 = 1 ]
-    then
-      echo Using Python 2+3
-      python3 setup.py --command-packages=stdeb.command sdist_dsc --with-python2=True --with-python3=True --no-python3-scripts=True build --no-cython bdist_deb
-      rc=$?
-    else
-      echo Using Python 2
-      # bdist_deb feed /usr/bin using setup.py entry-points
-      python setup.py --command-packages=stdeb.command build --no-cython bdist_deb
-      rc=$?
-    fi
-    
-    # move packages to dist directory
-    rm -rf ${dist_directory}
-    mkdir -p ${dist_directory}
-    mv -f deb_dist/*.deb ${dist_directory}
-    
-    # back to the root
-    cd ../../..
-}
 
-if [ $debian_version -ge 8 ]
-then 
-    build_deb_8_plus
-else
-    build_deb_7_minus
-fi
+build_deb
 
 if [ $install -eq 1 ]; then
   sudo -v su -c  "dpkg -i ${dist_directory}/*.deb"
