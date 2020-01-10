@@ -59,6 +59,9 @@ then
             buster)
                 debian_version=10
                 ;;
+            bullseye)
+                debian_version=11
+                ;;
         esac
     fi
 
