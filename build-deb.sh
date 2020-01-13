@@ -79,15 +79,19 @@ If the build succeed the directory dist/debian${debian_version} will
 contains the packages.
 
 optional arguments:
-    --help     show this help text
-    --install  install the packages generated at the end of
-               the process using 'sudo dpkg'
-    --debian9  Simulate a debian 9 Stretch system
-    --debian10 Simulate a debian 10 Buster system
-    --debian11 Simulate a debian 11 Bullseye system
+    --help          Show this help text
+    --install       Install the packages generated at the end of
+                    the process using 'sudo dpkg'
+    --stdeb-py3     Build using stdeb for python3
+    --stdeb-py2.py3 Build using stdeb for python2 and python3
+    --debian9       Simulate a debian 9 Stretch system
+    --debian10      Simulate a debian 10 Buster system
+    --debian11      Simulate a debian 11 Bullseye system
 "
 
 install=0
+use_stdeb=0
+stdeb_all_python=0
 
 while :
 do
@@ -98,6 +102,16 @@ do
           ;;
       --install)
           install=1
+          shift
+          ;;
+      --stdeb-py2)
+          use_stdeb=1
+          stdeb_all_python=0
+          shift
+          ;;
+      --stdeb-py2.py3)
+          use_stdeb=1
+          stdeb_all_python=1
           shift
           ;;
       --debian9)
@@ -232,7 +246,44 @@ build_deb() {
 }
 
 
-build_deb
+build_stdeb () {
+    echo "Build for debian using stdeb"
+    tarname=${project}-${strictversion}.tar.gz
+    clean_up
+
+    python setup.py sdist
+    cp -f dist/${tarname} ${build_directory}
+    cd ${build_directory}
+    tar -xzf ${tarname}
+    cd ${project}-${strictversion}
+
+    if [ $stdeb_all_python -eq 1 ]; then
+      echo Using Python 2+3
+      python3 setup.py --command-packages=stdeb.command sdist_dsc --with-python2=True --with-python3=True --no-python3-scripts=True build --no-cython bdist_deb
+      rc=$?
+    else
+      echo Using Python 3
+      # bdist_deb feed /usr/bin using setup.py entry-points
+      python3 setup.py --command-packages=stdeb.command build --no-cython bdist_deb
+      rc=$?
+    fi
+
+    # move packages to dist directory
+    rm -rf ${dist_directory}
+    mkdir -p ${dist_directory}
+    mv -f deb_dist/*.deb ${dist_directory}
+
+    # back to the root
+    cd ../../..
+}
+
+
+if [ $use_stdeb -eq 1 ]; then
+    build_stdeb
+else
+    build_deb
+fi
+
 
 if [ $install -eq 1 ]; then
   sudo -v su -c  "dpkg -i ${dist_directory}/*.deb"
