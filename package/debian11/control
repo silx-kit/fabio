@@ -1,0 +1,77 @@
+Source: fabio
+Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
+Uploaders: Jerome Kieffer <jerome.kieffer@esrf.fr>,
+           Picca Frédéric-Emmanuel <picca@debian.org>
+Section: science
+Priority: extra
+Build-Depends: cython3,
+               cython3-dbg,
+               debhelper ,
+               dh-python,
+               python3-all-dev,
+               python3-lxml,
+               python3-numpy,
+               python3-pil,
+               python3-setuptools,
+               python3-six,
+               python3-sphinx,
+               python3-nbsphinx,
+               python3-sphinxcontrib.programoutput,
+               python3-h5py,
+               help2man,
+               devscripts,
+               python3-pyqt5,
+               python3-matplotlib
+Standards-Version: 3.9.6
+Vcs-Browser: https://salsa.debian.org/science-team/python-fabio
+Vcs-Git: https://salsa.debian.org/science-team/python-fabio.git
+Homepage: https://github.com/silx-kit/fabio
+X-Python3-Version: >= 3.5
+
+Package: fabio-bin
+Architecture: all
+Section: python
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         python3-fabio (>= ${source:Version})
+Description: Binaries provided with python3-fabio.
+ .
+ Contains a viewer and a converter for images produced by 2D X-ray detector.
+
+Package: python3-fabio
+Architecture: any
+Section: python
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         ${shlibs:Depends},
+         python3-six
+Recommends: python3-lxml,
+            python3-matplotlib,
+            python3-pil,
+            python3-h5py
+Suggests: pyfai,
+          python-fabio-doc
+Description: I/O library for images produced by 2D X-ray detector - Python3
+ FabIO is an I/O library for images produced by 2D X-ray detectors and
+ written in Python. FabIO support images detectors from a dozen of
+ companies (including Mar, Dectris, ADSC, Hamamatsu, Oxford, ...), for
+ a total of 20 different file formats (like CBF, EDF, TIFF, ...) and
+ offers an unified interface to their headers (as a Python dictionary)
+ and datasets (as a numpy ndarray of integers or floats)
+ .
+
+Package: fabio-doc
+Architecture: all
+Section: doc
+Replaces: python-fabio-doc
+Depends: ${misc:Depends},
+         ${sphinxdoc:Depends}
+Description: I/O library for images produced by 2D X-ray detector - documentation
+ FabIO is an I/O library for images produced by 2D X-ray detectors and
+ written in Python. FabIO support images detectors from a dozen of
+ companies (including Mar, Dectris, ADSC, Hamamatsu, Oxford, ...), for
+ a total of 20 different file formats (like CBF, EDF, TIFF, ...) and
+ offers an unified interface to their headers (as a Python dictionary)
+ and datasets (as a numpy ndarray of integers or floats)
+ .
+ This is the common documentation package.
