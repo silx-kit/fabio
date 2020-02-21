@@ -20,11 +20,9 @@ Change Log
 - `pixiimage`: Improved file series filename parsing (PR #317)
 - `tifimage`: Improved TIFF via Pillow (PR #321)
 - Added support of esperanto format (PR #347, #351)
-- Fixed minor issues (PR #338)
-- Fixed compatibility with `h5py` (PR #350)
-- Improved tests (PR #320, #341, #345)
-- Improved `requirement.txt` (PR #331)
-- Improved debian packaging, adding debian11/ubuntu20.04 support (PR #324, #326, #355)
+- Fixed minor issues (PR #338) and compatibility with `h5py` (PR #350)
+- Improved tests (PR #320, #341, #345) and `requirement.txt` (PR #331)
+- Updated debian packaging (PR #324, #326), added debian11/ubuntu20.04 support (PR #355)
 
 
 0.9.0: 2019/03/29
