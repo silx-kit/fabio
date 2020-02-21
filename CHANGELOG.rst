@@ -23,6 +23,7 @@ Change Log
 - Fixed minor issues (PR #338) and compatibility with `h5py` (PR #350)
 - Improved tests (PR #320, #341, #345) and `requirement.txt` (PR #331)
 - Updated debian packaging (PR #324, #326), added debian11/ubuntu20.04 support (PR #355)
+- Added changelog file (PR #357)
 
 
 0.9.0: 2019/03/29
