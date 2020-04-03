@@ -69,12 +69,12 @@ class TestNormalTiffOK(unittest.TestCase):
     def test_read_openimage(self):
         from fabio.openimage import openimage
         obj = openimage(self.image)
-        if obj.data.astype(int).tostring() != self.imdata.astype(int).tostring():
+        if obj.data.astype(int).tobytes() != self.imdata.astype(int).tobytes():
             logger.info("%s %s" % (type(self.imdata), self.imdata.dtype))
             logger.info("%s %s" % (type(obj.data), obj.data.dtype))
             logger.info("%s %s" % (obj.data - self.imdata))
-        self.assertEqual(obj.data.astype(int).tostring(),
-                         self.imdata.astype(int).tostring())
+        self.assertEqual(obj.data.astype(int).tobytes(),
+                         self.imdata.astype(int).tobytes())
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)

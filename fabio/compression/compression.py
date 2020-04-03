@@ -303,30 +303,30 @@ def compByteOffset_numpy(data):
     binary_blob = b""
     for stop in exceptions:
         if stop - start > 0:
-            binary_blob += delta[start:stop].astype(numpy.int8).tostring()
+            binary_blob += delta[start:stop].astype(numpy.int8).tobytes()
         exc = delta[stop]
         absexc = abs(exc)
         if absexc > 2147483647:  # 2**31-1
             binary_blob += b"\x80\x00\x80\x00\x00\x00\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].byteswap().tobytes()
             else:
-                binary_blob += delta[stop:stop + 1].tostring()
+                binary_blob += delta[stop:stop + 1].tobytes()
         elif absexc > 32767:  # 2**15-1
             binary_blob += b"\x80\x00\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int32).byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int32).byteswap().tobytes()
             else:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int32).tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int32).tobytes()
         else:  # >127
             binary_blob += b"\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int16).byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int16).byteswap().tobytes()
             else:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int16).tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int16).tobytes()
         start = stop + 1
     if start < delta.size:
-        binary_blob += delta[start:].astype(numpy.int8).tostring()
+        binary_blob += delta[start:].astype(numpy.int8).tobytes()
     return binary_blob
 
 
@@ -348,9 +348,9 @@ def compByteOffset_cython(data):
         return compByteOffset_numpy(data)
     else:
         if "int32" in str(data.dtype):
-            return byte_offset.comp_cbf32(data).tostring()
+            return byte_offset.comp_cbf32(data).tobytes()
         else:
-            return byte_offset.comp_cbf(data).tostring()
+            return byte_offset.comp_cbf(data).tobytes()
 
 
 compByteOffset = compByteOffset_cython
@@ -424,7 +424,7 @@ def compTY1(data):
     diff[we32] = 128
     diff += 127
     data_8 = diff.astype(numpy.uint8)
-    return data_8.tostring(), data_16.tostring(), data_32.tostring()
+    return data_8.tobytes(), data_16.tobytes(), data_32.tobytes()
 
 
 def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):

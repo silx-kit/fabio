@@ -61,7 +61,7 @@ class TestFlatBinary(unittest.TestCase):
         for filename in self.filenames:
             try:
                 im = fabio.open(filename)
-                if im.data.tostring() != "\0x0" * 2048 * 2048 * 2:
+                if im.data.tobytes() != "\0x0" * 2048 * 2048 * 2:
                     nfail += 1
                 else:
                     logger.info("**** Passed: %s" % filename)

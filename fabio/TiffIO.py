@@ -861,9 +861,9 @@ class TiffIO(object):
 
         # write the image
         if self._swap:
-            fd.write(image.byteswap().tostring())
+            fd.write(image.byteswap().tobytes())
         else:
-            fd.write(image.tostring())
+            fd.write(image.tobytes())
 
         fd.flush()
         self.fd = fd

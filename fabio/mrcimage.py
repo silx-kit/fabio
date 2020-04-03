@@ -88,7 +88,7 @@ class MrcImage(FabioImage):
         for key, value in zip(self.KEYS, int_block):
             self.header[key] = value
         if self.header["MAP"] != 542130509:
-            logger.info("Expected 'MAP ', got %s", self.header["MAP"].tostring())
+            logger.info("Expected 'MAP ', got %s", self.header["MAP"].tobytes())
 
         for i in range(10):
             label = "LABEL_%02i" % i

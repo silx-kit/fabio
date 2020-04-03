@@ -53,7 +53,6 @@ Thus 2.1.0a3 is hexversion 0x020100a3.
 
 """
 
-
 from __future__ import absolute_import, print_function, division
 
 __author__ = "Jerome Kieffer"
@@ -75,8 +74,7 @@ MAJOR = 0
 MINOR = 10
 MICRO = 0
 RELEV = "beta"  # <16
-SERIAL = 1  # <16
-
+SERIAL = 2  # <16
 
 from collections import namedtuple
 _version_info = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
@@ -133,7 +131,6 @@ def calc_hexversion(major=0, minor=0, micro=0, releaselevel="dev", serial=0, str
 
 
 hexversion = calc_hexversion(*version_info)
-
 
 if __name__ == "__main__":
     print(version)

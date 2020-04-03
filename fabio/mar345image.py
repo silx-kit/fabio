@@ -245,7 +245,7 @@ class Mar345Image(FabioImage):
         self.header["HIGH"] = str(binheader[2])
         if self.swap_needed:
             binheader.byteswap(True)
-        return binheader.tostring()
+        return binheader.tobytes()
 
     def ascii_header(self, linesep="\n", size=4096):
         """
@@ -376,7 +376,7 @@ class Mar345Image(FabioImage):
         tmp[:nb_pix, 1] = flt_data[pix_location]
         if self.swap_needed:
             tmp.byteswap(True)
-        return tmp.tostring()
+        return tmp.tobytes()
 
     def nb_overflow_pixels(self):
         return (self.data > 65535).sum()
