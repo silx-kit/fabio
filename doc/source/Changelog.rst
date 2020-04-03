@@ -1,6 +1,18 @@
 Changelog
 =========
 
+FabIO-0.10.0 (04/2020):
+
+- EDF parser supports windows style line breaks in header
+- Read EDF data from external binary data
+- h5py compatibility improved
+- Initial support for Esperanto file format 
+- Incomplete support for agi-bitfield compression support
+- Tested and validated on PowerPC64le + ARM64
+- Support for Mar555 in addition to Mar345 files
+- Remove packagin for debian 6, 7 and 8, add support for debian11
+- Drop support for Python2 and 3.4, validated version are 3.5-3.8 on mac, win & linux 
+
 FabIO-0.9.0 (03/2019):
 ......................
 
