@@ -30,8 +30,7 @@ Module imported from silx project to avoid cyclic dependancy.
 
 __authors__ = ["Thomas Vincent", "J. Kieffer"]
 __license__ = "MIT"
-__date__ = "23/10/2019"
-
+__date__ = "03/04/2020"
 
 import os
 import threading
@@ -41,7 +40,7 @@ import tempfile
 import unittest
 from fabio.third_party import six
 import bz2
-from ..third_party import gzip
+import gzip
 
 logger = logging.getLogger(__name__)
 
@@ -172,11 +171,11 @@ class ExternalResources(object):
 
             if not os.path.isfile(fullfilename):
                 raise RuntimeError(
-                    ("Could not automatically download test images %s!"%filename)+
-                    "If you are behind a firewall, please set both environment variable http_proxy and https_proxy."+
-                    "This works even under windows !"+
-                    "Otherwise please try to download the images manually from"+
-                    "%s/%s"% (self.url_base, filename))
+                    ("Could not automatically download test images %s!" % filename) +
+                    "If you are behind a firewall, please set both environment variable http_proxy and https_proxy." +
+                    "This works even under windows !" +
+                    "Otherwise please try to download the images manually from" +
+                    "%s/%s" % (self.url_base, filename))
 
         if filename not in self.all_data:
             self.all_data.add(filename)
@@ -269,7 +268,7 @@ class ExternalResources(object):
             self.getfile(bzip2name)
             if not os.path.isfile(fullimagename_bz2):
                 raise RuntimeError(
-                    ("Could not automatically download test images %s!"%filename) +
+                    ("Could not automatically download test images %s!" % filename) +
                     "If you are behind a firewall, please set the environment variable http_proxy and https_proxy." +
                     "Otherwise please try to download the images manually from" +
                     "%s/%s" % (self.url_base, filename))

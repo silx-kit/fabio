@@ -188,7 +188,7 @@ class EdfFrame(fabioimage.FabioFrame):
         if capsHeader is None:
             capsHeader = {}
             for key in header:
-               capsHeader[key.upper()] = key
+                capsHeader[key.upper()] = key
         rank = 0
         if capsHeader is not None:
             rank = 0
@@ -234,7 +234,7 @@ class EdfFrame(fabioimage.FabioFrame):
         if capsHeader is None:
             capsHeader = {}
             for key in header:
-               capsHeader[key.upper()] = key
+                capsHeader[key.upper()] = key
         shape = []
         for irank in range(1, rank + 1):
             strDim = "DIM_{:d}".format(irank)
@@ -263,7 +263,7 @@ class EdfFrame(fabioimage.FabioFrame):
         :return: int counts
         '''
         if shape is None:
-          shape = ()
+            shape = ()
         counts = 1
         for ishape in range(0, len(shape)):
             counts *= shape[ishape]
@@ -329,8 +329,8 @@ class EdfFrame(fabioimage.FabioFrame):
         # ## setting it to None here would set it later to calcsize!
         # ## self.blobsize = None
         # Here, calcsize starts with a guess!
-        calcsize = 1
-        shape = []
+        # calcsize = 1
+        # shape = []
 
         if capsHeader is None:
             capsHeader = self._compute_capsheader()
@@ -485,7 +485,7 @@ class EdfFrame(fabioimage.FabioFrame):
                 # EDF_*, Size, Image, HeaderID
                 if (key[0:4] != "EDF_") and (key.upper() not in [ "SIZE", "IMAGE", "HEADERID" ]):
                     if (key not in self.header):
-                      self.header[key] = defaultheader[key]
+                        self.header[key] = defaultheader[key]
 
         for key in self.header:
             capsHeader[key.upper()] = key
@@ -504,7 +504,7 @@ class EdfFrame(fabioimage.FabioFrame):
         missing = list(MINIMUM_KEYS2 - capsKeys)
 
         if len(missing) > 0:
-           # Try now standard set (for EDF0, EDFU)
+            # Try now standard set (for EDF0, EDFU)
             missing = list(MINIMUM_KEYS - capsKeys)
 
         if len(missing) > 0:
@@ -874,7 +874,7 @@ class EdfImage(fabioimage.FabioImage):
 
         data_format_version = None
 
-        header_block = None
+        # header_block = None #unused ?
         header_size = None
         binary_size = None
 

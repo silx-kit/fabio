@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 from ..third_party import six
 
 try:
-    from ..third_party import gzip
+    import gzip
 except ImportError:
     logger.error("Unable to import gzip module: disabling gzip compression")
     gzip = None
