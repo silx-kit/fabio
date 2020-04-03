@@ -73,8 +73,8 @@ RELEASE_LEVEL_VALUE = {"dev": 0,
 MAJOR = 0
 MINOR = 10
 MICRO = 0
-RELEV = "beta"  # <16
-SERIAL = 2  # <16
+RELEV = "final" # <16
+SERIAL = 0  # <16
 
 from collections import namedtuple
 _version_info = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
