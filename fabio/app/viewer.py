@@ -56,13 +56,14 @@ numpy.seterr(divide='ignore')
 import fabio
 
 from fabio.nexus import Nexus
-from fabio.third_party.argparse import ArgumentParser
+from argparse import ArgumentParser
 
 output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img',
                  '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]
 
 
 class AppForm(qt.QMainWindow):
+
     def __init__(self, parent=None):
 
         # Main window
@@ -1311,6 +1312,7 @@ class AppForm(qt.QMainWindow):
 
 class CounterFormatOptionDialog(qt.QDialog):  # option doivent refleter l etat des couche du dessous
     """Dialog containing entry for down sampling"""
+
     def __init__(self, counter_format, parent=None):
         qt.QDialog.__init__(self, parent)
         self.resize(350, 100)
@@ -1345,6 +1347,7 @@ class CounterFormatOptionDialog(qt.QDialog):  # option doivent refleter l etat d
 
 class DownSamplingDialog(qt.QDialog):
     """Dialog containing entry for down sampling"""
+
     def __init__(self, parent=None):
         qt.QDialog.__init__(self, parent)
         self.resize(407, 250)
@@ -1391,6 +1394,7 @@ class DownSamplingDialog(qt.QDialog):
 
 class BinDialog(qt.QDialog):
     """Dialog containing entry for binary data block opening"""
+
     def __init__(self, parent=None):
         qt.QDialog.__init__(self, parent)
         self.resize(410, 270)
