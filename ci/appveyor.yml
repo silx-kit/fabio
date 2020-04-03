@@ -26,7 +26,7 @@ environment:
 
     matrix:
         # Python 3.5
-        - PYTHON: "C:\\Python35"
+        - PYTHON_DIR: "C:\\Python35"
           PYTHON_VERSION: "3.5.10"
           PYTHON_ARCH: "32"
 
@@ -53,7 +53,7 @@ environment:
 
 install:
   # Add Python to PATH
-  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "SET PATH=%PYTHON_DIR%;%PYTHON_DIR%\\Scripts;%PATH%"
 
   # Check that we have the expected version and architecture for Python
   - "python --version"
