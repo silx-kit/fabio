@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 0.10.0-beta0, 03/04/2020
+Measured on *fabio* version 0.10.0, 03/04/2020
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -12,7 +12,7 @@ Measured on *fabio* version 0.10.0-beta0, 03/04/2020
    "OXDimage.py", "353", "326", "92.4 %"
    "TiffIO.py", "801", "649", "81.0 %"
    "__init__.py", "40", "32", "80.0 %"
-   "_version.py", "53", "49", "92.5 %"
+   "_version.py", "53", "44", "83.0 %"
    "adscimage.py", "4", "4", "100.0 %"
    "binaryimage.py", "57", "20", "35.1 %"
    "bruker100image.py", "231", "160", "69.3 %"
@@ -55,7 +55,7 @@ Measured on *fabio* version 0.10.0-beta0, 03/04/2020
    "compression/agi_bitfield.py", "115", "113", "98.3 %"
    "compression/compression.py", "255", "191", "74.9 %"
    "ext/__init__.py", "0", "0", "0.0 %"
-   "utils/ExternalResources.py", "179", "127", "70.9 %"
+   "utils/ExternalResources.py", "179", "132", "73.7 %"
    "utils/__init__.py", "0", "0", "0.0 %"
    "utils/deprecation.py", "56", "54", "96.4 %"
    "utils/mathutils.py", "11", "6", "54.5 %"
