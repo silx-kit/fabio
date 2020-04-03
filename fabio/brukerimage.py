@@ -324,7 +324,7 @@ class BrukerImage(FabioImage):
             data.byteswap(True)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
-            bruker.write(data.tostring())
+            bruker.write(data.tobytes())
             bruker.write(self.gen_overflow().encode("ASCII"))
 
     def calc_bpp(self, data=None, max_entry=4096):

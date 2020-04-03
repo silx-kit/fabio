@@ -142,7 +142,7 @@ class Fit2dMaskImage(FabioImage):
             compact_array += large_array[:, i::8] * order
         with self._open(fname, mode="wb") as outfile:
             outfile.write(six.binary_type(header))
-            outfile.write(compact_array.tostring())
+            outfile.write(compact_array.tobytes())
 
     @staticmethod
     def check_data(data=None):

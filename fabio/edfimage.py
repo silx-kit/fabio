@@ -583,7 +583,7 @@ class EdfFrame(fabioimage.FabioFrame):
                         logger.error("Unimplemented compression scheme:  %s (%s)" % (compression, error))
                     else:
                         myData = byte_offset.analyseCython(fileData, size=uncompressed_size)
-                        rawData = myData.astype(self._dtype).tostring()
+                        rawData = myData.astype(self._dtype).tobytes()
                         self.size = uncompressed_size
                 elif compression == "NONE":
                     rawData = fileData
@@ -751,7 +751,7 @@ class EdfFrame(fabioimage.FabioFrame):
         else:
             headerSize = approxHeaderSize
         listHeader.append(" " * (headerSize - preciseSize) + "}\n")
-        return ("".join(listHeader)).encode("ASCII") + data.tostring()
+        return ("".join(listHeader)).encode("ASCII") + data.tobytes()
 
     @deprecation.deprecated(reason="Prefer using 'getEdfBlock'", deprecated_since="0.10.0beta")
     def getEdfBlock(self, force_type=None, fit2dMode=False):

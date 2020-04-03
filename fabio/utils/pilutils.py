@@ -101,7 +101,7 @@ def get_numpy_array(pil_image):
         if hasattr(pil_image, "tobytes"):
             data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
         else:
-            data = numpy.frombuffer(pil_image.tostring(), dtype=dtype).copy()
+            data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
         # byteswap ?
         if numpy.dtype(dtype).itemsize > 1:
             need_swap = False
@@ -129,7 +129,7 @@ def create_pil_16(numpy_array):
         mode1 = mode2[0]
     else:
         raise RuntimeError("Unknown numpy type: %s" % (numpy_array.dtype.type))
-    dats = numpy_array.tostring()
+    dats = numpy_array.tobytes()
     pil_image = Image.frombuffer(mode1, size, dats, "raw", mode2, 0, 1)
 
     return pil_image

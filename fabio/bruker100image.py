@@ -328,14 +328,14 @@ class Bruker100Image(BrukerImage):
             data.byteswap(True)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
-            bruker.write(data.tostring())
+            bruker.write(data.tobytes())
             overflows_one_byte = self.overflows_one_byte()
             overflows_two_byte = self.overflows_two_byte()
             if int(self.header["NOVERFL"].split()[0]) > 0:
                 underflows = self.underflows()
-                bruker.write(underflows.tostring())
-            bruker.write(overflows_one_byte.tostring())
-            bruker.write(overflows_two_byte.tostring())
+                bruker.write(underflows.tobytes())
+            bruker.write(overflows_one_byte.tobytes())
+            bruker.write(overflows_two_byte.tobytes())
 
     def underflows(self):
             """
