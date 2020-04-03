@@ -46,14 +46,11 @@ Documentation on the format is available from:
 http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
 
-from __future__ import with_statement, print_function, absolute_import
-
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "13/11/2018"
+__date__ = "03/04/2020"
 __status__ = "production"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
-
 
 import struct
 import time
@@ -62,7 +59,6 @@ import numpy
 
 import fabio
 from .fabioimage import FabioImage
-
 
 logger = logging.getLogger(__name__)
 from .compression import compPCK, decPCK

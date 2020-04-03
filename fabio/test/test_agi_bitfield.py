@@ -1,4 +1,36 @@
-from __future__ import print_function, with_statement, division, absolute_import
+#!/usr/bin/env python
+# coding: utf-8
+#
+#    Project: FabIO tests class utilities
+#
+#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#                       Grenoble, France
+#
+#    Principal authors: Jérôme KIEFFER (jerome.kieffer@esrf.fr)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+__author__ = "Jérôme Kieffer"
+__contact__ = "jerome.kieffer@esrf.eu"
+__license__ = "MIT"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "03/04/2020"
 
 import io
 import logging
@@ -13,6 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 class TestUtil(unittest.TestCase):
+
     def test_get_fieldsize(self):
         test_cases = [
             (np.zeros(8, dtype="int32"), 1),
@@ -80,6 +113,7 @@ class TestUtil(unittest.TestCase):
 
 
 class TestRow(unittest.TestCase):
+
     def test_compress_row_zero(self):
         data = np.zeros(256, dtype="int32")
         buffer = io.BytesIO()
@@ -118,6 +152,7 @@ class TestRow(unittest.TestCase):
 
 
 class TestCompression(unittest.TestCase):
+
     def test_full_rand(self):
         data = np.random.randint(-255, 255, (256, 256))
         compressed = agi_bitfield.compress(data)

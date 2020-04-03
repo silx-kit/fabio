@@ -8,18 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 """
 # Unit tests
@@ -27,7 +32,7 @@ Reading edf files as originally specified by expg with fabio.module edfimage.py
 
 07/06/2019 PB
 """
-from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import os
 import numpy
@@ -41,72 +46,75 @@ import fabio
 from fabio.edfimage import edfimage
 from ..utilstest import UtilsTest
 
-#logging.basicConfig(level=logging.DEBUG)
-#logging.basicConfig(level=logging.WARNING)
-#logging.basicConfig(level=logging.INFO)
-#logging.debug('This will get logged')
-#logging.warning('This will get logged')
-#logging.info('This will get logged')
+# logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.WARNING)
+# logging.basicConfig(level=logging.INFO)
+# logging.debug('This will get logged')
+# logging.warning('This will get logged')
+# logging.info('This will get logged')
+
 
 #==========================================
-def fopen(filename=None,frameno=None):
-    header=None
-    data=None
-    frame=None
-    logging.debug("fopen(filename={},frameno={})".format(filename,frameno))
+def fopen(filename=None, frameno=None):
+    header = None
+    data = None
+    frame = None
+    logging.debug("fopen(filename={},frameno={})".format(filename, frameno))
     if filename:
-        image=fabio.open(filename)
+        image = fabio.open(filename)
         if frameno is None:
-            frameno=0
+            frameno = 0
 
-        nframes=image.nframes
+        nframes = image.nframes
 
-        #if image.classname == "EdfImage":
-        if hasattr(image,"npsdframes"):
-            npsdframes=image.npsdframes
-            nerrorframes=image.nerrorframes
+        # if image.classname == "EdfImage":
+        if hasattr(image, "npsdframes"):
+            npsdframes = image.npsdframes
+            nerrorframes = image.nerrorframes
         else:
-            npsdframes=nframes
-            nerrorframes=0
+            npsdframes = nframes
+            nerrorframes = 0
 
         if frameno >= npsdframes:
-            logging.warning("Psd frame {} out of range: 0 <= {} < {}".format(frameno,frameno,npsdframes))
+            logging.warning("Psd frame {} out of range: 0 <= {} < {}".format(frameno, frameno, npsdframes))
 
-        if frameno <0:
+        if frameno < 0:
             if -frameno > nerrorframes:
-                logging.warning("Error frame {} out of range: {} <= {} < 0 ".format(frameno,-nerrorframes,frameno))
+                logging.warning("Error frame {} out of range: {} <= {} < 0 ".format(frameno, -nerrorframes, frameno))
             frameno += nframes
 
         if frameno in range(nframes):
-            if nframes>1:
+            if nframes > 1:
                 frame = image.getframe(frameno)
                 data = frame.data
-                header=frame.header
+                header = frame.header
             else:
                 # Single frame
                 data = image.data
-                header= image.header
-            frame=fabio.fabioimage.FabioFrame(data=data, header=header)
+                header = image.header
+            frame = fabio.fabioimage.FabioFrame(data=data, header=header)
         else:
             raise IOError("fopen: Cannot access frame: {} (0<=frame<{})".format(frameno, nframes))
 
     return(frame)
+
 
 def get_data_counts(shape=None):
     '''
     Counts all items specified by shape
     '''
     if shape is None:
-      shape=()
-    counts=1
-    for ishape in range(0,len(shape)):
-        counts*=shape[ishape]
+      shape = ()
+    counts = 1
+    for ishape in range(0, len(shape)):
+        counts *= shape[ishape]
     return(counts)
 
 #============================================
 
+
 # Hint: Must be defined outside the test case class, otherwise used as test
-def test_00(cls,filename,avglist=None,keylist=None):
+def test_00(cls, filename, avglist=None, keylist=None):
     """
     Checks the correct shape of the data arrays.
     Compares the mean value of each data frame array, with the number given in avglist.
@@ -115,98 +123,98 @@ def test_00(cls,filename,avglist=None,keylist=None):
     keylist: list of keys to read, stops, if not available
     If avglist or keylist is shorter than frameno, the last value in the list is used.
     """
-    image=fabio.open(filename)
+    image = fabio.open(filename)
 
-    nframes=image.nframes
+    nframes = image.nframes
 
-    if hasattr(image,"npsdframes"):
-        npsdframes=image.npsdframes
-        nerrorframes=image.nerrorframes
+    if hasattr(image, "npsdframes"):
+        npsdframes = image.npsdframes
+        nerrorframes = image.nerrorframes
     else:
-        npsdframes=image.nframes
-        nerrorframes=0
+        npsdframes = image.nframes
+        nerrorframes = 0
 
     # To avoid warnings make different loops over psd data and error data
-    #psd data
-    for frameno in range(0,npsdframes):
-        frame=fopen(filename,frameno)
+    # psd data
+    for frameno in range(0, npsdframes):
+        frame = fopen(filename, frameno)
 
         # check data shape
-        counts=get_data_counts(frame.shape)
-        data_counts=get_data_counts(frame.data.shape)
+        counts = get_data_counts(frame.shape)
+        data_counts = get_data_counts(frame.data.shape)
 
-        cls.assertEqual(counts, data_counts,"A:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
-           format(filename,frameno,frame.shape,frame.data.shape))
+        cls.assertEqual(counts, data_counts, "A:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
+           format(filename, frameno, frame.shape, frame.data.shape))
 
         # calculate mean value
-        sum=numpy.sum(frame.data)
-        fmean=sum/counts
+        sum = numpy.sum(frame.data)
+        fmean = sum / counts
 
-        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename,frameno,sum,counts,fmean))
+        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename, frameno, sum, counts, fmean))
 
         # read known mean value from avglist
         if avglist is not None:
-           if len(avglist)>frameno:
-               avg=avglist[frameno]
+           if len(avglist) > frameno:
+               avg = avglist[frameno]
            else:
-               avg=avglist[-1]
-           cls.assertLessEqual(abs(fmean-avg),abs(fmean+avg)*5e-6,"B:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
-               format(filename,frameno,fmean,avg))
+               avg = avglist[-1]
+           cls.assertLessEqual(abs(fmean - avg), abs(fmean + avg) * 5e-6, "B:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
+               format(filename, frameno, fmean, avg))
 
         # read a key to read from keylist
         if keylist is not None:
-            if len(keylist)>frameno:
-                key=keylist[frameno]
+            if len(keylist) > frameno:
+                key = keylist[frameno]
             else:
-                key=keylist[-1]
+                key = keylist[-1]
 
             if key in frame.header:
-               logging.debug("filename={}, frameno={}: '{}' = {}".format(filename,frameno,key,frame.header[key]))
+               logging.debug("filename={}, frameno={}: '{}' = {}".format(filename, frameno, key, frame.header[key]))
             else:
-               logging.debug("filename={}, frameno={}: '{}' = None".format(filename,frameno,key))
+               logging.debug("filename={}, frameno={}: '{}' = None".format(filename, frameno, key))
 
-            cls.assertIn(key,frame.header,"C:filename={},frameno={}: Missing expected header key '{}'".format(filename,frameno,key))
+            cls.assertIn(key, frame.header, "C:filename={},frameno={}: Missing expected header key '{}'".format(filename, frameno, key))
 
-    #error data
-    for frameno in range(0,nerrorframes):
-        frame=fopen(filename,-frameno-1)
+    # error data
+    for frameno in range(0, nerrorframes):
+        frame = fopen(filename, -frameno - 1)
 
         # check data shape
-        counts=get_data_counts(frame.shape)
-        data_counts=get_data_counts(frame.data.shape)
+        counts = get_data_counts(frame.shape)
+        data_counts = get_data_counts(frame.data.shape)
 
-        cls.assertEqual(counts, data_counts,"D:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
-           format(filename,frameno,frame.shape,frame.data.shape))
+        cls.assertEqual(counts, data_counts, "D:filename={},frameno={}: inconsistent data shapes: header.{},data.{}".
+           format(filename, frameno, frame.shape, frame.data.shape))
 
         # calculate mean value
-        sum=numpy.sum(frame.data)
-        fmean=sum/counts
+        sum = numpy.sum(frame.data)
+        fmean = sum / counts
 
-        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename,frameno,sum,counts,fmean))
+        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename, frameno, sum, counts, fmean))
 
         # read known mean value from avglist
         if avglist is not None:
-           #error frames are taken from the end
-           if len(avglist)>nframes-frameno-1:
-               avg=avglist[nframes-frameno-1]
+           # error frames are taken from the end
+           if len(avglist) > nframes - frameno - 1:
+               avg = avglist[nframes - frameno - 1]
            else:
-               avg=avglist[-1]
-           cls.assertLessEqual(abs(fmean-avg),abs(fmean+avg)*5e-6,"E:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
-               format(filename,frameno,fmean,avg))
+               avg = avglist[-1]
+           cls.assertLessEqual(abs(fmean - avg), abs(fmean + avg) * 5e-6, "E:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
+               format(filename, frameno, fmean, avg))
 
         # read a key to read from keylist
         if keylist is not None:
-            if len(keylist)>nframes-frameno-1:
-                key=keylist[nframes-frameno-1]
+            if len(keylist) > nframes - frameno - 1:
+                key = keylist[nframes - frameno - 1]
             else:
-                key=keylist[-1]
+                key = keylist[-1]
 
             if key in frame.header:
-               logging.debug("filename={},frameno={}: key='{}'".format(filename,frameno,key,frame.header[key]))
+               logging.debug("filename={},frameno={}: key='{}'".format(filename, frameno, key, frame.header[key]))
             else:
-               logging.debug("filename={},frameno={}: key=None".format(filename,frameno,key))
+               logging.debug("filename={},frameno={}: key=None".format(filename, frameno, key))
 
-            cls.assertIn(key,frame.header,"F:filename={},frameno={}: Missing expected header key '{}'".format(filename,frameno,key))
+            cls.assertIn(key, frame.header, "F:filename={},frameno={}: Missing expected header key '{}'".format(filename, frameno, key))
 
 
 class EdfBlockBoundaryCases(unittest.TestCase):
@@ -231,16 +239,16 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         multi5+gblk_gzip.edf : like multi5+gblk.edf.gz, but with internal compression
         """
 
-        avglist=[0.,1.,2.,3.,4.]
-        filename = os.path.join(self.root,"00_edfblocktypes/multi5.edf.gz")
-        test_00(self,filename,avglist)
-        keylist=["DefaultKey"] # the defaultkey is coming from the general block
-        filename = os.path.join(self.root,"00_edfblocktypes/multi5+gblk.edf.gz")
-        test_00(self,filename,avglist,keylist)
-        filename = os.path.join(self.root,"00_edfblocktypes/multi5+gblk_gzip.edf")
-        test_00(self,filename,avglist)
-        filename = os.path.join(self.root,"00_edfblocktypes/multi5_gzip.edf")
-        test_00(self,filename,avglist)
+        avglist = [0., 1., 2., 3., 4.]
+        filename = os.path.join(self.root, "00_edfblocktypes/multi5.edf.gz")
+        test_00(self, filename, avglist)
+        keylist = ["DefaultKey"]  # the defaultkey is coming from the general block
+        filename = os.path.join(self.root, "00_edfblocktypes/multi5+gblk.edf.gz")
+        test_00(self, filename, avglist, keylist)
+        filename = os.path.join(self.root, "00_edfblocktypes/multi5+gblk_gzip.edf")
+        test_00(self, filename, avglist)
+        filename = os.path.join(self.root, "00_edfblocktypes/multi5_gzip.edf")
+        test_00(self, filename, avglist)
 
     def test_edfsingle_raw_bf_gblk(self):
         """
@@ -250,10 +258,10 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         correctly read from the general block.
 
         """
-        avglist=[25743.2]
-        filename = os.path.join(self.root,"01_single_raw_bf_gblk/pj19_frelon_00028_raw.ehf")
-        keylist=["ExperimentInfo"]
-        test_00(self,filename,avglist,keylist)
+        avglist = [25743.2]
+        filename = os.path.join(self.root, "01_single_raw_bf_gblk/pj19_frelon_00028_raw.ehf")
+        keylist = ["ExperimentInfo"]
+        test_00(self, filename, avglist, keylist)
 
     def test_edfmulti_raw_bf_gblk(self):
         """
@@ -267,9 +275,9 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         frame 18:     Test reading with EDF_BinaryFileSize bigger than required
                       => currently an unnecessary info is given
         """
-        avglist=[9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
-        filename = os.path.join(self.root,"02_multi_raw_bf_gblk/rh28a_saxs_00022_raw_binned.ehf")
-        test_00(self,filename,avglist)
+        avglist = [9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
+        filename = os.path.join(self.root, "02_multi_raw_bf_gblk/rh28a_saxs_00022_raw_binned.ehf")
+        test_00(self, filename, avglist)
 
     def test_edfmulti_raw_dark_raw_bf_gblk(self):
         """
@@ -284,12 +292,12 @@ class EdfBlockBoundaryCases(unittest.TestCase):
           INFO:fabio.edfimage:Data stream is padded : 29184 > required 28800 bytes
             => unnecessary, feature, e.g. for saving byte arrays of odd length
         """
-        avglist=[2487.36, 2488.28, 2488.11]
-        filename = os.path.join(self.root,"03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_dark_binned.ehf")
-        test_00(self,filename,avglist)
-        avglist=[9651.25]
-        filename = os.path.join(self.root,"03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_raw_binned.ehf")
-        test_00(self,filename,avglist)
+        avglist = [2487.36, 2488.28, 2488.11]
+        filename = os.path.join(self.root, "03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_dark_binned.ehf")
+        test_00(self, filename, avglist)
+        avglist = [9651.25]
+        filename = os.path.join(self.root, "03_multi_raw_dark_bf_gblk/rh28a_saxs_00003_raw_binned.ehf")
+        test_00(self, filename, avglist)
 
     def test_edfsingle_raw_bf_gblk_gz(self):
         """
@@ -298,9 +306,9 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         data file if it cannot be opened with the binary file name found in the
         header. Both files are gzipped.
         """
-        avglist=[25743.2]
-        filename = os.path.join(self.root,"04_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
-        test_00(self,filename,avglist)
+        avglist = [25743.2]
+        filename = os.path.join(self.root, "04_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
+        test_00(self, filename, avglist)
 
     def test_edfsingle_raw_bf_gblk_gz(self):
         """
@@ -309,9 +317,9 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         data file if it cannot be opened with the binary file name found in the
         header. The binary data file is not compressed.
         """
-        avglist=[25743.2]
-        filename = os.path.join(self.root,"05_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
-        test_00(self,filename,avglist)
+        avglist = [25743.2]
+        filename = os.path.join(self.root, "05_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
+        test_00(self, filename, avglist)
 
     def test_edf6_single_raw_bf_gblk_gz(self):
         """
@@ -320,9 +328,9 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         data file if it cannot be opened with the binary file name found in the
         header. Only the binary data file is gzipped.
         """
-        avglist=[25743.2]
-        filename = os.path.join(self.root,"06_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf")
-        test_00(self,filename,avglist)
+        avglist = [25743.2]
+        filename = os.path.join(self.root, "06_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf")
+        test_00(self, filename, avglist)
 
     def test_edfmulti_raw_bf_gblk_gz(self):
         """
@@ -340,9 +348,9 @@ class EdfBlockBoundaryCases(unittest.TestCase):
                       the real file size. => data must only be read to the end
                       of the binary data file.
         """
-        avglist=[9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
-        filename = os.path.join(self.root,"07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz")
-        test_00(self,filename,avglist)
+        avglist = [9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
+        filename = os.path.join(self.root, "07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz")
+        test_00(self, filename, avglist)
 
     def test_pitfalls(self):
         """
@@ -355,29 +363,29 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         """
 
         # edf1 file => must always work
-        avglist=[0,1,2,3,4]
-        filename = os.path.join(self.root,"08_pitfalls/multi5+pitfalls_edf1.edf.gz")
-        test_00(self,filename,avglist)
+        avglist = [0, 1, 2, 3, 4]
+        filename = os.path.join(self.root, "08_pitfalls/multi5+pitfalls_edf1.edf.gz")
+        test_00(self, filename, avglist)
 
         # edf1 file with header end pattern in binary blob => must always work
-        avglist=[18312,18312,18312,18312,18312]
-        filename = os.path.join(self.root,"08_pitfalls/multi5+headerblob_edf1.edf.gz")
-        test_00(self,filename,avglist)
+        avglist = [18312, 18312, 18312, 18312, 18312]
+        filename = os.path.join(self.root, "08_pitfalls/multi5+headerblob_edf1.edf.gz")
+        test_00(self, filename, avglist)
 
         # edf1 file with header end pattern in Title value and binary blob
         # => must always work
-        filename = os.path.join(self.root,"08_pitfalls/multi5+headerblob+headerendinheader_edf1.edf.gz")
-        test_00(self,filename,avglist)
+        filename = os.path.join(self.root, "08_pitfalls/multi5+headerblob+headerendinheader_edf1.edf.gz")
+        test_00(self, filename, avglist)
 
         # edf0 file => must always work
-        avglist=[0,1,2,3,4]
-        filename = os.path.join(self.root,"08_pitfalls/multi5+pitfalls_edf0.edf.gz")
-        test_00(self,filename,avglist)
+        avglist = [0, 1, 2, 3, 4]
+        filename = os.path.join(self.root, "08_pitfalls/multi5+pitfalls_edf0.edf.gz")
+        test_00(self, filename, avglist)
 
         # edf0 file with header end pattern in binary blob => must always work
-        avglist=[18312,18312,18312,18312,18312]
-        filename = os.path.join(self.root,"08_pitfalls/multi5+headerblob_edf0.edf.gz")
-        test_00(self,filename,avglist)
+        avglist = [18312, 18312, 18312, 18312, 18312]
+        filename = os.path.join(self.root, "08_pitfalls/multi5+headerblob_edf0.edf.gz")
+        test_00(self, filename, avglist)
 
         # edf0 file with header end pattern in Title value and binary blob
         # => usually fails, because the header end pattern is searched
@@ -403,9 +411,9 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         09_special/face_tooshort.edf.gz
         """
 
-        avglist=[0.178897]
-        filename = os.path.join(self.root,"09_special/face_ok.edf.gz")
-        test_00(self,filename,avglist)
+        avglist = [0.178897]
+        filename = os.path.join(self.root, "09_special/face_ok.edf.gz")
+        test_00(self, filename, avglist)
 
         # The next 3 tests check that edf files can be
         # read where the header end pattern spreads over a
@@ -416,16 +424,16 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # an editor.
         # The following tests will fail if distributed  header end
         # patterns are not recognized.
-        avglist=[0.178897]
+        avglist = [0.178897]
         # header end character '}' at BLOCKSIZE-1 followed by '\n' at BLOCKSIZE
-        filename = os.path.join(self.root,"09_special/face_headerendatboundary1.edf.gz")
-        test_00(self,filename,avglist)
+        filename = os.path.join(self.root, "09_special/face_headerendatboundary1.edf.gz")
+        test_00(self, filename, avglist)
         # first part of header end pattern '}\r' at BLOCKSIZE-2 followed by '\n' at BLOCKSIZE
-        filename = os.path.join(self.root,"09_special/face_headerendatboundary2.edf.gz")
-        test_00(self,filename,avglist)
+        filename = os.path.join(self.root, "09_special/face_headerendatboundary2.edf.gz")
+        test_00(self, filename, avglist)
         # header end character '}' at BLOCKSIZE-1 followed by '\n' at BLOCKSIZE
-        filename = os.path.join(self.root,"09_special/face_headerendatboundary3.edf.gz")
-        test_00(self,filename,avglist)
+        filename = os.path.join(self.root, "09_special/face_headerendatboundary3.edf.gz")
+        test_00(self, filename, avglist)
 
         # Here, the binary blob is too short
         # like 09_special/face_headerendatboundary1.edf.gz, but in addition
@@ -437,6 +445,7 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         # test_00(self,filename,avglist)
 
     # test files 10 and 11 for testing with to be copied and added later
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase

@@ -28,13 +28,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher/Univeristy Köln, Germany"
-__date__ = "07/03/2019"
+__date__ = "03/04/2020"
 
 import unittest
 import numpy
@@ -48,6 +46,7 @@ from ..utilstest import UtilsTest
 
 
 class TestSpeImage(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         super(TestSpeImage, cls).setUpClass()

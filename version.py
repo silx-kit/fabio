@@ -53,8 +53,6 @@ Thus 2.1.0a3 is hexversion 0x020100a3.
 
 """
 
-from __future__ import absolute_import, print_function, division
-
 __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
@@ -73,7 +71,7 @@ RELEASE_LEVEL_VALUE = {"dev": 0,
 MAJOR = 0
 MINOR = 11
 MICRO = 0
-RELEV = "dev" # <16
+RELEV = "dev"  # <16
 SERIAL = 0  # <16
 
 from collections import namedtuple

@@ -34,11 +34,9 @@ data-type, dimensions, byte order and offset
 This simple library has been made for manipulating exotic/unknown files format.
 """
 
-from __future__ import with_statement, print_function
-
 __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]
 __contact__ = "gael.goret@esrf.fr"
-__license__ = "GPLv3+"
+__license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "17/10/2012"
 

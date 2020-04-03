@@ -8,22 +8,25 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 """Tiff Unit tests"""
-
-from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import logging
@@ -104,6 +107,7 @@ class TestTif(unittest.TestCase):
 
 
 class TestTifImage_Pilatus(unittest.TestCase):
+
     def setUp(self):
         self.fn = {}
         for i in ["pilatus2M.tif", "pilatus2M.edf"]:
@@ -121,6 +125,7 @@ class TestTifImage_Pilatus(unittest.TestCase):
 
 
 class TestTifImage_Packbits(unittest.TestCase):
+
     def setUp(self):
         self.fn = {}
         for i in ["oPPA_5grains_0001.tif", "oPPA_5grains_0001.edf"]:
@@ -138,6 +143,7 @@ class TestTifImage_Packbits(unittest.TestCase):
 
 
 class TestTifImage_fit2d(unittest.TestCase):
+
     def setUp(self):
         self.fn = {}
         for i in ["fit2d.tif", "fit2d.edf"]:
@@ -162,6 +168,7 @@ identify: a0009.tif: invalid TIFF directory; tags are not sorted in ascending or
 identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field, calculating from imagelength. `TIFFReadDirectory' @ tiff.c/TIFFWarnings/703.
 
     """
+
     def setUp(self):
         self.fn = {}
         for i in ["a0009.tif", "a0009.edf"]:
@@ -179,6 +186,7 @@ identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field,
 
 
 class TestGzipTif(unittest.TestCase):
+
     def setUp(self):
         self.unzipped = UtilsTest.getimage("oPPA_5grains_0001.tif.bz2")[:-4]
         self.zipped = self.unzipped + ".gz"
@@ -193,6 +201,7 @@ class TestGzipTif(unittest.TestCase):
 
 
 class TestTif_Rect(unittest.TestCase):
+
     def setUp(self):
         self.fn = UtilsTest.getimage("testmap1_0002.tif.bz2")[:-4]
 
@@ -203,6 +212,7 @@ class TestTif_Rect(unittest.TestCase):
 
 
 class TestTif_Colormap(unittest.TestCase):
+
     def setUp(self):
         self.fn = UtilsTest.getimage("indexed_color.tif.bz2")[:-4]
 

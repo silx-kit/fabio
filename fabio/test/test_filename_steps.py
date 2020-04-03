@@ -26,7 +26,6 @@ Test cases for the Next/Previous ...
 
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import logging
@@ -37,6 +36,7 @@ import fabio
 
 
 class TestNext(unittest.TestCase):
+
     def test_next1(self):
         files = [
             ["data0001.edf", "data0002.edf"],
@@ -49,6 +49,7 @@ class TestNext(unittest.TestCase):
 
 
 class TestPrev(unittest.TestCase):
+
     def test_prev1(self):
         files = [
             ["data0001.edf", "data0000.edf"],
@@ -61,6 +62,7 @@ class TestPrev(unittest.TestCase):
 
 
 class TestJump(unittest.TestCase):
+
     def test_jump1(self):
         files = [
             ["data0001.edf", "data99993.edf", 99993],

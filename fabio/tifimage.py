@@ -41,10 +41,8 @@ Authors:
   Grenoble (France)
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "13/06/2019"
+__date__ = "03/04/2020"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -62,7 +60,6 @@ import numpy
 from .utils import pilutils
 from . import fabioimage
 from . import TiffIO
-
 
 _USE_TIFFIO = True
 """Uses TiffIO library if available"""

@@ -26,16 +26,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE
 
-from __future__ import with_statement, print_function
-
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "12/11/2018"
+__date__ = "03/04/2020"
 
 import re
 import logging
 from . import tifimage
-
 
 _logger = logging.getLogger(__name__)
 

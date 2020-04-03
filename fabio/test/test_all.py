@@ -23,7 +23,6 @@
 #
 
 """Test suite for all fabio modules."""
-from __future__ import print_function, with_statement, division, absolute_import
 
 import sys
 import logging

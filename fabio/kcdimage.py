@@ -34,8 +34,6 @@ kcd images are 2D images written by the old KappaCCD diffractometer built by Non
 Based on the edfimage.py parser.
 """
 
-from __future__ import with_statement, print_function
-
 import numpy
 import logging
 import os
@@ -50,7 +48,6 @@ if not hasattr(io, "SEEK_END"):
     SEEK_END = 2
 else:
     SEEK_END = io.SEEK_END
-
 
 DATA_TYPES = {"u16": numpy.uint16}
 

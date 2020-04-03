@@ -42,14 +42,10 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 
 """
 
-
-# get ready for python3 compatibility
-from __future__ import absolute_import, print_function, with_statement, division
-
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "04/03/2019"
+__date__ = "03/04/2020"
 __status__ = "production"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2015 ESRF"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
 
 import logging

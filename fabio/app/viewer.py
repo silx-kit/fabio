@@ -34,10 +34,9 @@ Portable diffraction images viewer/converter
 * Image converter is also a light viewer based on the visualization tool
   provided by the module matplotlib.
 """
-from __future__ import absolute_import, with_statement, print_function
 
 __version__ = "1.0"
-__author__ = u"Gaël Goret, Jérôme Kieffer"
+__author__ = "Gaël Goret, Jérôme Kieffer"
 __copyright__ = "2015 ESRF"
 __licence__ = "GPL"
 

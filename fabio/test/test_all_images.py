@@ -2,7 +2,6 @@
 """
 Check we can read all the test images
 """
-from __future__ import print_function
 
 import glob
 import os

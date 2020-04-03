@@ -25,7 +25,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """Template for FabIO image reader
 
 This is a template for adding new file formats to FabIO
@@ -68,13 +67,11 @@ The basic idea is the following:
 
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "13/11/2018"
+__date__ = "03/04/2020"
 
 import logging
 logger = logging.getLogger(__name__)

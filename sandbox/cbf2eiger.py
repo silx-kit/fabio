@@ -8,11 +8,9 @@
 """Converter a bunch of files from any format to an eiger-data
 """
 
-from __future__ import with_statement, print_function
-
-__author__ = u"Jérôme Kieffer"
+__author__ = "Jérôme Kieffer"
 __copyright__ = "2016 ESRF"
-__date__ = "28/07/2017"
+__date__ = "03/04/2020"
 __licence__ = "MIT"
 
 import logging
@@ -37,13 +35,13 @@ try:
 except:
     from Queue import Queue
 
-
 logger = logging.getLogger("to_eiger")
 
 
 class Reader(Thread):
     """Reader with input and output queue 
     """
+
     def __init__(self, queue_in, queue_out, quit_event):
         """Constructor of the class
         

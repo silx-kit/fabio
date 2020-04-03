@@ -32,12 +32,9 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
          ESRF          Risoe National Laboratory
 """
 
-from __future__ import with_statement, print_function, division
-
 import logging
 import numpy
 logger = logging.getLogger(__name__)
-
 
 DATATYPES = {
     # type  sign bytes

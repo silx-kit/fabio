@@ -25,7 +25,6 @@
 """
 Unit tests for the Fit2D spread sheet image format.
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os
@@ -37,7 +36,6 @@ logger = logging.getLogger(__name__)
 
 from fabio.fit2dspreadsheetimage import Fit2dSpreadsheetImage
 from fabio.utils import testutils
-
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

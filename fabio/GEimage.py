@@ -39,14 +39,11 @@
 # modifications by Jon Wright for style, pychecker and fabio
 #
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "14/11/2018"
+__date__ = "03/04/2020"
 __status__ = "production"
-__copyright__ = "2007 APS; 2010-2015 ESRF"
+__copyright__ = "2007 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
-
 
 import numpy
 import struct

@@ -30,7 +30,6 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 """Portable image converter based on FabIO library.
 """
-from __future__ import with_statement, print_function
 
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"

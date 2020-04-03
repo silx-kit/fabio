@@ -26,14 +26,11 @@
 
 """ Setup script for python distutils package and fabio """
 
-from __future__ import print_function, division, with_statement, absolute_import
-
-
 __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/02/2019"
+__date__ = "03/04/2020"
 __status__ = "stable"
 
 import sys
@@ -45,11 +42,9 @@ import glob
 import contextlib
 import io
 
-
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger("fabio.setup")
-
 
 from distutils.command.clean import clean as Clean
 from distutils.command.build import build as _build
@@ -76,7 +71,6 @@ try:
     from sphinx.setup_command import BuildDoc
 except ImportError:
     sphinx = None
-
 
 PROJECT = "fabio"
 
@@ -127,25 +121,26 @@ classifiers = [
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
-
 # ########## #
 # version.py #
 # ########## #
+
 
 class build_py(_build_py):
     """
     Enhanced build_py which copies version.py to <PROJECT>._version.py
     """
+
     def find_package_modules(self, package, package_dir):
         modules = _build_py.find_package_modules(self, package, package_dir)
         if package == PROJECT:
             modules.append((PROJECT, '_version', 'version.py'))
         return modules
 
-
 ########
 # Test #
 ########
+
 
 class PyTest(Command):
     """Command to start tests running the script: run_tests.py"""
@@ -165,12 +160,13 @@ class PyTest(Command):
         if errno != 0:
             raise SystemExit(errno)
 
-
 # ################### #
 # build_doc command   #
 # ################### #
 
+
 if sphinx is None:
+
     class SphinxExpectedCommand(Command):
         """Command to inform that sphinx is missing"""
         user_options = []
@@ -319,6 +315,7 @@ class BuildMan(Command):
 
 
 if sphinx is not None:
+
     class BuildDocCommand(BuildDoc):
         """Command to build documentation using sphinx.
 
@@ -352,20 +349,22 @@ if sphinx is not None:
                 self.mkpath(self.builder_target_dir)
                 BuildDoc.run(self)
             sys.path.pop(0)
+
 else:
     BuildDocCommand = SphinxExpectedCommand
-
 
 # ################### #
 # test_doc command    #
 # ################### #
 
 if sphinx is not None:
+
     class TestDocCommand(BuildDoc):
         """Command to test the documentation using sphynx doctest.
 
         http://www.sphinx-doc.org/en/1.4.8/ext/doctest.html
         """
+
         def run(self):
             # make sure the python path is pointing to the newly built
             # code so that the documentation is built on this and not a
@@ -385,10 +384,10 @@ if sphinx is not None:
 else:
     TestDocCommand = SphinxExpectedCommand
 
-
 # ############################# #
 # numpy.distutils Configuration #
 # ############################# #
+
 
 def configuration(parent_package='', top_path=None):
     """Recursive construction of package info to be used in setup().
@@ -699,7 +698,6 @@ class BuildExt(build_ext):
             self.patch_extension(ext)
         build_ext.build_extensions(self)
 
-
 ################################################################################
 # Clean command
 ################################################################################
@@ -768,6 +766,7 @@ class CleanCommand(Clean):
 ################################################################################
 # Source tree
 ################################################################################
+
 
 class SourceDistWithCython(sdist):
     """
@@ -943,10 +942,10 @@ class PyTest(Command):
         if errno != 0:
             raise SystemExit(errno)
 
-
 # ##### #
 # setup #
 # ##### #
+
 
 def get_project_configuration(dry_run):
     """Returns project arguments for setup"""

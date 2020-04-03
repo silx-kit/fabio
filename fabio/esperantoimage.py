@@ -25,12 +25,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Florian Plaswig"]
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "10/10/2019"
+__date__ = "03/04/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -184,13 +182,13 @@ class EsperantoImage(FabioImage):
         """
 
         # create header
-        if "IMAGE" not in self.header: # create image entry
+        if "IMAGE" not in self.header:  # create image entry
             dtype_info = '"%s"' % self.format
             dx, dy = self.shape
 
             self.header["IMAGE"] = "%d %d 1 1 %s" % (dx, dy, dtype_info)
 
-        else: # update image entry
+        else:  # update image entry
             dtype_info = '"4BYTE_LONG"'
             dx, dy = self.shape
             split = self.header["IMAGE"].split(' ')
@@ -204,7 +202,7 @@ class EsperantoImage(FabioImage):
         if 256 > dx > 4096 or dx % 4 != 0 or 256 > dy > 4096 or dy % 4 != 0:
             logger.warning("The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues.")
 
-        if "ESPERANTO_FORMAT" not in self.header: # default format
+        if "ESPERANTO_FORMAT" not in self.header:  # default format
             self.header["ESPERANTO_FORMAT"] = "ESPERANTO FORMAT 1.1"
 
         self.header = dict(filter(self.header, lambda elem: elem[0] in self.HEADER_KEYS))
@@ -213,11 +211,10 @@ class EsperantoImage(FabioImage):
                                                 (self.header["ESPERANTO_FORMAT"], len(self.header)))
         HEADER = header_top
         for header_key in self.header:
-            if header_key == "ESPERANTO_FORMAT": #or header_key not in self.HEADER_KEYS:
+            if header_key == "ESPERANTO_FORMAT":  # or header_key not in self.HEADER_KEYS:
                 continue
             header_val = self.header[header_key]
             HEADER += self._formatheaderline(header_key + ' ' + header_val)
-
 
         with self._open(fname, "wb") as outfile:
             outfile.write(HEADER)
@@ -227,6 +224,7 @@ class EsperantoImage(FabioImage):
                 outfile.write(agi_bitfield.compress(self.data))
             else:
                 raise RuntimeError("Format not supported %s." % self.format)
+
 
 # This is not compatibility with old code:
 esperantoimage = EsperantoImage

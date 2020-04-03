@@ -32,7 +32,6 @@
 """General purpose utilities functions for fabio
 
 """
-from __future__ import absolute_import, print_function, with_statement, division
 
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"

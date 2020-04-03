@@ -8,18 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 """
 #bruker Unit tests
@@ -27,7 +32,6 @@
 #built on testbrukerimage
 19/01/2015
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os
@@ -58,7 +62,6 @@ MYIMAGE[1, 1] = 32
 MYIMAGE[127:129, 127:129] = 65535
 if not numpy.little_endian:
     MYIMAGE.byteswap(True)
-
 
 OVERFLOWS = [
     ["%09d" % 4194304, ("%07d" % (127 * 256 + 127))],
@@ -108,6 +111,7 @@ class TestBruker(unittest.TestCase):
 
 class TestBzipBruker(TestBruker):
     """ test for a bzipped image """
+
     def setUp(self):
         """ create the image """
         TestBruker.setUp(self)
@@ -121,6 +125,7 @@ class TestBzipBruker(TestBruker):
 
 class TestGzipBruker(TestBruker):
     """ test for a gzipped image """
+
     def setUp(self):
         """ Create the image """
         TestBruker.setUp(self)
@@ -134,6 +139,7 @@ class TestGzipBruker(TestBruker):
 
 class TestBrukerLinear(unittest.TestCase):
     """basic test, test a random array of float32"""
+
     def setUp(self):
         unittest.TestCase.setUp(self)
         self.filename = os.path.join(UtilsTest.tempdir, "bruker.0000")
@@ -163,6 +169,7 @@ TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17
 
 class TestRealImg(unittest.TestCase):
     """ check some read data from bruker detector"""
+
     def setUp(self):
         """
         download images

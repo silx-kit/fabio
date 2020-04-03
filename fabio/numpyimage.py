@@ -26,13 +26,11 @@
 
 """Generic numpy file reader for FabIO"""
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "16/11/2018"
+__date__ = "03/04/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -210,5 +208,6 @@ class NumpyImage(fabioimage.FabioImage):
     def next(self):
         """ returns the next frame in the series as a fabioimage """
         return self.getframe(self.currentframe + 1)
+
 
 numpyimage = NumpyImage

@@ -23,12 +23,10 @@
 
 """Benchmark for file reading"""
 
-from __future__ import print_function, division
-
 __author__ = "Jérôme Kieffer"
-__date__ = "25/07/2017"
+__date__ = "03/04/2020"
 __license__ = "MIT"
-__copyright__ = "2016 European Synchrotron Radiation Facility, Grenoble, France"
+__copyright__ = "2016-2020 European Synchrotron Radiation Facility, Grenoble, France"
 
 import json
 import sys
