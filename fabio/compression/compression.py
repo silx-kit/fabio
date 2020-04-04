@@ -37,10 +37,11 @@ Authors: Jérôme Kieffer, ESRF
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "03/04/2020"
+__date__ = "04/04/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import sys
+from collections import OrderedDict
 import base64
 import hashlib
 import logging
@@ -111,9 +112,8 @@ def endianness():
 
 class ExternalCompressors(object):
     """Class to handle lazy discovery of external compression programs"""
-    COMMANDS = {".bz2": ["bzip2" "-dcf"],
-                ".gz": ["gzip", "-dcf"]
-                }
+    COMMANDS = OrderedDict(((".bz2", ("bzip2" "-dcf")),
+                            (".gz", ("gzip", "-dcf"))))
 
     def __init__(self):
         """Empty constructor"""
@@ -122,22 +122,19 @@ class ExternalCompressors(object):
     def __getitem__(self, key):
         """Implement the dict-like behavior"""
         if key not in self.compressors:
-            if key in self.COMMANDS:
-                commandline = self.COMMANDS[key]
+            commandline = self.COMMANDS.get(key)
+            if commandline:
                 testline = [commandline[0], "-h"]
                 try:
                     lines = subprocess.check_output(testline,
                                                     stderr=subprocess.STDOUT,
                                                     universal_newlines=True)
-                    if "usage" in lines.lower():
-                        self.compressors[key] = commandline
-                    else:
-                        self.compressors[key] = None
+                    if "usage" not in lines.lower():
+                        commandline = None
                 except (subprocess.CalledProcessError, WindowsError) as err:
                     logger.debug("No %s utility found: %s", commandline[0], err)
-                    self.compressors[key] = None
-            else:
-                self.compressors[key] = None
+                    commandline = None
+            self.compressors[key] = commandline
         return self.compressors[key]
 
 
