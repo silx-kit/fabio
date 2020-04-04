@@ -61,7 +61,7 @@ class TestFlatEdfs(unittest.TestCase):
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
 
-        assert len(self.MYIMAGE[0:1, 0:1].tostring()) == 4, self.MYIMAGE[0:1, 0:1].tostring()
+        assert len(self.MYIMAGE[0:1, 0:1].tobytes()) == 4, self.MYIMAGE[0:1, 0:1].tobytes()
 
     def setUp(self):
         """ initialize"""
@@ -71,7 +71,7 @@ class TestFlatEdfs(unittest.TestCase):
             outf = open(self.filename, "wb")
             assert len(self.MYHEADER) % 1024 == 0
             outf.write(self.MYHEADER)
-            outf.write(self.MYIMAGE.tostring())
+            outf.write(self.MYIMAGE.tobytes())
             outf.close()
 
         obj = edfimage()
@@ -419,7 +419,7 @@ class TestBadFiles(unittest.TestCase):
         data = numpy.ones((256, 256), numpy.float32) * 10
         data[0, 0] = 0
         data[1, 1] = 20
-        fd.write(data.tostring())
+        fd.write(data.tobytes())
 
     @classmethod
     def copy_base(cls, filename, size):

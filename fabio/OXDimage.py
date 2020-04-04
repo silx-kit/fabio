@@ -542,7 +542,7 @@ class Section(object):
 
     def getSize(self, dtype):
         if dtype not in self._dictSize:
-            self._dictSize[dtype] = len(numpy.zeros(1, dtype=dtype).tostring())
+            self._dictSize[dtype] = len(numpy.zeros(1, dtype=dtype).tobytes())
         return self._dictSize[dtype]
 
     def setData(self, key, offset, dtype, default=None):
@@ -560,7 +560,7 @@ class Section(object):
         if value is None:
             value = b"\x00" * self.getSize(dtype)
         elif numpy.little_endian:
-            value = numpy.array(value).astype(dtype).tostring()
+            value = numpy.array(value).astype(dtype).tobytes()
         else:
-            value = numpy.array(value).astype(dtype).byteswap().tostring()
+            value = numpy.array(value).astype(dtype).byteswap().tobytes()
         self.lstChr[offset:offset + self.getSize(dtype)] = value

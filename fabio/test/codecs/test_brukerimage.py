@@ -85,7 +85,7 @@ class TestBruker(unittest.TestCase):
                 fout.write(b"\x1a\x04")
                 fout.write(b'.' * 78)
                 wrb = wrb + 80
-            fout.write(MYIMAGE.tostring())
+            fout.write(MYIMAGE.tobytes())
 
             noverfl = int(MYHEADER['NOVERFL'])
             for ovf in OVERFLOWS:

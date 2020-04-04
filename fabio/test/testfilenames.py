@@ -22,7 +22,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
 """
 Test cases for filename deconstruction
 
@@ -67,7 +66,6 @@ CASES = [
     (3, 'dtrek_or_oxd_or_hipic_or_raxis', 'mb_LP_1_003.img.bz2'),
     (3, 'dtrek_or_oxd_or_hipic_or_raxis', os.path.join("data", 'mb_LP_1_003.img.bz2')),
 ]
-
 
 MORE_CASES = [
     ("data0010.edf", "data0012.edf", 10),

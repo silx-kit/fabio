@@ -93,7 +93,7 @@ class BinaryImage(FabioImage):
         self._bytecode = bytecode
         f = open(self.filename, "rb")
         dims = [dim2, dim1]
-        bpp = len(numpy.array(0, bytecode).tostring())
+        bpp = len(numpy.array(0, bytecode).tobytes())
         size = dims[0] * dims[1] * bpp
 
         if offset >= 0:
@@ -117,7 +117,7 @@ class BinaryImage(FabioImage):
     def estimate_offset_value(self, fname, dim1, dim2, bytecode="int32"):
         "Estimates the size of a file"
         with open(fname, "rb") as f:
-            bpp = len(numpy.array(0, bytecode).tostring())
+            bpp = len(numpy.array(0, bytecode).tobytes())
             size = dim1 * dim2 * bpp
             totsize = len(f.read())
         logger.info('total size (bytes): %s', totsize)
@@ -126,7 +126,7 @@ class BinaryImage(FabioImage):
 
     def write(self, fname):
         with open(fname, mode="wb") as outfile:
-            outfile.write(self.data.tostring())
+            outfile.write(self.data.tobytes())
 
 
 binaryimage = BinaryImage

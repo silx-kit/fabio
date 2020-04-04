@@ -38,7 +38,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "17/01/2019"
+__date__ = "03/04/2020"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -79,7 +79,6 @@ else:
 PathTypes = StringTypes
 if pathlib is not None:
     PathTypes += (pathlib.PurePath,)
-
 
 from .compression import bz2, gzip, COMPRESSORS
 import traceback
@@ -130,6 +129,7 @@ class FilenameObject(object):
     """
     The 'meaning' of a filename ...
     """
+
     def __init__(self, stem=None,
                  num=None,
                  directory=None,
@@ -177,6 +177,7 @@ class FilenameObject(object):
                  self.digits,
                  self.directory]
         return fmt % tuple([str(x) for x in attrs])
+
     __repr__ = str
 
     def tostring(self):
@@ -398,6 +399,7 @@ class BytesIO(six.BytesIO):
 
     BugFix for MacOSX mainly
     """
+
     def __init__(self, data, fname=None, mode="r"):
         six.BytesIO.__init__(self, data)
         if "closed" not in dir(self):
@@ -422,6 +424,7 @@ class BytesIO(six.BytesIO):
 
     def setSize(self, size):
         self.__size = size
+
     size = property(getSize, setSize)
 
 
@@ -429,6 +432,7 @@ class File(FileIO):
     """
     wrapper for "file" with locking
     """
+
     def __init__(self, name, mode="rb", buffering=0, temporary=False):
         """file(name[, mode[, buffering]]) -> file object
 
@@ -486,6 +490,7 @@ class File(FileIO):
 
     def setSize(self, size):
         self.__size = size
+
     size = property(getSize, setSize)
 
     def __enter__(self):
@@ -502,6 +507,7 @@ class UnknownCompressedFile(File):
     """
     wrapper for "File" with locking
     """
+
     def __init__(self, name, mode="rb", buffering=0):
         logger.warning("No decompressor found for this type of file (are gzip anf bz2 installed ???")
         File.__init__(self, name, mode, buffering)
@@ -516,10 +522,12 @@ class UnknownCompressedFile(File):
 if gzip is None:
     GzipFile = UnknownCompressedFile
 else:
+
     class GzipFile(gzip.GzipFile):
         """
         Just a wrapper for gzip.GzipFile providing the correct seek capabilities for python 2.5
         """
+
         def __init__(self, filename=None, mode=None, compresslevel=9, fileobj=None):
             """
             Wrapper with locking for constructor for the GzipFile class.
@@ -586,12 +594,13 @@ else:
         """
         gzip.GzipFile.close(self)
 
-
 if bz2 is None:
     BZ2File = UnknownCompressedFile
 else:
+
     class BZ2File(bz2.BZ2File):
         "Wrapper with lock"
+
         def __init__(self, name, mode='r', buffering=0, compresslevel=9):
             """
             BZ2File(name [, mode='r', compresslevel=9]) -> file object
@@ -631,6 +640,7 @@ else:
 
         def setSize(self, value):
             self.__size = value
+
         size = property(getSize, setSize)
 
         def __enter__(self):
@@ -698,6 +708,7 @@ def exists(path):
 
 class OrderedDict(_OrderedDict):
     """Ordered dictionary with pretty print"""
+
     def __repr__(self):
         try:
             res = json.dumps(self, indent=2)

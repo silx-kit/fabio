@@ -162,9 +162,9 @@ class PnmImage(FabioImage):
             fobj.write(header)
             fobj.write(six.b(" \n"))
             if numpy.little_endian:
-                fobj.write(self.data.byteswap().tostring())
+                fobj.write(self.data.byteswap().tobytes())
             else:
-                fobj.write(self.data.tostring())
+                fobj.write(self.data.tobytes())
 
     def P1dec(self, buf, bytecode):
         data = numpy.zeros(self.shape)
