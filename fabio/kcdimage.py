@@ -40,7 +40,6 @@ import os
 
 import string
 from .fabioimage import FabioImage
-from .fabioutils import six
 logger = logging.getLogger(__name__)
 
 import io
@@ -60,10 +59,7 @@ MINIMUM_KEYS = [
 
 DEFAULT_VALUES = {"Data type": "u16"}
 
-if six.PY2:
-    ALPHANUM = string.digits + string.letters + ". "
-else:
-    ALPHANUM = bytes(string.digits + string.ascii_letters + ". ", encoding="ASCII")
+ALPHANUM = bytes(string.digits + string.ascii_letters + ". ", encoding="ASCII")
 
 
 class KcdImage(FabioImage):

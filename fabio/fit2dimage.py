@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -101,7 +101,6 @@ class Fit2dImage(FabioImage):
                     raise RuntimeError(err)
             key, line = line.split(b":", 1)
             num_block = hex_to(line[:8])
-            # metadatatype = chr(line[8]) if six.PY3 else line[8].decode(self.ENC)
             metadatatype = line[8:9].decode(self.ENC)
             key = key[1:].decode(self.ENC)
             if metadatatype == "s":

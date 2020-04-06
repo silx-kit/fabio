@@ -923,7 +923,7 @@ class TiffIO(object):
                 description = description + " "
                 descriptionLength = len(description)
 
-            if isinstance(description, six.text_type):
+            if isinstance(description, str):
                 raw = description.encode('utf-8')
             else:
                 if sys.version >= '3.0':

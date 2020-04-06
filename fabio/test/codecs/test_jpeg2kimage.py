@@ -46,8 +46,9 @@ from ..utilstest import UtilsTest
 
 
 def isPilUsable():
+    print("jpeg2kimage.PIL:", jpeg2kimage.PIL)
     if jpeg2kimage.PIL is None:
-        return False
+        return None
     try:
         if hasattr(jpeg2kimage.PIL.Image, "frombytes"):
             frombytes = jpeg2kimage.PIL.Image.frombytes
@@ -63,7 +64,7 @@ def isPilUsable():
 
 def isGlymurUsable():
     if jpeg2kimage.glymur is None:
-        return False
+        return None
     import glymur
     if glymur.version.openjpeg_version_tuple < [1, 5, 0]:
         return False
@@ -74,8 +75,8 @@ class TestJpeg2KImage(unittest.TestCase):
     """Test the class format"""
 
     def setUp(self):
-        if not isPilUsable() and not isGlymurUsable():
-            self.skipTest("PIL nor glymur are available")
+        if not (isPilUsable() or isGlymurUsable()):
+            self.skipTest("nor PIL neither glymur are available")
 
     def loadImage(self, filename):
         image_format = jpeg2kimage.Jpeg2KImage()
@@ -121,8 +122,8 @@ class TestJpeg2KImage_PIL(TestJpeg2KImage):
     """Test the class format using a specific decoder"""
 
     def setUp(self):
-        if not isPilUsable() and not isGlymurUsable():
-            self.skipTest("PIL is not available")
+        if not isPilUsable():
+            self.skipTest("PIL is not available or has no support for JPEG2000")
 
     @classmethod
     def setUpClass(cls):
@@ -142,7 +143,7 @@ class TestJpeg2KImage_glymur(TestJpeg2KImage):
 
     def setUp(self):
         if not isGlymurUsable():
-            self.skipTest("glymur is not available")
+            self.skipTest("glymur is not available or too old")
 
     @classmethod
     def setUpClass(cls):

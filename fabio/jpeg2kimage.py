@@ -29,7 +29,7 @@ FabIO class for dealing with JPEG 2000 images.
 """
 
 __authors__ = ["Valentin Valls"]
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import PIL
+    import PIL.Image
 except ImportError:
     PIL = None
 

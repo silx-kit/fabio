@@ -83,7 +83,7 @@ def from_isotime(text, use_tz=False):
     """
     if isinstance(text, numpy.ndarray):
         text = text[0]
-    if six.PY3 and isinstance(text, six.binary_type):
+    if six.PY3 and isinstance(text, bytes):
         text = text.decode("utf-8")
     else:
         text = str(text)
