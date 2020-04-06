@@ -44,7 +44,6 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from ...edfimage import edfimage
-from ...third_party import six
 from ...fabioutils import GzipFile, BZ2File
 from ..utilstest import UtilsTest
 
@@ -54,15 +53,15 @@ class TestFlatEdfs(unittest.TestCase):
 
     def common_setup(self):
         self.BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        self.MYHEADER = six.b("{\n%-1020s}\n" % (
-                    """Omega = 0.0 ;
-                    Dim_1 = 256 ;
-                    Dim_2 = 256 ;
-                    DataType = FloatValue ;
-                    ByteOrder = %s ;
-                    Image = 1;
-                    History-1 = something=something else;
-                    \n\n""" % self.BYTE_ORDER))
+        self.MYHEADER = ("{\n%-1020s}\n" % (
+                        """Omega = 0.0 ;
+                        Dim_1 = 256 ;
+                        Dim_2 = 256 ;
+                        DataType = FloatValue ;
+                        ByteOrder = %s ;
+                        Image = 1;
+                        History-1 = something=something else;
+                        \n\n""" % self.BYTE_ORDER)).encode("latin-1")
         self.MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
@@ -415,17 +414,17 @@ class TestBadFiles(unittest.TestCase):
     @classmethod
     def write_header(cls, fd, image_number):
         byte_order = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        byte_order = six.b(byte_order)
+        byte_order = byte_order.encode("latin-1")
 
-        fd.write(six.b("{\n"))
-        fd.write(six.b("Omega = 0.0 ;\n"))
-        fd.write(six.b("Dim_1 = 256 ;\n"))
-        fd.write(six.b("Dim_2 = 256 ;\n"))
-        fd.write(six.b("DataType = FloatValue ;\n"))
-        fd.write(six.b("ByteOrder = %s ;\n" % byte_order))
-        fd.write(six.b("Image = %d ;\n" % image_number))
-        fd.write(six.b("History-1 = something=something else;\n"))
-        fd.write(six.b("}\n"))
+        fd.write(b"{\n")
+        fd.write(b"Omega = 0.0 ;\n")
+        fd.write(b"Dim_1 = 256 ;\n")
+        fd.write(b"Dim_2 = 256 ;\n")
+        fd.write(b"DataType = FloatValue ;\n")
+        fd.write(b"ByteOrder = %s ;\n" % byte_order)
+        fd.write(b"Image = %d ;\n" % image_number)
+        fd.write(b"History-1 = something=something else;\n")
+        fd.write(b"}\n")
 
     @classmethod
     def write_data(cls, fd):
@@ -471,7 +470,7 @@ class TestBadFiles(unittest.TestCase):
     def test_wrong_magic(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
         f = io.open(filename, "wb")
-        f.write(six.b("\x10\x20\x30"))
+        f.write(b"\x10\x20\x30")
         f.close()
 
         self.assertRaises(IOError, self.open, filename)

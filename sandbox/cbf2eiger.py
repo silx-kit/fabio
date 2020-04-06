@@ -10,30 +10,22 @@
 
 __author__ = "Jérôme Kieffer"
 __copyright__ = "2016 ESRF"
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __licence__ = "MIT"
 
 import logging
 logging.basicConfig()
 
-import sys
 import os
-import time
-import glob
 
 import numpy
 import fabio
 from fabio import nexus
-import h5py
 
-from fabio.third_party import six
-from fabio.third_party import argparse
+import argparse
 from threading import Thread, Event
 
-try:
-    from queue import Queue
-except:
-    from Queue import Queue
+from queue import Queue
 
 logger = logging.getLogger("to_eiger")
 

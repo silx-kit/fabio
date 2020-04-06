@@ -33,19 +33,17 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 
 import logging
 import numpy
 import os
-import sys
 import time
 
 from .fabioutils import exists
 from ._version import version
-from .third_party import six
 
 logger = logging.getLogger(__name__)
 try:
@@ -83,7 +81,7 @@ def from_isotime(text, use_tz=False):
     """
     if isinstance(text, numpy.ndarray):
         text = text[0]
-    if six.PY3 and isinstance(text, bytes):
+    if isinstance(text, bytes):
         text = text.decode("utf-8")
     else:
         text = str(text)

@@ -43,7 +43,6 @@ import numpy
 import struct
 
 from .fabioimage import FabioImage
-from .third_party import six
 
 
 class Fit2dMaskImage(FabioImage):
