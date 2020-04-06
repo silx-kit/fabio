@@ -60,7 +60,6 @@ except ImportError:
         pathlib = None
 
 StringTypes = (str, bytes)
-unicode = str
 from io import FileIO, BytesIO as _BytesIO
 
 
