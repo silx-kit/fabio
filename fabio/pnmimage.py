@@ -43,7 +43,7 @@ License: MIT
 """
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -55,10 +55,10 @@ logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 from .fabioutils import six
 
-SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
+SUBFORMATS = (b'P1', b'P2', b'P3', b'P4', b'P5', b'P6', b'P7')
 
-HEADERITEMS = [six.b(i) for i in ('SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL')]
-P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR')]
+HEADERITEMS = (b'SUBFORMAT', b'WIDTH', b'HEIGHT', b'MAXVAL')
+P7HEADERITEMS = (b'WIDTH', b'HEIGHT', b'DEPTH', b'MAXVAL', b'TUPLTYPE', b'ENDHDR')
 
 
 class PnmImage(FabioImage):
