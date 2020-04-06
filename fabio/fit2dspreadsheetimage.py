@@ -27,13 +27,10 @@
 # THE SOFTWARE.
 #
 
-
 """
 Read the fit2d ascii image output
         + Jon Wright, ESRF
 """
-
-from __future__ import absolute_import, print_function, with_statement, division
 
 import numpy
 import logging

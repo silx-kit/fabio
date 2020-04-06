@@ -40,8 +40,6 @@ modification for HDF5 by Jérôme Kieffer
 
 """
 
-from __future__ import with_statement, print_function, absolute_import
-
 import os.path
 import logging
 logger = logging.getLogger(__name__)
@@ -51,7 +49,6 @@ from .fabioimage import FabioImage
 
 # Make sure to load all formats
 from . import fabioformats  # noqa
-
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -67,12 +64,12 @@ MAGIC_NUMBERS = [
     (b"\x49\x49\x2a\x00", 'tif'),
     # d*TREK must come before edf
     (b"{\nHEA", 'dtrek'),
-    # EDF_ types 
-    (b"\r\n{\r\nEDF",'edf'),   # EDF3 (can be interpreted like EDF1 but refused by fit2d)
-    (b"\n{\r\nEDF",'edf'),     # EDF2 (can be interpreted like EDF1 but refused by fit2d)
-    (b"{\r\nEDF",'edf'),       # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
-    (b"{\n",'edf'),            # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
-    (b"\n{\n",'edf'),          # EDFU (EDF unknown source, V1.xx)
+    # EDF_ types
+    (b"\r\n{\r\nEDF", 'edf'),  # EDF3 (can be interpreted like EDF1 but refused by fit2d)
+    (b"\n{\r\nEDF", 'edf'),  # EDF2 (can be interpreted like EDF1 but refused by fit2d)
+    (b"{\r\nEDF", 'edf'),  # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
+    (b"{\n", 'edf'),  # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
+    (b"\n{\n", 'edf'),  # EDFU (EDF unknown source, V1.xx)
     # conventional
     (b"{", 'edf'),
     (b"\r{", 'edf'),

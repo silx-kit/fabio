@@ -25,7 +25,6 @@
 # Unit tests
 Jerome Kieffer, 04/12/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import logging
@@ -38,6 +37,7 @@ from .utilstest import UtilsTest
 
 class Test1(unittest.TestCase):
     """openheader opening edf"""
+
     def setUp(self):
         self.name = UtilsTest.getimage("F2K_Seb_Lyso0675_header_only.edf.bz2")[:-4]
 

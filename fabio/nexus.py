@@ -28,13 +28,12 @@
 Stand-alone module which tries to offer interface to HDF5 via H5Py
 
 """
-from __future__ import absolute_import, print_function, division
 
 __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "23/10/2019"
+__date__ = "03/04/2020"
 __status__ = "beta"
 __docformat__ = 'restructuredtext'
 
@@ -122,6 +121,7 @@ class Nexus(object):
 
     #TODO: make it thread-safe !!!
     """
+
     def __init__(self, filename, mode="r"):
         """
         Constructor

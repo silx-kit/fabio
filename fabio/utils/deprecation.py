@@ -24,11 +24,9 @@
 # ###########################################################################*/
 """Bunch of useful decorators"""
 
-from __future__ import absolute_import, print_function, division
-
 __authors__ = ["Jerome Kieffer", "H. Payno", "P. Knobel"]
 __license__ = "MIT"
-__date__ = "28/03/2019"
+__date__ = "03/04/2020"
 
 import sys
 import logging
@@ -41,7 +39,6 @@ from .. import _version
 depreclog = logging.getLogger("fabio.DEPRECATION")
 
 deprecache = set([])
-
 
 _CACHE_VERSIONS = {}
 
@@ -65,7 +62,9 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None,
     :param Union[int,str] deprecated_since: If provided, log it as warning
         since a version of the library, else log it as debug
     """
+
     def decorator(func):
+
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             name = func.func_name if sys.version_info[0] < 3 else func.__name__
@@ -79,7 +78,9 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None,
                                skip_backtrace_count=skip_backtrace_count,
                                deprecated_since=deprecated_since)
             return func(*args, **kwargs)
+
         return wrapper
+
     if func is not None:
         return decorator(func)
     return decorator

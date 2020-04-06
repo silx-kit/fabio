@@ -24,8 +24,6 @@
 # THE SOFTWARE.
 #
 
-from __future__ import with_statement, print_function
-
 """MRC image for FabIO
 
 Authors: Jerome Kieffer
@@ -39,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__version__ = "29 Oct 2013"
+__date__ = "03/04/2020"
 
 import logging
 import numpy

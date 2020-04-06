@@ -27,7 +27,6 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os
@@ -51,6 +50,7 @@ TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67
 
 
 class TestMar345(unittest.TestCase):
+
     def setUp(self):
         """
         download images

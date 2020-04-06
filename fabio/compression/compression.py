@@ -28,21 +28,17 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """Compression and decompression algorithm for various formats
 
 Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
 """
-# get ready for python3
-from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "22/10/2018"
+__date__ = "03/04/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-
 
 import sys
 import base64
@@ -56,7 +52,7 @@ logger = logging.getLogger(__name__)
 from ..third_party import six
 
 try:
-    from ..third_party import gzip
+    import gzip
 except ImportError:
     logger.error("Unable to import gzip module: disabling gzip compression")
     gzip = None
@@ -155,6 +151,7 @@ def decGzip(stream):
     :return: uncompressed stream
 
     """
+
     def _python_gzip(stream):
         """Inefficient implementation based on loops in Python"""
         for i in range(1, 513):

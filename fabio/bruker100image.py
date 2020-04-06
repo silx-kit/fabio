@@ -28,7 +28,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
          Risoe National Laboratory
@@ -42,12 +41,10 @@
 
 """
 
-# get ready for python3
-from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright",
                "Jérôme Kieffer", "Sigmund Neher"]
 __status__ = "production"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2015-2016 ESRF, 2016 GWDG"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2015-2020 ESRF, 2016 GWDG"
 __licence__ = "MIT"
 
 import numpy

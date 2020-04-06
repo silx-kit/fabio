@@ -32,7 +32,6 @@
 """General purpose utilities functions for fabio
 
 """
-from __future__ import absolute_import, print_function, with_statement, division
 
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
@@ -47,11 +46,10 @@ import os
 import logging
 import sys
 import json
-import functools
 
 logger = logging.getLogger(__name__)
 
-from .third_party.ordereddict import OrderedDict as _OrderedDict
+from collections import OrderedDict as _OrderedDict
 from .third_party import six
 
 try:
@@ -84,10 +82,7 @@ from .compression import bz2, gzip, COMPRESSORS
 import traceback
 from math import ceil
 
-if sys.version_info < (3, 3):
-    from threading import _Semaphore as _Semaphore
-else:
-    from threading import Semaphore as _Semaphore
+from threading import Semaphore as _Semaphore
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
 

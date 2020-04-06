@@ -29,7 +29,6 @@ Test cases for filename deconstruction
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os

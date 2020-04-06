@@ -42,12 +42,10 @@ Authors:
 
 """
 
-from __future__ import with_statement, print_function
-
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "19/08/2019"
+__date__ = "03/04/2020"
 
 import time
 import logging
@@ -268,7 +266,7 @@ class OxdImage(FabioImage):
                 logger.info("Compressed with the TY5 compression")
                 dtype = numpy.dtype(numpy.int8)
                 raw8 = infile.read(dim1 * dim2)
-                
+
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
                 else:
@@ -527,6 +525,7 @@ class Section(object):
     """
     Small helper class for writing binary headers
     """
+
     def __init__(self, size, dictHeader):
         """
         :param size: size of the header section in bytes

@@ -24,7 +24,6 @@
 # THE SOFTWARE.
 #
 
-
 """Eiger data/master file reader for FabIO
 
 Eiger data files are HDF5 files with one group called "entry" and a dataset
@@ -42,13 +41,11 @@ https://github.com/silx-kit/hdf5plugin
 
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "23/10/2019"
+__date__ = "03/04/2020"
 
 import logging
 logger = logging.getLogger(__name__)

@@ -24,7 +24,6 @@
 # THE SOFTWARE.
 #
 
-
 """HDF5 image for FabIO
 
 Authors: Jerome Kieffer
@@ -38,13 +37,11 @@ filename::path
 Only supports ndim=2 or 3 (exposed as a stack of images
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "23/10/2019"
+__date__ = "03/04/2020"
 
 import logging
 import os

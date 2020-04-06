@@ -27,7 +27,6 @@ Test cases for the fabioimage class
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import sys
 import os
@@ -53,6 +52,7 @@ except ImportError:
 
 class Test50000(unittest.TestCase):
     """ test with 50000 everywhere"""
+
     def setUp(self):
         """make the image"""
         dat = numpy.ones((1024, 1024), numpy.uint16)
@@ -92,6 +92,7 @@ class Test50000(unittest.TestCase):
 
 class TestSlices(unittest.TestCase):
     """check slicing"""
+
     def setUp(self):
         """make test data"""
         dat2 = numpy.zeros((1024, 1024), numpy.uint16)
@@ -181,6 +182,7 @@ class TestOpen(unittest.TestCase):
 
 class TestPilImage(unittest.TestCase):
     """ check PIL creation"""
+
     def setUp(self):
         if pilutils.Image is None:
             self.skipTest("PIL is not available")
@@ -224,6 +226,7 @@ class TestPilImage(unittest.TestCase):
 
 class TestPilImage2(TestPilImage):
     """ check with different numbers"""
+
     def mkdata(self, shape, typ):
         """ positive and big"""
         return (numpy.random.random(shape) * sys.maxsize / 10).astype(typ)
@@ -231,6 +234,7 @@ class TestPilImage2(TestPilImage):
 
 class TestPilImage3(TestPilImage):
     """ check with different numbers"""
+
     def mkdata(self, shape, typ):
         """ positive, negative and big"""
         return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)

@@ -27,7 +27,6 @@
 builds on stuff from ImageD11.test.testpeaksearch
 Jerome Kieffer 04/12/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import logging
