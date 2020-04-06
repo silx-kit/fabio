@@ -37,7 +37,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -50,7 +50,6 @@ import json
 logger = logging.getLogger(__name__)
 
 from collections import OrderedDict as _OrderedDict
-from .third_party import six
 
 try:
     import pathlib
@@ -60,19 +59,14 @@ except ImportError:
     except ImportError:
         pathlib = None
 
-if six.PY2:
-    bytes_ = str
-    FileIO = file
-    StringTypes = (str, unicode)
-    to_str = str
-else:
-    bytes_ = bytes
-    StringTypes = (str, bytes)
-    unicode = str
-    from io import FileIO
+StringTypes = (str, bytes)
+unicode = str
+from io import FileIO, BytesIO as _BytesIO
 
-    def to_str(s):
-        return str(s, "ASCII")
+
+def to_str(s):
+    return str(s, "ASCII")
+
 
 PathTypes = StringTypes
 if pathlib is not None:
@@ -388,7 +382,7 @@ def nice_int(s):
         return int(float(s))
 
 
-class BytesIO(six.BytesIO):
+class BytesIO(_BytesIO):
     """
     just an interface providing the name and mode property to a BytesIO
 
@@ -396,7 +390,7 @@ class BytesIO(six.BytesIO):
     """
 
     def __init__(self, data, fname=None, mode="r"):
-        six.BytesIO.__init__(self, data)
+        _BytesIO.__init__(self, data)
         if "closed" not in dir(self):
             self.closed = False
         if fname is None:
@@ -428,7 +422,7 @@ class File(FileIO):
     wrapper for "file" with locking
     """
 
-    def __init__(self, name, mode="rb", buffering=0, temporary=False):
+    def __init__(self, name, mode="rb", temporary=False):
         """file(name[, mode[, buffering]]) -> file object
 
         Open a file.  The mode can be 'r', 'w' or 'a' for reading (default),
@@ -449,10 +443,7 @@ class File(FileIO):
 
         :param temporary: if True, destroy file at close.
         """
-        if six.PY2:
-            FileIO.__init__(self, name, mode, buffering)
-        else:  # for python3 we drop buffering
-            FileIO.__init__(self, name, mode)
+        FileIO.__init__(self, name, mode)
         self.lock = _Semaphore()
         self.__size = None
         self.__temporary = temporary
