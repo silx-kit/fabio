@@ -145,10 +145,11 @@ def openimage(filename, frame=None):
 
     if isinstance(filename, FilenameObject):
         try:
-            logger.debug("Attempting to open %s" % (filename.tobytes()))
-            obj = _openimage(filename.tobytes())
-            logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename.tobytes(), obj.classname))
-            obj = obj.read(filename.tobytes(), frame)
+            actual_filename = filename.tostring()
+            logger.debug("Attempting to open %s", actual_filename)
+            obj = _openimage(actual_filename)
+            logger.debug("Attempting to read frame %s from %s with reader %s", frame, actual_filename, obj.classname)
+            obj = obj.read(actual_filename, frame)
         except Exception as ex:
             # multiframe file
             # logger.debug( "DEBUG: multiframe file, start # %d"%(
