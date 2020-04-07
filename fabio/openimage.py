@@ -52,7 +52,6 @@ from .fabioimage import FabioImage
 # Make sure to load all formats
 from . import fabioformats  # noqa
 
-
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
     # "\1f\8b" : 'gzipped'
@@ -67,12 +66,12 @@ MAGIC_NUMBERS = [
     (b"\x49\x49\x2a\x00", 'tif'),
     # d*TREK must come before edf
     (b"{\nHEA", 'dtrek'),
-    # EDF_ types 
-    (b"\r\n{\r\nEDF",'edf'),   # EDF3 (can be interpreted like EDF1 but refused by fit2d)
-    (b"\n{\r\nEDF",'edf'),     # EDF2 (can be interpreted like EDF1 but refused by fit2d)
-    (b"{\r\nEDF",'edf'),       # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
-    (b"{\n",'edf'),            # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
-    (b"\n{\n",'edf'),          # EDFU (EDF unknown source, V1.xx)
+    # EDF_ types
+    (b"\r\n{\r\nEDF", 'edf'),  # EDF3 (can be interpreted like EDF1 but refused by fit2d)
+    (b"\n{\r\nEDF", 'edf'),  # EDF2 (can be interpreted like EDF1 but refused by fit2d)
+    (b"{\r\nEDF", 'edf'),  # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
+    (b"{\n", 'edf'),  # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
+    (b"\n{\n", 'edf'),  # EDFU (EDF unknown source, V1.xx)
     # conventional
     (b"{", 'edf'),
     (b"\r{", 'edf'),
@@ -148,10 +147,11 @@ def openimage(filename, frame=None):
 
     if isinstance(filename, FilenameObject):
         try:
-            logger.debug("Attempting to open %s" % (filename.tobytes()))
-            obj = _openimage(filename.tobytes())
-            logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename.tobytes(), obj.classname))
-            obj = obj.read(filename.tobytes(), frame)
+            actual_filename = filename.tostring()
+            logger.debug("Attempting to open %s", actual_filename)
+            obj = _openimage(actual_filename)
+            logger.debug("Attempting to read frame %s from %s with reader %s", frame, actual_filename, obj.classname)
+            obj = obj.read(actual_filename, frame)
         except Exception as ex:
             # multiframe file
             # logger.debug( "DEBUG: multiframe file, start # %d"%(
