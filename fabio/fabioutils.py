@@ -37,7 +37,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "06/04/2020"
+__date__ = "07/04/2020"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -75,7 +75,7 @@ from .compression import bz2, gzip, COMPRESSORS
 import traceback
 from math import ceil
 
-from threading import Semaphore as _Semaphore
+import threading
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
 
@@ -397,7 +397,7 @@ class BytesIO(_BytesIO):
         else:
             self.name = fname
         self.mode = mode
-        self.lock = _Semaphore()
+        self.lock = threading.Semaphore()
         self.__size = None
 
     def getSize(self):
@@ -443,7 +443,7 @@ class File(FileIO):
         :param temporary: if True, destroy file at close.
         """
         FileIO.__init__(self, name, mode)
-        self.lock = _Semaphore()
+        self.lock = threading.Semaphore()
         self.__size = None
         self.__temporary = temporary
 
@@ -542,7 +542,7 @@ else:
             and 9 is slowest and produces the most compression.  The default is 9.
             """
             gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
-            self.lock = _Semaphore()
+            self.lock = threading.Semaphore()
             self.__size = None
 
         def __del__(self):
@@ -604,7 +604,7 @@ else:
             newlines are available only when reading.
             """
             bz2.BZ2File.__init__(self, name, mode, buffering, compresslevel)
-            self.lock = _Semaphore()
+            self.lock = threading.Semaphore()
             self.__size = None
 
         def __del__(self):
@@ -644,15 +644,15 @@ class NotGoodReader(RuntimeError):
     pass
 
 
-class DebugSemaphore(_Semaphore):
+class DebugSemaphore(threading.Semaphore):
     """
     threading.Semaphore like class with helper for fighting dead-locks
     """
-    write_lock = _Semaphore()
+    write_lock = threading.Semaphore()
     blocked = []
 
     def __init__(self, *arg, **kwarg):
-        _Semaphore.__init__(self, *arg, **kwarg)
+        threading.Semaphore.__init__(self, *arg, **kwarg)
 
     def acquire(self, *arg, **kwarg):
         if self._Semaphore__value == 0:
@@ -661,7 +661,7 @@ class DebugSemaphore(_Semaphore):
                 sys.stderr.write(os.linesep.join(["Blocking sem %s" % id(self)] +
                                  traceback.format_stack()[:-1] + [""]))
 
-        return _Semaphore.acquire(self, *arg, **kwarg)
+        return threading.Semaphore.acquire(self, *arg, **kwarg)
 
     def release(self, *arg, **kwarg):
         with self.write_lock:
@@ -669,7 +669,7 @@ class DebugSemaphore(_Semaphore):
             if uid in self.blocked:
                 self.blocked.remove(uid)
                 sys.stderr.write("Released sem %s %s" % (uid, os.linesep))
-        _Semaphore.release(self, *arg, **kwarg)
+        threading.Semaphore.release(self, *arg, **kwarg)
 
     def __enter__(self):
         self.acquire()
