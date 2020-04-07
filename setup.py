@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "04/04/2020"
+__date__ = "07/04/2020"
 __status__ = "stable"
 
 import sys
@@ -73,6 +73,8 @@ except ImportError:
     sphinx = None
 
 PROJECT = "fabio"
+if sys.version_info.major < 3:
+    logger.error(PROJECT + " no more support Python2")
 
 if "LANG" not in os.environ and sys.platform == "darwin" and sys.version_info[0] > 2:
     print("""WARNING: the LANG environment variable is not defined,

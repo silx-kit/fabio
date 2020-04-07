@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "18/03/2019"
+__date__ = "07/04/2020"
 __license__ = "MIT"
 
 import distutils.util
@@ -85,7 +85,8 @@ logger = logging.getLogger("run_tests")
 logger.setLevel(logging.WARNING)
 
 logger.info("Python %s %s", sys.version, tuple.__itemsize__ * 8)
-
+if sys.version_info.major < 3:
+    logger.error("FabIO no more support Python2")
 
 try:
     import resource
@@ -97,6 +98,7 @@ try:
     import importlib
     importer = importlib.import_module
 except ImportError:
+
     def importer(name):
         module = __import__(name)
         # returns the leaf module, instead of the root module
@@ -106,14 +108,12 @@ except ImportError:
             module = getattr(module, subname)
             return module
 
-
 try:
     import numpy
 except Exception as error:
     logger.warning("Numpy missing: %s", error)
 else:
     logger.info("Numpy %s", numpy.version.version)
-
 
 try:
     import h5py
@@ -333,7 +333,6 @@ parser.add_argument("test_name", nargs='*',
 options = parser.parse_args()
 sys.argv = [sys.argv[0]]
 
-
 test_verbosity = 1
 use_buffer = True
 if options.verbose == 1:
@@ -365,7 +364,6 @@ if (os.path.dirname(os.path.abspath(__file__)) ==
     removed_from_sys_path = sys.path.pop(0)
     logger.info("Patched sys.path, removed: '%s'", removed_from_sys_path)
 
-
 # import module
 if options.installed:  # Use installed version
     try:
@@ -381,10 +379,8 @@ else:  # Use built source
     logger.warning("Patched sys.path, added: '%s'", build_dir)
     module = importer(PROJECT_NAME)
 
-
 PROJECT_VERSION = getattr(module, 'version', '')
 PROJECT_PATH = module.__path__[0]
-
 
 # Run the tests
 runnerArgs = {}
@@ -423,7 +419,6 @@ if result.wasSuccessful():
     exit_status = 0
 else:
     exit_status = 1
-
 
 if options.coverage:
     cov.stop()
