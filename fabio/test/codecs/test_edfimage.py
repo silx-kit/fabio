@@ -623,6 +623,45 @@ class TestEdfIterator(unittest.TestCase):
             next(iterator)
 
 
+
+class TestEdfBadHeaderPadding(unittest.TestCase):
+    """
+    Some old data were found with headers padded with 0xcd (issue #373)
+    """
+    def setUp(self):
+        self.fgood = "TestEdfGoodHeaderPadding.edf"
+        self.fbad = "TestEdfBadHeaderPadding.edf"
+        self.data = numpy.zeros( (10,11), numpy.uint8 )
+        self.hdr = { "mykey"  : "myvalue" }
+        fabio.edfimage.edfimage( self.data, self.hdr ).write(self.fgood)
+        with open( self.fgood, "rb") as fh:
+            hdr = bytearray( fh.read(512) )
+            while hdr.find(b"}")<0:
+                hdr += fh.read(512)
+            start = hdr.rfind( b";" )+1
+            end = hdr.find(b"}")-1
+            hdr[start:end] = [ord('\n'),] + [0xcd,]*(end-start-1)
+            with open( self.fbad, "wb") as fb:
+                fb.write( hdr )
+                fb.write( fh.read() )
+
+    def tearDown(self):
+        os.remove(self.fgood)
+        os.remove(self.fbad)
+
+    def testReadBadPadding(self):
+        im = fabio.open(self.fbad)
+        self.assertTrue( (im.data == 0).all() )
+        for k in self.hdr.keys():
+            self.assertEqual( self.hdr[k], im.header[k] )
+
+    def testReadGoodPadding(self):
+        im = fabio.open(self.fgood)
+        self.assertTrue( (im.data == 0).all() )
+        for k in self.hdr.keys():
+            self.assertEqual( self.hdr[k], im.header[k] )
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -639,6 +678,7 @@ def suite():
     testsuite.addTest(loadTests(TestBadGzFiles))
     testsuite.addTest(loadTests(TestEdfIterator))
     testsuite.addTest(loadTests(TestSphere2SaxsSamples))
+    testsuite.addTest(loadTests(TestEdfBadHeaderPadding))
     return testsuite
 
 
