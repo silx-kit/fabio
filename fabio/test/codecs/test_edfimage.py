@@ -631,6 +631,7 @@ class TestEdfBadHeaderPadding(unittest.TestCase):
     def setUp(self):
         self.fgood = "TestEdfGoodHeaderPadding.edf"
         self.fbad = "TestEdfBadHeaderPadding.edf"
+        self.fzero = "TestEdfZeroHeaderPadding.edf"
         self.data = numpy.zeros( (10,11), numpy.uint8 )
         self.hdr = { "mykey"  : "myvalue" }
         fabio.edfimage.edfimage( self.data, self.hdr ).write(self.fgood)
@@ -644,10 +645,18 @@ class TestEdfBadHeaderPadding(unittest.TestCase):
             with open( self.fbad, "wb") as fb:
                 fb.write( hdr )
                 fb.write( fh.read() )
+            # insert some 0x00 to be stripped
+            key = b"myvalue"
+            z = hdr.find(key)
+            hdr[z+len(key)] = 0
+            with open( self.fzero, "wb") as fb:
+                fb.write( hdr )
+                fb.write( fh.read() )
 
     def tearDown(self):
         os.remove(self.fgood)
         os.remove(self.fbad)
+        os.remove(self.fzero)
 
     def testReadBadPadding(self):
         im = fabio.open(self.fbad)
@@ -657,6 +666,12 @@ class TestEdfBadHeaderPadding(unittest.TestCase):
 
     def testReadGoodPadding(self):
         im = fabio.open(self.fgood)
+        self.assertTrue( (im.data == 0).all() )
+        for k in self.hdr.keys():
+            self.assertEqual( self.hdr[k], im.header[k] )
+
+    def testReadZeroPadding(self):
+        im = fabio.open(self.fzero)
         self.assertTrue( (im.data == 0).all() )
         for k in self.hdr.keys():
             self.assertEqual( self.hdr[k], im.header[k] )
