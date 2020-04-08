@@ -1,7 +1,12 @@
 # coding: utf-8
-# /*##########################################################################
 #
-# Copyright (c) 2015-2016 European Synchrotron Radiation Facility
+#    Project: X-ray image reader
+#             https://github.com/silx-kit/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,32 +24,6 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ###########################################################################*/
-"""Wrapper module for the `ordereddict` library.
+# THE SOFTWARE
 
-Feed this module using a local copy of `ordereddict` if it exists.
-Else it expect to have an available `ordereddict` library installed in
-the Python path.
-
-It should be used like that:
-
-.. code-block::
-
-    from fabio.third_party.ordereddict import OrderedDict
-
-"""
-
-from __future__ import absolute_import
-
-__authors__ = ["Valentin Valls"]
-__license__ = "MIT"
-__date__ = "28/07/2017"
-
-try:
-    # try to import our local version of six
-    from ._local.ordereddict import *  # noqa
-except ImportError:
-    # else try to import it from the python path
-    from collections import OrderedDict
+from .compression import *

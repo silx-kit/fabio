@@ -7,12 +7,28 @@
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 
 """Test Eiger images
 """
 
-from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import logging
@@ -29,7 +45,7 @@ def make_hdf5(name, shape=(50, 99, 101)):
     if h5py is None:
         raise unittest.SkipTest("h5py is not available")
 
-    with h5py.File(name) as h:
+    with h5py.File(name, mode="w") as h:
         e = h.require_group("entry/data")
         if len(shape) == 2:
             e.require_dataset("data", shape, compression="gzip", compression_opts=9, dtype="float32")
@@ -52,6 +68,7 @@ class TestEiger(_CommonTestFrames):
 
         class Meta(object):
             pass
+
         meta = Meta()
         meta.image = None
         meta.filename = filename

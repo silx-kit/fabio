@@ -38,6 +38,7 @@ def configuration(parent_package='', top_path=None):
     config.add_subpackage('test')
     config.add_subpackage('third_party')
     config.add_subpackage('utils')
+    config.add_subpackage('compression')
 
     return config
 

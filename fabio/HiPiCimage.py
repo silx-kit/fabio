@@ -40,8 +40,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 Information about the file format from Masakatzu Kobayashi is highly appreciated
 """
 
-from __future__ import with_statement, print_function
-
 import numpy
 import logging
 logger = logging.getLogger(__name__)

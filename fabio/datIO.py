@@ -28,7 +28,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """
 Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
@@ -39,8 +38,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
          and Jon Wright, ESRF
 """
-# get ready for python3
-from __future__ import with_statement, print_function
 
 import logging
 
@@ -80,6 +77,7 @@ class fabiodata(object):
 
 class columnfile(fabiodata):
     "Concrete fabiodata class"
+
     def read(self, fname, frame=None):
         from .ext import cf_io
         try:

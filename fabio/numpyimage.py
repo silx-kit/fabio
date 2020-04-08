@@ -26,13 +26,11 @@
 
 """Generic numpy file reader for FabIO"""
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "16/11/2018"
+__date__ = "03/04/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -158,7 +156,7 @@ class NumpyImage(fabioimage.FabioImage):
         self._readheader(infile)
 
         # read the image data
-        self.dataset = numpy.load(infile, allow_pickle=True)
+        self.dataset = numpy.load(infile, allow_pickle=False)
         self.slice_dataset(frame)
         return self
 
@@ -168,6 +166,8 @@ class NumpyImage(fabioimage.FabioImage):
 
         :param fname: name of the file
         """
+        if self.dataset is None and self.data is not None:
+            self.dataset = self.data
         numpy.save(fname, self.dataset)
 
     def _get_frame(self, num):

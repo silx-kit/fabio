@@ -25,8 +25,6 @@
 Deep test to check IOError exceptions
 """
 
-from __future__ import print_function, with_statement, division, absolute_import
-
 import unittest
 import os
 import logging

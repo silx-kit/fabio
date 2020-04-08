@@ -30,12 +30,11 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 """Portable image converter based on FabIO library.
 """
-from __future__ import with_statement, print_function
 
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "12/06/2018"
+__date__ = "03/04/2020"
 __status__ = "production"
 
 import logging
@@ -46,9 +45,8 @@ import os
 import glob
 
 import fabio
+import argparse
 from fabio.third_party import six
-from fabio.third_party import argparse
-
 
 logger = logging.getLogger("fabio-convert")
 

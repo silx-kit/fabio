@@ -46,14 +46,11 @@ Documentation on the format is available from:
 http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
 
-from __future__ import with_statement, print_function, absolute_import
-
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "13/11/2018"
+__date__ = "03/04/2020"
 __status__ = "production"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2016 ESRF"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
-
 
 import struct
 import time
@@ -62,7 +59,6 @@ import numpy
 
 import fabio
 from .fabioimage import FabioImage
-
 
 logger = logging.getLogger(__name__)
 from .compression import compPCK, decPCK
@@ -73,7 +69,8 @@ class Mar345Image(FabioImage):
 
     DESCRIPTION = "File format from Mar345 imaging plate and Mar555 flat panel"
 
-    DEFAULT_EXTENSIONS = ["mar2300"]
+    DEFAULT_EXTENSIONS = ["mar2300", "mar1200", "mar1600", "mar2000",  # 150µm pixel size
+                          "mar3450", "mar3000", "mar2400", "mar1800"]  # 100µm pixel size
 
     def __init__(self, *args, **kwargs):
         FabioImage.__init__(self, *args, **kwargs)
@@ -244,7 +241,7 @@ class Mar345Image(FabioImage):
         self.header["HIGH"] = str(binheader[2])
         if self.swap_needed:
             binheader.byteswap(True)
-        return binheader.tostring()
+        return binheader.tobytes()
 
     def ascii_header(self, linesep="\n", size=4096):
         """
@@ -375,7 +372,7 @@ class Mar345Image(FabioImage):
         tmp[:nb_pix, 1] = flt_data[pix_location]
         if self.swap_needed:
             tmp.byteswap(True)
-        return tmp.tostring()
+        return tmp.tobytes()
 
     def nb_overflow_pixels(self):
         return (self.data > 65535).sum()

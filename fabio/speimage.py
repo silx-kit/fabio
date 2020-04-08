@@ -27,19 +27,16 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """Princeton instrument SPE image reader for FabIO
 
 
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "29/10/2018"
+__date__ = "03/04/2020"
 
 import logging
 

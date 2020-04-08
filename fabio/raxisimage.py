@@ -35,13 +35,11 @@ Available at: http://www.rigaku.com/downloads/software/readimage.html
 
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "13/11/2018"
+__date__ = "03/04/2020"
 
 import logging
 import struct
@@ -50,7 +48,6 @@ import numpy
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
 logger = logging.getLogger(__name__)
-
 
 RIGAKU_KEYS = OrderedDict([
     ('InstrumentType', 10),

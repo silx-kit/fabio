@@ -24,7 +24,6 @@
 # THE SOFTWARE.
 #
 
-
 """
 Author:
 ........
@@ -34,8 +33,6 @@ Author:
 
 mpaimage can read ascii and binary .mpa (multiwire) files
 """
-
-from __future__ import with_statement, print_function, division, absolute_import
 
 import logging
 import numpy

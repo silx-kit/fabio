@@ -27,7 +27,6 @@ test cases for fileseries
 
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import logging
@@ -67,6 +66,7 @@ class TestEdfNumbered(unittest.TestCase):
     """
     Typical sequence of edf files
     """
+
     def setUp(self):
         """ note extension has the . in it"""
         self.fso = numbered_file_series("mydata", 0, 10005, ".edf")
@@ -342,10 +342,12 @@ class TestFileSeries(unittest.TestCase):
         serie.close()
 
     def test_filename_generator(self):
+
         def generator():
             filenames = self.get_anyframe_files()
             for filename in filenames:
                 yield filename
+
         serie = FileSeries(filenames=generator())
         self.assertEqual(serie.nframes, 10)
         serie.close()

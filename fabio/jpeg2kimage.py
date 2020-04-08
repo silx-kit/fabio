@@ -28,10 +28,8 @@
 FabIO class for dealing with JPEG 2000 images.
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Valentin Valls"]
-__date__ = "04/03/2019"
+__date__ = "03/04/2020"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -48,7 +46,6 @@ try:
     import glymur
 except ImportError:
     glymur = None
-
 
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
@@ -147,7 +144,6 @@ class Jpeg2KImage(FabioImage):
                 self.data = None
                 self.header = OrderedDict()
                 logger.debug("Error while using %s library: %s" % (name, e), exc_info=True)
-                pass
 
         if self.data is None:
             infile.seek(0)

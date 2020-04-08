@@ -34,10 +34,9 @@ Portable diffraction images viewer/converter
 * Image converter is also a light viewer based on the visualization tool
   provided by the module matplotlib.
 """
-from __future__ import absolute_import, with_statement, print_function
 
 __version__ = "1.0"
-__author__ = u"Gaël Goret, Jérôme Kieffer"
+__author__ = "Gaël Goret, Jérôme Kieffer"
 __copyright__ = "2015 ESRF"
 __licence__ = "GPL"
 
@@ -56,13 +55,14 @@ numpy.seterr(divide='ignore')
 import fabio
 
 from fabio.nexus import Nexus
-from fabio.third_party.argparse import ArgumentParser
+from argparse import ArgumentParser
 
 output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img',
                  '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]
 
 
 class AppForm(qt.QMainWindow):
+
     def __init__(self, parent=None):
 
         # Main window
@@ -387,7 +387,7 @@ class AppForm(qt.QMainWindow):
     def convert_and_write(self, fname, format_, data, header):
         if format_ == '*.bin':
             out = open(fname, mode="wb")
-            out.write(data.tostring())
+            out.write(data.tobytes())
             out.close()
             return
         elif format_ == '*.marccd':
@@ -1311,6 +1311,7 @@ class AppForm(qt.QMainWindow):
 
 class CounterFormatOptionDialog(qt.QDialog):  # option doivent refleter l etat des couche du dessous
     """Dialog containing entry for down sampling"""
+
     def __init__(self, counter_format, parent=None):
         qt.QDialog.__init__(self, parent)
         self.resize(350, 100)
@@ -1345,6 +1346,7 @@ class CounterFormatOptionDialog(qt.QDialog):  # option doivent refleter l etat d
 
 class DownSamplingDialog(qt.QDialog):
     """Dialog containing entry for down sampling"""
+
     def __init__(self, parent=None):
         qt.QDialog.__init__(self, parent)
         self.resize(407, 250)
@@ -1391,6 +1393,7 @@ class DownSamplingDialog(qt.QDialog):
 
 class BinDialog(qt.QDialog):
     """Dialog containing entry for binary data block opening"""
+
     def __init__(self, parent=None):
         qt.QDialog.__init__(self, parent)
         self.resize(410, 270)

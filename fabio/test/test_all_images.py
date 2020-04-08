@@ -2,13 +2,12 @@
 """
 Check we can read all the test images
 """
-from __future__ import print_function
 
 import glob
 import os
 import time
 import fabio.openimage
-from ..third_party import gzip
+import gzip
 import bz2
 import pstats
 import sys

@@ -30,11 +30,10 @@
 """
 # Unit tests for OXD image (Oxford diffraction now Rigaku)
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 __author__ = "Jerome Kieffer"
 __license__ = "MIT"
-__date__ = "2016-11-23"
+__date__ = "03/04/2020"
 __contact__ = "jerome.kieffer@esrf.fr"
 
 import unittest
@@ -47,7 +46,6 @@ import fabio
 from fabio.OXDimage import OXDimage
 from ..utilstest import UtilsTest
 
-
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = [
     ("b191_1_9_1.img", 512, 512, -500, 11975, 25.70, 90.2526, "Sapphire2"),
@@ -57,6 +55,7 @@ TESTIMAGES = [
 
 
 class TestOxd(unittest.TestCase):
+
     def setUp(self):
         self.fn = {}
         for vals in TESTIMAGES:
@@ -112,6 +111,7 @@ class TestOxd(unittest.TestCase):
 
 
 class TestOxdSame(unittest.TestCase):
+
     def setUp(self):
         self.fn = {}
         for i in ["b191_1_9_1.img", "b191_1_9_1_uncompressed.img"]:
@@ -135,6 +135,7 @@ class TestOxdSame(unittest.TestCase):
 
 class TestOxdBig(unittest.TestCase):
     """class to test bugs if OI is large (lot of exceptions 16 bits)"""
+
     def setUp(self):
         self.fn = {}
         for i in ["d80_60s.img", "d80_60s.edf"]:
@@ -152,6 +153,7 @@ class TestOxdBig(unittest.TestCase):
 
 
 class TestConvert(unittest.TestCase):
+
     def setUp(self):
         self.fn = {}
         for i in ["face.msk"]:

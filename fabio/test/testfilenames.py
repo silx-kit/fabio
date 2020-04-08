@@ -22,7 +22,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
 """
 Test cases for filename deconstruction
 
@@ -30,7 +29,6 @@ Test cases for filename deconstruction
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import os
@@ -67,7 +65,6 @@ CASES = [
     (3, 'dtrek_or_oxd_or_hipic_or_raxis', 'mb_LP_1_003.img.bz2'),
     (3, 'dtrek_or_oxd_or_hipic_or_raxis', os.path.join("data", 'mb_LP_1_003.img.bz2')),
 ]
-
 
 MORE_CASES = [
     ("data0010.edf", "data0012.edf", 10),

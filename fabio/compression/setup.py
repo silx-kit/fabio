@@ -1,7 +1,6 @@
 # coding: utf-8
 # /*##########################################################################
-#
-# Copyright (c) 2015-2016 European Synchrotron Radiation Facility
+# Copyright (C) 2016 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# ###########################################################################*/
-"""Wrapper module for the `argparse` library.
+# ############################################################################*/
 
-Feed this module using a local copy of `argparse` if it exists.
-Else it expect to have an available `argparse` library installed
-in the Python path.
-
-It should be used like that:
-
-.. code-block::
-
-    from fabio.third_party import argparse
-
-"""
-
-from __future__ import absolute_import
-
-__authors__ = ["Valentin Valls"]
+__authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "28/07/2017"
+__date__ = "31/07/2017"
 
-try:
-    # try to import our local version of six
-    from ._local.argparse import *  # noqa
-except ImportError:
-    # else try to import it from the python path
-    from argparse import *  # noqa
+from numpy.distutils.misc_util import Configuration
+
+
+def configuration(parent_package='', top_path=None):
+    config = Configuration('compression', parent_package, top_path)
+    return config
+
+
+if __name__ == "__main__":
+    from numpy.distutils.core import setup
+    setup(configuration=configuration)

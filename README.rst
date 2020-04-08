@@ -25,10 +25,7 @@ FabIO is available from `PyPI <https://pypi.python.org/pypi/fabio>`_.
 `wheels <http://www.silx.org/pub/wheelhouse/>`_ are available
 for windows, linux and MacOSX from the silx repository:
 
-Documentation is available at `PythonHosted <http://pythonhosted.org/fabio/>`_,
-Continuous documentation at `ReadTheDocs <http://fabio.readthedocs.io>`_ and
-Nightly build documentation at `silx <http://www.silx.org/doc/fabio/>`_.
-
+Documentation is available at `silx <http://www.silx.org/doc/fabio/>`_. 
 Citation:
 ---------
 The general philosophy of the library is described in:
@@ -36,7 +33,7 @@ The general philosophy of the library is described in:
 
 Transparent handling of compressed files
 ----------------------------------------
-Fabio is expected to handle gzip and bzip2 compressed files transparently.
+FabIO is expected to handle gzip and bzip2 compressed files transparently.
 Following a query about the performance of reading compressed data, some
 benchmarking details have been collected at fabio_compressed_speed.
 This means that when your python was configured and built you needed the
@@ -54,7 +51,7 @@ Example::
 
 Design Specifications
 ---------------------
-Name: Fabio = Fable Input/Output
+Name: FabIO = Fable Input/Output
 
 Idea:
 .....

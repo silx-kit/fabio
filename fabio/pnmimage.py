@@ -42,11 +42,9 @@ Authors: Henning O. Sorensen & Erik Knudsen
 License: MIT
 """
 
-from __future__ import absolute_import, print_function, with_statement, division
-
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "13/11/2018"
-__license__ = "MIT+"
+__date__ = "03/04/2020"
+__license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
 
@@ -162,9 +160,9 @@ class PnmImage(FabioImage):
             fobj.write(header)
             fobj.write(six.b(" \n"))
             if numpy.little_endian:
-                fobj.write(self.data.byteswap().tostring())
+                fobj.write(self.data.byteswap().tobytes())
             else:
-                fobj.write(self.data.tostring())
+                fobj.write(self.data.tobytes())
 
     def P1dec(self, buf, bytecode):
         data = numpy.zeros(self.shape)

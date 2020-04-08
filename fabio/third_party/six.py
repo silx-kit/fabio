@@ -35,11 +35,9 @@ It should be used like that:
 
 """
 
-from __future__ import absolute_import
-
 __authors__ = ["Valentin Valls"]
 __license__ = "MIT"
-__date__ = "28/07/2017"
+__date__ = "03/04/2020"
 
 try:
     # try to import our local version of six
