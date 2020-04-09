@@ -1007,25 +1007,20 @@ class EdfImage(fabioimage.FabioImage):
         # Go to the start of the binary blob
         infile.seek(offset, os.SEEK_CUR)
 
-        # keep header_block as bytes for issue #373
-        header_block = block[begin_block:end_block]
+        header_block = block[begin_block:end_block].decode("ASCII", errors='ignore')
 
         # create header
         header = OrderedDict()
 
         # Why would someone put null bytes in a header?
-        bytes_whitespace = (string.whitespace + "\x00").encode('ASCII')
+        whitespace = string.whitespace + "\x00"
 
         # Start with the keys of the input header_block
-        for line in header_block.split(b';'):
-            if b'=' in line:
-                key, val = line.split(b'=', 1)
-                key = key.strip(bytes_whitespace)
-                val = val.strip(bytes_whitespace)
-                try:
-                    header[key.decode("ASCII")] = val.decode("ASCII")
-                except:
-                    logger.warning("Non ASCII in header: %s %s", repr(key), repr(val))
+        for line in header_block.split(';'):
+            if '=' in line:
+                key, val = line.split('=', 1)
+                key = key.strip(whitespace)
+                header[key] = val.strip(whitespace)
 
         # Read EDF_ keys
         # if the header block starts with EDF_DataFormatVersion, it is a general block
