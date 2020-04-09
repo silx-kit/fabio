@@ -1022,16 +1022,10 @@ class EdfImage(fabioimage.FabioImage):
                 key, val = line.split(b'=', 1)
                 key = key.strip(bytes_whitespace)
                 val = val.strip(bytes_whitespace)
-                # do the decode here for each item:
                 try:
-                    key = key.decode("ASCII")
+                    header[key.decode("ASCII")] = val.decode("ASCII")
                 except:
-                    logging.warn("Non ascii data in your header %s"%(key))
-                try:
-                    val = val.decode("ASCII")
-                except:
-                    logging.warn("Non ascii data in your header %s"%(val))
-                header[key] = val
+                    logger.warning("Non ASCII in header: %s %s", repr(key), repr(val))
 
         # Read EDF_ keys
         # if the header block starts with EDF_DataFormatVersion, it is a general block

@@ -634,7 +634,7 @@ class TestEdfBadHeaderPadding(unittest.TestCase):
         self.fzero = "TestEdfZeroHeaderPadding.edf"
         self.fbytes = "TestEdfBytesItem.edf"
         self.data = numpy.zeros( (10,11), numpy.uint8 )
-        self.hdr = { "mykey"  : "myvalue" }
+        self.hdr = { "mykey"  : "myvalue", "title" : "ok" }
         fabio.edfimage.edfimage( self.data, self.hdr ).write(self.fgood)
         with open( self.fgood, "rb") as fh:
             hdr = bytearray( fh.read(512) )
@@ -687,10 +687,11 @@ class TestEdfBadHeaderPadding(unittest.TestCase):
         im = fabio.open(self.fbytes)
         self.assertTrue( (im.data == 0).all() )
         for k in self.hdr.keys():
-            self.assertTrue( k in im.header )
-            val = im.header[k]
-            self.assertNotEqual( self.hdr[k], im.header[k] )
-            
+            if k in im.header:
+                self.assertEqual (self.hdr[k], im.header[k] )
+            else:
+                # it was one we corrupted. These are skipped for now.
+                pass
 
             
 def suite():
