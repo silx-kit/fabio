@@ -34,7 +34,7 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import logging
-from .utilstest import UtilsTest
+import tempfile
 
 
 logger = logging.getLogger(__name__)
@@ -118,7 +118,8 @@ class TestFilenameObjects(unittest.TestCase):
         """ make a small test dataset """
         self.datashape = (10,11)
         self.nframes = 5
-        self.fnames = [ os.path.join( UtilsTest.tempdir , "FNO%04d.edf"%(i))
+        self.tempdir = tempfile.mkdtemp()
+        self.fnames = [ os.path.join( self.tempdir , "FNO%04d.edf"%(i))
                         for i in range(self.nframes) ]
         im = fabio.edfimage.edfimage( numpy.zeros(self.datashape,numpy.uint16 ) )
         for j, fname in enumerate(self.fnames):
@@ -126,7 +127,9 @@ class TestFilenameObjects(unittest.TestCase):
             im.write(fname)
 
     def tearDown(self):
-        UtilsTest.clean_up()
+        for name in self.fnames:
+            os.remove( name )
+        os.rmdir( self.tempdir )
 
     def test_files_are_being_opened(self):
         for j, fname in enumerate(self.fnames):
