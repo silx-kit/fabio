@@ -125,9 +125,6 @@ class TestFilenameObjects(unittest.TestCase):
             im.header["checkthing"] = str(j)
             im.write(fname)
 
-    def tearDown(self):
-        UtilsTest.clean_up()
-
     def test_files_are_being_opened(self):
         for j, fname in enumerate(self.fnames):
             obj = fabio.FilenameObject(filename=fname)
