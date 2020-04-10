@@ -48,49 +48,46 @@ from ..utilstest import UtilsTest
 # logging.info('This will get logged')
 
 
-#==========================================
-def fopen(filename=None, frameno=None):
-    header = None
-    data = None
-    frame = None
+def fopen(filename, frameno):
     logging.debug("fopen(filename={},frameno={})".format(filename, frameno))
-    if filename:
-        image = fabio.open(filename)
-        if frameno is None:
-            frameno = 0
 
-        nframes = image.nframes
+    image = fabio.open(filename)
+    if frameno is None:
+        frameno = 0
 
-        # if image.classname == "EdfImage":
-        if hasattr(image, "npsdframes"):
-            npsdframes = image.npsdframes
-            nerrorframes = image.nerrorframes
+    nframes = image.nframes
+
+    # if image.classname == "EdfImage":
+    if hasattr(image, "npsdframes"):
+        npsdframes = image.npsdframes
+        nerrorframes = image.nerrorframes
+    else:
+        npsdframes = nframes
+        nerrorframes = 0
+
+    if frameno >= npsdframes:
+        logging.warning("Psd frame {} out of range: 0 <= {} < {}".format(frameno, frameno, npsdframes))
+
+    if frameno < 0:
+        if -frameno > nerrorframes:
+            logging.warning("Error frame {} out of range: {} <= {} < 0 ".format(frameno, -nerrorframes, frameno))
+        frameno += nframes
+
+    frame = None
+    if frameno in range(nframes):
+        if nframes > 1:
+            frame = image.getframe(frameno)
+            data = frame.data
+            header = frame.header
         else:
-            npsdframes = nframes
-            nerrorframes = 0
+            # Single frame
+            data = image.data
+            header = image.header
+        frame = fabio.fabioimage.FabioFrame(data=data, header=header)
+    else:
+        raise IOError("fopen: Cannot access frame: {} (0<=frame<{})".format(frameno, nframes))
 
-        if frameno >= npsdframes:
-            logging.warning("Psd frame {} out of range: 0 <= {} < {}".format(frameno, frameno, npsdframes))
-
-        if frameno < 0:
-            if -frameno > nerrorframes:
-                logging.warning("Error frame {} out of range: {} <= {} < 0 ".format(frameno, -nerrorframes, frameno))
-            frameno += nframes
-
-        if frameno in range(nframes):
-            if nframes > 1:
-                frame = image.getframe(frameno)
-                data = frame.data
-                header = frame.header
-            else:
-                # Single frame
-                data = image.data
-                header = image.header
-            frame = fabio.fabioimage.FabioFrame(data=data, header=header)
-        else:
-            raise IOError("fopen: Cannot access frame: {} (0<=frame<{})".format(frameno, nframes))
-
-    return(frame)
+    return frame
 
 
 def get_data_counts(shape=None):
