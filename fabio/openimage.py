@@ -188,10 +188,12 @@ def _openimage(filename):
 
     """
     if hasattr(filename, "seek") and hasattr(filename, "read"):
-        # Looks to be a file containing filenames
-        if not isinstance(filename, BytesIO):
-            filename.seek(0)
-            actual_filename = BytesIO(filename.read())
+        # Data stream without filename
+        filename.seek(0)
+        data = filename.read()
+        actual_filename = fabioutils.BytesIO(data)
+        # Back to the location before the read
+        filename.seek(0)
     else:
         if os.path.exists(filename):
             # Already a valid filename
