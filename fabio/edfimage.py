@@ -1029,6 +1029,10 @@ class EdfImage(fabioimage.FabioImage):
                     if key in header:
                         logger.warning("Duplicated key: Drop %s = %s", key, header[key])
                     header[key] = val
+            else:
+                line = line.strip(bytes_whitespace)
+                if line != b"":
+                    logger.debug("Non key-value line: %s", line)
 
         # Read EDF_ keys
         # if the header block starts with EDF_DataFormatVersion, it is a general block
