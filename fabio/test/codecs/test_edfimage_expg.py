@@ -310,17 +310,6 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(self.root, "04_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
         test_00(self, filename, avglist)
 
-    def test_edfsingle_raw_bf_gblk_gz(self):
-        """
-        Test reading gzipped data files linking to an external binary data file.
-        Check that the extension .gz is added to the name of the external binary
-        data file if it cannot be opened with the binary file name found in the
-        header. The binary data file is not compressed.
-        """
-        avglist = [25743.2]
-        filename = os.path.join(self.root, "05_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
-        test_00(self, filename, avglist)
-
     def test_edf6_single_raw_bf_gblk_gz(self):
         """
         Test reading gzipped data files linking to an external binary data file.
