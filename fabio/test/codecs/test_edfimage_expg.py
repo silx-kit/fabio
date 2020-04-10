@@ -48,7 +48,7 @@ from ..utilstest import UtilsTest
 # logging.info('This will get logged')
 
 
-def fopen(filename, frameno):
+def open_frame(filename, frameno):
     logging.debug("fopen(filename={},frameno={})".format(filename, frameno))
 
     image = fabio.open(filename)
@@ -128,7 +128,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
     # To avoid warnings make different loops over psd data and error data
     # psd data
     for frameno in range(0, npsdframes):
-        frame = fopen(filename, frameno)
+        frame = open_frame(filename, frameno)
 
         # check data shape
         counts = get_data_counts(frame.shape)
@@ -168,7 +168,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
 
     # error data
     for frameno in range(0, nerrorframes):
-        frame = fopen(filename, -frameno - 1)
+        frame = open_frame(filename, -frameno - 1)
 
         # check data shape
         counts = get_data_counts(frame.shape)
