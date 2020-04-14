@@ -22,7 +22,6 @@
 # THE SOFTWARE.
 #
 # ###########################################################################*/
-from fileinput import filename
 """Access to external resources.
 
 Module imported from silx project to avoid cyclic dependancy.
@@ -30,7 +29,7 @@ Module imported from silx project to avoid cyclic dependancy.
 
 __authors__ = ["Thomas Vincent", "J. Kieffer"]
 __license__ = "MIT"
-__date__ = "06/04/2020"
+__date__ = "14/04/2020"
 
 import os
 import threading
@@ -38,7 +37,7 @@ import json
 import logging
 import tempfile
 import unittest
-import urllib
+import urllib.request, urllib.error
 import bz2
 import gzip
 
