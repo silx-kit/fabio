@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "04/04/2020"
+__date__ = "14/04/2020"
 __status__ = "stable"
 
 import sys
@@ -111,9 +111,11 @@ classifiers = [
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: Microsoft :: Windows',
     'Operating System :: POSIX',
-    'Programming Language :: Python',
-    'Programming Language :: Cython',
     'Programming Language :: C',
+    'Programming Language :: Cython',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: Implementation :: CPython',
     'Topic :: Scientific/Engineering :: Chemistry',
     'Topic :: Scientific/Engineering :: Bio-Informatics',
     'Topic :: Scientific/Engineering :: Physics',
@@ -1020,6 +1022,7 @@ def get_project_configuration(dry_run):
                         entry_points=entry_points,
                         test_suite="test",
                         license="MIT",
+                        python_requires='>=3.5',
                         )
     return setup_kwargs
 
