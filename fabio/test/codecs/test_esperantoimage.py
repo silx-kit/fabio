@@ -53,7 +53,7 @@ class TestEsperanto(unittest.TestCase):
             logger.debug("Processing: %s" % name)
             dim1, dim2 = params[1:3]
             shape = dim2, dim1
-            mini, maxi, mean, stddev = params[3:]
+            _mini, _maxi, _mean, _stddev = params[3:]
             obj = fabio.esperantoimage.EsperantoImage()
             obj.read(UtilsTest.getimage(name))
 

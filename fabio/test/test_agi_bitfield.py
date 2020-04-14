@@ -101,15 +101,15 @@ class TestUtil(unittest.TestCase):
             (4, 0b1111),
             (8, 0xff)
         ]
-        for len, msk in mask_cases:
-            self.assertEqual(msk, agi_bitfield.mask(len))
+        for length, msk in mask_cases:
+            self.assertEqual(msk, agi_bitfield.mask(length))
         conv_cases = [
             (1, 0),
             (4, 0b111),
             (8, 0b1111111)
         ]
-        for len, cnv in conv_cases:
-            self.assertEqual(cnv, agi_bitfield.conv(len))
+        for length, cnv in conv_cases:
+            self.assertEqual(cnv, agi_bitfield.conv(length))
 
 
 class TestRow(unittest.TestCase):
