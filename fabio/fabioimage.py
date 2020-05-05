@@ -853,7 +853,7 @@ class FabioImage(_FabioArray):
             try:
                 current_image = current_image.next()
             except IOError:
-                raise StopIteration
+                break
 
 
 fabioimage = FabioImage
