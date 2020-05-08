@@ -425,6 +425,12 @@ class BytesIO(six.BytesIO):
     def setSize(self, size):
         self.__size = size
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
     size = property(getSize, setSize)
 
 
