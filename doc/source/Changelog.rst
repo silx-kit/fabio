@@ -1,6 +1,16 @@
 Changelog
 =========
 
+FabIO-0.10.2 (05/2020):
+
+- Robustness to read corrupted EDF files
+- Fix open files with BytesIO
+- Fix unexpected exception on FabioImage iteration
+
+FabIO-0.10.1 (04/2020):
+
+- Fix regression on FilenameObject
+
 FabIO-0.10.0 (04/2020):
 .......................
 
