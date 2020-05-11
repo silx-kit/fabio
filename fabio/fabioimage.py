@@ -586,6 +586,8 @@ class FabioImage(_FabioArray):
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
         from .openimage import openimage
+        if self.filename is None:
+            raise IOError()
         return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
@@ -594,6 +596,8 @@ class FabioImage(_FabioArray):
         :raise IOError: When there is no next file in the series.
         """
         from .openimage import openimage
+        if self.filename is None:
+            raise IOError()
         return openimage(
             fabioutils.next_filename(self.filename))
 
