@@ -253,9 +253,19 @@ class TestDeprecatedFabioImage(unittest.TestCase):
         image.pilimage = None
 
 
+class TestFabioImage(unittest.TestCase):
+
+    def test_iter_abort_iteration(self):
+        data = numpy.zeros((2, 2))
+        image = FabioImage(data=data)
+        for frame in image:
+            self.assertEqual(frame.data[0, 0], 0)
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
+    testsuite.addTest(loadTests(TestFabioImage))
     testsuite.addTest(loadTests(Test50000))
     testsuite.addTest(loadTests(TestSlices))
     testsuite.addTest(loadTests(TestOpen))

@@ -34,10 +34,13 @@ from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import logging
+import tempfile
+
 
 logger = logging.getLogger(__name__)
 
 import fabio
+import numpy
 
 CASES = [
     (1, 'edf', "data0001.edf"),
@@ -109,10 +112,63 @@ class TestFilenames(unittest.TestCase):
             self.assertEqual(name, nname)
 
 
+class TestFilenameObjects(unittest.TestCase):
+
+    def setUp(self):
+        """ make a small test dataset """
+        self.datashape = (10,11)
+        self.nframes = 5
+        self.tempdir = tempfile.mkdtemp()
+        self.fnames = [os.path.join(self.tempdir, "FNO%04d.edf" % iframe)
+                       for iframe in range(self.nframes)]
+        data = numpy.zeros(self.datashape,numpy.uint16)
+        im = fabio.edfimage.edfimage(data)
+        for iframe, fname in enumerate(self.fnames):
+            im.header["checkthing"] = str(iframe)
+            im.write(fname)
+
+    def tearDown(self):
+        for name in self.fnames:
+            os.remove(name)
+        os.rmdir(self.tempdir)
+
+    def test_files_are_being_opened(self):
+        """Regression test for Fable"""
+        for iframe, fname in enumerate(self.fnames):
+            obj = fabio.FilenameObject(filename=fname)
+            # read via the FilenameObject
+            o1  = fabio.open(obj)
+            self.assertEqual(o1.data.shape, self.datashape)
+            self.assertEqual(o1.header['checkthing'], str(iframe))
+            # And via the tostring
+            o2  = fabio.open(obj.tostring())
+            self.assertEqual(o2.data.shape, self.datashape)
+            self.assertEqual(o2.header['checkthing'], str(iframe))
+
+    def test_FileNameObject_can_iterate(self):
+        """Regression test for Fable"""
+        obj = fabio.FilenameObject(filename=self.fnames[0])
+        for iframe, fname in enumerate(self.fnames):
+            obj.num = iframe
+            # read via the FilenameObject
+            o1  = fabio.open(obj)
+            self.assertEqual(o1.data.shape, self.datashape)
+            self.assertEqual(o1.header['checkthing'], str(iframe))
+            # And via the tostring
+            o2  = fabio.open(obj.tostring())
+            self.assertEqual(o2.data.shape, self.datashape)
+            self.assertEqual(o2.header['checkthing'], str(iframe))
+            # And the real name
+            o3  = fabio.open(fname)
+            self.assertEqual(o3.data.shape, self.datashape)
+            self.assertEqual(o3.header['checkthing'], str(iframe))
+
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestFilenames))
+    testsuite.addTest(loadTests(TestFilenameObjects))
     return testsuite
 
 

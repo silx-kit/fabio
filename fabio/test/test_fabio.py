@@ -32,6 +32,7 @@ Basically everything supposed to be provided by `import fabio`
 
 import unittest
 import logging
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,26 @@ class TestFabio(unittest.TestCase):
         image = fabio.open(filename)
         image.data
         image.close()
+
+    def test_open_bytesio(self):
+        filename = UtilsTest.getimage("multiframes.edf.bz2")
+        filename = filename.replace(".bz2", "")
+        with io.open(filename, "rb") as f:
+            data = f.read()
+            mem = io.BytesIO(data)
+            with fabio.open(mem) as image:
+                self.assertIsNotNone(image)
+                self.assertEqual(image.nframes, 8)
+
+    def test_open_fabio_bytesio(self):
+        filename = UtilsTest.getimage("multiframes.edf.bz2")
+        filename = filename.replace(".bz2", "")
+        with io.open(filename, "rb") as f:
+            data = f.read()
+            mem = fabio.fabioutils.BytesIO(data)
+            with fabio.open(mem) as image:
+                self.assertIsNotNone(image)
+                self.assertEqual(image.nframes, 8)
 
     def test_open_with(self):
         filename = UtilsTest.getimage("multiframes.edf.bz2")

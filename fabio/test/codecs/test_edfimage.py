@@ -623,6 +623,79 @@ class TestEdfIterator(unittest.TestCase):
             next(iterator)
 
 
+
+class TestEdfBadHeader(unittest.TestCase):
+    """Test reader behavior with corrupted header file"""
+
+    def setUp(self):
+        self.fgood = os.path.join(UtilsTest.tempdir, "TestEdfGoodHeaderPadding.edf")
+        self.fbad = os.path.join(UtilsTest.tempdir, "TestEdfBadHeaderPadding.edf")
+        self.fzero = os.path.join(UtilsTest.tempdir, "TestEdfZeroHeaderPadding.edf")
+        self.fnonascii = os.path.join(UtilsTest.tempdir, "TestEdfNonAsciiItem.edf")
+        self.data = numpy.zeros((10, 11), numpy.uint8)
+        self.hdr = {"mykey": "myvalue", "title": "ok"}
+
+        good = fabio.edfimage.edfimage(self.data, self.hdr)
+        good.write(self.fgood)
+        with fabio.open(self.fgood) as good:
+            self.good_header = good.header
+
+        with open(self.fgood, "rb") as fh:
+            hdr = bytearray(fh.read(512))
+            while hdr.find(b"}") < 0:
+                hdr += fh.read(512)
+            data = fh.read()
+        with open( self.fbad, "wb") as fb:
+            start = hdr.rfind(b";") + 1
+            end = hdr.find(b"}") - 1
+            hdr[start:end] = [ord('\n')] + [0xcd] * (end - start - 1)
+            fb.write(hdr)
+            fb.write(data)
+        with open( self.fzero, "wb") as fb:
+            # insert some 0x00 to be stripped
+            key = b"myvalue"
+            z = hdr.find(key)
+            hdr[z + len(key)] = 0
+            fb.write(hdr)
+            fb.write(data)
+        with open( self.fnonascii, "wb") as fb:
+            hdr[z:z + 1]= 0xc3, 0xa9  # e-acute in utf-8 ??
+            with open(self.fnonascii, "wb") as fb:
+                fb.write(hdr)
+                fb.write(data)
+
+    def tearDown(self):
+        os.remove(self.fgood)
+        os.remove(self.fbad)
+        os.remove(self.fzero)
+        os.remove(self.fnonascii)
+
+    def testReadBadPadding(self):
+        """
+        Some old data were found with headers padded with 0xcd (issue #373)
+        """
+        with fabio.open(self.fbad) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testReadGoodPadding(self):
+        with fabio.open(self.fgood) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testReadZeroPadding(self):
+        with fabio.open(self.fzero) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testNonAsciiHeader(self):
+        """Non-ascii characters are skipped."""
+        with fabio.open(self.fnonascii) as im:
+            self.assertTrue((im.data == 0).all())
+            expected = dict(self.good_header)
+            expected.pop("mykey")
+            self.assertEqual(im.header, expected)
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -639,6 +712,7 @@ def suite():
     testsuite.addTest(loadTests(TestBadGzFiles))
     testsuite.addTest(loadTests(TestEdfIterator))
     testsuite.addTest(loadTests(TestSphere2SaxsSamples))
+    testsuite.addTest(loadTests(TestEdfBadHeader))
     return testsuite
 
 
