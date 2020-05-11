@@ -2,12 +2,16 @@ Changelog
 =========
 
 FabIO-0.10.2 (05/2020):
+.......................
 
 - Robustness to read corrupted EDF files
 - Fix open files with BytesIO
 - Fix unexpected exception on FabioImage iteration
+- Validated on Python 3.5 to 3.8
+- Still works with Python 2.7 (probably the last)
 
 FabIO-0.10.1 (04/2020):
+.......................
 
 - Fix regression on FilenameObject
 
@@ -34,8 +38,8 @@ FabIO-0.10.0 (04/2020):
 - Improved tests (PR #320, #341, #345) and `requirement.txt` (PR #331)
 - Updated debian packaging (PR #324, #326), added debian11/ubuntu20.04 support (PR #355)
 - Added changelog file (PR #357)
-- Remove packagin for debian 6, 7 and 8, add support for debian11
-- Drop support for Python2 and 3.4, validated version are 3.5-3.8 on mac, win & linux 
+- Remove packaging for debian 6, 7 and 8, add support for debian11
+- Drop support for Python2 and 3.4, validated version are 3.5-3.8 on mac, win & linux
 
 
 FabIO-0.9.0 (03/2019):

@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 0.10.0, 03/04/2020
+Measured on *fabio* version 0.10.2, 11/05/2020
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -21,12 +21,12 @@ Measured on *fabio* version 0.10.0, 03/04/2020
    "converters.py", "18", "15", "83.3 %"
    "dm3image.py", "154", "145", "94.2 %"
    "dtrekimage.py", "171", "141", "82.5 %"
-   "edfimage.py", "858", "642", "74.8 %"
+   "edfimage.py", "868", "652", "75.1 %"
    "eigerimage.py", "106", "74", "69.8 %"
    "esperantoimage.py", "109", "57", "52.3 %"
    "fabioformats.py", "87", "62", "71.3 %"
-   "fabioimage.py", "429", "333", "77.6 %"
-   "fabioutils.py", "384", "302", "78.6 %"
+   "fabioimage.py", "435", "351", "80.7 %"
+   "fabioutils.py", "388", "307", "79.1 %"
    "file_series.py", "365", "274", "75.1 %"
    "fit2dimage.py", "92", "77", "83.7 %"
    "fit2dmaskimage.py", "78", "75", "96.2 %"
@@ -41,7 +41,7 @@ Measured on *fabio* version 0.10.0, 03/04/2020
    "mrcimage.py", "83", "63", "75.9 %"
    "nexus.py", "187", "94", "50.3 %"
    "numpyimage.py", "78", "54", "69.2 %"
-   "openimage.py", "101", "77", "76.2 %"
+   "openimage.py", "103", "87", "84.5 %"
    "pilatusimage.py", "43", "37", "86.0 %"
    "pixiimage.py", "107", "91", "85.0 %"
    "pnmimage.py", "136", "87", "64.0 %"
@@ -55,10 +55,10 @@ Measured on *fabio* version 0.10.0, 03/04/2020
    "compression/agi_bitfield.py", "115", "113", "98.3 %"
    "compression/compression.py", "255", "191", "74.9 %"
    "ext/__init__.py", "0", "0", "0.0 %"
-   "utils/ExternalResources.py", "179", "132", "73.7 %"
+   "utils/ExternalResources.py", "179", "94", "52.5 %"
    "utils/__init__.py", "0", "0", "0.0 %"
    "utils/deprecation.py", "56", "54", "96.4 %"
    "utils/mathutils.py", "11", "6", "54.5 %"
    "utils/pilutils.py", "49", "39", "79.6 %"
 
-   "fabio total", "8151", "6061", "74.4 %"
+   "fabio total", "8173", "6066", "74.2 %"
