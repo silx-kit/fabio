@@ -53,7 +53,12 @@ try:
     from setuptools.command.build_py import build_py as _build_py
     from setuptools.command.build_ext import build_ext
     from setuptools.command.sdist import sdist
-    logger.info("Use setuptools")
+    try:
+        from Cython.Build import build_ext
+        logger.info("Use setuptools with cython")
+    except ImportError:
+        from setuptools.command.build_ext import build_ext
+        logger.info("Use setuptools, cython is missing")
 except ImportError:
     try:
         from numpy.distutils.core import Command
@@ -62,8 +67,12 @@ except ImportError:
     from distutils.command.build_py import build_py as _build_py
     from distutils.command.build_ext import build_ext
     from distutils.command.sdist import sdist
-    logger.info("Use distutils")
-
+    try:
+        from Cython.Build import build_ext
+        logger.info("Use distutils with cython")
+    except ImportError:
+        from distutils.command.build_ext import build_ext
+        logger.info("Use distutils, cython is missing")
 try:
     import sphinx
     import sphinx.util.console
@@ -258,6 +267,55 @@ class BuildMan(Command):
         succeeded = succeeded and status == 0
         return succeeded
 
+    @staticmethod
+    def _write_script(target_name, lst_lines=None):
+        """Write a script to a temporary file and return its name
+        :paran target_name: base of the script name
+        :param lst_lines: list of lines to be written in the script
+        :return: the actual filename of the script (for execution or removal)
+        """
+        import tempfile
+        import stat
+        script_fid, script_name = tempfile.mkstemp(prefix="%s_" % target_name, text=True)
+        with os.fdopen(script_fid, 'wt') as script:
+            for line in lst_lines:
+                if not line.endswith("\n"):
+                    line += "\n"
+                script.write(line)
+        # make it executable
+        mode = os.stat(script_name).st_mode
+        os.chmod(script_name, mode + stat.S_IEXEC)
+        return script_name
+
+    def get_synopsis(self, module_name, env, log_output=False):
+        """Execute a script to retrieve the synopsis for help2man
+        :return: synopsis
+        :rtype: single line string
+        """
+        import subprocess
+        script_name = None
+        synopsis = None
+        script = ["#!%s\n" % sys.executable,
+                  "import logging",
+                  "logging.basicConfig(level=logging.ERROR)",
+                  "import %s as app" % module_name,
+                  "print(app.__doc__)"]
+        try:
+            script_name = self._write_script(module_name, script)
+            command_line = [sys.executable, script_name]
+            p = subprocess.Popen(command_line, env=env, stdout=subprocess.PIPE)
+            status = p.wait()
+            if status != 0:
+                logger.warning("Error while getting synopsis for module '%s'.", module_name)
+            synopsis = p.stdout.read().decode("utf-8").strip()
+            if synopsis == 'None':
+                synopsis = None
+        finally:
+            # clean up the script
+            if script_name is not None:
+                os.remove(script_name)
+        return synopsis
+
     def run(self):
         build = self.get_finalized_command('build')
         path = sys.path
@@ -293,7 +351,11 @@ class BuildMan(Command):
 
                 # execute help2man
                 man_file = "build/man/%s.1" % target_name
-                command_line = ["help2man", script_name, "-o", man_file]
+                command_line = ["help2man", "-N", script_name, "-o", man_file]
+
+                synopsis = self.get_synopsis(module_name, env)
+                if synopsis:
+                    command_line += ["-n", synopsis]
                 if not py3:
                     # Before Python 3.4, ArgParser --version was using
                     # stderr to print the version
@@ -354,9 +416,9 @@ if sphinx is not None:
                 self.mkpath(self.builder_target_dir)
                 BuildDoc.run(self)
             sys.path.pop(0)
-
 else:
     BuildDocCommand = SphinxExpectedCommand
+
 
 # ################### #
 # test_doc command    #
@@ -388,6 +450,7 @@ if sphinx is not None:
 
 else:
     TestDocCommand = SphinxExpectedCommand
+
 
 # ############################# #
 # numpy.distutils Configuration #
@@ -447,6 +510,8 @@ class Build(_build):
     def finalize_options(self):
         _build.finalize_options(self)
         self.finalize_cython_options(min_version='0.21.1')
+        if not self.force_cython:
+            self.force_cython = self._parse_env_as_bool("FORCE_CYTHON") is True
         self.finalize_openmp_options()
 
     def _parse_env_as_bool(self, key):
@@ -473,9 +538,9 @@ class Build(_build):
         elif self.no_openmp:
             use_openmp = False
         else:
-            env_force_cython = self._parse_env_as_bool("WITH_OPENMP")
-            if env_force_cython is not None:
-                use_openmp = env_force_cython
+            env_with_openmp = self._parse_env_as_bool("WITH_OPENMP")
+            if env_with_openmp is not None:
+                use_openmp = env_with_openmp
             else:
                 # Use it by default
                 use_openmp = True
@@ -596,14 +661,14 @@ class BuildExt(build_ext):
         if not self.use_cython:
             self.patch_with_default_cythonized_files(ext)
         else:
-            from Cython.Build import cythonize
-            patched_exts = cythonize(
-                [ext],
-                compiler_directives={'embedsignature': True,
-                                     'language_level': 3},
-                force=self.force_cython
-            )
-            ext.sources = patched_exts[0].sources
+        	from Cython.Build import cythonize
+        	patched_exts = cythonize(
+                	                 [ext],
+                	                 compiler_directives={'embedsignature': True,
+                	                 'language_level': 3},
+                	                 force=self.force_cython
+        				)
+	        ext.sources = patched_exts[0].sources
 
         # Remove OpenMP flags if OpenMP is disabled
         if not self.use_openmp:
@@ -702,6 +767,7 @@ class BuildExt(build_ext):
         for ext in self.extensions:
             self.patch_extension(ext)
         build_ext.build_extensions(self)
+
 
 ################################################################################
 # Clean command
