@@ -34,7 +34,7 @@
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __status__ = "production"
 
 import logging
@@ -46,7 +46,6 @@ import glob
 
 import fabio
 import argparse
-from fabio.third_party import six
 
 logger = logging.getLogger("fabio-convert")
 
@@ -95,8 +94,7 @@ def is_user_want_to_overwrite_filename(filename):
     """
     while True:
         question = "Do you want to overwrite the file '%s' (y/n): " % filename
-        answer = six.moves.input(question)
-        answer = answer.strip().lower()
+        answer = input(question).strip().lower()
         if answer in ["y", "yes", "n", "no"]:
             break
     return answer in ["y", "yes"]

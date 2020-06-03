@@ -43,7 +43,7 @@ License: MIT
 """
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -53,12 +53,10 @@ import numpy
 
 logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
-from .fabioutils import six
 
-SUBFORMATS = [six.b(i) for i in ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7')]
-
-HEADERITEMS = [six.b(i) for i in ('SUBFORMAT', 'WIDTH', 'HEIGHT', 'MAXVAL')]
-P7HEADERITEMS = [six.b(i) for i in ('WIDTH', 'HEIGHT', 'DEPTH', 'MAXVAL', 'TUPLTYPE', 'ENDHDR')]
+SUBFORMATS = (b'P1', b'P2', b'P3', b'P4', b'P5', b'P6', b'P7')
+HEADERITEMS = (b'SUBFORMAT', b'WIDTH', b'HEIGHT', b'MAXVAL')
+P7HEADERITEMS = (b'WIDTH', b'HEIGHT', b'DEPTH', b'MAXVAL', b'TUPLTYPE', b'ENDHDR')
 
 
 class PnmImage(FabioImage):
@@ -81,11 +79,11 @@ class PnmImage(FabioImage):
         if line not in SUBFORMATS:
             raise IOError('unknown subformat of pnm: %s' % line)
         else:
-            self.header[six.b('SUBFORMAT')] = line
+            self.header[b'SUBFORMAT'] = line
 
-        if self.header[six.b('SUBFORMAT')] == 'P7':
+        if self.header[b'SUBFORMAT'] == 'P7':
             # this one has a special header
-            while six.b('ENDHDR') not in line:
+            while b'ENDHDR' not in line:
                 line = f.readline()
                 while(line[0] == '#'):
                     line = f.readline()
@@ -104,12 +102,12 @@ class PnmImage(FabioImage):
                 self.header[k] = v.strip()
 
         # set the dimensions
-        dim1 = int(self.header[six.b("WIDTH")])
-        dim2 = int(self.header[six.b("HEIGHT")])
+        dim1 = int(self.header[b"WIDTH"])
+        dim2 = int(self.header[b"HEIGHT"])
         self._shape = dim2, dim1
         # figure out how many bytes are used to store the data
         # case construct here!
-        m = int(self.header[six.b('MAXVAL')])
+        m = int(self.header[b'MAXVAL'])
         if m < 256:
             self._dtype = numpy.dtype(numpy.uint8)
         elif m < 65536:
@@ -132,10 +130,7 @@ class PnmImage(FabioImage):
         self._readheader(infile)
 
         # read the image data
-        if six.PY3:
-            fmt = str(self.header[six.b('SUBFORMAT')], encoding="latin-1")
-        else:
-            fmt = self.header[six.b('SUBFORMAT')]
+        fmt = str(self.header[b'SUBFORMAT'], encoding="latin-1")
         decoder_name = "%sdec" % fmt
         if decoder_name in dir(PnmImage):
             decoder = getattr(PnmImage, decoder_name)
@@ -150,15 +145,15 @@ class PnmImage(FabioImage):
         try to write image. For now, limited to
         :param fname: name of the file
         """
-        self.header[six.b("SUBFORMAT")] = "P5"
-        self.header[six.b("WIDTH")] = self.shape[-1]
-        self.header[six.b("HEIGHT")] = self.shape[-2]
-        self.header[six.b("MAXVAL")] = self.data.max()
-        header = six.b(" ".join([str(self.header[key]) for key in HEADERITEMS[1:]]))
+        self.header[b"SUBFORMAT"] = "P5"
+        self.header[b"WIDTH"] = self.shape[-1]
+        self.header[b"HEIGHT"] = self.shape[-2]
+        self.header[b"MAXVAL"] = self.data.max()
+        header = (" ".join([str(self.header[key]) for key in HEADERITEMS[1:]])).encode("latin-1")
         with open(fname, "wb") as fobj:
-            fobj.write(six.b("P5 \n"))
+            fobj.write(b"P5 \n")
             fobj.write(header)
-            fobj.write(six.b(" \n"))
+            fobj.write(b" \n")
             if numpy.little_endian:
                 fobj.write(self.data.byteswap().tobytes())
             else:

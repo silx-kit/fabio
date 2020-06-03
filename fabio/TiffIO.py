@@ -27,15 +27,13 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2018"
+__date__ = "06/04/2020"
 
 import sys
 import os
 import struct
 import numpy
 import logging
-from fabio.third_party import six
-
 
 ALLOW_MULTIPLE_STRIPS = False
 
@@ -106,11 +104,11 @@ SAMPLE_FORMAT_VOID = 4  # undefined data, usually assumed UINT
 SAMPLE_FORMAT_COMPLEXINT = 5
 SAMPLE_FORMAT_COMPLEXIEEEFP = 6
 
-
 logger = logging.getLogger(__name__)
 
 
 class TiffIO(object):
+
     def __init__(self, filename, mode=None, cache_length=20, mono_output=False):
         if mode is None:
             mode = 'rb'
@@ -923,7 +921,7 @@ class TiffIO(object):
                 description = description + " "
                 descriptionLength = len(description)
 
-            if isinstance(description, six.text_type):
+            if isinstance(description, str):
                 raw = description.encode('utf-8')
             else:
                 if sys.version >= '3.0':

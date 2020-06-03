@@ -26,14 +26,12 @@
 
 __authors__ = ["Jerome Kieffer", "H. Payno", "P. Knobel"]
 __license__ = "MIT"
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 
 import sys
 import logging
 import functools
 import traceback
-from fabio.third_party import six
-
 from .. import _version
 
 depreclog = logging.getLogger("fabio.DEPRECATION")
@@ -133,7 +131,7 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
             deprecache.add(data)
 
     if deprecated_since is not None:
-        if isinstance(deprecated_since, six.string_types):
+        if isinstance(deprecated_since, str):
             if deprecated_since not in _CACHE_VERSIONS:
                 hexversion = _version.calc_hexversion(string=deprecated_since)
                 _CACHE_VERSIONS[deprecated_since] = hexversion

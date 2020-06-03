@@ -43,7 +43,6 @@ import numpy
 import struct
 
 from .fabioimage import FabioImage
-from .third_party import six
 
 
 class Fit2dMaskImage(FabioImage):
@@ -139,7 +138,7 @@ class Fit2dMaskImage(FabioImage):
             order = (1 << i)
             compact_array += large_array[:, i::8] * order
         with self._open(fname, mode="wb") as outfile:
-            outfile.write(six.binary_type(header))
+            outfile.write(bytes(header))
             outfile.write(compact_array.tobytes())
 
     @staticmethod
