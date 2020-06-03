@@ -43,7 +43,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "03/04/2020"
+__date__ = "03/06/2020"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -285,7 +285,7 @@ class BrukerImage(FabioImage):
         Write a bruker image
 
         """
-        if numpy.issubdtype(self.data.dtype, float):
+        if numpy.issubdtype(self.data.dtype, numpy.floating):
             if "LINEAR" in self.header:
                 try:
                     slope, offset = self.header["LINEAR"].split(None, 1)
@@ -305,10 +305,8 @@ class BrukerImage(FabioImage):
                     slope = 1.0
             tmp_data = numpy.round(((self.data - offset) / slope)).astype(numpy.uint32)
             self.header["LINEAR"] = "%s %s" % (slope, offset)
-
         else:
             tmp_data = self.data
-
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1
