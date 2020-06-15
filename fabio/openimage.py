@@ -100,6 +100,7 @@ MAGIC_NUMBERS = [
     # JPEG 2000 (from RFC 3745)
     (b"\x00\x00\x00\x0C\x6A\x50\x20\x20\x0D\x0A\x87\x0A", "jpeg2k"),
     (b"ESPERANTO FORMAT", "esperanto"),
+    (b'###CBF: VERSION',"cbf")
 ]
 
 
@@ -191,7 +192,7 @@ def _openimage(filename):
         # Data stream without filename
         filename.seek(0)
         data = filename.read()
-        actual_filename = fabioutils.BytesIO(data)
+        actual_filename = BytesIO(data)
         # Back to the location before the read
         filename.seek(0)
     else:
