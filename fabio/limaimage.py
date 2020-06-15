@@ -1,0 +1,159 @@
+# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/silx-kit/fabio
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation files
+#  (the "Software"), to deal in the Software without restriction,
+#  including without limitation the rights to use, copy, modify, merge,
+#  publish, distribute, sublicense, and/or sell copies of the Software,
+#  and to permit persons to whom the Software is furnished to do so,
+#  subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#  OTHER DEALINGS IN THE SOFTWARE.
+
+"""
+Basic read support for HDF5 files saved by LImA. 
+"""
+
+__authors__ = ["Jérôme Kieffer"]
+__contact__ = "jerome.kieffer@esrf.fr"
+__license__ = "MIT"
+__copyright__ = "ESRF"
+__date__ = "15/06/2020" 
+
+import logging
+logger = logging.getLogger(__name__)
+from .fabioimage import FabioImage
+from .fabioutils import NotGoodReader
+try:
+    import h5py
+except ImportError:
+    h5py = None
+
+
+class LimaImage(FabioImage):
+    """FabIO image class for Images for XXX detector
+
+    Put some documentation here
+    """
+
+    DESCRIPTION = "HDF5 file produces by LImA"
+
+    DEFAULT_EXTENSIONS = ["h5", "hdf5"]
+
+    def __init__(self, data=None, header=None):
+        """
+        Set up initial values
+        """
+        if not h5py:
+            raise RuntimeError("fabio.EigerImage cannot be used without h5py. Please install h5py and restart")
+
+        FabioImage.__init__(self, data, header)
+        self.dataset = [data]
+        self.h5 = None
+        
+    def __repr__(self):
+        if self.h5 is not None:
+            return "LImA-HDF5 dataset with %i frames from %s" % (self.nframes, self.h5.filename)
+        else:
+            return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
+
+    def _readheader(self, infile):
+        """
+        Read and decode the header of an image:
+
+        :param infile: Opened python file (can be stringIO or bzipped file)
+        """
+        # list of header key to keep the order (when writing)
+        self.header = self.check_header()
+
+    def read(self, fname, frame=None):
+        """
+        Try to read image
+
+        :param fname: name of the file
+        :param frame: number of the frame
+        """
+
+        self.resetvals()
+        with self._open(fname) as infile:
+            self._readheader(infile)
+            # read the image data and declare it
+
+        self.dataset = None
+        # read the image data
+        self.h5 = h5py.File(fname, mode="r")
+        entry_name = self.h5.attrs.get("default")
+        if entry_name is None:
+            raise NotGoodReader("HDF5 file does not contain any default entry.")
+        if entry_name in self.h5:
+            entry = self.h5[entry_name]
+        else:
+            raise NotGoodReader("HDF5's default entry does not exist.")
+        if "measurement" in entry:
+            measurement = entry["measurement"]
+        else:
+            raise NotGoodReader("HDF5's default entry has no measurement group.")
+        if "data" in measurement:
+            ds = measurement["data"]
+        else:
+            raise NotGoodReader("HDF5's measurement group has no dataset.")
+        self.dataset = ds
+        self._nframes = ds.shape[0]
+
+        if frame is not None:
+            return self.getframe(int(frame))
+        else:
+            self.currentframe = 0
+            self.data = self.dataset[self.currentframe]
+            self._shape = None
+            return self
+
+    def getframe(self, num):
+        """ returns the frame numbered 'num' in the stack if applicable"""
+        if self.nframes > 1:
+            new_img = None
+            if (num >= 0) and num < self.nframes:
+                data = self.dataset[num]
+                new_img = self.__class__(data=data, header=self.header)
+                new_img.dataset = self.dataset
+                new_img.h5 = self.h5
+                new_img._nframes = self.nframes
+                new_img.currentframe = num
+            else:
+                raise IOError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+        else:
+            new_img = FabioImage.getframe(self, num)
+        return new_img
+
+    def previous(self):
+        """ returns the previous frame in the series as a fabioimage """
+        return self.getframe(self.currentframe - 1)
+
+    def next(self):
+        """ returns the next frame in the series as a fabioimage """
+        return self.getframe(self.currentframe + 1)
+
+    def close(self):
+        if self.h5 is not None:
+            self.h5.close()
+            self.dataset = None
+
+
+
+# This is not compatibility with old code:
+limaimage = LimaImage

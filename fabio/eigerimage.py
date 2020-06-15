@@ -66,7 +66,7 @@ class EigerImage(FabioImage):
 
     DESCRIPTION = "Eiger data files based on HDF5"
 
-    DEFAULT_EXTENSIONS = ["h5"]
+    DEFAULT_EXTENSIONS = ["h5",  "hdf5"]
 
     def __init__(self, data=None, header=None):
         """
@@ -97,13 +97,16 @@ class EigerImage(FabioImage):
 
     def read(self, fname, frame=None):
         """
-        try to read image
+        Try to read image
+        
         :param fname: name of the file
+        :param frame: number of the frame
         """
 
         self.resetvals()
         with self._open(fname) as infile:
             self._readheader(infile)
+            # read the image data and declare it
 
         self.dataset = None
         lstds = []
