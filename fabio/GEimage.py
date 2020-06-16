@@ -39,19 +39,21 @@
 # modifications by Jon Wright for style, pychecker and fabio
 #
 
-__authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
+__authors__ = ["Antonino Miceli", "Jon Wright",
+               "Jérôme Kieffer", "Joel Bernier"]
 __date__ = "03/04/2020"
 __status__ = "production"
-__copyright__ = "2007 APS; 2010-2020 ESRF"
+__copyright__ = "2007-2020 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
 
 import os
 import numpy
 import struct
 import logging
-logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
+
+logger = logging.getLogger(__name__)
 
 GE_HEADER_INFO = [
     # Name, length in bytes, format for struct (None means string)
@@ -213,6 +215,7 @@ GE_HEADER_INFO = [
 
 
 class GeImage(FabioImage):
+    """GE a-Si Angio detector file format."""
 
     DESCRIPTION = "GE a-Si Angio detector file format"
 
@@ -232,15 +235,14 @@ class GeImage(FabioImage):
         * _NumberOfRowsInFrame
 
     def _readheader(self, infile):
-        """Read a GE image header"""
-        
+        """Read a GE image header."""
         # !!!: At APS they blanked the header with 8192 bytes of zeros when
         #      updating the GE firmware.  This happened in ~2018 to the best
-        #      of my knowliedge, and *a lot* of data has been measured with 
+        #      of my knowliedge, and *a lot* of data has been measured with
         #      the GE detectors that are missing the magic bytes and header.
         #      This hacky fix works, and we might be stuck with it.
         aps_img_format = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-        
+
         infile.seek(0)
 
         self.header = self.check_header()
@@ -250,19 +252,16 @@ class GeImage(FabioImage):
             else:
                 self.header[name] = struct.unpack(fmt, infile.read(nbytes))[0]
         if self.header["ImageFormat"] == aps_img_format:
-            # FIXME for now have to assume we have a bastardized GE file from
+            # FIXME: for now have to assume we have a bastardized GE file from
             # Argonne, where they blanked the header with all zeros
             self.header['StandardHeaderSizeInBytes'] = self._HeaderNBytes
             self.header['UserHeaderSizeInBytes'] = self._UserHeaderSizeInBytes
             self.header['NumberOfRowsInFrame'] = self._NumberOfRowsInFrame
             self.header['NumberOfColsInFrame'] = self._NumberOfColsInFrame
-            self.header['ImageDepthInBits'] = self._ImageDepthInBits            
+            self.header['ImageDepthInBits'] = self._ImageDepthInBits
 
     def read(self, fname, frame=None):
-        """
-        Read in header into self.header and
-        the data   into self.data
-        """
+        """Read header into self.header and the data into self.data."""
         if frame is None:
             frame = 0
         self.header = self.check_header()
@@ -281,16 +280,38 @@ class GeImage(FabioImage):
         return self
 
     def _makeframename(self):
-        """ The thing to be printed for the user to represent a frame inside
-        a file """
+        """
+        Represent a frame.
+
+        The thing to be printed for the user to represent a frame inside
+        a file.
+        """
         self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
 
     def _readframe(self, filepointer, img_num):
         """
-        # Load only one image from the sequence
-        #    Note: the first image in the sequence 0
-        # raises an exception if you give an invalid image
-        # otherwise fills in self.data
+        Load only one image from the file.
+
+        Parameters
+        ----------
+        filepointer : TYPE
+            DESCRIPTION.
+        img_num : TYPE
+            DESCRIPTION.
+
+        Raises
+        ------
+        Exception
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        Notes
+        -----
+        The first image in the sequence 0; raises an exception if you give an
+        invalid image index, otherwise fills in self.data.
         """
         if(img_num >= self.nframes or img_num < 0):
             raise Exception("Bad image number")
@@ -304,11 +325,15 @@ class GeImage(FabioImage):
 
         bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
         if bpp != 2:
-            logger.warning("Using uint16 for GE but seems to be wrong, bpp=%s" % bpp)
+            logger.warning(
+                "Using uint16 for GE but seems to be wrong, bpp=%s" % bpp
+            )
 
         imglength = (self.header['NumberOfRowsInFrame'] *
                      self.header['NumberOfColsInFrame'] * bpp)
-        data = numpy.frombuffer(filepointer.read(imglength), numpy.uint16).copy()
+        data = numpy.frombuffer(
+            filepointer.read(imglength), numpy.uint16
+        ).copy()
         if not numpy.little_endian:
             data.byteswap(True)
         data.shape = (self.header['NumberOfRowsInFrame'],
@@ -319,9 +344,7 @@ class GeImage(FabioImage):
         self._makeframename()
 
     def getframe(self, num):
-        """
-        Returns a frame as a new FabioImage object
-        """
+        """Return a frame as a new FabioImage object."""
         if num < 0 or num >= self.nframes:
             raise Exception("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
@@ -338,9 +361,7 @@ class GeImage(FabioImage):
         return frame
 
     def next(self):
-        """
-        Get the next image in a series as a fabio image
-        """
+        """Get the next image in a series as a fabio image."""
         if self.currentframe < (self.nframes - 1) and self.nframes > 1:
             return self.getframe(self.currentframe + 1)
         else:
@@ -350,9 +371,7 @@ class GeImage(FabioImage):
             return newobj
 
     def previous(self):
-        """
-        Get the previous image in a series as a fabio image
-        """
+        """Get the previous image in a series as a fabio image."""
         if self.currentframe > 0:
             return self.getframe(self.currentframe - 1)
         else:
