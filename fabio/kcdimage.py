@@ -34,15 +34,12 @@ kcd images are 2D images written by the old KappaCCD diffractometer built by Non
 Based on the edfimage.py parser.
 """
 
-from __future__ import with_statement, print_function
-
 import numpy
 import logging
 import os
 
 import string
 from .fabioimage import FabioImage
-from .fabioutils import six
 logger = logging.getLogger(__name__)
 
 import io
@@ -50,7 +47,6 @@ if not hasattr(io, "SEEK_END"):
     SEEK_END = 2
 else:
     SEEK_END = io.SEEK_END
-
 
 DATA_TYPES = {"u16": numpy.uint16}
 
@@ -63,10 +59,7 @@ MINIMUM_KEYS = [
 
 DEFAULT_VALUES = {"Data type": "u16"}
 
-if six.PY2:
-    ALPHANUM = string.digits + string.letters + ". "
-else:
-    ALPHANUM = bytes(string.digits + string.ascii_letters + ". ", encoding="ASCII")
+ALPHANUM = bytes(string.digits + string.ascii_letters + ". ", encoding="ASCII")
 
 
 class KcdImage(FabioImage):

@@ -23,42 +23,57 @@
 #
 """
 # Unit tests
-Jerome Kieffer, 04/12/2014
+
+# builds on stuff from ImageD11.test.testpeaksearch
+28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
+import os
 import logging
 
 logger = logging.getLogger(__name__)
 
-from fabio.openimage import openheader
+import fabio
+import shutil
 from .utilstest import UtilsTest
 
 
-class Test1(unittest.TestCase):
-    """openheader opening edf"""
-    def setUp(self):
-        self.name = UtilsTest.getimage("F2K_Seb_Lyso0675_header_only.edf.bz2")[:-4]
+class TestHeaderNotSingleton(unittest.TestCase):
 
-    def testcase(self):
-        """ check openheader can read edf headers"""
-        for ext in ["", ".bz2", ".gz"]:
-            name = self.name + ext
-            obj = openheader(name)
-            logger.debug(" %s obj = %s" % (name, obj.header))
-            self.assertEqual(obj.header["title"],
-                             "ESPIA FRELON Image",
-                             "Error on file %s" % name)
+    def setUp(self):
+        """
+        download images
+        """
+        self.file1 = UtilsTest.getimage("mb_LP_1_001.img.bz2")[:-4]
+
+    def testheader(self):
+        file2 = self.file1.replace("mb_LP_1_001.img", "mb_LP_1_002.img")
+        self.assertTrue(os.path.exists(self.file1))
+        if not os.path.exists(file2):
+            shutil.copy(self.file1, file2)
+        image1 = fabio.open(self.file1)
+        image2 = fabio.open(file2)
+
+        self.assertEqual(self.abs_norm(image1.filename), self.abs_norm(self.file1))
+        self.assertEqual(self.abs_norm(image2.filename), self.abs_norm(file2))
+        self.assertNotEqual(image1.filename, image2.filename)
+
+    def abs_norm(self, fn):
+        return os.path.normcase(os.path.abspath(fn))
+
+    def tearDown(self):
+        unittest.TestCase.tearDown(self)
+        self.file1 = None
 
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
-    testsuite.addTest(loadTests(Test1))
+    testsuite.addTest(loadTests(TestHeaderNotSingleton))
     return testsuite
 
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    runner.run(suite)
+    runner.run(suite())

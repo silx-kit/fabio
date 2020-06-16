@@ -28,14 +28,11 @@
 
 """Test suite for all pyFAI modules with timing and memory profiling"""
 
-from __future__ import absolute_import, division, print_function
-
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "22/10/2018"
-
+__date__ = "03/04/2020"
 
 import sys
 import unittest
@@ -66,6 +63,7 @@ class TestResult(unittest.TestResult):
 
 
 class ProfileTestRunner(unittest.TextTestRunner):
+
     def _makeResult(self):
         return TestResult(stream=sys.stderr, descriptions=True, verbosity=1)
 

@@ -38,13 +38,11 @@
 
 # modifications by Jon Wright for style, pychecker and fabio
 #
-# Get ready for python3:
-from __future__ import with_statement, print_function, division
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "14/11/2018"
+__date__ = "03/04/2020"
 __status__ = "production"
-__copyright__ = "2007 APS; 2010-2015 ESRF"
+__copyright__ = "2007 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
 
 import os
@@ -211,8 +209,7 @@ GE_HEADER_INFO = [
     ('NumberOfColumns128', 2, '<H'),
     ('NumberOfRows128', 2, '<H'),
     ('VFPAquisition', 2000, None),
-    ('Comment', 200, None)
-    ]
+    ('Comment', 200, None)]
 
 
 class GeImage(FabioImage):
@@ -223,6 +220,7 @@ class GeImage(FabioImage):
 
     _need_a_seek_to_read = True
 
+    # need these defaults for the case of the bastardized APS files
     _HeaderNBytes = 8192
     _UserHeaderSizeInBytes = 0
     _NumberOfRowsInFrame = 2048
@@ -235,9 +233,16 @@ class GeImage(FabioImage):
 
     def _readheader(self, infile):
         """Read a GE image header"""
+        
+        # !!!: At APS they blanked the header with 8192 bytes of zeros when
+        #      updating the GE firmware.  This happened in ~2018 to the best
+        #      of my knowliedge, and *a lot* of data has been measured with 
+        #      the GE detectors that are missing the magic bytes and header.
+        #      This hacky fix works, and we might be stuck with it.
         aps_img_format = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
         
         infile.seek(0)
+
         self.header = self.check_header()
         for name, nbytes, fmt in GE_HEADER_INFO:
             if fmt is None:
@@ -268,9 +273,9 @@ class GeImage(FabioImage):
 
         # obsolete for now # self.nframes = self.header['NumberOfFrames']
         file_size = os.stat(fname).st_size
-        assert numpy.remainder(file_size, self._BytesPerFrame) == self._HeaderNBytes, \
-            "file is incorrect size"
-        self._nframes = file_size//self._BytesPerFrame
+        assert (numpy.remainder(file_size, self._BytesPerFrame)
+                == self._HeaderNBytes), "GE file size is incorrect"
+        self._nframes = file_size // self._BytesPerFrame
         self._readframe(infile, frame)
         infile.close()
         return self

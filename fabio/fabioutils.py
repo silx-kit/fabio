@@ -32,13 +32,12 @@
 """General purpose utilities functions for fabio
 
 """
-from __future__ import absolute_import, print_function, with_statement, division
 
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "17/01/2019"
+__date__ = "07/04/2020"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -47,12 +46,10 @@ import os
 import logging
 import sys
 import json
-import functools
 
 logger = logging.getLogger(__name__)
 
-from .third_party.ordereddict import OrderedDict as _OrderedDict
-from .third_party import six
+from collections import OrderedDict as _OrderedDict
 
 try:
     import pathlib
@@ -62,33 +59,23 @@ except ImportError:
     except ImportError:
         pathlib = None
 
-if six.PY2:
-    bytes_ = str
-    FileIO = file
-    StringTypes = (str, unicode)
-    to_str = str
-else:
-    bytes_ = bytes
-    StringTypes = (str, bytes)
-    unicode = str
-    from io import FileIO
+StringTypes = (str, bytes)
+from io import FileIO, BytesIO as _BytesIO
 
-    def to_str(s):
-        return str(s, "ASCII")
+
+def to_str(s):
+    return str(s, "ASCII")
+
 
 PathTypes = StringTypes
 if pathlib is not None:
     PathTypes += (pathlib.PurePath,)
 
-
 from .compression import bz2, gzip, COMPRESSORS
 import traceback
 from math import ceil
 
-if sys.version_info < (3, 3):
-    from threading import _Semaphore as _Semaphore
-else:
-    from threading import Semaphore as _Semaphore
+import threading
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
 
@@ -130,6 +117,7 @@ class FilenameObject(object):
     """
     The 'meaning' of a filename ...
     """
+
     def __init__(self, stem=None,
                  num=None,
                  directory=None,
@@ -177,6 +165,7 @@ class FilenameObject(object):
                  self.digits,
                  self.directory]
         return fmt % tuple([str(x) for x in attrs])
+
     __repr__ = str
 
     def tostring(self):
@@ -392,14 +381,15 @@ def nice_int(s):
         return int(float(s))
 
 
-class BytesIO(six.BytesIO):
+class BytesIO(_BytesIO):
     """
     just an interface providing the name and mode property to a BytesIO
 
     BugFix for MacOSX mainly
     """
+
     def __init__(self, data, fname=None, mode="r"):
-        six.BytesIO.__init__(self, data)
+        _BytesIO.__init__(self, data)
         if "closed" not in dir(self):
             self.closed = False
         if fname is None:
@@ -407,7 +397,7 @@ class BytesIO(six.BytesIO):
         else:
             self.name = fname
         self.mode = mode
-        self.lock = _Semaphore()
+        self.lock = threading.Semaphore()
         self.__size = None
 
     def getSize(self):
@@ -422,6 +412,7 @@ class BytesIO(six.BytesIO):
 
     def setSize(self, size):
         self.__size = size
+
     size = property(getSize, setSize)
 
 
@@ -429,7 +420,8 @@ class File(FileIO):
     """
     wrapper for "file" with locking
     """
-    def __init__(self, name, mode="rb", buffering=0, temporary=False):
+
+    def __init__(self, name, mode="rb", temporary=False):
         """file(name[, mode[, buffering]]) -> file object
 
         Open a file.  The mode can be 'r', 'w' or 'a' for reading (default),
@@ -450,11 +442,8 @@ class File(FileIO):
 
         :param temporary: if True, destroy file at close.
         """
-        if six.PY2:
-            FileIO.__init__(self, name, mode, buffering)
-        else:  # for python3 we drop buffering
-            FileIO.__init__(self, name, mode)
-        self.lock = _Semaphore()
+        FileIO.__init__(self, name, mode)
+        self.lock = threading.Semaphore()
         self.__size = None
         self.__temporary = temporary
 
@@ -486,6 +475,7 @@ class File(FileIO):
 
     def setSize(self, size):
         self.__size = size
+
     size = property(getSize, setSize)
 
     def __enter__(self):
@@ -502,6 +492,7 @@ class UnknownCompressedFile(File):
     """
     wrapper for "File" with locking
     """
+
     def __init__(self, name, mode="rb", buffering=0):
         logger.warning("No decompressor found for this type of file (are gzip anf bz2 installed ???")
         File.__init__(self, name, mode, buffering)
@@ -516,10 +507,12 @@ class UnknownCompressedFile(File):
 if gzip is None:
     GzipFile = UnknownCompressedFile
 else:
+
     class GzipFile(gzip.GzipFile):
         """
         Just a wrapper for gzip.GzipFile providing the correct seek capabilities for python 2.5
         """
+
         def __init__(self, filename=None, mode=None, compresslevel=9, fileobj=None):
             """
             Wrapper with locking for constructor for the GzipFile class.
@@ -549,7 +542,7 @@ else:
             and 9 is slowest and produces the most compression.  The default is 9.
             """
             gzip.GzipFile.__init__(self, filename, mode, compresslevel, fileobj)
-            self.lock = _Semaphore()
+            self.lock = threading.Semaphore()
             self.__size = None
 
         def __del__(self):
@@ -586,12 +579,13 @@ else:
         """
         gzip.GzipFile.close(self)
 
-
 if bz2 is None:
     BZ2File = UnknownCompressedFile
 else:
+
     class BZ2File(bz2.BZ2File):
         "Wrapper with lock"
+
         def __init__(self, name, mode='r', buffering=0, compresslevel=9):
             """
             BZ2File(name [, mode='r', compresslevel=9]) -> file object
@@ -610,7 +604,7 @@ else:
             newlines are available only when reading.
             """
             bz2.BZ2File.__init__(self, name, mode, buffering, compresslevel)
-            self.lock = _Semaphore()
+            self.lock = threading.Semaphore()
             self.__size = None
 
         def __del__(self):
@@ -631,6 +625,7 @@ else:
 
         def setSize(self, value):
             self.__size = value
+
         size = property(getSize, setSize)
 
         def __enter__(self):
@@ -649,15 +644,15 @@ class NotGoodReader(RuntimeError):
     pass
 
 
-class DebugSemaphore(_Semaphore):
+class DebugSemaphore(threading.Semaphore):
     """
     threading.Semaphore like class with helper for fighting dead-locks
     """
-    write_lock = _Semaphore()
+    write_lock = threading.Semaphore()
     blocked = []
 
     def __init__(self, *arg, **kwarg):
-        _Semaphore.__init__(self, *arg, **kwarg)
+        threading.Semaphore.__init__(self, *arg, **kwarg)
 
     def acquire(self, *arg, **kwarg):
         if self._Semaphore__value == 0:
@@ -666,7 +661,7 @@ class DebugSemaphore(_Semaphore):
                 sys.stderr.write(os.linesep.join(["Blocking sem %s" % id(self)] +
                                  traceback.format_stack()[:-1] + [""]))
 
-        return _Semaphore.acquire(self, *arg, **kwarg)
+        return threading.Semaphore.acquire(self, *arg, **kwarg)
 
     def release(self, *arg, **kwarg):
         with self.write_lock:
@@ -674,7 +669,7 @@ class DebugSemaphore(_Semaphore):
             if uid in self.blocked:
                 self.blocked.remove(uid)
                 sys.stderr.write("Released sem %s %s" % (uid, os.linesep))
-        _Semaphore.release(self, *arg, **kwarg)
+        threading.Semaphore.release(self, *arg, **kwarg)
 
     def __enter__(self):
         self.acquire()
@@ -698,6 +693,7 @@ def exists(path):
 
 class OrderedDict(_OrderedDict):
     """Ordered dictionary with pretty print"""
+
     def __repr__(self):
         try:
             res = json.dumps(self, indent=2)

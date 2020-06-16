@@ -40,8 +40,6 @@ modification for HDF5 by Jérôme Kieffer
 
 """
 
-from __future__ import with_statement, print_function, absolute_import
-
 import os.path
 import logging
 logger = logging.getLogger(__name__)
@@ -51,7 +49,6 @@ from .fabioimage import FabioImage
 
 # Make sure to load all formats
 from . import fabioformats  # noqa
-
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -67,6 +64,13 @@ MAGIC_NUMBERS = [
     (b"\x49\x49\x2a\x00", 'tif'),
     # d*TREK must come before edf
     (b"{\nHEA", 'dtrek'),
+    # EDF_ types
+    (b"\r\n{\r\nEDF", 'edf'),  # EDF3 (can be interpreted like EDF1 but refused by fit2d)
+    (b"\n{\r\nEDF", 'edf'),  # EDF2 (can be interpreted like EDF1 but refused by fit2d)
+    (b"{\r\nEDF", 'edf'),  # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
+    (b"{\n", 'edf'),  # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
+    (b"\n{\n", 'edf'),  # EDFU (EDF unknown source, V1.xx)
+    # conventional
     (b"{", 'edf'),
     (b"\r{", 'edf'),
     (b"\n{", 'edf'),
@@ -99,6 +103,8 @@ MAGIC_NUMBERS = [
     (b"\xFF\xD8\xFF\xE1", "jpeg"),
     # JPEG 2000 (from RFC 3745)
     (b"\x00\x00\x00\x0C\x6A\x50\x20\x20\x0D\x0A\x87\x0A", "jpeg2k"),
+    (b"ESPERANTO FORMAT", "esperanto"),
+    (b'###CBF: VERSION',"cbf")
 ]
 
 
@@ -144,10 +150,11 @@ def openimage(filename, frame=None):
 
     if isinstance(filename, FilenameObject):
         try:
-            logger.debug("Attempting to open %s" % (filename.tostring()))
-            obj = _openimage(filename.tostring())
-            logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename.tostring(), obj.classname))
-            obj = obj.read(filename.tostring(), frame)
+            actual_filename = filename.tostring()
+            logger.debug("Attempting to open %s", actual_filename)
+            obj = _openimage(actual_filename)
+            logger.debug("Attempting to read frame %s from %s with reader %s", frame, actual_filename, obj.classname)
+            obj = obj.read(actual_filename, frame)
         except Exception as ex:
             # multiframe file
             # logger.debug( "DEBUG: multiframe file, start # %d"%(
@@ -186,10 +193,12 @@ def _openimage(filename):
 
     """
     if hasattr(filename, "seek") and hasattr(filename, "read"):
-        # Looks to be a file containing filenames
-        if not isinstance(filename, BytesIO):
-            filename.seek(0)
-            actual_filename = BytesIO(filename.read())
+        # Data stream without filename
+        filename.seek(0)
+        data = filename.read()
+        actual_filename = BytesIO(data)
+        # Back to the location before the read
+        filename.seek(0)
     else:
         if os.path.exists(filename):
             # Already a valid filename

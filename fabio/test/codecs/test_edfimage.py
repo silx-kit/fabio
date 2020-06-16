@@ -8,18 +8,23 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 """
 # Unit tests
@@ -27,7 +32,7 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
+
 import unittest
 import os
 import numpy
@@ -39,29 +44,29 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from ...edfimage import edfimage
-from ...third_party import six
 from ...fabioutils import GzipFile, BZ2File
 from ..utilstest import UtilsTest
 
 
 class TestFlatEdfs(unittest.TestCase):
     """ test some flat images """
+
     def common_setup(self):
         self.BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        self.MYHEADER = six.b("{\n%-1020s}\n" % (
-                    """Omega = 0.0 ;
-                    Dim_1 = 256 ;
-                    Dim_2 = 256 ;
-                    DataType = FloatValue ;
-                    ByteOrder = %s ;
-                    Image = 1;
-                    History-1 = something=something else;
-                    \n\n""" % self.BYTE_ORDER))
+        self.MYHEADER = ("{\n%-1020s}\n" % (
+                        """Omega = 0.0 ;
+                        Dim_1 = 256 ;
+                        Dim_2 = 256 ;
+                        DataType = FloatValue ;
+                        ByteOrder = %s ;
+                        Image = 1;
+                        History-1 = something=something else;
+                        \n\n""" % self.BYTE_ORDER)).encode("latin-1")
         self.MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
 
-        assert len(self.MYIMAGE[0:1, 0:1].tostring()) == 4, self.MYIMAGE[0:1, 0:1].tostring()
+        assert len(self.MYIMAGE[0:1, 0:1].tobytes()) == 4, self.MYIMAGE[0:1, 0:1].tobytes()
 
     def setUp(self):
         """ initialize"""
@@ -71,7 +76,7 @@ class TestFlatEdfs(unittest.TestCase):
             outf = open(self.filename, "wb")
             assert len(self.MYHEADER) % 1024 == 0
             outf.write(self.MYHEADER)
-            outf.write(self.MYIMAGE.tostring())
+            outf.write(self.MYIMAGE.tobytes())
             outf.close()
 
         obj = edfimage()
@@ -116,6 +121,7 @@ class TestFlatEdfs(unittest.TestCase):
 
 class TestBzipEdf(TestFlatEdfs):
     """ same for bzipped versions """
+
     def setUp(self):
         """set it up"""
         TestFlatEdfs.setUp(self)
@@ -128,6 +134,7 @@ class TestBzipEdf(TestFlatEdfs):
 
 class TestGzipEdf(TestFlatEdfs):
     """ same for gzipped versions """
+
     def setUp(self):
         """ set it up """
         TestFlatEdfs.setUp(self)
@@ -150,6 +157,7 @@ class TestEdfs(unittest.TestCase):
     """
     Read some test images
     """
+
     def setUp(self):
         self.im_dir = os.path.dirname(UtilsTest.getimage("F2K_Seb_Lyso0675.edf.bz2"))
         UtilsTest.getimage("id13_badPadding.edf.bz2")
@@ -194,6 +202,7 @@ class TestEdfCompressedData(unittest.TestCase):
     Read some test images with their data-block compressed.
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
     """
+
     def setUp(self):
         self.im_dir = os.path.dirname(UtilsTest.getimage("edfGzip_U16.edf.bz2"))
         UtilsTest.getimage("edfCompressed_U16.edf.bz2")
@@ -221,6 +230,7 @@ class TestEdfMultiFrame(unittest.TestCase):
     Read some test images with their data-block compressed.
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
     """
+
     def setUp(self):
         self.multiFrameFilename = UtilsTest.getimage("MultiFrame.edf.bz2")[:-4]
         self.Frame0Filename = UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")[:-4]
@@ -283,6 +293,7 @@ class TestEdfFastRead(unittest.TestCase):
     Read some test images with their data-block compressed.
     Z-Compression and Gzip compression are implemented Bzip2 and byte offet are experimental
     """
+
     def setUp(self):
         self.refFilename = UtilsTest.getimage("MultiFrame-Frame0.edf.bz2")
         self.fastFilename = self.refFilename[:-4]
@@ -339,6 +350,7 @@ class TestEdfRegression(unittest.TestCase):
     """
     Test suite to prevent regression
     """
+
     def test_bug_27(self):
         """
         import fabio
@@ -402,24 +414,24 @@ class TestBadFiles(unittest.TestCase):
     @classmethod
     def write_header(cls, fd, image_number):
         byte_order = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        byte_order = six.b(byte_order)
+        byte_order = byte_order.encode("latin-1")
 
-        fd.write(six.b("{\n"))
-        fd.write(six.b("Omega = 0.0 ;\n"))
-        fd.write(six.b("Dim_1 = 256 ;\n"))
-        fd.write(six.b("Dim_2 = 256 ;\n"))
-        fd.write(six.b("DataType = FloatValue ;\n"))
-        fd.write(six.b("ByteOrder = %s ;\n" % byte_order))
-        fd.write(six.b("Image = %d ;\n" % image_number))
-        fd.write(six.b("History-1 = something=something else;\n"))
-        fd.write(six.b("}\n"))
+        fd.write(b"{\n")
+        fd.write(b"Omega = 0.0 ;\n")
+        fd.write(b"Dim_1 = 256 ;\n")
+        fd.write(b"Dim_2 = 256 ;\n")
+        fd.write(b"DataType = FloatValue ;\n")
+        fd.write(b"ByteOrder = %s ;\n" % byte_order)
+        fd.write(b"Image = %d ;\n" % image_number)
+        fd.write(b"History-1 = something=something else;\n")
+        fd.write(b"}\n")
 
     @classmethod
     def write_data(cls, fd):
         data = numpy.ones((256, 256), numpy.float32) * 10
         data[0, 0] = 0
         data[1, 1] = 20
-        fd.write(data.tostring())
+        fd.write(data.tobytes())
 
     @classmethod
     def copy_base(cls, filename, size):
@@ -458,7 +470,7 @@ class TestBadFiles(unittest.TestCase):
     def test_wrong_magic(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
         f = io.open(filename, "wb")
-        f.write(six.b("\x10\x20\x30"))
+        f.write(b"\x10\x20\x30")
         f.close()
 
         self.assertRaises(IOError, self.open, filename)
@@ -623,6 +635,79 @@ class TestEdfIterator(unittest.TestCase):
             next(iterator)
 
 
+
+class TestEdfBadHeader(unittest.TestCase):
+    """Test reader behavior with corrupted header file"""
+
+    def setUp(self):
+        self.fgood = os.path.join(UtilsTest.tempdir, "TestEdfGoodHeaderPadding.edf")
+        self.fbad = os.path.join(UtilsTest.tempdir, "TestEdfBadHeaderPadding.edf")
+        self.fzero = os.path.join(UtilsTest.tempdir, "TestEdfZeroHeaderPadding.edf")
+        self.fnonascii = os.path.join(UtilsTest.tempdir, "TestEdfNonAsciiItem.edf")
+        self.data = numpy.zeros((10, 11), numpy.uint8)
+        self.hdr = {"mykey": "myvalue", "title": "ok"}
+
+        good = fabio.edfimage.edfimage(self.data, self.hdr)
+        good.write(self.fgood)
+        with fabio.open(self.fgood) as good:
+            self.good_header = good.header
+
+        with open(self.fgood, "rb") as fh:
+            hdr = bytearray(fh.read(512))
+            while hdr.find(b"}") < 0:
+                hdr += fh.read(512)
+            data = fh.read()
+        with open( self.fbad, "wb") as fb:
+            start = hdr.rfind(b";") + 1
+            end = hdr.find(b"}") - 1
+            hdr[start:end] = [ord('\n')] + [0xcd] * (end - start - 1)
+            fb.write(hdr)
+            fb.write(data)
+        with open( self.fzero, "wb") as fb:
+            # insert some 0x00 to be stripped
+            key = b"myvalue"
+            z = hdr.find(key)
+            hdr[z + len(key)] = 0
+            fb.write(hdr)
+            fb.write(data)
+        with open( self.fnonascii, "wb") as fb:
+            hdr[z:z + 1]= 0xc3, 0xa9  # e-acute in utf-8 ??
+            with open(self.fnonascii, "wb") as fb:
+                fb.write(hdr)
+                fb.write(data)
+
+    def tearDown(self):
+        os.remove(self.fgood)
+        os.remove(self.fbad)
+        os.remove(self.fzero)
+        os.remove(self.fnonascii)
+
+    def testReadBadPadding(self):
+        """
+        Some old data were found with headers padded with 0xcd (issue #373)
+        """
+        with fabio.open(self.fbad) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testReadGoodPadding(self):
+        with fabio.open(self.fgood) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testReadZeroPadding(self):
+        with fabio.open(self.fzero) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testNonAsciiHeader(self):
+        """Non-ascii characters are skipped."""
+        with fabio.open(self.fnonascii) as im:
+            self.assertTrue((im.data == 0).all())
+            expected = dict(self.good_header)
+            expected.pop("mykey")
+            self.assertEqual(im.header, expected)
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -639,6 +724,7 @@ def suite():
     testsuite.addTest(loadTests(TestBadGzFiles))
     testsuite.addTest(loadTests(TestEdfIterator))
     testsuite.addTest(loadTests(TestSphere2SaxsSamples))
+    testsuite.addTest(loadTests(TestEdfBadHeader))
     return testsuite
 
 

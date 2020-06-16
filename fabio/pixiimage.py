@@ -26,7 +26,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE
 
-
 """
 File format to read images from PiXIrad PCDs manufactured by Pixirad Imaging
 Counters SRL (http://www.pixirad.com/)
@@ -34,13 +33,11 @@ Counters SRL (http://www.pixirad.com/)
 Author: Jon Wright, ESRF.
 """
 
-from __future__ import with_statement, print_function, division
-
 __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "19/11/2018"
+__date__ = "03/04/2020"
 
 import numpy
 import os

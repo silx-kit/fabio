@@ -27,7 +27,6 @@ Test cases for the flat binary images
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 import unittest
 import os
 import logging
@@ -61,7 +60,7 @@ class TestFlatBinary(unittest.TestCase):
         for filename in self.filenames:
             try:
                 im = fabio.open(filename)
-                if im.data.tostring() != "\0x0" * 2048 * 2048 * 2:
+                if im.data.tobytes() != "\0x0" * 2048 * 2048 * 2:
                     nfail += 1
                 else:
                     logger.info("**** Passed: %s" % filename)

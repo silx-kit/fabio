@@ -68,8 +68,8 @@ been added to reduce the number of regressions when new features
 are added or old problems are repaired. The software is very
 modular and allows new classes to be added for handling other data
 formats easily. FabIO and its source-code are freely available to
-everyone on-line, licensed under the GNU General Public
-License version 3 (GPLv3). FabIO is also available directly from
+everyone on-line, licensed under the liberal MIT License. 
+FabIO is also available directly from
 popular Linux distributions like Debian and Ubuntu.
 
 Implementation

@@ -34,7 +34,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 """
 
-from __future__ import with_statement, print_function
 import numpy
 import re
 
@@ -43,7 +42,6 @@ import logging
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
-
 
 _DATA_TYPES = {
     "signed char": numpy.int8,
@@ -278,7 +276,7 @@ class DtrekImage(FabioImage):
         with open(fname, "wb") as outf:
             outf.write(out)
             if data is not None:
-                outf.write(data.tostring())
+                outf.write(data.tobytes())
 
     def _get_dtrek_byte_order(self, default_little_endian=None):
         """Returns the byte order value in d*TREK format."""

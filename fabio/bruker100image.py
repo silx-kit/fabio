@@ -28,7 +28,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """Authors: Henning O. Sorensen & Erik Knudsen
          Center for Fundamental Research: Metal Structures in Four Dimensions
          Risoe National Laboratory
@@ -42,12 +41,10 @@
 
 """
 
-# get ready for python3
-from __future__ import absolute_import, print_function, with_statement, division
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright",
                "Jérôme Kieffer", "Sigmund Neher"]
 __status__ = "production"
-__copyright__ = "2007-2009 Risoe National Laboratory; 2015-2016 ESRF, 2016 GWDG"
+__copyright__ = "2007-2009 Risoe National Laboratory; 2015-2020 ESRF, 2016 GWDG"
 __licence__ = "MIT"
 
 import numpy
@@ -226,7 +223,7 @@ class Bruker100Image(BrukerImage):
                             line = key.ljust(7) + ":"
                         line += value[72 * (i + 1):]
                 elif "__len__" in dir(value):
-                    f = "\%.%is" % 72 // len(value) - 1
+                    f = "%%.%is" % (72 // len(value) - 1)
                     line += " ".join([f % i for i in value])
                 else:
                     line += str(value)
@@ -328,14 +325,14 @@ class Bruker100Image(BrukerImage):
             data.byteswap(True)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
-            bruker.write(data.tostring())
+            bruker.write(data.tobytes())
             overflows_one_byte = self.overflows_one_byte()
             overflows_two_byte = self.overflows_two_byte()
             if int(self.header["NOVERFL"].split()[0]) > 0:
                 underflows = self.underflows()
-                bruker.write(underflows.tostring())
-            bruker.write(overflows_one_byte.tostring())
-            bruker.write(overflows_two_byte.tostring())
+                bruker.write(underflows.tobytes())
+            bruker.write(overflows_one_byte.tobytes())
+            bruker.write(overflows_two_byte.tobytes())
 
     def underflows(self):
             """

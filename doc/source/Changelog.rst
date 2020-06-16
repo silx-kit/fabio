@@ -1,6 +1,33 @@
 Changelog
 =========
 
+FabIO-0.10.0 (04/2020):
+.......................
+
+- `edfimage`:
+
+  - Improved robustness (PR #315)
+  - Read without all restrictions of the "Klora" convention (PR #318)
+  - Fixed example (PR #322)
+  - Improved performances: Do not create a temporary string (PR #323)
+  - Recognize a Global Header Section and using it as default (PR #328)
+  - Fixed cleaning header block reading (PR #332)
+  - Reading binary data from files and tests (PR #333)
+  - Make magic readable (PR #339)
+
+- `mar345image`: Provide all the default file extension for mar345 (PR #354)
+- `numpyimage`: Fixes (PR #314, #344)
+- `pixiimage`: Improved file series filename parsing (PR #317)
+- `tifimage`: Improved TIFF via Pillow (PR #321)
+- Added support of esperanto format (PR #347, #351)
+- Fixed minor issues (PR #338) and compatibility with `h5py` (PR #350)
+- Improved tests (PR #320, #341, #345) and `requirement.txt` (PR #331)
+- Updated debian packaging (PR #324, #326), added debian11/ubuntu20.04 support (PR #355)
+- Added changelog file (PR #357)
+- Remove packagin for debian 6, 7 and 8, add support for debian11
+- Drop support for Python2 and 3.4, validated version are 3.5-3.8 on mac, win & linux 
+
+
 FabIO-0.9.0 (03/2019):
 ......................
 

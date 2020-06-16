@@ -28,35 +28,31 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-
 """Compression and decompression algorithm for various formats
 
 Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
 """
-# get ready for python3
-from __future__ import absolute_import, print_function, with_statement, division
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "22/10/2018"
+__date__ = "06/04/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
-
 import sys
+from collections import OrderedDict
 import base64
 import hashlib
+import io
 import logging
 import subprocess
 import numpy
 
 logger = logging.getLogger(__name__)
 
-from .third_party import six
-
 try:
-    from .third_party import gzip
+    import gzip
 except ImportError:
     logger.error("Unable to import gzip module: disabling gzip compression")
     gzip = None
@@ -83,15 +79,11 @@ def is_incomplete_gz_block_exception(exception):
 
     :rtype: bool
     """
-    if six.PY2:
-        if isinstance(exception, IOError):
-            return "CRC check failed" in exception.args[0]
-    elif six.PY3:
-        version = sys.version_info[0:2]
-        if version == (3, 3):
-            import struct
-            return isinstance(exception, struct.error)
-        return isinstance(exception, EOFError)
+    version = sys.version_info[0:2]
+    if version == (3, 3):
+        import struct
+        return isinstance(exception, struct.error)
+    return isinstance(exception, EOFError)
 
     return False
 
@@ -115,9 +107,8 @@ def endianness():
 
 class ExternalCompressors(object):
     """Class to handle lazy discovery of external compression programs"""
-    COMMANDS = {".bz2": ["bzip2" "-dcf"],
-                ".gz": ["gzip", "-dcf"]
-                }
+    COMMANDS = OrderedDict(((".bz2", ("bzip2" "-dcf")),
+                            (".gz", ("gzip", "-dcf"))))
 
     def __init__(self):
         """Empty constructor"""
@@ -126,22 +117,19 @@ class ExternalCompressors(object):
     def __getitem__(self, key):
         """Implement the dict-like behavior"""
         if key not in self.compressors:
-            if key in self.COMMANDS:
-                commandline = self.COMMANDS[key]
+            commandline = self.COMMANDS.get(key)
+            if commandline:
                 testline = [commandline[0], "-h"]
                 try:
                     lines = subprocess.check_output(testline,
                                                     stderr=subprocess.STDOUT,
                                                     universal_newlines=True)
-                    if "usage" in lines.lower():
-                        self.compressors[key] = commandline
-                    else:
-                        self.compressors[key] = None
+                    if "usage" not in lines.lower():
+                        commandline = None
                 except (subprocess.CalledProcessError, WindowsError) as err:
                     logger.debug("No %s utility found: %s", commandline[0], err)
-                    self.compressors[key] = None
-            else:
-                self.compressors[key] = None
+                    commandline = None
+            self.compressors[key] = commandline
         return self.compressors[key]
 
 
@@ -155,11 +143,12 @@ def decGzip(stream):
     :return: uncompressed stream
 
     """
+
     def _python_gzip(stream):
         """Inefficient implementation based on loops in Python"""
         for i in range(1, 513):
             try:
-                fileobj = six.BytesIO(stream[:-i])
+                fileobj = io.BytesIO(stream[:-i])
                 uncompessed = gzip.GzipFile(fileobj=fileobj).read()
             except IOError:
                 logger.debug("trying with %s bytes less, doesn't work" % i)
@@ -168,7 +157,7 @@ def decGzip(stream):
 
     if gzip is None:
         raise ImportError("gzip module is not available")
-    fileobj = six.BytesIO(stream)
+    fileobj = io.BytesIO(stream)
     try:
         uncompessed = gzip.GzipFile(fileobj=fileobj).read()
     except IOError:
@@ -265,7 +254,7 @@ def decByteOffset_cython(stream, size=None, dtype="int64"):
     """
     logger.debug("CBF decompression using cython")
     try:
-        from .ext import byte_offset
+        from ..ext import byte_offset
     except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method: %s", error)
         return decByteOffset_numpy(stream, size, dtype=dtype)
@@ -303,30 +292,30 @@ def compByteOffset_numpy(data):
     binary_blob = b""
     for stop in exceptions:
         if stop - start > 0:
-            binary_blob += delta[start:stop].astype(numpy.int8).tostring()
+            binary_blob += delta[start:stop].astype(numpy.int8).tobytes()
         exc = delta[stop]
         absexc = abs(exc)
         if absexc > 2147483647:  # 2**31-1
             binary_blob += b"\x80\x00\x80\x00\x00\x00\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].byteswap().tobytes()
             else:
-                binary_blob += delta[stop:stop + 1].tostring()
+                binary_blob += delta[stop:stop + 1].tobytes()
         elif absexc > 32767:  # 2**15-1
             binary_blob += b"\x80\x00\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int32).byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int32).byteswap().tobytes()
             else:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int32).tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int32).tobytes()
         else:  # >127
             binary_blob += b"\x80"
             if byteswap:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int16).byteswap().tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int16).byteswap().tobytes()
             else:
-                binary_blob += delta[stop:stop + 1].astype(numpy.int16).tostring()
+                binary_blob += delta[stop:stop + 1].astype(numpy.int16).tobytes()
         start = stop + 1
     if start < delta.size:
-        binary_blob += delta[start:].astype(numpy.int8).tostring()
+        binary_blob += delta[start:].astype(numpy.int8).tobytes()
     return binary_blob
 
 
@@ -342,15 +331,15 @@ def compByteOffset_cython(data):
     """
     logger.debug("CBF compression using cython")
     try:
-        from .ext import byte_offset
+        from ..ext import byte_offset
     except ImportError as error:
         logger.error("Failed to import byte_offset cython module, falling back on numpy method: %s", error)
         return compByteOffset_numpy(data)
     else:
         if "int32" in str(data.dtype):
-            return byte_offset.comp_cbf32(data).tostring()
+            return byte_offset.comp_cbf32(data).tobytes()
         else:
-            return byte_offset.comp_cbf(data).tostring()
+            return byte_offset.comp_cbf(data).tobytes()
 
 
 compByteOffset = compByteOffset_cython
@@ -424,7 +413,7 @@ def compTY1(data):
     diff[we32] = 128
     diff += 127
     data_8 = diff.astype(numpy.uint8)
-    return data_8.tostring(), data_16.tostring(), data_32.tostring()
+    return data_8.tobytes(), data_16.tobytes(), data_32.tobytes()
 
 
 def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None):
@@ -441,14 +430,14 @@ def decPCK(stream, dim1=None, dim2=None, overflowPix=None, version=None, normal_
 
     """
     try:
-        from .ext.mar345_IO import uncompress_pck
+        from ..ext.mar345_IO import uncompress_pck
     except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to read compressed dataset: %s" % error)
     if "seek" in dir(stream):
         stream.seek(0)
         raw = stream.read()
     else:
-        raw = six.binary_type(stream)
+        raw = bytes(stream)
 
     return uncompress_pck(raw, dim1, dim2, overflowPix, version, normal_start, swap_needed)
 
@@ -462,7 +451,7 @@ def compPCK(data):
 
     """
     try:
-        from .ext.mar345_IO import compress_pck
+        from ..ext.mar345_IO import compress_pck
     except ImportError as error:
         raise RuntimeError("Unable to import mar345_IO to write compressed dataset: %s" % error)
     return compress_pck(data)

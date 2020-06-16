@@ -37,14 +37,12 @@ Authors: Henning O. Sorensen & Erik Knudsen
          and Jon Wright, Jerome Kieffer: ESRF
 
 """
-# get ready for python3
-from __future__ import with_statement, print_function, absolute_import, division
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "07/03/2019"
+__date__ = "03/04/2020"
 
 import os
 import logging
@@ -574,6 +572,7 @@ class FabioImage(_FabioArray):
         if self._classname is None:
             self._classname = str(self.__class__).replace("<class '", "").replace("'>", "").split(".")[-1]
         return self._classname
+
     classname = property(getclassname)
 
     def getframe(self, num):
@@ -587,6 +586,8 @@ class FabioImage(_FabioArray):
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
         from .openimage import openimage
+        if self.filename is None:
+            raise IOError()
         return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
@@ -595,6 +596,8 @@ class FabioImage(_FabioArray):
         :raise IOError: When there is no next file in the series.
         """
         from .openimage import openimage
+        if self.filename is None:
+            raise IOError()
         return openimage(
             fabioutils.next_filename(self.filename))
 
@@ -853,7 +856,7 @@ class FabioImage(_FabioArray):
             try:
                 current_image = current_image.next()
             except IOError:
-                raise StopIteration
+                break
 
 
 fabioimage = FabioImage

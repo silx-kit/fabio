@@ -27,7 +27,6 @@
 # builds on stuff from ImageD11.test.testpeaksearch
 28/11/2014
 """
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import logging
@@ -70,14 +69,18 @@ class TestRegistration(unittest.TestCase):
         self.assertIsNone(fabioformats.get_class_by_name("myformat0"))
 
     def test_annotation(self):
+
         @fabio.register
         class MyFormat1(fabio.fabioimage.FabioImage):
             pass
+
         self.assertIsNotNone(fabioformats.get_class_by_name("myformat1"))
 
     def test_function(self):
+
         class MyFormat2(fabio.fabioimage.FabioImage):
             pass
+
         fabio.register(MyFormat2)
         self.assertIsNotNone(fabioformats.get_class_by_name("myformat2"))
 

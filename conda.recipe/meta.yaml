@@ -7,15 +7,15 @@ source:
 
 requirements:
   build:
-    - python
-    - numpy
     - cython
-    - pillow
+    - numpy
+    - Pillow
+    - python
     - setuptools
   run:
-    - python
     - numpy
-    - pillow
+    - Pillow
+    - python
 
 test:
   imports:

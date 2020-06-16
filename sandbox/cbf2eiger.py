@@ -8,35 +8,24 @@
 """Converter a bunch of files from any format to an eiger-data
 """
 
-from __future__ import with_statement, print_function
-
-__author__ = u"Jérôme Kieffer"
+__author__ = "Jérôme Kieffer"
 __copyright__ = "2016 ESRF"
-__date__ = "28/07/2017"
+__date__ = "06/04/2020"
 __licence__ = "MIT"
 
 import logging
 logging.basicConfig()
 
-import sys
 import os
-import time
-import glob
 
 import numpy
 import fabio
 from fabio import nexus
-import h5py
 
-from fabio.third_party import six
-from fabio.third_party import argparse
+import argparse
 from threading import Thread, Event
 
-try:
-    from queue import Queue
-except:
-    from Queue import Queue
-
+from queue import Queue
 
 logger = logging.getLogger("to_eiger")
 
@@ -44,6 +33,7 @@ logger = logging.getLogger("to_eiger")
 class Reader(Thread):
     """Reader with input and output queue 
     """
+
     def __init__(self, queue_in, queue_out, quit_event):
         """Constructor of the class
         

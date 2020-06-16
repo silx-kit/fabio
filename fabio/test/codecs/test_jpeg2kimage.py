@@ -8,24 +8,27 @@
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 #
 """
 Test JPEG 2000 format
 """
-
-from __future__ import print_function, with_statement, division, absolute_import
 
 import unittest
 import numpy
@@ -43,8 +46,9 @@ from ..utilstest import UtilsTest
 
 
 def isPilUsable():
+    print("jpeg2kimage.PIL:", jpeg2kimage.PIL)
     if jpeg2kimage.PIL is None:
-        return False
+        return None
     try:
         if hasattr(jpeg2kimage.PIL.Image, "frombytes"):
             frombytes = jpeg2kimage.PIL.Image.frombytes
@@ -60,7 +64,7 @@ def isPilUsable():
 
 def isGlymurUsable():
     if jpeg2kimage.glymur is None:
-        return False
+        return None
     import glymur
     if glymur.version.openjpeg_version_tuple < [1, 5, 0]:
         return False
@@ -71,8 +75,8 @@ class TestJpeg2KImage(unittest.TestCase):
     """Test the class format"""
 
     def setUp(self):
-        if not isPilUsable() and not isGlymurUsable():
-            self.skipTest("PIL nor glymur are available")
+        if not (isPilUsable() or isGlymurUsable()):
+            self.skipTest("nor PIL neither glymur are available")
 
     def loadImage(self, filename):
         image_format = jpeg2kimage.Jpeg2KImage()
@@ -118,8 +122,8 @@ class TestJpeg2KImage_PIL(TestJpeg2KImage):
     """Test the class format using a specific decoder"""
 
     def setUp(self):
-        if not isPilUsable() and not isGlymurUsable():
-            self.skipTest("PIL is not available")
+        if not isPilUsable():
+            self.skipTest("PIL is not available or has no support for JPEG2000")
 
     @classmethod
     def setUpClass(cls):
@@ -139,7 +143,7 @@ class TestJpeg2KImage_glymur(TestJpeg2KImage):
 
     def setUp(self):
         if not isGlymurUsable():
-            self.skipTest("glymur is not available")
+            self.skipTest("glymur is not available or too old")
 
     @classmethod
     def setUpClass(cls):

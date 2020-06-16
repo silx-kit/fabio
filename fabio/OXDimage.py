@@ -42,12 +42,10 @@ Authors:
 
 """
 
-from __future__ import with_statement, print_function
-
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "04/03/2019"
+__date__ = "03/04/2020"
 
 import time
 import logging
@@ -268,7 +266,6 @@ class OxdImage(FabioImage):
                 logger.info("Compressed with the TY5 compression")
                 dtype = numpy.dtype(numpy.int8)
                 raw8 = infile.read(dim1 * dim2)
-                raw_data = numpy.frombuffer(raw8, dtype)
 
                 if self.header['OI'] > 0:
                     self.raw16 = infile.read(self.header['OI'] * 2)
@@ -449,8 +446,8 @@ class OxdImage(FabioImage):
             self.header["Compression"] = "TY1"
 
         datablock8, datablock16, datablock32 = compTY1(self.data)
-        self.header["OI"] = len(datablock16) / 2
-        self.header["OL"] = len(datablock32) / 4
+        self.header["OI"] = len(datablock16) // 2
+        self.header["OL"] = len(datablock32) // 4
         with self._open(fname, mode="wb") as outfile:
             outfile.write(self._writeheader())
             outfile.write(datablock8)
@@ -528,6 +525,7 @@ class Section(object):
     """
     Small helper class for writing binary headers
     """
+
     def __init__(self, size, dictHeader):
         """
         :param size: size of the header section in bytes
@@ -543,7 +541,7 @@ class Section(object):
 
     def getSize(self, dtype):
         if dtype not in self._dictSize:
-            self._dictSize[dtype] = len(numpy.zeros(1, dtype=dtype).tostring())
+            self._dictSize[dtype] = len(numpy.zeros(1, dtype=dtype).tobytes())
         return self._dictSize[dtype]
 
     def setData(self, key, offset, dtype, default=None):
@@ -561,7 +559,7 @@ class Section(object):
         if value is None:
             value = b"\x00" * self.getSize(dtype)
         elif numpy.little_endian:
-            value = numpy.array(value).astype(dtype).tostring()
+            value = numpy.array(value).astype(dtype).tobytes()
         else:
-            value = numpy.array(value).astype(dtype).byteswap().tostring()
+            value = numpy.array(value).astype(dtype).byteswap().tobytes()
         self.lstChr[offset:offset + self.getSize(dtype)] = value

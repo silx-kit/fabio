@@ -22,8 +22,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from __future__ import print_function, with_statement, division, absolute_import
-
 """
 Test frame concept of FabioImage
 
@@ -138,6 +136,7 @@ class TestVirtualEdf(_CommonTestFrames):
 
         class Meta(object):
             pass
+
         meta = Meta()
         meta.image = image
         meta.nframes = 3
@@ -172,6 +171,7 @@ class TestEdf(_CommonTestFrames):
 
         class Meta(object):
             pass
+
         meta = Meta()
         meta.image = image
         meta.nframes = 8
@@ -202,6 +202,7 @@ class TestTiff(_CommonTestFrames):
 
         class Meta(object):
             pass
+
         meta = Meta()
         meta.image = image
         meta.nframes = 8
@@ -254,6 +255,7 @@ class TestFileSeries(_CommonTestFrames):
 
         class Meta(object):
             pass
+
         meta = Meta()
         meta.image = image
         meta.nframes = 8 * 2

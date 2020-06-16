@@ -33,11 +33,9 @@ Translation into python/fabio: Jon Wright, ESRF.
 Writer: Jérôme Kieffer
 """
 
-from __future__ import with_statement, print_function
-
 __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
-__license__ = "GPLv3+"
+__license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "06/01/2015"
 
@@ -45,7 +43,6 @@ import numpy
 import struct
 
 from .fabioimage import FabioImage
-from .third_party import six
 
 
 class Fit2dMaskImage(FabioImage):
@@ -141,8 +138,8 @@ class Fit2dMaskImage(FabioImage):
             order = (1 << i)
             compact_array += large_array[:, i::8] * order
         with self._open(fname, mode="wb") as outfile:
-            outfile.write(six.binary_type(header))
-            outfile.write(compact_array.tostring())
+            outfile.write(bytes(header))
+            outfile.write(compact_array.tobytes())
 
     @staticmethod
     def check_data(data=None):

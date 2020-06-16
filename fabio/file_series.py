@@ -27,7 +27,6 @@
 # THE SOFTWARE.
 #
 
-
 """
 
 Authors:
@@ -42,8 +41,6 @@ Authors:
 * Jon Wright, ESRF
 
 """
-
-from __future__ import absolute_import, print_function, with_statement, division
 
 import logging
 import sys
@@ -173,6 +170,7 @@ class file_series(list):
        reverse
        sort
     """
+
     def __init__(self, list_of_strings):
         """
         Constructor:
@@ -356,6 +354,7 @@ class numbered_file_series(file_series):
     mydata0002.edf = "mydata" + 0002 + ".edf"
     mydata0003.edf = "mydata" + 0003 + ".edf"
     """
+
     def __init__(self, stem, first, last, extension,
                  digits=4, padding='Y', step=1):
         """
@@ -384,6 +383,7 @@ class filename_series(object):
         iteration.
     """
     """ Much like the others, but created from a string filename """
+
     def __init__(self, filename):
         """ create from a filename (String)"""
         if isinstance(filename, FilenameObject):

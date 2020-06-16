@@ -27,13 +27,11 @@
 """Test for FabIO reader for Fit2D binary images
 """
 
-from __future__ import with_statement, print_function, division, absolute_import
-
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
-__copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "07/03/2019"
+__copyright__ = "2016-2020 European Synchrotron Radiation Facility"
+__date__ = "03/04/2020"
 
 import unittest
 import numpy

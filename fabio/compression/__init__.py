@@ -1,7 +1,12 @@
 # coding: utf-8
-# /*##########################################################################
 #
-# Copyright (c) 2015-2016 European Synchrotron Radiation Facility
+#    Project: X-ray image reader
+#             https://github.com/silx-kit/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,34 +24,6 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-# ###########################################################################*/
-"""Wrapper module for the `six` library.
+# THE SOFTWARE
 
-Feed this module using a local silx copy of `six` if it exists.
-Else it expect to have an available `six` library installed in the Python path.
-
-It should be used like that:
-
-.. code-block::
-
-    from fabio.third_party import six
-
-"""
-
-from __future__ import absolute_import
-
-__authors__ = ["Valentin Valls"]
-__license__ = "MIT"
-__date__ = "28/07/2017"
-
-try:
-    # try to import our local version of six
-    from ._local.six import *  # noqa
-except ImportError:
-    # else try to import it from the python path
-    import six
-    if tuple(int(i) for i in six.__version__.split(".")[:2]) < (1, 8):
-        raise ImportError("Six version is too old")
-    from six import *  # noqa
+from .compression import *

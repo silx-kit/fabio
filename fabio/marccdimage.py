@@ -46,8 +46,6 @@ JPW : Use a parser in case of typos (sorry?)
 
 """
 
-from __future__ import with_statement, print_function, absolute_import
-
 # Base this on the tifimage (as marccd seems to be tiff with a
 # special header
 import logging

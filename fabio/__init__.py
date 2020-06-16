@@ -24,15 +24,12 @@
 
 """FabIO module"""
 
-from __future__ import absolute_import, print_function, division
-
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/11/2018"
+__date__ = "03/04/2020"
 __status__ = "stable"
-
 
 import sys
 import logging
@@ -52,7 +49,6 @@ except ImportError:
 from . import fabioformats as _fabioformats
 
 # provide a global fabio API
-register = _fabioformats.register
 factory = _fabioformats.factory
 
 # feed the library with all the available formats

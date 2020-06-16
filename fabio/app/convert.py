@@ -30,12 +30,11 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 """Portable image converter based on FabIO library.
 """
-from __future__ import with_statement, print_function
 
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "12/06/2018"
+__date__ = "06/04/2020"
 __status__ = "production"
 
 import logging
@@ -46,9 +45,7 @@ import os
 import glob
 
 import fabio
-from fabio.third_party import six
-from fabio.third_party import argparse
-
+import argparse
 
 logger = logging.getLogger("fabio-convert")
 
@@ -97,8 +94,7 @@ def is_user_want_to_overwrite_filename(filename):
     """
     while True:
         question = "Do you want to overwrite the file '%s' (y/n): " % filename
-        answer = six.moves.input(question)
-        answer = answer.strip().lower()
+        answer = input(question).strip().lower()
         if answer in ["y", "yes", "n", "no"]:
             break
     return answer in ["y", "yes"]
