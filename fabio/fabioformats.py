@@ -90,6 +90,7 @@ _default_codecs = [
     ("mpaimage", "MpaImage"),
     ("mrcimage", "MrcImage"),
     ("esperantoimage", "EsperantoImage"),
+    ("limaimage", "LimaImage"),
     # For compatibility (maybe not needed)
     ("adscimage", "AdscImage"),
 ]
