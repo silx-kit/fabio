@@ -268,12 +268,13 @@ class GeImage(FabioImage):
         infile = self._open(fname, "rb")
         self.sequencefilename = fname
         self._readheader(infile)
-
-        # obsolete for now # self.nframes = self.header['NumberOfFrames']
-        file_size = os.stat(fname).st_size
-        assert numpy.remainder(file_size, self._BytesPerFrame) == self._HeaderNBytes, \
-            "file is incorrect size"
-        self._nframes = file_size//self._BytesPerFrame
+        if self.header['NumberOfFrames'] == 0:
+            file_size = os.stat(fname).st_size
+            assert (numpy.remainder(file_size, self._BytesPerFrame)
+                    == self._HeaderNBytes), "GE file size is incorrect"
+            self._nframes = file_size // self._BytesPerFrame
+        else:
+            self._nframes = self.header['NumberOfFrames']
         self._readframe(infile, frame)
         infile.close()
         return self
