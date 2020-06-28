@@ -142,6 +142,9 @@ class Hdf5Image(fabioimage.FabioImage):
             raise RuntimeError(err)
         return self
 
+    def _get_frame(self, num):
+        return self.getframe(num)
+
     def getframe(self, num):
         """
         Returns a frame as a new FabioImage object
@@ -151,6 +154,8 @@ class Hdf5Image(fabioimage.FabioImage):
             raise IndexError("Requested frame number %i is out of range [0, %i[ " % (num, self.nframes))
         # Do a deep copy of the header to make a new one
         frame = Hdf5Frame(self, num)
+        frame._set_container(self, num)
+        frame._set_file_container(self, num)
         return frame
 
     def next(self):
