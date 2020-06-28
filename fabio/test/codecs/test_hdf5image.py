@@ -99,6 +99,22 @@ class TestHdf5(unittest.TestCase):
         self.assertEqual(e.nframes, 50, "nframes OK")
         self.assertEqual(e.bpp, 4, "nframes OK")
 
+    def test_next_frames(self):
+        """ check the legacy next API"""
+        h5 = openimage(self.fn3)
+        frame_nb = 1
+        frame_id = 0
+        frame = h5
+        while True:
+            try:
+                frame = frame.next()
+                frame_id = frame.file_index
+                frame_nb += 1
+            except IndexError:
+                break
+        self.assertEqual(frame_nb, 50)
+        self.assertEqual(frame_id, 49)
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
