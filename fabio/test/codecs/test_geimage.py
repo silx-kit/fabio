@@ -65,17 +65,18 @@ class TestGE(unittest.TestCase):
     def test_read(self):
         for info in self.TESTIMAGES:
             name = info[0]
-            dim1, dim2 = info[1]
-            mini, maxi, mean, stddev = info[2]
-            shape = dim2, dim1
-            obj = GEimage()
-            obj.read(os.path.join(UtilsTest.resources.data_home, name))
+            with self.subTest(name=name):
+                dim1, dim2 = info[1]
+                mini, maxi, mean, stddev = info[2]
+                shape = dim2, dim1
+                obj = GEimage()
+                obj.read(os.path.join(UtilsTest.resources.data_home, name))
 
-            self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin")
-            self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
-            self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean")
-            self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev")
-            self.assertEqual(shape, obj.shape)
+                self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin")
+                self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax")
+                self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean")
+                self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev")
+                self.assertEqual(shape, obj.shape)
 
 
 def suite():
