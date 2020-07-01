@@ -380,6 +380,14 @@ class FabioFrame(_FabioArray):
             return self._dtype
         return self.data.dtype
 
+    def next(self):
+        """Returns the next frame from it's file container.
+
+        :rtype: FabioFrame
+        """
+        container = self.file_container
+        return container.get_frame(self.file_index + 1)
+
 
 class FabioImage(_FabioArray):
     """A common object for images in fable
