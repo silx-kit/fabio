@@ -284,26 +284,14 @@ class GeImage(FabioImage):
         """
         Load only one image from the file.
 
-        Parameters
-        ----------
-        filepointer : TYPE
-            DESCRIPTION.
-        img_num : TYPE
-            DESCRIPTION.
-
-        Raises
-        ------
-        Exception
-            DESCRIPTION.
-
-        Returns
-        -------
-        None.
-
-        Notes
-        -----
         The first image in the sequence 0; raises an exception if you give an
         invalid image index, otherwise fills in self.data.
+
+        :param filepointer: Pointer to the input file stream
+        :param int img_num: Number of the frame (0 = 1st frame)
+        :raises: IndexError if the requested frame number is outside of the
+            available frames
+        :raises: IOError if there is problem to decode or read the frame
         """
         if(img_num >= self.nframes or img_num < 0):
             raise Exception("Bad image number")
