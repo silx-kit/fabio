@@ -38,15 +38,11 @@ __status__ = "production"
 __copyright__ = "2007-2020 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
 
-import os
 import io
 import numpy
 import struct
-import logging
 from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
-
-logger = logging.getLogger(__name__)
 
 GE_HEADER_INFO = [
     # Name, length in bytes, format for struct (None means string)
