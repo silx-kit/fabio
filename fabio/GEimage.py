@@ -25,20 +25,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-#
-#
-#
-# Reads the header from a GE a-Si Angio Detector
-# Using version 8001 of the header from file:
-#     c:\adept\core\DefaultImageInfoConfig.csv
-#
-#  Antonino Miceli
-#  Thu Jan  4 13:46:31 CST 2007
-#
+"""
+Reads the header from a GE a-Si Angio Detector
+using version 8001 of the header from file:
 
-# modifications by Jon Wright for style, pychecker and fabio
-#
-
+    c:\adept\core\DefaultImageInfoConfig.csv
+"""
 __authors__ = ["Antonino Miceli", "Jon Wright",
                "Jérôme Kieffer", "Joel Bernier"]
 __date__ = "03/04/2020"
