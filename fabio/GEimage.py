@@ -39,6 +39,7 @@ __copyright__ = "2007-2020 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
 
 import os
+import io
 import numpy
 import struct
 import logging
@@ -216,24 +217,29 @@ class GeImage(FabioImage):
 
     _need_a_seek_to_read = True
 
-    _HeaderNBytes = 8192
-    _UserHeaderSizeInBytes = 0
-    _NumberOfRowsInFrame = 2048
-    _NumberOfColsInFrame = 2048
-    _ImageDepthInBytes = 2
-    _ImageDepthInBits = 8 * _ImageDepthInBytes
-    _BytesPerFrame = _ImageDepthInBytes \
-        * _NumberOfRowsInFrame \
-        * _NumberOfRowsInFrame
+    BITDEPTH_TO_DATATYPES = {
+        8: numpy.uint8,
+        16: numpy.uint16,
+        32: numpy.uint32,
+    }
+
+    BLANKED_HEADER_METADATA = {
+        'StandardHeaderSizeInBytes': 8192,
+        'UserHeaderSizeInBytes': 0,
+        'NumberOfRowsInFrame': 2048,
+        'NumberOfColsInFrame': 2048,
+        'ImageDepthInBits': 16,
+    }
+
+    BLANK_IMAGE_FORMAT = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+    """At APS they blanked the header with 8192 bytes of zeros when
+    updating the GE firmware.  This happened in ~2018 to the best
+    of my knowledge, and *a lot* of data has been measured with
+    the GE detectors that are missing the magic bytes and header.
+    """
 
     def _readheader(self, infile):
         """Read a GE image header."""
-        # !!!: At APS they blanked the header with 8192 bytes of zeros when
-        #      updating the GE firmware.  This happened in ~2018 to the best
-        #      of my knowledge, and *a lot* of data has been measured with
-        #      the GE detectors that are missing the magic bytes and header.
-        #      This hacky fix works, and we might be stuck with it.
-        aps_img_format = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
         infile.seek(0)
         self.header = self.check_header()
@@ -242,14 +248,27 @@ class GeImage(FabioImage):
                 self.header[name] = infile.read(nbytes)
             else:
                 self.header[name] = struct.unpack(fmt, infile.read(nbytes))[0]
-        if self.header["ImageFormat"] == aps_img_format:
-            # FIXME: for now have to assume we have a bastardized GE file from
+        if self.header["ImageFormat"] == self.BLANK_IMAGE_FORMAT:
+            # Assume we have a bastardized GE file from
             # Argonne, where they blanked the header with all zeros
-            self.header['StandardHeaderSizeInBytes'] = self._HeaderNBytes
-            self.header['UserHeaderSizeInBytes'] = self._UserHeaderSizeInBytes
-            self.header['NumberOfRowsInFrame'] = self._NumberOfRowsInFrame
-            self.header['NumberOfColsInFrame'] = self._NumberOfColsInFrame
-            self.header['ImageDepthInBits'] = self._ImageDepthInBits
+            self.header.update(self.BLANKED_HEADER_METADATA)
+
+            # No better way for now to know the number of frames
+            if self.header['NumberOfFrames'] == 0:
+                cur = infile.tell()
+                infile.seek(0, io.SEEK_END)
+                file_size = infile.tell()
+                infile.seek(cur, io.SEEK_SET)
+
+                depth = self.header["ImageDepthInBits"] // 8
+                rows = self.header["NumberOfRowsInFrame"]
+                cols = self.header["NumberOfColsInFrame"]
+                header_size = self.header["StandardHeaderSizeInBytes"]
+                bytes_per_frames = rows * cols * depth
+                if not numpy.remainder(file_size, bytes_per_frames) == header_size:
+                    raise IOError("GE file size is incorrect")
+                nframes = file_size // bytes_per_frames
+                self.header['NumberOfFrames'] = nframes
 
     def read(self, fname, frame=None):
         """Read header into self.header and the data into self.data."""
@@ -260,13 +279,7 @@ class GeImage(FabioImage):
         infile = self._open(fname, "rb")
         self.sequencefilename = fname
         self._readheader(infile)
-        if self.header['NumberOfFrames'] == 0:
-            file_size = os.stat(fname).st_size
-            assert (numpy.remainder(file_size, self._BytesPerFrame)
-                    == self._HeaderNBytes), "GE file size is incorrect"
-            self._nframes = file_size // self._BytesPerFrame
-        else:
-            self._nframes = self.header['NumberOfFrames']
+        self._nframes = self.header['NumberOfFrames']
         self._readframe(infile, frame)
         infile.close()
         return self
@@ -295,29 +308,26 @@ class GeImage(FabioImage):
         """
         if not (0 <= img_num < self.nframes):
             raise IndexError("Bad image number")
-        imgstart = (self.header['StandardHeaderSizeInBytes'] +
-                    self.header['UserHeaderSizeInBytes'] +
-                    img_num * self.header['NumberOfRowsInFrame'] *
-                    self.header['NumberOfColsInFrame'] *
-                    self.header['ImageDepthInBits'] // 8)
-        # whence = 0 means seek from start of file
-        filepointer.seek(imgstart, 0)
 
-        bpp = self.header['ImageDepthInBits'] // 8  # hopefully 2
-        if bpp != 2:
-            logger.warning(
-                "Using uint16 for GE but seems to be wrong, bpp=%s" % bpp
-            )
+        cols = self.header['NumberOfColsInFrame']
+        rows = self.header['NumberOfRowsInFrame']
+        bitdepth = self.header['ImageDepthInBits']
+        standard_header_size = self.header['StandardHeaderSizeInBytes']
+        user_header_size = self.header['UserHeaderSizeInBytes']
 
-        imglength = (self.header['NumberOfRowsInFrame'] *
-                     self.header['NumberOfColsInFrame'] * bpp)
-        data = numpy.frombuffer(
-            filepointer.read(imglength), numpy.uint16
-        ).copy()
+        imglength = cols * rows * (bitdepth // 8)
+        imgstart = standard_header_size + user_header_size + img_num * imglength
+        filepointer.seek(imgstart, io.SEEK_SET)
+
+        datatype = self.BITDEPTH_TO_DATATYPES.get(bitdepth, None)
+        if datatype is None:
+            raise IOError("Data depth format %sbits is not supported" % bitdepth)
+
+        raw = filepointer.read(imglength)
+        data = numpy.frombuffer(raw, datatype).copy()
         if not numpy.little_endian:
             data.byteswap(True)
-        data.shape = (self.header['NumberOfRowsInFrame'],
-                      self.header['NumberOfColsInFrame'])
+        data.shape = rows, cols
         self.data = data
         self._shape = None
         self.currentframe = int(img_num)
