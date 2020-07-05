@@ -293,8 +293,8 @@ class GeImage(FabioImage):
             available frames
         :raises: IOError if there is problem to decode or read the frame
         """
-        if(img_num >= self.nframes or img_num < 0):
-            raise Exception("Bad image number")
+        if not (0 <= img_num < self.nframes):
+            raise IndexError("Bad image number")
         imgstart = (self.header['StandardHeaderSizeInBytes'] +
                     self.header['UserHeaderSizeInBytes'] +
                     img_num * self.header['NumberOfRowsInFrame'] *
@@ -325,8 +325,8 @@ class GeImage(FabioImage):
 
     def getframe(self, num):
         """Return a frame as a new FabioImage object."""
-        if num < 0 or num >= self.nframes:
-            raise Exception("Requested frame number is out of range")
+        if not (0 <= num < self.nframes):
+            raise IndexError("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         newheader = {}
         for k in self.header.keys():
