@@ -29,7 +29,7 @@
 Reads the header from a GE a-Si Angio Detector
 using version 8001 of the header from file:
 
-    c:\adept\core\DefaultImageInfoConfig.csv
+    c:\\adept\\core\\DefaultImageInfoConfig.csv
 """
 __authors__ = ["Antonino Miceli", "Jon Wright",
                "Jérôme Kieffer", "Joel Bernier"]
