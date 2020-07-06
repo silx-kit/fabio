@@ -37,18 +37,20 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 mods for fabio by JPW
 modification for HDF5 by Jérôme Kieffer
-
+mods for APS GE by JVB
 """
 
 import os.path
 import logging
-logger = logging.getLogger(__name__)
 from . import fabioutils
 from .fabioutils import FilenameObject, BytesIO
 from .fabioimage import FabioImage
 
 # Make sure to load all formats
 from . import fabioformats  # noqa
+
+logger = logging.getLogger(__name__)
+
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -74,7 +76,11 @@ MAGIC_NUMBERS = [
     (b"{", 'edf'),
     (b"\r{", 'edf'),
     (b"\n{", 'edf'),
+    # had to add a special case for GE here because they blanked out
+    # the default header for the GE's at APS with the firmware
+    # update as of 2018
     (b"ADEPT", 'GE'),
+    (b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 'GE'),
     (b"OD", 'OXD'),
     (b"IM", 'HiPiC'),
     (b'\x2d\x04', 'mar345'),
@@ -133,8 +139,8 @@ def do_magic(byts, filename):
 def openimage(filename, frame=None):
     """Open an image.
 
-    It returns a FabioImage-class instance which can be used as a context manager to close the file
-    at the termination.
+    It returns a FabioImage-class instance which can be used as a context
+    manager to close the file at the termination.
 
     .. code-block:: python
 
