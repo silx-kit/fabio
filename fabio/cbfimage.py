@@ -38,13 +38,16 @@ to conform to the specification of the IUCR
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "06/04/2020"
+__date__ = "14/09/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
 import os
 import logging
 import numpy
+from collections import OrderedDict
+from typing import NamedTuple
+
 from .fabioimage import FabioImage
 from .compression import compByteOffset, decByteOffset, md5sum
 from .ext._cif import split_tokens
@@ -845,3 +848,101 @@ class CIF(dict):
 
 
 cbfimage = CbfImage
+
+
+class PilatusKey(NamedTuple):        
+    keyword: str
+    key_index: int=0    
+    value_indices: list=[1]
+    types: list=[str]
+    repr: str="{}"
+
+
+class PilatusHeader(object):
+    KEYWORDS = OrderedDict()
+    KEYWORDS["Detector"] = PilatusKey("Detector", 0, slice(1, None), str, "Detector: {}")
+    KEYWORDS["sensor"] = PilatusKey("sensor", 1, [0, 3], [str, float],  "{} sensor, thickness {} m")
+    KEYWORDS["Pixel_size"] = PilatusKey("Pixel_size", 0,  [1, 4], [float, float], "Pixel_size {} m x {} m")
+    KEYWORDS["Exposure_time"] = PilatusKey("Exposure_time", 0, [1], [float], "Exposure_time {} s")
+    KEYWORDS["Exposure_period"] = PilatusKey("Exposure_period", 0, [1], [float], "Exposure_period {} s")
+    KEYWORDS["Tau"] = PilatusKey("Tau", 0, [1], [float], "Tau = {} s")
+    KEYWORDS["Count_cutoff"] = PilatusKey("Count_cutoff", 0, [1], [int], "Count_cutoff {} counts")
+    KEYWORDS["Threshold_setting"] = PilatusKey("Threshold_setting", 0, [1], [float], "Threshold_setting: {} eV")
+    KEYWORDS["Gain_setting"] = PilatusKey("Gain_setting", 0, [1, 2], [str, str], "Gain_setting: {} {} (vrf = -0.200)")
+    KEYWORDS["N_excluded_pixels"] = PilatusKey("N_excluded_pixels", 0, [1], [int], "N_excluded_pixels = {}")
+    KEYWORDS["Excluded_pixels"] = PilatusKey("Excluded_pixels", 0, [1], [str], "Excluded_pixels: {}")
+    KEYWORDS["Flat_field"] = PilatusKey("Flat_field", 0, [1], [str], "Flat_field: {}")
+    KEYWORDS["Trim_file"] = PilatusKey("Trim_file", 0, [1], [str], "Trim_file: {}")
+    KEYWORDS["Image_path"] = PilatusKey("Image_path", 0, [1], [str], "Image_path: {}")
+    KEYWORDS["Wavelength"] = PilatusKey("Wavelength", 0, [1], [float], "Wavelength {} A")
+    KEYWORDS["Energy_range"] = PilatusKey("Energy_range", 0, [1, 2], [float, float], "Energy_range {} {} eV")
+    KEYWORDS["Detector_distance"] = PilatusKey("Detector_distance", 0, [1], [float], "Detector_distance {} m")
+    KEYWORDS["Detector_Voffset"] = PilatusKey("Detector_Voffset", 0, [1], [float], "Detector_Voffset {} m")
+    KEYWORDS["Beam_xy"] = PilatusKey("Beam_xy", 0, [1, 2] , [float, float], "Beam_xy ({}, {}) pixels")
+    KEYWORDS["Flux"] = PilatusKey("Flux", 0, [1], [float], "Flux {}")
+    KEYWORDS["Filter_transmission"] = PilatusKey("Filter_transmission", 0, [1], [float], "Filter_transmission {}")
+    KEYWORDS["Start_angle"] = PilatusKey("Start_angle", 0, [1], [float], "Start_angle {} deg.")
+    KEYWORDS["Angle_increment"] = PilatusKey("Angle_increment", 0, [1], [float], "Angle_increment {} deg.")
+    KEYWORDS["Detector_2theta"] = PilatusKey("Detector_2theta", 0, [1], [float], "Detector_2theta {} deg.")
+    KEYWORDS["Polarization"] = PilatusKey("Polarization", 0, [1], [float], "Polarization {}")
+    KEYWORDS["Alpha"] = PilatusKey("Alpha", 0, [1], [float], "Alpha {} deg.")
+    KEYWORDS["Kappa"] = PilatusKey("Kappa", 0, [1], [float], "Kappa {} deg.")
+    KEYWORDS["Phi"] = PilatusKey("Phi", 0, [1], [float], "Phi {} deg.")
+    KEYWORDS["Phi_increment"] = PilatusKey("Phi_increment", 0, [1], [float], "Phi_increment {} deg.")
+    KEYWORDS["Chi"] = PilatusKey("Chi", 0, [1], [float], "Chi {} deg.")
+    KEYWORDS["Chi_increment"] = PilatusKey("Chi_increment", 0, [1], [float], "Chi_increment {} deg.")
+    KEYWORDS["Omega"] = PilatusKey("Omega", 0, [1], [float], "Omega {} deg.")
+    KEYWORDS["Omega_increment"] = PilatusKey("Omega_increment", 0, [1], [float], "Omega_increment {} deg.")
+    KEYWORDS["Oscillation_axis"] = PilatusKey("Oscillation_axis", 0, [1], [str], "Oscillation_axis {}")
+    KEYWORDS["N_oscillations"] = PilatusKey(" ('N_oscillations", 0, [1], [int], "N_oscillations {}")
+    KEYWORDS["Start_position"] = PilatusKey("Start_position", 0, [1], [float], "Start_position {}")
+    KEYWORDS["Position_increment"] = PilatusKey("Position_increment", 0, [1], [float], "Position_increment")
+    KEYWORDS["Shutter_time"] = PilatusKey("Shutter_time", 0, [1], [float],"Shutter_time {} s")
+    SPACE_LIKE = "()#:=,"
+    
+    @classmethod
+    def clean_string(cls, input_string):
+        tmp = str(input_string)
+        for k in cls.SPACE_LIKE:
+            tmp = tmp.replace(k, " ")
+        return tmp
+    
+    def __init__(self, content, convention="PILATUS_1.2"):
+        assert convention=="PILATUS_1.2"
+        self._dict = self._parse(content)
+
+    def __repr__(self):
+        lines = []
+        for key, descr in self.KEYWORDS.items():
+            value = self._dict.get(key)
+            if value is None: 
+                continue
+            if isinstance(value, (list, tuple)):
+                line= descr.repr.format(*value)
+            else:
+                line = descr.repr.format(value)
+            lines.append(line)
+        return "\n".join(lines)
+    
+    def _parse(self, content):
+        lines = self.clean_string(content).split("\n")
+        dico = OrderedDict()
+        for line in lines:
+            words = line.split()
+            #print(words)
+            if not words:
+                continue
+            for k, v in self.KEYWORDS.items():
+                if words[v.key_index] == k:
+                    #print(v)
+                    if isinstance(v.types, (list, tuple)):
+                        if len(v.value_indices) == 1:
+                            dico[k] = v.types[0]((words[v.value_indices[0]]))
+                        else:
+                            dico[k] = tuple( i(words[j]) for i,j in zip(v.types, v.value_indices) )
+                    else:
+                        if isinstance(v.value_indices, slice):
+                            dico[k] = " ".join([v.types(i) for i in words[v.value_indices]])
+                        else:
+                            dico[k] = v.types(words[v.value_indices])
+        return dico
