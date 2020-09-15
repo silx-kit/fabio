@@ -38,7 +38,7 @@ to conform to the specification of the IUCR
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "14/09/2020"
+__date__ = "15/09/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -95,6 +95,7 @@ class CbfImage(FabioImage):
         """
         FabioImage.__init__(self, data, header)
         self.cif = CIF()
+        self.pilatus_headers = None
         self.cbs = None
         self.start_binary = None
         if fname is not None:  # load the file)
@@ -158,7 +159,11 @@ class CbfImage(FabioImage):
                 if isinstance(value, str):
                     value = value.strip(" \"\n\r\t")
                 self.header[key] = value
-
+        if self.header.get("_array_data.header_convention") == "PILATUS_1.2":
+            print(self.header.get("_array_data.header_contents", ""))
+            self.pilatus_headers = PilatusHeader(self.header.get("_array_data.header_contents", "")) 
+            print(self.pilatus_headers)
+        
     def _read_binary_section_header(self, inStream):
         """
         Read the binary section header
@@ -307,6 +312,7 @@ class CbfImage(FabioImage):
         else:
             nonCifHeaders = [i.strip()[2:] for i in self.header["_array_data.header_contents"].split("\n") if i.find("# ") >= 0]
 
+        
         for key in self.header:
             if key.startswith("_"):
                 if key not in self.cif or self.cif[key] != self.header[key]:
@@ -321,6 +327,11 @@ class CbfImage(FabioImage):
                 pass
             elif key in self.header:
                 nonCifHeaders.append("%s %s" % (key, self.header[key]))
+        if self.pilatus_headers is not None:
+            #regenerate  the Pilatus header and set the convention
+            self.cif["_array_data.header_content"] = str(self.pilatus_headers)
+            self.cif["_array_data.header_convention"] = "PILATUS_1.2"
+
         if len(nonCifHeaders) > 0:
             self.cif["_array_data.header_contents"] = "\r\n".join(["# %s" % i for i in nonCifHeaders])
 
@@ -921,7 +932,7 @@ class PilatusHeader(object):
                 line= descr.repr.format(*value)
             else:
                 line = descr.repr.format(value)
-            lines.append(line)
+            lines.append("# " + line)
         return "\n".join(lines)
     
     def _parse(self, content):
@@ -946,3 +957,12 @@ class PilatusHeader(object):
                         else:
                             dico[k] = v.types(words[v.value_indices])
         return dico
+    
+    def __setitem__(self, key, value):
+        if key not in self.KEYWORDS:
+            logger.warning("Unknown key: %s", key)
+        self._dict[key] = value
+        
+    def __getitem__(self, key):
+        return self._dict[key]
+
