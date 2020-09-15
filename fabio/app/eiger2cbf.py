@@ -126,7 +126,7 @@ def convert_one(input_filename, options):
                     if data_grp:
                         nxdetector = data_grp.parent
                         try:
-                            detector = "%s, %s"%(nxdetector["detector_information/model"][()],
+                            detector = "%s, S/N %s"%(nxdetector["detector_information/model"][()],
                                                  nxdetector["detector_information/name"][()])                        
                             pilatus_headers["Detector"] = detector
                         except Exception as e:
@@ -249,6 +249,20 @@ def main():
                        help="Detector distance in meters")
     group.add_argument("-b", "--beam", nargs=2, type=float, default=None,
                        help="Direct beam in pixels x, y")
+
+    group = parser.add_argument_group("Goniometer setup")
+    group.add_argument("--axis", type=str, default=None,
+                       help="Goniometer angle used for scanning: 'omega', 'phi' or 'chi'")
+    group.add_argument("--alpha", type=float, default=None,
+                       help="Goniometer angle alpha value")
+    group.add_argument("--kappa", type=float, default=None,
+                       help="Goniometer angle kappa value")
+    group.add_argument("--chi", type=str, default=None,
+                       help="Goniometer angle chi value or formula f(index)")
+    group.add_argument("--phi", type=float, default=None,
+                       help="Goniometer angle phi value or formula f(index)")
+    group.add_argument("--omega", type=float, default=None,
+                       help="Goniometer angle omega value or formula f(index)")
 
     try:
         args = parser.parse_args()
