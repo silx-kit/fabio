@@ -36,12 +36,12 @@ to CBF and mimic the header from Dectris Pilatus.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "15/09/2020"
+__date__ = "18/09/2020"
 __status__ = "production"
 
 import logging
 logging.basicConfig()
-
+logger = logging.getLogger("eiger2cbf")
 import sys
 import os
 import glob
@@ -53,6 +53,11 @@ try:
     import hdf5plugin
 except ImportError:
     pass
+
+try:
+    import numexpr
+except:
+    logger.error("Numexpr is needed to interpret formula ...")
 
 logger = logging.getLogger("eiger2cbf")
 EXIT_SUCCESS = 0
@@ -150,16 +155,57 @@ def convert_one(input_filename, options):
         pilatus_headers["Detector_distance"] = options.distance
     if options.beam:
         pilatus_headers["Beam_xy"] = options.beam
-
+    if options.alpha:
+        pilatus_headers["Alpha"] = options.alpha 
+    if options.kappa:
+        pilatus_headers["Kappa"] = options.kappa
+    formula = None
+    destination = None
+    if options.chi is not None:
+        try:
+            value = float(options.chi)
+        except ValueError:
+            #Handle the string
+            formula = numexpr.NumExpr(options.chi)
+            destination = "Chi"
+            pilatus_headers["Oscillation_axis"] = "CHI"
+        else:
+            pilatus_headers["Chi"] = value
+    if options.phi is not None:
+        try:
+            value = float(options.phi)
+        except ValueError:
+            #Handle the string
+            formula = numexpr.NumExpr(options.phi)
+            destination = "Phi"
+            pilatus_headers["Oscillation_axis"] = "PHI"
+        else:
+            pilatus_headers["Phi"] = value
+    if options.omega is not None: 
+        try:
+            value = float(options.omega)
+        except ValueError:
+            #Handle the string
+            formula = numexpr.NumExpr(options.omega)
+            destination = "Omega"
+            pilatus_headers["Oscillation_axis"] = "OMEGA"
+        else:
+            pilatus_headers["OMEGA"] = value
         
     elif isinstance(source, fabio.eigerimage.EigerImage):
-        raise NotImplementedError("Please implement Eiger detector data format parsing")
+        raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
     
     for i, frame in enumerate(source):
         data = frame.data.astype("int32")
         mask = numpy.where(data == numpy.iinfo(frame.data.dtype).max)
         data[mask] = options.dummy
         converted = fabio.cbfimage.CbfImage(data=data)
+        
+        if formula and destination:
+            position = formula(i)
+            delta = abs(formula(i+1) - position)
+            pilatus_headers["Start_angle"] = pilatus_headers[destination] = position
+            pilatus_headers["Angle_increment"] = pilatus_headers[destination+"_increment"] = delta
         converted.pilatus_headers = pilatus_headers
         
         output_filename = options.output.format(index=i+options.offset)
@@ -251,18 +297,18 @@ def main():
                        help="Direct beam in pixels x, y")
 
     group = parser.add_argument_group("Goniometer setup")
-    group.add_argument("--axis", type=str, default=None,
-                       help="Goniometer angle used for scanning: 'omega', 'phi' or 'chi'")
+#     group.add_argument("--axis", type=str, default=None,
+#                        help="Goniometer angle used for scanning: 'omega', 'phi' or 'chi'")
     group.add_argument("--alpha", type=float, default=None,
-                       help="Goniometer angle alpha value")
+                       help="Goniometer angle alpha value in deg.")
     group.add_argument("--kappa", type=float, default=None,
-                       help="Goniometer angle kappa value")
+                       help="Goniometer angle kappa value in deg.")
     group.add_argument("--chi", type=str, default=None,
-                       help="Goniometer angle chi value or formula f(index)")
-    group.add_argument("--phi", type=float, default=None,
-                       help="Goniometer angle phi value or formula f(index)")
-    group.add_argument("--omega", type=float, default=None,
-                       help="Goniometer angle omega value or formula f(index)")
+                       help="Goniometer angle chi value in deg. or formula f(index)")
+    group.add_argument("--phi", type=str, default=None,
+                       help="Goniometer angle phi value in deg. or formula f(index)")
+    group.add_argument("--omega", type=str, default=None,
+                       help="Goniometer angle omega value in deg. or formula f(index)")
 
     try:
         args = parser.parse_args()
