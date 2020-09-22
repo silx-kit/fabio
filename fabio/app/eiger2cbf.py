@@ -89,14 +89,15 @@ def expand_args(args):
             new.append(afile)
     return new
 
-def convert_one(input_filename, options):
+def convert_one(input_filename, options, start_at=0):
     """
     Convert a single file using options
 
     :param str input_filename: The input filename
     :param object options: List of options provided from the command line
-    :rtype: bool
-    :returns: True is the conversion succeeded
+    :param start_at: index to start at for given file
+    :rtype: int
+    :returns: the number of frames processed
     """
     input_filename = os.path.abspath(input_filename)
     input_exists = os.path.exists(input_filename)
@@ -106,7 +107,7 @@ def convert_one(input_filename, options):
 
     if not input_exists:
         logger.error("Input file '%s' do not exists. Conversion skipped.", input_filename)
-        return False
+        return -1
 
     try:
         logger.debug("Load '%s'", input_filename)
@@ -116,9 +117,9 @@ def convert_one(input_filename, options):
     except Exception as e:
         logger.error("Loading input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
         logger.debug("Backtrace", exc_info=True)
-        return False
+        return -1
     
-    pilatus_headers = fabio.cbfimage.PilatusHeader("")
+    pilatus_headers = fabio.cbfimage.PilatusHeader("Silicon sensor, thickness 0.001 m")
     if isinstance(source, fabio.limaimage.LimaImage):
         #Populate the Pilatus header from the Lima
         entry_name = source.h5.attrs.get("default")
@@ -132,7 +133,7 @@ def convert_one(input_filename, options):
                         nxdetector = data_grp.parent
                         try:
                             detector = "%s, S/N %s"%(nxdetector["detector_information/model"][()],
-                                                 nxdetector["detector_information/name"][()])                        
+                                                 nxdetector["detector_information/name"][()])
                             pilatus_headers["Detector"] = detector
                         except Exception as e:
                             logger.warning("Error in searching for detector definition (%s): %s", type(e), e)
@@ -156,7 +157,7 @@ def convert_one(input_filename, options):
     if options.beam:
         pilatus_headers["Beam_xy"] = options.beam
     if options.alpha:
-        pilatus_headers["Alpha"] = options.alpha 
+        pilatus_headers["Alpha"] = options.alpha
     if options.kappa:
         pilatus_headers["Kappa"] = options.kappa
     formula = None
@@ -171,6 +172,8 @@ def convert_one(input_filename, options):
             pilatus_headers["Oscillation_axis"] = "CHI"
         else:
             pilatus_headers["Chi"] = value
+            pilatus_headers["Chi_increment"] = 0.0
+
     if options.phi is not None:
         try:
             value = float(options.phi)
@@ -181,6 +184,7 @@ def convert_one(input_filename, options):
             pilatus_headers["Oscillation_axis"] = "PHI"
         else:
             pilatus_headers["Phi"] = value
+            pilatus_headers["Phi_increment"] = 0.0
     if options.omega is not None: 
         try:
             value = float(options.omega)
@@ -190,25 +194,30 @@ def convert_one(input_filename, options):
             destination = "Omega"
             pilatus_headers["Oscillation_axis"] = "OMEGA"
         else:
-            pilatus_headers["OMEGA"] = value
+            pilatus_headers["Omega"] = value
+            pilatus_headers["Omega_increment"] = 0.0
         
     elif isinstance(source, fabio.eigerimage.EigerImage):
         raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
-    
+
     for i, frame in enumerate(source):
-        data = frame.data.astype("int32")
-        mask = numpy.where(data == numpy.iinfo(frame.data.dtype).max)
+        idx = i + start_at
+        data = numpy.empty((2527,2463), dtype=numpy.int32)
+        data.fill(options.dummy)
+        data[:frame.data.shape[1],:frame.data.shape[0]] = frame.data.astype(numpy.int32).T
+        #data = frame.data.astype(numpy.int32).T
+        mask = numpy.where(frame.data.T == numpy.iinfo(frame.data.dtype).max)
         data[mask] = options.dummy
         converted = fabio.cbfimage.CbfImage(data=data)
-        
+
         if formula and destination:
-            position = formula(i)
-            delta = abs(formula(i+1) - position)
+            position = formula(idx)
+            delta = (formula(idx+1) - position)
             pilatus_headers["Start_angle"] = pilatus_headers[destination] = position
             pilatus_headers["Angle_increment"] = pilatus_headers[destination+"_increment"] = delta
         converted.pilatus_headers = pilatus_headers
-        
-        output_filename = options.output.format(index=i+options.offset)
+
+        output_filename = options.output.format(index=((idx+options.offset)))
         os.makedirs(os.path.dirname(output_filename), exist_ok=True)
         try:
             logger.debug("Write '%s'", output_filename)
@@ -219,10 +228,10 @@ def convert_one(input_filename, options):
         except Exception as e:
             logger.error("Saving output file '%s' failed cause: \"%s: %s\". Conversion skipped.", output_filename, type(e), e)
             logger.debug("Backtrace", exc_info=True)
-            return False
-    options.offset +=  source.nframes
+            return -1
+    #ptions.offset +=  source.nframes
     # a success
-    return True
+    return source.nframes
 
 
 def convert_all(options):
@@ -233,8 +242,11 @@ def convert_all(options):
     :returns: True is the conversion succeeded
     """
     succeeded = True
+    start_at = 0
     for filename in options.images:
-        succeeded = succeeded and convert_one(filename, options)
+        finish_at =  convert_one(filename, options, start_at)
+        succeeded = succeeded and (finish_at>0)
+        start_at += finish_at
 
     return succeeded
 
