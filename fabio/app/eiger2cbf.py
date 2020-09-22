@@ -36,7 +36,7 @@ to CBF and mimic the header from Dectris Pilatus.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "18/09/2020"
+__date__ = "22/09/2020"
 __status__ = "production"
 
 import logging
@@ -152,6 +152,8 @@ def convert_one(input_filename, options, start_at=0):
     #Parse option for Pilatus headers
     if options.energy:
         pilatus_headers["Wavelength"] = CONST_hc/options.energy
+    elif options.wavelength:
+        pilatus_headers["Wavelength"] = options.wavelength
     if options.distance:
         pilatus_headers["Detector_distance"] = options.distance
     if options.beam:
@@ -303,6 +305,8 @@ def main():
     group = parser.add_argument_group("Experimental setup options")
     group.add_argument("-e", "--energy", type=float, default=None,
                        help="Energy of the incident beam in keV")
+    group.add_argument("-w", "--wavelength", type=float, default=None,
+                       help="Wavelength of the incident beam in Å")
     group.add_argument("-d", "--distance", type=float, default=None,
                        help="Detector distance in meters")
     group.add_argument("-b", "--beam", nargs=2, type=float, default=None,
