@@ -366,7 +366,7 @@ def convert_one(input_filename, options, start_at=0):
             input_data = numpy.rot90(input_data, k=options.rotation // 90)
         if options.transpose:
             input_data = input_data.T
-        if options.flip_up:
+        if options.flip_ud:
             input_data = numpy.flipud(input_data)
         if options.flip_lr:
             input_data = numpy.fliplr(input_data)
