@@ -406,11 +406,11 @@ def convert_all(options):
     :rtype: bool
     :returns: True is the conversion succeeded
     """
-    pb = ProgressBar("Conversion of HDF5 files into CBFs", len(options.images), 50)
+    pb = ProgressBar("HDF5 --> CBFs", len(options.images), 30)
     succeeded = True
     start_at = 0
     for i, filename in enumerate(options.images):
-        pb.update(i, "Processing %s" % filename)
+        pb.update(i + 0.5, os.path.basename(filename))
         finish_at = convert_one(filename, options, start_at)
         succeeded = succeeded and (finish_at > 0)
     pb.clear()
