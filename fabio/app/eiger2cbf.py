@@ -190,11 +190,11 @@ def select_detecor(shape):
     This function takes the input shape and return the smallest Dectris shape which is larger ... 
     """
     assert len(shape) >= 2
-    valid_detectors = {(514, 1030): 'eiger_500k',
-                         (1065, 1030): 'eiger_1m',
-                         (2167, 2070): 'eiger_4m',
-                         (3269, 3110): 'eiger_9m',
-                         (4371, 4150): 'eiger_16m',
+    valid_detectors = {  # (514, 1030): 'eiger_500k',
+                         # (1065, 1030): 'eiger_1m',
+                         # (2167, 2070): 'eiger_4m',
+                         # (3269, 3110): 'eiger_9m',
+                         # (4371, 4150): 'eiger_16m',
                          # (512, 1028): 'eiger2cdte500k',
                          # (1062, 1028): 'eiger2cdte1m',
                          # (2162, 2068): 'eiger2cdte4m',
