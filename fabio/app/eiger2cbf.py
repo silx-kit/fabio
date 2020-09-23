@@ -28,7 +28,7 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
-import None
+
 """Portable image converter based on FabIO library
 to export Eiger frames (including te one from LIMA)
 to CBF and mimic the header from Dectris Pilatus.
@@ -43,6 +43,7 @@ __status__ = "production"
 import logging
 logging.basicConfig()
 logger = logging.getLogger("eiger2cbf")
+import codecs
 import sys
 import os
 import glob
@@ -74,6 +75,114 @@ else:
     CONST_hc = constants.c * constants.h / constants.e * 1e7
 
 
+class ProgressBar:
+    """
+    Progress bar in shell mode
+    """
+
+    def __init__(self, title, max_value, bar_width):
+        """
+        Create a progress bar using a title, a maximum value and a graphical size.
+
+        The display is done with stdout using carriage return to to hide the
+        previous progress. It is not possible to use stdout for something else
+        whill a progress bar is in use.
+
+        The result looks like:
+
+        .. code-block:: none
+
+            Title [■■■■■■      ]  50%  Message
+
+        :param str title: Title displayed before the progress bar
+        :param float max_value: The maximum value of the progress bar
+        :param int bar_width: Size of the progressbar in the screen
+        """
+        self.title = title
+        self.max_value = max_value
+        self.bar_width = bar_width
+        self.last_size = 0
+        self._message = ""
+        self._value = 0.0
+
+        encoding = None
+        if hasattr(sys.stdout, "encoding"):
+            # sys.stdout.encoding can't be used in unittest context with some
+            # configurations of TestRunner. It does not exists in Python2
+            # StringIO and is None in Python3 StringIO.
+            encoding = sys.stdout.encoding
+        if encoding is None:
+            # We uses the safer aproch: a valid ASCII character.
+            self.progress_char = '#'
+        else:
+            try:
+                import datetime
+                if str(datetime.datetime.now())[5:10] == "02-14":
+                    self.progress_char = u'\u2665'
+                else:
+                    self.progress_char = u'\u25A0'
+                _byte = codecs.encode(self.progress_char, encoding)
+            except (ValueError, TypeError, LookupError):
+                # In case the char is not supported by the encoding,
+                # or if the encoding does not exists
+                self.progress_char = '#'
+
+    def clear(self):
+        """
+        Remove the progress bar from the display and move the cursor
+        at the beginning of the line using carriage return.
+        """
+        sys.stdout.write('\r' + " " * self.last_size + "\r")
+        sys.stdout.flush()
+
+    def display(self):
+        """
+        Display the progress bar to stdout
+        """
+        self.update(self._value, self._message)
+
+    def update(self, value, message="", max_value=None):
+        """
+        Update the progrss bar with the progress bar's current value.
+
+        Set the progress bar's current value, compute the percentage
+        of progress and update the screen with. Carriage return is used
+        first and then the content of the progress bar. The cursor is
+        at the begining of the line.
+
+        :param float value: progress bar's current value
+        :param str message: message displayed after the progress bar
+        :param float max_value: If not none, update the maximum value of the
+            progress bar
+        """
+        if max_value is not None:
+            self.max_value = max_value
+        self._message = message
+        self._value = value
+
+        if self.max_value == 0:
+            coef = 1.0
+        else:
+            coef = (1.0 * value) / self.max_value
+        percent = round(coef * 100)
+        bar_position = int(coef * self.bar_width)
+        if bar_position > self.bar_width:
+            bar_position = self.bar_width
+
+        # line to display
+        line = '\r%15s [%s%s] % 3d%%  %s' % (self.title, self.progress_char * bar_position, ' ' * (self.bar_width - bar_position), percent, message)
+
+        # trailing to mask the previous message
+        line_size = len(line)
+        clean_size = self.last_size - line_size
+        if clean_size < 0:
+            clean_size = 0
+        self.last_size = line_size
+
+        sys.stdout.write(line + " " * clean_size + "\r")
+        sys.stdout.flush()
+
+
 def select_detecor(shape):
     """CrysalisPro only accepts some detector shapes as CBF inputs.
     Those shaped correspond to the one of the dectris detector Pilatus and Eiger (first generation only?)
@@ -103,12 +212,13 @@ def select_detecor(shape):
                          }
     best = None
     for k in valid_detectors:
-        if k[0]>=shape[-2] and k[1]>=shape[-1]:
+        if k[0] >= shape[-2] and k[1] >= shape[-1]:
             if best is None:
                 best = k
-            elif k[0]<best[0] or k[1]<best[1]:
-                best = k 
+            elif k[0] < best[0] or k[1] < best[1]:
+                best = k
     return best
+
 
 def expand_args(args):
     """
@@ -137,10 +247,10 @@ def convert_one(input_filename, options, start_at=0):
     :rtype: int
     :returns: the number of frames processed
     """
-    flip =bool((options.rotation // 90) % 2)
+    flip = bool((options.rotation // 90) % 2)
     if options.transpose:
         flip = not flip
-    
+
     input_filename = os.path.abspath(input_filename)
     input_exists = os.path.exists(input_filename)
 
@@ -245,7 +355,7 @@ def convert_one(input_filename, options, start_at=0):
     elif isinstance(source, fabio.eigerimage.EigerImage):
         raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
     else:
-        raise NotImplementedError("Unsupported format: %s"%source.__class__.__name__)
+        raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
 
     for i, frame in enumerate(source):
         idx = i + start_at
@@ -253,14 +363,14 @@ def convert_one(input_filename, options, start_at=0):
         data.fill(options.dummy)
         input_data = frame.data.astype(numpy.int32)
         if options.rotation:
-            input_data = numpy.rot90(input_data, k=options.rotation//90)
+            input_data = numpy.rot90(input_data, k=options.rotation // 90)
         if options.transpose:
             input_data = input_data.T
         if options.flipup:
             input_data = numpy.flipud(input_data)
         if options.fliplr:
             input_data = numpy.fliplr(input_data)
-            
+
         data[:input_data.shape[0], :input_data.shape[1]] = input_data
 
         mask = numpy.where(input_data == numpy.iinfo(frame.data.dtype).max)
@@ -296,13 +406,14 @@ def convert_all(options):
     :rtype: bool
     :returns: True is the conversion succeeded
     """
+    pb = ProgressBar("Conversion of HDF5 files into CBFs", len(options.images), 50)
     succeeded = True
     start_at = 0
-    for filename in options.images:
+    for i, filename in enumerate(options.images):
+        pb.update(i, "Processing %s" % filename)
         finish_at = convert_one(filename, options, start_at)
         succeeded = succeeded and (finish_at > 0)
-        start_at += finish_at
-
+    pb.clear()
     return succeeded
 
 
@@ -378,7 +489,6 @@ def main():
     group.add_argument("--omega", type=str, default=None,
                        help="Goniometer angle omega value in deg. or formula f(index)")
 
-
     group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
     group.add_argument("--rotation", type=int, default=0,
                        help="Rotate the initial image by this value in degrees. Must be a multiple of 90°.")
@@ -388,7 +498,6 @@ def main():
                        help="Flip the image upside-down")
     group.add_argument("--fliplr", type=bool, default=False, action="store_true",
                        help="Flip the image left-right")
-
 
     try:
         args = parser.parse_args()
