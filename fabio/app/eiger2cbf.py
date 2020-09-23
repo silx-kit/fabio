@@ -366,9 +366,9 @@ def convert_one(input_filename, options, start_at=0):
             input_data = numpy.rot90(input_data, k=options.rotation // 90)
         if options.transpose:
             input_data = input_data.T
-        if options.flipup:
+        if options.flip_up:
             input_data = numpy.flipud(input_data)
-        if options.fliplr:
+        if options.flip_lr:
             input_data = numpy.fliplr(input_data)
 
         data[:input_data.shape[0], :input_data.shape[1]] = input_data
@@ -494,9 +494,9 @@ def main():
                        help="Rotate the initial image by this value in degrees. Must be a multiple of 90°.")
     group.add_argument("--transpose", default=False, action="store_true",
                        help="Flip the x/y axis")
-    group.add_argument("--flipud", default=False, action="store_true",
+    group.add_argument("--flip-ud", dest="flip_ud", default=False, action="store_true",
                        help="Flip the image upside-down")
-    group.add_argument("--fliplr", default=False, action="store_true",
+    group.add_argument("--flip-lr", dest="flip_lr", default=False, action="store_true",
                        help="Flip the image left-right")
 
     try:
