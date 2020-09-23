@@ -413,6 +413,7 @@ def convert_all(options):
         pb.update(i + 0.5, os.path.basename(filename))
         finish_at = convert_one(filename, options, start_at)
         succeeded = succeeded and (finish_at > 0)
+        start_at += finish_at
     pb.clear()
     return succeeded
 
