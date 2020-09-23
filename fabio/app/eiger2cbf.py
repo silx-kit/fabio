@@ -28,6 +28,7 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
+import None
 """Portable image converter based on FabIO library
 to export Eiger frames (including te one from LIMA)
 to CBF and mimic the header from Dectris Pilatus.
@@ -36,7 +37,7 @@ to CBF and mimic the header from Dectris Pilatus.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "22/09/2020"
+__date__ = "23/09/2020"
 __status__ = "production"
 
 import logging
@@ -68,10 +69,46 @@ try:
     from scipy import constants
 except ImportError:
     # Updated with scipy 1.4
-    CONST_hc = 12.398419843320026 
+    CONST_hc = 12.398419843320026
 else:
     CONST_hc = constants.c * constants.h / constants.e * 1e7
 
+
+def select_detecor(shape):
+    """CrysalisPro only accepts some detector shapes as CBF inputs.
+    Those shaped correspond to the one of the dectris detector Pilatus and Eiger (first generation only?)
+    
+    This function takes the input shape and return the smallest Dectris shape which is larger ... 
+    """
+    assert len(shape) >= 2
+    valid_detectors = {(514, 1030): 'eiger_500k',
+                         (1065, 1030): 'eiger_1m',
+                         (2167, 2070): 'eiger_4m',
+                         (3269, 3110): 'eiger_9m',
+                         (4371, 4150): 'eiger_16m',
+                         # (512, 1028): 'eiger2cdte500k',
+                         # (1062, 1028): 'eiger2cdte1m',
+                         # (2162, 2068): 'eiger2cdte4m',
+                         # (3262, 3108): 'eiger2cdte9m',
+                         # (4362, 4148): 'eiger2cdte16m',
+                         # (1, 1280): 'mythen1280',
+                         (195, 487): 'pilatus_100k',
+                         (407, 487): 'pilatus_200k',
+                         (619, 487): 'pilatus_300k',
+                         (195, 1475): 'pilatus_300kw',
+                         (1043, 981): 'pilatus_1m',
+                         (1679, 1475): 'pilatus_2m',
+                         (2527, 2463): 'pilatus_6m',
+                         # (195, 4439): 'pilatus_900kw'
+                         }
+    best = None
+    for k in valid_detectors:
+        if k[0]>=shape[-2] and k[1]>=shape[-1]:
+            if best is None:
+                best = k
+            elif k[0]<best[0] or k[1]<best[1]:
+                best = k 
+    return best
 
 def expand_args(args):
     """
@@ -89,6 +126,7 @@ def expand_args(args):
             new.append(afile)
     return new
 
+
 def convert_one(input_filename, options, start_at=0):
     """
     Convert a single file using options
@@ -99,6 +137,10 @@ def convert_one(input_filename, options, start_at=0):
     :rtype: int
     :returns: the number of frames processed
     """
+    flip =bool((options.rotation // 90) % 2)
+    if options.transpose:
+        flip = not flip
+    
     input_filename = os.path.abspath(input_filename)
     input_exists = os.path.exists(input_filename)
 
@@ -118,10 +160,11 @@ def convert_one(input_filename, options, start_at=0):
         logger.error("Loading input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
         logger.debug("Backtrace", exc_info=True)
         return -1
-    
+
+    shape = select_detecor((source.shape[-1], source.shape[-2]) if flip else source.shape)
     pilatus_headers = fabio.cbfimage.PilatusHeader("Silicon sensor, thickness 0.001 m")
     if isinstance(source, fabio.limaimage.LimaImage):
-        #Populate the Pilatus header from the Lima
+        # Populate the Pilatus header from the Lima
         entry_name = source.h5.attrs.get("default")
         if entry_name:
             entry = source.h5.get(entry_name)
@@ -132,7 +175,7 @@ def convert_one(input_filename, options, start_at=0):
                     if data_grp:
                         nxdetector = data_grp.parent
                         try:
-                            detector = "%s, S/N %s"%(nxdetector["detector_information/model"][()],
+                            detector = "%s, S/N %s" % (nxdetector["detector_information/model"][()],
                                                  nxdetector["detector_information/name"][()])
                             pilatus_headers["Detector"] = detector
                         except Exception as e:
@@ -149,9 +192,9 @@ def convert_one(input_filename, options, start_at=0):
                             pilatus_headers["Exposure_period"] = t1 + t2
                         except Exception as e:
                             logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
-    #Parse option for Pilatus headers
+    # Parse option for Pilatus headers
     if options.energy:
-        pilatus_headers["Wavelength"] = CONST_hc/options.energy
+        pilatus_headers["Wavelength"] = CONST_hc / options.energy
     elif options.wavelength:
         pilatus_headers["Wavelength"] = options.wavelength
     if options.distance:
@@ -168,7 +211,7 @@ def convert_one(input_filename, options, start_at=0):
         try:
             value = float(options.chi)
         except ValueError:
-            #Handle the string
+            # Handle the string
             formula = numexpr.NumExpr(options.chi)
             destination = "Chi"
             pilatus_headers["Oscillation_axis"] = "CHI"
@@ -180,46 +223,58 @@ def convert_one(input_filename, options, start_at=0):
         try:
             value = float(options.phi)
         except ValueError:
-            #Handle the string
+            # Handle the string
             formula = numexpr.NumExpr(options.phi)
             destination = "Phi"
             pilatus_headers["Oscillation_axis"] = "PHI"
         else:
             pilatus_headers["Phi"] = value
             pilatus_headers["Phi_increment"] = 0.0
-    if options.omega is not None: 
+    if options.omega is not None:
         try:
             value = float(options.omega)
         except ValueError:
-            #Handle the string
+            # Handle the string
             formula = numexpr.NumExpr(options.omega)
             destination = "Omega"
             pilatus_headers["Oscillation_axis"] = "OMEGA"
         else:
             pilatus_headers["Omega"] = value
             pilatus_headers["Omega_increment"] = 0.0
-        
+
     elif isinstance(source, fabio.eigerimage.EigerImage):
         raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
+    else:
+        raise NotImplementedError("Unsupported format: %s"%source.__class__.__name__)
 
     for i, frame in enumerate(source):
         idx = i + start_at
-        data = numpy.empty((2527,2463), dtype=numpy.int32)
+        data = numpy.empty(shape, dtype=numpy.int32)
         data.fill(options.dummy)
-        data[:frame.data.shape[1],:frame.data.shape[0]] = frame.data.astype(numpy.int32).T
-        #data = frame.data.astype(numpy.int32).T
-        mask = numpy.where(frame.data.T == numpy.iinfo(frame.data.dtype).max)
+        input_data = frame.data.astype(numpy.int32)
+        if options.rotation:
+            input_data = numpy.rot90(input_data, k=options.rotation//90)
+        if options.transpose:
+            input_data = input_data.T
+        if options.flipup:
+            input_data = numpy.flipud(input_data)
+        if options.fliplr:
+            input_data = numpy.fliplr(input_data)
+            
+        data[:input_data.shape[0], :input_data.shape[1]] = input_data
+
+        mask = numpy.where(input_data == numpy.iinfo(frame.data.dtype).max)
         data[mask] = options.dummy
         converted = fabio.cbfimage.CbfImage(data=data)
 
         if formula and destination:
             position = formula(idx)
-            delta = (formula(idx+1) - position)
+            delta = (formula(idx + 1) - position)
             pilatus_headers["Start_angle"] = pilatus_headers[destination] = position
-            pilatus_headers["Angle_increment"] = pilatus_headers[destination+"_increment"] = delta
+            pilatus_headers["Angle_increment"] = pilatus_headers[destination + "_increment"] = delta
         converted.pilatus_headers = pilatus_headers
 
-        output_filename = options.output.format(index=((idx+options.offset)))
+        output_filename = options.output.format(index=((idx + options.offset)))
         os.makedirs(os.path.dirname(output_filename), exist_ok=True)
         try:
             logger.debug("Write '%s'", output_filename)
@@ -231,8 +286,6 @@ def convert_one(input_filename, options, start_at=0):
             logger.error("Saving output file '%s' failed cause: \"%s: %s\". Conversion skipped.", output_filename, type(e), e)
             logger.debug("Backtrace", exc_info=True)
             return -1
-    #ptions.offset +=  source.nframes
-    # a success
     return source.nframes
 
 
@@ -246,12 +299,11 @@ def convert_all(options):
     succeeded = True
     start_at = 0
     for filename in options.images:
-        finish_at =  convert_one(filename, options, start_at)
-        succeeded = succeeded and (finish_at>0)
+        finish_at = convert_one(filename, options, start_at)
+        succeeded = succeeded and (finish_at > 0)
         start_at += finish_at
 
     return succeeded
-
 
 
 def main():
@@ -280,7 +332,7 @@ def main():
                        help="index offset, CrysalisPro likes indexes to start at 1, Python starts at 0")
     group.add_argument("-D", "--dummy", type=int, default=-1,
                        help="Set masked values to this dummy value")
-    
+
     group = parser.add_argument_group("optional behaviour arguments")
 #     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
 #                        help="if an existing destination file cannot be" +
@@ -325,6 +377,18 @@ def main():
                        help="Goniometer angle phi value in deg. or formula f(index)")
     group.add_argument("--omega", type=str, default=None,
                        help="Goniometer angle omega value in deg. or formula f(index)")
+
+
+    group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
+    group.add_argument("--rotation", type=int, default=0,
+                       help="Rotate the initial image by this value in degrees. Must be a multiple of 90°.")
+    group.add_argument("--transpose", type=bool, default=False, action="store_true",
+                       help="Flip the x/y axis")
+    group.add_argument("--flipud", type=bool, default=False, action="store_true",
+                       help="Flip the image upside-down")
+    group.add_argument("--fliplr", type=bool, default=False, action="store_true",
+                       help="Flip the image left-right")
+
 
     try:
         args = parser.parse_args()
