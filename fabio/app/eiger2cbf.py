@@ -37,7 +37,7 @@ to CBF and mimic the header from Dectris Pilatus.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "23/09/2020"
+__date__ = "25/09/2020"
 __status__ = "production"
 
 import logging
@@ -302,6 +302,11 @@ def convert_one(input_filename, options, start_at=0):
                             pilatus_headers["Exposure_period"] = t1 + t2
                         except Exception as e:
                             logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
+    elif isinstance(source, fabio.eigerimage.EigerImage):
+        raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
+    else:
+        raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
+
     # Parse option for Pilatus headers
     if options.energy:
         pilatus_headers["Wavelength"] = CONST_hc / options.energy
@@ -351,11 +356,6 @@ def convert_one(input_filename, options, start_at=0):
         else:
             pilatus_headers["Omega"] = value
             pilatus_headers["Omega_increment"] = 0.0
-
-    elif isinstance(source, fabio.eigerimage.EigerImage):
-        raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
-    else:
-        raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
 
     for i, frame in enumerate(source):
         idx = i + start_at
