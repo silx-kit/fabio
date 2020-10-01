@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "14/04/2020"
+__date__ = "15/09/2020"
 __status__ = "stable"
 
 import sys
@@ -1039,6 +1039,7 @@ def get_project_configuration(dry_run):
 
     console_scripts = [
         'fabio-convert = fabio.app.convert:main',
+        'eiger2cbf = fabio.app.eiger2cbf:main'
     ]
 
     gui_scripts = [
