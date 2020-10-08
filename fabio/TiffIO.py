@@ -1,6 +1,6 @@
 # The PyMca X-Ray Fluorescence Toolkit
 #
-# Copyright (c) 2004-2015 European Synchrotron Radiation Facility
+# Copyright (c) 2004-2020 European Synchrotron Radiation Facility
 #
 # This file is part of the PyMca X-ray Fluorescence Toolkit developed at
 # the ESRF by the Software group.
@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "06/04/2020"
+__date__ = "08/10/2020"
 
 import sys
 import os
@@ -654,7 +654,7 @@ class TiffIO(object):
             raise ValueError("Unsupported combination. Bits = %s  Format = %d" % (nBits, sampleFormat))
         if hasattr(nBits, 'index'):
             image = numpy.zeros((nRows, nColumns, len(nBits)), dtype=dtype)
-        elif colormap is not None:
+        elif colormap is not None and interpretation == 3:
             # should I use colormap dtype?
             image = numpy.zeros((nRows, nColumns, 3), dtype=dtype)
         else:
@@ -681,7 +681,7 @@ class TiffIO(object):
                 readout.byteswap(True)
             if hasattr(nBits, 'index'):
                 readout.shape = -1, nColumns, len(nBits)
-            elif info['colormap'] is not None:
+            elif info['colormap'] is not None and interpretation == 3:
                 readout = colormap[readout]
                 readout.shape = -1, nColumns, 3
             else:
