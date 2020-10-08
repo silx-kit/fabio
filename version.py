@@ -72,7 +72,7 @@ MAJOR = 0
 MINOR = 11
 MICRO = 0
 RELEV = "dev"  # <16
-SERIAL = 0  # <16
+SERIAL = 1  # <16
 
 from collections import namedtuple
 _version_info = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
