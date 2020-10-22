@@ -2,7 +2,7 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2020 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,7 +38,7 @@ to conform to the specification of the IUCR
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "15/09/2020"
+__date__ = "22/10/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -53,7 +53,7 @@ from .compression import compByteOffset, decByteOffset, md5sum
 from .ext._cif import split_tokens
 from . import version, date
 logger = logging.getLogger(__name__)
-__version__ = ["##CBF: VERSION 1.5, FabIO version %s (%s) - %s"%(version, date, __copyright__)]
+__version__ = ["##CBF: VERSION 1.5, FabIO version %s (%s) - %s" % (version, date, __copyright__)]
 
 DATA_TYPES = {"signed 8-bit integer": "int8",
               "signed 16-bit integer": "int16",
@@ -161,9 +161,9 @@ class CbfImage(FabioImage):
                 self.header[key] = value
         if self.header.get("_array_data.header_convention") == "PILATUS_1.2":
             print(self.header.get("_array_data.header_contents", ""))
-            self.pilatus_headers = PilatusHeader(self.header.get("_array_data.header_contents", "")) 
+            self.pilatus_headers = PilatusHeader(self.header.get("_array_data.header_contents", ""))
             print(self.pilatus_headers)
-        
+
     def _read_binary_section_header(self, inStream):
         """
         Read the binary section header
@@ -312,7 +312,6 @@ class CbfImage(FabioImage):
         else:
             nonCifHeaders = [i.strip()[2:] for i in self.header["_array_data.header_contents"].split("\n") if i.find("# ") >= 0]
 
-        
         for key in self.header:
             if key.startswith("_"):
                 if key not in self.cif or self.cif[key] != self.header[key]:
@@ -328,7 +327,7 @@ class CbfImage(FabioImage):
             elif key in self.header:
                 nonCifHeaders.append("%s %s" % (key, self.header[key]))
         if self.pilatus_headers is not None:
-            #regenerate  the Pilatus header and set the convention
+            # regenerate  the Pilatus header and set the convention
             self.cif["_array_data.header_content"] = str(self.pilatus_headers)
             self.cif["_array_data.header_convention"] = "PILATUS_1.2"
 
@@ -359,12 +358,13 @@ class CIF(dict):
     SINGLE_QUOTE = numpy.string_("'")
     DOUBLE_QUOTE = numpy.string_('"')
     SEMICOLUMN = numpy.string_(';')
+    DOT = numpy.string_('.')
     START_COMMENT = (SINGLE_QUOTE, DOUBLE_QUOTE)
     BINARY_MARKER = numpy.string_("--CIF-BINARY-FORMAT-SECTION--")
     HASH = numpy.string_("#")
     LOOP = numpy.string_("loop_")
     UNDERSCORE = ord("_")
-    QUESTIONMARK = ord("?")
+    QUESTIONMARK = numpy.string_("?")
     STOP = numpy.string_("stop_")
     GLOBAL = numpy.string_("global_")
     DATA = numpy.string_("data_")
@@ -764,7 +764,7 @@ class CIF(dict):
         bExists = False
         if sKey in self:
             if len(self[sKey]) >= 1:
-                if self[sKey][0] not in (self.QUESTIONMARK, numpy.string_(".")):
+                if self[sKey][0] not in (self.QUESTIONMARK, self.DOT):
                     bExists = True
         return bExists
 
@@ -861,9 +861,9 @@ class CIF(dict):
 cbfimage = CbfImage
 
 
-class PilatusKey(NamedTuple):        
+class PilatusKey(NamedTuple):
     keyword: str
-    key_index: int=0    
+    key_index: int=0
     value_indices: list=[1]
     types: list=[str]
     repr: str="{}"
@@ -872,8 +872,8 @@ class PilatusKey(NamedTuple):
 class PilatusHeader(object):
     KEYWORDS = OrderedDict()
     KEYWORDS["Detector"] = PilatusKey("Detector", 0, slice(1, None), str, "Detector: {}")
-    KEYWORDS["sensor"] = PilatusKey("sensor", 1, [0, 3], [str, float],  "{} sensor, thickness {} m")
-    KEYWORDS["Pixel_size"] = PilatusKey("Pixel_size", 0,  [1, 4], [float, float], "Pixel_size {} m x {} m")
+    KEYWORDS["sensor"] = PilatusKey("sensor", 1, [0, 3], [str, float], "{} sensor, thickness {} m")
+    KEYWORDS["Pixel_size"] = PilatusKey("Pixel_size", 0, [1, 4], [float, float], "Pixel_size {} m x {} m")
     KEYWORDS["Exposure_time"] = PilatusKey("Exposure_time", 0, [1], [float], "Exposure_time {} s")
     KEYWORDS["Exposure_period"] = PilatusKey("Exposure_period", 0, [1], [float], "Exposure_period {} s")
     KEYWORDS["Tau"] = PilatusKey("Tau", 0, [1], [float], "Tau = {} s")
@@ -889,7 +889,7 @@ class PilatusHeader(object):
     KEYWORDS["Energy_range"] = PilatusKey("Energy_range", 0, [1, 2], [float, float], "Energy_range {} {} eV")
     KEYWORDS["Detector_distance"] = PilatusKey("Detector_distance", 0, [1], [float], "Detector_distance {} m")
     KEYWORDS["Detector_Voffset"] = PilatusKey("Detector_Voffset", 0, [1], [float], "Detector_Voffset {} m")
-    KEYWORDS["Beam_xy"] = PilatusKey("Beam_xy", 0, [1, 2] , [float, float], "Beam_xy ({}, {}) pixels")
+    KEYWORDS["Beam_xy"] = PilatusKey("Beam_xy", 0, [1, 2], [float, float], "Beam_xy ({}, {}) pixels")
     KEYWORDS["Flux"] = PilatusKey("Flux", 0, [1], [float], "Flux {}")
     KEYWORDS["Filter_transmission"] = PilatusKey("Filter_transmission", 0, [1], [float], "Filter_transmission {}")
     KEYWORDS["Start_angle"] = PilatusKey("Start_angle", 0, [1], [float], "Start_angle {} deg.")
@@ -908,61 +908,58 @@ class PilatusHeader(object):
     KEYWORDS["N_oscillations"] = PilatusKey(" ('N_oscillations", 0, [1], [int], "N_oscillations {}")
     KEYWORDS["Start_position"] = PilatusKey("Start_position", 0, [1], [float], "Start_position {}")
     KEYWORDS["Position_increment"] = PilatusKey("Position_increment", 0, [1], [float], "Position_increment")
-    KEYWORDS["Shutter_time"] = PilatusKey("Shutter_time", 0, [1], [float],"Shutter_time {} s")
+    KEYWORDS["Shutter_time"] = PilatusKey("Shutter_time", 0, [1], [float], "Shutter_time {} s")
     SPACE_LIKE = "()#:=,"
-    
+
     @classmethod
     def clean_string(cls, input_string):
         tmp = str(input_string)
         for k in cls.SPACE_LIKE:
             tmp = tmp.replace(k, " ")
         return tmp
-    
+
     def __init__(self, content, convention="PILATUS_1.2"):
-        assert convention=="PILATUS_1.2"
+        assert convention == "PILATUS_1.2"
         self._dict = self._parse(content)
 
     def __repr__(self):
         lines = []
         for key, descr in self.KEYWORDS.items():
             value = self._dict.get(key)
-            if value is None: 
+            if value is None:
                 continue
             if isinstance(value, (list, tuple)):
-                line= descr.repr.format(*value)
+                line = descr.repr.format(*value)
             else:
                 line = descr.repr.format(value)
             lines.append("# " + line)
         return "\n".join(lines)
-    
+
     def _parse(self, content):
         lines = self.clean_string(content).split("\n")
         dico = OrderedDict()
         for line in lines:
             words = line.split()
-            #print(words)
             if not words:
                 continue
             for k, v in self.KEYWORDS.items():
                 if words[v.key_index] == k:
-                    #print(v)
                     if isinstance(v.types, (list, tuple)):
                         if len(v.value_indices) == 1:
                             dico[k] = v.types[0]((words[v.value_indices[0]]))
                         else:
-                            dico[k] = tuple( i(words[j]) for i,j in zip(v.types, v.value_indices) )
+                            dico[k] = tuple(i(words[j]) for i, j in zip(v.types, v.value_indices))
                     else:
                         if isinstance(v.value_indices, slice):
                             dico[k] = " ".join([v.types(i) for i in words[v.value_indices]])
                         else:
                             dico[k] = v.types(words[v.value_indices])
         return dico
-    
+
     def __setitem__(self, key, value):
         if key not in self.KEYWORDS:
             logger.warning("Unknown key: %s", key)
         self._dict[key] = value
-        
+
     def __getitem__(self, key):
         return self._dict[key]
-
