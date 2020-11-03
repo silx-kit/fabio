@@ -34,7 +34,7 @@ from ..utilstest import UtilsTest
 
 import unittest
 import logging
-
+import numpy
 logger = logging.getLogger(__name__)
 
 
@@ -95,6 +95,13 @@ class TestEsperanto(unittest.TestCase):
                 'ESPERANTO_FORMAT'])
 
             self.assertEqual(set(obj.header.keys()), expected_keys)
+
+    def test_data(self):
+        a = (numpy.random.random((257, 421)) * 100).round()
+        e = fabio.esperantoimage.EsperantoImage(data=a)
+        self.assertEqual(e.data.dtype, numpy.int32, "dtype has been changed")
+        self.assertEqual(e.data.shape, (424, 424), "data has been resized")
+        self.assertAlmostEqual(a.sum(), e.data.sum(), 2, "conent is almost the same")
 
 
 def suite():

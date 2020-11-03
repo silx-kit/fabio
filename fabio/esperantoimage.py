@@ -25,11 +25,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-__authors__ = ["Florian Plaswig"]
+__authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
-__copyright__ = "ESRF"
-__date__ = "03/04/2020"
+__copyright__ = "2019-2020 ESRF"
+__date__ = "03/11/2020"
 
+from collections import OrderedDict
 import logging
 logger = logging.getLogger(__name__)
 import numpy
@@ -47,35 +48,63 @@ class EsperantoImage(FabioImage):
 
     HEADER_SEPARATOR = "\x0d\x0a"
 
-    HEADER_KEYS = ["IMAGE",
-                   "SPECIAL_CCD_1",
-                   "SPECIAL_CCD_2",
-                   "SPECIAL_CCD_3",
-                   "SPECIAL_CCD_4",
-                   "SPECIAL_CCD_5",
-                   "TIME",
-                   "MONITOR",
-                   "AUTORUN",
-                   "PIXELSIZE",
-                   "TIMESTAMP",
-                   "GRIDPATTERN",
-                   "STARTANGLESINDEG",
-                   "ENDANGLESINDEG",
-                   "GONIOMODEL_1",
-                   "GONIOMODEL_2",
-                   "WAVELENGHTH",
-                   "MONOCHROMATOR",
-                   "HISTORY",
-                   "ESPERANTO_FORMAT",
-                   "WAVELENGTH",
-                   "ABSTORUN"]
+    HEADER_KEYS = OrderedDict([("IMAGE", "lnx lny lbx lby spixelformat"),
+                               ("SPECIAL_CCD_1", "delectronsperadu ldarkcorrectionswitch lfloodfieldcorrectionswitch/mode dsystemdcdb2gain ddarksignal dreadnoiserms"),
+                               ("SPECIAL_CCD_2", "ioverflowflag ioverflowafterremeasureflag inumofdarkcurrentimages inumofmultipleimages loverflowthreshold"),
+                               ("SPECIAL_CCD_3", "ldetector_descriptor lisskipcorrelation lremeasureturbomode bfsoftbinningflag bflownoisemodeflag"),
+                               ("SPECIAL_CCD_4", "lremeasureinturbo_done lisoverflowthresholdchanged loverflowthresholdfromimage lisdarksignalchanged lisreadnoisermschanged lisdarkdone lisremeasurewithskipcorrelation lcorrelationshift"),
+                               ("SPECIAL_CCD_5", "dblessingrej ddarksignalfromimage dreadnoisermsfromimage dtrueimagegain"),
+                               ("TIME", "dexposuretimeinsec doverflowtimeinsec doverflowfilter"),
+                               ("MONITOR", "lmon1 lmon2 lmon3 lmon4"),
+                               ("PIXELSIZE", "drealpixelsizex drealpixelsizey dsithicknessmmforpixeldetector"),
+                               ("TIMESTAMP", "timestampstring"),
+                               ("GRIDPATTERN", "filename"),
+                               ("STARTANGLESINDEG", "dom_s dth_s dka_s dph_s"),
+                               ("ENDANGLESINDEG", "dom_e dth_e dka_e dph_e"),
+                               ("GONIOMODEL_1", "dbeam2indeg dbeam3indeg detectorrotindeg_x detectorrotindeg_y detectorrotindeg_z dxorigininpix dyorigininpix dalphaindeg dbetaindeg ddistanceinmm"),
+                               ("GONIOMODEL_2", "dzerocorrectionsoftindeg_om dzerocorrectionsoftindeg_th dzerocorrectionsoftindeg_ka dzerocorrectionsoftindeg_ph"),
+                               ("WAVELENGTH", "dalpha1 dalpha2 dalpha12 dbeta1"),
+                               ("MONOCHROMATOR", "ddvalue–prepolfac orientation–type"),
+                               ("ABSTORUN", "labstorunscale"),
+                               ("HISTORY", "historystring")])
 
     def __init__(self, *arg, **kwargs):
         """
         Generic constructor
         """
+        self._data = None
         FabioImage.__init__(self, *arg, **kwargs)
         self.format = ""
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        """Esperanto accepts only images square with size a multiple of 4
+        
+        Question: Does the limitation in image size between 256-4096 still exist ? 
+        """
+        if value is None:
+            self._data = value
+            return
+        assert isinstance(value, numpy.ndarray)
+        old_shape = value.shape
+        size = max(old_shape)
+        padded_size = (size + 3) & ~3
+        new_shape = (padded_size, padded_size)
+        if not numpy.issubdtype(value.dtype, numpy.integer):
+            logger.info("Esperanto accepts only integer data, rounding")
+            value = numpy.round(value)
+        value = value.astype(numpy.int32)
+
+        if old_shape != new_shape:
+            logger.info("Padding image to be square and multiple of 4")
+            self._data = numpy.zeros(new_shape, dtype=numpy.int32)
+            # Nota: center horizontally, not vertically (!?)
+            shift = (new_shape[1] - old_shape[1]) // 2
+            self._data[:old_shape[0], shift: shift + old_shape[1]] = value
 
     def _readheader(self, infile):
         """
@@ -103,7 +132,7 @@ class EsperantoImage(FabioImage):
             line = infile.read(256).decode('ascii')
 
             if not line[-2:] == self.HEADER_SEPARATOR:
-                raise RuntimeError("Unable to read esperanto header: Ivalid format of line %d." % (line_num + 1))
+                raise RuntimeError("Unable to read esperanto header: Invalid format of line %d." % (line_num + 1))
 
             line = line.rstrip()
             split_line = line.split(' ')
@@ -111,8 +140,8 @@ class EsperantoImage(FabioImage):
             if key.rstrip() == '':
                 continue
 
-            # if key not in self.HEADER_KEYS:
-            #     raise RuntimeError("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
+            if key not in self.HEADER_KEYS:
+                logger.warning("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
 
             self.header[key] = ' '.join(split_line[1:])
 
