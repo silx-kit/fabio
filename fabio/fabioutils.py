@@ -37,7 +37,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "07/04/2020"
+__date__ = "03/11/2020"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -586,7 +586,7 @@ else:
     class BZ2File(bz2.BZ2File):
         "Wrapper with lock"
 
-        def __init__(self, name, mode='r', buffering=0, compresslevel=9):
+        def __init__(self, name, mode='r', compresslevel=9):
             """
             BZ2File(name [, mode='r', compresslevel=9]) -> file object
 
@@ -603,7 +603,7 @@ else:
             '\r\n' or a tuple containing all the newline types seen. Universal
             newlines are available only when reading.
             """
-            bz2.BZ2File.__init__(self, name, mode, buffering, compresslevel)
+            bz2.BZ2File.__init__(self, name, mode, compresslevel=compresslevel)
             self.lock = threading.Semaphore()
             self.__size = None
 
