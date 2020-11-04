@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "03/11/2020"
+__date__ = "04/11/2020"
 
 from collections import OrderedDict
 import logging
@@ -93,6 +93,7 @@ class EsperantoImage(FabioImage):
         old_shape = value.shape
         size = max(old_shape)
         padded_size = (size + 3) & ~3
+        padded_size = numpy.clip(padded_size, 256, 4096)
         new_shape = (padded_size, padded_size)
         if not numpy.issubdtype(value.dtype, numpy.integer):
             logger.info("Esperanto accepts only integer data, rounding")
@@ -100,11 +101,13 @@ class EsperantoImage(FabioImage):
         value = value.astype(numpy.int32)
 
         if old_shape != new_shape:
-            logger.info("Padding image to be square and multiple of 4")
+            logger.info("Padding image to be square, multiple of 4 and of size between 256 and 4096")
             self._data = numpy.zeros(new_shape, dtype=numpy.int32)
             # Nota: center horizontally, not vertically (!?)
-            shift = (new_shape[1] - old_shape[1]) // 2
-            self._data[:old_shape[0], shift: shift + old_shape[1]] = value
+            shift = max((new_shape[1] - old_shape[1]) // 2, 0)
+
+            self._data[:min(old_shape[0], new_shape[0]),
+                       shift:min(shift + old_shape[1], new_shape[1])] = value
 
     def _readheader(self, infile):
         """
