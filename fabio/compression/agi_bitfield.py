@@ -1,10 +1,54 @@
+# coding: utf-8
+#
+#    Project: X-ray image reader
+#             https://github.com/silx-kit/fabio
+#
+#
+#    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
+#
+#    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
+#
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation files
+#  (the "Software"), to deal in the Software without restriction,
+#  including without limitation the rights to use, copy, modify, merge,
+#  publish, distribute, sublicense, and/or sell copies of the Software,
+#  and to permit persons to whom the Software is furnished to do so,
+#  subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+#  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+#  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+#  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#  OTHER DEALINGS IN THE SOFTWARE.
+
+"""Compression and decompression algorithm for Esperanto format
+
+Authors: Jérôme Kieffer, ESRF email:jerome.kieffer@esrf.fr
+         Florian Plaswig
+
+"""
+__author__ = ["Florian Plaswig", "Jérôme Kieffer"]
+__contact__ = "jerome.kieffer@esrf.eu"
+__license__ = "MIT"
+__date__ = "05/11/2020"
+__copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
+
+import logging
 from io import BytesIO
-from struct import pack, unpack
+from struct import pack, unpack as unpack_
+logger = logging.getLogger(__name__)
+import numpy
 
-import numpy as np
-
-unpack_ = unpack
 unpack = lambda fmt, buff: unpack_(fmt, buff)[0]
+
+MASK = [(1 << i) - 1 for i in range(9)]
 
 
 def compress(frame):
@@ -19,10 +63,10 @@ def compress(frame):
     row_adresses = BytesIO()
 
     for frame_row in range(0, dim[0]):
-        row_adresses.write(pack("I", buffer.tell() + 4))
+        row_adresses.write(pack("<I", buffer.tell() + 4))
         compress_row(frame[frame_row], buffer)
 
-    data_size = pack("I", buffer.tell())
+    data_size = pack("<I", buffer.tell())
     buffer.write(row_adresses.getvalue())
 
     row_adresses.close()
@@ -43,7 +87,7 @@ def compress_row(data, buffer):
     n_fields = len(pixel_diff) // 16
     n_restpx = len(pixel_diff) % 16
 
-    for field in range(0, n_fields):
+    for _ in range(0, n_fields):
         fielda = pixel_diff[:8]
         fieldb = pixel_diff[8:16]
 
@@ -75,14 +119,13 @@ def decompress(comp_frame, dimensions):
     # read data components (row indices are ignored)
     data_size = unpack("I", comp_frame[:4])
     data_block = BytesIO(comp_frame[4:])
+    logger.debug("Size of binary data block: %d with image size: %s, compression ratio: %.3fx", data_size, dimensions, 4 * row_count * col_count / data_size)
+    output = numpy.zeros(dimensions, dtype=numpy.int32)
 
-    output = []
+    for row_index in range(row_count):
+        output[row_index] = decompress_row(data_block, col_count)
 
-    # iterate over rows
-    for row_index in range(0, row_count):
-        output.append(decompress_row(data_block, col_count))
-
-    return np.array(output, dtype="int32").cumsum(axis=1)
+    return output.cumsum(axis=1)
 
 
 def decompress_row(buffer, row_length):
@@ -98,7 +141,6 @@ def decompress_row(buffer, row_length):
     n_restpx = (row_length - 1) % 16
 
     pixels = [first_pixel]
-
     for field in range(n_fields):
         lb = unpack("B", buffer.read(1))
         len_b, len_a = read_len_byte(lb)
@@ -112,10 +154,49 @@ def decompress_row(buffer, row_length):
         pixels += field_a
         pixels += field_b
 
-    for restpx in range(n_restpx):
-        pixels.append(read_escaped(buffer))
+    pixels += [read_escaped(buffer) for _ in range(n_restpx)]
 
     return pixels
+
+
+def _fieldsize(n):
+    "Python version ... dubbious. Prefer the Fortran version"
+    return min(8, max(1, abs(n.item()).bit_length() + 1))
+
+
+def fortran_fieldsize(nbvalue):
+    "Direct translation of Fortran"
+    if(nbvalue < -63):
+        getfieldsize = 8
+    elif(nbvalue < -31):
+        getfieldsize = 7
+    elif(nbvalue < -15):
+        getfieldsize = 6
+    elif(nbvalue < -7):
+        getfieldsize = 5
+    elif(nbvalue < -3):
+        getfieldsize = 4
+    elif(nbvalue < -1):
+        getfieldsize = 3
+    elif(nbvalue < 0):
+        getfieldsize = 2
+    elif(nbvalue < 2):
+        getfieldsize = 1
+    elif(nbvalue < 3):
+        getfieldsize = 2
+    elif(nbvalue < 5):
+        getfieldsize = 3
+    elif(nbvalue < 9):
+        getfieldsize = 4
+    elif(nbvalue < 17):
+        getfieldsize = 5
+    elif(nbvalue < 33):
+        getfieldsize = 6
+    elif(nbvalue < 65):
+        getfieldsize = 7
+    else:
+        getfieldsize = 8
+    return getfieldsize
 
 
 def get_fieldsize(array):
@@ -123,11 +204,7 @@ def get_fieldsize(array):
     :param array numpy.array
     :returns int
     """
-
-    def fieldsize(n):
-        return min(8, max(1, abs(n.item()).bit_length() + 1))
-
-    return max(fieldsize(array.max()), fieldsize(array.min()))
+    return max(fortran_fieldsize(array.max()), fortran_fieldsize(array.min()))
 
 
 def compress_field(ifield, fieldsize, overflow_table):
@@ -138,37 +215,42 @@ def compress_field(ifield, fieldsize, overflow_table):
     :returns int
     """
 
-    compressed_field = np.uint64(0)  # uint64
-    fieldsize = np.uint8(fieldsize)
+    compressed_field = numpy.uint64(0)  # uint64
+    fieldsize = numpy.uint8(fieldsize)
 
-    mask_ = mask(fieldsize)
-    conv_ = conv(fieldsize)
+    mask_ = MASK[fieldsize]
+    conv_ = MASK[fieldsize - 1]
     for i, elem in enumerate(ifield):
         if -127 <= elem < 127:
-            val = np.uint8((elem + conv_) & mask_)
+            val = numpy.uint8((elem + conv_) & mask_)
         elif -32767 <= elem < 32767:
-            val = np.uint8(254)
+            val = numpy.uint8(254)
             overflow_table.write(pack("h", elem))
         else:
-            val = np.uint8(255)
+            val = numpy.uint8(255)
             overflow_table.write(pack("i", elem))
         compressed_field = val | (compressed_field << fieldsize)
     return pack("Q", compressed_field)[:fieldsize]
 
 
 def decode_field(field):
-    """decodes a field from bytes
+    """decodes a field from bytes. 
+    
+    One field always encode for 8 pixels but my be stored on 1 to 8 pixels 
+    (overflow are handeled separately)
+    
     :param field: bytes
     :returns list
     """
     size = len(field)
-    assert 0 < size <= 8, str(size)
-    field = unpack("Q", field + (b'\x00' * (8 - size)))
-    mask_ = mask(size)
-    values = []
-    for i in range(0, 8):
-        values.append((field >> (size * (7 - i)) & mask_))
-    return values
+    if size == 8:
+        return list(unpack_("B"*8, field))
+    elif size < 8:
+        field = unpack("<Q", field.ljust(8, b'\x00'))
+        mask_ = MASK[size]
+        return [(field >> (size * i)) & mask_ for i in range(8)]
+    else:
+        raise RuntimeError("Expected a maximum of 8 bytes, got %s" % size)
 
 
 def read_len_byte(lb):
@@ -176,23 +258,7 @@ def read_len_byte(lb):
     :param lb: int/byte
     :returns tuple
     """
-    return lb >> 4,  lb & 0xf
-
-
-def mask(length):
-    """returns a bit mask of the given length
-    :param length: int
-    :returns int
-    """
-    return (1 << length) - 1
-
-
-def conv(length):
-    """returns the conversion value of the given length
-    :param length: int
-    :returns int
-    """
-    return (1 << length - 1) - 1
+    return lb >> 4, lb & 0xf
 
 
 def write_escaped(value, buffer):
@@ -203,9 +269,9 @@ def write_escaped(value, buffer):
     if -127 <= value < 127:
         buffer.write(pack("B", value + 127))
     elif -32767 < value < 32767:
-        buffer.write(b'\xfe' + pack("h", value))
+        buffer.write(b'\xfe' + pack("<h", value))
     else:
-        buffer.write(b'\xff' + pack("i", value))
+        buffer.write(b'\xff' + pack("<i", value))
 
 
 def read_escaped(buffer):
@@ -215,9 +281,9 @@ def read_escaped(buffer):
     """
     byte = buffer.read(1)
     if byte == b'\xfe':  # two byte overflow
-        return unpack("h", buffer.read(2))
+        return unpack("<h", buffer.read(2))
     elif byte == b'\xff':  # four byte overflow
-        return unpack("i", buffer.read(4))
+        return unpack("<i", buffer.read(4))
     else:  # no overflow
         return unpack("B", byte) - 127
 
@@ -228,11 +294,11 @@ def undo_escapes(field, length, buffer):
     :param length: int
     :param buffer: io.BytesIO
     """
-    conv_ = conv(length)
+    conv_ = MASK[length - 1]
     for i, val in enumerate(field):
         if val == 0xfe:
-            field[i] = unpack("h", buffer.read(2))
+            field[i] = unpack("<h", buffer.read(2))
         elif val == 0xff:
-            field[i] = unpack("i", buffer.read(4))
+            field[i] = unpack("<i", buffer.read(4))
         else:
-            field[i] = field[i] - conv_
+            field[i] = val - conv_

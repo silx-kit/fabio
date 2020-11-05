@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "04/11/2020"
+__date__ = "05/11/2020"
 
 from collections import OrderedDict
 import logging
@@ -203,7 +203,6 @@ class EsperantoImage(FabioImage):
                     raise RuntimeError("Exception while reading pixel data %s." % err)
             elif self.format == "AGI_BITFIELD":
                 self.raw_data = infile.read()
-                logger.warning("AGI_BITFIELD decompression is known to be apporximative ... use those data with caution !")
                 try:
                     print(self.shape, type(self.raw_data))
                     self.data = agi_bitfield.decompress(self.raw_data, self.shape)
