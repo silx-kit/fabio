@@ -42,7 +42,7 @@ class EsperantoImage(FabioImage):
     """FabIO image class for Esperanto image files
     """
 
-    DESCRIPTION = "CrysAlis Pro Esperanto file format "
+    DESCRIPTION = "CrysAlis Pro Esperanto file format"
 
     DEFAULT_EXTENSIONS = [".eseperanto", ".esper"]
 
@@ -64,7 +64,7 @@ class EsperantoImage(FabioImage):
                                ("GONIOMODEL_1", "dbeam2indeg dbeam3indeg detectorrotindeg_x detectorrotindeg_y detectorrotindeg_z dxorigininpix dyorigininpix dalphaindeg dbetaindeg ddistanceinmm"),
                                ("GONIOMODEL_2", "dzerocorrectionsoftindeg_om dzerocorrectionsoftindeg_th dzerocorrectionsoftindeg_ka dzerocorrectionsoftindeg_ph"),
                                ("WAVELENGTH", "dalpha1 dalpha2 dalpha12 dbeta1"),
-                               ("MONOCHROMATOR", "ddvalue–prepolfac orientation–type"),
+                               ("MONOCHROMATOR", "ddvalue-prepolfac orientation-type"),
                                ("ABSTORUN", "labstorunscale"),
                                ("HISTORY", "historystring")])
 
@@ -83,8 +83,7 @@ class EsperantoImage(FabioImage):
     @data.setter
     def data(self, value):
         """Esperanto accepts only images square with size a multiple of 4
-        
-        Question: Does the limitation in image size between 256-4096 still exist ? 
+        and limit the size to 256-4096 
         """
         if value is None:
             self._data = value
@@ -108,6 +107,8 @@ class EsperantoImage(FabioImage):
 
             self._data[:min(old_shape[0], new_shape[0]),
                        shift:min(shift + old_shape[1], new_shape[1])] = value
+        else:
+            self._data = value
 
     def _readheader(self, infile):
         """
@@ -122,50 +123,62 @@ class EsperantoImage(FabioImage):
 
         if not top_line[-2:] == self.HEADER_SEPARATOR:
             raise RuntimeError("Unable to read esperanto header: Invalid format of first line")
-
+        words = top_line.split()
         try:
-            header_line_count = int(top_line.split(' ')[5])
+            header_line_count = int(words[5])
         except Exception as err:
             raise RuntimeError("Unable to determine header size: %s" % err)
 
-        self.header["ESPERANTO_FORMAT"] = ' '.join(top_line.split(' ')[:2])
+        self.header["ESPERANTO_FORMAT"] = ' '.join(words[2:])
+        self.header["format"] = int(words[2])
 
         # read the remaining lines
         for line_num in range(1, header_line_count):
             line = infile.read(256).decode('ascii')
-
-            if not line[-2:] == self.HEADER_SEPARATOR:
+            if not line[-2] == self.HEADER_SEPARATOR[0]:
                 raise RuntimeError("Unable to read esperanto header: Invalid format of line %d." % (line_num + 1))
 
             line = line.rstrip()
-            split_line = line.split(' ')
-            key = split_line[0]
-            if key.rstrip() == '':
+            words = line.split()
+            if not words:
                 continue
-
+            key = words[0]
+            if len(key) == 1 and ord(key) < 32:
+                continue
+            self.header[key] = ' '.join(words[1:])
             if key not in self.HEADER_KEYS:
                 logger.warning("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
+            else:  # try to interpret
+                lower_keys = self.HEADER_KEYS[key].split()
 
-            self.header[key] = ' '.join(split_line[1:])
+                for k, v in zip(lower_keys, words[1:]):
+                    if k.startswith("l") or k.startswith("i"):
+                        try:
+                            value = int(v)
+                        except:
+                            value = v
+                    elif k.startswith("d"):
+                        try:
+                            value = float(v)
+                        except:
+                            value = v
+                    elif k.startswith("s"):
+                        try:
+                            value = v.strip('"')
+                        except:
+                            value = v
+                    else:
+                        value = v
+                    self.header[k] = value
 
-        # extract necessary data
-        if "IMAGE" not in self.header:
-            raise RuntimeError("No IMAGE entry found in header.")
-
-        try:
-            image_data = self.header["IMAGE"].split(' ')
-
-            width = int(image_data[0])
-            height = int(image_data[1])
-        except Exception as err:
-            raise RuntimeError("Unable to determine dimensions of file: %s" % err)
-
+        width = self.header["lnx"]
+        height = self.header["lny"]
         if 256 > width > 4096 or width % 4 != 0 or 256 > height > 4096 or height % 4 != 0:
             logger.warning("The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues.")
 
         self.shape = (height, width)
 
-        self.format = self.header["IMAGE"].split(' ')[4][1:-1]
+        self.format = self.header["spixelformat"]
         self._dtype = "int32"
 
     def read(self, fname, frame=None):
@@ -192,7 +205,8 @@ class EsperantoImage(FabioImage):
                 self.raw_data = infile.read()
                 logger.warning("AGI_BITFIELD decompression is known to be apporximative ... use those data with caution !")
                 try:
-                    data = agi_bitfield.decompress(self.raw_data, self.shape)
+                    print(self.shape, type(self.raw_data))
+                    self.data = agi_bitfield.decompress(self.raw_data, self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while decompressing pixel data %s." % err)
             else:
