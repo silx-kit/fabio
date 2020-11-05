@@ -41,7 +41,8 @@ logger = logging.getLogger(__name__)
 class TestEsperanto(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
     TESTIMAGES = [
-        ("sucrose_1s__1_1.esperanto.bz2", 2048, 2048, 0, 65535, 8546.6414, 1500.4198)
+        ("sucrose_1s__1_1.esperanto.bz2", 2048, 2048, -173, 66043, 16.31592893600464, 266.4471326013064),  # To validate
+        ("reference.esperanto.bz2", 256, 256, -1, 10963, 1.767120361328125, 50.87154169213312)
     ]
 
     def test_read(self):
@@ -53,14 +54,14 @@ class TestEsperanto(unittest.TestCase):
             logger.debug("Processing: %s" % name)
             dim1, dim2 = params[1:3]
             shape = dim2, dim1
-            _mini, _maxi, _mean, _stddev = params[3:]
+            mini, maxi, mean, stddev = params[3:]
             obj = fabio.esperantoimage.EsperantoImage()
             obj.read(UtilsTest.getimage(name))
 
-            # self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
-            # self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
-            # self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
-            # self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
+            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
+            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
+            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
 
             self.assertEqual(shape, obj.shape, "dim1")
 
@@ -71,7 +72,6 @@ class TestEsperanto(unittest.TestCase):
             obj = fabio.esperantoimage.EsperantoImage()
             obj.read(UtilsTest.getimage(name))
 
-            # The key order is not the same depending on Python2 or 3
             expected_keys = set([
                 'IMAGE',
                 'SPECIAL_CCD_1',
@@ -94,7 +94,8 @@ class TestEsperanto(unittest.TestCase):
                 'HISTORY',
                 'ESPERANTO_FORMAT'])
 
-            self.assertEqual(set(obj.header.keys()), expected_keys)
+            upper_keys = set(i for i in obj.header.keys() if i.isupper())
+            self.assertEqual(upper_keys, expected_keys)
 
     def test_data(self):
         a = (numpy.random.random((257, 421)) * 100).round()
@@ -102,6 +103,11 @@ class TestEsperanto(unittest.TestCase):
         self.assertEqual(e.data.dtype, numpy.int32, "dtype has been changed")
         self.assertEqual(e.data.shape, (424, 424), "data has been resized")
         self.assertAlmostEqual(a.sum(), e.data.sum(), 2, "conent is almost the same")
+
+    def test_values(self):
+        esp = fabio.open(UtilsTest.getimage("reference.esperanto.bz2")[:-4])
+        npy = fabio.open(UtilsTest.getimage("reference.npy.bz2")[:-4])
+        self.assertEqual(numpy.alltrue(esp.data == npy.data), True, "Images are the same")
 
 
 def suite():
