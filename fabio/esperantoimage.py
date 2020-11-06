@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "05/11/2020"
+__date__ = "06/11/2020"
 
 from collections import OrderedDict
 import logging
@@ -47,6 +47,9 @@ class EsperantoImage(FabioImage):
     DEFAULT_EXTENSIONS = [".eseperanto", ".esper"]
 
     HEADER_SEPARATOR = "\x0d\x0a"
+    HEADER_LINES = 25
+    HEADER_WIDTH = 256
+    VALID_FORMATS = ("AGI_BITFIELD", "4BYTE_LONG")
 
     HEADER_KEYS = OrderedDict([("IMAGE", "lnx lny lbx lby spixelformat"),
                                ("SPECIAL_CCD_1", "delectronsperadu ldarkcorrectionswitch lfloodfieldcorrectionswitch/mode dsystemdcdb2gain ddarksignal dreadnoiserms"),
@@ -74,7 +77,7 @@ class EsperantoImage(FabioImage):
         """
         self._data = None
         FabioImage.__init__(self, *arg, **kwargs)
-        self.format = ""
+        self.format = "4BYTE_LONG"  # "AGI_BITFIELD is the other option
 
     @property
     def data(self):
@@ -119,26 +122,23 @@ class EsperantoImage(FabioImage):
         self.header = self.check_header()
 
         # read the first line of the header
-        top_line = infile.read(256).decode('ascii')
-
+        top_line = infile.read(self.HEADER_WIDTH).decode('ascii')
         if not top_line[-2:] == self.HEADER_SEPARATOR:
             raise RuntimeError("Unable to read esperanto header: Invalid format of first line")
         words = top_line.split()
         try:
-            header_line_count = int(words[5])
+            self.HEADER_LINES = int(words[5])
         except Exception as err:
             raise RuntimeError("Unable to determine header size: %s" % err)
-
-        self.header["ESPERANTO_FORMAT"] = ' '.join(words[2:])
+        assert self.HEADER_WIDTH == int(words[8]), "Line length match"
+        self.header["ESPERANTO FORMAT"] = ' '.join(words[2:])
         self.header["format"] = int(words[2])
 
         # read the remaining lines
-        for line_num in range(1, header_line_count):
-            line = infile.read(256).decode('ascii')
+        for line_num in range(1, self.HEADER_LINES):
+            line = infile.read(self.HEADER_WIDTH).decode('ascii')
             if not line[-2] == self.HEADER_SEPARATOR[0]:
                 raise RuntimeError("Unable to read esperanto header: Invalid format of line %d." % (line_num + 1))
-
-            line = line.rstrip()
             words = line.split()
             if not words:
                 continue
@@ -149,27 +149,25 @@ class EsperantoImage(FabioImage):
             if key not in self.HEADER_KEYS:
                 logger.warning("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
             else:  # try to interpret
-                lower_keys = self.HEADER_KEYS[key].split()
+                if key == "HISTORY":
+                    self.header[self.HEADER_KEYS[key]] = " ".join(words[1:]).strip('"')
+                else:
+                    lower_keys = self.HEADER_KEYS[key].split()
 
-                for k, v in zip(lower_keys, words[1:]):
-                    if k.startswith("l") or k.startswith("i"):
-                        try:
-                            value = int(v)
-                        except:
-                            value = v
-                    elif k.startswith("d"):
-                        try:
-                            value = float(v)
-                        except:
-                            value = v
-                    elif k.startswith("s"):
-                        try:
+                    for k, v in zip(lower_keys, words[1:]):
+                        if k[0] in "lib":
+                            try:
+                                value = int(v)
+                            except:
+                                value = v
+                        elif k[0] == "d":
+                            try:
+                                value = float(v)
+                            except:
+                                value = v
+                        else:
                             value = v.strip('"')
-                        except:
-                            value = v
-                    else:
-                        value = v
-                    self.header[k] = value
+                        self.header[k] = value
 
         width = self.header["lnx"]
         height = self.header["lny"]
@@ -197,27 +195,52 @@ class EsperantoImage(FabioImage):
                 try:
                     pixelsize = 4
                     pixelcount = self.shape[0] * self.shape[1]
-                    data = numpy.frombuffer(infile.read(pixelsize * pixelcount), dtype=self._dtype).copy()
+                    data = numpy.frombuffer(infile.read(pixelsize * pixelcount), dtype=self._dtype)
                     self.data = numpy.reshape(data, self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while reading pixel data %s." % err)
             elif self.format == "AGI_BITFIELD":
                 self.raw_data = infile.read()
                 try:
-                    print(self.shape, type(self.raw_data))
                     self.data = agi_bitfield.decompress(self.raw_data, self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while decompressing pixel data %s." % err)
             else:
-                raise RuntimeError("Format not supported %s." % self.format)
+                raise RuntimeError("Format not supported %s. Valid formats are %s" % (self.format, self.VALID_FORMATS))
 
         return self
 
     def _formatheaderline(self, line):
-        assert len(line) <= 254
-        line += ' ' * (254 - len(line))
-        line += self.HEADER_SEPARATOR
-        return line.encode("ASCII")
+        "Return one line as ASCII bytes padded with end of line"
+        assert len(line) <= self.HEADER_WIDTH - len(self.HEADER_SEPARATOR)
+        return (line.ljust(self.HEADER_WIDTH - len(self.HEADER_SEPARATOR), " ") + self.HEADER_SEPARATOR).encode("ASCII")
+
+    def _update_header(self):
+        """
+        Upper-cases headers are directly written into the ASCII header of the file.
+        This method updates them according to values found in lower-case header (if any)
+        
+        As a consequence, unforeseen headers are simply discarded.  
+        """
+        if "ESPERANTO FORMAT" not in self.header:  # default format
+            self.header["ESPERANTO FORMAT"] = "1 CONSISTING OF   25 LINES OF   256 BYTES EACH"
+        else:
+            self.header["ESPERANTO FORMAT"] = "%s CONSISTING OF   %s LINES OF   %s BYTES EACH" % (self.header["format"], self.HEADER_LINES, self.HEADER_WIDTH)
+        self.header["lny"], self.header["lnx"] = self.data.shape
+        self.header["spixelformat"] = self.format
+        if "lbx" not  in self.header:
+            self.header["lbx"] = 1
+        if "lby" not  in self.header:
+            self.header["lby"] = 1
+
+        for key, value in self.HEADER_KEYS.items():
+            updated = ""
+            for lower_key in value.split():
+                if lower_key[0] in "ldib":
+                    updated += '%s ' % self.header.get(lower_key, 0)
+                else:
+                    updated += '"%s" ' % self.header.get(lower_key, "")
+            self.header[key] = updated.strip()
 
     def write(self, fname):
         """
@@ -227,42 +250,15 @@ class EsperantoImage(FabioImage):
         """
 
         # create header
-        if "IMAGE" not in self.header:  # create image entry
-            dtype_info = '"%s"' % self.format
-            dx, dy = self.shape
-
-            self.header["IMAGE"] = "%d %d 1 1 %s" % (dx, dy, dtype_info)
-
-        else:  # update image entry
-            dtype_info = '"4BYTE_LONG"'
-            dx, dy = self.shape
-            split = self.header["IMAGE"].split(' ')
-
-            split[0] = str(dy)
-            split[1] = str(dx)
-            split[4] = str(dtype_info)
-
-            self.header["IMAGE"] = ' '.join(split)
-
-        if 256 > dx > 4096 or dx % 4 != 0 or 256 > dy > 4096 or dy % 4 != 0:
-            logger.warning("The dimensions of the image is (%i, %i) but they should only be between 256 and 4096 and a multiple of 4. This might cause compatibility issues.")
-
-        if "ESPERANTO_FORMAT" not in self.header:  # default format
-            self.header["ESPERANTO_FORMAT"] = "ESPERANTO FORMAT 1.1"
-
-        self.header = dict(filter(self.header, lambda elem: elem[0] in self.HEADER_KEYS))
-
-        header_top = self._formatheaderline("%s CONSISTING OF %d LINES OF 256 BYTE EACH" %
-                                                (self.header["ESPERANTO_FORMAT"], len(self.header)))
-        HEADER = header_top
-        for header_key in self.header:
-            if header_key == "ESPERANTO_FORMAT":  # or header_key not in self.HEADER_KEYS:
-                continue
-            header_val = self.header[header_key]
-            HEADER += self._formatheaderline(header_key + ' ' + header_val)
+        self._update_header()
+        bytes_header = self._formatheaderline("ESPERANTO FORMAT   " + self.header["ESPERANTO FORMAT"])
+        for key in self.HEADER_KEYS:
+            bytes_header += self._formatheaderline(key + ' ' + self.header[key])
+        if len(self.HEADER_KEYS) + 1 < self.HEADER_LINES:
+            bytes_header += self._formatheaderline("") * (self.HEADER_LINES - len(self.HEADER_KEYS) - 1)
 
         with self._open(fname, "wb") as outfile:
-            outfile.write(HEADER)
+            outfile.write(bytes_header)
             if self.format == "4BYTE_LONG":
                 outfile.write(self.data.tobytes())
             elif self.format == "AGI_BITFIELD":

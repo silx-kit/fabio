@@ -29,6 +29,7 @@
 """Test Esperanto images
 """
 
+import os
 import fabio.esperantoimage
 from ..utilstest import UtilsTest
 
@@ -92,10 +93,36 @@ class TestEsperanto(unittest.TestCase):
                 'MONOCHROMATOR',
                 'ABSTORUN',
                 'HISTORY',
-                'ESPERANTO_FORMAT'])
+                'ESPERANTO FORMAT'])
 
             upper_keys = set(i for i in obj.header.keys() if i.isupper())
             self.assertEqual(upper_keys, expected_keys)
+
+            # Test write uncompressed:
+            obj.format = "4BYTE_LONG"
+            dst = os.path.join(UtilsTest.tempdir, "4bytes_long.esperanto")
+            logger.info("Saving tmp file to %s", dst)
+            obj.write(dst)
+
+            new = fabio.open(dst)
+            self.assertTrue(numpy.allclose(obj.data, new.data), msg="data are the same")
+            for k, v in obj.header.items():
+                if k not in ("ESPERANTO FORMAT",
+                             ):
+                    self.assertEqual(v, new.header.get(k), "header differ on %s: %s vs %s" % (k, v, new.header.get(k)))
+
+            # Test write compressed:
+            obj.format = "AGI_BITFIELD"
+            dst = os.path.join(UtilsTest.tempdir, "agi_bitfield.esperanto")
+            logger.info("Saving tmp file to %s", dst)
+            obj.write(dst)
+
+            new = fabio.open(dst)
+            self.assertTrue(numpy.allclose(obj.data, new.data), msg="data are the same")
+            for k, v in obj.header.items():
+                if k not in ("ESPERANTO FORMAT",
+                             ):
+                    self.assertEqual(v, new.header.get(k), "header differ on %s: %s vs %s" % (k, v, new.header.get(k)))
 
     def test_data(self):
         a = (numpy.random.random((257, 421)) * 100).round()
