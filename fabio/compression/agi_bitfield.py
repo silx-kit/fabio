@@ -33,11 +33,13 @@
 Authors: Jérôme Kieffer, ESRF email:jerome.kieffer@esrf.fr
          Florian Plaswig
 
+Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/esperantoframe.cpp
+        Fortran code:   https://svn.debroglie.net/debroglie/Oxford/trunk/diamond2crysalis/bitfield.F90
 """
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "05/11/2020"
+__date__ = "06/11/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
@@ -214,23 +216,28 @@ def compress_field(ifield, fieldsize, overflow_table):
     :param overflow_table: io.BytesIO
     :returns int
     """
-
-    compressed_field = numpy.uint64(0)  # uint64
-    fieldsize = numpy.uint8(fieldsize)
-
-    mask_ = MASK[fieldsize]
+    assert 0 < fieldsize <= 8, "size is between 0 and 8"
     conv_ = MASK[fieldsize - 1]
-    for i, elem in enumerate(ifield):
-        if -127 <= elem < 127:
-            val = numpy.uint8((elem + conv_) & mask_)
-        elif -32767 <= elem < 32767:
-            val = numpy.uint8(254)
-            overflow_table.write(pack("h", elem))
-        else:
-            val = numpy.uint8(255)
-            overflow_table.write(pack("i", elem))
-        compressed_field = val | (compressed_field << fieldsize)
-    return pack("Q", compressed_field)[:fieldsize]
+    if fieldsize == 8:
+        # we have to deal offsets but not bitshifts
+        tmp = bytearray(8)
+        for i, elem in enumerate(ifield):
+            if -127 <= elem < 127:
+                tmp[i] = elem + conv_
+            elif -32767 <= elem < 32767:
+                tmp[i] = 254
+                overflow_table.write(pack("h", elem))
+            else:
+                tmp[i] = 255
+                overflow_table.write(pack("i", elem))
+        return bytes(tmp)
+    else:
+        # we have to deal with bit-shifts but not offsets
+        compressed_field = 0
+        for i, elem in enumerate(ifield):
+            val = elem + conv_
+            compressed_field |= val << (i * fieldsize)
+        return pack("<Q", compressed_field)[:fieldsize]
 
 
 def decode_field(field):

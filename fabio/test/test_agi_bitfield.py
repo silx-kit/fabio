@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
+__date__ = "06/11/2020"
 
 import io
 import logging
@@ -65,7 +65,7 @@ class TestUtil(unittest.TestCase):
         cf = agi_bitfield.compress_field(data, fs, oft)
         self.assertEqual(pack("h", 255) + pack("i", 40000), oft.getvalue())
 
-        mask_ = agi_bitfield.mask(fs)
+        mask_ = agi_bitfield.MASK[fs]
         dec = agi_bitfield.decode_field(cf)
         self.assertEqual([1 + 127, 2 + 127, 3 + 127, 4 + 127, 0xfe & mask_, 0xff & mask_, -4 + 127, 2 + 127], dec)
 
@@ -77,7 +77,7 @@ class TestUtil(unittest.TestCase):
         cf = agi_bitfield.compress_field(data, fs, oft)
         self.assertEqual(b'', oft.getvalue())
 
-        conv_ = agi_bitfield.conv(fs)
+        conv_ = agi_bitfield.MASK[fs - 1]
         dec = agi_bitfield.decode_field(cf[:fs])
         self.assertEqual([1 + conv_, 0 + conv_] * 4, dec)
 
@@ -102,14 +102,14 @@ class TestUtil(unittest.TestCase):
             (8, 0xff)
         ]
         for length, msk in mask_cases:
-            self.assertEqual(msk, agi_bitfield.mask(length))
+            self.assertEqual(msk, agi_bitfield.MASK[length])
         conv_cases = [
             (1, 0),
             (4, 0b111),
             (8, 0b1111111)
         ]
         for length, cnv in conv_cases:
-            self.assertEqual(cnv, agi_bitfield.conv(length))
+            self.assertEqual(cnv, agi_bitfield.MASK[length - 1])
 
 
 class TestRow(unittest.TestCase):
