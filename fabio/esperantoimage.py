@@ -47,6 +47,7 @@ class EsperantoImage(FabioImage):
     DEFAULT_EXTENSIONS = [".eseperanto", ".esper"]
 
     HEADER_SEPARATOR = "\x0d\x0a"
+    HEADER_END = b"\x0d\x1a"
     HEADER_LINES = 25
     HEADER_WIDTH = 256
     VALID_FORMATS = ("AGI_BITFIELD", "4BYTE_LONG")
@@ -149,7 +150,7 @@ class EsperantoImage(FabioImage):
             if key not in self.HEADER_KEYS:
                 logger.warning("Unable to read esperanto header: Invalid Key %s in line %d." % (key, line_num))
             else:  # try to interpret
-                if key == "HISTORY":
+                if key in ("HISTORY", "TIMESTAMP"):
                     self.header[self.HEADER_KEYS[key]] = " ".join(words[1:]).strip('"')
                 else:
                     lower_keys = self.HEADER_KEYS[key].split()
@@ -256,7 +257,7 @@ class EsperantoImage(FabioImage):
             bytes_header += self._formatheaderline(key + ' ' + self.header[key])
         if len(self.HEADER_KEYS) + 1 < self.HEADER_LINES:
             bytes_header += self._formatheaderline("") * (self.HEADER_LINES - len(self.HEADER_KEYS) - 1)
-
+        bytes_header = bytes_header[:-len(self.HEADER_SEPARATOR)] + self.HEADER_END
         with self._open(fname, "wb") as outfile:
             outfile.write(bytes_header)
             if self.format == "4BYTE_LONG":
