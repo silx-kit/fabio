@@ -100,8 +100,9 @@ def compress_row(data, buffer):
         fielda = pixel_diff[:8]
         fieldb = pixel_diff[8:16]
 
-        len_a, len_b = _get_fieldsize(fielda), _get_fieldsize(fieldb)
-        len_byte = (len_b << 4) | (0xf & len_a)
+        len_a = get_fieldsize(fielda)
+        len_b = get_fieldsize(fieldb)
+        len_byte = (len_b << 4) | len_a
         buffer.write(pack("B", len_byte))
 
         of_buff = BytesIO()
@@ -246,7 +247,7 @@ def compress_field(ifield, fieldsize, overflow_table):
         try:
             res = pack("<Q", compressed_field)
         except:
-            logger.error("Exception in struct.pack: %s %s %s", fieldsize, ifield, compressed_field)
+            logger.error("Exception in struct.pack: %s %s %s", fieldsize, type(fieldsize), ifield, compressed_field)
             raise
         return res[:fieldsize]
 

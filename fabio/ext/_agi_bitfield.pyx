@@ -36,10 +36,12 @@ __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
 
-from libc.stdint cimport int32_t
+from libc.stdint cimport int32_t, int64_t 
+ctypedef fused any_int:
+    int32_t
+    int64_t
 
-
-cpdef int32_t fieldsize(int32_t nbvalue):
+cpdef int32_t fieldsize(any_int nbvalue):
     "Direct translation of Fortran"
     cdef int getfieldsize
     if(nbvalue < -63):
@@ -75,14 +77,15 @@ cpdef int32_t fieldsize(int32_t nbvalue):
     return getfieldsize
 
 
-cpdef int32_t get_fieldsize(int32_t[::1] array):
+cpdef int32_t get_fieldsize(any_int[::1] array):
     """determine the fieldsize to store the given values
     
     :param array numpy.array
     :returns int
     """
     cdef:
-        int32_t size, idx, maxi, mini, value
+        any_int maxi, mini, value
+        int32_t size, idx, 
     maxi = mini = 0
     size = array.shape[0]
     for idx in range(size):
