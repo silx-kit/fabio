@@ -223,10 +223,9 @@ def compress_field(ifield, fieldsize, overflow_table):
     :param overflow_table: io.BytesIO
     :returns int
     """
-    assert 0 < fieldsize <= 8, "size is between 0 and 8"
-    conv_ = MASK[fieldsize - 1]
     if fieldsize == 8:
         # we have to deal offsets but not bitshifts
+        conv_ = MASK[fieldsize - 1]
         tmp = bytearray(8)
         for i, elem in enumerate(ifield):
             if -127 <= elem < 127:
@@ -238,8 +237,9 @@ def compress_field(ifield, fieldsize, overflow_table):
                 tmp[i] = 255
                 overflow_table.write(pack("<i", elem))
         return bytes(tmp)
-    else:
+    elif fieldsize > 0:
         # we have to deal with bit-shifts but not offsets
+        conv_ = MASK[fieldsize - 1]
         compressed_field = 0
         for i, elem in enumerate(ifield):
             val = elem + conv_
@@ -247,9 +247,11 @@ def compress_field(ifield, fieldsize, overflow_table):
         try:
             res = pack("<Q", compressed_field)
         except:
-            logger.error("Exception in struct.pack: %s %s %s", fieldsize, type(fieldsize), ifield, compressed_field)
+            logger.error("Exception in struct.pack: %s %s %s %s", fieldsize, type(fieldsize), ifield, compressed_field)
             raise
         return res[:fieldsize]
+    else:
+        raise AssertionError("fieldsize is between 0 and 8")
 
 
 def decode_field(field):
