@@ -24,7 +24,7 @@
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "18/01/2019"
+__date__ = "09/11/2020"
 
 import os
 import numpy
@@ -55,6 +55,11 @@ def configuration(parent_package='', top_path=None):
     config.add_extension(
         name="_cif",
         sources=["_cif.pyx"],
+        language='c')
+
+    config.add_extension(
+        name="_agi_bitfield",
+        sources=["_agi_bitfield.pyx"],
         language='c')
 
     return config

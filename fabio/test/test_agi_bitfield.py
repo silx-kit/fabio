@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "06/11/2020"
+__date__ = "09/11/2020"
 
 import io
 import logging
@@ -39,7 +39,8 @@ from struct import pack
 
 import numpy as np
 
-from fabio.compression import agi_bitfield
+from ..compression import agi_bitfield
+from ..ext import _agi_bitfield
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,9 @@ class TestUtil(unittest.TestCase):
             (np.array([-1, -2, 2, 1] * 2, dtype="int32"), 3)
         ]
         for array, result in test_cases:
-            fs = agi_bitfield.get_fieldsize(array)
+            fs = agi_bitfield.python_fieldsize(array)
+            self.assertEqual(result, fs)
+            fs = _agi_bitfield.cython_fieldsize(array)
             self.assertEqual(result, fs)
 
     def test_compress_decode_field_overflow(self):

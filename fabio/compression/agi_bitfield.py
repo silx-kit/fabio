@@ -45,6 +45,10 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 import logging
 from io import BytesIO
 from struct import pack, unpack as unpack_
+try:
+    from ..ext._agi_bitfield import get_fieldsize as _get_fieldsize
+except ImportError:
+    _get_fieldsize = None
 logger = logging.getLogger(__name__)
 import numpy
 
@@ -96,7 +100,7 @@ def compress_row(data, buffer):
         fielda = pixel_diff[:8]
         fieldb = pixel_diff[8:16]
 
-        len_a, len_b = get_fieldsize(fielda), get_fieldsize(fieldb)
+        len_a, len_b = _get_fieldsize(fielda), _get_fieldsize(fieldb)
         len_byte = (len_b << 4) | (0xf & len_a)
         buffer.write(pack("B", len_byte))
 
@@ -133,35 +137,6 @@ def decompress(comp_frame, dimensions):
     return output.cumsum(axis=1)
 
 
-def decompress2(comp_frame, dimensions):
-    """decompresses a frame that was compressed using the agi_bitfield algorithm
-    :param comp_frame: bytes
-    :param dimensions: tuple
-    :return numpy.ndarray
-    """
-    from io import BytesIO
-    import numpy
-    from struct import pack, unpack as unpack_
-    unpack = lambda fmt, buff: unpack_(fmt, buff)[0]
-    from fabio.compression.agi_bitfield import decompress_row
-
-    row_count, col_count = dimensions
-    # read data components (row indices are ignored)
-
-    data_size = unpack("I", comp_frame[:4])
-    data_block = BytesIO(comp_frame[4:])
-    logger.debug("Size of binary data block: %d with image size: %s, compression ratio: %.3fx", data_size, dimensions, 4 * row_count * col_count / data_size)
-    output = numpy.zeros(dimensions, dtype=numpy.int32)
-    lines = []
-    start = 4
-    for row_index in range(row_count):
-        output[row_index] = decompress_row(data_block, col_count)
-        end = data_block.tell()
-        lines.append(comp_frame[start:end])
-        start = end
-    return output, lines
-
-
 def decompress_row(buffer, row_length):
     """decompress a single row
     :param buffer: io.BytesIO
@@ -191,11 +166,6 @@ def decompress_row(buffer, row_length):
     pixels += [read_escaped(buffer) for _ in range(n_restpx)]
 
     return pixels
-
-
-def _fieldsize(n):
-    "Python version ... dubbious. Prefer the Fortran version"
-    return min(8, max(1, abs(n.item()).bit_length() + 1))
 
 
 def fortran_fieldsize(nbvalue):
@@ -241,6 +211,10 @@ def get_fieldsize(array):
     return max(fortran_fieldsize(array.max()), fortran_fieldsize(array.min()))
 
 
+if _get_fieldsize is None:
+    _get_fieldsize = get_fieldsize
+
+
 def compress_field(ifield, fieldsize, overflow_table):
     """compress a field with given size
     :param ifield: numpy.ndarray
@@ -258,10 +232,10 @@ def compress_field(ifield, fieldsize, overflow_table):
                 tmp[i] = elem + conv_
             elif -32767 <= elem < 32767:
                 tmp[i] = 254
-                overflow_table.write(pack("h", elem))
+                overflow_table.write(pack("<h", elem))
             else:
                 tmp[i] = 255
-                overflow_table.write(pack("i", elem))
+                overflow_table.write(pack("<i", elem))
         return bytes(tmp)
     else:
         # we have to deal with bit-shifts but not offsets
