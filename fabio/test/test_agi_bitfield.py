@@ -52,7 +52,8 @@ class TestUtil(unittest.TestCase):
             (np.zeros(8, dtype="int32"), 1),
             (np.array([1024] * 8, dtype="int32"), 8),
             (np.arange(0, 7, dtype="int32"), 4),
-            (np.array([-1, -2, 2, 1] * 2, dtype="int32"), 3)
+            (np.array([-1, -2, 2, 1] * 2, dtype="int32"), 3),
+            (np.array([-3, 3, 8, 3, -5 - 5, 0, 6]), 5)
         ]
         for array, result in test_cases:
             fs = agi_bitfield.get_fieldsize(array)
