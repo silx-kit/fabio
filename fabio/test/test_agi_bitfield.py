@@ -55,9 +55,9 @@ class TestUtil(unittest.TestCase):
             (np.array([-1, -2, 2, 1] * 2, dtype="int32"), 3)
         ]
         for array, result in test_cases:
-            fs = agi_bitfield.python_fieldsize(array)
+            fs = agi_bitfield.get_fieldsize(array)
             self.assertEqual(result, fs)
-            fs = _agi_bitfield.cython_fieldsize(array)
+            fs = _agi_bitfield.get_fieldsize(array)
             self.assertEqual(result, fs)
 
     def test_compress_decode_field_overflow(self):
@@ -157,7 +157,7 @@ class TestRow(unittest.TestCase):
 class TestCompression(unittest.TestCase):
 
     def test_full_rand(self):
-        data = np.random.randint(-255, 255, (256, 256))
+        data = np.random.randint(-255, 255, (256, 256)).astype("int32")
         compressed = agi_bitfield.compress(data)
         uncompressed = agi_bitfield.decompress(compressed, data.shape)
         self.assertTrue(np.array_equal(data, uncompressed))
