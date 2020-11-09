@@ -39,7 +39,7 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "06/11/2020"
+__date__ = "09/11/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
@@ -62,16 +62,19 @@ def compress(frame):
     dim = frame.shape
     buffer = BytesIO()
 
-    row_adresses = BytesIO()
+    row_start = numpy.zeros(dim[0], dtype=numpy.uint32)
 
-    for frame_row in range(0, dim[0]):
-        row_adresses.write(pack("<I", buffer.tell() + 4))
-        compress_row(frame[frame_row], buffer)
+    for row_index in range(0, dim[0]):
+        row_start[row_index] = buffer.tell()
+        compress_row(frame[row_index], buffer)
 
     data_size = pack("<I", buffer.tell())
-    buffer.write(row_adresses.getvalue())
 
-    row_adresses.close()
+    if numpy.little_endian:
+        buffer.write(row_start.tobytes())
+    else:
+        buffer.write(row_start.byteswap.tobytes())
+
     return data_size + buffer.getvalue()
 
 
@@ -128,6 +131,35 @@ def decompress(comp_frame, dimensions):
         output[row_index] = decompress_row(data_block, col_count)
 
     return output.cumsum(axis=1)
+
+
+def decompress2(comp_frame, dimensions):
+    """decompresses a frame that was compressed using the agi_bitfield algorithm
+    :param comp_frame: bytes
+    :param dimensions: tuple
+    :return numpy.ndarray
+    """
+    from io import BytesIO
+    import numpy
+    from struct import pack, unpack as unpack_
+    unpack = lambda fmt, buff: unpack_(fmt, buff)[0]
+    from fabio.compression.agi_bitfield import decompress_row
+
+    row_count, col_count = dimensions
+    # read data components (row indices are ignored)
+
+    data_size = unpack("I", comp_frame[:4])
+    data_block = BytesIO(comp_frame[4:])
+    logger.debug("Size of binary data block: %d with image size: %s, compression ratio: %.3fx", data_size, dimensions, 4 * row_count * col_count / data_size)
+    output = numpy.zeros(dimensions, dtype=numpy.int32)
+    lines = []
+    start = 4
+    for row_index in range(row_count):
+        output[row_index] = decompress_row(data_block, col_count)
+        end = data_block.tell()
+        lines.append(comp_frame[start:end])
+        start = end
+    return output, lines
 
 
 def decompress_row(buffer, row_length):
