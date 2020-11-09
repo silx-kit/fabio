@@ -243,7 +243,12 @@ def compress_field(ifield, fieldsize, overflow_table):
         for i, elem in enumerate(ifield):
             val = elem + conv_
             compressed_field |= val << (i * fieldsize)
-        return pack("<Q", compressed_field)[:fieldsize]
+        try:
+            res = pack("<Q", compressed_field)
+        except:
+            logger.error("Exception in struct.pack: %s %s %s", fieldsize, ifield, compressed_field)
+            raise
+        return res[:fieldsize]
 
 
 def decode_field(field):
