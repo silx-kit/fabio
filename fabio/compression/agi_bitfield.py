@@ -100,8 +100,8 @@ def compress_row(data, buffer):
         fielda = pixel_diff[:8]
         fieldb = pixel_diff[8:16]
 
-        len_a = get_fieldsize(fielda)
-        len_b = get_fieldsize(fieldb)
+        len_a = _get_fieldsize(fielda)
+        len_b = _get_fieldsize(fieldb)
         len_byte = (len_b << 4) | len_a
         buffer.write(pack("B", len_byte))
 
@@ -242,7 +242,7 @@ def compress_field(ifield, fieldsize, overflow_table):
         conv_ = MASK[fieldsize - 1]
         compressed_field = 0
         for i, elem in enumerate(ifield):
-            val = elem + conv_
+            val = int(elem) + conv_
             compressed_field |= val << (i * fieldsize)
         try:
             res = pack("<Q", compressed_field)
