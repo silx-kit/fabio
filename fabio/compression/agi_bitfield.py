@@ -39,16 +39,17 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "09/11/2020"
+__date__ = "10/11/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
 from io import BytesIO
 from struct import pack, unpack as unpack_
 try:
-    from ..ext._agi_bitfield import get_fieldsize as _get_fieldsize
+    from ..ext._agi_bitfield import get_fieldsize as _get_fieldsize, compress_row as _compress_row
 except ImportError:
     _get_fieldsize = None
+    _compress_row = None
 logger = logging.getLogger(__name__)
 import numpy
 
@@ -70,7 +71,7 @@ def compress(frame):
 
     for row_index in range(0, dim[0]):
         row_start[row_index] = buffer.tell()
-        compress_row(frame[row_index], buffer)
+        _compress_row(frame[row_index], buffer)
 
     data_size = pack("<I", buffer.tell())
 
@@ -115,6 +116,10 @@ def compress_row(data, buffer):
 
     for restpx in range(0, n_restpx):
         write_escaped(pixel_diff[restpx], buffer)
+
+
+if _compress_row is None:
+    _compress_row = compress_row
 
 
 def decompress(comp_frame, dimensions):

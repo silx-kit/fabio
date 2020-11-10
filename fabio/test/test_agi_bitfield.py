@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "09/11/2020"
+__date__ = "10/11/2020"
 
 import io
 import logging
@@ -121,11 +121,13 @@ class TestRow(unittest.TestCase):
     def test_compress_row_zero(self):
         data = np.zeros(256, dtype="int32")
         buffer = io.BytesIO()
-
-        agi_bitfield.compress_row(data, buffer)
-
+        buffer_python = io.BytesIO()
+        buffer_cython = io.BytesIO()
+        _agi_bitfield.compress_row(data, buffer_cython)
+        agi_bitfield.compress_row(data, buffer_python)
+        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
-
         decompressed = agi_bitfield.decompress_row(buffer, 256)
         decompressed = np.array(decompressed, dtype="int32").cumsum()
         self.assertTrue(np.array_equal(decompressed, data))
@@ -133,11 +135,13 @@ class TestRow(unittest.TestCase):
     def test_compress_row_small(self):
         data = np.random.randint(0, 5, 256, dtype="int32")
         buffer = io.BytesIO()
-
-        agi_bitfield.compress_row(data, buffer)
-
+        buffer_python = io.BytesIO()
+        buffer_cython = io.BytesIO()
+        _agi_bitfield.compress_row(data, buffer_cython)
+        agi_bitfield.compress_row(data, buffer_python)
+        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
-
         decompressed = agi_bitfield.decompress_row(buffer, 256)
         decompressed = np.array(decompressed, dtype="int32").cumsum()
         self.assertTrue(np.array_equal(decompressed, data))
@@ -145,11 +149,13 @@ class TestRow(unittest.TestCase):
     def compress_row_overflows(self):
         data = np.random.randint(-255, 255, 256, dtype="int32")
         buffer = io.BytesIO()
-
-        agi_bitfield.compress_row(data, buffer)
-
+        buffer_python = io.BytesIO()
+        buffer_cython = io.BytesIO()
+        _agi_bitfield.compress_row(data, buffer_cython)
+        agi_bitfield.compress_row(data, buffer_python)
+        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
-
         decompressed = agi_bitfield.decompress_row(buffer, 256)
         decompressed = np.array(decompressed, dtype="int32").cumsum()
         self.assertTrue(np.array_equal(decompressed, data))

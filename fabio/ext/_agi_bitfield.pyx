@@ -163,9 +163,9 @@ def compress_row(int32_t[::1] data, buffer):
     
     size = data.shape[0]
     first_pixel = data[0]
+    
     #data[1:] - data[:size-1]
     pixel_diff = numpy.empty(size-1, dtype=numpy.int32)
-    
     prev = first_pixel
     for i in range(1, size):
         cur = data[i]
