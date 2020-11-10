@@ -30,16 +30,16 @@ environment:
           PYTHON_ARCH: "64"
 
         # Python 3.7
-        - PYTHON_DIR: "C:\\Python37"
-          PYTHON_ARCH: "32"
-
         - PYTHON_DIR: "C:\\Python37-x64"
           PYTHON_ARCH: "64"
 
         # Python 3.8
         - PYTHON_DIR: "C:\\Python38-x64"
-          PYTHON_ARCH: "64"    
-    
+          PYTHON_ARCH: "64"
+
+        # Python 3.9
+        - PYTHON_DIR: "C:\\Python39-x64"
+          PYTHON_ARCH: "64"
 
 
 install:
