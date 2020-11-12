@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "06/11/2020"
+__date__ = "12/11/2020"
 
 from collections import OrderedDict
 import logging
@@ -41,16 +41,14 @@ from .compression import agi_bitfield
 class EsperantoImage(FabioImage):
     """FabIO image class for Esperanto image files
     """
-
     DESCRIPTION = "CrysAlis Pro Esperanto file format"
-
     DEFAULT_EXTENSIONS = [".eseperanto", ".esper"]
-
     HEADER_SEPARATOR = "\x0d\x0a"
     HEADER_END = b"\x0d\x1a"
     HEADER_LINES = 25
     HEADER_WIDTH = 256
     VALID_FORMATS = ("AGI_BITFIELD", "4BYTE_LONG")
+    DUMMY = 0  # Value to fill empty regions with when padding
 
     HEADER_KEYS = OrderedDict([("IMAGE", "lnx lny lbx lby spixelformat"),
                                ("SPECIAL_CCD_1", "delectronsperadu ldarkcorrectionswitch lfloodfieldcorrectionswitch/mode dsystemdcdb2gain ddarksignal dreadnoiserms"),
@@ -78,7 +76,7 @@ class EsperantoImage(FabioImage):
         """
         self._data = None
         FabioImage.__init__(self, *arg, **kwargs)
-        self.format = "4BYTE_LONG"  # "AGI_BITFIELD is the other option
+        self.format = "AGI_BITFIELD"  # "4BYTE_LONG" is the other option
 
     @property
     def data(self):
@@ -105,7 +103,7 @@ class EsperantoImage(FabioImage):
 
         if old_shape != new_shape:
             logger.info("Padding image to be square, multiple of 4 and of size between 256 and 4096")
-            self._data = numpy.zeros(new_shape, dtype=numpy.int32)
+            self._data = numpy.zeros(new_shape, dtype=numpy.int32) + self.DUMMY
             # Nota: center horizontally, not vertically (!?)
             shift = max((new_shape[1] - old_shape[1]) // 2, 0)
 
