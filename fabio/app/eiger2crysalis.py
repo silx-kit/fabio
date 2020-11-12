@@ -256,7 +256,7 @@ class Converter:
         f = esperantoimage.EsperantoImage(data=m)
         n = self.geometry_transform(f.data)
         w = numpy.argmin(abs(n.ravel() - dummy))
-        return w % shape[-1], w // shape[-1]
+        return w % n.shape[-1], w // n.shape[-1]
 
     def convert_all(self):
         self.succeeded = True
