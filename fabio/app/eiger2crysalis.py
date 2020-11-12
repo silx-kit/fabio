@@ -579,7 +579,7 @@ def main():
 
     group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
     group.add_argument("--rotation", type=int, default=180,
-                       help="Rotate the initial image by this value in degrees. Must be a multiple of 90°.")
+                       help="Rotate the initial image by this value in degrees. Must be a multiple of 90°. By default 180 deg (flip_up with origin=lower and flip_lr because the image is seen from the sample).")
     group.add_argument("--transpose", default=False, action="store_true",
                        help="Flip the x/y axis")
     group.add_argument("--flip-ud", dest="flip_ud", default=False, action="store_true",
