@@ -45,7 +45,6 @@ FOOTER = """To import your files as a project:
 * Start CrysalisPro and open any project
 * press "F5" to open the console
 * Type `esperanto createrunlist` and select your first and last frame
-Optionnal: create the mask file with `xx settoccd` and restart CrysalisPro
 """
 
 import logging
@@ -549,6 +548,8 @@ def main():
 #                        " option)")
     group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
                        help="do everything except modifying the file system")
+    group.add_argument("--calc-mask", dest="calc_mask", type=bool, default=True,
+                       help="Generate a mask from pixels marked as invalid, set to false to speed-up")
 
     group = parser.add_argument_group("Experimental setup options")
     group.add_argument("-e", "--energy", type=float, default=None,
