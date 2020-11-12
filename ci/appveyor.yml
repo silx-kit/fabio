@@ -1,4 +1,4 @@
-version: 0.10-dev{build}
+version: 0.11-dev{build}
 
 # fetch repository as zip archive
 shallow_clone: true
@@ -17,7 +17,8 @@ os:
 
 cache:
     - '%LOCALAPPDATA%\pip\Cache'
-
+image:
+  - Visual Studio 2019
 environment:
     global:
         WIN_SDK_ROOT: "C:\\Program Files\\Microsoft SDKs\\Windows"
@@ -38,7 +39,7 @@ environment:
           PYTHON_ARCH: "64"
 
         # Python 3.9
-        - PYTHON_DIR: "C:\\Python39-x64"
+          PYTHON_DIR: "C:\\Python39-x64"
           PYTHON_ARCH: "64"
 
 
