@@ -493,7 +493,7 @@ class Converter:
             new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
             rectangles =  dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
             self.progress.update(self.progress.max_value-0.5, f"Exporting {len(rectangles)} rectangles as mask")
-            with open(os.path.join(os.path.join(self.dirname, self.prefix),self.prefix+".set"), mode="w") as maskfile:
+            with open(os.path.join(self.dirname,self.prefix+".set"), mode="w") as maskfile:
                 for r in rectangles:
                     if r.area == 1:
                         maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n")
