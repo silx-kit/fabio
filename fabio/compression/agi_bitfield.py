@@ -39,17 +39,18 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "10/11/2020"
+__date__ = "13/11/2020"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
 from io import BytesIO
 from struct import pack, unpack as unpack_
 try:
-    from ..ext._agi_bitfield import get_fieldsize as _get_fieldsize, compress_row as _compress_row
+    from ..ext._agi_bitfield import get_fieldsize as _get_fieldsize, compress_row as _compress_row, compress as _compress
 except ImportError:
     _get_fieldsize = None
     _compress_row = None
+    _compress = None
 logger = logging.getLogger(__name__)
 import numpy
 

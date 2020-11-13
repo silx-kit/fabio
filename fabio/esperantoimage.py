@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "12/11/2020"
+__date__ = "13/11/2020"
 
 from collections import OrderedDict
 import logging
@@ -261,7 +261,10 @@ class EsperantoImage(FabioImage):
             if self.format == "4BYTE_LONG":
                 outfile.write(self.data.tobytes())
             elif self.format == "AGI_BITFIELD":
-                outfile.write(agi_bitfield.compress(self.data))
+                if agi_bitfield._compress is not None:
+                    outfile.write(agi_bitfield._compress(self.data))
+                else:
+                    outfile.write(agi_bitfield.compress(self.data))
             else:
                 raise RuntimeError("Format not supported %s." % self.format)
 
