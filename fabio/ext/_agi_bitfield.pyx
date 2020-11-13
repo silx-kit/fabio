@@ -368,13 +368,13 @@ def compress(int32_t [:,::1] frame):
     buffer = numpy.empty((shape, 8*shape), numpy.uint8) #Should be able to accomodate 4096 data 
     cumsum = numpy.empty(shape+1, numpy.uint32)
     line_size = numpy.empty(shape, numpy.uint16)
-    delta = numpy.empty((shape, shape), numpy.int32)
+    delta = numpy.empty(shape-1, numpy.int32)
 
     with nogil:
         current = 0
         for index in range(shape):
             cumsum[index] = current
-            size = _compress_row(frame[index], buffer[index], delta[index])
+            size = _compress_row(frame[index], buffer[index], delta)
             line_size[index] = size
             current += size
         cumsum[shape] = current
