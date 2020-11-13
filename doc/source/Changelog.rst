@@ -1,6 +1,12 @@
 Changelog
 =========
 
+FabIO-0.11.0 (??/2021):
+.......................
+
+- Stop testing for 32-bit operating systems.
+- Support for Python versions 3.5 ... 3.9
+
 FabIO-0.10.0 (04/2020):
 .......................
 
