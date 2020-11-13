@@ -1,7 +1,12 @@
 Changelog
 =========
 
-Support for Esperanto image format (includes bitfield compression)
+FabIO-0.11.0 unreleased (??/2021):
+.......................
+
+- Support for Esperanto image format (includes bitfield compression)
+- Stop testing for 32-bit operating systems.
+- Support for Python versions 3.5 ... 3.9
 
 FabIO-0.10.0 (04/2020):
 .......................

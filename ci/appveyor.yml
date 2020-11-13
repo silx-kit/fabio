@@ -1,4 +1,4 @@
-version: 0.10-dev{build}
+version: 0.11-dev{build}
 
 # fetch repository as zip archive
 shallow_clone: true
@@ -13,11 +13,11 @@ notifications:
   on_build_status_changed: true
 
 os:
-    - Visual Studio 2015
+    - Visual Studio 2019
 
 cache:
     - '%LOCALAPPDATA%\pip\Cache'
-
+    
 environment:
     global:
         WIN_SDK_ROOT: "C:\\Program Files\\Microsoft SDKs\\Windows"
@@ -30,16 +30,16 @@ environment:
           PYTHON_ARCH: "64"
 
         # Python 3.7
-        - PYTHON_DIR: "C:\\Python37"
-          PYTHON_ARCH: "32"
-
         - PYTHON_DIR: "C:\\Python37-x64"
           PYTHON_ARCH: "64"
 
         # Python 3.8
         - PYTHON_DIR: "C:\\Python38-x64"
-          PYTHON_ARCH: "64"    
-    
+          PYTHON_ARCH: "64"
+
+        # Python 3.9
+        - PYTHON_DIR: "C:\\Python39-x64"
+          PYTHON_ARCH: "64"
 
 
 install:
