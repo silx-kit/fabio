@@ -1,6 +1,8 @@
 Changelog
 =========
 
+Support for Esperanto image format (includes bitfield compression)
+
 FabIO-0.10.0 (04/2020):
 .......................
 
