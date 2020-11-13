@@ -37,7 +37,7 @@ deb_name=$(echo "$source_project" | tr '[:upper:]' '[:lower:]')
 
 # target system
 if [ -f /etc/debian_version ]
-then 
+then
     debian_version=$(cat /etc/debian_version | cut -d. -f1 | grep -o '[0-9]*')
     if [ -z $debian_version ]
     then
@@ -164,13 +164,13 @@ build_deb() {
     then
       cp -f dist/${project}-testimages.tar.gz ${build_directory}
     fi
-    
+
     cd ${build_directory}
     tar -xzf ${tarname}
-    
+
     directory=${project}-${strictversion}
     newname=${deb_name}_${debianversion}.orig.tar.gz
-    
+
     #echo tarname $tarname newname $newname
     if [ $tarname != $newname ]
     then
@@ -180,7 +180,7 @@ build_deb() {
       fi
         ln -s ${tarname} ${newname}
     fi
-    
+
     if [ -f ${project}-testimages.tar.gz ]
     then
       if [ ! -h  ${deb_name}_${debianversion}.orig-testimages.tar.gz ]
@@ -188,11 +188,11 @@ build_deb() {
         ln -s ${project}-testimages.tar.gz ${deb_name}_${debianversion}.orig-testimages.tar.gz
       fi
     fi
-    
+
     cd ${directory}
     cp -r ${project_directory}/package/${target_system} debian
     cp ${project_directory}/copyright debian
-    
+
     #handle test images
     if [ -f ../${deb_name}_${debianversion}.orig-testimages.tar.gz ]
     then
@@ -228,7 +228,7 @@ build_deb() {
     #dch --bpo "${project} snapshot ${version} built for ${target_system}"
     dpkg-buildpackage -r
     rc=$?
-    
+
     if [ $rc -eq 0 ]; then
       # move packages to dist directory
       echo Build succeeded...
@@ -286,7 +286,7 @@ fi
 
 
 if [ $install -eq 1 ]; then
-  sudo -v su -c  "dpkg -i ${dist_directory}/*.deb"
+  sudo su -c  "dpkg -i ${dist_directory}/*.deb"
 fi
 
 exit "$rc"

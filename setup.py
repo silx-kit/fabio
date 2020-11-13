@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # coding: utf8
 # /*##########################################################################
 #
@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/09/2020"
+__date__ = "12/11/2020"
 __status__ = "stable"
 
 import sys
@@ -416,9 +416,9 @@ if sphinx is not None:
                 self.mkpath(self.builder_target_dir)
                 BuildDoc.run(self)
             sys.path.pop(0)
+
 else:
     BuildDocCommand = SphinxExpectedCommand
-
 
 # ################### #
 # test_doc command    #
@@ -450,7 +450,6 @@ if sphinx is not None:
 
 else:
     TestDocCommand = SphinxExpectedCommand
-
 
 # ############################# #
 # numpy.distutils Configuration #
@@ -768,7 +767,6 @@ class BuildExt(build_ext):
             self.patch_extension(ext)
         build_ext.build_extensions(self)
 
-
 ################################################################################
 # Clean command
 ################################################################################
@@ -1039,7 +1037,8 @@ def get_project_configuration(dry_run):
 
     console_scripts = [
         'fabio-convert = fabio.app.convert:main',
-        'eiger2cbf = fabio.app.eiger2cbf:main'
+        'eiger2cbf = fabio.app.eiger2cbf:main',
+        'eiger2crysalis = fabio.app.eiger2crysalis:main'
     ]
 
     gui_scripts = [
