@@ -31,22 +31,25 @@
 """Compression and decompression extension for Esperanto format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "10/11/2020"
+__date__ = "13/11/2020"
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
 from io import BytesIO
 from struct import pack
 import numpy
-
-from libc.stdint cimport int32_t, int64_t, uint64_t 
+from libc.stdint cimport int32_t, int64_t, uint64_t, uint32_t, uint8_t, uint16_t, int16_t
 ctypedef fused any_int:
     int32_t
     int64_t
 
 cpdef int32_t fieldsize(any_int nbvalue):
     "Direct translation of Fortran"
-    cdef int getfieldsize
+    return _fieldsize(nbvalue)
+
+cdef uint8_t _fieldsize(any_int nbvalue) nogil:
+    "Direct translation of Fortran"
+    cdef uint8_t getfieldsize
     if(nbvalue < -63):
         getfieldsize = 8
     elif(nbvalue < -31):
@@ -98,6 +101,24 @@ cpdef int32_t get_fieldsize(any_int[::1] array):
     
     return max(fieldsize(maxi), fieldsize(mini))
 
+cdef uint8_t _get_fieldsize(int32_t[::1] array) nogil:
+    """determine the fieldsize to store the given values
+    
+    :param array numpy.array
+    :returns int
+    """
+    cdef:
+        int32_t maxi, mini, value
+        int32_t size, idx, 
+    maxi = mini = 0
+    size = array.shape[0]
+    for idx in range(size):
+        value = array[idx]
+        maxi = max(maxi, value)
+        mini = min(mini, value)
+    
+    return max(_fieldsize(maxi), _fieldsize(mini))
+
 
 cpdef write_escaped(int32_t value, buffer):
     """write an value to the buffer and escape when overflowing one byte
@@ -111,6 +132,35 @@ cpdef write_escaped(int32_t value, buffer):
     else:
         buffer.write(b'\xff' + pack("<i", value))
 
+cdef uint16_t _write_escaped(int32_t value, uint8_t[::1] buffer, uint16_t position) nogil:
+    """write an value to the buffer at the given position and escape when overflowing one byte
+    :param value: int
+    :param buffer: compressed line
+    :param position: where to start writing in the buffer
+    :return: now position in the vector 
+    """
+    cdef:
+        int16_t value_16
+        int32_t value_32
+        int64_t one=1
+        
+    if -127 <= value < 127:
+        buffer[position] = <uint8_t> (value + 127)
+        return position+1
+    elif -32767 < value < 32767:
+        buffer[position] = 254
+        value_16 = value 
+        buffer[position+1] = <uint8_t>(value_16 & ((one<<8)-1))
+        buffer[position+2] = <uint8_t>((value_16 & ((one<<16)-1))>>8)
+        return position+3 
+    else:
+        buffer[position] = 255
+        buffer[position+1] = <uint8_t>((value & ((one<<8)-1)))
+        buffer[position+2] = <uint8_t>((value & ((one<<16)-1))>>8) 
+        buffer[position+3] = <uint8_t>((value & ((one<<24)-1))>>16)
+        buffer[position+4] = <uint8_t>((value & ((one<<32)-1))>>24)
+        return position+5 
+
 
 cpdef bytes compress_field(int32_t[::1] ifield, int32_t fieldsize, overflow_table):
     """compress a field with given size
@@ -121,6 +171,8 @@ cpdef bytes compress_field(int32_t[::1] ifield, int32_t fieldsize, overflow_tabl
     """
     cdef:
         uint64_t compressed_field, i, val, conv_
+        int32_t elem
+
     if fieldsize == 8:
         # we have to deal offsets but not bitshifts
         tmp = bytearray(8)
@@ -148,6 +200,53 @@ cpdef bytes compress_field(int32_t[::1] ifield, int32_t fieldsize, overflow_tabl
             print("Exception in struct.pack: %s %s %s %s", fieldsize, type(fieldsize), ifield, compressed_field)
             raise
         return res[:fieldsize]
+    else:
+        raise AssertionError("fieldsize is between 0 and 8")
+    
+cdef uint16_t _compress_field(int32_t[::1] ifield, int32_t fieldsize, uint8_t[::1] buffer, uint16_t position, uint16_t overflow_position) nogil:
+    """compress a field with given size
+    :param ifield: numpy.ndarray with 8 data to be compressed
+    :param fieldsize: int size of the field, number of bits per item
+    :param buffer: the output buffer with compressed data
+    :param position: Where to write the bitfield in the buffer
+    :param overflow_position: Where to write the overflow table in the buffer
+    :returns: position of th endd of the overflow values 
+    """
+    cdef:
+        uint64_t compressed_field, i, val, conv_, one
+        int32_t value
+        int16_t value_16
+    if fieldsize == 8:
+        # we have to deal offsets but not bitshifts
+        one = 1
+        for i in range(8):
+            value = ifield[i]
+            if -127 <= value < 127:
+                buffer[position+i] = value + 127
+            elif -32767 <= value < 32767:
+                buffer[position+i] = 254
+                value_16 = value
+                buffer[overflow_position] = <uint8_t>(value_16 & ((one<<8)-1))
+                buffer[overflow_position+1] = <uint8_t>((value_16 & ((one<<16)-1))>>8)
+                overflow_position += 2
+            else:
+                buffer[position+i] =  255
+                buffer[overflow_position] = <uint8_t>((value & ((one<<8)-1)))
+                buffer[overflow_position+1] = <uint8_t>((value & ((one<<16)-1))>>8) 
+                buffer[overflow_position+2] = <uint8_t>((value & ((one<<24)-1))>>16)
+                buffer[overflow_position+3] = <uint8_t>((value & ((one<<32)-1))>>24)
+                overflow_position += 4
+        return overflow_position
+    elif fieldsize > 0:
+        # we have to deal with bit-shifts but not offsets
+        conv_ = (1<<(fieldsize - 1)) - 1 
+        compressed_field = 0
+        for i in range(8):
+            val = ifield[i] + conv_
+            compressed_field |= val << (i * fieldsize)
+        for i in range(fieldsize):
+            buffer[position+i] =  <uint8_t>((compressed_field>>(i*8)) & 255)
+        return overflow_position
     else:
         raise AssertionError("fieldsize is between 0 and 8")
 
@@ -197,3 +296,98 @@ def compress_row(int32_t[::1] data, buffer):
     for i in range(n_restpx):
         write_escaped(pixel_diff[i], buffer)
         
+cdef uint16_t _compress_row(int32_t [::1] data, uint8_t[::1] buffer, int32_t[::1] pixel_diff) nogil:
+    """compress a single row
+    :param data: numpy.array one line of the input frame
+    :param buffer: buffer where to store compressed data
+    :return: size of the compressed line
+    """
+    cdef:
+        int32_t size, first_pixel, n_fields, n_restpx, len_a, len_b, cur, prev, i
+        int32_t[::1] fielda, fieldb
+        uint16_t position, overflow_position
+    
+    size = data.shape[0]
+    first_pixel = data[0]
+    
+
+    #data[1:] - data[:size-1]
+    #pixel_diff = numpy.empty(size-1, dtype=numpy.int32)
+    prev = first_pixel
+    for i in range(1, size):
+        cur = data[i]
+        pixel_diff[i-1] = cur - prev
+        prev = cur
+
+    position = _write_escaped(first_pixel, buffer, 0)
+
+    n_fields = (size-1) // 16
+    n_restpx = (size-1) % 16
+
+    for i in range(n_fields):
+        fielda = pixel_diff[:8]
+        fieldb = pixel_diff[8:16]
+
+        len_a = _get_fieldsize(fielda)
+        len_b = _get_fieldsize(fieldb)
+        buffer[position] = (len_b << 4) | len_a
+        position += 1
+        
+        overflow_position = _compress_field(fielda, len_a, buffer, position, position+len_a+len_b)
+        position = _compress_field(fieldb, len_b, buffer, position+len_a, overflow_position)
+
+        pixel_diff = pixel_diff[16:]
+
+    for i in range(n_restpx):
+        position = _write_escaped(pixel_diff[i], buffer, position)
+
+    return position
+
+def compress(int32_t [:,::1] frame):
+    """compress a frame using the agi_bitfield algorithm
+    
+    Gil-free implementation of the compression algorithm
+    
+    :param frame: numpy.ndarray
+    :returns bytes
+    """
+    cdef:
+        Py_ssize_t shape, index
+        uint8_t[:, ::1] buffer    # Contains the compressed lines
+        uint8_t[::1] vector
+        uint16_t[::1] line_size   # Size of each of the compressed line
+        uint32_t[::1] cumsum
+        int32_t [:,::1] delta     # buffer space used by compre_row
+        uint32_t current
+        uint16_t size
+        
+        
+    shape = frame.shape[0]
+    assert frame.shape[1] == shape, "Input shape is expected to be square !"
+    
+    buffer = numpy.empty((shape, 8*shape), numpy.uint8) #Should be able to accomodate 4096 data 
+    cumsum = numpy.empty(shape+1, numpy.uint32)
+    line_size = numpy.empty(shape, numpy.uint16)
+    delta = numpy.empty((shape, shape), numpy.int32)
+
+    with nogil:
+        current = 0
+        for index in range(shape):
+            cumsum[index] = current
+            size = _compress_row(frame[index], buffer[index], delta[index])
+            line_size[index] = size
+            current += size
+        cumsum[shape] = current
+
+    #Copy data
+    vector = numpy.empty(cumsum[shape], dtype=numpy.uint8)
+    for index in range(shape):
+        vector[cumsum[index]:cumsum[index+1]] = buffer[index, :line_size[index]]
+    if numpy.little_endian:
+        return (numpy.asarray(cumsum[shape:]).tobytes() + 
+                numpy.asarray(vector).tobytes()+
+                numpy.asarray(cumsum[:shape]).tobytes())
+    else:
+        return (numpy.asarray(cumsum[shape:]).byteswap.tobytes() + 
+                numpy.asarray(vector).tobytes()+
+                numpy.asarray(cumsum[:shape]).byteswap.tobytes())

@@ -24,7 +24,7 @@
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "09/11/2020"
+__date__ = "13/11/2020"
 
 import os
 import numpy

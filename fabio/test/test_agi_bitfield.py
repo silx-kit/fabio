@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "10/11/2020"
+__date__ = "13/11/2020"
 
 import io
 import logging
@@ -164,10 +164,19 @@ class TestRow(unittest.TestCase):
 class TestCompression(unittest.TestCase):
 
     def test_full_rand(self):
-        data = np.random.randint(-255, 255, (256, 256)).astype("int32")
+        data = np.random.randint(-256, 500, (256, 256)).astype("int32")
+        import time
+        t0 = time.perf_counter()
         compressed = agi_bitfield.compress(data)
+        t1 = time.perf_counter()
         uncompressed = agi_bitfield.decompress(compressed, data.shape)
-        self.assertTrue(np.array_equal(data, uncompressed))
+        self.assertTrue(np.array_equal(data, uncompressed), "Python version is OK")
+        t2 = time.perf_counter()
+        compressed = _agi_bitfield.compress(data)
+        t3 = time.perf_counter()
+        uncompressed = agi_bitfield.decompress(compressed, data.shape)
+        self.assertTrue(np.array_equal(data, uncompressed), "Cython version is OK")
+        print("speed-up:", (t1 - t0) / (t3 - t2))
 
 
 def suite():
