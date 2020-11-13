@@ -380,7 +380,7 @@ def compress(int32_t [:,::1] frame):
         cumsum[shape] = current
 
     #Copy data
-    vector = numpy.empty(cumsum[shape], dtype=numpy.uint8)
+    vector = numpy.empty(current, dtype=numpy.uint8)
     for index in range(shape):
         vector[cumsum[index]:cumsum[index+1]] = buffer[index, :line_size[index]]
     if numpy.little_endian:
