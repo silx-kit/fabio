@@ -353,41 +353,35 @@ def compress(int32_t [:,::1] frame):
     """
     cdef:
         Py_ssize_t shape, index
-        uint8_t[:, ::1] buffer    # Contains the compressed lines
-        uint8_t[::1] vector
-        uint16_t[::1] line_size   # Size of each of the compressed line
+        uint8_t[::1] buffer    # Contains the compressed lines
         uint32_t[::1] cumsum
-        int32_t [:,::1] delta     # buffer space used by compre_row
+        int32_t [::1] delta     # buffer space used by compre_row
         uint32_t current
         uint16_t size
+        uint64_t one=1
         
         
     shape = frame.shape[0]
     assert frame.shape[1] == shape, "Input shape is expected to be square !"
     
-    buffer = numpy.empty((shape, 8*shape), numpy.uint8) #Should be able to accomodate 4096 data 
-    cumsum = numpy.empty(shape+1, numpy.uint32)
-    line_size = numpy.empty(shape, numpy.uint16)
-    delta = numpy.empty((shape, shape), numpy.int32)
+    buffer = numpy.empty(8*shape*shape, numpy.uint8) #Should be able to accomodate 4096² data 
+    cumsum = numpy.empty(shape, numpy.uint32)
+    delta = numpy.empty(shape-1, numpy.int32)
 
     with nogil:
         current = 0
         for index in range(shape):
             cumsum[index] = current
-            size = _compress_row(frame[index], buffer[index], delta[index])
-            line_size[index] = size
+            size = _compress_row(frame[index], buffer[4+current:], delta)
             current += size
-        cumsum[shape] = current
+        buffer[0] = current & ((one<<8)-1)
+        buffer[1] = (current & ((one<<16)-1))>>8
+        buffer[2] = (current & ((one<<24)-1))>>16
+        buffer[3] = (current & ((one<<32)-1))>>24
 
-    #Copy data
-    vector = numpy.empty(cumsum[shape], dtype=numpy.uint8)
-    for index in range(shape):
-        vector[cumsum[index]:cumsum[index+1]] = buffer[index, :line_size[index]]
     if numpy.little_endian:
-        return (numpy.asarray(cumsum[shape:]).tobytes() + 
-                numpy.asarray(vector).tobytes()+
-                numpy.asarray(cumsum[:shape]).tobytes())
+        return (numpy.asarray(buffer[:current+4]).tobytes()+
+                numpy.asarray(cumsum).tobytes())
     else:
-        return (numpy.asarray(cumsum[shape:]).byteswap.tobytes() + 
-                numpy.asarray(vector).tobytes()+
-                numpy.asarray(cumsum[:shape]).byteswap.tobytes())
+        return (numpy.asarray(buffer[:current+4]).tobytes()+
+                numpy.asarray(cumsum).byteswap.tobytes())
