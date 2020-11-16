@@ -5,3 +5,5 @@ sphinx
 cython
 sphinxcontrib-programoutput
 nbsphinx
+lxml
+pillow
