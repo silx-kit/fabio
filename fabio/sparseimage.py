@@ -68,7 +68,7 @@ __authors__ = ["Jerome Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "16/11/2020"
+__date__ = "17/11/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -84,6 +84,10 @@ else:
         pass
 from .fabioutils import NotGoodReader
 from .fabioimage import FabioImage, OrderedDict
+try:
+    from .ext import dense as cython_densify
+except ImportError:
+    cython_densify = None
 
 
 class SparseImage(FabioImage):
@@ -158,7 +162,7 @@ class SparseImage(FabioImage):
         self.frame_ptr = nx_data["frame_ptr"][()]
         self.index = nx_data["index"]
         self.intensity = nx_data["intensity"]
-        self.dummy = nx_data["dummy"][()]
+        self.dummy = self.intensity.dtype.type(nx_data["dummy"][()])
         self._nframes = self.frame_ptr.shape[0] - 1
 
         if frame is not None:
@@ -174,18 +178,27 @@ class SparseImage(FabioImage):
         if self.h5 is None:
             logger.warning("Not data have been read from disk")
             return
-
-        if self._masked is None:
-            self._masked = numpy.where(numpy.logical_not(numpy.isfinite(self.mask)))
-        bg = self.background_avg[index]
-        dense = numpy.interp(self.mask, self.radius, bg)
-        flat = dense.ravel()
-        start, stop = self.frame_ptr[index:index + 2]
-        flat[self.index[start:stop]] = self.intensity[start:stop]
-        dtype = self.intensity.dtype
-        if numpy.issubdtype(dtype, numpy.integer):
-            dense = numpy.round(dense).astype(dtype)
-        dense[self._masked] = self.dummy
+        if cython_densify is not None:
+            return cython_densify.densify(self.mask,
+                                 self.radius,
+                                 self.background_avg[index],
+                                 self.index[self.frame_ptr[index]:self.frame_ptr[index + 1]],
+                                 self.intensity[self.frame_ptr[index]:self.frame_ptr[index + 1]],
+                                 self.dummy,
+                                 self.intensity.dtype)
+        else:
+            # Fall-back on numpy code.
+            if self._masked is None:
+                self._masked = numpy.where(numpy.logical_not(numpy.isfinite(self.mask)))
+            bg = self.background_avg[index]
+            dense = numpy.interp(self.mask, self.radius, bg)
+            flat = dense.ravel()
+            start, stop = self.frame_ptr[index:index + 2]
+            flat[self.index[start:stop]] = self.intensity[start:stop]
+            dtype = self.intensity.dtype
+            if numpy.issubdtype(dtype, numpy.integer):
+                dense = numpy.round(dense).astype(dtype)
+            dense[self._masked] = self.dummy
         return dense
 
     def getframe(self, num):
