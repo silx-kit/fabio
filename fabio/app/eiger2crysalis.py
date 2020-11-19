@@ -191,7 +191,13 @@ class ProgressBar:
         sys.stdout.write(line + " " * clean_size + "\r")
         sys.stdout.flush()
 
-
+def as_str(any):
+    if isinstance(any, bytes):
+        return any.decode()
+    else:
+        return str(any)
+    
+    
 def expand_args(args):
     """
     Takes an argv and expand it (under Windows, cmd does not convert *.tif into
@@ -371,10 +377,10 @@ class Converter:
                 if entry_name:
                     entry = source.h5.get(entry_name)
                     if entry:
-                        instruments = [i for  i in entry.values() if i.attrs.get("NX_class", "").decode() == "NXinstrument"]
+                        instruments = [i for  i in entry.values() if as_str(i.attrs.get("NX_class", "")) == "NXinstrument"]
                         if instruments:
                             instrument = instruments[0]
-                            detectors = [i for  i in instrument.values() if i.attrs.get("NX_class", "").decode() == "NXdetecotr"]
+                            detectors = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXdetecotr"]
                             if detectors:
                                 detector = detectors[0]
                                 headers["drealpixelsizex"] = detector["x_pixel_size"][()] * 1e3
