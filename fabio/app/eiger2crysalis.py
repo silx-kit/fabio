@@ -374,16 +374,13 @@ class Converter:
                                     logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
             elif isinstance(source, sparseimage.SparseImage):
                 entry_name = source.h5.attrs.get("default")
-                print(entry_name)
                 if entry_name:
                     entry = source.h5.get(entry_name)
                     if entry:
                         instruments = [i for  i in entry.values() if as_str(i.attrs.get("NX_class", "")) == "NXinstrument"]
-                        print(instruments)
                         if instruments:
                             instrument = instruments[0]
                             detectors = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXdetector"]
-                            print(detectors)
                             if detectors:
                                 detector = detectors[0]
                                 headers["drealpixelsizex"] = detector["x_pixel_size"][()] * 1e3
@@ -627,7 +624,7 @@ def main():
             logger.setLevel(logging.DEBUG)
 
         if args.list:
-            print("Supported formats: LimaImage, EigerImage")
+            print("Supported formats: LimaImage, EigerImage, SparseImage")
             return
 
         if len(args.IMAGE) == 0:
