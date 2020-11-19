@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "17/11/2020"
+__date__ = "18/11/2020"
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -63,10 +63,16 @@ def densify(float[:,::1] mask,
             any_t dummy,
             dtype):
     """
-    :param index: index of the frame to rebuild
+    Densify a sparse representation to generate a normal frame 
+    
     :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
-    :param radius: 1D array with the radial vector
-    :param background: 1D array with the background values
+    :param radius: 1D array with the radial distance
+    :param background: 1D array with the background values at given distance from the center
+    :param index: position of non-background pixels
+    :param intensity: intensities of non background pixels (at index position)
+    :param dummy: numerical value for masked-out pixels in dense image
+    :param dtype: dtype of intensity.
+    :return: dense frame as 2D array
     """
     cdef:
         uint32_t i, j, size, pos, size_over, width, height

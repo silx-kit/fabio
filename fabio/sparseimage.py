@@ -68,7 +68,7 @@ __authors__ = ["Jerome Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "17/11/2020"
+__date__ = "19/11/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -88,6 +88,33 @@ try:
     from .ext import dense as cython_densify
 except ImportError:
     cython_densify = None
+
+
+def densify(mask,
+            radius,
+            background,
+            index,
+            intensity,
+            dummy):
+    """Generate a dense image of its sparse representation
+    
+    :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
+    :param radius: 1D array with the radial distance
+    :param background: 1D array with the background values at given distance from the center
+    :param index: position of non-background pixels
+    :param intensity: intensities of non background pixels (at index position)
+    :param dummy: numerical value for masked-out pixels in dense image
+    :return: dense frame as 2D array
+    """
+    dense = numpy.interp(mask, radius, background)
+    flat = dense.ravel()
+    flat[index] = intensity
+    dtype = intensity.dtype
+    if numpy.issubdtype(dtype, numpy.integer):
+        dense = numpy.round(dense)
+    dense = numpy.ascontiguousarray(dense, dtype=dtype)
+    dense[numpy.logical_not(numpy.isfinite(mask))] = dummy
+    return dense
 
 
 class SparseImage(FabioImage):
@@ -178,28 +205,23 @@ class SparseImage(FabioImage):
         if self.h5 is None:
             logger.warning("Not data have been read from disk")
             return
+        start, stop = self.frame_ptr[index:index + 2]
         if cython_densify is not None:
             return cython_densify.densify(self.mask,
                                  self.radius,
                                  self.background_avg[index],
-                                 self.index[self.frame_ptr[index]:self.frame_ptr[index + 1]],
-                                 self.intensity[self.frame_ptr[index]:self.frame_ptr[index + 1]],
+                                 self.index[start:stop],
+                                 self.intensity[start:stop],
                                  self.dummy,
                                  self.intensity.dtype)
         else:
             # Fall-back on numpy code.
-            if self._masked is None:
-                self._masked = numpy.where(numpy.logical_not(numpy.isfinite(self.mask)))
-            bg = self.background_avg[index]
-            dense = numpy.interp(self.mask, self.radius, bg)
-            flat = dense.ravel()
-            start, stop = self.frame_ptr[index:index + 2]
-            flat[self.index[start:stop]] = self.intensity[start:stop]
-            dtype = self.intensity.dtype
-            if numpy.issubdtype(dtype, numpy.integer):
-                dense = numpy.round(dense).astype(dtype)
-            dense[self._masked] = self.dummy
-        return dense
+            return densify(self.mask,
+                           self.radius,
+                           self.background_avg[index],
+                           self.index[start:stop],
+                           self.intensity[start:stop],
+                           self.dummy)
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
