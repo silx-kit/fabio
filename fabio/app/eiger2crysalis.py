@@ -223,14 +223,14 @@ class Converter:
         if not self.options.verbose:
             self.progress = ProgressBar("HDF5 --> Esperanto", len(options.images), 30)
         self.succeeded = True
-        
-        prefix =  os.path.commonprefix([os.path.abspath(i) for i in self.options.images])
+        all_files = [os.path.abspath(i) for i in self.options.images]
+        prefix =  os.path.commonprefix(all_files)
         if "{dirname}" in self.options.output: 
             self.dirname = os.path.dirname(prefix)
         else:
             self.dirname = os.path.dirname(os.path.abspath(self.options.output))
         if "{prefix}" in self.options.output:
-            self.prefix = os.path.basename(prefix)
+            self.prefix = os.path.basename(prefix).split(".")[0].split("_")[0]
         else:
             self.prefix = os.path.basename(os.path.abspath(self.options.output)).split("{")[0]
         self.headers = None
@@ -523,7 +523,11 @@ class Converter:
             new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
             rectangles =  dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
             self.progress.update(self.progress.max_value-0.5, f"Exporting {len(rectangles)} rectangles as mask")
-            with open(os.path.join(self.dirname,self.prefix+".set"), mode="w") as maskfile:
+            dummy_filename = self.options.output.format(index=self.options.offset, 
+                                                         prefix=self.prefix, 
+                                                         dirname=self.dirname)
+            dirname = os.path.dirname(dummy_filename)
+            with open(os.path.join(dirname,self.prefix+".set"), mode="w") as maskfile:
                 for r in rectangles:
                     if r.area == 1:
                         maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n")
