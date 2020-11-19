@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "12/11/2020"
+__date__ = "19/11/2020"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -55,7 +55,7 @@ import sys
 import os
 import glob
 from itertools import takewhile
-from .. import esperantoimage, eigerimage, limaimage
+from .. import esperantoimage, eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..nexus import get_isotime
@@ -366,6 +366,25 @@ class Converter:
                                     headers["dexposuretimeinsec"] = t1
                                 except Exception as e:
                                     logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
+            elif isinstance(source, sparseimage.SparseImage):
+                entry_name = source.h5.attrs.get("default")
+                if entry_name:
+                    entry = source.h5.get(entry_name)
+                    if entry:
+                        instruments = [i for  i in entry.values() if i.attrs.get("NX_class", "").decode() == "NXinstrument"]
+                        if instruments:
+                            instrument = instruments[0]
+                            detectors = [i for  i in instrument.values() if i.attrs.get("NX_class", "").decode() == "NXdetecotr"]
+                            if detectors:
+                                detector = detectors[0]
+                                headers["drealpixelsizex"] = detector["x_pixel_size"][()] * 1e3
+                                headers["drealpixelsizey"] = detector["y_pixel_size"][()] * 1e3               
+                                headers["dxorigininpix"] = detector["beam_center_x"][()]
+                                headers["dyorigininpix"] = detector["beam_center_y"][()]
+                                headers["ddistanceinmm"] = detector["distance"] * 1e3
+
+                headers["dexposuretimeinsec"] = 1 #meaningfull value.
+
             elif isinstance(source, eigerimage.EigerImage):
                 raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
             else:

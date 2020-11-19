@@ -184,11 +184,11 @@ class SparseImage(FabioImage):
         nx_data = entry[default_data]
         self.mask = nx_data["mask"][()]
         self.radius = nx_data["radius"][()]
-        self.background_avg = nx_data["background_avg"]
+        self.background_avg = nx_data["background_avg"][()]
 #         self.background_std = default_data["background_std"]
         self.frame_ptr = nx_data["frame_ptr"][()]
-        self.index = nx_data["index"]
-        self.intensity = nx_data["intensity"]
+        self.index = nx_data["index"][()]
+        self.intensity = nx_data["intensity"][()]
         self.dummy = self.intensity.dtype.type(nx_data["dummy"][()])
         self._nframes = self.frame_ptr.shape[0] - 1
 
