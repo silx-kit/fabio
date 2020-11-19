@@ -412,7 +412,7 @@ class Converter:
             x, y = self.options.beam
         elif headers.get("dxorigininpix") and headers.get("dyorigininpix"):
             x = headers["dxorigininpix"]
-            y = headers["dxorigininpix"]
+            y = headers["dyorigininpix"]
         else:
             y = x = 1024
         x, y = self.new_beam_center(x, y, shape)
