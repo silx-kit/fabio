@@ -410,9 +410,14 @@ class Converter:
             headers["ddistanceinmm"] = self.options.distance
         if self.options.beam:
             x, y = self.options.beam
-            x, y = self.new_beam_center(x, y, shape)
-            headers["dxorigininpix"] = x
-            headers["dyorigininpix"] = y
+        elif headers.get("dxorigininpix") and headers.get("dyorigininpix"):
+            x = headers["dxorigininpix"]
+            y = headers["dxorigininpix"]
+        else:
+            y = x = 1024
+        x, y = self.new_beam_center(x, y, shape)
+        headers["dxorigininpix"] = x
+        headers["dyorigininpix"] = y
         if self.options.alpha:
             headers["dalphaindeg"] = self.options.alpha
         if self.options.kappa is not None:
