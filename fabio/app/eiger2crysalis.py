@@ -374,20 +374,23 @@ class Converter:
                                     logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
             elif isinstance(source, sparseimage.SparseImage):
                 entry_name = source.h5.attrs.get("default")
+                print(entry_name)
                 if entry_name:
                     entry = source.h5.get(entry_name)
                     if entry:
                         instruments = [i for  i in entry.values() if as_str(i.attrs.get("NX_class", "")) == "NXinstrument"]
+                        print(instruments)
                         if instruments:
                             instrument = instruments[0]
-                            detectors = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXdetecotr"]
+                            detectors = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXdetector"]
+                            print(detectors)
                             if detectors:
                                 detector = detectors[0]
                                 headers["drealpixelsizex"] = detector["x_pixel_size"][()] * 1e3
                                 headers["drealpixelsizey"] = detector["y_pixel_size"][()] * 1e3               
                                 headers["dxorigininpix"] = detector["beam_center_x"][()]
                                 headers["dyorigininpix"] = detector["beam_center_y"][()]
-                                headers["ddistanceinmm"] = detector["distance"] * 1e3
+                                headers["ddistanceinmm"] = detector["distance"][()] * 1e3
 
                 headers["dexposuretimeinsec"] = 1 #meaningfull value.
 
@@ -473,7 +476,7 @@ class Converter:
 
         for i, frame in enumerate(source):
             idx = i + start_at
-            self.progress.update(idx + 0.5, input_filename+" - "+str(idx))
+            self.progress.update(idx + 0.5, input_filename+"#"+str(idx))
             input_data = frame.data
             numpy.maximum(self.mask, input_data, out=self.mask)
             input_data = input_data.astype(numpy.int32)
@@ -547,7 +550,7 @@ def main():
     group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
                        help="show the list of available formats and exit")
     group.add_argument("-o", "--output", default='{dirname}/{prefix}/{prefix}_1_{index}.esperanto', type=str,
-                       help="output directory and filename template")
+                       help="output directory and filename template, default is prefix/prefix_1_{index}.esperanto")
     group.add_argument("-O", "--offset", type=int, default=1,
                        help="index offset, CrysalisPro likes indexes to start at 1, Python starts at 0")
     group.add_argument("-D", "--dummy", type=int, default=-1,
