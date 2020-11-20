@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "19/11/2020"
+__date__ = "20/11/2020"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -388,6 +388,9 @@ class Converter:
                                 headers["dxorigininpix"] = detector["beam_center_x"][()]
                                 headers["dyorigininpix"] = detector["beam_center_y"][()]
                                 headers["ddistanceinmm"] = detector["distance"][()] * 1e3
+                            monchromators = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXmonochromator"]
+                            if monchromators:
+                                wavelength =  monchromators[0]["wavelength"][()]
 
                 headers["dexposuretimeinsec"] = 1 #meaningfull value.
 
