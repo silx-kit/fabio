@@ -391,7 +391,7 @@ class Converter:
                             monchromators = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXmonochromator"]
                             if monchromators:
                                 wavelength =  monchromators[0]["wavelength"][()]
-                self.mask = numpy.logical_not(numpy.isfinite(source.mask)).astype(dtype)*numpy.iinfo(dtype).max
+                self.mask = numpy.logical_not(numpy.isfinite(source.mask))
                 headers["dexposuretimeinsec"] = 1 #meaningfull value.
 
             elif isinstance(source, eigerimage.EigerImage):
@@ -479,16 +479,13 @@ class Converter:
             logger.debug("Backtrace", exc_info=True)
             return -1
         
-        if isinstance(source, sparseimage.SparseImage):
-            source.dummy = self.options.dummy
-
         for i, frame in enumerate(source):
             idx = i + start_at
             self.progress.update(idx + 0.5, input_filename+"#"+str(idx))
             input_data = frame.data
-            numpy.maximum(self.mask, input_data, out=self.mask)
+            numpy.logical_or(self.mask, input_data == numpy.iinfo(frame.data.dtype), out=self.mask)
             input_data = input_data.astype(numpy.int32)
-            input_data[input_data == numpy.iinfo(frame.data.dtype).max] = self.options.dummy#dynamic
+            input_data[self.mask] = self.options.dummy
             converted = esperantoimage.EsperantoImage(data=input_data)  # This changes the shape
             converted.data = self.geometry_transform(converted.data) 
             for k, v in self.headers.items():
@@ -524,10 +521,9 @@ class Converter:
         except ImportError:
             print("A recent version of pyFAI is needed to export the mask in a format compatible wit CrysalisPro")
         else:
-            mask = (self.mask == numpy.iinfo(self.mask.dtype).max)
-            
             esperantoimage.EsperantoImage.DUMMY=1
-            new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
+            new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
+            esperantoimage.EsperantoImage.DUMMY=-1
             rectangles =  dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
             self.progress.update(self.progress.max_value-0.5, f"Exporting {len(rectangles)} rectangles as mask")
             dummy_filename = self.options.output.format(index=self.options.offset, 
