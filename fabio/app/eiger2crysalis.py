@@ -191,11 +191,13 @@ class ProgressBar:
         sys.stdout.write(line + " " * clean_size + "\r")
         sys.stdout.flush()
 
-def as_str(any):
+
+def as_str(smth):
+    "Transform to string"
     if isinstance(any, bytes):
-        return any.decode()
+        return smth.decode()
     else:
-        return str(any)
+        return str(smth)
     
     
 def expand_args(args):
@@ -528,9 +530,9 @@ class Converter:
             self.progress.update(self.progress.max_value-0.5, f"Exporting {len(rectangles)} rectangles as mask")
             dummy_filename = self.options.output.format(index=self.options.offset, 
                                                          prefix=self.prefix, 
-                                                         dirname=self.dirname)
+                                                         dirname=self.dirname) 
             dirname = os.path.dirname(dummy_filename)
-            numpy.save(os.path.join(dirname,self.prefix+"_mask.npy"), mask)
+            numpy.save(os.path.join(dirname,self.prefix+"_mask.npy"), self.mask)
             with open(os.path.join(dirname,self.prefix+".set"), mode="wb") as maskfile:
                 maskfile.write(b'#XCALIBUR SYSTEM\r\n')
                 maskfile.write(b'#XCALIBUR SETUP FILE\r\n')
