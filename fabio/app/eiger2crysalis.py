@@ -392,6 +392,7 @@ class Converter:
                             if monchromators:
                                 wavelength =  monchromators[0]["wavelength"][()]
                 self.mask = numpy.logical_not(numpy.isfinite(source.mask)).astype(dtype)*numpy.iinfo(dtype).max
+                print("mask", self.mask.min(), self.mask.max())
                 headers["dexposuretimeinsec"] = 1 #meaningfull value.
 
             elif isinstance(source, eigerimage.EigerImage):
