@@ -220,6 +220,7 @@ class Converter:
     def __init__(self, options):
         self.options = options
         self.mask = None
+        self.masked = None #Static mask
         if not self.options.verbose:
             self.progress = ProgressBar("HDF5 --> Esperanto", len(options.images), 30)
         self.succeeded = True
@@ -400,7 +401,7 @@ class Converter:
                 raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
         if self.mask is None:
             self.mask = numpy.zeros(shape, dtype=dtype)
-        
+        self.masked = numpy.where(self.mask)
         # Parse option for headers
         if self.options.energy:
             wavelength = CONST_hc / self.options.energy
@@ -486,7 +487,8 @@ class Converter:
             input_data = frame.data
             numpy.maximum(self.mask, input_data, out=self.mask)
             input_data = input_data.astype(numpy.int32)
-            input_data[input_data == numpy.iinfo(frame.data.dtype).max] = self.options.dummy
+            input_data[self.masked] = self.options.dummy #static
+            input_data[input_data == numpy.iinfo(frame.data.dtype).max] = self.options.dummy#dynamic
             converted = esperantoimage.EsperantoImage(data=input_data)  # This changes the shape
             converted.data = self.geometry_transform(converted.data) 
             for k, v in self.headers.items():
