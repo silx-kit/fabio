@@ -391,7 +391,7 @@ class Converter:
                             monchromators = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXmonochromator"]
                             if monchromators:
                                 wavelength =  monchromators[0]["wavelength"][()]
-
+                self.mask = numpy.logical_not(numpy.isfinite(source.mask)).astype(dtype)*numpy.iinfo(dtype).max
                 headers["dexposuretimeinsec"] = 1 #meaningfull value.
 
             elif isinstance(source, eigerimage.EigerImage):
@@ -400,6 +400,7 @@ class Converter:
                 raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
         if self.mask is None:
             self.mask = numpy.zeros(shape, dtype=dtype)
+        
         # Parse option for headers
         if self.options.energy:
             wavelength = CONST_hc / self.options.energy
