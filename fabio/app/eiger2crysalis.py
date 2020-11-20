@@ -54,7 +54,7 @@ import codecs
 import sys
 import os
 import glob
-from itertools import takewhile
+import shutil
 from .. import esperantoimage, eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
@@ -392,7 +392,6 @@ class Converter:
                             if monchromators:
                                 wavelength =  monchromators[0]["wavelength"][()]
                 self.mask = numpy.logical_not(numpy.isfinite(source.mask)).astype(dtype)*numpy.iinfo(dtype).max
-                print("mask", self.mask.min(), self.mask.max())
                 headers["dexposuretimeinsec"] = 1 #meaningfull value.
 
             elif isinstance(source, eigerimage.EigerImage):
@@ -523,7 +522,8 @@ class Converter:
         except ImportError:
             print("A recent version of pyFAI is needed to export the mask in a format compatible wit CrysalisPro")
         else:
-            mask = self.mask == numpy.iinfo(self.mask.dtype).max
+            mask = (self.mask == numpy.iinfo(self.mask.dtype).max)
+            
             esperantoimage.EsperantoImage.DUMMY=1
             new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
             rectangles =  dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
@@ -532,13 +532,33 @@ class Converter:
                                                          prefix=self.prefix, 
                                                          dirname=self.dirname)
             dirname = os.path.dirname(dummy_filename)
-            with open(os.path.join(dirname,self.prefix+".set"), mode="w") as maskfile:
+            numpy.save(os.path.join(dirname,self.prefix+"_mask.npy"), mask)
+            with open(os.path.join(dirname,self.prefix+".set"), mode="wb") as maskfile:
+                maskfile.write(b'#XCALIBUR SYSTEM\r\n')
+                maskfile.write(b'#XCALIBUR SETUP FILE\r\n')
+                maskfile.write(b'#*******************************************************************************************************\r\n')
+                maskfile.write(b'# CHIP CHARACTERISTICS e_19_020609.ccd         D A T E Wed-Sep-16-10-00-59-2009\r\n')
+                maskfile.write(b'# This program produces version 1.9\r\n')
+                maskfile.write(b'#******************************************************************************************************\r\n')
+                maskfile.write(b'#THIS FILE IS USER READABLE - BUT SHOULD NOT BE TOUCHED BY THE USER\r\n')
+                maskfile.write(b'#ANY CHANGES TO THIS FILE WILL RESULT IN LOSS OF WARRANTY!\r\n')
+                maskfile.write(b'#CHIP IDCODE producer type serial\r\n')
+                maskfile.write(b'CHIP IDCODE "n/a" "n/a" "n/a\r\n')
+                maskfile.write(b'#CHIP TAPER producer type serial\r\n')
+                maskfile.write(b'CHIP TAPER "" "" ""\r\n')
+                maskfile.write(b'#ALL COORDINATES GO FROM 0 TO N-1\r\n')
+                maskfile.write(b'#CHIP BADPOINT treatment options: IGNORE,REPLACE,AVERAGE\r\n')
+                maskfile.write(b'#CHIP BADPOINT x1x1 y1x1 treatment r1x1x1 r1y1x1 r2x1x1 r2y1x1\r\n')
+                maskfile.write(b'#CHIP BADPOINT 630 422 REPLACE 632 422 0 0\r\n')
+                maskfile.write(b'#CHIP BADRECTANGLE xl xr yb yt\r\n')
                 for r in rectangles:
                     if r.area == 1:
-                        maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n")
+                        maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n".encode())
                     else:
-                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width-1} {r.row} {r.row+r.height-1}\r\n")            
-            
+                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width} {r.row} {r.row+r.height}\r\n".encode())            
+                maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
+            # Make a backup as the original could be overwritten by Crysalis at import 
+            shutil.copyfile(os.path.join(dirname,self.prefix+".set"), os.path.join(dirname,self.prefix+".set.orig"))
         
 def main():
 
