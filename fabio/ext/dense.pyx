@@ -31,11 +31,14 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "18/11/2020"
+__date__ = "25/11/2020"
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
 import numpy
+from numpy.random cimport bitgen_t
+from numpy.random.c_distributions cimport random_normal
+
 from libc.stdint cimport int8_t, uint8_t, \
                          uint16_t, int16_t,\
                          int32_t, uint32_t,\
@@ -53,15 +56,17 @@ ctypedef fused any_t:
     uint32_t
     int64_t
     uint64_t
-
+    
+from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
 
 def densify(float[:,::1] mask,
             float[::1] radius,
-            float[::1] background,
             uint32_t[::1] index,
             any_t[::1] intensity,
             any_t dummy,
-            dtype):
+            dtype,
+            float[::1] background,
+            float[::1] background_std=None):
     """
     Densify a sparse representation to generate a normal frame 
     
@@ -72,13 +77,16 @@ def densify(float[:,::1] mask,
     :param intensity: intensities of non background pixels (at index position)
     :param dummy: numerical value for masked-out pixels in dense image
     :param dtype: dtype of intensity.
+    :param background_std: 1D array with the background std at given distance from the center --> activates the noisy mode.
     :return: dense frame as 2D array
     """
     cdef:
-        uint32_t i, j, size, pos, size_over, width, height
-        double value, fres, fpos, idelta, start
-        bint integral
+        Py_ssize_t i, j, size, pos, size_over, width, height
+        double value, fres, fpos, idelta, start, std
+        bint integral, noisy
         any_t[:, ::1] dense
+        bitgen_t *rng
+        const char *capsule_name = "BitGenerator"
         
     size = radius.shape[0]
     assert background.shape[0] == size
@@ -88,6 +96,17 @@ def densify(float[:,::1] mask,
     height =mask.shape[0] 
     width = mask.shape[1]
     dense = numpy.zeros((height, width), dtype=dtype)
+    
+    noisy = background_std is not None
+    if noisy:     
+        bit_generator = numpy.random.PCG64()   
+        capsule = bit_generator.capsule
+        # Optional check that the capsule if from a BitGenerator
+        if not PyCapsule_IsValid(capsule, capsule_name):
+            raise ValueError("Invalid pointer to anon_func_state")
+        # Cast the pointer
+        rng = <bitgen_t *> PyCapsule_GetPointer(capsule, capsule_name)
+        
     with nogil:
         start = radius[0]
         idelta = (size - 1)/(radius[size-1] - start)  
@@ -105,6 +124,10 @@ def densify(float[:,::1] mask,
                     else:
                         fres = fpos - pos
                         value = (1.0 - fres)*background[pos] + fres*background[pos+1]
+                    if noisy:
+                        std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
+                        value = max(0.0, random_normal(rng, value, std))
+                        
                     if integral:
                         dense[i,j] =  <any_t>(value + 0.5) #this is rounding
                     else:

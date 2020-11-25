@@ -68,7 +68,7 @@ __authors__ = ["Jerome Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "19/11/2020"
+__date__ = "25/11/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -92,21 +92,26 @@ except ImportError:
 
 def densify(mask,
             radius,
-            background,
             index,
             intensity,
-            dummy):
+            dummy,
+            background,
+            background_std=None):
     """Generate a dense image of its sparse representation
     
     :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
     :param radius: 1D array with the radial distance
-    :param background: 1D array with the background values at given distance from the center
     :param index: position of non-background pixels
     :param intensity: intensities of non background pixels (at index position)
     :param dummy: numerical value for masked-out pixels in dense image
     :return: dense frame as 2D array
+    :param background: 1D array with the background values at given distance from the center
+    :param background_std: 1D array with the background std at given distance from the center
     """
     dense = numpy.interp(mask, radius, background)
+    if background_std is not None:
+        std = numpy.interp(mask, radius, background_std)
+        numpy.maximum(0.0, numpy.random.normal(dense, std), out=dense)
     flat = dense.ravel()
     flat[index] = intensity
     dtype = intensity.dtype
@@ -123,6 +128,8 @@ class SparseImage(FabioImage):
     While the sparsification requires pyFAI and substential resources, re-densifying the data is easy.
     
     The program used for the sparsification is `sparsify-Bragg` from the pyFAI suite
+    
+    Set the noisy attribute to re-generate background noise
     """
 
     DESCRIPTION = "spasify-Bragg"
@@ -138,7 +145,6 @@ class SparseImage(FabioImage):
 
         FabioImage.__init__(self, *arg, **kwargs)
         self.mask = None
-        self._masked = None
         self.radius = None
         self.background_avg = None
         self.background_std = None
@@ -146,7 +152,7 @@ class SparseImage(FabioImage):
         self.index = None
         self.intensity = None
         self.dummy = None
-        self.noise = False
+        self.noisy = False
         self.h5 = None
 
     def close(self):
@@ -185,7 +191,7 @@ class SparseImage(FabioImage):
         self.mask = nx_data["mask"][()]
         self.radius = nx_data["radius"][()]
         self.background_avg = nx_data["background_avg"][()]
-#         self.background_std = default_data["background_std"]
+        self.background_std = nx_data["background_std"][()]
         self.frame_ptr = nx_data["frame_ptr"][()]
         self.index = nx_data["index"][()]
         self.intensity = nx_data["intensity"][()]
@@ -209,19 +215,21 @@ class SparseImage(FabioImage):
         if cython_densify is not None:
             return cython_densify.densify(self.mask,
                                  self.radius,
-                                 self.background_avg[index],
                                  self.index[start:stop],
                                  self.intensity[start:stop],
                                  self.dummy,
-                                 self.intensity.dtype)
+                                 self.intensity.dtype,
+                                 self.background_avg[index],
+                                 self.background_std[index] if self.noisy else None)
         else:
             # Fall-back on numpy code.
             return densify(self.mask,
                            self.radius,
-                           self.background_avg[index],
                            self.index[start:stop],
                            self.intensity[start:stop],
-                           self.dummy)
+                           self.dummy,
+                           self.background_avg[index],
+                           self.background_std[index] if self.noisy else None)
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
@@ -233,12 +241,12 @@ class SparseImage(FabioImage):
                 new_img.mask = self.mask
                 new_img.radius = self.radius
                 new_img.background_avg = self.background_avg
-#                 self.background_std = None
+                new_img.background_std = self.background_std
                 new_img.frame_ptr = self.frame_ptr
                 new_img.index = self.index
                 new_img.intensity = self.intensity
                 new_img.dummy = self.dummy
-                new_img.noise = self.noise
+                new_img.noisy = self.noisy
                 new_img.h5 = self.h5
                 new_img._nframes = self.nframes
                 new_img.currentframe = num

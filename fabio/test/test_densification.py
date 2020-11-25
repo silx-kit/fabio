@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "19/11/2020"
+__date__ = "25/11/2020"
 
 import unittest
 import numpy
@@ -60,14 +60,16 @@ class TestDensification(unittest.TestCase):
         intensity = numpy.random.randint(0, 10, size=npeak.sum()).astype(numpy.uint16)
         frames = numpy.empty((nframes, *shape), dtype=numpy.uint16)
         background = numpy.empty((nframes, vsize), dtype=numpy.float32)
+        noise = numpy.empty((nframes, vsize), dtype=numpy.float32)
         python = []
         cython = []
         for i, f in enumerate(frames):
             background[i] = numpy.arcsinh(scale[i] * numpy.sinc(radius / osc[i]) ** 2)
+            noise[i] = abs(numpy.diff(background[i], prepend=background[i, 0]))
             f[...] = numpy.arcsinh(scale[i] * numpy.sinc(r2d / osc[i]) ** 2).round()
             f.ravel()[index[indptr[i]:indptr[i + 1]]] = intensity[indptr[i]:indptr[i + 1]]
-            python = densify(r2d, radius, background[i], index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0)
-            cython = cython_densify.densify(r2d, radius, background[i], index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype)
+            python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i])
+            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i], None)
             self.assertTrue(numpy.all(python == cython), "python == cython #" + str(i))
             # Rounding errors:
             delta = (python.astype(int) - f)
@@ -75,6 +77,11 @@ class TestDensification(unittest.TestCase):
             bad = numpy.where(delta)
             print("#####", i)
             self.assertLess(len(bad[0]), numpy.prod(shape) / 500, "python differs from reference on less then 0.2% of the pixel #" + str(i))
+
+            # Now consider the noise ...
+            python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i], noise[i])
+            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i], noise[i])
+            self.assertTrue(abs(python.astype(int) - cython).max() <= 2 * max(1, noise[i].max()), "python is close to cython #" + str(i))
 
 
 def suite():
