@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "12/11/2020"
+__date__ = "01/12/2020"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -399,12 +399,14 @@ class Converter:
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.theta)
             headers["dth_s"] = headers["dth_e"] = value
+            #print("dth_s", value, type(value))
         if self.options.phi is not None:
             try:
                 value = float(self.options.phi)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.phi)
             headers["dph_s"] = headers["dph_e"] = value
+            #print("dph_s", value, type(value))
         if self.options.omega is not None:
             try:
                 value = float(self.options.omega)
@@ -412,6 +414,7 @@ class Converter:
                 # Handle the string
                 value = numexpr.NumExpr(self.options.omega)
             headers["dom_s"] = headers["dom_e"] = value
+            #print("dom_s", value, type(value))
 
         return headers
 
