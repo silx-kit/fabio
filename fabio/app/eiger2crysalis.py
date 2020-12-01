@@ -393,21 +393,18 @@ class Converter:
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.kappa)
             headers["dka_s"] = headers["dka_e"] = value
-            print("dka_s", value, type(value))
         if self.options.theta is not None:
             try:
                 value = float(self.options.theta)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.theta)
             headers["dth_s"] = headers["dth_e"] = value
-            print("dth_s", value, type(value))
         if self.options.phi is not None:
             try:
                 value = float(self.options.phi)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.phi)
             headers["dph_s"] = headers["dph_e"] = value
-            print("dph_s", value, type(value))
         if self.options.omega is not None:
             try:
                 value = float(self.options.omega)
@@ -415,8 +412,6 @@ class Converter:
                 # Handle the string
                 value = numexpr.NumExpr(self.options.omega)
             headers["dom_s"] = headers["dom_e"] = value
-            print("dom_s", value, type(value))
-
         return headers
 
     def convert_one(self, input_filename, start_at=0):
