@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "12/11/2020"
+__date__ = "01/12/2020"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -389,7 +389,7 @@ class Converter:
             headers["dalphaindeg"] = self.options.alpha
         if self.options.kappa is not None:
             try:
-                value = float(self.options.theta)
+                value = float(self.options.kappa)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.kappa)
             headers["dka_s"] = headers["dka_e"] = value
@@ -412,7 +412,6 @@ class Converter:
                 # Handle the string
                 value = numexpr.NumExpr(self.options.omega)
             headers["dom_s"] = headers["dom_e"] = value
-
         return headers
 
     def convert_one(self, input_filename, start_at=0):
@@ -563,13 +562,13 @@ def main():
 
     group = parser.add_argument_group("Goniometer setup")
 #     group.add_argument("--axis", type=str, default=None,
-#                        help="Goniometer angle used for scanning: 'omega', 'phi' or 'chi'")
+#                        help="Goniometer angle used for scanning: 'omega', 'phi' or 'kappa'")
     group.add_argument("--alpha", type=float, default=50,
-                       help="Goniometer angle alpha value in deg. Constant, angle of the kappa axis/omega.")
+                       help="Goniometer angle alpha value in deg. Constant, angle between kappa/omega.")
     group.add_argument("--kappa", type=str, default=0,
                        help="Goniometer angle kappa value in deg or formula f(index).")
-    group.add_argument("--chi", type=str, default=0,
-                       help="Goniometer angle chi value in deg. or formula f(index).")
+#     group.add_argument("--chi", type=str, default=0,
+#                        help="Goniometer angle chi value in deg. or formula f(index).")
     group.add_argument("--phi", type=str, default=0,
                        help="Goniometer angle phi value in deg. or formula f(index). Inner-most rotation.")
     group.add_argument("--omega", type=str, default=0,

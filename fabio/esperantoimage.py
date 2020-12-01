@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "13/11/2020"
+__date__ = "01/12/2020"
 
 from collections import OrderedDict
 import logging
@@ -199,9 +199,9 @@ class EsperantoImage(FabioImage):
                 except Exception as err:
                     raise RuntimeError("Exception while reading pixel data %s." % err)
             elif self.format == "AGI_BITFIELD":
-                self.raw_data = infile.read()
+                raw_data = infile.read()
                 try:
-                    self.data = agi_bitfield.decompress(self.raw_data, self.shape)
+                    self.data = agi_bitfield.decompress(raw_data, self.shape)
                 except Exception as err:
                     raise RuntimeError("Exception while decompressing pixel data %s." % err)
             else:
