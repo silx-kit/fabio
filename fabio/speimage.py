@@ -277,7 +277,7 @@ class SpeImage(FabioImage):
         dtype = np.dtype(ntype)
         bp = dtype.itemsize
         data = infile.read(size * bp)
-        return np.fromstring(data, dtype)
+        return np.frombuffer(data, dtype)
 
     def _read_data(self, infile, frame=None):
         if frame is None:
