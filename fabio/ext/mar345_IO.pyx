@@ -190,7 +190,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     else:
         chigh = < int > overflowPix
 
-    instream = numpy.fromstring(raw[normal_offset:].lstrip(), dtype=numpy.uint8)
+    instream = numpy.frombuffer(raw[normal_offset:].lstrip(), dtype=numpy.uint8).copy()
 
     if use_CCP4:
         data = numpy.empty((cdimy, cdimx), dtype=numpy.uint32)
@@ -215,7 +215,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
         ################################################################################
         records = (chigh + PACK_SIZE_HIGH - 1) // PACK_SIZE_HIGH
         stop = normal_offset - lenkey - 14
-        odata = numpy.fromstring(raw[stop - 64 * records: stop], dtype=numpy.int32)
+        odata = numpy.frombuffer(raw[stop - 64 * records: stop], dtype=numpy.int32).copy()
         if swap_needed:
             odata.byteswap(True)
         overflow_data = odata.reshape((-1, 2))
