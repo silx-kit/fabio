@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "20/11/2020"
+__date__ = "01/12/2020"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -225,14 +225,14 @@ class Converter:
         if not self.options.verbose:
             self.progress = ProgressBar("HDF5 --> Esperanto", len(options.images), 30)
         self.succeeded = True
-        all_files = [os.path.abspath(i) for i in self.options.images]
-        prefix =  os.path.commonprefix(all_files)
+        
+        prefix =  os.path.commonprefix([os.path.abspath(i) for i in self.options.images])
         if "{dirname}" in self.options.output: 
             self.dirname = os.path.dirname(prefix)
         else:
             self.dirname = os.path.dirname(os.path.abspath(self.options.output))
         if "{prefix}" in self.options.output:
-            self.prefix = os.path.basename(prefix).split(".")[0].split("_")[0]
+            self.prefix = os.path.basename(prefix)
         else:
             self.prefix = os.path.basename(os.path.abspath(self.options.output)).split("{")[0]
         self.headers = None
@@ -412,19 +412,14 @@ class Converter:
             headers["ddistanceinmm"] = self.options.distance
         if self.options.beam:
             x, y = self.options.beam
-        elif headers.get("dxorigininpix") and headers.get("dyorigininpix"):
-            x = headers["dxorigininpix"]
-            y = headers["dyorigininpix"]
-        else:
-            y = x = 1024
-        x, y = self.new_beam_center(x, y, shape)
-        headers["dxorigininpix"] = x
-        headers["dyorigininpix"] = y
+            x, y = self.new_beam_center(x, y, shape)
+            headers["dxorigininpix"] = x
+            headers["dyorigininpix"] = y
         if self.options.alpha:
             headers["dalphaindeg"] = self.options.alpha
         if self.options.kappa is not None:
             try:
-                value = float(self.options.theta)
+                value = float(self.options.kappa)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.kappa)
             headers["dka_s"] = headers["dka_e"] = value
@@ -480,14 +475,14 @@ class Converter:
             logger.error("Loading input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
             logger.debug("Backtrace", exc_info=True)
             return -1
-        
+
         for i, frame in enumerate(source):
             idx = i + start_at
-            self.progress.update(idx + 0.5, input_filename+"#"+str(idx))
+            self.progress.update(idx + 0.5, input_filename+" - "+str(idx))
             input_data = frame.data
-            numpy.logical_or(self.mask, input_data == numpy.iinfo(frame.data.dtype), out=self.mask)
+            numpy.maximum(self.mask, input_data, out=self.mask)
             input_data = input_data.astype(numpy.int32)
-            input_data[self.mask] = self.options.dummy
+            input_data[input_data == numpy.iinfo(frame.data.dtype).max] = self.options.dummy
             converted = esperantoimage.EsperantoImage(data=input_data)  # This changes the shape
             converted.data = self.geometry_transform(converted.data) 
             for k, v in self.headers.items():
@@ -523,6 +518,7 @@ class Converter:
         except ImportError:
             print("A recent version of pyFAI is needed to export the mask in a format compatible wit CrysalisPro")
         else:
+            mask = self.mask == numpy.iinfo(self.mask.dtype).max
             esperantoimage.EsperantoImage.DUMMY=1
             new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
             esperantoimage.EsperantoImage.DUMMY=-1
@@ -581,7 +577,7 @@ def main():
     group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
                        help="show the list of available formats and exit")
     group.add_argument("-o", "--output", default='{dirname}/{prefix}/{prefix}_1_{index}.esperanto', type=str,
-                       help="output directory and filename template, default is prefix/prefix_1_{index}.esperanto")
+                       help="output directory and filename template")
     group.add_argument("-O", "--offset", type=int, default=1,
                        help="index offset, CrysalisPro likes indexes to start at 1, Python starts at 0")
     group.add_argument("-D", "--dummy", type=int, default=-1,
@@ -622,13 +618,13 @@ def main():
 
     group = parser.add_argument_group("Goniometer setup")
 #     group.add_argument("--axis", type=str, default=None,
-#                        help="Goniometer angle used for scanning: 'omega', 'phi' or 'chi'")
+#                        help="Goniometer angle used for scanning: 'omega', 'phi' or 'kappa'")
     group.add_argument("--alpha", type=float, default=50,
-                       help="Goniometer angle alpha value in deg. Constant, angle of the kappa axis/omega.")
+                       help="Goniometer angle alpha value in deg. Constant, angle between kappa/omega.")
     group.add_argument("--kappa", type=str, default=0,
                        help="Goniometer angle kappa value in deg or formula f(index).")
-    group.add_argument("--chi", type=str, default=0,
-                       help="Goniometer angle chi value in deg. or formula f(index).")
+#     group.add_argument("--chi", type=str, default=0,
+#                        help="Goniometer angle chi value in deg. or formula f(index).")
     group.add_argument("--phi", type=str, default=0,
                        help="Goniometer angle phi value in deg. or formula f(index). Inner-most rotation.")
     group.add_argument("--omega", type=str, default=0,
