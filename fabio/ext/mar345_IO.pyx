@@ -163,7 +163,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
         start = raw.index(key) + lenkey
         sizes = raw[start:start + 13]
         cdimx = < int > int(sizes[:4])
-        cdimy = < int > int(sizes[-4:])
+        cdimy = < int > int(sizes[13-4:13])
         normal_offset = start + 13
     else:
         cdimx = < int > dim1
