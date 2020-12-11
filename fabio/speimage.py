@@ -36,7 +36,7 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "03/04/2020"
+__date__ = "11/12/2020"
 
 import logging
 
@@ -119,7 +119,7 @@ class SpeImage(FabioImage):
         return self
 
     def _get_version(self, infile):
-        self.xml_offset = self._read_at(infile, 678, 1, np.long)[0]
+        self.xml_offset = self._read_at(infile, 678, 1, np.int64)[0]
         if self.xml_offset == 0:
             return 2
         else:
