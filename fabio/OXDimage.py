@@ -335,12 +335,12 @@ class OxdImage(FabioImage):
         header += NG.__repr__()
 
         NS = Section(self.header['Special Section size in Byte'], self.header)
-        NS.setData('Gain', 56, numpy.float)
+        NS.setData('Gain', 56, numpy.float64)
         NS.setData('Overflows flag', 464, numpy.int16)
         NS.setData('Overflow after remeasure flag', 466, numpy.int16)
         NS.setData('Overflow threshold', 472, numpy.int32)
-        NS.setData('Exposure time in sec', 480, numpy.float)
-        NS.setData('Overflow time in sec', 488, numpy.float)
+        NS.setData('Exposure time in sec', 480, numpy.float64)
+        NS.setData('Overflow time in sec', 488, numpy.float64)
         NS.setData('Monitor counts of raw image 1', 528, numpy.int32)
         NS.setData('Monitor counts of raw image 2', 532, numpy.int32)
         NS.setData('Monitor counts of overflow raw image 1', 536, numpy.int32)
@@ -350,8 +350,8 @@ class OxdImage(FabioImage):
             for key, value in DETECTOR_TYPES.items():
                 if value == self.header['Detector type']:
                     NS.setData(None, 548, numpy.int32, default=key)
-        NS.setData('Real pixel size x (mm)', 568, numpy.float)
-        NS.setData('Real pixel size y (mm)', 576, numpy.float)
+        NS.setData('Real pixel size x (mm)', 568, numpy.float64)
+        NS.setData('Real pixel size y (mm)', 576, numpy.float64)
         header += NS.__repr__()
 
         KM = Section(self.header['KM4 Section size in Byte'], self.header)
