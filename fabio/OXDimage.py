@@ -45,7 +45,7 @@ Authors:
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "03/04/2020"
+__date__ = "11/12/2020"
 
 import time
 import logging
@@ -165,7 +165,7 @@ class OxdImage(FabioImage):
         # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
         start_angles_step = numpy.frombuffer(block[284:304], numpy.int32)
         end_angles_step = numpy.frombuffer(block[324:344], numpy.int32)
-        step2rad = numpy.frombuffer(block[368:408], numpy.float)
+        step2rad = numpy.frombuffer(block[368:408], numpy.float64)
         zero_correction_soft_step = numpy.frombuffer(block[512:532], numpy.int32)
         if not numpy.little_endian:
             start_angles_step.byteswap(True)
