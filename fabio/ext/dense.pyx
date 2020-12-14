@@ -123,7 +123,11 @@ def densify(float[:,::1] mask,
     
     noisy = background_std is not None
     if noisy:
-        srand(<unsigned int> (time.time_ns()%RAND_MAX))
+        try:
+            value = time.time_ns()
+        except Exception:
+            value = int(time.time()/EPS64)
+        srand(<unsigned int> (value%RAND_MAX))
                 
     with nogil:
         start = radius[0]
