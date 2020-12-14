@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/04/2020"
+__date__ = "11/12/2020"
 
 import os
 import logging
@@ -207,23 +207,23 @@ class _FabioArray(object):
         if sli == self.slice and self.area_sum is not None:
             pass
         elif sli == self.slice and self.roi is not None:
-            self.area_sum = self.roi.sum(dtype=numpy.float)
+            self.area_sum = self.roi.sum(dtype=numpy.float64)
         else:
             self.slice = sli
             self.roi = self.data[self.slice]
-            self.area_sum = self.roi.sum(dtype=numpy.float)
+            self.area_sum = self.roi.sum(dtype=numpy.float64)
         return self.area_sum
 
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = self.data.mean(dtype=numpy.double)
+            self.mean = self.data.mean(dtype=numpy.float64)
         return self.mean
 
     def getstddev(self):
         """ return the standard deviation """
         if self.stddev is None:
-            self.stddev = self.data.std(dtype=numpy.double)
+            self.stddev = self.data.std(dtype=numpy.float64)
         return self.stddev
 
     @property
