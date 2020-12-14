@@ -36,7 +36,7 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "03/04/2020"
+__date__ = "11/12/2020"
 
 import logging
 
@@ -119,7 +119,7 @@ class SpeImage(FabioImage):
         return self
 
     def _get_version(self, infile):
-        self.xml_offset = self._read_at(infile, 678, 1, np.long)[0]
+        self.xml_offset = self._read_at(infile, 678, 1, np.int64)[0]
         if self.xml_offset == 0:
             return 2
         else:
@@ -191,18 +191,18 @@ class SpeImage(FabioImage):
         if len(dom.getElementsByTagName('Experiment')) != 1:  # check if it is a real v3.0 file
             if len(dom.getElementsByTagName('ShutterTiming')) == 1:  # check if it is a pixis detector
                 exposure_time = dom.getElementsByTagName('ExposureTime')[0].childNodes[0]
-                return np.float(exposure_time.toxml()) / 1000.0
+                return np.float64(exposure_time.toxml()) / 1000.0
             else:
                 exposure_time = dom.getElementsByTagName('ReadoutControl')[0]. \
                     getElementsByTagName('Time')[0].childNodes[0].nodeValue
                 self.header['accumulations'] = dom.getElementsByTagName('Accumulations')[0].childNodes[0].nodeValue
-                return np.float(exposure_time) * np.float(self.header['accumulations'])
+                return np.float64(exposure_time) * np.float64(self.header['accumulations'])
         else:  # this is searching for legacy experiment:
             self._exposure_time = dom.getElementsByTagName('LegacyExperiment')[0]. \
                 getElementsByTagName('Experiment')[0]. \
                 getElementsByTagName('CollectionParameters')[0]. \
                 getElementsByTagName('Exposure')[0].attributes["value"].value
-            return np.float(self._exposure_time.split()[0])
+            return np.float64(self._exposure_time.split()[0])
 
     def _read_detector_from_dom(self, dom):
         """Reads the detector information from the dom object"""
@@ -277,7 +277,7 @@ class SpeImage(FabioImage):
         dtype = np.dtype(ntype)
         bp = dtype.itemsize
         data = infile.read(size * bp)
-        return np.fromstring(data, dtype)
+        return np.frombuffer(data, dtype)
 
     def _read_data(self, infile, frame=None):
         if frame is None:

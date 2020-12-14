@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "08/10/2020"
+__date__ = "11/12/2020"
 
 import sys
 import os
@@ -390,7 +390,7 @@ class TiffIO(object):
                 tmpColormap = numpy.array(tmpColormap, dtype=numpy.uint8)
             tmpColormap.shape = 3, -1
             colormap = numpy.zeros((tmpColormap.shape[-1], 3), tmpColormap.dtype)
-            colormap[:, :] = tmpColormap.T
+            colormap[:,:] = tmpColormap.T
             tmpColormap = None
         else:
             colormap = None
@@ -613,7 +613,7 @@ class TiffIO(object):
 
         if rowMax < rowMin:
             txt = "Max Row smaller than Min Row. Reverse selection not supported"
-            raise NotImplemented(txt)
+            raise NotImplementedError(txt)
 
         if rowMin >= nRows:
             raise IndexError("Image only has %d rows" % nRows)
@@ -738,7 +738,7 @@ class TiffIO(object):
                         readout.shape = -1, nColumns, 3
                     else:
                         readout.shape = -1, nColumns
-                    image[rowStart:rowEnd, :] = readout
+                    image[rowStart:rowEnd,:] = readout
                 else:
                     readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
                     if self._swap:
@@ -751,7 +751,7 @@ class TiffIO(object):
                         readout.shape = -1, nColumns, 3
                     else:
                         readout.shape = -1, nColumns
-                    image[rowStart:rowEnd, :] = readout
+                    image[rowStart:rowEnd,:] = readout
                 rowStart += nRowsToRead
         if close:
             self.__makeSureFileIsClosed()
@@ -760,9 +760,9 @@ class TiffIO(object):
             # color image
             if self._forceMonoOutput:
                 # color image, convert to monochrome
-                image = (image[:, :, 0] * 0.114 +
-                         image[:, :, 1] * 0.587 +
-                         image[:, :, 2] * 0.299).astype(numpy.float32)
+                image = (image[:,:, 0] * 0.114 +
+                         image[:,:, 1] * 0.587 +
+                         image[:,:, 2] * 0.299).astype(numpy.float32)
 
         if (rowMin == 0) and (rowMax == (nRows - 1)):
             self._imageDataCacheIndex.insert(0, nImage)
