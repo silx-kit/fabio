@@ -1,5 +1,5 @@
 #List of dependecies used by PIP but also by ReadTheDocs to generate the documentation on the fly
-numpy > 1.19
+numpy
 cython
 lxml
 sphinx
