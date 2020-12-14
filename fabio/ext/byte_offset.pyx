@@ -38,7 +38,6 @@ __copyright__ = "2010-2016, European Synchrotron Radiation Facility, Grenoble, F
 __date__ = "14/12/2020"
 
 
-cimport numpy as cnumpy 
 import numpy
 import cython
 
