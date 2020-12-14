@@ -31,19 +31,19 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "25/11/2020"
+__date__ = "14/12/2020"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
+import time
 import numpy
-from numpy.random cimport bitgen_t
-from numpy.random.c_distributions cimport random_normal
 
 from libc.stdint cimport int8_t, uint8_t, \
                          uint16_t, int16_t,\
                          int32_t, uint32_t,\
                          int64_t, uint64_t
-from libc.math cimport isfinite                         
+from libc.math cimport isfinite, log, sqrt, cos, M_PI                         
+from libc.stdlib cimport rand, RAND_MAX, srand
                
 ctypedef fused any_t:
     double
@@ -56,8 +56,34 @@ ctypedef fused any_t:
     uint32_t
     int64_t
     uint64_t
+
+cdef:
+    double EPS64 = numpy.finfo(numpy.float64).eps
+    double two_pi = 2.0*M_PI
+
+
+cdef double random_normal(double mu, double sigma) nogil:
+    """
+    Calculate the gaussian distribution using the Box–Muller algorithm
     
-from cpython.pycapsule cimport PyCapsule_IsValid, PyCapsule_GetPointer
+    Credits:
+    https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
+    
+    :param mu: the center of the distribution
+    :param sigma: the width of the distribution
+    """    
+    cdef:
+        double u1, u2
+    
+    u1 = 0.0
+    
+    while (u1 < EPS64):
+        u1 = <double> rand() / RAND_MAX 
+        u2 = <double> rand() / RAND_MAX
+    
+    mag = sigma * sqrt(-2.0 * log(u1));
+    return mag * cos(two_pi * u2) + mu;
+    
 
 def densify(float[:,::1] mask,
             float[::1] radius,
@@ -85,8 +111,6 @@ def densify(float[:,::1] mask,
         double value, fres, fpos, idelta, start, std
         bint integral, noisy
         any_t[:, ::1] dense
-        bitgen_t *rng
-        const char *capsule_name = "BitGenerator"
         
     size = radius.shape[0]
     assert background.shape[0] == size
@@ -98,15 +122,9 @@ def densify(float[:,::1] mask,
     dense = numpy.zeros((height, width), dtype=dtype)
     
     noisy = background_std is not None
-    if noisy:     
-        bit_generator = numpy.random.PCG64()   
-        capsule = bit_generator.capsule
-        # Optional check that the capsule if from a BitGenerator
-        if not PyCapsule_IsValid(capsule, capsule_name):
-            raise ValueError("Invalid pointer to anon_func_state")
-        # Cast the pointer
-        rng = <bitgen_t *> PyCapsule_GetPointer(capsule, capsule_name)
-        
+    if noisy:
+        srand(<unsigned int> (time.time_ns()%RAND_MAX))
+                
     with nogil:
         start = radius[0]
         idelta = (size - 1)/(radius[size-1] - start)  
@@ -126,7 +144,7 @@ def densify(float[:,::1] mask,
                         value = (1.0 - fres)*background[pos] + fres*background[pos+1]
                     if noisy:
                         std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
-                        value = max(0.0, random_normal(rng, value, std))
+                        value = max(0.0, random_normal(value, std))
                         
                     if integral:
                         dense[i,j] =  <any_t>(value + 0.5) #this is rounding
@@ -137,7 +155,5 @@ def densify(float[:,::1] mask,
             j = index[i]
             dense[j//width, j%width] = intensity[i]
     return numpy.asarray(dense) 
-                
-                
-                
+
                 

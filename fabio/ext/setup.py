@@ -24,16 +24,11 @@
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "25/11/2020"
+__date__ = "14/12/2020"
 
 import os
 import numpy
 from numpy.distutils.misc_util import Configuration
-
-
-def get_libnpyrandom():
-    from os.path import join, dirname
-    return join(join(dirname(dirname(numpy.get_include())), "random"), "lib")
 
 
 def configuration(parent_package='', top_path=None):
@@ -71,7 +66,6 @@ def configuration(parent_package='', top_path=None):
         name="dense",
         sources=["dense.pyx"],
         include_dirs=[numpy.get_include()],
-        extra_link_args=["-L" + get_libnpyrandom(), "-lnpyrandom"],
         language='c')
 
     return config
