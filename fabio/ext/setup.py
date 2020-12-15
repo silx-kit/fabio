@@ -24,7 +24,7 @@
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "13/11/2020"
+__date__ = "14/12/2020"
 
 import os
 import numpy
@@ -60,6 +60,12 @@ def configuration(parent_package='', top_path=None):
     config.add_extension(
         name="_agi_bitfield",
         sources=["_agi_bitfield.pyx"],
+        language='c')
+
+    config.add_extension(
+        name="dense",
+        sources=["dense.pyx"],
+        include_dirs=[numpy.get_include()],
         language='c')
 
     return config
