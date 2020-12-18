@@ -78,8 +78,8 @@ PRERELEASE_NORMALIZED_NAME = {"dev": "a",
 MAJOR = 0
 MINOR = 11
 MICRO = 0
-RELEV = "candidate"  # <16
-SERIAL = 0    # <16
+RELEV = "final"  # <16
+SERIAL = 0  # <16
 date = __date__
 
 from collections import namedtuple
