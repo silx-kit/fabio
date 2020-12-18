@@ -158,6 +158,7 @@ Known file formats
   + OXDimage uncompressed
   + OXDimage with TY1 byte offset compression
   + OXDimage with TY5 byte offset compression (experimental)
+  + Esperanto format
 
 * Nonius -> now owned by Bruker
 
