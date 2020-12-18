@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "15/06/2020" 
+__date__ = "16/11/2020"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -46,9 +46,10 @@ except ImportError:
 
 
 class LimaImage(FabioImage):
-    """FabIO image class for Images for XXX detector
+    """FabIO image class for images acquired with the LIMA framwork
 
-    Put some documentation here
+    LIMA is the Library for Image Acquisition, 
+    https://github.com/esrf-bliss/LImA
     """
 
     DESCRIPTION = "HDF5 file produces by LImA"
@@ -65,7 +66,7 @@ class LimaImage(FabioImage):
         FabioImage.__init__(self, data, header)
         self.dataset = [data]
         self.h5 = None
-        
+
     def __repr__(self):
         if self.h5 is not None:
             return "LImA-HDF5 dataset with %i frames from %s" % (self.nframes, self.h5.filename)
@@ -152,7 +153,6 @@ class LimaImage(FabioImage):
         if self.h5 is not None:
             self.h5.close()
             self.dataset = None
-
 
 
 # This is not compatibility with old code:

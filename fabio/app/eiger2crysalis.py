@@ -54,8 +54,8 @@ import codecs
 import sys
 import os
 import glob
-from itertools import takewhile
-from .. import esperantoimage, eigerimage, limaimage
+import shutil
+from .. import esperantoimage, eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..nexus import get_isotime
@@ -192,6 +192,14 @@ class ProgressBar:
         sys.stdout.flush()
 
 
+def as_str(smth):
+    "Transform to string"
+    if isinstance(any, bytes):
+        return smth.decode()
+    else:
+        return str(smth)
+    
+    
 def expand_args(args):
     """
     Takes an argv and expand it (under Windows, cmd does not convert *.tif into
@@ -366,6 +374,28 @@ class Converter:
                                     headers["dexposuretimeinsec"] = t1
                                 except Exception as e:
                                     logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
+            elif isinstance(source, sparseimage.SparseImage):
+                entry_name = source.h5.attrs.get("default")
+                if entry_name:
+                    entry = source.h5.get(entry_name)
+                    if entry:
+                        instruments = [i for  i in entry.values() if as_str(i.attrs.get("NX_class", "")) == "NXinstrument"]
+                        if instruments:
+                            instrument = instruments[0]
+                            detectors = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXdetector"]
+                            if detectors:
+                                detector = detectors[0]
+                                headers["drealpixelsizex"] = detector["x_pixel_size"][()] * 1e3
+                                headers["drealpixelsizey"] = detector["y_pixel_size"][()] * 1e3               
+                                headers["dxorigininpix"] = detector["beam_center_x"][()]
+                                headers["dyorigininpix"] = detector["beam_center_y"][()]
+                                headers["ddistanceinmm"] = detector["distance"][()] * 1e3
+                            monchromators = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXmonochromator"]
+                            if monchromators:
+                                wavelength =  monchromators[0]["wavelength"][()]
+                self.mask = numpy.logical_not(numpy.isfinite(source.mask))
+                headers["dexposuretimeinsec"] = 1 #meaningfull value.
+
             elif isinstance(source, eigerimage.EigerImage):
                 raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
             else:
@@ -412,6 +442,7 @@ class Converter:
                 # Handle the string
                 value = numexpr.NumExpr(self.options.omega)
             headers["dom_s"] = headers["dom_e"] = value
+
         return headers
 
     def convert_one(self, input_filename, start_at=0):
@@ -489,16 +520,41 @@ class Converter:
         else:
             mask = self.mask == numpy.iinfo(self.mask.dtype).max
             esperantoimage.EsperantoImage.DUMMY=1
-            new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
+            new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
+            esperantoimage.EsperantoImage.DUMMY=-1
             rectangles =  dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
             self.progress.update(self.progress.max_value-0.5, f"Exporting {len(rectangles)} rectangles as mask")
-            with open(os.path.join(self.dirname,self.prefix+".set"), mode="w") as maskfile:
+            dummy_filename = self.options.output.format(index=self.options.offset, 
+                                                         prefix=self.prefix, 
+                                                         dirname=self.dirname) 
+            dirname = os.path.dirname(dummy_filename)
+            numpy.save(os.path.join(dirname,self.prefix+"_mask.npy"), self.mask)
+            with open(os.path.join(dirname,self.prefix+".set"), mode="wb") as maskfile:
+                maskfile.write(b'#XCALIBUR SYSTEM\r\n')
+                maskfile.write(b'#XCALIBUR SETUP FILE\r\n')
+                maskfile.write(b'#*******************************************************************************************************\r\n')
+                maskfile.write(b'# CHIP CHARACTERISTICS e_19_020609.ccd         D A T E Wed-Sep-16-10-00-59-2009\r\n')
+                maskfile.write(b'# This program produces version 1.9\r\n')
+                maskfile.write(b'#******************************************************************************************************\r\n')
+                maskfile.write(b'#THIS FILE IS USER READABLE - BUT SHOULD NOT BE TOUCHED BY THE USER\r\n')
+                maskfile.write(b'#ANY CHANGES TO THIS FILE WILL RESULT IN LOSS OF WARRANTY!\r\n')
+                maskfile.write(b'#CHIP IDCODE producer type serial\r\n')
+                maskfile.write(b'CHIP IDCODE "n/a" "n/a" "n/a\r\n')
+                maskfile.write(b'#CHIP TAPER producer type serial\r\n')
+                maskfile.write(b'CHIP TAPER "" "" ""\r\n')
+                maskfile.write(b'#ALL COORDINATES GO FROM 0 TO N-1\r\n')
+                maskfile.write(b'#CHIP BADPOINT treatment options: IGNORE,REPLACE,AVERAGE\r\n')
+                maskfile.write(b'#CHIP BADPOINT x1x1 y1x1 treatment r1x1x1 r1y1x1 r2x1x1 r2y1x1\r\n')
+                maskfile.write(b'#CHIP BADPOINT 630 422 REPLACE 632 422 0 0\r\n')
+                maskfile.write(b'#CHIP BADRECTANGLE xl xr yb yt\r\n')
                 for r in rectangles:
                     if r.area == 1:
-                        maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n")
+                        maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n".encode())
                     else:
-                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width-1} {r.row} {r.row+r.height-1}\r\n")            
-            
+                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width} {r.row} {r.row+r.height}\r\n".encode())            
+                maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
+            # Make a backup as the original could be overwritten by Crysalis at import 
+            shutil.copyfile(os.path.join(dirname,self.prefix+".set"), os.path.join(dirname,self.prefix+".set.orig"))
         
 def main():
 
@@ -593,7 +649,7 @@ def main():
             logger.setLevel(logging.DEBUG)
 
         if args.list:
-            print("Supported formats: LimaImage, EigerImage")
+            print("Supported formats: LimaImage, EigerImage, SparseImage")
             return
 
         if len(args.IMAGE) == 0:
