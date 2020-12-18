@@ -386,9 +386,8 @@ class AppForm(qt.QMainWindow):
 
     def convert_and_write(self, fname, format_, data, header):
         if format_ == '*.bin':
-            out = open(fname, mode="wb")
-            out.write(data.tobytes())
-            out.close()
+            with open(fname, mode="wb") as out:
+                data.tofile(out)
             return
         elif format_ == '*.marccd':
             out = fabio.marccdimage.marccdimage(data=data, header=header)

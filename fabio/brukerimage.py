@@ -43,7 +43,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "03/06/2020"
+__date__ = "18/12/2020"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -51,7 +51,7 @@ __licence__ = "MIT"
 import logging
 import numpy
 from math import ceil
-import os
+import os, io
 import getpass
 import time
 logger = logging.getLogger(__name__)
@@ -318,7 +318,10 @@ class BrukerImage(FabioImage):
             data.byteswap(True)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
-            bruker.write(data.tobytes())
+            if isinstance(bruker, io.BufferedWriter):
+                data.tofile(bruker)
+            else:
+                bruker.write(data.tobytes())
             bruker.write(self.gen_overflow().encode("ASCII"))
 
     def calc_bpp(self, data=None, max_entry=4096):

@@ -47,10 +47,11 @@ __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2015-2020 ESRF, 2016 GWDG"
 __licence__ = "MIT"
 
-import numpy
-import logging
+import io
 import os
 from math import ceil
+import logging
+import numpy
 
 logger = logging.getLogger(__name__)
 
@@ -324,15 +325,26 @@ class Bruker100Image(BrukerImage):
             # Bruker enforces little endian
             data.byteswap(True)
         with self._open(fname, "wb") as bruker:
+            fast = isinstance(bruker, io.BufferedWriter)
             bruker.write(self.gen_header().encode("ASCII"))
-            bruker.write(data.tobytes())
+            if fast:
+                data.tofile(bruker)
+            else:
+                bruker.write(data.tobytes())
             overflows_one_byte = self.overflows_one_byte()
             overflows_two_byte = self.overflows_two_byte()
             if int(self.header["NOVERFL"].split()[0]) > 0:
                 underflows = self.underflows()
-                bruker.write(underflows.tobytes())
-            bruker.write(overflows_one_byte.tobytes())
-            bruker.write(overflows_two_byte.tobytes())
+                if fast:
+                    underflows.tofile(bruker)
+                else:
+                    bruker.write(underflows.tobytes())
+            if fast:
+                overflows_one_byte.tofile(bruker)
+                overflows_two_byte.tofile(bruker)
+            else:
+                bruker.write(overflows_one_byte.tobytes())
+                bruker.write(overflows_two_byte.tobytes())
 
     def underflows(self):
             """
