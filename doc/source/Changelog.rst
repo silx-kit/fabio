@@ -10,7 +10,8 @@ FabIO-0.11.0 unreleased (??/2021):
 - Improved supportfor Tiff: Miss interpretation of colormap tags
 - Improved support for GE files gernerated at APS
 - Stop testing for 32-bit operating systems.
-- Support for Python versions 3.5 ... 3.9
+- Support for Python versions 3.6 ... 3.9
+- Linux is officially the main platform, Windows and MacOS are also supported
 
 FabIO-0.10.0 (04/2020):
 .......................
