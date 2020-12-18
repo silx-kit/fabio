@@ -249,17 +249,6 @@ When you run the test for the first time, many test images will be download and 
 (this takes a lot of time).
 
 Be sure you have an internet connection and your proxy setting are correctly defined in the environment variable *http_proxy*.
-For example if you are behind a firewall/proxy (No more needed at ESRF):
-
-Under Linux and MacOSX::
-
-   export http_proxy=http://proxy.site.org:3128
-
-Under Windows::
-
-   set http_proxy=http://proxy.site.org:3128
-
-Where *proxy.site.org* and *3128* correspond to the proxy server and port on your network.
 
 Many tests are there to deal with malformed files, don't worry if the programs complains in warnings about "bad files",
 it is done on purpose to ensure robustness in FabIO.
