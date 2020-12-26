@@ -40,8 +40,7 @@ provides the namespace of PyQt5 over PyQt4 and PySide.
 
 __authors__ = ["V.A. Sole - ESRF Data Analysis"]
 __license__ = "MIT"
-__date__ = "07/09/2017"
-
+__date__ = "26/12/2020"
 
 import logging
 import sys
@@ -95,16 +94,6 @@ else:  # Then try Qt bindings
 
 if BINDING == 'PyQt4':
     _logger.debug('Using PyQt4 bindings')
-
-    if sys.version < "3.0.0":
-        try:
-            import sip
-
-            sip.setapi("QString", 2)
-            sip.setapi("QVariant", 2)
-        except:
-            _logger.warning("Cannot set sip API")
-
     import PyQt4 as QtBinding  # noqa
 
     from PyQt4.QtCore import *  # noqa

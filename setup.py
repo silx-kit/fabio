@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/11/2020"
+__date__ = "26/12/2020"
 __status__ = "stable"
 
 import sys
@@ -85,7 +85,7 @@ PROJECT = "fabio"
 if sys.version_info.major < 3:
     logger.error(PROJECT + " no more support Python2")
 
-if "LANG" not in os.environ and sys.platform == "darwin" and sys.version_info[0] > 2:
+if "LANG" not in os.environ and sys.platform == "darwin":
     print("""WARNING: the LANG environment variable is not defined,
 an utf-8 LANG is mandatory to use setup.py, you may face unexpected UnicodeError.
 export LANG=en_US.utf-8
@@ -337,7 +337,6 @@ class BuildMan(Command):
             # help2man expect a single executable file to extract the help
             # we create it, execute it, and delete it at the end
 
-            py3 = sys.version_info >= (3, 0)
             try:
                 # create a launcher using the right python interpreter
                 script_name = os.path.join(workdir, target_name)
@@ -356,18 +355,6 @@ class BuildMan(Command):
                 synopsis = self.get_synopsis(module_name, env)
                 if synopsis:
                     command_line += ["-n", synopsis]
-                if not py3:
-                    # Before Python 3.4, ArgParser --version was using
-                    # stderr to print the version
-                    command_line.append("--no-discard-stderr")
-                    # Then we dont know if the documentation will contains
-                    # durtty things
-                    succeeded = self.run_targeted_script(target_name, script_name, env, False)
-                    if not succeeded:
-                        logger.info("Error while generating man file for target '%s'.", target_name)
-                        self.run_targeted_script(target_name, script_name, env, True)
-                        raise RuntimeError("Fail to generate '%s' man documentation" % target_name)
-
                 p = subprocess.Popen(command_line, env=env)
                 status = p.wait()
                 if status != 0:
@@ -692,7 +679,7 @@ class BuildExt(build_ext):
             # Avoids runtime symbol collision for manylinux1 platform
             # See issue #1070
             extern = 'extern "C" ' if ext.language == 'c++' else ''
-            return_type = 'void' if sys.version_info[0] <= 2 else 'PyObject*'
+            return_type = 'PyObject*'
 
             ext.extra_compile_args.append('-fvisibility=hidden')
 
@@ -715,17 +702,8 @@ class BuildExt(build_ext):
 
         :rtype: bool
         """
-        if sys.version_info >= (3, 0):
-            # It is normalized on Python 3
-            # But it is not available on Windows CPython
-            if hasattr(sys, "abiflags"):
-                return "d" in sys.abiflags
-        else:
-            # It's a Python 2 interpreter
-            # pydebug is not available on Windows/Mac OS interpreters
-            if hasattr(sys, "pydebug"):
-                return sys.pydebug
-
+        if hasattr(sys, "abiflags"):
+            return "d" in sys.abiflags
         # We can't know if we uses debug interpreter
         return False
 
