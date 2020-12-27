@@ -97,11 +97,9 @@ class Jpeg2KImage(FabioImage):
         version = tuple(int(i) for i in glymur.__version__.split(".")[:2])
         if version == (0, 7):
             image = glymur.Jp2k(filename=filename)
-        elif version == (0,8):
+        elif version >= (0,8):
             # inject a shape  to avoid calling the read function
             image = glymur.Jp2k(filename=filename, shape=(1, 1))
-        elif version>(0,8):
-            image = glymur.Jp2k(filename=filename, shape=(1,1))
         else:
             raise IOError("Glymur version %s is not supported" % glymur.__version__)
 
