@@ -407,5 +407,34 @@ class Bruker100Image(BrukerImage):
 
         return nderflow_val_paded  # pad(overflow, ".", 512)
 
+    def basic_translate(self, fname=None):
+        """
+        Does some basic population of the headers so that the writing is possible
+        """
+        if "FORMAT" not in self.header:
+            self.header["FORMAT"] = "100"
+#         if "HDRBLKS" not in self.header:
+#             self.header["HDRBLKS"] = 5
+#         if "TYPE" not in self.header:
+#             self.header["TYPE"] = "UNWARPED"
+#         if "USER" not in self.header:
+#             self.header["USER"] = getpass.getuser()
+#         if "FILENAM" not in self.header:
+#             self.header["FILENAM"] = "%s" % fname
+#         if "CREATED" not in self.header:
+#             self.header["CREATED"] = time.ctime()
+#         if "NOVERFL" not in self.header:
+#             self.header["NOVERFL"] = "0"
+# #        if not "NPIXELB" in self.header:
+#         self.header["NPIXELB"] = self.calc_bpp()
+#         # if not "NROWS" in self.header:
+        self.header["NROWS"] = self.data.shape[0]
+        # if not "NCOLS" in self.header:
+        self.header["NCOLS"] = self.data.shape[1]
+#         if "WORDORD" not in self.header:
+#             self.header["WORDORD"] = "0"
+#         if "LONGORD" not in self.header:
+#             self.header["LONGORD"] = "0"
+
 
 bruker100image = Bruker100Image
