@@ -66,7 +66,7 @@ def mround(value, multiple=16):
     return int(multiple * ceil(value / multiple))
 
 
-def _merge_data(data, baseline=None, underflow=None, overflow1=None, overflow2=None):
+def _merge_data(data, baseline=0, underflow=None, overflow1=None, overflow2=None):
     """
     Build an array from the various components
     
@@ -81,13 +81,17 @@ def _merge_data(data, baseline=None, underflow=None, overflow1=None, overflow2=N
     data = data.astype(numpy.int32)
     if (in_dtype.itemsize == 1) and (overflow1 is not None):
         # Use Overflow1
+        print(in_dtype, overflow1)
         mask = numpy.where(data == 255)
+        print(mask)
         data[mask] = overflow1
     if (in_dtype.itemsize < 4) and (overflow2 is not None):
         # Use Overflow2
         mask = numpy.where(data == 65535)
         data[mask] = overflow2
-    if (baseline is not None) and (underflow is not None):
+    if (underflow is None):
+        data += baseline
+    else:
         mask = data == 0
         data[numpy.where(mask)] = underflow
         data[numpy.logical_not(mask)] += baseline
@@ -194,47 +198,37 @@ class Bruker100Image(BrukerImage):
                     continue
                 if k > 2:
                     break
-                bpp = 1 << k
-                datatype = self.bpp_to_numpy[bpp]
+                if k == 0:
+                    bpp = int(self.header['NPIXELB'].split()[1])
+                    datatype = numpy.dtype(f"int{bpp*8}")
+                else:
+                    bpp = 2* k
+                    datatype = self.bpp_to_numpy[bpp]
+                to_read = nov * bpp
                 # pad nov*bpp to a multiple of 16 bytes
-                nbytes = mround(nov * bpp, 16)
+                nbytes = mround(to_read, 16)
 
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
                 # ar without zeros
-                ar = numpy.frombuffer(data_str[:nov * bpp], datatype)
+                ar = numpy.frombuffer(data_str[:to_read], datatype)
                 if k == 0:
                     # read the set of "underflow pixels" - these will be completely disregarded for now
-                    self.ar_underflows = ar
-                    continue
-
-                # insert the the overflow pixels in the image array:
-                lim = (1 << (8 * k)) - 1
-
-                # upgrade data type
-                self.data = self.data.astype(datatype)
-
-                # generate an array comprising of the indices into data.ravel()
-                # where its value equals lim.
-                flat = self.data.ravel()
-                mask = numpy.where(flat >= lim)[0]
-                # now put values from ar into those indices
-                if k != 0:
-                    flat.put(mask, ar)
+                    to_merge["underflow"] = ar
+                elif k == 1:
+                    to_merge["overflow1"] = ar
+                elif k == 2:
+                    to_merge["overflow2"] = ar
+                else:
+                    break
                 logger.debug("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
-
-        # replace zeros with values from underflow block
-        if noverfl_values[0] > 0:
-            flat = self.data.ravel()
-            self.mask_undeflows = numpy.where(flat == 0)[0]
-            self.mask_no_undeflows = numpy.where(self.data != 0)
-            flat.put(self.mask_undeflows, self.ar_underflows)
-
         # add baseline
-        if noverfl_values[0] != -1:
-            baseline = int(self.header["NEXP"].split()[2])
-            self.data[self.mask_no_undeflows] += baseline
-
+        if noverfl_values[0] == -1:
+            to_merge["baseline"] = 0
+        else:
+            to_merge["baseline"] = int(self.header["NEXP"].split()[2])
+#             self.data[self.mask_no_undeflows] += baseline
+        self.data = _merge_data(**to_merge)
         self.resetvals()
         return self
 
