@@ -60,6 +60,40 @@ from .readbytestream import readbytestream
 from .fabioutils import pad, StringTypes
 
 
+def mround(value, multiple=16):
+    """Round a value up to the multiple of multiple
+    """
+    return int(multiple * ceil(value / multiple))
+
+
+def _merge_data(data, baseline=None, underflow=None, overflow1=None, overflow2=None):
+    """
+    Build an array from the various components
+    
+    :param data: probably a uint8 array --> expanded to int32
+    :param baseline: value of the baseline
+    :param underflow: value of the data below the baseline (any value with 0 are replaced with those values)
+    :param overflow1: value of the data where data=255 (in the range 255-65535)
+    :param overflow2: value of the data where overflow1=65535 (value >= 65535)
+    :return: array of int32
+    """
+    in_dtype = data.dtype
+    data = data.astype(numpy.int32)
+    if (in_dtype.itemsize == 1) and (overflow1 is not None):
+        # Use Overflow1
+        mask = numpy.where(data == 255)
+        data[mask] = overflow1
+    if (in_dtype.itemsize < 4) and (overflow2 is not None):
+        # Use Overflow2
+        mask = numpy.where(data == 65535)
+        data[mask] = overflow2
+    if (baseline is not None) and (underflow is not None):
+        mask = data == 0
+        data[numpy.where(mask)] = underflow
+        data[numpy.logical_not(mask)] += baseline
+    return data
+
+
 class Bruker100Image(BrukerImage):
 
     DESCRIPTION = "SFRM File format used by Bruker detectors (version 100)"
@@ -137,19 +171,33 @@ class Bruker100Image(BrukerImage):
             # We are now at the start of the image - assuming bruker._readheader worked
             # Get image block size from NPIXELB.
             # The total size is nbytes * nrows * ncolumns.
-            self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
-                                       datatype="int", signed='n', swap='n')
-
+            
+            data_size = rows* cols* npixelb
+            data_size_padded = mround(data_size, 512)
+            raw_data = infile.read(data_size_padded)
+            data = numpy.frombuffer(raw_data[:data_size], dtype=self.bpp_to_numpy[npixelb]).reshape((rows, cols))
+#             self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
+#                                        datatype="int", signed='n', swap='n')
+            if npixelb > 1 and not numpy.little_endian:
+                self.data = data.byteswap()
+            else:
+                self.data = data
             # now process the overflows
             noverfl_values = [int(f) for f in self.header['NOVERFL'].split()]
-
+            to_merge = {"data":data,
+                        "underflow": None,
+                        "overflow1": None,
+                        "overflow2": None,
+                        "baseline": None}
             for k, nov in enumerate(noverfl_values):
                 if nov <= 0:
                     continue
+                if k > 2:
+                    break
                 bpp = 1 << k
                 datatype = self.bpp_to_numpy[bpp]
                 # pad nov*bpp to a multiple of 16 bytes
-                nbytes = (nov * bpp + 15) & ~(15)
+                nbytes = mround(nov * bpp, 16)
 
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
@@ -232,7 +280,7 @@ class Bruker100Image(BrukerImage):
         header = "".join(headers)
         if len(header) > 512 * self.header["HDRBLKS"]:
             tmp = ceil(len(header) / 512.0)
-            self.header["HDRBLKS"] = int(ceil(tmp / 5.0) * 5.0)
+            self.header["HDRBLKS"] = mround(tmp, 5.0)
             for i in range(len(headers)):
                 if headers[i].startswith("HDRBLKS"):
                     headers[i] = ("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " ")
@@ -249,7 +297,7 @@ class Bruker100Image(BrukerImage):
         limit = 255
         # noverf = int(self.header['NOVERFL'].split()[1])
         noverf = self.noverf
-        read_bytes = (noverf * bpp + 15) & ~(15)  # since data b
+        read_bytes = mround(noverf * bpp, 16)  # since data b
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
         flat = self.data.ravel()  # flat memory view
@@ -268,7 +316,7 @@ class Bruker100Image(BrukerImage):
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
         # nunderf = self.nunderf
-        read_bytes = (noverf * bpp + 15) & ~(15)
+        read_bytes = mround(noverf * bpp, 16)
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
         flat = self.data.ravel()  # flat memory view
@@ -306,9 +354,10 @@ class Bruker100Image(BrukerImage):
         else:
             if int(self.header["NOVERFL"].split()[0]) > 0:
                 baseline = int(self.header["NEXP"].split()[2])
-                self.data[self.mask_no_undeflows] -= baseline
-
-            tmp_data = self.data
+                tmp_data = self.data.copy()
+                tmp_data[self.mask_no_undeflows] -= baseline
+            else:
+                tmp_data = self.data
 
         minusMask = numpy.where(tmp_data < 0)
         bpp = self.calc_bpp(tmp_data)
@@ -354,7 +403,7 @@ class Bruker100Image(BrukerImage):
             # limit = 255
             nunderFlows = self.nunderFlows
             # temp_data = self.data
-            read_bytes = (nunderFlows * bpp + 15) & ~(15)  # multiple of 16
+            read_bytes = mround(nunderFlows * bpp, 16)  # multiple of 16
             dif2usedbyts = read_bytes - (nunderFlows * bpp)
             pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
             # flat = self.data.ravel()  # flat memory view
@@ -373,7 +422,7 @@ class Bruker100Image(BrukerImage):
             limit = 255
             nover_one = self.nover_one
             # temp_data = self.data
-            read_bytes = (nover_one * bpp + 15) & ~(15)  # multiple of 16
+            read_bytes = mround(nover_one * bpp, 16)
             dif2usedbyts = read_bytes - (nover_one * bpp)
             pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
             flat = self.data.ravel()  # flat memory view
@@ -393,7 +442,7 @@ class Bruker100Image(BrukerImage):
         bpp = 4
         noverf = int(self.header['NOVERFL'].split()[2])
         # nover_two = self.nover_two
-        read_bytes = (noverf * bpp + 15) & ~(15)  # multiple of 16
+        read_bytes = mround(noverf * bpp, 16)
         dif2usedbyts = read_bytes - (noverf * bpp)
         pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
         flat = self.data.ravel()  # flat memory view
