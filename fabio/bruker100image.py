@@ -283,43 +283,6 @@ class Bruker100Image(BrukerImage):
         res = pad("".join(headers), self.SPACER + "." * 78, 512 * int(self.header["HDRBLKS"]))
         return res
 
-    def gen_overflow(self):
-        """
-        Generate an overflow table, including the underflow, marked as 65535 .
-        """
-        bpp = 2
-        limit = 255
-        # noverf = int(self.header['NOVERFL'].split()[1])
-        noverf = self.noverf
-        read_bytes = mround(noverf * bpp, 16)  # since data b
-        dif2usedbyts = read_bytes - (noverf * bpp)
-        pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
-        flat = self.data.ravel()  # flat memory view
-        flow_pos = numpy.logical_or(flat >= limit, flat < 0)
-        # flow_pos_indexes = numpy.where(flow_pos)[0]
-        flow_vals = (flat[flow_pos])
-
-        flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
-        flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
-        return flow_vals_paded  # pad(overflow, ".", 512)
-
-    def gen_underflow100(self):
-        """
-        Generate an underflow table
-        """
-        bpp = 4
-        noverf = int(self.header['NOVERFL'].split()[2])
-        # nunderf = self.nunderf
-        read_bytes = mround(noverf * bpp, 16)
-        dif2usedbyts = read_bytes - (noverf * bpp)
-        pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
-        flat = self.data.ravel()  # flat memory view
-        underflow_pos = numpy.where(flat < 0)[0]
-        underflow_val = flat[underflow_pos]
-        underflow_val = underflow_val.astype(self.bpp_to_numpy[bpp])
-        nderflow_val_paded = numpy.hstack((underflow_val, pad_zeros))
-        return nderflow_val_paded
-
     def write(self, fname):
         """
         Write a bruker image
