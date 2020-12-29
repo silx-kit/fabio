@@ -35,6 +35,7 @@
 import unittest
 import os
 import logging
+import numpy
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +96,23 @@ class TestBruker100(unittest.TestCase):
             self.assertTrue(key in other.header, "Key %s is in header" % key)
             self.assertEqual(obt.header[key], other.header[key], "value are the same for key %s" % key)
         os.unlink(os.path.join(UtilsTest.tempdir, name))
+
+    def test_conversion(self):
+        fname = UtilsTest.getimage("testcbf.cbf.bz2")[:-4]
+        c = openimage(fname)
+        assert "Cbf" in c.__class__.__name__, "This is a CbfImage"
+        b = c.convert("bruker100")
+        fname_out = os.path.join(UtilsTest.tempdir, "testcbf2bruker100.sfrm")
+        print(b.header)
+        b.write(fname_out)
+        a = openimage(fname_out)
+        print(a.data)
+        print(c.data)
+        print(numpy.where(a.data - c.data))
+        for k in a.header.keys():
+            print(k, "|", a.header[k], "|", b.header[k])
+
+        self.assertTrue(numpy.allclose(a.data, c.data), msg="data are the same")
 
 
 def suite():
