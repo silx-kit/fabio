@@ -145,7 +145,7 @@ def _merge_data(data, baseline=0, underflow=None, overflow1=None, overflow2=None
         # Use Overflow2
         mask = numpy.where(data == 65535)
         data[mask] = overflow2
-    if (underflow is None):
+    if (underflow is None or underflow.size == 0):
         data += baseline
     else:
         mask = data == 0
