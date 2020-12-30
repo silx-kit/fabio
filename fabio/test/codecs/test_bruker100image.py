@@ -109,7 +109,7 @@ class TestBruker100(unittest.TestCase):
         logger.info("size of underflow: %s overflow1 %s overflow2: %s",
                     split["underflow"].shape, split["overflow1"].shape, split["overflow2"].shape)
         obt = _merge_data(**split)
-        print(numpy.where(obt - ref))
+#         print(numpy.where(obt - ref))
         self.assertTrue(numpy.allclose(obt, ref), "data are the same")
 
 
