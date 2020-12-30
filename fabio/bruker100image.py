@@ -66,6 +66,53 @@ def mround(value, multiple=16):
     return int(multiple * ceil(value / multiple))
 
 
+def _split_data(data):
+    "Split an image, return the dict with various components"
+    data = data.astype("int32")  # explicit copy
+    flat = data.ravel()
+    mini = data.min()
+    if mini >= 0:
+        mode = flat.bincount().argmax()
+    else:
+        mean = flat.mean()
+        std = flat.std()
+        inliers = abs(flat - mean) / std < 3
+        mode = int(flat[inliers].mean())
+
+    if (mode - mini) < 128:
+        baseline = mini - 1
+    else:
+        baseline = mode - 128  # Ensures the mode is in the middle of the uint8 range
+    print(f"mini {mini}, mode {mode}, baseline {baseline}")
+    umask = flat<=baseline
+    underflow = flat[umask]
+    underflow_max = max(abs(underflow.min()), abs(underflow.max()))
+    underflow_dtype = numpy.dtype(f"int{mround(numpy.log2(underflow_max)+1,8)}")
+    print(underflow_dtype)
+    flat -= baseline
+    flat[umask] = 0
+    o2_mask = flat>=65535
+    if numpy.any(o2_mask):
+        overflow2 = flat[o2_mask]
+        flat[o2_mask] = 65535
+    else:
+        overflow2 = None
+    o1_mask = flat>=255
+    if numpy.any(o1_mask):
+        overflow1 = flat[o1_mask].astype(numpy.uint16)
+        flat[o1_mask] = 255
+    else:
+        overflow1 = None
+    data = flat.astype(numpy.uint8).reshape(data.shape)
+    res = {"data":data, 
+           "baseline": baseline,
+           "underflow":underflow.astype(underflow_dtype),
+           "overflow1": overflow1,
+           "overflow2": overflow2
+           }
+    return res
+
+
 def _merge_data(data, baseline=0, underflow=None, overflow1=None, overflow2=None):
     """
     Build an array from the various components
