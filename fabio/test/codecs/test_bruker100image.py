@@ -105,12 +105,12 @@ class TestBruker100(unittest.TestCase):
         a.ravel()[numpy.random.randint(0, numpy.prod(shape), size=outliers)] = numpy.random.randint(10000, 1000000, size=outliers)
         ref = a.astype("int32")
 
-        split = _split_data(ref)
-        logger.info("size of underflow: %s overflow1 %s overflow2: %s",
-                    split["underflow"].shape, split["overflow1"].shape, split["overflow2"].shape)
-        obt = _merge_data(**split)
-#         print(numpy.where(obt - ref))
-        self.assertTrue(numpy.allclose(obt, ref), "data are the same")
+        for baseline in (None, 0, False):
+            split = _split_data(ref, baseline=baseline)
+            logger.info("size of underflow: %s overflow1 %s overflow2: %s",
+                        split["underflow"].shape, split["overflow1"].shape, split["overflow2"].shape)
+            obt = _merge_data(**split)
+            self.assertTrue(numpy.allclose(obt, ref), f"data are the same, baseline={baseline}")
 
 
 def suite():
