@@ -92,8 +92,6 @@ class TestBruker100(unittest.TestCase):
         obj.write(os.path.join(UtilsTest.tempdir, name))
         other = openimage(os.path.join(UtilsTest.tempdir, name))
         self.assertEqual(abs(obt.data - other.data).max(), 0, "data are the same")
-        for key in ("NROWS",):
-            print(key, obt.header[key], "|", other.header[key])
         for key in obt.header:
             self.assertTrue(key in other.header, "Key %s is in header" % key)
             self.assertEqual(obt.header[key], other.header[key], "value are the same for key %s" % key)
