@@ -255,11 +255,11 @@ class Bruker100Image(BrukerImage):
                 if k == 0:
                     bpp = int(self.header['NPIXELB'].split()[1])
                     datatype = numpy.dtype(f"int{bpp*8}")
+                elif k > 2:
+                    break
                 else:
                     bpp = 2* k
                     datatype = self.bpp_to_numpy[bpp]
-                    if k > 2:
-                        break
                 to_read = nov * bpp
                 # pad nov*bpp to a multiple of 16 bytes
                 nbytes = mround(to_read, 16)
