@@ -225,7 +225,7 @@ Debian 8 and newer
 ^^^^^^^^^^^^^^^^^^
 
 The same script, *build-deb.sh*, will create *real* debian packages:
-It will build a bunch of 6 debian packages:
+It will build a bunch of 4 debian packages:
 
 * *fabio-bin*: the GUI for visualizing diffraction images
 * *fabio-doc*: the documumentation package
@@ -278,10 +278,10 @@ Within Python (or ipython):
 Test coverage
 .............
 
-FabIO comes with 49 test-suites (315 tests in total) representing a coverage of 73%.
+FabIO comes with 52 test-suites (337 tests in total) representing a coverage of 75%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (in each case in 32 and 64 bits) with Python versions 3.5, 3.6, 3.7 and 3.8.
-Under linux it has been tested on i386, x86_64, arm, arm64, ppc, ppc64le.
+FabIO runs under Linux, MacOSX and Windows (64 bits, in 32 bits your milleage may vary) with Python versions 3.6, 3.7, 3.8 and 3.9.
+Under linux it has been tested on x86_64, arm64, ppc64le.
 FabIO may run on other untested systems but without warranty.
 
 .. toctree::
