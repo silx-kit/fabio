@@ -56,7 +56,6 @@ import numpy
 logger = logging.getLogger(__name__)
 
 from .brukerimage import BrukerImage
-from .readbytestream import readbytestream
 from .fabioutils import pad, StringTypes
 
 
@@ -167,7 +166,6 @@ class Bruker100Image(BrukerImage):
 
     def __init__(self, data=None, header=None):
         BrukerImage.__init__(self, data, header)
-        self.nover_one = self.nover_two = 0
 
     def _readheader(self, infile):
         """
@@ -216,11 +214,12 @@ class Bruker100Image(BrukerImage):
 
         Data is stored in three blocks:
 
-        - data (uint8)
-        - overflow (uint32)
-        - underflow (int32).
+        - data (uint8 mainly when bpp=1), possibly int32 if bpp=4
+        - overflow1 (2 bytes/value in uint16)
+        - overflow2 (4 bytes/value in int32)
+        - underflow (int8, int16 or int32).
 
-        The blocks are zero padded to a multiple of 16 bits.
+        The blocks are zero padded to a multiple of 16 bytes.
         """
         with self._open(fname, "rb") as infile:
             self._readheader(infile)
@@ -233,7 +232,8 @@ class Bruker100Image(BrukerImage):
             # The total size is nbytes * nrows * ncolumns.
             
             data_size = rows* cols* npixelb
-            data_size_padded = mround(data_size, 512)
+#             data_size_padded = mround(data_size, 512)
+            data_size_padded = data_size
             raw_data = infile.read(data_size_padded)
             data = numpy.frombuffer(raw_data[:data_size], dtype=self.bpp_to_numpy[npixelb]).reshape((rows, cols))
 #             self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
@@ -252,11 +252,11 @@ class Bruker100Image(BrukerImage):
             for k, nov in enumerate(noverfl_values):
                 if nov <= 0:
                     continue
-                if k > 2:
-                    break
                 if k == 0:
                     bpp = int(self.header['NPIXELB'].split()[1])
                     datatype = numpy.dtype(f"int{bpp*8}")
+                elif k > 2:
+                    break
                 else:
                     bpp = 2* k
                     datatype = self.bpp_to_numpy[bpp]
@@ -267,7 +267,7 @@ class Bruker100Image(BrukerImage):
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
                 # ar without zeros
-                ar = numpy.frombuffer(data_str[:to_read], datatype)
+                ar = numpy.frombuffer(data_str[:to_read], dtype=datatype)
                 if k == 0:
                     # read the set of "underflow pixels" - these will be completely disregarded for now
                     to_merge["underflow"] = ar
@@ -308,6 +308,8 @@ class Bruker100Image(BrukerImage):
                         line += "".join(str(v).ljust(24, ' ') for k, v in enumerate(value.split()) if k < 3)
                     elif key == "NPIXELB":
                         line += "".join(str(v).ljust(36, ' ') for k, v in enumerate(value.split()) if k < 2)
+                    elif key in ("NROWS", "NCOLS"):
+                        line += "".join(str(v).ljust(36, ' ') for k, v in enumerate(value.split()) if k < 2)
                     elif key == "NEXP":
                         line += "".join(str(v).ljust(72 // 5, ' ') for k, v in enumerate(value.split()) if k < 5)
                     elif key == "DETTYPE":
@@ -340,12 +342,13 @@ class Bruker100Image(BrukerImage):
             for i in range(len(headers)):
                 if headers[i].startswith("HDRBLKS"):
                     headers[i] = ("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " ")
+
         res = pad("".join(headers), self.SPACER + "." * 78, 512 * int(self.header["HDRBLKS"]))
         return res
 
     def write(self, fname):
         """
-        Write a bruker image
+        Write a bruker100 format  image
 
         """
         if numpy.issubdtype(self.data.dtype, float):
@@ -371,7 +374,7 @@ class Bruker100Image(BrukerImage):
         else:
             tmp_data = self.data
             
-        if (int(self.header.get("NOVERFL", "").split()[0]) ==-1):
+        if (int(self.header.get("NOVERFL", "-1").split()[0]) == -1):
             baseline=False
         elif (len(self.header.get("NEXP", "").split()) > 2):
             baseline = int(self.header.get("NEXP", "").split()[2])
@@ -400,13 +403,31 @@ class Bruker100Image(BrukerImage):
                 lst = ["1", "1", "0", "0", "0"]
         self.header["NEXP"] = " ".join(lst)
         self.header["HDRBLKS"] = "5"
+        if "NROWS" in self.header:
+            self.header['NROWS'] = self.header['NROWS'].split()
+        else:
+            self.header['NROWS'] = [None]
+        if "NCOLS" in self.header:
+            self.header['NCOLS'] = self.header['NCOLS'].split()
+        else:
+            self.header['NCOLS'] = [None]
+        self.header['NROWS'][0] = str(tmp_data.shape[0])
+        self.header['NCOLS'][0] = str(tmp_data.shape[1])
+        self.header['NROWS'] = " ".join(self.header['NROWS'])
+        self.header['NCOLS'] = " ".join(self.header['NCOLS'])
+        bytes_header = self.gen_header().encode("ASCII")
+#         print(bytes_header.decode())
         with self._open(fname, "wb") as bruker:
             fast = isinstance(bruker, io.BufferedWriter)
-            bruker.write(self.gen_header().encode("ASCII"))
+            bruker.write(bytes_header)
             if fast:
                 data.tofile(bruker)
             else:
                 bruker.write(data.tobytes())
+#             # 512-Padding
+#             padded = mround(data.nbytes, 512)
+#             bruker.write(b"\x00"*(padded - data.nbytes))
+
             for extra in (underflow, overflow1, overflow2):
                 if extra.nbytes:
                     if fast:

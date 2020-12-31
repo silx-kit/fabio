@@ -112,6 +112,16 @@ class TestBruker100(unittest.TestCase):
             obt = _merge_data(**split)
             self.assertTrue(numpy.allclose(obt, ref), f"data are the same, baseline={baseline}")
 
+    def test_conversion(self):
+        fname = UtilsTest.getimage("testcbf.cbf.bz2")[:-4]
+        c = openimage(fname)
+        assert "Cbf" in c.__class__.__name__, "This is a CbfImage"
+        b = c.convert("bruker100")
+        fname_out = os.path.join(UtilsTest.tempdir, "testcbf2bruker100.sfrm")
+        b.write(fname_out)
+        a = openimage(fname_out)
+        self.assertTrue(numpy.allclose(a.data, c.data), msg="data are the same")
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
