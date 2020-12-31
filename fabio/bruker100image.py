@@ -232,7 +232,7 @@ class Bruker100Image(BrukerImage):
             # The total size is nbytes * nrows * ncolumns.
             
             data_size = rows* cols* npixelb
-            # data_size_padded = mround(data_size, 512)
+#             data_size_padded = mround(data_size, 512)
             data_size_padded = data_size
             raw_data = infile.read(data_size_padded)
             data = numpy.frombuffer(raw_data[:data_size], dtype=self.bpp_to_numpy[npixelb]).reshape((rows, cols))
@@ -267,8 +267,6 @@ class Bruker100Image(BrukerImage):
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
                 # ar without zeros
-                print(k, bpp, datatype, nov, to_read, nbytes)
-                print(len(data_str))
                 ar = numpy.frombuffer(data_str[:to_read], dtype=datatype)
                 if k == 0:
                     # read the set of "underflow pixels" - these will be completely disregarded for now
@@ -426,6 +424,10 @@ class Bruker100Image(BrukerImage):
                 data.tofile(bruker)
             else:
                 bruker.write(data.tobytes())
+#             # 512-Padding
+#             padded = mround(data.nbytes, 512)
+#             bruker.write(b"\x00"*(padded - data.nbytes))
+
             for extra in (underflow, overflow1, overflow2):
                 if extra.nbytes:
                     if fast:
