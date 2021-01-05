@@ -96,11 +96,11 @@ Compile the sources
 .. code-block:: shell
 
    pip install setuptools wheel
-   pip install -r ci\\requirements_appveyor.txt
+   pip install -r ci\requirements_appveyor.txt
    python setup.py build
    python setup.py test.py
    python bdist_wheel
-   pip install dist\\fabio*.whl
+   pip install dist\fabio*.whl
 
 Testing version of FabIO
 ........................
