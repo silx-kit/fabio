@@ -43,6 +43,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 import logging
 logger = logging.getLogger(__name__)
 
+from .convert.cbf_bruker100 import convert_header as convert_header_cbf_bruker100
 
 def convert_data_integer(data):
     """
@@ -53,6 +54,7 @@ def convert_data_integer(data):
     else:
         return data
 
+def convert_
 
 CONVERSION_HEADER = {
     ("edfimage", "edfimage"): lambda header: header,
