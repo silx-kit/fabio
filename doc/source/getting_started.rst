@@ -303,13 +303,13 @@ Acknowledgements
 
 We acknowledge Andy Götz and Kenneth Evans for extensive
 testing when including the FabIO reader in the Fable image viewer
-(Götz et al., 2007).We also thank V. Armando Solé for assistance with
+(Götz et al., 2007).
+We also thank V. Armando Solé for assistance with
 his TiffIO reader and Carsten Gundlach for deployment of FabIO at
-the beamlines i711 and i811, MAX IV, and providing bug reports. We
-finally acknowledge our colleagues who have reported bugs and
+the beamlines i711 and i811, MAX IV, and providing bug reports. 
+We finally acknowledge our colleagues who have reported bugs and
 helped to improve FabIO. Financial support was granted by the EU
-6th Framework NEST/ADVENTURE project TotalCryst (Poulsen et
-al., 2006).
+6th Framework NEST/ADVENTURE project TotalCryst (Poulsen et al., 2006).
 
 
 Citation

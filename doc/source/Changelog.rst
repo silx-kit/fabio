@@ -1,7 +1,7 @@
 Changelog
 =========
 
-FabIO-0.11.0 unreleased (01/2021):
+FabIO-0.11.0 (01/2021):
 .......................
 
 - New support for Esperanto image format (includes bitfield compression) read & write

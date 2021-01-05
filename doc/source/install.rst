@@ -10,7 +10,7 @@ FabIO can, as any Python module, be installed from its sources,
 available on the `Python cheese shop <https://pypi.python.org/pypi/fabio>`_
 but we advice to use binary wheels packages provided for the most common platforms:
 Windows, MacOSX. For Debian Linux and its derivatives (Ubuntu, Mint, ...), FabIO
-is part of the distributions and itss package is named *python-fabio* and can be installed via:
+is part of the distributions and its package is named *python3-fabio* and can be installed via:
 
 .. code-block:: shell
 
@@ -19,13 +19,13 @@ is part of the distributions and itss package is named *python-fabio* and can be
 If you are using MS Windows or MacOSX; binary version (as wheel packages) are
 PIP-installable.
 PIP is the Python Installer Program, similar to ``apt-get`` for Python.
-It runs under any architecture. It should best be used in a virtual environament:
+It runs under any architecture. It is best used in a virtual environament:
 
 .. code-block:: shell
 
-	python3 -m venv py3
-	py3\bin\activate.bat
-	pip install setuptools wheel pip --upgrade
+    python3 -m venv py3
+    py3\bin\activate.bat
+    pip install setuptools wheel pip --upgrade
     pip install fabio
 
 Installation under windows
@@ -34,14 +34,19 @@ Installation under windows
 Python is not installed by default under Windows operating system. 
 We suggest you install `Python3 <http://python.org>`_ from the official web page.
 Python 3.7 is recommended, in 64 bits version if your operating system allows it; 
-but any Python3 (>=3.5) are OK. The support for Python2 has ended in 2020 and FabIO 
+but any Python3 (>3.5) are OK. The support for Python2 has ended in 2020 and FabIO 
 is no more tested there.
 
 If you are looking for an integrated scientific Python distribution on Windows,
 `WinPython <https://winpython.github.io/>`_ is a good one, Anaconda is also very popular.
 Please use Python3 as the support of Python2 has ended.
 
-Then install using PIP as previously
+Try first to install FabIO from the provided packaging system, if it fails, revert to the `pip` method.
+For example, in Anaconda it gives:
+
+.. code-block:: shell
+
+    conda install -c conda-forge fabio
 
 Manual installation under windows
 .................................
@@ -71,7 +76,7 @@ Installation from sources
 
 * unzip the file in a directory
 * open a console (cmd.exe) in this directory.
-* install the required dependencies using PIP::
+* install the required dependencies using PIP:
 
 .. code-block:: shell
 
@@ -91,11 +96,11 @@ Compile the sources
 .. code-block:: shell
 
    pip install setuptools wheel
-   pip install -r ci\requirements_appveyor.txt
+   pip install -r ci\\requirements_appveyor.txt
    python setup.py build
    python setup.py test.py
    python bdist_wheel
-   pip install dist\fabio*.whl
+   pip install dist\\fabio*.whl
 
 Testing version of FabIO
 ........................
@@ -112,8 +117,8 @@ and go to **artifacts** where wheels and MSI-installers are available.
 Installation on MacOSX
 ----------------------
 
-Python 2.7, 64 bits and numpy are natively available on MacOSX but Python2 has reached its end on like.
-You have to install `Python3 <http://python.org>`_ from the official web page.
+Despite Apple providing Python 2.7 as part of MacOSX, Python2 reached its end of life in 2020.
+Now you have to install `Python3 <http://python.org>`_ from the official web page.
 
 Install via PIP
 ...............
@@ -123,9 +128,9 @@ FabIO directly in it:
 
 .. code-block:: shell
 
-	python3 -m venv ~/py3
-	source ~/py3/bin/activate
-	pip install setuptools wheel pip --upgrade
+    python3 -m venv ~/py3
+    source ~/py3/bin/activate
+    pip install setuptools wheel pip numpy --upgrade
     pip install fabio
     
 
@@ -167,12 +172,12 @@ Install the dependencies
 ........................
 
 Most Linux distribution come with a Python environment configured. Complete
-it with the needed dependencies. Please ensure you use Python3.x x>=5 and
+it with the needed dependencies. Please ensure you use Python3.x x>5 and
 that numpy is installed on your computer.
 
 For full functionality of FabIO the following modules need to be installed:
 
-* Pillow (python imaging library) - http://www.pythonware.com
+* Pillow (python imaging library)
 * lxml (library for reading XSDimages)
 * PyQt for the fabio_viewer program
 
@@ -189,17 +194,17 @@ Once done, follow the classical procedure (similar to Windows or MacOSX):
 
 .. code-block:: shell
 
-	# Create a virtual env:
-	python3 -m venv ~/py3
-	source ~/py3/bin/activate
-	pip install setuptools wheel pip --upgrade
-	# Install the dependencies 	
-	pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
+    # Create a virtual env:
+    python3 -m venv ~/py3
+    source ~/py3/bin/activate
+    pip install setuptools wheel pip --upgrade
+    # Install the dependencies     
+    pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
     python setup.py build
     python setup.py test
     python setup.py bdist_wheel
     # Install the freshly build package
-   	pip install dist/fabio*.whl
+    pip install dist/fabio*.whl
 
 
 Development versions
@@ -210,12 +215,12 @@ The newest development version can be obtained by checking it out from the git r
 
     git clone https://github.com/silx-kit/fabio
     cd fabio
-	pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
+    pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
     python setup.py build
     python setup.py test
     python setup.py bdist_wheel
     # Install the freshly build package
-   	pip install dist/fabio*.whl
+    pip install dist/fabio*.whl
 
 
 Automatic debian packaging
