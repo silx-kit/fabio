@@ -51,6 +51,7 @@ import io
 import os
 from math import ceil
 import logging
+import time
 import numpy
 
 logger = logging.getLogger(__name__)
@@ -89,7 +90,7 @@ def _split_data(data, baseline=None):
         use_underflow = False
 #     else:
 #         print("Forced baseline", baseline, data.min(), data.max())
-    umask = flat<=baseline
+    umask = flat <= baseline
     if use_underflow and numpy.any(umask):
         underflow = flat[umask]
         underflow_max = max(abs(underflow.min()), abs(underflow.max()))
@@ -107,14 +108,14 @@ def _split_data(data, baseline=None):
     else:
         overflow2 = numpy.array([], dtype=numpy.int32)
 
-    o1_mask = flat>=255
+    o1_mask = flat >= 255
     if numpy.any(o1_mask):
         overflow1 = flat[o1_mask].astype(numpy.uint16)
         flat[o1_mask] = 255
     else:
         overflow1 = numpy.array([], dtype=numpy.uint16)
     data = flat.astype(numpy.uint8).reshape(data.shape)
-    res = {"data":data, 
+    res = {"data":data,
            "baseline": baseline,
            "underflow": underflow,
            "overflow1": overflow1,
@@ -207,7 +208,7 @@ class Bruker100Image(BrukerImage):
         # set the image dimensions
         shape = int(self.header['NROWS'].split()[0]), int(self.header['NCOLS'].split()[0])
         self._shape = shape
-        self.version = int(self.header.get('VERSION', "100"))
+        self.version = int(self.header.get('FORMAT', "100"))
 
     def read(self, fname, frame=None):
         """Read the data.
@@ -230,8 +231,8 @@ class Bruker100Image(BrukerImage):
             # We are now at the start of the image - assuming bruker._readheader worked
             # Get image block size from NPIXELB.
             # The total size is nbytes * nrows * ncolumns.
-            
-            data_size = rows* cols* npixelb
+
+            data_size = rows * cols * npixelb
 #             data_size_padded = mround(data_size, 512)
             data_size_padded = data_size
             raw_data = infile.read(data_size_padded)
@@ -258,7 +259,7 @@ class Bruker100Image(BrukerImage):
                 elif k > 2:
                     break
                 else:
-                    bpp = 2* k
+                    bpp = 2 * k
                     datatype = self.bpp_to_numpy[bpp]
                 to_read = nov * bpp
                 # pad nov*bpp to a multiple of 16 bytes
@@ -373,9 +374,9 @@ class Bruker100Image(BrukerImage):
             self.header["LINEAR"] = "%s %s" % (slope, offset)
         else:
             tmp_data = self.data
-            
+
         if (int(self.header.get("NOVERFL", "-1").split()[0]) == -1):
-            baseline=False
+            baseline = False
         elif (len(self.header.get("NEXP", "").split()) > 2):
             baseline = int(self.header.get("NEXP", "").split()[2])
         else:
@@ -415,8 +416,29 @@ class Bruker100Image(BrukerImage):
         self.header['NCOLS'][0] = str(tmp_data.shape[1])
         self.header['NROWS'] = " ".join(self.header['NROWS'])
         self.header['NCOLS'] = " ".join(self.header['NCOLS'])
+        self.header["FORMAT"] = str(self.version)
+        if "VERSION" not in self.header:
+            self.header["VERSION"] = "16"
+        if "FILENAM" not in self.header:
+            self.header["FILENAM"] = fname
+        if "CREATED" not in self.header:
+            self.header["CREATED"] = time.strftime('%Y-%m-%d %H:%M:%S')
+        if "TITLE" not in self.header:
+            self.header["TITLE"] = "\n"*8
+        if "DISTANC" not in self.header:
+            self.header["DISTANC"] = 10
+        if "CENTER" not in self.header:
+            self.header["CENTER"] = f"{self.shape[1]/2} {self.shape[0]/2}"
+        if "WAVELEN" not in self.header:
+            self.header["WAVELEN"] = "1.0 1.0 1.0"
+        if 'MAXXY' not in self.header:
+            argmax = self.data.argmax()
+            width = data.shape[1]
+            self.header['MAXXY'] = f"{argmax%width} {argmax//width}"
+        if "DETTYPE" not in self.header:
+            self.header["DETTYPE"] = "UNKNOWN"
+
         bytes_header = self.gen_header().encode("ASCII")
-#         print(bytes_header.decode())
         with self._open(fname, "wb") as bruker:
             fast = isinstance(bruker, io.BufferedWriter)
             bruker.write(bytes_header)
@@ -436,5 +458,6 @@ class Bruker100Image(BrukerImage):
                         bruker.write(extra.tobytes())
                     padded = mround(extra.nbytes, 16)
                     bruker.write(b"\x00"*(padded - extra.nbytes))
+
 
 bruker100image = Bruker100Image
