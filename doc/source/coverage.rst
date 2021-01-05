@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 0.11.0, 31/12/2020
+Measured on *fabio* version 0.11.0, 05/01/2021
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -15,7 +15,7 @@ Measured on *fabio* version 0.11.0, 31/12/2020
    "_version.py", "40", "35", "87.5 %"
    "adscimage.py", "4", "4", "100.0 %"
    "binaryimage.py", "60", "21", "35.0 %"
-   "bruker100image.py", "264", "219", "83.0 %"
+   "bruker100image.py", "286", "243", "85.0 %"
    "brukerimage.py", "203", "169", "83.3 %"
    "cbfimage.py", "634", "298", "47.0 %"
    "converters.py", "17", "14", "82.4 %"
@@ -63,4 +63,4 @@ Measured on *fabio* version 0.11.0, 31/12/2020
    "utils/mathutils.py", "11", "6", "54.5 %"
    "utils/pilutils.py", "49", "39", "79.6 %"
 
-   "fabio total", "8636", "6472", "74.9 %"
+   "fabio total", "8658", "6496", "75.0 %"
