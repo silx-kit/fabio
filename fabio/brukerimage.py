@@ -43,7 +43,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "18/12/2020"
+__date__ = "05/01/2021"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -218,7 +218,7 @@ class BrukerImage(FabioImage):
         # set the image dimensions
         shape = int(self.header['NROWS'].split()[0]), int(self.header['NCOLS'].split()[0])
         self._shape = shape
-        self.version = int(self.header.get('VERSION', "86"))
+        self.version = int(self.header.get('FORMAT', "86"))
 
     def read(self, fname, frame=None):
         """

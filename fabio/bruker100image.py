@@ -439,6 +439,7 @@ class Bruker100Image(BrukerImage):
             self.header["DETTYPE"] = "UNKNOWN"
 
         bytes_header = self.gen_header().encode("ASCII")
+
         with self._open(fname, "wb") as bruker:
             fast = isinstance(bruker, io.BufferedWriter)
             bruker.write(bytes_header)
