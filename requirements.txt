@@ -2,5 +2,8 @@
 numpy
 cython
 lxml
+h5py
+hdf5plugin
 sphinx
 sphinxcontrib-programoutput
+sphinx-rtd-theme

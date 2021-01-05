@@ -276,7 +276,7 @@ class DtrekImage(FabioImage):
         with open(fname, "wb") as outf:
             outf.write(out)
             if data is not None:
-                outf.write(data.tobytes())
+                data.tofile(outf)
 
     def _get_dtrek_byte_order(self, default_little_endian=None):
         """Returns the byte order value in d*TREK format."""

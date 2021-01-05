@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "11/12/2020"
+__date__ = "26/12/2020"
 
 import sys
 import os
@@ -886,14 +886,9 @@ class TiffIO(object):
         else:
             self._swap = True
         fd.seek(0)
-        if sys.version < '3.0':
-            fd.write(struct.pack(st + '2s', order))
-            fd.write(struct.pack(st + 'H', 42))
-            fd.write(struct.pack(st + 'I', 0))
-        else:
-            fd.write(struct.pack(st + '2s', bytes(order, 'utf-8')))
-            fd.write(struct.pack(st + 'H', 42))
-            fd.write(struct.pack(st + 'I', 0))
+        fd.write(struct.pack(st + '2s', bytes(order, 'utf-8')))
+        fd.write(struct.pack(st + 'H', 42))
+        fd.write(struct.pack(st + 'I', 0))
         fd.flush()
 
     def _getOutputIFD(self, image, description=None, software=None, date=None):
@@ -924,18 +919,7 @@ class TiffIO(object):
             if isinstance(description, str):
                 raw = description.encode('utf-8')
             else:
-                if sys.version >= '3.0':
-                    raw = bytes(description, 'utf-8')
-                elif isinstance(description, str):
-                    try:
-                        raw = description.decode('utf-8')
-                    except UnicodeDecodeError:
-                        try:
-                            raw = description.decode('latin-1')
-                        except UnicodeDecodeError:
-                            raw = description
-                    if sys.version > '2.6':
-                        raw = raw.encode('utf-8', errors="ignore")
+                raw = bytes(description, 'utf-8')
             imageDescription = struct.pack("%ds" % len(raw), raw)
             nDirectoryEntries += 1
 
@@ -945,8 +929,7 @@ class TiffIO(object):
             while softwareLength < 4:
                 software = software + " "
                 softwareLength = len(software)
-            if sys.version >= '3.0':
-                software = bytes(software, 'utf-8')
+            software = bytes(software, 'utf-8')
             softwarePackedString = struct.pack("%ds" % softwareLength, software)
             nDirectoryEntries += 1
         else:
@@ -954,8 +937,7 @@ class TiffIO(object):
 
         if date is not None:
             dateLength = len(date)
-            if sys.version >= '3.0':
-                date = bytes(date, 'utf-8')
+            date = bytes(date, 'utf-8')
             datePackedString = struct.pack("%ds" % dateLength, date)
             dateLength = len(datePackedString)
             nDirectoryEntries += 1
@@ -1087,9 +1069,7 @@ class TiffIO(object):
         info["date"] = date
         info["sampleFormat"] = sampleFormat
 
-        outputIFD = ""
-        if sys.version > '2.6':
-            outputIFD = eval('b""')
+        outputIFD = eval('b""')
 
         fmt = st + "H"
         outputIFD += struct.pack(fmt, nDirectoryEntries)

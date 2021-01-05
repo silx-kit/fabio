@@ -47,16 +47,111 @@ __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2015-2020 ESRF, 2016 GWDG"
 __licence__ = "MIT"
 
-import numpy
-import logging
+import io
 import os
 from math import ceil
+import logging
+import time
+import numpy
 
 logger = logging.getLogger(__name__)
 
 from .brukerimage import BrukerImage
-from .readbytestream import readbytestream
 from .fabioutils import pad, StringTypes
+
+
+def mround(value, multiple=16):
+    """Round a value up to the multiple of multiple
+    """
+    return int(multiple * ceil(value / multiple))
+
+
+def _split_data(data, baseline=None):
+    "Split an image, return the dict with various components"
+    data = data.astype("int32")  # explicit copy
+    flat = data.ravel()
+    use_underflow = True
+    if baseline is None:
+        mini = data.min()
+        if mini >= 0:
+            mode = numpy.bincount(flat).argmax()
+        else:
+            mean = flat.mean()
+            std = flat.std()
+            inliers = abs(flat - mean) / std < 3
+            mode = int(flat[inliers].mean())
+
+        if (mode - mini) < 128:
+            baseline = mini + 1
+        else:
+            baseline = mode + 128  # Ensures the mode is in the middle of the uint8 range
+    elif baseline is False:
+        baseline = 0
+        use_underflow = False
+#     else:
+#         print("Forced baseline", baseline, data.min(), data.max())
+    umask = flat <= baseline
+    if use_underflow and numpy.any(umask):
+        underflow = flat[umask]
+        underflow_max = max(abs(underflow.min()), abs(underflow.max()))
+        underflow_dtype = numpy.dtype(f"int{mround(numpy.log2(underflow_max)+1,8)}")
+        underflow = underflow.astype(underflow_dtype)
+        flat -= baseline
+        flat[umask] = 0
+    else:
+        underflow = numpy.array([], dtype=numpy.int8)
+        flat -= baseline
+    o2_mask = numpy.logical_or(flat < 0, flat >= 65535)
+    if numpy.any(o2_mask):
+        overflow2 = flat[o2_mask]
+        flat[o2_mask] = 65535
+    else:
+        overflow2 = numpy.array([], dtype=numpy.int32)
+
+    o1_mask = flat >= 255
+    if numpy.any(o1_mask):
+        overflow1 = flat[o1_mask].astype(numpy.uint16)
+        flat[o1_mask] = 255
+    else:
+        overflow1 = numpy.array([], dtype=numpy.uint16)
+    data = flat.astype(numpy.uint8).reshape(data.shape)
+    res = {"data":data,
+           "baseline": baseline,
+           "underflow": underflow,
+           "overflow1": overflow1,
+           "overflow2": overflow2
+           }
+    return res
+
+
+def _merge_data(data, baseline=0, underflow=None, overflow1=None, overflow2=None):
+    """
+    Build an array from the various components
+    
+    :param data: probably a uint8 array --> expanded to int32
+    :param baseline: value of the baseline
+    :param underflow: value of the data below the baseline (any value with 0 are replaced with those values)
+    :param overflow1: value of the data where data=255 (in the range 255-65535)
+    :param overflow2: value of the data where overflow1=65535 (value >= 65535)
+    :return: array of int32
+    """
+    in_dtype = data.dtype
+    data = data.astype(numpy.int32)
+    if (in_dtype.itemsize == 1) and (overflow1 is not None):
+        # Use Overflow1
+        mask = numpy.where(data == 255)
+        data[mask] = overflow1
+    if (in_dtype.itemsize < 4) and (overflow2 is not None):
+        # Use Overflow2
+        mask = numpy.where(data == 65535)
+        data[mask] = overflow2
+    if (underflow is None or underflow.size == 0):
+        data += baseline
+    else:
+        mask = data == 0
+        data[numpy.where(mask)] = underflow
+        data[numpy.logical_not(mask)] += baseline
+    return data
 
 
 class Bruker100Image(BrukerImage):
@@ -72,7 +167,6 @@ class Bruker100Image(BrukerImage):
 
     def __init__(self, data=None, header=None):
         BrukerImage.__init__(self, data, header)
-        self.nover_one = self.nover_two = 0
 
     def _readheader(self, infile):
         """
@@ -114,78 +208,86 @@ class Bruker100Image(BrukerImage):
         # set the image dimensions
         shape = int(self.header['NROWS'].split()[0]), int(self.header['NCOLS'].split()[0])
         self._shape = shape
-        self.version = int(self.header.get('VERSION', "100"))
+        self.version = int(self.header.get('FORMAT', "100"))
 
     def read(self, fname, frame=None):
         """Read the data.
 
         Data is stored in three blocks:
 
-        - data (uint8)
-        - overflow (uint32)
-        - underflow (int32).
+        - data (uint8 mainly when bpp=1), possibly int32 if bpp=4
+        - overflow1 (2 bytes/value in uint16)
+        - overflow2 (4 bytes/value in int32)
+        - underflow (int8, int16 or int32).
 
-        The blocks are zero padded to a multiple of 16 bits.
+        The blocks are zero padded to a multiple of 16 bytes.
         """
         with self._open(fname, "rb") as infile:
             self._readheader(infile)
             rows, cols = self.shape
-            npixelb = int(self.header['NPIXELB'][0])
+            npixelb = int(self.header['NPIXELB'].split()[0])
             # you had to read the Bruker docs to know this!
 
             # We are now at the start of the image - assuming bruker._readheader worked
             # Get image block size from NPIXELB.
             # The total size is nbytes * nrows * ncolumns.
-            self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
-                                       datatype="int", signed='n', swap='n')
 
+            data_size = rows * cols * npixelb
+#             data_size_padded = mround(data_size, 512)
+            data_size_padded = data_size
+            raw_data = infile.read(data_size_padded)
+            data = numpy.frombuffer(raw_data[:data_size], dtype=self.bpp_to_numpy[npixelb]).reshape((rows, cols))
+#             self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
+#                                        datatype="int", signed='n', swap='n')
+            if npixelb > 1 and not numpy.little_endian:
+                self.data = data.byteswap()
+            else:
+                self.data = data
             # now process the overflows
             noverfl_values = [int(f) for f in self.header['NOVERFL'].split()]
-
+            to_merge = {"data":data,
+                        "underflow": None,
+                        "overflow1": None,
+                        "overflow2": None,
+                        "baseline": None}
             for k, nov in enumerate(noverfl_values):
                 if nov <= 0:
                     continue
-                bpp = 1 << k
-                datatype = self.bpp_to_numpy[bpp]
+                if k == 0:
+                    bpp = int(self.header['NPIXELB'].split()[1])
+                    datatype = numpy.dtype(f"int{bpp*8}")
+                elif k > 2:
+                    break
+                else:
+                    bpp = 2 * k
+                    datatype = self.bpp_to_numpy[bpp]
+                to_read = nov * bpp
                 # pad nov*bpp to a multiple of 16 bytes
-                nbytes = (nov * bpp + 15) & ~(15)
+                nbytes = mround(to_read, 16)
 
                 # Multiple of 16 just above
                 data_str = infile.read(nbytes)
                 # ar without zeros
-                ar = numpy.frombuffer(data_str[:nov * bpp], datatype)
+                ar = numpy.frombuffer(data_str[:to_read], dtype=datatype)
                 if k == 0:
                     # read the set of "underflow pixels" - these will be completely disregarded for now
-                    self.ar_underflows = ar
-                    continue
-
-                # insert the the overflow pixels in the image array:
-                lim = (1 << (8 * k)) - 1
-
-                # upgrade data type
-                self.data = self.data.astype(datatype)
-
-                # generate an array comprising of the indices into data.ravel()
-                # where its value equals lim.
-                flat = self.data.ravel()
-                mask = numpy.where(flat >= lim)[0]
-                # now put values from ar into those indices
-                if k != 0:
-                    flat.put(mask, ar)
+                    to_merge["underflow"] = ar
+                elif k == 1:
+                    to_merge["overflow1"] = ar
+                elif k == 2:
+                    to_merge["overflow2"] = ar
+                else:
+                    break
                 logger.debug("%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp))
 
-        # replace zeros with values from underflow block
-        if noverfl_values[0] > 0:
-            flat = self.data.ravel()
-            self.mask_undeflows = numpy.where(flat == 0)[0]
-            self.mask_no_undeflows = numpy.where(self.data != 0)
-            flat.put(self.mask_undeflows, self.ar_underflows)
+        # Read baseline
+        if noverfl_values[0] == -1:
+            # If number of underflows is -1, there is neither baseline, nor underflow correction
+            to_merge["baseline"] = 0
+        else:
+            to_merge["baseline"] = int(self.header["NEXP"].split()[2])
 
-        # add baseline
-        if noverfl_values[0] != -1:
-            baseline = int(self.header["NEXP"].split()[2])
-            self.data[self.mask_no_undeflows] += baseline
-
+        self.data = _merge_data(**to_merge)
         self.resetvals()
         return self
 
@@ -204,7 +306,13 @@ class Bruker100Image(BrukerImage):
                     line = key.ljust(7) + ":"
                 if type(value) in StringTypes:
                     if key == 'NOVERFL':
-                        line += str(str(self.nunderFlows).ljust(24, ' ') + str(self.nover_one).ljust(24) + str(self.nover_two))
+                        line += "".join(str(v).ljust(24, ' ') for k, v in enumerate(value.split()) if k < 3)
+                    elif key == "NPIXELB":
+                        line += "".join(str(v).ljust(36, ' ') for k, v in enumerate(value.split()) if k < 2)
+                    elif key in ("NROWS", "NCOLS"):
+                        line += "".join(str(v).ljust(36, ' ') for k, v in enumerate(value.split()) if k < 2)
+                    elif key == "NEXP":
+                        line += "".join(str(v).ljust(72 // 5, ' ') for k, v in enumerate(value.split()) if k < 5)
                     elif key == "DETTYPE":
                         line += str(value)
                     elif key == "CFR":
@@ -228,58 +336,20 @@ class Bruker100Image(BrukerImage):
                 else:
                     line += str(value)
                 headers.append(line.ljust(80, " "))
-        header = "".join(headers)
-        if len(header) > 512 * self.header["HDRBLKS"]:
-            tmp = ceil(len(header) / 512.0)
-            self.header["HDRBLKS"] = int(ceil(tmp / 5.0) * 5.0)
+        header_size = sum(len(i) for i in headers)
+        if header_size > 512 * int(self.header["HDRBLKS"]):
+            tmp = ceil(header_size / 512)
+            self.header["HDRBLKS"] = mround(tmp, 5)
             for i in range(len(headers)):
                 if headers[i].startswith("HDRBLKS"):
                     headers[i] = ("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " ")
-        else:
-            self.header["HDRBLKS"] = 15
+
         res = pad("".join(headers), self.SPACER + "." * 78, 512 * int(self.header["HDRBLKS"]))
         return res
 
-    def gen_overflow(self):
-        """
-        Generate an overflow table, including the underflow, marked as 65535 .
-        """
-        bpp = 2
-        limit = 255
-        # noverf = int(self.header['NOVERFL'].split()[1])
-        noverf = self.noverf
-        read_bytes = (noverf * bpp + 15) & ~(15)  # since data b
-        dif2usedbyts = read_bytes - (noverf * bpp)
-        pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
-        flat = self.data.ravel()  # flat memory view
-        flow_pos = numpy.logical_or(flat >= limit, flat < 0)
-        # flow_pos_indexes = numpy.where(flow_pos)[0]
-        flow_vals = (flat[flow_pos])
-
-        flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
-        flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
-        return flow_vals_paded  # pad(overflow, ".", 512)
-
-    def gen_underflow100(self):
-        """
-        Generate an underflow table
-        """
-        bpp = 4
-        noverf = int(self.header['NOVERFL'].split()[2])
-        # nunderf = self.nunderf
-        read_bytes = (noverf * bpp + 15) & ~(15)
-        dif2usedbyts = read_bytes - (noverf * bpp)
-        pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
-        flat = self.data.ravel()  # flat memory view
-        underflow_pos = numpy.where(flat < 0)[0]
-        underflow_val = flat[underflow_pos]
-        underflow_val = underflow_val.astype(self.bpp_to_numpy[bpp])
-        nderflow_val_paded = numpy.hstack((underflow_val, pad_zeros))
-        return nderflow_val_paded
-
     def write(self, fname):
         """
-        Write a bruker image
+        Write a bruker100 format  image
 
         """
         if numpy.issubdtype(self.data.dtype, float):
@@ -303,97 +373,92 @@ class Bruker100Image(BrukerImage):
             tmp_data = numpy.round(((self.data - offset) / slope)).astype(numpy.uint32)
             self.header["LINEAR"] = "%s %s" % (slope, offset)
         else:
-            if int(self.header["NOVERFL"].split()[0]) > 0:
-                baseline = int(self.header["NEXP"].split()[2])
-                self.data[self.mask_no_undeflows] -= baseline
-
             tmp_data = self.data
 
-        minusMask = numpy.where(tmp_data < 0)
-        bpp = self.calc_bpp(tmp_data)
-        # self.basic_translate(fname)
-        limit = 2 ** (8 * bpp) - 1
-        data = tmp_data.astype(self.bpp_to_numpy[bpp])
-        reset = numpy.where(tmp_data >= limit)
-        self.nunderFlows = int(self.header["NOVERFL"].split()[0])
-        self.nover_one = len(reset[0]) + len(minusMask[0])
-        self.nover_two = len(minusMask[0])
-        data[reset] = limit
-        data[minusMask] = limit
-        if not numpy.little_endian and bpp > 1:
-            # Bruker enforces little endian
-            data.byteswap(True)
+        if (int(self.header.get("NOVERFL", "-1").split()[0]) == -1):
+            baseline = False
+        elif (len(self.header.get("NEXP", "").split()) > 2):
+            baseline = int(self.header.get("NEXP", "").split()[2])
+        else:
+            baseline = None
+        split = _split_data(tmp_data, baseline)
+        data = split["data"]
+        underflow = split['underflow']
+        overflow1 = split['overflow1']
+        overflow2 = split['overflow2']
+        if baseline is False:
+            self.header["NOVERFL"] = f"-1 {overflow1.size} {overflow2.size}"
+            self.header["NPIXELB"] = f"{data.dtype.itemsize} 1"
+            if "NEXP" in self.header:
+                lst = self.header["NEXP"].split()
+                lst[2] = "32"
+            else:
+                lst = ["1", "1", "32", "0", "0"]
+        else:
+            self.header["NOVERFL"] = f"{underflow.size} {overflow1.size} {overflow2.size}"
+            self.header["NPIXELB"] = f"{data.dtype.itemsize} {underflow.dtype.itemsize}"
+            if "NEXP" in self.header:
+                lst = self.header["NEXP"].split()
+                lst[2] = str(split['baseline'])
+            else:
+                lst = ["1", "1", "0", "0", "0"]
+        self.header["NEXP"] = " ".join(lst)
+        self.header["HDRBLKS"] = "5"
+        if "NROWS" in self.header:
+            self.header['NROWS'] = self.header['NROWS'].split()
+        else:
+            self.header['NROWS'] = [None]
+        if "NCOLS" in self.header:
+            self.header['NCOLS'] = self.header['NCOLS'].split()
+        else:
+            self.header['NCOLS'] = [None]
+        self.header['NROWS'][0] = str(tmp_data.shape[0])
+        self.header['NCOLS'][0] = str(tmp_data.shape[1])
+        self.header['NROWS'] = " ".join(self.header['NROWS'])
+        self.header['NCOLS'] = " ".join(self.header['NCOLS'])
+        self.header["FORMAT"] = str(self.version)
+        if "VERSION" not in self.header:
+            self.header["VERSION"] = "16"
+        if "FILENAM" not in self.header:
+            self.header["FILENAM"] = fname
+        if "CREATED" not in self.header:
+            self.header["CREATED"] = time.strftime('%Y-%m-%d %H:%M:%S')
+        if "TITLE" not in self.header:
+            self.header["TITLE"] = "\n"*8
+        if "DISTANC" not in self.header:
+            self.header["DISTANC"] = 10
+        if "CENTER" not in self.header:
+            self.header["CENTER"] = f"{self.shape[1]/2} {self.shape[0]/2}"
+        if "WAVELEN" not in self.header:
+            self.header["WAVELEN"] = "1.0 1.0 1.0"
+        if 'MAXXY' not in self.header:
+            argmax = self.data.argmax()
+            width = data.shape[1]
+            self.header['MAXXY'] = f"{argmax%width} {argmax//width}"
+        if "DETTYPE" not in self.header:
+            self.header["DETTYPE"] = "UNKNOWN"
+
+        bytes_header = self.gen_header().encode("ASCII")
+
         with self._open(fname, "wb") as bruker:
-            bruker.write(self.gen_header().encode("ASCII"))
-            bruker.write(data.tobytes())
-            overflows_one_byte = self.overflows_one_byte()
-            overflows_two_byte = self.overflows_two_byte()
-            if int(self.header["NOVERFL"].split()[0]) > 0:
-                underflows = self.underflows()
-                bruker.write(underflows.tobytes())
-            bruker.write(overflows_one_byte.tobytes())
-            bruker.write(overflows_two_byte.tobytes())
+            fast = isinstance(bruker, io.BufferedWriter)
+            bruker.write(bytes_header)
+            if fast:
+                data.tofile(bruker)
+            else:
+                bruker.write(data.tobytes())
+#             # 512-Padding
+#             padded = mround(data.nbytes, 512)
+#             bruker.write(b"\x00"*(padded - data.nbytes))
 
-    def underflows(self):
-            """
-            Generate underflow table
-            """
-            bpp = 1
-            # limit = 255
-            nunderFlows = self.nunderFlows
-            # temp_data = self.data
-            read_bytes = (nunderFlows * bpp + 15) & ~(15)  # multiple of 16
-            dif2usedbyts = read_bytes - (nunderFlows * bpp)
-            pad_zeros = numpy.zeros(dif2usedbyts / bpp).astype(self.bpp_to_numpy[bpp])
-            # flat = self.data.ravel()  # flat memory view
-            # flow_pos_indexes = self.mask_undeflows
-            flow_vals = (self.ar_underflows)
-            # flow_vals[flow_vals<0] = 65535#limit#flow_vals[flow_vals<0]
-            flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
-
-            return flow_vals_paded  # pad(overflow, ".", 512)
-
-    def overflows_one_byte(self):
-            """
-            Generate one-byte overflow table
-            """
-            bpp = 2
-            limit = 255
-            nover_one = self.nover_one
-            # temp_data = self.data
-            read_bytes = (nover_one * bpp + 15) & ~(15)  # multiple of 16
-            dif2usedbyts = read_bytes - (nover_one * bpp)
-            pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
-            flat = self.data.ravel()  # flat memory view
-            flow_pos = (flat >= limit) + (flat < 0)
-            # flow_pos_indexes = numpy.where(flow_pos == True)[0]
-            flow_vals = (flat[flow_pos])
-            flow_vals[flow_vals < 0] = 65535  # limit#flow_vals[flow_vals<0]
-            # print("flow_vals",flow_vals)
-            flow_vals_paded = numpy.hstack((flow_vals, pad_zeros)).astype(self.bpp_to_numpy[bpp])
-            return flow_vals_paded  # pad(overflow, ".", 512)
-
-    def overflows_two_byte(self):
-        """
-        Generate two byte overflow table
-        """
-
-        bpp = 4
-        noverf = int(self.header['NOVERFL'].split()[2])
-        # nover_two = self.nover_two
-        read_bytes = (noverf * bpp + 15) & ~(15)  # multiple of 16
-        dif2usedbyts = read_bytes - (noverf * bpp)
-        pad_zeros = numpy.zeros(dif2usedbyts // bpp, dtype=self.bpp_to_numpy[bpp])
-        flat = self.data.ravel()  # flat memory view
-
-        underflow_pos = numpy.where(flat < 0)[0]
-        underflow_val = flat[underflow_pos]  # [::-1]
-        # underflow_val[underflow_val 0] = 65535#limit#flow_vals[flow_vals<0]
-
-        underflow_val = underflow_val.astype(self.bpp_to_numpy[bpp])
-        nderflow_val_paded = numpy.hstack((underflow_val, pad_zeros))
-
-        return nderflow_val_paded  # pad(overflow, ".", 512)
+            for extra in (underflow, overflow1, overflow2):
+                if extra.nbytes:
+                    if fast:
+                        extra.tofile(bruker)
+                    else:
+                        bruker.write(extra.tobytes())
+                    padded = mround(extra.nbytes, 16)
+                    bruker.write(b"\x00"*(padded - extra.nbytes))
 
 
 bruker100image = Bruker100Image

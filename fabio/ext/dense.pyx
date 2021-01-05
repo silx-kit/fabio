@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "14/12/2020"  
+__date__ = "18/12/2020"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -73,9 +73,9 @@ cdef double random_normal(double mu, double sigma) nogil:
     :param sigma: the width of the distribution
     """    
     cdef:
-        double u1, u2
+        double u1, u2, mag
     
-    u1 = 0.0
+    u1 = u2 = 0.0
     
     while (u1 < EPS64):
         u1 = <double> rand() / RAND_MAX 
@@ -143,6 +143,7 @@ def densify(float[:,::1] mask,
                     pos = <uint32_t> fpos
                     if pos+1 == size:
                         value = background[pos]
+                        fres = 0.0
                     else:
                         fres = fpos - pos
                         value = (1.0 - fres)*background[pos] + fres*background[pos+1]

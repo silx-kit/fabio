@@ -38,7 +38,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from fabio.bruker100image import Bruker100Image
+import numpy
+from fabio.bruker100image import Bruker100Image, _split_data, _merge_data
 from fabio.openimage import openimage
 from ..utilstest import UtilsTest
 
@@ -95,6 +96,31 @@ class TestBruker100(unittest.TestCase):
             self.assertTrue(key in other.header, "Key %s is in header" % key)
             self.assertEqual(obt.header[key], other.header[key], "value are the same for key %s" % key)
         os.unlink(os.path.join(UtilsTest.tempdir, name))
+
+    def test_split_merge(self):
+        "Pretty challanging random example"
+        shape = 256, 256
+        outliers = 100
+        a = numpy.random.normal(100, 50, size=shape)
+        a.ravel()[numpy.random.randint(0, numpy.prod(shape), size=outliers)] = numpy.random.randint(10000, 1000000, size=outliers)
+        ref = a.astype("int32")
+
+        for baseline in (None, 0, False):
+            split = _split_data(ref, baseline=baseline)
+            logger.info("size of underflow: %s overflow1 %s overflow2: %s",
+                        split["underflow"].shape, split["overflow1"].shape, split["overflow2"].shape)
+            obt = _merge_data(**split)
+            self.assertTrue(numpy.allclose(obt, ref), f"data are the same, baseline={baseline}")
+
+    def test_conversion(self):
+        fname = UtilsTest.getimage("testcbf.cbf.bz2")[:-4]
+        c = openimage(fname)
+        assert "Cbf" in c.__class__.__name__, "This is a CbfImage"
+        b = c.convert("bruker100")
+        fname_out = os.path.join(UtilsTest.tempdir, "testcbf2bruker100.sfrm")
+        b.write(fname_out)
+        a = openimage(fname_out)
+        self.assertTrue(numpy.allclose(a.data, c.data), msg="data are the same")
 
 
 def suite():

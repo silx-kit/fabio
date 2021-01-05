@@ -1178,9 +1178,9 @@ class EdfImage(fabioimage.FabioImage):
         self.resetvals()
         self.filename = fname
 
-        infile = self._open(fname, "rb")
+        self._file = self._open(fname, "rb")
         try:
-            self._readheader(infile)
+            self._readheader(self._file)
             if frame is None:
                 pass
             elif frame < self.nframes:
@@ -1189,7 +1189,7 @@ class EdfImage(fabioimage.FabioImage):
                 logger.error("Reading file %s You requested frame %s but only %s frames are available", fname, frame, self.nframes)
             self.resetvals()
         except Exception as e:
-            infile.close()
+            self._file.close()
             raise e
         return self
 
