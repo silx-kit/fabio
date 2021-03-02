@@ -160,9 +160,7 @@ class CbfImage(FabioImage):
                     value = value.strip(" \"\n\r\t")
                 self.header[key] = value
         if self.header.get("_array_data.header_convention") == "PILATUS_1.2":
-            print(self.header.get("_array_data.header_contents", ""))
             self.pilatus_headers = PilatusHeader(self.header.get("_array_data.header_contents", ""))
-            print(self.pilatus_headers)
 
     def _read_binary_section_header(self, inStream):
         """
