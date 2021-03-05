@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "01/12/2020"
+__date__ = "05/03/2021"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -198,8 +198,8 @@ def as_str(smth):
         return smth.decode()
     else:
         return str(smth)
-    
-    
+
+
 def expand_args(args):
     """
     Takes an argv and expand it (under Windows, cmd does not convert *.tif into
@@ -225,9 +225,9 @@ class Converter:
         if not self.options.verbose:
             self.progress = ProgressBar("HDF5 --> Esperanto", len(options.images), 30)
         self.succeeded = True
-        
-        prefix =  os.path.commonprefix([os.path.abspath(i) for i in self.options.images])
-        if "{dirname}" in self.options.output: 
+
+        prefix = os.path.commonprefix([os.path.abspath(i) for i in self.options.images])
+        if "{dirname}" in self.options.output:
             self.dirname = os.path.dirname(prefix)
         else:
             self.dirname = os.path.dirname(os.path.abspath(self.options.output))
@@ -273,6 +273,7 @@ class Converter:
             finish_at = self.convert_one(filename, start_at)
             self.succeeded = self.succeeded and (finish_at > 0)
             start_at += finish_at
+
     def finish(self):
         if not self.succeeded:
             if not self.options.verbose:
@@ -296,9 +297,9 @@ class Converter:
                     "dreadnoiserms": 0,
                     # SPECIAL_CCD_2
                     "ioverflowflag":0 ,
-                    "ioverflowafterremeasureflag" :0,
-                    "inumofdarkcurrentimages" :0,
-                    "inumofmultipleimages" :0,
+                    "ioverflowafterremeasureflag":0,
+                    "inumofdarkcurrentimages":0,
+                    "inumofmultipleimages":0,
                     "loverflowthreshold": 1000000,
                     # SPECIAL_CCD_3
                     # SPECIAL_CCD_4
@@ -352,7 +353,7 @@ class Converter:
             shape = source.data.shape
             dtype = source.data.dtype
             if self.progress is not None:
-                self.progress.max_value = source.nframes*len(self.options.images)
+                self.progress.max_value = source.nframes * len(self.options.images)
             if isinstance(source, limaimage.LimaImage):
                 # Populate the Pilatus header from the Lima
                 entry_name = source.h5.attrs.get("default")
@@ -386,15 +387,15 @@ class Converter:
                             if detectors:
                                 detector = detectors[0]
                                 headers["drealpixelsizex"] = detector["x_pixel_size"][()] * 1e3
-                                headers["drealpixelsizey"] = detector["y_pixel_size"][()] * 1e3               
+                                headers["drealpixelsizey"] = detector["y_pixel_size"][()] * 1e3
                                 headers["dxorigininpix"] = detector["beam_center_x"][()]
                                 headers["dyorigininpix"] = detector["beam_center_y"][()]
                                 headers["ddistanceinmm"] = detector["distance"][()] * 1e3
                             monchromators = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXmonochromator"]
                             if monchromators:
-                                wavelength =  monchromators[0]["wavelength"][()]
+                                wavelength = monchromators[0]["wavelength"][()]
                 self.mask = numpy.logical_not(numpy.isfinite(source.mask))
-                headers["dexposuretimeinsec"] = 1 #meaningfull value.
+                headers["dexposuretimeinsec"] = 1  # meaningfull value.
 
             elif isinstance(source, eigerimage.EigerImage):
                 raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
@@ -478,13 +479,13 @@ class Converter:
 
         for i, frame in enumerate(source):
             idx = i + start_at
-            self.progress.update(idx + 0.5, input_filename+" - "+str(idx))
+            self.progress.update(idx + 0.5, input_filename + " - " + str(idx))
             input_data = frame.data
             numpy.maximum(self.mask, input_data, out=self.mask)
             input_data = input_data.astype(numpy.int32)
             input_data[input_data == numpy.iinfo(frame.data.dtype).max] = self.options.dummy
             converted = esperantoimage.EsperantoImage(data=input_data)  # This changes the shape
-            converted.data = self.geometry_transform(converted.data) 
+            converted.data = self.geometry_transform(converted.data)
             for k, v in self.headers.items():
                 if callable(v):
                     if k.endswith("s"):
@@ -494,8 +495,8 @@ class Converter:
                 else:
                     converted.header[k] = v
 
-            output_filename = self.options.output.format(index=((idx + self.options.offset)), 
-                                                         prefix=self.prefix, 
+            output_filename = self.options.output.format(index=((idx + self.options.offset)),
+                                                         prefix=self.prefix,
                                                          dirname=self.dirname)
             os.makedirs(os.path.dirname(output_filename), exist_ok=True)
             try:
@@ -512,24 +513,24 @@ class Converter:
 
     def treat_mask(self):
         if self.progress:
-            self.progress.update(self.progress.max_value-1, "Generate mask")
+            self.progress.update(self.progress.max_value - 1, "Generate mask")
         try:
             from pyFAI.ext import dynamic_rectangle
         except ImportError:
             print("A recent version of pyFAI is needed to export the mask in a format compatible wit CrysalisPro")
         else:
             mask = self.mask == numpy.iinfo(self.mask.dtype).max
-            esperantoimage.EsperantoImage.DUMMY=1
+            esperantoimage.EsperantoImage.DUMMY = 1
             new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
-            esperantoimage.EsperantoImage.DUMMY=-1
-            rectangles =  dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
-            self.progress.update(self.progress.max_value-0.5, f"Exporting {len(rectangles)} rectangles as mask")
-            dummy_filename = self.options.output.format(index=self.options.offset, 
-                                                         prefix=self.prefix, 
-                                                         dirname=self.dirname) 
+            esperantoimage.EsperantoImage.DUMMY = -1
+            rectangles = dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
+            self.progress.update(self.progress.max_value - 0.5, f"Exporting {len(rectangles)} rectangles as mask")
+            dummy_filename = self.options.output.format(index=self.options.offset,
+                                                         prefix=self.prefix,
+                                                         dirname=self.dirname)
             dirname = os.path.dirname(dummy_filename)
-            numpy.save(os.path.join(dirname,self.prefix+"_mask.npy"), self.mask)
-            with open(os.path.join(dirname,self.prefix+".set"), mode="wb") as maskfile:
+            numpy.save(os.path.join(dirname, self.prefix + "_mask.npy"), self.mask)
+            with open(os.path.join(dirname, self.prefix + ".set"), mode="wb") as maskfile:
                 maskfile.write(b'#XCALIBUR SYSTEM\r\n')
                 maskfile.write(b'#XCALIBUR SETUP FILE\r\n')
                 maskfile.write(b'#*******************************************************************************************************\r\n')
@@ -551,11 +552,12 @@ class Converter:
                     if r.area == 1:
                         maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n".encode())
                     else:
-                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width} {r.row} {r.row+r.height}\r\n".encode())            
+                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width} {r.row} {r.row+r.height}\r\n".encode())
                 maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
-            # Make a backup as the original could be overwritten by Crysalis at import 
-            shutil.copyfile(os.path.join(dirname,self.prefix+".set"), os.path.join(dirname,self.prefix+".set.orig"))
-        
+            # Make a backup as the original could be overwritten by Crysalis at import
+            shutil.copyfile(os.path.join(dirname, self.prefix + ".set"), os.path.join(dirname, self.prefix + ".set.orig"))
+
+
 def main():
 
     epilog = """return codes: 0 means a success. 1 means the conversion
@@ -603,8 +605,8 @@ def main():
 #                        " option)")
     group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
                        help="do everything except modifying the file system")
-    group.add_argument("--calc-mask", dest="calc_mask", type=bool, default=True,
-                       help="Generate a mask from pixels marked as invalid, set to false to speed-up")
+    group.add_argument("--calc-mask", dest="calc_mask", default=False, action="store_true",
+                       help="Generate a mask from pixels marked as invalid. Off by default since it takes time")
 
     group = parser.add_argument_group("Experimental setup options")
     group.add_argument("-e", "--energy", type=float, default=None,
@@ -663,10 +665,10 @@ def main():
         logger.debug("Backtrace", exc_info=True)
         return EXIT_ARGUMENT_FAILURE
     esperantoimage.EsperantoImage.DUMMY = args.dummy
-
     converter = Converter(args)
     converter.convert_all()
-    converter.treat_mask()
+    if args.calc_mask:
+        converter.treat_mask()
     return converter.finish()
 
 
