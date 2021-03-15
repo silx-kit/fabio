@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "11/12/2020"
+__date__ = "12/03/2021"
 
 import os
 import logging
@@ -863,7 +863,7 @@ class FabioImage(_FabioArray):
             yield current_image
             try:
                 current_image = current_image.next()
-            except IOError:
+            except (IOError, IndexError):
                 break
 
 

@@ -115,6 +115,11 @@ class TestHdf5(unittest.TestCase):
         self.assertEqual(frame_nb, 50)
         self.assertEqual(frame_id, 49)
 
+    def test_iterate(self):
+        for i, f in enumerate(openimage(self.fn3)):
+            print(i, f)
+        self.assertEqual(i, 49, "Last frame is #49")
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
