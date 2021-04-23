@@ -43,11 +43,12 @@ License: MIT
 """
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "06/04/2020"
+__date__ = "18/12/2020"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
 
+import io
 import logging
 import numpy
 
@@ -150,21 +151,27 @@ class PnmImage(FabioImage):
         self.header[b"HEIGHT"] = self.shape[-2]
         self.header[b"MAXVAL"] = self.data.max()
         header = (" ".join([str(self.header[key]) for key in HEADERITEMS[1:]])).encode("latin-1")
-        with open(fname, "wb") as fobj:
+        with self._open(fname, "wb") as fobj:
             fobj.write(b"P5 \n")
             fobj.write(header)
             fobj.write(b" \n")
-            if numpy.little_endian:
-                fobj.write(self.data.byteswap().tobytes())
+            if isinstance(fobj, io.BufferedWriter):
+                if numpy.little_endian:
+                    self.data.byteswap().tofile(fobj)
+                else:
+                    self.data.tofile(fobj)
             else:
-                fobj.write(self.data.tobytes())
+                if numpy.little_endian:
+                    fobj.write(self.data.byteswap().tobytes())
+                else:
+                    fobj.write(self.data.tobytes())
 
     def P1dec(self, buf, bytecode):
         data = numpy.zeros(self.shape)
         i = 0
         for l in buf:
             try:
-                data[i, :] = numpy.array(l.split()).astype(bytecode)
+                data[i,:] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
                 raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
@@ -179,7 +186,7 @@ class PnmImage(FabioImage):
         i = 0
         for l in buf:
             try:
-                data[i, :] = numpy.array(l.split()).astype(bytecode)
+                data[i,:] = numpy.array(l.split()).astype(bytecode)
             except ValueError:
                 raise IOError('Size spec in pnm-header does not match size of image data field')
         return data

@@ -28,8 +28,9 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "01/12/2020"
+__date__ = "18/12/2020"
 
+import io
 from collections import OrderedDict
 import logging
 logger = logging.getLogger(__name__)
@@ -259,7 +260,10 @@ class EsperantoImage(FabioImage):
         with self._open(fname, "wb") as outfile:
             outfile.write(bytes_header)
             if self.format == "4BYTE_LONG":
-                outfile.write(self.data.tobytes())
+                if isinstance(outfile, io.BufferedWriter):
+                    self.data.tofile(outfile)
+                else:
+                    outfile.write(self.data.tobytes())
             elif self.format == "AGI_BITFIELD":
                 if agi_bitfield._compress is not None:
                     outfile.write(agi_bitfield._compress(self.data))

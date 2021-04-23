@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "23/04/2021"
+__date__ = "05/03/2021"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -50,14 +50,15 @@ FOOTER = """To import your files as a project:
 import logging
 logging.basicConfig()
 logger = logging.getLogger("eiger2crysalis")
+import codecs
 import sys
 import os
-from itertools import takewhile
-from .. import esperantoimage, eigerimage, limaimage
+import glob
+import shutil
+from .. import esperantoimage, eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..nexus import get_isotime
-from ..utils.cli import ProgressBar, expand_args
 import numpy
 import argparse
 try:
@@ -67,7 +68,7 @@ except ImportError:
 
 try:
     import numexpr
-except ImportError:
+except:
     logger.error("Numexpr is needed to interpret formula ...")
 
 EXIT_SUCCESS = 0
@@ -81,6 +82,139 @@ except ImportError:
     CONST_hc = 12.398419843320026
 else:
     CONST_hc = constants.c * constants.h / constants.e * 1e7
+
+
+class ProgressBar:
+    """
+    Progress bar in shell mode
+    """
+
+    def __init__(self, title, max_value, bar_width):
+        """
+        Create a progress bar using a title, a maximum value and a graphical size.
+
+        The display is done with stdout using carriage return to to hide the
+        previous progress. It is not possible to use stdout for something else
+        whill a progress bar is in use.
+
+        The result looks like:
+
+        .. code-block:: none
+
+            Title [■■■■■■      ]  50%  Message
+
+        :param str title: Title displayed before the progress bar
+        :param float max_value: The maximum value of the progress bar
+        :param int bar_width: Size of the progressbar in the screen
+        """
+        self.title = title
+        self.max_value = max_value
+        self.bar_width = bar_width
+        self.last_size = 0
+        self._message = ""
+        self._value = 0.0
+
+        encoding = None
+        if hasattr(sys.stdout, "encoding"):
+            # sys.stdout.encoding can't be used in unittest context with some
+            # configurations of TestRunner. It does not exists in Python2
+            # StringIO and is None in Python3 StringIO.
+            encoding = sys.stdout.encoding
+        if encoding is None:
+            # We uses the safer aproch: a valid ASCII character.
+            self.progress_char = '#'
+        else:
+            try:
+                import datetime
+                if str(datetime.datetime.now())[5:10] == "02-14":
+                    self.progress_char = u'\u2665'
+                else:
+                    self.progress_char = u'\u25A0'
+                _byte = codecs.encode(self.progress_char, encoding)
+            except (ValueError, TypeError, LookupError):
+                # In case the char is not supported by the encoding,
+                # or if the encoding does not exists
+                self.progress_char = '#'
+
+    def clear(self):
+        """
+        Remove the progress bar from the display and move the cursor
+        at the beginning of the line using carriage return.
+        """
+        sys.stdout.write('\r' + " " * self.last_size + "\r")
+        sys.stdout.flush()
+
+    def display(self):
+        """
+        Display the progress bar to stdout
+        """
+        self.update(self._value, self._message)
+
+    def update(self, value, message="", max_value=None):
+        """
+        Update the progrss bar with the progress bar's current value.
+
+        Set the progress bar's current value, compute the percentage
+        of progress and update the screen with. Carriage return is used
+        first and then the content of the progress bar. The cursor is
+        at the begining of the line.
+
+        :param float value: progress bar's current value
+        :param str message: message displayed after the progress bar
+        :param float max_value: If not none, update the maximum value of the
+            progress bar
+        """
+        if max_value is not None:
+            self.max_value = max_value
+        self._message = message
+        self._value = value
+
+        if self.max_value == 0:
+            coef = 1.0
+        else:
+            coef = (1.0 * value) / self.max_value
+        percent = round(coef * 100)
+        bar_position = int(coef * self.bar_width)
+        if bar_position > self.bar_width:
+            bar_position = self.bar_width
+
+        # line to display
+        line = '\r%15s [%s%s] % 3d%%  %s' % (self.title, self.progress_char * bar_position, ' ' * (self.bar_width - bar_position), percent, message)
+
+        # trailing to mask the previous message
+        line_size = len(line)
+        clean_size = self.last_size - line_size
+        if clean_size < 0:
+            clean_size = 0
+        self.last_size = line_size
+
+        sys.stdout.write(line + " " * clean_size + "\r")
+        sys.stdout.flush()
+
+
+def as_str(smth):
+    "Transform to string"
+    if isinstance(any, bytes):
+        return smth.decode()
+    else:
+        return str(smth)
+
+
+def expand_args(args):
+    """
+    Takes an argv and expand it (under Windows, cmd does not convert *.tif into
+    a list of files.
+
+    :param list args: list of files or wildcards
+    :return: list of actual args
+    """
+    new = []
+    for afile in args:
+        if glob.has_magic(afile):
+            new += glob.glob(afile)
+        else:
+            new.append(afile)
+    return new
 
 
 class Converter:
@@ -241,6 +375,28 @@ class Converter:
                                     headers["dexposuretimeinsec"] = t1
                                 except Exception as e:
                                     logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
+            elif isinstance(source, sparseimage.SparseImage):
+                entry_name = source.h5.attrs.get("default")
+                if entry_name:
+                    entry = source.h5.get(entry_name)
+                    if entry:
+                        instruments = [i for  i in entry.values() if as_str(i.attrs.get("NX_class", "")) == "NXinstrument"]
+                        if instruments:
+                            instrument = instruments[0]
+                            detectors = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXdetector"]
+                            if detectors:
+                                detector = detectors[0]
+                                headers["drealpixelsizex"] = detector["x_pixel_size"][()] * 1e3
+                                headers["drealpixelsizey"] = detector["y_pixel_size"][()] * 1e3
+                                headers["dxorigininpix"] = detector["beam_center_x"][()]
+                                headers["dyorigininpix"] = detector["beam_center_y"][()]
+                                headers["ddistanceinmm"] = detector["distance"][()] * 1e3
+                            monchromators = [i for  i in instrument.values() if as_str(i.attrs.get("NX_class", "")) == "NXmonochromator"]
+                            if monchromators:
+                                wavelength = monchromators[0]["wavelength"][()]
+                self.mask = numpy.logical_not(numpy.isfinite(source.mask))
+                headers["dexposuretimeinsec"] = 1  # meaningfull value.
+
             elif isinstance(source, eigerimage.EigerImage):
                 raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
             else:
@@ -287,6 +443,7 @@ class Converter:
                 # Handle the string
                 value = numexpr.NumExpr(self.options.omega)
             headers["dom_s"] = headers["dom_e"] = value
+
         return headers
 
     def convert_one(self, input_filename, start_at=0):
@@ -364,15 +521,41 @@ class Converter:
         else:
             mask = self.mask == numpy.iinfo(self.mask.dtype).max
             esperantoimage.EsperantoImage.DUMMY = 1
-            new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
+            new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
+            esperantoimage.EsperantoImage.DUMMY = -1
             rectangles = dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
             self.progress.update(self.progress.max_value - 0.5, f"Exporting {len(rectangles)} rectangles as mask")
-            with open(os.path.join(self.dirname, self.prefix + ".set"), mode="w") as maskfile:
+            dummy_filename = self.options.output.format(index=self.options.offset,
+                                                         prefix=self.prefix,
+                                                         dirname=self.dirname)
+            dirname = os.path.dirname(dummy_filename)
+            numpy.save(os.path.join(dirname, self.prefix + "_mask.npy"), self.mask)
+            with open(os.path.join(dirname, self.prefix + ".set"), mode="wb") as maskfile:
+                maskfile.write(b'#XCALIBUR SYSTEM\r\n')
+                maskfile.write(b'#XCALIBUR SETUP FILE\r\n')
+                maskfile.write(b'#*******************************************************************************************************\r\n')
+                maskfile.write(b'# CHIP CHARACTERISTICS e_19_020609.ccd         D A T E Wed-Sep-16-10-00-59-2009\r\n')
+                maskfile.write(b'# This program produces version 1.9\r\n')
+                maskfile.write(b'#******************************************************************************************************\r\n')
+                maskfile.write(b'#THIS FILE IS USER READABLE - BUT SHOULD NOT BE TOUCHED BY THE USER\r\n')
+                maskfile.write(b'#ANY CHANGES TO THIS FILE WILL RESULT IN LOSS OF WARRANTY!\r\n')
+                maskfile.write(b'#CHIP IDCODE producer type serial\r\n')
+                maskfile.write(b'CHIP IDCODE "n/a" "n/a" "n/a\r\n')
+                maskfile.write(b'#CHIP TAPER producer type serial\r\n')
+                maskfile.write(b'CHIP TAPER "" "" ""\r\n')
+                maskfile.write(b'#ALL COORDINATES GO FROM 0 TO N-1\r\n')
+                maskfile.write(b'#CHIP BADPOINT treatment options: IGNORE,REPLACE,AVERAGE\r\n')
+                maskfile.write(b'#CHIP BADPOINT x1x1 y1x1 treatment r1x1x1 r1y1x1 r2x1x1 r2y1x1\r\n')
+                maskfile.write(b'#CHIP BADPOINT 630 422 REPLACE 632 422 0 0\r\n')
+                maskfile.write(b'#CHIP BADRECTANGLE xl xr yb yt\r\n')
                 for r in rectangles:
                     if r.area == 1:
-                        maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n")
+                        maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n".encode())
                     else:
-                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width-1} {r.row} {r.row+r.height-1}\r\n")
+                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width} {r.row} {r.row+r.height}\r\n".encode())
+                maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
+            # Make a backup as the original could be overwritten by Crysalis at import
+            shutil.copyfile(os.path.join(dirname, self.prefix + ".set"), os.path.join(dirname, self.prefix + ".set.orig"))
 
 
 def main():
@@ -422,8 +605,8 @@ def main():
 #                        " option)")
     group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
                        help="do everything except modifying the file system")
-    group.add_argument("--calc-mask", dest="calc_mask", type=bool, default=True,
-                       help="Generate a mask from pixels marked as invalid, set to false to speed-up")
+    group.add_argument("--calc-mask", dest="calc_mask", default=False, action="store_true",
+                       help="Generate a mask from pixels marked as invalid. Off by default since it takes time")
 
     group = parser.add_argument_group("Experimental setup options")
     group.add_argument("-e", "--energy", type=float, default=None,
@@ -468,7 +651,7 @@ def main():
             logger.setLevel(logging.DEBUG)
 
         if args.list:
-            print("Supported formats: LimaImage, EigerImage")
+            print("Supported formats: LimaImage, EigerImage, SparseImage")
             return
 
         if len(args.IMAGE) == 0:
@@ -482,10 +665,10 @@ def main():
         logger.debug("Backtrace", exc_info=True)
         return EXIT_ARGUMENT_FAILURE
     esperantoimage.EsperantoImage.DUMMY = args.dummy
-
     converter = Converter(args)
     converter.convert_all()
-    converter.treat_mask()
+    if args.calc_mask:
+        converter.treat_mask()
     return converter.finish()
 
 

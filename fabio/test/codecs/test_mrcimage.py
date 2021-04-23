@@ -46,43 +46,48 @@ from ..utilstest import UtilsTest
 
 class TestMrc(unittest.TestCase):
     """basic test"""
-    mrcfilename = 'EMD-3001.map'
-    npyfilename = 'EMD-3001.npy'
-    results = """EMD-3001.map   73 43  -0.36814222  0.678705 0.006804995 0.1630334"""
+    mrcfilename = ('EMD-3001.map', "0p67_5s_0000.mrc")
+    npyfilename = ('EMD-3001.npy', "0p67_5s_0000.npy")
+    results = """EMD-3001.map   73 43  -0.36814222  0.678705 0.0062340125 0.16349247
+                 0p67_5s_0000.mrc 2048 2048 -344.0 33553.0 82.653259 243.213061"""
 
     def setUp(self):
         """Download files"""
         self.fn = {}
-        for i in [self.mrcfilename, self.npyfilename]:
+        for i in self.mrcfilename + self.npyfilename:
             self.fn[i] = UtilsTest.getimage(i + ".bz2")[:-4]
         for i in self.fn:
             assert os.path.exists(self.fn[i])
 
     def test_read(self):
-        """ check we can read kcd images"""
-        vals = self.results.split()
-        dim1, dim2 = [int(x) for x in vals[1:3]]
-        shape = dim2, dim1
-        mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
-        for ext in ["", ".gz", ".bz2"]:
-            try:
-                obj = openimage(self.fn[self.mrcfilename] + ext)
-            except Exception as err:
-                logger.error("unable to read: %s", self.fn[self.mrcfilename] + ext)
-                raise err
-            self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin" + ext)
-            self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax" + ext)
-            self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean" + ext)
-            self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev" + ext)
-            self.assertEqual(shape, obj.shape, "shape" + ext)
+        """ check we can read mrc images"""
+        for results in self.results.split("\n"):
+            vals = results.split()
+            dim1, dim2 = [int(x) for x in vals[1:3]]
+            shape = dim2, dim1
+            mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
+            for ext in ["", ".gz", ".bz2"]:
+                filename = self.fn[vals[0]] + ext
+                try:
+                    obj = openimage(filename)
+                except Exception as err:
+                    logger.error("unable to read: %s", filename)
+                    raise err
+                self.assertAlmostEqual(mini, obj.getmin(), 4, f"{filename} getmin")
+                self.assertAlmostEqual(maxi, obj.getmax(), 4, f"{filename} getmax")
+                self.assertAlmostEqual(mean, obj.getmean(), 4, f"{filename} getmean")
+                self.assertAlmostEqual(stddev, obj.getstddev(), 4, f"{filename} getstddev")
+                self.assertEqual(shape, obj.shape, f"{filename} shape")
 
     def test_same(self):
-        """ see if we can read kcd images and if they are the same as the EDF """
-        mrc = MrcImage()
-        mrc.read(self.fn[self.mrcfilename])
-        npy = fabio.open(self.fn[self.npyfilename])
-        diff = (mrc.data - npy.data)
-        self.assertAlmostEqual(abs(diff).sum(), 0, 4)
+        """ see if we can read mrc images and if they are the same as the numpy dump"""
+        for mrcfilename, npyfilename in zip(self.mrcfilename, self.npyfilename):
+            logger.info("Comparing files %s and %s", mrcfilename, npyfilename)
+            mrc = MrcImage()
+            mrc.read(self.fn[mrcfilename])
+            npy = fabio.open(self.fn[npyfilename])
+            diff = (mrc.data - npy.data)
+            self.assertAlmostEqual(abs(diff).sum(), 0, 4, msg=mrcfilename)
 
 
 def suite():
