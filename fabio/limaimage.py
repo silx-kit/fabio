@@ -33,11 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-<<<<<<< HEAD
 __date__ = "23/04/2021"
-=======
-__date__ = "16/11/2020"
->>>>>>> upstream/master
 
 import logging
 logger = logging.getLogger(__name__)
@@ -60,17 +56,11 @@ else:
 
 
 class LimaImage(FabioImage):
-<<<<<<< HEAD
     """FabIO image class for Images for LIMA detector
 
     LIMA is the Library for Image Acquisition:
     https://lima1.readthedocs.io/en/latest/
-=======
-    """FabIO image class for images acquired with the LIMA framwork
-
-    LIMA is the Library for Image Acquisition, 
     https://github.com/esrf-bliss/LImA
->>>>>>> upstream/master
     """
 
     DESCRIPTION = "HDF5 file produces by LImA"
@@ -248,6 +238,7 @@ class LimaImage(FabioImage):
             for i, frame in enumerate(self.dataset):
                 dataset[i] = frame
             entry.attrs["default"] = plot_grp.name
+
 
 # This is not compatibility with old code:
 limaimage = LimaImage
