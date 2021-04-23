@@ -37,18 +37,29 @@ __date__ = "23/04/2021"
 
 import logging
 logger = logging.getLogger(__name__)
+import os
+import numpy
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
+from . import nexus
 try:
     import h5py
 except ImportError:
     h5py = None
+try:
+    import hdf5plugin
+except ImportError:
+    compression = {"compression":"gzip",
+                   "compression_opts":1}
+else:
+    compression = hdf5plugin.Bitshuffle()
 
 
 class LimaImage(FabioImage):
-    """FabIO image class for Images for XXX detector
+    """FabIO image class for Images for LIMA detector
 
-    Put some documentation here
+    LIMA is the Library for Image Acquisition:
+    https://lima1.readthedocs.io/en/latest/
     """
 
     DESCRIPTION = "HDF5 file produces by LImA"
@@ -80,6 +91,19 @@ class LimaImage(FabioImage):
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
+        with h5py.File(infile, mode="r") as h5:
+            entry_name = h5.attrs.get("default")
+            if entry_name is None:
+                raise NotGoodReader("HDF5 file does not contain any default entry.")
+            if entry_name in h5:
+                entry = h5[entry_name]
+            else:
+                raise NotGoodReader("HDF5's default entry does not exist.")
+            if "default" in entry.attrs:
+                nxdata = entry.attrs["default"]
+                self.header["detector"] = nxdata.split("/")[-2]
+            else:
+                self.header["detector"] = "detector"
 
     def read(self, fname, frame=None):
         """
@@ -152,6 +176,67 @@ class LimaImage(FabioImage):
         if self.h5 is not None:
             self.h5.close()
             self.dataset = None
+
+    def write(self, filename):
+        """Write a file that looks like one saved by LIMA."""
+        start_time = nexus.get_isotime()
+        abs_name = os.path.abspath(filename)
+        if os.path.exists(abs_name):
+            mode = "a"
+        else:
+            mode = "w"
+        with nexus.Nexus(abs_name, mode=mode, creator="LIMA-1.9.7") as nxs:
+            entry = nxs.new_entry(entry="entry",
+                                  program_name=None,
+                                  title="Lima 2D detector acquisition",
+                                  force_time=start_time,
+                                  force_name=False)
+            measurement_grp = nxs.new_class(entry, "measurement", class_type="NXcollection")
+            instrument_grp = nxs.new_class(entry, "instrument", class_type="NXinstrument")
+            detector_grp = nxs.new_class(instrument_grp, self.header.get("detector", "detector"), class_type="NXdetector")
+            acq_grp = nxs.new_class(detector_grp, "acquisition", class_type="NXcollection")
+            info_grp = nxs.new_class(detector_grp, "detector_information", class_type="NXcollection")
+            info_grp["image_lima_type"] = f"Bpp{8*numpy.dtype(self.dtype).itemsize}"
+            max_grp = nxs.new_class(info_grp, "max_image_size", class_type="NXcollection")
+            max_grp["xsize"] = numpy.int32(self.shape[-1])
+            max_grp["ysize"] = numpy.int32(self.shape[-2])
+
+            header_grp = nxs.new_class(detector_grp, "header", class_type="NXcollection")
+            header_grp["acq_nb_frames"] = str(self.nframes)
+            header_grp["image_bin"] = "<1x1>"
+            header_grp["image_flip"] = "<flip x : False,flip y : False>"
+            header_grp["image_roi"] = f"<0,0>-<{self.shape[-2]}x{self.shape[-1]}>"
+            header_grp["image_rotation"] = "Rotation_0"
+            op_grp = nxs.new_class(detector_grp, "image_operation", class_type="NXcollection")
+            op_grp["rotation"] = "Rotation_0"
+            bin_grp = nxs.new_class(op_grp, "binning", class_type="NXcollection")
+            bin_grp["x"] = numpy.int32(1)
+            bin_grp["y"] = numpy.int32(1)
+            dim_grp = nxs.new_class(op_grp, "dimension", class_type="NXcollection")
+            dim_grp["xsize"] = numpy.int32(self.shape[-1])
+            dim_grp["ysize"] = numpy.int32(self.shape[-2])
+            flp_grp = nxs.new_class(op_grp, "flipping", class_type="NXcollection")
+            flp_grp["x"] = numpy.uint8(0)
+            flp_grp["y"] = numpy.uint8(0)
+            roi_grp = nxs.new_class(op_grp, "region_of_interest", class_type="NXcollection")
+            roi_grp["xsize"] = numpy.int32(self.shape[-1])
+            roi_grp["ysize"] = numpy.int32(self.shape[-2])
+            roi_grp["xstart"] = numpy.int32(0)
+            roi_grp["ystart"] = numpy.int32(0)
+
+            plot_grp = nxs.new_class(detector_grp, "plot", class_type="NXdata")
+
+            acq_grp["nb_frames"] = numpy.int32(self.nframes)
+
+            shape = (self.nframes,) + self.shape
+            dataset = detector_grp.create_dataset("data", shape=shape, chunks=(1,) + self.shape, dtype=self.dtype, **compression)
+            dataset.attrs["interpretation"] = "image"
+            plot_grp["data"] = dataset
+            plot_grp.attrs["signal"] = "data"
+            measurement_grp["data"] = dataset
+            for i, frame in enumerate(self.dataset):
+                dataset[i] = frame
+            entry.attrs["default"] = plot_grp.name
 
 
 # This is not compatibility with old code:
