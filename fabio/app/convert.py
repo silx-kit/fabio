@@ -42,11 +42,9 @@ logging.basicConfig()
 
 import sys
 import os
-from ..utils.cli import expand_args
-from .. import fabioformats, fabioutils
-from ..openimage import openimage as fabio_open
-from .. import version as fabio_version, factory as fabio_factory
-
+import fabio
+from fabio import fabioformats, fabioutils
+from fabio.utils.cli import expand_args
 import argparse
 
 logger = logging.getLogger("fabio-convert")
@@ -177,7 +175,7 @@ def convert_one(input_filename, output_filename, options):
 
     try:
         logger.debug("Load '%s'", input_filename)
-        source = fabio_open(input_filename)
+        source = fabio.open(input_filename)
     except KeyboardInterrupt:
         raise
     except Exception as e:
@@ -242,7 +240,7 @@ def print_supported_formats():
 
     indentation = "    "
 
-    print(f"List of writable file formats supported by FabIO version {fabio_version}")
+    print(f"List of writable file formats supported by FabIO version {fabio.version}")
     print()
 
     for class_ in classes:
@@ -264,7 +262,7 @@ def is_format_supported(format_name):
     :rtype: bool
     """
     try:
-        fabio_factory(format_name)
+        fabio.factory(format_name)
         return True
     except RuntimeError:
         logger.debug("Backtrace", exc_info=True)
@@ -287,7 +285,7 @@ def main():
                                      epilog=epilog)
     parser.add_argument("IMAGE", nargs="*",
                         help="Input file images")
-    parser.add_argument("-V", "--version", action='version', version=fabio_version,
+    parser.add_argument("-V", "--version", action='version', version=fabio.version,
                         help="output version and exit")
     parser.add_argument("-v", "--verbose", action='store_true', dest="verbose", default=False,
                         help="show information for each conversions")
