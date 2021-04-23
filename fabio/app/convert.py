@@ -34,7 +34,7 @@
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "06/04/2020"
+__date__ = "23/04/2021"
 __status__ = "production"
 
 import logging
@@ -42,9 +42,11 @@ logging.basicConfig()
 
 import sys
 import os
-import glob
+from ..utils.cli import expand_args
+from .. import fabioformats, fabioutils
+from ..openimage import openimage as fabio_open
+from .. import version as fabio_version, factory as fabio_factory
 
-import fabio
 import argparse
 
 logger = logging.getLogger("fabio-convert")
@@ -57,7 +59,7 @@ def get_default_extension_from_format(format_name):
     :param str format: String format like "edfimage"
     :rtype: str
     """
-    class_ = fabio.fabioformats.get_class_by_name(format_name)
+    class_ = fabioformats.get_class_by_name(format_name)
     if class_ is None:
         raise RuntimeError("Format '%s' unsupported" % format_name)
 
@@ -175,7 +177,7 @@ def convert_one(input_filename, output_filename, options):
 
     try:
         logger.debug("Load '%s'", input_filename)
-        source = fabio.open(input_filename)
+        source = fabio_open(input_filename)
     except KeyboardInterrupt:
         raise
     except Exception as e:
@@ -235,12 +237,12 @@ def convert_all(options):
 
 def print_supported_formats():
     """List supported format to the output"""
-    classes = fabio.fabioformats.get_classes(writer=True)
+    classes = fabioformats.get_classes(writer=True)
     classes.sort(key=lambda c: c.__module__.lower())
 
     indentation = "    "
 
-    print("List of writable file formats supported by FabIO version %s" % fabio.version)
+    print(f"List of writable file formats supported by FabIO version {fabio_version}")
     print()
 
     for class_ in classes:
@@ -262,28 +264,11 @@ def is_format_supported(format_name):
     :rtype: bool
     """
     try:
-        fabio.factory(format_name)
+        fabio_factory(format_name)
         return True
     except RuntimeError:
         logger.debug("Backtrace", exc_info=True)
         return False
-
-
-def expand_args(args):
-    """
-    Takes an argv and expand it (under Windows, cmd does not convert *.tif into
-    a list of files.
-
-    :param list args: list of files or wildcards
-    :return: list of actual args
-    """
-    new = []
-    for afile in args:
-        if glob.has_magic(afile):
-            new += glob.glob(afile)
-        else:
-            new.append(afile)
-    return new
 
 
 EXIT_SUCCESS = 0
@@ -302,7 +287,7 @@ def main():
                                      epilog=epilog)
     parser.add_argument("IMAGE", nargs="*",
                         help="Input file images")
-    parser.add_argument("-V", "--version", action='version', version=fabio.version,
+    parser.add_argument("-V", "--version", action='version', version=fabio_version,
                         help="output version and exit")
     parser.add_argument("-v", "--verbose", action='store_true', dest="verbose", default=False,
                         help="show information for each conversions")
@@ -366,7 +351,7 @@ def main():
                 dummy_filename = "foo." + args.format
 
             # extract file format from file name
-            filename = fabio.fabioutils.FilenameObject(filename=dummy_filename)
+            filename = fabioutils.FilenameObject(filename=dummy_filename)
 
             if filename.format is None or len(filename.format) == 0:
                 raise argparse.ArgumentError(None, "This file extension is unknown. You have also to specify a format using -F.")

@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "01/12/2020"
+__date__ = "23/04/2021"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -50,15 +50,14 @@ FOOTER = """To import your files as a project:
 import logging
 logging.basicConfig()
 logger = logging.getLogger("eiger2crysalis")
-import codecs
 import sys
 import os
-import glob
 from itertools import takewhile
 from .. import esperantoimage, eigerimage, limaimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..nexus import get_isotime
+from ..utils.cli import ProgressBar, expand_args
 import numpy
 import argparse
 try:
@@ -68,7 +67,7 @@ except ImportError:
 
 try:
     import numexpr
-except:
+except ImportError:
     logger.error("Numexpr is needed to interpret formula ...")
 
 EXIT_SUCCESS = 0
@@ -84,131 +83,6 @@ else:
     CONST_hc = constants.c * constants.h / constants.e * 1e7
 
 
-class ProgressBar:
-    """
-    Progress bar in shell mode
-    """
-
-    def __init__(self, title, max_value, bar_width):
-        """
-        Create a progress bar using a title, a maximum value and a graphical size.
-
-        The display is done with stdout using carriage return to to hide the
-        previous progress. It is not possible to use stdout for something else
-        whill a progress bar is in use.
-
-        The result looks like:
-
-        .. code-block:: none
-
-            Title [■■■■■■      ]  50%  Message
-
-        :param str title: Title displayed before the progress bar
-        :param float max_value: The maximum value of the progress bar
-        :param int bar_width: Size of the progressbar in the screen
-        """
-        self.title = title
-        self.max_value = max_value
-        self.bar_width = bar_width
-        self.last_size = 0
-        self._message = ""
-        self._value = 0.0
-
-        encoding = None
-        if hasattr(sys.stdout, "encoding"):
-            # sys.stdout.encoding can't be used in unittest context with some
-            # configurations of TestRunner. It does not exists in Python2
-            # StringIO and is None in Python3 StringIO.
-            encoding = sys.stdout.encoding
-        if encoding is None:
-            # We uses the safer aproch: a valid ASCII character.
-            self.progress_char = '#'
-        else:
-            try:
-                import datetime
-                if str(datetime.datetime.now())[5:10] == "02-14":
-                    self.progress_char = u'\u2665'
-                else:
-                    self.progress_char = u'\u25A0'
-                _byte = codecs.encode(self.progress_char, encoding)
-            except (ValueError, TypeError, LookupError):
-                # In case the char is not supported by the encoding,
-                # or if the encoding does not exists
-                self.progress_char = '#'
-
-    def clear(self):
-        """
-        Remove the progress bar from the display and move the cursor
-        at the beginning of the line using carriage return.
-        """
-        sys.stdout.write('\r' + " " * self.last_size + "\r")
-        sys.stdout.flush()
-
-    def display(self):
-        """
-        Display the progress bar to stdout
-        """
-        self.update(self._value, self._message)
-
-    def update(self, value, message="", max_value=None):
-        """
-        Update the progrss bar with the progress bar's current value.
-
-        Set the progress bar's current value, compute the percentage
-        of progress and update the screen with. Carriage return is used
-        first and then the content of the progress bar. The cursor is
-        at the begining of the line.
-
-        :param float value: progress bar's current value
-        :param str message: message displayed after the progress bar
-        :param float max_value: If not none, update the maximum value of the
-            progress bar
-        """
-        if max_value is not None:
-            self.max_value = max_value
-        self._message = message
-        self._value = value
-
-        if self.max_value == 0:
-            coef = 1.0
-        else:
-            coef = (1.0 * value) / self.max_value
-        percent = round(coef * 100)
-        bar_position = int(coef * self.bar_width)
-        if bar_position > self.bar_width:
-            bar_position = self.bar_width
-
-        # line to display
-        line = '\r%15s [%s%s] % 3d%%  %s' % (self.title, self.progress_char * bar_position, ' ' * (self.bar_width - bar_position), percent, message)
-
-        # trailing to mask the previous message
-        line_size = len(line)
-        clean_size = self.last_size - line_size
-        if clean_size < 0:
-            clean_size = 0
-        self.last_size = line_size
-
-        sys.stdout.write(line + " " * clean_size + "\r")
-        sys.stdout.flush()
-
-
-def expand_args(args):
-    """
-    Takes an argv and expand it (under Windows, cmd does not convert *.tif into
-    a list of files.
-
-    :param list args: list of files or wildcards
-    :return: list of actual args
-    """
-    new = []
-    for afile in args:
-        if glob.has_magic(afile):
-            new += glob.glob(afile)
-        else:
-            new.append(afile)
-    return new
-
-
 class Converter:
 
     def __init__(self, options):
@@ -217,9 +91,9 @@ class Converter:
         if not self.options.verbose:
             self.progress = ProgressBar("HDF5 --> Esperanto", len(options.images), 30)
         self.succeeded = True
-        
-        prefix =  os.path.commonprefix([os.path.abspath(i) for i in self.options.images])
-        if "{dirname}" in self.options.output: 
+
+        prefix = os.path.commonprefix([os.path.abspath(i) for i in self.options.images])
+        if "{dirname}" in self.options.output:
             self.dirname = os.path.dirname(prefix)
         else:
             self.dirname = os.path.dirname(os.path.abspath(self.options.output))
@@ -265,6 +139,7 @@ class Converter:
             finish_at = self.convert_one(filename, start_at)
             self.succeeded = self.succeeded and (finish_at > 0)
             start_at += finish_at
+
     def finish(self):
         if not self.succeeded:
             if not self.options.verbose:
@@ -288,9 +163,9 @@ class Converter:
                     "dreadnoiserms": 0,
                     # SPECIAL_CCD_2
                     "ioverflowflag":0 ,
-                    "ioverflowafterremeasureflag" :0,
-                    "inumofdarkcurrentimages" :0,
-                    "inumofmultipleimages" :0,
+                    "ioverflowafterremeasureflag":0,
+                    "inumofdarkcurrentimages":0,
+                    "inumofmultipleimages":0,
                     "loverflowthreshold": 1000000,
                     # SPECIAL_CCD_3
                     # SPECIAL_CCD_4
@@ -344,7 +219,7 @@ class Converter:
             shape = source.data.shape
             dtype = source.data.dtype
             if self.progress is not None:
-                self.progress.max_value = source.nframes*len(self.options.images)
+                self.progress.max_value = source.nframes * len(self.options.images)
             if isinstance(source, limaimage.LimaImage):
                 # Populate the Pilatus header from the Lima
                 entry_name = source.h5.attrs.get("default")
@@ -447,13 +322,13 @@ class Converter:
 
         for i, frame in enumerate(source):
             idx = i + start_at
-            self.progress.update(idx + 0.5, input_filename+" - "+str(idx))
+            self.progress.update(idx + 0.5, input_filename + " - " + str(idx))
             input_data = frame.data
             numpy.maximum(self.mask, input_data, out=self.mask)
             input_data = input_data.astype(numpy.int32)
             input_data[input_data == numpy.iinfo(frame.data.dtype).max] = self.options.dummy
             converted = esperantoimage.EsperantoImage(data=input_data)  # This changes the shape
-            converted.data = self.geometry_transform(converted.data) 
+            converted.data = self.geometry_transform(converted.data)
             for k, v in self.headers.items():
                 if callable(v):
                     if k.endswith("s"):
@@ -463,8 +338,8 @@ class Converter:
                 else:
                     converted.header[k] = v
 
-            output_filename = self.options.output.format(index=((idx + self.options.offset)), 
-                                                         prefix=self.prefix, 
+            output_filename = self.options.output.format(index=((idx + self.options.offset)),
+                                                         prefix=self.prefix,
                                                          dirname=self.dirname)
             os.makedirs(os.path.dirname(output_filename), exist_ok=True)
             try:
@@ -481,25 +356,25 @@ class Converter:
 
     def treat_mask(self):
         if self.progress:
-            self.progress.update(self.progress.max_value-1, "Generate mask")
+            self.progress.update(self.progress.max_value - 1, "Generate mask")
         try:
             from pyFAI.ext import dynamic_rectangle
         except ImportError:
             print("A recent version of pyFAI is needed to export the mask in a format compatible wit CrysalisPro")
         else:
             mask = self.mask == numpy.iinfo(self.mask.dtype).max
-            esperantoimage.EsperantoImage.DUMMY=1
+            esperantoimage.EsperantoImage.DUMMY = 1
             new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
-            rectangles =  dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
-            self.progress.update(self.progress.max_value-0.5, f"Exporting {len(rectangles)} rectangles as mask")
-            with open(os.path.join(self.dirname,self.prefix+".set"), mode="w") as maskfile:
+            rectangles = dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
+            self.progress.update(self.progress.max_value - 0.5, f"Exporting {len(rectangles)} rectangles as mask")
+            with open(os.path.join(self.dirname, self.prefix + ".set"), mode="w") as maskfile:
                 for r in rectangles:
                     if r.area == 1:
                         maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n")
                     else:
-                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width-1} {r.row} {r.row+r.height-1}\r\n")            
-            
-        
+                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width-1} {r.row} {r.row+r.height-1}\r\n")
+
+
 def main():
 
     epilog = """return codes: 0 means a success. 1 means the conversion

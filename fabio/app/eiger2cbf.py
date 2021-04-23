@@ -37,7 +37,7 @@ to CBF and mimic the header from Dectris Pilatus.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "25/09/2020"
+__date__ = "23/04/2021"
 __status__ = "production"
 
 import logging
@@ -46,9 +46,10 @@ logger = logging.getLogger("eiger2cbf")
 import codecs
 import sys
 import os
-import glob
 
-import fabio
+from ..utils.cli import expand_args
+from ..openimage import openimage as fabio_open
+from .. import cbfimage, limaimage, eigerimage, version as fabio_version
 import numpy
 import argparse
 try:
@@ -220,23 +221,6 @@ def select_detecor(shape):
     return best
 
 
-def expand_args(args):
-    """
-    Takes an argv and expand it (under Windows, cmd does not convert *.tif into
-    a list of files.
-
-    :param list args: list of files or wildcards
-    :return: list of actual args
-    """
-    new = []
-    for afile in args:
-        if glob.has_magic(afile):
-            new += glob.glob(afile)
-        else:
-            new.append(afile)
-    return new
-
-
 def convert_one(input_filename, options, start_at=0):
     """
     Convert a single file using options
@@ -263,7 +247,7 @@ def convert_one(input_filename, options, start_at=0):
 
     try:
         logger.debug("Load '%s'", input_filename)
-        source = fabio.open(input_filename)
+        source = fabio_open(input_filename)
     except KeyboardInterrupt:
         raise
     except Exception as e:
@@ -272,8 +256,8 @@ def convert_one(input_filename, options, start_at=0):
         return -1
 
     shape = select_detecor((source.shape[-1], source.shape[-2]) if flip else source.shape)
-    pilatus_headers = fabio.cbfimage.PilatusHeader("Silicon sensor, thickness 0.001 m")
-    if isinstance(source, fabio.limaimage.LimaImage):
+    pilatus_headers = cbfimage.PilatusHeader("Silicon sensor, thickness 0.001 m")
+    if isinstance(source, limaimage.LimaImage):
         # Populate the Pilatus header from the Lima
         entry_name = source.h5.attrs.get("default")
         if entry_name:
@@ -302,7 +286,7 @@ def convert_one(input_filename, options, start_at=0):
                             pilatus_headers["Exposure_period"] = t1 + t2
                         except Exception as e:
                             logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
-    elif isinstance(source, fabio.eigerimage.EigerImage):
+    elif isinstance(source, eigerimage.EigerImage):
         raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
     else:
         raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
@@ -371,11 +355,11 @@ def convert_one(input_filename, options, start_at=0):
         if options.flip_lr:
             input_data = numpy.fliplr(input_data)
 
-        data[:input_data.shape[0], :input_data.shape[1]] = input_data
+        data[:input_data.shape[0],:input_data.shape[1]] = input_data
 
         mask = numpy.where(input_data == numpy.iinfo(frame.data.dtype).max)
         data[mask] = options.dummy
-        converted = fabio.cbfimage.CbfImage(data=data)
+        converted = cbfimage.CbfImage(data=data)
 
         if formula and destination:
             position = formula(idx)
@@ -429,7 +413,7 @@ def main():
                                      epilog=epilog)
     parser.add_argument("IMAGE", nargs="*",
                         help="File with input images")
-    parser.add_argument("-V", "--version", action='version', version=fabio.version,
+    parser.add_argument("-V", "--version", action='version', version=fabio_version,
                         help="output version and exit")
     parser.add_argument("-v", "--verbose", action='store_true', dest="verbose", default=False,
                         help="show information for each conversions")
