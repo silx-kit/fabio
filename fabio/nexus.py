@@ -146,12 +146,14 @@ class Nexus(object):
             logger.error("h5py module missing: NeXus not supported")
             raise RuntimeError("H5py module is missing")
 
-        pre_existing = os.path.exists(self.filename) or "w" in mode
+        pre_existing = os.path.exists(self.filename)
         if self.mode is None:
             if pre_existing:
                 self.mode = "r"
             else:
-                self.mode = "a"
+                self.mode = "w"
+        if "w" in self.mode:
+            pre_existing = False
 
         if self.mode == "r":
             self.file_handle = open(self.filename, mode=self.mode + "b")
@@ -166,7 +168,8 @@ class Nexus(object):
             self.h5.attrs["file_time"] = get_isotime()
             self.h5.attrs["file_name"] = self.filename
             self.h5.attrs["HDF5_Version"] = h5py.version.hdf5_version
-            self.h5.attrs["creator"] = creator or self.__class__.__name__
+            if creator is not None:
+                self.h5.attrs["creator"] = creator
 
     def close(self, end_time=None):
         """
@@ -343,11 +346,17 @@ class Nexus(object):
         :param entry: name of the entry
         :param subentry: all pyFAI description of detectors should be in a pyFAI sub-entry
         """
-        from . import __version__ as version
         entry_grp = self.new_entry(entry)
         pyFAI_grp = self.new_class(entry_grp, subentry, "NXsubentry")
-        pyFAI_grp["definition_local"] = str("pyFAI")
-        pyFAI_grp["definition_local"].attrs["version"] = str(version)
+        local_ds = pyFAI_grp.create_dataset("definition_local", data=subentry)
+        if subentry == "pyFAI":
+            try:
+                from pyFAI import __version__ as pyFAI_version
+            except ImportError:
+                pyFAI_version = None
+            if pyFAI_version is not None:
+                local_ds.attrs["version"] = str(version)
+
         det_grp = self.new_class(pyFAI_grp, name, "NXdetector")
         return det_grp
 
