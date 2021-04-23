@@ -48,8 +48,8 @@ class TestMrc(unittest.TestCase):
     """basic test"""
     mrcfilename = ('EMD-3001.map', "0p67_5s_0000.mrc")
     npyfilename = ('EMD-3001.npy', "0p67_5s_0000.npy")
-    results = """EMD-3001.map   73 43  -0.36814222  0.678705 0.006804995 0.1630334
-                 0p67_5s_0000.mrc 2048 2048 -344.0 33553.0 82.65322 243.21312"""
+    results = """EMD-3001.map   73 43  -0.36814222  0.678705 0.0062340125 0.16349247
+                 0p67_5s_0000.mrc 2048 2048 -344.0 33553.0 82.653259 243.213061"""
 
     def setUp(self):
         """Download files"""
@@ -73,15 +73,16 @@ class TestMrc(unittest.TestCase):
                 except Exception as err:
                     logger.error("unable to read: %s", filename)
                     raise err
-                self.assertAlmostEqual(mini, obj.getmin(), 4, "getmin" + ext)
-                self.assertAlmostEqual(maxi, obj.getmax(), 4, "getmax" + ext)
-                self.assertAlmostEqual(mean, obj.getmean(), 4, "getmean" + ext)
-                self.assertAlmostEqual(stddev, obj.getstddev(), 4, "getstddev" + ext)
-                self.assertEqual(shape, obj.shape, "shape" + ext)
+                self.assertAlmostEqual(mini, obj.getmin(), 4, f"{filename} getmin")
+                self.assertAlmostEqual(maxi, obj.getmax(), 4, f"{filename} getmax")
+                self.assertAlmostEqual(mean, obj.getmean(), 4, f"{filename} getmean")
+                self.assertAlmostEqual(stddev, obj.getstddev(), 4, f"{filename} getstddev")
+                self.assertEqual(shape, obj.shape, f"{filename} shape")
 
     def test_same(self):
         """ see if we can read mrc images and if they are the same as the numpy dump"""
         for mrcfilename, npyfilename in zip(self.mrcfilename, self.npyfilename):
+            logger.info("Comparing files %s and %s", mrcfilename, npyfilename)
             mrc = MrcImage()
             mrc.read(self.fn[mrcfilename])
             npy = fabio.open(self.fn[npyfilename])
