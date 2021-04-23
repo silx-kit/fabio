@@ -5,5 +5,5 @@ sphinx
 cython
 sphinxcontrib-programoutput
 nbsphinx
-lxml
+lxml>=4.6.3
 pillow

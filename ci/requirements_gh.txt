@@ -11,4 +11,4 @@ numpy; python_version>= '3.6'
 h5py
 cython
 Pillow
-lxml
+lxml>=4.6.3

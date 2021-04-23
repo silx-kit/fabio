@@ -4,6 +4,6 @@
 wheel
 numpy
 Cython
-lxml
+lxml>=4.6.3
 Pillow
 h5py
