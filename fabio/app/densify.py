@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ...
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "23/04/2021"
+__date__ = "27/04/2021"
 __status__ = "production"
 
 FOOTER = """
@@ -45,20 +45,112 @@ FOOTER = """
 import logging
 logging.basicConfig()
 logger = logging.getLogger("densify")
+import argparse
 import codecs
 import sys
 import os
 import glob
+import numpy
 from itertools import takewhile
 from .. import eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..nexus import get_isotime
-from ..utils.cli import ProgressBar
-import numpy
-import argparse
+from ..utils.cli import ProgressBar, expand_args
+
 try:
     import hdf5plugin
 except ImportError:
     pass
 
+EXIT_SUCCESS = 0
+EXIT_FAILURE = 1
+EXIT_ARGUMENT_FAILURE = 2
+
+
+def parse_args():
+    """Parse command line arguments and returns those arguments"""
+
+    epilog = """return codes: 0 means a success. 1 means the conversion
+                contains a failure, 2 means there was an error in the
+                arguments"""
+
+    parser = argparse.ArgumentParser(prog="densify",
+                                     description=__doc__,
+                                     epilog=epilog)
+    parser.add_argument("IMAGE", nargs="*",
+                        help="File with input images")
+    parser.add_argument("-V", "--version", action='version', version=fabio_version,
+                        help="output version and exit")
+    parser.add_argument("-v", "--verbose", action='store_true', dest="verbose", default=False,
+                        help="show information for each conversions")
+    parser.add_argument("--debug", action='store_true', dest="debug", default=False,
+                        help="show debug information")
+    group = parser.add_argument_group("main arguments")
+    group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
+                       help="show the list of available output formats and exit")
+    group.add_argument("-o", "--output", default='{baseame}_densify.h5', type=str,
+                       help="output filename")
+    group.add_argument("-D", "--dummy", type=int, default=None,
+                       help="Set masked values to this dummy value")
+
+    group = parser.add_argument_group("optional behaviour arguments")
+#     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
+#                        help="if an existing destination file cannot be" +
+#                        " opened, remove it and try again (this option" +
+#                        " is ignored when the -n option is also used)")
+#     group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
+#                        help="do not overwrite an existing file (this option" +
+#                        " is ignored when the -i option is also used)")
+#     group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
+#                        help="remove each existing destination file before" +
+#                        " attempting to open it (contrast with --force)")
+#     group.add_argument("-u", "--update", dest="update", action="store_true", default=False,
+#                        help="copy only when the SOURCE file is newer" +
+#                        " than the destination file or when the" +
+#                        " destination file is missing")
+#     group.add_argument("-i", "--interactive", dest="interactive", action="store_true", default=False,
+#                        help="prompt before overwrite (overrides a previous -n" +
+#                        " option)")
+    group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
+                       help="do everything except modifying the file system")
+
+#     group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
+#     group.add_argument("--rotation", type=int, default=180,
+#                        help="Rotate the initial image by this value in degrees. Must be a multiple of 90°. By default 180 deg (flip_up with origin=lower and flip_lr because the image is seen from the sample).")
+#     group.add_argument("--transpose", default=False, action="store_true",
+#                        help="Flip the x/y axis")
+#     group.add_argument("--flip-ud", dest="flip_ud", default=False, action="store_true",
+#                        help="Flip the image upside-down")
+#     group.add_argument("--flip-lr", dest="flip_lr", default=False, action="store_true",
+#                        help="Flip the image left-right")
+
+    try:
+        args = parser.parse_args()
+
+        if args.debug:
+            logger.setLevel(logging.DEBUG)
+
+        if args.list:
+            print("Supported output formats: LimaImage, soon EigerImage, NxMx")
+            return EXIT_SUCCESS
+
+        if len(args.IMAGE) == 0:
+            raise argparse.ArgumentError(None, "No input file specified.")
+
+        # the upper case IMAGE is used for the --help auto-documentation
+        args.images = expand_args(args.IMAGE)
+        args.images.sort()
+    except argparse.ArgumentError as e:
+        logger.error(e.message)
+        logger.debug("Backtrace", exc_info=True)
+        return EXIT_ARGUMENT_FAILURE
+    return args
+
+
+def main():
+    args = parse_args()
+
+
+if __name__ == "__main__":
+    main()
