@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "23/04/2021"
+__date__ = "27/04/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -74,9 +74,30 @@ class LimaImage(FabioImage):
         if not h5py:
             raise RuntimeError("fabio.LimaImage cannot be used without h5py. Please install h5py and restart")
 
-        FabioImage.__init__(self, data, header)
         self.dataset = [data]
+        self._data = None
+        FabioImage.__init__(self, data, header)
         self.h5 = None
+
+    @property
+    def nframes(self):
+        """Returns the number of frames contained in this file
+
+        :rtype: int
+        """
+        return len(self.dataset)
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        if isinstance(self.dataset, list):
+            # padd dataset
+            self.dataset += [None] * (self.nframes - len(self.dataset))
+        self.dataset[self.currentframe] = value
+        self._data = value
 
     def __repr__(self):
         if self.h5 is not None:
