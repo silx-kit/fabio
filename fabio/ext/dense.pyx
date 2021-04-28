@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #cython: embedsignature=True, language_level=3
 ## This is for optimisation
-##cython: boundscheck=False, wraparound=False, cdivision=True, initializedcheck=False,
+#cython: boundscheck=False, wraparound=False, cdivision=True, initializedcheck=False,
 ## This is for developping:
 #cython: profile=True, warn.undeclared=True, warn.unused=True, warn.unused_result=False, warn.unused_arg=True
 #
@@ -171,7 +171,7 @@ def distribution_uniform_mtc(shape):
 
 
 def distribution_normal_mtc(mu, sigma):
-    "Function to test normale distribution"
+    "Function to test normal distribution"
     shape = mu.shape
     assert mu.shape == sigma.shape
     cdef: 
@@ -251,7 +251,11 @@ def densify(float[:,::1] mask,
                         fres = fpos - pos
                         value = (1.0 - fres)*background[pos] + fres*background[pos+1]
                     if noisy:
-                        std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
+                        if pos+1 == size:
+                            std = background_std[pos]
+                            fres = 0.0
+                        else:
+                            std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
                         value = max(0.0, mt._normal(value, std))
                         
                     if integral:
