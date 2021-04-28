@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 #cython: embedsignature=True, language_level=3
 ## This is for optimisation
-#cython: boundscheck=False, wraparound=False, cdivision=True, initializedcheck=False,
+##cython: boundscheck=False, wraparound=False, cdivision=True, initializedcheck=False,
 ## This is for developping:
-##cython: profile=True, warn.undeclared=True, warn.unused=True, warn.unused_result=False, warn.unused_arg=True
+#cython: profile=True, warn.undeclared=True, warn.unused=True, warn.unused_result=False, warn.unused_arg=True
 #
 #    Project: Fable Input/Output
 #             https://github.com/silx-kit/fabio
@@ -42,7 +42,7 @@ from libc.stdint cimport int8_t, uint8_t, \
                          uint16_t, int16_t,\
                          int32_t, uint32_t,\
                          int64_t, uint64_t
-from libc.math cimport isfinite, log, sqrt, cos, M_PI, round                         
+from libc.math cimport isfinite, log, sqrt, cos, M_PI                         
 from libc.stdlib cimport RAND_MAX
 cimport cython             
                
@@ -263,87 +263,3 @@ def densify(float[:,::1] mask,
             j = index[i]
             dense[j//width, j%width] = intensity[i]
     return numpy.asarray(dense) 
-
-
-def densify_stack(float[:,::1] mask,
-                  float[::1] radius,
-                  uint32_t[::1] indptr,
-                  uint32_t[::1] index,
-                  any_t[::1] intensity,
-                  any_t dummy,
-                  dtype,
-                  float[:, ::1] background,
-                  float[:, ::1] background_std=None):
-    """
-    Densify a full stack of sparse representation to generate a normal frame 
-    
-    :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
-    :param radius: 1D array with the radial distance
-    :param indptr: index of the begining of the frames
-    :param index: position of non-background pixels
-    :param intensity: intensities of non background pixels (at index position)
-    :param dummy: numerical value for masked-out pixels in dense image
-    :param dtype: dtype of intensity.
-    :param background: 1D array with the background values at given distance from the center
-    :param background_std: 1D array with the background std at given distance from the center --> activates the noisy mode.
-    :return: dense frame as 2D array
-    """
-    cdef:
-        Py_ssize_t i, j, size, pos, width, height, nframes, frame
-        double value, fres, fpos, idelta, start, std
-        bint integral, noisy
-        any_t[:, :, ::1] dense
-        MT mt
-        
-    size = radius.shape[0]
-    nframes = background.shape[0]
-    assert background.shape[1] == size, "background.shape[1] == size"
-    assert intensity.shape[0] == index.shape[0], "index.shape[0] == intensity.shape[0]"
-    integral = numpy.issubdtype(dtype, numpy.integer)
-    height = mask.shape[0] 
-    width = mask.shape[1]
-    assert indptr.shape[0]-1 == nframes, "indptr.shape[0]-1 == nframes"
-    dense = numpy.empty((nframes, height, width), dtype=dtype)
-    if background_std is None:
-        noisy = False
-    else:
-        noisy=True
-        try:
-            mt=MT(time.time_ns())
-        except:
-            mt=MT(time.time()/EPS64)
-
-                
-    with nogil:
-        start = radius[0]
-        idelta = (size - 1)/(radius[size-1] - start)  
-        for frame in range(nframes):
-            #Process one frame
-            #Linear interpolation
-            for i in range(height):
-                for j in range(width):
-                    fpos = (mask[i, j] - start)*idelta
-                    if (fpos<0) or (fpos>=size) or (not isfinite(fpos)):
-                        dense[frame, i, j] = dummy 
-                    else:
-                        pos = <uint32_t> fpos
-                        if pos+1 == size:
-                            value = background[frame, pos]
-                            fres = 0.0
-                        else:
-                            fres = fpos - pos
-                            value = (1.0 - fres)*background[frame, pos] + fres*background[frame, pos+1]
-                        if noisy:
-                            std = (1.0 - fres)*background_std[frame, pos] + fres*background_std[frame, pos+1]
-                            value = max(0.0, mt._normal(value, std))
-                            
-                        if integral:
-                            dense[frame, i, j] =  <any_t>(value + 0.5) #this is rounding
-                        else:
-                            dense[frame, i, j] =  <any_t>(value) 
-            # Assignment of outliers
-            for i in range(indptr[frame], indptr[frame+1]):
-                j = index[i]
-                dense[frame, j//width, j%width] = intensity[i]
-    return numpy.asarray(dense) 
-                

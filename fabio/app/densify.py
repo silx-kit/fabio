@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "27/04/2021"
+__date__ = "28/04/2021"
 __status__ = "production"
 
 FOOTER = """
@@ -46,17 +46,12 @@ import logging
 logging.basicConfig()
 logger = logging.getLogger("densify")
 import argparse
-import codecs
-import sys
 import os
 import time
-import glob
-import numpy
-from itertools import takewhile
+import multiprocessing.pool
 from .. import eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
-from ..nexus import get_isotime
 from ..utils.cli import ProgressBar, expand_args
 
 try:
@@ -154,18 +149,21 @@ def parse_args():
 
 
 class Converter:
+    "Convert sparse format to dense HDF5 format"
 
     def __init__(self, args):
         self.args = args
         self.pb = ProgressBar("Decompression", 50, 50)
+        sparseimage.SparseImage.NOISY = self.args.noisy
 
     def decompress_one(self, filename):
-        self.pb.update(1, "Read input data")
+        "Decompress one input files"
+        self.pb.update(0, "Read input data")
         t0 = time.perf_counter()
         sparse = fabio_open(filename)
         assert isinstance(sparse, sparseimage.SparseImage)
         t1 = time.perf_counter()
-        sparse.NOISY = self.args.noisy
+
         self.pb.max_value = sparse.nframes
         if self.args.format.startswith("lima"):
             dest = limaimage.LimaImage()
@@ -173,9 +171,19 @@ class Converter:
             dest = eigerimage.EigerImage()
         else:
             raise RuntimeError(f"Unsupported output format {self.args.format}")
-        for idx, frame in enumerate(sparse):
+        self.pb.update(1, "Create thread pool")
+        pool = multiprocessing.pool.ThreadPool(multiprocessing.cpu_count())
+        self.pb.update(1, "Populate thread pool")
+
+        future_frames = {idx: pool.apply_async(sparse._generate_data, (idx,))
+                         for idx in range(sparse.nframes)}
+        pool.close()
+        for idx, future_frame in future_frames.items():
             self.pb.update(idx, f"Decompress frame #{idx:04d}")
-            dest.dataset.append(frame.data)
+            dest.set_data(future_frame.get(), idx)
+        pool.join()
+
+        # dest.set_data
         t2 = time.perf_counter()
         output = self.args.output
         if self.args.output is None:
@@ -183,11 +191,14 @@ class Converter:
         self.pb.update(self.pb.max_value, f"Save {output}")
         dest.save(output)
         t3 = time.perf_counter()
+        self.pb.clear()
+        print(f"Densify of {filename} --> {output} took:")
         print(f"Read input: {t1-t0:.3f}s")
         print(f"Decompress: {t2-t1:.3f}s")
         print(f"Write outp: {t3-t2:.3f}s")
 
     def decompress(self):
+        "Decompress all input files"
         for filename in self.args.images:
             self.decompress_one(filename)
 
