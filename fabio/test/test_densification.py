@@ -32,16 +32,38 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "25/11/2020"
+__date__ = "28/04/2021"
 
 import unittest
 import numpy
 import logging
 logger = logging.getLogger(__name__)
 from ..sparseimage import densify, cython_densify
+from ..ext.dense import distribution_uniform_mtc, distribution_normal_mtc
 
 
 class TestDensification(unittest.TestCase):
+
+    def test_rng_uniform(self):
+        shape = (100, 100)
+        U = distribution_uniform_mtc(shape).ravel()
+        d, p = numpy.histogram(U, 100)
+        eps = 1e-3
+        self.assertGreater(p[0], 0)
+        self.assertLess(p[0], eps)
+        self.assertGreater(p[-1], 1 - eps)
+        self.assertLess(p[-1], 1)
+        self.assertGreater(d.min(), 50)
+        self.assertLess(d.max(), 150)
+
+    def test_rng_normal(self):
+        shape = (100, 100)
+        mu = 5.5
+        sigma = 1.5
+        one = numpy.ones(shape)
+        N = distribution_normal_mtc(one * mu, one * sigma)
+        self.assertAlmostEqual(N.mean(), mu, 1)
+        self.assertAlmostEqual(N.std(), sigma, 1)
 
     def test_cython(self):
         shape = 256, 256
