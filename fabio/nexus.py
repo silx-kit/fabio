@@ -33,7 +33,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "23/04/2021"
+__date__ = "28/04/2021"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
 
@@ -83,10 +83,10 @@ def from_isotime(text, use_tz=False):
     if len(text) == 1:
         # just in case someone sets as a list
         text = text[0]
-    try:
-        text = text.decode("ascii")
-    except (UnicodeError, AttributeError):
-        text = str(text)
+    if isinstance(text, bytes):
+        text = text.decode()
+    if len(text) > 3 and text.startswith("b") and text[1] == text[-1] and text[1] in ('"', "'"):
+        text = text[2:-1]
     if len(text) < 19:
         logger.warning("Not a iso-time string: %s", text)
         return
