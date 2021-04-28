@@ -188,7 +188,6 @@ def distribution_normal_mtc(mu, sigma):
         mt = MT(time.time_ns())
     except:
         mt = MT(time.time()/EPS64)
-        
     with nogil:
         for idx in range(size):
             ary[idx] = mt._normal(cmu[idx], csigma[idx])
