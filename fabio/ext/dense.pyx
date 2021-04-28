@@ -163,7 +163,11 @@ def distribution_uniform_mtc(shape):
     cdef: 
         uint64_t size = numpy.prod(shape), idx
         double[::1] ary = numpy.empty(size)
-        MT mt = MT(time.time_ns())
+        MT mt 
+    try:
+        mt = MT(time.time_ns())
+    except:
+        mt = MT(time.time()/EPS64)
     with nogil:
         for idx in range(size):
             ary[idx] = mt._uniform()
@@ -180,6 +184,10 @@ def distribution_normal_mtc(mu, sigma):
         double[::1] cmu = numpy.ascontiguousarray(mu, dtype=numpy.float64).ravel()
         double[::1] csigma = numpy.ascontiguousarray(sigma, dtype=numpy.float64).ravel()
         MT mt = MT(time.time_ns())
+    try:
+        mt = MT(time.time_ns())
+    except:
+        mt = MT(time.time()/EPS64)
         
     with nogil:
         for idx in range(size):
