@@ -84,6 +84,9 @@ cdef class MT:
         uint64_t mt[312]
         uint32_t mti
         uint64_t mag01[2]
+        bint has_spare
+        double spare
+
     
     def __init__(self, seed):
         self.mti = NN + 1
@@ -96,6 +99,7 @@ cdef class MT:
         self.mag01[0] = 0ULL
         self.mag01[1] = MATRIX_A
         self.mti = NN
+        self.has_spare = False
         
     cdef inline uint64_t genrand64(self) nogil:
         cdef: 
@@ -133,7 +137,8 @@ cdef class MT:
         "Return a random value between [0:1["
         return self._uniform()
     
-    cdef inline double _normal(self, double mu, double sigma) nogil:
+    cdef inline double _normal_bm(self, double mu, double sigma) nogil:
+        "Box-Muller implementation of the normal distribution"
         cdef:
             double u1=0.0, u2=0.0
     
@@ -143,54 +148,74 @@ cdef class MT:
 
         return sigma * sqrt(-2.0 * log(u1)) * cos(TWO_PI * u2) + mu;
 
+    cdef inline double _normal_m(self, double mu, double sigma) nogil:
+        "Marsaglia implementation of the normal distribution, 2xfaster than Box-Muller"
+        cdef: 
+            double u1=0.0, u2=0.0, s=0.0
+        if self.has_spare:
+            self.has_spare = False
+            return mu + self.spare * sigma 
+        else:
+            while (s>=1 or s==0.0):
+                u1 = 2.0 * self._uniform() - 1.0
+                u2 = 2.0 * self._uniform() - 1.0
+                s = u1 * u1 + u2 * u2;
+            s = sqrt(-2.0*log(s)/s)
+            self.spare = u2 * s
+            self.has_spare = True
+        return mu + sigma * u1 * s;
+
     def normal(self, mu, sigma): 
         """
-        Calculate the gaussian distribution using the Box–Muller algorithm
+        Calculate the gaussian distribution using the Marsaglia algorithm
 
         Credits:
+        https://en.wikipedia.org/wiki/Marsaglia_polar_method
         https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
 
         :param mu: the center of the distribution
         :param sigma: the width of the distribution
         :return: random value
         """       
-        return self._normal(mu, sigma)
+        return self._normal_m(mu, sigma)
 
 
 
-def distribution_uniform_mtc(shape):
+def distribution_uniform_mtc(shape, seed=None):
     "Function to test uniform distribution"
+    if seed is None:  
+        try:
+            seed = time.time_ns()
+        except:
+            seed = int(time.time()*1e9)
     cdef: 
         uint64_t size = numpy.prod(shape), idx
         double[::1] ary = numpy.empty(size)
-        MT mt 
-    try:
-        mt = MT(time.time_ns())
-    except:
-        mt = MT(time.time()/EPS64)
+        MT mt = MT(seed)
     with nogil:
         for idx in range(size):
             ary[idx] = mt._uniform()
     return numpy.asarray(ary).reshape(shape)      
 
 
-def distribution_normal_mtc(mu, sigma):
+def distribution_normal_mtc(mu, sigma, seed=None):
     "Function to test normal distribution"
     shape = mu.shape
     assert mu.shape == sigma.shape
+    if seed is None:  
+        try:
+            seed = time.time_ns()
+        except:
+            seed = int(time.time()*1e9)
     cdef: 
         uint64_t size = numpy.prod(shape), idx
         double[::1] ary = numpy.empty(size)
         double[::1] cmu = numpy.ascontiguousarray(mu, dtype=numpy.float64).ravel()
         double[::1] csigma = numpy.ascontiguousarray(sigma, dtype=numpy.float64).ravel()
-        MT mt = MT(time.time_ns())
-    try:
-        mt = MT(time.time_ns())
-    except:
-        mt = MT(time.time()/EPS64)
+        MT mt = MT(seed)
     with nogil:
         for idx in range(size):
-            ary[idx] = mt._normal(cmu[idx], csigma[idx])
+            ary[idx] = mt._normal_m(cmu[idx], csigma[idx])
     return numpy.asarray(ary).reshape(shape)        
 
 
@@ -237,7 +262,7 @@ def densify(float[:,::1] mask,
         try:
             mt=MT(time.time_ns())
         except:
-            mt=MT(time.time()/EPS64)
+            mt=MT(time.time()*1e9)
                 
     with nogil:
         start = radius[0]
@@ -263,7 +288,7 @@ def densify(float[:,::1] mask,
                             fres = 0.0
                         else:
                             std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
-                        value = max(0.0, mt._normal(value, std))
+                        value = max(0.0, mt._normal_m(value, std))
                         
                     if integral:
                         dense[i,j] =  <any_t>(value + 0.5) #this is rounding
