@@ -24,7 +24,7 @@
 
 __authors__ = ["V. Valls"]
 __license__ = "MIT"
-__date__ = "27/04/2021"
+__date__ = "28/04/2021"
 
 import os
 import numpy
@@ -66,10 +66,7 @@ def configuration(parent_package='', top_path=None):
         name="dense",
         sources=["dense.pyx"],
         include_dirs=[numpy.get_include()],
-        language='c',
-        #extra_link_args=['-fopenmp'],
-        #extra_compile_args=['-fopenmp'])
-        )
+        language='c')
     return config
 
 
