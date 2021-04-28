@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "12/02/2021"
+__date__ = "27/04/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -226,6 +226,31 @@ class SparseImage(FabioImage):
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img
+
+    def get_stack(self):
+        """Returns the full, dense stack"""
+        if cython_densify is not None:
+            return cython_densify.densify_stack(self.mask,
+                                                 self.radius,
+                                                 self.frame_ptr,
+                                                 self.index,
+                                                 self.intensity,
+                                                 self.dummy,
+                                                 self.intensity.dtype,
+                                                 self.background_avg,
+                                                 self.background_std if self.noisy else None)
+        else:
+            # Fall-back on numpy code.
+            dense = numpy.empty((self.nframes,) + self.shape, dtype=self.intensity.dtype)
+            for index in range(self.nframes):
+                start, stop = self.frame_ptr[index:index + 2]
+                dense[index] = densify(self.mask,
+                                       self.radius,
+                                       self.index[start:stop],
+                                       self.intensity[start:stop],
+                                       self.dummy,
+                                       self.background_avg[index],
+                                       self.background_std[index] if self.noisy else None)
 
     def previous(self):
         """ returns the previous frame in the series as a fabioimage """

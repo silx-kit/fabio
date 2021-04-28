@@ -87,17 +87,33 @@ class LimaImage(FabioImage):
         """
         return len(self.dataset)
 
-    @property
-    def data(self):
+    def get_data(self):
+        if self._data is None and len(self.dataset) >= self.currentframe:
+            self._data = self.dataset[self.currentframe]
         return self._data
 
-    @data.setter
-    def data(self, value):
+    def set_data(self, data, index=None):
+        """Set the data for frame index
+
+        :param data: numpy array
+        :param int index: index of the frame (by default: current one)
+        :raises IndexError: If the frame number is out of the available range.
+        """
+        if index is None:
+            index = self.currentframe
         if isinstance(self.dataset, list):
-            # padd dataset
-            self.dataset += [None] * (self.nframes - len(self.dataset))
-        self.dataset[self.currentframe] = value
-        self._data = value
+            if index == len(self.dataset):
+                self.dataset.append(data)
+            elif index > len(self.dataset):
+            # pad dataset with None ?
+                self.dataset += [None] * (1 + index - len(self.dataset))
+                self.dataset[index] = data
+            else:
+                self.dataset[index] = data
+        if index == self.currentframe:
+            self._data = data
+
+    data = property(get_data, set_data)
 
     def __repr__(self):
         if self.h5 is not None:
