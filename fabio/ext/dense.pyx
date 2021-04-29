@@ -3,7 +3,7 @@
 ## This is for optimisation
 #cython: boundscheck=False, wraparound=False, cdivision=True, initializedcheck=False,
 ## This is for developping:
-#cython: profile=True, warn.undeclared=True, warn.unused=True, warn.unused_result=False, warn.unused_arg=True
+##cython: profile=True, warn.undeclared=True, warn.unused=True, warn.unused_result=False, warn.unused_arg=True
 #
 #    Project: Fable Input/Output
 #             https://github.com/silx-kit/fabio
@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "28/04/2021"  
+__date__ = "29/04/2021"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -60,13 +60,15 @@ ctypedef fused any_t:
 
 #Few constants for 64-bit Mersenne Twisters
 cdef:
-    uint32_t NN=312
-    uint32_t MM=156
-    uint64_t MATRIX_A=0xB5026F5AA96619E9ULL
-    uint64_t UM=0xFFFFFFFF80000000ULL # Most significant 33 bits
-    uint64_t LM=0x7FFFFFFFULL #Least significant 31 bits
+    uint32_t NN = 312
+    uint32_t MM = 156
+    uint64_t MATRIX_A = 0xB5026F5AA96619E9ULL
+    uint64_t UM = 0xFFFFFFFF80000000ULL # Most significant 33 bits
+    uint64_t LM = 0x7FFFFFFFULL #Least significant 31 bits
+    double NRM53 = 1.0 / ((1<<53)-1) #Normalisation for 53 bit integer
     double EPS64 = numpy.finfo(numpy.float64).eps
     double TWO_PI = 2.0 * M_PI
+    
 
 cdef class MT:
     """
@@ -131,7 +133,7 @@ cdef class MT:
     
     @cython.cdivision(True)
     cdef inline double _uniform(self) nogil:
-        return (self.genrand64() >> 11) * (1.0/9007199254740991.0)
+        return (self.genrand64() >> 11) * NRM53
     
     def uniform(self):
         "Return a random value between [0:1["
@@ -142,7 +144,7 @@ cdef class MT:
         cdef:
             double u1=0.0, u2=0.0
     
-        while (u1 < EPS64):
+        while (u1 == 0.0):
             u1 = self._uniform()
             u2 = self._uniform()
 
