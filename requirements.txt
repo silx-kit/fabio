@@ -1,7 +1,7 @@
 #List of dependecies used by PIP but also by ReadTheDocs to generate the documentation on the fly
 numpy
 cython
-lxml
+lxml>=4.6.3
 h5py
 hdf5plugin
 sphinx
