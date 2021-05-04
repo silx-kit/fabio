@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "12/03/2021"
+__date__ = "04/05/2021"
 
 import os
 import logging
@@ -431,12 +431,12 @@ class FabioImage(_FabioArray):
         self._file = None
         if type(data) in fabioutils.StringTypes:
             raise TypeError("Data should be numpy array")
+        self._nframes = 1
+        self.currentframe = 0
         self.data = self.check_data(data)
         self.header = self.check_header(header)
         # cache for image statistics
 
-        self._nframes = 1
-        self.currentframe = 0
         self.filename = None
         self.filenumber = None
 
