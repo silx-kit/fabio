@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 from .utilstest import UtilsTest
 from .. import nexus
+import numpy
 
 
 class TestNexus(unittest.TestCase):
@@ -42,7 +43,7 @@ class TestNexus(unittest.TestCase):
 
     def test_nexus(self):
         "Test creation of Nexus files"
-        fname = os.path.join(UtilsTest.tempdir, "nexus.h5")
+        fname = os.path.join(UtilsTest.tempdir, "nexus1.h5")
         nex = nexus.Nexus(fname)
         entry = nex.new_entry("entry")
         nex.new_instrument(entry, "ID00")
@@ -53,11 +54,12 @@ class TestNexus(unittest.TestCase):
         os.unlink(fname)
 
     def test_from_time(self):
-        fname = os.path.join(UtilsTest.tempdir, "nexus.h5")
+        fname = os.path.join(UtilsTest.tempdir, "nexus2.h5")
         nex = nexus.Nexus(fname)
         entry = nex.new_entry("entry")
         time1 = nexus.from_isotime(entry["start_time"][()])
-        entry["bad_time"] = [entry["start_time"][()]]  # this is a list
+        ltime = [str(entry["start_time"][()]).encode()]
+        entry.create_dataset("bad_time", data=ltime)
         time2 = nexus.from_isotime(entry["bad_time"][()])
         self.assertEqual(time1, time2, "start_time in list does not works !")
         nex.close()
