@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "28/04/2021"
+__date__ = "04/05/2021"
 __status__ = "production"
 
 FOOTER = """
@@ -45,10 +45,12 @@ FOOTER = """
 import logging
 logging.basicConfig()
 logger = logging.getLogger("densify")
+import sys
 import argparse
 import os
 import time
 import multiprocessing.pool
+import numpy
 from .. import eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
@@ -131,7 +133,7 @@ def parse_args():
             logger.setLevel(logging.DEBUG)
 
         if args.list:
-            print("Supported output formats: LimaImage, soon EigerImage, NxMx")
+            print("Supported output formats: LimaImage, EigerImage, soon NxMx")
             return EXIT_SUCCESS
 
         if len(args.IMAGE) == 0:
@@ -186,6 +188,8 @@ class Converter:
         # dest.set_data
         t2 = time.perf_counter()
         output = self.args.output
+        if self.args.format.startswith("eiger"):
+            dest.dataset = [numpy.asarray(dest.dataset)]
         if self.args.output is None:
             output = os.path.splitext(filename)[0] + "_dense.h5"
         self.pb.update(self.pb.max_value, f"Save {output}")
@@ -205,9 +209,18 @@ class Converter:
 
 def main():
     args = parse_args()
-    c = Converter(args)
-    c.decompress()
+    if args == EXIT_ARGUMENT_FAILURE:
+        raise
+    try:
+        c = Converter(args)
+        c.decompress()
+    except Exception as err:
+        logger.error(err.message)
+        logger.debug("Backtrace", exc_info=True)
+        return EXIT_FAILURE
+    else:
+        return EXIT_SUCCESS
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
