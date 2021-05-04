@@ -165,7 +165,8 @@ class Converter:
         sparse = fabio_open(filename)
         assert isinstance(sparse, sparseimage.SparseImage)
         t1 = time.perf_counter()
-
+        if self.args.dummy is not None:
+            sparse.dummy = self.args.dummy
         self.pb.max_value = sparse.nframes
         if self.args.format.startswith("lima"):
             dest = limaimage.LimaImage()
