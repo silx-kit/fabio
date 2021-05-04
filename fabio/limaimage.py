@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/05/2021"
+__date__ = "04/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -49,6 +49,7 @@ except ImportError:
 try:
     import hdf5plugin
 except ImportError:
+    hdf5plugin = None
 
 
 class LimaImage(FabioImage):
