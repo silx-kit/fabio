@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "29/04/2021"  
+__date__ = "03/05/2021"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -262,9 +262,10 @@ def densify(float[:,::1] mask,
     else:
         noisy=True
         try:
-            mt=MT(time.time_ns())
-        except:
-            mt=MT(time.time()*1e9)
+            value = time.time_ns()
+        except Exception:
+            value = int(time.time()*1e9)
+        srand(<unsigned int> (value%RAND_MAX))
                 
     with nogil:
         start = radius[0]

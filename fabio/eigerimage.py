@@ -45,11 +45,11 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/04/2020"
+__date__ = "03/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
-
+import numpy
 try:
     import h5py
 except ImportError:
@@ -57,6 +57,14 @@ except ImportError:
 
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
+from .nexus import Nexus
+try:
+    import hdf5plugin
+except ImportError:
+    compression = {"compression":"gzip",
+                   "compression_opts":1}
+else:
+    compression = hdf5plugin.Bitshuffle()
 
 
 class EigerImage(FabioImage):
@@ -66,7 +74,7 @@ class EigerImage(FabioImage):
 
     DESCRIPTION = "Eiger data files based on HDF5"
 
-    DEFAULT_EXTENSIONS = ["h5",  "hdf5"]
+    DEFAULT_EXTENSIONS = ["h5", "hdf5"]
 
     def __init__(self, data=None, header=None):
         """
@@ -74,9 +82,12 @@ class EigerImage(FabioImage):
         """
         if not h5py:
             raise RuntimeError("fabio.EigerImage cannot be used without h5py. Please install h5py and restart")
-
+        if data is None:
+            self.dataset = [None]
+        else:
+            self.dataset = [numpy.atleast_3d(data)]
+        self._data = None
         FabioImage.__init__(self, data, header)
-        self.dataset = [data]
         self.h5 = None
 
     def __repr__(self):
@@ -117,7 +128,7 @@ class EigerImage(FabioImage):
             if "data" in entry:
                 data = entry["data"]
                 if isinstance(data, h5py.Group):
-                    "Newer format /entry/data/data_1"
+                    "Newer format /entry/data/data_000001"
                     datasets = [i for i in data.keys() if i.startswith("data")]
                     datasets.sort()
                     try:
@@ -137,18 +148,17 @@ class EigerImage(FabioImage):
                         lstds.append(entry[i])
                 except KeyError:
                     pass
-
-        if not lstds:
+        if lstds:
+            self.dataset = lstds
+        else:
             raise NotGoodReader("HDF5 file does not contain an Eiger-like structure.")
-
-        self.dataset = lstds
-        self._nframes = sum(i.shape[0] for i in lstds)
 
         if frame is not None:
             return self.getframe(int(frame))
         else:
             self.currentframe = 0
-            self.data = self.dataset[0][self.currentframe, :, :]
+
+            self._data = self.dataset[0][self.currentframe,:,:]
             self._shape = None
             return self
 
@@ -157,15 +167,25 @@ class EigerImage(FabioImage):
         try to write image
         :param fname: name of the file
         """
-        if len(self.dataset.shape) == 2:
-            self.dataset.shape = (1,) + self.dataset.shape
-        with h5py.File(fname, mode="w") as h5file:
-            grp = h5file.require_group("entry/data")
-            if len(self.dataset) > 1:
-                for i, ds in enumerate(self.dataset):
-                    grp["data_%06i" % i] = ds
-            else:
-                grp["data"] = self.dataset
+        with Nexus(fname, mode="w") as nxs:
+            entry = nxs.new_entry(entry="entry", program_name=None, force_name=True)
+            data_grp = nxs.new_class(entry, "data", "NXdata")
+
+            for i, ds in enumerate(self.dataset):
+                if ds is None:
+                    # we are in a trouble
+                    data = numpy.atleast_2d(numpy.NaN)
+                elif isinstance(ds, h5py.Dataset):
+                    data = numpy.atleat_2d(ds[()])
+                else:
+                    data = numpy.atleast_2d(ds)
+                if len(data.shape) == 2:
+                    data.shape = (1,) + data.shape
+                chunks = (1,) + data.shape[-2:]
+                if len(self.dataset) > 1:
+                    data_grp.create_dataset(f"data_{i+1:06d}", data=data, chunks=chunks, **compression)
+                elif len(self.dataset) == 1:
+                    data_grp.create_dataset(f"data", data=data, chunks=chunks, **compression)
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
@@ -204,7 +224,43 @@ class EigerImage(FabioImage):
     def close(self):
         if self.h5 is not None:
             self.h5.close()
-            self.dataset = None
+            self.dataset = []
+
+    @property
+    def nframes(self):
+        """Returns the number of frames contained in this file
+
+        :rtype: int
+        """
+        return sum(i.shape[0] if i.ndim > 2 else 1 for i in self.dataset)
+
+    def get_data(self):
+        if self._data is None and len(self.dataset) >= self.currentframe:
+            self._data = self.dataset[self.currentframe]
+        return self._data
+
+    def set_data(self, data, index=None):
+        """Set the data for frame index
+
+        :param data: numpy array
+        :param int index: index of the frame (by default: current one)
+        :raises IndexError: If the frame number is out of the available range.
+        """
+        if index is None:
+            index = self.currentframe
+        if isinstance(self.dataset, list):
+            if index == len(self.dataset):
+                self.dataset.append(data)
+            elif index > len(self.dataset):
+            # pad dataset with None ?
+                self.dataset += [None] * (1 + index - len(self.dataset))
+                self.dataset[index] = data
+            else:
+                self.dataset[index] = data
+        if index == self.currentframe:
+            self._data = data
+
+    data = property(get_data, set_data)
 
 
 eigerimage = EigerImage

@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "27/04/2021"
+__date__ = "03/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -49,10 +49,6 @@ except ImportError:
 try:
     import hdf5plugin
 except ImportError:
-    compression = {"compression":"gzip",
-                   "compression_opts":1}
-else:
-    compression = hdf5plugin.Bitshuffle()
 
 
 class LimaImage(FabioImage):
@@ -223,6 +219,13 @@ class LimaImage(FabioImage):
             mode = "a"
         else:
             mode = "w"
+        if hdf5plugin is None:
+            compression = {"compression":"gzip",
+                   "compression_opts":1}
+        else:
+            logger.warning("hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)")
+            compression = hdf5plugin.Bitshuffle()
+
         with nexus.Nexus(abs_name, mode=mode, creator="LIMA-1.9.7") as nxs:
             entry = nxs.new_entry(entry="entry",
                                   program_name=None,
