@@ -45,10 +45,11 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/05/2021"
+__date__ = "05/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
+import posixpath
 import numpy
 try:
     import h5py
@@ -170,7 +171,8 @@ class EigerImage(FabioImage):
         with Nexus(fname, mode="w") as nxs:
             entry = nxs.new_entry(entry="entry", program_name=None, force_name=True)
             data_grp = nxs.new_class(entry, "data", "NXdata")
-
+            entry.attrs["default"] = "data"
+            nxs.h5.attrs["default"] = "entry"
             for i, ds in enumerate(self.dataset):
                 if ds is None:
                     # we are in a trouble
@@ -183,9 +185,12 @@ class EigerImage(FabioImage):
                     data.shape = (1,) + data.shape
                 chunks = (1,) + data.shape[-2:]
                 if len(self.dataset) > 1:
-                    data_grp.create_dataset(f"data_{i+1:06d}", data=data, chunks=chunks, **compression)
+                    hds = data_grp.create_dataset(f"data_{i+1:06d}", data=data, chunks=chunks, **compression)
                 elif len(self.dataset) == 1:
-                    data_grp.create_dataset(f"data", data=data, chunks=chunks, **compression)
+                    hds = data_grp.create_dataset(f"data", data=data, chunks=chunks, **compression)
+                hds.attrs["interpretation"] = "image"
+                if "signal" not in data_grp.attrs:
+                    data_grp["signal"] = posixpath.split(hds.name)[-1]
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
@@ -249,13 +254,24 @@ class EigerImage(FabioImage):
         if index is None:
             index = self.currentframe
         if isinstance(self.dataset, list):
-            if index == len(self.dataset):
+            frame_idx = [len(ds) if ds is not None else 1 for ds in self.dataset]
+            end_ds = numpy.cumsum(frame_idx)
+            nframes = end_ds[-1]
+            if index == nframes:
                 self.dataset.append(data)
-            elif index > len(self.dataset):
+            elif index > nframes:
             # pad dataset with None ?
                 self.dataset += [None] * (1 + index - len(self.dataset))
                 self.dataset[index] = data
             else:
+                for idx, end in enumerate(end_ds):
+                    start = 0 if idx == 0 else end_ds[idx - 1]
+                    if end > index > start:
+                        ds = self.dataset[idx]
+                        if ds is None or ds.ndims == 2:
+                            self.dataset[idx] = data
+                        else:
+                            ds[index - start] = data
                 self.dataset[index] = data
         if index == self.currentframe:
             self._data = data
