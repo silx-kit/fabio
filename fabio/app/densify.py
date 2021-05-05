@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "04/05/2021"
+__date__ = "05/05/2021"
 __status__ = "production"
 
 FOOTER = """
@@ -50,14 +50,17 @@ import argparse
 import os
 import time
 import multiprocessing.pool
+import json
 import numpy
 from .. import eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..utils.cli import ProgressBar, expand_args
+from ..nexus import Nexus
 
 try:
     import hdf5plugin
+    import h5py
 except ImportError:
     pass
 
@@ -150,6 +153,54 @@ def parse_args():
     return args
 
 
+def load_param(fn):
+    "Extract compression parameters from a sparse HDF5 file"
+    with Nexus(fn, "r") as nxs:
+        ndata = nxs.get_default_NXdata()
+        mask = numpy.uint32(1) - numpy.isfinite(ndata["mask"])
+        config = ndata.parent["sparsify/configuration/data"][()]
+    dico = json.loads(config)
+    dico["mask"] = mask
+    return dico
+
+
+def save_master(outfile, sparsefile, nframes=None):
+    "Save a master file in addition to the data file, ala Dectris"
+    master = os.path.splitext(outfile)[-1::-1].split("_", 1)[1][-1::-1] + "_master.h5"
+    if os.path.exists(master):
+        logger.warning("Master file exists, skipping")
+    else:
+        config = load_param(sparsefile)
+        import pyFAI
+        # Load
+        d = load_param(sparsefile)
+        ai = pyFAI .load(d["geometry"])
+        with Nexus(master, mode="w") as nxs:
+            entry = nxs.new_entry(program_name=None, force_name=True)
+            data = nxs.new_class(entry, "data", "NXdata")
+            data["data_000001"] = h5py.ExternalLink(outfile, "entry/data/data")
+            instrument = nxs.new_class(entry, "instrument", "NXinstrument")
+            beam = nxs.new_class(instrument, "beam", "NXbeam")
+            beam["incident_wavelength"] = numpy.float32(1e10 * ai.wavelength)
+            beam["incident_wavelength"].attrs["units"] = "angstrom"
+            detector = nxs.new_class(instrument, "detector", "NXdetector")
+            detector["beam_center_x"] = numpy.float32(ai.getFit2D()["centerX"])
+            detector["beam_center_x"].attrs["unit"] = "pixel"
+            detector["beam_center_y"] = numpy.float32(ai.getFit2D()["centerY"])
+            detector["beam_center_y"].attrs["unit"] = "pixel"
+            detector["description"] = ai.detector.name
+            detector["distance"] = ai.dist
+            spec = nxs.new_class(detector, "detectorSpecific", "NXcollection")
+            spec["flatfield_correction_applied"] = numpy.int32(1)
+            detector["pixel_mask_applied"] = numpy.int32(1)
+            detector["x_pixel_size"] = numpy.float32(ai.detector.pixel2)
+            detector["y_pixel_size"] = numpy.float32(ai.detector.pixel2)
+            nxs.h5["/entry/instrument/detector/detectorSpecific/pixel_mask"] = d["mask"]
+            if nframes is None:
+                nframes = fabio_open(sparsefile).nframes
+            nxs.h5["/entry/instrument/detector/detectorSpecific/nimages"] = numpy.uint32(nframes)
+
+
 class Converter:
     "Convert sparse format to dense HDF5 format"
 
@@ -172,6 +223,7 @@ class Converter:
             dest = limaimage.LimaImage()
         elif self.args.format.startswith("eiger"):
             dest = eigerimage.EigerImage()
+            dest.dataset = [numpy.empty((sparse.nframes,) + sparse.shape, sparse.dtype)]
         else:
             raise RuntimeError(f"Unsupported output format {self.args.format}")
         self.pb.update(1, "Create thread pool")
@@ -189,12 +241,16 @@ class Converter:
         # dest.set_data
         t2 = time.perf_counter()
         output = self.args.output
-        if self.args.format.startswith("eiger"):
-            dest.dataset = [numpy.asarray(dest.dataset)]
         if self.args.output is None:
-            output = os.path.splitext(filename)[0] + "_dense.h5"
+            if self.args.format.startswith("lima"):
+                output = os.path.splitext(filename)[0] + "_dense.h5"
+            elif self.args.format.startswith("eiger"):
+                output = os.path.splitext(filename)[0] + "_000001.h5"
+
         self.pb.update(self.pb.max_value, f"Save {output}")
         dest.save(output)
+        if self.args.format.startswith("eiger"):
+            save_master(output, filename, sparse.nframes)
         t3 = time.perf_counter()
         self.pb.clear()
         print(f"Densify of {filename} --> {output} took:")
