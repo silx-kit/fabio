@@ -45,7 +45,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "05/05/2021"
+__date__ = "07/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -62,10 +62,7 @@ from .nexus import Nexus
 try:
     import hdf5plugin
 except ImportError:
-    compression = {"compression":"gzip",
-                   "compression_opts":1}
-else:
-    compression = hdf5plugin.Bitshuffle()
+    hdf5plugin = None
 
 
 class EigerImage(FabioImage):
@@ -168,6 +165,13 @@ class EigerImage(FabioImage):
         try to write image
         :param fname: name of the file
         """
+        if hdf5plugin is None:
+            logger.warning("hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)")
+            compression = {"compression":"gzip",
+                   "compression_opts":1}
+        else:
+            compression = hdf5plugin.Bitshuffle()
+
         with Nexus(fname, mode="w") as nxs:
             entry = nxs.new_entry(entry="entry", program_name=None, force_name=True)
             data_grp = nxs.new_class(entry, "data", "NXdata")
