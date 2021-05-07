@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "28/04/2021"
+__date__ = "05/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -123,7 +123,7 @@ class SparseImage(FabioImage):
         self.index = None
         self.intensity = None
         self.dummy = None
-        self.noisy = self.__class__.NOISY
+        self.noisy = float(self.__class__.NOISY)
         self.h5 = None
 
     def close(self):
@@ -191,7 +191,7 @@ class SparseImage(FabioImage):
                                  self.dummy,
                                  self.intensity.dtype,
                                  self.background_avg[index],
-                                 self.background_std[index] if self.noisy else None)
+                                 self.background_std[index] * self.noisy if self.noisy else None)
         else:
             # Fall-back on numpy code.
             return densify(self.mask,
@@ -200,7 +200,7 @@ class SparseImage(FabioImage):
                            self.intensity[start:stop],
                            self.dummy,
                            self.background_avg[index],
-                           self.background_std[index] if self.noisy else None)
+                           self.background_std[index] * self.noisy if self.noisy else None)
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
