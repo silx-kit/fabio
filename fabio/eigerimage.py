@@ -45,7 +45,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "07/05/2021"
+__date__ = "10/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -194,7 +194,7 @@ class EigerImage(FabioImage):
                     hds = data_grp.create_dataset(f"data", data=data, chunks=chunks, **compression)
                 hds.attrs["interpretation"] = "image"
                 if "signal" not in data_grp.attrs:
-                    data_grp["signal"] = posixpath.split(hds.name)[-1]
+                    data_grp.attrs["signal"] = posixpath.split(hds.name)[-1]
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
@@ -204,14 +204,23 @@ class EigerImage(FabioImage):
                 if isinstance(self.dataset, list):
                     nfr = num
                     for ds in self.dataset:
-                        if nfr < ds.shape[0]:
-                            data = ds[nfr]
-                            break
-                        else:
-                            nfr -= ds.shape[0]
+                        if ds is None or ds.ndim == 2:
+                            if nfr == 0:
+                                data = None
+                            else:
+                                nfr -= 1
+                        elif ds.ndim == 3:
+                            # Stack of images
+                            if (nfr < ds.shape[0]):
+                                data = ds[nfr]
+                                break
+                            else:
+                                nfr -= ds.shape[0]
+
                 else:
                     data = self.dataset[num]
-                new_img = self.__class__(data=data, header=self.header)
+                new_img = self.__class__(data=None, header=self.header)
+                new_img._data = data
                 new_img.dataset = self.dataset
                 new_img.h5 = self.h5
                 new_img._nframes = self.nframes
@@ -244,8 +253,23 @@ class EigerImage(FabioImage):
         return sum(i.shape[0] if i.ndim > 2 else 1 for i in self.dataset)
 
     def get_data(self):
-        if self._data is None and len(self.dataset) >= self.currentframe:
-            self._data = self.dataset[self.currentframe]
+        if self._data is None:
+            data = None
+            index = self.currentframe
+            if isinstance(self.dataset, list):
+                frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
+                end_ds = numpy.cumsum(frame_idx)
+                for idx, end in enumerate(end_ds):
+                    start = 0 if idx == 0 else end_ds[idx - 1]
+                    if end > index >= start:
+                        ds = self.dataset[idx]
+                        if ds is None or ds.ndim == 2:
+                            data = ds
+                        else:
+                            data = ds[index - start]
+            else:
+                data = self.dataset[index]
+            self._data = data
         return self._data
 
     def set_data(self, data, index=None):
@@ -258,25 +282,24 @@ class EigerImage(FabioImage):
         if index is None:
             index = self.currentframe
         if isinstance(self.dataset, list):
-            frame_idx = [len(ds) if ds is not None else 1 for ds in self.dataset]
+            frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
             end_ds = numpy.cumsum(frame_idx)
             nframes = end_ds[-1]
             if index == nframes:
                 self.dataset.append(data)
             elif index > nframes:
-            # pad dataset with None ?
+                # pad dataset with None ?
                 self.dataset += [None] * (1 + index - len(self.dataset))
                 self.dataset[index] = data
             else:
                 for idx, end in enumerate(end_ds):
                     start = 0 if idx == 0 else end_ds[idx - 1]
-                    if end > index > start:
+                    if end > index >= start:
                         ds = self.dataset[idx]
-                        if ds is None or ds.ndims == 2:
+                        if ds is None or ds.ndim == 2:
                             self.dataset[idx] = data
                         else:
                             ds[index - start] = data
-                self.dataset[index] = data
         if index == self.currentframe:
             self._data = data
 

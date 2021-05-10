@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "04/05/2021"  
+__date__ = "10/05/2021"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -228,7 +228,8 @@ def densify(float[:,::1] mask,
             any_t dummy,
             dtype,
             float[::1] background,
-            float[::1] background_std=None):
+            float[::1] background_std=None,
+            normalization=None):
     """
     Densify a sparse representation to generate a normal frame 
     
@@ -240,13 +241,15 @@ def densify(float[:,::1] mask,
     :param dummy: numerical value for masked-out pixels in dense image
     :param dtype: dtype of intensity.
     :param background_std: 1D array with the background std at given distance from the center --> activates the noisy mode.
+    :param 
     :return: dense frame as 2D array
     """
     cdef:
         Py_ssize_t i, j, size, pos, size_over, width, height
         double value, fres, fpos, idelta, start, std
-        bint integral, noisy
+        bint integral, noisy, do_normalization=False
         any_t[:, ::1] dense
+        float[:,::1] c_normalization
         MT mt
     size = radius.shape[0]
     assert background.shape[0] == size
@@ -256,6 +259,9 @@ def densify(float[:,::1] mask,
     height =mask.shape[0] 
     width = mask.shape[1]
     dense = numpy.zeros((height, width), dtype=dtype)
+    if normalization is not None:
+        do_normalization = True
+        c_normalization = numpy.ascontiguousarray(normalization, dtype=numpy.float32)
     
     if background_std is None:
         noisy = False
@@ -292,7 +298,8 @@ def densify(float[:,::1] mask,
                         else:
                             std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
                         value = max(0.0, mt._normal_m(value, std))
-                        
+                    if do_normalization:
+                        value *= c_normalization[i, j]
                     if integral:
                         dense[i,j] =  <any_t>(value + 0.5) #this is rounding
                     else:

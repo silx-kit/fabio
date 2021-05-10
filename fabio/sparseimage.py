@@ -175,6 +175,8 @@ class SparseImage(FabioImage):
         self.intensity = nx_data["intensity"][()]
         self.dummy = self.intensity.dtype.type(nx_data["dummy"][()])
         self._nframes = self.frame_ptr.shape[0] - 1
+        if "normalization" in nx_data:
+            self.normalization = numpy.ascontiguousarray(nx_data["normalization"][()], dtype=numpy.float32)
 
         if frame is not None:
             return self.getframe(int(frame))
@@ -198,7 +200,8 @@ class SparseImage(FabioImage):
                                  self.dummy,
                                  self.intensity.dtype,
                                  self.background_avg[index],
-                                 self.background_std[index] * self.noisy if self.noisy else None)
+                                 self.background_std[index] * self.noisy if self.noisy else None,
+                                 self.normalization)
         else:
             # Fall-back on numpy code.
             return densify(self.mask,
@@ -229,6 +232,7 @@ class SparseImage(FabioImage):
                 new_img.h5 = self.h5
                 new_img._nframes = self.nframes
                 new_img.currentframe = num
+                new_img.normalization = self.normalization
             else:
                 raise IOError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
         else:
