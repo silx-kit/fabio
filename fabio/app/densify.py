@@ -117,8 +117,8 @@ def parse_args():
 #                        " option)")
     group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
                        help="do everything except modifying the file system")
-    group.add_argument("-N", "--no-noise", action="store_false", dest="noisy", default=True,
-                       help="Disable the noise reconstruction")
+    group.add_argument("-N", "--noise", type=float, dest="noisy", default=1.0,
+                       help="Noise scaling factor, from 0 to 1, set to 0 to disable the noise reconstruction")
 #     group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
 #     group.add_argument("--rotation", type=int, default=180,
 #                        help="Rotate the initial image by this value in degrees. Must be a multiple of 90°. By default 180 deg (flip_up with origin=lower and flip_lr because the image is seen from the sample).")
