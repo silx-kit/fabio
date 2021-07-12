@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/05/2021"
+__date__ = "07/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -57,6 +57,7 @@ class LimaImage(FabioImage):
 
     LIMA is the Library for Image Acquisition:
     https://lima1.readthedocs.io/en/latest/
+    https://github.com/esrf-bliss/LImA
     """
 
     DESCRIPTION = "HDF5 file produces by LImA"
@@ -70,9 +71,46 @@ class LimaImage(FabioImage):
         if not h5py:
             raise RuntimeError("fabio.LimaImage cannot be used without h5py. Please install h5py and restart")
 
-        FabioImage.__init__(self, data, header)
         self.dataset = [data]
+        self._data = None
+        FabioImage.__init__(self, data, header)
         self.h5 = None
+
+    @property
+    def nframes(self):
+        """Returns the number of frames contained in this file
+
+        :rtype: int
+        """
+        return len(self.dataset)
+
+    def get_data(self):
+        if self._data is None and len(self.dataset) >= self.currentframe:
+            self._data = self.dataset[self.currentframe]
+        return self._data
+
+    def set_data(self, data, index=None):
+        """Set the data for frame index
+
+        :param data: numpy array
+        :param int index: index of the frame (by default: current one)
+        :raises IndexError: If the frame number is out of the available range.
+        """
+        if index is None:
+            index = self.currentframe
+        if isinstance(self.dataset, list):
+            if index == len(self.dataset):
+                self.dataset.append(data)
+            elif index > len(self.dataset):
+            # pad dataset with None ?
+                self.dataset += [None] * (1 + index - len(self.dataset))
+                self.dataset[index] = data
+            else:
+                self.dataset[index] = data
+        if index == self.currentframe:
+            self._data = data
+
+    data = property(get_data, set_data)
 
     def __repr__(self):
         if self.h5 is not None:
@@ -183,10 +221,10 @@ class LimaImage(FabioImage):
         else:
             mode = "w"
         if hdf5plugin is None:
+            logger.warning("hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)")
             compression = {"compression":"gzip",
                    "compression_opts":1}
         else:
-            logger.warning("hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)")
             compression = hdf5plugin.Bitshuffle()
 
         with nexus.Nexus(abs_name, mode=mode, creator="LIMA-1.9.7") as nxs:
