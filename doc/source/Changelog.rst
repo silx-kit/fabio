@@ -1,6 +1,18 @@
 Changelog
 =========
 
+FabIO-0.12.0 (07/2021):
+.......................
+- Densification of sparse data (densify-Bragg) produced by pyFAI (sparsify-Bragg)
+- Writer for EigerImage format
+- Writer for LimaImage format
+- Refactor all CLI tools
+- Disable the mask calculation by default in `eiger2crysalis`
+- Clean-up some debuging prints in CbfImage
+- Correct MrcImage format (and change in tests) 
+- Support for Python versions 3.6 to 3.9, tested on amd64, ppc64le and arm64
+- Linux is officially the main platform, Windows and MacOS are supported in best effort mode.
+
 FabIO-0.11.0 (01/2021):
 .......................
 
