@@ -34,7 +34,7 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
-
+import numpy
 from fabio.openimage import openimage
 from fabio.limaimage import LimaImage, h5py
 from ..utilstest import UtilsTest
@@ -98,6 +98,26 @@ class TestLima(_CommonTestFrames):
         self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 17, "nframe: got %s!=17" % e.nframes)
         self.assertEqual(e.bpp, 2, "bpp OK")
+    
+    def test_write(self):
+        fn = os.path.join(UtilsTest.tempdir, "lima_write.h5")
+        shape=(10, 11, 13)
+        ary = numpy.random.randint(0, 100, size=shape)
+        e = LimaImage()
+        for i, d in enumerate(ary):
+            e.set_data(d, i)
+        self.assertEqual(shape[0], e.nframes, "shape matches")
+        self.assertEqual(shape[1:], e.shape, "shape matches")
+        e.save(fn)
+        self.assertTrue(os.path.exists(fn), "file exists")
+        f = openimage(fn)
+        self.assertEqual(str(f.__class__.__name__), "LimaImage", "Used the write reader")
+        self.assertEqual(shape[0], f.nframes, "shape matches")
+        self.assertEqual(shape[1:], f.shape, "shape matches")
+        self.assertEqual(abs(f.data-ary[0]).max(), 0, "first frame matches")
+        for i,g in enumerate(f):
+            self.assertEqual(abs(g.data-ary[i]).max(), 0, f"frame {i} matches")
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
