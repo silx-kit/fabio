@@ -32,7 +32,7 @@ FabIO is available from `PyPI <https://pypi.python.org/pypi/fabio>`_:
 `wheels <http://www.silx.org/pub/wheelhouse/>`_ are available
 for Windows, Linux and MacOSX from the silx repository. 
 
-See the `installation instructions <http://www.silx.org/doc/fabio/latest/Installation.html>`_ for more information.
+See the `installation instructions <http://www.silx.org/doc/fabio/latest/install.html>`_ for more information.
 
 Usage
 -----
