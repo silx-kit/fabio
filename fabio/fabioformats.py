@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/03/2019"
+__date__ = "16/11/2020"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -48,6 +48,7 @@ try:
     import importlib
     importer = importlib.import_module
 except ImportError:
+
     def importer(module_name):
         module = __import__(module_name)
         # returns the leaf module, instead of the root module
@@ -56,7 +57,6 @@ except ImportError:
         for name in names:
             module = getattr(module, name)
         return module
-
 
 _default_codecs = [
     ("edfimage", "EdfImage"),
@@ -90,12 +90,13 @@ _default_codecs = [
     ("mpaimage", "MpaImage"),
     ("mrcimage", "MrcImage"),
     ("esperantoimage", "EsperantoImage"),
+    ("limaimage", "LimaImage"),
     # For compatibility (maybe not needed)
     ("adscimage", "AdscImage"),
+    ("sparseimage", "SparseImage"),
 ]
 """List of relative module and class names for available formats in fabio.
 Order matter."""
-
 
 _registry = OrderedDict()
 """Contains all registered codec classes indexed by codec name."""

@@ -39,11 +39,11 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "06/01/2015"
 
+import io
 import numpy
 import struct
 
 from .fabioimage import FabioImage
-from .third_party import six
 
 
 class Fit2dMaskImage(FabioImage):
@@ -111,7 +111,7 @@ class Fit2dMaskImage(FabioImage):
         if spares == 0:
             data = numpy.where(result == 0, 0, 1)
         else:
-            data = numpy.where(result[:, :-spares] == 0, 0, 1)
+            data = numpy.where(result[:,:-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
         # self.data = numpy.transpose(self.data)
         self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8)
@@ -134,13 +134,16 @@ class Fit2dMaskImage(FabioImage):
         header[20:24] = struct.pack("<I", dim2)
         compact_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 4), dtype=numpy.uint8)
         large_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 32), dtype=numpy.uint8)
-        large_array[:dim2, :dim1] = (self.data != 0)
+        large_array[:dim2,:dim1] = (self.data != 0)
         for i in range(8):
             order = (1 << i)
             compact_array += large_array[:, i::8] * order
         with self._open(fname, mode="wb") as outfile:
-            outfile.write(six.binary_type(header))
-            outfile.write(compact_array.tobytes())
+            outfile.write(bytes(header))
+            if isinstance(outfile, io.BufferedWriter):
+                compact_array.tofile(outfile)
+            else:
+                outfile.write(compact_array.tobytes())
 
     @staticmethod
     def check_data(data=None):

@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
+__date__ = "13/11/2020"
 
 import io
 import logging
@@ -39,7 +39,8 @@ from struct import pack
 
 import numpy as np
 
-from fabio.compression import agi_bitfield
+from ..compression import agi_bitfield
+from ..ext import _agi_bitfield
 
 logger = logging.getLogger(__name__)
 
@@ -51,10 +52,13 @@ class TestUtil(unittest.TestCase):
             (np.zeros(8, dtype="int32"), 1),
             (np.array([1024] * 8, dtype="int32"), 8),
             (np.arange(0, 7, dtype="int32"), 4),
-            (np.array([-1, -2, 2, 1] * 2, dtype="int32"), 3)
+            (np.array([-1, -2, 2, 1] * 2, dtype="int32"), 3),
+            (np.array([-3, 3, 8, 3, -5 - 5, 0, 6]), 5)
         ]
         for array, result in test_cases:
             fs = agi_bitfield.get_fieldsize(array)
+            self.assertEqual(result, fs)
+            fs = _agi_bitfield.get_fieldsize(array)
             self.assertEqual(result, fs)
 
     def test_compress_decode_field_overflow(self):
@@ -65,7 +69,7 @@ class TestUtil(unittest.TestCase):
         cf = agi_bitfield.compress_field(data, fs, oft)
         self.assertEqual(pack("h", 255) + pack("i", 40000), oft.getvalue())
 
-        mask_ = agi_bitfield.mask(fs)
+        mask_ = agi_bitfield.MASK[fs]
         dec = agi_bitfield.decode_field(cf)
         self.assertEqual([1 + 127, 2 + 127, 3 + 127, 4 + 127, 0xfe & mask_, 0xff & mask_, -4 + 127, 2 + 127], dec)
 
@@ -77,7 +81,7 @@ class TestUtil(unittest.TestCase):
         cf = agi_bitfield.compress_field(data, fs, oft)
         self.assertEqual(b'', oft.getvalue())
 
-        conv_ = agi_bitfield.conv(fs)
+        conv_ = agi_bitfield.MASK[fs - 1]
         dec = agi_bitfield.decode_field(cf[:fs])
         self.assertEqual([1 + conv_, 0 + conv_] * 4, dec)
 
@@ -101,15 +105,15 @@ class TestUtil(unittest.TestCase):
             (4, 0b1111),
             (8, 0xff)
         ]
-        for len, msk in mask_cases:
-            self.assertEqual(msk, agi_bitfield.mask(len))
+        for length, msk in mask_cases:
+            self.assertEqual(msk, agi_bitfield.MASK[length])
         conv_cases = [
             (1, 0),
             (4, 0b111),
             (8, 0b1111111)
         ]
-        for len, cnv in conv_cases:
-            self.assertEqual(cnv, agi_bitfield.conv(len))
+        for length, cnv in conv_cases:
+            self.assertEqual(cnv, agi_bitfield.MASK[length - 1])
 
 
 class TestRow(unittest.TestCase):
@@ -117,11 +121,13 @@ class TestRow(unittest.TestCase):
     def test_compress_row_zero(self):
         data = np.zeros(256, dtype="int32")
         buffer = io.BytesIO()
-
-        agi_bitfield.compress_row(data, buffer)
-
+        buffer_python = io.BytesIO()
+        buffer_cython = io.BytesIO()
+        _agi_bitfield.compress_row(data, buffer_cython)
+        agi_bitfield.compress_row(data, buffer_python)
+        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
-
         decompressed = agi_bitfield.decompress_row(buffer, 256)
         decompressed = np.array(decompressed, dtype="int32").cumsum()
         self.assertTrue(np.array_equal(decompressed, data))
@@ -129,11 +135,13 @@ class TestRow(unittest.TestCase):
     def test_compress_row_small(self):
         data = np.random.randint(0, 5, 256, dtype="int32")
         buffer = io.BytesIO()
-
-        agi_bitfield.compress_row(data, buffer)
-
+        buffer_python = io.BytesIO()
+        buffer_cython = io.BytesIO()
+        _agi_bitfield.compress_row(data, buffer_cython)
+        agi_bitfield.compress_row(data, buffer_python)
+        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
-
         decompressed = agi_bitfield.decompress_row(buffer, 256)
         decompressed = np.array(decompressed, dtype="int32").cumsum()
         self.assertTrue(np.array_equal(decompressed, data))
@@ -141,11 +149,13 @@ class TestRow(unittest.TestCase):
     def compress_row_overflows(self):
         data = np.random.randint(-255, 255, 256, dtype="int32")
         buffer = io.BytesIO()
-
-        agi_bitfield.compress_row(data, buffer)
-
+        buffer_python = io.BytesIO()
+        buffer_cython = io.BytesIO()
+        _agi_bitfield.compress_row(data, buffer_cython)
+        agi_bitfield.compress_row(data, buffer_python)
+        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
-
         decompressed = agi_bitfield.decompress_row(buffer, 256)
         decompressed = np.array(decompressed, dtype="int32").cumsum()
         self.assertTrue(np.array_equal(decompressed, data))
@@ -154,10 +164,19 @@ class TestRow(unittest.TestCase):
 class TestCompression(unittest.TestCase):
 
     def test_full_rand(self):
-        data = np.random.randint(-255, 255, (256, 256))
+        data = np.random.randint(-256, 500, (256, 256)).astype("int32")
+        import time
+        t0 = time.perf_counter()
         compressed = agi_bitfield.compress(data)
+        t1 = time.perf_counter()
         uncompressed = agi_bitfield.decompress(compressed, data.shape)
-        self.assertTrue(np.array_equal(data, uncompressed))
+        self.assertTrue(np.array_equal(data, uncompressed), "Python version is OK")
+        t2 = time.perf_counter()
+        compressed = _agi_bitfield.compress(data)
+        t3 = time.perf_counter()
+        uncompressed = agi_bitfield.decompress(compressed, data.shape)
+        self.assertTrue(np.array_equal(data, uncompressed), "Cython version is OK")
+        print("speed-up:", (t1 - t0) / (t3 - t2))
 
 
 def suite():

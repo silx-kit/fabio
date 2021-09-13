@@ -30,17 +30,17 @@ import unittest
 
 logger = logging.getLogger(__name__)
 
-from . import testfabioimage
-from . import testfilenames
+from . import test_fabio_image
+from . import test_filenames
 from . import test_file_series
 from . import test_filename_steps
-from . import testheadernotsingleton
-from . import testopenheader
-from . import testopenimage
+from . import test_header_not_singleton
+from . import test_open_header
+from . import test_open_image
 from . import test_flat_binary
-from . import testcompression
+from . import test_compression
 from . import test_nexus
-from . import testfabioconvert
+from . import test_fabio_convert
 from . import test_failing_files
 from . import test_formats
 from . import test_image_convert
@@ -49,21 +49,22 @@ from . import test_frames
 from . import test_fabio
 from . import codecs
 from . import test_agi_bitfield
+from . import test_densification
 
 
 def suite():
     testSuite = unittest.TestSuite()
-    testSuite.addTest(testfabioimage.suite())
-    testSuite.addTest(testfilenames.suite())
+    testSuite.addTest(test_fabio_image.suite())
+    testSuite.addTest(test_filenames.suite())
     testSuite.addTest(test_file_series.suite())
     testSuite.addTest(test_filename_steps.suite())
-    testSuite.addTest(testheadernotsingleton.suite())
-    testSuite.addTest(testopenheader.suite())
-    testSuite.addTest(testopenimage.suite())
+    testSuite.addTest(test_header_not_singleton.suite())
+    testSuite.addTest(test_open_header.suite())
+    testSuite.addTest(test_open_image.suite())
     testSuite.addTest(test_flat_binary.suite())
-    testSuite.addTest(testcompression.suite())
+    testSuite.addTest(test_compression.suite())
     testSuite.addTest(test_nexus.suite())
-    testSuite.addTest(testfabioconvert.suite())
+    testSuite.addTest(test_fabio_convert.suite())
     testSuite.addTest(test_failing_files.suite())
     testSuite.addTest(test_formats.suite())
     testSuite.addTest(test_image_convert.suite())
@@ -72,6 +73,7 @@ def suite():
     testSuite.addTest(test_fabio.suite())
     testSuite.addTest(codecs.suite())
     testSuite.addTest(test_agi_bitfield.suite())
+    testSuite.addTest(test_densification.suite())
     return testSuite
 
 

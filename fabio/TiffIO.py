@@ -1,6 +1,6 @@
 # The PyMca X-Ray Fluorescence Toolkit
 #
-# Copyright (c) 2004-2015 European Synchrotron Radiation Facility
+# Copyright (c) 2004-2020 European Synchrotron Radiation Facility
 #
 # This file is part of the PyMca X-ray Fluorescence Toolkit developed at
 # the ESRF by the Software group.
@@ -27,15 +27,13 @@ __author__ = "V.A. Sole - ESRF Data Analysis"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2018"
+__date__ = "26/12/2020"
 
 import sys
 import os
 import struct
 import numpy
 import logging
-from fabio.third_party import six
-
 
 ALLOW_MULTIPLE_STRIPS = False
 
@@ -106,11 +104,11 @@ SAMPLE_FORMAT_VOID = 4  # undefined data, usually assumed UINT
 SAMPLE_FORMAT_COMPLEXINT = 5
 SAMPLE_FORMAT_COMPLEXIEEEFP = 6
 
-
 logger = logging.getLogger(__name__)
 
 
 class TiffIO(object):
+
     def __init__(self, filename, mode=None, cache_length=20, mono_output=False):
         if mode is None:
             mode = 'rb'
@@ -392,7 +390,7 @@ class TiffIO(object):
                 tmpColormap = numpy.array(tmpColormap, dtype=numpy.uint8)
             tmpColormap.shape = 3, -1
             colormap = numpy.zeros((tmpColormap.shape[-1], 3), tmpColormap.dtype)
-            colormap[:, :] = tmpColormap.T
+            colormap[:,:] = tmpColormap.T
             tmpColormap = None
         else:
             colormap = None
@@ -615,7 +613,7 @@ class TiffIO(object):
 
         if rowMax < rowMin:
             txt = "Max Row smaller than Min Row. Reverse selection not supported"
-            raise NotImplemented(txt)
+            raise NotImplementedError(txt)
 
         if rowMin >= nRows:
             raise IndexError("Image only has %d rows" % nRows)
@@ -656,7 +654,7 @@ class TiffIO(object):
             raise ValueError("Unsupported combination. Bits = %s  Format = %d" % (nBits, sampleFormat))
         if hasattr(nBits, 'index'):
             image = numpy.zeros((nRows, nColumns, len(nBits)), dtype=dtype)
-        elif colormap is not None:
+        elif colormap is not None and interpretation == 3:
             # should I use colormap dtype?
             image = numpy.zeros((nRows, nColumns, 3), dtype=dtype)
         else:
@@ -683,7 +681,7 @@ class TiffIO(object):
                 readout.byteswap(True)
             if hasattr(nBits, 'index'):
                 readout.shape = -1, nColumns, len(nBits)
-            elif info['colormap'] is not None:
+            elif info['colormap'] is not None and interpretation == 3:
                 readout = colormap[readout]
                 readout.shape = -1, nColumns, 3
             else:
@@ -740,7 +738,7 @@ class TiffIO(object):
                         readout.shape = -1, nColumns, 3
                     else:
                         readout.shape = -1, nColumns
-                    image[rowStart:rowEnd, :] = readout
+                    image[rowStart:rowEnd,:] = readout
                 else:
                     readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
                     if self._swap:
@@ -753,7 +751,7 @@ class TiffIO(object):
                         readout.shape = -1, nColumns, 3
                     else:
                         readout.shape = -1, nColumns
-                    image[rowStart:rowEnd, :] = readout
+                    image[rowStart:rowEnd,:] = readout
                 rowStart += nRowsToRead
         if close:
             self.__makeSureFileIsClosed()
@@ -762,9 +760,9 @@ class TiffIO(object):
             # color image
             if self._forceMonoOutput:
                 # color image, convert to monochrome
-                image = (image[:, :, 0] * 0.114 +
-                         image[:, :, 1] * 0.587 +
-                         image[:, :, 2] * 0.299).astype(numpy.float32)
+                image = (image[:,:, 0] * 0.114 +
+                         image[:,:, 1] * 0.587 +
+                         image[:,:, 2] * 0.299).astype(numpy.float32)
 
         if (rowMin == 0) and (rowMax == (nRows - 1)):
             self._imageDataCacheIndex.insert(0, nImage)
@@ -888,14 +886,9 @@ class TiffIO(object):
         else:
             self._swap = True
         fd.seek(0)
-        if sys.version < '3.0':
-            fd.write(struct.pack(st + '2s', order))
-            fd.write(struct.pack(st + 'H', 42))
-            fd.write(struct.pack(st + 'I', 0))
-        else:
-            fd.write(struct.pack(st + '2s', bytes(order, 'utf-8')))
-            fd.write(struct.pack(st + 'H', 42))
-            fd.write(struct.pack(st + 'I', 0))
+        fd.write(struct.pack(st + '2s', bytes(order, 'utf-8')))
+        fd.write(struct.pack(st + 'H', 42))
+        fd.write(struct.pack(st + 'I', 0))
         fd.flush()
 
     def _getOutputIFD(self, image, description=None, software=None, date=None):
@@ -923,21 +916,10 @@ class TiffIO(object):
                 description = description + " "
                 descriptionLength = len(description)
 
-            if isinstance(description, six.text_type):
+            if isinstance(description, str):
                 raw = description.encode('utf-8')
             else:
-                if sys.version >= '3.0':
-                    raw = bytes(description, 'utf-8')
-                elif isinstance(description, str):
-                    try:
-                        raw = description.decode('utf-8')
-                    except UnicodeDecodeError:
-                        try:
-                            raw = description.decode('latin-1')
-                        except UnicodeDecodeError:
-                            raw = description
-                    if sys.version > '2.6':
-                        raw = raw.encode('utf-8', errors="ignore")
+                raw = bytes(description, 'utf-8')
             imageDescription = struct.pack("%ds" % len(raw), raw)
             nDirectoryEntries += 1
 
@@ -947,8 +929,7 @@ class TiffIO(object):
             while softwareLength < 4:
                 software = software + " "
                 softwareLength = len(software)
-            if sys.version >= '3.0':
-                software = bytes(software, 'utf-8')
+            software = bytes(software, 'utf-8')
             softwarePackedString = struct.pack("%ds" % softwareLength, software)
             nDirectoryEntries += 1
         else:
@@ -956,8 +937,7 @@ class TiffIO(object):
 
         if date is not None:
             dateLength = len(date)
-            if sys.version >= '3.0':
-                date = bytes(date, 'utf-8')
+            date = bytes(date, 'utf-8')
             datePackedString = struct.pack("%ds" % dateLength, date)
             dateLength = len(datePackedString)
             nDirectoryEntries += 1
@@ -1089,9 +1069,7 @@ class TiffIO(object):
         info["date"] = date
         info["sampleFormat"] = sampleFormat
 
-        outputIFD = ""
-        if sys.version > '2.6':
-            outputIFD = eval('b""')
+        outputIFD = eval('b""')
 
         fmt = st + "H"
         outputIFD += struct.pack(fmt, nDirectoryEntries)

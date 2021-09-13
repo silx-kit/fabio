@@ -29,7 +29,7 @@ FabIO class for dealing with JPEG 2000 images.
 """
 
 __authors__ = ["Valentin Valls"]
-__date__ = "03/04/2020"
+__date__ = "06/04/2020"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import PIL
+    import PIL.Image
 except ImportError:
     PIL = None
 
@@ -93,9 +94,10 @@ class Jpeg2KImage(FabioImage):
         This code was tested with all release 0.8.x
         """
         # image = glymur.Jp2k(filename)
-        if glymur.__version__.startswith("0.7."):
+        version = tuple(int(i) for i in glymur.__version__.split(".")[:2])
+        if version == (0, 7):
             image = glymur.Jp2k(filename=filename)
-        elif glymur.__version__.startswith("0.8."):
+        elif version >= (0,8):
             # inject a shape  to avoid calling the read function
             image = glymur.Jp2k(filename=filename, shape=(1, 1))
         else:

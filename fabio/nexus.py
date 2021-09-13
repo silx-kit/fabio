@@ -33,19 +33,18 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
-__status__ = "beta"
+__date__ = "28/04/2021"
+__status__ = "production"
 __docformat__ = 'restructuredtext'
 
 import logging
-import numpy
-import os
-import sys
-import time
 
+import sys
+import os
+import time
+import numpy
 from .fabioutils import exists
 from ._version import version
-from .third_party import six
 
 logger = logging.getLogger(__name__)
 try:
@@ -81,12 +80,16 @@ def from_isotime(text, use_tz=False):
     :param text: string representing the time is iso format
     :return: Time in second since epoch (float)
     """
-    if isinstance(text, numpy.ndarray):
+    if len(text) == 1:
+        # just in case someone sets as a list
         text = text[0]
-    if six.PY3 and isinstance(text, six.binary_type):
-        text = text.decode("utf-8")
-    else:
-        text = str(text)
+    if isinstance(text, bytes):
+        text = text.decode()
+    if len(text) > 3 and text.startswith("b") and text[1] == text[-1] and text[1] in ('"', "'"):
+        text = text[2:-1]
+    if len(text) < 19:
+        logger.warning("Not a iso-time string: %s", text)
+        return
     base = text[:19]
     if use_tz and len(text) == 25:
         sgn = 1 if text[:19] == "+" else -1
@@ -114,44 +117,72 @@ def is_hdf5(filename):
 class Nexus(object):
     """
     Writer class to handle Nexus/HDF5 data
+
     Manages:
     entry
         pyFAI-subentry
             detector
 
-    #TODO: make it thread-safe !!!
+    - entry
+
+        - pyFAI-subentry
+
+            - detector
+
+    TODO: make it thread-safe !!!
     """
 
-    def __init__(self, filename, mode="r"):
+    def __init__(self, filename, mode=None, creator=None):
         """
         Constructor
 
         :param filename: name of the hdf5 file containing the nexus
-        :param mode: can be r or a
+        :param mode: can be 'r', 'a', 'w', '+' ....
+        :param creator: set as attr of the NXroot
         """
         self.filename = os.path.abspath(filename)
         self.mode = mode
         if not h5py:
             logger.error("h5py module missing: NeXus not supported")
             raise RuntimeError("H5py module is missing")
-        if exists(self.filename) and self.mode == "r":
-            self.h5 = h5py.File(self.filename.split("::")[0], mode=self.mode)
+
+        pre_existing = os.path.exists(self.filename)
+        if self.mode is None:
+            if pre_existing:
+                self.mode = "r"
+            else:
+                self.mode = "w"
+        if "w" in self.mode:
+            pre_existing = False
+
+        if self.mode == "r":
+            self.file_handle = open(self.filename, mode=self.mode + "b")
+            self.h5 = h5py.File(self.file_handle, mode=self.mode)
         else:
-            self.h5 = h5py.File(self.filename.split("::")[0], mode="w")
+            self.file_handle = None
+            self.h5 = h5py.File(self.filename, mode=self.mode)
         self.to_close = []
 
-    def close(self, endtime=None):
-        """Close the filename and update all entries
+        if not pre_existing:
+            self.h5.attrs["NX_class"] = "NXroot"
+            self.h5.attrs["file_time"] = get_isotime()
+            self.h5.attrs["file_name"] = self.filename
+            self.h5.attrs["HDF5_Version"] = h5py.version.hdf5_version
+            if creator is not None:
+                self.h5.attrs["creator"] = creator
 
-        :param endtime: timestamp in iso-format of the end of the acquisition.
+    def close(self, end_time=None):
         """
-        if endtime is None:
-            end_time = get_isotime()
-        elif isinstance(endtime, (int, float)):
-            end_time = get_isotime(endtime)
-        for entry in self.to_close:
-            entry["end_time"] = end_time
+        close the filename and update all entries
+        """
+        if self.mode != "r":
+            end_time = get_isotime(end_time)
+            for entry in self.to_close:
+                entry["end_time"] = end_time
+            self.h5.attrs["file_update_time"] = get_isotime()
         self.h5.close()
+        if self.file_handle:
+            self.file_handle.close()
 
     # Context manager for "with" statement compatibility
     def __enter__(self, *arg, **kwarg):
@@ -159,6 +190,10 @@ class Nexus(object):
 
     def __exit__(self, *arg, **kwarg):
         self.close()
+
+    def flush(self):
+        if self.h5:
+            self.h5.flush()
 
     def get_entry(self, name):
         """
@@ -170,11 +205,10 @@ class Nexus(object):
         for grp_name in self.h5:
             if grp_name == name:
                 grp = self.h5[grp_name]
-                if (isinstance(grp, h5py.Group) and
-                        "start_time" in grp and
-                        "NX_class" in grp.attrs and
-                        grp.attrs["NX_class"] == "NXentry"):
-                    return grp
+                if isinstance(grp, h5py.Group) and \
+                   ("start_time" in grp) and  \
+                   self.get_attr(grp, "NX_class") == "NXentry":
+                        return grp
 
     def get_entries(self):
         """
@@ -184,20 +218,11 @@ class Nexus(object):
         """
         entries = [(grp, from_isotime(self.h5[grp + "/start_time"][()]))
                    for grp in self.h5
-                   if (isinstance(self.h5[grp], h5py.Group) and
-                       "start_time" in self.h5[grp] and
-                       "NX_class" in self.h5[grp].attrs and
-                       self.h5[grp].attrs["NX_class"] == "NXentry")]
-        if entries:
-            entries.sort(key=lambda a: a[1], reverse=True)  # sort entries in decreasing time
-            return [self.h5[i[0]] for i in entries]
-        else:  # no entries found, try without sorting by time
-            entries = [grp for grp in self.h5
-                       if (isinstance(self.h5[grp], h5py.Group) and
-                           "NX_class" in self.h5[grp].attrs and
-                           self.h5[grp].attrs["NX_class"] == "NXentry")]
-            entries.sort(reverse=True)
-            return [self.h5[i] for i in entries]
+                   if isinstance(self.h5[grp], h5py.Group) and
+                   ("start_time" in self.h5[grp]) and
+                   self.get_attr(self.h5[grp], "NX_class") == "NXentry"]
+        entries.sort(key=lambda a: a[1], reverse=True)  # sort entries in decreasing time
+        return [self.h5[i[0]] for i in entries]
 
     def find_detector(self, all=False):
         """
@@ -221,6 +246,7 @@ class Nexus(object):
 
         :param all: return all detectors found as a list
         """
+        logger.error("Deprecated!")
         result = []
         for entry in self.get_entries():
             data = self.get_data(entry)
@@ -261,27 +287,32 @@ class Nexus(object):
         return result
 
     def new_entry(self, entry="entry", program_name="pyFAI",
-                  title="description of experiment",
-                  force_time=None, force_name=False):
+                  title=None, force_time=None, force_name=False):
         """
         Create a new entry
 
         :param entry: name of the entry
         :param program_name: value of the field as string
-        :param title: value of the field as string
-        :param force_time: seconds since epoch enforce the start_time
-        :param force_name: set to true to prevent the addition of a _0001 suffix
+        :param title: description of experiment as str
+        :param force_time: enforce the start_time (as string!)
+        :param force_name: force the entry name as such, without numerical suffix.
         :return: the corresponding HDF5 group
         """
-        if force_name:
-            entry_grp = self.h5.require_group(entry)
-        else:
+
+        if not force_name:
             nb_entries = len(self.get_entries())
-            entry_grp = self.h5.require_group("%s_%04i" % (entry, nb_entries))
+            entry = "%s_%04i" % (entry, nb_entries)
+        entry_grp = self.h5.require_group(entry)
+        self.h5.attrs["default"] = entry
         entry_grp.attrs["NX_class"] = "NXentry"
-        entry_grp["title"] = numpy.string_(title)
-        entry_grp["program_name"] = numpy.string_(program_name)
-        entry_grp["start_time"] = numpy.string_(get_isotime(force_time))
+        if title is not None:
+            entry_grp["title"] = str(title)
+        if program_name is not None:
+            entry_grp["program_name"] = program_name
+        if isinstance(force_time, str):
+            entry_grp["start_time"] = force_time
+        else:
+            entry_grp["start_time"] = get_isotime(force_time)
         self.to_close.append(entry_grp)
         return entry_grp
 
@@ -304,7 +335,7 @@ class Nexus(object):
         :return: subgroup created
         """
         sub = grp.require_group(name)
-        sub.attrs["NX_class"] = class_type
+        sub.attrs["NX_class"] = str(class_type)
         return sub
 
     def new_detector(self, name="detector", entry="entry", subentry="pyFAI"):
@@ -317,8 +348,15 @@ class Nexus(object):
         """
         entry_grp = self.new_entry(entry)
         pyFAI_grp = self.new_class(entry_grp, subentry, "NXsubentry")
-        pyFAI_grp["definition_local"] = numpy.string_("pyFAI")
-        pyFAI_grp["definition_local"].attrs["version"] = version
+        local_ds = pyFAI_grp.create_dataset("definition_local", data=subentry)
+        if subentry == "pyFAI":
+            try:
+                from pyFAI import __version__ as pyFAI_version
+            except ImportError:
+                pyFAI_version = None
+            if pyFAI_version is not None:
+                local_ds.attrs["version"] = str(version)
+
         det_grp = self.new_class(pyFAI_grp, name, "NXdetector")
         return det_grp
 
@@ -330,24 +368,36 @@ class Nexus(object):
         :param class_type: name of the NeXus class
         """
         coll = [grp[name] for name in grp
-                if (isinstance(grp[name], h5py.Group) and
-                    "NX_class" in grp[name].attrs and
-                    grp[name].attrs["NX_class"] == class_type)]
+                if isinstance(grp[name], h5py.Group) and
+                self.get_attr(grp[name], "NX_class") == class_type]
         return coll
 
-    def get_data(self, grp, class_type="NXdata"):
-        """
-        return all dataset of the the NeXus class NXdata
+    def get_data(self, grp, attr=None, value=None):
+        """return all dataset of the the NeXus class NXdata
 
         :param grp: HDF5 group
-        :param class_type: name of the NeXus class
+        :param attr: name of an attribute
+        :param value: requested value
         """
-        result = []
-        for grp in self.get_class(grp, class_type):
-            result += [grp[name] for name in grp
-                       if (isinstance(grp[name], h5py.Dataset) and
-                       ("signal" in grp[name].attrs))]
-        return result
+        coll = [grp[name] for name in grp
+                if isinstance(grp[name], h5py.Dataset) and
+                self.get_attr(grp[name], attr) == value]
+        return coll
+
+    def get_default_NXdata(self):
+        """Return the default plot configured in the nexus structure.
+        
+        :return: the group with the default plot or None if not found
+        """
+        entry_name = self.h5.attrs.get("default")
+        if entry_name:
+            entry_grp = self.h5.get(entry_name)
+            nxdata_name = entry_grp.attrs.get("default")
+            if nxdata_name:
+                if nxdata_name.startswith("/"):
+                    return self.h5.get(nxdata_name)
+                else:
+                    return entry_grp.get(nxdata_name)
 
     def deep_copy(self, name, obj, where="/", toplevel=None, excluded=None, overwrite=False):
         """
@@ -372,10 +422,30 @@ class Nexus(object):
             if name in toplevel:
                 if overwrite:
                     del toplevel[name]
-                    logger.warning("Overwriting %s in %s" % (toplevel[name].name, self.filename))
+                    logger.warning("Overwriting %s in %s", toplevel[name].name, self.filename)
                 else:
-                    logger.warning("Not overwriting %s in %s" % (toplevel[name].name, self.filename))
+                    logger.warning("Not overwriting %s in %s", toplevel[name].name, self.filename)
                     return
-            toplevel[name] = obj.value
+            toplevel[name] = obj[()]
             for k, v in obj.attrs.items():
                 toplevel[name].attrs[k] = v
+
+    @classmethod
+    def get_attr(cls, dset, name, default=None):
+        """Return the attribute of the dataset
+
+        Handles the ascii -> unicode issue in python3 #275
+
+        :param dset: a HDF5 dataset (or a group)
+        :param name: name of the attribute
+        :param default: default value to be returned
+        :return: attribute value decoded in python3 or default
+        """
+        dec = default
+        if name in dset.attrs:
+            raw = dset.attrs[name]
+            if (sys.version_info[0] > 2) and ("decode" in dir(raw)):
+                dec = raw.decode()
+            else:
+                dec = raw
+        return dec

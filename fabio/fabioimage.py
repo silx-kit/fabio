@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/04/2020"
+__date__ = "04/05/2021"
 
 import os
 import logging
@@ -207,23 +207,23 @@ class _FabioArray(object):
         if sli == self.slice and self.area_sum is not None:
             pass
         elif sli == self.slice and self.roi is not None:
-            self.area_sum = self.roi.sum(dtype=numpy.float)
+            self.area_sum = self.roi.sum(dtype=numpy.float64)
         else:
             self.slice = sli
             self.roi = self.data[self.slice]
-            self.area_sum = self.roi.sum(dtype=numpy.float)
+            self.area_sum = self.roi.sum(dtype=numpy.float64)
         return self.area_sum
 
     def getmean(self):
         """ return the mean """
         if self.mean is None:
-            self.mean = self.data.mean(dtype=numpy.double)
+            self.mean = self.data.mean(dtype=numpy.float64)
         return self.mean
 
     def getstddev(self):
         """ return the standard deviation """
         if self.stddev is None:
-            self.stddev = self.data.std(dtype=numpy.double)
+            self.stddev = self.data.std(dtype=numpy.float64)
         return self.stddev
 
     @property
@@ -380,6 +380,14 @@ class FabioFrame(_FabioArray):
             return self._dtype
         return self.data.dtype
 
+    def next(self):
+        """Returns the next frame from it's file container.
+
+        :rtype: FabioFrame
+        """
+        container = self.file_container
+        return container.get_frame(self.file_index + 1)
+
 
 class FabioImage(_FabioArray):
     """A common object for images in fable
@@ -423,12 +431,11 @@ class FabioImage(_FabioArray):
         self._file = None
         if type(data) in fabioutils.StringTypes:
             raise TypeError("Data should be numpy array")
+        self._nframes = 1
+        self.currentframe = 0
         self.data = self.check_data(data)
         self.header = self.check_header(header)
         # cache for image statistics
-
-        self._nframes = 1
-        self.currentframe = 0
         self.filename = None
         self.filenumber = None
 
@@ -586,6 +593,8 @@ class FabioImage(_FabioArray):
     def previous(self):
         """ returns the previous file in the series as a fabioimage """
         from .openimage import openimage
+        if self.filename is None:
+            raise IOError()
         return openimage(fabioutils.previous_filename(self.filename))
 
     def next(self):
@@ -594,6 +603,8 @@ class FabioImage(_FabioArray):
         :raise IOError: When there is no next file in the series.
         """
         from .openimage import openimage
+        if self.filename is None:
+            raise IOError()
         return openimage(
             fabioutils.next_filename(self.filename))
 
@@ -851,8 +862,8 @@ class FabioImage(_FabioArray):
             yield current_image
             try:
                 current_image = current_image.next()
-            except IOError:
-                raise StopIteration
+            except (IOError, IndexError):
+                break
 
 
 fabioimage = FabioImage

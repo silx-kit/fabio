@@ -44,7 +44,6 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from ...edfimage import edfimage
-from ...third_party import six
 from ...fabioutils import GzipFile, BZ2File
 from ..utilstest import UtilsTest
 
@@ -54,15 +53,15 @@ class TestFlatEdfs(unittest.TestCase):
 
     def common_setup(self):
         self.BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        self.MYHEADER = six.b("{\n%-1020s}\n" % (
-                    """Omega = 0.0 ;
-                    Dim_1 = 256 ;
-                    Dim_2 = 256 ;
-                    DataType = FloatValue ;
-                    ByteOrder = %s ;
-                    Image = 1;
-                    History-1 = something=something else;
-                    \n\n""" % self.BYTE_ORDER))
+        self.MYHEADER = ("{\n%-1020s}\n" % (
+                        """Omega = 0.0 ;
+                        Dim_1 = 256 ;
+                        Dim_2 = 256 ;
+                        DataType = FloatValue ;
+                        ByteOrder = %s ;
+                        Image = 1;
+                        History-1 = something=something else;
+                        \n\n""" % self.BYTE_ORDER)).encode("latin-1")
         self.MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
@@ -415,17 +414,17 @@ class TestBadFiles(unittest.TestCase):
     @classmethod
     def write_header(cls, fd, image_number):
         byte_order = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        byte_order = six.b(byte_order)
+        byte_order = byte_order.encode("latin-1")
 
-        fd.write(six.b("{\n"))
-        fd.write(six.b("Omega = 0.0 ;\n"))
-        fd.write(six.b("Dim_1 = 256 ;\n"))
-        fd.write(six.b("Dim_2 = 256 ;\n"))
-        fd.write(six.b("DataType = FloatValue ;\n"))
-        fd.write(six.b("ByteOrder = %s ;\n" % byte_order))
-        fd.write(six.b("Image = %d ;\n" % image_number))
-        fd.write(six.b("History-1 = something=something else;\n"))
-        fd.write(six.b("}\n"))
+        fd.write(b"{\n")
+        fd.write(b"Omega = 0.0 ;\n")
+        fd.write(b"Dim_1 = 256 ;\n")
+        fd.write(b"Dim_2 = 256 ;\n")
+        fd.write(b"DataType = FloatValue ;\n")
+        fd.write(b"ByteOrder = %s ;\n" % byte_order)
+        fd.write(b"Image = %d ;\n" % image_number)
+        fd.write(b"History-1 = something=something else;\n")
+        fd.write(b"}\n")
 
     @classmethod
     def write_data(cls, fd):
@@ -471,7 +470,7 @@ class TestBadFiles(unittest.TestCase):
     def test_wrong_magic(self):
         filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
         f = io.open(filename, "wb")
-        f.write(six.b("\x10\x20\x30"))
+        f.write(b"\x10\x20\x30")
         f.close()
 
         self.assertRaises(IOError, self.open, filename)
@@ -636,6 +635,79 @@ class TestEdfIterator(unittest.TestCase):
             next(iterator)
 
 
+
+class TestEdfBadHeader(unittest.TestCase):
+    """Test reader behavior with corrupted header file"""
+
+    def setUp(self):
+        self.fgood = os.path.join(UtilsTest.tempdir, "TestEdfGoodHeaderPadding.edf")
+        self.fbad = os.path.join(UtilsTest.tempdir, "TestEdfBadHeaderPadding.edf")
+        self.fzero = os.path.join(UtilsTest.tempdir, "TestEdfZeroHeaderPadding.edf")
+        self.fnonascii = os.path.join(UtilsTest.tempdir, "TestEdfNonAsciiItem.edf")
+        self.data = numpy.zeros((10, 11), numpy.uint8)
+        self.hdr = {"mykey": "myvalue", "title": "ok"}
+
+        good = fabio.edfimage.edfimage(self.data, self.hdr)
+        good.write(self.fgood)
+        with fabio.open(self.fgood) as good:
+            self.good_header = good.header
+
+        with open(self.fgood, "rb") as fh:
+            hdr = bytearray(fh.read(512))
+            while hdr.find(b"}") < 0:
+                hdr += fh.read(512)
+            data = fh.read()
+        with open( self.fbad, "wb") as fb:
+            start = hdr.rfind(b";") + 1
+            end = hdr.find(b"}") - 1
+            hdr[start:end] = [ord('\n')] + [0xcd] * (end - start - 1)
+            fb.write(hdr)
+            fb.write(data)
+        with open( self.fzero, "wb") as fb:
+            # insert some 0x00 to be stripped
+            key = b"myvalue"
+            z = hdr.find(key)
+            hdr[z + len(key)] = 0
+            fb.write(hdr)
+            fb.write(data)
+        with open( self.fnonascii, "wb") as fb:
+            hdr[z:z + 1]= 0xc3, 0xa9  # e-acute in utf-8 ??
+            with open(self.fnonascii, "wb") as fb:
+                fb.write(hdr)
+                fb.write(data)
+
+    def tearDown(self):
+        os.remove(self.fgood)
+        os.remove(self.fbad)
+        os.remove(self.fzero)
+        os.remove(self.fnonascii)
+
+    def testReadBadPadding(self):
+        """
+        Some old data were found with headers padded with 0xcd (issue #373)
+        """
+        with fabio.open(self.fbad) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testReadGoodPadding(self):
+        with fabio.open(self.fgood) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testReadZeroPadding(self):
+        with fabio.open(self.fzero) as im:
+            self.assertTrue((im.data == 0).all())
+            self.assertEqual(im.header, self.good_header)
+
+    def testNonAsciiHeader(self):
+        """Non-ascii characters are skipped."""
+        with fabio.open(self.fnonascii) as im:
+            self.assertTrue((im.data == 0).all())
+            expected = dict(self.good_header)
+            expected.pop("mykey")
+            self.assertEqual(im.header, expected)
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -652,6 +724,7 @@ def suite():
     testsuite.addTest(loadTests(TestBadGzFiles))
     testsuite.addTest(loadTests(TestEdfIterator))
     testsuite.addTest(loadTests(TestSphere2SaxsSamples))
+    testsuite.addTest(loadTests(TestEdfBadHeader))
     return testsuite
 
 

@@ -41,7 +41,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 import logging
 import numpy
 from .fabioimage import FabioImage
-from .third_party.six import binary_type
 logger = logging.getLogger(__name__)
 
 DATA_TYPES = {2: numpy.int16,
@@ -49,7 +48,7 @@ DATA_TYPES = {2: numpy.int16,
               3: numpy.int32,
               5: numpy.uint32,
               6: numpy.float32,
-              7: numpy.float,
+              7: numpy.float64,
               8: numpy.int8,
               9: None,
               10: None,
@@ -180,7 +179,7 @@ class Dm3Image(FabioImage):
                 key = tag_label.decode("latin-1", "replace")
                 logger.warning("Non-valid latin-1 key renamed into '%s'" % key)
             value = self.read_tag_type()
-            if isinstance(value, binary_type):
+            if isinstance(value, bytes):
                 value = value.decode()
             logger.debug("%s: %s", key, value)
             if key in self.header:

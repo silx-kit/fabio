@@ -811,7 +811,7 @@ void pack_chunk(int32_t *lng,
   { buffree = buffer = (char *) malloc(PACKBUFSIZ);
     bitmark = 0;}
   if (lng != NULL)
-  { for (i = nmbr, j = 0; i > 1; i /= 2, ++j);
+  { for (i = nmbr, j = 0; i > 1; i /= 2, ++j){;}
     descriptor[0] = j;
     descriptor[1] = bitsize_encode[bitsize];
     if ((buffree - buffer) > (PACKBUFSIZ - (130 * 4)))

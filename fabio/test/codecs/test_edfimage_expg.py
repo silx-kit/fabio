@@ -27,23 +27,17 @@
 # THE SOFTWARE.
 #
 """
-# Unit tests
-Reading edf files as originally specified by expg with fabio.module edfimage.py
-
-07/06/2019 PB
+Unittest to read edf files as originally specified by expg.
 """
 
 import unittest
 import os
 import numpy
-import shutil
-import io
 import logging
 
 logger = logging.getLogger(__name__)
 
 import fabio
-from fabio.edfimage import edfimage
 from ..utilstest import UtilsTest
 
 # logging.basicConfig(level=logging.DEBUG)
@@ -54,49 +48,46 @@ from ..utilstest import UtilsTest
 # logging.info('This will get logged')
 
 
-#==========================================
-def fopen(filename=None, frameno=None):
-    header = None
-    data = None
-    frame = None
+def open_frame(filename, frameno):
     logging.debug("fopen(filename={},frameno={})".format(filename, frameno))
-    if filename:
-        image = fabio.open(filename)
-        if frameno is None:
-            frameno = 0
 
-        nframes = image.nframes
+    image = fabio.open(filename)
+    if frameno is None:
+        frameno = 0
 
-        # if image.classname == "EdfImage":
-        if hasattr(image, "npsdframes"):
-            npsdframes = image.npsdframes
-            nerrorframes = image.nerrorframes
+    nframes = image.nframes
+
+    # if image.classname == "EdfImage":
+    if hasattr(image, "npsdframes"):
+        npsdframes = image.npsdframes
+        nerrorframes = image.nerrorframes
+    else:
+        npsdframes = nframes
+        nerrorframes = 0
+
+    if frameno >= npsdframes:
+        logging.warning("Psd frame {} out of range: 0 <= {} < {}".format(frameno, frameno, npsdframes))
+
+    if frameno < 0:
+        if -frameno > nerrorframes:
+            logging.warning("Error frame {} out of range: {} <= {} < 0 ".format(frameno, -nerrorframes, frameno))
+        frameno += nframes
+
+    frame = None
+    if frameno in range(nframes):
+        if nframes > 1:
+            frame = image.getframe(frameno)
+            data = frame.data
+            header = frame.header
         else:
-            npsdframes = nframes
-            nerrorframes = 0
+            # Single frame
+            data = image.data
+            header = image.header
+        frame = fabio.fabioimage.FabioFrame(data=data, header=header)
+    else:
+        raise IOError("fopen: Cannot access frame: {} (0<=frame<{})".format(frameno, nframes))
 
-        if frameno >= npsdframes:
-            logging.warning("Psd frame {} out of range: 0 <= {} < {}".format(frameno, frameno, npsdframes))
-
-        if frameno < 0:
-            if -frameno > nerrorframes:
-                logging.warning("Error frame {} out of range: {} <= {} < 0 ".format(frameno, -nerrorframes, frameno))
-            frameno += nframes
-
-        if frameno in range(nframes):
-            if nframes > 1:
-                frame = image.getframe(frameno)
-                data = frame.data
-                header = frame.header
-            else:
-                # Single frame
-                data = image.data
-                header = image.header
-            frame = fabio.fabioimage.FabioFrame(data=data, header=header)
-        else:
-            raise IOError("fopen: Cannot access frame: {} (0<=frame<{})".format(frameno, nframes))
-
-    return(frame)
+    return frame
 
 
 def get_data_counts(shape=None):
@@ -104,7 +95,7 @@ def get_data_counts(shape=None):
     Counts all items specified by shape
     '''
     if shape is None:
-      shape = ()
+        shape = ()
     counts = 1
     for ishape in range(0, len(shape)):
         counts *= shape[ishape]
@@ -137,7 +128,7 @@ def test_00(cls, filename, avglist=None, keylist=None):
     # To avoid warnings make different loops over psd data and error data
     # psd data
     for frameno in range(0, npsdframes):
-        frame = fopen(filename, frameno)
+        frame = open_frame(filename, frameno)
 
         # check data shape
         counts = get_data_counts(frame.shape)
@@ -147,19 +138,19 @@ def test_00(cls, filename, avglist=None, keylist=None):
            format(filename, frameno, frame.shape, frame.data.shape))
 
         # calculate mean value
-        sum = numpy.sum(frame.data)
-        fmean = sum / counts
+        fsum = numpy.sum(frame.data)
+        fmean = fsum / counts
 
-        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename, frameno, sum, counts, fmean))
+        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename, frameno, fsum, counts, fmean))
 
         # read known mean value from avglist
         if avglist is not None:
-           if len(avglist) > frameno:
-               avg = avglist[frameno]
-           else:
-               avg = avglist[-1]
-           cls.assertLessEqual(abs(fmean - avg), abs(fmean + avg) * 5e-6, "B:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
-               format(filename, frameno, fmean, avg))
+            if len(avglist) > frameno:
+                avg = avglist[frameno]
+            else:
+                avg = avglist[-1]
+            cls.assertLessEqual(abs(fmean - avg), abs(fmean + avg) * 5e-6, "B:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
+                format(filename, frameno, fmean, avg))
 
         # read a key to read from keylist
         if keylist is not None:
@@ -169,15 +160,15 @@ def test_00(cls, filename, avglist=None, keylist=None):
                 key = keylist[-1]
 
             if key in frame.header:
-               logging.debug("filename={}, frameno={}: '{}' = {}".format(filename, frameno, key, frame.header[key]))
+                logging.debug("filename={}, frameno={}: '{}' = {}".format(filename, frameno, key, frame.header[key]))
             else:
-               logging.debug("filename={}, frameno={}: '{}' = None".format(filename, frameno, key))
+                logging.debug("filename={}, frameno={}: '{}' = None".format(filename, frameno, key))
 
             cls.assertIn(key, frame.header, "C:filename={},frameno={}: Missing expected header key '{}'".format(filename, frameno, key))
 
     # error data
     for frameno in range(0, nerrorframes):
-        frame = fopen(filename, -frameno - 1)
+        frame = open_frame(filename, -frameno - 1)
 
         # check data shape
         counts = get_data_counts(frame.shape)
@@ -187,20 +178,21 @@ def test_00(cls, filename, avglist=None, keylist=None):
            format(filename, frameno, frame.shape, frame.data.shape))
 
         # calculate mean value
-        sum = numpy.sum(frame.data)
+        fsum = numpy.sum(frame.data)
         fmean = sum / counts
 
-        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename, frameno, sum, counts, fmean))
+        logging.debug("filename={},frameno={},sum={},counts={},fmean={}".format(filename, frameno, fsum, counts, fmean))
 
         # read known mean value from avglist
         if avglist is not None:
-           # error frames are taken from the end
-           if len(avglist) > nframes - frameno - 1:
-               avg = avglist[nframes - frameno - 1]
-           else:
-               avg = avglist[-1]
-           cls.assertLessEqual(abs(fmean - avg), abs(fmean + avg) * 5e-6, "E:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
-               format(filename, frameno, fmean, avg))
+            # error frames are taken from the end
+            if len(avglist) > nframes - frameno - 1:
+                avg = avglist[nframes - frameno - 1]
+            else:
+                avg = avglist[-1]
+            cls.assertLessEqual(abs(fmean - avg), abs(fmean + avg) * 5e-6,
+                                "E:filename={},frameno={}: unexpected average value: calculated {}, expected {}".
+                                format(filename, frameno, fmean, avg))
 
         # read a key to read from keylist
         if keylist is not None:
@@ -210,9 +202,9 @@ def test_00(cls, filename, avglist=None, keylist=None):
                 key = keylist[-1]
 
             if key in frame.header:
-               logging.debug("filename={},frameno={}: key='{}'".format(filename, frameno, key, frame.header[key]))
+                logging.debug("filename={},frameno={}: key='{}'".format(filename, frameno, key, frame.header[key]))
             else:
-               logging.debug("filename={},frameno={}: key=None".format(filename, frameno, key))
+                logging.debug("filename={},frameno={}: key=None".format(filename, frameno, key))
 
             cls.assertIn(key, frame.header, "F:filename={},frameno={}: Missing expected header key '{}'".format(filename, frameno, key))
 
@@ -275,7 +267,10 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         frame 18:     Test reading with EDF_BinaryFileSize bigger than required
                       => currently an unnecessary info is given
         """
-        avglist = [9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
+        avglist = [9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29,
+                   9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27,
+                   9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51,
+                   9604.45, 9617.5]
         filename = os.path.join(self.root, "02_multi_raw_bf_gblk/rh28a_saxs_00022_raw_binned.ehf")
         test_00(self, filename, avglist)
 
@@ -310,17 +305,6 @@ class EdfBlockBoundaryCases(unittest.TestCase):
         filename = os.path.join(self.root, "04_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
         test_00(self, filename, avglist)
 
-    def test_edfsingle_raw_bf_gblk_gz(self):
-        """
-        Test reading gzipped data files linking to an external binary data file.
-        Check that the extension .gz is added to the name of the external binary
-        data file if it cannot be opened with the binary file name found in the
-        header. The binary data file is not compressed.
-        """
-        avglist = [25743.2]
-        filename = os.path.join(self.root, "05_single_raw_bf_gblk_gz/pj19_frelon_00028_raw.ehf.gz")
-        test_00(self, filename, avglist)
-
     def test_edf6_single_raw_bf_gblk_gz(self):
         """
         Test reading gzipped data files linking to an external binary data file.
@@ -348,7 +332,10 @@ class EdfBlockBoundaryCases(unittest.TestCase):
                       the real file size. => data must only be read to the end
                       of the binary data file.
         """
-        avglist = [9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29, 9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27, 9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51, 9604.45, 9617.5]
+        avglist = [9584.23, 9592.64, 9591.69, 9599.7, 9602.51, 9604.29,
+                   9610.97, 9609.86, 9614.14, 9610.52, 9603.12, 9603.27,
+                   9600.22, 9606.86, 9605.26, 9601.37, 9606.09, 9604.51,
+                   9604.45, 9617.5]
         filename = os.path.join(self.root, "07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz")
         test_00(self, filename, avglist)
 

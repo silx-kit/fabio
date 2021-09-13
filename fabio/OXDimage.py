@@ -45,7 +45,7 @@ Authors:
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "03/04/2020"
+__date__ = "11/12/2020"
 
 import time
 import logging
@@ -165,7 +165,7 @@ class OxdImage(FabioImage):
         # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
         start_angles_step = numpy.frombuffer(block[284:304], numpy.int32)
         end_angles_step = numpy.frombuffer(block[324:344], numpy.int32)
-        step2rad = numpy.frombuffer(block[368:408], numpy.float)
+        step2rad = numpy.frombuffer(block[368:408], numpy.float64)
         zero_correction_soft_step = numpy.frombuffer(block[512:532], numpy.int32)
         if not numpy.little_endian:
             start_angles_step.byteswap(True)
@@ -335,12 +335,12 @@ class OxdImage(FabioImage):
         header += NG.__repr__()
 
         NS = Section(self.header['Special Section size in Byte'], self.header)
-        NS.setData('Gain', 56, numpy.float)
+        NS.setData('Gain', 56, numpy.float64)
         NS.setData('Overflows flag', 464, numpy.int16)
         NS.setData('Overflow after remeasure flag', 466, numpy.int16)
         NS.setData('Overflow threshold', 472, numpy.int32)
-        NS.setData('Exposure time in sec', 480, numpy.float)
-        NS.setData('Overflow time in sec', 488, numpy.float)
+        NS.setData('Exposure time in sec', 480, numpy.float64)
+        NS.setData('Overflow time in sec', 488, numpy.float64)
         NS.setData('Monitor counts of raw image 1', 528, numpy.int32)
         NS.setData('Monitor counts of raw image 2', 532, numpy.int32)
         NS.setData('Monitor counts of overflow raw image 1', 536, numpy.int32)
@@ -350,8 +350,8 @@ class OxdImage(FabioImage):
             for key, value in DETECTOR_TYPES.items():
                 if value == self.header['Detector type']:
                     NS.setData(None, 548, numpy.int32, default=key)
-        NS.setData('Real pixel size x (mm)', 568, numpy.float)
-        NS.setData('Real pixel size y (mm)', 576, numpy.float)
+        NS.setData('Real pixel size x (mm)', 568, numpy.float64)
+        NS.setData('Real pixel size y (mm)', 576, numpy.float64)
         header += NS.__repr__()
 
         KM = Section(self.header['KM4 Section size in Byte'], self.header)

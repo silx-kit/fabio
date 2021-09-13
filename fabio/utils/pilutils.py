@@ -59,7 +59,7 @@ PIL_TO_NUMPY = {
     "F;64F": numpy.float64,
     "F;64BF": numpy.float64,  # big endian
     "F": numpy.float32,
-    "1": numpy.bool,
+    "1": bool,
     "I": numpy.int32,
     "L": numpy.uint8,
     "P": numpy.uint8,

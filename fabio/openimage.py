@@ -37,18 +37,19 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
 mods for fabio by JPW
 modification for HDF5 by Jérôme Kieffer
-
+mods for APS GE by JVB
 """
 
 import os.path
 import logging
-logger = logging.getLogger(__name__)
 from . import fabioutils
 from .fabioutils import FilenameObject, BytesIO
 from .fabioimage import FabioImage
 
 # Make sure to load all formats
 from . import fabioformats  # noqa
+
+logger = logging.getLogger(__name__)
 
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
@@ -74,7 +75,11 @@ MAGIC_NUMBERS = [
     (b"{", 'edf'),
     (b"\r{", 'edf'),
     (b"\n{", 'edf'),
+    # had to add a special case for GE here because they blanked out
+    # the default header for the GE's at APS with the firmware
+    # update as of 2018
     (b"ADEPT", 'GE'),
+    (b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 'GE'),
     (b"OD", 'OXD'),
     (b"IM", 'HiPiC'),
     (b'\x2d\x04', 'mar345'),
@@ -87,7 +92,7 @@ MAGIC_NUMBERS = [
     (b"No", "kcd"),
     (b"<", "xsd"),
     (b"\n\xb8\x03\x00", 'pixi'),
-    (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/hdf5"),
+    (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/lima/sparse/hdf5"),
     (b"R-AXIS", 'raxis'),
     (b"\x93NUMPY", 'numpy'),
     (b"\\$FFF_START", 'fit2d'),
@@ -100,6 +105,7 @@ MAGIC_NUMBERS = [
     # JPEG 2000 (from RFC 3745)
     (b"\x00\x00\x00\x0C\x6A\x50\x20\x20\x0D\x0A\x87\x0A", "jpeg2k"),
     (b"ESPERANTO FORMAT", "esperanto"),
+    (b'###CBF: VERSION', "cbf")
 ]
 
 
@@ -108,11 +114,20 @@ def do_magic(byts, filename):
     for magic, format_type in MAGIC_NUMBERS:
         if byts.startswith(magic):
             if "/" in format_type:
-                if format_type == "eiger/hdf5":
+                if format_type == "eiger/lima/sparse/hdf5":
                     if "::" in filename:
                         return "hdf5"
                     else:
-                        return "eiger"
+                        # check if the creator is LIMA
+                        import h5py
+                        with h5py.File(filename, "r") as h:
+                            creator = h.attrs.get("creator")
+                        if str(creator).startswith("LIMA"):
+                            return "lima"
+                        elif str(creator).startswith("pyFAI"):
+                            return "sparse"
+                        else:
+                            return "eiger"
                 elif format_type == "marccd/tif":
                     if "mccd" in filename.split("."):
                         return "marccd"
@@ -125,8 +140,8 @@ def do_magic(byts, filename):
 def openimage(filename, frame=None):
     """Open an image.
 
-    It returns a FabioImage-class instance which can be used as a context manager to close the file
-    at the termination.
+    It returns a FabioImage-class instance which can be used as a context
+    manager to close the file at the termination.
 
     .. code-block:: python
 
@@ -188,10 +203,12 @@ def _openimage(filename):
 
     """
     if hasattr(filename, "seek") and hasattr(filename, "read"):
-        # Looks to be a file containing filenames
-        if not isinstance(filename, BytesIO):
-            filename.seek(0)
-            actual_filename = BytesIO(filename.read())
+        # Data stream without filename
+        filename.seek(0)
+        data = filename.read()
+        actual_filename = BytesIO(data)
+        # Back to the location before the read
+        filename.seek(0)
     else:
         if os.path.exists(filename):
             # Already a valid filename

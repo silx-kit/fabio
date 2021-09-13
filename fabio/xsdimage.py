@@ -42,7 +42,6 @@ import base64
 import hashlib
 
 from .fabioimage import FabioImage
-from .fabioutils import six
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +150,7 @@ class XsdImage(FabioImage):
                 self.coding = j.text
         self.rawData = None
         for i in xml.findall(".//data"):
-            self.rawData = six.b(i.text)
+            self.rawData = i.text.encode("latin-1")
         self.md5 = None
         for i in xml.findall(".//md5sum"):
             j = i.find("value")

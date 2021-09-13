@@ -6,10 +6,17 @@
 Welcome to FabIO's documentation!
 =================================
 
+FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python.
+FabIO support images detectors from a dozen of companies (including Mar, Dectris, ADSC, Hamamatsu, Oxford, ...),
+for a total of 30 different file formats (like CBF, EDF, TIFF, ...) and offers an unified interface to their
+headers (as a python dictionary) and datasets (as a numpy ndarray of integers or floats)
+
+
+
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    getting_started
    install

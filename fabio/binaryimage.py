@@ -40,6 +40,7 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __version__ = "17/10/2012"
 
+import io
 from .fabioimage import FabioImage
 import numpy
 import logging
@@ -123,8 +124,11 @@ class BinaryImage(FabioImage):
         logger.info('estimation of the offset value (bytes): %s', totsize - size)
 
     def write(self, fname):
-        with open(fname, mode="wb") as outfile:
-            outfile.write(self.data.tobytes())
+        with self._open(fname, mode="wb") as outfile:
+            if isinstance(outfile, io.BufferedWriter):
+                self.data.tofile(outfile)
+            else:
+                outfile.write(self.data.tobytes())
 
 
 binaryimage = BinaryImage

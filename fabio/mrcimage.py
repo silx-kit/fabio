@@ -31,13 +31,16 @@ email:  Jerome.Kieffer@terre-adelie.org
 
 Specifications from:
 http://ami.scripps.edu/software/mrctools/mrc_specification.php
+New version on:
+https://www.ccpem.ac.uk/mrc_format/mrc_format.php
+https://www.fei-software-center.com/tem-apps/MRC-2014-Specifications/
 """
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "03/04/2020"
+__date__ = "23/04/2021"
 
 import logging
 import numpy
@@ -85,12 +88,18 @@ class MrcImage(FabioImage):
         int_block = numpy.frombuffer(infile.read(56 * 4), dtype=numpy.int32)
         for key, value in zip(self.KEYS, int_block):
             self.header[key] = value
-        if self.header["MAP"] != 542130509:
-            logger.info("Expected 'MAP ', got %s", self.header["MAP"].tobytes())
+        # convert some headers ...
+        self.header["MAP"] = self.header["MAP"].tobytes().decode()
+        if self.header["MAP"][:3] not in ('MAP ', 'FEI'):
+            logger.info("Expected 'MAP ', got %s", self.header["MAP"])
 
         for i in range(10):
             label = "LABEL_%02i" % i
-            self.header[label] = infile.read(80).strip()
+            self.header[label] = infile.read(80).decode().strip()
+
+        # Read extended header
+        self.header["extended"] = infile.read(self.header["NSYMBT"])
+
         dim1 = int(self.header["NX"])
         dim2 = int(self.header["NY"])
         self._shape = dim2, dim1
@@ -126,7 +135,7 @@ class MrcImage(FabioImage):
         :param frame: frame number
         """
         assert frame < self.nframes
-        return 1024 + frame * self.imagesize
+        return 1024 + self.header["NSYMBT"] + frame * self.imagesize
 
     def _makeframename(self):
         self.filename = "%s$%04d" % (self.sequencefilename,

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # coding: utf8
 # /*##########################################################################
 #
@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
+__date__ = "29/04/2021"
 __status__ = "stable"
 
 import sys
@@ -53,7 +53,12 @@ try:
     from setuptools.command.build_py import build_py as _build_py
     from setuptools.command.build_ext import build_ext
     from setuptools.command.sdist import sdist
-    logger.info("Use setuptools")
+    try:
+        from Cython.Build import build_ext
+        logger.info("Use setuptools with cython")
+    except ImportError:
+        from setuptools.command.build_ext import build_ext
+        logger.info("Use setuptools, cython is missing")
 except ImportError:
     try:
         from numpy.distutils.core import Command
@@ -62,8 +67,12 @@ except ImportError:
     from distutils.command.build_py import build_py as _build_py
     from distutils.command.build_ext import build_ext
     from distutils.command.sdist import sdist
-    logger.info("Use distutils")
-
+    try:
+        from Cython.Build import build_ext
+        logger.info("Use distutils with cython")
+    except ImportError:
+        from distutils.command.build_ext import build_ext
+        logger.info("Use distutils, cython is missing")
 try:
     import sphinx
     import sphinx.util.console
@@ -73,8 +82,10 @@ except ImportError:
     sphinx = None
 
 PROJECT = "fabio"
+if sys.version_info.major < 3:
+    logger.error(PROJECT + " no more support Python2")
 
-if "LANG" not in os.environ and sys.platform == "darwin" and sys.version_info[0] > 2:
+if "LANG" not in os.environ and sys.platform == "darwin":
     print("""WARNING: the LANG environment variable is not defined,
 an utf-8 LANG is mandatory to use setup.py, you may face unexpected UnicodeError.
 export LANG=en_US.utf-8
@@ -111,9 +122,11 @@ classifiers = [
     'Operating System :: MacOS :: MacOS X',
     'Operating System :: Microsoft :: Windows',
     'Operating System :: POSIX',
-    'Programming Language :: Python',
-    'Programming Language :: Cython',
     'Programming Language :: C',
+    'Programming Language :: Cython',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: Implementation :: CPython',
     'Topic :: Scientific/Engineering :: Chemistry',
     'Topic :: Scientific/Engineering :: Bio-Informatics',
     'Topic :: Scientific/Engineering :: Physics',
@@ -254,6 +267,55 @@ class BuildMan(Command):
         succeeded = succeeded and status == 0
         return succeeded
 
+    @staticmethod
+    def _write_script(target_name, lst_lines=None):
+        """Write a script to a temporary file and return its name
+        :paran target_name: base of the script name
+        :param lst_lines: list of lines to be written in the script
+        :return: the actual filename of the script (for execution or removal)
+        """
+        import tempfile
+        import stat
+        script_fid, script_name = tempfile.mkstemp(prefix="%s_" % target_name, text=True)
+        with os.fdopen(script_fid, 'wt') as script:
+            for line in lst_lines:
+                if not line.endswith("\n"):
+                    line += "\n"
+                script.write(line)
+        # make it executable
+        mode = os.stat(script_name).st_mode
+        os.chmod(script_name, mode + stat.S_IEXEC)
+        return script_name
+
+    def get_synopsis(self, module_name, env, log_output=False):
+        """Execute a script to retrieve the synopsis for help2man
+        :return: synopsis
+        :rtype: single line string
+        """
+        import subprocess
+        script_name = None
+        synopsis = None
+        script = ["#!%s\n" % sys.executable,
+                  "import logging",
+                  "logging.basicConfig(level=logging.ERROR)",
+                  "import %s as app" % module_name,
+                  "print(app.__doc__)"]
+        try:
+            script_name = self._write_script(module_name, script)
+            command_line = [sys.executable, script_name]
+            p = subprocess.Popen(command_line, env=env, stdout=subprocess.PIPE)
+            status = p.wait()
+            if status != 0:
+                logger.warning("Error while getting synopsis for module '%s'.", module_name)
+            synopsis = p.stdout.read().decode("utf-8").strip()
+            if synopsis == 'None':
+                synopsis = None
+        finally:
+            # clean up the script
+            if script_name is not None:
+                os.remove(script_name)
+        return synopsis
+
     def run(self):
         build = self.get_finalized_command('build')
         path = sys.path
@@ -267,6 +329,7 @@ class BuildMan(Command):
         import tempfile
         import stat
         script_name = None
+        workdir = tempfile.mkdtemp()
 
         entry_points = self.entry_points_iterator()
         for target_name, module_name, function_name in entry_points:
@@ -274,34 +337,24 @@ class BuildMan(Command):
             # help2man expect a single executable file to extract the help
             # we create it, execute it, and delete it at the end
 
-            py3 = sys.version_info >= (3, 0)
             try:
                 # create a launcher using the right python interpreter
-                script_fid, script_name = tempfile.mkstemp(prefix="%s_" % target_name, text=True)
-                script = os.fdopen(script_fid, 'wt')
-                script.write("#!%s\n" % sys.executable)
-                script.write("import %s as app\n" % module_name)
-                script.write("app.%s()\n" % function_name)
-                script.close()
+                script_name = os.path.join(workdir, target_name)
+                with open(script_name, "wt") as script:
+                    script.write("#!%s\n" % sys.executable)
+                    script.write("import %s as app\n" % module_name)
+                    script.write("app.%s()\n" % function_name)
                 # make it executable
                 mode = os.stat(script_name).st_mode
                 os.chmod(script_name, mode + stat.S_IEXEC)
 
                 # execute help2man
                 man_file = "build/man/%s.1" % target_name
-                command_line = ["help2man", script_name, "-o", man_file]
-                if not py3:
-                    # Before Python 3.4, ArgParser --version was using
-                    # stderr to print the version
-                    command_line.append("--no-discard-stderr")
-                    # Then we dont know if the documentation will contains
-                    # durtty things
-                    succeeded = self.run_targeted_script(target_name, script_name, env, False)
-                    if not succeeded:
-                        logger.info("Error while generating man file for target '%s'.", target_name)
-                        self.run_targeted_script(target_name, script_name, env, True)
-                        raise RuntimeError("Fail to generate '%s' man documentation" % target_name)
+                command_line = ["help2man", "-N", script_name, "-o", man_file]
 
+                synopsis = self.get_synopsis(module_name, env)
+                if synopsis:
+                    command_line += ["-n", synopsis]
                 p = subprocess.Popen(command_line, env=env)
                 status = p.wait()
                 if status != 0:
@@ -312,6 +365,7 @@ class BuildMan(Command):
                 # clean up the script
                 if script_name is not None:
                     os.remove(script_name)
+        os.rmdir(workdir)
 
 
 if sphinx is not None:
@@ -442,6 +496,8 @@ class Build(_build):
     def finalize_options(self):
         _build.finalize_options(self)
         self.finalize_cython_options(min_version='0.21.1')
+        if not self.force_cython:
+            self.force_cython = self._parse_env_as_bool("FORCE_CYTHON") is True
         self.finalize_openmp_options()
 
     def _parse_env_as_bool(self, key):
@@ -468,9 +524,9 @@ class Build(_build):
         elif self.no_openmp:
             use_openmp = False
         else:
-            env_force_cython = self._parse_env_as_bool("WITH_OPENMP")
-            if env_force_cython is not None:
-                use_openmp = env_force_cython
+            env_with_openmp = self._parse_env_as_bool("WITH_OPENMP")
+            if env_with_openmp is not None:
+                use_openmp = env_with_openmp
             else:
                 # Use it by default
                 use_openmp = True
@@ -591,14 +647,14 @@ class BuildExt(build_ext):
         if not self.use_cython:
             self.patch_with_default_cythonized_files(ext)
         else:
-            from Cython.Build import cythonize
-            patched_exts = cythonize(
-                [ext],
-                compiler_directives={'embedsignature': True,
-                                     'language_level': 3},
-                force=self.force_cython
-            )
-            ext.sources = patched_exts[0].sources
+        	from Cython.Build import cythonize
+        	patched_exts = cythonize(
+                	                 [ext],
+                	                 compiler_directives={'embedsignature': True,
+                	                 'language_level': 3},
+                	                 force=self.force_cython
+        				)
+	        ext.sources = patched_exts[0].sources
 
         # Remove OpenMP flags if OpenMP is disabled
         if not self.use_openmp:
@@ -623,7 +679,7 @@ class BuildExt(build_ext):
             # Avoids runtime symbol collision for manylinux1 platform
             # See issue #1070
             extern = 'extern "C" ' if ext.language == 'c++' else ''
-            return_type = 'void' if sys.version_info[0] <= 2 else 'PyObject*'
+            return_type = 'PyObject*'
 
             ext.extra_compile_args.append('-fvisibility=hidden')
 
@@ -646,17 +702,8 @@ class BuildExt(build_ext):
 
         :rtype: bool
         """
-        if sys.version_info >= (3, 0):
-            # It is normalized on Python 3
-            # But it is not available on Windows CPython
-            if hasattr(sys, "abiflags"):
-                return "d" in sys.abiflags
-        else:
-            # It's a Python 2 interpreter
-            # pydebug is not available on Windows/Mac OS interpreters
-            if hasattr(sys, "pydebug"):
-                return sys.pydebug
-
+        if hasattr(sys, "abiflags"):
+            return "d" in sys.abiflags
         # We can't know if we uses debug interpreter
         return False
 
@@ -968,6 +1015,9 @@ def get_project_configuration(dry_run):
 
     console_scripts = [
         'fabio-convert = fabio.app.convert:main',
+        'eiger2cbf = fabio.app.eiger2cbf:main',
+        'eiger2crysalis = fabio.app.eiger2crysalis:main',
+        "densify-Bragg = fabio.app.densify:main"
     ]
 
     gui_scripts = [
@@ -1019,6 +1069,7 @@ def get_project_configuration(dry_run):
                         entry_points=entry_points,
                         test_suite="test",
                         license="MIT",
+                        python_requires='>=3.5',
                         )
     return setup_kwargs
 
