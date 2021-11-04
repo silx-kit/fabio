@@ -46,6 +46,7 @@ import fabio
 from ...edfimage import edfimage
 from ...fabioutils import GzipFile, BZ2File
 from ..utilstest import UtilsTest
+from ..testutils import LoggingValidator 
 
 
 class TestFlatEdfs(unittest.TestCase):
@@ -382,7 +383,56 @@ class TestEdfRegression(unittest.TestCase):
         image2 = fabio.open(output_filename)
         self.assertEqual(image.shape, image2.shape)
 
-
+    def test_bug_459(self):
+        h = {'HeaderID': 'EH:000001:000000:000000',
+             'Image': '1',
+             'ByteOrder': 'LowByteFirst',
+             'DataType': 'Float',
+             'Dim_1': '3216',
+             'Dim_2': '3000',
+             'Size': '38592000',
+             'Date': '30-Oct-2021',
+             'Lcurve': '0',
+             'Mh': '24.996',
+             'Mv': '24.996',
+             'angles_fname': 'angles_file.txt',
+             'angles_sign': '-1',
+             'ans': ';',
+             'approach': '8',
+             'argn': '[0,',
+             'avg_plane_zero': '6.2031',
+             'axisfilesduringscan': '1',
+             'axisposition': 'global',
+             'betash': '0.0179803',
+             'betasv': '0.0179803',
+             'calc_residu': '0',
+             'centralpart': '2048',
+             'centralpart_shift_h': '0',
+             'centralpart_shift_v': '0',
+             'centralpart_struct': ';',
+             'check_spectrum': '0',
+             'check_z1v': '0',
+             'constrain': '0',
+             'correct_detector': '3',
+             'correct_distortion_par': ';',
+             'correct_shrink': '0',
+             'correct_shrink_positive': '0',
+             'correct_whitefield_par': '17',
+             'cutn': '0.0511098',
+             'cylinder': '0',
+             'debug': '0',
+             'delta_beta': '2119.4',
+             'delta_beta_normalised': '0',
+             'delta_beta_range': '2119.4',
+             'delta_beta_test': '0',
+             'dim_h': '2048',
+             'dim_v': '2048',
+             'dir': '/data/visitor/ls3023/id16a/PR3/',
+             'direc': ''}
+        with LoggingValidator(fabio.edfimage.logger, error=0, warning=0):
+            fabio.edfimage.EdfFrame.get_data_rank(h)
+        
+    
 class TestBadFiles(unittest.TestCase):
 
     filename_template = "%s.edf"
