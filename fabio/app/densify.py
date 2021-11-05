@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "10/05/2021"
+__date__ = "05/11/2021"
 __status__ = "production"
 
 FOOTER = """
@@ -172,7 +172,6 @@ def save_master(outfile, sparsefile):
     p = 1 if len(s) > 1 else 0
     master = s[p][-1::-1] + "_master.h5"
 
-    print("master")
     if os.path.exists(master):
         logger.warning("Master file exists, skipping")
     else:
@@ -181,16 +180,18 @@ def save_master(outfile, sparsefile):
         except ImportError:
             logger.error("Master file generation requires pyFAI")
         else:
+            logger.info("Create master file")
             d = load_param(sparsefile)
-            ai = pyFAI .load(d["geometry"])
+            ai = pyFAI.load(d["geometry"])
             with Nexus(master, mode="w") as nxs:
                 entry = nxs.new_entry(program_name=None, force_name=True)
                 data = nxs.new_class(entry, "data", "NXdata")
                 data["data_000001"] = h5py.ExternalLink(outfile, "entry/data/data")
                 instrument = nxs.new_class(entry, "instrument", "NXinstrument")
                 beam = nxs.new_class(instrument, "beam", "NXbeam")
-                beam["incident_wavelength"] = numpy.float32(1e10 * ai.wavelength)
-                beam["incident_wavelength"].attrs["units"] = "angstrom"
+                if ai.wavelength is not None:
+                    beam["incident_wavelength"] = numpy.float32(1e10 * ai.wavelength)
+                    beam["incident_wavelength"].attrs["units"] = "angstrom"
                 detector = nxs.new_class(instrument, "detector", "NXdetector")
                 detector["beam_center_x"] = numpy.float32(ai.getFit2D()["centerX"])
                 detector["beam_center_x"].attrs["unit"] = "pixel"
