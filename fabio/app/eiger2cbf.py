@@ -37,7 +37,7 @@ to CBF and mimic the header from Dectris Pilatus.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "23/04/2021"
+__date__ = "03/12/2021"
 __status__ = "production"
 
 import logging
@@ -184,11 +184,11 @@ class ProgressBar:
         sys.stdout.flush()
 
 
-def select_detecor(shape):
+def select_pilatus_detecor(shape):
     """CrysalisPro only accepts some detector shapes as CBF inputs.
-    Those shaped correspond to the one of the dectris detector Pilatus and Eiger (first generation only?)
+    Those shaped correspond to the one of the dectris detector Pilatus
     
-    This function takes the input shape and return the smallest Dectris shape which is larger ... 
+    This function takes the input shape and return the smallest Dectris shape which is large enough. 
     """
     assert len(shape) >= 2
     valid_detectors = {  # (514, 1030): 'eiger_500k',
@@ -255,7 +255,10 @@ def convert_one(input_filename, options, start_at=0):
         logger.debug("Backtrace", exc_info=True)
         return -1
 
-    shape = select_detecor((source.shape[-1], source.shape[-2]) if flip else source.shape)
+    shape = source.shape[-1::-1] if flip else source.shape
+    if options.pilatus:
+        shape = select_pilatus_detecor(shape)
+
     pilatus_headers = cbfimage.PilatusHeader("Silicon sensor, thickness 0.001 m")
     if isinstance(source, limaimage.LimaImage):
         # Populate the Pilatus header from the Lima
@@ -341,11 +344,19 @@ def convert_one(input_filename, options, start_at=0):
             pilatus_headers["Omega"] = value
             pilatus_headers["Omega_increment"] = 0.0
 
+    if options.mask:
+        mask = fabio_open(options.mask).data
+        wmsk = numpy.where(mask)
+
     for i, frame in enumerate(source):
         idx = i + start_at
         data = numpy.empty(shape, dtype=numpy.int32)
         data.fill(options.dummy)
         input_data = frame.data.astype(numpy.int32)
+
+        if options.mask:
+            input_data[wmsk] = options.dummy
+
         if options.rotation:
             input_data = numpy.rot90(input_data, k=options.rotation // 90)
         if options.transpose:
@@ -423,11 +434,15 @@ def main():
 #     group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
 #                        help="show the list of available formats and exit")
     group.add_argument("-o", "--output", default='eiger2cbf/frame_{index:04d}.cbf', type=str,
-                       help="output directory and filename template")
+                       help="output directory and filename template: eiger2cbf/frame_{index:04d}.cbf")
+    group.add_argument("-m", "--mask", type=str, default=None,
+                       help="Read masked pixel from this file")
     group.add_argument("-O", "--offset", type=int, default=0,
                        help="index offset, CrysalisPro likes indexes to start at 1, Python starts at 0")
     group.add_argument("-D", "--dummy", type=int, default=-1,
                        help="Set masked values to this dummy value")
+    group.add_argument("--pilatus", action="store_true", default=False,
+                       help="Select an image shape similar to Pilatus detectors for compatibiliy with Crysalis")
 
     group = parser.add_argument_group("optional behaviour arguments")
 #     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
@@ -472,7 +487,7 @@ def main():
     group.add_argument("--phi", type=str, default=None,
                        help="Goniometer angle phi value in deg. or formula f(index)")
     group.add_argument("--omega", type=str, default=None,
-                       help="Goniometer angle omega value in deg. or formula f(index)")
+                       help="Goniometer angle omega value in deg. or formula f(index) like '-180+index*0.1")
 
     group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
     group.add_argument("--rotation", type=int, default=0,
@@ -489,10 +504,6 @@ def main():
 
         if args.debug:
             logger.setLevel(logging.DEBUG)
-
-#         if args.list:
-#             print_supported_formats()
-#             return
 
         if len(args.IMAGE) == 0:
             raise argparse.ArgumentError(None, "No input file specified.")
