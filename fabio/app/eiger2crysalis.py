@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "05/03/2021"
+__date__ = "23/04/2021"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -50,15 +50,14 @@ FOOTER = """To import your files as a project:
 import logging
 logging.basicConfig()
 logger = logging.getLogger("eiger2crysalis")
-import codecs
 import sys
 import os
-import glob
 import shutil
 from .. import esperantoimage, eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..nexus import get_isotime
+from ..utils.cli import ProgressBar, expand_args
 import numpy
 import argparse
 try:
@@ -68,7 +67,7 @@ except ImportError:
 
 try:
     import numexpr
-except:
+except ImportError:
     logger.error("Numexpr is needed to interpret formula ...")
 
 EXIT_SUCCESS = 0
@@ -84,137 +83,12 @@ else:
     CONST_hc = constants.c * constants.h / constants.e * 1e7
 
 
-class ProgressBar:
-    """
-    Progress bar in shell mode
-    """
-
-    def __init__(self, title, max_value, bar_width):
-        """
-        Create a progress bar using a title, a maximum value and a graphical size.
-
-        The display is done with stdout using carriage return to to hide the
-        previous progress. It is not possible to use stdout for something else
-        whill a progress bar is in use.
-
-        The result looks like:
-
-        .. code-block:: none
-
-            Title [■■■■■■      ]  50%  Message
-
-        :param str title: Title displayed before the progress bar
-        :param float max_value: The maximum value of the progress bar
-        :param int bar_width: Size of the progressbar in the screen
-        """
-        self.title = title
-        self.max_value = max_value
-        self.bar_width = bar_width
-        self.last_size = 0
-        self._message = ""
-        self._value = 0.0
-
-        encoding = None
-        if hasattr(sys.stdout, "encoding"):
-            # sys.stdout.encoding can't be used in unittest context with some
-            # configurations of TestRunner. It does not exists in Python2
-            # StringIO and is None in Python3 StringIO.
-            encoding = sys.stdout.encoding
-        if encoding is None:
-            # We uses the safer aproch: a valid ASCII character.
-            self.progress_char = '#'
-        else:
-            try:
-                import datetime
-                if str(datetime.datetime.now())[5:10] == "02-14":
-                    self.progress_char = u'\u2665'
-                else:
-                    self.progress_char = u'\u25A0'
-                _byte = codecs.encode(self.progress_char, encoding)
-            except (ValueError, TypeError, LookupError):
-                # In case the char is not supported by the encoding,
-                # or if the encoding does not exists
-                self.progress_char = '#'
-
-    def clear(self):
-        """
-        Remove the progress bar from the display and move the cursor
-        at the beginning of the line using carriage return.
-        """
-        sys.stdout.write('\r' + " " * self.last_size + "\r")
-        sys.stdout.flush()
-
-    def display(self):
-        """
-        Display the progress bar to stdout
-        """
-        self.update(self._value, self._message)
-
-    def update(self, value, message="", max_value=None):
-        """
-        Update the progrss bar with the progress bar's current value.
-
-        Set the progress bar's current value, compute the percentage
-        of progress and update the screen with. Carriage return is used
-        first and then the content of the progress bar. The cursor is
-        at the begining of the line.
-
-        :param float value: progress bar's current value
-        :param str message: message displayed after the progress bar
-        :param float max_value: If not none, update the maximum value of the
-            progress bar
-        """
-        if max_value is not None:
-            self.max_value = max_value
-        self._message = message
-        self._value = value
-
-        if self.max_value == 0:
-            coef = 1.0
-        else:
-            coef = (1.0 * value) / self.max_value
-        percent = round(coef * 100)
-        bar_position = int(coef * self.bar_width)
-        if bar_position > self.bar_width:
-            bar_position = self.bar_width
-
-        # line to display
-        line = '\r%15s [%s%s] % 3d%%  %s' % (self.title, self.progress_char * bar_position, ' ' * (self.bar_width - bar_position), percent, message)
-
-        # trailing to mask the previous message
-        line_size = len(line)
-        clean_size = self.last_size - line_size
-        if clean_size < 0:
-            clean_size = 0
-        self.last_size = line_size
-
-        sys.stdout.write(line + " " * clean_size + "\r")
-        sys.stdout.flush()
-
-
 def as_str(smth):
     "Transform to string"
     if isinstance(any, bytes):
         return smth.decode()
     else:
         return str(smth)
-
-
-def expand_args(args):
-    """
-    Takes an argv and expand it (under Windows, cmd does not convert *.tif into
-    a list of files.
-
-    :param list args: list of files or wildcards
-    :return: list of actual args
-    """
-    new = []
-    for afile in args:
-        if glob.has_magic(afile):
-            new += glob.glob(afile)
-        else:
-            new.append(afile)
-    return new
 
 
 class Converter:

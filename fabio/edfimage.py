@@ -193,14 +193,17 @@ class EdfFrame(fabioimage.FabioFrame):
         if capsHeader is not None:
             rank = 0
             for key in capsHeader:
-                if key[0:4] == "DIM_":
-                    try:
-                        index = int(key[4:])
-                    except ValueError:
-                        logger.error("Unable converting index of {} to integer.".format(key))
-                    if index > rank:
-                        rank = index
-        return(rank)
+                if key.startswith("DIM_"):
+                    sidx = key[4:] 
+                    if sidx.isdecimal():
+                        try:
+                            index = int(sidx)
+                        except ValueError:
+                            logger.error("Unable converting index of {} to integer.".format(key))
+                        else:
+                            if index > rank:
+                                rank = index
+        return rank
 
     @staticmethod
     def get_data_shape(rank=0, header=None, capsHeader=None):

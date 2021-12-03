@@ -45,10 +45,11 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "03/05/2021"
+__date__ = "10/05/2021"
 
 import logging
 logger = logging.getLogger(__name__)
+import posixpath
 import numpy
 try:
     import h5py
@@ -61,10 +62,7 @@ from .nexus import Nexus
 try:
     import hdf5plugin
 except ImportError:
-    compression = {"compression":"gzip",
-                   "compression_opts":1}
-else:
-    compression = hdf5plugin.Bitshuffle()
+    hdf5plugin = None
 
 
 class EigerImage(FabioImage):
@@ -167,10 +165,18 @@ class EigerImage(FabioImage):
         try to write image
         :param fname: name of the file
         """
+        if hdf5plugin is None:
+            logger.warning("hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)")
+            compression = {"compression":"gzip",
+                   "compression_opts":1}
+        else:
+            compression = hdf5plugin.Bitshuffle()
+
         with Nexus(fname, mode="w") as nxs:
             entry = nxs.new_entry(entry="entry", program_name=None, force_name=True)
             data_grp = nxs.new_class(entry, "data", "NXdata")
-
+            entry.attrs["default"] = "data"
+            nxs.h5.attrs["default"] = "entry"
             for i, ds in enumerate(self.dataset):
                 if ds is None:
                     # we are in a trouble
@@ -183,9 +189,12 @@ class EigerImage(FabioImage):
                     data.shape = (1,) + data.shape
                 chunks = (1,) + data.shape[-2:]
                 if len(self.dataset) > 1:
-                    data_grp.create_dataset(f"data_{i+1:06d}", data=data, chunks=chunks, **compression)
+                    hds = data_grp.create_dataset(f"data_{i+1:06d}", data=data, chunks=chunks, **compression)
                 elif len(self.dataset) == 1:
-                    data_grp.create_dataset(f"data", data=data, chunks=chunks, **compression)
+                    hds = data_grp.create_dataset(f"data", data=data, chunks=chunks, **compression)
+                hds.attrs["interpretation"] = "image"
+                if "signal" not in data_grp.attrs:
+                    data_grp.attrs["signal"] = posixpath.split(hds.name)[-1]
 
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
@@ -195,14 +204,23 @@ class EigerImage(FabioImage):
                 if isinstance(self.dataset, list):
                     nfr = num
                     for ds in self.dataset:
-                        if nfr < ds.shape[0]:
-                            data = ds[nfr]
-                            break
-                        else:
-                            nfr -= ds.shape[0]
+                        if ds is None or ds.ndim == 2:
+                            if nfr == 0:
+                                data = None
+                            else:
+                                nfr -= 1
+                        elif ds.ndim == 3:
+                            # Stack of images
+                            if (nfr < ds.shape[0]):
+                                data = ds[nfr]
+                                break
+                            else:
+                                nfr -= ds.shape[0]
+
                 else:
                     data = self.dataset[num]
-                new_img = self.__class__(data=data, header=self.header)
+                new_img = self.__class__(data=None, header=self.header)
+                new_img._data = data
                 new_img.dataset = self.dataset
                 new_img.h5 = self.h5
                 new_img._nframes = self.nframes
@@ -235,8 +253,23 @@ class EigerImage(FabioImage):
         return sum(i.shape[0] if i.ndim > 2 else 1 for i in self.dataset)
 
     def get_data(self):
-        if self._data is None and len(self.dataset) >= self.currentframe:
-            self._data = self.dataset[self.currentframe]
+        if self._data is None:
+            data = None
+            index = self.currentframe
+            if isinstance(self.dataset, list):
+                frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
+                end_ds = numpy.cumsum(frame_idx)
+                for idx, end in enumerate(end_ds):
+                    start = 0 if idx == 0 else end_ds[idx - 1]
+                    if end > index >= start:
+                        ds = self.dataset[idx]
+                        if ds is None or ds.ndim == 2:
+                            data = ds
+                        else:
+                            data = ds[index - start]
+            else:
+                data = self.dataset[index]
+            self._data = data
         return self._data
 
     def set_data(self, data, index=None):
@@ -249,14 +282,24 @@ class EigerImage(FabioImage):
         if index is None:
             index = self.currentframe
         if isinstance(self.dataset, list):
-            if index == len(self.dataset):
+            frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
+            end_ds = numpy.cumsum(frame_idx)
+            nframes = end_ds[-1]
+            if index == nframes:
                 self.dataset.append(data)
-            elif index > len(self.dataset):
-            # pad dataset with None ?
+            elif index > nframes:
+                # pad dataset with None ?
                 self.dataset += [None] * (1 + index - len(self.dataset))
                 self.dataset[index] = data
             else:
-                self.dataset[index] = data
+                for idx, end in enumerate(end_ds):
+                    start = 0 if idx == 0 else end_ds[idx - 1]
+                    if end > index >= start:
+                        ds = self.dataset[idx]
+                        if ds is None or ds.ndim == 2:
+                            self.dataset[idx] = data
+                        else:
+                            ds[index - start] = data
         if index == self.currentframe:
             self._data = data
 

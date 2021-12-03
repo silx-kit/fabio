@@ -436,7 +436,6 @@ class FabioImage(_FabioArray):
         self.data = self.check_data(data)
         self.header = self.check_header(header)
         # cache for image statistics
-
         self.filename = None
         self.filenumber = None
 

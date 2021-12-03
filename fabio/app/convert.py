@@ -34,7 +34,7 @@
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "06/04/2020"
+__date__ = "23/04/2021"
 __status__ = "production"
 
 import logging
@@ -42,9 +42,9 @@ logging.basicConfig()
 
 import sys
 import os
-import glob
-
 import fabio
+from fabio import fabioformats, fabioutils
+from fabio.utils.cli import expand_args
 import argparse
 
 logger = logging.getLogger("fabio-convert")
@@ -57,7 +57,7 @@ def get_default_extension_from_format(format_name):
     :param str format: String format like "edfimage"
     :rtype: str
     """
-    class_ = fabio.fabioformats.get_class_by_name(format_name)
+    class_ = fabioformats.get_class_by_name(format_name)
     if class_ is None:
         raise RuntimeError("Format '%s' unsupported" % format_name)
 
@@ -235,12 +235,12 @@ def convert_all(options):
 
 def print_supported_formats():
     """List supported format to the output"""
-    classes = fabio.fabioformats.get_classes(writer=True)
+    classes = fabioformats.get_classes(writer=True)
     classes.sort(key=lambda c: c.__module__.lower())
 
     indentation = "    "
 
-    print("List of writable file formats supported by FabIO version %s" % fabio.version)
+    print(f"List of writable file formats supported by FabIO version {fabio.version}")
     print()
 
     for class_ in classes:
@@ -267,23 +267,6 @@ def is_format_supported(format_name):
     except RuntimeError:
         logger.debug("Backtrace", exc_info=True)
         return False
-
-
-def expand_args(args):
-    """
-    Takes an argv and expand it (under Windows, cmd does not convert *.tif into
-    a list of files.
-
-    :param list args: list of files or wildcards
-    :return: list of actual args
-    """
-    new = []
-    for afile in args:
-        if glob.has_magic(afile):
-            new += glob.glob(afile)
-        else:
-            new.append(afile)
-    return new
 
 
 EXIT_SUCCESS = 0
@@ -366,7 +349,7 @@ def main():
                 dummy_filename = "foo." + args.format
 
             # extract file format from file name
-            filename = fabio.fabioutils.FilenameObject(filename=dummy_filename)
+            filename = fabioutils.FilenameObject(filename=dummy_filename)
 
             if filename.format is None or len(filename.format) == 0:
                 raise argparse.ArgumentError(None, "This file extension is unknown. You have also to specify a format using -F.")
