@@ -487,6 +487,32 @@ class File(FileIO):
         """
         return FileIO.close(self)
 
+    def write(self, readablebuffer):
+        nbytes = len(readablebuffer)
+        nwritten = super().write(readablebuffer)
+        while nwritten < nbytes:
+            # One write operation is limited to e.g. 2 GB
+            nextra = super().write(readablebuffer[nwritten:])
+            if nextra:
+                nwritten += nextra
+            else:
+                break
+        return nwritten
+
+    def read(self, size = -1):
+        buffer = super().read(size)
+        size -= len(buffer)
+        while size > 0:
+            # One read operation is limited to e.g. 2 GB
+            extra = super().read(size)
+            nextra = len(extra)
+            if nextra:
+                size -= nextra
+                buffer += extra
+            else:
+                break
+        return buffer
+
 
 class UnknownCompressedFile(File):
     """
