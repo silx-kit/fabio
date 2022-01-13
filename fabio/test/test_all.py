@@ -50,6 +50,7 @@ from . import test_fabio
 from . import codecs
 from . import test_agi_bitfield
 from . import test_densification
+from . import test_io_limits
 
 
 def suite():
@@ -74,6 +75,7 @@ def suite():
     testSuite.addTest(codecs.suite())
     testSuite.addTest(test_agi_bitfield.suite())
     testSuite.addTest(test_densification.suite())
+    testSuite.addTest(test_io_limits.suite())
     return testSuite
 
 
