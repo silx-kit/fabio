@@ -95,11 +95,10 @@ Compile and test the code source
 
 .. code-block:: shell
 
-   pip install setuptools wheel
-   pip install -r ci\requirements_appveyor.txt
-   python setup.py build
-   python run_tests.py
-   pip install .
+   pip install --upgrade setuptools wheel
+   pip install --upgrade -r ci\requirements_appveyor.txt
+   python3 run_tests.py
+   pip install --upgade .
 
 Testing version of FabIO
 ........................
@@ -157,9 +156,8 @@ Once done, follow the classical procedure (similar to Windows or Linux):
 
 .. code-block:: shell
 
-   pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
-   python setup.py build
-   python run_tests.py
+   pip install --upgrade -r ci/requirements_travis.txt --trusted-host www.silx.org
+   python3 run_tests.py
    pip install --upgrade .
 
 
@@ -198,8 +196,7 @@ Once done, follow the classical procedure (similar to Windows or MacOSX):
     pip install setuptools wheel pip --upgrade
     # Install the dependencies
     pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
-    python setup.py build
-    python run_tests.py
+    python3 run_tests.py
     pip install --upgrade .
 
 
@@ -211,9 +208,8 @@ The newest development version can be obtained by checking it out from the git r
 
     git clone https://github.com/silx-kit/fabio
     cd fabio
-    pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
-    python3 setup.py build
-    python run_tests.py
+    pip install --upgrade -r ci/requirements_travis.txt --trusted-host www.silx.org
+    python3 run_tests.py
     pip install --upgrade .
 
 
@@ -237,7 +233,7 @@ For this, you need a complete debian build environment:
 ::
 
    sudo apt-get build-dep python3-fabio
-   ./build-deb.sh
+   ./build-deb.sh --install
 
 This script works the same way with Debian-9 stretch and newer.
 
@@ -261,7 +257,7 @@ To run the test:
 
 .. code-block:: shell
 
-   python run_tests.py
+   python3 run_tests.py
 
 
 Run test suite from installed version
