@@ -64,7 +64,7 @@ from .utils import deprecation
 from collections import namedtuple
 
 BLOCKSIZE = 512
-MAX_BLOCKS = 40
+MAX_BLOCKS = 512
 DATA_TYPES = {"SignedByte": numpy.int8,
               "Signed8": numpy.int8,
               "UnsignedByte": numpy.uint8,
@@ -194,7 +194,7 @@ class EdfFrame(fabioimage.FabioFrame):
             rank = 0
             for key in capsHeader:
                 if key.startswith("DIM_"):
-                    sidx = key[4:] 
+                    sidx = key[4:]
                     if sidx.isdecimal():
                         try:
                             index = int(sidx)

@@ -1,6 +1,16 @@
 Changelog
 =========
 
+FabIO-0.13.0 (01/2022):
+.......................
+- Allow files to be larger than 2GB (Thanks Wout)
+- Simplify the `eiger2cbf` tool
+- Correct densification with missing wavelength
+- Correct issue with EDF headers (#459)
+- Update documentation (Thanks Loïc)
+- Support for Python versions 3.6 to 3.10, tested on amd64, ppc64le and arm64
+- Linux is officially the main platform, Windows and MacOS are supported in best effort mode.
+
 FabIO-0.12.0 (07/2021):
 .......................
 - Densification of sparse data (densify-Bragg) produced by pyFAI (sparsify-Bragg)
