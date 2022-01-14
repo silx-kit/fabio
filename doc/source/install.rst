@@ -31,10 +31,10 @@ It runs under any architecture. It is best used in a virtual environament:
 Installation under windows
 --------------------------
 
-Python is not installed by default under Windows operating system. 
+Python is not installed by default under Windows operating system.
 We suggest you install `Python3 <http://python.org>`_ from the official web page.
-Python 3.7 is recommended, in 64 bits version if your operating system allows it; 
-but any Python3 (>3.5) are OK. The support for Python2 has ended in 2020 and FabIO 
+Python 3.7 is recommended, in 64 bits version if your operating system allows it;
+but any Python3 (>3.5) are OK. The support for Python2 has ended in 2020 and FabIO
 is no more tested there.
 
 If you are looking for an integrated scientific Python distribution on Windows,
@@ -59,10 +59,10 @@ Pay attention to the Python version (both number and architecture).
 To determine the version and architecture width of the Python interpreter:
 
 .. code-block:: python
-    
+
     >>> import sys
     >>> print(sys.version)
-    3.7.1 (default, Mar  1 2019, 12:57:24) 
+    3.7.1 (default, Mar  1 2019, 12:57:24)
     >>> print("%s bits"%(8 * tuple.__itemsize__))
     64 bits
 
@@ -87,20 +87,19 @@ Get the compiler and install it
 
 The version of the compiler and the version of the Microsoft SDK
 have to match the Python version you are using.
-Please refer to the 
-`Microsoft Visual studio compatibility with Python <https://wiki.python.org/moin/WindowsCompilers>`_ list. 
+Please refer to the
+`Microsoft Visual studio compatibility with Python <https://wiki.python.org/moin/WindowsCompilers>`_ list.
 
-Compile the sources
-^^^^^^^^^^^^^^^^^^^
+Compile and test the code source
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: shell
 
    pip install setuptools wheel
    pip install -r ci\requirements_appveyor.txt
    python setup.py build
-   python setup.py test.py
-   python bdist_wheel
-   pip install dist\fabio*.whl
+   python run_tests.py
+   pip install .
 
 Testing version of FabIO
 ........................
@@ -130,9 +129,9 @@ FabIO directly in it:
 
     python3 -m venv ~/py3
     source ~/py3/bin/activate
-    pip install setuptools wheel pip numpy --upgrade
-    pip install fabio
-    
+    pip install --upgrade setuptools wheel pip numpy
+    pip install --upgrade .
+
 
 Compile from sources
 ....................
@@ -160,9 +159,8 @@ Once done, follow the classical procedure (similar to Windows or Linux):
 
    pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
    python setup.py build
-   python setup.py test
-   python setup.py bdist_wheel 
-   pip install dist/fabio*.whel
+   python run_tests.py
+   pip install --upgrade .
 
 
 Manual Installation for any operating system
@@ -198,13 +196,11 @@ Once done, follow the classical procedure (similar to Windows or MacOSX):
     python3 -m venv ~/py3
     source ~/py3/bin/activate
     pip install setuptools wheel pip --upgrade
-    # Install the dependencies     
+    # Install the dependencies
     pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
     python setup.py build
-    python setup.py test
-    python setup.py bdist_wheel
-    # Install the freshly build package
-    pip install dist/fabio*.whl
+    python run_tests.py
+    pip install --upgrade .
 
 
 Development versions
@@ -216,11 +212,10 @@ The newest development version can be obtained by checking it out from the git r
     git clone https://github.com/silx-kit/fabio
     cd fabio
     pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
-    python setup.py build
-    python setup.py test
-    python setup.py bdist_wheel
-    # Install the freshly build package
-    pip install dist/fabio*.whl
+    python3 setup.py build
+    python run_tests.py
+    pip install --upgrade .
+
 
 
 Automatic debian packaging
@@ -250,7 +245,7 @@ Test suite
 ----------
 
 FabIO has a comprehensive test-suite to ensure non regression.
-When you run the test for the first time, many test images will be download and converted into various compressed format like gzip and bzip2 
+When you run the test for the first time, many test images will be download and converted into various compressed format like gzip and bzip2
 (this takes a lot of time).
 
 Be sure you have an internet connection and your proxy setting are correctly defined in the environment variable *http_proxy*.
@@ -266,7 +261,7 @@ To run the test:
 
 .. code-block:: shell
 
-   python setup.py build test
+   python run_tests.py
 
 
 Run test suite from installed version
@@ -283,14 +278,14 @@ Within Python (or ipython):
 Test coverage
 .............
 
-FabIO comes with 52 test-suites (337 tests in total) representing a coverage of 75%.
+FabIO comes with 54 test-suites (347 tests in total) representing a coverage of 75%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (64 bits, in 32 bits your milleage may vary) with Python versions 3.6, 3.7, 3.8 and 3.9.
+FabIO runs under Linux, MacOSX and Windows (64 bits, in 32 bits your milleage may vary) with Python versions 3.6 to 3.10.
 Under linux it has been tested on x86_64, arm64, ppc64le.
 FabIO may run on other untested systems but without warranty.
 
 .. toctree::
    :maxdepth: 2
-    
+
    coverage
 
