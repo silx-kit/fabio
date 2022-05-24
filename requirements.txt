@@ -1,5 +1,5 @@
 #List of dependecies used by PIP but also by ReadTheDocs to generate the documentation on the fly
-setuptools<60
+setuptools<63
 numpy
 cython
 lxml>=4.6.3
