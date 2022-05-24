@@ -2,7 +2,7 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2020 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2022 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -326,7 +326,7 @@ class CbfImage(FabioImage):
                 nonCifHeaders.append("%s %s" % (key, self.header[key]))
         if self.pilatus_headers is not None:
             # regenerate  the Pilatus header and set the convention
-            self.cif["_array_data.header_content"] = str(self.pilatus_headers)
+            self.cif["_array_data.header_contents"] = str(self.pilatus_headers)
             self.cif["_array_data.header_convention"] = "PILATUS_1.2"
 
         if len(nonCifHeaders) > 0:
