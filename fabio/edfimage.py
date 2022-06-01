@@ -45,6 +45,11 @@ Authors:
 
 
 """
+__authors__ = ["Jérôme Kieffer", "Jon Wright", "Henning O. Sorensen", "Erik Knudsen"]
+__contact__ = "jerome.kieffer@esrf.fr"
+__license__ = "MIT"
+__copyright__ = "ESRF"
+__date__ = "01/06/2022"
 
 import os
 import re
@@ -1214,45 +1219,45 @@ class EdfImage(fabioimage.FabioImage):
 
     def getframe(self, num):
         """ returns the file numbered 'num' in the series as a FabioImage """
-        newImage = None
+        new_image = None
         if self.nframes == 1:
             logger.debug("Single frame EDF; having FabioImage default behavior: %s" % num)
-            newImage = fabioimage.FabioImage.getframe(self, num)
-            newImage._file = self._file
+            new_image = fabioimage.FabioImage.getframe(self, num)
+            new_image._file = self._file
         elif num < self.nframes:
             logger.debug("Multi frame EDF; having EdfImage specific behavior frame %s: 0<=frame<%s" %
                          (num, self.nframes))
-            newImage = self.__class__(frames=self._frames)
-            newImage.currentframe = num
-            newImage.filename = self.filename
-            newImage._file = self._file
+            new_image = self.__class__(frames=self._frames)
+            new_image.currentframe = num
+            new_image.filename = self.filename
+            new_image._file = self._file
         else:
             raise IOError("EdfImage.getframe: Cannot access frame %s: 0<=frame<%s" %
                           (num, self.nframes))
-        return newImage
+        return new_image
 
     def previous(self):
         """ returns the previous file in the series as a FabioImage """
-        newImage = None
+        new_image = None
         if self.nframes == 1:
-            newImage = fabioimage.FabioImage.previous(self)
+            new_image = fabioimage.FabioImage.previous(self)
         else:
-            newFrameId = self.currentframe - 1
-            newImage = self.getframe(newFrameId)
-        return newImage
+            new_idx = self.currentframe - 1
+            new_image = self.getframe(new_idx)
+        return new_image
 
     def next(self):
         """Returns the next file in the series as a fabioimage
 
         :raise IOError: When there is no next file or image in the series.
         """
-        newImage = None
+        new_image = None
         if self.nframes == 1:
-            newImage = fabioimage.FabioImage.next(self)
+            new_image = fabioimage.FabioImage.next(self)
         else:
-            newFrameId = self.currentframe + 1
-            newImage = self.getframe(newFrameId)
-        return newImage
+            new_idx = self.currentframe + 1
+            new_image = self.getframe(new_idx)
+        return new_image
 
     def write(self, fname, force_type=None, fit2dMode=False):
         """

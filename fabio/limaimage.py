@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "07/05/2021"
+__date__ = "01/06/2022"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -194,18 +194,33 @@ class LimaImage(FabioImage):
                 new_img._nframes = self.nframes
                 new_img.currentframe = num
             else:
-                raise IOError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+                raise IOError(f"getframe({num}) out of range [0, {self.nframes}[")
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img
 
     def previous(self):
-        """ returns the previous frame in the series as a fabioimage """
-        return self.getframe(self.currentframe - 1)
+        """ returns the previous file in the series as a FabioImage """
+        new_image = None
+        if self.nframes == 1:
+            new_image = FabioImage.previous(self)
+        else:
+            new_idx = self.currentframe - 1
+            new_image = self.getframe(new_idx)
+        return new_image
 
     def next(self):
-        """ returns the next frame in the series as a fabioimage """
-        return self.getframe(self.currentframe + 1)
+        """Returns the next file in the series as a fabioimage
+
+        :raise IOError: When there is no next file or image in the series.
+        """
+        new_image = None
+        if self.nframes == 1:
+            new_image = FabioImage.next(self)
+        else:
+            new_idx = self.currentframe + 1
+            new_image = self.getframe(new_idx)
+        return new_image
 
     def close(self):
         if self.h5 is not None:
