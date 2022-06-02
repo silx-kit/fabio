@@ -68,7 +68,7 @@ class TestDensification(unittest.TestCase):
     def test_cython(self):
         seed = 0 
         shape = 256, 256
-        nframes = 8000#
+        nframes = 8
         vsize = 181  # This is cheated to avoid interpolation issues with rounding 128*sqrt(2)
         y, x = numpy.ogrid[-shape[0] // 2:-shape[0] // 2 + shape[0],
                           -shape[1] // 2:-shape[1] // 2 + shape[1]]
