@@ -30,7 +30,7 @@ __author__ = "Jerome Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/04/2021"
+__date__ = "02/06/2022"
 __status__ = "stable"
 
 import sys
@@ -1069,7 +1069,7 @@ def get_project_configuration(dry_run):
                         entry_points=entry_points,
                         test_suite="test",
                         license="MIT",
-                        python_requires='>=3.5',
+                        python_requires='>=3.6',
                         )
     return setup_kwargs
 
