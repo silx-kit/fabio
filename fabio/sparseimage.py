@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "10/05/2021"
+__date__ = "02/06/2022"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -66,7 +66,8 @@ def densify(mask,
             dummy,
             background,
             background_std=None,
-            normalization=None):
+            normalization=None,
+            seed=None):
     """Generate a dense image of its sparse representation
     
     :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
@@ -82,6 +83,8 @@ def densify(mask,
     """
     dense = numpy.interp(mask, radius, background)
     if background_std is not None:
+        if seed is not None:
+            numpy.random.seed(seed)
         std = numpy.interp(mask, radius, background_std)
         numpy.maximum(0.0, numpy.random.normal(dense, std), out=dense)
     if normalization is not None:
@@ -91,7 +94,8 @@ def densify(mask,
     flat[index] = intensity
     dtype = intensity.dtype
     if numpy.issubdtype(dtype, numpy.integer):
-        dense = numpy.round(dense)
+        #dense = numpy.round(dense) # Foolded by banker's rounding !!!!
+        dense += 0.5
     dense = numpy.ascontiguousarray(dense, dtype=dtype)
     dense[numpy.logical_not(numpy.isfinite(mask))] = dummy
     return dense
