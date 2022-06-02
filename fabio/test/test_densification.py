@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "28/04/2021"
+__date__ = "02/06/2022"
 
 import unittest
 import numpy
@@ -66,13 +66,15 @@ class TestDensification(unittest.TestCase):
         self.assertAlmostEqual(N.std(), sigma, 1)
 
     def test_cython(self):
+        seed = 0 
         shape = 256, 256
         nframes = 8
         vsize = 181  # This is cheated to avoid interpolation issues with rounding 128*sqrt(2)
         y, x = numpy.ogrid[-shape[0] // 2:-shape[0] // 2 + shape[0],
                           -shape[1] // 2:-shape[1] // 2 + shape[1]]
-        r2d = numpy.sqrt(x * x + y * y).astype(numpy.float32)
-        radius = numpy.linspace(0, r2d.max(), vsize).astype(numpy.float32)
+        # To make this test "robust", those two radial position arrays needs to be in float64 ... in production float32 is more common 
+        r2d = numpy.sqrt(x * x + y * y).astype(numpy.float64)
+        radius = numpy.linspace(0, r2d.max(), vsize).astype(numpy.float64)
         npeak = numpy.random.randint(90, 110, size=nframes)
         scale = numpy.random.randint(90, 110, size=nframes)
         osc = numpy.random.randint(40, 100, size=nframes)
@@ -92,6 +94,7 @@ class TestDensification(unittest.TestCase):
             f.ravel()[index[indptr[i]:indptr[i + 1]]] = intensity[indptr[i]:indptr[i + 1]]
             python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i])
             cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i], None)
+            
             self.assertTrue(numpy.all(python == cython), "python == cython #" + str(i))
             # Rounding errors:
             delta = (python.astype(int) - f)
@@ -101,8 +104,8 @@ class TestDensification(unittest.TestCase):
             self.assertLess(len(bad[0]), numpy.prod(shape) / 500, "python differs from reference on less then 0.2% of the pixel #" + str(i))
 
             # Now consider the noise ...
-            python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i], noise[i])
-            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i], noise[i])
+            python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i], noise[i], seed=seed)
+            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i], noise[i], seed=seed)
             self.assertTrue(abs(python.astype(int) - cython).max() <= 2 * max(1, noise[i].max()), "python is close to cython #" + str(i))
 
 

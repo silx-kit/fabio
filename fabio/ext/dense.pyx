@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "10/05/2021"  
+__date__ = "02/06/2022"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -44,7 +44,7 @@ from libc.stdint cimport int8_t, uint8_t, \
                          int64_t, uint64_t
 from libc.math cimport isfinite, log, sqrt, cos, M_PI                         
 from libc.stdlib cimport RAND_MAX
-cimport cython             
+cimport cython
                
 ctypedef fused any_t:
     double
@@ -221,15 +221,16 @@ def distribution_normal_mtc(mu, sigma, seed=None):
     return numpy.asarray(ary).reshape(shape)        
 
 
-def densify(float[:,::1] mask,
-            float[::1] radius,
+def densify(cython.floating[:,::1] mask,
+            cython.floating[::1] radius,
             uint32_t[::1] index,
             any_t[::1] intensity,
             any_t dummy,
             dtype,
             float[::1] background,
             float[::1] background_std=None,
-            normalization=None):
+            normalization=None,
+            seed = None):
     """
     Densify a sparse representation to generate a normal frame 
     
@@ -241,7 +242,8 @@ def densify(float[:,::1] mask,
     :param dummy: numerical value for masked-out pixels in dense image
     :param dtype: dtype of intensity.
     :param background_std: 1D array with the background std at given distance from the center --> activates the noisy mode.
-    :param 
+    :param normalization: normalization array: renormalize all data with this factor (pixel-wise)
+    :param seed: seed for the random number-generator, used only when regenerating noisy background
     :return: dense frame as 2D array
     """
     cdef:
@@ -267,15 +269,16 @@ def densify(float[:,::1] mask,
         noisy = False
     else:
         noisy=True
-        try:
-            value = time.time_ns()
-        except Exception:
-            value = int(time.time()*1e9)
-        mt = MT(value)
+        if seed is None:
+            try:
+                seed = time.time_ns()
+            except Exception:
+                seed = int(time.time()*1e9)
+        mt = MT(seed)
                 
     with nogil:
         start = radius[0]
-        idelta = (size - 1)/(radius[size-1] - start)  
+        idelta = <double>(size - 1)/(radius[size-1] - start)  
         
         #Linear interpolation
         for i in range(height):
