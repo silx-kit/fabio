@@ -1,6 +1,16 @@
 Changelog
 =========
 
+FabIO-0.14.0 (06/2022):
+.......................
+- fix infinite loop when iterating over lima/eiger image files (#468) 
+- fix typo when saving in pilatus/CBF format (#471)
+- fix noisy test on densification (#440)
+- limit version of setuptools (related to the PEP517 and associated regressions)
+- Change logo in documentation
+- Support for Python versions 3.6 to 3.10, tested on amd64, ppc64le and arm64
+- Linux is officially the main platform, Windows and MacOS are supported in best effort mode.
+
 FabIO-0.13.0 (01/2022):
 .......................
 - Allow files to be larger than 2GB (Thanks Wout)
