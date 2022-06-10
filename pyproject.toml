@@ -1,6 +1,6 @@
 [project]
 name = 'fabio'
-#dynamic = ['version',]
+dynamic = ['version',]
 license = {file = "copyright"}
 requires-python = ">=3.6"
 readme = "README.rst"

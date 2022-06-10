@@ -53,6 +53,6 @@ python_sources = [
 
 py.install_sources(
   python_sources,
-  pure: true,    # Will be installed next to binaries
+  pure: false,    # Will be installed next to binaries
   subdir: 'fabio'  # Folder relative to site-packages to install to
 )
