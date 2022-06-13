@@ -46,10 +46,13 @@ dependencies = [
 ]
 
 [build-system]
-build-backend = 'mesonpy'
+#build-backend = 'mesonpy'
+build-backend = "mesonpep517.buildapi"
 requires = [
-    "meson-python>=0.5.0",
+    #"meson-python>=0.5.0",
+    "mesonpep517",
     "meson",
+    "ninja",
     "wheel",
     "numpy",
     "Cython>=0.25",
@@ -67,3 +70,41 @@ documentation = "http://www.silx.org/doc/fabio/latest/"
 source = "https://github.com/silx-kit/fabio"
 download = "https://github.com/silx-kit/fabio/releases"
 tracker = "https://github.com/silx-kit/fabio/issues"
+
+
+[tool.mesonpep517.metadata]
+author = 'Henning Sorensen, Erik Knudsen Jonathan P. Wright, Regis Perdreau, Jérôme Kieffer, Gael Goret, Brian Pauw and Valentin Valls'
+summary = 'FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python'
+
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Console',
+    'Intended Audience :: End Users/Desktop',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    "License :: OSI Approved :: MIT License",
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Programming Language :: C',
+    'Programming Language :: Cython',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Topic :: Scientific/Engineering :: Chemistry',
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
+    'Topic :: Scientific/Engineering :: Physics',
+    'Topic :: Scientific/Engineering :: Visualization',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+]
+
+requires = [
+    #"meson-python>=0.5.0",
+    "mesonpep517",
+    "meson",
+    "ninja",
+    "wheel",
+    "numpy",
+    "Cython>=0.25",
+    "numpy"
+]

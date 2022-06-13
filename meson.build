@@ -6,6 +6,17 @@ project('FabIO',
   			           check:true).stdout().strip(),
 )
 
+
+# Seek the backend
+if meson.backend() != 'ninja'
+  error('Ninja backend required')
+endif
+
+# Seek for Cython installation
+cython = find_program('cython', required : true)
+if not cython.found()
+  error('Cython not found.')
+endif
 cc = meson.get_compiler('c')
 
 m_dep = cc.find_library('m', required : false)
