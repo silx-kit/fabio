@@ -5,7 +5,7 @@ license = {file = "copyright"}
 requires-python = ">=3.6"
 readme = "README.rst"
 description = 'FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python'
-keyword = ["image", "detector"] 
+#keyword = ["image", "detector"]
 authors = [
   { name = 'Henning Sorensen', email = 'osho@fysik.dtu.dk' },
   { name = "Erik Knudsen" },
