@@ -18,11 +18,4 @@ py_mod = import('python')
 py = py_mod.find_installation()
 py_dep = py.dependency()
 
-py.install_sources(
-  ['version.py'],
-  #rename: ['_version.py'],
-  pure: false,    # Will be installed next to binaries
-  subdir: 'fabio'  # Folder relative to site-packages to install to
-)
-
 subdir('fabio')

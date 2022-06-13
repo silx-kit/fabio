@@ -1,7 +1,10 @@
 subdir('ext')
 subdir('utils')
 
-python_sources = [
+version_py = configure_file(input: '../version.py', output: '_version.py', copy: true)
+
+py.install_sources([
+	version_py,
 	'adscimage.py',
 	'binaryimage.py',
 	'bruker100image.py',
@@ -49,10 +52,7 @@ python_sources = [
 	'TiffIO.py',
 	'tifimage.py',
 	'xsdimage.py',
-]
-
-py.install_sources(
-  python_sources,
+],
   pure: false,    # Will be installed next to binaries
   subdir: 'fabio'  # Folder relative to site-packages to install to
 )

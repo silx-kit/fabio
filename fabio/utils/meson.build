@@ -1,4 +1,5 @@
-python_sources = [
+py.install_sources(
+[
 	'__init__.py',
 	'cli.py',
 	'deprecation.py',
@@ -6,10 +7,7 @@ python_sources = [
 	'mathutils.py',
 	'pilutils.py',
 	'testutils.py'
-]
-
-py.install_sources(
-  python_sources,
+],
   pure: false,    # Will be installed next to binaries
-  subdir: 'fabio/utils'  # Folder relative to site-packages to install to
+  subdir: 'fabio/utils/'  # Folder relative to site-packages to install to
 )
