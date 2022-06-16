@@ -309,7 +309,6 @@ class EigerImage(FabioImage):
             frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
             end_ds = numpy.cumsum(frame_idx)
             nframes = end_ds[-1]
-            print(nframes, index)
             if index == nframes:
                 self.dataset.append(data)
 
