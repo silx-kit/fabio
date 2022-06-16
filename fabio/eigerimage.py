@@ -88,7 +88,7 @@ class EigerImage(FabioImage):
             else:
                 data.shape = [-1] + list(data.shape[-2:])
             self.dataset = [data]
-        self._data = data[0,:,:]
+            self._data = data[0,:,:]
         FabioImage.__init__(self, None, header)
         self.h5 = None
 
