@@ -83,15 +83,12 @@ class EigerImage(FabioImage):
         if data is None:
             self.dataset = [None]
         else:
-            if data.ndim == 0:
-                self.dataset = [data.reshape(1, 1, 1)]
-            elif data.ndim == 1:
-                self.dataset = [data[numpy.newaxis, numpy.newaxis,:]]
-            elif data.ndim == 2:
-                self.dataset = [data[numpy.newaxis,:,:]]
+            if data.ndim < 3:
+                data.shape = [1] * (3 - data.ndim) + list(data.shape)
             else:
-                self.dataset = [data]
-        self._data = data
+                data.shape = [-1] + list(data.shape[-2:])
+            self.dataset = [data]
+        self._data = data[0,:,:]
         FabioImage.__init__(self, None, header)
         self.h5 = None
 
@@ -309,7 +306,6 @@ class EigerImage(FabioImage):
             frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
             end_ds = numpy.cumsum(frame_idx)
             nframes = end_ds[-1]
-            print(nframes, index)
             if index == nframes:
                 self.dataset.append(data)
 
