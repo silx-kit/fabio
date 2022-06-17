@@ -45,7 +45,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "16/06/2022"
+__date__ = "17/06/2022"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -84,9 +84,9 @@ class EigerImage(FabioImage):
             self.dataset = [None]
         else:
             if data.ndim < 3:
-                data.shape = [1] * (3 - data.ndim) + list(data.shape)
+                data = data.reshape(*([1] * (3 - data.ndim) + list(data.shape)))
             else:
-                data.shape = [-1] + list(data.shape[-2:])
+                data.shape = data.reshape(*([-1] + list(data.shape[-2:])))
             self.dataset = [data]
             self._data = data[0,:,:]
         FabioImage.__init__(self, None, header)
