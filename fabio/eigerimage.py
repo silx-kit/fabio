@@ -45,7 +45,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "01/06/2022"
+__date__ = "17/06/2022"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -83,9 +83,13 @@ class EigerImage(FabioImage):
         if data is None:
             self.dataset = [None]
         else:
-            self.dataset = [numpy.atleast_3d(data)]
-        self._data = None
-        FabioImage.__init__(self, data, header)
+            if data.ndim < 3:
+                data = data.reshape(*([1] * (3 - data.ndim) + list(data.shape)))
+            else:
+                data.shape = data.reshape(*([-1] + list(data.shape[-2:])))
+            self.dataset = [data]
+            self._data = data[0,:,:]
+        FabioImage.__init__(self, None, header)
         self.h5 = None
 
     def __repr__(self):
@@ -294,6 +298,8 @@ class EigerImage(FabioImage):
         :param int index: index of the frame (by default: current one)
         :raises IndexError: If the frame number is out of the available range.
         """
+        if data is None:
+            return
         if index is None:
             index = self.currentframe
         if isinstance(self.dataset, list):
@@ -302,6 +308,7 @@ class EigerImage(FabioImage):
             nframes = end_ds[-1]
             if index == nframes:
                 self.dataset.append(data)
+
             elif index > nframes:
                 # pad dataset with None ?
                 self.dataset += [None] * (1 + index - len(self.dataset))
