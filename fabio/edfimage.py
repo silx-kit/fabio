@@ -841,7 +841,7 @@ class EdfImage(fabioimage.FabioImage):
         return new
 
     @staticmethod
-    def _read_header_block(infile, frame_id):
+    def read_header_block(infile, frame_id):
         """
         Reads the header block of the EDF frame frame_id as an
         ASCII string and returns the found key-value pairs in
@@ -1090,7 +1090,7 @@ class EdfImage(fabioimage.FabioImage):
 
         while True:
             try:
-                value = self._read_header_block(infile, len(self._frames))
+                value = self.read_header_block(infile, len(self._frames))
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if len(self._frames) == 0:
@@ -1600,7 +1600,7 @@ class EdfImage(fabioimage.FabioImage):
 
         while True:
             try:
-                value = cls._read_header_block(infile, index)
+                value = cls.read_header_block(infile, index)
             except MalformedHeaderError:
                 logger.debug("Backtrace", exc_info=True)
                 if index == 0:
