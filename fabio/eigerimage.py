@@ -86,7 +86,7 @@ class EigerImage(FabioImage):
             if data.ndim < 3:
                 data = data.reshape(*([1] * (3 - data.ndim) + list(data.shape)))
             else:
-                data.shape = data.reshape(*([-1] + list(data.shape[-2:])))
+                data = data.reshape(*([-1] + list(data.shape[-2:])))
             self.dataset = [data]
             self._data = data[0,:,:]
         FabioImage.__init__(self, None, header)
