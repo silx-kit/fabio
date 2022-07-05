@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "02/06/2022"
+__date__ = "05/07/2022"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -79,6 +79,7 @@ def densify(mask,
     :param background: 1D array with the background values at given distance from the center
     :param background_std: 1D array with the background std at given distance from the center
     :param normalization: flat*solidangle*polarization*... array
+    :param seed: numerical seed for random number generator
     :return dense array
     """
     dense = numpy.interp(mask, radius, background)
@@ -94,8 +95,9 @@ def densify(mask,
     flat[index] = intensity
     dtype = intensity.dtype
     if numpy.issubdtype(dtype, numpy.integer):
-        #dense = numpy.round(dense) # Foolded by banker's rounding !!!!
-        dense += 0.5
+        # Foolded by banker's rounding !!!!
+        dense +=0.5
+        numpy.floor(dense, out=dense)
     dense = numpy.ascontiguousarray(dense, dtype=dtype)
     dense[numpy.logical_not(numpy.isfinite(mask))] = dummy
     return dense
@@ -166,7 +168,7 @@ class SparseImage(FabioImage):
         if default_entry is None or default_entry not in self.h5:
             raise NotGoodReader("HDF5 file does not contain any default entry.")
         entry = self.h5[default_entry]
-        default_data = entry.attrs.get("default")
+        default_data = entry.attrs.get("pyFAI_sparse_frames") or entry.attrs.get("default")
         if default_data is None or default_data not in entry:
             raise NotGoodReader("HDF5 file does not contain any default NXdata.")
         nx_data = entry[default_data]
