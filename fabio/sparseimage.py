@@ -168,7 +168,7 @@ class SparseImage(FabioImage):
         if default_entry is None or default_entry not in self.h5:
             raise NotGoodReader("HDF5 file does not contain any default entry.")
         entry = self.h5[default_entry]
-        default_data = entry.attrs.get("default")
+        default_data = entry.attrs.get("pyFAI_sparse_frames") or entry.attrs.get("default")
         if default_data is None or default_data not in entry:
             raise NotGoodReader("HDF5 file does not contain any default NXdata.")
         nx_data = entry[default_data]
