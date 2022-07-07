@@ -45,7 +45,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "17/06/2022"
+__date__ = "05/07/2022"
 
 import logging
 logger = logging.getLogger(__name__)
