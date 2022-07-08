@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 import fabio
 from ...edfimage import EdfFrame, edfimage
-from ...fabioutils import GzipFile, BZ2File, File as fabioFile
+from ...fabioutils import GzipFile, BZ2File
 from ..utilstest import UtilsTest
 from ..testutils import LoggingValidator 
 
@@ -121,7 +121,7 @@ class TestFlatEdfs(unittest.TestCase):
     
     def test_read_header_block(self):
         """test `read_header_block` function"""
-        with fabioFile(self.filename, "rb") as file_:
+        with edfimage().open(self.filename, "rb") as file_:
             header_block = edfimage.read_header_block(file_, 0)
             assert header_block.header["ByteOrder"] == self.BYTE_ORDER
             assert header_block.header_size not in (0, None)

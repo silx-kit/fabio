@@ -793,6 +793,8 @@ class FabioImage(_FabioArray):
 
         return fileObject
 
+    open = _open
+
     def _compressed_stream(self,
                            fname,
                            system_uncompress,
