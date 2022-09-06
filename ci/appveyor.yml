@@ -51,7 +51,6 @@ install:
   - "python -c \"print(tuple.__itemsize__*8)\""
 
   # Upgrade/install distribution modules
-  - "pip install --upgrade setuptools"
   - "python -m pip install --upgrade pip"
 
   # Install the build and runtime dependencies of the project.
@@ -59,7 +58,7 @@ install:
 
 build_script:
   - "python setup.py build"
-  - "python setup.py bdist_wheel bdist_msi"
+  - "python setup.py bdist_wheel"
   - ps: "ls dist"
   # Install the generated wheel package to test it
   - "pip install --pre --find-links dist/  --no-cache-dir --no-index fabio"
