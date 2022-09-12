@@ -189,7 +189,7 @@ class AppForm(qt.QMainWindow):
                             self.sequential_file_list += [extract_fname]
                             self.sequential_file_dict[extract_fname] = fname
                             iid += 1
-                self.progressBar.setValue(float(iid + 1) / (total) * 100.)
+                self.progressBar.setValue(int((iid + 1) / total * 100.))
             self.statusBar().clearMessage()
             self.progressBar.setValue(0)
             self.log.appendPlainText('Opening procedure: Complete')
@@ -228,7 +228,7 @@ class AppForm(qt.QMainWindow):
                 self.images_list.clear()
                 safeiid = 0
                 for iid in range(total):
-                    self.progressBar.setValue(((iid + 1.0) / (total)) * 100.)
+                    self.progressBar.setValue(int((iid + 1.0) / total * 100.))
                     self.log.appendPlainText('Extracting data from hdf5 archive, image number %d' % iid)
                     qt.QCoreApplication.processEvents()
                     self.data_series.append(dataset[iid])
@@ -353,7 +353,7 @@ class AppForm(qt.QMainWindow):
                     img = self._open(tmpfname)
                     if img is None:
                         continue
-                    self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((iid + 1) / total * 100.))
                     template = 'Converting and saving file %s. saving file number %d'
                     self.log.appendPlainText(template % (tmpfname, iid))
                     qt.QCoreApplication.processEvents()
@@ -365,7 +365,7 @@ class AppForm(qt.QMainWindow):
             else:
                 for iid, data in enumerate(self.data_series):
                     self.log.appendPlainText('Saving file number %d' % iid)
-                    self.progressBar.setValue((float(iid + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((iid + 1) / total * 100.))
                     qt.QCoreApplication.processEvents()
                     if self.transform_data_series:
                         tmpdata = self.apply_queued_transformations(data)
@@ -423,7 +423,7 @@ class AppForm(qt.QMainWindow):
                 img = self._open(tmpfname)
                 if img is None:
                     continue
-                self.progressBar.setValue((float(ii + 1) / (total)) * 100.)
+                self.progressBar.setValue(int((ii + 1) / total * 100.))
                 self.log.appendPlainText('Converting file %s' % tmpfname)
                 qt.QCoreApplication.processEvents()
                 if self.transform_data_series:
@@ -439,7 +439,7 @@ class AppForm(qt.QMainWindow):
                 tmpdata = self.data_series[i]
                 tmpheader = self.header_series[i]
                 tmpfname = ('%s_%s%s' % (fname, self.counter_format, format_[1:])) % i
-                self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                self.progressBar.setValue(int((i + 1) / total * 100.))
                 self.log.appendPlainText('Converting file %s' % i)
                 qt.QCoreApplication.processEvents()
                 if self.transform_data_series:
@@ -469,7 +469,7 @@ class AppForm(qt.QMainWindow):
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.flipud(self.data_series[i])[:]
-                    self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((i + 1) / total * 100.))
                     self.log.appendPlainText('Applying horizontal mirror to data series: image %d' % i)
                     qt.QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
@@ -502,7 +502,7 @@ class AppForm(qt.QMainWindow):
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.fliplr(self.data_series[i])[:]
-                    self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((i + 1) / total * 100.))
                     self.log.appendPlainText('Applying vertical mirror to data series: image %d' % i)
                     qt.QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
@@ -534,7 +534,7 @@ class AppForm(qt.QMainWindow):
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = self.data_series[i].transpose()[:]
-                    self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((i + 1) / total * 100.))
                     self.log.appendPlainText('Applying transposition to data series: image %d' % i)
                     qt.QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
@@ -566,7 +566,7 @@ class AppForm(qt.QMainWindow):
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i])[:]
-                    self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((i + 1) / total * 100.))
                     self.log.appendPlainText('Applying + 90 rotation to data series: image %d' % i)
                     qt.QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
@@ -598,7 +598,7 @@ class AppForm(qt.QMainWindow):
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i], 2)[:]
-                    self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((i + 1) / total * 100.))
                     self.log.appendPlainText('Applying + 180 rotation to data series: image %d' % i)
                     qt.QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
@@ -630,7 +630,7 @@ class AppForm(qt.QMainWindow):
                     return
                 for i in range(len(self.data_series)):
                     self.data_series[i] = numpy.rot90(self.data_series[i], 3)[:]
-                    self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                    self.progressBar.setValue(int((i + 1) / total * 100.))
                     self.log.appendPlainText('Applying - 90 rotation to data series: image %d' % i)
                     qt.QCoreApplication.processEvents()
                 iid = self.imgDict[str(self.images_list.currentText())]
@@ -685,7 +685,7 @@ class AppForm(qt.QMainWindow):
                                 self.log.appendPlainText(message)
                             else:
                                 self.data_series[i] = self.mask * self.data_series[i]
-                                self.progressBar.setValue((float(i + 1) / (total)) * 100.)
+                                self.progressBar.setValue(int((i + 1) / total * 100.))
                                 self.log.appendPlainText('Applying mask to data series: image %d' % i)
                                 qt.QCoreApplication.processEvents()
                         iid = self.imgDict[str(self.images_list.currentText())]
@@ -780,7 +780,7 @@ class AppForm(qt.QMainWindow):
                                 self.log.appendPlainText(message)
                                 continue
                             numpy.add(stack, img.data, stack)
-                            self.progressBar.setValue((float(i + 1) / (subtotal)) * 100.)
+                            self.progressBar.setValue(int((i + 1) / subtotal * 100.))
                             self.log.appendPlainText('File %s stacked' % imgkey)
                             qt.QCoreApplication.processEvents()
                             if j == thick - 1:
@@ -808,7 +808,7 @@ class AppForm(qt.QMainWindow):
                                 self.log.appendPlainText(message)
                                 continue
                             numpy.add(stack, data, stack)
-                            self.progressBar.setValue((float(i + 1) / (subtotal)) * 100.)
+                            self.progressBar.setValue(int((i + 1) / subtotal * 100.))
                             self.log.appendPlainText('File number %d stacked' % i)
                             qt.QCoreApplication.processEvents()
                             if j == thick - 1:
