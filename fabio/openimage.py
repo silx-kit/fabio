@@ -57,12 +57,14 @@ MAGIC_NUMBERS = [
     (b"FORMAT :100", 'bruker100'),
     (b"FORMAT :        86", 'bruker'),
     (b"\x4d\x4d\x00\x2a", 'tif'),
+    (b"\x4d\x4d\x2b\x00", 'tif'), # bigtiff, big endian
     # The marCCD and Pilatus formats are both standard tif with a header
     # hopefully these byte patterns are unique for the formats
     # If not the image will be read, but the is missing
     (b"\x49\x49\x2a\x00\x08\x00", 'marccd/tif'),
     (b"\x49\x49\x2a\x00\x82\x00", 'pilatus'),
     (b"\x49\x49\x2a\x00", 'tif'),
+    (b"\x49\x49\x2b\x00", 'tif'),  # bigtiff, little endian
     # d*TREK must come before edf
     (b"{\nHEA", 'dtrek'),
     # EDF_ types
