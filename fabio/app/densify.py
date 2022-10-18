@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "05/07/2022"
+__date__ = "18/10/2022"
 __status__ = "production"
 
 FOOTER = """
@@ -56,11 +56,10 @@ from .. import eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..utils.cli import ProgressBar, expand_args
-from ..nexus import Nexus
+from ..nexus import Nexus, h5py
 
 try:
     import hdf5plugin
-    import h5py
 except ImportError:
     pass
 
