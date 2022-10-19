@@ -98,7 +98,7 @@ class TestEiger(_CommonTestFrames):
 
     def test_write(self):
         fn = os.path.join(UtilsTest.tempdir, "eiger_write.h5")
-        shape=(10, 11, 13)
+        shape = (10, 11, 13)
         ary = numpy.random.randint(0, 100, size=shape)
         e = EigerImage()
         for i, d in enumerate(ary):
@@ -111,9 +111,20 @@ class TestEiger(_CommonTestFrames):
         self.assertEqual(str(f.__class__.__name__), "EigerImage", "Used the write reader")
         self.assertEqual(shape[0], f.nframes, "shape matches")
         self.assertEqual(shape[1:], f.shape, "shape matches")
-        self.assertEqual(abs(f.data-ary[0]).max(), 0, "first frame matches")
-        for i,g in enumerate(f):
-            self.assertEqual(abs(g.data-ary[i]).max(), 0, f"frame {i} matches")
+        self.assertEqual(abs(f.data - ary[0]).max(), 0, "first frame matches")
+        for i, g in enumerate(f):
+            self.assertEqual(abs(g.data - ary[i]).max(), 0, f"frame {i} matches")
+
+    def test_bug_479(self):
+        fn = os.path.join(UtilsTest.tempdir, "eiger_479.h5")
+        r = numpy.random.randint(0, 100, size=(100, 101))
+        e = EigerImage(data=r)
+        e.write(fn)
+        f = openimage(fn)
+        self.assertEqual(f.data.shape, r.shape, "shape match")
+        self.assertEqual(f.nframes, e.nframes, "nframes match")
+        self.assertTrue(numpy.all(f.data == e.data), "data match")
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase

@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "05/11/2021"
+__date__ = "18/10/2022"
 __status__ = "production"
 
 FOOTER = """
@@ -56,11 +56,10 @@ from .. import eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..utils.cli import ProgressBar, expand_args
-from ..nexus import Nexus
+from ..nexus import Nexus, h5py
 
 try:
     import hdf5plugin
-    import h5py
 except ImportError:
     pass
 
@@ -240,8 +239,9 @@ class Converter:
         future_frames = {idx: pool.apply_async(sparse._generate_data, (idx,))
                          for idx in range(sparse.nframes)}
         pool.close()
-        for idx, future_frame in future_frames.items():
+        for idx in range(sparse.nframes):
             self.pb.update(idx, f"Decompress frame #{idx:04d}")
+            future_frame =  future_frames.pop(idx)
             dest.set_data(future_frame.get(), idx)
         pool.join()
 

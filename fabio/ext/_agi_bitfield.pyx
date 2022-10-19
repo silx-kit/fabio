@@ -244,7 +244,7 @@ cdef uint16_t _compress_field(int32_t[::1] ifield, int32_t fieldsize, uint8_t[::
         for i in range(8):
             val = ifield[i] + conv_
             compressed_field |= val << (i * fieldsize)
-        for i in range(fieldsize):
+        for i in range(<uint64_t>fieldsize):
             buffer[position+i] =  <uint8_t>((compressed_field>>(i*8)) & 255)
         return overflow_position
     else:
