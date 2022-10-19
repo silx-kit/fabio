@@ -1,4 +1,6 @@
+subdir('app')
 subdir('ext')
+subdir('test')
 subdir('utils')
 
 version_py = configure_file(input: '../version.py', output: '_version.py', copy: true)
