@@ -25,7 +25,8 @@ include README.rst
 include copyright
 include requirements.txt
 include pyproject.toml
-recursive-include fabio meson.build
+include meson.build
+recursive-include fabio/* ?eson.build
 
 #Include doc without checkpoints
 recursive-include doc *
