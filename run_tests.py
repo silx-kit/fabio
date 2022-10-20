@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "06/11/2020"
+__date__ = "20/10/2022"
 __license__ = "MIT"
 
 import distutils.util
@@ -130,11 +130,10 @@ def get_project_name(root_dir):
     :return: The name of the project stored in root_dir
     """
     logger.debug("Getting project name in %s", root_dir)
-    p = subprocess.Popen([sys.executable, "setup.py", "--name"],
-                         shell=False, cwd=root_dir, stdout=subprocess.PIPE)
-    name, _stderr_data = p.communicate()
-    logger.debug("subprocess ended with rc= %s", p.returncode)
-    return name.split()[-1].decode('ascii')
+    import toml
+    with open("pyproject.toml") as f:
+        pyproject = toml.loads(f.read())
+    return pyproject.get("project",{}).get("name")
 
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -285,24 +284,28 @@ def build_project(name, root_dir):
     :param str root_dir: Root directory of the project
     :return: The path to the directory were build was performed
     """
-    platform = distutils.util.get_platform()
-    architecture = "lib.%s-%i.%i" % (platform,
-                                     sys.version_info[0], sys.version_info[1])
-    if is_debug_python():
-        architecture += "-pydebug"
-
+    build = os.path.join(root_dir, "build")
+    if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
+        p = subprocess.Popen(["meson", "build"],
+                         shell=False, cwd=root_dir)
+        p.wait()
+    p = subprocess.Popen(["meson", "configure", "--prefix", "/"],
+                     shell=False, cwd=build)
+    p.wait()
+    p = subprocess.Popen(["meson", "install", "--destdir", "."],
+                     shell=False, cwd=build)
+    logger.debug("meson install ended with rc= %s", p.wait())
+        
+    python_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
     if os.environ.get("PYBUILD_NAME") == name:
         # we are in the debian packaging way
         home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
     elif os.environ.get("BUILDPYTHONPATH"):
         home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
     else:
-        home = os.path.join(root_dir, "build", architecture)
+        home = os.path.join(build, "lib", python_version, "site-packages")
 
     logger.warning("Building %s to %s", name, home)
-    p = subprocess.Popen([sys.executable, "setup.py", "build"],
-                         shell=False, cwd=root_dir)
-    logger.debug("subprocess ended with rc= %s", p.wait())
     return home
 
 
