@@ -1,5 +1,7 @@
 #List of dependecies used by PIP but also by ReadTheDocs to generate the documentation on the fly
-setuptools<60
+#setuptools<60
+meson
+meson-python
 numpy
 cython
 lxml>=4.6.3
@@ -8,3 +10,6 @@ hdf5plugin
 sphinx
 sphinxcontrib-programoutput
 sphinx-rtd-theme
+#For development only
+#invoke
+#

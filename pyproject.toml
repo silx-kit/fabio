@@ -70,3 +70,12 @@ documentation = "http://www.silx.org/doc/fabio/latest/"
 source = "https://github.com/silx-kit/fabio"
 download = "https://github.com/silx-kit/fabio/releases"
 tracker = "https://github.com/silx-kit/fabio/issues"
+
+[project.entry-points.console_scripts]
+densify_Bragg = 'fabio.app.densify:main'
+eiger2cbf = 'fabio.app.eiger2cbf:main'
+eiger2crysalis = 'fabio.app.eiger2crysalis:main'
+fabio-convert = 'fabio.app.convert:main'
+
+[project.entry-points.gui_scripts]
+fabio_viewer = 'fabio.app.viewer:main'
