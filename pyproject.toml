@@ -58,6 +58,7 @@ requires = [
     "Cython>=0.25",
     "numpy",
     'pyproject-metadata>=0.5.0',
+    'tomli>=1.0.0'
 ]
 doc = [
     "sphinx",
