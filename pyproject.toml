@@ -1,20 +1,20 @@
 [project]
 name = 'fabio'
 dynamic = ['version',]
-license = {file = "copyright"}
-requires-python = ">=3.6"
-readme = "README.rst"
+license = {file = 'copyright'}
+requires-python = '>=3.6'
+readme = 'README.rst'
 description = 'FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python'
-#keyword = ["image", "detector"]
+#keyword = ['image', 'detector']
 authors = [
   { name = 'Henning Sorensen', email = 'osho@fysik.dtu.dk' },
-  { name = "Erik Knudsen" },
-  { name = "Jonathan P. Wright", email= 'wright@esrf.fr'},
+  { name = 'Erik Knudsen' },
+  { name = 'Jonathan P. Wright', email= 'wright@esrf.fr'},
   { name = 'Regis Perdreau'},
-  { name = "Jérôme Kieffer", email = "jerome.kieffer@esrf.fr"},
-  { name = "Gael Goret"},
-  { name = "Brian Pauw"},
-  { name = "Valentin Valls", email = "valentin.valls@esrf.fr"},
+  { name = 'Jérôme Kieffer', email = 'jerome.kieffer@esrf.fr'},
+  { name = 'Gael Goret'},
+  { name = 'Brian Pauw'},
+  { name = 'Valentin Valls', email = 'valentin.valls@esrf.fr'},
 ]
 classifiers = [
     'Development Status :: 5 - Production/Stable',
@@ -49,29 +49,29 @@ dependencies = [
 build-backend = 'mesonpy'
 #build-backend = "mesonpep517.buildapi"
 requires = [
-    "meson-python>=0.5.0",
+    'meson-python>=0.5.0',
     #"mesonpep517",
-    "meson",
-    "ninja",
-    "wheel",
-    "numpy",
-    "Cython>=0.25",
-    "numpy",
+    'meson',
+    'ninja',
+    'wheel',
+    'numpy',
+    'Cython>=0.25',
+    'numpy',
     'pyproject-metadata>=0.5.0',
     'tomli>=1.0.0'
 ]
 doc = [
-    "sphinx",
-    "sphinxcontrib-programoutput",
-    "sphinx-rtd-theme",
+    'sphinx',
+    'sphinxcontrib-programoutput',
+    'sphinx-rtd-theme',
     ]
 
 [project.urls]
-homepage = "http://silx.org"
-documentation = "http://www.silx.org/doc/fabio/latest/"
-source = "https://github.com/silx-kit/fabio"
-download = "https://github.com/silx-kit/fabio/releases"
-tracker = "https://github.com/silx-kit/fabio/issues"
+homepage = 'http://silx.org'
+documentation = 'http://www.silx.org/doc/fabio/latest/'
+source = 'https://github.com/silx-kit/fabio'
+download = 'https://github.com/silx-kit/fabio/releases'
+tracker = 'https://github.com/silx-kit/fabio/issues'
 
 [project.scripts]
 densify_Bragg = 'fabio.app.densify:main'
