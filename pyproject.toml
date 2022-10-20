@@ -56,12 +56,13 @@ requires = [
     "wheel",
     "numpy",
     "Cython>=0.25",
-    "numpy"
+    "numpy",
+    'pyproject-metadata>=0.5.0',
 ]
 doc = [
     "sphinx",
-	"sphinxcontrib-programoutput",
-	"sphinx-rtd-theme",
+    "sphinxcontrib-programoutput",
+    "sphinx-rtd-theme",
     ]
 
 [project.urls]
