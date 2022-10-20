@@ -2,7 +2,7 @@
 name = 'fabio'
 dynamic = ['version',]
 license = {file = 'copyright'}
-requires-python = '>=3.6'
+requires-python = '>=3.7'
 readme = 'README.rst'
 description = 'FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python'
 #keyword = ['image', 'detector']
@@ -47,10 +47,8 @@ dependencies = [
 
 [build-system]
 build-backend = 'mesonpy'
-#build-backend = "mesonpep517.buildapi"
 requires = [
     'meson-python>=0.5.0',
-    #"mesonpep517",
     'meson',
     'ninja',
     'wheel',
@@ -60,11 +58,11 @@ requires = [
     'pyproject-metadata>=0.5.0',
     'tomli>=1.0.0'
 ]
-doc = [
-    'sphinx',
-    'sphinxcontrib-programoutput',
-    'sphinx-rtd-theme',
-    ]
+#doc = [
+#    'sphinx',
+#    'sphinxcontrib-programoutput',
+#    'sphinx-rtd-theme',
+#    ]
 
 [project.urls]
 homepage = 'http://silx.org'
