@@ -1,3 +1,5 @@
+subdir('codecs')
+
 py.install_sources(
 ['__init__.py',
  'profile_all.py',
