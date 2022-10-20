@@ -32,5 +32,5 @@ py.install_sources(
  'test_tifimage.py',
  'test_xsdimage.py'],
   pure: false,   # Will be installed next to binaries
-  subdir: 'fabio/compression/'  # Folder relative to site-packages to install to
+  subdir: 'fabio/test/codecs'  # Folder relative to site-packages to install to
 )
