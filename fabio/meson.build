@@ -1,4 +1,6 @@
 subdir('app')
+subdir('benchmark')
+subdir('compression')
 subdir('ext')
 subdir('test')
 subdir('utils')
