@@ -2,7 +2,7 @@
 meson
 meson-python
 ninja
-toml
+tomli
 numpy
 cython
 lxml>=4.6.3

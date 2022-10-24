@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "20/10/2022"
+__date__ = "24/10/2022"
 __license__ = "MIT"
 
 import distutils.util
@@ -130,9 +130,9 @@ def get_project_name(root_dir):
     :return: The name of the project stored in root_dir
     """
     logger.debug("Getting project name in %s", root_dir)
-    import toml
+    import tomli
     with open("pyproject.toml") as f:
-        pyproject = toml.loads(f.read())
+        pyproject = tomli.loads(f.read())
     return pyproject.get("project",{}).get("name")
 
 
