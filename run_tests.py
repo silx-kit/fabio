@@ -43,6 +43,7 @@ import sys
 import time
 import unittest
 import collections
+import tomli
 
 
 class StreamHandlerUnittestReady(logging.StreamHandler):
@@ -130,7 +131,6 @@ def get_project_name(root_dir):
     :return: The name of the project stored in root_dir
     """
     logger.debug("Getting project name in %s", root_dir)
-    import tomli
     with open("pyproject.toml") as f:
         pyproject = tomli.loads(f.read())
     return pyproject.get("project",{}).get("name")
@@ -276,9 +276,7 @@ def is_debug_python():
 
 
 def build_project(name, root_dir):
-    """Run python setup.py build for the project.
-
-    Build directory can be modified by environment variables.
+    """Build locally the project using meson
 
     :param str name: Name of the project.
     :param str root_dir: Root directory of the project
