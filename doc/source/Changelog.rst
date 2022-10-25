@@ -1,5 +1,12 @@
 Changelog
 =========
+FabIO-0.15.0 (??/202?):
+.......................
+- Change build-system from `numpy.distutils` to `meson-python`
+- Support BigTIFF
+- Fix issue in ProgressBar in the viewer
+- Fix memory leak in densify
+- Fix EigerImage behavour
 
 FabIO-0.14.0 (06/2022):
 .......................
