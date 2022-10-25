@@ -10,7 +10,7 @@ example: ./bootstrap.py ipython
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "24/10/2022"
+__date__ = "25/10/2022"
 
 import sys
 import os
@@ -40,26 +40,37 @@ def build_project(name, root_dir):
     :param str root_dir: Root directory of the project
     :return: The path to the directory were build was performed
     """
+    extra = []
+    libdir = "lib"
+    if sys.platform == "win32":
+        libdir = "Lib"
+        extra = ["--buildtype", "plain"]
+    
     build = os.path.join(root_dir, "build")
     if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
         p = subprocess.Popen(["meson", "build"],
-                         shell=False, cwd=root_dir)
+                         shell=False, cwd=root_dir, env=os.environ)
         p.wait()
-    p = subprocess.Popen(["meson", "configure", "--prefix", "/"],
-                     shell=False, cwd=build)
+    p = subprocess.Popen(["meson", "configure", "--prefix", "/"] + extra,
+                     shell=False, cwd=build, env=os.environ)
     p.wait()
     p = subprocess.Popen(["meson", "install", "--destdir", "."],
-                     shell=False, cwd=build)
+                     shell=False, cwd=build, env=os.environ)
     logger.debug("meson install ended with rc= %s", p.wait())
         
-    python_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
+    
     if os.environ.get("PYBUILD_NAME") == name:
         # we are in the debian packaging way
         home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
     elif os.environ.get("BUILDPYTHONPATH"):
         home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
     else:
-        home = os.path.join(build, "lib", python_version, "site-packages")
+        if sys.platform == "win32":
+            home = os.path.join(build, "Lib", "site-packages")
+        else:
+            python_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
+            home = os.path.join(build, "lib", python_version, "site-packages")
+        home = os.path.abspath(home)
 
     logger.warning("Building %s to %s", name, home)
     return home
