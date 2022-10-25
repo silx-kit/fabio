@@ -32,19 +32,17 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "24/10/2022"
+__date__ = "25/10/2022"
 __license__ = "MIT"
 
-import distutils.util
 import logging
 import os
-import subprocess
+from argparse import ArgumentParser
 import sys
 import time
 import unittest
 import collections
 import tomli
-
 
 class StreamHandlerUnittestReady(logging.StreamHandler):
     """The unittest class TestResult redefine sys.stdout/err to capture
@@ -124,19 +122,9 @@ else:
     logger.info("h5py %s", h5py.version.version)
 
 
-def get_project_name(root_dir):
-    """Retrieve project name by running python setup.py --name in root_dir.
-
-    :param str root_dir: Directory where to run the command.
-    :return: The name of the project stored in root_dir
-    """
-    logger.debug("Getting project name in %s", root_dir)
-    with open("pyproject.toml") as f:
-        pyproject = tomli.loads(f.read())
-    return pyproject.get("project",{}).get("name")
-
-
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, PROJECT_DIR)
+from bootstrap import get_project_name, build_project
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info("Project name: %s", PROJECT_NAME)
 
@@ -275,39 +263,8 @@ def is_debug_python():
     return hasattr(sys, "gettotalrefcount")
 
 
-def build_project(name, root_dir):
-    """Build locally the project using meson
-
-    :param str name: Name of the project.
-    :param str root_dir: Root directory of the project
-    :return: The path to the directory were build was performed
-    """
-    build = os.path.join(root_dir, "build")
-    if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
-        p = subprocess.Popen(["meson", "build"],
-                         shell=False, cwd=root_dir)
-        p.wait()
-    p = subprocess.Popen(["meson", "configure", "--prefix", "/"],
-                     shell=False, cwd=build)
-    p.wait()
-    p = subprocess.Popen(["meson", "install", "--destdir", "."],
-                     shell=False, cwd=build)
-    logger.debug("meson install ended with rc= %s", p.wait())
-        
-    python_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
-    if os.environ.get("PYBUILD_NAME") == name:
-        # we are in the debian packaging way
-        home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
-    elif os.environ.get("BUILDPYTHONPATH"):
-        home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
-    else:
-        home = os.path.join(build, "lib", python_version, "site-packages")
-
-    logger.warning("Building %s to %s", name, home)
-    return home
 
 
-from argparse import ArgumentParser
 parser = ArgumentParser(description='Run the tests.')
 
 parser.add_argument("--installed",
