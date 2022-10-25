@@ -48,7 +48,7 @@ dependencies = [
 [build-system]
 build-backend = 'mesonpy'
 requires = [
-    'meson-python>=0.5.0',
+    'meson-python>=0.11',
     'meson',
     'ninja',
     'wheel',
@@ -66,11 +66,11 @@ source = 'https://github.com/silx-kit/fabio'
 download = 'https://github.com/silx-kit/fabio/releases'
 tracker = 'https://github.com/silx-kit/fabio/issues'
 
-[console_scripts]
+[project.scripts]
 densify_Bragg = 'fabio.app.densify:main'
 eiger2cbf = 'fabio.app.eiger2cbf:main'
 eiger2crysalis = 'fabio.app.eiger2crysalis:main'
 fabio-convert = 'fabio.app.convert:main'
 
-[gui_scripts]
+[project.gui-scripts]
 fabio_viewer = 'fabio.app.viewer:main'
