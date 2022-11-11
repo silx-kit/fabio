@@ -58,7 +58,7 @@ class HipicImage(FabioImage):
         Read in a header from an already open file
 
         """
-        Image_tag = infile.read(2)
+        Image_tag = infile.read(2).decode()
         Comment_len = numpy.frombuffer(infile.read(2), numpy.uint16)
         Dim_1 = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
         Dim_2 = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
@@ -66,7 +66,8 @@ class HipicImage(FabioImage):
         Dim_2_offset = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
         _HeaderType = numpy.frombuffer(infile.read(2), numpy.uint16)[0]
         _Dump = infile.read(50)
-        Comment = infile.read(Comment_len)
+        Comment = infile.read(Comment_len[0])
+        Comment = Comment.decode()
         self.header['Image_tag'] = Image_tag
         self.header['Dim_1'] = Dim_1
         self.header['Dim_2'] = Dim_2
