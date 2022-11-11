@@ -124,13 +124,19 @@ class HipicImage(FabioImage):
         self._dtype = None
         self._shape = None
 
-        # Sometimes these files are not saved as 12 bit,
-        # But as 16 bit after bg subtraction - which results
-        # negative values saved as 16bit. Therefore values higher
-        # 4095 is really negative values
-        if self.data.max() > 4095:
-            gt12bit = self.data > 4095
-            self.data = self.data - gt12bit * (2 ** 16 - 1)
+
+        #### The case below is not true for data collected at 
+        #### BL47XU/BL20XU/BL20B at SPring-8 - here the data is saved as 
+        #### 16 bit - so values above 4095 should be negative.
+        #### Therefore I have now commented it out.
+        
+        # # Sometimes these files are not saved as 12 bit,
+        # # But as 16 bit after bg subtraction - which results
+        # # negative values saved as 16bit. Therefore values higher
+        # # 4095 is really negative values
+        # if self.data.max() > 4095:
+        #     gt12bit = self.data > 4095
+        #     self.data = self.data - gt12bit * (2 ** 16 - 1)
         return self
 
 
