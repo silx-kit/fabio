@@ -1,7 +1,9 @@
 #List of dependencies used by PIP for AppVeyor (use cache on edna-site)
 --find-links http://www.silx.org/pub/wheelhouse
 
-setuptools<60
+meson-python
+meson
+tomly
 wheel
 numpy
 Cython
