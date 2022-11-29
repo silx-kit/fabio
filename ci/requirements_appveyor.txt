@@ -3,7 +3,7 @@
 
 meson-python
 meson
-tomly
+tomli
 wheel
 numpy
 Cython
