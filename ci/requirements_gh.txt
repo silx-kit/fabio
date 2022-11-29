@@ -3,6 +3,8 @@
 # PIP installs them from pre-compiled wheels, optimized for Github-CI Python environment.
 --find-links http://www.edna-site.org/pub/wheelhouse
 
+meson
+ninja
 meson-python
 wheel
 numpy <1.19 ; python_version <= '3.5'
