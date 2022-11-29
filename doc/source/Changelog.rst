@@ -7,6 +7,7 @@ FabIO-0.15.0 (??/202?):
 - Fix issue in ProgressBar in the viewer
 - Fix memory leak in densify
 - Fix EigerImage behavour
+- Drop Python-3.6 (declared eol 12-2021)
 
 FabIO-0.14.0 (06/2022):
 .......................
