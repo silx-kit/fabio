@@ -66,7 +66,7 @@ def isGlymurUsable():
     if jpeg2kimage.glymur is None:
         return None
     import glymur
-    if glymur.version.openjpeg_version_tuple < (1, 5, 0):
+    if tuple(glymur.version.openjpeg_version_tuple) < (1, 5, 0):
         return False
     return True
 
