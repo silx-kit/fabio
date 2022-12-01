@@ -32,7 +32,7 @@ import os
 import logging
 
 logger = logging.getLogger(__name__)
-
+import numpy
 import fabio
 from fabio import tifimage
 from ..utilstest import UtilsTest
@@ -104,6 +104,14 @@ class TestTif(unittest.TestCase):
             self.assertIsNotNone(frame.data)
             self.assertEqual(frame.data.shape, (dim2, dim1))
             self.assertEqual(len(frame.header.keys()), 15)
+
+    def test_bug502(self):
+        """
+        Test the reading of a frame with wrong Photometric interpretation 
+        """
+        ref = fabio.open(UtilsTest.getimage("frame_00017.npy"))
+        obt = fabio.open(UtilsTest.getimage("frame_00017.tif"))
+        self.assertTrue(numpy.all(ref.data == obt.data), "Data match")
 
 
 class TestTifImage_Pilatus(unittest.TestCase):
