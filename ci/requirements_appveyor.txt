@@ -11,4 +11,4 @@ Cython
 lxml>=4.6.3
 Pillow
 h5py
-hdf5-plugin
+hdf5plugin
