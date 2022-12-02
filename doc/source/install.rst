@@ -25,7 +25,7 @@ It runs under any architecture. It is best used in a virtual environament:
 
     python3 -m venv py3
     py3\bin\activate.bat
-    pip install setuptools wheel pip --upgrade
+    pip install pip --upgrade
     pip install fabio
 
 Installation under windows
@@ -95,10 +95,10 @@ Compile and test the code source
 
 .. code-block:: shell
 
-   pip install --upgrade setuptools wheel
+   pip install --upgrade pip wheel build 'meson-python>=0.11'
    pip install --upgrade -r ci\requirements_appveyor.txt
    python3 run_tests.py
-   pip install --upgade .
+   pip install .
 
 Testing version of FabIO
 ........................
@@ -128,8 +128,9 @@ FabIO directly in it:
 
     python3 -m venv ~/py3
     source ~/py3/bin/activate
-    pip install --upgrade setuptools wheel pip numpy
-    pip install --upgrade .
+    pip install --upgrade wheel pip build 'meson-python>=0.11'
+    pip install -r requirements.txt
+    pip install .
 
 
 Compile from sources
@@ -156,7 +157,8 @@ Once done, follow the classical procedure (similar to Windows or Linux):
 
 .. code-block:: shell
 
-   pip install --upgrade -r ci/requirements_travis.txt --trusted-host www.silx.org
+   pip install wheel build 'meson-python>=0.11'
+   pip install --upgrade -r requirements.txt --trusted-host www.silx.org
    python3 run_tests.py
    pip install --upgrade .
 
@@ -193,9 +195,9 @@ Once done, follow the classical procedure (similar to Windows or MacOSX):
     # Create a virtual env:
     python3 -m venv ~/py3
     source ~/py3/bin/activate
-    pip install setuptools wheel pip --upgrade
+    pip install --upgrade wheel pip build 'meson-python>0.11'
     # Install the dependencies
-    pip install -r ci/requirements_travis.txt --trusted-host www.silx.org
+    pip install -r requirements.txt --trusted-host www.silx.org
     python3 run_tests.py
     pip install --upgrade .
 
@@ -207,12 +209,12 @@ The newest development version can be obtained by checking it out from the git r
 .. code-block:: shell
 
     git clone https://github.com/silx-kit/fabio
+    pip install --upgrade wheel pip build 'meson-python>0.11'
     cd fabio
-    pip install --upgrade -r ci/requirements_travis.txt --trusted-host www.silx.org
+    pip install --upgrade -r requirements.txt --trusted-host www.silx.org
     python3 run_tests.py
-    pip install --upgrade .
-
-
+    pip install .
+    
 
 Automatic debian packaging
 ..........................

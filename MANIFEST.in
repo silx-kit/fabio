@@ -25,6 +25,7 @@ include README.rst
 include copyright
 include requirements.txt
 include pyproject.toml
+include meson.build
 
 #Include doc without checkpoints
 recursive-include doc *

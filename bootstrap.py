@@ -10,58 +10,70 @@ example: ./bootstrap.py ipython
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "26/12/2020"
+__date__ = "25/10/2022"
 
 import sys
 import os
-import distutils.util
 import subprocess
 import logging
-
+import tomli
 logging.basicConfig()
 logger = logging.getLogger("bootstrap")
 
 
-def is_debug_python():
-    """Returns true if the Python interpreter is in debug mode."""
-    try:
-        import sysconfig
-    except ImportError:  # pragma nocover
-        # Python < 2.7
-        import distutils.sysconfig as sysconfig
+def get_project_name(root_dir):
+    """Retrieve project name by running python setup.py --name in root_dir.
 
-    if sysconfig.get_config_var("Py_DEBUG"):
-        return True
-
-    return hasattr(sys, "gettotalrefcount")
-
-
-def _distutils_dir_name(dname="lib"):
+    :param str root_dir: Directory where to run the command.
+    :return: The name of the project stored in root_dir
     """
-    Returns the name of a distutils build directory
+    logger.debug("Getting project name in %s", root_dir)
+    with open("pyproject.toml") as f:
+        pyproject = tomli.loads(f.read())
+    return pyproject.get("project",{}).get("name")
+
+
+def build_project(name, root_dir):
+    """Build locally the project using meson
+
+    :param str name: Name of the project.
+    :param str root_dir: Root directory of the project
+    :return: The path to the directory were build was performed
     """
-    platform = distutils.util.get_platform()
-    architecture = "%s.%s-%i.%i" % (dname, platform,
-                                    sys.version_info[0], sys.version_info[1])
-    if is_debug_python():
-        architecture += "-pydebug"
-    return architecture
+    extra = []
+    libdir = "lib"
+    if sys.platform == "win32":
+        libdir = "Lib"
+        extra = ["--buildtype", "plain"]
+    
+    build = os.path.join(root_dir, "build")
+    if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
+        p = subprocess.Popen(["meson", "build"],
+                         shell=False, cwd=root_dir, env=os.environ)
+        p.wait()
+    p = subprocess.Popen(["meson", "configure", "--prefix", "/"] + extra,
+                     shell=False, cwd=build, env=os.environ)
+    p.wait()
+    p = subprocess.Popen(["meson", "install", "--destdir", "."],
+                     shell=False, cwd=build, env=os.environ)
+    logger.debug("meson install ended with rc= %s", p.wait())
+        
+    
+    if os.environ.get("PYBUILD_NAME") == name:
+        # we are in the debian packaging way
+        home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
+    elif os.environ.get("BUILDPYTHONPATH"):
+        home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
+    else:
+        if sys.platform == "win32":
+            home = os.path.join(build, "Lib", "site-packages")
+        else:
+            python_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
+            home = os.path.join(build, "lib", python_version, "site-packages")
+        home = os.path.abspath(home)
 
-
-def _distutils_scripts_name():
-    """Return the name of the distrutils scripts sirectory"""
-    f = "scripts-{version[0]}.{version[1]}"
-    return f.format(version=sys.version_info)
-
-
-def _get_available_scripts(path):
-    res = []
-    try:
-        res = " ".join([s.rstrip('.py') for s in os.listdir(path)])
-    except OSError:
-        res = ["no script available, did you ran "
-               "'python setup.py build' before bootstrapping ?"]
-    return res
+    logger.warning("Building %s to %s", name, home)
+    return home
 
 
 def execfile(fullpath, globals=None, locals=None):
@@ -113,18 +125,16 @@ def run_file(filename, argv):
         run.wait()
 
 
-def run_entry_point(entry_point, argv):
+def run_entry_point(target_name, entry_point, argv):
     """
     Execute an entry_point using the current python context
-    (http://setuptools.readthedocs.io/en/latest/setuptools.html#automatic-script-creation)
 
     :param str entry_point: A string identifying a function from a module
         (NAME = PACKAGE.MODULE:FUNCTION)
+    :param argv: list of arguments
     """
     import importlib
-    elements = entry_point.split("=")
-    target_name = elements[0].strip()
-    elements = elements[1].split(":")
+    elements = entry_point.split(":")
     module_name = elements[0].strip()
     function_name = elements[1].strip()
 
@@ -158,48 +168,23 @@ def find_executable(target):
     if os.path.isfile(target):
         return ("path", os.path.abspath(target))
 
-    # search the file from setup.py
-    import setup
-    config = setup.get_project_configuration(dry_run=True)
-    # scripts from project configuration
-    if "scripts" in config:
-        for script_name in config["scripts"]:
-            if os.path.basename(script) == target:
-                return ("path", os.path.abspath(script_name))
-    # entry-points from project configuration
-    if "entry_points" in config:
-        for kind in config["entry_points"]:
-            for entry_point in config["entry_points"][kind]:
-                elements = entry_point.split("=")
-                name = elements[0].strip()
-                if name == target:
-                    return ("entry_point", entry_point)
-
-    # search the file from env PATH
-    for dirname in os.environ.get("PATH", "").split(os.pathsep):
-        path = os.path.join(dirname, target)
-        if os.path.isfile(path):
-            return ("path", path)
-
+    # search the executable in pyproject.toml
+    with open(os.path.join(PROJECT_DIR, "pyproject.toml")) as f:
+        pyproject = tomli.loads(f.read())
+    for script, entry_point in list(pyproject.get("console_scripts",{}).items())+list(pyproject.get("gui_scripts",{}).items()):
+        if script == target:
+            print(script, entry_point)
+            return ("entry_point", target, entry_point)
     return None, None
 
 
-home = os.path.dirname(os.path.abspath(__file__))
-LIBPATH = os.path.join(home, 'build', _distutils_dir_name('lib'))
-cwd = os.getcwd()
-os.chdir(home)
-build = subprocess.Popen([sys.executable, "setup.py", "build"],
-                         shell=False, cwd=os.path.dirname(os.path.abspath(__file__)))
-build_rc = build.wait()
-os.chdir(cwd)
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_NAME = get_project_name(PROJECT_DIR)
+logger.info("Project name: %s", PROJECT_NAME)
 
-if build_rc == 0:
-    logger.info("Build process ended.")
-else:
-    logger.error("Build process ended with rc=%s", build_rc)
-    sys.exit(-1)
 
 if __name__ == "__main__":
+    LIBPATH = build_project(PROJECT_NAME, PROJECT_DIR)
     if len(sys.argv) < 2:
         logger.warning("usage: ./bootstrap.py <script>\n")
         script = None
@@ -215,11 +200,11 @@ if __name__ == "__main__":
 
     if script:
         argv = sys.argv[2:]
-        kind, target = find_executable(script)
-        if kind == "path":
-            run_file(target, argv)
-        elif kind == "entry_point":
-            run_entry_point(target, argv)
+        res = find_executable(script)
+        if res[0]  == "path":
+            run_file(res[1], argv)
+        elif res[0]  == "entry_point":
+            run_entry_point(res[1], res[2], argv)
         else:
             logger.error("Script %s not found", script)
     else:

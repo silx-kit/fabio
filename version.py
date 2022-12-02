@@ -79,7 +79,7 @@ MAJOR = 0
 MINOR = 15
 MICRO = 0
 RELEV = "dev"  # <16
-SERIAL = 0  # <16
+SERIAL = 1  # <16
 date = __date__
 
 from collections import namedtuple
@@ -90,7 +90,7 @@ version_info = _version_info(MAJOR, MINOR, MICRO, RELEV, SERIAL)
 strictversion = version = debianversion = "%d.%d.%d" % version_info[:3]
 if version_info.releaselevel != "final":
     _prerelease = PRERELEASE_NORMALIZED_NAME[version_info[3]]
-    version += "-%s%s" % (_prerelease, version_info[-1])
+    version += "%s%s" % (_prerelease, version_info[-1])
     debianversion += "~adev%i" % version_info[-1] if RELEV == "dev" else "~%s%i" % (_prerelease, version_info[-1])
     strictversion += _prerelease + str(version_info[-1])
 
