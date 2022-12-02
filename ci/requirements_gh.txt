@@ -7,9 +7,7 @@ meson
 ninja
 meson-python
 wheel
-numpy <1.19 ; python_version <= '3.5'
-numpy <1.20 ; python_version <= '3.6'
-numpy; python_version>= '3.6'
+numpy
 h5py
 cython
 Pillow
