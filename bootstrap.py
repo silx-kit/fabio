@@ -181,10 +181,10 @@ def find_executable(target):
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info("Project name: %s", PROJECT_NAME)
-LIBPATH = build_project(PROJECT_NAME, PROJECT_DIR)
 
 
 if __name__ == "__main__":
+    LIBPATH = build_project(PROJECT_NAME, PROJECT_DIR)
     if len(sys.argv) < 2:
         logger.warning("usage: ./bootstrap.py <script>\n")
         script = None

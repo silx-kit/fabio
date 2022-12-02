@@ -322,8 +322,10 @@ if (os.path.dirname(os.path.abspath(__file__)) ==
     removed_from_sys_path = sys.path.pop(0)
     logger.info("Patched sys.path, removed: '%s'", removed_from_sys_path)
 
-# import module
 if options.installed:  # Use installed version
+    for bad_path in (".", os.getcwd(), os.path.abspath(".")):
+        if bad_path in sys.path:
+            sys.path.remove(bad_path)
     try:
         module = importer(PROJECT_NAME)
     except Exception:
