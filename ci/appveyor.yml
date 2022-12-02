@@ -1,4 +1,4 @@
-version: 0.11-dev{build}
+version: 0.15-dev{build}
 
 # fetch repository as zip archive
 shallow_clone: true
@@ -57,6 +57,8 @@ install:
   - "pip install --trusted-host www.silx.org -r ci\\requirements_appveyor.txt"
 
 build_script:
+  - "meson --version"
+  - "python run_tests.py"
   - "python -m build"
   - ps: "ls dist"
   # Install the generated wheel package to test it
