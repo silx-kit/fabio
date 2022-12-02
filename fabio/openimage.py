@@ -128,9 +128,10 @@ def do_magic(byts, filename):
                                 default_entry = h.attrs.get("default")
                                 if default_entry:
                                     default_grp = h[default_entry].attrs.get("default")
-                                    dataformat = default_grp.attrs.get("dataformat")
-                                    if dataformat and "Bragg" in dataformat:
-                                        return "sparse"
+                                    if default_grp:
+                                        dataformat = h[default_grp].attrs.get("dataformat")
+                                        if dataformat and "Bragg" in dataformat:
+                                            return "sparse"
                                 return "lima"
                             elif str(creator).startswith("pyFAI"):
                                 return "sparse"
