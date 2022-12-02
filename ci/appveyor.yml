@@ -59,7 +59,7 @@ install:
 build_script:
   - "meson --version"
   - "python run_tests.py"
-  - "python -m build"
+  - "python -m build --wheel"
   - ps: "ls dist"
   # Install the generated wheel package to test it
   - "pip install --pre --find-links dist/  --no-cache-dir --no-index fabio"
