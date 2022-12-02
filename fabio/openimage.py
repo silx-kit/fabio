@@ -124,18 +124,18 @@ def do_magic(byts, filename):
                         import h5py
                         with h5py.File(filename, "r") as h:
                             creator = h.attrs.get("creator")
-                        if str(creator).startswith("LIMA"):
-                            default_entry = h.attrs.get("default")
-                            if default_entry:
-                                default_grp = h[default_entry].attrs.get("default")
-                                dataformat = default_grp.attrs.get("dataformat")
-                                if dataformat and "Bragg" in dataformat:
-                                    return "sparse"
-                            return "lima"
-                        elif str(creator).startswith("pyFAI"):
-                            return "sparse"
-                        else:
-                            return "eiger"
+                            if str(creator).startswith("LIMA"):
+                                default_entry = h.attrs.get("default")
+                                if default_entry:
+                                    default_grp = h[default_entry].attrs.get("default")
+                                    dataformat = default_grp.attrs.get("dataformat")
+                                    if dataformat and "Bragg" in dataformat:
+                                        return "sparse"
+                                return "lima"
+                            elif str(creator).startswith("pyFAI"):
+                                return "sparse"
+                            else:
+                                return "eiger"
                 elif format_type == "marccd/tif":
                     if "mccd" in filename.split("."):
                         return "marccd"
