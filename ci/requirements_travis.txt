@@ -1,9 +1,0 @@
-#List of dependencies used.
-# PIP installs them from pre-compiled wheels, optimized for Travis-CI Python environment.
---find-links http://www.edna-site.org/pub/wheelhouse
-
-wheel
-h5py
-cython
-Pillow
-lxml>=4.6.3 

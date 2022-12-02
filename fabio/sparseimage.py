@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "05/07/2022"
+__date__ = "14/11/2022"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -179,7 +179,14 @@ class SparseImage(FabioImage):
         self.frame_ptr = nx_data["frame_ptr"][()]
         self.index = nx_data["index"][()]
         self.intensity = nx_data["intensity"][()]
-        self.dummy = self.intensity.dtype.type(nx_data["dummy"][()])
+        try:
+            self.dummy = self.intensity.dtype.type(nx_data["dummy"][()])
+        except KeyError:
+            if self.intensity.dtype.char in numpy.typecodes['AllFloat']:
+                self.dummy = numpy.NaN
+            else:
+                self.dummy = 0
+            
         self._nframes = self.frame_ptr.shape[0] - 1
         if "normalization" in nx_data:
             self.normalization = numpy.ascontiguousarray(nx_data["normalization"][()], dtype=numpy.float32)
