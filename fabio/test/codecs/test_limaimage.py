@@ -118,6 +118,10 @@ class TestLima(_CommonTestFrames):
         for i,g in enumerate(f):
             self.assertEqual(abs(g.data-ary[i]).max(), 0, f"frame {i} matches")
 
+    def test_identify(self):
+        fn = UtilsTest.getimage("output_sparse_0_00000.h5")
+        res = openimage(fn)
+        self.assertTrue(res.__class__.__name__.startswith("Sparse"))
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
