@@ -10,7 +10,7 @@ example: ./bootstrap.py ipython
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "25/10/2022"
+__date__ = "06/12/2022"
 
 import sys
 import os
@@ -72,7 +72,16 @@ def build_project(name, root_dir):
             home = os.path.join(build, "lib", python_version, "site-packages")
         home = os.path.abspath(home)
 
+    cnt = 0
+    while not os.path.isdir(home):
+        cnt += 1
+        home = os.path.split(home)[0]
+    for _ in range(cnt):
+        n = os.listdir(home)[0]
+        home = os.path.join(home, n)
+
     logger.warning("Building %s to %s", name, home)
+    
     return home
 
 
