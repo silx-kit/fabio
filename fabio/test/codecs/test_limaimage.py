@@ -48,7 +48,7 @@ def make_hdf5(name, shape=(50, 99, 101)):
     with h5py.File(name, mode="w") as h:
         h.attrs["creator"] = "LIMA"
         h.attrs["default"] = "/entry"
-        e = h.require_group("/entry/measurement")        
+        e = h.require_group("/entry/measurement")
         if len(shape) == 2:
             e.require_dataset("data", shape, compression="gzip", compression_opts=9, dtype="uint16")
         elif len(shape) == 3:
@@ -98,7 +98,7 @@ class TestLima(_CommonTestFrames):
         self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 17, "nframe: got %s!=17" % e.nframes)
         self.assertEqual(e.bpp, 2, "bpp OK")
-    
+
     def test_write(self):
         fn = os.path.join(UtilsTest.tempdir, "lima_write.h5")
         shape=(10, 11, 13)
@@ -118,6 +118,10 @@ class TestLima(_CommonTestFrames):
         for i,g in enumerate(f):
             self.assertEqual(abs(g.data-ary[i]).max(), 0, f"frame {i} matches")
 
+    def test_identify(self):
+        fn = UtilsTest.getimage("output_sparse_0_00000.h5")
+        res = openimage(fn)
+        self.assertTrue(res.__class__.__name__.startswith("Sparse"))
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase

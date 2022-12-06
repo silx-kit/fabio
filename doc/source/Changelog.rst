@@ -1,13 +1,19 @@
 Changelog
 =========
-FabIO-0.15.0 (??/202?):
-.......................
+
+FabIO-2022.12:
+..............
+- Declared stable
+- Change the versioning system to calendar 
 - Change build-system from `numpy.distutils` to `meson-python`
+- Deprecate the usage of setup.py (will be removed in next release)
+- Fix Tif-reader for wrong photometric interpretation
+- Update HiPiCimage
 - Support BigTIFF
 - Fix issue in ProgressBar in the viewer
 - Fix memory leak in densify
 - Fix EigerImage behavour
-- Drop Python-3.6 (declared eol 12-2021)
+- Drop Python-3.6 (declared EOL 12-2021)
 
 FabIO-0.14.0 (06/2022):
 .......................
