@@ -629,8 +629,6 @@ class FileSeries(FabioImage):
                 if image.nframes == 0:
                     # The container is empty
                     pass
-                elif image.nframes == 1:
-                    yield image
                 else:
                     for frame_num in range(image.nframes):
                         frame = image.get_frame(frame_num)
