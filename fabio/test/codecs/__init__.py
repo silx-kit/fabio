@@ -69,6 +69,7 @@ def suite():
     from . import test_pixiimage
     from . import test_esperantoimage
     from . import test_limaimage
+    from . import test_hipicimage
 
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_edfimage.suite())
@@ -102,6 +103,7 @@ def suite():
     testSuite.addTest(test_pixiimage.suite())
     testSuite.addTest(test_esperantoimage.suite())
     testSuite.addTest(test_limaimage.suite())
+    testSuite.addTest(test_hipicimage.suite())
     return testSuite
 
 
