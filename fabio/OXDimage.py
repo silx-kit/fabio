@@ -45,17 +45,17 @@ Authors:
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "11/12/2020"
+__date__ = "12/12/2022"
 
 import time
 import logging
 import struct
 logger = logging.getLogger(__name__)
 import numpy
+from numpy import rad2deg, deg2rad
 from .fabioimage import FabioImage
 from .compression import decTY1, compTY1
 from .fabioutils import to_str
-from .utils.mathutils import rad2deg, deg2rad
 
 DETECTOR_TYPES = {0: 'Sapphire/KM4CCD (1x1: 0.06mm, 2x2: 0.12mm)',
                   1: 'Sapphire2-Kodak (1x1: 0.06mm, 2x2: 0.12mm)',

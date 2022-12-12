@@ -38,7 +38,7 @@ to conform to the specification of the IUCR
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "22/10/2020"
+__date__ = "12/12/2022"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 
@@ -204,7 +204,7 @@ class CbfImage(FabioImage):
     def read_raw_data(self, infile):
         """Read and return the raw data chunk
 
-        :param infile: opened file are correct position
+        :param infile: opened file at correct position
         :return: raw compressed stream
         """
         if self.CIF_BINARY_BLOCK_KEY not in self.cif:
@@ -662,18 +662,8 @@ class CIF(dict):
             mode = "wb"
         else:
             mode = "w"
-        try:
-            fFile = open(_strFilename, mode)
-        except IOError:
-            logger.error("Error during the opening of file for write: %s",
-                         _strFilename)
-            return
-        fFile.write(self.tostring(_strFilename, linesep))
-        try:
-            fFile.close()
-        except IOError:
-            logger.error("Error during the closing of file for write: %s",
-                         _strFilename)
+        with open(_strFilename, mode) as fFile:
+            fFile.write(self.tostring(_strFilename, linesep))
 
     def tostring(self, _strFilename=None, linesep=os.linesep):
         """
@@ -728,11 +718,15 @@ class CIF(dict):
                 lstStrCif.append("loop_ ")
                 lKeys = loop[0]
                 llData = loop[1]
-                lstStrCif += [" %s" % (sKey) for sKey in lKeys]
+                lstStrCif += [f" {sKey.decode() if isinstance(sKey, bytes) else str(sKey)}" for sKey in lKeys]
                 for lData in llData:
                     sLine = " "
                     for key in lKeys:
                         sRawValue = lData[key]
+                        if isinstance(sRawValue, bytes):
+                            sRawValue = sRawValue.decode()
+                        else:
+                            sRawValue = str(sRawValue)
                         if sRawValue.find("\n") > -1:  # should add value  between ;;
                             lstStrCif += [sLine, ";", str(sRawValue), ";"]
                             sLine = " "

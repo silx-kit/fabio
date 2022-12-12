@@ -51,6 +51,7 @@ from . import codecs
 from . import test_agi_bitfield
 from . import test_densification
 from . import test_io_limits
+from . import test_utils_cli
 
 
 def suite():
@@ -76,6 +77,7 @@ def suite():
     testSuite.addTest(test_agi_bitfield.suite())
     testSuite.addTest(test_densification.suite())
     testSuite.addTest(test_io_limits.suite())
+    testSuite.addTest(test_utils_cli.suite())
     return testSuite
 
 
