@@ -90,22 +90,22 @@ class BinaryImage(FabioImage):
         self.filename = fname
         self._shape = dim2, dim1
         self._bytecode = bytecode
-        f = open(self.filename, "rb")
-        dims = [dim2, dim1]
-        bpp = len(numpy.array(0, bytecode).tobytes())
-        size = dims[0] * dims[1] * bpp
-
-        if offset >= 0:
-            f.seek(offset)
-        else:
-            try:
-                f.seek(-size + offset + 1, 2)  # seek from EOF backwards
-            except IOError:
-                logger.warning('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
-            except Exception:
-                logger.debug("Backtrace", exc_info=True)
-                logger.error('Uncommon error encountered when reading file')
-        rawData = f.read(size)
+        with open(self.filename, "rb") as f: 
+            dims = [dim2, dim1]
+            bpp = numpy.dtype(bytecode).itemsize
+            size = dims[0] * dims[1] * bpp
+    
+            if offset >= 0:
+                f.seek(offset)
+            else:
+                try:
+                    f.seek(-size + offset + 1, 2)  # seek from EOF backwards
+                except IOError:
+                    logger.warning('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
+                except Exception:
+                    logger.debug("Backtrace", exc_info=True)
+                    logger.error('Uncommon error encountered when reading file')
+            rawData = f.read(size)
         data = numpy.frombuffer(rawData, bytecode).copy().reshape(tuple(dims))
         if self.swap_needed(endian):
             data.byteswap(True)
