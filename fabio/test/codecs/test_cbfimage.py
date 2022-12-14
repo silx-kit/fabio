@@ -267,11 +267,11 @@ B   0.19750   0.50000   0.50000
 """
         filename = os.path.join(UtilsTest.tempdir, "LaB6.cif")
         filename2 =os.path.join(UtilsTest.tempdir, "LaB6_2.cif")
-        print(filename, filename2)
+        # print(filename, filename2)
         with open(filename, "w") as w:
             w.write(LaB6)
         lab6 = CIF(filename)
-        print(lab6)
+        # print(lab6)
         lab6.saveCIF(filename2)
         lab62 = CIF(filename2)
         self.assertEqual(len(lab6), len(lab62), "size matches") 
