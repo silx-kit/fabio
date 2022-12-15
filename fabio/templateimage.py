@@ -54,15 +54,17 @@ The basic idea is the following:
 6) Fill out the magic numbers for your format in fabio.openimage if you know
    them (the characteristic first few bytes in the file)
 
-7) Upload a testimage to the file release system and create a unittest testcase
+7) Declare your new file in meson.build
+
+8) Upload a testimage to the file release system and create a unittest testcase
    which opens an example of your new format, confirming the image has actually
    been read in successfully (eg check the mean, max, min and esd are all correct,
    perhaps orientation too)
 
-8) Run pylint on your code and then please go clean it up. Have a go at mine
+9) Run pylint on your code and then please go clean it up. Have a go at mine
    while you are at it, before requesting a pull-request on github.
 
-9) Bask in the warm glow of appreciation when someone unexpectedly learns they
+10) Bask in the warm glow of appreciation when someone unexpectedly learns they
    don't need to convert their data into another format
 
 """
@@ -71,7 +73,7 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "03/04/2020"
+__date__ = "15/12/2022"
 
 import logging
 logger = logging.getLogger(__name__)
