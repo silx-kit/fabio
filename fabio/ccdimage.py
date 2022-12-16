@@ -217,15 +217,12 @@ class ChipMachineFunction:
     def loads(cls, buffer):
         buffer_len = 2+8+8
         assert len(buffer)>=buffer_len
-        lst = struct.unpack("<HH"+"H"*2*CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS,
+        lst = struct.unpack("<Hdd,
                             buffer[:buffer_len])
-        return cls(lst[0], lst[1],
-                   lst[2:2+CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS],
-                   lst[2+CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS:],)
+        return cls(lst[0], lst[1], lst[2])
 
     def dumps(self):
-        return struct.pack("<HH"+"H"*2*CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS,
-                           self.itype, self.ipoints, *self.iax, *self.iay)
+        return struct.pack("<Hdd", self.iismachinefunction, self.da_machinefct, self.db_machinefct)
     
 @dataclass
 class CcdCharacteristiscs:
