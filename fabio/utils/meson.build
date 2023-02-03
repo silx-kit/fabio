@@ -4,7 +4,6 @@ py.install_sources(
 	'cli.py',
 	'deprecation.py',
 	'ExternalResources.py',
-	'mathutils.py',
 	'pilutils.py',
 	'testutils.py'
 ],

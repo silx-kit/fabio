@@ -25,6 +25,7 @@ py.install_sources(
  'test_open_header.py',
  'test_open_image.py',
  'test_tiffio.py',
+ 'test_utils_cli.py',
  'testutils.py',
  'utilstest.py'],
   pure: false,   # Will be installed next to binaries
