@@ -14,6 +14,7 @@ py.install_sources([
 	'bruker100image.py',
 	'brukerimage.py',
 	'cbfimage.py',
+	'ccdimage.py',
 	'converters.py',
 	'datIO.py',
 	'directories.py',

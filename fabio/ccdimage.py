@@ -1,6 +1,6 @@
 # coding: utf-8
 #
-#    Project: CCD mask image reader/writer. Format used in CrysalisPro software 
+#    Project: CCD mask image reader/writer. Format used in CrysalisPro software
 #             https://github.com/silx-kit/fabio
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
@@ -34,7 +34,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2022 ESRF"
-__date__ = "16/12/2022"
+__date__ = "03/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ from dataclasses import dataclass
 from enum import Enum
 import struct
 # Some constants used in the file:
+
 
 class CCD_FILEVERSION(Enum):
     VERS_1_1 = 0x00010001
@@ -58,9 +59,10 @@ class CCD_FILEVERSION(Enum):
     VERS_1_10 = 0x0001000a
     VERS_1_11 = 0x0001000b
     VERS_1_12 = 0x0001000c
-    
-    
-CCD_FILEVERSION_VERS_HIGHEST =CCD_FILEVERSION.VERS_1_12
+
+
+CCD_FILEVERSION_VERS_HIGHEST = CCD_FILEVERSION.VERS_1_12
+
 
 class CHIPCHARACTERISTICS_TREATMENT(Enum):
     IGNORE = 0
@@ -73,11 +75,13 @@ class CHIPCHARACTERISTICS_TREATMENT(Enum):
     REPLACEBOTTOM = 7
     AVERAGETOPBOTTOM = 8
 
+
 class CHIPCHARACTERISTICS_POLYGONTYPE(Enum):
     TRIANGLE = 0
     RECTANGLE = 1
     POLYGON = 2
     MAXPOINTS = 6
+
 
 class CHIPCHARACTERISTICS_SCINTILLATORID(Enum):
     NOTPRESENT = 0
@@ -89,119 +93,127 @@ class CHIPCHARACTERISTICS_SCINTILLATORID(Enum):
     RAREXFINE = 6
     GREEN400_NEW = 7
 
+
 CHIPCHARACTERISTICS_SCINTILLATORID_FIRST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400
 CHIPCHARACTERISTICS_SCINTILLATORID_LAST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400_NEW
+
 
 @dataclass
 class ChipPoint:
     ix: int
     iy: int
-    
+    SIZE = 4
+
     @classmethod
     def loads(cls, buffer):
-        buffer_len = 4
-        assert len(buffer)>=buffer_len
-        return cls(*struct.unpack("<HH", buffer[:buffer_len]))
+        assert len(buffer) >= cls.SIZE
+        return cls(*struct.unpack("<HH", buffer[:cls.SIZE]))
 
     def dumps(self):
         return struct.pack("<HH", self.ix, self.iy)
+
 
 @dataclass
 class ChipBadPoint:
     spt: ChipPoint
     sptreplace1:ChipPoint
     sptreplace2: ChipPoint
-    itreatment :int
+    itreatment:int
+    SIZE = 14
 
     @classmethod
     def loads(cls, buffer):
-        buffer_len = 14
-        assert len(buffer)>=buffer_len
+        assert len(buffer) >= cls.SIZE
         return cls(ChipPoint(buffer[:4]),
-                   ChipPoint(buffer[4:8])
-                   ChipPoint(buffer[8:12])
-                   struct.unpack("<H", buffer[12:buffer_len]))
+                   ChipPoint(buffer[4:8]),
+                   ChipPoint(buffer[8:12]),
+                   struct.unpack("<H", buffer[12:cls.SIZE]))
 
     def dumps(self):
-        return spt.dumps() + \
-            sptreplace1.dumps() + \
-            sptreplace2.dumps() + \
-            struct.pack("<H", self.itreatment)
+        return  self.spt.dumps() + \
+                self.sptreplace1.dumps() + \
+                self.sptreplace2.dumps() + \
+                struct.pack("<H", self.itreatment)
+
 
 @dataclass
 class ChipBadRow:
-    """ROW STARTX ENDX Y"""    
+    """ROW STARTX ENDX Y"""
     sptstart: ChipPoint
     sptend: ChipPoint
     sptstartreplace:ChipPoint
     sptendreplace: ChipPoint
-    itreatment :int
+    itreatment:int
+    SIZE = 18
 
     @classmethod
     def loads(cls, buffer):
-        buffer_len = 18
-        assert len(buffer)>=buffer_len
+        cls.SIZE = cls.SIZE
+        assert len(buffer) >= cls.SIZE
         return cls(ChipPoint(buffer[:4]),
                    ChipPoint(buffer[4:8]),
                    ChipPoint(buffer[8:12]),
                    ChipPoint(buffer[12:16]),
-                   struct.unpack("<H", buffer[16:buffer_len])[0])
+                   struct.unpack("<H", buffer[16:cls.SIZE])[0])
 
     def dumps(self):
-        return sptstart.dumps() + \
-            sptend.dumps() + \
-            sptstartreplace.dumps() + \
-            sptendreplace.dumps() + \
-            struct.pack("<H", self.itreatment)
+        return  self.sptstart.dumps() + \
+                self.sptend.dumps() + \
+                self.sptstartreplace.dumps() + \
+                self.sptendreplace.dumps() + \
+                struct.pack("<H", self.itreatment)
+
 
 @dataclass
 class ChipBadColumn:
-    """COLUMN X STARTY ENDY"""    
+    """COLUMN X STARTY ENDY"""
     sptstart: ChipPoint
     sptend: ChipPoint
     sptstartreplace:ChipPoint
     sptendreplace: ChipPoint
-    itreatment :int
+    itreatment:int
     ilowlimit: int
     ihighlimit: int
+    SIZE = 22
 
     @classmethod
     def loads(cls, buffer):
-        buffer_len = 22
-        assert len(buffer)>=buffer_len
+        assert len(buffer) >= cls.SIZE
         return cls(ChipPoint(buffer[:4]),
                    ChipPoint(buffer[4:8]),
                    ChipPoint(buffer[8:12]),
                    ChipPoint(buffer[12:16]),
-                   *struct.unpack("<HHH", buffer[16:buffer_len]))
+                   *struct.unpack("<HHH", buffer[16:cls.SIZE]))
 
     def dumps(self):
-        return sptstart.dumps() + \
-            sptend.dumps() + \
-            sptstartreplace.dumps() + \
-            sptendreplace.dumps() + \
-            struct.pack("<HHH", self.itreatment, self.ilowlimit, self.ihighlimit)
+        return self.sptstart.dumps() + \
+               self.sptend.dumps() + \
+               self.sptstartreplace.dumps() + \
+               self.sptendreplace.dumps() + \
+               struct.pack("<HHH", self.itreatment, self.ilowlimit, self.ihighlimit)
+
 
 @dataclass
 class ChipBadPolygon:
     itype:int
     ipoints: int
-    iax: List[int]
-    iay: List[int]
+    iax: list[int]
+    iay: list[int]
+    SIZE = 2 * (2 + 2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value)
 
     @classmethod
     def loads(cls, buffer):
-        buffer_len = 2*(2+2*CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS)
-        assert len(buffer)>=buffer_len
-        lst = struct.unpack("<HH"+"H"*2*CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS,
-                            buffer[:buffer_len])
+        assert len(buffer) >= cls.SIZE
+        lst = struct.unpack("<HH" + "H"*2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
+                            buffer[:cls.SIZE])
         return cls(lst[0], lst[1],
-                   lst[2:2+CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS],
-                   lst[2+CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS:],)
+                   lst[2:2 + CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value],
+                   lst[2 + CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value:],)
 
     def dumps(self):
-        return struct.pack("<HH"+"H"*2*CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS,
+        return struct.pack("<HH" + "H"*2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
                            self.itype, self.ipoints, *self.iax, *self.iay)
+
 
 @dataclass
 class ChipMachineFunction:
@@ -209,21 +221,22 @@ class ChipMachineFunction:
     xl is log10 of true Xray intensity
     y=A * exp (B * xl)
     """
-    iismachinefunction: int
-    da_machinefct: float
-    db_machinefct: float
+    iismachinefunction: int = 0
+    da_machinefct: float = 0.0
+    db_machinefct: float = 0.0
+    SIZE = 18
 
     @classmethod
     def loads(cls, buffer):
-        buffer_len = 2+8+8
-        assert len(buffer)>=buffer_len
-        lst = struct.unpack("<Hdd,
-                            buffer[:buffer_len])
+        assert len(buffer) >= cls.SIZE
+        lst = struct.unpack("<Hdd",
+                            buffer[:cls.SIZE])
         return cls(lst[0], lst[1], lst[2])
 
     def dumps(self):
         return struct.pack("<Hdd", self.iismachinefunction, self.da_machinefct, self.db_machinefct)
-    
+
+
 @dataclass
 class CcdCharacteristiscs:
     """Names are using the hugarian notation: the first letter describes the type
@@ -232,54 +245,234 @@ class CcdCharacteristiscs:
     floats are 64bits
     integers are 16bits, probably unsigned
     """
+    dwversion: int
     ddarkcurrentinADUpersec:float
     dreadnoiseinADU: float
     ccharacteristicsfil: str
     cccdproducer: str
     cccdchiptype: str
     cccdchipserial: str
-
-    ibadpoints: int 
-    pschipbadpoint: list
-    ibadcolumns: int
-    pschipbadcolumn: list
-    ibadrows: int
-    pschipbadrow: list
-
-    ibadcolumns1x1: int
-    pschipbadcolumn1x1: list
-    ibadcolumns2x2: int
-    struct chipbadcolumn_tag *pschipbadcolumn2x2;
-    ibadcolumns4x4: int
-    struct chipbadcolumn_tag *pschipbadcolumn4x4;
-
-    //1X1 2X2 4X4 BAD ROWS
-    SHORT ibadrows1x1: int
-    struct chipbadrow_tag *pschipbadrow1x1;
-    SHORT ibadrows2x2: int
-    struct chipbadrow_tag *pschipbadrow2x2;
-    SHORT ibadrows4x4: int
-    struct chipbadrow_tag *pschipbadrow4x4;
-
     ctaperproducer: str
     ctapertype: str
     ctaperserial: str
+
     iisfip60origin: int
     ifip60xorigin: int
     ifip60yorigin: int
+
     inumofcornermasks: int
-    iacornermaskx[4],
-    iacornermasky[4];
+    iacornermaskx: list
+    iacornermasky:list
     inumofglowingcornermasks: int
-    iaglowingcornermaskx[4]
-    iaglowingcornermasky[4]
+    iaglowingcornermaskx: list
+    iaglowingcornermasky:list
+
     ibadpolygons: int
     pschipbadpolygon:list
-    struct chipmachinefunction_tag schipmachinefunction;
-    iisrepairprint: int
-    iscintillatorid,iisscintillatorid: int
-    dgain_cu:float
-    dgain_mo:float
+
+    ibadpoints: int
+    pschipbadpoint: list
+
+    ibadcolumns: int = 0
+    pschipbadcolumn: list = tuple()
+    ibadcolumns1x1: int = 0
+    pschipbadcolumn1x1: list = tuple()
+    ibadcolumns2x2: int = 0
+    pschipbadcolumn2x2: list = tuple()
+    ibadcolumns4x4: int = 0
+    pschipbadcolumn4x4: list = tuple()
+
+    ibadrows: int = 0
+    pschipbadrow: list = tuple()
+
+    iscintillatorid: int = 0
+    # iisscintillatorid: int =0
+    dgain_cu:float = 0.0
+    dgain_mo:float = 0.0
+    chipmachinefunction: ChipMachineFunction = ChipMachineFunction()
+
+    ibadrows1x1: int = 0
+    pschipbadrow1x1: list = tuple()
+    ibadrows2x2: int = 0
+    pschipbadrow2x2: list = tuple()
+    ibadrows4x4: int = 0
+    pschipbadrow4x4: list = tuple()
+
+    @classmethod
+    def read(cls, filename):
+        """The the filename.ccd"""
+        with open(filename, "rb") as f:
+            bytestream = f.read()
+        return cls.loads(bytestream)
+
+    @classmethod
+    def loads(cls, bytestream):
+        ended = False
+        length = len(bytestream)
+        dico = {}
+        if length > 1854:
+            dico["dwversion"] = struct.unpack("I", bytestream[:4])[0]  # VERSION
+            dico["ddarkcurrentinADUpersec"] = struct.unpack("d", bytestream[4:12])[0]  # DARK CURRENT IN ADU
+            dico["dreadnoiseinADU"] = struct.unpack("d", bytestream[12:20])[0]  # READ NOSE IN ADU
+            dico["ccharacteristicsfil"] = bytestream[20:276].decode().strip("\x00")  # CHARACTISTICS FILE NAME
+            dico["cccdproducer"] = bytestream[276:532].decode().strip("\x00")  # PRODUCER
+            dico["cccdchiptype"] = bytestream[532:788].decode().strip("\x00")  # CHIP TYPE
+            dico["cccdchipserial"] = bytestream[788:1044].decode().strip("\x00")  # CHIP SERIAL
+            dico["ctaperproducer"] = bytestream[1044:1300].decode().strip("\x00")  # TAPER PRODUCER
+            dico["ctapertype"] = bytestream[1300:1556].decode().strip("\x00")  #  TAPER TYPE
+            dico["ctaperserial"] = bytestream[1556:1812].decode().strip("\x00")  #  TAPER SERIAL
+            dico["iisfip60origin"], dico["ifip60xorigin"], dico["ifip60yorigin"] = struct.unpack("HHH", bytestream[1812:1818])  # FIP60ORIGIN
+
+            dico["inumofcornermasks"] = struct.unpack("H", bytestream[1818:1820])  # CORNER MASKS
+            dico["iacornermaskx"] = struct.unpack("HHHH", bytestream[1820:1828])
+            dico["iacornermasky"] = struct.unpack("HHHH", bytestream[1828:1836])
+
+            dico["inumofglowingcornermasks"] = struct.unpack("H", bytestream[1836:1838])  # GLOWINGCORNER MASKS
+            dico["iaglowingcornermaskx"] = struct.unpack("HHHH", bytestream[1838:1846])
+            dico["iaglowingcornermasky"] = struct.unpack("HHHH", bytestream[1846:1854])
+        else:
+            ended = True
+        # NUMBER OF BAD POLYGONS
+        start = 1856
+        if not ended and start <= length:
+            try:
+                dico["ibadpolygons"] = struct.unpack("H", bytestream[1854:1856])[0]
+                polygons = dico["pschipbadpolygon"] = []
+                for _ in range(dico["ibadpolygons"]):
+                    polygons.append(ChipBadPolygon.loads(bytestream[start:]))
+                    start += ChipBadPolygon.SIZE
+            except AssertionError:
+                ended = True
+        # NUMBER OF BAD POINTS
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadpoints"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                points = dico["pschipbadpoint"] = []
+                for _ in range(dico["ibadpoints"]):  # LOOP OVER BAD POINTS
+                    points.append(ChipBadPoint.loads(bytestream[start:]))
+                    start += ChipBadPoint.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD COLS
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadcolumns"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadcolumn"] = []
+                for _ in range(dico["ibadcolumns"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadColumn.loads(bytestream[start:]))
+                    start += ChipBadColumn.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD COLS 1X1
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadcolumns1x1"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadcolumn1x1"] = []
+                for _ in range(dico["ibadcolumns1x1"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadColumn.loads(bytestream[start:]))
+                    start += ChipBadColumn.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD COLS 2X2
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadcolumns2x2"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadcolumn2x2"] = []
+                for _ in range(dico["ibadcolumns2x2"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadColumn.loads(bytestream[start:]))
+                    start += ChipBadColumn.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD COLS 4X4
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadcolumns4x4"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadcolumn4x4"] = []
+                for _ in range(dico["ibadcolumns4x4"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadColumn.loads(bytestream[start:]))
+                    start += ChipBadColumn.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD ROWS
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadrows"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadrow"] = []
+                for _ in range(dico["ibadrows"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadRow.loads(bytestream[start:]))
+                    start += ChipBadRow.SIZE
+            except AssertionError:
+                ended = True
+
+        if not ended and start + 18 <= length:
+            try:
+                dico["iscintillatorid"] = struct.unpack("H", bytestream[start:start + 2])[0]  # SCINTILLATOR DESCRIPTION
+                dico["dgain_mo"] = struct.unpack("d", bytestream[start + 2:start + 10])[0]  # GAINMO
+                dico["dgain_cu"] = struct.unpack("d", bytestream[start + 10:start + 18])[0]  # GAINCU
+                start += 18
+                dico["chipmachinefunction"] = ChipMachineFunction.loads(bytestream[start:])  # IISMACHINEFUNCTION
+                start += ChipMachineFunction.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD ROWS 1X1
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadrows1x1"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadrow1x1"] = []
+                for _ in range(dico["ibadcolumns1x1"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadRow.loads(bytestream[start:]))
+                    start += ChipBadRow.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD ROWS 2X2
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadrows2x2"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadrow2x2"] = []
+                for _ in range(dico["ibadrows2x2"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadRow.loads(bytestream[start:]))
+                    start += ChipBadRow.SIZE
+            except AssertionError:
+                ended = True
+
+        # NUMBER OF BAD ROWS 4X4
+        if not ended and start + 2 <= length:
+            try:
+                dico["ibadrows4x4"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                start += 2
+                columns = dico["pschipbadrow4x4"] = []
+                for _ in range(dico["ibadrows4x4"]):  # LOOP OVER BAD COLS
+                    columns.append(ChipBadRow.loads(bytestream[start:]))
+                    start += ChipBadRow.SIZE
+            except AssertionError:
+                ended = True
+
+        self = cls(**dico)
+        return self
+
+    def save(self, filename):
+        with open(filename, "wb")  as w:
+            w.write(self.dumps())
+
+    def dumps(self):
+        """Dump the content of the struct as a bytestream."""
+        # TODO
+
 
 class CcdImage(FabioImage):
     """FabIO image class for CrysalisPro mask image
