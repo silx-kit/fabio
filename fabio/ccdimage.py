@@ -34,7 +34,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2022 ESRF"
-__date__ = "03/02/2023"
+__date__ = "09/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,7 +96,6 @@ class CHIPCHARACTERISTICS_SCINTILLATORID(Enum):
 
 CHIPCHARACTERISTICS_SCINTILLATORID_FIRST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400
 CHIPCHARACTERISTICS_SCINTILLATORID_LAST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400_NEW
-
 
 @dataclass
 class ChipPoint:
@@ -245,33 +244,33 @@ class CcdCharacteristiscs:
     floats are 64bits
     integers are 16bits, probably unsigned
     """
-    dwversion: int
-    ddarkcurrentinADUpersec:float
-    dreadnoiseinADU: float
-    ccharacteristicsfil: str
-    cccdproducer: str
-    cccdchiptype: str
-    cccdchipserial: str
-    ctaperproducer: str
-    ctapertype: str
-    ctaperserial: str
+    dwversion: int = 0
+    ddarkcurrentinADUpersec:float = 0.0
+    dreadnoiseinADU: float = 0.0
+    ccharacteristicsfil: str = "n/a"
+    cccdproducer: str = "n/a"
+    cccdchiptype: str = "n/a"
+    cccdchipserial: str = "n/a"
+    ctaperproducer: str = "n/a"
+    ctapertype: str = "n/a"
+    ctaperserial: str = "n/a"
 
-    iisfip60origin: int
-    ifip60xorigin: int
-    ifip60yorigin: int
+    iisfip60origin: int = 0
+    ifip60xorigin: int = 0
+    ifip60yorigin: int = 0
 
-    inumofcornermasks: int
-    iacornermaskx: list
-    iacornermasky:list
-    inumofglowingcornermasks: int
-    iaglowingcornermaskx: list
-    iaglowingcornermasky:list
+    inumofcornermasks: int = 0
+    iacornermaskx: list = 0
+    iacornermasky:list = 0
+    inumofglowingcornermasks: int = 0
+    iaglowingcornermaskx: list = 0
+    iaglowingcornermasky:list = 0
 
-    ibadpolygons: int
-    pschipbadpolygon:list
+    ibadpolygons: int = 0
+    pschipbadpolygon:list = tuple()
 
-    ibadpoints: int
-    pschipbadpoint: list
+    ibadpoints: int = 0
+    pschipbadpoint: list = tuple()
 
     ibadcolumns: int = 0
     pschipbadcolumn: list = tuple()
@@ -297,6 +296,14 @@ class CcdCharacteristiscs:
     pschipbadrow2x2: list = tuple()
     ibadrows4x4: int = 0
     pschipbadrow4x4: list = tuple()
+
+    def _clip_string(self):
+        """Clip all strings to 256 chars"""
+        for key in ("ccharacteristicsfil", "cccdproducer", "cccdchiptype", "cccdchipserial", "ctaperproducer", "ctapertype", "ctaperserial"):
+            value = self.__getattribute__(key)
+            l = len(value)
+            if l>256:
+                self.__setattr__(key, value[:256])
 
     @classmethod
     def read(cls, filename):
@@ -471,8 +478,84 @@ class CcdCharacteristiscs:
 
     def dumps(self):
         """Dump the content of the struct as a bytestream."""
-        # TODO
+        buffer = bytearray(4096)
+        end = 0
+        # prepare the structure
+        if not self.dwversion:
+            self.dwversion = CCD_FILEVERSION_VERS_HIGHEST
+        self._clip_string()
+        self.ibadpolygons = len(self.pschipbadpolygon)
 
+        # Some helper functions
+        def record_str(key):
+            value = self.__getattribute__(key)
+            buffer[end:end+len(value)] = value.encode()
+            return 256
+        
+        def record_struct(key, dtype):
+            value = self.__getattribute__(key)
+            size = struct.calcsize(dtype)
+            if isinstance(value, (list, tuple)):
+                buffer[end:end+size] = struct.pack(dtype, *value)
+            else:
+                buffer[end:end+size] = struct.pack(dtype, value)
+            return size
+        
+        def record_object(key):
+            value = self.__getattribute__(key)
+            tmp = value.dumps()
+            ltmp = len(tmp)
+            buffer[end:end+ltmp] = tmp
+            return ltmp
+        
+        def record_variable(key, subkey, dtype="H"):
+            size = struct.calcsize(dtype)
+            values = self.__getattribute__(subkey)
+            nitems = len(values)
+            self.__setattr__(key, nitems)
+            buffer[end:end+size] = struct.pack(dtype, nitems)
+            for i in values:
+                tmp = i.dumps()
+                ltmp = len(tmp)
+                buffer[end+size:end+size+ltmp] = tmp
+                size += ltmp
+            return size
+        
+        
+        end += record_struct("dwversion", "I") # VERSION
+        end += record_struct("ddarkcurrentinADUpersec", "d") # DARK CURRENT IN ADU
+        end += record_struct("dreadnoiseinADU", "d") # READ NOSE IN ADU
+        end +=record_str("ccharacteristicsfil")
+        end +=record_str("cccdproducer")
+        end +=record_str("cccdchiptype")
+        end +=record_str("cccdchipserial")
+        end +=record_str("ctaperproducer")
+        end +=record_str("ctapertype")
+        end +=record_str("ctaperserial")
+        end += record_struct("iisfip60origin", "H")
+        end += record_struct("ifip60xorigin", "H")
+        end += record_struct("ifip60yorigin", "H")
+        end += record_struct("inumofcornermasks", "H")
+        end += record_struct("iacornermaskx", "HHHH")
+        end += record_struct("iacornermasky", "HHHH")
+        end += record_struct("inumofglowingcornermasks", "H")
+        end += record_struct("iaglowingcornermaskx", "HHHH")
+        end += record_struct("iaglowingcornermasky", "HHHH")
+        end += record_variable("ibadpolygons", "pschipbadpolygon")
+        end += record_variable("ibadpoints", "pschipbadpoint")
+        end += record_variable("ibadcolumns", "pschipbadcolumn")
+        end += record_variable("ibadcolumns1x1", "pschipbadcolumn1x1")        
+        end += record_variable("ibadcolumns2x2", "pschipbadcolumn2x2")
+        end += record_variable("ibadcolumns4x4", "pschipbadcolumn4x4")
+        end += record_variable("ibadrows", "pschipbadrow")
+        end += record_struct("iscintillatorid", "H")
+        end += record_struct("dgain_mo", "d")
+        end += record_struct("dgain_cu", "d")
+        end += record_object("chipmachinefunction")
+        end += record_variable("ibadrows1x1", "pschipbadrow1x1")
+        end += record_variable("ibadrows2x2", "pschipbadrow2x2")
+        end += record_variable("ibadrows4x4", "pschipbadrow4x4")
+        return bytes(buffer[:end])
 
 class CcdImage(FabioImage):
     """FabIO image class for CrysalisPro mask image
