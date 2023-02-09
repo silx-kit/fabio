@@ -71,6 +71,7 @@ def suite():
     from . import test_limaimage
     from . import test_hipicimage
     from . import test_binaryimage
+    from . import test_ccdimage
 
     testSuite = unittest.TestSuite()
     testSuite.addTest(test_edfimage.suite())
@@ -106,6 +107,7 @@ def suite():
     testSuite.addTest(test_limaimage.suite())
     testSuite.addTest(test_hipicimage.suite())
     testSuite.addTest(test_binaryimage.suite())
+    testSuite.addTest(test_ccdimage.suite())
     return testSuite
 
 

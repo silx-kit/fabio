@@ -32,7 +32,8 @@ py.install_sources(
  'test_speimage.py',
  'test_tifimage.py',
  'test_xsdimage.py',
- 'test_binaryimage.py'],
+ 'test_binaryimage.py',
+ 'test_ccdimage.py'],
   pure: false,   # Will be installed next to binaries
   subdir: 'fabio/test/codecs'  # Folder relative to site-packages to install to
 )
