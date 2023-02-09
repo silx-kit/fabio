@@ -99,8 +99,8 @@ CHIPCHARACTERISTICS_SCINTILLATORID_LAST = CHIPCHARACTERISTICS_SCINTILLATORID.GRE
 
 @dataclass
 class ChipPoint:
-    ix: int
-    iy: int
+    ix: int = 0
+    iy: int = 0
     SIZE = 4
 
     @classmethod
@@ -117,7 +117,7 @@ class ChipBadPoint:
     spt: ChipPoint
     sptreplace1:ChipPoint
     sptreplace2: ChipPoint
-    itreatment:int
+    itreatment:int = 0
     SIZE = 14
 
     @classmethod
@@ -210,8 +210,13 @@ class ChipBadPolygon:
                    lst[2 + CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value:],)
 
     def dumps(self):
+        for lst in (self.iax, self.iay):
+            if len(lst) < CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value:
+                lst += [0]*(len(lst)-CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value)
         return struct.pack("<HH" + "H"*2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
-                           self.itype, self.ipoints, *self.iax, *self.iay)
+                           self.itype, self.ipoints, 
+                           *self.iax[:CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value], 
+                           *self.iay[:CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value])
 
 
 @dataclass
@@ -597,6 +602,57 @@ class XcaliburImage(FabioImage):
         # Nota: dim1, dim2, bytecode and bpp are properties defined by the dataset
         return self
 
+    def decompose(self):
+        """Decompose a mask defined as a 2D binary image in 
+        
+        * vertical+horizontal gaps
+        * rectangles
+        * bad pixels 
+        
+        and return a CcdCharacteristiscs struct.
+        """
+        ccd = CcdCharacteristiscs(CCD_FILEVERSION_VERS_HIGHEST)
+        mask = numpy.array(self.data, dtype=bool)
+        shape = mask.shape
+        
+        row_gaps = self._search_gap(mask, dim=1)
+        col_gaps = self._search_gap(mask, dim=0)
+        
+        dummy_point = ChipPoint()
+        
+        ccd.ibadpolygons = len(row_gaps)+len(col_gaps)
+        ccd.pschipbadpolygon = []
+        for gap in row_gaps:
+            polygon = ChipBadPolygon(CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value, 4,
+                                     [0, shape[1]-1],[gap[0], gap[1]-1])
+            ccd.pschipbadpolygon.append(polygon)
+        for gap in col_gaps:
+            polygon = ChipBadPolygon(CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value, 4,
+                                     [gap[0], gap[1]-1], [0, shape[0]-1])
+            ccd.pschipbadpolygon.append(polygon)
+
+    @staticmethod
+    def _search_gap(mask, dim=0):
+        
+        shape = mask.shape
+        m0 = numpy.sum(mask, axis=dim, dtype="int") == shape[dim]
+        if m0.any():
+            m0 = numpy.asarray(m0, "int8")
+            d0=m0[1:]-m0[:-1]
+            starts = numpy.where(d0==1)[0]
+            stops = numpy.where(d0==-1)[0]
+            if  (len(starts) == 0):
+                starts = numpy.array([-1])
+            if  (len(stops) == 0):
+                stops = numpy.array([len(m0)-1])
+            if (stops[0]<starts[0]):
+                starts = numpy.concatenate(([-1], starts))
+            if (stops[-1]<starts[-1]):
+                stops = numpy.concatenate((stops, [len(m0)-1]))
+            r0 = [ (start+1, stop+1) for start,stop  in zip(starts, stops)]
+        else:
+            r0 = []
+        return r0
 
 # This is for compatibility with old code:
 xcaliburimage = XcaliburImage
