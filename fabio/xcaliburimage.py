@@ -196,8 +196,8 @@ class ChipBadColumn:
 class ChipBadPolygon:
     itype:int
     ipoints: int
-    iax: list[int]
-    iay: list[int]
+    iax: list
+    iay: list
     SIZE = 2 * (2 + 2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value)
 
     @classmethod
