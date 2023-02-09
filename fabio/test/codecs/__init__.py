@@ -30,7 +30,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__data__ = "30/10/2015"
+__date__ = "09/02/2023"
 
 import sys
 import unittest
