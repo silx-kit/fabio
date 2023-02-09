@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "14/11/2022"
+__date__ = "09/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -261,5 +261,5 @@ class SparseImage(FabioImage):
         return self.getframe(self.currentframe + 1)
 
 
-# This is not compatibility with old code:
+# This is for compatibility with old code:
 sparseimage = SparseImage

@@ -560,7 +560,6 @@ class CcdCharacteristiscs:
 class CcdImage(FabioImage):
     """FabIO image class for CrysalisPro mask image
 
-    Put some documentation here
     """
 
     DESCRIPTION = "Name of the file format"
@@ -601,5 +600,5 @@ class CcdImage(FabioImage):
         return self
 
 
-# This is not compatibility with old code:
+# This is for compatibility with old code:
 ccdimage = CcdImage

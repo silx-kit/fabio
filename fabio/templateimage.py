@@ -73,7 +73,7 @@ __authors__ = ["author"]
 __contact__ = "name@institut.org"
 __license__ = "MIT"
 __copyright__ = "Institut"
-__date__ = "15/12/2022"
+__date__ = "09/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -125,5 +125,5 @@ class TemplateImage(FabioImage):
         return self
 
 
-# This is not compatibility with old code:
+# This is for compatibility with old code:
 templateimage = TemplateImage

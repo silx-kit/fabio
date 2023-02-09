@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "18/12/2020"
+__date__ = "09/02/2023"
 
 import io
 from collections import OrderedDict
@@ -273,5 +273,5 @@ class EsperantoImage(FabioImage):
                 raise RuntimeError("Format not supported %s." % self.format)
 
 
-# This is not compatibility with old code:
+# This is for compatibility with old code:
 esperantoimage = EsperantoImage
