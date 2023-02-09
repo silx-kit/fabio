@@ -66,7 +66,9 @@ class TestCcdCharacteristiscs(unittest.TestCase):
                     if what.__getattribute__(key) == tuple():
                         what.__setattr__(key, [])
             self.assertEqual(ref, obt, f"{afile} matches ")
-                
+        raise RuntimeError("Good catch!")
+    
+    
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
