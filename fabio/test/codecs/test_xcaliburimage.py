@@ -28,7 +28,7 @@
 #
 
 """
-Unit tests for ccd struct used b crysalis to represent the mask
+Unit tests for xcalibur struct used by crysalis to represent the mask
 
 """
 __authors__ = ["Jérôme Kieffer"]
@@ -45,7 +45,7 @@ import logging
 logger = logging.getLogger(__name__)
 import numpy
 import fabio
-from fabio.ccdimage import CcdCharacteristiscs
+from fabio.xcaliburimage import CcdCharacteristiscs
 from ..utilstest import UtilsTest
 
 
@@ -66,7 +66,6 @@ class TestCcdCharacteristiscs(unittest.TestCase):
                     if what.__getattribute__(key) == tuple():
                         what.__setattr__(key, [])
             self.assertEqual(ref, obt, f"{afile} matches ")
-        raise RuntimeError("Good catch!")
     
     
 def suite():

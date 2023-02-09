@@ -557,18 +557,16 @@ class CcdCharacteristiscs:
         end += record_variable("ibadrows4x4", "pschipbadrow4x4")
         return bytes(buffer[:end])
 
-class CcdImage(FabioImage):
+class XcaliburImage(FabioImage):
     """FabIO image class for CrysalisPro mask image
-
     """
 
-    DESCRIPTION = "Name of the file format"
+    DESCRIPTION = "Xcalibur binary struct of masked pixels"
 
     DEFAULT_EXTENSIONS = []
 
     def __init__(self, *arg, **kwargs):
         """
-        Generic constructor
         """
         FabioImage.__init__(self, *arg, **kwargs)
 
@@ -601,4 +599,4 @@ class CcdImage(FabioImage):
 
 
 # This is for compatibility with old code:
-ccdimage = CcdImage
+xcaliburimage = XcaliburImage
