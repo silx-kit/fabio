@@ -212,7 +212,7 @@ class ChipBadPolygon:
     def dumps(self):
         for lst in (self.iax, self.iay):
             if len(lst) < CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value:
-                lst += [0]*(len(lst)-CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value)
+                lst += [0]*(CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value-len(lst))
         return struct.pack("<HH" + "H"*2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
                            self.itype, self.ipoints, 
                            *self.iax[:CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value], 
@@ -265,11 +265,11 @@ class CcdCharacteristiscs:
     ifip60yorigin: int = 0
 
     inumofcornermasks: int = 0
-    iacornermaskx: list = 0
-    iacornermasky:list = 0
+    iacornermaskx: list = tuple()
+    iacornermasky:list = tuple()
     inumofglowingcornermasks: int = 0
-    iaglowingcornermaskx: list = 0
-    iaglowingcornermasky:list = 0
+    iaglowingcornermaskx: list = tuple()
+    iaglowingcornermasky:list = tuple()
 
     ibadpolygons: int = 0
     pschipbadpolygon:list = tuple()
@@ -490,6 +490,12 @@ class CcdCharacteristiscs:
             self.dwversion = CCD_FILEVERSION_VERS_HIGHEST
         self._clip_string()
         self.ibadpolygons = len(self.pschipbadpolygon)
+        self.ibadpoints = len(self.pschipbadpoint)
+        for empty_4_tuple in ("iacornermaskx", "iacornermasky", 
+                              "iaglowingcornermaskx", "iaglowingcornermasky"): 
+            value = self.__getattribute__(empty_4_tuple)
+            if len(value) == 0:
+                self.__setattr__(empty_4_tuple, [0,0,0,0])
 
         # Some helper functions
         def record_str(key):
@@ -602,14 +608,15 @@ class XcaliburImage(FabioImage):
         # Nota: dim1, dim2, bytecode and bpp are properties defined by the dataset
         return self
 
-    def decompose(self):
+    def decompose(self, full=False):
         """Decompose a mask defined as a 2D binary image in 
         
         * vertical+horizontal gaps
         * rectangles
         * bad pixels 
         
-        and return a CcdCharacteristiscs struct.
+        :param: full: deal only with gaps (False) or perform the complete analysis (True) 
+        :return: CcdCharacteristiscs struct.
         """
         ccd = CcdCharacteristiscs(CCD_FILEVERSION_VERS_HIGHEST.value,
                                   pschipbadpolygon=[],
@@ -619,9 +626,6 @@ class XcaliburImage(FabioImage):
         
         row_gaps = self._search_gap(mask, dim=1)
         col_gaps = self._search_gap(mask, dim=0)
-        
-        
-         
         
         ccd.ibadpolygons = len(row_gaps)+len(col_gaps)
         ccd.pschipbadpolygon = []
@@ -638,6 +642,8 @@ class XcaliburImage(FabioImage):
             import pyFAI.ext.dynamic_rectangle
         except ImportError:
             logger.warning("PyFAI not available: only a coarse description of the mask is provided")
+            full = False
+        if not full:
             return ccd
         # Decompose detector into a set of modules, then extract patches of mask for each of them:
         c = 0
