@@ -34,7 +34,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2022 ESRF"
-__date__ = "09/02/2023"
+__date__ = "10/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -611,14 +611,17 @@ class XcaliburImage(FabioImage):
         
         and return a CcdCharacteristiscs struct.
         """
-        ccd = CcdCharacteristiscs(CCD_FILEVERSION_VERS_HIGHEST)
+        ccd = CcdCharacteristiscs(CCD_FILEVERSION_VERS_HIGHEST.value,
+                                  pschipbadpolygon=[],
+                                  pschipbadpoint=[])
         mask = numpy.array(self.data, dtype=bool)
         shape = mask.shape
         
         row_gaps = self._search_gap(mask, dim=1)
         col_gaps = self._search_gap(mask, dim=0)
         
-        dummy_point = ChipPoint()
+        
+         
         
         ccd.ibadpolygons = len(row_gaps)+len(col_gaps)
         ccd.pschipbadpolygon = []
@@ -630,6 +633,36 @@ class XcaliburImage(FabioImage):
             polygon = ChipBadPolygon(CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value, 4,
                                      [gap[0], gap[1]-1], [0, shape[0]-1])
             ccd.pschipbadpolygon.append(polygon)
+
+        try:
+            import pyFAI.ext.dynamic_rectangle
+        except ImportError:
+            logger.warning("PyFAI not available: only a coarse description of the mask is provided")
+            return ccd
+        # Decompose detector into a set of modules, then extract patches of mask for each of them:
+        c = 0
+        for cg in col_gaps+[(self.shape[1], self.shape[1])]:
+            r=0
+            for rg in row_gaps+[(self.shape[0],self.shape[0])]:
+                mm = mask[r:rg[0],c:cg[0]]
+                if mm.size: 
+                    rectangles = pyFAI.ext.dynamic_rectangle.decompose_mask(mm)
+                    for rec in rectangles:
+                        if rec.area == 1:
+                            point = ChipPoint(c+rec.col, r+rec.row)
+                            bad_point = ChipBadPoint(point, point, point, CHIPCHARACTERISTICS_TREATMENT.IGNORE.value)
+                            ccd.ibadpoints+=1
+                            ccd.pschipbadpoint.append(bad_point)
+                        else:
+                            ccd.ibadpolygons += 1
+                            polygon = ChipBadPolygon(CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value, 4,
+                                                     [c+rec.col, c+rec.col+rec.width-1], 
+                                                     [r+rec.row, r+rec.row+rec.height-1])
+                            ccd.pschipbadpolygon.append(polygon)
+                r = rg[1]
+            c = cg[1]
+        return ccd
+        
 
     @staticmethod
     def _search_gap(mask, dim=0):
@@ -653,6 +686,7 @@ class XcaliburImage(FabioImage):
         else:
             r0 = []
         return r0
+
 
 # This is for compatibility with old code:
 xcaliburimage = XcaliburImage
