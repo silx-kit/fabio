@@ -34,7 +34,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2022 ESRF"
-__date__ = "10/02/2023"
+__date__ = "21/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,6 +96,11 @@ class CHIPCHARACTERISTICS_SCINTILLATORID(Enum):
 
 CHIPCHARACTERISTICS_SCINTILLATORID_FIRST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400
 CHIPCHARACTERISTICS_SCINTILLATORID_LAST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400_NEW
+
+class SCAN_TYPE(Enum):
+        Omega = 0
+        Phi = 4
+
 
 @dataclass
 class ChipPoint:
@@ -239,6 +244,114 @@ class ChipMachineFunction:
 
     def dumps(self):
         return struct.pack("<Hdd", self.iismachinefunction, self.da_machinefct, self.db_machinefct)
+
+@dataclass
+class Sweep:
+    "Describes one scan or sweep, continuous rotation of one motor"
+    iscanindex: int = 0
+    iscantype: int = 0
+    dwunknown1: int = 0
+    domega: float = 0.0
+    dtheta: float = 0.0
+    dkappa: float = 0.0
+    dphi: float = 0.0
+    dstart: float = 0.0
+    dend: float = 0.0
+    dwidth: float = 0.0
+    dunknown2: float=0.0
+    iunknown3: int=0.0;
+    iunknown4: int=0.0;
+    iunknown5: int=0.0;
+    iunknown6: int=0.0;
+    dexposure: float=0.0
+    SIZE = 88
+
+    @classmethod
+    def loads(cls, buffer):
+        assert len(buffer) >= cls.SIZE
+        lst = struct.unpack("<HHIddddddddHHHHd",
+                            buffer[:cls.SIZE])
+        return cls(*lst)
+
+    def dumps(self):
+        return struct.pack("<HHIddddddddHHHHd", self.iscanindex, self.iscantype, 
+                           self.dwunknown1, self.domega, self.dtheta, self.dkappa, 
+                           self.dphi, self.dstart, self.dend, self.dwidth, 
+                           self.dunknown2, self.iunknown3, self.iunknown4, self.iunknown5, self.iunknown6,
+                           self.dexposure)
+
+
+@dataclass
+class RunDescription:
+    """Names are using the hugarian notation: the first letter describes the type
+    
+    strings are 256bytes long
+    floats are 64bits
+    integers are 16bits, probably unsigned
+    """
+    cprefix: str = "n/a"
+    cfolder: str = "n/a"
+    inumofsweeps: int = 0
+    dunknown: float = 0.0
+    pssweep:list = tuple()
+    SIZE = 528
+    
+    @classmethod
+    def read(cls, filename):
+        """Read the filename.run"""
+        with open(filename, "rb") as f:
+            bytestream = f.read()
+        return cls.loads(bytestream)
+
+    @classmethod
+    def loads(cls, buffer):
+        assert len(buffer) >= cls.SIZE
+        prefix = buffer[:256].decode().strip("\x00")
+        path = buffer[256:512].decode().strip("\x00")
+        lst = struct.unpack("<Qd", buffer[512:cls.SIZE])
+        self = cls(prefix, path, *lst, [])
+        size = cls.SIZE
+        for _ in range(self.inumofsweeps):
+            self.pssweep.append(Sweep.loads(buffer[size:size+Sweep.SIZE]))
+            size += Sweep.SIZE
+        return self
+
+    def save(self, filename):
+        with open(filename, "wb")  as w:
+            w.write(self.dumps())
+
+    def dumps(self):
+        # Some helper functions
+        def record_str(key):
+            value = self.__getattribute__(key)
+            buffer[end:end+len(value)] = value.encode()
+            return 256
+        
+        def record_struct(key, dtype):
+            value = self.__getattribute__(key)
+            size = struct.calcsize(dtype)
+            if isinstance(value, (list, tuple)):
+                buffer[end:end+size] = struct.pack(dtype, *value)
+            else:
+                buffer[end:end+size] = struct.pack(dtype, value)
+            return size
+
+        self.inumofsweeps = len(self.pssweep)
+
+        size = self.SIZE+self.inumofsweeps*Sweep.SIZE
+        buffer = bytearray(size)
+        end = 0
+        end += record_str("cprefix")
+        end += record_str("cfolder")
+        end += record_struct("inumofsweeps", "<Q")
+        end += record_struct("dunknown", "<d")
+        for sweep in self.pssweep:
+            binary = sweep.dumps()
+            length =  len(binary)
+            start = end
+            end += length
+            buffer[start:end] = binary
+        return bytes(buffer[:end])
 
 
 @dataclass

@@ -30,7 +30,7 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 """Portable image converter based on FabIO library
-to export Eiger frames (including te one from LImA)
+to export Eiger frames (including the one from LImA)
 to a set of esperanto frames which can be imported 
 into CrysalisPro.
 """
@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "10/02/2023"
+__date__ = "21/02/2023"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -110,6 +110,9 @@ class Converter:
         else:
             self.prefix = os.path.basename(os.path.abspath(self.options.output)).split("{")[0]
         self.headers = None
+        self.processed_frames = None
+        self.scan_type = None
+        self.angle_ranges = {}
 
     def geometry_transform(self, image):
         "Transforms an image according to the requested command line options"
@@ -141,12 +144,12 @@ class Converter:
 
     def convert_all(self):
         self.succeeded = True
-        start_at = 0
+        self.processed_frames = 0
         self.headers = self.common_headers()
         for filename in self.options.images:
-            finish_at = self.convert_one(filename, start_at)
+            finish_at = self.convert_one(filename, self.processed_frames)
             self.succeeded = self.succeeded and (finish_at > 0)
-            start_at += finish_at
+            self.processed_frames += finish_at
 
     def finish(self):
         if not self.succeeded:
@@ -297,18 +300,21 @@ class Converter:
                 value = float(self.options.kappa)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.kappa)
+                self.scan_type = "kappa"
             headers["dka_s"] = headers["dka_e"] = value
         if self.options.theta is not None:
             try:
                 value = float(self.options.theta)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.theta)
+                self.scan_type = "theta"
             headers["dth_s"] = headers["dth_e"] = value
         if self.options.phi is not None:
             try:
                 value = float(self.options.phi)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.phi)
+                self.scan_type = "phi"
             headers["dph_s"] = headers["dph_e"] = value
         if self.options.omega is not None:
             try:
@@ -316,6 +322,7 @@ class Converter:
             except ValueError:
                 # Handle the string
                 value = numexpr.NumExpr(self.options.omega)
+                self.scan_type = "omega"
             headers["dom_s"] = headers["dom_e"] = value
 
         return headers
@@ -363,11 +370,16 @@ class Converter:
             for k, v in self.headers.items():
                 if callable(v):
                     if k.endswith("s"):
-                        converted.header[k] = v(idx)
+                        v0 = converted.header[k] = v(idx)
                     else:  # k.endswith("e"):
-                        converted.header[k] = v(idx + 1)
+                        v1 = converted.header[k] = v(idx + 1)
                 else:
-                    converted.header[k] = v
+                    v0 = v1 = converted.header[k] = v
+                if k in self.angle_ranges:
+                    v = self.angle_ranges[k]
+                    self.angle_ranges[k] = (min(v[0], v0, v1), max(v[1], v0, v1))
+                else:
+                    self.angle_ranges[k] = (min(v0, v1), max(v0, v1))
 
             output_filename = self.options.output.format(index=((idx + self.options.offset)),
                                                          prefix=self.prefix,
@@ -432,6 +444,43 @@ class Converter:
         # Make a backup as the original could be overwritten by Crysalis at import
         shutil.copyfile(os.path.join(dirname, prefix + ".set"), os.path.join(dirname, prefix + ".set.orig"))
 
+    def make_scan_files(self):
+        prefix = self.prefix.split("_")[0]
+        dummy_filename = self.options.output.format(index=self.options.offset,
+                                                     prefix=self.prefix,
+                                                     dirname=self.dirname)
+        dirname = os.path.dirname(dummy_filename)
+        rundescription = xcaliburimage.RunDescription(prefix, dirname, pssweep=[])
+        if self.scan_type=="phi":
+            iscantype = xcaliburimage.SCAN_TYPE.Phi.value
+            dstart = self.headers["dph_s"](0)
+            dend = self.headers["dph_s"](self.processed_frames)
+            dphi = 0.0
+            domega = self.headers["dom_s"]
+        else: #Omega-scan
+            iscantype = xcaliburimage.SCAN_TYPE.Omega.value
+            dstart = self.headers["dom_s"](0)
+            dend = self.headers["dom_s"](self.processed_frames)
+            dphi = self.headers["dph_s"]
+            domega = 0.0
+            
+            
+        sweep = xcaliburimage.Sweep(0,
+                                    iscantype,
+                                    domega=domega,
+                                    dtheta=self.headers["dth_s"],
+                                    dkappa=self.headers["dka_s"],
+                                    dphi=dphi,
+                                    dstart=dstart, dend=dend,
+                                    dwidth=(dend-dstart)/self.processed_frames,
+                                    dunknown2=0.0, 
+                                    iunknown3=self.processed_frames, 
+                                    iunknown4=0, 
+                                    iunknown5=self.processed_frames, iunknown6=0,
+                                    dexposure=self.headers["dexposuretimeinsec"]
+                                    )
+        rundescription.pssweep.append(sweep)
+        rundescription.save(os.path.join(dirname,prefix+".run"))
 
 def main():
 
@@ -543,6 +592,7 @@ def main():
     converter = Converter(args)
     converter.convert_all()
     converter.treat_mask(full=args.calc_mask)
+    converter.make_scan_files()
     return converter.finish()
 
 
