@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "21/02/2023"
+__date__ = "22/02/2023"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -106,7 +106,7 @@ class Converter:
         else:
             self.dirname = os.path.dirname(os.path.abspath(self.options.output))
         if "{prefix}" in self.options.output:
-            self.prefix = os.path.basename(prefix)
+            self.prefix = os.path.basename(prefix)+"_1"
         else:
             self.prefix = os.path.basename(os.path.abspath(self.options.output)).split("{")[0]
         self.headers = None
@@ -401,7 +401,6 @@ class Converter:
         ":param full: complete/slow mask analysis"
         if self.progress:
             self.progress.update(self.progress.max_value - 1, "Generate mask")
-        # mask = self.mask == numpy.iinfo(self.mask.dtype).max
         esperantoimage.EsperantoImage.DUMMY = 1
         new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
         esperantoimage.EsperantoImage.DUMMY = -1
@@ -443,13 +442,8 @@ class Converter:
             maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
         # Make a backup as the original could be overwritten by Crysalis at import
         shutil.copyfile(os.path.join(dirname, prefix + ".set"), os.path.join(dirname, prefix + ".set.orig"))
-
-    def make_scan_files(self):
-        prefix = self.prefix.split("_")[0]
-        dummy_filename = self.options.output.format(index=self.options.offset,
-                                                     prefix=self.prefix,
-                                                     dirname=self.dirname)
-        dirname = os.path.dirname(dummy_filename)
+        
+        # save the ".run" file
         rundescription = xcaliburimage.RunDescription(prefix, dirname, pssweep=[])
         if self.scan_type=="phi":
             iscantype = xcaliburimage.SCAN_TYPE.Phi.value
@@ -464,7 +458,7 @@ class Converter:
             dphi = self.headers["dph_s"]
             domega = 0.0
             
-            
+        oscil = (dend-dstart)/self.processed_frames
         sweep = xcaliburimage.Sweep(0,
                                     iscantype,
                                     domega=domega,
@@ -472,7 +466,7 @@ class Converter:
                                     dkappa=self.headers["dka_s"],
                                     dphi=dphi,
                                     dstart=dstart, dend=dend,
-                                    dwidth=(dend-dstart)/self.processed_frames,
+                                    dwidth=oscil,
                                     dunknown2=0.0, 
                                     iunknown3=self.processed_frames, 
                                     iunknown4=0, 
@@ -481,6 +475,18 @@ class Converter:
                                     )
         rundescription.pssweep.append(sweep)
         rundescription.save(os.path.join(dirname,prefix+".run"))
+
+        # Finally save the ".par" file
+        xci.save_par(dirname, prefix, 
+                     wavelength=self.options.wavelength,
+                     alpha=self.options.alpha,
+                     polarization=self.options.polarization,
+                     distance=self.options.distance,
+                     oscil=oscil,
+                     center_x=self.headers["dxorigininpix"],
+                     center_y=self.headers["dyorigininpix"]
+                     )
+
 
 def main():
 
@@ -541,6 +547,8 @@ def main():
                        help="Detector distance in millimeters")
     group.add_argument("-b", "--beam", nargs=2, type=float, default=None,
                        help="Direct beam in pixels x, y")
+    group.add_argument("-p", "--polarization", type=float, default=0.99,
+                       help="Polarization factor (0.99 by default on synchrotron")
 
     group = parser.add_argument_group("Goniometer setup")
 #     group.add_argument("--axis", type=str, default=None,
@@ -592,7 +600,6 @@ def main():
     converter = Converter(args)
     converter.convert_all()
     converter.treat_mask(full=args.calc_mask)
-    converter.make_scan_files()
     return converter.finish()
 
 
