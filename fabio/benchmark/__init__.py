@@ -24,7 +24,7 @@
 """Benchmark for file reading"""
 
 __author__ = "Jérôme Kieffer"
-__date__ = "03/04/2020"
+__date__ = "10/02/2023"
 __license__ = "MIT"
 __copyright__ = "2016-2020 European Synchrotron Radiation Facility, Grenoble, France"
 
@@ -74,9 +74,9 @@ def run_benchmark(number=10, repeat=3):
     :param repeat: number of measurement, takes the best of them
 
     """
-    print("Averaging over %i repetitions (best of %s)." % (number, repeat))
-    print("Python %s" % sys.version)
-    print("FabIO %s (%s)" % (version, date))
+    print(f"Benchmarking during {number} seconds (best of {repeat} iterations).")
+    print(f"Python {sys.version}")
+    print(f"FabIO {version} ({date})")
     print("#" * 80)
     print("     Module           filename        \t file size \t image size \t read time (ms) \t ms/Mpix")
     for img in datasets:

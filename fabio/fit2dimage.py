@@ -33,7 +33,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "06/04/2020"
+__date__ = "09/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -161,5 +161,5 @@ class Fit2dImage(FabioImage):
         return self
 
 
-# this is not compatibility with old code:
+# this is for compatibility with old code:
 fit2dimage = Fit2dImage

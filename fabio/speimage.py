@@ -36,7 +36,7 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "11/12/2020"
+__date__ = "09/02/2023"
 
 import logging
 
@@ -306,5 +306,5 @@ class SpeImage(FabioImage):
         return data.reshape((self.header['y_dim'], self.header['x_dim']))
 
 
-# this is not compatibility with old code:
+# this is for compatibility with old code:
 speimage = SpeImage

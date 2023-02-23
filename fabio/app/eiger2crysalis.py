@@ -30,7 +30,7 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 """Portable image converter based on FabIO library
-to export Eiger frames (including te one from LImA)
+to export Eiger frames (including the one from LImA)
 to a set of esperanto frames which can be imported 
 into CrysalisPro.
 """
@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "23/04/2021"
+__date__ = "23/02/2023"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -53,7 +53,7 @@ logger = logging.getLogger("eiger2crysalis")
 import sys
 import os
 import shutil
-from .. import esperantoimage, eigerimage, limaimage, sparseimage
+from .. import esperantoimage, eigerimage, limaimage, sparseimage, xcaliburimage
 from ..openimage import openimage as fabio_open
 from .._version import version as fabio_version
 from ..nexus import get_isotime
@@ -106,10 +106,13 @@ class Converter:
         else:
             self.dirname = os.path.dirname(os.path.abspath(self.options.output))
         if "{prefix}" in self.options.output:
-            self.prefix = os.path.basename(prefix)
+            self.prefix = os.path.basename(prefix)+"_1"
         else:
             self.prefix = os.path.basename(os.path.abspath(self.options.output)).split("{")[0]
         self.headers = None
+        self.processed_frames = None
+        self.scan_type = None
+        self.angle_ranges = {}
 
     def geometry_transform(self, image):
         "Transforms an image according to the requested command line options"
@@ -141,12 +144,12 @@ class Converter:
 
     def convert_all(self):
         self.succeeded = True
-        start_at = 0
+        self.processed_frames = 0
         self.headers = self.common_headers()
         for filename in self.options.images:
-            finish_at = self.convert_one(filename, start_at)
+            finish_at = self.convert_one(filename, self.processed_frames)
             self.succeeded = self.succeeded and (finish_at > 0)
-            start_at += finish_at
+            self.processed_frames += finish_at
 
     def finish(self):
         if not self.succeeded:
@@ -297,18 +300,21 @@ class Converter:
                 value = float(self.options.kappa)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.kappa)
+                self.scan_type = "kappa"
             headers["dka_s"] = headers["dka_e"] = value
         if self.options.theta is not None:
             try:
                 value = float(self.options.theta)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.theta)
+                self.scan_type = "theta"
             headers["dth_s"] = headers["dth_e"] = value
         if self.options.phi is not None:
             try:
                 value = float(self.options.phi)
             except ValueError:  # Handle the string
                 value = numexpr.NumExpr(self.options.phi)
+                self.scan_type = "phi"
             headers["dph_s"] = headers["dph_e"] = value
         if self.options.omega is not None:
             try:
@@ -316,6 +322,7 @@ class Converter:
             except ValueError:
                 # Handle the string
                 value = numexpr.NumExpr(self.options.omega)
+                self.scan_type = "omega"
             headers["dom_s"] = headers["dom_e"] = value
 
         return headers
@@ -363,11 +370,16 @@ class Converter:
             for k, v in self.headers.items():
                 if callable(v):
                     if k.endswith("s"):
-                        converted.header[k] = v(idx)
+                        v0 = converted.header[k] = v(idx)
                     else:  # k.endswith("e"):
-                        converted.header[k] = v(idx + 1)
+                        v1 = converted.header[k] = v(idx + 1)
                 else:
-                    converted.header[k] = v
+                    v0 = v1 = converted.header[k] = v
+                if k in self.angle_ranges:
+                    v = self.angle_ranges[k]
+                    self.angle_ranges[k] = (min(v[0], v0, v1), max(v[1], v0, v1))
+                else:
+                    self.angle_ranges[k] = (min(v0, v1), max(v0, v1))
 
             output_filename = self.options.output.format(index=((idx + self.options.offset)),
                                                          prefix=self.prefix,
@@ -385,51 +397,97 @@ class Converter:
                 return -1
         return source.nframes
 
-    def treat_mask(self):
+    def treat_mask(self, full=False):
+        ":param full: complete/slow mask analysis"
         if self.progress:
             self.progress.update(self.progress.max_value - 1, "Generate mask")
-        try:
-            from pyFAI.ext import dynamic_rectangle
-        except ImportError:
-            print("A recent version of pyFAI is needed to export the mask in a format compatible wit CrysalisPro")
-        else:
-            mask = self.mask == numpy.iinfo(self.mask.dtype).max
-            esperantoimage.EsperantoImage.DUMMY = 1
-            new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
-            esperantoimage.EsperantoImage.DUMMY = -1
-            rectangles = dynamic_rectangle.decompose_mask(new_mask.astype(numpy.int8))
-            self.progress.update(self.progress.max_value - 0.5, f"Exporting {len(rectangles)} rectangles as mask")
-            dummy_filename = self.options.output.format(index=self.options.offset,
-                                                         prefix=self.prefix,
-                                                         dirname=self.dirname)
-            dirname = os.path.dirname(dummy_filename)
-            numpy.save(os.path.join(dirname, self.prefix + "_mask.npy"), self.mask)
-            with open(os.path.join(dirname, self.prefix + ".set"), mode="wb") as maskfile:
-                maskfile.write(b'#XCALIBUR SYSTEM\r\n')
-                maskfile.write(b'#XCALIBUR SETUP FILE\r\n')
-                maskfile.write(b'#*******************************************************************************************************\r\n')
-                maskfile.write(b'# CHIP CHARACTERISTICS e_19_020609.ccd         D A T E Wed-Sep-16-10-00-59-2009\r\n')
-                maskfile.write(b'# This program produces version 1.9\r\n')
-                maskfile.write(b'#******************************************************************************************************\r\n')
-                maskfile.write(b'#THIS FILE IS USER READABLE - BUT SHOULD NOT BE TOUCHED BY THE USER\r\n')
-                maskfile.write(b'#ANY CHANGES TO THIS FILE WILL RESULT IN LOSS OF WARRANTY!\r\n')
-                maskfile.write(b'#CHIP IDCODE producer type serial\r\n')
-                maskfile.write(b'CHIP IDCODE "n/a" "n/a" "n/a\r\n')
-                maskfile.write(b'#CHIP TAPER producer type serial\r\n')
-                maskfile.write(b'CHIP TAPER "" "" ""\r\n')
-                maskfile.write(b'#ALL COORDINATES GO FROM 0 TO N-1\r\n')
-                maskfile.write(b'#CHIP BADPOINT treatment options: IGNORE,REPLACE,AVERAGE\r\n')
-                maskfile.write(b'#CHIP BADPOINT x1x1 y1x1 treatment r1x1x1 r1y1x1 r2x1x1 r2y1x1\r\n')
-                maskfile.write(b'#CHIP BADPOINT 630 422 REPLACE 632 422 0 0\r\n')
-                maskfile.write(b'#CHIP BADRECTANGLE xl xr yb yt\r\n')
-                for r in rectangles:
-                    if r.area == 1:
-                        maskfile.write(f"CHIP BADPOINT {r.col} {r.row} IGNORE {r.col} {r.row} {r.col} {r.row}\r\n".encode())
-                    else:
-                        maskfile.write(f"CHIP BADRECTANGLE {r.col} {r.col+r.width} {r.row} {r.row+r.height}\r\n".encode())
-                maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
-            # Make a backup as the original could be overwritten by Crysalis at import
-            shutil.copyfile(os.path.join(dirname, self.prefix + ".set"), os.path.join(dirname, self.prefix + ".set.orig"))
+        dummy_value = numpy.cast[self.mask.dtype](-1)
+        mask = (self.mask==dummy_value).astype(numpy.int8)
+        esperantoimage.EsperantoImage.DUMMY = 1
+        new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
+        esperantoimage.EsperantoImage.DUMMY = -1 # restore the class !
+        if self.progress:
+            self.progress.update(self.progress.max_value - 1, f"Decompose mask full={full}")
+        xci = xcaliburimage.XcaliburImage(data=new_mask)
+        ccd = xci.decompose(full)
+        if self.progress:
+            self.progress.update(self.progress.max_value - 0.5, f"Exporting mask as CCD/SET file")
+        dummy_filename = self.options.output.format(index=self.options.offset,
+                                                     prefix=self.prefix,
+                                                     dirname=self.dirname)
+        dirname = os.path.dirname(dummy_filename)
+        prefix = self.prefix.split("_")[0]
+        numpy.save(os.path.join(dirname, prefix + "_mask.npy"), new_mask)
+        ccd.save(os.path.join(dirname, prefix + ".ccd"))
+        with open(os.path.join(dirname, prefix + ".set"), mode="wb") as maskfile:
+            maskfile.write(b'#XCALIBUR SYSTEM\r\n')
+            maskfile.write(b'#XCALIBUR SETUP FILE\r\n')
+            maskfile.write(b'#*******************************************************************************************************\r\n')
+            maskfile.write(b'# CHIP CHARACTERISTICS e_19_020609.ccd         D A T E Wed-Sep-16-10-00-59-2009\r\n')
+            maskfile.write(b'# This program produces version 1.9\r\n')
+            maskfile.write(b'#******************************************************************************************************\r\n')
+            maskfile.write(b'#THIS FILE IS USER READABLE - BUT SHOULD NOT BE TOUCHED BY THE USER\r\n')
+            maskfile.write(b'#ANY CHANGES TO THIS FILE WILL RESULT IN LOSS OF WARRANTY!\r\n')
+            maskfile.write(b'#CHIP IDCODE producer type serial\r\n')
+            maskfile.write(b'CHIP IDCODE "n/a" "n/a" "n/a\r\n')
+            maskfile.write(b'#CHIP TAPER producer type serial\r\n')
+            maskfile.write(b'CHIP TAPER "" "" ""\r\n')
+            maskfile.write(b'#ALL COORDINATES GO FROM 0 TO N-1\r\n')
+            maskfile.write(b'#CHIP BADPOINT treatment options: IGNORE,REPLACE,AVERAGE\r\n')
+            maskfile.write(b'#CHIP BADPOINT x1x1 y1x1 treatment r1x1x1 r1y1x1 r2x1x1 r2y1x1\r\n')
+            maskfile.write(b'#CHIP BADPOINT 630 422 REPLACE 632 422 0 0\r\n')
+            maskfile.write(b'#CHIP BADRECTANGLE xl xr yb yt\r\n')
+            for r in ccd.pschipbadpolygon:
+                    maskfile.write(f"CHIP BADRECTANGLE {r.iax[0]} {r.iax[1]} {r.iay[0]} {r.iay[1]}\r\n".encode())
+            for r in ccd.pschipbadpoint:
+                    maskfile.write(f"CHIP BADPOINT {r.spt.ix} {r.spt.iy} IGNORE {r.spt.ix} {r.spt.iy} {r.spt.ix} {r.spt.iy}\r\n".encode())
+            maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
+        # Make a backup as the original could be overwritten by Crysalis at import
+        shutil.copyfile(os.path.join(dirname, prefix + ".set"), os.path.join(dirname, prefix + ".set.orig"))
+        
+        # save the ".run" file
+        rundescription = xcaliburimage.RunDescription(prefix, dirname, pssweep=[])
+        if self.scan_type=="phi":
+            iscantype = xcaliburimage.SCAN_TYPE.Phi.value
+            dstart = self.headers["dph_s"](0)
+            dend = self.headers["dph_s"](self.processed_frames)
+            dphi = 0.0
+            domega = self.headers["dom_s"]
+        else: #Omega-scan
+            iscantype = xcaliburimage.SCAN_TYPE.Omega.value
+            dstart = self.headers["dom_s"](0)
+            dend = self.headers["dom_s"](self.processed_frames)
+            dphi = self.headers["dph_s"]
+            domega = 0.0
+            
+        oscil = (dend-dstart)/self.processed_frames
+        sweep = xcaliburimage.Sweep(0,
+                                    iscantype,
+                                    domega=domega,
+                                    dtheta=self.headers["dth_s"],
+                                    dkappa=self.headers["dka_s"],
+                                    dphi=dphi,
+                                    dstart=dstart, dend=dend,
+                                    dwidth=oscil,
+                                    dunknown2=0.0, 
+                                    iunknown3=self.processed_frames, 
+                                    iunknown4=0, 
+                                    iunknown5=self.processed_frames, iunknown6=0,
+                                    dexposure=self.headers["dexposuretimeinsec"]
+                                    )
+        rundescription.pssweep.append(sweep)
+        rundescription.save(os.path.join(dirname,prefix+".run"))
+
+        # Finally save the ".par" file
+        xci.save_par(dirname, prefix, 
+                     wavelength=self.options.wavelength,
+                     alpha=self.options.alpha,
+                     polarization=self.options.polarization,
+                     distance=self.options.distance,
+                     oscil=oscil,
+                     center_x=self.headers["dxorigininpix"],
+                     center_y=self.headers["dyorigininpix"]
+                     )
 
 
 def main():
@@ -480,7 +538,7 @@ def main():
     group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
                        help="do everything except modifying the file system")
     group.add_argument("--calc-mask", dest="calc_mask", default=False, action="store_true",
-                       help="Generate a mask from pixels marked as invalid. Off by default since it takes time")
+                       help="Generate a fine mask from pixels marked as invalid. By default, only treats gaps")
 
     group = parser.add_argument_group("Experimental setup options")
     group.add_argument("-e", "--energy", type=float, default=None,
@@ -491,6 +549,8 @@ def main():
                        help="Detector distance in millimeters")
     group.add_argument("-b", "--beam", nargs=2, type=float, default=None,
                        help="Direct beam in pixels x, y")
+    group.add_argument("-p", "--polarization", type=float, default=0.99,
+                       help="Polarization factor (0.99 by default on synchrotron)")
 
     group = parser.add_argument_group("Goniometer setup")
 #     group.add_argument("--axis", type=str, default=None,
@@ -541,8 +601,7 @@ def main():
     esperantoimage.EsperantoImage.DUMMY = args.dummy
     converter = Converter(args)
     converter.convert_all()
-    if args.calc_mask:
-        converter.treat_mask()
+    converter.treat_mask(full=args.calc_mask)
     return converter.finish()
 
 
