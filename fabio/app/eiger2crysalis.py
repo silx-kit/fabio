@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "22/02/2023"
+__date__ = "23/02/2023"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -401,9 +401,11 @@ class Converter:
         ":param full: complete/slow mask analysis"
         if self.progress:
             self.progress.update(self.progress.max_value - 1, "Generate mask")
+        dummy_value = numpy.cast[self.mask.dtype](-1)
+        mask = (self.mask==dummy_value).astype(numpy.int8)
         esperantoimage.EsperantoImage.DUMMY = 1
-        new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=self.mask).data)
-        esperantoimage.EsperantoImage.DUMMY = -1
+        new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)
+        esperantoimage.EsperantoImage.DUMMY = -1 # restore the class !
         if self.progress:
             self.progress.update(self.progress.max_value - 1, f"Decompose mask full={full}")
         xci = xcaliburimage.XcaliburImage(data=new_mask)
@@ -415,7 +417,7 @@ class Converter:
                                                      dirname=self.dirname)
         dirname = os.path.dirname(dummy_filename)
         prefix = self.prefix.split("_")[0]
-        numpy.save(os.path.join(dirname, prefix + "_mask.npy"), self.mask)
+        numpy.save(os.path.join(dirname, prefix + "_mask.npy"), new_mask)
         ccd.save(os.path.join(dirname, prefix + ".ccd"))
         with open(os.path.join(dirname, prefix + ".set"), mode="wb") as maskfile:
             maskfile.write(b'#XCALIBUR SYSTEM\r\n')
@@ -548,7 +550,7 @@ def main():
     group.add_argument("-b", "--beam", nargs=2, type=float, default=None,
                        help="Direct beam in pixels x, y")
     group.add_argument("-p", "--polarization", type=float, default=0.99,
-                       help="Polarization factor (0.99 by default on synchrotron")
+                       help="Polarization factor (0.99 by default on synchrotron)")
 
     group = parser.add_argument_group("Goniometer setup")
 #     group.add_argument("--axis", type=str, default=None,

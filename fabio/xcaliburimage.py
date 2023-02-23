@@ -34,7 +34,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2022 ESRF"
-__date__ = "22/02/2023"
+__date__ = "23/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -353,9 +353,9 @@ class ChipBadPoint:
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        return cls(ChipPoint(buffer[:4]),
-                   ChipPoint(buffer[4:8]),
-                   ChipPoint(buffer[8:12]),
+        return cls(ChipPoint.loads(buffer[:4]),
+                   ChipPoint.loads(buffer[4:8]),
+                   ChipPoint.loads(buffer[8:12]),
                    struct.unpack("<H", buffer[12:cls.SIZE]))
 
     def dumps(self):
@@ -379,10 +379,10 @@ class ChipBadRow:
     def loads(cls, buffer):
         cls.SIZE = cls.SIZE
         assert len(buffer) >= cls.SIZE
-        return cls(ChipPoint(buffer[:4]),
-                   ChipPoint(buffer[4:8]),
-                   ChipPoint(buffer[8:12]),
-                   ChipPoint(buffer[12:16]),
+        return cls(ChipPoint.loads(buffer[:4]),
+                   ChipPoint.loads(buffer[4:8]),
+                   ChipPoint.loads(buffer[8:12]),
+                   ChipPoint.loads(buffer[12:16]),
                    struct.unpack("<H", buffer[16:cls.SIZE])[0])
 
     def dumps(self):
@@ -408,10 +408,10 @@ class ChipBadColumn:
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        return cls(ChipPoint(buffer[:4]),
-                   ChipPoint(buffer[4:8]),
-                   ChipPoint(buffer[8:12]),
-                   ChipPoint(buffer[12:16]),
+        return cls(ChipPoint.loads(buffer[:4]),
+                   ChipPoint.loads(buffer[4:8]),
+                   ChipPoint.loads(buffer[8:12]),
+                   ChipPoint.loads(buffer[12:16]),
                    *struct.unpack("<HHH", buffer[16:cls.SIZE]))
 
     def dumps(self):
@@ -905,6 +905,16 @@ class CcdCharacteristiscs:
         end += record_variable("ibadrows2x2", "pschipbadrow2x2")
         end += record_variable("ibadrows4x4", "pschipbadrow4x4")
         return bytes(buffer[:end])
+    
+    def build_mask(self, shape):
+        """Rebuild a mask from all pixels/rectangles masked"""
+        mask = numpy.zeros(shape, dtype=numpy.int8)
+        for poly in self.pschipbadpolygon:
+            if poly.itype == CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value:  
+                mask[poly.iay[0]:1+poly.iay[1],poly.iax[0]:1+poly.iax[1]] = 1
+        for pt in self.pschipbadpoint:
+            mask[pt.spt.iy, pt.spt.ix] = 1
+        return mask
 
 class XcaliburImage(FabioImage):
     """FabIO image class for CrysalisPro mask image

@@ -35,7 +35,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2022 ESRF"
-__date__ = "09/02/2023"
+__date__ = "23/02/2023"
 
 import unittest
 import os
@@ -45,7 +45,7 @@ import logging
 logger = logging.getLogger(__name__)
 import numpy
 import fabio
-from fabio.xcaliburimage import CcdCharacteristiscs
+from fabio.xcaliburimage import CcdCharacteristiscs, XcaliburImage
 from ..utilstest import UtilsTest
 
 
@@ -67,11 +67,35 @@ class TestCcdCharacteristiscs(unittest.TestCase):
                         what.__setattr__(key, [])
             self.assertEqual(ref, obt, f"{afile} matches ")
     
+class testXcalibureImage(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls)->None:
+        cls.filename = UtilsTest.getimage("Pilatus1M.cbf")
+    @classmethod
+    def tearDownClass(cls)->None:
+        cls.filename = None 
+    def test_decomposition(self):
+        ref = (fabio.open(self.filename).data<0).astype("int8")
+        xcal = XcaliburImage(data=ref)
+        try:
+            import pyFAI.ext.dynamic_rectangle
+        except ImportError:
+            logger.warning("PyFAI not available: only a coarse description of the mask is provided")
+            precise = False
+        else:
+            precise = True
+
+        ccd = xcal.decompose(full=True)
+        obt = ccd.build_mask(ref.shape)
+        if precise:
+            self.assertTrue(numpy.allclose(ref, obt), "mask is the same")        
+
     
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestCcdCharacteristiscs))
+    testsuite.addTest(loadTests(testXcalibureImage))    
     return testsuite
 
 
