@@ -411,7 +411,7 @@ class Converter:
         xci = xcaliburimage.XcaliburImage(data=new_mask)
         ccd = xci.decompose(full)
         if self.progress:
-            self.progress.update(self.progress.max_value - 0.5, f"Exporting mask as CCD/SET file")
+            self.progress.update(self.progress.max_value - 0.5, "Exporting mask as CCD/SET file")
         dummy_filename = self.options.output.format(index=self.options.offset,
                                                      prefix=self.prefix,
                                                      dirname=self.dirname)

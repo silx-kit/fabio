@@ -34,7 +34,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2022 ESRF"
-__date__ = "23/02/2023"
+__date__ = "27/02/2023"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -223,7 +223,7 @@ ROTATION ABSORPTIONCOEFFICIENTS 0.000000 0.000000 0.000000
 # ROTATION BEAM b2 b3 b2pd b3pd eqpd
 ROTATION BEAM   0.000000    0.000000   0.00000   0.00000    0.00000
 # ROTATION DETECTORORIENTATION d1 d2 d3 distanceinmm xorigininpix yorigininpix d1pd d2pd d3pd distanceinmmpd xorigininpixpd yorigininpixpd
-ROTATION DETECTORORIENTATION    0.000000    0.000000    0.00000   188.200000 1625.000000 1607.000000 -0.23494    0.11672    0.00000   50.65263  518.03346  502.88889
+ROTATION DETECTORORIENTATION    0.000000    0.000000    0.00000   {distance} {center_x} {center_y} -0.23494    0.11672    0.00000   50.65263  518.03346  502.88889
 # ROTATION MONOCHROMATOR (dvalue|prepolfac) (orientation|type)
 ROTATION MONOCHROMATOR    {polarization} SYNCHROTRON
 # ROTATION PEAKINTEGRITYAREA enlargementfactor constantinpix userefMo userefCu refmod-closeMo,farMo,closeCu,farCu(d1,d2,t0,dd,x,y)
