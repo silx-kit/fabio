@@ -6,7 +6,7 @@ Purpose
 
 Convert a multiframe HDF5 Eiger data file into several CBF files.
  
-Portable image converter based on FabIO library to export Eiger frames ((``lima`` or ``eiger``) 
+Portable image converter based on FabIO library to export Eiger frames (``lima`` or ``eiger``) 
 to CBF which mimic the header of a Dectris Pilatus detector.
 
 Usage:
