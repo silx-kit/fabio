@@ -365,6 +365,7 @@ uses extensions as a fallback if that fails.
    "Raxis", "Rigaku Saxs format", ".img", "Yes", "No", "No"
    "spe", "Princeton instrumentation", ".spe", "Yes", "Yes", "No"
    "TIFF", "Tagged Image File Format", ".tif", "Yes", "Yes", "Yes"
+   "Xcalibur", "mask format used by CrysalisPro", ".ccd", "Yes", "No", "Yes" 
 
 Adding new file formats
 .......................

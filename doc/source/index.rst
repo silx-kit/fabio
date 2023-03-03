@@ -23,7 +23,7 @@ Contents:
    tutorials/index
    performances
    Changelog
-   man/fabio_viewer
+   man/index
    api/modules
 
 

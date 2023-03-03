@@ -8,4 +8,4 @@ fabio_viewer is a simple diffraction image viewer based on matplotlib and PyQt4.
 .. command-output:: fabio_viewer --help
     :nostderr:
 
-
+This tool is deprecated and one should prefer `silx view` as generic image viewer.
