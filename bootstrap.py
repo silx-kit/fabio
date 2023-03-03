@@ -10,13 +10,16 @@ example: ./bootstrap.py ipython
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "06/12/2022"
+__date__ = "03/03/2023"
 
 import sys
 import os
 import subprocess
 import logging
-import tomli
+if sys.version_info[:2] < (3, 11):
+    import tomli
+else:
+    import tomllib as tomli
 logging.basicConfig()
 logger = logging.getLogger("bootstrap")
 
@@ -30,7 +33,7 @@ def get_project_name(root_dir):
     logger.debug("Getting project name in %s", root_dir)
     with open("pyproject.toml") as f:
         pyproject = tomli.loads(f.read())
-    return pyproject.get("project",{}).get("name")
+    return pyproject.get("project", {}).get("name")
 
 
 def build_project(name, root_dir):
@@ -45,7 +48,7 @@ def build_project(name, root_dir):
     if sys.platform == "win32":
         libdir = "Lib"
         extra = ["--buildtype", "plain"]
-    
+
     build = os.path.join(root_dir, "build")
     if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
         p = subprocess.Popen(["meson", "build"],
@@ -57,8 +60,7 @@ def build_project(name, root_dir):
     p = subprocess.Popen(["meson", "install", "--destdir", "."],
                      shell=False, cwd=build, env=os.environ)
     logger.debug("meson install ended with rc= %s", p.wait())
-        
-    
+
     if os.environ.get("PYBUILD_NAME") == name:
         # we are in the debian packaging way
         home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
@@ -81,7 +83,7 @@ def build_project(name, root_dir):
         home = os.path.join(home, n)
 
     logger.warning("Building %s to %s", name, home)
-    
+
     return home
 
 
@@ -180,7 +182,7 @@ def find_executable(target):
     # search the executable in pyproject.toml
     with open(os.path.join(PROJECT_DIR, "pyproject.toml")) as f:
         pyproject = tomli.loads(f.read())
-    for script, entry_point in list(pyproject.get("console_scripts",{}).items())+list(pyproject.get("gui_scripts",{}).items()):
+    for script, entry_point in list(pyproject.get("console_scripts", {}).items()) + list(pyproject.get("gui_scripts", {}).items()):
         if script == target:
             print(script, entry_point)
             return ("entry_point", target, entry_point)
@@ -190,7 +192,6 @@ def find_executable(target):
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info("Project name: %s", PROJECT_NAME)
-
 
 if __name__ == "__main__":
     LIBPATH = build_project(PROJECT_NAME, PROJECT_DIR)
@@ -210,9 +211,9 @@ if __name__ == "__main__":
     if script:
         argv = sys.argv[2:]
         res = find_executable(script)
-        if res[0]  == "path":
+        if res[0] == "path":
             run_file(res[1], argv)
-        elif res[0]  == "entry_point":
+        elif res[0] == "entry_point":
             run_entry_point(res[1], res[2], argv)
         else:
             logger.error("Script %s not found", script)

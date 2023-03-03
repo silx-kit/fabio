@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "25/10/2022"
+__date__ = "03/03/2023"
 __license__ = "MIT"
 
 import logging
@@ -42,7 +42,7 @@ import sys
 import time
 import unittest
 import collections
-import tomli
+
 
 class StreamHandlerUnittestReady(logging.StreamHandler):
     """The unittest class TestResult redefine sys.stdout/err to capture
@@ -120,7 +120,6 @@ except Exception as error:
     logger.warning("h5py missing: %s", error)
 else:
     logger.info("h5py %s", h5py.version.version)
-
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, PROJECT_DIR)
@@ -261,8 +260,6 @@ def is_debug_python():
         return True
 
     return hasattr(sys, "gettotalrefcount")
-
-
 
 
 parser = ArgumentParser(description='Run the tests.')
