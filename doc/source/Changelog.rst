@@ -1,9 +1,9 @@
 Changelog
 =========
-FabIO-2023.XX: 
+FabIO-2023.04: 
 ..............
 - `eiger2crysalis` generates full CrysalisPro projects, including mask & scan description
-- Support Python3.7-3.11 with Cython 0.21-3.0
+- Support Python 3.7 to 3.11 with Cython 0.21-3.0
 
 FabIO-2022.12: (12/12/2022):
 ............................
