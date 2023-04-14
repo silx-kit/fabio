@@ -2,7 +2,7 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2022 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2023 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,9 +38,8 @@ to conform to the specification of the IUCR
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "12/12/2022"
+__date__ = "14/04/2023"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-
 
 import os
 import logging
@@ -214,7 +213,11 @@ class CbfImage(FabioImage):
                 logger.debug("%s: %s", kv)
             raise RuntimeError(err)
         if self.cif[self.CIF_BINARY_BLOCK_KEY] == "CIF Binary Section":
-            self.cbs += infile.read(len(self.STARTER) + int(self.header["X-Binary-Size"]) - len(self.cbs) + self.start_binary)
+            size = len(self.STARTER) + int(self.header["X-Binary-Size"]) - len(self.cbs) + self.start_binary
+            if size > 0:
+                self.cbs += infile.read(size)
+            # elif size < 0:
+            #     self.cbs = self.cbs[:size]
         else:
             if len(self.cif[self.CIF_BINARY_BLOCK_KEY]) > int(self.header["X-Binary-Size"]) + self.start_binary + len(self.STARTER):
                 self.cbs = self.cif[self.CIF_BINARY_BLOCK_KEY][:int(self.header["X-Binary-Size"]) + self.start_binary + len(self.STARTER)]
@@ -855,10 +858,10 @@ cbfimage = CbfImage
 
 class PilatusKey(NamedTuple):
     keyword: str
-    key_index: int=0
-    value_indices: list=[1]
-    types: list=[str]
-    repr: str="{}"
+    key_index: int = 0
+    value_indices: list = [1]
+    types: list = [str]
+    repr: str = "{}"
 
 
 class PilatusHeader(object):
