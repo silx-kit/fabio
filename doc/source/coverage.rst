@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 2022.12.0, 12/12/2022
+Measured on *fabio* version 2023.4.0, 03/04/2023
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -32,7 +32,7 @@ Measured on *fabio* version 2022.12.0, 12/12/2022
    "fit2dmaskimage.py", "79", "75", "94.9 %"
    "fit2dspreadsheetimage.py", "47", "40", "85.1 %"
    "hdf5image.py", "98", "67", "68.4 %"
-   "jpeg2kimage.py", "82", "56", "68.3 %"
+   "jpeg2kimage.py", "82", "74", "90.2 %"
    "jpegimage.py", "47", "45", "95.7 %"
    "kcdimage.py", "107", "76", "71.0 %"
    "limaimage.py", "180", "151", "83.9 %"
@@ -50,6 +50,7 @@ Measured on *fabio* version 2022.12.0, 12/12/2022
    "sparseimage.py", "135", "93", "68.9 %"
    "speimage.py", "162", "157", "96.9 %"
    "tifimage.py", "126", "119", "94.4 %"
+   "xcaliburimage.py", "586", "462", "78.8 %"
    "xsdimage.py", "94", "70", "74.5 %"
    "app/__init__.py", "0", "0", "0.0 %"
    "app/convert.py", "203", "28", "13.8 %"
@@ -63,4 +64,4 @@ Measured on *fabio* version 2022.12.0, 12/12/2022
    "utils/deprecation.py", "67", "63", "94.0 %"
    "utils/pilutils.py", "49", "39", "79.6 %"
 
-   "fabio total", "8988", "6997", "77.8 %"
+   "fabio total", "9574", "7477", "78.1 %"
