@@ -216,8 +216,8 @@ class CbfImage(FabioImage):
             size = len(self.STARTER) + int(self.header["X-Binary-Size"]) - len(self.cbs) + self.start_binary
             if size > 0:
                 self.cbs += infile.read(size)
-            # elif size < 0:
-            #     self.cbs = self.cbs[:size]
+            elif size < 0:
+                self.cbs = self.cbs[:size]
         else:
             if len(self.cif[self.CIF_BINARY_BLOCK_KEY]) > int(self.header["X-Binary-Size"]) + self.start_binary + len(self.STARTER):
                 self.cbs = self.cif[self.CIF_BINARY_BLOCK_KEY][:int(self.header["X-Binary-Size"]) + self.start_binary + len(self.STARTER)]
