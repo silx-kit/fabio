@@ -1,5 +1,10 @@
 Changelog
 =========
+
+FabIO-2023.4.1: 
+...............
+- Bugfix (#528) wrong checksum with small CBF files 
+
 FabIO-2023.04: 
 ..............
 - `eiger2crysalis` generates full CrysalisPro projects, including mask & scan description

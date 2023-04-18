@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 2023.4.0, 03/04/2023
+Measured on *fabio* version 2023.4.1, 18/04/2023
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -17,7 +17,7 @@ Measured on *fabio* version 2023.4.0, 03/04/2023
    "binaryimage.py", "60", "44", "73.3 %"
    "bruker100image.py", "286", "243", "85.0 %"
    "brukerimage.py", "203", "169", "83.3 %"
-   "cbfimage.py", "627", "387", "61.7 %"
+   "cbfimage.py", "631", "391", "62.0 %"
    "converters.py", "17", "14", "82.4 %"
    "dm3image.py", "153", "144", "94.1 %"
    "dtrekimage.py", "170", "140", "82.4 %"
@@ -64,4 +64,4 @@ Measured on *fabio* version 2023.4.0, 03/04/2023
    "utils/deprecation.py", "67", "63", "94.0 %"
    "utils/pilutils.py", "49", "39", "79.6 %"
 
-   "fabio total", "9574", "7477", "78.1 %"
+   "fabio total", "9578", "7481", "78.1 %"
