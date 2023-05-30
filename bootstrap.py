@@ -47,11 +47,11 @@ def build_project(name, root_dir):
     libdir = "lib"
     if sys.platform == "win32":
         libdir = "Lib"
-        extra = ["--buildtype", "plain"]
+        # extra = ["--buildtype", "plain"]
 
     build = os.path.join(root_dir, "build")
     if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
-        p = subprocess.Popen(["meson", "build"],
+        p = subprocess.Popen(["meson", "setup", "build"],
                          shell=False, cwd=root_dir, env=os.environ)
         p.wait()
     p = subprocess.Popen(["meson", "configure", "--prefix", "/"] + extra,
@@ -68,10 +68,10 @@ def build_project(name, root_dir):
         home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
     else:
         if sys.platform == "win32":
-            home = os.path.join(build, "Lib", "site-packages")
+            home = os.path.join(build, libdir, "site-packages")
         else:
             python_version = f"python{sys.version_info.major}.{sys.version_info.minor}"
-            home = os.path.join(build, "lib", python_version, "site-packages")
+            home = os.path.join(build, libdir, python_version, "site-packages")
         home = os.path.abspath(home)
 
     cnt = 0
