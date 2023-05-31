@@ -14,9 +14,8 @@ if __name__ == '__main__':
     dest_dir = os.path.join(PROJECT_DIR, "build", "sphinx")
     if not os.path.isdir(dest_dir):
         os.makedirs(dest_dir)
-    
     argv = ["-b", "html",
             os.path.join(PROJECT_DIR,"doc","source"),
             dest_dir ]
-    print(argv)
+    print(f"run sphinx with those arguments {argv}")
     sys.exit(main(argv)) 
