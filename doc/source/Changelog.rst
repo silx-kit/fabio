@@ -1,6 +1,13 @@
 Changelog
 =========
 
+FabIO-2023.6.0: 
+...............
+- Move source code to src
+- Remove anything related to setup.py (i.e. exit setuptools and numpy.distutils)
+- Debian build works only on debian12 (impossible to meet requirements on former versions)
+- Supports python 3.7 - 3.11
+
 FabIO-2023.4.1: 
 ...............
 - Bugfix (#528) wrong checksum with small CBF files 
