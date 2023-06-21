@@ -225,7 +225,7 @@ def report_rst(cov, package, version="0.0.0", base=""):
         fname = cl.get("filename")
         if not os.path.abspath(fname).startswith(base):
             continue
-        lines = cl.find("lines").getchildren()
+        lines = list(cl.find("lines"))
         hits = [int(i.get("hits")) for i in lines]
 
         sum_hits = sum(hits)
