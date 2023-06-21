@@ -62,9 +62,11 @@ extensions = ['sphinx.ext.autodoc',
 # Set the theme to sphinx_rtd_theme when *not* building on Read The Docs.
 # The theme is set to default otherwise as Read The Docs uses its own theme anyway.
 if not on_rtd:
-    import sphinx_rtd_theme
-
-    extensions.append('sphinx_rtd_theme')
+    try:
+        import sphinx_rtd_theme
+        extensions.append('sphinx_rtd_theme')
+    except:
+        print("sphinx_rtd_theme is not available")
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

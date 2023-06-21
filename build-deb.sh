@@ -29,9 +29,9 @@
 
 project=fabio
 source_project=fabio
-version=$(python3 -c"import version; print(version.version)")
-strictversion=$(python3 -c"import version; print(version.strictversion)")
-debianversion=$(python3 -c"import version; print(version.debianversion)")
+version=$(PYTHONPATH=src/fabio python3 -c"import _version; print(_version.version)")
+strictversion=$(PYTHONPATH=src/fabio python3 -c"import _version; print(_version.strictversion)")
+debianversion=$(PYTHONPATH=src/fabio python3 -c"import _version; print(_version.debianversion)")
 
 deb_name=$(echo "$source_project" | tr '[:upper:]' '[:lower:]')
 
@@ -171,7 +171,9 @@ build_deb() {
     echo "Build for debian 9 or newer using actual packaging"
     tarname=${project}_${debianversion}.orig.tar.gz
     clean_up
-    python3 setup.py debian_src
+    python -m build -s
+    ln -s ${source_project}-${strictversion}.tar.gz dist/${tarname}
+    directory=${source_project}-${strictversion}
     cp -f dist/${tarname} ${build_directory}
     if [ -f dist/${project}-testimages.tar.gz ]
     then
