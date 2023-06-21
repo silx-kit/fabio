@@ -2,7 +2,7 @@ project('FabIO',
   'c', 'cython',
   license: 'MIT',
   meson_version: '>= 0.60',
-  version: run_command('version.py',
+  version: run_command('src/fabio/_version.py',
   			           check:true).stdout().strip(),
 )
 
@@ -23,4 +23,4 @@ py_mod = import('python')
 py = py_mod.find_installation()
 py_dep = py.dependency()
 
-subdir('fabio')
+subdir('src/fabio')
