@@ -5,10 +5,8 @@ subdir('ext')
 subdir('test')
 subdir('utils')
 
-#version_py = configure_file(input: '../version.py', output: '_version.py', copy: true)
-
 py.install_sources([
-	'_version_py',
+	'_version.py',
 	'adscimage.py',
 	'binaryimage.py',
 	'bruker100image.py',
