@@ -181,6 +181,13 @@ class TestCbfReader(unittest.TestCase):
             fimg = fabio.open(filename)
         self.assertEqual(abs(data - fimg.data).max(), 0, "data match")
 
+    def test_bug_535(self):
+        "Bug when reading files with long path in header"
+        cbf_filename = UtilsTest.getimage("ref-test_5_0001.cbf")
+        fimg = fabio.open(cbf_filename)
+        # print(fimg.header)
+        # raise RuntimeError("plop")
+
     def test_cif(self):
         LaB6 = """
 data_global
