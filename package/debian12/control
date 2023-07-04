@@ -24,7 +24,8 @@ Build-Depends: cython3,
                devscripts,
                python3-pyqt5,
                python3-matplotlib,
-               bitshuffle
+               bitshuffle,
+               pybuild-plugin-pyproject
 Standards-Version: 3.9.6
 Vcs-Browser: https://salsa.debian.org/science-team/python-fabio
 Vcs-Git: https://salsa.debian.org/science-team/python-fabio.git
