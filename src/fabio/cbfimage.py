@@ -38,7 +38,7 @@ to conform to the specification of the IUCR
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "14/04/2023"
+__date__ = "04/07/2023"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import os
@@ -911,7 +911,17 @@ class PilatusHeader(object):
         tmp = str(input_string)
         for k in cls.SPACE_LIKE:
             tmp = tmp.replace(k, " ")
-        return tmp
+
+        # Manage line continuation with "\"
+        lines = tmp.splitlines()
+        i = 0
+        while i < len(lines):
+            if lines[i].endswith("\\"):
+                while lines[i].endswith("\\") and i < len(lines):
+                    lines[i] = lines[i][:-1] + lines[i + 1]
+                    lines.pop(i + 1)
+            i += 1
+        return lines
 
     def __init__(self, content, convention="PILATUS_1.2"):
         assert convention == "PILATUS_1.2"
@@ -931,7 +941,12 @@ class PilatusHeader(object):
         return "\n".join(lines)
 
     def _parse(self, content):
-        lines = self.clean_string(content).split("\n")
+        """Parse the header block
+        
+        :param str content: header block
+        :return: dict with parsed headers
+        """
+        lines = self.clean_string(content)
         dico = OrderedDict()
         for line in lines:
             words = line.split()
