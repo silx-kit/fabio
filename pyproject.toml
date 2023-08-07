@@ -43,8 +43,7 @@ dependencies = [
    'h5py',
    'hdf5plugin',
    'lxml',
-   'pillow',
-   'glymur'
+   'pillow'
 ]
 
 [build-system]
