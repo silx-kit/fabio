@@ -40,6 +40,11 @@ classifiers = [
 
 dependencies = [
    'numpy',
+   'h5py',
+   'hdf5plugin',
+   'lxml',
+   'pillow',
+   'glymur'
 ]
 
 [build-system]
