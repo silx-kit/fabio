@@ -80,7 +80,7 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
 #else 
   if(1){
 #endif
-    FILE *fp=fopen(fname,"wb");
+    FILE *fp=_fopen_(fname,"wb");
     if (fp==NULL) return -1;
     status=-1;
     if (FLAGS & CF_BIN){
