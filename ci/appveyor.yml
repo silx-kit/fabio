@@ -1,4 +1,4 @@
-version: 0.15-dev{build}
+version: 2023-10-dev{build}
 
 # fetch repository as zip archive
 shallow_clone: true
@@ -58,7 +58,7 @@ install:
 
 build_script:
   - "meson --version"
-  - "python run_tests.py"
+  - "python run_tests.py -v"
   - "python -m build --wheel"
   - ps: "ls dist"
   # Install the generated wheel package to test it
