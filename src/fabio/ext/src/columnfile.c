@@ -2,6 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if (defined(_MSC_VER) && (_MSC_VER >= 1400) )
+
+static inline
+FILE* fn_fopen(const char* fname, const char* mode)
+{
+    FILE* fptr;
+    errno_t err = fopen_s(&fptr, fname, mode);
+    if (err != 0) {
+        return NULL;
+    }
+    return fptr;
+}
+#define _fopen_(fname, mode)   fn_fopen((fname), (mode))
+
+#else
+
+#define _fopen_(fname, mode)   fopen((fname), (mode))
+
+#endif
+
+
 #ifndef HAVE_ZLIB_H
 #define HAVE_ZLIB_H 0
 #else
