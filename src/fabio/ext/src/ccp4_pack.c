@@ -64,11 +64,12 @@
 
                                             Jan Pieter Abrahams, 6 Jan 1993   */
 
-#if (defined(_MSC_VER) && (_MSC_VER >= 1400) )
-#define _CRT_SECURE_NO_WARNINGS
+#if !defined(_CRT_SECURE_NO_DEPRECATE) && defined(_MSC_VER) && _MSC_VER >= 1300
+#define _CRT_SECURE_NO_DEPRECATE /* to avoid multiple Visual Studio warnings */
 #else
 #define sscanf_s   sscanf
 #endif
+
 
 #include <ccp4_pack.h>
 #include "string.h"
