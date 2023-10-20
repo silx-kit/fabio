@@ -6,7 +6,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #else
 #define sscanf_s   sscanf
-
+#endif
 
 #ifndef HAVE_ZLIB_H
 #define HAVE_ZLIB_H 0
