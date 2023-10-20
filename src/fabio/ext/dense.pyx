@@ -8,7 +8,7 @@
 #    Project: Fable Input/Output
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2020-2020 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2020-2023 European Synchrotron Radiation Facility, Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "02/06/2022"  
+__date__ = "20/10/2023"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -94,7 +94,7 @@ cdef class MT:
         self.mti = NN + 1
         self._seed(<uint64_t> seed)
     
-    cdef inline void _seed(self, uint64_t seed) nogil:
+    cdef inline void _seed(self, uint64_t seed) noexcept nogil:
         self.mt[0] = seed
         for self.mti in range(1, NN):
             self.mt[self.mti] = (6364136223846793005ULL * (self.mt[self.mti-1] ^ (self.mt[self.mti-1] >> 62)) + self.mti)
@@ -103,7 +103,7 @@ cdef class MT:
         self.mti = NN
         self.has_spare = False
         
-    cdef inline uint64_t genrand64(self) nogil:
+    cdef inline uint64_t genrand64(self) noexcept nogil:
         cdef: 
             uint32_t i
             uint64_t x
@@ -132,14 +132,14 @@ cdef class MT:
         return self.genrand64()%(<uint64_t>RAND_MAX+1)
     
     @cython.cdivision(True)
-    cdef inline double _uniform(self) nogil:
+    cdef inline double _uniform(self) noexcept nogil:
         return (self.genrand64() >> 11) * NRM53
     
     def uniform(self):
         "Return a random value between [0:1["
         return self._uniform()
     
-    cdef inline double _normal_bm(self, double mu, double sigma) nogil:
+    cdef inline double _normal_bm(self, double mu, double sigma) noexcept nogil:
         "Box-Muller implementation of the normal distribution"
         cdef:
             double u1=0.0, u2=0.0
@@ -150,7 +150,7 @@ cdef class MT:
 
         return sigma * sqrt(-2.0 * log(u1)) * cos(TWO_PI * u2) + mu;
 
-    cdef inline double _normal_m(self, double mu, double sigma) nogil:
+    cdef inline double _normal_m(self, double mu, double sigma) noexcept nogil:
         "Marsaglia implementation of the normal distribution, 2xfaster than Box-Muller"
         cdef: 
             double u1=0.0, u2=0.0, s=0.0
