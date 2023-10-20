@@ -69,11 +69,13 @@
 static inline
 FILE* fn_fopen(const char* fname, const char* mode)
 {
+    printf("open file %s in mode %s ...",fname, mode);
     FILE* fptr;
     errno_t err = fopen_s(&fptr, fname, mode);
     if (err != 0) {
         return NULL;
     }
+    printf("Done\n");
     return fptr;
 }
 #define _fopen_(fname, mode)   fn_fopen((fname), (mode))
@@ -209,7 +211,7 @@ void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
 // *unpack a new style mar345 image a'la what is done in CBFlib
 // * assumes the file is already positioned after the ascii header
 // * Perhaps the positioning should be done here as well.
- 
+
 void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
   // first process overflow bytes - for now we just ignore them
   // these are stored in 64 byte records
@@ -217,25 +219,25 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
   int *odata,x,y,version=0;
   char *c,cbuffer[64]="";
   unsigned int *unpacked_array;
-  
+
   odata=(int*)malloc(64*8*orecords);
   if (!odata)
     return NULL;
   pfail_nonzero (orecords-fread(odata,64,orecords,file));
   //  there is no stdout in a gui, sorry
-   
+
   // now after they have been read find the CCP4.....string and compare to dim1
   c=cbuffer;
   while((*c)!=EOF){
-    
+
     if (c==cbuffer+63){
      c=cbuffer;
-    } 
-    
+    }
+
     *c=(char)getc(file);
     // set the next character to a \0 so the string is always terminated
     *(c+1)='\0';
-    
+
     if (*c=='\n'){
       // check for the CCP- string
       x=y=0;
@@ -269,7 +271,7 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
     default:
       return NULL;
   }
-  
+
   // handle overflows
   while (ocount>0){
     unsigned int adress,value;
@@ -287,7 +289,7 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
 // *unpack a ccp4-style packed array into the memory location pointed to by unpacked_array
 // * if this is null allocate memory and return a pointer to it
 // * \return NULL if unsuccessful
-// * TODO change this to read directly from the FILE to not waste memory 
+// * TODO change this to read directly from the FILE to not waste memory
 void * ccp4_unpack(
     void *unpacked_array,
     void *packed,
@@ -334,7 +336,7 @@ void * ccp4_unpack(
         num_error=CCP4_PCK_ERR_COUNT[(t_>>bit_offset) & CCP4_PCK_MASK[3]];
         num_bits=CCP4_PCK_BIT_COUNT[(t_>>(3+bit_offset)) & CCP4_PCK_MASK[3]];
         bit_offset+=CCP4_PCK_BLOCK_HEADER_LENGTH;
-      } 
+      }
     } else {
       // reading the data in the block
       while(num_error>0){
@@ -365,7 +367,7 @@ void * ccp4_unpack(
         {
           err_val|= -1<<(num_bits-1);
         }
-        // store the current value in the unpacked array 
+        // store the current value in the unpacked array
         if (i>dim1){
           // the current pixel is not in the first row - averaging is possible
           //  n.b. the averaging calculation is performed in the 2's complement domain
@@ -382,7 +384,7 @@ void * ccp4_unpack(
         }
         i++;
         num_error--;
-      } 
+      }
     }// else
   }
   return (void *) unpacked_array;
@@ -572,7 +574,7 @@ void * ccp4_unpack_v2(
         {
           err_val|= -1<<(num_bits-1);
         }
-        // store the current value in the unpacked array 
+        // store the current value in the unpacked array
         if (i>dim1){
           // the current pixel is not in the first row - averaging is possible
           // n.b. the averaging calculation is performed in the 2's complement domain
@@ -704,7 +706,7 @@ void * ccp4_unpack_v2_string(
 
 // Returns the number of bits neccesary to encode the longword-array 'chunk'
 //   of size 'n' The size in bits of one encoded element can be 0, 4, 5, 6, 7,
-//   8, 16 or 32. 
+//   8, 16 or 32.
 int bits(		int32_t *chunk,		int n){
   int size, maxsize, i;
 
@@ -770,7 +772,7 @@ int *diff_words(
 //   significant bits are used. The starting bit of 'target' is 'bit' (bits range
 //   from 0 to 7). After completion of 'pack_words()', both '**target' and '*bit'
 //   are updated and define the next position in 'target' from which packing
-//   could continue. 
+//   could continue.
 void pack_longs(int32_t *lng,
 		int n,
 		char **target,
@@ -812,7 +814,7 @@ void pack_longs(int32_t *lng,
 // Packs 'nmbr' LONGs starting at 'lng[0]' into a packed array of 'bitsize'
 //   sized elements. If the internal buffer in which the array is packed is full,
 //   it is flushed to 'file', making room for more of the packed array. If
-//   ('lng == NULL'), the buffer is flushed a swell. 
+//   ('lng == NULL'), the buffer is flushed a swell.
 void pack_chunk(int32_t *lng,
 		int nmbr,
 		int bitsize,
@@ -846,7 +848,7 @@ void pack_chunk(int32_t *lng,
     buffer = NULL;}}
 
 
-// Pack image 'img', containing 'x * y' WORD-sized pixels into 'filename'. 
+// Pack image 'img', containing 'x * y' WORD-sized pixels into 'filename'.
 void pack_wordimage_copen(short int *img,
 		int x,
 		int y,
