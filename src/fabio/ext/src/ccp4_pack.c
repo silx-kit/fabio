@@ -66,21 +66,8 @@
 
 #include <stdio.h>
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400) )
-static inline
-FILE* fn_fopen(const char* fname, const char* mode)
-{
-    printf("open file %s in mode %s ...",fname, mode);
-    FILE* fptr;
-    errno_t err = fopen_s(&fptr, fname, mode);
-    if (err != 0) {
-        return NULL;
-    }
-    printf("Done\n");
-    return fptr;
-}
-#define _fopen_(fname, mode)   fopen((fname), (mode))
+#define _CRT_SECURE_NO_WARNINGS
 #else
-#define _fopen_(fname, mode)   fopen((fname), (mode))
 #define sscanf_s   sscanf
 #endif
 
@@ -893,7 +880,7 @@ void pack_wordimage_c(
 		short int *img,
 		int x, int y,
 		char *filename){
-  FILE *packfile = _fopen_(filename, "ab");
+  FILE *packfile = fopen(filename, "ab");
   if (packfile == NULL) {
     fprintf(stderr,"The file %s cannot be created!\n   ...giving up...\n",
           filename);
