@@ -30,8 +30,8 @@ environment:
           PYTHON_ARCH: "64"
 
         # Python 3.8
-        - PYTHON_DIR: "C:\\Python38-x64"
-          PYTHON_ARCH: "64"
+        #- PYTHON_DIR: "C:\\Python38-x64"
+        #  PYTHON_ARCH: "64"
 
         # Python 3.9
         - PYTHON_DIR: "C:\\Python39-x64"
@@ -39,6 +39,10 @@ environment:
 
         # Python 3.10
         - PYTHON_DIR: "C:\\Python310-x64"
+          PYTHON_ARCH: "64"
+
+        # Python 3.11        
+        - PYTHON_DIR: "C:\\Python311-x64"
           PYTHON_ARCH: "64"
 
 
@@ -58,7 +62,7 @@ install:
 
 build_script:
   - "meson --version"
-  - "python run_tests.py -v"
+  - "python run_tests.py"
   - "python -m build --wheel"
   - ps: "ls dist"
   # Install the generated wheel package to test it

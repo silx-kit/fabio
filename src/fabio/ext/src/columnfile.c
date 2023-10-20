@@ -3,21 +3,9 @@
 #include <string.h>
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400) )
-static inline
-FILE* fn_fopen(const char* fname, const char* mode)
-{
-    FILE* fptr;
-    errno_t err = fopen_s(&fptr, fname, mode);
-    if (err != 0) {
-        return NULL;
-    }
-    return fptr;
-}
-#define _fopen_(fname, mode)   fn_fopen((fname), (mode))
+#define _CRT_SECURE_NO_WARNINGS
 #else
-#define _fopen_(fname, mode)   fopen((fname), (mode))
 #define sscanf_s   sscanf
-#endif
 
 
 #ifndef HAVE_ZLIB_H
@@ -74,10 +62,10 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
     gzclose(gzfp);
     return status;
   }else{
-#else 
+#else
   if(1){
 #endif
-    FILE *fp=_fopen_(fname,"wb");
+    FILE *fp=fopen(fname,"wb");
     if (fp==NULL) return -1;
     status=-1;
     if (FLAGS & CF_BIN){
@@ -200,7 +188,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   if (feof((FILE *)fp)) break;
 #endif
 
-    i=0;  
+    i=0;
     p=line;
 
     while (i<ncols && *p!='\0' && *p!='\n' && p<line+2048){
