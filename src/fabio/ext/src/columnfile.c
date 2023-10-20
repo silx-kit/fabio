@@ -3,9 +3,6 @@
 #include <string.h>
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1400) )
-
-#define _CRT_SECURE_NO_WARNINGS
-
 static inline
 FILE* fn_fopen(const char* fname, const char* mode)
 {
@@ -17,11 +14,9 @@ FILE* fn_fopen(const char* fname, const char* mode)
     return fptr;
 }
 #define _fopen_(fname, mode)   fn_fopen((fname), (mode))
-
 #else
-
 #define _fopen_(fname, mode)   fopen((fname), (mode))
-
+#define sscanf_s   sscanf
 #endif
 
 
@@ -162,7 +157,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   }
 
   /*try to sscanf it using 32 conversions - if that doesn't work use pedestrian version*/
-  ncols=sscanf(line,hdr_ctl,repeat16_inc(clabels,0),repeat16_inc(clabels,16),*(clabels+32));
+  ncols=sscanf_s(line,hdr_ctl,repeat16_inc(clabels,0),repeat16_inc(clabels,16),*(clabels+32));
   if (ncols==32+1 || ncols==0){
     /*aha we probably didn't get it all*/
     /*step through buffer with char ptr and check for whitespace->non-ws slopes. when one is found read from pc-1 into header storage. exit when line is exhausted*/
@@ -178,7 +173,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
           *(clabels+ncols)=(char*)malloc(CF_HEADER_ITEM*sizeof(char));
           nc_alloc++;
         }
-        sscanf(p,"%s",*(clabels+ncols));
+        sscanf_s(p,"%s",*(clabels+ncols));
         ncols++;
       }
       p++;

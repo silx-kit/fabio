@@ -64,6 +64,11 @@
 
                                             Jan Pieter Abrahams, 6 Jan 1993   */
 
+
+#if (!(defined(_MSC_VER) && (_MSC_VER >= 1400) ))
+#define sscanf_s   sscanf
+#endif
+
 #include <ccp4_pack.h>
 #include "string.h"
 #include "assert.h"
@@ -127,13 +132,13 @@ void *mar345_read_data_string(char *instring, int ocount, int dim1, int dim2){
 	  if (*c=='\n'){
 		// check for the CCP- string
 		x=y=0;
-		sscanf(cbuffer,"CCP4 packed image, X: %04d, Y: %04d", &x,&y);
+		sscanf_s(cbuffer,"CCP4 packed image, X: %04d, Y: %04d", &x,&y);
 		if (x==dim1 || y ==dim2){
 		  version=1;
 		  break;
 		}
 		x=y=0;
-		sscanf(cbuffer,"CCP4 packed image V2, X: %04d, Y: %04d", &x,&y);
+		sscanf_s(cbuffer,"CCP4 packed image V2, X: %04d, Y: %04d", &x,&y);
 		if (x==dim1 || y ==dim2){
 		  version=2;
 		  break;
@@ -221,13 +226,13 @@ void * mar345_read_data(FILE *file, int ocount, int dim1, int dim2){
     if (*c=='\n'){
       // check for the CCP- string
       x=y=0;
-      sscanf(cbuffer,"CCP4 packed image, X: %04d, Y: %04d", &x,&y);
+      sscanf_s(cbuffer,"CCP4 packed image, X: %04d, Y: %04d", &x,&y);
       if (x==dim1 || y ==dim2){
         version=1;
         break;
       }
       x=y=0;
-      sscanf(cbuffer,"CCP4 packed image V2, X: %04d, Y: %04d", &x,&y);
+      sscanf_s(cbuffer,"CCP4 packed image V2, X: %04d, Y: %04d", &x,&y);
       if (x==dim1 || y ==dim2){
         version=2;
         break;
