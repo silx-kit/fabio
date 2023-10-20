@@ -37,7 +37,7 @@ Authors: Jérôme Kieffer, ESRF
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "07/08/2023"
+__date__ = "20/10/2023"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import sys
@@ -223,7 +223,7 @@ def decByteOffset_numpy(stream, size=None, dtype="int64"):
         if stream[idx + 1:idx + 3] == key32:
             if stream[idx + 3:idx + 7] == key64:
                 # 64 bits int
-                res = numpy.frombuffer(stream[idx + 7:idx + 15], dtype="<l")
+                res = numpy.frombuffer(stream[idx + 7:idx + 15], dtype="<q")
                 listnpa.append(res)
                 shift = 15
             else:
