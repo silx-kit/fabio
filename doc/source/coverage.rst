@@ -1,7 +1,7 @@
 Test coverage report for fabio
 ==============================
 
-Measured on *fabio* version 2023.6.0, 21/06/2023
+Measured on *fabio* version 2023.10.0, 25/10/2023
 
 .. csv-table:: Test suite coverage
    :header: "Name", "Stmts", "Exec", "Cover"
@@ -10,14 +10,14 @@ Measured on *fabio* version 2023.6.0, 21/06/2023
    "GEimage.py", "106", "80", "75.5 %"
    "HiPiCimage.py", "61", "54", "88.5 %"
    "OXDimage.py", "352", "325", "92.3 %"
-   "TiffIO.py", "781", "643", "82.3 %"
+   "TiffIO.py", "781", "648", "83.0 %"
    "__init__.py", "35", "29", "82.9 %"
-   "_version.py", "40", "35", "87.5 %"
+   "_version.py", "40", "39", "97.5 %"
    "adscimage.py", "4", "4", "100.0 %"
    "binaryimage.py", "60", "44", "73.3 %"
    "bruker100image.py", "286", "243", "85.0 %"
    "brukerimage.py", "203", "169", "83.3 %"
-   "cbfimage.py", "633", "392", "61.9 %"
+   "cbfimage.py", "641", "422", "65.8 %"
    "converters.py", "17", "14", "82.4 %"
    "dm3image.py", "153", "144", "94.1 %"
    "dtrekimage.py", "170", "141", "82.9 %"
@@ -26,7 +26,7 @@ Measured on *fabio* version 2023.6.0, 21/06/2023
    "esperantoimage.py", "158", "137", "86.7 %"
    "fabioformats.py", "90", "65", "72.2 %"
    "fabioimage.py", "467", "386", "82.7 %"
-   "fabioutils.py", "392", "311", "79.3 %"
+   "fabioutils.py", "392", "316", "80.6 %"
    "file_series.py", "370", "280", "75.7 %"
    "fit2dimage.py", "91", "76", "83.5 %"
    "fit2dmaskimage.py", "79", "75", "94.9 %"
@@ -51,19 +51,17 @@ Measured on *fabio* version 2023.6.0, 21/06/2023
    "speimage.py", "162", "157", "96.9 %"
    "tifimage.py", "128", "121", "94.5 %"
    "xcaliburimage.py", "586", "462", "78.8 %"
-   "xsdimage.py", "94", "73", "77.7 %"
+   "xsdimage.py", "94", "70", "74.5 %"
    "app/__init__.py", "0", "0", "0.0 %"
    "app/convert.py", "204", "28", "13.7 %"
    "compression/__init__.py", "1", "1", "100.0 %"
    "compression/agi_bitfield.py", "171", "148", "86.5 %"
-   "compression/compression.py", "249", "189", "75.9 %"
+   "compression/compression.py", "245", "188", "76.7 %"
    "ext/__init__.py", "0", "0", "0.0 %"
-   "test/__init__.py", "22", "15", "68.2 %"
-   "test/codecs/__init__.py", "87", "81", "93.1 %"
    "utils/ExternalResources.py", "180", "133", "73.9 %"
    "utils/__init__.py", "0", "0", "0.0 %"
-   "utils/cli.py", "60", "48", "80.0 %"
+   "utils/cli.py", "60", "52", "86.7 %"
    "utils/deprecation.py", "67", "63", "94.0 %"
    "utils/pilutils.py", "49", "39", "79.6 %"
 
-   "fabio total", "9714", "7594", "78.2 %"
+   "fabio total", "9609", "7542", "78.5 %"
