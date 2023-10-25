@@ -893,7 +893,7 @@ void pack_wordimage_c(
 		short int *img,
 		int x, int y,
 		char *filename){
-  printf("in pack_wordimage_c, open %s\n", filename)
+  printf("in pack_wordimage_c, open %s\n", filename);
   FILE *packfile = _fopen_(filename, "ab");
   if (packfile == NULL) {
     fprintf(stderr,"The file %s cannot be created!\n   ...giving up...\n",
