@@ -77,6 +77,7 @@ FILE* fn_fopen(const char* fname, const char* mode)
     return fptr;
 }
 #define _fopen_(fname, mode)   fn_fopen((fname), (mode))
+
 #else
 #define _fopen_(fname, mode)   fopen((fname), (mode))
 #define sscanf_s   sscanf

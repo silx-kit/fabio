@@ -3,9 +3,23 @@
 #include <string.h>
 #if !defined(_CRT_SECURE_NO_DEPRECATE) && defined(_MSC_VER) && _MSC_VER >= 1300
 #define _CRT_SECURE_NO_DEPRECATE /* to avoid multiple Visual Studio warnings */
+FILE* fn_fopen(const char* fname, const char* mode)
+{
+    FILE* fptr;
+    errno_t err = fopen_s(&fptr, fname, mode);
+    if (err != 0) {
+        return NULL;
+    }
+    return fptr;
+}
+#define _fopen_(fname, mode)   fn_fopen((fname), (mode))
+
 #else
+#define _fopen_(fname, mode)   fopen((fname), (mode))
 #define sscanf_s   sscanf
+
 #endif
+
 
 #ifndef HAVE_ZLIB_H
 #define HAVE_ZLIB_H 0
@@ -64,7 +78,7 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
 #else
   if(1){
 #endif
-    FILE *fp=fopen(fname,"wb");
+    FILE *fp=_fopen_(fname,"wb");
     if (fp==NULL) return -1;
     status=-1;
     if (FLAGS & CF_BIN){
