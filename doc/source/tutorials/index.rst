@@ -10,5 +10,6 @@ Tutorials on FabIO
    :maxdepth: 1
 
    convert_CBF
+   convert_tiff
    Nexus2cbf
    
