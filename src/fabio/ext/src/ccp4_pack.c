@@ -64,10 +64,23 @@
 
                                             Jan Pieter Abrahams, 6 Jan 1993   */
 
+#include <stdio.h>
 #if !defined(_CRT_SECURE_NO_DEPRECATE) && defined(_MSC_VER) && _MSC_VER >= 1300
 #define _CRT_SECURE_NO_DEPRECATE /* to avoid multiple Visual Studio warnings */
+FILE* fn_fopen(const char* fname, const char* mode)
+{
+    FILE* fptr;
+    errno_t err = fopen_s(&fptr, fname, mode);
+    if (err != 0) {
+        return NULL;
+    }
+    return fptr;
+}
+#define _fopen_(fname, mode)   fn_fopen((fname), (mode))
 #else
+#define _fopen_(fname, mode)   fopen((fname), (mode))
 #define sscanf_s   sscanf
+
 #endif
 
 
@@ -880,7 +893,8 @@ void pack_wordimage_c(
 		short int *img,
 		int x, int y,
 		char *filename){
-  FILE *packfile = fopen(filename, "ab");
+  printf("in pack_wordimage_c, open %s", filename)
+  FILE *packfile = _fopen_(filename, "ab");
   if (packfile == NULL) {
     fprintf(stderr,"The file %s cannot be created!\n   ...giving up...\n",
           filename);
