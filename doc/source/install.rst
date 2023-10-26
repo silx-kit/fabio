@@ -214,7 +214,13 @@ The newest development version can be obtained by checking it out from the git r
     pip install --upgrade -r requirements.txt --trusted-host www.silx.org
     python3 run_tests.py
     pip install .
+
+or without `pip`, replace the last line with:
+
+.. code-block:: shell 
     
+    python3 -m build --wheel
+    python3 -m installer dist/*.whl
 
 Automatic debian packaging
 ..........................
