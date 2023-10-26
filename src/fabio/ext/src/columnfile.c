@@ -1,6 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if !defined(_CRT_SECURE_NO_DEPRECATE) && defined(_MSC_VER) && _MSC_VER >= 1300
+#define _CRT_SECURE_NO_DEPRECATE /* to avoid multiple Visual Studio warnings */
+FILE* fn_fopen(const char* fname, const char* mode)
+{
+    FILE* fptr;
+    errno_t err = fopen_s(&fptr, fname, mode);
+    if (err != 0) {
+        return NULL;
+    }
+    return fptr;
+}
+#define _fopen_(fname, mode)   fn_fopen((fname), (mode))
+
+#else
+#define _fopen_(fname, mode)   fopen((fname), (mode))
+#define sscanf_s   sscanf
+
+#endif
+
 
 #ifndef HAVE_ZLIB_H
 #define HAVE_ZLIB_H 0
@@ -56,10 +75,10 @@ int cf_write(char *fname,void *cf_handle, unsigned int FLAGS){
     gzclose(gzfp);
     return status;
   }else{
-#else 
+#else
   if(1){
 #endif
-    FILE *fp=fopen(fname,"wb");
+    FILE *fp=_fopen_(fname,"wb");
     if (fp==NULL) return -1;
     status=-1;
     if (FLAGS & CF_BIN){
@@ -139,7 +158,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   }
 
   /*try to sscanf it using 32 conversions - if that doesn't work use pedestrian version*/
-  ncols=sscanf(line,hdr_ctl,repeat16_inc(clabels,0),repeat16_inc(clabels,16),*(clabels+32));
+  ncols=sscanf_s(line,hdr_ctl,repeat16_inc(clabels,0),repeat16_inc(clabels,16),*(clabels+32));
   if (ncols==32+1 || ncols==0){
     /*aha we probably didn't get it all*/
     /*step through buffer with char ptr and check for whitespace->non-ws slopes. when one is found read from pc-1 into header storage. exit when line is exhausted*/
@@ -155,7 +174,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
           *(clabels+ncols)=(char*)malloc(CF_HEADER_ITEM*sizeof(char));
           nc_alloc++;
         }
-        sscanf(p,"%s",*(clabels+ncols));
+        sscanf_s(p,"%s",*(clabels+ncols));
         ncols++;
       }
       p++;
@@ -182,7 +201,7 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   if (feof((FILE *)fp)) break;
 #endif
 
-    i=0;  
+    i=0;
     p=line;
 
     while (i<ncols && *p!='\0' && *p!='\n' && p<line+2048){

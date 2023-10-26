@@ -1,6 +1,13 @@
 Changelog
 =========
 
+FabIO-2023.10.0: 
+................
+- New tutorial on the ccreation of multiframe Tiff
+- Fix regression related to the depreciation of `fopen` on MSVC compilers (validation code)
+- Clean-up packaging
+- Support Python 3.7-3.12
+
 FabIO-2023.6.0: 
 ...............
 - Move source code to src

@@ -1,4 +1,4 @@
-version: 0.15-dev{build}
+version: 2023-10-dev{build}
 
 # fetch repository as zip archive
 shallow_clone: true
@@ -30,8 +30,8 @@ environment:
           PYTHON_ARCH: "64"
 
         # Python 3.8
-        - PYTHON_DIR: "C:\\Python38-x64"
-          PYTHON_ARCH: "64"
+        #- PYTHON_DIR: "C:\\Python38-x64"
+        #  PYTHON_ARCH: "64"
 
         # Python 3.9
         - PYTHON_DIR: "C:\\Python39-x64"
@@ -39,6 +39,10 @@ environment:
 
         # Python 3.10
         - PYTHON_DIR: "C:\\Python310-x64"
+          PYTHON_ARCH: "64"
+
+        # Python 3.11        
+        - PYTHON_DIR: "C:\\Python311-x64"
           PYTHON_ARCH: "64"
 
 

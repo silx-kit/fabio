@@ -27,7 +27,7 @@ __author__ = "V.A. Sole - ESRF"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/12/2022"
+__date__ = "26/10/2023"
 
 import sys
 import os
@@ -147,13 +147,13 @@ class TiffIO(object):
             self.fd = fd
         # read the order
         fd.seek(0)
-        order = fd.read(2).decode()
+        order = fd.read(2)
         if len(order):
-            if order == "II":
+            if order == b"II":
                 # intel, little endian
                 fileOrder = "little"
                 self._structChar = '<'
-            elif order == "MM":
+            elif order == b"MM":
                 # motorola, high endian
                 fileOrder = "big"
                 self._structChar = '>'

@@ -48,7 +48,7 @@ __authors__ = ["Jerome Kieffer", "Gael Goret", "Thomas Vincent"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2012-2020, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "11/12/2020"
+__date__ = "25/10/2023"
 
 from libc.stdint cimport int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t 
 
@@ -106,6 +106,7 @@ def compress_pck(image not None, bint use_CCP4=False):
     data = numpy.ascontiguousarray(image.ravel(), dtype=numpy.int16)
     if use_CCP4:
         (fd, fname) = tempfile.mkstemp()
+        os.close(fd)
         fname = fname.encode("ASCII")
         name = <char*> fname
         with nogil:
@@ -113,7 +114,6 @@ def compress_pck(image not None, bint use_CCP4=False):
         with open(name, "rb") as f:
             f.seek(0)
             output = f.read()
-        os.close(fd)
         os.unlink(fname)
     else:
         output = ("\nCCP4 packed image, X: %04d, Y: %04d\n" % (dim1, dim0)).encode("ASCII")

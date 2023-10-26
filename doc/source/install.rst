@@ -276,9 +276,9 @@ Within Python (or ipython):
 Test coverage
 .............
 
-FabIO comes with 54 test-suites (347 tests in total) representing a coverage of 75%.
+FabIO comes with 58 test-suites (360 tests in total) representing a coverage of 79%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (64 bits, in 32 bits your milleage may vary) with Python versions 3.6 to 3.10.
+FabIO runs under Linux, MacOSX and Windows (64 bits, in 32 bits your milleage may vary) with Python versions 3.7 to 3.12.
 Under linux it has been tested on x86_64, arm64, ppc64le.
 FabIO may run on other untested systems but without warranty.
 
