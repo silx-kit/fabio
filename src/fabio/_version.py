@@ -4,7 +4,7 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-20230 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2023 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -76,9 +76,9 @@ PRERELEASE_NORMALIZED_NAME = {"dev": "a",
                               "candidate": "rc"}
 
 MAJOR = 2023
-MINOR = 10
+MINOR = 11
 MICRO = 0
-RELEV = "final"  # <16
+RELEV = "dev"  # <16
 SERIAL = 0  # <16
 date = __date__
 
