@@ -289,7 +289,8 @@ class ExternalResources(object):
 
             if not gz_file_exists:
                 try:
-                    gzip.open(fullimagename_gz, "wb").write(decompressed)
+                    with gzip.open(fullimagename_gz, "wb") as g: 
+                        g.write(decompressed)
                 except IOError:
                     raise IOError("unable to write gzipped \
                     data to disk at %s" % self.data_home)
