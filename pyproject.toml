@@ -62,7 +62,7 @@ requires = [
 ]
 
 [project.urls]
-homepage = 'http://silx.org'
+homepage = 'http://www.silx.org'
 documentation = 'http://www.silx.org/doc/fabio/latest/'
 source = 'https://github.com/silx-kit/fabio'
 download = 'https://github.com/silx-kit/fabio/releases'
