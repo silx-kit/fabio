@@ -151,7 +151,7 @@ def do_magic(byts, filename):
                     else:
                         return "tif"
 
-            if format_type == "edf":
+            if format_type == "edf" and isinstance(filename, str):
                 # Might be GE with an EDF header
                 # If the extension is `ge` plus a number, assume it is GE
                 extension = filename.split(".")[-1]
