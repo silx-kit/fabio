@@ -42,6 +42,7 @@ mods for APS GE by JVB
 
 import os.path
 import logging
+import re
 from . import fabioutils
 from .fabioutils import FilenameObject, BytesIO
 from .fabioimage import FabioImage
@@ -149,6 +150,14 @@ def do_magic(byts, filename):
                         return "marccd"
                     else:
                         return "tif"
+
+            if format_type == "edf":
+                # Might be GE with an EDF header
+                # If the extension is `ge` plus a number, assume it is GE
+                extension = filename.split(".")[-1]
+                if re.search(r'^ge\d*$', extension):
+                    return "GE"
+
             return format_type
     raise Exception("Could not interpret magic string")
 
