@@ -1,7 +1,7 @@
 # coding: utf-8
 # /*##########################################################################
 #
-# Copyright (c) 2016-2017 European Synchrotron Radiation Facility
+# Copyright (c) 2016-2024 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,16 @@
 # ###########################################################################*/
 """Bunch of useful decorators"""
 
-__authors__ = ["Jerome Kieffer", "H. Payno", "P. Knobel"]
+__authors__ = ["Jérôme Kieffer", "H. Payno", "P. Knobel"]
 __license__ = "MIT"
-__date__ = "18/12/2020"
+__date__ = "15/03/2024"
 
 import logging
 import functools
 import traceback
 import re
-from .. import _version
+
+from ..version import calc_hexversion, hexversion as ref_hexversion
 
 depreclog = logging.getLogger("fabio.DEPRECATION")
 
@@ -54,7 +55,7 @@ def hexversion_fromstring(string):
         releaselevel = result[3]
         if releaselevel is None:
             releaselevel = 0
-    return _version.calc_hexversion(major, minor, micro, releaselevel, serial=0)
+    return calc_hexversion(major, minor, micro, releaselevel, serial=0)
 
 
 def deprecated(func=None, reason=None, replacement=None, since_version=None,
@@ -154,7 +155,7 @@ def deprecated_warning(type_, name, reason=None, replacement=None,
                 deprecated_since = hexversion
             else:
                 deprecated_since = _CACHE_VERSIONS[deprecated_since]
-        log_as_debug = _version.hexversion < deprecated_since
+        log_as_debug = ref_hexversion < deprecated_since
     else:
         log_as_debug = False
 

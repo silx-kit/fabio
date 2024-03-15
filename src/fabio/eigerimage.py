@@ -2,7 +2,7 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2024 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,7 +45,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "05/07/2022"
+__date__ = "15/03/2024"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -184,7 +184,7 @@ class EigerImage(FabioImage):
             for i, ds in enumerate(self.dataset):
                 if ds is None:
                     # we are in a trouble
-                    data = numpy.atleast_2d(numpy.NaN)
+                    data = numpy.atleast_2d(numpy.nan)
                 elif isinstance(ds, h5py.Dataset):
                     data = numpy.atleat_2d(ds[()])
                 else:

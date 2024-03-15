@@ -56,7 +56,7 @@ except:
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinxcontrib.programoutput',
-              "nbsphinx"
+              'nbsphinx'
               ]
 
 # Set the theme to sphinx_rtd_theme when *not* building on Read The Docs.
