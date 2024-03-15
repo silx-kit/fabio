@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "23/02/2023"
+__date__ = "15/03/2024"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -401,7 +401,7 @@ class Converter:
         ":param full: complete/slow mask analysis"
         if self.progress:
             self.progress.update(self.progress.max_value - 1, "Generate mask")
-        dummy_value = numpy.cast[self.mask.dtype](-1)
+        dummy_value = numpy.asarray(-numpy.ones(1), dtype=self.mask.dtype)[-1] #-1 in the given datatype
         mask = (self.mask==dummy_value).astype(numpy.int8)
         esperantoimage.EsperantoImage.DUMMY = 1
         new_mask = self.geometry_transform(esperantoimage.EsperantoImage(data=mask).data)

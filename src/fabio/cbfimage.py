@@ -245,7 +245,7 @@ class CbfImage(FabioImage):
             return binary_data
 
         if ("Content-MD5" in self.header) and check_MD5:
-                ref = numpy.string_(self.header["Content-MD5"])
+                ref = numpy.bytes_(self.header["Content-MD5"])
                 obt = md5sum(binary_data)
                 if ref != obt:
                     logger.error("Checksum of binary data mismatch: expected %s, got %s" % (ref, obt))
@@ -294,14 +294,14 @@ class CbfImage(FabioImage):
                         b"Content-Type: application/octet-stream;",
                         b'     conversions="x-CBF_BYTE_OFFSET"',
                         b'Content-Transfer-Encoding: BINARY',
-                        numpy.string_("X-Binary-Size: %d" % (len(binary_blob))),
+                        numpy.bytes_("X-Binary-Size: %d" % (len(binary_blob))),
                         b"X-Binary-ID: 1",
-                        numpy.string_('X-Binary-Element-Type: "%s"' % (dtype)),
+                        numpy.bytes_('X-Binary-Element-Type: "%s"' % (dtype)),
                         b"X-Binary-Element-Byte-Order: LITTLE_ENDIAN",
                         b"Content-MD5: " + md5sum(binary_blob),
-                        numpy.string_("X-Binary-Number-of-Elements: %d" % (dim1 * dim2)),
-                        numpy.string_("X-Binary-Size-Fastest-Dimension: %d" % dim1),
-                        numpy.string_("X-Binary-Size-Second-Dimension: %d" % dim2),
+                        numpy.bytes_("X-Binary-Number-of-Elements: %d" % (dim1 * dim2)),
+                        numpy.bytes_("X-Binary-Size-Fastest-Dimension: %d" % dim1),
+                        numpy.bytes_("X-Binary-Size-Second-Dimension: %d" % dim2),
                         b"X-Binary-Size-Padding: 1",
                         b"",
                         self.STARTER + binary_blob,
@@ -354,22 +354,22 @@ class CIF(dict):
     keys are always unicode (str in python3)
     values are bytes
     """
-    EOL = [numpy.string_(i) for i in ("\r", "\n", "\r\n", "\n\r")]
-    BLANK = [numpy.string_(i) for i in (" ", "\t")] + EOL
-    SINGLE_QUOTE = numpy.string_("'")
-    DOUBLE_QUOTE = numpy.string_('"')
-    SEMICOLUMN = numpy.string_(';')
-    DOT = numpy.string_('.')
+    EOL = [numpy.bytes_(i) for i in ("\r", "\n", "\r\n", "\n\r")]
+    BLANK = [numpy.bytes_(i) for i in (" ", "\t")] + EOL
+    SINGLE_QUOTE = numpy.bytes_("'")
+    DOUBLE_QUOTE = numpy.bytes_('"')
+    SEMICOLUMN = numpy.bytes_(';')
+    DOT = numpy.bytes_('.')
     START_COMMENT = (SINGLE_QUOTE, DOUBLE_QUOTE)
-    BINARY_MARKER = numpy.string_("--CIF-BINARY-FORMAT-SECTION--")
-    HASH = numpy.string_("#")
-    LOOP = numpy.string_("loop_")
+    BINARY_MARKER = numpy.bytes_("--CIF-BINARY-FORMAT-SECTION--")
+    HASH = numpy.bytes_("#")
+    LOOP = numpy.bytes_("loop_")
     UNDERSCORE = ord("_")
-    QUESTIONMARK = numpy.string_("?")
-    STOP = numpy.string_("stop_")
-    GLOBAL = numpy.string_("global_")
-    DATA = numpy.string_("data_")
-    SAVE = numpy.string_("save_")
+    QUESTIONMARK = numpy.bytes_("?")
+    STOP = numpy.bytes_("stop_")
+    GLOBAL = numpy.bytes_("global_")
+    DATA = numpy.bytes_("data_")
+    SAVE = numpy.bytes_("save_")
 
     def __init__(self, _strFilename=None):
         """
@@ -416,7 +416,7 @@ class CIF(dict):
         else:
             raise RuntimeError("CIF.loadCIF: what is %s type %s" % (_strFilename, type(_strFilename)))
         if _bKeepComment:
-            self._parseCIF(numpy.string_(infile.read()))
+            self._parseCIF(numpy.bytes_(infile.read()))
         else:
             self._parseCIF(CIF._readCIF(infile))
         if own_fd:
@@ -454,13 +454,13 @@ class CIF(dict):
         if "read" not in dir(instream):
             raise RuntimeError("CIF._readCIF(instream): I expected instream to be an opened file,\
              here I got %s type %s" % (instream, type(instream)))
-        out_bytes = numpy.string_("")
+        out_bytes = numpy.bytes_("")
         for sLine in instream:
-            nline = numpy.string_(sLine)
+            nline = numpy.bytes_(sLine)
             pos = nline.find(cls.HASH)
             if pos >= 0:
                 if cls.isAscii(nline):
-                    out_bytes += nline[:pos] + numpy.string_(os.linesep)
+                    out_bytes += nline[:pos] + numpy.bytes_(os.linesep)
                 if pos > 80:
                     logger.warning("This line is too long and could cause problems in PreQuest: %s", sLine)
             else:
@@ -535,7 +535,7 @@ class CIF(dict):
                     idx += 1 + bytes_text[idx + 1:].find(cls.SINGLE_QUOTE)
                     if idx >= len(bytes_text) - 1:
                         fields.append(bytes_text[1:-1].strip())
-                        bytes_text = numpy.string_("")
+                        bytes_text = numpy.bytes_("")
                         finished = True
                         break
 
@@ -552,7 +552,7 @@ class CIF(dict):
                     idx += 1 + bytes_text[idx + 1:].find(cls.DOUBLE_QUOTE)
                     if idx >= len(bytes_text) - 1:
                         fields.append(bytes_text[1:-1].strip())
-                        bytes_text = numpy.string_("")
+                        bytes_text = numpy.bytes_("")
                         finished = True
                         break
 
@@ -594,7 +594,7 @@ class CIF(dict):
                     bytes_text = bytes_text[end_binary:].strip()
                 else:
                     fields.append(bytes_text)
-                    bytes_text = numpy.string_("")
+                    bytes_text = numpy.bytes_("")
                     break
         return fields
 

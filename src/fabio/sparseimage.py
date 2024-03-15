@@ -3,7 +3,7 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright 2020-2021(C) European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright 2020-2024(C) European Synchrotron Radiation Facility, Grenoble, France
 #
 #  Permission is hereby granted, free of charge, to any person
 #  obtaining a copy of this software and associated documentation files
@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "09/02/2023"
+__date__ = "15/03/2024"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -183,7 +183,7 @@ class SparseImage(FabioImage):
             self.dummy = self.intensity.dtype.type(nx_data["dummy"][()])
         except KeyError:
             if self.intensity.dtype.char in numpy.typecodes['AllFloat']:
-                self.dummy = numpy.NaN
+                self.dummy = numpy.nan
             else:
                 self.dummy = 0
             

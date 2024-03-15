@@ -816,6 +816,7 @@ class FabioImage(_FabioArray):
             fobj.seek(0)
         elif self._need_a_seek_to_read and mode[0] == "r":
             fo = python_uncompress(fname, mode)
+            print(fname, mode, fo)
             fobj = fabioutils.BytesIO(fo.read(), fname, mode)
         else:
             fobj = python_uncompress(fname, mode)
