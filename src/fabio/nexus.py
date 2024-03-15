@@ -29,11 +29,11 @@ Stand-alone module which tries to offer interface to HDF5 via H5Py
 
 """
 
-__author__ = "Jerome Kieffer"
+__author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "28/04/2021"
+__date__ = "15/03/2024"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
 
@@ -44,7 +44,7 @@ import os
 import time
 import numpy
 from .fabioutils import exists
-from ._version import version
+from .version import version
 
 logger = logging.getLogger(__name__)
 try:

@@ -28,7 +28,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "21/06/2023"
+__date__ = "15/03/2024"
 __status__ = "stable"
 
 import sys
@@ -39,8 +39,7 @@ if "ps1" in dir(sys):
     logging.basicConfig()
 
 import os
-from ._version import __date__ as date  # noqa
-from ._version import version, version_info, hexversion, strictversion  # noqa
+from .version import __date__ as date, version, version_info, hexversion, strictversion  # noqa
 from . import fabioformats as _fabioformats
 
 # provide a global fabio API

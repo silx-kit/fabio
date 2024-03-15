@@ -6,7 +6,6 @@ subdir('test')
 subdir('utils')
 
 py.install_sources([
-	'_version.py',
 	'adscimage.py',
 	'binaryimage.py',
 	'bruker100image.py',

@@ -2,7 +2,7 @@ project('FabIO',
   'c', 'cython',
   license: 'MIT',
   meson_version: '>= 0.60',
-  version: run_command('src/fabio/_version.py',
+  version: run_command(['version.py', '--wheel'],
   			           check:true).stdout().strip(),
 )
 
@@ -13,6 +13,7 @@ if meson.backend() != 'ninja'
 endif
 
 cc = meson.get_compiler('c')
+cy = meson.get_compiler('cython')
 m_dep = cc.find_library('m', required : false)
 if m_dep.found()
   add_project_link_arguments('-lm', language : 'c')
@@ -22,5 +23,12 @@ endif
 py_mod = import('python')
 py = py_mod.find_installation()
 py_dep = py.dependency()
+
+py.install_sources([
+    'version.py',
+],
+  pure: false,    # Will be installed next to binaries
+  subdir: 'fabio'  # Folder relative to site-packages to install to
+)
 
 subdir('src/fabio')
