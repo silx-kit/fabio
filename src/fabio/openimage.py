@@ -44,6 +44,7 @@ import os.path
 import logging
 import re
 from . import fabioutils
+from .compression import ExternalCompressors
 from .fabioutils import FilenameObject, BytesIO
 from .fabioimage import FabioImage
 
@@ -152,9 +153,13 @@ def do_magic(byts, filename):
                         return "tif"
 
             if format_type == "edf" and isinstance(filename, str):
-                # Might be GE with an EDF header
-                # If the extension is `ge` plus a number, assume it is GE
+                # Might be GE with an EDF header. Check the extension.
                 extension = filename.split(".")[-1]
+                # If it is a compression extension, check the next one up.
+                if f'.{extension}' in ExternalCompressors.COMMANDS:
+                    extension = filename.split(".")[-2]
+
+                # If the extension is `ge` plus a number, assume it is GE
                 if re.search(r'^ge\d*$', extension):
                     return "GE"
 
