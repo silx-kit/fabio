@@ -53,6 +53,7 @@ class TestGE(unittest.TestCase):
         ("GE_aSI_detector_image_1529", (2048, 2048), (1515, 16353, 1833.0311, 56.9124)),
         ("GE_image_1frame_intact_header.ge", (2048, 2048), (1515, 16353, 2209.1113, 437.6377)),
         ("GE_image_1frame_blanked_header.ge", (2048, 2048), (1300, 16349, 1886.41111, 117.0603)),
+        ("dark_before_000428.edf.ge5", (2048, 2048), (1300, 16349, 1833.87892, 84.5265)),
     ]
 
     def setUp(self):

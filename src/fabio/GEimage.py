@@ -41,8 +41,12 @@ __licence__ = "MIT"
 import io
 import numpy
 import struct
+from .edfimage import EdfImage
 from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
+from .openimage import MAGIC_NUMBERS
+
+EDF_MAGIC_NUMBERS = [(x, y) for x, y in MAGIC_NUMBERS if y == 'edf']
 
 GE_HEADER_INFO = [
     # Name, length in bytes, format for struct (None means string)
@@ -265,6 +269,20 @@ class GeImage(FabioImage):
                     raise IOError("GE file size is incorrect")
                 nframes = file_size // bytes_per_frames
                 self.header['NumberOfFrames'] = nframes
+        elif any(self.header["ImageFormat"].startswith(x) for x, _ in EDF_MAGIC_NUMBERS):
+            # At APS, they started saving some GE headers with an EDF format in ~2022
+
+            # Use the same metadata as the blank header...
+            self.header.update(self.BLANKED_HEADER_METADATA)
+
+            # Read the EDF header
+            cur = infile.tell()
+            infile.seek(0)
+            header = EdfImage._read_header_block(infile, 1)
+            infile.seek(cur, io.SEEK_SET)
+
+            # Extract any needed info from the EDF header
+            self.header['NumberOfFrames'] = int(header[0]["Num_Images"])
 
     def read(self, fname, frame=None):
         """Read header into self.header and the data into self.data."""
