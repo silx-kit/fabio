@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "15/03/2024"
+__date__ = "19/03/2024"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -82,7 +82,11 @@ def densify(mask,
     :param seed: numerical seed for random number generator
     :return dense array
     """
-    dense = numpy.interp(mask, radius, background)
+    dtype = intensity.dtype
+    if radius is None or background is None:
+        dense = numpy.zeros(radius.shape, dtype=dtype)
+    else:
+        dense = numpy.interp(mask, radius, background)
     if background_std is not None:
         if seed is not None:
             numpy.random.seed(seed)
@@ -93,7 +97,7 @@ def densify(mask,
 
     flat = dense.ravel()
     flat[index] = intensity
-    dtype = intensity.dtype
+    
     if numpy.issubdtype(dtype, numpy.integer):
         # Foolded by banker's rounding !!!!
         dense +=0.5
@@ -173,9 +177,13 @@ class SparseImage(FabioImage):
             raise NotGoodReader("HDF5 file does not contain any default NXdata.")
         nx_data = entry[default_data]
         self.mask = nx_data["mask"][()]
-        self.radius = nx_data["radius"][()]
-        self.background_avg = nx_data["background_avg"][()]
-        self.background_std = nx_data["background_std"][()]
+        try:
+            self.radius = nx_data["radius"][()]
+            self.background_avg = nx_data["background_avg"][()]
+            self.background_std = nx_data["background_std"][()]
+        except KeyError:
+            logger.info("No background information found")
+            self.radius = self.background_avg = self.background_std = None  
         self.frame_ptr = nx_data["frame_ptr"][()]
         self.index = nx_data["index"][()]
         self.intensity = nx_data["intensity"][()]
@@ -205,19 +213,29 @@ class SparseImage(FabioImage):
             logger.warning("Not data have been read from disk")
             return
         start, stop = self.frame_ptr[index:index + 2]
-        if cython_densify is not None:
-            return cython_densify.densify(self.mask,
-                                 self.radius,
-                                 self.index[start:stop],
-                                 self.intensity[start:stop],
-                                 self.dummy,
-                                 self.intensity.dtype,
-                                 self.background_avg[index],
-                                 self.background_std[index] * self.noisy if self.noisy else None,
-                                 self.normalization)
+        if self.radius is None:
+            if cython_densify is None:  # Numpy implementation
+                dense = densify(self.mask,
+                                None,
+                                self.index[start:stop],
+                                self.intensity[start:stop],
+                                self.dummy,
+                                None,
+                                None,
+                                self.normalization)
+            else:  # Cython
+                dense = cython_densify.densify(self.mask,
+                                               None,
+                                               self.index[start:stop],
+                                               self.intensity[start:stop],
+                                               self.dummy,
+                                               self.intensity.dtype,
+                                               None,
+                                               None,
+                                               self.normalization)
         else:
-            # Fall-back on numpy code.
-            return densify(self.mask,
+            if cython_densify is None:  # Numpy
+                dense = densify(self.mask,
                            self.radius,
                            self.index[start:stop],
                            self.intensity[start:stop],
@@ -225,7 +243,18 @@ class SparseImage(FabioImage):
                            self.background_avg[index],
                            self.background_std[index] * self.noisy if self.noisy else None,
                            self.normalization)
-
+            else:
+                dense = cython_densify.densify(self.mask,
+                                               self.radius,
+                                               self.index[start:stop],
+                                               self.intensity[start:stop],
+                                               self.dummy,
+                                               self.intensity.dtype,
+                                               self.background_avg[index],
+                                               self.background_std[index] * self.noisy if self.noisy else None,
+                                               self.normalization)
+        return dense
+    
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:

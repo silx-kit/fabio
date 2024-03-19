@@ -8,7 +8,7 @@
 #    Project: Fable Input/Output
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2020-2023 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2020-2024 European Synchrotron Radiation Facility, Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "20/10/2023"  
+__date__ = "19/03/2024"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -249,12 +249,15 @@ def densify(cython.floating[:,::1] mask,
     cdef:
         Py_ssize_t i, j, size, pos, size_over, width, height
         double value, fres, fpos, idelta, start, std
-        bint integral, noisy, do_normalization=False
+        bint integral, noisy, do_normalization=False, do_background=True
         any_t[:, ::1] dense
         float[:,::1] c_normalization
         MT mt
-    size = radius.shape[0]
-    assert background.shape[0] == size
+    if radius is None:
+        do_background = False
+    else:
+        size = radius.shape[0]
+        assert background.shape[0] == size
     size_over = index.shape[0]
     assert intensity.shape[0] == size_over
     integral = numpy.issubdtype(dtype, numpy.integer)
@@ -277,36 +280,37 @@ def densify(cython.floating[:,::1] mask,
         mt = MT(seed)
                 
     with nogil:
-        start = radius[0]
-        idelta = <double>(size - 1)/(radius[size-1] - start)  
-        
-        #Linear interpolation
-        for i in range(height):
-            for j in range(width):
-                fpos = (mask[i,j] - start)*idelta
-                if (fpos<0) or (fpos>=size) or (not isfinite(fpos)):
-                    dense[i,j] = dummy 
-                else:
-                    pos = <uint32_t> fpos
-                    if pos+1 == size:
-                        value = background[pos]
-                        fres = 0.0
+        if do_background:
+            start = radius[0]
+            idelta = <double>(size - 1)/(radius[size-1] - start)  
+            
+            #Linear interpolation
+            for i in range(height):
+                for j in range(width):
+                    fpos = (mask[i,j] - start)*idelta
+                    if (fpos<0) or (fpos>=size) or (not isfinite(fpos)):
+                        dense[i,j] = dummy 
                     else:
-                        fres = fpos - pos
-                        value = (1.0 - fres)*background[pos] + fres*background[pos+1]
-                    if noisy:
+                        pos = <uint32_t> fpos
                         if pos+1 == size:
-                            std = background_std[pos]
+                            value = background[pos]
                             fres = 0.0
                         else:
-                            std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
-                        value = max(0.0, mt._normal_m(value, std))
-                    if do_normalization:
-                        value *= c_normalization[i, j]
-                    if integral:
-                        dense[i,j] =  <any_t>(value + 0.5) #this is rounding
-                    else:
-                        dense[i,j] =  <any_t>(value) 
+                            fres = fpos - pos
+                            value = (1.0 - fres)*background[pos] + fres*background[pos+1]
+                        if noisy:
+                            if pos+1 == size:
+                                std = background_std[pos]
+                                fres = 0.0
+                            else:
+                                std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
+                            value = max(0.0, mt._normal_m(value, std))
+                        if do_normalization:
+                            value *= c_normalization[i, j]
+                        if integral:
+                            dense[i,j] =  <any_t>(value + 0.5) #this is rounding
+                        else:
+                            dense[i,j] =  <any_t>(value) 
         # Assignment of outliers
         for i in range(size_over):
             j = index[i]
