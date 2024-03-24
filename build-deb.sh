@@ -29,9 +29,9 @@
 
 project=fabio
 source_project=fabio
-version=$(PYTHONPATH=src/fabio python3 -c"import _version; print(_version.version)")
-strictversion=$(PYTHONPATH=src/fabio python3 -c"import _version; print(_version.strictversion)")
-debianversion=$(PYTHONPATH=src/fabio python3 -c"import _version; print(_version.debianversion)")
+version=$(PYTHONPATH=src/fabio python3 -c"import version; print(version.version)")
+strictversion=$(PYTHONPATH=src/fabio python3 -c"import version; print(version.strictversion)")
+debianversion=$(PYTHONPATH=src/fabio python3 -c"import version; print(version.debianversion)")
 
 deb_name=$(echo "$source_project" | tr '[:upper:]' '[:lower:]')
 
