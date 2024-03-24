@@ -81,7 +81,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-from fabio._version import strictversion, version, __date__ as fabio_date
+from fabio.version import strictversion, version, __date__ as fabio_date
 
 year = fabio_date.split("/")[-1]
 copyright = u'2006-%s, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer' % (year)
