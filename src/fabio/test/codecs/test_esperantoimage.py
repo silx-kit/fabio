@@ -134,7 +134,7 @@ class TestEsperanto(unittest.TestCase):
     def test_values(self):
         esp = fabio.open(UtilsTest.getimage("reference.esperanto.bz2")[:-4])
         npy = fabio.open(UtilsTest.getimage("reference.npy.bz2")[:-4])
-        self.assertEqual(numpy.alltrue(esp.data == npy.data), True, "Images are the same")
+        self.assertEqual(numpy.all(esp.data == npy.data), True, "Images are the same")
 
 
 def suite():
