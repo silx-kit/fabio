@@ -482,7 +482,7 @@ class OxdImage(FabioImage):
         dim2 = self._shape[0]
         while pos_inp < stream_size and pos_out < array_size:
             if pos_out % dim2 == 0:
-                last = 0
+                last = numpy.int64(0)
             else:
                 last = current
             value = raw[pos_inp]
