@@ -57,6 +57,8 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
+      - name: Install pandoc&graphviz
+        run: sudo apt-get install pandoc graphviz
       - name: Install fabio
         run: pip install .
       - name: Install documentation dependencies
