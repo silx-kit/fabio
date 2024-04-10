@@ -58,9 +58,12 @@ jobs:
           python-version: "3.12"
           cache: "pip"
       - name: Install fabio
-        run: |
-          pip install .
+        run: pip install .
+      - name: Install documentation dependencies
+        run: pip install -r requirements.txt
       - name: Build doc
+        env:
+          READTHEDOCS: "True"  # To skip checking that fabio is installed locally
         run: |
           export FABIO_VERSION="$(python -c 'import fabio; print(fabio.strictversion)')"
           sphinx-build doc/source/ "fabio-${FABIO_VERSION}_documentation/"
