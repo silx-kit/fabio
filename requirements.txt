@@ -11,3 +11,4 @@ hdf5plugin
 sphinx
 sphinxcontrib-programoutput
 sphinx-rtd-theme
+nbsphinx
