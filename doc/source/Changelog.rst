@@ -1,6 +1,15 @@
 Changelog
 =========
 
+FabIO-2024.4.0: 
+................
+- Support for new style GE-files (contribution from Patrick Avery)
+- Support sparse frames without background
+- Fix documentation (Thanks Wout)
+- Automatize the release (Thanks Thomas)
+- Support for Numpy v2.0
+- Support Python 3.7-3.12
+
 FabIO-2023.10.0: 
 ................
 - New tutorial on the ccreation of multiframe Tiff
