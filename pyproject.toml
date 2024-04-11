@@ -55,8 +55,6 @@ requires = [
     'ninja',
     'wheel',
     'Cython>=0.29',
-    "numpy<1.26.0; platform_machine == 'ppc64le'",
-    "numpy; platform_machine != 'ppc64le'",
     'pyproject-metadata>=0.5.0',
     'tomli>=1.0.0'
 ]
