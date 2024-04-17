@@ -38,3 +38,7 @@ override_dh_installdocs:
 	python3 build-doc.py
 	dh_installdocs "build/sphinx" -p fabio-doc
 	dh_installdocs
+
+override_dh_sphinxdoc:
+	dh_sphinxdoc -X searchtools.js
+
