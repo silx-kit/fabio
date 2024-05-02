@@ -34,6 +34,7 @@ py.install_sources([
 	'jpeg2kimage.py',
 	'jpegimage.py',
 	'kcdimage.py',
+	'lambdaimage.py',
 	'limaimage.py',
 	'mar345image.py',
 	'marccdimage.py',
