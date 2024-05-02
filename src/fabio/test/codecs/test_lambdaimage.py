@@ -29,6 +29,8 @@
 """Test lambda images
 """
 
+import os
+import numpy
 import fabio.lambdaimage
 from fabio.openimage import openimage 
 from ..utilstest import UtilsTest
@@ -58,9 +60,8 @@ class TestLambda(unittest.TestCase):
             shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
             obj = fabio.lambdaimage.LambdaImage()
-            print(UtilsTest.getimage(name))
-            obj.read(UtilsTest.getimage(name))
-            print(obj)
+            filename =UtilsTest.getimage(name) 
+            obj.read(filename)
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
@@ -68,12 +69,19 @@ class TestLambda(unittest.TestCase):
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
 
             self.assertEqual(shape, obj.shape, "dim1")
-
-    def test_values(self):
-        """read file using fabio.open"""
+                     
+    def test_write(self):
+        """read file using fabio.open and save and reopen ... check consistency"""
         for params in self.TESTIMAGES:
-            self.assertEqual(openimage(UtilsTest.getimage(params[0])).shape, params[2:0:-1])
-        
+            fname = UtilsTest.getimage(params[0])
+            obj = openimage(fname)
+            self.assertEqual(obj.shape, params[2:0:-1])
+ 
+            dst = os.path.join(UtilsTest.tempdir, os.path.basename(fname))
+            obj.write(dst)
+            for idx, read_back in enumerate(openimage(dst)):
+                self.assertTrue(numpy.all(read_back.data == obj.getframe(idx).data), f"data are the same {fname} #{idx}")  
+
         
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
