@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "10/02/2023"
+__date__ = "02/05/2024"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -91,6 +91,7 @@ _default_codecs = [
     ("mrcimage", "MrcImage"),
     ("esperantoimage", "EsperantoImage"),
     ("limaimage", "LimaImage"),
+    ("lambdaimage", "LambdaImage"),
     # For compatibility (maybe not needed)
     ("adscimage", "AdscImage"),
     ("sparseimage", "SparseImage"),

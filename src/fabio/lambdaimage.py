@@ -63,6 +63,7 @@ class LambdaImage(FabioImage):
     DESCRIPTION = "HDF5 file produces by Lambda"
 
     DEFAULT_EXTENSIONS = ["h5", "hdf5", "nxs"]
+    DETECTOR_GRP = "/entry/instrument/detector"
 
     def __init__(self, data=None, header=None):
         """
@@ -113,10 +114,10 @@ class LambdaImage(FabioImage):
     data = property(get_data, set_data)
 
     def __repr__(self):
-        if self.h5 is not None:
-            return "Lambdanexus dataset with %i frames from %s" % (self.nframes, self.h5.filename)
-        else:
+        if self.h5 is None:
             return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
+        else:
+            return "Lambda/nexus dataset with %i frames from %s" % (self.nframes, self.h5.filename)
 
     def _readheader(self, infile):
         """
@@ -126,15 +127,19 @@ class LambdaImage(FabioImage):
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
-        entry_name = "entry"
-        instrument_name = "instrument"
-        detector_name = "detector"
-        data_path = posixpath.join(entry_name, instrument_name, detector_name, "data")
-        description_path = posixpath.join(entry_name, instrument_name, detector_name, "description")
-        name_path = posixpath.join(entry_name, instrument_name, detector_name, "local_name")
+        data_path = posixpath.join(self.DETECTOR_GRP, "data")
+        description_path = posixpath.join(self.DETECTOR_GRP, "description")
+        name_path = posixpath.join(self.DETECTOR_GRP, "local_name")
         with h5py.File(infile, mode="r") as h5:
-            if not (data_path in h5 and description_path in h5 and h5[description_path][()] == "Lambda") :
+            if not (data_path in h5 and description_path in h5):
                 raise NotGoodReader("HDF5's does not look like a Lambda-detector NeXus file.")
+            description = h5[description_path][()]
+            if isinstance(description, bytes):
+                description = description.decode()
+            else:
+                description = str(description)
+            if description != "Lambda":
+                raise NotGoodReader("Nexus file does not look like it has been written by a Lambda-detector.")
             if name_path in h5:
                 self.header["detector"] = str(h5[name_path][()]) 
             else:
@@ -156,21 +161,11 @@ class LambdaImage(FabioImage):
         self.dataset = None
         # read the image data
         self.h5 = h5py.File(fname, mode="r")
-        entry_name = self.h5.attrs.get("default")
-        if entry_name is None:
-            raise NotGoodReader("HDF5 file does not contain any default entry.")
-        if entry_name in self.h5:
-            entry = self.h5[entry_name]
+        data_path = posixpath.join(self.DETECTOR_GRP, "data")
+        if data_path in self.h5:
+            ds = self.h5[data_path]
         else:
             raise NotGoodReader("HDF5's default entry does not exist.")
-        if "measurement" in entry:
-            measurement = entry["measurement"]
-        else:
-            raise NotGoodReader("HDF5's default entry has no measurement group.")
-        if "data" in measurement:
-            ds = measurement["data"]
-        else:
-            raise NotGoodReader("HDF5's measurement group has no dataset.")
         self.dataset = ds
         self._nframes = ds.shape[0]
 

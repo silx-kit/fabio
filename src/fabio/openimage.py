@@ -96,7 +96,7 @@ MAGIC_NUMBERS = [
     (b"No", "kcd"),
     (b"<", "xsd"),
     (b"\n\xb8\x03\x00", 'pixi'),
-    (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/lima/sparse/hdf5"),
+    (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/lima/sparse/hdf5/lambda"),
     (b"R-AXIS", 'raxis'),
     (b"\x93NUMPY", 'numpy'),
     (b"\\$FFF_START", 'fit2d'),
@@ -118,11 +118,12 @@ def do_magic(byts, filename):
     for magic, format_type in MAGIC_NUMBERS:
         if byts.startswith(magic):
             if "/" in format_type:
-                if format_type == "eiger/lima/sparse/hdf5":
+                if format_type == "eiger/lima/sparse/hdf5/lambda":
                     if "::" in filename:
                         return "hdf5"
                     else:
-                        # check if the creator is LIMA
+                        # check if the creator is LIMA or other
+                        lambda_path = "/entry/instrument/detector/description"
                         import h5py
                         with h5py.File(filename, "r") as h:
                             creator = h.attrs.get("creator")
@@ -144,6 +145,8 @@ def do_magic(byts, filename):
                                 return "lima"
                             elif str(creator).startswith("pyFAI"):
                                 return "sparse"
+                            elif lambda_path in h and h[lambda_path][()].decode() == "Lambda":
+                                return "lambda"
                             else:
                                 return "eiger"
                 elif format_type == "marccd/tif":

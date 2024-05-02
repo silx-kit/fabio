@@ -29,21 +29,22 @@
 """Test lambda images
 """
 
-import os
 import fabio.lambdaimage
+from fabio.openimage import openimage 
 from ..utilstest import UtilsTest
 
 import unittest
 import logging
-import numpy
 logger = logging.getLogger(__name__)
 
 
 class TestLambda(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
     TESTIMAGES = [
-        ("l1_test02_00002_master.nxs.bz2", 2048, 2048, -173, 66043, 16.31592893600464, 266.4471326013064),  # WIP
-        ("l1_test02_00002_m01.nxs.bz2", 256, 256, -1, 10963, 1.767120361328125, 50.87154169213312) # WIP
+        ("l1_test02_00002_m01.nxs", 1554, 516, 0, 548, 0.00, 0.81024), # WIP
+        ("l1_test02_00002_m02.nxs", 1554, 516, 0, 0, 0.0, 0.0), # WIP
+        ("l1_test02_00002_m03.nxs", 1554, 516, 0, 45, 0.00 ,0.0534), # WIP
+        ("l1_test02_00002_master.nxs", 1555, 1813, 0, 548, 0.00, 0.433),  # WIP
     ]
 
     def test_read(self):
@@ -57,7 +58,9 @@ class TestLambda(unittest.TestCase):
             shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
             obj = fabio.lambdaimage.LambdaImage()
+            print(UtilsTest.getimage(name))
             obj.read(UtilsTest.getimage(name))
+            print(obj)
 
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
@@ -68,8 +71,8 @@ class TestLambda(unittest.TestCase):
 
     def test_values(self):
         """read file using fabio.open"""
-        pass
-        #
+        for params in self.TESTIMAGES:
+            self.assertEqual(openimage(UtilsTest.getimage(params[0])).shape, params[2:0:-1])
         
         
 def suite():
