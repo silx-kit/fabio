@@ -30,7 +30,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "09/02/2023"
+__date__ = "02/05/2024"
 
 import sys
 import unittest
@@ -58,6 +58,7 @@ def suite():
     from . import test_numpyimage
     from . import test_pilatusimage
     from . import test_eigerimage
+    from . import test_lambdaimage
     from . import test_hdf5image
     from . import test_fit2dimage
     from . import test_speimage
@@ -108,6 +109,7 @@ def suite():
     testSuite.addTest(test_hipicimage.suite())
     testSuite.addTest(test_binaryimage.suite())
     testSuite.addTest(test_xcaliburimage.suite())
+    testSuite.addTest(test_lambdaimage.suite())
     return testSuite
 
 
