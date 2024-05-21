@@ -18,6 +18,7 @@ py.install_sources(
  'test_jpeg2kimage.py',
  'test_jpegimage.py',
  'test_kcdimage.py',
+ 'test_lambdaimage.py',
  'test_limaimage.py',
  'test_mar345image.py',
  'test_mccdimage.py',
