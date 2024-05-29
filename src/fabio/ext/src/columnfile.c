@@ -193,11 +193,11 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
     if ((gzgets((gzFile )fp,line,2048))==Z_NULL) {fprintf(stderr,"zlib io error reading file at %s\n",__LINE__);return -1;}
     if(gzeof((gzFile)fp)) break;
   }else{
-    fgets(line,2048,(FILE *)fp);
+    if fgets(line,2048,(FILE *)fp) == NULL) break;
     if (feof((FILE *)fp)) break;
   }
 #else
-  fgets(line,2048,(FILE *)fp);
+  if (fgets(line,2048,(FILE *)fp) == NULL) break;
   if (feof((FILE *)fp)) break;
 #endif
 
