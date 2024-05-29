@@ -231,9 +231,9 @@ class TestPilImage2(TestPilImage):
     def mkdata(self, shape, typ):
         """ positive and big"""
         if numpy.issubdtype(typ, numpy.integer):
-            maxi = numpy.iinfo(typ).max()
+            maxi = numpy.iinfo(typ).max
         else:
-            maxi = numpy.iinfo(numpy.integer).max()
+            maxi = numpy.iinfo(numpy.integer).max
         return (numpy.random.random(shape) * maxi / 10).astype(typ)
 
 
@@ -243,9 +243,9 @@ class TestPilImage3(TestPilImage):
     def mkdata(self, shape, typ):
         """ positive, negative and big"""
         if numpy.issubdtype(typ, numpy.integer):
-            maxi = numpy.iinfo(typ).max()
+            maxi = numpy.iinfo(typ).max
         else:
-            maxi = numpy.iinfo(numpy.integer).max()
+            maxi = numpy.iinfo(numpy.integer).max
         return ((numpy.random.random(shape) - 0.5) * maxi / 10).astype(typ)
 
 
