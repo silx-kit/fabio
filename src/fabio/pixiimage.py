@@ -37,7 +37,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
+__date__ = "30/05/2024"
 
 import numpy
 import os
@@ -71,7 +71,7 @@ class PixiImage(fabioimage.FabioImage):
         infile.seek(0)
         self.header = self.check_header()
         byt = infile.read(4)
-        framesize = numpy.frombuffer(byt, numpy.int32)
+        framesize = numpy.frombuffer(byt, numpy.dtype("<i4"))
         if framesize * 2 == self._FRAME_SIZE - self._MAGIC_SIZE:
             self.header['framesize'] = framesize
             self.header['width'] = self._IMAGE_WIDTH
@@ -123,7 +123,7 @@ class PixiImage(fabioimage.FabioImage):
         imgstart = self.header['offset'] + img_num * self._FRAME_SIZE
         filepointer.seek(imgstart, 0)
         data = numpy.frombuffer(filepointer.read(self._IMAGE_SIZE),
-                                numpy.uint16).copy()
+                                numpy.dtype("<u2")).copy()
         data.shape = self.header['height'], self.header['width']
         return data
 
