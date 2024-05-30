@@ -37,7 +37,7 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
-
+import sys
 import logging
 import numpy
 from .fabioimage import FabioImage
@@ -93,11 +93,12 @@ class Dm3Image(FabioImage):
         self.tag_label_length = None
 
     def _readheader(self):
+        BE_uint32 = numpy.dtype('>u4')
         self.infile.seek(0)
-        file_format = self.readbytes(4, numpy.uint32)[0]  # should be 3
-        assert file_format == 3, 'Wrong file type '
-        self.bytes_in_file = self.readbytes(4, numpy.uint32)[0]
-        self.byte_order = self.readbytes(4, numpy.uint32)[0]  # 0 = big, 1= little
+        file_format = self.readbytes(4, BE_uint32, swap=False)[0]  # should be 3
+        assert file_format == 3, 'Wrong file type'
+        self.bytes_in_file = self.readbytes(4, BE_uint32, swap=False)[0]
+        self.byte_order = self.readbytes(4, BE_uint32, swap=False)[0]  # 0 = big, 1= little
         logger.debug('read dm3 file - file format %s' % file_format)
         logger.debug('Bytes in file: %s' % self.bytes_in_file)
         logger.debug('Byte order: %s  - 0 = bigEndian , 1 = littleEndian' % self.byte_order)
