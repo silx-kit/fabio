@@ -31,7 +31,16 @@ FILE* fn_fopen(const char* fname, const char* mode)
 
 #include "columnfile.h"
 
-static char hdr_ctl[]="# %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s";
+/* 32 conversions for sscanf below = 8*4 */
+static char hdr_ctl[]="# "
+"%s %s %s %s "
+"%s %s %s %s "
+"%s %s %s %s "
+"%s %s %s %s "
+"%s %s %s %s "
+"%s %s %s %s "
+"%s %s %s %s "
+"%s %s %s %s ";
 
 
 
@@ -158,8 +167,8 @@ void *cf_read_ascii(void *fp, void *dest, unsigned int FLAGS){/*{{{*/
   }
 
   /*try to sscanf it using 32 conversions - if that doesn't work use pedestrian version*/
-  ncols=sscanf_s(line,hdr_ctl,repeat16_inc(clabels,0),repeat16_inc(clabels,16),*(clabels+32));
-  if (ncols==32+1 || ncols==0){
+  ncols=sscanf_s(line,hdr_ctl,repeat16_inc(clabels,0),repeat16_inc(clabels,16));
+  if (ncols==32 || ncols==0){
     /*aha we probably didn't get it all*/
     /*step through buffer with char ptr and check for whitespace->non-ws slopes. when one is found read from pc-1 into header storage. exit when line is exhausted*/
     /*count the number of entries*/
