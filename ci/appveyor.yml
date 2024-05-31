@@ -1,4 +1,4 @@
-version: 0.11-dev{build}
+version: 2023-10-dev{build}
 
 # fetch repository as zip archive
 shallow_clone: true
@@ -25,20 +25,24 @@ environment:
         VENV_TEST_DIR: "venv_test"
 
     matrix:
-        # Python 3.6
-        - PYTHON_DIR: "C:\\Python36-x64"
-          PYTHON_ARCH: "64"
-
         # Python 3.7
         - PYTHON_DIR: "C:\\Python37-x64"
           PYTHON_ARCH: "64"
 
         # Python 3.8
-        - PYTHON_DIR: "C:\\Python38-x64"
-          PYTHON_ARCH: "64"
+        #- PYTHON_DIR: "C:\\Python38-x64"
+        #  PYTHON_ARCH: "64"
 
         # Python 3.9
         - PYTHON_DIR: "C:\\Python39-x64"
+          PYTHON_ARCH: "64"
+
+        # Python 3.10
+        - PYTHON_DIR: "C:\\Python310-x64"
+          PYTHON_ARCH: "64"
+
+        # Python 3.11        
+        - PYTHON_DIR: "C:\\Python311-x64"
           PYTHON_ARCH: "64"
 
 
@@ -51,15 +55,15 @@ install:
   - "python -c \"print(tuple.__itemsize__*8)\""
 
   # Upgrade/install distribution modules
-  - "pip install --upgrade setuptools"
   - "python -m pip install --upgrade pip"
 
   # Install the build and runtime dependencies of the project.
   - "pip install --trusted-host www.silx.org -r ci\\requirements_appveyor.txt"
 
 build_script:
-  - "python setup.py build"
-  - "python setup.py bdist_wheel bdist_msi"
+  - "meson --version"
+  - "python run_tests.py"
+  - "python -m build --wheel"
   - ps: "ls dist"
   # Install the generated wheel package to test it
   - "pip install --pre --find-links dist/  --no-cache-dir --no-index fabio"

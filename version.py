@@ -4,7 +4,7 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-2020 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2024 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -58,7 +58,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/07/2021"
+__date__ = "02/05/2024"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
 __all__ = ["date", "version_info", "strictversion", "hexversion", "debianversion",
@@ -75,8 +75,8 @@ PRERELEASE_NORMALIZED_NAME = {"dev": "a",
                               "beta": "b",
                               "candidate": "rc"}
 
-MAJOR = 0
-MINOR = 13
+MAJOR = 2024
+MINOR = 5
 MICRO = 0
 RELEV = "dev"  # <16
 SERIAL = 0  # <16
@@ -90,7 +90,7 @@ version_info = _version_info(MAJOR, MINOR, MICRO, RELEV, SERIAL)
 strictversion = version = debianversion = "%d.%d.%d" % version_info[:3]
 if version_info.releaselevel != "final":
     _prerelease = PRERELEASE_NORMALIZED_NAME[version_info[3]]
-    version += "-%s%s" % (_prerelease, version_info[-1])
+    version += "%s%s" % (_prerelease, version_info[-1])
     debianversion += "~adev%i" % version_info[-1] if RELEV == "dev" else "~%s%i" % (_prerelease, version_info[-1])
     strictversion += _prerelease + str(version_info[-1])
 

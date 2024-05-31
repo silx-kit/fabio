@@ -162,21 +162,25 @@ through a series of files. These methods are :meth:`~fabio.fabioimage.FabioImage
 The behaviour of such methods varies depending on the image format: for single-frame
 format (like mar345), :meth:`~fabio.fabioimage.FabioImage.next` will return the image in next
 file; for multi-frame format (like GE), :meth:`~fabio.fabioimage.FabioImage.next` will return
-the next frame within the same file. For formats which are possibly
-multi-framed like EDF, the behaviour depends on the actual number
-of frames per file (accessible via the :attr:`~fabio.fabioimage.FabioImage.nframes` attribute).
+the next frame within the same file. 
+For formats which are possibly multi-framed like EDF and TIFF, the behaviour can be complicated 
+and depend on the actual number of frames per file 
+(accessible via the :attr:`~fabio.fabioimage.FabioImage.nframes` attribute).
 
 .. code-block:: python
 
     import fabio
-    im100 = fabio.open('Quartz_0100.tif') # Open image file
-    print(im0.data[1024,1024])            # Check a pixel value
-    im101 = im100.next()                  # Open next image
-    im270 = im100.getframe(270)           # Jump to file number 270: Quartz_0270.tif
+    im1 = fabio.open("200mMmgso4_001.mar2300")   # Open image file
+    print(im1.data[1024,1024])                   # Check a pixel value
+    im2 = im1.next()                             # Open next image
+    print(im2.filename)                          # prints 200mMmgso4_002.mar2300                     
+    im5 = im1.getframe(5)                        # Jump to file number 5: 200mMmgso4_005.mar2300
 
-This conveniant way to iterate through many files have limitation. It is not
-working in case of many frames per files, the read access is difficult to
-optimize, and it is difficult to custom the list of the files.
+The files used in this example are available from https://zenodo.org/record/2546760#.Y5H1n0jMLmE
+
+This conveniant way to iterate through many files has limitations. It is not
+working in case of many frames per files (TIF), the read access is difficult to
+optimize, and it is difficult to custom the list of files.
 
 FabIO file series
 .................
@@ -361,6 +365,7 @@ uses extensions as a fallback if that fails.
    "Raxis", "Rigaku Saxs format", ".img", "Yes", "No", "No"
    "spe", "Princeton instrumentation", ".spe", "Yes", "Yes", "No"
    "TIFF", "Tagged Image File Format", ".tif", "Yes", "Yes", "Yes"
+   "Xcalibur", "mask format used by CrysalisPro", ".ccd", "Yes", "No", "Yes" 
 
 Adding new file formats
 .......................

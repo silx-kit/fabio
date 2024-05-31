@@ -13,10 +13,7 @@
 
 import sys
 import os
-import glob
-import subprocess
 
-on_rtd = os.environ.get('READTHEDOCS') == 'True'
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -26,7 +23,7 @@ try:
     import fabio
     project_dir = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
     build_dir = os.path.abspath(fabio.__file__)
-    if on_rtd:
+    if os.environ.get('READTHEDOCS') == 'True':
         print("On Read The Docs")
         print("build_dir", build_dir)
         print("project_dir", project_dir)
@@ -55,16 +52,10 @@ except:
 
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
+              'sphinx_rtd_theme',
               'sphinxcontrib.programoutput',
-              "nbsphinx"
+              'nbsphinx'
               ]
-
-# Set the theme to sphinx_rtd_theme when *not* building on Read The Docs.
-# The theme is set to default otherwise as Read The Docs uses its own theme anyway.
-if not on_rtd:
-    import sphinx_rtd_theme
-
-    extensions.append('sphinx_rtd_theme')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -79,7 +70,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-from fabio._version import strictversion, version, __date__ as fabio_date
+from fabio.version import strictversion, __date__ as fabio_date
 
 year = fabio_date.split("/")[-1]
 copyright = u'2006-%s, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer' % (year)
@@ -134,7 +125,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default' if on_rtd else 'sphinx_rtd_theme'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

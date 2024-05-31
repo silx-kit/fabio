@@ -32,13 +32,12 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "06/11/2020"
+__date__ = "03/03/2023"
 __license__ = "MIT"
 
-import distutils.util
 import logging
 import os
-import subprocess
+from argparse import ArgumentParser
 import sys
 import time
 import unittest
@@ -122,22 +121,9 @@ except Exception as error:
 else:
     logger.info("h5py %s", h5py.version.version)
 
-
-def get_project_name(root_dir):
-    """Retrieve project name by running python setup.py --name in root_dir.
-
-    :param str root_dir: Directory where to run the command.
-    :return: The name of the project stored in root_dir
-    """
-    logger.debug("Getting project name in %s", root_dir)
-    p = subprocess.Popen([sys.executable, "setup.py", "--name"],
-                         shell=False, cwd=root_dir, stdout=subprocess.PIPE)
-    name, _stderr_data = p.communicate()
-    logger.debug("subprocess ended with rc= %s", p.returncode)
-    return name.split()[-1].decode('ascii')
-
-
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, PROJECT_DIR)
+from bootstrap import get_project_name, build_project
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info("Project name: %s", PROJECT_NAME)
 
@@ -239,7 +225,7 @@ def report_rst(cov, package, version="0.0.0", base=""):
         fname = cl.get("filename")
         if not os.path.abspath(fname).startswith(base):
             continue
-        lines = cl.find("lines").getchildren()
+        lines = list(cl.find("lines"))
         hits = [int(i.get("hits")) for i in lines]
 
         sum_hits = sum(hits)
@@ -276,37 +262,6 @@ def is_debug_python():
     return hasattr(sys, "gettotalrefcount")
 
 
-def build_project(name, root_dir):
-    """Run python setup.py build for the project.
-
-    Build directory can be modified by environment variables.
-
-    :param str name: Name of the project.
-    :param str root_dir: Root directory of the project
-    :return: The path to the directory were build was performed
-    """
-    platform = distutils.util.get_platform()
-    architecture = "lib.%s-%i.%i" % (platform,
-                                     sys.version_info[0], sys.version_info[1])
-    if is_debug_python():
-        architecture += "-pydebug"
-
-    if os.environ.get("PYBUILD_NAME") == name:
-        # we are in the debian packaging way
-        home = os.environ.get("PYTHONPATH", "").split(os.pathsep)[-1]
-    elif os.environ.get("BUILDPYTHONPATH"):
-        home = os.path.abspath(os.environ.get("BUILDPYTHONPATH", ""))
-    else:
-        home = os.path.join(root_dir, "build", architecture)
-
-    logger.warning("Building %s to %s", name, home)
-    p = subprocess.Popen([sys.executable, "setup.py", "build"],
-                         shell=False, cwd=root_dir)
-    logger.debug("subprocess ended with rc= %s", p.wait())
-    return home
-
-
-from argparse import ArgumentParser
 parser = ArgumentParser(description='Run the tests.')
 
 parser.add_argument("--installed",
@@ -364,8 +319,10 @@ if (os.path.dirname(os.path.abspath(__file__)) ==
     removed_from_sys_path = sys.path.pop(0)
     logger.info("Patched sys.path, removed: '%s'", removed_from_sys_path)
 
-# import module
 if options.installed:  # Use installed version
+    for bad_path in (".", os.getcwd(), os.path.abspath(".")):
+        if bad_path in sys.path:
+            sys.path.remove(bad_path)
     try:
         module = importer(PROJECT_NAME)
     except Exception:
