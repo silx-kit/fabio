@@ -39,7 +39,7 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "13/11/2020"
+__date__ = "30/05/2024"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
@@ -79,7 +79,7 @@ def compress(frame):
     if numpy.little_endian:
         buffer.write(row_start.tobytes())
     else:
-        buffer.write(row_start.byteswap.tobytes())
+        buffer.write(row_start.byteswap().tobytes())
 
     return data_size + buffer.getvalue()
 

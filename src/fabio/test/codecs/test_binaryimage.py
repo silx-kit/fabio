@@ -64,18 +64,16 @@ class TestBinaryImage(unittest.TestCase):
         self.assertEqual(e.shape, f.shape)
         self.assertEqual(e.bpp, f.bpp, "bpp OK")
         print(self.fn3)
-        self.assertEqual(abs(e.data-f.data).max(), 0, "data OK")
-        
-
+        self.assertEqual(abs(e.data - f.data).max(), 0, "data OK")
 
     def test_write(self):
         fn = os.path.join(UtilsTest.tempdir, "binary_write.h5")
         ary = numpy.random.randint(0, 100, size=self.shape)
-        e = BinaryImage(data = ary)
+        e = BinaryImage(data=ary)
         e.save(fn)
         self.assertTrue(os.path.exists(fn), "file exists")
         f = BinaryImage()
-        f.read(fn, self.shape[1], self.shape[0], offset=0, bytecode=ary.dtype)
+        f.read(fn, self.shape[1], self.shape[0], offset=0, bytecode=ary.dtype, endian=ary.dtype.str[0])
         self.assertEqual(str(f.__class__.__name__), "BinaryImage", "Used the write reader")
         self.assertEqual(self.shape, f.shape, "shape matches")
         self.assertEqual(abs(f.data - ary).max(), 0, "first frame matches")

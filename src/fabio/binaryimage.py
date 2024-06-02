@@ -38,7 +38,7 @@ __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]
 __contact__ = "gael.goret@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__version__ = "17/10/2012"
+__date__ = "30/05/2024"
 
 import io
 from .fabioimage import FabioImage
@@ -84,17 +84,21 @@ class BinaryImage(FabioImage):
         :param int dim2: image dimensions (Slow index)
         :param int offset: starting position of the data-block. If negative, starts at the end.
         :param bytecode: can be "int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64",...
-        :param endian:  among short or long endian ("<" or ">")
+        :param endian:  among litte or big endian ("<" or ">")
 
         """
+        assert endian in ('<', '>', '=')
+        bytecode = numpy.dtype(bytecode)
+        if not bytecode.str.startswith(endian):
+            bytecode = numpy.dtype(endian + bytecode.str[1:])
         self.filename = fname
         self._shape = dim2, dim1
         self._bytecode = bytecode
-        with open(self.filename, "rb") as f: 
+        with open(self.filename, "rb") as f:
             dims = [dim2, dim1]
             bpp = numpy.dtype(bytecode).itemsize
             size = dims[0] * dims[1] * bpp
-    
+
             if offset >= 0:
                 f.seek(offset)
             else:
@@ -107,8 +111,6 @@ class BinaryImage(FabioImage):
                     logger.error('Uncommon error encountered when reading file')
             rawData = f.read(size)
         data = numpy.frombuffer(rawData, bytecode).copy().reshape(tuple(dims))
-        if self.swap_needed(endian):
-            data.byteswap(True)
         self.data = data
         self._shape = None
         return self

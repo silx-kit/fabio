@@ -171,9 +171,15 @@ build_deb() {
     echo "Build for debian 9 or newer using actual packaging"
     tarname=${project}_${debianversion}.orig.tar.gz
     clean_up
-    python -m build -s
-    ln -s ${source_project}-${strictversion}.tar.gz dist/${tarname}
-    directory=${source_project}-${strictversion}
+    if [ $debian_version -le 11 ]
+    then
+       python3 setup.py debian_src
+       directory=${project}-${strictversion}
+    else
+       python3 -m build -s
+       ln -s ${source_project}-${strictversion}.tar.gz dist/${tarname}
+       directory=${source_project}-${strictversion}
+    fi
     cp -f dist/${tarname} ${build_directory}
     if [ -f dist/${project}-testimages.tar.gz ]
     then
@@ -236,10 +242,13 @@ build_deb() {
         11)
             debian_name=bullseye
             ;;
+        12)
+            debian_name=bookworm
+            ;;
     esac
 
-    dch -v ${debianversion}-1 "upstream development build of ${project} ${version}" --force-distribution
-    dch -D ${debian_name}-backports -l~bpo${debian_version}+ "${project} snapshot ${version} built for ${target_system}" --force-distribution
+    dch --force-distribution -v ${debianversion}-1 "upstream development build of ${project} ${version}"
+    dch --force-distribution -D ${debian_name}-backports -l~bpo${debian_version}+ "${project} snapshot ${version} built for ${target_system}"
     #dch --bpo "${project} snapshot ${version} built for ${target_system}"
     dpkg-buildpackage -r
     rc=$?

@@ -65,10 +65,8 @@ class Fit2dMaskImage(FabioImage):
                      (b"K", 12)]:
             if header[j] != i[0]:
                 raise Exception("Not a fit2d mask file")
-        fit2dhdr = numpy.frombuffer(header, numpy.int32)
         # Enforce little endian
-        if not numpy.little_endian:
-            fit2dhdr.byteswap(True)
+        fit2dhdr = numpy.frombuffer(header, numpy.dtype("<i4"))
         dim1 = fit2dhdr[4]  # 1 less than Andy's fortran
         dim2 = fit2dhdr[5]
         self._shape = dim2, dim1
