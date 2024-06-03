@@ -61,7 +61,9 @@ DATA_TYPES = {"signed 8-bit integer": "int8",
               "unsigned 8-bit integer": "uint8",
               "unsigned 16-bit integer": "uint16",
               "unsigned 32-bit integer": "uint32",
-              "unsigned 64-bit integer": "uint64"
+              "unsigned 64-bit integer": "uint64",
+              "signed 32-bit real IEEE": "float",
+              "signed 64-bit real IEEE": "double"
               }
 
 MINIMUM_KEYS = ["X-Binary-Size-Fastest-Dimension",
