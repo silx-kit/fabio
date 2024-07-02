@@ -20,6 +20,7 @@ py.install_sources(
  'test_frames.py',
  'test_header_not_singleton.py',
  'test_image_convert.py',
+ 'test_import.py',
  'test_io_limits.py',
  'test_nexus.py',
  'test_open_header.py',
