@@ -54,7 +54,7 @@ import json
 import numpy
 from .. import eigerimage, limaimage, sparseimage
 from ..openimage import openimage as fabio_open
-from .._version import version as fabio_version
+from .. import version as fabio_version
 from ..utils.cli import ProgressBar, expand_args
 from ..nexus import Nexus, h5py
 
