@@ -33,6 +33,7 @@ import os
 import numpy
 import copy
 import logging
+import numbers
 
 logger = logging.getLogger(__name__)
 
@@ -229,7 +230,11 @@ class TestPilImage2(TestPilImage):
 
     def mkdata(self, shape, typ):
         """ positive and big"""
-        return (numpy.random.random(shape) * sys.maxsize / 10).astype(typ)
+        if numpy.issubdtype(typ, numpy.integer):
+            maxi = numpy.iinfo(typ).max
+        else:
+            maxi = numpy.iinfo(numpy.integer).max
+        return (numpy.random.random(shape) * maxi / 10).astype(typ)
 
 
 class TestPilImage3(TestPilImage):
@@ -237,7 +242,11 @@ class TestPilImage3(TestPilImage):
 
     def mkdata(self, shape, typ):
         """ positive, negative and big"""
-        return ((numpy.random.random(shape) - 0.5) * sys.maxsize / 10).astype(typ)
+        if numpy.issubdtype(typ, numpy.integer):
+            maxi = numpy.iinfo(typ).max
+        else:
+            maxi = numpy.iinfo(numpy.integer).max
+        return ((numpy.random.random(shape) - 0.5) * maxi / 10).astype(typ)
 
 
 class TestDeprecatedFabioImage(unittest.TestCase):
