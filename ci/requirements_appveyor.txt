@@ -12,3 +12,5 @@ lxml>=4.6.3
 Pillow
 h5py
 hdf5plugin
+matplotlib
+pyqt5
