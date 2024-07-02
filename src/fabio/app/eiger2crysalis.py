@@ -55,7 +55,7 @@ import os
 import shutil
 from .. import esperantoimage, eigerimage, limaimage, sparseimage, xcaliburimage
 from ..openimage import openimage as fabio_open
-from .._version import version as fabio_version
+from .. import version as fabio_version
 from ..nexus import get_isotime
 from ..utils.cli import ProgressBar, expand_args
 import numpy
