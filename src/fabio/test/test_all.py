@@ -52,6 +52,7 @@ from . import test_agi_bitfield
 from . import test_densification
 from . import test_io_limits
 from . import test_utils_cli
+from . import test_import
 
 
 def suite():
@@ -78,6 +79,7 @@ def suite():
     testSuite.addTest(test_densification.suite())
     testSuite.addTest(test_io_limits.suite())
     testSuite.addTest(test_utils_cli.suite())
+    testSuite.addTest(test_import.suite())
     return testSuite
 
 
