@@ -5,7 +5,6 @@ py.install_sources(
  'profile_all.py',
  'test_agi_bitfield.py',
  'test_all.py',
- 'test_all_images.py',
  'test_compression.py',
  'test_densification.py',
  'test_fabio.py',

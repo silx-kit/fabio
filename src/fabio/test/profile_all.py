@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
+__date__ = "03/07/2024"
 
 import sys
 import unittest
@@ -40,26 +40,35 @@ import time
 
 from . import test_all
 
-import resource
 import logging
 profiler = logging.getLogger("memProf")
 profiler.setLevel(logging.DEBUG)
 profiler.handlers.append(logging.FileHandler("profile.log"))
+logger = logging.getLogger(__name__)
+
+WIN32_ERROR = "`profile_all` can only be used under UNIX, Windows is missing memory "
+
+if sys.platform != "win32":
+    import resource
+else:
+    logger.error(WIN32_ERROR)
 
 
 class TestResult(unittest.TestResult):
 
     def startTest(self, test):
+        if sys.platform == "win32":
+            raise RuntimeError(WIN32_ERROR)
         self.__mem_start = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        self.__time_start = time.time()
+        self.__time_start = time.perf_counter()
         unittest.TestResult.startTest(self, test)
 
     def stopTest(self, test):
         unittest.TestResult.stopTest(self, test)
-        params = (time.time() - self.__time_start,
-                  (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start) / 1e3,
-                  test.id())
-        profiler.info("Time: %.3fs \t RAM: %.3f Mb\t%s" % params)
+        if sys.platform == "win32":
+            raise RuntimeError(WIN32_ERROR)
+        mem = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start) / 1e3
+        profiler.info(f"Time: {time.perf_counter() - self.__time_start:.3f}s \t RAM: {mem:.3f}Mb\t{test.id()}")
 
 
 class ProfileTestRunner(unittest.TextTestRunner):
