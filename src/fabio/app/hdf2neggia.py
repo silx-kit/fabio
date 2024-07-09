@@ -8,7 +8,8 @@ import os
 import sys
 import argparse
 import logging
-logger = logging.getLogger(os.path.splitext(os.path.basename(__file__))[0])
+application_name = os.path.splitext(os.path.basename(__file__))[0]
+logger = logging.getLogger(application_name)
 logging.basicConfig()
 import numpy
 import fabio
@@ -25,7 +26,7 @@ except ImportError:
 def parse(argv=None):
     if argv is None:
         argv = []
-    parser = argparse.ArgumentParser(prog='lima2neggia',
+    parser = argparse.ArgumentParser(prog=application_name,
                     description='Convert any HDF5 file containing images to a file processable by XDS using the neggia plugin from Dectris.'
                                  'Do not forget to specify LIB=/path/to/plugin/dectris-neggia.so in XDS.INP',
                     epilog='Requires hdf5plugin and pyFAI to parse configuration file. Geometry can be calibrated with pyFAI-calib2')
@@ -36,9 +37,9 @@ def parse(argv=None):
                         action="store_true")
     parser.add_argument("--copy", "-c", help="copy dataset instead of using external links",
                         action="store_true")
-    parser.add_argument("--geometry", "-g", help="PONI-file containing the geometry (pyFAI format")
+    parser.add_argument("--geometry", "-g", help="PONI-file containing the geometry (pyFAI format)")
     parser.add_argument("--output", "-o", help="output filename", default="master.h5")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 def process(options):
     if options.verbose:
@@ -69,7 +70,7 @@ def process(options):
 
     dest_dir = os.path.dirname(os.path.abspath(options.output))
     with Nexus(options.output, mode) as nxs:
-        entry = nxs.new_entry(entry="entry", program_name="lima2neggia", force_name=True)
+        entry = nxs.new_entry(entry="entry", program_name=application_name, force_name=True)
         instrument = nxs.new_instrument(entry=entry, instrument_name="instrument")
         if poni.wavelength:
             beam = nxs.new_class(instrument, "beam", "NXbeam")
@@ -135,7 +136,11 @@ def process(options):
                         logger.warning("Don't know how to handle {item}, skipping")
     return 0
 
-if __name__=="__main__":
+
+def main():
     options = parse(sys.argv)
-    rc = process(options)
-    sys.exit(rc)
+    return process(options)
+
+
+if __name__=="__main__":
+    sys.exit(main())

@@ -8,6 +8,7 @@ py.install_sources(
   'viewer.py',
   'densify.py',
   'eiger2crysalis.py',
+  'hdf2neggia.py'
   ]
 ,
   pure: false,   # Will be installed next to binaries
