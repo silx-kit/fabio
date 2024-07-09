@@ -43,18 +43,18 @@ def parse(argv=None):
 
 def process(options):
     if options.verbose:
-        if option.verbose>1:
+        if options.verbose>1:
             logger.setLevel(logging.debug)
         else:
             logger.setLevel(logging.info)
 
     if not options.geometry or not os.path.exists(options.geometry):
-        logger.error(f"Unable to parse PONI-file: {options.geometry}")
+        logger.error("Unable to parse PONI-file: %s", options.geometry)
         return 1
     try:
         poni = load(options.geometry)
     except Exception as err:
-        logger.error(f"Unable to parse PONI-file: {options.geometry}")
+        logger.error("Unable to parse PONI-file: %s", options.geometry)
         raise err
         return 1
     f2d = poni.getFit2D()
@@ -133,7 +133,7 @@ def process(options):
                                             chunks=(1,)+fimg.shape,
                                             **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
                     else:
-                        logger.warning("Don't know how to handle {item}, skipping")
+                        logger.warning("Don't know how to handle %s, skipping", item)
     return 0
 
 
