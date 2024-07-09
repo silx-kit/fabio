@@ -14,3 +14,4 @@ Pillow
 lxml>=4.6.3
 pyqt5
 matplotlib
+hdf5plugin
