@@ -37,7 +37,7 @@ def parse(argv=None):
                         action="store_true")
     parser.add_argument("--copy", "-c", help="copy dataset instead of using external links",
                         action="store_true")
-    parser.add_argument("--geometry", "-g", help="PONI-file containing the geometry (pyFAI format)")
+    parser.add_argument("--geometry", "-g", help="PONI-file containing the geometry (pyFAI format, MANDATORY)")
     parser.add_argument("--output", "-o", help="output filename", default="master.h5")
     return parser.parse_args(argv)
 
@@ -58,6 +58,10 @@ def process(options):
         raise err
         return 1
     f2d = poni.getFit2D()
+    
+    if len(options.input)==0:
+        logger.error("No input HDF5 file provided. Aborting")
+        return 1
     frames = [fabio.open(i) for i in options.input]
     if os.path.exists(options.output):
         if options.force:
@@ -80,6 +84,7 @@ def process(options):
         detector.create_dataset("y_pixel_size", data=float(poni.pixel1)).attrs["unit"] = "m"
         detector.create_dataset("beam_center_x", data=float(f2d["centerX"])).attrs["unit"] = "pixel"
         detector.create_dataset("beam_center_y", data=float(f2d["centerY"])).attrs["unit"] = "pixel"
+        detector.create_dataset("detector_distance", data=f2d["directDist"]*1e-3).attrs["unit"] = "m"
         detectorSpecific = nxs.new_class(detector, "detectorSpecific", "NXcollection")
         detectorSpecific.create_dataset("nimages", data=sum(i.nframes for i in frames))
         detectorSpecific.create_dataset("ntrigger", data=1)
