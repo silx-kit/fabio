@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__date__ = "09/06/2024"
+__date__ = "10/07/2024"
 __author__ = "Jerome Kieffer"
 __license__ = "MIT"
 
@@ -138,7 +138,7 @@ def process(options):
 
 
 def main():
-    options = parse(sys.argv)
+    options = parse(sys.argv[1:])
     return process(options)
 
 
