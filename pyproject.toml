@@ -71,6 +71,7 @@ densify_Bragg = 'fabio.app.densify:main'
 eiger2cbf = 'fabio.app.eiger2cbf:main'
 eiger2crysalis = 'fabio.app.eiger2crysalis:main'
 fabio-convert = 'fabio.app.convert:main'
+hdf2neggia = 'fabio.app.hdf2neggia:main'
 
 [project.gui-scripts]
 fabio_viewer = 'fabio.app.viewer:main'
