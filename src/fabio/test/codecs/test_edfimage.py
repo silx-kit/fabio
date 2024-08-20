@@ -305,6 +305,29 @@ class TestEdfFastRead(unittest.TestCase):
         obt = ref.fast_read_data(self.fastFilename)
         self.assertEqual(abs(obt - refdata).max(), 0, "testedffastread: Same data")
 
+    def test_578(self):
+        "Non regression for issue 578: EDFImage.fast_read_data: cannot read a line"
+
+        file_name = os.path.join(UtilsTest.tempdir, "test_578.edf")
+        # create some dummy data
+        edf_writer = fabio.edfimage.EdfImage(
+            data=numpy.arange(0, 99).reshape(9, 11),
+        )
+        edf_writer.write(file_name)
+        
+        edf_reader = fabio.open(file_name)
+        
+        # if I want to read it line by line
+        line_index_to_read = 4
+        line_data = edf_reader.fast_read_roi(
+            file_name,coords=(
+                slice(3, 9),
+                slice(line_index_to_read, line_index_to_read+1),
+            ),
+        )
+        self.assertTrue(numpy.allclose(edf_writer.data[3:9,line_index_to_read:line_index_to_read+1],
+                                       line_data))
+
 
 class TestEdfWrite(unittest.TestCase):
     """
