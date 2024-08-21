@@ -433,7 +433,6 @@ class EdfBlockBoundaryCases(unittest.TestCase):
 
     # test files 10 and 11 for testing with to be copied and added later
 
-
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()

@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "04/05/2021"
+__date__ = "20/08/2024"
 
 import os
 import logging
@@ -169,6 +169,7 @@ class _FabioArray(object):
         the latter are immutable, meaning the roi can be cached
         """
         assert len(coords) == 4
+        coords = list(coords)
         if len(coords) == 4:
             # fabian edfimage preference
             if coords[0] > coords[2]:

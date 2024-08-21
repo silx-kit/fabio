@@ -49,7 +49,7 @@ __authors__ = ["Jérôme Kieffer", "Jon Wright", "Henning O. Sorensen", "Erik Kn
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "01/06/2022"
+__date__ = "20/08/2024"
 
 import os
 import re
@@ -1339,6 +1339,8 @@ class EdfImage(fabioimage.FabioImage):
         Method reading Region of Interest of another file  based on metadata available in current EdfImage.
         The aim is performances, ... but only supports uncompressed files.
 
+        :param filename: name of another file with the same structure.
+        :paran coords: 2 tuple of slices (RECOMMANDED) or a 4 tuple (NOT RECOMMANDED, cryptic fabian convention) 
         :return: ROI-data from another file using positions from current EdfImage
         :rtype: numpy 2darray
         """
@@ -1365,6 +1367,9 @@ class EdfImage(fabioimage.FabioImage):
         with open(filename, "rb")as f:
             f.seek(start)
             raw = f.read(size)
+        if len(raw)<size:
+            # Pad with zero until the right size
+            raw+=b"\x00"*(size-len(raw))
         try:
             data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
             data.shape = -1, d1
