@@ -34,7 +34,7 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/05/2024"
+__date__ = "23/08/2024"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -195,6 +195,7 @@ def _get_extension_mapping():
             if not hasattr(codec, "DEFAULT_EXTENSIONS"):
                 continue
             for ext in codec.DEFAULT_EXTENSIONS:
+                ext = ext.strip(".")
                 if ext not in _extension_cache:
                     _extension_cache[ext] = []
                 _extension_cache[ext].append(codec)
@@ -208,8 +209,8 @@ def get_classes_from_extension(extension):
     :param str extension: File extension, for example "edf"
     :return: fabio image class
     """
+    extension = extension.lower().strip(".")
     mapping = _get_extension_mapping()
-    extension = extension.lower()
     if extension in mapping:
         # clone the list
         return list(mapping[extension])
@@ -224,9 +225,7 @@ def is_extension_supported(extension):
     :param str format_name: Format name, for example, "edfimage"
     :return: instance of the new class
     """
-    mapping = _get_extension_mapping()
-    extension = extension.lower()
-    return extension in mapping
+    return bool(get_classes_from_extension(extension))
 
 
 def factory(name):

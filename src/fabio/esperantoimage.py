@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "09/02/2023"
+__date__ = "23/08/2024"
 
 import io
 from collections import OrderedDict
@@ -43,7 +43,7 @@ class EsperantoImage(FabioImage):
     """FabIO image class for Esperanto image files
     """
     DESCRIPTION = "CrysAlis Pro Esperanto file format"
-    DEFAULT_EXTENSIONS = [".eseperanto", ".esper"]
+    DEFAULT_EXTENSIONS = ["eseperanto", "esper"]
     HEADER_SEPARATOR = "\x0d\x0a"
     HEADER_END = b"\x0d\x1a"
     HEADER_LINES = 25
