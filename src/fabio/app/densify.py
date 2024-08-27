@@ -255,7 +255,7 @@ class Converter:
                 output = os.path.splitext(filename)[0] + "_000001.h5"
         else:
                 base = os.path.basename(os.path.splitext(filename)[0])
-                output = self.output.replace("{basename}", base)
+                output = output.replace("{basename}", base)
 
         self.pb.update(self.pb.max_value, f"Save {output}")
         dest.save(output)
