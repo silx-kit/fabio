@@ -37,7 +37,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "19/03/2024"
+__date__ = "23/08/2024"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -119,7 +119,7 @@ class SparseImage(FabioImage):
 
     DESCRIPTION = "spasify-Bragg"
 
-    DEFAULT_EXTENSIONS = [".h5", ".hdf5", ".nxs"]
+    DEFAULT_EXTENSIONS = ["h5", "hdf5", "nxs"]
 
     NOISY = False
 

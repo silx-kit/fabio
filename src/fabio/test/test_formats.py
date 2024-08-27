@@ -84,6 +84,9 @@ class TestRegistration(unittest.TestCase):
         fabio.register(MyFormat2)
         self.assertIsNotNone(fabioformats.get_class_by_name("myformat2"))
 
+    def test_extenstion_registry(self):
+        for ext in fabioformats._get_extension_mapping():
+            self.assertFalse("." in ext)
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
