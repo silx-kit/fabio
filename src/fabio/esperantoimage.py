@@ -28,7 +28,7 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "23/08/2024"
+__date__ = "27/08/2024"
 
 import io
 from collections import OrderedDict
