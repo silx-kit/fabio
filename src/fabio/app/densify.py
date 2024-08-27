@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "18/10/2022"
+__date__ = "27/08/2024"
 __status__ = "production"
 
 FOOTER = """
@@ -90,7 +90,7 @@ def parse_args():
     group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
                        help="show the list of available output formats and exit")
     group.add_argument("-o", "--output", default=None, type=str,
-                       help="output filename, by default {baseame}_densify.h5")
+                       help="output filename, by default {basename}_densify.h5")
     group.add_argument("-O", "--output-format", dest="format", default='lima', type=str,
                        help="output format among 'lima', 'eiger' ...")
     group.add_argument("-D", "--dummy", type=int, default=None,
@@ -248,11 +248,14 @@ class Converter:
         # dest.set_data
         t2 = time.perf_counter()
         output = self.args.output
-        if self.args.output is None:
+        if self.args.output is None or "{basename}" not in self.args.output:
             if self.args.format.startswith("lima"):
                 output = os.path.splitext(filename)[0] + "_dense.h5"
             elif self.args.format.startswith("eiger"):
                 output = os.path.splitext(filename)[0] + "_000001.h5"
+        else:
+                base = os.path.basename(os.path.splitext(filename)[0])
+                output = self.output.replace("{basename}", base)
 
         self.pb.update(self.pb.max_value, f"Save {output}")
         dest.save(output)
