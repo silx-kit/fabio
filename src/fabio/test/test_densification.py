@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "02/06/2022"
+__date__ = "02/09/2024"
 
 import unittest
 import numpy
@@ -93,8 +93,7 @@ class TestDensification(unittest.TestCase):
             f[...] = numpy.arcsinh(scale[i] * numpy.sinc(r2d / osc[i]) ** 2).round()
             f.ravel()[index[indptr[i]:indptr[i + 1]]] = intensity[indptr[i]:indptr[i + 1]]
             python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i])
-            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i], None)
-            
+            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i])
             self.assertTrue(numpy.all(python == cython), "python == cython #" + str(i))
             # Rounding errors:
             delta = (python.astype(int) - f)

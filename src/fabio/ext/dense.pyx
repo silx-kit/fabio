@@ -313,6 +313,8 @@ def densify(cython.floating[:,::1] mask,
                                 std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
                             
                             value = min(max(0.0, mt._normal_m(mean, std)), value + c_cutoff*std)
+                        else:
+                            value = mean
                         if do_normalization:
                             value *= c_normalization[i, j]
                         if integral:
