@@ -98,6 +98,8 @@ def densify(mask,
         if cutoff is not None:
             cutoff_ary = mean_2d + cutoff * std_2d
             numpy.minimum(cutoff_ary, dense, out=dense)
+    else:
+        dense = mean_2d
     if normalization is not None:
         dense *= normalization
 
@@ -208,12 +210,11 @@ class SparseImage(FabioImage):
             self.normalization = numpy.ascontiguousarray(nx_data["normalization"][()], dtype=numpy.float32)
 
         # Read cutoff_pick
+        config = {}
         try:
             config = json.loads(entry["sparsify/configuration/data"][()])
         except Exception as err:
             logger.warning("Unable to read configuration of sparsification:\n%s: %s",type(err), err)
-        else: 
-            config = {}
         self.cutoff = config.get("sparsify", {}).get("cutoff_pick")
         
         # Read the peak position in the file
