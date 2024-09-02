@@ -27,11 +27,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from pickle import TRUE
 
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "19/03/2024"  
+__date__ = "02/09/2024"  
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -230,6 +231,7 @@ def densify(cython.floating[:,::1] mask,
             float[::1] background,
             float[::1] background_std=None,
             normalization=None,
+            cutoff=None,
             seed = None):
     """
     Densify a sparse representation to generate a normal frame 
@@ -243,12 +245,13 @@ def densify(cython.floating[:,::1] mask,
     :param dtype: dtype of intensity.
     :param background_std: 1D array with the background std at given distance from the center --> activates the noisy mode.
     :param normalization: normalization array: renormalize all data with this factor (pixel-wise)
+    :param cutoff: maximum value for the background as mean+cutoff*std
     :param seed: seed for the random number-generator, used only when regenerating noisy background
     :return: dense frame as 2D array
     """
     cdef:
         Py_ssize_t i, j, size, pos, size_over, width, height
-        double value, fres, fpos, idelta, start, std
+        double value, fres, fpos, idelta, start, mean, std, c_cutoff
         bint integral, noisy, do_normalization=False, do_background=True
         any_t[:, ::1] dense
         float[:,::1] c_normalization
@@ -279,6 +282,10 @@ def densify(cython.floating[:,::1] mask,
                 seed = int(time.time()*1e9)
         mt = MT(seed)
                 
+    if cutoff is None:
+        c_cutoff = numpy.finfo("double").max
+    else:
+        c_cutoff = cutoff
     with nogil:
         if do_background:
             start = radius[0]
@@ -293,18 +300,19 @@ def densify(cython.floating[:,::1] mask,
                     else:
                         pos = <uint32_t> fpos
                         if pos+1 == size:
-                            value = background[pos]
+                            mean = background[pos]
                             fres = 0.0
                         else:
                             fres = fpos - pos
-                            value = (1.0 - fres)*background[pos] + fres*background[pos+1]
+                            mean = (1.0 - fres)*background[pos] + fres*background[pos+1]
                         if noisy:
                             if pos+1 == size:
                                 std = background_std[pos]
                                 fres = 0.0
                             else:
                                 std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
-                            value = max(0.0, mt._normal_m(value, std))
+                            
+                            value = min(max(0.0, mt._normal_m(mean, std)), value + c_cutoff*std)
                         if do_normalization:
                             value *= c_normalization[i, j]
                         if integral:
