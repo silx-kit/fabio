@@ -291,7 +291,7 @@ def main():
         c = Converter(args)
         c.decompress()
     except Exception as err:
-        logger.error(err.message)
+        logger.error("%s: %s", type(err),str(err))
         logger.debug("Backtrace", exc_info=True)
         return EXIT_FAILURE
     else:
