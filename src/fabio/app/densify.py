@@ -262,8 +262,11 @@ class Converter:
         dest.save(output)
         # link peaks to destination files 
         if sparse.peaks:
-            with h5py.File(output, "a") as h:                
-                h[posixpath.join(h.attrs['default'], posixpath.split(sparse.peaks)[-1])] = h5py.ExternalLink(filename, sparse.peaks)
+            relpath = os.path.relpath(os.path.abspath(filename), 
+                                      os.path.dirname(os.path.abspath(output)))
+            with h5py.File(output, "a") as h:
+                key = posixpath.join(h.attrs['default'], posixpath.split(sparse.peaks)[-1])                 
+                h[key] = h5py.ExternalLink(relpath, sparse.peaks)
             
         if self.args.format.startswith("eiger"):
             save_master(output, filename)
