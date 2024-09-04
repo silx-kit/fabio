@@ -37,10 +37,11 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "23/08/2024"
+__date__ = "02/09/2024"
 
 import logging
 logger = logging.getLogger(__name__)
+import json
 import numpy
 try:
     import h5py
@@ -67,6 +68,7 @@ def densify(mask,
             background,
             background_std=None,
             normalization=None,
+            cutoff=None,
             seed=None):
     """Generate a dense image of its sparse representation
     
@@ -79,19 +81,25 @@ def densify(mask,
     :param background: 1D array with the background values at given distance from the center
     :param background_std: 1D array with the background std at given distance from the center
     :param normalization: flat*solidangle*polarization*... array
+    :param cutoff: maximum value for the background as mean+cutoff*std
     :param seed: numerical seed for random number generator
     :return dense array
     """
     dtype = intensity.dtype
     if radius is None or background is None:
-        dense = numpy.zeros(radius.shape, dtype=dtype)
+        mean_2d = numpy.zeros(radius.shape, dtype=dtype) 
     else:
-        dense = numpy.interp(mask, radius, background)
+        mean_2d = numpy.interp(mask, radius, background)
     if background_std is not None:
         if seed is not None:
             numpy.random.seed(seed)
-        std = numpy.interp(mask, radius, background_std)
-        numpy.maximum(0.0, numpy.random.normal(dense, std), out=dense)
+        std_2d = numpy.interp(mask, radius, background_std)
+        dense = numpy.maximum(0.0, numpy.random.normal(mean_2d, std_2d))
+        if cutoff is not None:
+            cutoff_ary = mean_2d + cutoff * std_2d
+            numpy.minimum(cutoff_ary, dense, out=dense)
+    else:
+        dense = mean_2d
     if normalization is not None:
         dense *= normalization
 
@@ -141,6 +149,8 @@ class SparseImage(FabioImage):
         self.intensity = None
         self.dummy = None
         self.noisy = float(self.__class__.NOISY)
+        self.cutoff = None
+        self.peaks = None
         self.h5 = None
 
     def close(self):
@@ -199,6 +209,18 @@ class SparseImage(FabioImage):
         if "normalization" in nx_data:
             self.normalization = numpy.ascontiguousarray(nx_data["normalization"][()], dtype=numpy.float32)
 
+        # Read cutoff_pick
+        config = {}
+        try:
+            config = json.loads(entry["sparsify/configuration/data"][()])
+        except Exception as err:
+            logger.warning("Unable to read configuration of sparsification:\n%s: %s",type(err), err)
+        self.cutoff = config.get("sparsify", {}).get("cutoff_pick")
+        
+        # Read the peak position in the file
+        if "peaks" in entry:
+            self.peaks = entry["peaks"].name 
+
         if frame is not None:
             return self.getframe(int(frame))
         else:
@@ -215,24 +237,27 @@ class SparseImage(FabioImage):
         start, stop = self.frame_ptr[index:index + 2]
         if self.radius is None:
             if cython_densify is None:  # Numpy implementation
-                dense = densify(self.mask,
-                                None,
-                                self.index[start:stop],
-                                self.intensity[start:stop],
-                                self.dummy,
-                                None,
-                                None,
-                                self.normalization)
+                dense = densify(mask=self.mask,
+                                radius=None,
+                                index=self.index[start:stop],
+                                intensity=self.intensity[start:stop],
+                                dummy = self.dummy,
+                                background=None,
+                                background_std=None,
+                                normalization=self.normalization,
+                                cutoff=self.cutoff
+                                )
             else:  # Cython
-                dense = cython_densify.densify(self.mask,
-                                               None,
-                                               self.index[start:stop],
-                                               self.intensity[start:stop],
-                                               self.dummy,
-                                               self.intensity.dtype,
-                                               None,
-                                               None,
-                                               self.normalization)
+                dense = cython_densify.densify(mask=self.mask,
+                                               radius=None,
+                                               index=self.index[start:stop],
+                                               intensity=self.intensity[start:stop],
+                                               dummy=self.dummy,
+                                               dtype=self.intensity.dtype,
+                                               background=None,
+                                               background_std=None,
+                                               normalization=self.normalization,
+                                               cutoff=self.cutoff)
         else:
             if cython_densify is None:  # Numpy
                 dense = densify(self.mask,

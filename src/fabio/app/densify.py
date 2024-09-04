@@ -36,7 +36,7 @@ stack of frames in Eiger, Lima ... images.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "27/08/2024"
+__date__ = "02/09/2024"
 __status__ = "production"
 
 FOOTER = """
@@ -48,6 +48,7 @@ logger = logging.getLogger("densify")
 import sys
 import argparse
 import os
+import posixpath
 import time
 import multiprocessing.pool
 import json
@@ -259,6 +260,14 @@ class Converter:
 
         self.pb.update(self.pb.max_value, f"Save {output}")
         dest.save(output)
+        # link peaks to destination files 
+        if sparse.peaks:
+            relpath = os.path.relpath(os.path.abspath(filename), 
+                                      os.path.dirname(os.path.abspath(output)))
+            with h5py.File(output, "a") as h:
+                key = posixpath.join(h.attrs['default'], posixpath.split(sparse.peaks)[-1])                 
+                h[key] = h5py.ExternalLink(relpath, sparse.peaks)
+            
         if self.args.format.startswith("eiger"):
             save_master(output, filename)
         t3 = time.perf_counter()
@@ -282,8 +291,8 @@ def main():
         c = Converter(args)
         c.decompress()
     except Exception as err:
-        logger.error(err.message)
-        logger.debug("Backtrace", exc_info=True)
+        logger.error("%s: %s", err.__class__.__name__,str(err))
+        logger.error("Backtrace", exc_info=True)
         return EXIT_FAILURE
     else:
         return EXIT_SUCCESS
