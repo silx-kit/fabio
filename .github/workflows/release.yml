@@ -44,7 +44,9 @@ jobs:
           name: cibw-sdist
           path: dist
       - name: Install from sdist
-        run: pip install "$(ls dist/fabio-*.tar.gz)"
+        run: |
+          pip install "$(ls dist/fabio-*.tar.gz)"
+          pip install pyqt5
       - name: Run tests
         run: python -c "import fabio.test, sys; sys.exit(fabio.test.run_tests())"
 
