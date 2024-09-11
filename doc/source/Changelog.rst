@@ -1,6 +1,17 @@
 Changelog
 =========
 
+FabIO-2024.9.0: 
+...............
+- Link `peak` from sparse dataset to the dense one when using `densify_Bragg`
+- New tool `hdf2neggia` which converts any HDF5 file compatible into something compatible with XDS+neggia pluggin
+- support new detector: `LambdaImage`
+- fix endianness issue in several file-format
+- fix bug in `edf.fast_data_read`
+- fix warning which became errors in gcc14
+- Supports Python 3.8-3.12
+
+
 FabIO-2024.4.0: 
 ................
 - Support for new style GE-files (contribution from Patrick Avery)
