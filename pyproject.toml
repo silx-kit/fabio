@@ -58,6 +58,9 @@ requires = [
     'pyproject-metadata>=0.5.0',
     'tomli>=1.0.0'
 ]
+[project.optional-dependencies]
+gui = [ "pyqt5", "matplotlib" ]
+all = ["pyqt5", "matplotlib"]
 
 [project.urls]
 homepage = 'http://www.silx.org'
@@ -75,3 +78,7 @@ hdf2neggia = 'fabio.app.hdf2neggia:main'
 
 [project.gui-scripts]
 fabio_viewer = 'fabio.app.viewer:main'
+
+[tool.cibuildwheel]
+test-requires = ["pyqt5", "matplotlib"]
+
