@@ -80,4 +80,5 @@ hdf2neggia = 'fabio.app.hdf2neggia:main'
 fabio_viewer = 'fabio.app.viewer:main'
 
 [tool.cibuildwheel]
-test-requires = "pyqt5", "matplotlib"]
+test-requires = ["pyqt5", "matplotlib"]
+
