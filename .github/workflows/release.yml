@@ -93,7 +93,7 @@ jobs:
             cibw_archs: "ppc64le"
           - os: windows-2019
             cibw_archs: "auto64"
-          - os: macos-13
+          - os: macos-12
             cibw_archs: "x86_64"
             macos_target: "11.0"
           - os: macos-14
@@ -122,7 +122,7 @@ jobs:
           CIBW_TEST_COMMAND: python -c "import fabio.test, sys; sys.exit(fabio.test.run_tests())"
           # Skip tests for emulated architectures
           # and Python3.8 on macos/arm64 (https://github.com/pypa/cibuildwheel/pull/1169)
-          CIBW_TEST_SKIP: "*-*linux_{aarch64,ppc64le,s390x} cp38-macosx_arm64"
+          CIBW_TEST_SKIP: "*-*linux_{aarch64,ppc64le,s390x} cp38-macosx_*"
 
       - uses: actions/upload-artifact@v4
         with:
