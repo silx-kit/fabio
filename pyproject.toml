@@ -58,7 +58,9 @@ requires = [
     'pyproject-metadata>=0.5.0',
     'tomli>=1.0.0'
 ]
-
+[project.optional-dependencies]
+gui = [ "PyQt5", "matplotlib" ]
+all = ["PyQt5", "matplotlib"]
 [project.urls]
 homepage = 'http://www.silx.org'
 documentation = 'http://www.silx.org/doc/fabio/latest/'
