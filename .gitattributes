@@ -2,3 +2,4 @@ sandbox/* export-ignore
 .github/* export-ignore
 ci/* export-ignore
 package/* export-ignore
+build-deb.sh export-ignore
