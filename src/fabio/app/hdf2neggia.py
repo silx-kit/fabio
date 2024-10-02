@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+from pickle import FALSE
 
-__date__ = "01/10/2024"
+__date__ = "02/10/2024"
 __author__ = "Jérôme Kieffer"
 __license__ = "MIT"
 
@@ -52,17 +53,18 @@ class XDSbuilder:
         parser.add_argument("--copy", "-c", help="copy dataset instead of using external links",
                             action="store_true")
         parser.add_argument("--geometry", "-g", help="PONI-file containing the geometry (pyFAI format, MANDATORY)")
-        parser.add_argument("--output", "-o", help="output filename", default="master.h5")
+        parser.add_argument("--output", "-o", help="output filename", default="master_000000.h5")
         parser.add_argument("--CdTe", help="The detector is made of CdTe", default=False, action="store_true")
+        parser.add_argument("--neggia", help="Path of the neggia plugin", default="dectris-neggia.so")
         self.options = parser.parse_args(argv)
         return self.options
         
     def configure_verboseness(self):
         if self.options and self.options.verbose:
             if self.options.verbose>1:
-                logger.setLevel(logging.debug)
+                logger.setLevel(logging.DEBUG)
             else:
-                logger.setLevel(logging.info)
+                logger.setLevel(logging.INFO)
         
     def load_poni(self):
         "return 1 if poni-file cannot be found"
@@ -97,6 +99,8 @@ class XDSbuilder:
             mode = "w"
         f2d = self.poni.getFit2D()
         dest_dir = os.path.dirname(os.path.abspath(self.options.output))
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir, exist_ok=True)
         with Nexus(self.options.output, mode) as nxs:
             entry = nxs.new_entry(entry="entry", program_name=application_name, force_name=True)
             instrument = nxs.new_instrument(entry=entry, instrument_name="instrument")
@@ -167,41 +171,72 @@ class XDSbuilder:
     
     def build_XDS(self):
         "Create XDS.INP file suitable for data reduction"
+        
+        basename = os.path.basename(self.options.output)
+        base, ext = os.path.splitext(basename)
+        newbase = ""
+        replace = True
+        for i in base[-1::-1]:
+            if replace and i.isdigit():
+                newbase = "?" + newbase
+            else:
+                replace=False 
+                newbase = i + newbase
+                 
+        
         xds = ["JOB= XYCORR INIT COLSPOT IDXREF DEFPIX INTEGRATE CORRECT",
                "! JOB=  DEFPIX INTEGRATE CORRECT",
-               "LIB=./dectris-neggia.so",
+               "",
+               f"NAME_TEMPLATE_OF_DATA_FRAMES= {newbase}{ext}",
+               f"LIB= {self.options.neggia}",
+               "",
                "SPACE_GROUP_NUMBER=0 ! 0 if unknown",
                "FRIEDEL'S_LAW=FALSE     ! This acts only on the CORRECT step",
+               "",
                "FRACTION_OF_POLARIZATION=0.99",
+               "ROTATION_AXIS=0 -1  0",
                "POLARIZATION_PLANE_NORMAL=0 1 0",
                "DIRECTION_OF_DETECTOR_X-AXIS=1 0 0",
                "DIRECTION_OF_DETECTOR_Y-AXIS=0 1 0",
                "INCIDENT_BEAM_DIRECTION=0 0 1",
                "OSCILLATION_RANGE= 0.5",
+               "",
                ]
-        #DATA_RANGE=
+        xds.append(f"DATA_RANGE= 1 {sum(i.nframes for i in self.frames)}")
         
         shape = self.poni.detector.shape
         pixel1, pixel2 = self.poni.detector.pixel1, self.poni.detector.pixel2
         xds.append(f"NX= {shape[1]:d} NY= {shape[0]:d}  QX= {pixel2*1000:f}  QY= {pixel1*1000:f}")
         
         f2d = self.poni.getFit2D()
-        xds.append(f"DETECTOR_DISTANCE= {f2d['directDist']:f}")
-        xds.append(f"ORGX= {f2d['centerX']:f} ORGY= {f2d['centerY']:f}")
+        xds.append(f"DETECTOR_DISTANCE= {f2d['directDist']:.4f}")
+        xds.append(f"ORGX= {f2d['centerX']:.3f} ORGY= {f2d['centerY']:.3f}")
         
-        mask = self.poni.detector.mask
-        empty_lines = numpy.where(numpy.std(mask, axis=0) == 0)[0]
-        #TODO
-        
-        #UNTRUSTED_RECTANGLE= 487  495    0 1680
-        
-        if self.option.CdTe:
+        xds.append("")
+        mask = self.poni.detector.mask>0
+        empty = numpy.where(numpy.std(mask, axis=0) == 0)[0]
+        if len(empty):
+            start = 0
+            for stop in numpy.where(empty[1:]-empty[:-1]!=1)[0]:
+                xds.append(f"UNTRUSTED_RECTANGLE= {empty[start]:4d} {empty[stop]:4d}    0 {shape[0]:4d} ")
+                start = stop + 1
+            xds.append(f"UNTRUSTED_RECTANGLE= {empty[start]:4d} {empty[-1]:4d}    0 {shape[0]:4d} ")
+
+        empty = numpy.where(numpy.std(mask, axis=1) == 0)[0]
+        if len(empty):
+            start = 0
+            for stop in numpy.where(empty[1:]-empty[:-1]!=1)[0]:
+                xds.append(f"UNTRUSTED_RECTANGLE=     0 {shape[1]:4d} {empty[start]:4d} {empty[stop]:4d}")
+                start = stop + 1
+            xds.append(f"UNTRUSTED_RECTANGLE=     0 {shape[1]:4d} {empty[start]:4d} {empty[-1]:4d}")
+        xds.append("")
+        if self.options.CdTe:
             xds.append("SENSOR_THICKNESS=0.75 !mm")
             nrj = self.poni.energy
-            e,mu = numpy.loadtxt(StringIO(Attenuations_CdTe),unpack=True)
-            xds.append(f"SILICON={numpy.interp(nrj, e, mu)}!1/mm"
-        if self.options.outfile:
-            outfile = os.path.join(os.path.dirname(os.path.abspath(self.options.outfile)), 
+            e, mu = numpy.loadtxt(StringIO(Attenuations_CdTe),unpack=True)
+            xds.append(f"SILICON= {numpy.interp(nrj, e, mu):.3f} !1/mm")
+        if self.options.output:
+            outfile = os.path.join(os.path.dirname(os.path.abspath(self.options.output)), 
                                    "XDS.INP")
             with open(outfile, "w") as w:
                 w.write(os.linesep.join(xds))
