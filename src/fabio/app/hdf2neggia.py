@@ -169,6 +169,7 @@ class XDSbuilder:
                         else:
                             logger.warning("Don't know how to handle %s, skipping", item)
         os.link(dest_h5, dest_h5.replace("master","000000"))
+        logger.info(f"Successfully created Neggia file {dest_h5}.")
         return 0
     
     def build_XDS(self):
@@ -230,11 +231,17 @@ class XDSbuilder:
             nrj = self.poni.energy
             e, mu = numpy.loadtxt(StringIO(Attenuations_CdTe),unpack=True)
             xds.append(f"SILICON= {numpy.interp(nrj, e, mu):.3f} !1/mm")
-        if self.options.output:
-            outfile = os.path.join(os.path.dirname(os.path.abspath(self.options.output)), 
-                                   "XDS.INP")
-            with open(outfile, "w") as w:
-                w.write(os.linesep.join(xds))
+
+        mode = "w"        
+        if os.path.exists(dest_xds):
+            if self.options.force:
+                mode = "w"
+            else:
+                logger.error("Output file exist, not overwriting it. Aborting")
+                return 1
+        with open(dest_xds, "w") as w:
+            w.write(os.linesep.join(xds))
+        logger.info(f"Successfully created XDS file {dest_xds}.")
         return 0
 
     def process(self):
