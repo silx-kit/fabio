@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from pickle import FALSE
 
-__date__ = "02/10/2024"
+__date__ = "03/10/2024"
 __author__ = "Jérôme Kieffer"
 __license__ = "MIT"
 
@@ -35,6 +35,7 @@ class XDSbuilder:
         self.poni = None
         self.options = None
         self.frames = None 
+        self.h5_filename = "fabio_master.h5"
 
     def parse(self, argv=None):
         "Parse command line arguments and return "
@@ -53,7 +54,7 @@ class XDSbuilder:
         parser.add_argument("--copy", "-c", help="copy dataset instead of using external links",
                             action="store_true")
         parser.add_argument("--geometry", "-g", help="PONI-file containing the geometry (pyFAI format, MANDATORY)")
-        parser.add_argument("--output", "-o", help="output filename", default="master_000000.h5")
+        parser.add_argument("--output", "-o", help=f"output directory, the data will be in {self.h5_filename}", default="fabio_xds")
         parser.add_argument("--CdTe", help="The detector is made of CdTe", default=False, action="store_true")
         parser.add_argument("--neggia", help="Path of the neggia plugin", default="dectris-neggia.so")
         self.options = parser.parse_args(argv)
@@ -89,7 +90,10 @@ class XDSbuilder:
         
     def build_neggia(self):
         """Build the neggia file, i.e. the HDF5 file with data + metadata for analysis""" 
-        if os.path.exists(self.options.output):
+        if not os.path.exists(self.options.output):
+            os.makedirs(self.options.output)
+        dest_h5 = os.path.join(self.options.output, self.h5_filename)
+        if os.path.exists(dest_h5):
             if self.options.force:
                 mode = "w"
             else:
@@ -98,10 +102,7 @@ class XDSbuilder:
         else:
             mode = "w"
         f2d = self.poni.getFit2D()
-        dest_dir = os.path.dirname(os.path.abspath(self.options.output))
-        if not os.path.exists(dest_dir):
-            os.makedirs(dest_dir, exist_ok=True)
-        with Nexus(self.options.output, mode) as nxs:
+        with Nexus(dest_h5, mode) as nxs:
             entry = nxs.new_entry(entry="entry", program_name=application_name, force_name=True)
             instrument = nxs.new_instrument(entry=entry, instrument_name="instrument")
             if self.poni.wavelength:
@@ -132,7 +133,7 @@ class XDSbuilder:
                                             chunks=(1,)+fimg.shape,
                                             **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
                     else:
-                        data[f"data_{cnt:06d}"] = h5py.ExternalLink(os.path.relpath(fimg.dataset.file.filename, dest_dir), fimg.dataset.name)
+                        data[f"data_{cnt:06d}"] = h5py.ExternalLink(os.path.relpath(fimg.dataset.file.filename, self.options.output), fimg.dataset.name)
                 elif isinstance(fimg.dataset, numpy.ndarray):
                     cnt += 1
                     if fimg.dataset.ndim < 3:
@@ -153,7 +154,7 @@ class XDSbuilder:
                                                     chunks=(1,)+fimg.shape,
                                                     **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
                             else:
-                                data[f"data_{cnt:06d}"] = h5py.ExternalLink(os.path.relpath(item.file.filename, dest_dir), item.name)
+                                data[f"data_{cnt:06d}"] = h5py.ExternalLink(os.path.relpath(item.file.filename, self.options.output), item.name)
     
                         elif isinstance(fimg.dataset, numpy.ndarray):
                             cnt += 1
@@ -167,27 +168,19 @@ class XDSbuilder:
                                                 **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
                         else:
                             logger.warning("Don't know how to handle %s, skipping", item)
+        os.link(dest_h5, dest_h5.replace("master","000000"))
         return 0
     
     def build_XDS(self):
         "Create XDS.INP file suitable for data reduction"
-        
-        basename = os.path.basename(self.options.output)
-        base, ext = os.path.splitext(basename)
-        newbase = ""
-        replace = True
-        for i in base[-1::-1]:
-            if replace and i.isdigit():
-                newbase = "?" + newbase
-            else:
-                replace=False 
-                newbase = i + newbase
-                 
+        if not os.path.exists(self.options.output):
+            os.makedirs(self.options.output)
+        dest_xds = os.path.join(self.options.output, "XDS.INP")
         
         xds = ["JOB= XYCORR INIT COLSPOT IDXREF DEFPIX INTEGRATE CORRECT",
                "! JOB=  DEFPIX INTEGRATE CORRECT",
                "",
-               f"NAME_TEMPLATE_OF_DATA_FRAMES= {newbase}{ext}",
+               f"NAME_TEMPLATE_OF_DATA_FRAMES= {self.h5_filename.replace('master','??????')}",
                f"LIB= {self.options.neggia}",
                "",
                "SPACE_GROUP_NUMBER=0 ! 0 if unknown",
@@ -201,6 +194,7 @@ class XDSbuilder:
                "INCIDENT_BEAM_DIRECTION=0 0 1",
                "OSCILLATION_RANGE= 0.5",
                "",
+               "OVERLOAD=100000000",
                ]
         xds.append(f"DATA_RANGE= 1 {sum(i.nframes for i in self.frames)}")
         
@@ -209,9 +203,10 @@ class XDSbuilder:
         xds.append(f"NX= {shape[1]:d} NY= {shape[0]:d}  QX= {pixel2*1000:f}  QY= {pixel1*1000:f}")
         
         f2d = self.poni.getFit2D()
+        xds.append("DETECTOR= EIGER")
         xds.append(f"DETECTOR_DISTANCE= {f2d['directDist']:.4f}")
         xds.append(f"ORGX= {f2d['centerX']:.3f} ORGY= {f2d['centerY']:.3f}")
-        
+        xds.append(f"X-RAY_WAVELENGTH={1e10*self.poni.wavelength}")
         xds.append("")
         mask = self.poni.detector.mask>0
         empty = numpy.where(numpy.std(mask, axis=0) == 0)[0]
