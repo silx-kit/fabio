@@ -288,7 +288,7 @@ class Converter:
                     headers["drealpixelsizey"] = nxdetector["y_pixel_size"][()] * 1e3
                     headers["dxorigininpix"] = nxdetector["beam_center_x"][()]
                     headers["dyorigininpix"] = nxdetector["beam_center_y"][()]
-                    headers["ddistanceinmm"] = nxdetector["detector_distance"][()]  * 1e3
+                    headers["ddistanceinmm"] = nxdetector["detector_distance"][()] * 1e3
                     headers["dexposuretimeinsec"] = nxdetector["count_time"][()]
                     wavelength = entry["instrument/beam/incident_wavelength"][()] 
             else:
