@@ -58,7 +58,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/09/2024"
+__date__ = "09/10/2024"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
 __all__ = ["date", "version_info", "strictversion", "hexversion", "debianversion",
@@ -76,8 +76,8 @@ PRERELEASE_NORMALIZED_NAME = {"dev": "a",
                               "candidate": "rc"}
 
 MAJOR = 2024
-MINOR = 9
-MICRO = 1
+MINOR = 10
+MICRO = 0
 RELEV = "dev"  # <16
 SERIAL = 0  # <16
 date = __date__
