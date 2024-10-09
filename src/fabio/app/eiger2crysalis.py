@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "15/03/2024"
+__date__ = "09/10/2024"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -275,7 +275,22 @@ class Converter:
                 headers["dexposuretimeinsec"] = 1  # meaningfull value.
 
             elif isinstance(source, eigerimage.EigerImage):
-                raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
+                entry_name = source.h5.attrs.get("default")
+                if entry_name is None:
+                    entry_name = "entry"
+                entry = source.h5.get(entry_name)
+                try:
+                    nxdetector = entry["instrument/detector"]
+                except:
+                    logger.error("No detector definition in Eiger file, is this a master file ?")
+                else:
+                    headers["drealpixelsizex"] = nxdetector["x_pixel_size"][()] * 1e3
+                    headers["drealpixelsizey"] = nxdetector["y_pixel_size"][()] * 1e3
+                    headers["dxorigininpix"] = nxdetector["beam_center_x"][()]
+                    headers["dyorigininpix"] = nxdetector["beam_center_y"][()]
+                    headers["ddistanceinmm"] = nxdetector["detector_distance"][()]  * 1e3
+                    headers["dexposuretimeinsec"] = nxdetector["count_time"][()]
+                    wavelength = entry["instrument/beam/incident_wavelength"][()] 
             else:
                 raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
         if self.mask is None:
