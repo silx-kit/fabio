@@ -339,7 +339,7 @@ class Converter:
                 value = numexpr.NumExpr(self.options.omega)
                 self.scan_type = "omega"
             headers["dom_s"] = headers["dom_e"] = value
-
+        
         return headers
 
     def convert_one(self, input_filename, start_at=0):
@@ -468,13 +468,14 @@ class Converter:
             dend = self.headers["dph_s"](self.processed_frames)
             dphi = 0.0
             domega = self.headers["dom_s"]
-        else: #Omega-scan
+        elif self.scan_type=="omega":
             iscantype = xcaliburimage.SCAN_TYPE.Omega.value
             dstart = self.headers["dom_s"](0)
             dend = self.headers["dom_s"](self.processed_frames)
             dphi = self.headers["dph_s"]
             domega = 0.0
-            
+        else:
+            raise RuntimeError("This program only supports Omega and Phi scans, please provide the scan type in the command-line. See the output of the `--help` options.")
         oscil = (dend-dstart)/self.processed_frames
         sweep = xcaliburimage.Sweep(0,
                                     iscantype,
