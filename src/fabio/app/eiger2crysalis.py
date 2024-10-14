@@ -38,7 +38,7 @@ into CrysalisPro.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "15/03/2024"
+__date__ = "09/10/2024"
 __status__ = "production"
 
 FOOTER = """To import your files as a project:
@@ -275,7 +275,22 @@ class Converter:
                 headers["dexposuretimeinsec"] = 1  # meaningfull value.
 
             elif isinstance(source, eigerimage.EigerImage):
-                raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
+                entry_name = source.h5.attrs.get("default")
+                if entry_name is None:
+                    entry_name = "entry"
+                entry = source.h5.get(entry_name)
+                try:
+                    nxdetector = entry["instrument/detector"]
+                except:
+                    logger.error("No detector definition in Eiger file, is this a master file ?")
+                else:
+                    headers["drealpixelsizex"] = nxdetector["x_pixel_size"][()] * 1e3
+                    headers["drealpixelsizey"] = nxdetector["y_pixel_size"][()] * 1e3
+                    headers["dxorigininpix"] = nxdetector["beam_center_x"][()]
+                    headers["dyorigininpix"] = nxdetector["beam_center_y"][()]
+                    headers["ddistanceinmm"] = nxdetector["detector_distance"][()] * 1e3
+                    headers["dexposuretimeinsec"] = nxdetector["count_time"][()]
+                    wavelength = entry["instrument/beam/incident_wavelength"][()] 
             else:
                 raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
         if self.mask is None:
@@ -324,7 +339,7 @@ class Converter:
                 value = numexpr.NumExpr(self.options.omega)
                 self.scan_type = "omega"
             headers["dom_s"] = headers["dom_e"] = value
-
+        
         return headers
 
     def convert_one(self, input_filename, start_at=0):
@@ -453,13 +468,14 @@ class Converter:
             dend = self.headers["dph_s"](self.processed_frames)
             dphi = 0.0
             domega = self.headers["dom_s"]
-        else: #Omega-scan
+        elif self.scan_type=="omega":
             iscantype = xcaliburimage.SCAN_TYPE.Omega.value
             dstart = self.headers["dom_s"](0)
             dend = self.headers["dom_s"](self.processed_frames)
             dphi = self.headers["dph_s"]
             domega = 0.0
-            
+        else:
+            raise RuntimeError("This program only supports Omega and Phi scans, please provide the scan type in the command-line. See the output of the `--help` options.")
         oscil = (dend-dstart)/self.processed_frames
         sweep = xcaliburimage.Sweep(0,
                                     iscantype,
