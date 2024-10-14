@@ -37,7 +37,7 @@ to CBF and mimic the header from Dectris Pilatus.
 __author__ = "Jerome Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "03/12/2021"
+__date__ = "07/10/2024"
 __status__ = "production"
 
 import logging
@@ -259,7 +259,7 @@ def convert_one(input_filename, options, start_at=0):
     if options.pilatus:
         shape = select_pilatus_detecor(shape)
 
-    pilatus_headers = cbfimage.PilatusHeader("Silicon sensor, thickness 0.001 m")
+    pilatus_headers = cbfimage.PilatusHeader()
     if isinstance(source, limaimage.LimaImage):
         # Populate the Pilatus header from the Lima
         entry_name = source.h5.attrs.get("default")
@@ -290,7 +290,27 @@ def convert_one(input_filename, options, start_at=0):
                         except Exception as e:
                             logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
     elif isinstance(source, eigerimage.EigerImage):
-        raise NotImplementedError("Please implement Eiger detector data format parsing or at least open an issue")
+        entry_name = source.h5.attrs.get("default")
+        if entry_name:
+            entry = source.h5.get(entry_name)
+            try:
+                nxdetector = entry["instrument/detector"]
+            except:
+                logger.error("No detector definition in Eiger file, is this a master file ?")
+            else:
+                detector = "%s, S/N %s" % (nxdetector["description"][()].decode(),
+                                           nxdetector["detector_number"][()].decode())
+                pilatus_headers["Detector"] = detector
+                pilatus_headers["Pixel_size"] = (nxdetector["x_pixel_size"][()],
+                                                 nxdetector["y_pixel_size"][()])
+                pilatus_headers["Exposure_time"] = nxdetector["count_time"][()]
+                pilatus_headers["Exposure_period"] = nxdetector["frame_time"][()]
+                pilatus_headers["Wavelength"] = entry["instrument/beam/incident_wavelength"][()] 
+                pilatus_headers["Detector_distance"] = nxdetector["detector_distance"][()] 
+                pilatus_headers["Beam_xy"] = (nxdetector["beam_center_x"][()],
+                                              nxdetector["beam_center_y"][()])
+                pilatus_headers["sensor"] = (nxdetector["sensor_material"][()].decode(),
+                                              nxdetector["sensor_thickness"][()])
     else:
         raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
 
@@ -307,6 +327,8 @@ def convert_one(input_filename, options, start_at=0):
         pilatus_headers["Alpha"] = options.alpha
     if options.kappa:
         pilatus_headers["Kappa"] = options.kappa
+    if "sensor" not in pilatus_headers:
+        pilatus_headers["sensor"] = ("Silicon", 0.001)
     formula = None
     destination = None
     if options.chi is not None:

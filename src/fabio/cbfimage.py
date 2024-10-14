@@ -38,7 +38,7 @@ to conform to the specification of the IUCR
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "04/07/2023"
+__date__ = "07/10/2024"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import os
@@ -923,9 +923,12 @@ class PilatusHeader(object):
             i += 1
         return lines
 
-    def __init__(self, content, convention="PILATUS_1.2"):
+    def __init__(self, content=None, convention="PILATUS_1.2"):
         assert convention == "PILATUS_1.2"
-        self._dict = self._parse(content)
+        if content:
+            self._dict = self._parse(content)
+        else:
+            self._dict = OrderedDict()
 
     def __repr__(self):
         lines = []
@@ -973,3 +976,6 @@ class PilatusHeader(object):
 
     def __getitem__(self, key):
         return self._dict[key]
+    
+    def __contains__(self, key):
+        return key in self._dict 
