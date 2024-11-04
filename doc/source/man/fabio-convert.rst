@@ -11,8 +11,8 @@ For multi-frame files, the best is to use the Python API.
 Usage:
 ------
 
-fabio-convert [-h] [-V] [-v] [--debug] [-l] [-o OUTPUT] [-F FORMAT] [-f] [-n] [--remove-destination] [-u] [-i]
-[--dry-run] [IMAGE ...]
+fabio-convert [-h] [-V] [-v] [-\-debug] [-l] [-o OUTPUT] [-F FORMAT] [-f] [-n] [-\-remove-destination] [-u] [-i]
+[-\-dry-run] [IMAGE ...]
 
 Positional arguments:
 +++++++++++++++++++++
@@ -23,53 +23,53 @@ IMAGE
 Options:
 ++++++++
 
-**-h**, **--help**
+**-h**, **-\-help**
    show this help message and exit
 
-**-V**, **--version**
+**-V**, **-\-version**
    output version and exit
 
-**-v**, **--verbose**
+**-v**, **-\-verbose**
    show information for each conversions
 
-**--debug**
+**-\-debug**
    show debug information
 
 Main arguments:
 +++++++++++++++
 
-**-l**, **--list**
+**-l**, **-\-list**
    show the list of available formats and exit
 
-**-o** OUTPUT, **--output** OUTPUT
+**-o** OUTPUT, **-\-output** OUTPUT
    output file or directory
 
-**-F** FORMAT, **--output-format** FORMAT
+**-F** FORMAT, **-\-output-format** FORMAT
    output format
 
 Optional behaviour arguments:
 +++++++++++++++++++++++++++++
 
-**-f**, **--force**
+**-f**, **-\-force**
    if an existing destination file cannot be opened, remove it and try
    again (this option is ignored when the **-n** option is also used)
 
-**-n**, **--no-clobber**
+**-n**, **-\-no-clobber**
    do not overwrite an existing file (this option is ignored when the
    **-i** option is also used)
 
-**--remove-destination**
+**-\-remove-destination**
    remove each existing destination file before attempting to open it
    (contrast with **--force**)
 
-**-u**, **--update**
+**-u**, **-\-update**
    copy only when the SOURCE file is newer than the destination file or
    when the destination file is missing
 
-**-i**, **--interactive**
+**-i**, **-\-interactive**
    prompt before overwrite (overrides a previous **-n** option)
 
-**--dry-run**
+**-\-dry-run**
    do everything except modifying the file system
 
 Return code: 
