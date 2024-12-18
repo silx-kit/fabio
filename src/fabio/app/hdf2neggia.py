@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__date__ = "10/07/2024"
+__date__ = "18/12/2024"
 __author__ = "Jerome Kieffer"
 __license__ = "MIT"
 
@@ -33,6 +33,8 @@ def parse(argv=None):
     parser.add_argument("input", nargs='+',  help="Space separated list of input files (HDF5)")
     parser.add_argument("--verbose", "-v", help="increase output verbosity",
                         action="count")
+    parser.add_argument("-V", "--version", action='version', version=fabio.version,
+                        help="output version and exit")
     parser.add_argument("--force", "-f", help="force overwrite output file",
                         action="store_true")
     parser.add_argument("--copy", "-c", help="copy dataset instead of using external links",
