@@ -35,7 +35,7 @@ import sys
 import traceback
 
 from packaging.version import Version
-from silx.utils import deprecation
+# from . import deprecation
 
 _logger = logging.getLogger(__name__)
 
