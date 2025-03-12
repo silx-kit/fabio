@@ -3,6 +3,7 @@ subdir('benchmark')
 subdir('compression')
 subdir('ext')
 subdir('test')
+subdir('qt')
 subdir('utils')
 
 py.install_sources([
