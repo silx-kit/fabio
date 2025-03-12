@@ -31,49 +31,50 @@ __date__ = "02/09/2021"
 import enum
 import logging
 
-import PyQt6.sip
-
-
 _logger = logging.getLogger(__name__)
 
+try:
+    import PyQt6.sip
+except ImportError:
+    pass 
+else:
+    def patch_enums(*modules):
+        """Patch PyQt6 modules to provide backward compatibility of enum values
 
-def patch_enums(*modules):
-    """Patch PyQt6 modules to provide backward compatibility of enum values
-
-    :param modules: Modules to patch (e.g., PyQt6.QtCore).
-    """
-    for module in modules:
-        for clsName in dir(module):
-            cls = getattr(module, clsName, None)
-            if not isinstance(cls, PyQt6.sip.wrappertype) or not clsName.startswith(
-                "Q"
-            ):
-                continue
-
-            for qenumName in dir(cls):
-                if not qenumName[0].isupper():
-                    continue
-                # Special cases to avoid overrides and mimic PySide6
-                if clsName == "QColorSpace" and qenumName in (
-                    "Primaries",
-                    "TransferFunction",
+        :param modules: Modules to patch (e.g., PyQt6.QtCore).
+        """
+        for module in modules:
+            for clsName in dir(module):
+                cls = getattr(module, clsName, None)
+                if not isinstance(cls, PyQt6.sip.wrappertype) or not clsName.startswith(
+                    "Q"
                 ):
                     continue
-                if qenumName in ("DeviceType", "PointerType"):
-                    continue
 
-                qenum = getattr(cls, qenumName)
-                if not isinstance(qenum, enum.EnumMeta):
-                    continue
+                for qenumName in dir(cls):
+                    if not qenumName[0].isupper():
+                        continue
+                    # Special cases to avoid overrides and mimic PySide6
+                    if clsName == "QColorSpace" and qenumName in (
+                        "Primaries",
+                        "TransferFunction",
+                    ):
+                        continue
+                    if qenumName in ("DeviceType", "PointerType"):
+                        continue
 
-                if any(
-                    map(
-                        lambda ancestor: isinstance(ancestor, PyQt6.sip.wrappertype)
-                        and qenum is getattr(ancestor, qenumName, None),
-                        cls.__mro__[1:],
-                    )
-                ):
-                    continue  # Only handle it once in case of inheritance
+                    qenum = getattr(cls, qenumName)
+                    if not isinstance(qenum, enum.EnumMeta):
+                        continue
 
-                for name, value in qenum.__members__.items():
-                    setattr(cls, name, value)
+                    if any(
+                        map(
+                            lambda ancestor: isinstance(ancestor, PyQt6.sip.wrappertype)
+                            and qenum is getattr(ancestor, qenumName, None),
+                            cls.__mro__[1:],
+                        )
+                    ):
+                        continue  # Only handle it once in case of inheritance
+
+                    for name, value in qenum.__members__.items():
+                        setattr(cls, name, value)
