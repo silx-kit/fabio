@@ -1,8 +1,6 @@
 py.install_sources(
 [
   '__init__.py',
-  '_qt.py',
-  '_matplotlib.py',
   'convert.py',
   'eiger2cbf.py',
   'viewer.py',
