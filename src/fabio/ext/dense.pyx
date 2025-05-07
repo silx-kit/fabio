@@ -8,7 +8,7 @@
 #    Project: Fable Input/Output
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2020-2024 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2020-2025 European Synchrotron Radiation Facility, Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ from pickle import TRUE
 """Densification of sparse frame format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "02/09/2024"  
+__date__ = "05/05/2025"
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -43,10 +43,10 @@ from libc.stdint cimport int8_t, uint8_t, \
                          uint16_t, int16_t,\
                          int32_t, uint32_t,\
                          int64_t, uint64_t
-from libc.math cimport isfinite, log, sqrt, cos, M_PI                         
+from libc.math cimport isfinite, log, sqrt, cos, M_PI, lround
 from libc.stdlib cimport RAND_MAX
 cimport cython
-               
+
 ctypedef fused any_t:
     double
     float
@@ -69,18 +69,18 @@ cdef:
     double NRM53 = 1.0 / ((1<<53)-1) #Normalisation for 53 bit integer
     double EPS64 = numpy.finfo(numpy.float64).eps
     double TWO_PI = 2.0 * M_PI
-    
+
 
 cdef class MT:
     """
     This class implements 64-bit Mersenne Twisters
-    
+
     http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/VERSIONS/C-LANG/mt19937-64.c
-    
+
     Inspired from:
     https://github.com/ananswam/cython_random
     with minor clean-ups
-    
+
     Licence: MIT
     """
     cdef:
@@ -90,11 +90,11 @@ cdef class MT:
         bint has_spare
         double spare
 
-    
+
     def __init__(self, seed):
         self.mti = NN + 1
         self._seed(<uint64_t> seed)
-    
+
     cdef inline void _seed(self, uint64_t seed) noexcept nogil:
         self.mt[0] = seed
         for self.mti in range(1, NN):
@@ -103,9 +103,9 @@ cdef class MT:
         self.mag01[1] = MATRIX_A
         self.mti = NN
         self.has_spare = False
-        
+
     cdef inline uint64_t genrand64(self) noexcept nogil:
-        cdef: 
+        cdef:
             uint32_t i
             uint64_t x
         if self.mti >= NN:
@@ -128,23 +128,23 @@ cdef class MT:
         x ^= (x << 37) & 0xFFF7EEE000000000ULL
         x ^= (x >> 43);
         return x
-    
+
     def rand(self):
         return self.genrand64()%(<uint64_t>RAND_MAX+1)
-    
+
     @cython.cdivision(True)
     cdef inline double _uniform(self) noexcept nogil:
         return (self.genrand64() >> 11) * NRM53
-    
+
     def uniform(self):
         "Return a random value between [0:1["
         return self._uniform()
-    
+
     cdef inline double _normal_bm(self, double mu, double sigma) noexcept nogil:
         "Box-Muller implementation of the normal distribution"
         cdef:
             double u1=0.0, u2=0.0
-    
+
         while (u1 == 0.0):
             u1 = self._uniform()
             u2 = self._uniform()
@@ -153,11 +153,11 @@ cdef class MT:
 
     cdef inline double _normal_m(self, double mu, double sigma) noexcept nogil:
         "Marsaglia implementation of the normal distribution, 2xfaster than Box-Muller"
-        cdef: 
+        cdef:
             double u1=0.0, u2=0.0, s=0.0
         if self.has_spare:
             self.has_spare = False
-            return mu + self.spare * sigma 
+            return mu + self.spare * sigma
         else:
             while (s>=1 or s==0.0):
                 u1 = 2.0 * self._uniform() - 1.0
@@ -168,7 +168,7 @@ cdef class MT:
             self.has_spare = True
         return mu + sigma * u1 * s;
 
-    def normal(self, mu, sigma): 
+    def normal(self, mu, sigma):
         """
         Calculate the gaussian distribution using the Marsaglia algorithm
 
@@ -179,38 +179,38 @@ cdef class MT:
         :param mu: the center of the distribution
         :param sigma: the width of the distribution
         :return: random value
-        """       
+        """
         return self._normal_m(mu, sigma)
 
 
 
 def distribution_uniform_mtc(shape, seed=None):
     "Function to test uniform distribution"
-    if seed is None:  
+    if seed is None:
         try:
             seed = time.time_ns()
         except:
             seed = int(time.time()*1e9)
-    cdef: 
+    cdef:
         uint64_t size = numpy.prod(shape), idx
         double[::1] ary = numpy.empty(size)
         MT mt = MT(seed)
     with nogil:
         for idx in range(size):
             ary[idx] = mt._uniform()
-    return numpy.asarray(ary).reshape(shape)      
+    return numpy.asarray(ary).reshape(shape)
 
 
 def distribution_normal_mtc(mu, sigma, seed=None):
     "Function to test normal distribution"
     shape = mu.shape
     assert mu.shape == sigma.shape
-    if seed is None:  
+    if seed is None:
         try:
             seed = time.time_ns()
         except:
             seed = int(time.time()*1e9)
-    cdef: 
+    cdef:
         uint64_t size = numpy.prod(shape), idx
         double[::1] ary = numpy.empty(size)
         double[::1] cmu = numpy.ascontiguousarray(mu, dtype=numpy.float64).ravel()
@@ -219,7 +219,7 @@ def distribution_normal_mtc(mu, sigma, seed=None):
     with nogil:
         for idx in range(size):
             ary[idx] = mt._normal_m(cmu[idx], csigma[idx])
-    return numpy.asarray(ary).reshape(shape)        
+    return numpy.asarray(ary).reshape(shape)
 
 
 def densify(cython.floating[:,::1] mask,
@@ -234,8 +234,8 @@ def densify(cython.floating[:,::1] mask,
             cutoff=None,
             seed = None):
     """
-    Densify a sparse representation to generate a normal frame 
-    
+    Densify a sparse representation to generate a normal frame
+
     :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
     :param radius: 1D array with the radial distance
     :param background: 1D array with the background values at given distance from the center
@@ -264,13 +264,13 @@ def densify(cython.floating[:,::1] mask,
     size_over = index.shape[0]
     assert intensity.shape[0] == size_over
     integral = numpy.issubdtype(dtype, numpy.integer)
-    height =mask.shape[0] 
+    height =mask.shape[0]
     width = mask.shape[1]
     dense = numpy.zeros((height, width), dtype=dtype)
     if normalization is not None:
         do_normalization = True
         c_normalization = numpy.ascontiguousarray(normalization, dtype=numpy.float32)
-    
+
     if background_std is None:
         noisy = False
     else:
@@ -281,7 +281,7 @@ def densify(cython.floating[:,::1] mask,
             except Exception:
                 seed = int(time.time()*1e9)
         mt = MT(seed)
-                
+
     if cutoff is None:
         c_cutoff = numpy.finfo("double").max
     else:
@@ -289,14 +289,14 @@ def densify(cython.floating[:,::1] mask,
     with nogil:
         if do_background:
             start = radius[0]
-            idelta = <double>(size - 1)/(radius[size-1] - start)  
-            
+            idelta = <double>(size - 1)/(radius[size-1] - start)
+
             #Linear interpolation
             for i in range(height):
                 for j in range(width):
                     fpos = (mask[i,j] - start)*idelta
                     if (fpos<0) or (fpos>=size) or (not isfinite(fpos)):
-                        dense[i,j] = dummy 
+                        dense[i,j] = dummy
                     else:
                         pos = <uint32_t> fpos
                         if pos+1 == size:
@@ -311,18 +311,18 @@ def densify(cython.floating[:,::1] mask,
                                 fres = 0.0
                             else:
                                 std = (1.0 - fres)*background_std[pos] + fres*background_std[pos+1]
-                            
+
                             value = min(max(0.0, mt._normal_m(mean, std)), value + c_cutoff*std)
                         else:
                             value = mean
                         if do_normalization:
                             value *= c_normalization[i, j]
                         if integral:
-                            dense[i,j] =  <any_t>(value + 0.5) #this is rounding
+                            dense[i,j] =  <any_t>lround(value) #this is rounding
                         else:
-                            dense[i,j] =  <any_t>(value) 
+                            dense[i,j] =  <any_t>(value)
         # Assignment of outliers
         for i in range(size_over):
             j = index[i]
             dense[j//width, j%width] = intensity[i]
-    return numpy.asarray(dense) 
+    return numpy.asarray(dense)
