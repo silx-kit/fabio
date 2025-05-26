@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from pickle import FALSE
 
-__date__ = "03/10/2024"
+__date__ = "26/05/2025"
 __author__ = "Jérôme Kieffer"
 __license__ = "MIT"
 
@@ -57,6 +57,8 @@ class XDSbuilder:
         parser.add_argument("--output", "-o", help=f"output directory, the data will be in {self.h5_filename}", default="fabio_xds")
         parser.add_argument("--CdTe", help="The detector is made of CdTe", default=False, action="store_true")
         parser.add_argument("--neggia", help="Path of the neggia plugin", default="dectris-neggia.so")
+        parser.add_argument("--oscillation", help="Oscillation range used.", default=0.5)
+        
         self.options = parser.parse_args(argv)
         return self.options
         
@@ -193,7 +195,7 @@ class XDSbuilder:
                "DIRECTION_OF_DETECTOR_X-AXIS=1 0 0",
                "DIRECTION_OF_DETECTOR_Y-AXIS=0 1 0",
                "INCIDENT_BEAM_DIRECTION=0 0 1",
-               "OSCILLATION_RANGE= 0.5",
+               f"OSCILLATION_RANGE= {self.options.oscillation}",
                "",
                "OVERLOAD=100000000",
                ]
