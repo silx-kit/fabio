@@ -1,5 +1,5 @@
 :Author: Jérôme Kieffer
-:Date: 15/07/2016
+:Date: 07/05/2025
 :Keywords: Tutorials
 :Target: Advanced users
 
@@ -12,4 +12,5 @@ Tutorials on FabIO
    convert_CBF
    convert_tiff
    Nexus2cbf
+   random
    
