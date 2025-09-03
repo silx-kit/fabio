@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from pickle import FALSE
 
 __date__ = "26/05/2025"
 __author__ = "Jérôme Kieffer"
