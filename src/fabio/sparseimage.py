@@ -3,7 +3,7 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright 2020-2024(C) European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright 2020-2025(C) European Synchrotron Radiation Facility, Grenoble, France
 #
 #  Permission is hereby granted, free of charge, to any person
 #  obtaining a copy of this software and associated documentation files
@@ -30,14 +30,14 @@
 This format contains the average background with its associated deviation in addition to all
 pixels corresponding to Bragg peaks (positive outliers)
 
-This class is able to regenerate images with or without background noise.  
+This class is able to regenerate images with or without background noise.
 """
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
-__copyright__ = "2020 ESRF"
-__date__ = "02/09/2024"
+__copyright__ = "2020-2025 ESRF"
+__date__ = "05/05/2025"
 
 import logging
 logger = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ def densify(mask,
             cutoff=None,
             seed=None):
     """Generate a dense image of its sparse representation
-    
+
     :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
     :param radius: 1D array with the radial distance
     :param index: position of non-background pixels
@@ -87,7 +87,7 @@ def densify(mask,
     """
     dtype = intensity.dtype
     if radius is None or background is None:
-        mean_2d = numpy.zeros(radius.shape, dtype=dtype) 
+        mean_2d = numpy.zeros(radius.shape, dtype=dtype)
     else:
         mean_2d = numpy.interp(mask, radius, background)
     if background_std is not None:
@@ -105,23 +105,24 @@ def densify(mask,
 
     flat = dense.ravel()
     flat[index] = intensity
-    
+
     if numpy.issubdtype(dtype, numpy.integer):
         # Foolded by banker's rounding !!!!
-        dense +=0.5
-        numpy.floor(dense, out=dense)
+        #numpy.round(dense, out=dense)
+        numpy.fix(dense+0.5*numpy.sign(dense), out=dense)
+
     dense = numpy.ascontiguousarray(dense, dtype=dtype)
     dense[numpy.logical_not(numpy.isfinite(mask))] = dummy
     return dense
 
 
 class SparseImage(FabioImage):
-    """FabIO image class for images compressed by sparsification of Bragg peaks 
+    """FabIO image class for images compressed by sparsification of Bragg peaks
 
     While the sparsification requires pyFAI and substential resources, re-densifying the data is easy.
-    
+
     The program used for the sparsification is `sparsify-Bragg` from the pyFAI suite
-    
+
     Set the noisy attribute to re-generate background noise
     """
 
@@ -193,7 +194,7 @@ class SparseImage(FabioImage):
             self.background_std = nx_data["background_std"][()]
         except KeyError:
             logger.info("No background information found")
-            self.radius = self.background_avg = self.background_std = None  
+            self.radius = self.background_avg = self.background_std = None
         self.frame_ptr = nx_data["frame_ptr"][()]
         self.index = nx_data["index"][()]
         self.intensity = nx_data["intensity"][()]
@@ -204,7 +205,7 @@ class SparseImage(FabioImage):
                 self.dummy = numpy.nan
             else:
                 self.dummy = 0
-            
+
         self._nframes = self.frame_ptr.shape[0] - 1
         if "normalization" in nx_data:
             self.normalization = numpy.ascontiguousarray(nx_data["normalization"][()], dtype=numpy.float32)
@@ -216,10 +217,10 @@ class SparseImage(FabioImage):
         except Exception as err:
             logger.warning("Unable to read configuration of sparsification:\n%s: %s",type(err), err)
         self.cutoff = config.get("sparsify", {}).get("cutoff_pick")
-        
+
         # Read the peak position in the file
         if "peaks" in entry:
-            self.peaks = entry["peaks"].name 
+            self.peaks = entry["peaks"].name
 
         if frame is not None:
             return self.getframe(int(frame))
@@ -279,7 +280,7 @@ class SparseImage(FabioImage):
                                                self.background_std[index] * self.noisy if self.noisy else None,
                                                self.normalization)
         return dense
-    
+
     def getframe(self, num):
         """ returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
