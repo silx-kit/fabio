@@ -2,7 +2,7 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2025 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,7 +29,7 @@ FabIO class for dealing with JPEG 2000 images.
 """
 
 __authors__ = ["Valentin Valls"]
-__date__ = "06/04/2020"
+__date__ = "05/09/2025"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
@@ -129,8 +129,11 @@ class Jpeg2KImage(FabioImage):
     def _readWithGlymur(self, filename, infile):
         """Read data using Glymur"""
         image = self._loadGlymurImage(filename, infile)
-        self.data = image.read()
-
+        if "_read" in dir(image):
+            self.data = image._read()
+        else:
+            self.data = image.read()
+            
     def read(self, filename, frame=None):
         infile = self._open(filename, "rb")
         self.data = None
