@@ -66,13 +66,13 @@ class TestDensification(unittest.TestCase):
         self.assertAlmostEqual(N.std(), sigma, 1)
 
     def test_cython(self):
-        seed = 0 
+        seed = 0
         shape = 256, 256
         nframes = 8
         vsize = 181  # This is cheated to avoid interpolation issues with rounding 128*sqrt(2)
         y, x = numpy.ogrid[-shape[0] // 2:-shape[0] // 2 + shape[0],
                           -shape[1] // 2:-shape[1] // 2 + shape[1]]
-        # To make this test "robust", those two radial position arrays needs to be in float64 ... in production float32 is more common 
+        # To make this test "robust", those two radial position arrays needs to be in float64 ... in production float32 is more common
         r2d = numpy.sqrt(x * x + y * y).astype(numpy.float64)
         radius = numpy.linspace(0, r2d.max(), vsize).astype(numpy.float64)
         npeak = numpy.random.randint(90, 110, size=nframes)
@@ -94,6 +94,9 @@ class TestDensification(unittest.TestCase):
             f.ravel()[index[indptr[i]:indptr[i + 1]]] = intensity[indptr[i]:indptr[i + 1]]
             python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i])
             cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i])
+            if not numpy.all(python == cython):
+                print(python)
+                print(cython)
             self.assertTrue(numpy.all(python == cython), "python == cython #" + str(i))
             # Rounding errors:
             delta = (python.astype(int) - f)

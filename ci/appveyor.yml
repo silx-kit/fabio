@@ -34,12 +34,12 @@ environment:
         #  PYTHON_ARCH: "64"
 
         # Python 3.9
-        - PYTHON_DIR: "C:\\Python39-x64"
-          PYTHON_ARCH: "64"
+        # - PYTHON_DIR: "C:\\Python39-x64"
+        #   PYTHON_ARCH: "64"
 
-        # Python 3.10
-        - PYTHON_DIR: "C:\\Python310-x64"
-          PYTHON_ARCH: "64"
+        # # Python 3.10
+        # - PYTHON_DIR: "C:\\Python310-x64"
+        #   PYTHON_ARCH: "64"
 
         # Python 3.11
         - PYTHON_DIR: "C:\\Python311-x64"
@@ -47,6 +47,10 @@ environment:
 
         # Python 3.12
         - PYTHON_DIR: "C:\\Python312-x64"
+          PYTHON_ARCH: "64"
+
+        # Python 3.13
+        - PYTHON_DIR: "C:\\Python313-x64"
           PYTHON_ARCH: "64"
 
 
