@@ -9,6 +9,7 @@ py.extension_module('cf_io',
         include_directories : ['include'],
         install: true,
         subdir: 'fabio/ext',
+        limited_api: '3.11'
         )
 
 py.extension_module('byte_offset',
@@ -16,6 +17,7 @@ py.extension_module('byte_offset',
         dependencies : py_dep,
         install: true,
         subdir: 'fabio/ext',
+        limited_api: '3.11'
         )
 
 py.extension_module('mar345_IO',
@@ -25,6 +27,7 @@ py.extension_module('mar345_IO',
         install: true,
         subdir: 'fabio/ext',
         include_directories : ['include'],
+        limited_api: '3.11'
         )
 
 py.extension_module('_cif',
@@ -32,6 +35,7 @@ py.extension_module('_cif',
         dependencies : py_dep,
         install: true,
         subdir: 'fabio/ext',
+        limited_api: '3.11'
         )
 
 py.extension_module( '_agi_bitfield',
@@ -39,6 +43,7 @@ py.extension_module( '_agi_bitfield',
         dependencies : py_dep,
         install: true,
         subdir: 'fabio/ext',
+        limited_api: '3.11'
         )
 
 py.extension_module( 'dense',
@@ -46,6 +51,5 @@ py.extension_module( 'dense',
         dependencies : py_dep,
         install: true,
         subdir: 'fabio/ext',
+        limited_api: '3.11'
         )
-
-
