@@ -8,7 +8,7 @@
 #    Project: Fable Input/Output
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2020-2020 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2020-2025 European Synchrotron Radiation Facility, Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 """Compression and decompression extension for Esperanto format
 """
 __author__ = "Jérôme Kieffer"
-__date__ = "13/11/2020"
+__date__ = "04/10/2025"
 __contact__ = "Jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 
@@ -384,4 +384,4 @@ def compress(int32_t [:,::1] frame):
                 numpy.asarray(cumsum).tobytes())
     else:
         return (numpy.asarray(buffer[:current+4]).tobytes()+
-                numpy.asarray(cumsum).byteswap.tobytes())
+                numpy.asarray(cumsum).byteswap().tobytes())
