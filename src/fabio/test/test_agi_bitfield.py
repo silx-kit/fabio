@@ -3,7 +3,7 @@
 #
 #    Project: FabIO tests class utilities
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2025 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 #    Principal authors: Jérôme KIEFFER (jerome.kieffer@esrf.fr)
@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "13/11/2020"
+__date__ = "04/10/2025"
 
 import io
 import logging
@@ -67,7 +67,7 @@ class TestUtil(unittest.TestCase):
 
         oft = io.BytesIO()
         cf = agi_bitfield.compress_field(data, fs, oft)
-        self.assertEqual(pack("h", 255) + pack("i", 40000), oft.getvalue())
+        self.assertEqual(pack("<h", 255) + pack("<i", 40000), oft.getvalue())
 
         mask_ = agi_bitfield.MASK[fs]
         dec = agi_bitfield.decode_field(cf)
