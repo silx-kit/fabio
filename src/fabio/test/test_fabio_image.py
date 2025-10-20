@@ -233,8 +233,8 @@ class TestPilImage2(TestPilImage):
         if numpy.issubdtype(typ, numpy.integer):
             maxi = numpy.iinfo(typ).max
         else:
-            maxi = numpy.iinfo(numpy.integer).max
-        return (numpy.random.random(shape) * maxi / 10).astype(typ)
+            maxi = numpy.iinfo(int).max
+        return (numpy.random.random(shape) * (0.1 * maxi)).astype(typ)
 
 
 class TestPilImage3(TestPilImage):
@@ -245,8 +245,8 @@ class TestPilImage3(TestPilImage):
         if numpy.issubdtype(typ, numpy.integer):
             maxi = numpy.iinfo(typ).max
         else:
-            maxi = numpy.iinfo(numpy.integer).max
-        return ((numpy.random.random(shape) - 0.5) * maxi / 10).astype(typ)
+            maxi = numpy.iinfo(int).max
+        return ((numpy.random.random(shape) - 0.5) * (0.1 * maxi)).astype(typ)
 
 
 class TestDeprecatedFabioImage(unittest.TestCase):

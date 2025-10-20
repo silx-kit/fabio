@@ -186,7 +186,7 @@ class EigerImage(FabioImage):
                     # we are in a trouble
                     data = numpy.atleast_2d(numpy.nan)
                 elif isinstance(ds, h5py.Dataset):
-                    data = numpy.atleat_2d(ds[()])
+                    data = numpy.atleast_2d(ds[()])
                 else:
                     data = numpy.atleast_2d(ds)
                 if len(data.shape) == 2:

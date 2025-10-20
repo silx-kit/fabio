@@ -1,0 +1,244 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: fabio
+Upstream-Contact: Jérôme Kieffer <kieffer@esrf.eu>
+Source: https://github.com/silx-kit/fabio/releases/tag/v0.4.0
+
+Files: *
+Copyright: 2007-2009 Henning O. Sorensen & Erik Knudsen
+ Center for Fundamental Research: Metal Structures in Four Dimensions
+ Risoe National Laboratory
+ Frederiksborgvej 399
+ DK-4000 Roskilde
+ email:erik.knudsen@risoe.dk
+ 2009-2016 Jonathan P. Wright, Jerome Kieffer and Gael Goret
+ European Synchrotron Radiation Facility
+ 6 rue Jules Horowitz
+ 38000 Grenoble, France
+License: Expat
+
+Files: bootstrap.py
+Copyright: 2007-2009 Henning O. Sorensen & Erik Knudsen
+                Center for Fundamental Research: Metal Structures in Four Dimensions
+                Risoe National Laboratory
+                Frederiksborgvej 399
+                DK-4000 Roskilde
+                email:erik.knudsen@risoe.dk
+ 2009-2016 Jonathan P. Wright, Jerome Kieffer and Gael Goret
+                European Synchrotron Radiation Facility
+                6 rue Jules Horowitz
+                38000 Grenoble, France
+License: Expat
+
+Files: build-deb.sh
+Copyright: 2015-2017, European Synchrotron Radiation Facility, Grenoble, France
+License: Expat
+
+Files: debian/*
+Copyright: 2013, 2014, Picca Frederic-Emmanuel <picca@debian.org>
+  2011, Jerome Kieffer <jerome.kieffer@esrf.fr>
+License: Expat
+
+Files: doc/source/mathjax.py
+Copyright: Copyright 2007-2013,the Sphinx team, see AUTHORS.
+License: BSD-3-clause
+
+Files: src/fabio/*
+Copyright: European Synchrotron Radiation Facility, Grenoble, France
+License: Expat
+
+Files: src/fabio/TiffIO.py
+  src/fabio/cbfimage.py
+  src/fabio/eigerimage.py
+  src/fabio/fit2dimage.py
+  src/fabio/hdf5image.py
+  src/fabio/jpeg2kimage.py
+  src/fabio/jpegimage.py
+  src/fabio/mrcimage.py
+  src/fabio/nexus.py
+  src/fabio/numpyimage.py
+  src/fabio/setup.py
+  src/fabio/tifimage.py
+  src/fabio/xsdimage.py
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+Files: src/fabio/__init__.py
+  src/fabio/adscimage.py
+  src/fabio/binaryimage.py
+Copyright: European Synchrotron Radiation Facility, Grenoble, France
+License: GPL-3+
+
+Files: src/fabio/app/*
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+Files: src/fabio/app/convert.py
+  src/fabio/app/viewer.py
+Copyright: European Synchrotron Radiation Facility, Grenoble, France
+License: Expat
+
+Files: src/fabio/benchmark/setup.py
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+Files: src/fabio/ext/*
+Copyright: 2015-2017, European Synchrotron Radiation Facility, Grenoble, France
+License: Expat
+
+Files: src/fabio/ext/include/ccp4_pack.h
+Copyright: 2007-2009, Henning O. Sorensen & Erik Knudsen
+License: LGPL-3+
+
+Files: src/fabio/ext/include/columnfile.h
+Copyright: ???
+License: Expat
+
+Files: src/fabio/ext/include/msvc/stdint.h
+Copyright: 2006-2008 Alexander Chemeris
+License: BSD-3-clause
+
+Files: src/fabio/ext/setup.py
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+Files: src/fabio/ext/src/*
+Copyright: ???
+License: Expat
+
+Files: src/fabio/ext/src/ccp4_pack.c
+Copyright: 2007-2009, Henning O. Sorensen & Erik Knudsen
+License: LGPL-3+
+
+Files: src/fabio/mpaimage.py
+Copyright: 2017, Cornell High Energy Synchrotron Source
+License: Expat
+
+Files: src/fabio/raxisimage.py
+Copyright: Brian R. Pauw <brian@stack.nl>
+License: Expat
+
+Files: src/fabio/speimage.py
+Copyright: 2016, Univeristy Köln, Germany
+License: Expat
+
+Files: src/fabio/test/*
+Copyright: European Synchrotron Radiation Facility, Grenoble, France
+License: GPL-3+
+
+Files: src/fabio/test/profile_all.py
+Copyright: 2015-2017, European Synchrotron Radiation Facility, Grenoble, France
+License: Expat
+
+Files: src/fabio/test/setup.py
+  src/fabio/test/utilstest.py
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+Files: src/fabio/test/test_all_images.py
+Copyright: (C) European Synchrotron Radiation Facility, Grenoble, France
+License: Expat
+
+Files: src/fabio/third_party/*
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+Files: src/fabio/third_party/__init__.py
+Copyright: European Synchrotron Radiation Facility, Grenoble, France
+License: Expat
+
+Files: src/fabio/utils/setup.py
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+Files: package/*
+Copyright: 2007-2009 Henning O. Sorensen & Erik Knudsen
+                Center for Fundamental Research: Metal Structures in Four Dimensions
+                Risoe National Laboratory
+                Frederiksborgvej 399
+                DK-4000 Roskilde
+                email:erik.knudsen@risoe.dk
+ 2009-2016 Jonathan P. Wright, Jerome Kieffer and Gael Goret
+                European Synchrotron Radiation Facility
+                6 rue Jules Horowitz
+                38000 Grenoble, France
+License: Expat
+
+Files: run_tests.py
+Copyright: 2004-2018, European Synchrotron Radiation Facility
+License: Expat
+
+License: BSD-3-clause
+ The BSD License
+ .
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are
+ met:
+ .
+   * Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+ .
+   * Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in the
+     documentation and/or other materials provided with the distribution.
+ .
+   * Neither the name of foo nor the names of its
+     contributors may be used to endorse or promote products derived from
+     this software without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+License: Expat
+ The MIT License
+ .
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated
+ documentation files (the "Software"), to deal in the Software
+ without restriction, including without limitation the rights to
+ use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to
+ whom the Software is furnished to do so, subject to the
+ following conditions:
+ .
+ The above copyright notice and this permission notice shall
+ be included in all copies or substantial portions of the
+ Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT
+ WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+ SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE.
+
+License: GPL-3+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 3 dated June, 2007, or (at
+ your option) any later version.
+ .
+ On Debian systems, the complete text of version 3 of the GNU General
+ Public License can be found in '/usr/share/common-licenses/GPL-3'.
+
+License: LGPL-3+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published by the
+ Free Software Foundation; version 3 of the License, or (at
+ your option) any later version.
+ .
+ On Debian systems, the complete text of version 3 of the GNU Lesser
+ General Public License can be found in `/usr/share/common-licenses/LGPL-3'.

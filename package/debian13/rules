@@ -1,0 +1,51 @@
+#!/usr/bin/make -f
+
+export PYBUILD_NAME=fabio
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+TESTS_TO_EXCLUDE="not test_00 and \
+not test_openimage and \
+not test_frames_abort_iteration and \
+not test_frames_full_iteration and \
+not test_frames_random_access"
+export PYBUILD_TEST_ARGS=fabio -k ${TESTS_TO_EXCLUDE}
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+execute_before_dh_clean:
+        # remove the cython generated files distributed by upstream
+	rm -f $(patsubst %.pyx,%.c,$(wildcard fabio/ext/*.pyx))
+	rm -rf doc/build/html
+	rm -rf build/man
+	rm -rf *.egg-info
+	rm -rf doc/build
+
+override_dh_auto_build-arch:
+	PYBUILD_BUILD_ARGS="-Ccompile-args=--verbose" dh_auto_build
+
+override_dh_auto_build-indep: override_dh_auto_build-arch
+ifeq (,$(findstring nodoc, $(DEB_BUILD_OPTIONS)))
+	env PYTHONPATH=$(shell pybuild --build -i python3 -s custom --build-args 'echo {build_dir}') \
+	SPHINXBUILD="python3 -m sphinx" \
+	SPHINXOPTS="-D mathjax_path=MathJax.js" \
+	$(MAKE) -C doc html
+endif
+
+execute_after_dh_auto_install:
+        # install scripts into fabio-viewer
+	mkdir -p debian/fabio-viewer/usr/bin
+	cp debian/python3-fabio/usr/bin/* debian/fabio-viewer/usr/bin
+	rm -rf debian/python3-fabio/usr/bin
+
+override_dh_sphinxdoc:
+ifeq (,$(findstring nodoc, $(DEB_BUILD_OPTIONS)))
+	dh_installdocs -p python-fabio-doc "doc/build/html" --doc-main-package=python3-fabio
+	dh_sphinxdoc -p python-fabio-doc -XMathJax.js
+endif
+
+execute_before_dh_fixperms:
+	# hack until the 1/1/1970 issue is solved by upstream
+	-find debian/fabio-viewer -type f | xargs touch -d@${SOURCE_DATE_EPOCH}
+	-find debian/python3-fabio -type f | xargs touch -d@${SOURCE_DATE_EPOCH}
+	-find debian/python-fabio-doc -type f | xargs touch -d@${SOURCE_DATE_EPOCH}

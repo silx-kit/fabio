@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-from pickle import FALSE
 
-__date__ = "03/10/2024"
+__date__ = "26/05/2025"
 __author__ = "Jérôme Kieffer"
 __license__ = "MIT"
 
@@ -57,6 +56,8 @@ class XDSbuilder:
         parser.add_argument("--output", "-o", help=f"output directory, the data will be in {self.h5_filename}", default="fabio_xds")
         parser.add_argument("--CdTe", help="The detector is made of CdTe", default=False, action="store_true")
         parser.add_argument("--neggia", help="Path of the neggia plugin", default="dectris-neggia.so")
+        parser.add_argument("--oscillation", help="Oscillation range used.", default=0.5)
+        
         self.options = parser.parse_args(argv)
         return self.options
         
@@ -88,6 +89,16 @@ class XDSbuilder:
         self.frames = [fabio_open(i) for i in self.options.input]
         return 0
         
+    def _distance_center(self):
+        """return distance, centerx, center_y 
+        """
+        width = self.poni.detector.shape[-1]
+        distance = self.poni.dist*1e3 #mm
+        r_array = self.poni.array_from_unit(unit="r_m")
+        x_center = numpy.argmin(r_array) % width
+        y_center =  numpy.argmin(r_array) // width
+        return distance, x_center, y_center
+
     def build_neggia(self):
         """Build the neggia file, i.e. the HDF5 file with data + metadata for analysis""" 
         if not os.path.exists(self.options.output):
@@ -101,7 +112,7 @@ class XDSbuilder:
                 return 1
         else:
             mode = "w"
-        f2d = self.poni.getFit2D()
+        distance, center_x, center_y = self._distance_center()
         with Nexus(dest_h5, mode) as nxs:
             entry = nxs.new_entry(entry="entry", program_name=application_name, force_name=True)
             instrument = nxs.new_instrument(entry=entry, instrument_name="instrument")
@@ -111,9 +122,9 @@ class XDSbuilder:
             detector = nxs.new_class(instrument, "detector", "NXdetector")
             detector.create_dataset("x_pixel_size", data=float(self.poni.pixel2)).attrs["unit"] = "m"
             detector.create_dataset("y_pixel_size", data=float(self.poni.pixel1)).attrs["unit"] = "m"
-            detector.create_dataset("beam_center_x", data=float(f2d["centerX"])).attrs["unit"] = "pixel"
-            detector.create_dataset("beam_center_y", data=float(f2d["centerY"])).attrs["unit"] = "pixel"
-            detector.create_dataset("detector_distance", data=f2d["directDist"]*1e-3).attrs["unit"] = "m"
+            detector.create_dataset("beam_center_x", data=float(center_x)).attrs["unit"] = "pixel"
+            detector.create_dataset("beam_center_y", data=float(center_y)).attrs["unit"] = "pixel"
+            detector.create_dataset("detector_distance", data=distance*1e-3).attrs["unit"] = "m"
             detectorSpecific = nxs.new_class(detector, "detectorSpecific", "NXcollection")
             detectorSpecific.create_dataset("nimages", data=sum(i.nframes for i in self.frames))
             detectorSpecific.create_dataset("ntrigger", data=1)
@@ -193,7 +204,7 @@ class XDSbuilder:
                "DIRECTION_OF_DETECTOR_X-AXIS=1 0 0",
                "DIRECTION_OF_DETECTOR_Y-AXIS=0 1 0",
                "INCIDENT_BEAM_DIRECTION=0 0 1",
-               "OSCILLATION_RANGE= 0.5",
+               f"OSCILLATION_RANGE= {self.options.oscillation}",
                "",
                "OVERLOAD=100000000",
                ]
@@ -202,11 +213,11 @@ class XDSbuilder:
         shape = self.poni.detector.shape
         pixel1, pixel2 = self.poni.detector.pixel1, self.poni.detector.pixel2
         xds.append(f"NX= {shape[1]:d} NY= {shape[0]:d}  QX= {pixel2*1000:f}  QY= {pixel1*1000:f}")
-        
-        f2d = self.poni.getFit2D()
+
+        distance, center_x, center_y = self._distance_center()        
         xds.append("DETECTOR= EIGER")
-        xds.append(f"DETECTOR_DISTANCE= {f2d['directDist']:.4f}")
-        xds.append(f"ORGX= {f2d['centerX']:.3f} ORGY= {f2d['centerY']:.3f}")
+        xds.append(f"DETECTOR_DISTANCE= {distance:.4f}")
+        xds.append(f"ORGX= {center_x:.3f} ORGY= {center_y:.3f}")
         xds.append(f"X-RAY_WAVELENGTH={1e10*self.poni.wavelength}")
         xds.append("")
         mask = self.poni.detector.mask>0

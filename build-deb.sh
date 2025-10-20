@@ -3,7 +3,7 @@
 #    Project: Fabio Input/Output
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-2020 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2025 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -33,7 +33,7 @@ version=$(PYTHONPATH=src/fabio python3 -c"import version; print(version.version)
 strictversion=$(PYTHONPATH=src/fabio python3 -c"import version; print(version.strictversion)")
 debianversion=$(PYTHONPATH=src/fabio python3 -c"import version; print(version.debianversion)")
 
-deb_name=$(echo "$source_project" | tr '[:upper:]' '[:lower:]')
+deb_name=python-$(echo "$source_project" | tr '[:upper:]' '[:lower:]')
 
 # target system
 if [ -f /etc/debian_version ]
@@ -55,6 +55,9 @@ then
                 ;;
             bookworm)
                 debian_version=12
+                ;;
+            trixie)
+                debian_version=13
                 ;;
         esac
     fi
@@ -92,6 +95,7 @@ optional arguments:
     --debian10      Simulate a debian 10 Buster system
     --debian11      Simulate a debian 11 Bullseye system
     --debian12      Simulate a debian 12 Bookworm system
+    --debian13      Simulate a debian 13 Trixie system
 "
 
 install=0
@@ -142,6 +146,13 @@ do
           ;;
       --debian12)
           debian_version=12
+          target_system=debian${debian_version}
+          dist_directory=${project_directory}/dist/${target_system}
+          build_directory=${project_directory}/build/${target_system}
+          shift
+          ;;
+      --debian13)
+          debian_version=13
           target_system=debian${debian_version}
           dist_directory=${project_directory}/dist/${target_system}
           build_directory=${project_directory}/build/${target_system}
@@ -244,6 +255,9 @@ build_deb() {
             ;;
         12)
             debian_name=bookworm
+            ;;
+        13)
+            debian_name=trixie
             ;;
     esac
 
