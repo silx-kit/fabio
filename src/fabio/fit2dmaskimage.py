@@ -47,7 +47,7 @@ from .fabioimage import FabioImage
 
 
 class Fit2dMaskImage(FabioImage):
-    """ Read and try to write Andy Hammersley's mask format """
+    """Read and try to write Andy Hammersley's mask format"""
 
     DESCRIPTION = "Fit2d mask file format"
 
@@ -59,10 +59,7 @@ class Fit2dMaskImage(FabioImage):
         """
         # 1024 bytes gives 256x32 bit integers
         header = infile.read(1024)
-        for i, j in [(b"M", 0),
-                     (b"A", 4),
-                     (b"S", 8),
-                     (b"K", 12)]:
+        for i, j in [(b"M", 0), (b"A", 4), (b"S", 8), (b"K", 12)]:
             if header[j] != i[0]:
                 raise Exception("Not a fit2d mask file")
         # Enforce little endian
@@ -71,7 +68,7 @@ class Fit2dMaskImage(FabioImage):
         dim2 = fit2dhdr[5]
         self._shape = dim2, dim1
 
-    def read(self, fname, frame=None):
+    def read(self, fname:str, frame=None):
         """
         Read in header into self.header and
             the data   into self.data
@@ -92,6 +89,8 @@ class Fit2dMaskImage(FabioImage):
         # Now to unpack it
         data = numpy.frombuffer(data, numpy.uint8)
         if not numpy.little_endian:
+            data = numpy.copy(data)
+            data.setflags(write=1)
             data.byteswap(True)
 
         data = numpy.reshape(data, (dim2, num_ints * 4))
@@ -109,7 +108,7 @@ class Fit2dMaskImage(FabioImage):
         if spares == 0:
             data = numpy.where(result == 0, 0, 1)
         else:
-            data = numpy.where(result[:,:-spares] == 0, 0, 1)
+            data = numpy.where(result[:, :-spares] == 0, 0, 1)
         # Transpose appears to be needed to match edf reader (scary??)
         # self.data = numpy.transpose(self.data)
         self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8)
@@ -117,7 +116,7 @@ class Fit2dMaskImage(FabioImage):
         self._shape = None
         return self
 
-    def write(self, fname):
+    def write(self, fname:str):
         """
         Try to write a file
         """
@@ -132,9 +131,9 @@ class Fit2dMaskImage(FabioImage):
         header[20:24] = struct.pack("<I", dim2)
         compact_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 4), dtype=numpy.uint8)
         large_array = numpy.zeros((dim2, ((dim1 + 31) // 32) * 32), dtype=numpy.uint8)
-        large_array[:dim2,:dim1] = (self.data != 0)
+        large_array[:dim2, :dim1] = self.data != 0
         for i in range(8):
-            order = (1 << i)
+            order = 1 << i
             compact_array += large_array[:, i::8] * order
         with self._open(fname, mode="wb") as outfile:
             outfile.write(bytes(header))

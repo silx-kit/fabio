@@ -3,7 +3,7 @@
 #
 #    Project: FabIO tests class utilities
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2025 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 #    Principal authors: Jérôme KIEFFER (jerome.kieffer@esrf.fr)
@@ -30,7 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "13/11/2020"
+__date__ = "04/10/2025"
 
 import io
 import logging
@@ -46,14 +46,13 @@ logger = logging.getLogger(__name__)
 
 
 class TestUtil(unittest.TestCase):
-
     def test_get_fieldsize(self):
         test_cases = [
             (np.zeros(8, dtype="int32"), 1),
             (np.array([1024] * 8, dtype="int32"), 8),
             (np.arange(0, 7, dtype="int32"), 4),
             (np.array([-1, -2, 2, 1] * 2, dtype="int32"), 3),
-            (np.array([-3, 3, 8, 3, -5 - 5, 0, 6]), 5)
+            (np.array([-3, 3, 8, 3, -5 - 5, 0, 6]), 5),
         ]
         for array, result in test_cases:
             fs = agi_bitfield.get_fieldsize(array)
@@ -67,11 +66,23 @@ class TestUtil(unittest.TestCase):
 
         oft = io.BytesIO()
         cf = agi_bitfield.compress_field(data, fs, oft)
-        self.assertEqual(pack("h", 255) + pack("i", 40000), oft.getvalue())
+        self.assertEqual(pack("<h", 255) + pack("<i", 40000), oft.getvalue())
 
         mask_ = agi_bitfield.MASK[fs]
         dec = agi_bitfield.decode_field(cf)
-        self.assertEqual([1 + 127, 2 + 127, 3 + 127, 4 + 127, 0xfe & mask_, 0xff & mask_, -4 + 127, 2 + 127], dec)
+        self.assertEqual(
+            [
+                1 + 127,
+                2 + 127,
+                3 + 127,
+                4 + 127,
+                0xFE & mask_,
+                0xFF & mask_,
+                -4 + 127,
+                2 + 127,
+            ],
+            dec,
+        )
 
     def test_compress_decompress_field_small(self):
         data = np.array([1, 0] * 4, dtype="int32")
@@ -79,7 +90,7 @@ class TestUtil(unittest.TestCase):
 
         oft = io.BytesIO()
         cf = agi_bitfield.compress_field(data, fs, oft)
-        self.assertEqual(b'', oft.getvalue())
+        self.assertEqual(b"", oft.getvalue())
 
         conv_ = agi_bitfield.MASK[fs - 1]
         dec = agi_bitfield.decode_field(cf[:fs])
@@ -92,7 +103,9 @@ class TestUtil(unittest.TestCase):
         oft = io.BytesIO()
         cf = agi_bitfield.compress_field(data, fs, oft)
 
-        oft = io.BytesIO(oft.getvalue())  # do this to simulate actual conditions. the data is passed between
+        oft = io.BytesIO(
+            oft.getvalue()
+        )  # do this to simulate actual conditions. the data is passed between
         # encoding and decoding as bytes so the index would not be preserved
 
         field = agi_bitfield.decode_field(cf[:fs])
@@ -100,24 +113,15 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(list(data), field)
 
     def test_mask_conv(self):
-        mask_cases = [
-            (1, 1),
-            (4, 0b1111),
-            (8, 0xff)
-        ]
+        mask_cases = [(1, 1), (4, 0b1111), (8, 0xFF)]
         for length, msk in mask_cases:
             self.assertEqual(msk, agi_bitfield.MASK[length])
-        conv_cases = [
-            (1, 0),
-            (4, 0b111),
-            (8, 0b1111111)
-        ]
+        conv_cases = [(1, 0), (4, 0b111), (8, 0b1111111)]
         for length, cnv in conv_cases:
             self.assertEqual(cnv, agi_bitfield.MASK[length - 1])
 
 
 class TestRow(unittest.TestCase):
-
     def test_compress_row_zero(self):
         data = np.zeros(256, dtype="int32")
         buffer = io.BytesIO()
@@ -125,7 +129,11 @@ class TestRow(unittest.TestCase):
         buffer_cython = io.BytesIO()
         _agi_bitfield.compress_row(data, buffer_cython)
         agi_bitfield.compress_row(data, buffer_python)
-        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        self.assertEqual(
+            buffer_cython.getbuffer(),
+            buffer_python.getbuffer(),
+            "compressed string matches",
+        )
         _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
         decompressed = agi_bitfield.decompress_row(buffer, 256)
@@ -139,7 +147,11 @@ class TestRow(unittest.TestCase):
         buffer_cython = io.BytesIO()
         _agi_bitfield.compress_row(data, buffer_cython)
         agi_bitfield.compress_row(data, buffer_python)
-        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        self.assertEqual(
+            buffer_cython.getbuffer(),
+            buffer_python.getbuffer(),
+            "compressed string matches",
+        )
         _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
         decompressed = agi_bitfield.decompress_row(buffer, 256)
@@ -153,7 +165,11 @@ class TestRow(unittest.TestCase):
         buffer_cython = io.BytesIO()
         _agi_bitfield.compress_row(data, buffer_cython)
         agi_bitfield.compress_row(data, buffer_python)
-        self.assertEqual(buffer_cython.getbuffer(), buffer_python.getbuffer(), "compressed string matches")
+        self.assertEqual(
+            buffer_cython.getbuffer(),
+            buffer_python.getbuffer(),
+            "compressed string matches",
+        )
         _agi_bitfield.compress_row(data, buffer)
         buffer.seek(0)
         decompressed = agi_bitfield.decompress_row(buffer, 256)
@@ -162,10 +178,10 @@ class TestRow(unittest.TestCase):
 
 
 class TestCompression(unittest.TestCase):
-
     def test_full_rand(self):
         data = np.random.randint(-256, 500, (256, 256)).astype("int32")
         import time
+
         t0 = time.perf_counter()
         compressed = agi_bitfield.compress(data)
         t1 = time.perf_counter()
@@ -188,6 +204,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

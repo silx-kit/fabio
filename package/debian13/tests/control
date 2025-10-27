@@ -1,0 +1,14 @@
+Test-Command: set -efu
+ ; cp bootstrap.py pyproject.toml run_tests.py README.rst "$AUTOPKGTEST_TMP"
+ ; for py in $(py3versions -r 2>/dev/null)
+ ; do cd "$AUTOPKGTEST_TMP"
+ ; echo "Testing with $py:"
+ ; $py run_tests.py -v -m --installed
+ ; done
+Depends:
+ python3-all,
+ python3-fabio,
+ python3-setuptools,
+Restrictions:
+ allow-stderr,
+ needs-internet,

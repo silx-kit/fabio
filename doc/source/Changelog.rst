@@ -1,6 +1,12 @@
 Changelog
 =========
 
+FabIO-2025.10.0: 
+................
+- Include patches from debian (Thanks Rolland Mas)
+- Compatibility with recent version of Glymur
+- Supports Python 3.10-3.14
+
 FabIO-2024.9.0: 
 ...............
 - Link `peak` from sparse dataset to the dense one when using `densify_Bragg`
