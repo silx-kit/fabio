@@ -4,7 +4,7 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-2024 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2025 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -64,6 +64,10 @@ __docformat__ = 'restructuredtext'
 __all__ = ["date", "version_info", "strictversion", "hexversion", "debianversion",
            "calc_hexversion"]
 
+
+from collections import namedtuple
+
+
 RELEASE_LEVEL_VALUE = {"dev": 0,
                        "alpha": 10,
                        "beta": 11,
@@ -75,14 +79,13 @@ PRERELEASE_NORMALIZED_NAME = {"dev": "a",
                               "beta": "b",
                               "candidate": "rc"}
 
-MAJOR = 2024
+MAJOR = 2025
 MINOR = 10
 MICRO = 0
 RELEV = "dev"  # <16
 SERIAL = 0  # <16
 date = __date__
 
-from collections import namedtuple
 _version_info = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
 
 version_info = _version_info(MAJOR, MINOR, MICRO, RELEV, SERIAL)
