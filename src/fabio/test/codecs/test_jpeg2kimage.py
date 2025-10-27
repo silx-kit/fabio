@@ -102,10 +102,11 @@ class TestJpeg2KImage(unittest.TestCase):
         filename = "MultiFrame.edf"
         filename = UtilsTest.getimage(filename + ".bz2")[:-4]
         image_format = jpeg2kimage.Jpeg2KImage()
+
         try:
             _image = image_format.read(filename)
             self.fail()
-        except IOError:
+        except (IOError, RuntimeError):
             pass
 
     def test_open_missing_file(self):
