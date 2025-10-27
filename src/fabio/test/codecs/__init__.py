@@ -28,13 +28,12 @@ Test module for each codecs supported by FabIO
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
-__license__ = "GPLv3+"
+__license__ = "MIT+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "02/05/2024"
+__date__ = "27/10/2025"
 
-import sys
+
 import unittest
-from .. import utilstest
 
 
 def suite():

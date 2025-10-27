@@ -31,13 +31,11 @@ import unittest
 import logging
 import numpy
 import contextlib
-
-logger = logging.getLogger(__name__)
-
 import fabio.fabioimage
 import fabio.edfimage
 import fabio.file_series
 from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class _CommonTestFrames(unittest.TestCase):

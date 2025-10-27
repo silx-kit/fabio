@@ -37,12 +37,13 @@ Based on the edfimage.py parser.
 import numpy
 import logging
 import os
-
 import string
 from .fabioimage import FabioImage
+import io
+
+
 logger = logging.getLogger(__name__)
 
-import io
 if not hasattr(io, "SEEK_END"):
     SEEK_END = 2
 else:

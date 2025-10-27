@@ -40,14 +40,13 @@ import unittest
 import os
 import time
 import logging
-
-logger = logging.getLogger(__name__)
 import numpy
 import fabio
 from fabio.cbfimage import CbfImage, CIF
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
 from ..utilstest import UtilsTest
 from ..testutils import LoggingValidator
+logger = logging.getLogger(__name__)
 
 
 class TestCbfReader(unittest.TestCase):
@@ -202,7 +201,7 @@ _publ_author_name
 'Paderno Y'
 'Khlyustova S'
 _journal_name_full 'Kristallografiya'
-_journal_volume 31 
+_journal_volume 31
 _journal_year 1986
 _journal_page_first 803
 _journal_page_last 805

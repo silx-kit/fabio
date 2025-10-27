@@ -32,13 +32,12 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
 import numpy
 from fabio.openimage import openimage
 from fabio.eigerimage import EigerImage, h5py
 from ..utilstest import UtilsTest
 from ..test_frames import _CommonTestFrames
+logger = logging.getLogger(__name__)
 
 
 def make_hdf5(name, shape=(50, 99, 101)):

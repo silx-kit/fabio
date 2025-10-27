@@ -37,7 +37,8 @@ import json
 import logging
 import tempfile
 import unittest
-import urllib.request, urllib.error
+import urllib.request
+import urllib.error
 import bz2
 import gzip
 

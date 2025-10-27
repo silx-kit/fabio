@@ -30,7 +30,6 @@ import os
 import io
 import fabio
 import shutil
-
 from .utilstest import UtilsTest
 
 

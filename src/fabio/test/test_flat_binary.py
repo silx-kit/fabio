@@ -30,11 +30,9 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 import unittest
 import os
 import logging
-
 from .utilstest import UtilsTest
-
-logger = logging.getLogger(__name__)
 import fabio
+logger = logging.getLogger(__name__)
 
 
 class TestFlatBinary(unittest.TestCase):

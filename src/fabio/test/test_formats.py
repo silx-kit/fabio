@@ -30,12 +30,11 @@
 
 import unittest
 import logging
-
-logger = logging.getLogger(__name__)
 import fabio
 from .. import fabioformats
 from ..utils import deprecation
 from ..utils import testutils
+logger = logging.getLogger(__name__)
 
 
 class TestRegistration(unittest.TestCase):

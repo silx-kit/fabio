@@ -30,11 +30,9 @@
 
 import unittest
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class TestPilatus(unittest.TestCase):

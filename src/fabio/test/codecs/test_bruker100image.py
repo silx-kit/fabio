@@ -35,13 +35,11 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import numpy
 from fabio.bruker100image import Bruker100Image, _split_data, _merge_data
 from fabio.openimage import openimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """NaCl_10_01_0009.sfrm         512 512 -30 5912 34.4626 26.189

@@ -34,13 +34,10 @@ Unit tests for the Fit2D spread sheet image format.
 import unittest
 import os
 import logging
-
 from ..utilstest import UtilsTest
-
-logger = logging.getLogger(__name__)
-
 from fabio.fit2dspreadsheetimage import Fit2dSpreadsheetImage
 from fabio.utils import testutils
+logger = logging.getLogger(__name__)
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

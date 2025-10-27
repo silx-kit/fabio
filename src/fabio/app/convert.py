@@ -34,19 +34,17 @@
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "23/04/2021"
+__date__ = "27/10/2025"
 __status__ = "production"
 
 import logging
-logging.basicConfig()
-
 import sys
 import os
 import fabio
 from fabio import fabioformats, fabioutils
 from fabio.utils.cli import expand_args
 import argparse
-
+logging.basicConfig()
 logger = logging.getLogger("fabio-convert")
 
 

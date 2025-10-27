@@ -30,16 +30,14 @@
 # Unit tests for raxis images
 28/11/2014
 """
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.raxisimage import raxisimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """mgzn-20hpt.img     2300 1280 16 15040  287.82 570.72

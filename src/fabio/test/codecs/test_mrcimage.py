@@ -35,13 +35,11 @@ Test for MRC file format imagess.
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ...mrcimage import MrcImage
 from ...openimage import openimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class TestMrc(unittest.TestCase):

@@ -10,11 +10,9 @@ import logging
 import numpy
 import tempfile
 import shutil
-
-logger = logging.getLogger(__name__)
-
 import fabio.edfimage
 import fabio.tifimage
+logger = logging.getLogger(__name__)
 
 
 class _CommonIOLimitTest(unittest.TestCase):

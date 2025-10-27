@@ -32,12 +32,10 @@ import unittest
 import os
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.mar345image import mar345image
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67

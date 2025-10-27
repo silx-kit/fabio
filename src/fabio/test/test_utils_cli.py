@@ -3,7 +3,7 @@
 #    Project: Azimuthal integration
 #             https://github.com/silx-kit/pyFAI
 #
-#    Copyright (C) 2015-2018 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2025 European Synchrotron Radiation Facility, Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,15 +28,15 @@
 __author__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "12/12/2022"
+__date__ = "27/10/2025"
 __status__ = "development"
 __docformat__ = 'restructuredtext'
 
 import unittest
 import logging
 from .utilstest import UtilsTest
-logger = logging.getLogger(__name__)
 from ..utils.cli import ProgressBar, expand_args
+logger = logging.getLogger(__name__)
 
 
 class TestUtilShell(unittest.TestCase):
@@ -53,7 +53,7 @@ class TestUtilShell(unittest.TestCase):
 
     def test_expand_args(self):
         _ = expand_args(["*.tif","*.edf", "*.cbf", "*.img"])
-        
+
 def suite():
     loader = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()

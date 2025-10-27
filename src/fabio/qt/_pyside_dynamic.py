@@ -64,8 +64,8 @@
 """How to load a user interface dynamically with PySide6"""
 
 import logging
-_logger = logging.getLogger(__name__)
 from ._qt import BINDING
+_logger = logging.getLogger(__name__)
 
 if BINDING == "PySide6":
 
@@ -185,7 +185,6 @@ if BINDING == "PySide6":
         section, then automatically load all the custom widget classes.
         """
 
-        import sys
         import importlib
         from xml.etree.ElementTree import ElementTree
 

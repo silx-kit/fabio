@@ -28,19 +28,15 @@ testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
 import unittest
-import sys
 import os
 import numpy
 import copy
 import logging
-import numbers
-
-logger = logging.getLogger(__name__)
-
 from ..fabioimage import FabioImage
 from .. import fabioutils
 from ..utils import pilutils
 from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 try:
     import pathlib

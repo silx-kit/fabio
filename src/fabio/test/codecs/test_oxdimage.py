@@ -31,20 +31,18 @@
 # Unit tests for OXD image (Oxford diffraction now Rigaku)
 """
 
-__author__ = "Jerome Kieffer"
+__author__ = "Jérôme Kieffer"
 __license__ = "MIT"
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 __contact__ = "jerome.kieffer@esrf.fr"
 
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.OXDimage import OXDimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
 TESTIMAGES = [

@@ -36,18 +36,16 @@ Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 
 """
 
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 __author__ = "jerome Kieffer"
 
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.dm3image import Dm3Image
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

@@ -39,14 +39,12 @@ import numpy
 import shutil
 import io
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ...edfimage import edfimage
 from ...fabioutils import GzipFile, BZ2File
 from ..utilstest import UtilsTest
-from ..testutils import LoggingValidator 
+from ..testutils import LoggingValidator
+logger = logging.getLogger(__name__)
 
 
 class TestFlatEdfs(unittest.TestCase):
@@ -314,9 +312,9 @@ class TestEdfFastRead(unittest.TestCase):
             data=numpy.arange(0, 99).reshape(9, 11),
         )
         edf_writer.write(file_name)
-        
+
         edf_reader = fabio.open(file_name)
-        
+
         # if I want to read it line by line
         line_index_to_read = 4
         line_data = edf_reader.fast_read_roi(
@@ -454,8 +452,8 @@ class TestEdfRegression(unittest.TestCase):
              'direc': ''}
         with LoggingValidator(fabio.edfimage.logger, error=0, warning=0):
             fabio.edfimage.EdfFrame.get_data_rank(h)
-        
-    
+
+
 class TestBadFiles(unittest.TestCase):
 
     filename_template = "%s.edf"

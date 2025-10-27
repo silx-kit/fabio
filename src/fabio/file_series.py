@@ -46,14 +46,12 @@ import logging
 import sys
 import os.path
 import collections
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from .fabioutils import FilenameObject, next_filename
 from .openimage import openimage
 from .fabioimage import FabioImage
 from .utils import deprecation
+logger = logging.getLogger(__name__)
 
 
 def new_file_series0(first_object, first=None, last=None, step=1):

@@ -38,7 +38,7 @@ __authors__ = ["Gaël Goret", "Jérôme Kieffer", "Brian Pauw"]
 __contact__ = "gael.goret@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/05/2024"
+__date__ = "27/10/2025"
 
 import io
 from .fabioimage import FabioImage

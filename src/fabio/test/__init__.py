@@ -30,11 +30,9 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__data__ = "30/10/2015"
+__date__ = "27/10/2025"
 
-import sys
 import unittest
-from . import utilstest
 from . import test_all
 
 

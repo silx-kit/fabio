@@ -34,15 +34,14 @@ __author__ = "Valentin Valls"
 __contact__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "23/08/2024"
+__date__ = "27/10/2025"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
 import logging
-_logger = logging.getLogger(__name__)
-
 from . import fabioimage
 from .fabioutils import OrderedDict
+_logger = logging.getLogger(__name__)
 
 try:
     import importlib

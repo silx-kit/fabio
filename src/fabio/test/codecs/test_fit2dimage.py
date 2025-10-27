@@ -31,17 +31,15 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2020 European Synchrotron Radiation Facility"
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 
 import unittest
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.fit2dimage import fit2dimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class TestFit2DImage(unittest.TestCase):

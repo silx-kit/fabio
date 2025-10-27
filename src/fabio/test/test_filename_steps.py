@@ -29,10 +29,8 @@ Test cases for the Next/Previous ...
 
 import unittest
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
+logger = logging.getLogger(__name__)
 
 
 class TestNext(unittest.TestCase):

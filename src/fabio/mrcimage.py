@@ -40,11 +40,10 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "23/04/2021"
+__date__ = "27/10/2025"
 
 import logging
 import numpy
-
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 

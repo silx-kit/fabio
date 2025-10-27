@@ -24,28 +24,19 @@
 """Benchmark for file reading"""
 
 __author__ = "Jérôme Kieffer"
-__date__ = "10/02/2023"
+__date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "2016-2020 European Synchrotron Radiation Facility, Grenoble, France"
 
-import json
 import sys
-import time
 import timeit
 import os
-import platform
-import subprocess
-import numpy
-import fabio
-import os.path as op
-import logging
-
+from ..test import utilstest
 # To use use the locally build version of PyFAI, use ../bootstrap.py
 try:
     from .. import open as fabio_open, version, date
 except ImportError:
     from fabio import open as fabio_open, version, date
-from ..test import utilstest
 
 datasets = ["mb_LP_1_001.img",
             "Cr8F8140k103.0026",

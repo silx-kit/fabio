@@ -42,14 +42,13 @@ import logging
 import sys
 import os
 import time
-import numpy
 from .fabioutils import exists
 from .version import version
 
 logger = logging.getLogger(__name__)
 try:
     import h5py
-except ImportError as error:
+except ImportError:
     h5py = None
     logger.error("h5py module missing")
 else:

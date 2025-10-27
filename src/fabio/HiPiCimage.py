@@ -42,8 +42,8 @@ Information about the file format from Masakatzu Kobayashi is highly appreciated
 
 import numpy
 import logging
-logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
+logger = logging.getLogger(__name__)
 
 
 class HipicImage(FabioImage):
@@ -125,11 +125,11 @@ class HipicImage(FabioImage):
         self._shape = None
 
 
-        #### The case below is not true for data collected at 
-        #### BL47XU/BL20XU/BL20B at SPring-8 - here the data is saved as 
+        #### The case below is not true for data collected at
+        #### BL47XU/BL20XU/BL20B at SPring-8 - here the data is saved as
         #### 16 bit - so values above 4095 should be negative.
         #### Therefore I have now commented it out.
-        
+
         # # Sometimes these files are not saved as 12 bit,
         # # But as 16 bit after bg subtraction - which results
         # # negative values saved as 16bit. Therefore values higher

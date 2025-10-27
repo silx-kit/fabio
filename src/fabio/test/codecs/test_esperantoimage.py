@@ -32,7 +32,6 @@
 import os
 import fabio.esperantoimage
 from ..utilstest import UtilsTest
-
 import unittest
 import logging
 import numpy

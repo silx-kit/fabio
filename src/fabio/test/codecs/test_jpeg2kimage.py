@@ -37,12 +37,10 @@ try:
     from PIL import Image
 except ImportError:
     Image = None
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ... import jpeg2kimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 def isPilUsable():

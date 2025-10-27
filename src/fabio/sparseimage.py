@@ -37,27 +37,22 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020-2025 ESRF"
-__date__ = "05/05/2025"
+__date__ = "27/10/2025"
 
 import logging
-logger = logging.getLogger(__name__)
 import json
 import numpy
 try:
     import h5py
 except ImportError:
     h5py = None
-else:
-    try:
-        import hdf5plugin
-    except:
-        pass
 from .fabioutils import NotGoodReader
-from .fabioimage import FabioImage, OrderedDict
+from .fabioimage import FabioImage
 try:
     from .ext import dense as cython_densify
 except ImportError:
     cython_densify = None
+logger = logging.getLogger(__name__)
 
 
 def densify(mask,

@@ -28,11 +28,9 @@ Jerome Kieffer, 04/12/2014
 
 import unittest
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio.openimage import openheader
 from .utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class Test1(unittest.TestCase):

@@ -37,12 +37,11 @@ import unittest
 import os
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 from ...tifimage import tifimage
 from ...marccdimage import marccdimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
+
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

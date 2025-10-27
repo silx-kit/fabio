@@ -38,24 +38,20 @@ Portable diffraction images viewer/converter
 __version__ = "1.0"
 __author__ = "Gaël Goret, Jérôme Kieffer"
 __copyright__ = "2015 ESRF"
-__licence__ = "GPL"
+__licence__ = "MIT"
 
 import sys
 import os
 import time
-
 from .. import qt
 from ..qt.matplotlib import FigureCanvasQTAgg
 from ..qt.matplotlib import NavigationToolbar2QT
 from matplotlib.figure import Figure
-
 import numpy
-numpy.seterr(divide='ignore')
-
 import fabio
-
 from fabio.nexus import Nexus
 from argparse import ArgumentParser
+numpy.seterr(divide='ignore')
 
 output_format = ['*.bin', '*.cbf', '*.edf', '*.h5', '*.img',
                  '*.mar2300', '*.mar3450', '*.marccd', '*.tiff', "*.sfrm"]

@@ -29,11 +29,9 @@ import unittest
 import os
 import logging
 import numpy
-
-logger = logging.getLogger(__name__)
-
 from .utilstest import UtilsTest
 from ..TiffIO import TiffIO
+logger = logging.getLogger(__name__)
 
 
 class TestTiffIO(unittest.TestCase):

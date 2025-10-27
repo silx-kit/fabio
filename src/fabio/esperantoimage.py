@@ -28,15 +28,15 @@
 __authors__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __license__ = "MIT"
 __copyright__ = "2019-2020 ESRF"
-__date__ = "27/08/2024"
+__date__ = "27/10/2025"
 
 import io
 from collections import OrderedDict
 import logging
-logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage
 from .compression import agi_bitfield
+logger = logging.getLogger(__name__)
 
 
 class EsperantoImage(FabioImage):
@@ -86,7 +86,7 @@ class EsperantoImage(FabioImage):
     @data.setter
     def data(self, value):
         """Esperanto accepts only images square with size a multiple of 4
-        and limit the size to 256-4096 
+        and limit the size to 256-4096
         """
         if value is None:
             self._data = value
@@ -158,12 +158,12 @@ class EsperantoImage(FabioImage):
                         if k[0] in "lib":
                             try:
                                 value = int(v)
-                            except:
+                            except Exception:
                                 value = v
                         elif k[0] == "d":
                             try:
                                 value = float(v)
-                            except:
+                            except Exception:
                                 value = v
                         else:
                             value = v.strip('"')
@@ -219,8 +219,8 @@ class EsperantoImage(FabioImage):
         """
         Upper-cases headers are directly written into the ASCII header of the file.
         This method updates them according to values found in lower-case header (if any)
-        
-        As a consequence, unforeseen headers are simply discarded.  
+
+        As a consequence, unforeseen headers are simply discarded.
         """
         if "ESPERANTO FORMAT" not in self.header:  # default format
             self.header["ESPERANTO FORMAT"] = "1 CONSISTING OF   25 LINES OF   256 BYTES EACH"

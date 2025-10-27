@@ -31,18 +31,16 @@
 Image provided by Henning O. Sørensen
 """
 
-__date__ = "09/12/2022"
+__date__ = "27/10/2025"
 __author__ = "Jérôme Kieffer"
 
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.HiPiCimage import HipicImage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = [("Radiograph_SP8_BL47XU_HiPicimage.img", (2048, 2048), 2029, 46937, 22125.5196352005, 9089.959313208194),

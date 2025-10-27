@@ -37,7 +37,6 @@ Authors: Henning O. Sorensen & Erik Knudsen
 
         + Jon Wright, ESRF
 """
-import sys
 import logging
 import numpy
 from .fabioimage import FabioImage

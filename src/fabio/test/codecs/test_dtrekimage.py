@@ -36,15 +36,12 @@ import os
 import logging
 import numpy
 import shutil
-
 from ..utilstest import UtilsTest
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.dtrekimage import DtrekImage
 from fabio.edfimage import EdfImage
 from fabio.utils import testutils
+logger = logging.getLogger(__name__)
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev

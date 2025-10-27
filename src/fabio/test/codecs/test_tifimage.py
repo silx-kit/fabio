@@ -30,12 +30,11 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
 import numpy
 import fabio
 from fabio import tifimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class TestTif(unittest.TestCase):
@@ -107,7 +106,7 @@ class TestTif(unittest.TestCase):
 
     def test_bug502(self):
         """
-        Test the reading of a frame with wrong Photometric interpretation 
+        Test the reading of a frame with wrong Photometric interpretation
         """
         ref = fabio.open(UtilsTest.getimage("frame_00017.npy"))
         obt = fabio.open(UtilsTest.getimage("frame_00017.tif"))

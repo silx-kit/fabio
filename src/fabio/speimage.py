@@ -36,19 +36,15 @@ __authors__ = ["Clemens Prescher"]
 __contact__ = "c.prescher@uni-koeln.de"
 __license__ = "MIT"
 __copyright__ = "Clemens Prescher"
-__date__ = "09/02/2023"
+__date__ = "27/10/2025"
 
 import logging
-
-logger = logging.getLogger(__name__)
-
 import datetime
 from xml.dom.minidom import parseString
-
 import numpy as np
 from numpy.polynomial.polynomial import polyval
-
 from .fabioimage import FabioImage
+logger = logging.getLogger(__name__)
 
 
 class SpeImage(FabioImage):

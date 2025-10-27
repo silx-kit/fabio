@@ -29,28 +29,25 @@ FabIO class for dealing with JPEG 2000 images.
 """
 
 __authors__ = ["Valentin Valls"]
-__date__ = "05/09/2025"
+__date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
 
 import logging
-logger = logging.getLogger(__name__)
-
 try:
     import PIL
     import PIL.Image
 except ImportError:
     PIL = None
-
 try:
     import glymur
 except ImportError:
     glymur = None
-
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
 from .utils import pilutils
+logger = logging.getLogger(__name__)
 
 
 class Jpeg2KImage(FabioImage):
@@ -133,7 +130,7 @@ class Jpeg2KImage(FabioImage):
             self.data = image._read()
         else:
             self.data = image.read()
-            
+
     def read(self, filename, frame=None):
         infile = self._open(filename, "rb")
         self.data = None

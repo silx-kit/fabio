@@ -39,12 +39,13 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "30/05/2024"
+__date__ = "27/10/2025"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
 from io import BytesIO
 from struct import pack, unpack as unpack_
+import numpy
 try:
     from ..ext._agi_bitfield import get_fieldsize as _get_fieldsize, compress_row as _compress_row, compress as _compress
 except ImportError:
@@ -52,9 +53,10 @@ except ImportError:
     _compress_row = None
     _compress = None
 logger = logging.getLogger(__name__)
-import numpy
 
-unpack = lambda fmt, buff: unpack_(fmt, buff)[0]
+
+def unpack(fmt, buff):
+    unpack_(fmt, buff)[0]
 
 MASK = [(1 << i) - 1 for i in range(9)]
 
@@ -261,11 +263,11 @@ def compress_field(ifield, fieldsize, overflow_table):
 
 
 def decode_field(field):
-    """decodes a field from bytes. 
-    
-    One field always encode for 8 pixels but my be stored on 1 to 8 pixels 
+    """decodes a field from bytes.
+
+    One field always encode for 8 pixels but my be stored on 1 to 8 pixels
     (overflow are handeled separately)
-    
+
     :param field: bytes
     :returns list
     """

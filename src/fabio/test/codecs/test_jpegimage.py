@@ -34,12 +34,10 @@ import unittest
 import os
 import shutil
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ... import jpegimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 TEST_DIRECTORY = None
 # Temporary directory where storing test data

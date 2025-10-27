@@ -30,9 +30,6 @@ Jerome Kieffer 04/12/2014
 
 import unittest
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio.openimage import openimage
 from fabio.edfimage import EdfImage
 from fabio.marccdimage import MarccdImage
@@ -41,6 +38,9 @@ from fabio.OXDimage import OXDimage
 from fabio.brukerimage import BrukerImage
 from fabio.dtrekimage import DtrekImage
 from .utilstest import UtilsTest
+
+logger = logging.getLogger(__name__)
+
 
 
 class TestOpenEdf(unittest.TestCase):

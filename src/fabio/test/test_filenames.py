@@ -34,12 +34,9 @@ import unittest
 import os
 import logging
 import tempfile
-
-
-logger = logging.getLogger(__name__)
-
 import fabio
 import numpy
+logger = logging.getLogger(__name__)
 
 CASES = [
     (1, 'edf', "data0001.edf"),

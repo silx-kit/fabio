@@ -34,35 +34,33 @@ to export Eiger frames (including te one from LIMA)
 to CBF and mimic the header from Dectris Pilatus.
 """
 
-__author__ = "Jerome Kieffer"
+__author__ = "Jérôme Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "07/10/2024"
+__date__ = "27/10/2025"
 __status__ = "production"
 
 import logging
-logging.basicConfig()
-logger = logging.getLogger("eiger2cbf")
 import codecs
 import sys
 import os
-
 from ..utils.cli import expand_args
 from ..openimage import openimage as fabio_open
 from .. import cbfimage, limaimage, eigerimage, version as fabio_version
 import numpy
 import argparse
+logging.basicConfig()
+logger = logging.getLogger("eiger2cbf")
 try:
-    import hdf5plugin
+    import hdf5plugin  #noqa
 except ImportError:
     pass
 
 try:
     import numexpr
-except:
+except ImportError:
     logger.error("Numexpr is needed to interpret formula ...")
 
-logger = logging.getLogger("eiger2cbf")
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 EXIT_ARGUMENT_FAILURE = 2
@@ -187,8 +185,8 @@ class ProgressBar:
 def select_pilatus_detecor(shape):
     """CrysalisPro only accepts some detector shapes as CBF inputs.
     Those shaped correspond to the one of the dectris detector Pilatus
-    
-    This function takes the input shape and return the smallest Dectris shape which is large enough. 
+
+    This function takes the input shape and return the smallest Dectris shape which is large enough.
     """
     assert len(shape) >= 2
     valid_detectors = {  # (514, 1030): 'eiger_500k',
@@ -295,7 +293,7 @@ def convert_one(input_filename, options, start_at=0):
             entry = source.h5.get(entry_name)
             try:
                 nxdetector = entry["instrument/detector"]
-            except:
+            except Exception:
                 logger.error("No detector definition in Eiger file, is this a master file ?")
             else:
                 detector = "%s, S/N %s" % (nxdetector["description"][()].decode(),
@@ -305,8 +303,8 @@ def convert_one(input_filename, options, start_at=0):
                                                  nxdetector["y_pixel_size"][()])
                 pilatus_headers["Exposure_time"] = nxdetector["count_time"][()]
                 pilatus_headers["Exposure_period"] = nxdetector["frame_time"][()]
-                pilatus_headers["Wavelength"] = entry["instrument/beam/incident_wavelength"][()] 
-                pilatus_headers["Detector_distance"] = nxdetector["detector_distance"][()] 
+                pilatus_headers["Wavelength"] = entry["instrument/beam/incident_wavelength"][()]
+                pilatus_headers["Detector_distance"] = nxdetector["detector_distance"][()]
                 pilatus_headers["Beam_xy"] = (nxdetector["beam_center_x"][()],
                                               nxdetector["beam_center_y"][()])
                 pilatus_headers["sensor"] = (nxdetector["sensor_material"][()].decode(),

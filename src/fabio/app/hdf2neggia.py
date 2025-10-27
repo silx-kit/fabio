@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__date__ = "26/05/2025"
+__date__ = "27/10/2025"
 __author__ = "Jérôme Kieffer"
 __license__ = "MIT"
 
@@ -9,15 +9,16 @@ import sys
 import argparse
 from io import StringIO
 import logging
-application_name = os.path.splitext(os.path.basename(__file__))[0]
-logger = logging.getLogger(application_name)
-logging.basicConfig()
 import numpy
 from .. import version as fabio_version, date as fabio_date
 from ..openimage import openimage as fabio_open
 from ..nexus import Nexus
 import h5py
 import hdf5plugin
+application_name = os.path.splitext(os.path.basename(__file__))[0]
+logger = logging.getLogger(application_name)
+logging.basicConfig()
+
 try:
     from pyFAI import load
 except ImportError:
@@ -30,10 +31,10 @@ except ImportError:
 class XDSbuilder:
     def __init__(self):
         "Constructor of the class"
-        
+
         self.poni = None
         self.options = None
-        self.frames = None 
+        self.frames = None
         self.h5_filename = "fabio_master.h5"
 
     def parse(self, argv=None):
@@ -57,17 +58,17 @@ class XDSbuilder:
         parser.add_argument("--CdTe", help="The detector is made of CdTe", default=False, action="store_true")
         parser.add_argument("--neggia", help="Path of the neggia plugin", default="dectris-neggia.so")
         parser.add_argument("--oscillation", help="Oscillation range used.", default=0.5)
-        
+
         self.options = parser.parse_args(argv)
         return self.options
-        
+
     def configure_verboseness(self):
         if self.options and self.options.verbose:
             if self.options.verbose>1:
                 logger.setLevel(logging.DEBUG)
             else:
                 logger.setLevel(logging.INFO)
-        
+
     def load_poni(self):
         "return 1 if poni-file cannot be found"
         if self.options is None:
@@ -81,16 +82,16 @@ class XDSbuilder:
             logger.error("Unable to parse PONI-file: %s", self.options.geometry)
             raise err
             return 1
-        
+
     def load_input(self):
         if len(self.options.input)==0:
             logger.error("No input HDF5 file provided. Aborting")
             return 2
         self.frames = [fabio_open(i) for i in self.options.input]
         return 0
-        
+
     def _distance_center(self):
-        """return distance, centerx, center_y 
+        """return distance, centerx, center_y
         """
         width = self.poni.detector.shape[-1]
         distance = self.poni.dist*1e3 #mm
@@ -100,7 +101,7 @@ class XDSbuilder:
         return distance, x_center, y_center
 
     def build_neggia(self):
-        """Build the neggia file, i.e. the HDF5 file with data + metadata for analysis""" 
+        """Build the neggia file, i.e. the HDF5 file with data + metadata for analysis"""
         if not os.path.exists(self.options.output):
             os.makedirs(self.options.output)
         dest_h5 = os.path.join(self.options.output, self.h5_filename)
@@ -166,7 +167,7 @@ class XDSbuilder:
                                                     **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
                             else:
                                 data[f"data_{cnt:06d}"] = h5py.ExternalLink(os.path.relpath(item.file.filename, self.options.output), item.name)
-    
+
                         elif isinstance(fimg.dataset, numpy.ndarray):
                             cnt += 1
                             if fimg.dataset.ndim < 3:
@@ -182,13 +183,13 @@ class XDSbuilder:
         os.link(dest_h5, dest_h5.replace("master","000000"))
         logger.info(f"Successfully created Neggia file {dest_h5}.")
         return 0
-    
+
     def build_XDS(self):
         "Create XDS.INP file suitable for data reduction"
         if not os.path.exists(self.options.output):
             os.makedirs(self.options.output)
         dest_xds = os.path.join(self.options.output, "XDS.INP")
-        
+
         xds = ["JOB= XYCORR INIT COLSPOT IDXREF DEFPIX INTEGRATE CORRECT",
                "! JOB=  DEFPIX INTEGRATE CORRECT",
                "",
@@ -209,12 +210,12 @@ class XDSbuilder:
                "OVERLOAD=100000000",
                ]
         xds.append(f"DATA_RANGE= 1 {sum(i.nframes for i in self.frames)}")
-        
+
         shape = self.poni.detector.shape
         pixel1, pixel2 = self.poni.detector.pixel1, self.poni.detector.pixel2
         xds.append(f"NX= {shape[1]:d} NY= {shape[0]:d}  QX= {pixel2*1000:f}  QY= {pixel1*1000:f}")
 
-        distance, center_x, center_y = self._distance_center()        
+        distance, center_x, center_y = self._distance_center()
         xds.append("DETECTOR= EIGER")
         xds.append(f"DETECTOR_DISTANCE= {distance:.4f}")
         xds.append(f"ORGX= {center_x:.3f} ORGY= {center_y:.3f}")
@@ -243,14 +244,14 @@ class XDSbuilder:
             e, mu = numpy.loadtxt(StringIO(Attenuations_CdTe),unpack=True)
             xds.append(f"SILICON= {numpy.interp(nrj, e, mu):.3f} !1/mm")
 
-        mode = "w"        
+        mode = "w"
         if os.path.exists(dest_xds):
             if self.options.force:
                 mode = "w"
             else:
                 logger.error("Output file exist, not overwriting it. Aborting")
                 return 1
-        with open(dest_xds, "w") as w:
+        with open(dest_xds, mode) as w:
             w.write(os.linesep.join(xds))
         logger.info(f"Successfully created XDS file {dest_xds}.")
         return 0
@@ -258,20 +259,22 @@ class XDSbuilder:
     def process(self):
         "pipeline processing, returns a error code as integer"
         self.configure_verboseness()
-        
+
         rc = self.load_poni()
-        if rc: return rc
-        
+        if rc:
+            return rc
+
         rc = self.load_input()
-        if rc: return rc
-        
+        if rc:
+            return rc
+
         rc = self.build_neggia()
-        if rc: return rc
-        rc = self.build_XDS()
-        if rc: return rc    
-        return rc
-    
-    
+        if rc:
+            return rc
+
+        return self.build_XDS()
+
+
 def main(argv=None):
     xds = XDSbuilder()
     xds.parse(sys.argv[1:] if argv is None else argv)

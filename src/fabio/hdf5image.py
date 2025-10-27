@@ -41,20 +41,19 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 
 import logging
 import os
 import posixpath
 from . import fabioimage
-
-logger = logging.getLogger(__name__)
-
+from .fabioutils import previous_filename, next_filename
 try:
     import h5py
 except ImportError:
     h5py = None
-from .fabioutils import previous_filename, next_filename
+
+logger = logging.getLogger(__name__)
 
 
 class Hdf5Frame(fabioimage.FabioFrame):

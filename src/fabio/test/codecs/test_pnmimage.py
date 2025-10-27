@@ -32,18 +32,17 @@ Test for PNM images.
 
 Jerome Kieffer, 04/12/2014
 """
-__author__ = "Jerome Kieffer"
-__date__ = "03/04/2020"
+__author__ = "Jérôme Kieffer"
+__date__ = "27/10/2025"
+
 import os
 import unittest
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio.pnmimage import pnmimage
 from fabio.openimage import openimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class TestPNM(unittest.TestCase):

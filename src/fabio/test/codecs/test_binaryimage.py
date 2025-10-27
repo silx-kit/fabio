@@ -32,12 +32,11 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
 import numpy
 from fabio.openimage import openimage
 from fabio.binaryimage import BinaryImage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 def make_file(name, shape, dtype):

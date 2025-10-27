@@ -34,11 +34,9 @@ import unittest
 import os
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 # logging.basicConfig(level=logging.DEBUG)
 # logging.basicConfig(level=logging.WARNING)
@@ -202,9 +200,9 @@ def test_00(cls, filename, avglist=None, keylist=None):
                 key = keylist[-1]
 
             if key in frame.header:
-                logging.debug("filename={},frameno={}: key='{}'".format(filename, frameno, key, frame.header[key]))
+                logging.debug("filename={},frameno={}: key='{}'".format(filename, frameno, key, ))
             else:
-                logging.debug("filename={},frameno={}: key=None".format(filename, frameno, key))
+                logging.debug("filename={},frameno={}: key=None".format(filename, frameno, ))
 
             cls.assertIn(key, frame.header, "F:filename={},frameno={}: Missing expected header key '{}'".format(filename, frameno, key))
 

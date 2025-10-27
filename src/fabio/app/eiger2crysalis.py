@@ -31,25 +31,18 @@
 
 """Portable image converter based on FabIO library
 to export Eiger frames (including the one from LImA)
-to a set of esperanto frames which can be imported 
+to a set of esperanto frames which can be imported
 into CrysalisPro.
 """
 
-__author__ = "Jerome Kieffer"
+__author__ = "Jérôme Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "09/10/2024"
+__date__ = "27/10/2025"
 __status__ = "production"
 
-FOOTER = """To import your files as a project:
-* Start CrysalisPro and open any project
-* press "F5" to open the console
-* Type `esperanto createrunlist` and select your first and last frame
-"""
 
 import logging
-logging.basicConfig()
-logger = logging.getLogger("eiger2crysalis")
 import sys
 import os
 import shutil
@@ -61,14 +54,23 @@ from ..utils.cli import ProgressBar, expand_args
 import numpy
 import argparse
 try:
-    import hdf5plugin
+    import hdf5plugin  # noqa
 except ImportError:
     pass
+
+logging.basicConfig()
+logger = logging.getLogger("eiger2crysalis")
 
 try:
     import numexpr
 except ImportError:
     logger.error("Numexpr is needed to interpret formula ...")
+
+FOOTER = """To import your files as a project:
+* Start CrysalisPro and open any project
+* press "F5" to open the console
+* Type `esperanto createrunlist` and select your first and last frame
+"""
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -128,7 +130,7 @@ class Converter:
 
     def new_beam_center(self, x, y, shape):
         """Calculate the position of the beam after all transformations:
-        
+
         :param x, y: position in the initial image
         :shape: shape of the input image
         :return: x, y, coordinated of the new beam center within the esperanto frame.
@@ -281,7 +283,7 @@ class Converter:
                 entry = source.h5.get(entry_name)
                 try:
                     nxdetector = entry["instrument/detector"]
-                except:
+                except Exception:
                     logger.error("No detector definition in Eiger file, is this a master file ?")
                 else:
                     headers["drealpixelsizex"] = nxdetector["x_pixel_size"][()] * 1e3
@@ -290,7 +292,7 @@ class Converter:
                     headers["dyorigininpix"] = nxdetector["beam_center_y"][()]
                     headers["ddistanceinmm"] = nxdetector["detector_distance"][()] * 1e3
                     headers["dexposuretimeinsec"] = nxdetector["count_time"][()]
-                    wavelength = entry["instrument/beam/incident_wavelength"][()] 
+                    wavelength = entry["instrument/beam/incident_wavelength"][()]
             else:
                 raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
         if self.mask is None:
@@ -339,13 +341,13 @@ class Converter:
                 value = numexpr.NumExpr(self.options.omega)
                 self.scan_type = "omega"
             headers["dom_s"] = headers["dom_e"] = value
-        
+
         return headers
 
     def convert_one(self, input_filename, start_at=0):
         """
         Convert a single file using options
-    
+
         :param str input_filename: The input filename
         :param object options: List of options provided from the command line
         :param start_at: index to start at for given file
@@ -459,7 +461,7 @@ class Converter:
             maskfile.write(b'#END OF XCALIBUR CHIP CHARACTERISTICS FILE\r\n')
         # Make a backup as the original could be overwritten by Crysalis at import
         shutil.copyfile(os.path.join(dirname, prefix + ".set"), os.path.join(dirname, prefix + ".set.orig"))
-        
+
         # save the ".run" file
         rundescription = xcaliburimage.RunDescription(prefix, dirname, pssweep=[])
         if self.scan_type=="phi":
@@ -485,9 +487,9 @@ class Converter:
                                     dphi=dphi,
                                     dstart=dstart, dend=dend,
                                     dwidth=oscil,
-                                    dunknown2=0.0, 
-                                    iunknown3=self.processed_frames, 
-                                    iunknown4=0, 
+                                    dunknown2=0.0,
+                                    iunknown3=self.processed_frames,
+                                    iunknown4=0,
                                     iunknown5=self.processed_frames, iunknown6=0,
                                     dexposure=self.headers["dexposuretimeinsec"]
                                     )
@@ -495,7 +497,7 @@ class Converter:
         rundescription.save(os.path.join(dirname,prefix+".run"))
 
         # Finally save the ".par" file
-        xci.save_par(dirname, prefix, 
+        xci.save_par(dirname, prefix,
                      wavelength=self.options.wavelength,
                      alpha=self.options.alpha,
                      polarization=self.options.polarization,

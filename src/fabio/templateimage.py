@@ -76,9 +76,9 @@ __copyright__ = "Institut"
 __date__ = "09/02/2023"
 
 import logging
-logger = logging.getLogger(__name__)
 import numpy
-from .fabioimage import FabioImage, OrderedDict
+from .fabioimage import FabioImage
+logger = logging.getLogger(__name__)
 
 
 class TemplateImage(FabioImage):

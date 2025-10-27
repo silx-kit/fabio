@@ -26,17 +26,16 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Basic read support for NeXus/HDF5 files saved by Lambda-detectors. 
+Basic read support for NeXus/HDF5 files saved by Lambda-detectors.
 """
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "02/05/2024"
+__date__ = "27/10/2025"
 
 import logging
-logger = logging.getLogger(__name__)
 import posixpath
 import os
 import numpy
@@ -51,12 +50,13 @@ try:
     import hdf5plugin
 except ImportError:
     hdf5plugin = None
+logger = logging.getLogger(__name__)
 
 
 class LambdaImage(FabioImage):
     """FabIO image class for Images for Lambda detector
 
-    Lambda detector are medipix based detectors sold by X-Spectrum: 
+    Lambda detector are medipix based detectors sold by X-Spectrum:
     https://x-spectrum.de/products/lambda/
     """
 
@@ -141,7 +141,7 @@ class LambdaImage(FabioImage):
             if description != "Lambda":
                 raise NotGoodReader("Nexus file does not look like it has been written by a Lambda-detector.")
             if name_path in h5:
-                self.header["detector"] = str(h5[name_path][()]) 
+                self.header["detector"] = str(h5[name_path][()])
             else:
                 self.header["detector"] = "detector"
 
@@ -244,7 +244,7 @@ class LambdaImage(FabioImage):
             detector_grp["description"] = b"Lambda"
             detector_grp["local_name"] = self.header.get("detector", "detector").encode()
             detector_grp["layout"] = "X".join(str(i) for i in self.shape[-1::-1]).encode()
-            header_grp = nxs.new_class(detector_grp, "collection", class_type="NXcollection")
+            nxs.new_class(detector_grp, "collection", class_type="NXcollection")
             acq_grp = nxs.new_class(detector_grp, "acquisition", class_type="NXcollection")
 
             acq_grp["frame_numbers"] = numpy.int32(self.nframes)

@@ -36,13 +36,9 @@
 import unittest
 import os
 import logging
-
 from ..utilstest import UtilsTest
-
-logger = logging.getLogger(__name__)
-
 from fabio.GEimage import GEimage
-
+logger = logging.getLogger(__name__)
 
 class TestGE(unittest.TestCase):
 

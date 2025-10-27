@@ -33,12 +33,12 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "09/02/2023"
+__date__ = "27/10/2025"
 
 import logging
-logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage, OrderedDict
+logger = logging.getLogger(__name__)
 
 
 def hex_to(stg, type_="int"):

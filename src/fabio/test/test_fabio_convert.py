@@ -20,11 +20,9 @@ import subprocess
 import time
 import unittest
 import logging
-
-_logger = logging.getLogger(__name__)
-
 import fabio.app.convert
 from .utilstest import UtilsTest
+_logger = logging.getLogger(__name__)
 
 
 class TestFabioConvert(unittest.TestCase):

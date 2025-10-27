@@ -35,13 +35,11 @@ Test for Nonius Kappa CCD cameras.
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ...kcdimage import kcdimage
 from ...openimage import openimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class TestKcd(unittest.TestCase):

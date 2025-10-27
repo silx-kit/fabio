@@ -42,19 +42,20 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "20/08/2024"
+__date__ = "27/10/2025"
 
 import os
 import logging
 import sys
 import tempfile
 import weakref
-logger = logging.getLogger(__name__)
 import numpy
 from . import fabioutils, converters
 from .fabioutils import OrderedDict
+from .compression import COMPRESSORS
 from .utils import pilutils
 from .utils import deprecation
+logger = logging.getLogger(__name__)
 
 
 class _FabioArray(object):
@@ -773,12 +774,12 @@ class FabioImage(_FabioArray):
         comp_type = os.path.splitext(fname)[-1]
         if comp_type == ".gz":
             fileObject = self._compressed_stream(fname,
-                                                 fabioutils.COMPRESSORS['.gz'],
+                                                 COMPRESSORS['.gz'],
                                                  fabioutils.GzipFile,
                                                  mode)
         elif comp_type == '.bz2':
             fileObject = self._compressed_stream(fname,
-                                                 fabioutils.COMPRESSORS['.bz2'],
+                                                 COMPRESSORS['.bz2'],
                                                  fabioutils.BZ2File,
                                                  mode)
         #

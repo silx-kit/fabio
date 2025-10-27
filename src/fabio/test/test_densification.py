@@ -32,14 +32,14 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "02/09/2024"
+__date__ = "27/10/2025"
 
 import unittest
 import numpy
 import logging
-logger = logging.getLogger(__name__)
 from ..sparseimage import densify, cython_densify
 from ..ext.dense import distribution_uniform_mtc, distribution_normal_mtc
+logger = logging.getLogger(__name__)
 
 
 class TestDensification(unittest.TestCase):

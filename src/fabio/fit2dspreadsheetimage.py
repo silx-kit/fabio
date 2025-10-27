@@ -34,10 +34,8 @@ Read the fit2d ascii image output
 
 import numpy
 import logging
-
-_logger = logging.getLogger(__name__)
-
 from .fabioimage import FabioImage
+_logger = logging.getLogger(__name__)
 
 
 class Fit2dSpreadsheetImage(FabioImage):

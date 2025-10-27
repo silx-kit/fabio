@@ -27,9 +27,6 @@
 import sys
 import logging
 import unittest
-
-logger = logging.getLogger(__name__)
-
 from . import test_fabio_image
 from . import test_filenames
 from . import test_file_series
@@ -53,6 +50,8 @@ from . import test_densification
 from . import test_io_limits
 from . import test_utils_cli
 from . import test_import
+
+logger = logging.getLogger(__name__)
 
 
 def suite():

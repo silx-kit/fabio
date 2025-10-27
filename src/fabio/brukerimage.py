@@ -43,7 +43,7 @@ Writer by Jérôme Kieffer, ESRF, Grenoble, France
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "05/01/2021"
+__date__ = "27/10/2025"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -51,12 +51,13 @@ __licence__ = "MIT"
 import logging
 import numpy
 from math import ceil
-import os, io
+import os
+import io
 import getpass
 import time
-logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 from .fabioutils import pad, StringTypes
+logger = logging.getLogger(__name__)
 
 
 class BrukerImage(FabioImage):

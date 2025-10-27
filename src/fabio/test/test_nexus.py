@@ -27,12 +27,9 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 from .utilstest import UtilsTest
 from .. import nexus
-import numpy
+logger = logging.getLogger(__name__)
 
 
 class TestNexus(unittest.TestCase):

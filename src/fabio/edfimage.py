@@ -56,9 +56,7 @@ import re
 import string
 import logging
 import numpy
-
-logger = logging.getLogger(__name__)
-
+from collections import namedtuple
 from . import fabioimage
 from .fabioutils import isAscii, toAscii, nice_int, OrderedDict
 from .compression import decBzip2, decGzip, decZlib
@@ -66,7 +64,7 @@ from . import compression as compression_module
 from . import fabioutils
 from .utils import deprecation
 
-from collections import namedtuple
+logger = logging.getLogger(__name__)
 
 BLOCKSIZE = 512
 MAX_BLOCKS = 512
@@ -1031,7 +1029,7 @@ class EdfImage(fabioimage.FabioImage):
                 val = val.strip(bytes_whitespace)
                 try:
                     key, val = key.decode("ASCII"), val.decode("ASCII")
-                except:
+                except Exception:
                     logger.warning("Non ASCII in key-value: Drop %s = %s", key, val)
                 else:
                     if key in header:
@@ -1340,7 +1338,7 @@ class EdfImage(fabioimage.FabioImage):
         The aim is performances, ... but only supports uncompressed files.
 
         :param filename: name of another file with the same structure.
-        :paran coords: 2 tuple of slices (RECOMMANDED) or a 4 tuple (NOT RECOMMANDED, cryptic fabian convention) 
+        :paran coords: 2 tuple of slices (RECOMMANDED) or a 4 tuple (NOT RECOMMANDED, cryptic fabian convention)
         :return: ROI-data from another file using positions from current EdfImage
         :rtype: numpy 2darray
         """

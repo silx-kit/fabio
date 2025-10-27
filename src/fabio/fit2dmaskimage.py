@@ -37,12 +37,11 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__version__ = "06/01/2015"
+__date__ = "27/10/2025"
 
 import io
 import numpy
 import struct
-
 from .fabioimage import FabioImage
 
 

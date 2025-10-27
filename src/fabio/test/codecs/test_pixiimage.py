@@ -33,12 +33,10 @@ Deep test to check IOError exceptions
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ..utilstest import UtilsTest
 from ..test_frames import _CommonTestFrames
+logger = logging.getLogger(__name__)
 
 
 class TestPixiImage(_CommonTestFrames):

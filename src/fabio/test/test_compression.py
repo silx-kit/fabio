@@ -32,15 +32,13 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2011-2016 ESRF"
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 
 import unittest
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio import compression
+logger = logging.getLogger(__name__)
 
 
 class TestByteOffset(unittest.TestCase):

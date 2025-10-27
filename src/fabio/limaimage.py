@@ -26,17 +26,16 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Basic read support for HDF5 files saved by LImA. 
+Basic read support for HDF5 files saved by LImA.
 """
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "09/02/2023"
+__date__ = "27/10/2025"
 
 import logging
-logger = logging.getLogger(__name__)
 import os
 import numpy
 from .fabioimage import FabioImage
@@ -50,6 +49,7 @@ try:
     import hdf5plugin
 except ImportError:
     hdf5plugin = None
+logger = logging.getLogger(__name__)
 
 
 class LimaImage(FabioImage):

@@ -2,7 +2,7 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2025 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,13 +42,17 @@ Authors:
 """
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
 
 import time
 import logging
+import numpy
+from .utils import pilutils
+from . import fabioimage
+from . import TiffIO
 logger = logging.getLogger(__name__)
 
 try:
@@ -56,10 +60,6 @@ try:
 except ImportError:
     PIL = None
 
-import numpy
-from .utils import pilutils
-from . import fabioimage
-from . import TiffIO
 
 _USE_TIFFIO = True
 """Uses TiffIO library if available"""

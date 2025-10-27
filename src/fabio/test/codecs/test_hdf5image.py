@@ -32,13 +32,11 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio.fabioutils import exists
 from fabio.openimage import openimage
 from fabio.hdf5image import Hdf5Image, h5py
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 def make_hdf5(name, shape=(50, 99, 101)):

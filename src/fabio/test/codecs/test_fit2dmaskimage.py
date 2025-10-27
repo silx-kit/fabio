@@ -36,12 +36,10 @@ import unittest
 import os
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.fit2dmaskimage import fit2dmaskimage
 from ..utilstest import UtilsTest
+logger = logging.getLogger(__name__)
 
 
 class TestFaceMask(unittest.TestCase):

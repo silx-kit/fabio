@@ -31,13 +31,10 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 import shutil
 from .utilstest import UtilsTest
-
+logger = logging.getLogger(__name__)
 
 class TestHeaderNotSingleton(unittest.TestCase):
 

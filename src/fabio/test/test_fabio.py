@@ -31,11 +31,9 @@ Basically everything supposed to be provided by `import fabio`
 import unittest
 import logging
 import io
-
-logger = logging.getLogger(__name__)
-
 from .utilstest import UtilsTest
 import fabio
+logger = logging.getLogger(__name__)
 
 
 class TestFabio(unittest.TestCase):

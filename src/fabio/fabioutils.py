@@ -37,7 +37,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/11/2020"
+__date__ = "27/10/2025"
 __status__ = "stable"
 __docformat__ = 'restructuredtext'
 
@@ -46,11 +46,11 @@ import os
 import logging
 import sys
 import json
-
-logger = logging.getLogger(__name__)
-
 from collections import OrderedDict as _OrderedDict
-
+import traceback
+from math import ceil
+import threading
+from .compression import bz2, gzip
 try:
     import pathlib
 except ImportError:
@@ -58,9 +58,9 @@ except ImportError:
         import pathlib2 as pathlib
     except ImportError:
         pathlib = None
-
-StringTypes = (str, bytes)
 from io import FileIO, BytesIO as _BytesIO
+logger = logging.getLogger(__name__)
+StringTypes = (str, bytes)
 
 
 def to_str(s):
@@ -71,11 +71,6 @@ PathTypes = StringTypes
 if pathlib is not None:
     PathTypes += (pathlib.PurePath,)
 
-from .compression import bz2, gzip, COMPRESSORS
-import traceback
-from math import ceil
-
-import threading
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
 

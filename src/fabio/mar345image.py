@@ -47,7 +47,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -56,12 +56,10 @@ import struct
 import time
 import logging
 import numpy
-
 import fabio
 from .fabioimage import FabioImage
-
-logger = logging.getLogger(__name__)
 from .compression import compPCK, decPCK
+logger = logging.getLogger(__name__)
 
 
 class Mar345Image(FabioImage):

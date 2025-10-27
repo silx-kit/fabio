@@ -53,11 +53,9 @@ from math import ceil
 import logging
 import time
 import numpy
-
-logger = logging.getLogger(__name__)
-
 from .brukerimage import BrukerImage
 from .fabioutils import pad, StringTypes
+logger = logging.getLogger(__name__)
 
 
 def mround(value, multiple=16):
@@ -127,7 +125,7 @@ def _split_data(data, baseline=None):
 def _merge_data(data, baseline=0, underflow=None, overflow1=None, overflow2=None):
     """
     Build an array from the various components
-    
+
     :param data: probably a uint8 array --> expanded to int32
     :param baseline: value of the baseline
     :param underflow: value of the data below the baseline (any value with 0 are replaced with those values)

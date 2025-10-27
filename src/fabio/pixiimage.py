@@ -37,16 +37,14 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "wright@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "30/05/2024"
+__date__ = "27/10/2025"
 
 import numpy
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 from . import fabioimage
 from .fabioutils import previous_filename, next_filename
+logger = logging.getLogger(__name__)
 
 
 class PixiImage(fabioimage.FabioImage):

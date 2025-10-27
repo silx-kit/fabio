@@ -43,7 +43,7 @@ License: MIT
 """
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "18/12/2020"
+__date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
@@ -51,10 +51,9 @@ __status__ = "stable"
 import io
 import logging
 import numpy
-
-logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
 
+logger = logging.getLogger(__name__)
 SUBFORMATS = (b'P1', b'P2', b'P3', b'P4', b'P5', b'P6', b'P7')
 HEADERITEMS = (b'SUBFORMAT', b'WIDTH', b'HEIGHT', b'MAXVAL')
 P7HEADERITEMS = (b'WIDTH', b'HEIGHT', b'DEPTH', b'MAXVAL', b'TUPLTYPE', b'ENDHDR')
@@ -169,9 +168,9 @@ class PnmImage(FabioImage):
     def P1dec(self, buf, bytecode):
         data = numpy.zeros(self.shape)
         i = 0
-        for l in buf:
+        for line in buf:
             try:
-                data[i,:] = numpy.array(l.split()).astype(bytecode)
+                data[i,:] = numpy.array(line.split()).astype(bytecode)
             except ValueError:
                 raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
@@ -184,9 +183,9 @@ class PnmImage(FabioImage):
     def P2dec(self, buf, bytecode):
         data = numpy.zeros(self.shape)
         i = 0
-        for l in buf:
+        for line in buf:
             try:
-                data[i,:] = numpy.array(l.split()).astype(bytecode)
+                data[i,:] = numpy.array(line.split()).astype(bytecode)
             except ValueError:
                 raise IOError('Size spec in pnm-header does not match size of image data field')
         return data
