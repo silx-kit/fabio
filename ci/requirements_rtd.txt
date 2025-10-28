@@ -1,4 +1,4 @@
-numpy; python_version>= '3.6'
+numpy
 h5py
 sphinx
 cython
@@ -6,3 +6,4 @@ sphinxcontrib-programoutput
 nbsphinx
 lxml>=4.6.3
 pillow
+pydata-sphinx-theme
