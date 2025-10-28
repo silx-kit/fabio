@@ -64,7 +64,7 @@ jobs:
       - name: Install fabio
         run: pip install .
       - name: Install documentation dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt ci/requirements-rtd.txt
       - name: Build doc
         env:
           READTHEDOCS: "True"  # To skip checking that fabio is installed locally
@@ -85,13 +85,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-24.04
             cibw_archs: "auto64"
-          - os: ubuntu-20.04
+          - os: ubuntu-24.04
             cibw_archs: "aarch64"
-          - os: ubuntu-20.04
+          - os: ubuntu-24.04
             cibw_archs: "ppc64le"
-          - os: windows-2019
+          - os: windows-2022
             cibw_archs: "auto64"
           - os: macos-13
             cibw_archs: "x86_64"
