@@ -46,14 +46,13 @@ import logging
 import sys
 import os.path
 import collections
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from .fabioutils import FilenameObject, next_filename
 from .openimage import openimage
 from .fabioimage import FabioImage
 from .utils import deprecation
+
+logger = logging.getLogger(__name__)
 
 
 def new_file_series0(first_object, first=None, last=None, step=1):
@@ -137,7 +136,7 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             retVal = sys.exc_info()
             # Skip bad images
             logger.warning("Got a problem here: next() failed %s", ex)
-            if(traceback):
+            if traceback:
                 logger.error("Backtrace", exc_info=True)
             else:
                 logger.debug("Backtrace", exc_info=True)
@@ -145,7 +144,9 @@ def new_file_series(first_object, nimages=0, step=1, traceback=False):
             try:
                 im.filename = next_filename(im.filename)
             except Exception as ex:
-                logger.warning("Got another problem here: next_filename(im.filename) %s", ex)
+                logger.warning(
+                    "Got another problem here: next_filename(im.filename) %s", ex
+                )
         if nprocessed % step == 0:
             yield retVal
             # Avoid cyclic references with exc_info ?
@@ -207,9 +208,7 @@ class file_series(list):
         return self[self._current]
 
     def current(self):
-        """Current position in a sequence
-
-        """
+        """Current position in a sequence"""
         return self[self._current]
 
     def next(self):
@@ -355,8 +354,7 @@ class numbered_file_series(file_series):
     mydata0003.edf = "mydata" + 0003 + ".edf"
     """
 
-    def __init__(self, stem, first, last, extension,
-                 digits=4, padding='Y', step=1):
+    def __init__(self, stem, first, last, extension, digits=4, padding="Y", step=1):
         """
         Constructor
 
@@ -365,7 +363,7 @@ class numbered_file_series(file_series):
         :param padding: possibility for specifying that numbers are not padded with zeroes up to digits
 
         """
-        if padding == 'Y':
+        if padding == "Y":
             fmt = "%s%0" + str(digits) + "d%s"
         else:
             fmt = "%s%i%s"
@@ -382,74 +380,76 @@ class filename_series(object):
     :param Union[str,FilenameObject] filename: The first filename of the
         iteration.
     """
+
     """ Much like the others, but created from a string filename """
 
     def __init__(self, filename):
-        """ create from a filename (String)"""
+        """create from a filename (String)"""
         if isinstance(filename, FilenameObject):
             self.obj = filename
         else:
             self.obj = FilenameObject(filename=filename)
 
     def next(self):
-        """ increment number """
+        """increment number"""
         self.obj.num += 1
         return self.obj.tostring()
 
     def previous(self):
-        """ decrement number """
+        """decrement number"""
         self.obj.num -= 1
         return self.obj.tostring()
 
     def current(self):
-        """ return current filename string"""
+        """return current filename string"""
         return self.obj.tostring()
 
     def jump(self, num):
-        """ jump to a specific number """
+        """jump to a specific number"""
         self.obj.num = num
         return self.obj.tostring()
 
     # image methods
     def next_image(self):
-        """ returns the next image as a fabioimage """
+        """returns the next image as a fabioimage"""
         return openimage(self.next())
 
     def prev_image(self):
-        """ returns the previos image as a fabioimage """
+        """returns the previos image as a fabioimage"""
         return openimage(self.previous())
 
     def current_image(self):
-        """ returns the current image as a fabioimage"""
+        """returns the current image as a fabioimage"""
         return openimage(self.current())
 
     def jump_image(self, num):
-        """ returns the image number as a fabioimage"""
+        """returns the image number as a fabioimage"""
         return openimage(self.jump(num))
 
     # object methods
     def next_object(self):
-        """ returns the next filename as a fabio.FilenameObject"""
+        """returns the next filename as a fabio.FilenameObject"""
         self.obj.num += 1
         return self.obj
 
     def previous_object(self):
-        """ returns the previous filename as a fabio.FilenameObject"""
+        """returns the previous filename as a fabio.FilenameObject"""
         self.obj.num -= 1
         return self.obj
 
     def current_object(self):
-        """ returns the current filename as a fabio.FilenameObject"""
+        """returns the current filename as a fabio.FilenameObject"""
         return self.obj
 
     def jump_object(self, num):
-        """ returns the filename num as a fabio.FilenameObject"""
+        """returns the filename num as a fabio.FilenameObject"""
         self.obj.num = num
         return self.obj
 
 
-_FileDescription = collections.namedtuple('_FileDescription',
-                                          ['filename', 'file_number', 'first_frame_number', 'nframes'])
+_FileDescription = collections.namedtuple(
+    "_FileDescription", ["filename", "file_number", "first_frame_number", "nframes"]
+)
 """Object storing description of a file from a file serie"""
 
 
@@ -459,7 +459,7 @@ def _filename_series_adapter(series):
     Without the adaptater `filename_series` will not list the first element,
     and will loop to the infinite.
     """
-    assert(isinstance(series, filename_series))
+    assert isinstance(series, filename_series)
     filename = series.current()
     if not os.path.exists(filename):
         return
@@ -535,9 +535,12 @@ class FileSeries(FabioImage):
         # Each files contains 100 frames (the last one could contain less)
         serie = FileSeries(filenames=filenames, fixed_frame_number=100)
     """
+
     DEFAULT_EXTENSIONS = []
 
-    def __init__(self, filenames, single_frame=None, fixed_frames=None, fixed_frame_number=None):
+    def __init__(
+        self, filenames, single_frame=None, fixed_frames=None, fixed_frame_number=None
+    ):
         """
         Constructor
 
@@ -609,9 +612,9 @@ class FileSeries(FabioImage):
         """Returns an iterator throug all frames of all filenames of this
         file series."""
         import fabio.edfimage
+
         nframe = 0
         for filename in self.__iter_filenames():
-
             if self.use_edf_shortcut:
                 info = FilenameObject(filename=filename)
                 # It is the supported formats
@@ -700,7 +703,7 @@ class FileSeries(FabioImage):
 
         Use a cached structure which grows according to the requestes.
         """
-        assert(self.__file_descriptions is not None)
+        assert self.__file_descriptions is not None
         for description in self.__file_descriptions:
             yield description
 
@@ -733,7 +736,7 @@ class FileSeries(FabioImage):
         :param int frame_number: A frame number
         :rtype: _FileDescription
         """
-        assert(self.__file_descriptions is not None)
+        assert self.__file_descriptions is not None
 
         # Check it on the last cached description
         if self.__current_file_description is not None:
@@ -797,7 +800,9 @@ class FileSeries(FabioImage):
         frame._set_container(self, num)
         return frame
 
-    @deprecation.deprecated(reason="Replaced by get_frame.", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Replaced by get_frame.", deprecated_since="0.10.0beta"
+    )
     def getframe(self, num):
         return self.get_frame(num)
 
@@ -838,26 +843,36 @@ class FileSeries(FabioImage):
             return self.__nframes
         file_number = len(self.__filenames) - 1
         fabiofile = self.__get_file(file_number)
-        nframes = self.__fixed_frame_number * (len(self.__filenames) - 1) + fabiofile.nframes
+        nframes = (
+            self.__fixed_frame_number * (len(self.__filenames) - 1) + fabiofile.nframes
+        )
         self.__nframes = nframes
         return nframes
 
     @property
     def data(self):
         # This could provide access to the first or the current frame
-        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
+        raise NotImplementedError(
+            "Not implemented. Use serie.frames() or serie.get_frame(int)"
+        )
 
     @property
     def header(self):
         # This could provide access to the first or the current frame
-        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
+        raise NotImplementedError(
+            "Not implemented. Use serie.frames() or serie.get_frame(int)"
+        )
 
     @property
     def shape(self):
         # This could provide access to the first or the current frame
-        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
+        raise NotImplementedError(
+            "Not implemented. Use serie.frames() or serie.get_frame(int)"
+        )
 
     @property
     def dtype(self):
         # This could provide access to the first or the current frame
-        raise NotImplementedError("Not implemented. Use serie.frames() or serie.get_frame(int)")
+        raise NotImplementedError(
+            "Not implemented. Use serie.frames() or serie.get_frame(int)"
+        )

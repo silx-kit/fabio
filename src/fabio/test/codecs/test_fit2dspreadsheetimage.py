@@ -34,20 +34,19 @@ Unit tests for the Fit2D spread sheet image format.
 import unittest
 import os
 import logging
-
 from ..utilstest import UtilsTest
-
-logger = logging.getLogger(__name__)
-
 from fabio.fit2dspreadsheetimage import Fit2dSpreadsheetImage
 from fabio.utils import testutils
 
+logger = logging.getLogger(__name__)
+
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = [("example.spr", (512, 512), 86.0, 61204.0, 511.63, 667.148),
-              ("example.spr.gz", (512, 512), 86.0, 61204.0, 511.63, 667.148),
-              ("example.spr.bz2", (512, 512), 86.0, 61204.0, 511.63, 667.148),
-              ]
+TESTIMAGES = [
+    ("example.spr", (512, 512), 86.0, 61204.0, 511.63, 667.148),
+    ("example.spr.gz", (512, 512), 86.0, 61204.0, 511.63, 667.148),
+    ("example.spr.bz2", (512, 512), 86.0, 61204.0, 511.63, 667.148),
+]
 
 
 class TestRealSamples(testutils.ParametricTestCase):
@@ -73,7 +72,7 @@ class TestRealSamples(testutils.ParametricTestCase):
         cls.im_dir = UtilsTest.resources.data_home
 
     def test_read(self):
-        """ check we can read flat ADSC images"""
+        """check we can read flat ADSC images"""
         for datainfo in TESTIMAGES:
             with self.subTest(datainfo=datainfo):
                 name, shape, mini, maxi, mean, stddev = datainfo
@@ -94,6 +93,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

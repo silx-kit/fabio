@@ -34,12 +34,11 @@ import unittest
 import os
 import shutil
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from ... import jpegimage
 from ..utilstest import UtilsTest
+
+logger = logging.getLogger(__name__)
 
 TEST_DIRECTORY = None
 # Temporary directory where storing test data
@@ -110,7 +109,6 @@ class TestJpegImage(unittest.TestCase):
 
 
 class TestPilNotAvailable(unittest.TestCase):
-
     def setUp(self):
         filename = UtilsTest.getimage("rand_uint8.jpg.bz2")[:-4]
         self.filename = filename
@@ -168,6 +166,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

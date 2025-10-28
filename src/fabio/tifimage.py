@@ -2,7 +2,7 @@
 #
 #    Project: FabIO X-ray image reader
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2025 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,13 +42,18 @@ Authors:
 """
 
 __authors__ = ["Jérôme Kieffer", "Henning O. Sorensen", "Erik Knudsen"]
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "ESRF, Grenoble & Risoe National Laboratory"
 __status__ = "stable"
 
 import time
 import logging
+import numpy
+from .utils import pilutils
+from . import fabioimage
+from . import TiffIO
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -56,10 +61,6 @@ try:
 except ImportError:
     PIL = None
 
-import numpy
-from .utils import pilutils
-from . import fabioimage
-from . import TiffIO
 
 _USE_TIFFIO = True
 """Uses TiffIO library if available"""
@@ -82,6 +83,7 @@ class TifImage(fabioimage.FabioImage):
     Images in TIF format
     Wraps TiffIO
     """
+
     DESCRIPTION = "Tagged image file format"
 
     DEFAULT_EXTENSIONS = ["tif", "tiff"]
@@ -89,7 +91,7 @@ class TifImage(fabioimage.FabioImage):
     _need_a_seek_to_read = True
 
     def __init__(self, *args, **kwds):
-        """ Tifimage constructor adds an nbits member attribute """
+        """Tifimage constructor adds an nbits member attribute"""
         self.nbits = None
         fabioimage.FabioImage.__init__(self, *args, **kwds)
         self._tiffio = None
@@ -141,7 +143,11 @@ class TifImage(fabioimage.FabioImage):
             logger.warning("Third dimension is the color")
             self._shape = None
         else:
-            logger.warning("dataset has %s dimensions (%s), check for errors !!!!", self.data.ndim, self.data.shape)
+            logger.warning(
+                "dataset has %s dimensions (%s), check for errors !!!!",
+                self.data.ndim,
+                self.data.shape,
+            )
         self.lib = "TiffIO"
 
     def _read_with_pil(self, infile):
@@ -167,7 +173,9 @@ class TifImage(fabioimage.FabioImage):
             try:
                 self._read_with_tiffio(infile)
             except Exception as error:
-                logger.warning("Unable to read %s with TiffIO due to %s, trying PIL", fname, error)
+                logger.warning(
+                    "Unable to read %s with TiffIO due to %s, trying PIL", fname, error
+                )
                 logger.debug("Backtrace", exc_info=True)
                 infile.seek(0)
 
@@ -184,7 +192,9 @@ class TifImage(fabioimage.FabioImage):
                         infile.close()
 
         if self.lib is None:
-            logger.error("Error in opening %s: no tiff reader managed to read the file.", fname)
+            logger.error(
+                "Error in opening %s: no tiff reader managed to read the file.", fname
+            )
 
         self.resetvals()
         return self
@@ -196,10 +206,12 @@ class TifImage(fabioimage.FabioImage):
         :param str fname: name of the file to save the image to
         """
         with TiffIO.TiffIO(fname, mode="w") as tiff_file:
-            tiff_file.writeImage(self.data,
-                                 info=self.header,
-                                 software="fabio.tifimage",
-                                 date=time.ctime())
+            tiff_file.writeImage(
+                self.data,
+                info=self.header,
+                software="fabio.tifimage",
+                date=time.ctime(),
+            )
 
     def close(self):
         if self._tiffio is not None:

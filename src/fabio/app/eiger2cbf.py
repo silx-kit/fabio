@@ -34,35 +34,34 @@ to export Eiger frames (including te one from LIMA)
 to CBF and mimic the header from Dectris Pilatus.
 """
 
-__author__ = "Jerome Kieffer"
+__author__ = "Jérôme Kieffer"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __licence__ = "MIT"
-__date__ = "07/10/2024"
+__date__ = "27/10/2025"
 __status__ = "production"
 
 import logging
-logging.basicConfig()
-logger = logging.getLogger("eiger2cbf")
 import codecs
 import sys
 import os
-
 from ..utils.cli import expand_args
 from ..openimage import openimage as fabio_open
 from .. import cbfimage, limaimage, eigerimage, version as fabio_version
 import numpy
 import argparse
+
+logging.basicConfig()
+logger = logging.getLogger("eiger2cbf")
 try:
-    import hdf5plugin
+    import hdf5plugin  # noqa
 except ImportError:
     pass
 
 try:
     import numexpr
-except:
+except ImportError:
     logger.error("Numexpr is needed to interpret formula ...")
 
-logger = logging.getLogger("eiger2cbf")
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 EXIT_ARGUMENT_FAILURE = 2
@@ -114,26 +113,27 @@ class ProgressBar:
             encoding = sys.stdout.encoding
         if encoding is None:
             # We uses the safer aproch: a valid ASCII character.
-            self.progress_char = '#'
+            self.progress_char = "#"
         else:
             try:
                 import datetime
+
                 if str(datetime.datetime.now())[5:10] == "02-14":
-                    self.progress_char = u'\u2665'
+                    self.progress_char = "\u2665"
                 else:
-                    self.progress_char = u'\u25A0'
+                    self.progress_char = "\u25a0"
                 _byte = codecs.encode(self.progress_char, encoding)
             except (ValueError, TypeError, LookupError):
                 # In case the char is not supported by the encoding,
                 # or if the encoding does not exists
-                self.progress_char = '#'
+                self.progress_char = "#"
 
     def clear(self):
         """
         Remove the progress bar from the display and move the cursor
         at the beginning of the line using carriage return.
         """
-        sys.stdout.write('\r' + " " * self.last_size + "\r")
+        sys.stdout.write("\r" + " " * self.last_size + "\r")
         sys.stdout.flush()
 
     def display(self):
@@ -171,7 +171,13 @@ class ProgressBar:
             bar_position = self.bar_width
 
         # line to display
-        line = '\r%15s [%s%s] % 3d%%  %s' % (self.title, self.progress_char * bar_position, ' ' * (self.bar_width - bar_position), percent, message)
+        line = "\r%15s [%s%s] % 3d%%  %s" % (
+            self.title,
+            self.progress_char * bar_position,
+            " " * (self.bar_width - bar_position),
+            percent,
+            message,
+        )
 
         # trailing to mask the previous message
         line_size = len(line)
@@ -187,30 +193,30 @@ class ProgressBar:
 def select_pilatus_detecor(shape):
     """CrysalisPro only accepts some detector shapes as CBF inputs.
     Those shaped correspond to the one of the dectris detector Pilatus
-    
-    This function takes the input shape and return the smallest Dectris shape which is large enough. 
+
+    This function takes the input shape and return the smallest Dectris shape which is large enough.
     """
     assert len(shape) >= 2
     valid_detectors = {  # (514, 1030): 'eiger_500k',
-                         # (1065, 1030): 'eiger_1m',
-                         # (2167, 2070): 'eiger_4m',
-                         # (3269, 3110): 'eiger_9m',
-                         # (4371, 4150): 'eiger_16m',
-                         # (512, 1028): 'eiger2cdte500k',
-                         # (1062, 1028): 'eiger2cdte1m',
-                         # (2162, 2068): 'eiger2cdte4m',
-                         # (3262, 3108): 'eiger2cdte9m',
-                         # (4362, 4148): 'eiger2cdte16m',
-                         # (1, 1280): 'mythen1280',
-                         (195, 487): 'pilatus_100k',
-                         (407, 487): 'pilatus_200k',
-                         (619, 487): 'pilatus_300k',
-                         (195, 1475): 'pilatus_300kw',
-                         (1043, 981): 'pilatus_1m',
-                         (1679, 1475): 'pilatus_2m',
-                         (2527, 2463): 'pilatus_6m',
-                         # (195, 4439): 'pilatus_900kw'
-                         }
+        # (1065, 1030): 'eiger_1m',
+        # (2167, 2070): 'eiger_4m',
+        # (3269, 3110): 'eiger_9m',
+        # (4371, 4150): 'eiger_16m',
+        # (512, 1028): 'eiger2cdte500k',
+        # (1062, 1028): 'eiger2cdte1m',
+        # (2162, 2068): 'eiger2cdte4m',
+        # (3262, 3108): 'eiger2cdte9m',
+        # (4362, 4148): 'eiger2cdte16m',
+        # (1, 1280): 'mythen1280',
+        (195, 487): "pilatus_100k",
+        (407, 487): "pilatus_200k",
+        (619, 487): "pilatus_300k",
+        (195, 1475): "pilatus_300kw",
+        (1043, 981): "pilatus_1m",
+        (1679, 1475): "pilatus_2m",
+        (2527, 2463): "pilatus_6m",
+        # (195, 4439): 'pilatus_900kw'
+    }
     best = None
     for k in valid_detectors:
         if k[0] >= shape[-2] and k[1] >= shape[-1]:
@@ -242,7 +248,9 @@ def convert_one(input_filename, options, start_at=0):
         print("Converting file '%s'" % (input_filename))
 
     if not input_exists:
-        logger.error("Input file '%s' do not exists. Conversion skipped.", input_filename)
+        logger.error(
+            "Input file '%s' do not exists. Conversion skipped.", input_filename
+        )
         return -1
 
     try:
@@ -251,7 +259,11 @@ def convert_one(input_filename, options, start_at=0):
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        logger.error("Loading input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
+        logger.error(
+            "Loading input file '%s' failed cause: \"%s\". Conversion skipped.",
+            input_filename,
+            e.message,
+        )
         logger.debug("Backtrace", exc_info=True)
         return -1
 
@@ -272,45 +284,73 @@ def convert_one(input_filename, options, start_at=0):
                     if data_grp:
                         nxdetector = data_grp.parent
                         try:
-                            detector = "%s, S/N %s" % (nxdetector["detector_information/model"][()],
-                                                 nxdetector["detector_information/name"][()])
+                            detector = "%s, S/N %s" % (
+                                nxdetector["detector_information/model"][()],
+                                nxdetector["detector_information/name"][()],
+                            )
                             pilatus_headers["Detector"] = detector
                         except Exception as e:
-                            logger.warning("Error in searching for detector definition (%s): %s", type(e), e)
+                            logger.warning(
+                                "Error in searching for detector definition (%s): %s",
+                                type(e),
+                                e,
+                            )
                         try:
-                            pilatus_headers["Pixel_size"] = (nxdetector["detector_information/pixel_size/xsize"][()],
-                                                             nxdetector["detector_information/pixel_size/ysize"][()])
+                            pilatus_headers["Pixel_size"] = (
+                                nxdetector["detector_information/pixel_size/xsize"][()],
+                                nxdetector["detector_information/pixel_size/ysize"][()],
+                            )
                         except Exception as e:
-                            logger.warning("Error in searching for pixel size (%s): %s", type(e), e)
+                            logger.warning(
+                                "Error in searching for pixel size (%s): %s", type(e), e
+                            )
                         try:
                             t1 = nxdetector["acquisition/exposure_time"][()]
                             t2 = nxdetector["acquisition/latency_time"][()]
                             pilatus_headers["Exposure_time"] = t1
                             pilatus_headers["Exposure_period"] = t1 + t2
                         except Exception as e:
-                            logger.warning("Error in searching for exposure time (%s): %s", type(e), e)
+                            logger.warning(
+                                "Error in searching for exposure time (%s): %s",
+                                type(e),
+                                e,
+                            )
     elif isinstance(source, eigerimage.EigerImage):
         entry_name = source.h5.attrs.get("default")
         if entry_name:
             entry = source.h5.get(entry_name)
             try:
                 nxdetector = entry["instrument/detector"]
-            except:
-                logger.error("No detector definition in Eiger file, is this a master file ?")
+            except Exception:
+                logger.error(
+                    "No detector definition in Eiger file, is this a master file ?"
+                )
             else:
-                detector = "%s, S/N %s" % (nxdetector["description"][()].decode(),
-                                           nxdetector["detector_number"][()].decode())
+                detector = "%s, S/N %s" % (
+                    nxdetector["description"][()].decode(),
+                    nxdetector["detector_number"][()].decode(),
+                )
                 pilatus_headers["Detector"] = detector
-                pilatus_headers["Pixel_size"] = (nxdetector["x_pixel_size"][()],
-                                                 nxdetector["y_pixel_size"][()])
+                pilatus_headers["Pixel_size"] = (
+                    nxdetector["x_pixel_size"][()],
+                    nxdetector["y_pixel_size"][()],
+                )
                 pilatus_headers["Exposure_time"] = nxdetector["count_time"][()]
                 pilatus_headers["Exposure_period"] = nxdetector["frame_time"][()]
-                pilatus_headers["Wavelength"] = entry["instrument/beam/incident_wavelength"][()] 
-                pilatus_headers["Detector_distance"] = nxdetector["detector_distance"][()] 
-                pilatus_headers["Beam_xy"] = (nxdetector["beam_center_x"][()],
-                                              nxdetector["beam_center_y"][()])
-                pilatus_headers["sensor"] = (nxdetector["sensor_material"][()].decode(),
-                                              nxdetector["sensor_thickness"][()])
+                pilatus_headers["Wavelength"] = entry[
+                    "instrument/beam/incident_wavelength"
+                ][()]
+                pilatus_headers["Detector_distance"] = nxdetector["detector_distance"][
+                    ()
+                ]
+                pilatus_headers["Beam_xy"] = (
+                    nxdetector["beam_center_x"][()],
+                    nxdetector["beam_center_y"][()],
+                )
+                pilatus_headers["sensor"] = (
+                    nxdetector["sensor_material"][()].decode(),
+                    nxdetector["sensor_thickness"][()],
+                )
     else:
         raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
 
@@ -388,7 +428,7 @@ def convert_one(input_filename, options, start_at=0):
         if options.flip_lr:
             input_data = numpy.fliplr(input_data)
 
-        data[:input_data.shape[0],:input_data.shape[1]] = input_data
+        data[: input_data.shape[0], : input_data.shape[1]] = input_data
 
         mask = numpy.where(input_data == numpy.iinfo(frame.data.dtype).max)
         data[mask] = options.dummy
@@ -396,12 +436,14 @@ def convert_one(input_filename, options, start_at=0):
 
         if formula and destination:
             position = formula(idx)
-            delta = (formula(idx + 1) - position)
+            delta = formula(idx + 1) - position
             pilatus_headers["Start_angle"] = pilatus_headers[destination] = position
-            pilatus_headers["Angle_increment"] = pilatus_headers[destination + "_increment"] = delta
+            pilatus_headers["Angle_increment"] = pilatus_headers[
+                destination + "_increment"
+            ] = delta
         converted.pilatus_headers = pilatus_headers
 
-        output_filename = options.output.format(index=((idx + options.offset)))
+        output_filename = options.output.format(index=(idx + options.offset))
         os.makedirs(os.path.dirname(output_filename), exist_ok=True)
         try:
             logger.debug("Write '%s'", output_filename)
@@ -410,7 +452,12 @@ def convert_one(input_filename, options, start_at=0):
         except KeyboardInterrupt:
             raise
         except Exception as e:
-            logger.error("Saving output file '%s' failed cause: \"%s: %s\". Conversion skipped.", output_filename, type(e), e)
+            logger.error(
+                "Saving output file '%s' failed cause: \"%s: %s\". Conversion skipped.",
+                output_filename,
+                type(e),
+                e,
+            )
             logger.debug("Backtrace", exc_info=True)
             return -1
     return source.nframes
@@ -436,90 +483,177 @@ def convert_all(options):
 
 
 def main():
-
     epilog = """return codes: 0 means a success. 1 means the conversion
                 contains a failure, 2 means there was an error in the
                 arguments"""
 
-    parser = argparse.ArgumentParser(prog="eiger2cbf",
-                                     description=__doc__,
-                                     epilog=epilog)
-    parser.add_argument("IMAGE", nargs="*",
-                        help="File with input images")
-    parser.add_argument("-V", "--version", action='version', version=fabio_version,
-                        help="output version and exit")
-    parser.add_argument("-v", "--verbose", action='store_true', dest="verbose", default=False,
-                        help="show information for each conversions")
-    parser.add_argument("--debug", action='store_true', dest="debug", default=False,
-                        help="show debug information")
+    parser = argparse.ArgumentParser(
+        prog="eiger2cbf", description=__doc__, epilog=epilog
+    )
+    parser.add_argument("IMAGE", nargs="*", help="File with input images")
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=fabio_version,
+        help="output version and exit",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        dest="verbose",
+        default=False,
+        help="show information for each conversions",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        dest="debug",
+        default=False,
+        help="show debug information",
+    )
     group = parser.add_argument_group("main arguments")
-#     group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
-#                        help="show the list of available formats and exit")
-    group.add_argument("-o", "--output", default='eiger2cbf/frame_{index:04d}.cbf', type=str,
-                       help="output directory and filename template: eiger2cbf/frame_{index:04d}.cbf")
-    group.add_argument("-m", "--mask", type=str, default=None,
-                       help="Read masked pixel from this file")
-    group.add_argument("-O", "--offset", type=int, default=0,
-                       help="index offset, CrysalisPro likes indexes to start at 1, Python starts at 0")
-    group.add_argument("-D", "--dummy", type=int, default=-1,
-                       help="Set masked values to this dummy value")
-    group.add_argument("--pilatus", action="store_true", default=False,
-                       help="Select an image shape similar to Pilatus detectors for compatibiliy with Crysalis")
+    #     group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
+    #                        help="show the list of available formats and exit")
+    group.add_argument(
+        "-o",
+        "--output",
+        default="eiger2cbf/frame_{index:04d}.cbf",
+        type=str,
+        help="output directory and filename template: eiger2cbf/frame_{index:04d}.cbf",
+    )
+    group.add_argument(
+        "-m", "--mask", type=str, default=None, help="Read masked pixel from this file"
+    )
+    group.add_argument(
+        "-O",
+        "--offset",
+        type=int,
+        default=0,
+        help="index offset, CrysalisPro likes indexes to start at 1, Python starts at 0",
+    )
+    group.add_argument(
+        "-D",
+        "--dummy",
+        type=int,
+        default=-1,
+        help="Set masked values to this dummy value",
+    )
+    group.add_argument(
+        "--pilatus",
+        action="store_true",
+        default=False,
+        help="Select an image shape similar to Pilatus detectors for compatibiliy with Crysalis",
+    )
 
     group = parser.add_argument_group("optional behaviour arguments")
-#     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
-#                        help="if an existing destination file cannot be" +
-#                        " opened, remove it and try again (this option" +
-#                        " is ignored when the -n option is also used)")
-#     group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
-#                        help="do not overwrite an existing file (this option" +
-#                        " is ignored when the -i option is also used)")
-#     group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
-#                        help="remove each existing destination file before" +
-#                        " attempting to open it (contrast with --force)")
-#     group.add_argument("-u", "--update", dest="update", action="store_true", default=False,
-#                        help="copy only when the SOURCE file is newer" +
-#                        " than the destination file or when the" +
-#                        " destination file is missing")
-#     group.add_argument("-i", "--interactive", dest="interactive", action="store_true", default=False,
-#                        help="prompt before overwrite (overrides a previous -n" +
-#                        " option)")
-    group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
-                       help="do everything except modifying the file system")
+    #     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
+    #                        help="if an existing destination file cannot be" +
+    #                        " opened, remove it and try again (this option" +
+    #                        " is ignored when the -n option is also used)")
+    #     group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
+    #                        help="do not overwrite an existing file (this option" +
+    #                        " is ignored when the -i option is also used)")
+    #     group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
+    #                        help="remove each existing destination file before" +
+    #                        " attempting to open it (contrast with --force)")
+    #     group.add_argument("-u", "--update", dest="update", action="store_true", default=False,
+    #                        help="copy only when the SOURCE file is newer" +
+    #                        " than the destination file or when the" +
+    #                        " destination file is missing")
+    #     group.add_argument("-i", "--interactive", dest="interactive", action="store_true", default=False,
+    #                        help="prompt before overwrite (overrides a previous -n" +
+    #                        " option)")
+    group.add_argument(
+        "--dry-run",
+        dest="dry_run",
+        action="store_true",
+        default=False,
+        help="do everything except modifying the file system",
+    )
 
     group = parser.add_argument_group("Experimental setup options")
-    group.add_argument("-e", "--energy", type=float, default=None,
-                       help="Energy of the incident beam in keV")
-    group.add_argument("-w", "--wavelength", type=float, default=None,
-                       help="Wavelength of the incident beam in Å")
-    group.add_argument("-d", "--distance", type=float, default=None,
-                       help="Detector distance in meters")
-    group.add_argument("-b", "--beam", nargs=2, type=float, default=None,
-                       help="Direct beam in pixels x, y")
+    group.add_argument(
+        "-e",
+        "--energy",
+        type=float,
+        default=None,
+        help="Energy of the incident beam in keV",
+    )
+    group.add_argument(
+        "-w",
+        "--wavelength",
+        type=float,
+        default=None,
+        help="Wavelength of the incident beam in Å",
+    )
+    group.add_argument(
+        "-d", "--distance", type=float, default=None, help="Detector distance in meters"
+    )
+    group.add_argument(
+        "-b",
+        "--beam",
+        nargs=2,
+        type=float,
+        default=None,
+        help="Direct beam in pixels x, y",
+    )
 
     group = parser.add_argument_group("Goniometer setup")
-#     group.add_argument("--axis", type=str, default=None,
-#                        help="Goniometer angle used for scanning: 'omega', 'phi' or 'chi'")
-    group.add_argument("--alpha", type=float, default=None,
-                       help="Goniometer angle alpha value in deg.")
-    group.add_argument("--kappa", type=float, default=None,
-                       help="Goniometer angle kappa value in deg.")
-    group.add_argument("--chi", type=str, default=None,
-                       help="Goniometer angle chi value in deg. or formula f(index)")
-    group.add_argument("--phi", type=str, default=None,
-                       help="Goniometer angle phi value in deg. or formula f(index)")
-    group.add_argument("--omega", type=str, default=None,
-                       help="Goniometer angle omega value in deg. or formula f(index) like '-180+index*0.1")
+    #     group.add_argument("--axis", type=str, default=None,
+    #                        help="Goniometer angle used for scanning: 'omega', 'phi' or 'chi'")
+    group.add_argument(
+        "--alpha", type=float, default=None, help="Goniometer angle alpha value in deg."
+    )
+    group.add_argument(
+        "--kappa", type=float, default=None, help="Goniometer angle kappa value in deg."
+    )
+    group.add_argument(
+        "--chi",
+        type=str,
+        default=None,
+        help="Goniometer angle chi value in deg. or formula f(index)",
+    )
+    group.add_argument(
+        "--phi",
+        type=str,
+        default=None,
+        help="Goniometer angle phi value in deg. or formula f(index)",
+    )
+    group.add_argument(
+        "--omega",
+        type=str,
+        default=None,
+        help="Goniometer angle omega value in deg. or formula f(index) like '-180+index*0.1",
+    )
 
-    group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
-    group.add_argument("--rotation", type=int, default=0,
-                       help="Rotate the initial image by this value in degrees. Must be a multiple of 90°.")
-    group.add_argument("--transpose", default=False, action="store_true",
-                       help="Flip the x/y axis")
-    group.add_argument("--flip-ud", dest="flip_ud", default=False, action="store_true",
-                       help="Flip the image upside-down")
-    group.add_argument("--flip-lr", dest="flip_lr", default=False, action="store_true",
-                       help="Flip the image left-right")
+    group = parser.add_argument_group(
+        "Image preprocessing (Important: applied in this order!)"
+    )
+    group.add_argument(
+        "--rotation",
+        type=int,
+        default=0,
+        help="Rotate the initial image by this value in degrees. Must be a multiple of 90°.",
+    )
+    group.add_argument(
+        "--transpose", default=False, action="store_true", help="Flip the x/y axis"
+    )
+    group.add_argument(
+        "--flip-ud",
+        dest="flip_ud",
+        default=False,
+        action="store_true",
+        help="Flip the image upside-down",
+    )
+    group.add_argument(
+        "--flip-lr",
+        dest="flip_lr",
+        default=False,
+        action="store_true",
+        help="Flip the image left-right",
+    )
 
     try:
         args = parser.parse_args()
@@ -540,7 +674,9 @@ def main():
 
     succeeded = convert_all(args)
     if not succeeded:
-        print("Conversion or part of it failed. You can try with --debug to have more output information.")
+        print(
+            "Conversion or part of it failed. You can try with --debug to have more output information."
+        )
         return EXIT_FAILURE
 
     return EXIT_SUCCESS

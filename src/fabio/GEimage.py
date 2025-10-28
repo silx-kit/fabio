@@ -31,8 +31,8 @@ using version 8001 of the header from file:
 
     c:\\adept\\core\\DefaultImageInfoConfig.csv
 """
-__authors__ = ["Antonino Miceli", "Jon Wright",
-               "Jérôme Kieffer", "Joel Bernier"]
+
+__authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer", "Joel Bernier"]
 __date__ = "03/04/2020"
 __status__ = "production"
 __copyright__ = "2007-2020 APS; 2010-2020 ESRF"
@@ -46,166 +46,166 @@ from .fabioimage import FabioImage
 from .fabioutils import next_filename, previous_filename
 from .openimage import MAGIC_NUMBERS
 
-EDF_MAGIC_NUMBERS = [(x, y) for x, y in MAGIC_NUMBERS if y == 'edf']
+EDF_MAGIC_NUMBERS = [(x, y) for x, y in MAGIC_NUMBERS if y == "edf"]
 
 GE_HEADER_INFO = [
     # Name, length in bytes, format for struct (None means string)
-    ('ImageFormat', 10, None),
-    ('VersionOfStandardHeader', 2, '<H'),
-    ('StandardHeaderSizeInBytes', 4, '<L'),
-    ('VersionOfUserHeader', 2, '<H'),
-    ('UserHeaderSizeInBytes', 4, '<L'),
-    ('NumberOfFrames', 2, '<H'),
-    ('NumberOfRowsInFrame', 2, '<H'),
-    ('NumberOfColsInFrame', 2, '<H'),
-    ('ImageDepthInBits', 2, '<H'),
-    ('AcquisitionDate', 20, None),
-    ('AcquisitionTime', 20, None),
-    ('DUTID', 20, None),
-    ('Operator', 50, None),
-    ('DetectorSignature', 20, None),
-    ('TestSystemName', 20, None),
-    ('TestStationRevision', 20, None),
-    ('CoreBundleRevision', 20, None),
-    ('AcquisitionName', 40, None),
-    ('AcquisitionParameterRevision', 20, None),
-    ('OriginalNumberOfRows', 2, '<H'),
-    ('OriginalNumberOfColumns', 2, '<H'),
-    ('RowNumberUpperLeftPointArchiveROI', 2, '<H'),
-    ('ColNumberUpperLeftPointArchiveROI', 2, '<H'),
-    ('Swapped', 2, '<H'),
-    ('Reordered', 2, '<H'),
-    ('HorizontalFlipped', 2, '<H'),
-    ('VerticalFlipped', 2, '<H'),
-    ('WindowValueDesired', 2, '<H'),
-    ('LevelValueDesired', 2, '<H'),
-    ('AcquisitionMode', 2, '<H'),
-    ('AcquisitionType', 2, '<H'),
-    ('UserAcquisitionCoffFileName1', 100, None),
-    ('UserAcquisitionCoffFileName2', 100, None),
-    ('FramesBeforeExpose', 2, '<H'),
-    ('FramesDuringExpose', 2, '<H'),
-    ('FramesAfterExpose', 2, '<H'),
-    ('IntervalBetweenFrames', 2, '<H'),
-    ('ExposeTimeDelayInMicrosecs', 8, '<d'),
-    ('TimeBetweenFramesInMicrosecs', 8, '<d'),
-    ('FramesToSkipExpose', 2, '<H'),
-    ('ExposureMode', 2, '<H'),
-    ('PrepPresetTimeInMicrosecs', 8, '<d'),
-    ('ExposePresetTimeInMicrosecs', 8, '<d'),
-    ('AcquisitionFrameRateInFps', 4, '<f'),
-    ('FOVSelect', 2, '<H'),
-    ('ExpertMode', 2, '<H'),
-    ('SetVCommon1', 8, '<d'),
-    ('SetVCommon2', 8, '<d'),
-    ('SetAREF', 8, '<d'),
-    ('SetAREFTrim', 4, '<L'),
-    ('SetSpareVoltageSource', 8, '<d'),
-    ('SetCompensationVoltageSource', 8, '<d'),
-    ('SetRowOffVoltage', 8, '<d'),
-    ('SetRowOnVoltage', 8, '<d'),
-    ('StoreCompensationVoltage', 4, '<L'),
-    ('RampSelection', 2, '<H'),
-    ('TimingMode', 2, '<H'),
-    ('Bandwidth', 2, '<H'),
-    ('ARCIntegrator', 2, '<H'),
-    ('ARCPostIntegrator', 2, '<H'),
-    ('NumberOfRows', 4, '<L'),
-    ('RowEnable', 2, '<H'),
-    ('EnableStretch', 2, '<H'),
-    ('CompEnable', 2, '<H'),
-    ('CompStretch', 2, '<H'),
-    ('LeftEvenTristate', 2, '<H'),
-    ('RightOddTristate', 2, '<H'),
-    ('TestModeSelect', 4, '<L'),
-    ('AnalogTestSource', 4, '<L'),
-    ('VCommonSelect', 4, '<L'),
-    ('DRCColumnSum', 4, '<L'),
-    ('TestPatternFrameDelta', 4, '<L'),
-    ('TestPatternRowDelta', 4, '<L'),
-    ('TestPatternColumnDelta', 4, '<L'),
-    ('DetectorHorizontalFlip', 2, '<H'),
-    ('DetectorVerticalFlip', 2, '<H'),
-    ('DFNAutoScrubOnOff', 2, '<H'),
-    ('FiberChannelTimeOutInMicrosecs', 4, '<L'),
-    ('DFNAutoScrubDelayInMicrosecs', 4, '<L'),
-    ('StoreAECROI', 2, '<H'),
-    ('TestPatternSaturationValue', 2, '<H'),
-    ('TestPatternSeed', 4, '<L'),
-    ('ExposureTimeInMillisecs', 4, '<f'),
-    ('FrameRateInFps', 4, '<f'),
-    ('kVp', 4, '<f'),
-    ('mA', 4, '<f'),
-    ('mAs', 4, '<f'),
-    ('FocalSpotInMM', 4, '<f'),
-    ('GeneratorType', 20, None),
-    ('StrobeIntensityInFtL', 4, '<f'),
-    ('NDFilterSelection', 2, '<H'),
-    ('RefRegTemp1', 8, '<d'),
-    ('RefRegTemp2', 8, '<d'),
-    ('RefRegTemp3', 8, '<d'),
-    ('Humidity1', 4, '<f'),
-    ('Humidity2', 4, '<f'),
-    ('DetectorControlTemp', 8, '<d'),
-    ('DoseValueInmR', 8, '<d'),
-    ('TargetLevelROIRow0', 2, '<H'),
-    ('TargetLevelROICol0', 2, '<H'),
-    ('TargetLevelROIRow1', 2, '<H'),
-    ('TargetLevelROICol1', 2, '<H'),
-    ('FrameNumberForTargetLevelROI', 2, '<H'),
-    ('PercentRangeForTargetLevel', 2, '<H'),
-    ('TargetValue', 2, '<H'),
-    ('ComputedMedianValue', 2, '<H'),
-    ('LoadZero', 2, '<H'),
-    ('MaxLUTOut', 2, '<H'),
-    ('MinLUTOut', 2, '<H'),
-    ('MaxLinear', 2, '<H'),
-    ('Reserved', 2, '<H'),
-    ('ElectronsPerCount', 2, '<H'),
-    ('ModeGain', 2, '<H'),
-    ('TemperatureInDegC', 8, '<d'),
-    ('LineRepaired', 2, '<H'),
-    ('LineRepairFileName', 100, None),
-    ('CurrentLongitudinalInMM', 4, '<f'),
-    ('CurrentTransverseInMM', 4, '<f'),
-    ('CurrentCircularInMM', 4, '<f'),
-    ('CurrentFilterSelection', 4, '<L'),
-    ('DisableScrubAck', 2, '<H'),
-    ('ScanModeSelect', 2, '<H'),
-    ('DetectorAppSwVersion', 20, None),
-    ('DetectorNIOSVersion', 20, None),
-    ('DetectorPeripheralSetVersion', 20, None),
-    ('DetectorPhysicalAddress', 20, None),
-    ('PowerDown', 2, '<H'),
-    ('InitialVoltageLevel_VCOMMON', 8, '<d'),
-    ('FinalVoltageLevel_VCOMMON', 8, '<d'),
-    ('DmrCollimatorSpotSize', 10, None),
-    ('DmrTrack', 5, None),
-    ('DmrFilter', 5, None),
-    ('FilterCarousel', 2, '<H'),
-    ('Phantom', 20, None),
-    ('SetEnableHighTime', 2, '<H'),
-    ('SetEnableLowTime', 2, '<H'),
-    ('SetCompHighTime', 2, '<H'),
-    ('SetCompLowTime', 2, '<H'),
-    ('SetSyncLowTime', 2, '<H'),
-    ('SetConvertLowTime', 2, '<H'),
-    ('SetSyncHighTime', 2, '<H'),
-    ('SetEOLTime', 2, '<H'),
-    ('SetRampOffsetTime', 2, '<H'),
-    ('FOVStartingValue', 2, '<H'),
-    ('ColumnBinning', 2, '<H'),
-    ('RowBinning', 2, '<H'),
-    ('BorderColumns64', 2, '<H'),
-    ('BorderRows64', 2, '<H'),
-    ('FETOffRows64', 2, '<H'),
-    ('FOVStartColumn128', 2, '<H'),
-    ('FOVStartRow128', 2, '<H'),
-    ('NumberOfColumns128', 2, '<H'),
-    ('NumberOfRows128', 2, '<H'),
-    ('VFPAquisition', 2000, None),
-    ('Comment', 200, None)
-    ]
+    ("ImageFormat", 10, None),
+    ("VersionOfStandardHeader", 2, "<H"),
+    ("StandardHeaderSizeInBytes", 4, "<L"),
+    ("VersionOfUserHeader", 2, "<H"),
+    ("UserHeaderSizeInBytes", 4, "<L"),
+    ("NumberOfFrames", 2, "<H"),
+    ("NumberOfRowsInFrame", 2, "<H"),
+    ("NumberOfColsInFrame", 2, "<H"),
+    ("ImageDepthInBits", 2, "<H"),
+    ("AcquisitionDate", 20, None),
+    ("AcquisitionTime", 20, None),
+    ("DUTID", 20, None),
+    ("Operator", 50, None),
+    ("DetectorSignature", 20, None),
+    ("TestSystemName", 20, None),
+    ("TestStationRevision", 20, None),
+    ("CoreBundleRevision", 20, None),
+    ("AcquisitionName", 40, None),
+    ("AcquisitionParameterRevision", 20, None),
+    ("OriginalNumberOfRows", 2, "<H"),
+    ("OriginalNumberOfColumns", 2, "<H"),
+    ("RowNumberUpperLeftPointArchiveROI", 2, "<H"),
+    ("ColNumberUpperLeftPointArchiveROI", 2, "<H"),
+    ("Swapped", 2, "<H"),
+    ("Reordered", 2, "<H"),
+    ("HorizontalFlipped", 2, "<H"),
+    ("VerticalFlipped", 2, "<H"),
+    ("WindowValueDesired", 2, "<H"),
+    ("LevelValueDesired", 2, "<H"),
+    ("AcquisitionMode", 2, "<H"),
+    ("AcquisitionType", 2, "<H"),
+    ("UserAcquisitionCoffFileName1", 100, None),
+    ("UserAcquisitionCoffFileName2", 100, None),
+    ("FramesBeforeExpose", 2, "<H"),
+    ("FramesDuringExpose", 2, "<H"),
+    ("FramesAfterExpose", 2, "<H"),
+    ("IntervalBetweenFrames", 2, "<H"),
+    ("ExposeTimeDelayInMicrosecs", 8, "<d"),
+    ("TimeBetweenFramesInMicrosecs", 8, "<d"),
+    ("FramesToSkipExpose", 2, "<H"),
+    ("ExposureMode", 2, "<H"),
+    ("PrepPresetTimeInMicrosecs", 8, "<d"),
+    ("ExposePresetTimeInMicrosecs", 8, "<d"),
+    ("AcquisitionFrameRateInFps", 4, "<f"),
+    ("FOVSelect", 2, "<H"),
+    ("ExpertMode", 2, "<H"),
+    ("SetVCommon1", 8, "<d"),
+    ("SetVCommon2", 8, "<d"),
+    ("SetAREF", 8, "<d"),
+    ("SetAREFTrim", 4, "<L"),
+    ("SetSpareVoltageSource", 8, "<d"),
+    ("SetCompensationVoltageSource", 8, "<d"),
+    ("SetRowOffVoltage", 8, "<d"),
+    ("SetRowOnVoltage", 8, "<d"),
+    ("StoreCompensationVoltage", 4, "<L"),
+    ("RampSelection", 2, "<H"),
+    ("TimingMode", 2, "<H"),
+    ("Bandwidth", 2, "<H"),
+    ("ARCIntegrator", 2, "<H"),
+    ("ARCPostIntegrator", 2, "<H"),
+    ("NumberOfRows", 4, "<L"),
+    ("RowEnable", 2, "<H"),
+    ("EnableStretch", 2, "<H"),
+    ("CompEnable", 2, "<H"),
+    ("CompStretch", 2, "<H"),
+    ("LeftEvenTristate", 2, "<H"),
+    ("RightOddTristate", 2, "<H"),
+    ("TestModeSelect", 4, "<L"),
+    ("AnalogTestSource", 4, "<L"),
+    ("VCommonSelect", 4, "<L"),
+    ("DRCColumnSum", 4, "<L"),
+    ("TestPatternFrameDelta", 4, "<L"),
+    ("TestPatternRowDelta", 4, "<L"),
+    ("TestPatternColumnDelta", 4, "<L"),
+    ("DetectorHorizontalFlip", 2, "<H"),
+    ("DetectorVerticalFlip", 2, "<H"),
+    ("DFNAutoScrubOnOff", 2, "<H"),
+    ("FiberChannelTimeOutInMicrosecs", 4, "<L"),
+    ("DFNAutoScrubDelayInMicrosecs", 4, "<L"),
+    ("StoreAECROI", 2, "<H"),
+    ("TestPatternSaturationValue", 2, "<H"),
+    ("TestPatternSeed", 4, "<L"),
+    ("ExposureTimeInMillisecs", 4, "<f"),
+    ("FrameRateInFps", 4, "<f"),
+    ("kVp", 4, "<f"),
+    ("mA", 4, "<f"),
+    ("mAs", 4, "<f"),
+    ("FocalSpotInMM", 4, "<f"),
+    ("GeneratorType", 20, None),
+    ("StrobeIntensityInFtL", 4, "<f"),
+    ("NDFilterSelection", 2, "<H"),
+    ("RefRegTemp1", 8, "<d"),
+    ("RefRegTemp2", 8, "<d"),
+    ("RefRegTemp3", 8, "<d"),
+    ("Humidity1", 4, "<f"),
+    ("Humidity2", 4, "<f"),
+    ("DetectorControlTemp", 8, "<d"),
+    ("DoseValueInmR", 8, "<d"),
+    ("TargetLevelROIRow0", 2, "<H"),
+    ("TargetLevelROICol0", 2, "<H"),
+    ("TargetLevelROIRow1", 2, "<H"),
+    ("TargetLevelROICol1", 2, "<H"),
+    ("FrameNumberForTargetLevelROI", 2, "<H"),
+    ("PercentRangeForTargetLevel", 2, "<H"),
+    ("TargetValue", 2, "<H"),
+    ("ComputedMedianValue", 2, "<H"),
+    ("LoadZero", 2, "<H"),
+    ("MaxLUTOut", 2, "<H"),
+    ("MinLUTOut", 2, "<H"),
+    ("MaxLinear", 2, "<H"),
+    ("Reserved", 2, "<H"),
+    ("ElectronsPerCount", 2, "<H"),
+    ("ModeGain", 2, "<H"),
+    ("TemperatureInDegC", 8, "<d"),
+    ("LineRepaired", 2, "<H"),
+    ("LineRepairFileName", 100, None),
+    ("CurrentLongitudinalInMM", 4, "<f"),
+    ("CurrentTransverseInMM", 4, "<f"),
+    ("CurrentCircularInMM", 4, "<f"),
+    ("CurrentFilterSelection", 4, "<L"),
+    ("DisableScrubAck", 2, "<H"),
+    ("ScanModeSelect", 2, "<H"),
+    ("DetectorAppSwVersion", 20, None),
+    ("DetectorNIOSVersion", 20, None),
+    ("DetectorPeripheralSetVersion", 20, None),
+    ("DetectorPhysicalAddress", 20, None),
+    ("PowerDown", 2, "<H"),
+    ("InitialVoltageLevel_VCOMMON", 8, "<d"),
+    ("FinalVoltageLevel_VCOMMON", 8, "<d"),
+    ("DmrCollimatorSpotSize", 10, None),
+    ("DmrTrack", 5, None),
+    ("DmrFilter", 5, None),
+    ("FilterCarousel", 2, "<H"),
+    ("Phantom", 20, None),
+    ("SetEnableHighTime", 2, "<H"),
+    ("SetEnableLowTime", 2, "<H"),
+    ("SetCompHighTime", 2, "<H"),
+    ("SetCompLowTime", 2, "<H"),
+    ("SetSyncLowTime", 2, "<H"),
+    ("SetConvertLowTime", 2, "<H"),
+    ("SetSyncHighTime", 2, "<H"),
+    ("SetEOLTime", 2, "<H"),
+    ("SetRampOffsetTime", 2, "<H"),
+    ("FOVStartingValue", 2, "<H"),
+    ("ColumnBinning", 2, "<H"),
+    ("RowBinning", 2, "<H"),
+    ("BorderColumns64", 2, "<H"),
+    ("BorderRows64", 2, "<H"),
+    ("FETOffRows64", 2, "<H"),
+    ("FOVStartColumn128", 2, "<H"),
+    ("FOVStartRow128", 2, "<H"),
+    ("NumberOfColumns128", 2, "<H"),
+    ("NumberOfRows128", 2, "<H"),
+    ("VFPAquisition", 2000, None),
+    ("Comment", 200, None),
+]
 
 
 class GeImage(FabioImage):
@@ -224,14 +224,14 @@ class GeImage(FabioImage):
     }
 
     BLANKED_HEADER_METADATA = {
-        'StandardHeaderSizeInBytes': 8192,
-        'UserHeaderSizeInBytes': 0,
-        'NumberOfRowsInFrame': 2048,
-        'NumberOfColsInFrame': 2048,
-        'ImageDepthInBits': 16,
+        "StandardHeaderSizeInBytes": 8192,
+        "UserHeaderSizeInBytes": 0,
+        "NumberOfRowsInFrame": 2048,
+        "NumberOfColsInFrame": 2048,
+        "ImageDepthInBits": 16,
     }
 
-    BLANK_IMAGE_FORMAT = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+    BLANK_IMAGE_FORMAT = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
     """At APS they blanked the header with 8192 bytes of zeros when
     updating the GE firmware.  This happened in ~2018 to the best
     of my knowledge, and *a lot* of data has been measured with
@@ -254,7 +254,7 @@ class GeImage(FabioImage):
             self.header.update(self.BLANKED_HEADER_METADATA)
 
             # No better way for now to know the number of frames
-            if self.header['NumberOfFrames'] == 0:
+            if self.header["NumberOfFrames"] == 0:
                 cur = infile.tell()
                 infile.seek(0, io.SEEK_END)
                 file_size = infile.tell()
@@ -268,8 +268,10 @@ class GeImage(FabioImage):
                 if not numpy.remainder(file_size, bytes_per_frames) == header_size:
                     raise IOError("GE file size is incorrect")
                 nframes = file_size // bytes_per_frames
-                self.header['NumberOfFrames'] = nframes
-        elif any(self.header["ImageFormat"].startswith(x) for x, _ in EDF_MAGIC_NUMBERS):
+                self.header["NumberOfFrames"] = nframes
+        elif any(
+            self.header["ImageFormat"].startswith(x) for x, _ in EDF_MAGIC_NUMBERS
+        ):
             # At APS, they started saving some GE headers with an EDF format in ~2022
 
             # Use the same metadata as the blank header...
@@ -282,7 +284,7 @@ class GeImage(FabioImage):
             infile.seek(cur, io.SEEK_SET)
 
             # Extract any needed info from the EDF header
-            self.header['NumberOfFrames'] = int(header[0]["Num_Images"])
+            self.header["NumberOfFrames"] = int(header[0]["Num_Images"])
 
     def read(self, fname, frame=None):
         """Read header into self.header and the data into self.data."""
@@ -293,7 +295,7 @@ class GeImage(FabioImage):
         infile = self._open(fname, "rb")
         self.sequencefilename = fname
         self._readheader(infile)
-        self._nframes = self.header['NumberOfFrames']
+        self._nframes = self.header["NumberOfFrames"]
         self._readframe(infile, frame)
         infile.close()
         return self
@@ -323,11 +325,11 @@ class GeImage(FabioImage):
         if not (0 <= img_num < self.nframes):
             raise IndexError("Bad image number")
 
-        cols = self.header['NumberOfColsInFrame']
-        rows = self.header['NumberOfRowsInFrame']
-        bitdepth = self.header['ImageDepthInBits']
-        standard_header_size = self.header['StandardHeaderSizeInBytes']
-        user_header_size = self.header['UserHeaderSizeInBytes']
+        cols = self.header["NumberOfColsInFrame"]
+        rows = self.header["NumberOfRowsInFrame"]
+        bitdepth = self.header["ImageDepthInBits"]
+        standard_header_size = self.header["StandardHeaderSizeInBytes"]
+        user_header_size = self.header["UserHeaderSizeInBytes"]
 
         imglength = cols * rows * (bitdepth // 8)
         imgstart = standard_header_size + user_header_size + img_num * imglength
@@ -370,8 +372,7 @@ class GeImage(FabioImage):
             return self.getframe(self.currentframe + 1)
         else:
             newobj = GeImage()
-            newobj.read(next_filename(
-                self.sequencefilename))
+            newobj.read(next_filename(self.sequencefilename))
             return newobj
 
     def previous(self):
@@ -380,8 +381,7 @@ class GeImage(FabioImage):
             return self.getframe(self.currentframe - 1)
         else:
             newobj = GeImage()
-            newobj.read(previous_filename(
-                self.sequencefilename))
+            newobj.read(previous_filename(self.sequencefilename))
             return newobj
 
 

@@ -30,16 +30,15 @@
 
 import unittest
 import logging
-
-logger = logging.getLogger(__name__)
 import fabio
 from .. import fabioformats
 from ..utils import deprecation
 from ..utils import testutils
 
+logger = logging.getLogger(__name__)
+
 
 class TestRegistration(unittest.TestCase):
-
     def test_fabio_factory(self):
         image = fabio.factory("edfimage")
         self.assertIsNotNone(image)
@@ -63,13 +62,14 @@ class TestRegistration(unittest.TestCase):
     @testutils.test_logging(deprecation.depreclog, warning=1)
     def test_deprecated_fabioimage_factory_missing_format(self):
         """Check that it is still working"""
-        self.assertRaises(RuntimeError, fabio.fabioimage.FabioImage.factory, "foobarimage")
+        self.assertRaises(
+            RuntimeError, fabio.fabioimage.FabioImage.factory, "foobarimage"
+        )
 
     def test_not_existing(self):
         self.assertIsNone(fabioformats.get_class_by_name("myformat0"))
 
     def test_annotation(self):
-
         @fabio.register
         class MyFormat1(fabio.fabioimage.FabioImage):
             pass
@@ -77,7 +77,6 @@ class TestRegistration(unittest.TestCase):
         self.assertIsNotNone(fabioformats.get_class_by_name("myformat1"))
 
     def test_function(self):
-
         class MyFormat2(fabio.fabioimage.FabioImage):
             pass
 
@@ -88,6 +87,7 @@ class TestRegistration(unittest.TestCase):
         for ext in fabioformats._get_extension_mapping():
             self.assertFalse("." in ext)
 
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -95,6 +95,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

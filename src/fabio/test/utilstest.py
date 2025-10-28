@@ -3,7 +3,7 @@
 #
 #    Project: FabIO tests class utilities
 #
-#    Copyright (C) 2010-2016 European Synchrotron Radiation Facility
+#    Copyright (C) 2010-2025 European Synchrotron Radiation Facility
 #                       Grenoble, France
 #
 #    Principal authors: Jérôme KIEFFER (jerome.kieffer@esrf.fr)
@@ -30,10 +30,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/04/2020"
-
-PACKAGE = "fabio"
-DATA_KEY = "FABIO_DATA"
+__date__ = "27/10/2025"
 
 import os
 import sys
@@ -45,20 +42,20 @@ from ..utils.ExternalResources import ExternalResources
 
 logger = logging.getLogger(__name__)
 
+PACKAGE = "fabio"
+DATA_KEY = "FABIO_DATA"
 TEST_HOME = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestOptions(object):
-
     def __init__(self):
         self.options = None
         self.timeout = 60  # timeout in seconds for downloading images
         # url_base = "http://forge.epn-campus.eu/attachments/download"
         self.url_base = "http://www.edna-site.org/pub/fabio/testimages"
-        self.resources = ExternalResources(PACKAGE,
-                                           timeout=self.timeout,
-                                           env_key=DATA_KEY,
-                                           url_base=self.url_base)
+        self.resources = ExternalResources(
+            PACKAGE, timeout=self.timeout, env_key=DATA_KEY, url_base=self.url_base
+        )
         self.sem = threading.Semaphore()
         self.recompiled = False
         self.reloaded = False
@@ -89,6 +86,7 @@ class TestOptions(object):
             script = self.get_installed_script_path(script_name)
         else:
             import importlib
+
             module = importlib.import_module(module_name)
             script = module.__file__
         return script
@@ -100,7 +98,7 @@ class TestOptions(object):
         In Windows, it checks availability of script using .py .bat, and .exe
         file extensions.
         """
-        if (sys.platform == "win32"):
+        if sys.platform == "win32":
             available_extensions = [".py", ".bat", ".exe"]
         else:
             available_extensions = [""]
@@ -126,8 +124,9 @@ class TestOptions(object):
         if not self._tempdir:
             with self.sem:
                 if not self._tempdir:
-                    self._tempdir = tempfile.mkdtemp("_" + getpass.getuser(),
-                                                     self.name + "_")
+                    self._tempdir = tempfile.mkdtemp(
+                        "_" + getpass.getuser(), self.name + "_"
+                    )
 
     @property
     def tempdir(self):

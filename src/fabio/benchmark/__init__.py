@@ -24,43 +24,37 @@
 """Benchmark for file reading"""
 
 __author__ = "Jérôme Kieffer"
-__date__ = "10/02/2023"
+__date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "2016-2020 European Synchrotron Radiation Facility, Grenoble, France"
 
-import json
 import sys
-import time
 import timeit
 import os
-import platform
-import subprocess
-import numpy
-import fabio
-import os.path as op
-import logging
+from ..test import utilstest
 
 # To use use the locally build version of PyFAI, use ../bootstrap.py
 try:
     from .. import open as fabio_open, version, date
 except ImportError:
     from fabio import open as fabio_open, version, date
-from ..test import utilstest
 
-datasets = ["mb_LP_1_001.img",
-            "Cr8F8140k103.0026",
-            "run2_1_00148.cbf",
-            "F2K_Seb_Lyso0675.edf",
-            "fit2d_click.msk",
-            "GE_aSI_detector_image_1529",
-            "i01f0001.kcd",
-            "example.mar2300",
-            "corkcont2_H_0089.mccd",
-            "b191_1_9_1.img",
-            "image0001.pgm",
-            "mgzn-20hpt.img",
-            "oPPA_5grains_0001.tif",
-            "XSDataImage.xml", ]
+datasets = [
+    "mb_LP_1_001.img",
+    "Cr8F8140k103.0026",
+    "run2_1_00148.cbf",
+    "F2K_Seb_Lyso0675.edf",
+    "fit2d_click.msk",
+    "GE_aSI_detector_image_1529",
+    "i01f0001.kcd",
+    "example.mar2300",
+    "corkcont2_H_0089.mccd",
+    "b191_1_9_1.img",
+    "image0001.pgm",
+    "mgzn-20hpt.img",
+    "oPPA_5grains_0001.tif",
+    "XSDataImage.xml",
+]
 
 setup = """
 import fabio
@@ -78,16 +72,22 @@ def run_benchmark(number=10, repeat=3):
     print(f"Python {sys.version}")
     print(f"FabIO {version} ({date})")
     print("#" * 80)
-    print("     Module           filename        \t file size \t image size \t read time (ms) \t ms/Mpix")
+    print(
+        "     Module           filename        \t file size \t image size \t read time (ms) \t ms/Mpix"
+    )
     for img in datasets:
         fn = utilstest.UtilsTest.getimage(img)
         fimg = fabio_open(fn)
         file_size = os.stat(fn).st_size / 1.0e6  # MB
         img_size = fimg.data.size / 1.0e6  # Mpix
         timer = timeit.Timer(stmt % fn, setup + (stmt % fn))
-        tmin = min([i / (0.001 * number) for i in timer.repeat(repeat=repeat, number=number)])
-        print("%13s %25s %.3f Mb \t %.3f Mpix \t  %.3f ms \t %.3f ms/Mpix" %
-              (fimg.__class__.__name__, img, file_size, img_size, tmin, tmin / img_size))
+        tmin = min(
+            [i / (0.001 * number) for i in timer.repeat(repeat=repeat, number=number)]
+        )
+        print(
+            "%13s %25s %.3f Mb \t %.3f Mpix \t  %.3f ms \t %.3f ms/Mpix"
+            % (fimg.__class__.__name__, img, file_size, img_size, tmin, tmin / img_size)
+        )
 
 
 run = run_benchmark

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__date__ = "26/05/2025"
+__date__ = "27/10/2025"
 __author__ = "Jérôme Kieffer"
 __license__ = "MIT"
 
@@ -9,15 +9,17 @@ import sys
 import argparse
 from io import StringIO
 import logging
-application_name = os.path.splitext(os.path.basename(__file__))[0]
-logger = logging.getLogger(application_name)
-logging.basicConfig()
 import numpy
 from .. import version as fabio_version, date as fabio_date
 from ..openimage import openimage as fabio_open
 from ..nexus import Nexus
 import h5py
 import hdf5plugin
+
+application_name = os.path.splitext(os.path.basename(__file__))[0]
+logger = logging.getLogger(application_name)
+logging.basicConfig()
+
 try:
     from pyFAI import load
 except ImportError:
@@ -25,49 +27,79 @@ except ImportError:
     logger.error("Unable to import pyFAI, won't be able to parse PONI-file!")
 
 
-
-
 class XDSbuilder:
     def __init__(self):
         "Constructor of the class"
-        
+
         self.poni = None
         self.options = None
-        self.frames = None 
+        self.frames = None
         self.h5_filename = "fabio_master.h5"
 
     def parse(self, argv=None):
-        "Parse command line arguments and return "
+        "Parse command line arguments and return"
         if argv is None:
             argv = []
-        parser = argparse.ArgumentParser(prog=application_name,
-                        description='Convert any HDF5 file containing images to a file processable by XDS using the neggia plugin from Dectris.'
-                                     'Do not forget to specify LIB=/path/to/plugin/dectris-neggia.so in XDS.INP',
-                        epilog='Requires hdf5plugin and pyFAI to parse configuration file. Geometry can be calibrated with pyFAI-calib2',)
-        parser.add_argument('--version', action='version', version=f'%(prog)s {fabio_version} from {fabio_date}')
-        parser.add_argument("input", nargs='+',  help="Space separated list of input files (HDF5)")
-        parser.add_argument("--verbose", "-v", help="increase output verbosity",
-                            action="count")
-        parser.add_argument("--force", "-f", help="force overwrite output file",
-                            action="store_true")
-        parser.add_argument("--copy", "-c", help="copy dataset instead of using external links",
-                            action="store_true")
-        parser.add_argument("--geometry", "-g", help="PONI-file containing the geometry (pyFAI format, MANDATORY)")
-        parser.add_argument("--output", "-o", help=f"output directory, the data will be in {self.h5_filename}", default="fabio_xds")
-        parser.add_argument("--CdTe", help="The detector is made of CdTe", default=False, action="store_true")
-        parser.add_argument("--neggia", help="Path of the neggia plugin", default="dectris-neggia.so")
-        parser.add_argument("--oscillation", help="Oscillation range used.", default=0.5)
-        
+        parser = argparse.ArgumentParser(
+            prog=application_name,
+            description="Convert any HDF5 file containing images to a file processable by XDS using the neggia plugin from Dectris."
+            "Do not forget to specify LIB=/path/to/plugin/dectris-neggia.so in XDS.INP",
+            epilog="Requires hdf5plugin and pyFAI to parse configuration file. Geometry can be calibrated with pyFAI-calib2",
+        )
+        parser.add_argument(
+            "--version",
+            action="version",
+            version=f"%(prog)s {fabio_version} from {fabio_date}",
+        )
+        parser.add_argument(
+            "input", nargs="+", help="Space separated list of input files (HDF5)"
+        )
+        parser.add_argument(
+            "--verbose", "-v", help="increase output verbosity", action="count"
+        )
+        parser.add_argument(
+            "--force", "-f", help="force overwrite output file", action="store_true"
+        )
+        parser.add_argument(
+            "--copy",
+            "-c",
+            help="copy dataset instead of using external links",
+            action="store_true",
+        )
+        parser.add_argument(
+            "--geometry",
+            "-g",
+            help="PONI-file containing the geometry (pyFAI format, MANDATORY)",
+        )
+        parser.add_argument(
+            "--output",
+            "-o",
+            help=f"output directory, the data will be in {self.h5_filename}",
+            default="fabio_xds",
+        )
+        parser.add_argument(
+            "--CdTe",
+            help="The detector is made of CdTe",
+            default=False,
+            action="store_true",
+        )
+        parser.add_argument(
+            "--neggia", help="Path of the neggia plugin", default="dectris-neggia.so"
+        )
+        parser.add_argument(
+            "--oscillation", help="Oscillation range used.", default=0.5
+        )
+
         self.options = parser.parse_args(argv)
         return self.options
-        
+
     def configure_verboseness(self):
         if self.options and self.options.verbose:
-            if self.options.verbose>1:
+            if self.options.verbose > 1:
                 logger.setLevel(logging.DEBUG)
             else:
                 logger.setLevel(logging.INFO)
-        
+
     def load_poni(self):
         "return 1 if poni-file cannot be found"
         if self.options is None:
@@ -81,26 +113,25 @@ class XDSbuilder:
             logger.error("Unable to parse PONI-file: %s", self.options.geometry)
             raise err
             return 1
-        
+
     def load_input(self):
-        if len(self.options.input)==0:
+        if len(self.options.input) == 0:
             logger.error("No input HDF5 file provided. Aborting")
             return 2
         self.frames = [fabio_open(i) for i in self.options.input]
         return 0
-        
+
     def _distance_center(self):
-        """return distance, centerx, center_y 
-        """
+        """return distance, centerx, center_y"""
         width = self.poni.detector.shape[-1]
-        distance = self.poni.dist*1e3 #mm
+        distance = self.poni.dist * 1e3  # mm
         r_array = self.poni.array_from_unit(unit="r_m")
         x_center = numpy.argmin(r_array) % width
-        y_center =  numpy.argmin(r_array) // width
+        y_center = numpy.argmin(r_array) // width
         return distance, x_center, y_center
 
     def build_neggia(self):
-        """Build the neggia file, i.e. the HDF5 file with data + metadata for analysis""" 
+        """Build the neggia file, i.e. the HDF5 file with data + metadata for analysis"""
         if not os.path.exists(self.options.output):
             os.makedirs(self.options.output)
         dest_h5 = os.path.join(self.options.output, self.h5_filename)
@@ -114,19 +145,37 @@ class XDSbuilder:
             mode = "w"
         distance, center_x, center_y = self._distance_center()
         with Nexus(dest_h5, mode) as nxs:
-            entry = nxs.new_entry(entry="entry", program_name=application_name, force_name=True)
+            entry = nxs.new_entry(
+                entry="entry", program_name=application_name, force_name=True
+            )
             instrument = nxs.new_instrument(entry=entry, instrument_name="instrument")
             if self.poni.wavelength:
                 beam = nxs.new_class(instrument, "beam", "NXbeam")
-                beam.create_dataset("incident_wavelength", data=self.poni.wavelength*1e10).attrs["unit"] = "A"
+                beam.create_dataset(
+                    "incident_wavelength", data=self.poni.wavelength * 1e10
+                ).attrs["unit"] = "A"
             detector = nxs.new_class(instrument, "detector", "NXdetector")
-            detector.create_dataset("x_pixel_size", data=float(self.poni.pixel2)).attrs["unit"] = "m"
-            detector.create_dataset("y_pixel_size", data=float(self.poni.pixel1)).attrs["unit"] = "m"
-            detector.create_dataset("beam_center_x", data=float(center_x)).attrs["unit"] = "pixel"
-            detector.create_dataset("beam_center_y", data=float(center_y)).attrs["unit"] = "pixel"
-            detector.create_dataset("detector_distance", data=distance*1e-3).attrs["unit"] = "m"
-            detectorSpecific = nxs.new_class(detector, "detectorSpecific", "NXcollection")
-            detectorSpecific.create_dataset("nimages", data=sum(i.nframes for i in self.frames))
+            detector.create_dataset("x_pixel_size", data=float(self.poni.pixel2)).attrs[
+                "unit"
+            ] = "m"
+            detector.create_dataset("y_pixel_size", data=float(self.poni.pixel1)).attrs[
+                "unit"
+            ] = "m"
+            detector.create_dataset("beam_center_x", data=float(center_x)).attrs[
+                "unit"
+            ] = "pixel"
+            detector.create_dataset("beam_center_y", data=float(center_y)).attrs[
+                "unit"
+            ] = "pixel"
+            detector.create_dataset("detector_distance", data=distance * 1e-3).attrs[
+                "unit"
+            ] = "m"
+            detectorSpecific = nxs.new_class(
+                detector, "detectorSpecific", "NXcollection"
+            )
+            detectorSpecific.create_dataset(
+                "nimages", data=sum(i.nframes for i in self.frames)
+            )
             detectorSpecific.create_dataset("ntrigger", data=1)
             mask = self.poni.detector.mask
             if mask is None:
@@ -140,117 +189,154 @@ class XDSbuilder:
                 if isinstance(fimg.dataset, h5py.Dataset):
                     cnt += 1
                     if self.options.copy:
-                        data.create_dataset(f"data_{cnt:06d}", data=fimg.dataset[()],
-                                            chunks=(1,)+fimg.shape,
-                                            **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
+                        data.create_dataset(
+                            f"data_{cnt:06d}",
+                            data=fimg.dataset[()],
+                            chunks=(1,) + fimg.shape,
+                            **hdf5plugin.Bitshuffle(nelems=0, cname="lz4"),
+                        )
                     else:
-                        data[f"data_{cnt:06d}"] = h5py.ExternalLink(os.path.relpath(fimg.dataset.file.filename, self.options.output), fimg.dataset.name)
+                        data[f"data_{cnt:06d}"] = h5py.ExternalLink(
+                            os.path.relpath(
+                                fimg.dataset.file.filename, self.options.output
+                            ),
+                            fimg.dataset.name,
+                        )
                 elif isinstance(fimg.dataset, numpy.ndarray):
                     cnt += 1
                     if fimg.dataset.ndim < 3:
                         dataset = numpy.atleast_3d(fimg.dataset)
-                        dataset.shape = (1,)*(3-fimg.dataset.ndim)+fimg.dataset.shape
+                        dataset.shape = (1,) * (
+                            3 - fimg.dataset.ndim
+                        ) + fimg.dataset.shape
                     else:
                         dataset = fimg.dataset
-                    data.create_dataset(f"data_{cnt:06d}", data=dataset,
-                                        chunks=(1,)+fimg.shape,
-                                        **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
-                else: # assume it is a list
+                    data.create_dataset(
+                        f"data_{cnt:06d}",
+                        data=dataset,
+                        chunks=(1,) + fimg.shape,
+                        **hdf5plugin.Bitshuffle(nelems=0, cname="lz4"),
+                    )
+                else:  # assume it is a list
                     for item in fimg.dataset:
                         # each item can be either a dataset or a numpy array
                         if isinstance(item, h5py.Dataset):
                             cnt += 1
                             if self.options.copy:
-                                data.create_dataset(f"data_{cnt:06d}", data=item[()],
-                                                    chunks=(1,)+fimg.shape,
-                                                    **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
+                                data.create_dataset(
+                                    f"data_{cnt:06d}",
+                                    data=item[()],
+                                    chunks=(1,) + fimg.shape,
+                                    **hdf5plugin.Bitshuffle(nelems=0, cname="lz4"),
+                                )
                             else:
-                                data[f"data_{cnt:06d}"] = h5py.ExternalLink(os.path.relpath(item.file.filename, self.options.output), item.name)
-    
+                                data[f"data_{cnt:06d}"] = h5py.ExternalLink(
+                                    os.path.relpath(
+                                        item.file.filename, self.options.output
+                                    ),
+                                    item.name,
+                                )
+
                         elif isinstance(fimg.dataset, numpy.ndarray):
                             cnt += 1
                             if fimg.dataset.ndim < 3:
                                 dataset = numpy.atleast_3d(item)
-                                dataset.shape = (1,)*(3-item.ndim)+item.shape
+                                dataset.shape = (1,) * (3 - item.ndim) + item.shape
                             else:
                                 dataset = item
-                            data.create_dataset(f"data_{cnt:06d}", data=dataset,
-                                                chunks=(1,)+fimg.shape,
-                                                **hdf5plugin.Bitshuffle(nelems=0, cname='lz4'))
+                            data.create_dataset(
+                                f"data_{cnt:06d}",
+                                data=dataset,
+                                chunks=(1,) + fimg.shape,
+                                **hdf5plugin.Bitshuffle(nelems=0, cname="lz4"),
+                            )
                         else:
-                            logger.warning("Don't know how to handle %s, skipping", item)
-        os.link(dest_h5, dest_h5.replace("master","000000"))
+                            logger.warning(
+                                "Don't know how to handle %s, skipping", item
+                            )
+        os.link(dest_h5, dest_h5.replace("master", "000000"))
         logger.info(f"Successfully created Neggia file {dest_h5}.")
         return 0
-    
+
     def build_XDS(self):
         "Create XDS.INP file suitable for data reduction"
         if not os.path.exists(self.options.output):
             os.makedirs(self.options.output)
         dest_xds = os.path.join(self.options.output, "XDS.INP")
-        
-        xds = ["JOB= XYCORR INIT COLSPOT IDXREF DEFPIX INTEGRATE CORRECT",
-               "! JOB=  DEFPIX INTEGRATE CORRECT",
-               "",
-               f"NAME_TEMPLATE_OF_DATA_FRAMES= {self.h5_filename.replace('master','??????')}",
-               f"LIB= {self.options.neggia}",
-               "",
-               "SPACE_GROUP_NUMBER=0 ! 0 if unknown",
-               "FRIEDEL'S_LAW=FALSE     ! This acts only on the CORRECT step",
-               "",
-               "FRACTION_OF_POLARIZATION=0.99",
-               "ROTATION_AXIS=0 -1  0",
-               "POLARIZATION_PLANE_NORMAL=0 1 0",
-               "DIRECTION_OF_DETECTOR_X-AXIS=1 0 0",
-               "DIRECTION_OF_DETECTOR_Y-AXIS=0 1 0",
-               "INCIDENT_BEAM_DIRECTION=0 0 1",
-               f"OSCILLATION_RANGE= {self.options.oscillation}",
-               "",
-               "OVERLOAD=100000000",
-               ]
+
+        xds = [
+            "JOB= XYCORR INIT COLSPOT IDXREF DEFPIX INTEGRATE CORRECT",
+            "! JOB=  DEFPIX INTEGRATE CORRECT",
+            "",
+            f"NAME_TEMPLATE_OF_DATA_FRAMES= {self.h5_filename.replace('master', '??????')}",
+            f"LIB= {self.options.neggia}",
+            "",
+            "SPACE_GROUP_NUMBER=0 ! 0 if unknown",
+            "FRIEDEL'S_LAW=FALSE     ! This acts only on the CORRECT step",
+            "",
+            "FRACTION_OF_POLARIZATION=0.99",
+            "ROTATION_AXIS=0 -1  0",
+            "POLARIZATION_PLANE_NORMAL=0 1 0",
+            "DIRECTION_OF_DETECTOR_X-AXIS=1 0 0",
+            "DIRECTION_OF_DETECTOR_Y-AXIS=0 1 0",
+            "INCIDENT_BEAM_DIRECTION=0 0 1",
+            f"OSCILLATION_RANGE= {self.options.oscillation}",
+            "",
+            "OVERLOAD=100000000",
+        ]
         xds.append(f"DATA_RANGE= 1 {sum(i.nframes for i in self.frames)}")
-        
+
         shape = self.poni.detector.shape
         pixel1, pixel2 = self.poni.detector.pixel1, self.poni.detector.pixel2
-        xds.append(f"NX= {shape[1]:d} NY= {shape[0]:d}  QX= {pixel2*1000:f}  QY= {pixel1*1000:f}")
+        xds.append(
+            f"NX= {shape[1]:d} NY= {shape[0]:d}  QX= {pixel2 * 1000:f}  QY= {pixel1 * 1000:f}"
+        )
 
-        distance, center_x, center_y = self._distance_center()        
+        distance, center_x, center_y = self._distance_center()
         xds.append("DETECTOR= EIGER")
         xds.append(f"DETECTOR_DISTANCE= {distance:.4f}")
         xds.append(f"ORGX= {center_x:.3f} ORGY= {center_y:.3f}")
-        xds.append(f"X-RAY_WAVELENGTH={1e10*self.poni.wavelength}")
+        xds.append(f"X-RAY_WAVELENGTH={1e10 * self.poni.wavelength}")
         xds.append("")
-        mask = self.poni.detector.mask>0
+        mask = self.poni.detector.mask > 0
         empty = numpy.where(numpy.std(mask, axis=0) == 0)[0]
         if len(empty):
             start = 0
-            for stop in numpy.where(empty[1:]-empty[:-1]!=1)[0]:
-                xds.append(f"UNTRUSTED_RECTANGLE= {empty[start]:4d} {empty[stop]:4d}    0 {shape[0]:4d} ")
+            for stop in numpy.where(empty[1:] - empty[:-1] != 1)[0]:
+                xds.append(
+                    f"UNTRUSTED_RECTANGLE= {empty[start]:4d} {empty[stop]:4d}    0 {shape[0]:4d} "
+                )
                 start = stop + 1
-            xds.append(f"UNTRUSTED_RECTANGLE= {empty[start]:4d} {empty[-1]:4d}    0 {shape[0]:4d} ")
+            xds.append(
+                f"UNTRUSTED_RECTANGLE= {empty[start]:4d} {empty[-1]:4d}    0 {shape[0]:4d} "
+            )
 
         empty = numpy.where(numpy.std(mask, axis=1) == 0)[0]
         if len(empty):
             start = 0
-            for stop in numpy.where(empty[1:]-empty[:-1]!=1)[0]:
-                xds.append(f"UNTRUSTED_RECTANGLE=     0 {shape[1]:4d} {empty[start]:4d} {empty[stop]:4d}")
+            for stop in numpy.where(empty[1:] - empty[:-1] != 1)[0]:
+                xds.append(
+                    f"UNTRUSTED_RECTANGLE=     0 {shape[1]:4d} {empty[start]:4d} {empty[stop]:4d}"
+                )
                 start = stop + 1
-            xds.append(f"UNTRUSTED_RECTANGLE=     0 {shape[1]:4d} {empty[start]:4d} {empty[-1]:4d}")
+            xds.append(
+                f"UNTRUSTED_RECTANGLE=     0 {shape[1]:4d} {empty[start]:4d} {empty[-1]:4d}"
+            )
         xds.append("")
         if self.options.CdTe:
             xds.append("SENSOR_THICKNESS=0.75 !mm")
             nrj = self.poni.energy
-            e, mu = numpy.loadtxt(StringIO(Attenuations_CdTe),unpack=True)
+            e, mu = numpy.loadtxt(StringIO(Attenuations_CdTe), unpack=True)
             xds.append(f"SILICON= {numpy.interp(nrj, e, mu):.3f} !1/mm")
 
-        mode = "w"        
+        mode = "w"
         if os.path.exists(dest_xds):
             if self.options.force:
                 mode = "w"
             else:
                 logger.error("Output file exist, not overwriting it. Aborting")
                 return 1
-        with open(dest_xds, "w") as w:
+        with open(dest_xds, mode) as w:
             w.write(os.linesep.join(xds))
         logger.info(f"Successfully created XDS file {dest_xds}.")
         return 0
@@ -258,27 +344,29 @@ class XDSbuilder:
     def process(self):
         "pipeline processing, returns a error code as integer"
         self.configure_verboseness()
-        
+
         rc = self.load_poni()
-        if rc: return rc
-        
+        if rc:
+            return rc
+
         rc = self.load_input()
-        if rc: return rc
-        
+        if rc:
+            return rc
+
         rc = self.build_neggia()
-        if rc: return rc
-        rc = self.build_XDS()
-        if rc: return rc    
-        return rc
-    
-    
+        if rc:
+            return rc
+
+        return self.build_XDS()
+
+
 def main(argv=None):
     xds = XDSbuilder()
     xds.parse(sys.argv[1:] if argv is None else argv)
     return xds.process()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     sys.exit(main())
 
 

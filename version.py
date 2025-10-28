@@ -4,7 +4,7 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-2024 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2025 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -58,32 +58,36 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/10/2024"
+__date__ = "27/10/2025"
 __status__ = "production"
-__docformat__ = 'restructuredtext'
-__all__ = ["date", "version_info", "strictversion", "hexversion", "debianversion",
-           "calc_hexversion"]
+__docformat__ = "restructuredtext"
+__all__ = [
+    "date",
+    "version_info",
+    "strictversion",
+    "hexversion",
+    "debianversion",
+    "calc_hexversion",
+]
 
-RELEASE_LEVEL_VALUE = {"dev": 0,
-                       "alpha": 10,
-                       "beta": 11,
-                       "candidate": 12,
-                       "final": 15}
 
-PRERELEASE_NORMALIZED_NAME = {"dev": "a",
-                              "alpha": "a",
-                              "beta": "b",
-                              "candidate": "rc"}
+from collections import namedtuple
+
+
+RELEASE_LEVEL_VALUE = {"dev": 0, "alpha": 10, "beta": 11, "candidate": 12, "final": 15}
+
+PRERELEASE_NORMALIZED_NAME = {"dev": "a", "alpha": "a", "beta": "b", "candidate": "rc"}
 
 MAJOR = 2025
 MINOR = 10
 MICRO = 0
-RELEV = "dev"  # <16
-SERIAL = 0  # <16
+RELEV = "beta"  # <16
+SERIAL = 1  # <16
 date = __date__
 
-from collections import namedtuple
-_version_info = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
+_version_info = namedtuple(
+    "version_info", ["major", "minor", "micro", "releaselevel", "serial"]
+)
 
 version_info = _version_info(MAJOR, MINOR, MICRO, RELEV, SERIAL)
 
@@ -91,7 +95,11 @@ strictversion = version = debianversion = "%d.%d.%d" % version_info[:3]
 if version_info.releaselevel != "final":
     _prerelease = PRERELEASE_NORMALIZED_NAME[version_info[3]]
     version += "%s%s" % (_prerelease, version_info[-1])
-    debianversion += "~adev%i" % version_info[-1] if RELEV == "dev" else "~%s%i" % (_prerelease, version_info[-1])
+    debianversion += (
+        "~adev%i" % version_info[-1]
+        if RELEV == "dev"
+        else "~%s%i" % (_prerelease, version_info[-1])
+    )
     strictversion += _prerelease + str(version_info[-1])
 
 

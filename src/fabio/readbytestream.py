@@ -34,30 +34,33 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
 
 import logging
 import numpy
+
 logger = logging.getLogger(__name__)
 
 DATATYPES = {
     # type  sign bytes
-    ("int", 'n', 1): numpy.uint8,
-    ("int", 'n', 2): numpy.uint16,
-    ("int", 'n', 4): numpy.uint32,
-    ("int", 'y', 1): numpy.int8,
-    ("int", 'y', 2): numpy.int16,
-    ("int", 'y', 4): numpy.int32,
-    ('float', 'y', 4): numpy.float32,  # does this occur in bruker?
-    ('double', 'y', 4): numpy.float64
+    ("int", "n", 1): numpy.uint8,
+    ("int", "n", 2): numpy.uint16,
+    ("int", "n", 4): numpy.uint32,
+    ("int", "y", 1): numpy.int8,
+    ("int", "y", 2): numpy.int16,
+    ("int", "y", 4): numpy.int32,
+    ("float", "y", 4): numpy.float32,  # does this occur in bruker?
+    ("double", "y", 4): numpy.float64,
 }
 
 
-def readbytestream(fil,
-                   offset,
-                   x,
-                   y,
-                   nbytespp,
-                   datatype='int',
-                   signed='n',
-                   swap='n',
-                   typeout=numpy.uint16):
+def readbytestream(
+    fil,
+    offset,
+    x,
+    y,
+    nbytespp,
+    datatype="int",
+    signed="n",
+    swap="n",
+    typeout=numpy.uint16,
+):
     """
     Reads in a bytestream from a file (which may be a string indicating
     a filename, or an already opened file (should be "rb"))
@@ -79,8 +82,8 @@ def readbytestream(fil,
     """
     tin = "dunno"
     length = nbytespp * x * y  # bytes per pixel times number of pixels
-    if datatype in ['float', 'double']:
-        signed = 'y'
+    if datatype in ["float", "double"]:
+        signed = "y"
 
     key = (datatype, signed, nbytespp)
     try:
@@ -94,7 +97,7 @@ def readbytestream(fil,
         infile = fil
         opened = False
     else:
-        infile = open(fil, 'rb')
+        infile = open(fil, "rb")
         opened = True
 
     infile.seek(offset)
@@ -102,7 +105,7 @@ def readbytestream(fil,
     data = numpy.frombuffer(infile.read(length), tin)
     arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
 
-    if swap == 'y':
+    if swap == "y":
         arr.byteswap(True)
 
     if opened:

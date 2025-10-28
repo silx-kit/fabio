@@ -44,13 +44,13 @@ original implementation which is buggy
 
 """
 
-__authors__ = ["Jerome Kieffer", "Gael Goret", "Thomas Vincent"]
+__authors__ = ["Jérôme Kieffer", "Gael Goret", "Thomas Vincent"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__copyright__ = "2012-2020, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/10/2023"
+__copyright__ = "2012-2025, European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "25/10/2025"
 
-from libc.stdint cimport int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t 
+from libc.stdint cimport int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t
 
 import cython
 

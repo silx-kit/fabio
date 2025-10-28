@@ -33,23 +33,21 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/03/2024"
+__date__ = "28/10/2025"
 __status__ = "production"
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 import logging
-
 import sys
 import os
 import time
-import numpy
 from .fabioutils import exists
 from .version import version
 
 logger = logging.getLogger(__name__)
 try:
     import h5py
-except ImportError as error:
+except ImportError:
     h5py = None
     logger.error("h5py module missing")
 else:
@@ -85,7 +83,12 @@ def from_isotime(text, use_tz=False):
         text = text[0]
     if isinstance(text, bytes):
         text = text.decode()
-    if len(text) > 3 and text.startswith("b") and text[1] == text[-1] and text[1] in ('"', "'"):
+    if (
+        len(text) > 3
+        and text.startswith("b")
+        and text[1] == text[-1]
+        and text[1] in ('"', "'")
+    ):
         text = text[2:-1]
     if len(text) < 19:
         logger.warning("Not a iso-time string: %s", text)
@@ -205,10 +208,12 @@ class Nexus(object):
         for grp_name in self.h5:
             if grp_name == name:
                 grp = self.h5[grp_name]
-                if isinstance(grp, h5py.Group) and \
-                   ("start_time" in grp) and  \
-                   self.get_attr(grp, "NX_class") == "NXentry":
-                        return grp
+                if (
+                    isinstance(grp, h5py.Group)
+                    and ("start_time" in grp)
+                    and self.get_attr(grp, "NX_class") == "NXentry"
+                ):
+                    return grp
 
     def get_entries(self):
         """
@@ -216,12 +221,16 @@ class Nexus(object):
 
         :return: list of HDF5 groups
         """
-        entries = [(grp, from_isotime(self.h5[grp + "/start_time"][()]))
-                   for grp in self.h5
-                   if isinstance(self.h5[grp], h5py.Group) and
-                   ("start_time" in self.h5[grp]) and
-                   self.get_attr(self.h5[grp], "NX_class") == "NXentry"]
-        entries.sort(key=lambda a: a[1], reverse=True)  # sort entries in decreasing time
+        entries = [
+            (grp, from_isotime(self.h5[grp + "/start_time"][()]))
+            for grp in self.h5
+            if isinstance(self.h5[grp], h5py.Group)
+            and ("start_time" in self.h5[grp])
+            and self.get_attr(self.h5[grp], "NX_class") == "NXentry"
+        ]
+        entries.sort(
+            key=lambda a: a[1], reverse=True
+        )  # sort entries in decreasing time
         return [self.h5[i[0]] for i in entries]
 
     def find_detector(self, all=False):
@@ -232,7 +241,9 @@ class Nexus(object):
         """
         result = []
         for entry in self.get_entries():
-            for instrument in self.get_class(entry, "NXsubentry") + self.get_class(entry, "NXinstrument"):
+            for instrument in self.get_class(entry, "NXsubentry") + self.get_class(
+                entry, "NXinstrument"
+            ):
                 for detector in self.get_class(instrument, "NXdetector"):
                     if all:
                         result.append(detector)
@@ -286,8 +297,14 @@ class Nexus(object):
 
         return result
 
-    def new_entry(self, entry="entry", program_name="pyFAI",
-                  title=None, force_time=None, force_name=False):
+    def new_entry(
+        self,
+        entry="entry",
+        program_name="pyFAI",
+        title=None,
+        force_time=None,
+        force_name=False,
+    ):
         """
         Create a new entry
 
@@ -316,15 +333,20 @@ class Nexus(object):
         self.to_close.append(entry_grp)
         return entry_grp
 
-    def new_instrument(self, entry="entry", instrument_name="id00",):
+    def new_instrument(
+        self,
+        entry="entry",
+        instrument_name="id00",
+    ):
         """
         Create an instrument in an entry or create both the entry and the instrument if
         """
         if not isinstance(entry, h5py.Group):
             entry = self.new_entry(entry)
         return self.new_class(entry, instrument_name, "NXinstrument")
-#        howto external link
-        # myfile['ext link'] = h5py.ExternalLink("otherfile.hdf5", "/path/to/resource")
+
+    #        howto external link
+    # myfile['ext link'] = h5py.ExternalLink("otherfile.hdf5", "/path/to/resource")
 
     def new_class(self, grp, name, class_type="NXcollection"):
         """
@@ -367,9 +389,12 @@ class Nexus(object):
         :param grp: HDF5 group
         :param class_type: name of the NeXus class
         """
-        coll = [grp[name] for name in grp
-                if isinstance(grp[name], h5py.Group) and
-                self.get_attr(grp[name], "NX_class") == class_type]
+        coll = [
+            grp[name]
+            for name in grp
+            if isinstance(grp[name], h5py.Group)
+            and self.get_attr(grp[name], "NX_class") == class_type
+        ]
         return coll
 
     def get_data(self, grp, attr=None, value=None):
@@ -379,14 +404,17 @@ class Nexus(object):
         :param attr: name of an attribute
         :param value: requested value
         """
-        coll = [grp[name] for name in grp
-                if isinstance(grp[name], h5py.Dataset) and
-                self.get_attr(grp[name], attr) == value]
+        coll = [
+            grp[name]
+            for name in grp
+            if isinstance(grp[name], h5py.Dataset)
+            and self.get_attr(grp[name], attr) == value
+        ]
         return coll
 
     def get_default_NXdata(self):
         """Return the default plot configured in the nexus structure.
-        
+
         :return: the group with the default plot or None if not found
         """
         entry_name = self.h5.attrs.get("default")
@@ -399,7 +427,9 @@ class Nexus(object):
                 else:
                     return entry_grp.get(nxdata_name)
 
-    def deep_copy(self, name, obj, where="/", toplevel=None, excluded=None, overwrite=False):
+    def deep_copy(
+        self, name, obj, where="/", toplevel=None, excluded=None, overwrite=False
+    ):
         """
         perform a deep copy:
         create a "name" entry in self containing a copy of the object
@@ -417,14 +447,18 @@ class Nexus(object):
             if name not in toplevel:
                 grp = toplevel.require_group(name)
                 for k, v in obj.attrs.items():
-                        grp.attrs[k] = v
+                    grp.attrs[k] = v
         elif isinstance(obj, h5py.Dataset):
             if name in toplevel:
                 if overwrite:
                     del toplevel[name]
-                    logger.warning("Overwriting %s in %s", toplevel[name].name, self.filename)
+                    logger.warning(
+                        "Overwriting %s in %s", toplevel[name].name, self.filename
+                    )
                 else:
-                    logger.warning("Not overwriting %s in %s", toplevel[name].name, self.filename)
+                    logger.warning(
+                        "Not overwriting %s in %s", toplevel[name].name, self.filename
+                    )
                     return
             toplevel[name] = obj[()]
             for k, v in obj.attrs.items():

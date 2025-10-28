@@ -26,23 +26,23 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Basic read support for NeXus/HDF5 files saved by Lambda-detectors. 
+Basic read support for NeXus/HDF5 files saved by Lambda-detectors.
 """
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "02/05/2024"
+__date__ = "27/10/2025"
 
 import logging
-logger = logging.getLogger(__name__)
 import posixpath
 import os
 import numpy
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
 from . import nexus
+
 try:
     import h5py
 except ImportError:
@@ -51,12 +51,13 @@ try:
     import hdf5plugin
 except ImportError:
     hdf5plugin = None
+logger = logging.getLogger(__name__)
 
 
 class LambdaImage(FabioImage):
     """FabIO image class for Images for Lambda detector
 
-    Lambda detector are medipix based detectors sold by X-Spectrum: 
+    Lambda detector are medipix based detectors sold by X-Spectrum:
     https://x-spectrum.de/products/lambda/
     """
 
@@ -70,7 +71,9 @@ class LambdaImage(FabioImage):
         Set up initial values
         """
         if not h5py:
-            raise RuntimeError("fabio.LambdaImage cannot be used without h5py. Please install h5py and restart")
+            raise RuntimeError(
+                "fabio.LambdaImage cannot be used without h5py. Please install h5py and restart"
+            )
 
         self.dataset = [data]
         self._data = None
@@ -103,7 +106,7 @@ class LambdaImage(FabioImage):
             if index == len(self.dataset):
                 self.dataset.append(data)
             elif index > len(self.dataset):
-            # pad dataset with None ?
+                # pad dataset with None ?
                 self.dataset += [None] * (1 + index - len(self.dataset))
                 self.dataset[index] = data
             else:
@@ -117,7 +120,10 @@ class LambdaImage(FabioImage):
         if self.h5 is None:
             return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
         else:
-            return "Lambda/nexus dataset with %i frames from %s" % (self.nframes, self.h5.filename)
+            return "Lambda/nexus dataset with %i frames from %s" % (
+                self.nframes,
+                self.h5.filename,
+            )
 
     def _readheader(self, infile):
         """
@@ -132,16 +138,20 @@ class LambdaImage(FabioImage):
         name_path = posixpath.join(self.DETECTOR_GRP, "local_name")
         with h5py.File(infile, mode="r") as h5:
             if not (data_path in h5 and description_path in h5):
-                raise NotGoodReader("HDF5's does not look like a Lambda-detector NeXus file.")
+                raise NotGoodReader(
+                    "HDF5's does not look like a Lambda-detector NeXus file."
+                )
             description = h5[description_path][()]
             if isinstance(description, bytes):
                 description = description.decode()
             else:
                 description = str(description)
             if description != "Lambda":
-                raise NotGoodReader("Nexus file does not look like it has been written by a Lambda-detector.")
+                raise NotGoodReader(
+                    "Nexus file does not look like it has been written by a Lambda-detector."
+                )
             if name_path in h5:
-                self.header["detector"] = str(h5[name_path][()]) 
+                self.header["detector"] = str(h5[name_path][()])
             else:
                 self.header["detector"] = "detector"
 
@@ -178,7 +188,7 @@ class LambdaImage(FabioImage):
             return self
 
     def getframe(self, num):
-        """ returns the frame numbered 'num' in the stack if applicable"""
+        """returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
             new_img = None
             if (num >= 0) and num < self.nframes:
@@ -195,7 +205,7 @@ class LambdaImage(FabioImage):
         return new_img
 
     def previous(self):
-        """ returns the previous file in the series as a FabioImage """
+        """returns the previous file in the series as a FabioImage"""
         new_image = None
         if self.nframes == 1:
             new_image = FabioImage.previous(self)
@@ -228,32 +238,49 @@ class LambdaImage(FabioImage):
         abs_name = os.path.abspath(filename)
         mode = "w"
         if hdf5plugin is None:
-            logger.warning("hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)")
-            compression = {"compression":"gzip",
-                           "compression_opts":1}
+            logger.warning(
+                "hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)"
+            )
+            compression = {"compression": "gzip", "compression_opts": 1}
         else:
             compression = hdf5plugin.Bitshuffle()
 
         with nexus.Nexus(abs_name, mode=mode) as nxs:
-            entry = nxs.new_entry(entry="entry",
-                                  program_name=None,
-                                  force_time=start_time,
-                                  force_name=True)
-            instrument_grp = nxs.new_class(entry, "instrument", class_type="NXinstrument")
-            detector_grp = nxs.new_class(instrument_grp, "detector", class_type="NXdetector")
+            entry = nxs.new_entry(
+                entry="entry", program_name=None, force_time=start_time, force_name=True
+            )
+            instrument_grp = nxs.new_class(
+                entry, "instrument", class_type="NXinstrument"
+            )
+            detector_grp = nxs.new_class(
+                instrument_grp, "detector", class_type="NXdetector"
+            )
             detector_grp["description"] = b"Lambda"
-            detector_grp["local_name"] = self.header.get("detector", "detector").encode()
-            detector_grp["layout"] = "X".join(str(i) for i in self.shape[-1::-1]).encode()
-            header_grp = nxs.new_class(detector_grp, "collection", class_type="NXcollection")
-            acq_grp = nxs.new_class(detector_grp, "acquisition", class_type="NXcollection")
+            detector_grp["local_name"] = self.header.get(
+                "detector", "detector"
+            ).encode()
+            detector_grp["layout"] = "X".join(
+                str(i) for i in self.shape[-1::-1]
+            ).encode()
+            nxs.new_class(detector_grp, "collection", class_type="NXcollection")
+            acq_grp = nxs.new_class(
+                detector_grp, "acquisition", class_type="NXcollection"
+            )
 
             acq_grp["frame_numbers"] = numpy.int32(self.nframes)
 
             shape = (self.nframes,) + self.shape
-            dataset = detector_grp.create_dataset("data", shape=shape, chunks=(1,) + self.shape, dtype=self.dtype, **compression)
+            dataset = detector_grp.create_dataset(
+                "data",
+                shape=shape,
+                chunks=(1,) + self.shape,
+                dtype=self.dtype,
+                **compression,
+            )
             dataset.attrs["interpretation"] = "image"
             for i, frame in enumerate(self.dataset):
                 dataset[i] = frame
+
 
 # This is for compatibility with old code:
 lambdaimage = LambdaImage

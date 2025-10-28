@@ -44,8 +44,7 @@ _PATTERN = re.compile(r"(\d+)\.(\d+)\.(\d+)(\w+)?$")
 
 
 def hexversion_fromstring(string):
-    """Calculate the hexadecimal version number from a string:
-    """
+    """Calculate the hexadecimal version number from a string:"""
     if string is not None:
         result = _PATTERN.match(string)
         if result is None:
@@ -58,9 +57,15 @@ def hexversion_fromstring(string):
     return calc_hexversion(major, minor, micro, releaselevel, serial=0)
 
 
-def deprecated(func=None, reason=None, replacement=None, since_version=None,
-               only_once=True, skip_backtrace_count=1,
-               deprecated_since=None):
+def deprecated(
+    func=None,
+    reason=None,
+    replacement=None,
+    since_version=None,
+    only_once=True,
+    skip_backtrace_count=1,
+    deprecated_since=None,
+):
     """
     Decorator that deprecates the use of a function
 
@@ -79,19 +84,20 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None,
     """
 
     def decorator(func):
-
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             name = func.__name__
 
-            deprecated_warning(type_='Function',
-                               name=name,
-                               reason=reason,
-                               replacement=replacement,
-                               since_version=since_version,
-                               only_once=only_once,
-                               skip_backtrace_count=skip_backtrace_count,
-                               deprecated_since=deprecated_since)
+            deprecated_warning(
+                type_="Function",
+                name=name,
+                reason=reason,
+                replacement=replacement,
+                since_version=since_version,
+                only_once=only_once,
+                skip_backtrace_count=skip_backtrace_count,
+                deprecated_since=deprecated_since,
+            )
             return func(*args, **kwargs)
 
         return wrapper
@@ -101,10 +107,16 @@ def deprecated(func=None, reason=None, replacement=None, since_version=None,
     return decorator
 
 
-def deprecated_warning(type_, name, reason=None, replacement=None,
-                       since_version=None, only_once=True,
-                       skip_backtrace_count=0,
-                       deprecated_since=None):
+def deprecated_warning(
+    type_,
+    name,
+    reason=None,
+    replacement=None,
+    since_version=None,
+    only_once=True,
+    skip_backtrace_count=0,
+    deprecated_since=None,
+):
     """
     Function to log a deprecation warning
 

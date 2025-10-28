@@ -33,12 +33,13 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2016-2016 European Synchrotron Radiation Facility"
-__date__ = "09/02/2023"
+__date__ = "27/10/2025"
 
 import logging
-logger = logging.getLogger(__name__)
 import numpy
 from .fabioimage import FabioImage, OrderedDict
+
+logger = logging.getLogger(__name__)
 
 
 def hex_to(stg, type_="int"):
@@ -96,7 +97,7 @@ class Fit2dImage(FabioImage):
                         infile.seek(0)
                         break
                 else:
-                    err = "issue while reading header, expected '\', got %s" % line[0]
+                    err = "issue while reading header, expected '', got %s" % line[0]
                     logger.error(err)
                     raise RuntimeError(err)
             key, line = line.split(b":", 1)
@@ -105,7 +106,7 @@ class Fit2dImage(FabioImage):
             key = key[1:].decode(self.ENC)
             if metadatatype == "s":
                 len_value = hex_to(line[9:17])
-                header[key] = line[17:17 + len_value].decode(self.ENC)
+                header[key] = line[17 : 17 + len_value].decode(self.ENC)
             elif metadatatype == "r":
                 header[key] = hex_to(line[9:17], "float")
             elif metadatatype == "i":
@@ -134,7 +135,7 @@ class Fit2dImage(FabioImage):
                     # Remove the sign bit which is the first in big-endian
                     # all pixels are in reverse order in the group of 31
                     r31 = r32[:, -1:0:-1]
-                    mask = r31.ravel()[:dim1 * dim2].reshape((dim2, dim1))
+                    mask = r31.ravel()[: dim1 * dim2].reshape((dim2, dim1))
                     header[key] = mask
                     continue
                 else:
@@ -142,10 +143,14 @@ class Fit2dImage(FabioImage):
                     logger.error(err)
                     raise RuntimeError(err)
                 raw = infile.read(self.num_block * self.BUFFER_SIZE)
-                decoded = numpy.frombuffer(raw, bytecode).copy().reshape((-1, self.BUFFER_SIZE // bpp))
+                decoded = (
+                    numpy.frombuffer(raw, bytecode)
+                    .copy()
+                    .reshape((-1, self.BUFFER_SIZE // bpp))
+                )
                 # There is a bug in this format: throw away 3/4 of the read data:
-                decoded = decoded[:, :self.PIXELS_PER_CHUNK].ravel()
-                header[key] = decoded[:dim1 * dim2].reshape(dim2, dim1)
+                decoded = decoded[:, : self.PIXELS_PER_CHUNK].ravel()
+                header[key] = decoded[: dim1 * dim2].reshape(dim2, dim1)
         self.header = header
 
     def read(self, fname, frame=None):

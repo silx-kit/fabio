@@ -21,22 +21,18 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-"""Unit tests for nexus file reader
-"""
+"""Unit tests for nexus file reader"""
 
 import unittest
 import os
 import logging
+from .utilstest import UtilsTest
+from .. import nexus
 
 logger = logging.getLogger(__name__)
 
-from .utilstest import UtilsTest
-from .. import nexus
-import numpy
-
 
 class TestNexus(unittest.TestCase):
-
     def setUp(self):
         if nexus.h5py is None:
             self.skipTest("h5py library is not available. Skipping Nexus test")
@@ -74,6 +70,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

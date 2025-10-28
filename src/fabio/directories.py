@@ -40,6 +40,7 @@ import os
 import getpass
 import tempfile
 import logging
+
 logger = logging.getLogger(__name__)
 
 SHARED_TESTIMAGES = "/usr/share/fabio/testimages"
@@ -54,7 +55,9 @@ elif os.path.isdir(SHARED_TESTIMAGES):
     testimages = SHARED_TESTIMAGES
 else:
     # create a temporary folder
-    testimages = os.path.join(tempfile.gettempdir(), "fabio_testimages_%s" % (getpass.getuser()))
+    testimages = os.path.join(
+        tempfile.gettempdir(), "fabio_testimages_%s" % (getpass.getuser())
+    )
 
 if not os.path.exists(testimages):
     os.makedirs(testimages)

@@ -28,19 +28,34 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/03/2024"
+__date__ = "27/10/2025"
 __status__ = "stable"
 
 import sys
 import logging
+from .version import __date__ as date, version, version_info, hexversion, strictversion  # noqa
+from . import fabioformats as _fabioformats
+from . import fabioimage  # noqa
+from . import openimage  # noqa
+from .fabioutils import (
+    jump_filename,
+    FilenameObject,
+    previous_filename,
+    next_filename,
+    deconstruct_filename,
+    extract_filenumber,
+    getnum,
+    construct_filename,
+    exists,
+)  # noqa
+from .compression import COMPRESSORS  # noqa
+from .openimage import openimage as open  # noqa
+from .openimage import open_series as open_series  # noqa
+from .openimage import openheader as openheader  # noqa
 
 if "ps1" in dir(sys):
     # configure logging with interactive console
     logging.basicConfig()
-
-import os
-from .version import __date__ as date, version, version_info, hexversion, strictversion  # noqa
-from . import fabioformats as _fabioformats
 
 # provide a global fabio API
 factory = _fabioformats.factory
@@ -48,19 +63,8 @@ factory = _fabioformats.factory
 # feed the library with all the available formats
 _fabioformats.register_default_formats()
 
-from . import fabioimage
-from . import openimage
-
-from .fabioutils import COMPRESSORS, jump_filename, FilenameObject, \
-    previous_filename, next_filename, deconstruct_filename, \
-    extract_filenumber, getnum, construct_filename, exists
-
 # Compatibility with outside world:
 filename_object = FilenameObject
-
-from .openimage import openimage as open
-from .openimage import open_series as open_series
-from .openimage import openheader as openheader
 
 
 def register(codec_class):
@@ -85,7 +89,7 @@ def register(codec_class):
         class MyCodec(fabio.fabioimage.FabioImage):
             pass
     """
-    assert(issubclass(codec_class, fabioimage.FabioImage))
+    assert issubclass(codec_class, fabioimage.FabioImage)
     _fabioformats.register(codec_class)
     return codec_class
 
@@ -102,6 +106,7 @@ def tests():
     export http_proxy=http://proxy.site.com:3128
     """
     from . import test
+
     test.run_tests()
 
 
@@ -110,5 +115,6 @@ def benchmarks():
     Run the benchmarks
     """
     from . import benchmark
+
     res = benchmark.run()
     return res

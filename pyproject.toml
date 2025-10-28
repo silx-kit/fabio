@@ -59,8 +59,8 @@ requires = [
     "tomli>=1.0.0; python_version < '3.11'"
 ]
 [project.optional-dependencies]
-gui = [ "pyqt5", "matplotlib" ]
-all = ["pyqt5", "matplotlib"]
+gui = [ "pyside6", "matplotlib", "packaging" ]
+all = [ "pyside6", "matplotlib", "packaging" ]
 
 [project.urls]
 homepage = 'http://www.silx.org'

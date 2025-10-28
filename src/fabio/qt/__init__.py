@@ -50,7 +50,7 @@ see `qtpy <https://pypi.org/project/QtPy/>`_.
 
 from ._qt import *  # noqa
 
-if BINDING == "PySide6":
+if BINDING == "PySide6":  # noqa
     # Import loadUi wrapper
     from ._pyside_dynamic import loadUi  # noqa
 from ._utils import *  # noqa

@@ -41,6 +41,7 @@ import time
 from . import test_all
 
 import logging
+
 profiler = logging.getLogger("memProf")
 profiler.setLevel(logging.DEBUG)
 profiler.handlers.append(logging.FileHandler("profile.log"))
@@ -55,7 +56,6 @@ else:
 
 
 class TestResult(unittest.TestResult):
-
     def startTest(self, test):
         if sys.platform == "win32":
             raise RuntimeError(WIN32_ERROR)
@@ -67,17 +67,20 @@ class TestResult(unittest.TestResult):
         unittest.TestResult.stopTest(self, test)
         if sys.platform == "win32":
             raise RuntimeError(WIN32_ERROR)
-        mem = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start) / 1e3
-        profiler.info(f"Time: {time.perf_counter() - self.__time_start:.3f}s \t RAM: {mem:.3f}Mb\t{test.id()}")
+        mem = (
+            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss - self.__mem_start
+        ) / 1e3
+        profiler.info(
+            f"Time: {time.perf_counter() - self.__time_start:.3f}s \t RAM: {mem:.3f}Mb\t{test.id()}"
+        )
 
 
 class ProfileTestRunner(unittest.TextTestRunner):
-
     def _makeResult(self):
         return TestResult(stream=sys.stderr, descriptions=True, verbosity=1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     suite = test_all.suite()
     runner = ProfileTestRunner()
     testresult = runner.run(suite)

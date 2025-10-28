@@ -229,18 +229,10 @@ typedef struct frame_header_type {
 """
 
 # Convert mar c header file types to python struct module types
-C_TO_STRUCT = {
-    "INT32": "i",
-    "UINT32": "I",
-    "char": "c",
-    "UINT16": "H"}
+C_TO_STRUCT = {"INT32": "i", "UINT32": "I", "char": "c", "UINT16": "H"}
 
 # Sizes (bytes) of mar c header objects
-C_SIZES = {
-    "INT32": 4,
-    "UINT32": 4,
-    "char": 1,
-    "UINT16": 2}
+C_SIZES = {"INT32": 4, "UINT32": 4, "char": 1, "UINT16": 2}
 
 # This was worked out by trial and error from a trial image I think
 MAXIMAGES = 9
@@ -314,8 +306,8 @@ def interpret_header(header, fmt, names):
 
 
 class MarccdImage(TifImage):
-    """ Read in data in mar ccd format, also
-        MarMosaic images, including header info """
+    """Read in data in mar ccd format, also
+    MarMosaic images, including header info"""
 
     DESCRIPTION = "File format from MarCCD and MarMosaic images"
 

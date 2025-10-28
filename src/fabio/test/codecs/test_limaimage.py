@@ -26,19 +26,18 @@
 # THE SOFTWARE.
 #
 
-"""Test Eiger images
-"""
+"""Test Eiger images"""
 
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
 import numpy
 from fabio.openimage import openimage
 from fabio.limaimage import LimaImage, h5py
 from ..utilstest import UtilsTest
 from ..test_frames import _CommonTestFrames
+
+logger = logging.getLogger(__name__)
 
 
 def make_hdf5(name, shape=(50, 99, 101)):
@@ -50,9 +49,18 @@ def make_hdf5(name, shape=(50, 99, 101)):
         h.attrs["default"] = "/entry"
         e = h.require_group("/entry/measurement")
         if len(shape) == 2:
-            e.require_dataset("data", shape, compression="gzip", compression_opts=9, dtype="uint16")
+            e.require_dataset(
+                "data", shape, compression="gzip", compression_opts=9, dtype="uint16"
+            )
         elif len(shape) == 3:
-            e.require_dataset("data", shape, chunks=(1,) + shape[1:], compression="gzip", compression_opts=9, dtype="uint16")
+            e.require_dataset(
+                "data",
+                shape,
+                chunks=(1,) + shape[1:],
+                compression="gzip",
+                compression_opts=9,
+                dtype="uint16",
+            )
 
 
 class TestLima(_CommonTestFrames):
@@ -61,7 +69,7 @@ class TestLima(_CommonTestFrames):
     @classmethod
     def setUpClass(cls):
         cls.fn3 = os.path.join(UtilsTest.tempdir, "lima3d.h5")
-        print(cls.fn3 )
+        print(cls.fn3)
         make_hdf5(cls.fn3, (17, 99, 101))
         super(TestLima, cls).setUpClass()
 
@@ -101,7 +109,7 @@ class TestLima(_CommonTestFrames):
 
     def test_write(self):
         fn = os.path.join(UtilsTest.tempdir, "lima_write.h5")
-        shape=(10, 11, 13)
+        shape = (10, 11, 13)
         ary = numpy.random.randint(0, 100, size=shape)
         e = LimaImage()
         for i, d in enumerate(ary):
@@ -111,17 +119,20 @@ class TestLima(_CommonTestFrames):
         e.save(fn)
         self.assertTrue(os.path.exists(fn), "file exists")
         f = openimage(fn)
-        self.assertEqual(str(f.__class__.__name__), "LimaImage", "Used the write reader")
+        self.assertEqual(
+            str(f.__class__.__name__), "LimaImage", "Used the write reader"
+        )
         self.assertEqual(shape[0], f.nframes, "shape matches")
         self.assertEqual(shape[1:], f.shape, "shape matches")
-        self.assertEqual(abs(f.data-ary[0]).max(), 0, "first frame matches")
-        for i,g in enumerate(f):
-            self.assertEqual(abs(g.data-ary[i]).max(), 0, f"frame {i} matches")
+        self.assertEqual(abs(f.data - ary[0]).max(), 0, "first frame matches")
+        for i, g in enumerate(f):
+            self.assertEqual(abs(g.data - ary[i]).max(), 0, f"frame {i} matches")
 
     def test_identify(self):
         fn = UtilsTest.getimage("output_sparse_0_00000.h5")
         res = openimage(fn)
         self.assertTrue(res.__class__.__name__.startswith("Sparse"))
+
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
@@ -130,6 +141,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

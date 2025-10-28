@@ -51,25 +51,31 @@ from .fabioimage import FabioImage
 from .compression import compByteOffset, decByteOffset, md5sum
 from .ext._cif import split_tokens
 from . import version, date
+
 logger = logging.getLogger(__name__)
-__version__ = ["##CBF: VERSION 1.5, FabIO version %s (%s) - %s" % (version, date, __copyright__)]
+__version__ = [
+    "##CBF: VERSION 1.5, FabIO version %s (%s) - %s" % (version, date, __copyright__)
+]
 
-DATA_TYPES = {"signed 8-bit integer": "int8",
-              "signed 16-bit integer": "int16",
-              "signed 32-bit integer": "int32",
-              "signed 64-bit integer": "int64",
-              "unsigned 8-bit integer": "uint8",
-              "unsigned 16-bit integer": "uint16",
-              "unsigned 32-bit integer": "uint32",
-              "unsigned 64-bit integer": "uint64"
-              }
+DATA_TYPES = {
+    "signed 8-bit integer": "int8",
+    "signed 16-bit integer": "int16",
+    "signed 32-bit integer": "int32",
+    "signed 64-bit integer": "int64",
+    "unsigned 8-bit integer": "uint8",
+    "unsigned 16-bit integer": "uint16",
+    "unsigned 32-bit integer": "uint32",
+    "unsigned 64-bit integer": "uint64",
+}
 
-MINIMUM_KEYS = ["X-Binary-Size-Fastest-Dimension",
-                "X-Binary-Size-Second-Dimension",
-                "X-Binary-Size",
-                "X-Binary-Number-of-Elements",
-                'X-Binary-Element-Type',
-                'X-Binary-Number-of-Elements']
+MINIMUM_KEYS = [
+    "X-Binary-Size-Fastest-Dimension",
+    "X-Binary-Size-Second-Dimension",
+    "X-Binary-Size",
+    "X-Binary-Number-of-Elements",
+    "X-Binary-Element-Type",
+    "X-Binary-Number-of-Elements",
+]
 
 
 class CbfImage(FabioImage):
@@ -156,10 +162,12 @@ class CbfImage(FabioImage):
                     self.cbs = value
             else:
                 if isinstance(value, str):
-                    value = value.strip(" \"\n\r\t")
+                    value = value.strip(' "\n\r\t')
                 self.header[key] = value
         if self.header.get("_array_data.header_convention") == "PILATUS_1.2":
-            self.pilatus_headers = PilatusHeader(self.header.get("_array_data.header_contents", ""))
+            self.pilatus_headers = PilatusHeader(
+                self.header.get("_array_data.header_contents", "")
+            )
 
     def _read_binary_section_header(self, inStream):
         """
@@ -169,17 +177,17 @@ class CbfImage(FabioImage):
         while self.start_binary < 0:
             self.cbs += inStream.read(self.PADDING)
             self.start_binary = self.cbs.find(self.STARTER)
-        bin_headers = self.cbs[:self.start_binary]
+        bin_headers = self.cbs[: self.start_binary]
         lines = bin_headers.split(b"\n")
         for line in lines[1:]:
             if len(line) < 10:
                 break
             try:
-                key, val = line.split(b':', 1)
+                key, val = line.split(b":", 1)
             except ValueError:
-                key, val = line.split(b'=', 1)
+                key, val = line.split(b"=", 1)
             key = key.strip().decode("ASCII")
-            self.header[key] = val.strip(b" \"\n\r\t").decode("ASCII")
+            self.header[key] = val.strip(b' "\n\r\t').decode("ASCII")
         missing = []
         for item in MINIMUM_KEYS:
             if item not in self.header:
@@ -188,13 +196,13 @@ class CbfImage(FabioImage):
             logger.info("Mandatory keys missing in CBF file: " + ", ".join(missing))
         # Compute image size
         try:
-            slow = int(self.header['X-Binary-Size-Fastest-Dimension'])
-            fast = int(self.header['X-Binary-Size-Second-Dimension'])
+            slow = int(self.header["X-Binary-Size-Fastest-Dimension"])
+            fast = int(self.header["X-Binary-Size-Second-Dimension"])
             self._shape = fast, slow
         except (KeyError, ValueError):
             raise IOError("CBF file %s is corrupt, no dimensions in it" % inStream.name)
         try:
-            bytecode = DATA_TYPES[self.header['X-Binary-Element-Type']]
+            bytecode = DATA_TYPES[self.header["X-Binary-Element-Type"]]
         except KeyError:
             bytecode = "int32"
             logger.warning("Defaulting type to int32")
@@ -207,23 +215,37 @@ class CbfImage(FabioImage):
         :return: raw compressed stream
         """
         if self.CIF_BINARY_BLOCK_KEY not in self.cif:
-            err = "Not key %s in CIF, no CBF image in %s" % (self.CIF_BINARY_BLOCK_KEY, self.filename)
+            err = "Not key %s in CIF, no CBF image in %s" % (
+                self.CIF_BINARY_BLOCK_KEY,
+                self.filename,
+            )
             logger.error(err)
             for kv in self.cif.items():
                 logger.debug("%s: %s", kv)
             raise RuntimeError(err)
         if self.cif[self.CIF_BINARY_BLOCK_KEY] == "CIF Binary Section":
-            size = len(self.STARTER) + int(self.header["X-Binary-Size"]) - len(self.cbs) + self.start_binary
+            size = (
+                len(self.STARTER)
+                + int(self.header["X-Binary-Size"])
+                - len(self.cbs)
+                + self.start_binary
+            )
             if size > 0:
                 self.cbs += infile.read(size)
             elif size < 0:
                 self.cbs = self.cbs[:size]
         else:
-            if len(self.cif[self.CIF_BINARY_BLOCK_KEY]) > int(self.header["X-Binary-Size"]) + self.start_binary + len(self.STARTER):
-                self.cbs = self.cif[self.CIF_BINARY_BLOCK_KEY][:int(self.header["X-Binary-Size"]) + self.start_binary + len(self.STARTER)]
+            if len(self.cif[self.CIF_BINARY_BLOCK_KEY]) > int(
+                self.header["X-Binary-Size"]
+            ) + self.start_binary + len(self.STARTER):
+                self.cbs = self.cif[self.CIF_BINARY_BLOCK_KEY][
+                    : int(self.header["X-Binary-Size"])
+                    + self.start_binary
+                    + len(self.STARTER)
+                ]
             else:
                 self.cbs = self.cif[self.CIF_BINARY_BLOCK_KEY]
-        return self.cbs[self.start_binary + len(self.STARTER):]
+        return self.cbs[self.start_binary + len(self.STARTER) :]
 
     def read(self, fname, frame=None, check_MD5=True, only_raw=False):
         """Read in header into self.header and the data   into self.data
@@ -245,19 +267,29 @@ class CbfImage(FabioImage):
             return binary_data
 
         if ("Content-MD5" in self.header) and check_MD5:
-                ref = numpy.bytes_(self.header["Content-MD5"])
-                obt = md5sum(binary_data)
-                if ref != obt:
-                    logger.error("Checksum of binary data mismatch: expected %s, got %s" % (ref, obt))
+            ref = numpy.bytes_(self.header["Content-MD5"])
+            obt = md5sum(binary_data)
+            if ref != obt:
+                logger.error(
+                    "Checksum of binary data mismatch: expected %s, got %s" % (ref, obt)
+                )
 
         if self.header["conversions"] == "x-CBF_BYTE_OFFSET":
-            data = numpy.ascontiguousarray(self._readbinary_byte_offset(binary_data,), self._dtype)
+            data = numpy.ascontiguousarray(
+                self._readbinary_byte_offset(
+                    binary_data,
+                ),
+                self._dtype,
+            )
             data.shape = self._shape
             self.data = data
             self._shape = None
             self._dtype = None
         else:
-            raise Exception(IOError, "Compression scheme not yet supported, please contact the author")
+            raise Exception(
+                IOError,
+                "Compression scheme not yet supported, please contact the author",
+            )
 
         self.resetvals()
         return self
@@ -290,28 +322,34 @@ class CbfImage(FabioImage):
         for key, value in DATA_TYPES.items():
             if value == self.data.dtype:
                 dtype = key
-        binary_block = [b"--CIF-BINARY-FORMAT-SECTION--",
-                        b"Content-Type: application/octet-stream;",
-                        b'     conversions="x-CBF_BYTE_OFFSET"',
-                        b'Content-Transfer-Encoding: BINARY',
-                        numpy.bytes_("X-Binary-Size: %d" % (len(binary_blob))),
-                        b"X-Binary-ID: 1",
-                        numpy.bytes_('X-Binary-Element-Type: "%s"' % (dtype)),
-                        b"X-Binary-Element-Byte-Order: LITTLE_ENDIAN",
-                        b"Content-MD5: " + md5sum(binary_blob),
-                        numpy.bytes_("X-Binary-Number-of-Elements: %d" % (dim1 * dim2)),
-                        numpy.bytes_("X-Binary-Size-Fastest-Dimension: %d" % dim1),
-                        numpy.bytes_("X-Binary-Size-Second-Dimension: %d" % dim2),
-                        b"X-Binary-Size-Padding: 1",
-                        b"",
-                        self.STARTER + binary_blob,
-                        b"",
-                        b"--CIF-BINARY-FORMAT-SECTION----"]
+        binary_block = [
+            b"--CIF-BINARY-FORMAT-SECTION--",
+            b"Content-Type: application/octet-stream;",
+            b'     conversions="x-CBF_BYTE_OFFSET"',
+            b"Content-Transfer-Encoding: BINARY",
+            numpy.bytes_("X-Binary-Size: %d" % (len(binary_blob))),
+            b"X-Binary-ID: 1",
+            numpy.bytes_('X-Binary-Element-Type: "%s"' % (dtype)),
+            b"X-Binary-Element-Byte-Order: LITTLE_ENDIAN",
+            b"Content-MD5: " + md5sum(binary_blob),
+            numpy.bytes_("X-Binary-Number-of-Elements: %d" % (dim1 * dim2)),
+            numpy.bytes_("X-Binary-Size-Fastest-Dimension: %d" % dim1),
+            numpy.bytes_("X-Binary-Size-Second-Dimension: %d" % dim2),
+            b"X-Binary-Size-Padding: 1",
+            b"",
+            self.STARTER + binary_blob,
+            b"",
+            b"--CIF-BINARY-FORMAT-SECTION----",
+        ]
 
         if "_array_data.header_contents" not in self.header:
             nonCifHeaders = []
         else:
-            nonCifHeaders = [i.strip()[2:] for i in self.header["_array_data.header_contents"].split("\n") if i.find("# ") >= 0]
+            nonCifHeaders = [
+                i.strip()[2:]
+                for i in self.header["_array_data.header_contents"].split("\n")
+                if i.find("# ") >= 0
+            ]
 
         for key in self.header:
             if key.startswith("_"):
@@ -333,10 +371,14 @@ class CbfImage(FabioImage):
             self.cif["_array_data.header_convention"] = "PILATUS_1.2"
 
         if len(nonCifHeaders) > 0:
-            self.cif["_array_data.header_contents"] = "\r\n".join(["# %s" % i for i in nonCifHeaders])
+            self.cif["_array_data.header_contents"] = "\r\n".join(
+                ["# %s" % i for i in nonCifHeaders]
+            )
 
         self.cbf = b"\r\n".join(binary_block)
-        block = b"\r\n".join([b"", self.CIF_BINARY_BLOCK_KEY.encode("ASCII"), b";", self.cbf, b";"])
+        block = b"\r\n".join(
+            [b"", self.CIF_BINARY_BLOCK_KEY.encode("ASCII"), b";", self.cbf, b";"]
+        )
         self.cif.pop(self.CIF_BINARY_BLOCK_KEY, None)
         with open(fname, "wb") as out_file:
             out_file.write(self.cif.tostring(fname, "\r\n").encode("ASCII"))
@@ -354,12 +396,13 @@ class CIF(dict):
     keys are always unicode (str in python3)
     values are bytes
     """
+
     EOL = [numpy.bytes_(i) for i in ("\r", "\n", "\r\n", "\n\r")]
     BLANK = [numpy.bytes_(i) for i in (" ", "\t")] + EOL
     SINGLE_QUOTE = numpy.bytes_("'")
     DOUBLE_QUOTE = numpy.bytes_('"')
-    SEMICOLUMN = numpy.bytes_(';')
-    DOT = numpy.bytes_('.')
+    SEMICOLUMN = numpy.bytes_(";")
+    DOT = numpy.bytes_(".")
     START_COMMENT = (SINGLE_QUOTE, DOUBLE_QUOTE)
     BINARY_MARKER = numpy.bytes_("--CIF-BINARY-FORMAT-SECTION--")
     HASH = numpy.bytes_("#")
@@ -410,11 +453,15 @@ class CIF(dict):
                 infile = open(_strFilename, "rb")
                 own_fd = True
             else:
-                raise RuntimeError("CIF.loadCIF: No such file to open: %s" % _strFilename)
+                raise RuntimeError(
+                    "CIF.loadCIF: No such file to open: %s" % _strFilename
+                )
         elif "read" in dir(_strFilename):
             infile = _strFilename
         else:
-            raise RuntimeError("CIF.loadCIF: what is %s type %s" % (_strFilename, type(_strFilename)))
+            raise RuntimeError(
+                "CIF.loadCIF: what is %s type %s" % (_strFilename, type(_strFilename))
+            )
         if _bKeepComment:
             self._parseCIF(numpy.bytes_(infile.read()))
         else:
@@ -452,8 +499,11 @@ class CIF(dict):
         :rtype: string
         """
         if "read" not in dir(instream):
-            raise RuntimeError("CIF._readCIF(instream): I expected instream to be an opened file,\
-             here I got %s type %s" % (instream, type(instream)))
+            raise RuntimeError(
+                "CIF._readCIF(instream): I expected instream to be an opened file,\
+             here I got %s type %s"
+                % (instream, type(instream))
+            )
         out_bytes = numpy.bytes_("")
         for sLine in instream:
             nline = numpy.bytes_(sLine)
@@ -462,11 +512,17 @@ class CIF(dict):
                 if cls.isAscii(nline):
                     out_bytes += nline[:pos] + numpy.bytes_(os.linesep)
                 if pos > 80:
-                    logger.warning("This line is too long and could cause problems in PreQuest: %s", sLine)
+                    logger.warning(
+                        "This line is too long and could cause problems in PreQuest: %s",
+                        sLine,
+                    )
             else:
                 out_bytes += nline
                 if len(sLine.strip()) > 80:
-                    logger.warning("This line is too long and could cause problems in PreQuest: %s", sLine)
+                    logger.warning(
+                        "This line is too long and could cause problems in PreQuest: %s",
+                        sLine,
+                    )
         return out_bytes
 
     def _parseCIF(self, bytes_text):
@@ -486,7 +542,11 @@ class CIF(dict):
         loop = []
         fields = split_tokens(bytes_text)
 
-        logger.debug("After split got %s fields of len: %s", len(fields), [len(i) for i in fields])
+        logger.debug(
+            "After split got %s fields of len: %s",
+            len(fields),
+            [len(i) for i in fields],
+        )
 
         for idx, field in enumerate(fields):
             if field.lower() == self.LOOP:
@@ -498,7 +558,7 @@ class CIF(dict):
                 looplen.append(length)
 
             for i in range(len(loopidx) - 1, -1, -1):
-                f1 = fields[:loopidx[i]] + fields[loopidx[i] + looplen[i]:]
+                f1 = fields[: loopidx[i]] + fields[loopidx[i] + looplen[i] :]
                 fields = f1
 
             self[self.LOOP.decode("ASCII")] = loop
@@ -532,7 +592,7 @@ class CIF(dict):
                 idx = 0
                 finished = False
                 while not finished:
-                    idx += 1 + bytes_text[idx + 1:].find(cls.SINGLE_QUOTE)
+                    idx += 1 + bytes_text[idx + 1 :].find(cls.SINGLE_QUOTE)
                     if idx >= len(bytes_text) - 1:
                         fields.append(bytes_text[1:-1].strip())
                         bytes_text = numpy.bytes_("")
@@ -541,7 +601,7 @@ class CIF(dict):
 
                     if bytes_text[idx + 1] in cls.BLANK:
                         fields.append(bytes_text[1:idx].strip())
-                        tmp_text = bytes_text[idx + 1:]
+                        tmp_text = bytes_text[idx + 1 :]
                         bytes_text = tmp_text.strip()
                         finished = True
 
@@ -549,7 +609,7 @@ class CIF(dict):
                 idx = 0
                 finished = False
                 while not finished:
-                    idx += 1 + bytes_text[idx + 1:].find(cls.DOUBLE_QUOTE)
+                    idx += 1 + bytes_text[idx + 1 :].find(cls.DOUBLE_QUOTE)
                     if idx >= len(bytes_text) - 1:
                         fields.append(bytes_text[1:-1].strip())
                         bytes_text = numpy.bytes_("")
@@ -558,7 +618,7 @@ class CIF(dict):
 
                     if bytes_text[idx + 1] in cls.BLANK:
                         fields.append(bytes_text[1:idx].strip())
-                        tmp_text = bytes_text[idx + 1:]
+                        tmp_text = bytes_text[idx + 1 :]
                         bytes_text = tmp_text.strip()
                         finished = True
 
@@ -573,10 +633,10 @@ class CIF(dict):
                     idx = 0
                 finished = False
                 while not finished:
-                    idx += 1 + bytes_text[idx + 1:].find(cls.SEMICOLUMN)
+                    idx += 1 + bytes_text[idx + 1 :].find(cls.SEMICOLUMN)
                     if bytes_text[idx - 1] in cls.EOL:
-                        fields.append(bytes_text[1:idx - 1].strip())
-                        tmp_text = bytes_text[idx + 1:]
+                        fields.append(bytes_text[1 : idx - 1].strip())
+                        tmp_text = bytes_text[idx + 1 :]
                         bytes_text = tmp_text.strip()
                         finished = True
             else:
@@ -589,7 +649,12 @@ class CIF(dict):
                         continue
                 start_binary = bytes_text.find(cls.BINARY_MARKER)
                 if start_binary > 0:
-                    end_binary = bytes_text[start_binary + 1:].find(cls.BINARY_MARKER) + start_binary + 1 + len(cls.BINARY_MARKER)
+                    end_binary = (
+                        bytes_text[start_binary + 1 :].find(cls.BINARY_MARKER)
+                        + start_binary
+                        + 1
+                        + len(cls.BINARY_MARKER)
+                    )
                     fields.append(bytes_text[:end_binary])
                     bytes_text = bytes_text[end_binary:].strip()
                 else:
@@ -651,9 +716,9 @@ class CIF(dict):
                 loop.append(element)
         return loop, 1 + len(keys) + len(data), keys
 
-##########################################
-# everything needed to  write a CIF file #
-##########################################
+    ##########################################
+    # everything needed to  write a CIF file #
+    ##########################################
     def saveCIF(self, _strFilename="test.cif", linesep=os.linesep, binary=False):
         """Transforms the CIF object in string then write it into the given file
         :param _strFilename: the of the file to be written
@@ -698,7 +763,9 @@ class CIF(dict):
                 continue
             if sKey not in self:
                 self._ordered.remove(sKey)
-                logger.debug("Skipping key %s from ordered list as no more present in dict")
+                logger.debug(
+                    "Skipping key %s from ordered list as no more present in dict"
+                )
                 continue
             sValue = str(self[sKey])
             if sValue.find("\n") > -1:  # should add value  between ;;
@@ -721,7 +788,10 @@ class CIF(dict):
                 lstStrCif.append("loop_ ")
                 lKeys = loop[0]
                 llData = loop[1]
-                lstStrCif += [f" {sKey.decode() if isinstance(sKey, bytes) else str(sKey)}" for sKey in lKeys]
+                lstStrCif += [
+                    f" {sKey.decode() if isinstance(sKey, bytes) else str(sKey)}"
+                    for sKey in lKeys
+                ]
                 for lData in llData:
                     sLine = " "
                     for key in lKeys:
@@ -734,7 +804,9 @@ class CIF(dict):
                             lstStrCif += [sLine, ";", str(sRawValue), ";"]
                             sLine = " "
                         else:
-                            if len(sRawValue.split()) > 1:  # should add value between ''
+                            if (
+                                len(sRawValue.split()) > 1
+                            ):  # should add value between ''
                                 value = "'%s'" % (sRawValue)
                             else:
                                 value = str(sRawValue)
@@ -796,7 +868,7 @@ class CIF(dict):
             logger.error(errStr)
             raise IOError(errStr)
         lInFile = open(_strFilename, "r").readlines()
-        self["_audit_creation_method"] = 'From 2-D detector using FIT2D and CIFfile'
+        self["_audit_creation_method"] = "From 2-D detector using FIT2D and CIFfile"
         self["_pd_meas_scan_method"] = "fixed"
         self["_pd_spec_description"] = lInFile[0].strip()
         try:
@@ -817,7 +889,7 @@ class CIF(dict):
             limitsOK = False
             f2ThetaMin = 180.0
             f2ThetaMax = 0
-#        print "limitsOK:", limitsOK
+        #        print "limitsOK:", limitsOK
         for sLine in lInFile[4:]:
             sCleaned = sLine.split("#")[0].strip()
             data = sCleaned.split()
@@ -831,8 +903,10 @@ class CIF(dict):
                 lOneLoop.append({"_pd_meas_intensity_total": data[1]})
         if not iLenData:
             iLenData = len(lOneLoop)
-        assert (iLenData == len(lOneLoop))
-        self["_pd_meas_2theta_range_inc"] = "%.4f" % ((f2ThetaMax - f2ThetaMin) / (iLenData - 1))
+        assert iLenData == len(lOneLoop)
+        self["_pd_meas_2theta_range_inc"] = "%.4f" % (
+            (f2ThetaMax - f2ThetaMin) / (iLenData - 1)
+        )
         if self["_pd_meas_2theta_range_inc"] < 0:
             self["_pd_meas_2theta_range_inc"] = abs(self["_pd_meas_2theta_range_inc"])
             tmp = f2ThetaMax
@@ -845,7 +919,7 @@ class CIF(dict):
 
     @staticmethod
     def LoopHasKey(loop, key):
-        "Returns True if the key (string) exist in the array called loop"""
+        "Returns True if the key (string) exist in the array called loop"
         try:
             loop.index(key)
             return True
@@ -866,44 +940,100 @@ class PilatusKey(NamedTuple):
 
 class PilatusHeader(object):
     KEYWORDS = OrderedDict()
-    KEYWORDS["Detector"] = PilatusKey("Detector", 0, slice(1, None), str, "Detector: {}")
-    KEYWORDS["sensor"] = PilatusKey("sensor", 1, [0, 3], [str, float], "{} sensor, thickness {} m")
-    KEYWORDS["Pixel_size"] = PilatusKey("Pixel_size", 0, [1, 4], [float, float], "Pixel_size {} m x {} m")
-    KEYWORDS["Exposure_time"] = PilatusKey("Exposure_time", 0, [1], [float], "Exposure_time {} s")
-    KEYWORDS["Exposure_period"] = PilatusKey("Exposure_period", 0, [1], [float], "Exposure_period {} s")
+    KEYWORDS["Detector"] = PilatusKey(
+        "Detector", 0, slice(1, None), str, "Detector: {}"
+    )
+    KEYWORDS["sensor"] = PilatusKey(
+        "sensor", 1, [0, 3], [str, float], "{} sensor, thickness {} m"
+    )
+    KEYWORDS["Pixel_size"] = PilatusKey(
+        "Pixel_size", 0, [1, 4], [float, float], "Pixel_size {} m x {} m"
+    )
+    KEYWORDS["Exposure_time"] = PilatusKey(
+        "Exposure_time", 0, [1], [float], "Exposure_time {} s"
+    )
+    KEYWORDS["Exposure_period"] = PilatusKey(
+        "Exposure_period", 0, [1], [float], "Exposure_period {} s"
+    )
     KEYWORDS["Tau"] = PilatusKey("Tau", 0, [1], [float], "Tau = {} s")
-    KEYWORDS["Count_cutoff"] = PilatusKey("Count_cutoff", 0, [1], [int], "Count_cutoff {} counts")
-    KEYWORDS["Threshold_setting"] = PilatusKey("Threshold_setting", 0, [1], [float], "Threshold_setting: {} eV")
-    KEYWORDS["Gain_setting"] = PilatusKey("Gain_setting", 0, [1, 2], [str, str], "Gain_setting: {} {} (vrf = -0.200)")
-    KEYWORDS["N_excluded_pixels"] = PilatusKey("N_excluded_pixels", 0, [1], [int], "N_excluded_pixels = {}")
-    KEYWORDS["Excluded_pixels"] = PilatusKey("Excluded_pixels", 0, [1], [str], "Excluded_pixels: {}")
+    KEYWORDS["Count_cutoff"] = PilatusKey(
+        "Count_cutoff", 0, [1], [int], "Count_cutoff {} counts"
+    )
+    KEYWORDS["Threshold_setting"] = PilatusKey(
+        "Threshold_setting", 0, [1], [float], "Threshold_setting: {} eV"
+    )
+    KEYWORDS["Gain_setting"] = PilatusKey(
+        "Gain_setting", 0, [1, 2], [str, str], "Gain_setting: {} {} (vrf = -0.200)"
+    )
+    KEYWORDS["N_excluded_pixels"] = PilatusKey(
+        "N_excluded_pixels", 0, [1], [int], "N_excluded_pixels = {}"
+    )
+    KEYWORDS["Excluded_pixels"] = PilatusKey(
+        "Excluded_pixels", 0, [1], [str], "Excluded_pixels: {}"
+    )
     KEYWORDS["Flat_field"] = PilatusKey("Flat_field", 0, [1], [str], "Flat_field: {}")
     KEYWORDS["Trim_file"] = PilatusKey("Trim_file", 0, [1], [str], "Trim_file: {}")
     KEYWORDS["Image_path"] = PilatusKey("Image_path", 0, [1], [str], "Image_path: {}")
-    KEYWORDS["Wavelength"] = PilatusKey("Wavelength", 0, [1], [float], "Wavelength {} A")
-    KEYWORDS["Energy_range"] = PilatusKey("Energy_range", 0, [1, 2], [float, float], "Energy_range {} {} eV")
-    KEYWORDS["Detector_distance"] = PilatusKey("Detector_distance", 0, [1], [float], "Detector_distance {} m")
-    KEYWORDS["Detector_Voffset"] = PilatusKey("Detector_Voffset", 0, [1], [float], "Detector_Voffset {} m")
-    KEYWORDS["Beam_xy"] = PilatusKey("Beam_xy", 0, [1, 2], [float, float], "Beam_xy ({}, {}) pixels")
+    KEYWORDS["Wavelength"] = PilatusKey(
+        "Wavelength", 0, [1], [float], "Wavelength {} A"
+    )
+    KEYWORDS["Energy_range"] = PilatusKey(
+        "Energy_range", 0, [1, 2], [float, float], "Energy_range {} {} eV"
+    )
+    KEYWORDS["Detector_distance"] = PilatusKey(
+        "Detector_distance", 0, [1], [float], "Detector_distance {} m"
+    )
+    KEYWORDS["Detector_Voffset"] = PilatusKey(
+        "Detector_Voffset", 0, [1], [float], "Detector_Voffset {} m"
+    )
+    KEYWORDS["Beam_xy"] = PilatusKey(
+        "Beam_xy", 0, [1, 2], [float, float], "Beam_xy ({}, {}) pixels"
+    )
     KEYWORDS["Flux"] = PilatusKey("Flux", 0, [1], [float], "Flux {}")
-    KEYWORDS["Filter_transmission"] = PilatusKey("Filter_transmission", 0, [1], [float], "Filter_transmission {}")
-    KEYWORDS["Start_angle"] = PilatusKey("Start_angle", 0, [1], [float], "Start_angle {} deg.")
-    KEYWORDS["Angle_increment"] = PilatusKey("Angle_increment", 0, [1], [float], "Angle_increment {} deg.")
-    KEYWORDS["Detector_2theta"] = PilatusKey("Detector_2theta", 0, [1], [float], "Detector_2theta {} deg.")
-    KEYWORDS["Polarization"] = PilatusKey("Polarization", 0, [1], [float], "Polarization {}")
+    KEYWORDS["Filter_transmission"] = PilatusKey(
+        "Filter_transmission", 0, [1], [float], "Filter_transmission {}"
+    )
+    KEYWORDS["Start_angle"] = PilatusKey(
+        "Start_angle", 0, [1], [float], "Start_angle {} deg."
+    )
+    KEYWORDS["Angle_increment"] = PilatusKey(
+        "Angle_increment", 0, [1], [float], "Angle_increment {} deg."
+    )
+    KEYWORDS["Detector_2theta"] = PilatusKey(
+        "Detector_2theta", 0, [1], [float], "Detector_2theta {} deg."
+    )
+    KEYWORDS["Polarization"] = PilatusKey(
+        "Polarization", 0, [1], [float], "Polarization {}"
+    )
     KEYWORDS["Alpha"] = PilatusKey("Alpha", 0, [1], [float], "Alpha {} deg.")
     KEYWORDS["Kappa"] = PilatusKey("Kappa", 0, [1], [float], "Kappa {} deg.")
     KEYWORDS["Phi"] = PilatusKey("Phi", 0, [1], [float], "Phi {} deg.")
-    KEYWORDS["Phi_increment"] = PilatusKey("Phi_increment", 0, [1], [float], "Phi_increment {} deg.")
+    KEYWORDS["Phi_increment"] = PilatusKey(
+        "Phi_increment", 0, [1], [float], "Phi_increment {} deg."
+    )
     KEYWORDS["Chi"] = PilatusKey("Chi", 0, [1], [float], "Chi {} deg.")
-    KEYWORDS["Chi_increment"] = PilatusKey("Chi_increment", 0, [1], [float], "Chi_increment {} deg.")
+    KEYWORDS["Chi_increment"] = PilatusKey(
+        "Chi_increment", 0, [1], [float], "Chi_increment {} deg."
+    )
     KEYWORDS["Omega"] = PilatusKey("Omega", 0, [1], [float], "Omega {} deg.")
-    KEYWORDS["Omega_increment"] = PilatusKey("Omega_increment", 0, [1], [float], "Omega_increment {} deg.")
-    KEYWORDS["Oscillation_axis"] = PilatusKey("Oscillation_axis", 0, [1], [str], "Oscillation_axis {}")
-    KEYWORDS["N_oscillations"] = PilatusKey(" ('N_oscillations", 0, [1], [int], "N_oscillations {}")
-    KEYWORDS["Start_position"] = PilatusKey("Start_position", 0, [1], [float], "Start_position {}")
-    KEYWORDS["Position_increment"] = PilatusKey("Position_increment", 0, [1], [float], "Position_increment")
-    KEYWORDS["Shutter_time"] = PilatusKey("Shutter_time", 0, [1], [float], "Shutter_time {} s")
+    KEYWORDS["Omega_increment"] = PilatusKey(
+        "Omega_increment", 0, [1], [float], "Omega_increment {} deg."
+    )
+    KEYWORDS["Oscillation_axis"] = PilatusKey(
+        "Oscillation_axis", 0, [1], [str], "Oscillation_axis {}"
+    )
+    KEYWORDS["N_oscillations"] = PilatusKey(
+        " ('N_oscillations", 0, [1], [int], "N_oscillations {}"
+    )
+    KEYWORDS["Start_position"] = PilatusKey(
+        "Start_position", 0, [1], [float], "Start_position {}"
+    )
+    KEYWORDS["Position_increment"] = PilatusKey(
+        "Position_increment", 0, [1], [float], "Position_increment"
+    )
+    KEYWORDS["Shutter_time"] = PilatusKey(
+        "Shutter_time", 0, [1], [float], "Shutter_time {} s"
+    )
     SPACE_LIKE = "()#:=,"
 
     @classmethod
@@ -945,7 +1075,7 @@ class PilatusHeader(object):
 
     def _parse(self, content):
         """Parse the header block
-        
+
         :param str content: header block
         :return: dict with parsed headers
         """
@@ -961,10 +1091,14 @@ class PilatusHeader(object):
                         if len(v.value_indices) == 1:
                             dico[k] = v.types[0]((words[v.value_indices[0]]))
                         else:
-                            dico[k] = tuple(i(words[j]) for i, j in zip(v.types, v.value_indices))
+                            dico[k] = tuple(
+                                i(words[j]) for i, j in zip(v.types, v.value_indices)
+                            )
                     else:
                         if isinstance(v.value_indices, slice):
-                            dico[k] = " ".join([v.types(i) for i in words[v.value_indices]])
+                            dico[k] = " ".join(
+                                [v.types(i) for i in words[v.value_indices]]
+                            )
                         else:
                             dico[k] = v.types(words[v.value_indices])
         return dico
@@ -976,6 +1110,6 @@ class PilatusHeader(object):
 
     def __getitem__(self, key):
         return self._dict[key]
-    
+
     def __contains__(self, key):
-        return key in self._dict 
+        return key in self._dict

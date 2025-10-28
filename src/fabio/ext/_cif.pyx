@@ -27,11 +27,11 @@
 
 """Cif parser helper functions"""
 
-__author__ = "Jerome Kieffer"
+__author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2014, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "18/01/2019"
+__date__ = "27/10/2025"
 
 import numpy
 import cython

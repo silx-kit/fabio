@@ -37,12 +37,11 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__version__ = "06/01/2015"
+__date__ = "27/10/2025"
 
 import io
 import numpy
 import struct
-
 from .fabioimage import FabioImage
 
 
@@ -68,7 +67,7 @@ class Fit2dMaskImage(FabioImage):
         dim2 = fit2dhdr[5]
         self._shape = dim2, dim1
 
-    def read(self, fname:str, frame=None):
+    def read(self, fname: str, frame=None):
         """
         Read in header into self.header and
             the data   into self.data
@@ -116,7 +115,7 @@ class Fit2dMaskImage(FabioImage):
         self._shape = None
         return self
 
-    def write(self, fname:str):
+    def write(self, fname: str):
         """
         Try to write a file
         """

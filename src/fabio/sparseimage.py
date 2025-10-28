@@ -37,39 +37,38 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020-2025 ESRF"
-__date__ = "05/05/2025"
+__date__ = "27/10/2025"
 
 import logging
-logger = logging.getLogger(__name__)
 import json
 import numpy
+
 try:
     import h5py
 except ImportError:
     h5py = None
-else:
-    try:
-        import hdf5plugin
-    except:
-        pass
 from .fabioutils import NotGoodReader
-from .fabioimage import FabioImage, OrderedDict
+from .fabioimage import FabioImage
+
 try:
     from .ext import dense as cython_densify
 except ImportError:
     cython_densify = None
+logger = logging.getLogger(__name__)
 
 
-def densify(mask,
-            radius,
-            index,
-            intensity,
-            dummy,
-            background,
-            background_std=None,
-            normalization=None,
-            cutoff=None,
-            seed=None):
+def densify(
+    mask,
+    radius,
+    index,
+    intensity,
+    dummy,
+    background,
+    background_std=None,
+    normalization=None,
+    cutoff=None,
+    seed=None,
+):
     """Generate a dense image of its sparse representation
 
     :param mask: 2D array with NaNs for mask and pixel radius for the valid pixels
@@ -108,8 +107,8 @@ def densify(mask,
 
     if numpy.issubdtype(dtype, numpy.integer):
         # Foolded by banker's rounding !!!!
-        #numpy.round(dense, out=dense)
-        numpy.fix(dense+0.5*numpy.sign(dense), out=dense)
+        # numpy.round(dense, out=dense)
+        numpy.fix(dense + 0.5 * numpy.sign(dense), out=dense)
 
     dense = numpy.ascontiguousarray(dense, dtype=dtype)
     dense[numpy.logical_not(numpy.isfinite(mask))] = dummy
@@ -137,11 +136,15 @@ class SparseImage(FabioImage):
         Generic constructor
         """
         if not h5py:
-            raise RuntimeError("fabio.SparseImage cannot be used without h5py. Please install h5py and restart")
+            raise RuntimeError(
+                "fabio.SparseImage cannot be used without h5py. Please install h5py and restart"
+            )
 
         FabioImage.__init__(self, *arg, **kwargs)
         self.mask = None
-        self.normalization = None  # Correspond to the flat/polarization/solid-angle correction
+        self.normalization = (
+            None  # Correspond to the flat/polarization/solid-angle correction
+        )
         self.radius = None
         self.background_avg = None
         self.background_std = None
@@ -183,7 +186,9 @@ class SparseImage(FabioImage):
         if default_entry is None or default_entry not in self.h5:
             raise NotGoodReader("HDF5 file does not contain any default entry.")
         entry = self.h5[default_entry]
-        default_data = entry.attrs.get("pyFAI_sparse_frames") or entry.attrs.get("default")
+        default_data = entry.attrs.get("pyFAI_sparse_frames") or entry.attrs.get(
+            "default"
+        )
         if default_data is None or default_data not in entry:
             raise NotGoodReader("HDF5 file does not contain any default NXdata.")
         nx_data = entry[default_data]
@@ -201,21 +206,27 @@ class SparseImage(FabioImage):
         try:
             self.dummy = self.intensity.dtype.type(nx_data["dummy"][()])
         except KeyError:
-            if self.intensity.dtype.char in numpy.typecodes['AllFloat']:
+            if self.intensity.dtype.char in numpy.typecodes["AllFloat"]:
                 self.dummy = numpy.nan
             else:
                 self.dummy = 0
 
         self._nframes = self.frame_ptr.shape[0] - 1
         if "normalization" in nx_data:
-            self.normalization = numpy.ascontiguousarray(nx_data["normalization"][()], dtype=numpy.float32)
+            self.normalization = numpy.ascontiguousarray(
+                nx_data["normalization"][()], dtype=numpy.float32
+            )
 
         # Read cutoff_pick
         config = {}
         try:
             config = json.loads(entry["sparsify/configuration/data"][()])
         except Exception as err:
-            logger.warning("Unable to read configuration of sparsification:\n%s: %s",type(err), err)
+            logger.warning(
+                "Unable to read configuration of sparsification:\n%s: %s",
+                type(err),
+                err,
+            )
         self.cutoff = config.get("sparsify", {}).get("cutoff_pick")
 
         # Read the peak position in the file
@@ -235,54 +246,61 @@ class SparseImage(FabioImage):
         if self.h5 is None:
             logger.warning("Not data have been read from disk")
             return
-        start, stop = self.frame_ptr[index:index + 2]
+        start, stop = self.frame_ptr[index : index + 2]
         if self.radius is None:
             if cython_densify is None:  # Numpy implementation
-                dense = densify(mask=self.mask,
-                                radius=None,
-                                index=self.index[start:stop],
-                                intensity=self.intensity[start:stop],
-                                dummy = self.dummy,
-                                background=None,
-                                background_std=None,
-                                normalization=self.normalization,
-                                cutoff=self.cutoff
-                                )
+                dense = densify(
+                    mask=self.mask,
+                    radius=None,
+                    index=self.index[start:stop],
+                    intensity=self.intensity[start:stop],
+                    dummy=self.dummy,
+                    background=None,
+                    background_std=None,
+                    normalization=self.normalization,
+                    cutoff=self.cutoff,
+                )
             else:  # Cython
-                dense = cython_densify.densify(mask=self.mask,
-                                               radius=None,
-                                               index=self.index[start:stop],
-                                               intensity=self.intensity[start:stop],
-                                               dummy=self.dummy,
-                                               dtype=self.intensity.dtype,
-                                               background=None,
-                                               background_std=None,
-                                               normalization=self.normalization,
-                                               cutoff=self.cutoff)
+                dense = cython_densify.densify(
+                    mask=self.mask,
+                    radius=None,
+                    index=self.index[start:stop],
+                    intensity=self.intensity[start:stop],
+                    dummy=self.dummy,
+                    dtype=self.intensity.dtype,
+                    background=None,
+                    background_std=None,
+                    normalization=self.normalization,
+                    cutoff=self.cutoff,
+                )
         else:
             if cython_densify is None:  # Numpy
-                dense = densify(self.mask,
-                           self.radius,
-                           self.index[start:stop],
-                           self.intensity[start:stop],
-                           self.dummy,
-                           self.background_avg[index],
-                           self.background_std[index] * self.noisy if self.noisy else None,
-                           self.normalization)
+                dense = densify(
+                    self.mask,
+                    self.radius,
+                    self.index[start:stop],
+                    self.intensity[start:stop],
+                    self.dummy,
+                    self.background_avg[index],
+                    self.background_std[index] * self.noisy if self.noisy else None,
+                    self.normalization,
+                )
             else:
-                dense = cython_densify.densify(self.mask,
-                                               self.radius,
-                                               self.index[start:stop],
-                                               self.intensity[start:stop],
-                                               self.dummy,
-                                               self.intensity.dtype,
-                                               self.background_avg[index],
-                                               self.background_std[index] * self.noisy if self.noisy else None,
-                                               self.normalization)
+                dense = cython_densify.densify(
+                    self.mask,
+                    self.radius,
+                    self.index[start:stop],
+                    self.intensity[start:stop],
+                    self.dummy,
+                    self.intensity.dtype,
+                    self.background_avg[index],
+                    self.background_std[index] * self.noisy if self.noisy else None,
+                    self.normalization,
+                )
         return dense
 
     def getframe(self, num):
-        """ returns the frame numbered 'num' in the stack if applicable"""
+        """returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
             new_img = None
             if (num >= 0) and num < self.nframes:
@@ -302,17 +320,19 @@ class SparseImage(FabioImage):
                 new_img.currentframe = num
                 new_img.normalization = self.normalization
             else:
-                raise IOError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+                raise IOError(
+                    "getframe %s out of range [%s %s[" % (num, 0, self.nframes)
+                )
         else:
             new_img = FabioImage.getframe(self, num)
         return new_img
 
     def previous(self):
-        """ returns the previous frame in the series as a fabioimage """
+        """returns the previous frame in the series as a fabioimage"""
         return self.getframe(self.currentframe - 1)
 
     def next(self):
-        """ returns the next frame in the series as a fabioimage """
+        """returns the next frame in the series as a fabioimage"""
         return self.getframe(self.currentframe + 1)
 
 

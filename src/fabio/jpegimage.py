@@ -29,21 +29,21 @@ FabIO class for dealing with JPEG images.
 """
 
 __authors__ = ["Valentin Valls"]
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
 
 import logging
-logger = logging.getLogger(__name__)
 
 try:
     from PIL import Image
 except ImportError:
     Image = None
-
 from .fabioimage import FabioImage
 from .utils import pilutils
+
+logger = logging.getLogger(__name__)
 
 # List of reserved keys reached from
 # http://pillow.readthedocs.io/en/3.4.x/handbook/image-file-formats.html#jpeg
@@ -64,7 +64,7 @@ JPEG_RESERVED_HEADER_KEYS = [
     "dpi",
     "exif",
     "subsampling",
-    "qtables"
+    "qtables",
 ]
 
 
@@ -72,6 +72,7 @@ class JpegImage(FabioImage):
     """
     Images in JPEG format using PIL
     """
+
     DESCRIPTION = "JPEG format"
 
     DEFAULT_EXTENSIONS = ["jpg", "jpeg"]
@@ -81,7 +82,7 @@ class JpegImage(FabioImage):
     _need_a_seek_to_read = True
 
     def __init__(self, *args, **kwds):
-        """ Tifimage constructor adds an nbits member attribute """
+        """Tifimage constructor adds an nbits member attribute"""
         self.nbits = None
         FabioImage.__init__(self, *args, **kwds)
 

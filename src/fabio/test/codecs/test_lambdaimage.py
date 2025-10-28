@@ -26,26 +26,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.#
 
-"""Test lambda images
-"""
+"""Test lambda images"""
 
 import os
 import numpy
 import fabio.lambdaimage
-from fabio.openimage import openimage 
+from fabio.openimage import openimage
 from ..utilstest import UtilsTest
-
 import unittest
 import logging
+
 logger = logging.getLogger(__name__)
 
 
 class TestLambda(unittest.TestCase):
     # filename dim1 dim2 min max mean stddev
     TESTIMAGES = [
-        ("l1_test02_00002_m01.nxs", 1554, 516, 0, 548, 0.00, 0.81024), # WIP
-        ("l1_test02_00002_m02.nxs", 1554, 516, 0, 0, 0.0, 0.0), # WIP
-        ("l1_test02_00002_m03.nxs", 1554, 516, 0, 45, 0.00 ,0.0534), # WIP
+        ("l1_test02_00002_m01.nxs", 1554, 516, 0, 548, 0.00, 0.81024),  # WIP
+        ("l1_test02_00002_m02.nxs", 1554, 516, 0, 0, 0.0, 0.0),  # WIP
+        ("l1_test02_00002_m03.nxs", 1554, 516, 0, 45, 0.00, 0.0534),  # WIP
         ("l1_test02_00002_master.nxs", 1555, 1813, 0, 548, 0.00, 0.433),  # WIP
     ]
 
@@ -60,29 +59,43 @@ class TestLambda(unittest.TestCase):
             shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
             obj = fabio.lambdaimage.LambdaImage()
-            filename =UtilsTest.getimage(name) 
+            filename = UtilsTest.getimage(name)
             obj.read(filename)
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertAlmostEqual(
+                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+            )
+            self.assertAlmostEqual(
+                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+            )
+            self.assertAlmostEqual(
+                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+            )
+            self.assertAlmostEqual(
+                stddev,
+                obj.getstddev(),
+                2,
+                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+            )
 
             self.assertEqual(shape, obj.shape, "dim1")
-                     
+
     def test_write(self):
         """read file using fabio.open and save and reopen ... check consistency"""
         for params in self.TESTIMAGES:
             fname = UtilsTest.getimage(params[0])
             obj = openimage(fname)
             self.assertEqual(obj.shape, params[2:0:-1])
- 
+
             dst = os.path.join(UtilsTest.tempdir, os.path.basename(fname))
             obj.write(dst)
             for idx, read_back in enumerate(openimage(dst)):
-                self.assertTrue(numpy.all(read_back.data == obj.getframe(idx).data), f"data are the same {fname} #{idx}")  
+                self.assertTrue(
+                    numpy.all(read_back.data == obj.getframe(idx).data),
+                    f"data are the same {fname} #{idx}",
+                )
 
-        
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -90,6 +103,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())
