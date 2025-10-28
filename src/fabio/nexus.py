@@ -33,18 +33,16 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "15/03/2024"
+__date__ = "28/10/2025"
 __status__ = "production"
 __docformat__ = 'restructuredtext'
 
 import logging
-
 import sys
 import os
 import time
 from .fabioutils import exists
 from .version import version
-
 logger = logging.getLogger(__name__)
 try:
     import h5py
@@ -385,7 +383,7 @@ class Nexus(object):
 
     def get_default_NXdata(self):
         """Return the default plot configured in the nexus structure.
-        
+
         :return: the group with the default plot or None if not found
         """
         entry_name = self.h5.attrs.get("default")
