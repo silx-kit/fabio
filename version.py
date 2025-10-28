@@ -81,8 +81,8 @@ PRERELEASE_NORMALIZED_NAME = {"dev": "a", "alpha": "a", "beta": "b", "candidate"
 MAJOR = 2025
 MINOR = 10
 MICRO = 0
-RELEV = "dev"  # <16
-SERIAL = 0  # <16
+RELEV = "beta"  # <16
+SERIAL = 1  # <16
 date = __date__
 
 _version_info = namedtuple(
