@@ -26,7 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-""" Test the fit2d mask reader
+"""Test the fit2d mask reader
 
 Updated by Jerome Kieffer (jerome.kieffer@esrf.eu), 2011
 28/11/2014
@@ -39,11 +39,12 @@ import logging
 import fabio
 from fabio.fit2dmaskimage import fit2dmaskimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
 class TestFaceMask(unittest.TestCase):
-    """ test the picture of a face """
+    """test the picture of a face"""
 
     def setUp(self):
         """
@@ -53,7 +54,7 @@ class TestFaceMask(unittest.TestCase):
         self.edffilename = UtilsTest.getimage("face.edf.bz2")[:-4]
 
     def test_getmatch(self):
-        """ test edf and msk are the same """
+        """test edf and msk are the same"""
         i = fit2dmaskimage()
         i.read(self.filename)
         j = fabio.open(self.edffilename)
@@ -65,7 +66,7 @@ class TestFaceMask(unittest.TestCase):
 
 
 class TestClickedMask(unittest.TestCase):
-    """ A few random clicks to make a test mask """
+    """A few random clicks to make a test mask"""
 
     def setUp(self):
         """
@@ -75,7 +76,7 @@ class TestClickedMask(unittest.TestCase):
         self.edffilename = UtilsTest.getimage("fit2d_click.edf.bz2")[:-4]
 
     def test_read(self):
-        """ Check it reads a mask OK """
+        """Check it reads a mask OK"""
         i = fit2dmaskimage()
         i.read(self.filename)
         self.assertEqual(i.shape, (1024, 1024))
@@ -84,7 +85,7 @@ class TestClickedMask(unittest.TestCase):
         self.assertEqual(i.data.shape, (1024, 1024))
 
     def test_getmatch(self):
-        """ test edf and msk are the same """
+        """test edf and msk are the same"""
         i = fit2dmaskimage()
         j = fabio.open(self.edffilename)
         i.read(self.filename)
@@ -104,7 +105,7 @@ class TestMskWrite(unittest.TestCase):
 
     def setUp(self):
         shape = (199, 211)  # those are prime numbers
-        self.data = (numpy.random.random(shape) > 0.6)
+        self.data = numpy.random.random(shape) > 0.6
         self.header = fit2dmaskimage.check_header()
 
     def atest(self):
@@ -150,6 +151,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

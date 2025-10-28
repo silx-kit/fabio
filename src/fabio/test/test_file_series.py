@@ -37,6 +37,7 @@ import fabio
 from fabio.file_series import numbered_file_series, file_series, filename_series
 from fabio.file_series import FileSeries
 from .utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -66,19 +67,19 @@ class TestEdfNumbered(unittest.TestCase):
     """
 
     def setUp(self):
-        """ note extension has the . in it"""
+        """note extension has the . in it"""
         self.fso = numbered_file_series("mydata", 0, 10005, ".edf")
 
     def testfirst(self):
-        """ first in series"""
+        """first in series"""
         self.assertEqual(self.fso.first(), "mydata0000.edf")
 
     def testlast(self):
-        """ last in series"""
+        """last in series"""
         self.assertEqual(self.fso.last(), "mydata10005.edf")
 
     def testnext(self):
-        """ check all in order """
+        """check all in order"""
         mylist = ["mydata%04d.edf" % (i) for i in range(0, 10005)]
         i = 1
         while i < len(mylist):
@@ -86,7 +87,7 @@ class TestEdfNumbered(unittest.TestCase):
             i += 1
 
     def testprevious(self):
-        """ check all in order """
+        """check all in order"""
         mylist = ["mydata%04d.edf" % (i) for i in range(0, 10005)]
         i = 10003
         self.fso.jump(10004)
@@ -112,7 +113,6 @@ class TestEdfNumbered(unittest.TestCase):
 
 
 class TestFileSeries(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.tmp_directory = os.path.join(UtilsTest.tempdir, cls.__name__)
@@ -174,7 +174,12 @@ class TestFileSeries(unittest.TestCase):
         return filenames
 
     def get_anyframe_files(self):
-        filenames = ["image_c_000.edf", "image_c_001.edf", "image_c_002.edf", "image_c_003.edf"]
+        filenames = [
+            "image_c_000.edf",
+            "image_c_001.edf",
+            "image_c_002.edf",
+            "image_c_003.edf",
+        ]
         filenames = [self.get_filename(f) for f in filenames]
         return filenames
 
@@ -340,7 +345,6 @@ class TestFileSeries(unittest.TestCase):
         serie.close()
 
     def test_filename_generator(self):
-
         def generator():
             filenames = self.get_anyframe_files()
             for filename in filenames:
@@ -351,7 +355,9 @@ class TestFileSeries(unittest.TestCase):
         serie.close()
 
     def test_with_numbered_file_series(self):
-        filenames = numbered_file_series(self.get_filename("image_c_"), 0, 3, ".edf", digits=3)
+        filenames = numbered_file_series(
+            self.get_filename("image_c_"), 0, 3, ".edf", digits=3
+        )
         serie = FileSeries(filenames=filenames)
         self.assertEqual(serie.nframes, 10)
         serie.close()
@@ -373,6 +379,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

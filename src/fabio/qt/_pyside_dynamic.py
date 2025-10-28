@@ -65,10 +65,10 @@
 
 import logging
 from ._qt import BINDING
+
 _logger = logging.getLogger(__name__)
 
 if BINDING == "PySide6":
-
     from PySide6.QtCore import QMetaObject, Property, Qt
     from PySide6.QtWidgets import QFrame
     from PySide6.QtUiTools import QUiLoader
@@ -100,7 +100,6 @@ if BINDING == "PySide6":
                 raise ValueError("Unsupported orientation %s" % str(orientation))
 
         orientation = Property("Qt::Orientation", getOrientation, setOrientation)
-
 
     CUSTOM_WIDGETS = {"Line": _Line}
     """Default custom widgets for `loadUi`"""
@@ -168,7 +167,7 @@ if BINDING == "PySide6":
                         widget = self.customWidgets[class_name](parent)
                     except KeyError as error:
                         raise Exception(
-                            f"No custom widget {class_name} " "found in customWidgets"
+                            f"No custom widget {class_name} found in customWidgets"
                         ) from error
 
                 if self.baseinstance:
@@ -177,7 +176,6 @@ if BINDING == "PySide6":
                     setattr(self.baseinstance, name, widget)
 
                 return widget
-
 
     def _get_custom_widgets(ui_file):
         """
@@ -210,7 +208,6 @@ if BINDING == "PySide6":
 
         return custom_widget_classes
 
-
     def loadUi(uifile, baseinstance=None, package=None, resource_suffix=None):
         """
         Dynamically load a user interface from the given ``uifile``.
@@ -236,7 +233,9 @@ if BINDING == "PySide6":
         if package is not None:
             _logger.warning("loadUi package parameter not implemented with PySide")
         if resource_suffix is not None:
-            _logger.warning("loadUi resource_suffix parameter not implemented with PySide")
+            _logger.warning(
+                "loadUi resource_suffix parameter not implemented with PySide"
+            )
 
         # We parse the UI file and import any required custom widgets
         customWidgets = _get_custom_widgets(uifile)

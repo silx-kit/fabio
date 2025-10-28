@@ -36,15 +36,17 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "27/10/2025"
 __status__ = "stable"
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 import logging
 from . import fabioimage
 from .fabioutils import OrderedDict
+
 _logger = logging.getLogger(__name__)
 
 try:
     import importlib
+
     importer = importlib.import_module
 except ImportError:
 
@@ -56,6 +58,7 @@ except ImportError:
         for name in names:
             module = getattr(module, name)
         return module
+
 
 _default_codecs = [
     ("edfimage", "EdfImage"),
@@ -110,7 +113,9 @@ def register(codec_class):
     """Register a class format to the core fabio library"""
     global _extension_cache
     if not issubclass(codec_class, fabioimage.FabioImage):
-        raise AssertionError("Expected subclass of FabioImage class but found %s" % type(codec_class))
+        raise AssertionError(
+            "Expected subclass of FabioImage class but found %s" % type(codec_class)
+        )
     _registry[codec_class.codec_name()] = codec_class
     # clean u[p the cache
     _extension_cache = None
@@ -128,7 +133,9 @@ def register_default_formats():
         module = importer("fabio." + module_name)
         codec_class = getattr(module, class_name)
         if codec_class is None:
-            raise RuntimeError("Class name '%s' from mudule '%s' not found" % (class_name, module_name))
+            raise RuntimeError(
+                "Class name '%s' from mudule '%s' not found" % (class_name, module_name)
+            )
         register(codec_class)
 
 
@@ -239,8 +246,11 @@ def factory(name):
     if name in _registry:
         obj = _registry[name]()
     else:
-        msg = ("FileType %s is unknown !, "
-               "please check if the filename exists or select one from %s" % (name, _registry.keys()))
+        msg = (
+            "FileType %s is unknown !, "
+            "please check if the filename exists or select one from %s"
+            % (name, _registry.keys())
+        )
         _logger.debug(msg)
         raise RuntimeError(msg)
     return obj

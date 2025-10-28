@@ -35,6 +35,7 @@ import logging
 import fabio
 from fabio.mar345image import mar345image
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev
@@ -48,7 +49,6 @@ TESTIMAGES = """example.mar2300     2300 2300 0 999999 180.15 4122.67
 
 
 class TestMar345(unittest.TestCase):
-
     def setUp(self):
         """
         download images
@@ -64,7 +64,7 @@ class TestMar345(unittest.TestCase):
         """
         Test the reading of Mar345 images
         """
-        for line in TESTIMAGES.split('\n'):
+        for line in TESTIMAGES.split("\n"):
             vals = line.strip().split()
             name = vals[0]
             dim1, dim2 = [int(x) for x in vals[1:3]]
@@ -73,10 +73,21 @@ class TestMar345(unittest.TestCase):
             obj = mar345image()
             obj.read(UtilsTest.getimage(name))
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertAlmostEqual(
+                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+            )
+            self.assertAlmostEqual(
+                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+            )
+            self.assertAlmostEqual(
+                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+            )
+            self.assertAlmostEqual(
+                stddev,
+                obj.getstddev(),
+                2,
+                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+            )
             self.assertEqual(shape, obj.shape, "shape")
 
     def test_write(self):
@@ -91,13 +102,22 @@ class TestMar345(unittest.TestCase):
             other = mar345image()
             other.read(os.path.join(UtilsTest.tempdir, name))
             if abs(obj.data - other.data).max():
-                logger.error("data for %s are not the same %s", line, numpy.where(obj.data - other.data))
+                logger.error(
+                    "data for %s are not the same %s",
+                    line,
+                    numpy.where(obj.data - other.data),
+                )
             self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
             for key in obj.header:
                 if key == "filename":
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
-                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s: [%s|%s]" % (key, obj.header[key], other.header[key]))
+                self.assertEqual(
+                    obj.header[key],
+                    other.header[key],
+                    "value are the same for key %s: [%s|%s]"
+                    % (key, obj.header[key], other.header[key]),
+                )
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
@@ -118,7 +138,12 @@ class TestMar345(unittest.TestCase):
                 if key == "filename":
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
-                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s: [%s|%s]" % (key, obj.header[key], other.header[key]))
+                self.assertEqual(
+                    obj.header[key],
+                    other.header[key],
+                    "value are the same for key %s: [%s|%s]"
+                    % (key, obj.header[key], other.header[key]),
+                )
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
@@ -135,15 +160,17 @@ class TestMar345(unittest.TestCase):
                 print("reading #%s/%s" % (i, N))
 
     def test_aux(self):
-        """test auxillary functions
-        """
+        """test auxillary functions"""
         from fabio.ext import mar345_IO
+
         shape = 120, 130
         size = shape[0] * shape[1]
         img = numpy.random.randint(0, 32000, size).astype("int16")
         b = mar345_IO.precomp(img, shape[-1])
         c = mar345_IO.postdec(b, shape[-1])
-        self.assertEqual(abs(c - img).max(), 0, "pre-compression and post-decompression works")
+        self.assertEqual(
+            abs(c - img).max(), 0, "pre-compression and post-decompression works"
+        )
 
         a = mar345_IO.calc_nb_bits(numpy.arange(8).astype("int32"), 0, 8)
         self.assertEqual(a, 32, "8*4")
@@ -197,6 +224,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite)

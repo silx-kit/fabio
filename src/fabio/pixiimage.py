@@ -44,11 +44,11 @@ import os
 import logging
 from . import fabioimage
 from .fabioutils import previous_filename, next_filename
+
 logger = logging.getLogger(__name__)
 
 
 class PixiImage(fabioimage.FabioImage):
-
     DESCRIPTION = "Pixi file format"
 
     DEFAULT_EXTENSIONS = []
@@ -71,10 +71,10 @@ class PixiImage(fabioimage.FabioImage):
         byt = infile.read(4)
         framesize = numpy.frombuffer(byt, numpy.dtype("<i4"))
         if framesize * 2 == self._FRAME_SIZE - self._MAGIC_SIZE:
-            self.header['framesize'] = framesize
-            self.header['width'] = self._IMAGE_WIDTH
-            self.header['height'] = self._IMAGE_HEIGHT
-            self.header['offset'] = self._HEADER_SIZE
+            self.header["framesize"] = framesize
+            self.header["width"] = self._IMAGE_WIDTH
+            self.header["height"] = self._IMAGE_HEIGHT
+            self.header["offset"] = self._HEADER_SIZE
         else:
             logger.warning("Bad framesize: %s", framesize)
             raise Exception("Bad framesize")
@@ -112,17 +112,17 @@ class PixiImage(fabioimage.FabioImage):
     def _make_filename(self, img_num):
         self.currentframe = int(img_num)
         if self.nframes == 1:
-            self.filename = "%s$%04d" % (self.sequencefilename,
-                                         self.currentframe)
+            self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
 
     def _readdata(self, filepointer, img_num):
-        if (img_num >= self.nframes or img_num < 0):
+        if img_num >= self.nframes or img_num < 0:
             raise Exception("Bad image number")
-        imgstart = self.header['offset'] + img_num * self._FRAME_SIZE
+        imgstart = self.header["offset"] + img_num * self._FRAME_SIZE
         filepointer.seek(imgstart, 0)
-        data = numpy.frombuffer(filepointer.read(self._IMAGE_SIZE),
-                                numpy.dtype("<u2")).copy()
-        data.shape = self.header['height'], self.header['width']
+        data = numpy.frombuffer(
+            filepointer.read(self._IMAGE_SIZE), numpy.dtype("<u2")
+        ).copy()
+        data.shape = self.header["height"], self.header["width"]
         return data
 
     def _readframe(self, filepointer, img_num):
@@ -159,8 +159,7 @@ class PixiImage(fabioimage.FabioImage):
             return self.getframe(self.currentframe + 1)
         else:
             newobj = PixiImage()
-            newobj.read(next_filename(
-                self.sequencefilename))
+            newobj.read(next_filename(self.sequencefilename))
             return newobj
 
     def previous(self):
@@ -171,8 +170,7 @@ class PixiImage(fabioimage.FabioImage):
             return self.getframe(self.currentframe - 1)
         else:
             newobj = PixiImage()
-            newobj.read(previous_filename(
-                self.sequencefilename))
+            newobj.read(previous_filename(self.sequencefilename))
             return newobj
 
 

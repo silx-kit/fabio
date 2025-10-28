@@ -39,13 +39,15 @@ import fabio
 from ...kcdimage import kcdimage
 from ...openimage import openimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
 class TestKcd(unittest.TestCase):
     """basic test"""
-    kcdfilename = 'i01f0001.kcd'
-    edffilename = 'i01f0001.edf'
+
+    kcdfilename = "i01f0001.kcd"
+    edffilename = "i01f0001.edf"
     results = """i01f0001.kcd   625 576  96  66814.0 195.3862972   243.58150990245315"""
 
     def setUp(self):
@@ -57,7 +59,7 @@ class TestKcd(unittest.TestCase):
             assert os.path.exists(self.fn[i])
 
     def test_read(self):
-        """ check we can read kcd images"""
+        """check we can read kcd images"""
         vals = self.results.split()
         dim1, dim2 = [int(x) for x in vals[1:3]]
         shape = dim2, dim1
@@ -75,11 +77,11 @@ class TestKcd(unittest.TestCase):
             self.assertEqual(shape, obj.shape, "shape" + ext)
 
     def test_same(self):
-        """ see if we can read kcd images and if they are the same as the EDF """
+        """see if we can read kcd images and if they are the same as the EDF"""
         kcd = kcdimage()
         kcd.read(self.fn[self.kcdfilename])
         edf = fabio.open(self.fn[self.edffilename])
-        diff = (kcd.data.astype("int32") - edf.data.astype("int32"))
+        diff = kcd.data.astype("int32") - edf.data.astype("int32")
         self.assertAlmostEqual(abs(diff).sum(dtype=int), 0, 4)
 
 
@@ -90,6 +92,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

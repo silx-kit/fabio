@@ -26,8 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE
 
-"""Helper functions using Python Imaging Library (PIL)
-"""
+"""Helper functions using Python Imaging Library (PIL)"""
 
 __authors__ = ["Jérôme Kieffer", "Jon Wright"]
 __date__ = "25/06/2018"
@@ -67,13 +66,13 @@ PIL_TO_NUMPY = {
 
 
 NUMPY_TO_PIL = {
-    'float32': "F",
-    'int32': "F;32NS",
-    'uint32': "F;32N",
-    'int16': "F;16NS",
-    'uint16': "F;16N",
-    'int8': "F;8S",
-    'uint8': "F;8"
+    "float32": "F",
+    "int32": "F;32NS",
+    "uint32": "F;32N",
+    "int16": "F;16NS",
+    "uint16": "F;16N",
+    "int8": "F;8S",
+    "uint8": "F;8",
 }
 
 
@@ -90,7 +89,7 @@ def get_numpy_array(pil_image):
         dtype = numpy.float32
         pil_image = pil_image.convert("F")
     try:
-        if pil_image.mode == 'P':
+        if pil_image.mode == "P":
             # Indexed color
             data = numpy.asarray(pil_image.convert("RGB"), dtype)
         else:

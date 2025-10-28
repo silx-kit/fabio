@@ -27,6 +27,7 @@ Test cases for the fabioimage class
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
+
 import unittest
 import os
 import numpy
@@ -36,6 +37,7 @@ from ..fabioimage import FabioImage
 from .. import fabioutils
 from ..utils import pilutils
 from .utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -48,7 +50,7 @@ except ImportError:
 
 
 class Test50000(unittest.TestCase):
-    """ test with 50000 everywhere"""
+    """test with 50000 everywhere"""
 
     def setUp(self):
         """make the image"""
@@ -101,8 +103,7 @@ class TestSlices(unittest.TestCase):
         dat2[slic] = dat2[slic] + 100
         assert self.obj.maxval is None
         assert self.obj.minval is None
-        self.npix = (slic[0].stop - slic[0].start) * \
-            (slic[1].stop - slic[1].start)
+        self.npix = (slic[0].stop - slic[0].start) * (slic[1].stop - slic[1].start)
 
     def testgetmax(self):
         """check max"""
@@ -113,7 +114,7 @@ class TestSlices(unittest.TestCase):
         self.assertEqual(self.obj.getmin(), 0)
 
     def testintegratearea(self):
-        """ check integrations"""
+        """check integrations"""
         self.obj.resetvals()
         area1 = self.obj.integrate_area(self.cord)
         self.obj.resetvals()
@@ -127,15 +128,18 @@ class TestSlices(unittest.TestCase):
         res = numpy.array([[13, 17], [45, 49]])
         fabimg = FabioImage(data=big, header={})
         fabimg.rebin(4, 4)
-        self.assertEqual(abs(res - fabimg.data).max(), 0, "data are the same after rebin")
+        self.assertEqual(
+            abs(res - fabimg.data).max(), 0, "data are the same after rebin"
+        )
 
 
 class TestOpen(unittest.TestCase):
     """check opening compressed files"""
+
     testfile = os.path.join(UtilsTest.tempdir, "testfile")
 
     def setUp(self):
-        """ create test files"""
+        """create test files"""
         if not os.path.isfile(self.testfile):
             with open(self.testfile, "wb") as f:
                 f.write(b"{ hello }")
@@ -148,19 +152,19 @@ class TestOpen(unittest.TestCase):
         self.obj = FabioImage()
 
     def testFlat(self):
-        """ no compression"""
+        """no compression"""
         res = self.obj._open(self.testfile)
         self.assertEqual(res.read(), b"{ hello }")
         res.close()
 
     def testgz(self):
-        """ gzipped """
+        """gzipped"""
         res = self.obj._open(self.testfile + ".gz")
         self.assertEqual(res.read(), b"{ hello }")
         res.close()
 
     def testbz2(self):
-        """ bzipped"""
+        """bzipped"""
         res = self.obj._open(self.testfile + ".bz2")
         self.assertEqual(res.read(), b"{ hello }")
         res.close()
@@ -178,27 +182,28 @@ class TestOpen(unittest.TestCase):
 
 
 class TestPilImage(unittest.TestCase):
-    """ check PIL creation"""
+    """check PIL creation"""
 
     def setUp(self):
         if pilutils.Image is None:
             self.skipTest("PIL is not available")
 
         """ list of working numeric types"""
-        self.okformats = [numpy.uint8,
-                          numpy.int8,
-                          numpy.uint16,
-                          numpy.int16,
-                          numpy.uint32,
-                          numpy.int32,
-                          numpy.float32]
+        self.okformats = [
+            numpy.uint8,
+            numpy.int8,
+            numpy.uint16,
+            numpy.int16,
+            numpy.uint32,
+            numpy.int32,
+            numpy.float32,
+        ]
 
     def mkdata(self, shape, typ):
-        """ generate [01] testdata """
+        """generate [01] testdata"""
         return (numpy.random.random(shape)).astype(typ)
 
     def testpil(self):
-
         for typ in self.okformats:
             for shape in [(10, 20), (431, 1325)]:
                 testdata = self.mkdata(shape, typ)
@@ -207,13 +212,18 @@ class TestPilImage(unittest.TestCase):
                 for i in [0, 5, 6, shape[1] - 1]:
                     for j in [0, 5, 7, shape[0] - 1]:
                         errstr = str(typ) + " %d %d %f %f t=%s" % (
-                            i, j, testdata[j, i], pim.getpixel((i, j)), typ)
+                            i,
+                            j,
+                            testdata[j, i],
+                            pim.getpixel((i, j)),
+                            typ,
+                        )
 
                         er1 = img.data[j, i] - pim.getpixel((i, j))
                         er2 = img.data[j, i] + pim.getpixel((i, j))
 
                         # difference as % error in case of rounding
-                        if er2 != 0.:
+                        if er2 != 0.0:
                             err = er1 / er2
                         else:
                             err = er1
@@ -222,10 +232,10 @@ class TestPilImage(unittest.TestCase):
 
 
 class TestPilImage2(TestPilImage):
-    """ check with different numbers"""
+    """check with different numbers"""
 
     def mkdata(self, shape, typ):
-        """ positive and big"""
+        """positive and big"""
         if numpy.issubdtype(typ, numpy.integer):
             maxi = numpy.iinfo(typ).max
         else:
@@ -234,10 +244,10 @@ class TestPilImage2(TestPilImage):
 
 
 class TestPilImage3(TestPilImage):
-    """ check with different numbers"""
+    """check with different numbers"""
 
     def mkdata(self, shape, typ):
-        """ positive, negative and big"""
+        """positive, negative and big"""
         if numpy.issubdtype(typ, numpy.integer):
             maxi = numpy.iinfo(typ).max
         else:
@@ -246,7 +256,6 @@ class TestPilImage3(TestPilImage):
 
 
 class TestDeprecatedFabioImage(unittest.TestCase):
-
     def test_patch_dim(self):
         data = numpy.array(numpy.arange(3 * 10)).reshape(3, 10)
         image = FabioImage(data=data)
@@ -263,7 +272,6 @@ class TestDeprecatedFabioImage(unittest.TestCase):
 
 
 class TestFabioImage(unittest.TestCase):
-
     def test_iter_abort_iteration(self):
         data = numpy.zeros((2, 2))
         image = FabioImage(data=data)
@@ -285,6 +293,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

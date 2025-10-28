@@ -32,6 +32,7 @@ import unittest
 import logging
 import fabio
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -56,10 +57,21 @@ class TestPilatus(unittest.TestCase):
             obj = fabio.pilatusimage.PilatusImage()
             obj.read(UtilsTest.getimage(name))
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertAlmostEqual(
+                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+            )
+            self.assertAlmostEqual(
+                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+            )
+            self.assertAlmostEqual(
+                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+            )
+            self.assertAlmostEqual(
+                stddev,
+                obj.getstddev(),
+                2,
+                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+            )
             self.assertEqual(shape, obj.shape)
 
     def test_header(self):
@@ -80,7 +92,8 @@ class TestPilatus(unittest.TestCase):
                 "N_excluded_pixels",
                 "Excluded_pixels",
                 "Flat_field",
-                "Trim_directory"]
+                "Trim_directory",
+            ]
             self.assertEqual(list(obj.header.keys()), expected_keys)
 
             expected_values = {
@@ -95,7 +108,8 @@ class TestPilatus(unittest.TestCase):
                 "N_excluded_pixels": "0",
                 "Excluded_pixels": "(nil)",
                 "Flat_field": "(nil)",
-                "Trim_directory": "(nil)"}
+                "Trim_directory": "(nil)",
+            }
 
             self.assertEqual(dict(obj.header), expected_values)
 
@@ -123,6 +137,7 @@ class TestPilatus1M(unittest.TestCase):
 
     def setUp(self):
         import fabio.utils.pilutils
+
         if fabio.utils.pilutils.Image is None:
             self.skipTest("No TIFF decoder available for LZW")
 
@@ -173,7 +188,8 @@ class TestPilatus1M(unittest.TestCase):
                 "Phi",
                 "Chi",
                 "Oscillation_axis",
-                "N_oscillations"]
+                "N_oscillations",
+            ]
             self.assertEqual(list(obj.header.keys()), expected_keys)
 
 
@@ -185,6 +201,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

@@ -33,6 +33,7 @@ Test JPEG 2000 format
 import unittest
 import numpy
 import logging
+
 try:
     from PIL import Image
 except ImportError:
@@ -40,6 +41,7 @@ except ImportError:
 import fabio
 from ... import jpeg2kimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -52,7 +54,7 @@ def isPilUsable():
             frombytes = jpeg2kimage.PIL.Image.frombytes
         else:
             frombytes = jpeg2kimage.PIL.Image.frombuffer
-        frombytes("1", (2, 2), b"", decoder_name='jpeg2k')
+        frombytes("1", (2, 2), b"", decoder_name="jpeg2k")
     except Exception as e:
         if e.args[0] == "decoder jpeg2k not available":
             return False
@@ -64,6 +66,7 @@ def isGlymurUsable():
     if jpeg2kimage.glymur is None:
         return None
     import glymur
+
     if tuple(glymur.version.openjpeg_version_tuple) < (1, 5, 0):
         return False
     return True
@@ -176,6 +179,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

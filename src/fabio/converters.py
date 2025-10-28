@@ -41,6 +41,7 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

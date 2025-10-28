@@ -46,11 +46,12 @@ from fabio.cbfimage import CbfImage, CIF
 from fabio.compression import decByteOffset_numpy, decByteOffset_cython
 from ..utilstest import UtilsTest
 from ..testutils import LoggingValidator
+
 logger = logging.getLogger(__name__)
 
 
 class TestCbfReader(unittest.TestCase):
-    """ test cbf image reader """
+    """test cbf image reader"""
 
     def setUp(self):
         """Download images"""
@@ -60,7 +61,7 @@ class TestCbfReader(unittest.TestCase):
         self.cbf_filename = UtilsTest.getimage(self.cbf_filename)[:-4]
 
     def test_read(self):
-        """ check whole reader"""
+        """check whole reader"""
         times = []
         times.append(time.time())
         cbf = fabio.open(self.cbf_filename)
@@ -69,7 +70,10 @@ class TestCbfReader(unittest.TestCase):
         times.append(time.time())
 
         self.assertAlmostEqual(0, abs(cbf.data - edf.data).max())
-        logger.info("Reading CBF took %.3fs whereas the same EDF took %.3fs" % (times[1] - times[0], times[2] - times[1]))
+        logger.info(
+            "Reading CBF took %.3fs whereas the same EDF took %.3fs"
+            % (times[1] - times[0], times[2] - times[1])
+        )
 
     def test_write(self):
         "Rest writing with self consistency at the fabio level"
@@ -81,10 +85,14 @@ class TestCbfReader(unittest.TestCase):
         other.read(os.path.join(UtilsTest.tempdir, name))
         self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
         for key in obj.header:
-            if key in["filename", "X-Binary-Size-Padding"]:
+            if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
             self.assertTrue(key in other.header, "Key %s is in header" % key)
-            self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s" % key)
+            self.assertEqual(
+                obj.header[key],
+                other.header[key],
+                "value are the same for key %s" % key,
+            )
         # By destroying the object, one actually closes the file, which is needed under windows.
         del obj
         del other
@@ -92,12 +100,12 @@ class TestCbfReader(unittest.TestCase):
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
     def test_byte_offset(self):
-        """ check byte offset algorithm"""
+        """check byte offset algorithm"""
         cbf = fabio.open(self.cbf_filename)
         starter = b"\x0c\x1a\x04\xd5"
         cbs = cbf.cbs
         startPos = cbs.find(starter) + 4
-        data = cbs[startPos: startPos + int(cbf.header["X-Binary-Size"])]
+        data = cbs[startPos : startPos + int(cbf.header["X-Binary-Size"])]
         startTime = time.time()
         size = cbf.shape[0] * cbf.shape[1]
         numpyRes = decByteOffset_numpy(data, size=size)
@@ -109,7 +117,9 @@ class TestCbfReader(unittest.TestCase):
         tCython = time.time() - startTime
         delta = abs(numpyRes - cythonRes).max()
         self.assertAlmostEqual(0, delta)
-        logger.info("Timing for Cython method : %.3fs, max delta= %s" % (tCython, delta))
+        logger.info(
+            "Timing for Cython method : %.3fs, max delta= %s" % (tCython, delta)
+        )
 
     def test_consitency_manual(self):
         """
@@ -122,10 +132,15 @@ class TestCbfReader(unittest.TestCase):
         other = fabio.open(os.path.join(UtilsTest.tempdir, name))
         self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
         for key in obj.header:
-            if key in["filename", "X-Binary-Size-Padding"]:
+            if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
             self.assertTrue(key in other.header, "Key %s is in header" % key)
-            self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s [%s|%s]" % (key, obj.header[key], other.header[key]))
+            self.assertEqual(
+                obj.header[key],
+                other.header[key],
+                "value are the same for key %s [%s|%s]"
+                % (key, obj.header[key], other.header[key]),
+            )
 
     def test_consitency_convert(self):
         """
@@ -138,25 +153,35 @@ class TestCbfReader(unittest.TestCase):
         other = fabio.open(os.path.join(UtilsTest.tempdir, name))
         self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
         for key in obj.header:
-            if key in["filename", "X-Binary-Size-Padding"]:
+            if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
             self.assertTrue(key in other.header, "Key %s is in header" % key)
-            self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s [%s|%s]" % (key, obj.header[key], other.header[key]))
+            self.assertEqual(
+                obj.header[key],
+                other.header[key],
+                "value are the same for key %s [%s|%s]"
+                % (key, obj.header[key], other.header[key]),
+            )
 
     def test_unicode(self):
         """
         Test if an image can be read and saved to an unicode named
         """
-        name = u"%s" % os.path.basename(self.cbf_filename)
+        name = "%s" % os.path.basename(self.cbf_filename)
         obj = fabio.open(self.cbf_filename)
         obj.write(os.path.join(UtilsTest.tempdir, name))
         other = fabio.open(os.path.join(UtilsTest.tempdir, name))
         self.assertEqual(abs(obj.data - other.data).max(), 0, "data are the same")
         for key in obj.header:
-            if key in["filename", "X-Binary-Size-Padding"]:
+            if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
             self.assertTrue(key in other.header, "Key %s is in header" % key)
-            self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s [%s|%s]" % (key, obj.header[key], other.header[key]))
+            self.assertEqual(
+                obj.header[key],
+                other.header[key],
+                "value are the same for key %s [%s|%s]"
+                % (key, obj.header[key], other.header[key]),
+            )
 
     def test_bug_388(self):
         data = numpy.random.randint(0, 100, size=(27, 31)).astype(numpy.int32)
@@ -164,7 +189,9 @@ class TestCbfReader(unittest.TestCase):
         filename = os.path.join(UtilsTest.tempdir, "bad_name.edf")
         im.write(filename)
         res = fabio.open(filename)
-        self.assertEqual(abs(data - res.data).max(), 0, "Data are the same despite the wrong name")
+        self.assertEqual(
+            abs(data - res.data).max(), 0, "Data are the same despite the wrong name"
+        )
 
     def test_bug_408(self):
         "Bug when reading files generated by XDS"
@@ -300,6 +327,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

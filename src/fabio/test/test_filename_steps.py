@@ -30,11 +30,11 @@ Test cases for the Next/Previous ...
 import unittest
 import logging
 import fabio
+
 logger = logging.getLogger(__name__)
 
 
 class TestNext(unittest.TestCase):
-
     def test_next1(self):
         files = [
             ["data0001.edf", "data0002.edf"],
@@ -47,7 +47,6 @@ class TestNext(unittest.TestCase):
 
 
 class TestPrev(unittest.TestCase):
-
     def test_prev1(self):
         files = [
             ["data0001.edf", "data0000.edf"],
@@ -60,7 +59,6 @@ class TestPrev(unittest.TestCase):
 
 
 class TestJump(unittest.TestCase):
-
     def test_jump1(self):
         files = [
             ["data0001.edf", "data99993.edf", 99993],
@@ -81,6 +79,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

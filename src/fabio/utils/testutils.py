@@ -45,9 +45,11 @@ _logger = logging.getLogger(__name__)
 
 
 if sys.hexversion >= 0x030400F0:  # Python >= 3.4
+
     class ParametricTestCase(unittest.TestCase):
         pass
 else:
+
     class ParametricTestCase(unittest.TestCase):
         """TestCase with subTest support for Python < 3.4.
 
@@ -62,8 +64,8 @@ else:
         def subTest(self, msg=None, **params):
             """Use as unittest.TestCase.subTest method in Python >= 3.4."""
             # Format arguments as: '[msg] (key=value, ...)'
-            param_str = ', '.join(['%s=%s' % (k, v) for k, v in params.items()])
-            self._subtest_msg = '[%s] (%s)' % (msg or '', param_str)
+            param_str = ", ".join(["%s=%s" % (k, v) for k, v in params.items()])
+            self._subtest_msg = "[%s] (%s)" % (msg or "", param_str)
             yield
             self._subtest_msg = None
 
@@ -71,8 +73,9 @@ else:
             short_desc = super(ParametricTestCase, self).shortDescription()
             if self._subtest_msg is not None:
                 # Append subTest message to shortDescription
-                short_desc = ' '.join(
-                    [msg for msg in (short_desc, self._subtest_msg) if msg])
+                short_desc = " ".join(
+                    [msg for msg in (short_desc, self._subtest_msg) if msg]
+                )
 
             return short_desc if short_desc else None
 
@@ -131,8 +134,16 @@ class TestLogging(logging.Handler):
     :raises RuntimeError: If the message counts are the expected ones.
     """
 
-    def __init__(self, logger=None, critical=None, error=None,
-                 warning=None, info=None, debug=None, notset=None):
+    def __init__(
+        self,
+        logger=None,
+        critical=None,
+        error=None,
+        warning=None,
+        info=None,
+        debug=None,
+        notset=None,
+    ):
         if logger is None:
             logger = logging.getLogger()
         elif not isinstance(logger, logging.Logger):
@@ -147,7 +158,7 @@ class TestLogging(logging.Handler):
             logging.WARNING: warning,
             logging.INFO: info,
             logging.DEBUG: debug,
-            logging.NOTSET: notset
+            logging.NOTSET: notset,
         }
 
         super(TestLogging, self).__init__()
@@ -179,16 +190,24 @@ class TestLogging(logging.Handler):
                 for record in self.records:
                     self.logger.handle(record)
                 raise RuntimeError(
-                    'Expected %d %s logging messages, got %d' % (
-                        expected_count, logging.getLevelName(level), count))
+                    "Expected %d %s logging messages, got %d"
+                    % (expected_count, logging.getLevelName(level), count)
+                )
 
     def emit(self, record):
         """Override :meth:`logging.Handler.emit`"""
         self.records.append(record)
 
 
-def test_logging(logger=None, critical=None, error=None,
-                 warning=None, info=None, debug=None, notset=None):
+def test_logging(
+    logger=None,
+    critical=None,
+    error=None,
+    warning=None,
+    info=None,
+    debug=None,
+    notset=None,
+):
     """Decorator checking number of logging messages.
 
     Propagation of logging messages is disabled by this decorator.
@@ -217,16 +236,20 @@ def test_logging(logger=None, critical=None, error=None,
     :param int notset: Expected number of NOTSET messages.
                        Default: Do not check.
     """
+
     def decorator(func):
-        test_context = TestLogging(logger, critical, error,
-                                   warning, info, debug, notset)
+        test_context = TestLogging(
+            logger, critical, error, warning, info, debug, notset
+        )
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             with test_context:
                 result = func(*args, **kwargs)
             return result
+
         return wrapper
+
     return decorator
 
 
@@ -256,6 +279,7 @@ class EnsureImportError(object):
         if it is already imported. It only ensures that any attempt to import
         it again will cause an ImportError to be raised.
     """
+
     def __init__(self, name):
         """
 

@@ -29,6 +29,7 @@ It MUST be imported prior to any other import of matplotlib.
 It provides the matplotlib :class:`FigureCanvasQTAgg` class corresponding
 to the used backend.
 """
+
 from __future__ import annotations
 
 

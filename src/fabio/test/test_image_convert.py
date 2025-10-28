@@ -30,6 +30,7 @@ import os
 import logging
 from .utilstest import UtilsTest
 import fabio
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,6 +59,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

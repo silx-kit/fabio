@@ -28,8 +28,7 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
-"""Portable image converter based on FabIO library.
-"""
+"""Portable image converter based on FabIO library."""
 
 __author__ = "Valentin Valls"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
@@ -44,12 +43,13 @@ import fabio
 from fabio import fabioformats, fabioutils
 from fabio.utils.cli import expand_args
 import argparse
+
 logging.basicConfig()
 logger = logging.getLogger("fabio-convert")
 
 
 def get_default_extension_from_format(format_name):
-    """"
+    """ "
     Get a default file extension from a fabio format
 
     :param str format: String format like "edfimage"
@@ -129,7 +129,9 @@ def convert_one(input_filename, output_filename, options):
         print("Converting file '%s' to '%s'" % (input_filename, output_filename))
 
     if not input_exists:
-        logger.error("Input file '%s' do not exists. Conversion skipped.", input_filename)
+        logger.error(
+            "Input file '%s' do not exists. Conversion skipped.", input_filename
+        )
         return False
 
     skip_conversion = False
@@ -151,7 +153,7 @@ def convert_one(input_filename, output_filename, options):
             else:
                 remove_file = True
         elif is_user_want_to_overwrite_filename(output_filename):
-                remove_file = True
+            remove_file = True
         else:
             skip_conversion = True
 
@@ -162,7 +164,11 @@ def convert_one(input_filename, output_filename, options):
             if not options.dry_run:
                 os.remove(output_filename)
         except OSError as e:
-            logger.error("Removing previous file %s failed cause: \"%s\". Conversion skipped.", e.message, output_filename)
+            logger.error(
+                'Removing previous file %s failed cause: "%s". Conversion skipped.',
+                e.message,
+                output_filename,
+            )
             logger.debug("Backtrace", exc_info=True)
             return False
 
@@ -177,7 +183,11 @@ def convert_one(input_filename, output_filename, options):
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        logger.error("Loading input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
+        logger.error(
+            "Loading input file '%s' failed cause: \"%s\". Conversion skipped.",
+            input_filename,
+            e.message,
+        )
         logger.debug("Backtrace", exc_info=True)
         return False
 
@@ -187,7 +197,11 @@ def convert_one(input_filename, output_filename, options):
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        logger.error("Converting input file '%s' failed cause: \"%s\". Conversion skipped.", input_filename, e.message)
+        logger.error(
+            "Converting input file '%s' failed cause: \"%s\". Conversion skipped.",
+            input_filename,
+            e.message,
+        )
         logger.debug("Backtrace", exc_info=True)
         return False
 
@@ -198,7 +212,11 @@ def convert_one(input_filename, output_filename, options):
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        logger.error("Saving output file '%s' failed cause: \"%s\". Conversion skipped.", output_filename, e.message)
+        logger.error(
+            "Saving output file '%s' failed cause: \"%s\". Conversion skipped.",
+            output_filename,
+            e.message,
+        )
         logger.debug("Backtrace", exc_info=True)
         return False
 
@@ -215,7 +233,6 @@ def convert_all(options):
     """
     succeeded = True
     for filename in options.images:
-
         if options.output is None:
             output_filename = get_output_filename(filename, options.format)
         elif os.path.isdir(options.output):
@@ -273,51 +290,111 @@ EXIT_ARGUMENT_FAILURE = 2
 
 
 def main():
-
     epilog = """return codes: 0 means a success. 1 means the conversion
                 contains a failure, 2 means there was an error in the
                 arguments"""
 
-    parser = argparse.ArgumentParser(prog="fabio-convert",
-                                     description=__doc__,
-                                     epilog=epilog)
-    parser.add_argument("IMAGE", nargs="*",
-                        help="Input file images")
-    parser.add_argument("-V", "--version", action='version', version=fabio.version,
-                        help="output version and exit")
-    parser.add_argument("-v", "--verbose", action='store_true', dest="verbose", default=False,
-                        help="show information for each conversions")
-    parser.add_argument("--debug", action='store_true', dest="debug", default=False,
-                        help="show debug information")
+    parser = argparse.ArgumentParser(
+        prog="fabio-convert", description=__doc__, epilog=epilog
+    )
+    parser.add_argument("IMAGE", nargs="*", help="Input file images")
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=fabio.version,
+        help="output version and exit",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        dest="verbose",
+        default=False,
+        help="show information for each conversions",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        dest="debug",
+        default=False,
+        help="show debug information",
+    )
 
     group = parser.add_argument_group("main arguments")
-    group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
-                       help="show the list of available formats and exit")
-    group.add_argument("-o", "--output", dest='output', type=str,
-                       help="output file or directory")
-    group.add_argument("-F", "--output-format", dest="format", type=str, default=None,
-                       help="output format")
+    group.add_argument(
+        "-l",
+        "--list",
+        action="store_true",
+        dest="list",
+        default=None,
+        help="show the list of available formats and exit",
+    )
+    group.add_argument(
+        "-o", "--output", dest="output", type=str, help="output file or directory"
+    )
+    group.add_argument(
+        "-F",
+        "--output-format",
+        dest="format",
+        type=str,
+        default=None,
+        help="output format",
+    )
 
     group = parser.add_argument_group("optional behaviour arguments")
-    group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
-                       help="if an existing destination file cannot be" +
-                       " opened, remove it and try again (this option" +
-                       " is ignored when the -n option is also used)")
-    group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
-                       help="do not overwrite an existing file (this option" +
-                       " is ignored when the -i option is also used)")
-    group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
-                       help="remove each existing destination file before" +
-                       " attempting to open it (contrast with --force)")
-    group.add_argument("-u", "--update", dest="update", action="store_true", default=False,
-                       help="copy only when the SOURCE file is newer" +
-                       " than the destination file or when the" +
-                       " destination file is missing")
-    group.add_argument("-i", "--interactive", dest="interactive", action="store_true", default=False,
-                       help="prompt before overwrite (overrides a previous -n" +
-                       " option)")
-    group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
-                       help="do everything except modifying the file system")
+    group.add_argument(
+        "-f",
+        "--force",
+        dest="force",
+        action="store_true",
+        default=False,
+        help="if an existing destination file cannot be"
+        + " opened, remove it and try again (this option"
+        + " is ignored when the -n option is also used)",
+    )
+    group.add_argument(
+        "-n",
+        "--no-clobber",
+        dest="no_clobber",
+        action="store_true",
+        default=False,
+        help="do not overwrite an existing file (this option"
+        + " is ignored when the -i option is also used)",
+    )
+    group.add_argument(
+        "--remove-destination",
+        dest="remove_destination",
+        action="store_true",
+        default=False,
+        help="remove each existing destination file before"
+        + " attempting to open it (contrast with --force)",
+    )
+    group.add_argument(
+        "-u",
+        "--update",
+        dest="update",
+        action="store_true",
+        default=False,
+        help="copy only when the SOURCE file is newer"
+        + " than the destination file or when the"
+        + " destination file is missing",
+    )
+    group.add_argument(
+        "-i",
+        "--interactive",
+        dest="interactive",
+        action="store_true",
+        default=False,
+        help="prompt before overwrite (overrides a previous -n" + " option)",
+    )
+    group.add_argument(
+        "--dry-run",
+        dest="dry_run",
+        action="store_true",
+        default=False,
+        help="do everything except modifying the file system",
+    )
 
     try:
         args = parser.parse_args()
@@ -337,10 +414,11 @@ def main():
         args.images.sort()
 
         if args.format is None or not args.format.endswith("image"):
-
             if args.format is None:
                 if args.output is None:
-                    raise argparse.ArgumentError(None, "No format specified. Use -F or -o.")
+                    raise argparse.ArgumentError(
+                        None, "No format specified. Use -F or -o."
+                    )
                 dummy_filename = args.output
             else:
                 # format looks to be an extension
@@ -350,15 +428,26 @@ def main():
             filename = fabioutils.FilenameObject(filename=dummy_filename)
 
             if filename.format is None or len(filename.format) == 0:
-                raise argparse.ArgumentError(None, "This file extension is unknown. You have also to specify a format using -F.")
+                raise argparse.ArgumentError(
+                    None,
+                    "This file extension is unknown. You have also to specify a format using -F.",
+                )
             elif filename.format is None or len(filename.format) > 1:
                 formats = [i + "image" for i in filename.format]
-                formats = ', '.join(formats)
-                raise argparse.ArgumentError(None, "This file extension correspond to different file formats: '%s'. You have to specify it using -F." % formats)
+                formats = ", ".join(formats)
+                raise argparse.ArgumentError(
+                    None,
+                    "This file extension correspond to different file formats: '%s'. You have to specify it using -F."
+                    % formats,
+                )
             args.format = filename.format[0] + "image"
 
         if not is_format_supported(args.format):
-            raise argparse.ArgumentError(None, "Format '%s' is unknown. Use -l to list all available formats." % args.format)
+            raise argparse.ArgumentError(
+                None,
+                "Format '%s' is unknown. Use -l to list all available formats."
+                % args.format,
+            )
     except argparse.ArgumentError as e:
         logger.error(e.message)
         logger.debug("Backtrace", exc_info=True)
@@ -366,7 +455,9 @@ def main():
 
     succeeded = convert_all(args)
     if not succeeded:
-        print("Conversion or part of it failed. You can try with --debug to have more output information.")
+        print(
+            "Conversion or part of it failed. You can try with --debug to have more output information."
+        )
         return EXIT_FAILURE
 
     return EXIT_SUCCESS

@@ -26,8 +26,7 @@
 # THE SOFTWARE.
 #
 
-"""Test Eiger images
-"""
+"""Test Eiger images"""
 
 import unittest
 import os
@@ -37,6 +36,7 @@ from fabio.openimage import openimage
 from fabio.eigerimage import EigerImage, h5py
 from ..utilstest import UtilsTest
 from ..test_frames import _CommonTestFrames
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,9 +47,18 @@ def make_hdf5(name, shape=(50, 99, 101)):
     with h5py.File(name, mode="w") as h:
         e = h.require_group("entry/data")
         if len(shape) == 2:
-            e.require_dataset("data", shape, compression="gzip", compression_opts=9, dtype="float32")
+            e.require_dataset(
+                "data", shape, compression="gzip", compression_opts=9, dtype="float32"
+            )
         elif len(shape) == 3:
-            e.require_dataset("data", shape, chunks=(1,) + shape[1:], compression="gzip", compression_opts=9, dtype="float32")
+            e.require_dataset(
+                "data",
+                shape,
+                chunks=(1,) + shape[1:],
+                compression="gzip",
+                compression_opts=9,
+                dtype="float32",
+            )
 
 
 class TestEiger(_CommonTestFrames):
@@ -81,7 +90,7 @@ class TestEiger(_CommonTestFrames):
             os.unlink(cls.fn3)
 
     def test_read(self):
-        """ check we can read images from Eiger"""
+        """check we can read images from Eiger"""
         e = EigerImage()
         e.read(self.fn3)
         self.assertEqual(e.shape, (99, 101))
@@ -89,7 +98,7 @@ class TestEiger(_CommonTestFrames):
         self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_open(self):
-        """ check we can read images from Eiger"""
+        """check we can read images from Eiger"""
         e = openimage(self.fn3)
         self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
@@ -107,7 +116,9 @@ class TestEiger(_CommonTestFrames):
         e.save(fn)
         self.assertTrue(os.path.exists(fn), "file exists")
         f = openimage(fn)
-        self.assertEqual(str(f.__class__.__name__), "EigerImage", "Used the write reader")
+        self.assertEqual(
+            str(f.__class__.__name__), "EigerImage", "Used the write reader"
+        )
         self.assertEqual(shape[0], f.nframes, "shape matches")
         self.assertEqual(shape[1:], f.shape, "shape matches")
         self.assertEqual(abs(f.data - ary[0]).max(), 0, "first frame matches")
@@ -132,6 +143,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

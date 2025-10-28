@@ -54,6 +54,7 @@ import numpy
 from .fabioimage import FabioImage
 from .fabioutils import NotGoodReader
 from .nexus import Nexus
+
 try:
     import h5py
 except ImportError:
@@ -79,7 +80,9 @@ class EigerImage(FabioImage):
         Set up initial values
         """
         if not h5py:
-            raise RuntimeError("fabio.EigerImage cannot be used without h5py. Please install h5py and restart")
+            raise RuntimeError(
+                "fabio.EigerImage cannot be used without h5py. Please install h5py and restart"
+            )
         if data is None:
             self.dataset = [None]
         else:
@@ -88,13 +91,16 @@ class EigerImage(FabioImage):
             else:
                 data = data.reshape(*([-1] + list(data.shape[-2:])))
             self.dataset = [data]
-            self._data = data[0,:,:]
+            self._data = data[0, :, :]
         FabioImage.__init__(self, None, header)
         self.h5 = None
 
     def __repr__(self):
         if self.h5 is not None:
-            return "Eiger dataset with %i frames from %s" % (self.nframes, self.h5.filename)
+            return "Eiger dataset with %i frames from %s" % (
+                self.nframes,
+                self.h5.filename,
+            )
         else:
             return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
 
@@ -160,7 +166,7 @@ class EigerImage(FabioImage):
         else:
             self.currentframe = 0
 
-            self._data = self.dataset[0][self.currentframe,:,:]
+            self._data = self.dataset[0][self.currentframe, :, :]
             self._shape = None
             return self
 
@@ -170,9 +176,10 @@ class EigerImage(FabioImage):
         :param fname: name of the file
         """
         if hdf5plugin is None:
-            logger.warning("hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)")
-            compression = {"compression":"gzip",
-                   "compression_opts":1}
+            logger.warning(
+                "hdf5plugin is needed for bitshuffle-LZ4 compression, falling back on gzip (slower)"
+            )
+            compression = {"compression": "gzip", "compression_opts": 1}
         else:
             compression = hdf5plugin.Bitshuffle()
 
@@ -193,15 +200,19 @@ class EigerImage(FabioImage):
                     data.shape = (1,) + data.shape
                 chunks = (1,) + data.shape[-2:]
                 if len(self.dataset) > 1:
-                    hds = data_grp.create_dataset(f"data_{i+1:06d}", data=data, chunks=chunks, **compression)
+                    hds = data_grp.create_dataset(
+                        f"data_{i + 1:06d}", data=data, chunks=chunks, **compression
+                    )
                 elif len(self.dataset) == 1:
-                    hds = data_grp.create_dataset("data", data=data, chunks=chunks, **compression)
+                    hds = data_grp.create_dataset(
+                        "data", data=data, chunks=chunks, **compression
+                    )
                 hds.attrs["interpretation"] = "image"
                 if "signal" not in data_grp.attrs:
                     data_grp.attrs["signal"] = posixpath.split(hds.name)[-1]
 
     def getframe(self, num):
-        """ returns the frame numbered 'num' in the stack if applicable"""
+        """returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
             new_img = None
             if (num >= 0) and num < self.nframes:
@@ -215,7 +226,7 @@ class EigerImage(FabioImage):
                                 nfr -= 1
                         elif ds.ndim == 3:
                             # Stack of images
-                            if (nfr < ds.shape[0]):
+                            if nfr < ds.shape[0]:
                                 data = ds[nfr]
                                 break
                             else:
@@ -236,7 +247,7 @@ class EigerImage(FabioImage):
         return new_img
 
     def previous(self):
-        """ returns the previous file in the series as a FabioImage """
+        """returns the previous file in the series as a FabioImage"""
         new_image = None
         if self.nframes == 1:
             new_image = FabioImage.previous(self)
@@ -276,7 +287,10 @@ class EigerImage(FabioImage):
             data = None
             index = self.currentframe
             if isinstance(self.dataset, list):
-                frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
+                frame_idx = [
+                    len(ds) if (ds is not None and ds.ndim == 3) else 1
+                    for ds in self.dataset
+                ]
                 end_ds = numpy.cumsum(frame_idx)
                 for idx, end in enumerate(end_ds):
                     start = 0 if idx == 0 else end_ds[idx - 1]
@@ -303,7 +317,10 @@ class EigerImage(FabioImage):
         if index is None:
             index = self.currentframe
         if isinstance(self.dataset, list):
-            frame_idx = [len(ds) if (ds is not None and ds.ndim == 3) else 1 for ds in self.dataset]
+            frame_idx = [
+                len(ds) if (ds is not None and ds.ndim == 3) else 1
+                for ds in self.dataset
+            ]
             end_ds = numpy.cumsum(frame_idx)
             nframes = end_ds[-1]
             if index == nframes:

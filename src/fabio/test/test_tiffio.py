@@ -31,6 +31,7 @@ import logging
 import numpy
 from .utilstest import UtilsTest
 from ..TiffIO import TiffIO
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,11 +39,11 @@ class TestTiffIO(unittest.TestCase):
     """Test the class format"""
 
     def write(self, filename):
-        tif = TiffIO(filename, mode='wb+')
+        tif = TiffIO(filename, mode="wb+")
         dtype = numpy.uint16
         data = numpy.arange(10000).astype(dtype)
         data.shape = 100, 100
-        tif.writeImage(data, info={'Title': '1st'})
+        tif.writeImage(data, info={"Title": "1st"})
         tif = None
 
     def test_write(self):
@@ -55,11 +56,11 @@ class TestTiffIO(unittest.TestCase):
         filename = os.path.join(UtilsTest.tempdir, filename)
         self.write(filename)
         # append
-        tif = TiffIO(filename, mode='rb+')
+        tif = TiffIO(filename, mode="rb+")
         dtype = numpy.uint16
         data = numpy.arange(100).astype(dtype)
         data.shape = 10, 10
-        tif.writeImage((data * 2).astype(dtype), info={'Title': '2nd'})
+        tif.writeImage((data * 2).astype(dtype), info={"Title": "2nd"})
         self.assertEqual(tif.getNumberOfImages(), 2)
         tif = None
 
@@ -75,7 +76,7 @@ class TestTiffIO(unittest.TestCase):
             for key in info:
                 if key not in ["colormap"]:
                     logger.info("%s = %s", key, info[key])
-                elif info['colormap'] is not None:
+                elif info["colormap"] is not None:
                     logger.info("RED   %s = %s", key, info[key][0:10, 0])
                     logger.info("GREEN %s = %s", key, info[key][0:10, 1])
                     logger.info("BLUE  %s = %s", key, info[key][0:10, 2])
@@ -90,6 +91,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

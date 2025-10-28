@@ -37,6 +37,7 @@ import numpy
 import logging
 import fabio.xsdimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
@@ -45,7 +46,6 @@ TESTIMAGES = """XSDataImage.xml     512 512        86 61204     511.63    667.15
 
 
 class TestXSD(unittest.TestCase):
-
     def setUp(self):
         if fabio.xsdimage.etree is None:
             self.skipTest("etree is not available")
@@ -73,18 +73,25 @@ class TestXSD(unittest.TestCase):
             self.assertEqual(shape, obj.shape)
 
     def test_same(self):
-        """ test if an image is the same as the EDF equivalent"""
+        """test if an image is the same as the EDF equivalent"""
         xsd = fabio.open(self.fn["XSDataImage.xml"])
         edf = fabio.open(self.fn["XSDataImage.edf"])
-        self.assertAlmostEqual(0, abs(xsd.data - edf.data).max(), 1, "images are the same")
+        self.assertAlmostEqual(
+            0, abs(xsd.data - edf.data).max(), 1, "images are the same"
+        )
 
     def test_invert(self):
-        """ Tests that 2 matrixes are invert """
+        """Tests that 2 matrixes are invert"""
         m1 = fabio.open(self.fn["XSDataImage.xml"])
         m2 = fabio.open(self.fn["XSDataImageInv.xml"])
-        delta = abs(numpy.dot(m1.data, m2.data) - numpy.identity(m1.data.shape[0])).max()
+        delta = abs(
+            numpy.dot(m1.data, m2.data) - numpy.identity(m1.data.shape[0])
+        ).max()
         if delta >= 1e-3:
-            logger.error("Matrices are not invert of each other !!! prod = %s", numpy.matrix(m1.data) * numpy.matrix(m2.data))
+            logger.error(
+                "Matrices are not invert of each other !!! prod = %s",
+                numpy.matrix(m1.data) * numpy.matrix(m2.data),
+            )
         self.assertTrue(delta < 1e-3, "matrices are invert of each other")
 
 
@@ -95,6 +102,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

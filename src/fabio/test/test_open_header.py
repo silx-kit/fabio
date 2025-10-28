@@ -30,6 +30,7 @@ import unittest
 import logging
 from fabio.openimage import openheader
 from .utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,14 +41,14 @@ class Test1(unittest.TestCase):
         self.name = UtilsTest.getimage("F2K_Seb_Lyso0675_header_only.edf.bz2")[:-4]
 
     def testcase(self):
-        """ check openheader can read edf headers"""
+        """check openheader can read edf headers"""
         for ext in ["", ".bz2", ".gz"]:
             name = self.name + ext
             obj = openheader(name)
             logger.debug(" %s obj = %s" % (name, obj.header))
-            self.assertEqual(obj.header["title"],
-                             "ESPIA FRELON Image",
-                             "Error on file %s" % name)
+            self.assertEqual(
+                obj.header["title"], "ESPIA FRELON Image", "Error on file %s" % name
+            )
 
 
 def suite():
@@ -57,6 +58,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite)

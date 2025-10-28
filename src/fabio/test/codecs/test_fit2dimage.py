@@ -24,8 +24,7 @@
 # THE SOFTWARE.
 #
 
-"""Test for FabIO reader for Fit2D binary images
-"""
+"""Test for FabIO reader for Fit2D binary images"""
 
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kiefer@esrf.fr"
@@ -39,11 +38,12 @@ import logging
 import fabio
 from fabio.fit2dimage import fit2dimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
 class TestFit2DImage(unittest.TestCase):
-    """ A few random clicks to make a test mask """
+    """A few random clicks to make a test mask"""
 
     def setUp(self):
         """
@@ -53,7 +53,7 @@ class TestFit2DImage(unittest.TestCase):
         self.tiffilename = UtilsTest.getimage("fit2d.tif.bz2")[:-4]
 
     def test_read(self):
-        """ Check it reads a mask OK """
+        """Check it reads a mask OK"""
         i = fit2dimage()
         i.read(self.filename)
         self.assertEqual(i.shape, (28, 25))
@@ -62,7 +62,7 @@ class TestFit2DImage(unittest.TestCase):
         self.assertEqual(i.data.shape, (28, 25))
 
     def test_match(self):
-        """ test edf and msk are the same """
+        """test edf and msk are the same"""
         i = fabio.open(self.filename)
         j = fabio.open(self.tiffilename)
         i.read(self.filename)
@@ -88,6 +88,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

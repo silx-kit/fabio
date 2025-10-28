@@ -67,7 +67,7 @@ class Fit2dMaskImage(FabioImage):
         dim2 = fit2dhdr[5]
         self._shape = dim2, dim1
 
-    def read(self, fname:str, frame=None):
+    def read(self, fname: str, frame=None):
         """
         Read in header into self.header and
             the data   into self.data
@@ -115,7 +115,7 @@ class Fit2dMaskImage(FabioImage):
         self._shape = None
         return self
 
-    def write(self, fname:str):
+    def write(self, fname: str):
         """
         Try to write a file
         """

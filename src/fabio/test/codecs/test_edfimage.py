@@ -44,31 +44,39 @@ from ...edfimage import edfimage
 from ...fabioutils import GzipFile, BZ2File
 from ..utilstest import UtilsTest
 from ..testutils import LoggingValidator
+
 logger = logging.getLogger(__name__)
 
 
 class TestFlatEdfs(unittest.TestCase):
-    """ test some flat images """
+    """test some flat images"""
 
     def common_setup(self):
         self.BYTE_ORDER = "LowByteFirst" if numpy.little_endian else "HighByteFirst"
-        self.MYHEADER = ("{\n%-1020s}\n" % (
-                        """Omega = 0.0 ;
+        self.MYHEADER = (
+            "{\n%-1020s}\n"
+            % (
+                """Omega = 0.0 ;
                         Dim_1 = 256 ;
                         Dim_2 = 256 ;
                         DataType = FloatValue ;
                         ByteOrder = %s ;
                         Image = 1;
                         History-1 = something=something else;
-                        \n\n""" % self.BYTE_ORDER)).encode("latin-1")
+                        \n\n"""
+                % self.BYTE_ORDER
+            )
+        ).encode("latin-1")
         self.MYIMAGE = numpy.ones((256, 256), numpy.float32) * 10
         self.MYIMAGE[0, 0] = 0
         self.MYIMAGE[1, 1] = 20
 
-        assert len(self.MYIMAGE[0:1, 0:1].tobytes()) == 4, self.MYIMAGE[0:1, 0:1].tobytes()
+        assert len(self.MYIMAGE[0:1, 0:1].tobytes()) == 4, self.MYIMAGE[
+            0:1, 0:1
+        ].tobytes()
 
     def setUp(self):
-        """ initialize"""
+        """initialize"""
         self.common_setup()
         self.filename = os.path.join(UtilsTest.tempdir, "im0000.edf")
         if not os.path.isfile(self.filename):
@@ -89,21 +97,39 @@ class TestFlatEdfs(unittest.TestCase):
         self.BYTE_ORDER = self.MYHEADER = self.MYIMAGE = None
 
     def test_read(self):
-        """ check readable"""
-        self.assertEqual(self.obj.shape, (256, 256), msg="File %s has wrong shape " % self.filename)
+        """check readable"""
+        self.assertEqual(
+            self.obj.shape, (256, 256), msg="File %s has wrong shape " % self.filename
+        )
         self.assertEqual(self.obj.bpp, 4, msg="bpp!=4 for file: %s" % self.filename)
-        self.assertEqual(self.obj.bytecode, numpy.float32, msg="bytecode!=flot32 for file: %s" % self.filename)
-        self.assertEqual(self.obj.data.shape, (256, 256), msg="shape!=(256,256) for file: %s" % self.filename)
+        self.assertEqual(
+            self.obj.bytecode,
+            numpy.float32,
+            msg="bytecode!=flot32 for file: %s" % self.filename,
+        )
+        self.assertEqual(
+            self.obj.data.shape,
+            (256, 256),
+            msg="shape!=(256,256) for file: %s" % self.filename,
+        )
 
     def test_getstats(self):
-        """ test statistics"""
+        """test statistics"""
         self.assertEqual(self.obj.getmean(), 10)
         self.assertEqual(self.obj.getmin(), 0)
         self.assertEqual(self.obj.getmax(), 20)
 
     def test_headers(self):
         self.assertEqual(len(self.obj.header), 7)
-        expected_keys = ["Omega", "Dim_1", "Dim_2", "DataType", "ByteOrder", "Image", "History-1"]
+        expected_keys = [
+            "Omega",
+            "Dim_1",
+            "Dim_2",
+            "DataType",
+            "ByteOrder",
+            "Image",
+            "History-1",
+        ]
         self.assertEqual(expected_keys, list(self.obj.header.keys()))
 
         expected_values = {
@@ -112,14 +138,14 @@ class TestFlatEdfs(unittest.TestCase):
             "Dim_2": "256",
             "DataType": "FloatValue",
             "Image": "1",
-            "History-1": "something=something else"
+            "History-1": "something=something else",
         }
         for k, expected_value in expected_values.items():
             self.assertEqual(self.obj.header[k], expected_value)
 
 
 class TestBzipEdf(TestFlatEdfs):
-    """ same for bzipped versions """
+    """same for bzipped versions"""
 
     def setUp(self):
         """set it up"""
@@ -132,10 +158,10 @@ class TestBzipEdf(TestFlatEdfs):
 
 
 class TestGzipEdf(TestFlatEdfs):
-    """ same for gzipped versions """
+    """same for gzipped versions"""
 
     def setUp(self):
-        """ set it up """
+        """set it up"""
         TestFlatEdfs.setUp(self)
         if not os.path.isfile(self.filename + ".gz"):
             with GzipFile(self.filename + ".gz", "wb") as f:
@@ -162,7 +188,7 @@ class TestEdfs(unittest.TestCase):
         UtilsTest.getimage("id13_badPadding.edf.bz2")
 
     def test_read(self):
-        """ check we can read these images"""
+        """check we can read these images"""
         for line in TESTIMAGES.split("\n"):
             vals = line.split()
             name = vals[0]
@@ -175,12 +201,18 @@ class TestEdfs(unittest.TestCase):
             except Exception:
                 logger.error("Cannot read image %s", name)
                 raise
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "testedfs: %s getmin()" % name)
+            self.assertAlmostEqual(
+                mini, obj.getmin(), 2, "testedfs: %s getmin()" % name
+            )
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "testedfs: %s getmax" % name)
             logger.info("%s Mean: exp=%s, obt=%s" % (name, mean, obj.getmean()))
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "testedfs: %s getmean" % name)
+            self.assertAlmostEqual(
+                mean, obj.getmean(), 2, "testedfs: %s getmean" % name
+            )
             logger.info("%s StdDev:  exp=%s, obt=%s" % (name, stddev, obj.getstddev()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name)
+            self.assertAlmostEqual(
+                stddev, obj.getstddev(), 2, "testedfs: %s getstddev" % name
+            )
             self.assertEqual(obj.shape, shape, "testedfs: %s shape" % name)
         obj = None
 
@@ -189,7 +221,11 @@ class TestEdfs(unittest.TestCase):
         f = edfimage()
         f.read(os.path.join(self.im_dir, "F2K_Seb_Lyso0675.edf"))
         f.rebin(1024, 1024)
-        self.assertEqual(abs(numpy.array([[1547, 1439], [1536, 1494]]) - f.data).max(), 0, "data are the same after rebin")
+        self.assertEqual(
+            abs(numpy.array([[1547, 1439], [1536, 1494]]) - f.data).max(),
+            0,
+            "data are the same after rebin",
+        )
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
@@ -208,7 +244,7 @@ class TestEdfCompressedData(unittest.TestCase):
         UtilsTest.getimage("edfUncompressed_U16.edf.bz2")
 
     def test_read(self):
-        """ check we can read these images"""
+        """check we can read these images"""
         ref = edfimage()
         gzipped = edfimage()
         compressed = edfimage()
@@ -220,8 +256,14 @@ class TestEdfCompressedData(unittest.TestCase):
         gzipped.read(os.path.join(self.im_dir, gzippedFile))
         compressed.read(os.path.join(self.im_dir, compressedFile))
 
-        self.assertEqual((ref.data - gzipped.data).max(), 0, "Gzipped data block is correct")
-        self.assertEqual((ref.data - compressed.data).max(), 0, "Zlib compressed data block is correct")
+        self.assertEqual(
+            (ref.data - gzipped.data).max(), 0, "Gzipped data block is correct"
+        )
+        self.assertEqual(
+            (ref.data - compressed.data).max(),
+            0,
+            "Zlib compressed data block is correct",
+        )
 
 
 class TestEdfMultiFrame(unittest.TestCase):
@@ -244,47 +286,107 @@ class TestEdfMultiFrame(unittest.TestCase):
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
-        self.multiFrameFilename = self.Frame0Filename = self.Frame1Filename = self.ref = self.frame0 = self.frame1 = None
+        self.multiFrameFilename = self.Frame0Filename = self.Frame1Filename = (
+            self.ref
+        ) = self.frame0 = self.frame1 = None
 
     def test_getFrame_multi(self):
-        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_multi: Same data for frame 0")
+        self.assertEqual(
+            (self.ref.data - self.frame0.data).max(),
+            0,
+            "getFrame_multi: Same data for frame 0",
+        )
         f1_multi = self.ref.getframe(1)
         # logger.warning("f1_multi.header=%s\nf1_multi.data=  %s" % (f1_multi.header, f1_multi.data))
-        self.assertEqual((f1_multi.data - self.frame1.data).max(), 0, "getFrame_multi: Same data for frame 1")
+        self.assertEqual(
+            (f1_multi.data - self.frame1.data).max(),
+            0,
+            "getFrame_multi: Same data for frame 1",
+        )
 
     def test_getFrame_mono(self):
-        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "getFrame_mono: Same data for frame 0")
+        self.assertEqual(
+            (self.ref.data - self.frame0.data).max(),
+            0,
+            "getFrame_mono: Same data for frame 0",
+        )
         f1_mono = self.frame0.getframe(1)
-        self.assertEqual((f1_mono.data - self.frame1.data).max(), 0, "getFrame_mono: Same data for frame 1")
+        self.assertEqual(
+            (f1_mono.data - self.frame1.data).max(),
+            0,
+            "getFrame_mono: Same data for frame 1",
+        )
 
     def test_next_multi(self):
-        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_multi: Same data for frame 0")
+        self.assertEqual(
+            (self.ref.data - self.frame0.data).max(),
+            0,
+            "next_multi: Same data for frame 0",
+        )
         next_ = self.ref.next()
-        self.assertEqual((next_.data - self.frame1.data).max(), 0, "next_multi: Same data for frame 1")
+        self.assertEqual(
+            (next_.data - self.frame1.data).max(),
+            0,
+            "next_multi: Same data for frame 1",
+        )
 
     def text_next_mono(self):
-        self.assertEqual((self.ref.data - self.frame0.data).max(), 0, "next_mono: Same data for frame 0")
+        self.assertEqual(
+            (self.ref.data - self.frame0.data).max(),
+            0,
+            "next_mono: Same data for frame 0",
+        )
         next_ = self.frame0.next()
-        self.assertEqual((next_.data - self.frame1.data).max(), 0, "next_mono: Same data for frame 1")
+        self.assertEqual(
+            (next_.data - self.frame1.data).max(), 0, "next_mono: Same data for frame 1"
+        )
 
     def test_previous_multi(self):
         f1 = self.ref.getframe(1)
-        self.assertEqual((f1.data - self.frame1.data).max(), 0, "previous_multi: Same data for frame 1")
+        self.assertEqual(
+            (f1.data - self.frame1.data).max(),
+            0,
+            "previous_multi: Same data for frame 1",
+        )
         f0 = f1.previous()
-        self.assertEqual((f0.data - self.frame1.data).max(), 0, "previous_multi: Same data for frame 0")
+        self.assertEqual(
+            (f0.data - self.frame1.data).max(),
+            0,
+            "previous_multi: Same data for frame 0",
+        )
 
     def test_previous_mono(self):
         f1 = self.ref.getframe(1)
-        self.assertEqual((f1.data - self.frame1.data).max(), 0, "previous_mono: Same data for frame 1")
+        self.assertEqual(
+            (f1.data - self.frame1.data).max(),
+            0,
+            "previous_mono: Same data for frame 1",
+        )
         prev = self.frame1.previous()
-        self.assertEqual((prev.data - self.frame0.data).max(), 0, "previous_mono: Same data for frame 0")
+        self.assertEqual(
+            (prev.data - self.frame0.data).max(),
+            0,
+            "previous_mono: Same data for frame 0",
+        )
 
     def test_openimage_multiframes(self):
         "test if openimage can directly read first or second frame of a multi-frame"
-        self.assertEqual((fabio.open(self.multiFrameFilename).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for default ")
+        self.assertEqual(
+            (fabio.open(self.multiFrameFilename).data - self.frame0.data).max(),
+            0,
+            "openimage_multiframes: Same data for default ",
+        )
         # print(fabio.open(self.multiFrameFilename, 0).data)
-        self.assertEqual((fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(), 0, "openimage_multiframes: Same data for frame 0")
-        self.assertEqual((fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(), 0, "openimage_multiframes: Same data for frame 1")
+        self.assertEqual(
+            (fabio.open(self.multiFrameFilename, 0).data - self.frame0.data).max(),
+            0,
+            "openimage_multiframes: Same data for frame 0",
+        )
+        self.assertEqual(
+            (fabio.open(self.multiFrameFilename, 1).data - self.frame1.data).max(),
+            0,
+            "openimage_multiframes: Same data for frame 1",
+        )
 
 
 class TestEdfFastRead(unittest.TestCase):
@@ -318,19 +420,25 @@ class TestEdfFastRead(unittest.TestCase):
         # if I want to read it line by line
         line_index_to_read = 4
         line_data = edf_reader.fast_read_roi(
-            file_name,coords=(
+            file_name,
+            coords=(
                 slice(3, 9),
-                slice(line_index_to_read, line_index_to_read+1),
+                slice(line_index_to_read, line_index_to_read + 1),
             ),
         )
-        self.assertTrue(numpy.allclose(edf_writer.data[3:9,line_index_to_read:line_index_to_read+1],
-                                       line_data))
+        self.assertTrue(
+            numpy.allclose(
+                edf_writer.data[3:9, line_index_to_read : line_index_to_read + 1],
+                line_data,
+            )
+        )
 
 
 class TestEdfWrite(unittest.TestCase):
     """
     Write dummy edf files with various compression schemes
     """
+
     tmpdir = UtilsTest.tempdir
 
     def setUp(self):
@@ -344,7 +452,9 @@ class TestEdfWrite(unittest.TestCase):
         r = fabio.open(self.filename)
         self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
         self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
-        self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
+        self.assertEqual(
+            int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block"
+        )
 
     def testGzip(self):
         self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
@@ -353,7 +463,9 @@ class TestEdfWrite(unittest.TestCase):
         r = fabio.open(self.filename)
         self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
         self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
-        self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
+        self.assertEqual(
+            int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block"
+        )
 
     def testBzip2(self):
         self.filename = os.path.join(self.tmpdir, "merged.azim.gz")
@@ -362,7 +474,9 @@ class TestEdfWrite(unittest.TestCase):
         r = fabio.open(self.filename)
         self.assertTrue(r.header["toto"] == self.header["toto"], "header are OK")
         self.assertTrue(abs(r.data - self.data).max() == 0, "data are OK")
-        self.assertEqual(int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block")
+        self.assertEqual(
+            int(r.header["EDF_HeaderSize"]), 512, "header size is one 512 block"
+        )
 
     def tearDown(self):
         os.unlink(self.filename)
@@ -382,7 +496,11 @@ class TestEdfRegression(unittest.TestCase):
         """
         # create dummy image:
         shape = (32, 32)
-        data = numpy.random.randint(0, 6500, size=shape[0] * shape[1]).astype("uint16").reshape(shape)
+        data = (
+            numpy.random.randint(0, 6500, size=shape[0] * shape[1])
+            .astype("uint16")
+            .reshape(shape)
+        )
         fname = os.path.join(UtilsTest.tempdir, "bug27.edf")
         e = edfimage(data=data, header={"key1": "value1"})
         e.write(fname)
@@ -396,7 +514,9 @@ class TestEdfRegression(unittest.TestCase):
 
     def test_remove_metadata_header(self):
         filename = UtilsTest.getimage("face.edf.bz2")[0:-4]
-        output_filename = os.path.join(UtilsTest.tempdir, "test_remove_metadata_header.edf")
+        output_filename = os.path.join(
+            UtilsTest.tempdir, "test_remove_metadata_header.edf"
+        )
 
         image = fabio.open(filename)
         del image.header["Dim_1"]
@@ -405,57 +525,58 @@ class TestEdfRegression(unittest.TestCase):
         self.assertEqual(image.shape, image2.shape)
 
     def test_bug_459(self):
-        h = {'HeaderID': 'EH:000001:000000:000000',
-             'Image': '1',
-             'ByteOrder': 'LowByteFirst',
-             'DataType': 'Float',
-             'Dim_1': '3216',
-             'Dim_2': '3000',
-             'Size': '38592000',
-             'Date': '30-Oct-2021',
-             'Lcurve': '0',
-             'Mh': '24.996',
-             'Mv': '24.996',
-             'angles_fname': 'angles_file.txt',
-             'angles_sign': '-1',
-             'ans': ';',
-             'approach': '8',
-             'argn': '[0,',
-             'avg_plane_zero': '6.2031',
-             'axisfilesduringscan': '1',
-             'axisposition': 'global',
-             'betash': '0.0179803',
-             'betasv': '0.0179803',
-             'calc_residu': '0',
-             'centralpart': '2048',
-             'centralpart_shift_h': '0',
-             'centralpart_shift_v': '0',
-             'centralpart_struct': ';',
-             'check_spectrum': '0',
-             'check_z1v': '0',
-             'constrain': '0',
-             'correct_detector': '3',
-             'correct_distortion_par': ';',
-             'correct_shrink': '0',
-             'correct_shrink_positive': '0',
-             'correct_whitefield_par': '17',
-             'cutn': '0.0511098',
-             'cylinder': '0',
-             'debug': '0',
-             'delta_beta': '2119.4',
-             'delta_beta_normalised': '0',
-             'delta_beta_range': '2119.4',
-             'delta_beta_test': '0',
-             'dim_h': '2048',
-             'dim_v': '2048',
-             'dir': '/data/visitor/ls3023/id16a/PR3/',
-             'direc': ''}
+        h = {
+            "HeaderID": "EH:000001:000000:000000",
+            "Image": "1",
+            "ByteOrder": "LowByteFirst",
+            "DataType": "Float",
+            "Dim_1": "3216",
+            "Dim_2": "3000",
+            "Size": "38592000",
+            "Date": "30-Oct-2021",
+            "Lcurve": "0",
+            "Mh": "24.996",
+            "Mv": "24.996",
+            "angles_fname": "angles_file.txt",
+            "angles_sign": "-1",
+            "ans": ";",
+            "approach": "8",
+            "argn": "[0,",
+            "avg_plane_zero": "6.2031",
+            "axisfilesduringscan": "1",
+            "axisposition": "global",
+            "betash": "0.0179803",
+            "betasv": "0.0179803",
+            "calc_residu": "0",
+            "centralpart": "2048",
+            "centralpart_shift_h": "0",
+            "centralpart_shift_v": "0",
+            "centralpart_struct": ";",
+            "check_spectrum": "0",
+            "check_z1v": "0",
+            "constrain": "0",
+            "correct_detector": "3",
+            "correct_distortion_par": ";",
+            "correct_shrink": "0",
+            "correct_shrink_positive": "0",
+            "correct_whitefield_par": "17",
+            "cutn": "0.0511098",
+            "cylinder": "0",
+            "debug": "0",
+            "delta_beta": "2119.4",
+            "delta_beta_normalised": "0",
+            "delta_beta_range": "2119.4",
+            "delta_beta_test": "0",
+            "dim_h": "2048",
+            "dim_v": "2048",
+            "dir": "/data/visitor/ls3023/id16a/PR3/",
+            "direc": "",
+        }
         with LoggingValidator(fabio.edfimage.logger, error=0, warning=0):
             fabio.edfimage.EdfFrame.get_data_rank(h)
 
 
 class TestBadFiles(unittest.TestCase):
-
     filename_template = "%s.edf"
 
     @classmethod
@@ -517,7 +638,9 @@ class TestBadFiles(unittest.TestCase):
         return image
 
     def test_base(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         size = self.data2
         self.copy_base(filename, size)
 
@@ -532,14 +655,18 @@ class TestBadFiles(unittest.TestCase):
         self.assertEqual(frame.data[-1].sum(), 2560)
 
     def test_empty(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         f = io.open(filename, "wb")
         f.close()
 
         self.assertRaises(IOError, self.open, filename)
 
     def test_wrong_magic(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         f = io.open(filename, "wb")
         f.write(b"\x10\x20\x30")
         f.close()
@@ -547,14 +674,18 @@ class TestBadFiles(unittest.TestCase):
         self.assertRaises(IOError, self.open, filename)
 
     def test_half_header(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         size = self.header1 // 2
         self.copy_base(filename, size)
 
         self.assertRaises(IOError, self.open, filename)
 
     def test_header_with_no_data(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         size = self.header1
         self.copy_base(filename, size)
 
@@ -563,7 +694,9 @@ class TestBadFiles(unittest.TestCase):
         self.assertTrue(image.incomplete_file)
 
     def test_header_with_half_data(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         size = (self.header1 + self.data1) // 2
         self.copy_base(filename, size)
 
@@ -577,7 +710,9 @@ class TestBadFiles(unittest.TestCase):
         self.assertTrue(frame.incomplete_data)
 
     def test_full_frame_plus_half_header(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         size = (self.data1 + self.header2) // 2
         self.copy_base(filename, size)
 
@@ -591,7 +726,9 @@ class TestBadFiles(unittest.TestCase):
         self.assertFalse(frame.incomplete_data)
 
     def test_full_frame_plus_header_with_no_data(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         size = self.header2
         self.copy_base(filename, size)
 
@@ -605,7 +742,9 @@ class TestBadFiles(unittest.TestCase):
         self.assertFalse(frame.incomplete_data)
 
     def test_full_frame_plus_header_with_half_data(self):
-        filename = os.path.join(self.tmp_directory, self.filename_template % str(self.id()))
+        filename = os.path.join(
+            self.tmp_directory, self.filename_template % str(self.id())
+        )
         size = (self.header2 + self.data2) // 2
         self.copy_base(filename, size)
 
@@ -625,7 +764,6 @@ class TestBadFiles(unittest.TestCase):
 
 
 class TestBadGzFiles(TestBadFiles):
-
     filename_template = "%s.edf.gz"
 
     @classmethod
@@ -647,10 +785,30 @@ class TestSphere2SaxsSamples(unittest.TestCase):
         self.samples = UtilsTest.resources.getdir("sphere2saxs_output.tar.bz2")
 
     SAMPLES = {
-        "multi.edf": (5, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
-        "multi.edf.gz": (5, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
-        "sphere.edf": (1, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
-        "sphere.edf.gz": (1, (200, 100), numpy.float32, (6.292408e-05, 0.5594252, 3.2911296, 0.82902604)),
+        "multi.edf": (
+            5,
+            (200, 100),
+            numpy.float32,
+            (6.292408e-05, 0.5594252, 3.2911296, 0.82902604),
+        ),
+        "multi.edf.gz": (
+            5,
+            (200, 100),
+            numpy.float32,
+            (6.292408e-05, 0.5594252, 3.2911296, 0.82902604),
+        ),
+        "sphere.edf": (
+            1,
+            (200, 100),
+            numpy.float32,
+            (6.292408e-05, 0.5594252, 3.2911296, 0.82902604),
+        ),
+        "sphere.edf.gz": (
+            1,
+            (200, 100),
+            numpy.float32,
+            (6.292408e-05, 0.5594252, 3.2911296, 0.82902604),
+        ),
     }
 
     def test_all_images(self):
@@ -673,8 +831,7 @@ class TestSphere2SaxsSamples(unittest.TestCase):
 
 
 class TestEdfIterator(unittest.TestCase):
-    """Read different EDF files with lazy iterator
-    """
+    """Read different EDF files with lazy iterator"""
 
     def test_multi_frame(self):
         """Test iterator on a multi-frame EDF"""
@@ -686,8 +843,14 @@ class TestEdfIterator(unittest.TestCase):
         for index in range(ref.nframes):
             frame = next(iterator)
             ref_frame = ref.getframe(index)
-            self.assertEqual(numpy.abs(ref_frame.data - frame.data).max(), 0, 'Test frame %d data' % index)
-            self.assertEqual(ref_frame.header, frame.header, 'Test frame %d header' % index)
+            self.assertEqual(
+                numpy.abs(ref_frame.data - frame.data).max(),
+                0,
+                "Test frame %d data" % index,
+            )
+            self.assertEqual(
+                ref_frame.header, frame.header, "Test frame %d header" % index
+            )
 
         with self.assertRaises(StopIteration):
             next(iterator)
@@ -704,7 +867,6 @@ class TestEdfIterator(unittest.TestCase):
 
         with self.assertRaises(StopIteration):
             next(iterator)
-
 
 
 class TestEdfBadHeader(unittest.TestCase):
@@ -728,21 +890,21 @@ class TestEdfBadHeader(unittest.TestCase):
             while hdr.find(b"}") < 0:
                 hdr += fh.read(512)
             data = fh.read()
-        with open( self.fbad, "wb") as fb:
+        with open(self.fbad, "wb") as fb:
             start = hdr.rfind(b";") + 1
             end = hdr.find(b"}") - 1
-            hdr[start:end] = [ord('\n')] + [0xcd] * (end - start - 1)
+            hdr[start:end] = [ord("\n")] + [0xCD] * (end - start - 1)
             fb.write(hdr)
             fb.write(data)
-        with open( self.fzero, "wb") as fb:
+        with open(self.fzero, "wb") as fb:
             # insert some 0x00 to be stripped
             key = b"myvalue"
             z = hdr.find(key)
             hdr[z + len(key)] = 0
             fb.write(hdr)
             fb.write(data)
-        with open( self.fnonascii, "wb") as fb:
-            hdr[z:z + 1]= 0xc3, 0xa9  # e-acute in utf-8 ??
+        with open(self.fnonascii, "wb") as fb:
+            hdr[z : z + 1] = 0xC3, 0xA9  # e-acute in utf-8 ??
             with open(self.fnonascii, "wb") as fb:
                 fb.write(hdr)
                 fb.write(data)
@@ -779,6 +941,7 @@ class TestEdfBadHeader(unittest.TestCase):
             expected.pop("mykey")
             self.assertEqual(im.header, expected)
 
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
@@ -799,6 +962,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

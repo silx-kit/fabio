@@ -32,6 +32,7 @@ import unittest
 import logging
 import fabio
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,6 +40,7 @@ class TestMpa(unittest.TestCase):
     """
     Test classe for multiwire (mpa) images
     """
+
     TESTIMAGES = [
         # filename dim1 dim2 min max mean stddev
         ("mpa_test.mpa", 1024, 1024, 0, 1295, 0.8590, 18.9393),
@@ -57,10 +59,21 @@ class TestMpa(unittest.TestCase):
             obj = fabio.mpaimage.MpaImage()
             obj.read(path)
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertAlmostEqual(
+                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+            )
+            self.assertAlmostEqual(
+                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+            )
+            self.assertAlmostEqual(
+                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+            )
+            self.assertAlmostEqual(
+                stddev,
+                obj.getstddev(),
+                2,
+                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+            )
             self.assertEqual(shape, obj.shape)
 
 
@@ -71,6 +84,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

@@ -40,24 +40,49 @@ import logging
 import fabio
 from fabio.HiPiCimage import HipicImage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = [("Radiograph_SP8_BL47XU_HiPicimage.img", (2048, 2048), 2029, 46937, 22125.5196352005, 9089.959313208194),
-              ("Radiograph_SP8_BL47XU_HiPicimage.img.gz", (2048, 2048), 2029, 46937, 22125.5196352005, 9089.959313208194),
-              ("Radiograph_SP8_BL47XU_HiPicimage.img.bz2", (2048, 2048), 2029, 46937, 22125.5196352005, 9089.959313208194)]
+TESTIMAGES = [
+    (
+        "Radiograph_SP8_BL47XU_HiPicimage.img",
+        (2048, 2048),
+        2029,
+        46937,
+        22125.5196352005,
+        9089.959313208194,
+    ),
+    (
+        "Radiograph_SP8_BL47XU_HiPicimage.img.gz",
+        (2048, 2048),
+        2029,
+        46937,
+        22125.5196352005,
+        9089.959313208194,
+    ),
+    (
+        "Radiograph_SP8_BL47XU_HiPicimage.img.bz2",
+        (2048, 2048),
+        2029,
+        46937,
+        22125.5196352005,
+        9089.959313208194,
+    ),
+]
 
 
 class TestHiPiCImage(unittest.TestCase):
-    """
-    """
+    """ """
 
     def setUp(self):
-        """ Download images """
-        self.im_dir = os.path.dirname(UtilsTest.getimage("Radiograph_SP8_BL47XU_HiPicimage.img.bz2"))
+        """Download images"""
+        self.im_dir = os.path.dirname(
+            UtilsTest.getimage("Radiograph_SP8_BL47XU_HiPicimage.img.bz2")
+        )
 
     def test_read(self):
-        """ check we can read dm3 images"""
+        """check we can read dm3 images"""
         for info in TESTIMAGES:
             name, shape, mini, maxi, mean, stddev = info
             fname = os.path.join(self.im_dir, name)
@@ -68,7 +93,9 @@ class TestHiPiCImage(unittest.TestCase):
                 self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
                 self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
                 got_mean = obj.getmean()
-                self.assertAlmostEqual(mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean))
+                self.assertAlmostEqual(
+                    mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean)
+                )
                 self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
                 self.assertEqual(shape, obj.shape)
 
@@ -80,6 +107,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

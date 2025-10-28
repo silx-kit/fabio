@@ -48,6 +48,7 @@ import os
 import posixpath
 from . import fabioimage
 from .fabioutils import previous_filename, next_filename
+
 try:
     import h5py
 except ImportError:
@@ -88,7 +89,9 @@ class Hdf5Image(fabioimage.FabioImage):
         Generic constructor
         """
         if not h5py:
-            raise RuntimeError("fabio.Hdf5Image cannot be used without h5py. Please install h5py and restart")
+            raise RuntimeError(
+                "fabio.Hdf5Image cannot be used without h5py. Please install h5py and restart"
+            )
 
         fabioimage.FabioImage.__init__(self, *arg, **kwargs)
         self.hdf5 = None
@@ -102,7 +105,10 @@ class Hdf5Image(fabioimage.FabioImage):
 
         self.resetvals()
         if "::" not in fname:
-            err = "the '::' separator in mandatory for HDF5 container, absent in %s" % fname
+            err = (
+                "the '::' separator in mandatory for HDF5 container, absent in %s"
+                % fname
+            )
             logger.error(err)
             raise RuntimeError(err)
         filename, datapath = fname.split("::", 1)
@@ -136,7 +142,10 @@ class Hdf5Image(fabioimage.FabioImage):
         elif ndim == 2:
             self.data = self.dataset[:, :]
         else:
-            err = "Only 2D and 3D datasets are supported by FabIO, here %sD" % self.dataset.ndim
+            err = (
+                "Only 2D and 3D datasets are supported by FabIO, here %sD"
+                % self.dataset.ndim
+            )
             logger.error(err)
             raise RuntimeError(err)
         return self
@@ -150,7 +159,10 @@ class Hdf5Image(fabioimage.FabioImage):
         :param num: frame number
         """
         if num < 0 or num >= self.nframes:
-            raise IndexError("Requested frame number %i is out of range [0, %i[ " % (num, self.nframes))
+            raise IndexError(
+                "Requested frame number %i is out of range [0, %i[ "
+                % (num, self.nframes)
+            )
         # Do a deep copy of the header to make a new one
         frame = Hdf5Frame(self, num)
         frame._set_container(self, num)

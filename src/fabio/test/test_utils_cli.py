@@ -30,17 +30,17 @@ __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __date__ = "27/10/2025"
 __status__ = "development"
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 import unittest
 import logging
 from .utilstest import UtilsTest
 from ..utils.cli import ProgressBar, expand_args
+
 logger = logging.getLogger(__name__)
 
 
 class TestUtilShell(unittest.TestCase):
-
     def test_coverage(self):
         """
         test function coverage
@@ -52,7 +52,8 @@ class TestUtilShell(unittest.TestCase):
         progressbar.clear()
 
     def test_expand_args(self):
-        _ = expand_args(["*.tif","*.edf", "*.cbf", "*.img"])
+        _ = expand_args(["*.tif", "*.edf", "*.cbf", "*.img"])
+
 
 def suite():
     loader = unittest.defaultTestLoader.loadTestsFromTestCase
@@ -61,7 +62,7 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())
     UtilsTest.clean_up()

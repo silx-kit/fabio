@@ -35,6 +35,7 @@ Read the fit2d ascii image output
 import numpy
 import logging
 from .fabioimage import FabioImage
+
 _logger = logging.getLogger(__name__)
 
 
@@ -57,9 +58,9 @@ class Fit2dSpreadsheetImage(FabioImage):
         items = line.split()
         xdim = int(items[0])
         ydim = int(items[1])
-        self.header['title'] = line
-        self.header['Dim_1'] = xdim
-        self.header['Dim_2'] = ydim
+        self.header["title"] = line
+        self.header["Dim_1"] = xdim
+        self.header["Dim_2"] = ydim
 
     def read(self, fname, frame=None):
         """
@@ -72,8 +73,8 @@ class Fit2dSpreadsheetImage(FabioImage):
         self._readheader(infile)
         # Compute image size
         try:
-            dim1 = int(self.header['Dim_1'])
-            dim2 = int(self.header['Dim_2'])
+            dim1 = int(self.header["Dim_1"])
+            dim2 = int(self.header["Dim_2"])
             self._shape = dim2, dim1
         except (ValueError, KeyError):
             raise IOError("file %s is corrupt, cannot read it" % str(fname))

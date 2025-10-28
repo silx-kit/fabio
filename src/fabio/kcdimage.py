@@ -53,10 +53,11 @@ DATA_TYPES = {"u16": numpy.uint16}
 
 MINIMUM_KEYS = [
     # 'ByteOrder', Assume little by default
-    'Data type',
-    'X dimension',
-    'Y dimension',
-    'Number of readouts']
+    "Data type",
+    "X dimension",
+    "Y dimension",
+    "Number of readouts",
+]
 
 DEFAULT_VALUES = {"Data type": "u16"}
 
@@ -65,7 +66,7 @@ ALPHANUM = bytes(string.digits + string.ascii_letters + ". ", encoding="ASCII")
 
 class KcdImage(FabioImage):
     """
-    Read the Nonius kcd data format """
+    Read the Nonius kcd data format"""
 
     DESCRIPTION = "KCD file format from Nonius's KappaCCD diffractometer"
 
@@ -84,7 +85,9 @@ class KcdImage(FabioImage):
 
         if asciiHeader is False:
             # This does not look like an KappaCCD file
-            logger.warning("First line of %s does not seam to be ascii text!" % infile.name)
+            logger.warning(
+                "First line of %s does not seam to be ascii text!" % infile.name
+            )
         end_of_headers = False
         while not end_of_headers:
             one_line = infile.readline()
@@ -99,7 +102,7 @@ class KcdImage(FabioImage):
                 if one_line.strip() == "Binned mode":
                     one_line = "Mode = Binned"
                 if "=" in one_line:
-                    key, val = one_line.split('=', 1)
+                    key, val = one_line.split("=", 1)
                     key = key.strip()
                     self.header[key] = val.strip()
                 else:
@@ -123,19 +126,19 @@ class KcdImage(FabioImage):
             self._readheader(infile)
             # Compute image size
             try:
-                dim1 = int(self.header['X dimension'])
-                dim2 = int(self.header['Y dimension'])
+                dim1 = int(self.header["X dimension"])
+                dim2 = int(self.header["Y dimension"])
                 self._shape = dim2, dim1
             except (KeyError, ValueError):
                 raise IOError("KCD file %s is corrupt, cannot read it" % fname)
             try:
-                bytecode = DATA_TYPES[self.header['Data type']]
+                bytecode = DATA_TYPES[self.header["Data type"]]
             except KeyError:
                 bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
             self._dtype = numpy.dtype(bytecode)
             try:
-                nbReadOut = int(self.header['Number of readouts'])
+                nbReadOut = int(self.header["Number of readouts"])
             except KeyError:
                 logger.warning("Defaulting number of ReadOut to 1")
                 nbReadOut = 1
@@ -145,7 +148,9 @@ class KcdImage(FabioImage):
                 infile.seek(-expected_size, SEEK_END)
             except Exception:
                 logger.debug("Backtrace", exc_info=True)
-                logger.warning("seeking from end is not implemeneted for file %s", fname)
+                logger.warning(
+                    "seeking from end is not implemeneted for file %s", fname
+                )
                 if hasattr(infile, "measure_size"):
                     fileSize = infile.measure_size()
                 elif hasattr(infile, "size"):
@@ -165,7 +170,7 @@ class KcdImage(FabioImage):
         for i in range(nbReadOut):
             start = stop
             stop = (i + 1) * expected_size // nbReadOut
-            data = numpy.frombuffer(block[start: stop], self._dtype).copy()
+            data = numpy.frombuffer(block[start:stop], self._dtype).copy()
             data.shape = dim2, dim1
             if not numpy.little_endian:
                 data.byteswap(True)

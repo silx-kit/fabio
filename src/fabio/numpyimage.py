@@ -35,8 +35,8 @@ __date__ = "27/10/2025"
 import logging
 import numpy
 from . import fabioimage
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 
 class NumpyImage(fabioimage.FabioImage):
@@ -181,13 +181,15 @@ class NumpyImage(fabioimage.FabioImage):
                 frame._set_container(self, num)
                 frame._set_file_container(self, num)
             else:
-                raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+                raise IndexError(
+                    "getframe %s out of range [%s %s[" % (num, 0, self.nframes)
+                )
         else:
             frame = fabioimage.FabioImage._get_frame(self, num)
         return frame
 
     def getframe(self, num):
-        """ returns the frame numbered 'num' in the stack if applicable"""
+        """returns the frame numbered 'num' in the stack if applicable"""
         if self.nframes > 1:
             frame = None
             if (num >= 0) and num < self.nframes:
@@ -197,17 +199,19 @@ class NumpyImage(fabioimage.FabioImage):
                 frame._nframes = self.nframes
                 frame.currentframe = num
             else:
-                raise IndexError("getframe %s out of range [%s %s[" % (num, 0, self.nframes))
+                raise IndexError(
+                    "getframe %s out of range [%s %s[" % (num, 0, self.nframes)
+                )
         else:
             frame = fabioimage.FabioImage.getframe(self, num)
         return frame
 
     def previous(self):
-        """ returns the previous frame in the series as a fabioimage """
+        """returns the previous frame in the series as a fabioimage"""
         return self.getframe(self.currentframe - 1)
 
     def next(self):
-        """ returns the next frame in the series as a fabioimage """
+        """returns the next frame in the series as a fabioimage"""
         return self.getframe(self.currentframe + 1)
 
 

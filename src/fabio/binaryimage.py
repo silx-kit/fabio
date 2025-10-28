@@ -44,6 +44,7 @@ import io
 from .fabioimage import FabioImage
 import numpy
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -70,9 +71,13 @@ class BinaryImage(FabioImage):
         """
         Decide if we need to byteswap
         """
-        if (endian == '<' and numpy.little_endian) or (endian == '>' and not numpy.little_endian):
+        if (endian == "<" and numpy.little_endian) or (
+            endian == ">" and not numpy.little_endian
+        ):
             return False
-        if (endian == '>' and numpy.little_endian) or (endian == '<' and not numpy.little_endian):
+        if (endian == ">" and numpy.little_endian) or (
+            endian == "<" and not numpy.little_endian
+        ):
             return True
 
     def read(self, fname, dim1, dim2, offset=0, bytecode="int32", endian="<"):
@@ -87,7 +92,7 @@ class BinaryImage(FabioImage):
         :param endian:  among litte or big endian ("<" or ">")
 
         """
-        assert endian in ('<', '>', '=')
+        assert endian in ("<", ">", "=")
         bytecode = numpy.dtype(bytecode)
         if not bytecode.str.startswith(endian):
             bytecode = numpy.dtype(endian + bytecode.str[1:])
@@ -105,10 +110,14 @@ class BinaryImage(FabioImage):
                 try:
                     f.seek(-size + offset + 1, 2)  # seek from EOF backwards
                 except IOError:
-                    logger.warning('expected datablock too large, please check bytecode settings: {}'.format(bytecode))
+                    logger.warning(
+                        "expected datablock too large, please check bytecode settings: {}".format(
+                            bytecode
+                        )
+                    )
                 except Exception:
                     logger.debug("Backtrace", exc_info=True)
-                    logger.error('Uncommon error encountered when reading file')
+                    logger.error("Uncommon error encountered when reading file")
             rawData = f.read(size)
         data = numpy.frombuffer(rawData, bytecode).copy().reshape(tuple(dims))
         self.data = data
@@ -121,9 +130,9 @@ class BinaryImage(FabioImage):
             bpp = len(numpy.array(0, bytecode).tobytes())
             size = dim1 * dim2 * bpp
             totsize = len(f.read())
-        logger.info('total size (bytes): %s', totsize)
-        logger.info('expected data size given parameters (bytes): %s', size)
-        logger.info('estimation of the offset value (bytes): %s', totsize - size)
+        logger.info("total size (bytes): %s", totsize)
+        logger.info("expected data size given parameters (bytes): %s", size)
+        logger.info("estimation of the offset value (bytes): %s", totsize - size)
 
     def write(self, fname):
         with self._open(fname, mode="wb") as outfile:

@@ -78,6 +78,7 @@ __date__ = "09/02/2023"
 import logging
 import numpy
 from .fabioimage import FabioImage
+
 logger = logging.getLogger(__name__)
 
 

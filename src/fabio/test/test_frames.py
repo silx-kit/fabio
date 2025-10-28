@@ -35,6 +35,7 @@ import fabio.fabioimage
 import fabio.edfimage
 import fabio.file_series
 from .utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -118,7 +119,6 @@ class _CommonTestFrames(unittest.TestCase):
 
 
 class TestVirtualEdf(_CommonTestFrames):
-
     @classmethod
     def getMeta(cls):
         header1 = {"foo": "bar"}
@@ -160,7 +160,6 @@ class TestVirtualEdf(_CommonTestFrames):
 
 
 class TestEdf(_CommonTestFrames):
-
     @classmethod
     def getMeta(cls):
         filename = UtilsTest.getimage("multiframes.edf.bz2")
@@ -191,7 +190,6 @@ class TestEdf(_CommonTestFrames):
 
 
 class TestTiff(_CommonTestFrames):
-
     @classmethod
     def getMeta(cls):
         filename = UtilsTest.getimage("multiframes.tif.bz2")
@@ -222,7 +220,6 @@ class TestTiff(_CommonTestFrames):
 
 
 class TestFabioImage(unittest.TestCase):
-
     def test_single_frame_iterator(self):
         data = numpy.array([[1, 2], [3, 4]], dtype=numpy.uint16)
         image = fabio.fabioimage.FabioImage(data=data)
@@ -239,7 +236,6 @@ class TestFabioImage(unittest.TestCase):
 
 
 class TestFileSeries(_CommonTestFrames):
-
     @classmethod
     def getMeta(cls):
         filenames = []
@@ -271,6 +267,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

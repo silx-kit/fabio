@@ -26,8 +26,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.#
 
-"""Test Eiger images
-"""
+"""Test Eiger images"""
 
 import unittest
 import os
@@ -36,6 +35,7 @@ from fabio.fabioutils import exists
 from fabio.openimage import openimage
 from fabio.hdf5image import Hdf5Image, h5py
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,9 +46,18 @@ def make_hdf5(name, shape=(50, 99, 101)):
     with h5py.File(name, mode="w") as h:
         e = h.require_group("entry")
         if len(shape) == 2:
-            e.require_dataset("data", shape, compression="gzip", compression_opts=9, dtype="float32")
+            e.require_dataset(
+                "data", shape, compression="gzip", compression_opts=9, dtype="float32"
+            )
         elif len(shape) == 3:
-            e.require_dataset("data", shape, chunks=(1,) + shape[1:], compression="gzip", compression_opts=9, dtype="float32")
+            e.require_dataset(
+                "data",
+                shape,
+                chunks=(1,) + shape[1:],
+                compression="gzip",
+                compression_opts=9,
+                dtype="float32",
+            )
     return name + "::entry/data"
 
 
@@ -72,7 +81,7 @@ class TestHdf5(unittest.TestCase):
             os.unlink(cls.fn2.split("::")[0])
 
     def test_read(self):
-        """ check we can read images from Eiger"""
+        """check we can read images from Eiger"""
         e = Hdf5Image()
         e.read(self.fn2)
         self.assertEqual(e.shape, (99, 101))
@@ -86,7 +95,7 @@ class TestHdf5(unittest.TestCase):
         self.assertEqual(e.bpp, 4, "nframes OK")
 
     def test_open(self):
-        """ check we can read images from Eiger"""
+        """check we can read images from Eiger"""
         e = openimage(self.fn2)
         self.assertEqual(e.shape, (99, 101))
         self.assertEqual(e.nframes, 1, "nframes OK")
@@ -98,7 +107,7 @@ class TestHdf5(unittest.TestCase):
         self.assertEqual(e.bpp, 4, "nframes OK")
 
     def test_next_frames(self):
-        """ check the legacy next API"""
+        """check the legacy next API"""
         h5 = openimage(self.fn3)
         frame_nb = 1
         frame_id = 0
@@ -126,6 +135,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

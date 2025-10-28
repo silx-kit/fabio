@@ -27,6 +27,7 @@
 # THE SOFTWARE.
 #
 """Tiff Unit tests"""
+
 import unittest
 import os
 import logging
@@ -34,6 +35,7 @@ import numpy
 import fabio
 from fabio import tifimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
@@ -42,7 +44,8 @@ class TestTif(unittest.TestCase):
     TESTIMAGES = [
         ("Feb09-bright-00.300s_WAXS.bz2", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
         ("Feb09-bright-00.300s_WAXS.gz", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
-        ("Feb09-bright-00.300s_WAXS", 1042, 1042, 0, 65535, 8546.6414, 1500.4198)]
+        ("Feb09-bright-00.300s_WAXS", 1042, 1042, 0, 65535, 8546.6414, 1500.4198),
+    ]
 
     def test_read(self):
         """
@@ -57,10 +60,21 @@ class TestTif(unittest.TestCase):
             obj = fabio.tifimage.TifImage()
             obj.read(UtilsTest.getimage(name))
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertAlmostEqual(
+                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+            )
+            self.assertAlmostEqual(
+                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+            )
+            self.assertAlmostEqual(
+                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+            )
+            self.assertAlmostEqual(
+                stddev,
+                obj.getstddev(),
+                2,
+                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+            )
             self.assertEqual(shape, obj.shape, "dim1")
 
     def test_header(self):
@@ -71,22 +85,25 @@ class TestTif(unittest.TestCase):
             obj.read(UtilsTest.getimage(name))
 
             # The key order is not the same depending on Python2 or 3
-            expected_keys = set([
-                'info',
-                'photometricInterpretation',
-                'rowsPerStrip',
-                'nColumns',
-                'compression',
-                'sampleFormat',
-                'imageDescription',
-                'nRows',
-                'colormap',
-                'nBits',
-                'date',
-                'software',
-                'compression_type',
-                'stripOffsets',
-                'stripByteCounts'])
+            expected_keys = set(
+                [
+                    "info",
+                    "photometricInterpretation",
+                    "rowsPerStrip",
+                    "nColumns",
+                    "compression",
+                    "sampleFormat",
+                    "imageDescription",
+                    "nRows",
+                    "colormap",
+                    "nBits",
+                    "date",
+                    "software",
+                    "compression_type",
+                    "stripOffsets",
+                    "stripByteCounts",
+                ]
+            )
             self.assertEqual(set(obj.header.keys()), expected_keys)
 
     def test_frame(self):
@@ -114,7 +131,6 @@ class TestTif(unittest.TestCase):
 
 
 class TestTifImage_Pilatus(unittest.TestCase):
-
     def setUp(self):
         self.fn = {}
         for i in ["pilatus2M.tif", "pilatus2M.edf"]:
@@ -132,7 +148,6 @@ class TestTifImage_Pilatus(unittest.TestCase):
 
 
 class TestTifImage_Packbits(unittest.TestCase):
-
     def setUp(self):
         self.fn = {}
         for i in ["oPPA_5grains_0001.tif", "oPPA_5grains_0001.edf"]:
@@ -150,7 +165,6 @@ class TestTifImage_Packbits(unittest.TestCase):
 
 
 class TestTifImage_fit2d(unittest.TestCase):
-
     def setUp(self):
         self.fn = {}
         for i in ["fit2d.tif", "fit2d.edf"]:
@@ -169,10 +183,10 @@ class TestTifImage_fit2d(unittest.TestCase):
 
 class TestTifImage_A0009(unittest.TestCase):
     """
-    test image from ??? with this error
-a0009.tif TIFF 1024x1024 1024x1024+0+0 16-bit Grayscale DirectClass 2MiB 0.000u 0:00.010
-identify: a0009.tif: invalid TIFF directory; tags are not sorted in ascending order. `TIFFReadDirectory' @ tiff.c/TIFFWarnings/703.
-identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field, calculating from imagelength. `TIFFReadDirectory' @ tiff.c/TIFFWarnings/703.
+        test image from ??? with this error
+    a0009.tif TIFF 1024x1024 1024x1024+0+0 16-bit Grayscale DirectClass 2MiB 0.000u 0:00.010
+    identify: a0009.tif: invalid TIFF directory; tags are not sorted in ascending order. `TIFFReadDirectory' @ tiff.c/TIFFWarnings/703.
+    identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field, calculating from imagelength. `TIFFReadDirectory' @ tiff.c/TIFFWarnings/703.
 
     """
 
@@ -193,7 +207,6 @@ identify: a0009.tif: TIFF directory is missing required "StripByteCounts" field,
 
 
 class TestGzipTif(unittest.TestCase):
-
     def setUp(self):
         self.unzipped = UtilsTest.getimage("oPPA_5grains_0001.tif.bz2")[:-4]
         self.zipped = self.unzipped + ".gz"
@@ -208,7 +221,6 @@ class TestGzipTif(unittest.TestCase):
 
 
 class TestTif_Rect(unittest.TestCase):
-
     def setUp(self):
         self.fn = UtilsTest.getimage("testmap1_0002.tif.bz2")[:-4]
 
@@ -219,7 +231,6 @@ class TestTif_Rect(unittest.TestCase):
 
 
 class TestTif_Colormap(unittest.TestCase):
-
     def setUp(self):
         self.fn = UtilsTest.getimage("indexed_color.tif.bz2")[:-4]
 
@@ -277,6 +288,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

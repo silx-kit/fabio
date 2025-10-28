@@ -57,24 +57,24 @@ class MpaImage(FabioImage):
         :param infile: Opened python file (can be stringIO or bzipped file)
         """
         # list of header key to keep the order (when writing)
-        header_prefix = ''
+        header_prefix = ""
         tmp_hdr = OrderedDict([("None", OrderedDict())])
 
         while True:
             line = infile.readline()
             line = line.decode()
-            if line.find('=') > -1:
-                key, value = line.strip().split('=', 1)
+            if line.find("=") > -1:
+                key, value = line.strip().split("=", 1)
                 key = key.strip()
                 value = value.strip()
-                if header_prefix == '':
+                if header_prefix == "":
                     tmp_hdr["None"][key] = value
                 else:
                     tmp_hdr[header_prefix][key] = value
-            elif line.startswith('[DATA') or line.startswith('[CDAT'):
+            elif line.startswith("[DATA") or line.startswith("[CDAT"):
                 break
             else:
-                header_prefix = line.strip().strip('[]')
+                header_prefix = line.strip().strip("[]")
                 tmp_hdr[header_prefix] = {}
 
         self.header = OrderedDict()
@@ -82,10 +82,10 @@ class MpaImage(FabioImage):
             key = str(key)
             for subkey, subkey_data in key_data.items():
                 subkey = str(subkey)
-                if key == 'None':
+                if key == "None":
                     self.header[subkey] = subkey_data
                 else:
-                    self.header[key + '_' + subkey] = subkey_data
+                    self.header[key + "_" + subkey] = subkey_data
 
     def read(self, fname, frame=None):
         """
@@ -94,32 +94,34 @@ class MpaImage(FabioImage):
         :param fname: name of the file
         """
 
-        infile = self._open(fname, 'r')
+        infile = self._open(fname, "r")
         self._readheader(infile)
 
-        if ('ADC1_range' not in self.header.keys() or
-                'ADC2_range' not in self.header.keys() or
-                'mpafmt' not in self.header.keys()):
-            logger.error('Error in opening %s: badly formatted mpa header.', fname)
-            raise IOError('Error in opening %s: badly formatted mpa header.' % fname)
+        if (
+            "ADC1_range" not in self.header.keys()
+            or "ADC2_range" not in self.header.keys()
+            or "mpafmt" not in self.header.keys()
+        ):
+            logger.error("Error in opening %s: badly formatted mpa header.", fname)
+            raise IOError("Error in opening %s: badly formatted mpa header." % fname)
 
-        dim2 = int(self.header['ADC1_range'])
-        dim1 = int(self.header['ADC2_range'])
+        dim2 = int(self.header["ADC1_range"])
+        dim1 = int(self.header["ADC2_range"])
         self._shape = dim2, dim1
 
-        if self.header['mpafmt'] == 'asc':
+        if self.header["mpafmt"] == "asc":
             lines = infile.readlines()
         else:
             infile.close()
-            infile = self._open(fname, 'rb')
+            infile = self._open(fname, "rb")
             lines = infile.readlines()
 
         for i, line in enumerate(lines):
-            if line.startswith(b'[CDAT'):
+            if line.startswith(b"[CDAT"):
                 pos = i
                 break
 
-        img = numpy.array(lines[pos + 1:], dtype=float)
+        img = numpy.array(lines[pos + 1 :], dtype=float)
         self.data = img.reshape(self._shape)
         self._shape = None
 

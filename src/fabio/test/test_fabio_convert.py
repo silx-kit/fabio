@@ -22,11 +22,11 @@ import unittest
 import logging
 import fabio.app.convert
 from .utilstest import UtilsTest
+
 _logger = logging.getLogger(__name__)
 
 
 class TestFabioConvert(unittest.TestCase):
-
     def create_test_env(self):
         path = os.path.join(UtilsTest.tempdir, self.id())
         os.makedirs(path)
@@ -89,10 +89,14 @@ class TestFabioConvert(unittest.TestCase):
         commandLine = [sys.executable, self.__script]
         commandLine.extend(args)
         _logger.info("Execute: %s", " ".join(commandLine))
-        p = subprocess.Popen(commandLine, env=self.__env, shell=False,
-                             stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        p = subprocess.Popen(
+            commandLine,
+            env=self.__env,
+            shell=False,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         return p
 
     def logCommunicate(self, p):
@@ -112,98 +116,104 @@ class TestFabioConvert(unittest.TestCase):
     def testSingleFile(self):
         p = self.subprocessFabioConvert("input/03.edf", "-o=output/03.msk")
         self.logCommunicate(p)
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/03.msk")
         image = fabio.open("output/03.msk")
-        assert(isinstance(image, fabio.fit2dmaskimage.Fit2dMaskImage))
-        assert(image.data.shape == (100, 100))
+        assert isinstance(image, fabio.fit2dmaskimage.Fit2dMaskImage)
+        assert image.data.shape == (100, 100)
 
     def testSingleFileToDir(self):
         p = self.subprocessFabioConvert("input/03.edf", "-F=msk", "-o=output")
         self.logCommunicate(p)
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/03.msk")
 
     def testSingleFileWithWildcardToDir(self):
         p = self.subprocessFabioConvert("input/03.*", "-F=msk", "-o=output")
         self.logCommunicate(p)
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/03.msk")
 
     def testFullFormatName(self):
         p = self.subprocessFabioConvert("input/03.*", "-F=numpyimage", "-o=output")
         self.logCommunicate(p)
-        assert(os.path.exists("output/03.npy"))
+        assert os.path.exists("output/03.npy")
         image = fabio.open("output/03.npy")
-        assert(isinstance(image, fabio.numpyimage.NumpyImage))
-        assert(image.data.shape == (100, 100))
+        assert isinstance(image, fabio.numpyimage.NumpyImage)
+        assert image.data.shape == (100, 100)
 
     def testForceOption(self):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
         p = self.subprocessFabioConvert("input/*.edf", "-f", "-F=msk", "-o=output")
         self.logCommunicate(p)
-        assert(os.path.exists("output/01.msk"))
-        assert(date1 < os.path.getmtime("output/01.msk"))
-        assert(os.path.exists("output/02.msk"))
-        assert(date2 < os.path.getmtime("output/02.msk"))
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/01.msk")
+        assert date1 < os.path.getmtime("output/01.msk")
+        assert os.path.exists("output/02.msk")
+        assert date2 < os.path.getmtime("output/02.msk")
+        assert os.path.exists("output/03.msk")
 
     def testRemoveDestinationOption(self):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
-        p = self.subprocessFabioConvert("input/*.edf", "--remove-destination", "-F=msk", "-o=output")
+        p = self.subprocessFabioConvert(
+            "input/*.edf", "--remove-destination", "-F=msk", "-o=output"
+        )
         self.logCommunicate(p)
-        assert(os.path.exists("output/01.msk"))
-        assert(date1 < os.path.getmtime("output/01.msk"))
-        assert(os.path.exists("output/02.msk"))
-        assert(date2 < os.path.getmtime("output/02.msk"))
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/01.msk")
+        assert date1 < os.path.getmtime("output/01.msk")
+        assert os.path.exists("output/02.msk")
+        assert date2 < os.path.getmtime("output/02.msk")
+        assert os.path.exists("output/03.msk")
 
     def testNoClobberOption(self):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
         p = self.subprocessFabioConvert("input/*.edf", "-n", "-F=msk", "-o=output")
         self.logCommunicate(p)
-        assert(os.path.exists("output/01.msk"))
-        assert(date1 == os.path.getmtime("output/01.msk"))
-        assert(os.path.exists("output/02.msk"))
-        assert(date2 == os.path.getmtime("output/02.msk"))
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/01.msk")
+        assert date1 == os.path.getmtime("output/01.msk")
+        assert os.path.exists("output/02.msk")
+        assert date2 == os.path.getmtime("output/02.msk")
+        assert os.path.exists("output/03.msk")
 
     def testUpdateOption(self):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
-        p = self.subprocessFabioConvert("input/*.edf", "--update", "-F=msk", "-o=output")
+        p = self.subprocessFabioConvert(
+            "input/*.edf", "--update", "-F=msk", "-o=output"
+        )
         self.logCommunicate(p)
-        assert(os.path.exists("output/01.msk"))
-        assert(date1 < os.path.getmtime("output/01.msk"))
-        assert(os.path.exists("output/02.msk"))
-        assert(date2 == os.path.getmtime("output/02.msk"))
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/01.msk")
+        assert date1 < os.path.getmtime("output/01.msk")
+        assert os.path.exists("output/02.msk")
+        assert date2 == os.path.getmtime("output/02.msk")
+        assert os.path.exists("output/03.msk")
 
     def testDefaultOption(self):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
         p = self.subprocessFabioConvert("input/*.edf", "-F=msk", "-o=output")
-        p.stdin.write(b'yes\n')
-        p.stdin.write(b'no\n')
+        p.stdin.write(b"yes\n")
+        p.stdin.write(b"no\n")
         self.logCommunicate(p)
-        assert(os.path.exists("output/01.msk"))
-        assert(date1 < os.path.getmtime("output/01.msk"))
-        assert(os.path.exists("output/02.msk"))
-        assert(date2 == os.path.getmtime("output/02.msk"))
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/01.msk")
+        assert date1 < os.path.getmtime("output/01.msk")
+        assert os.path.exists("output/02.msk")
+        assert date2 == os.path.getmtime("output/02.msk")
+        assert os.path.exists("output/03.msk")
 
     def testInteractiveOption(self):
         date1 = os.path.getmtime("output/01.msk")
         date2 = os.path.getmtime("output/02.msk")
-        p = self.subprocessFabioConvert("input/*.edf", "-n", "-i", "-F=msk", "-o=output")
-        p.stdin.write(b'yes\n')
-        p.stdin.write(b'no\n')
+        p = self.subprocessFabioConvert(
+            "input/*.edf", "-n", "-i", "-F=msk", "-o=output"
+        )
+        p.stdin.write(b"yes\n")
+        p.stdin.write(b"no\n")
         self.logCommunicate(p)
-        assert(os.path.exists("output/01.msk"))
-        assert(date1 < os.path.getmtime("output/01.msk"))
-        assert(os.path.exists("output/02.msk"))
-        assert(date2 == os.path.getmtime("output/02.msk"))
-        assert(os.path.exists("output/03.msk"))
+        assert os.path.exists("output/01.msk")
+        assert date1 < os.path.getmtime("output/01.msk")
+        assert os.path.exists("output/02.msk")
+        assert date2 == os.path.getmtime("output/02.msk")
+        assert os.path.exists("output/03.msk")
 
 
 def suite():
@@ -213,6 +223,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

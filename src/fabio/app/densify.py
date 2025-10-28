@@ -54,6 +54,7 @@ from ..openimage import openimage as fabio_open
 from .. import version as fabio_version
 from ..utils.cli import ProgressBar, expand_args
 from ..nexus import Nexus, h5py
+
 try:
     import hdf5plugin  # noqa
 except ImportError:
@@ -78,58 +79,104 @@ def parse_args():
                 contains a failure, 2 means there was an error in the
                 arguments"""
 
-    parser = argparse.ArgumentParser(prog="densify",
-                                     description=__doc__,
-                                     epilog=epilog)
-    parser.add_argument("IMAGE", nargs="*",
-                        help="File with input images")
-    parser.add_argument("-V", "--version", action='version', version=fabio_version,
-                        help="output version and exit")
-    parser.add_argument("-v", "--verbose", action='store_true', dest="verbose", default=False,
-                        help="show information for each conversions")
-    parser.add_argument("--debug", action='store_true', dest="debug", default=False,
-                        help="show debug information")
+    parser = argparse.ArgumentParser(prog="densify", description=__doc__, epilog=epilog)
+    parser.add_argument("IMAGE", nargs="*", help="File with input images")
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=fabio_version,
+        help="output version and exit",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        dest="verbose",
+        default=False,
+        help="show information for each conversions",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        dest="debug",
+        default=False,
+        help="show debug information",
+    )
     group = parser.add_argument_group("main arguments")
-    group.add_argument("-l", "--list", action="store_true", dest="list", default=None,
-                       help="show the list of available output formats and exit")
-    group.add_argument("-o", "--output", default=None, type=str,
-                       help="output filename, by default {basename}_densify.h5")
-    group.add_argument("-O", "--output-format", dest="format", default='lima', type=str,
-                       help="output format among 'lima', 'eiger' ...")
-    group.add_argument("-D", "--dummy", type=int, default=None,
-                       help="Set masked values to this dummy value")
+    group.add_argument(
+        "-l",
+        "--list",
+        action="store_true",
+        dest="list",
+        default=None,
+        help="show the list of available output formats and exit",
+    )
+    group.add_argument(
+        "-o",
+        "--output",
+        default=None,
+        type=str,
+        help="output filename, by default {basename}_densify.h5",
+    )
+    group.add_argument(
+        "-O",
+        "--output-format",
+        dest="format",
+        default="lima",
+        type=str,
+        help="output format among 'lima', 'eiger' ...",
+    )
+    group.add_argument(
+        "-D",
+        "--dummy",
+        type=int,
+        default=None,
+        help="Set masked values to this dummy value",
+    )
 
     group = parser.add_argument_group("optional behaviour arguments")
-#     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
-#                        help="if an existing destination file cannot be" +
-#                        " opened, remove it and try again (this option" +
-#                        " is ignored when the -n option is also used)")
-#     group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
-#                        help="do not overwrite an existing file (this option" +
-#                        " is ignored when the -i option is also used)")
-#     group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
-#                        help="remove each existing destination file before" +
-#                        " attempting to open it (contrast with --force)")
-#     group.add_argument("-u", "--update", dest="update", action="store_true", default=False,
-#                        help="copy only when the SOURCE file is newer" +
-#                        " than the destination file or when the" +
-#                        " destination file is missing")
-#     group.add_argument("-i", "--interactive", dest="interactive", action="store_true", default=False,
-#                        help="prompt before overwrite (overrides a previous -n" +
-#                        " option)")
-    group.add_argument("--dry-run", dest="dry_run", action="store_true", default=False,
-                       help="do everything except modifying the file system")
-    group.add_argument("-N", "--noise", type=float, dest="noisy", default=1.0,
-                       help="Noise scaling factor, from 0 to 1, set to 0 to disable the noise reconstruction")
-#     group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
-#     group.add_argument("--rotation", type=int, default=180,
-#                        help="Rotate the initial image by this value in degrees. Must be a multiple of 90°. By default 180 deg (flip_up with origin=lower and flip_lr because the image is seen from the sample).")
-#     group.add_argument("--transpose", default=False, action="store_true",
-#                        help="Flip the x/y axis")
-#     group.add_argument("--flip-ud", dest="flip_ud", default=False, action="store_true",
-#                        help="Flip the image upside-down")
-#     group.add_argument("--flip-lr", dest="flip_lr", default=False, action="store_true",
-#                        help="Flip the image left-right")
+    #     group.add_argument("-f", "--force", dest="force", action="store_true", default=False,
+    #                        help="if an existing destination file cannot be" +
+    #                        " opened, remove it and try again (this option" +
+    #                        " is ignored when the -n option is also used)")
+    #     group.add_argument("-n", "--no-clobber", dest="no_clobber", action="store_true", default=False,
+    #                        help="do not overwrite an existing file (this option" +
+    #                        " is ignored when the -i option is also used)")
+    #     group.add_argument("--remove-destination", dest="remove_destination", action="store_true", default=False,
+    #                        help="remove each existing destination file before" +
+    #                        " attempting to open it (contrast with --force)")
+    #     group.add_argument("-u", "--update", dest="update", action="store_true", default=False,
+    #                        help="copy only when the SOURCE file is newer" +
+    #                        " than the destination file or when the" +
+    #                        " destination file is missing")
+    #     group.add_argument("-i", "--interactive", dest="interactive", action="store_true", default=False,
+    #                        help="prompt before overwrite (overrides a previous -n" +
+    #                        " option)")
+    group.add_argument(
+        "--dry-run",
+        dest="dry_run",
+        action="store_true",
+        default=False,
+        help="do everything except modifying the file system",
+    )
+    group.add_argument(
+        "-N",
+        "--noise",
+        type=float,
+        dest="noisy",
+        default=1.0,
+        help="Noise scaling factor, from 0 to 1, set to 0 to disable the noise reconstruction",
+    )
+    #     group = parser.add_argument_group("Image preprocessing (Important: applied in this order!)")
+    #     group.add_argument("--rotation", type=int, default=180,
+    #                        help="Rotate the initial image by this value in degrees. Must be a multiple of 90°. By default 180 deg (flip_up with origin=lower and flip_lr because the image is seen from the sample).")
+    #     group.add_argument("--transpose", default=False, action="store_true",
+    #                        help="Flip the x/y axis")
+    #     group.add_argument("--flip-ud", dest="flip_ud", default=False, action="store_true",
+    #                        help="Flip the image upside-down")
+    #     group.add_argument("--flip-lr", dest="flip_lr", default=False, action="store_true",
+    #                        help="Flip the image left-right")
 
     try:
         args = parser.parse_args()
@@ -206,8 +253,12 @@ def save_master(outfile, sparsefile):
                 detector["pixel_mask_applied"] = numpy.int32(1)
                 detector["x_pixel_size"] = numpy.float32(ai.detector.pixel2)
                 detector["y_pixel_size"] = numpy.float32(ai.detector.pixel2)
-                nxs.h5["/entry/instrument/detector/detectorSpecific/pixel_mask"] = d["mask"]
-                nxs.h5["/entry/instrument/detector/detectorSpecific/nimages"] = numpy.uint32(d["nframes"])
+                nxs.h5["/entry/instrument/detector/detectorSpecific/pixel_mask"] = d[
+                    "mask"
+                ]
+                nxs.h5["/entry/instrument/detector/detectorSpecific/nimages"] = (
+                    numpy.uint32(d["nframes"])
+                )
 
 
 class Converter:
@@ -239,12 +290,14 @@ class Converter:
         pool = multiprocessing.pool.ThreadPool(multiprocessing.cpu_count())
         self.pb.update(1, "Populate thread pool")
 
-        future_frames = {idx: pool.apply_async(sparse._generate_data, (idx,))
-                         for idx in range(sparse.nframes)}
+        future_frames = {
+            idx: pool.apply_async(sparse._generate_data, (idx,))
+            for idx in range(sparse.nframes)
+        }
         pool.close()
         for idx in range(sparse.nframes):
             self.pb.update(idx, f"Decompress frame #{idx:04d}")
-            future_frame =  future_frames.pop(idx)
+            future_frame = future_frames.pop(idx)
             dest.set_data(future_frame.get(), idx)
         pool.join()
 
@@ -257,17 +310,20 @@ class Converter:
             elif self.args.format.startswith("eiger"):
                 output = os.path.splitext(filename)[0] + "_000001.h5"
         else:
-                base = os.path.basename(os.path.splitext(filename)[0])
-                output = output.replace("{basename}", base)
+            base = os.path.basename(os.path.splitext(filename)[0])
+            output = output.replace("{basename}", base)
 
         self.pb.update(self.pb.max_value, f"Save {output}")
         dest.save(output)
         # link peaks to destination files
         if sparse.peaks:
-            relpath = os.path.relpath(os.path.abspath(filename),
-                                      os.path.dirname(os.path.abspath(output)))
+            relpath = os.path.relpath(
+                os.path.abspath(filename), os.path.dirname(os.path.abspath(output))
+            )
             with h5py.File(output, "a") as h:
-                key = posixpath.join(h.attrs['default'], posixpath.split(sparse.peaks)[-1])
+                key = posixpath.join(
+                    h.attrs["default"], posixpath.split(sparse.peaks)[-1]
+                )
                 h[key] = h5py.ExternalLink(relpath, sparse.peaks)
 
         if self.args.format.startswith("eiger"):
@@ -275,9 +331,9 @@ class Converter:
         t3 = time.perf_counter()
         self.pb.clear()
         print(f"Densify of {filename} --> {output} took:")
-        print(f"Read input: {t1-t0:.3f}s")
-        print(f"Decompress: {t2-t1:.3f}s")
-        print(f"Write outp: {t3-t2:.3f}s")
+        print(f"Read input: {t1 - t0:.3f}s")
+        print(f"Decompress: {t2 - t1:.3f}s")
+        print(f"Write outp: {t3 - t2:.3f}s")
 
     def decompress(self):
         "Decompress all input files"
@@ -293,7 +349,7 @@ def main():
         c = Converter(args)
         c.decompress()
     except Exception as err:
-        logger.error("%s: %s", err.__class__.__name__,str(err))
+        logger.error("%s: %s", err.__class__.__name__, str(err))
         logger.error("Backtrace", exc_info=True)
         return EXIT_FAILURE
     else:

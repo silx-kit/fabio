@@ -36,6 +36,7 @@ import logging
 import fabio
 from ..utilstest import UtilsTest
 from ..test_frames import _CommonTestFrames
+
 logger = logging.getLogger(__name__)
 
 
@@ -49,7 +50,6 @@ class TestPixiImage(_CommonTestFrames):
 
     @classmethod
     def getMeta(cls):
-
         class Meta(object):
             pass
 
@@ -72,12 +72,12 @@ class TestPixiImage(_CommonTestFrames):
         header = b"\n\xb8\x03\x00" + b"\x00" * 20
 
         cls.single_frame = os.path.join(UtilsTest.tempdir, "pixi_1frame.dat")
-        with open(cls.single_frame, 'wb') as f:
+        with open(cls.single_frame, "wb") as f:
             f.write(header)
             f.write(frame1)
 
         cls.multi_frame = os.path.join(UtilsTest.tempdir, "pixi_3frame.dat")
-        with open(cls.multi_frame, 'wb') as f:
+        with open(cls.multi_frame, "wb") as f:
             f.write(header)
             f.write(frame1)
             f.write(header)
@@ -90,7 +90,7 @@ class TestPixiImage(_CommonTestFrames):
         frames = [frame1, frame2, frame3]
         for num, frame in enumerate(frames):
             filename = template % num
-            with open(filename, 'wb') as f:
+            with open(filename, "wb") as f:
                 f.write(header)
                 f.write(frame)
 
@@ -145,6 +145,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

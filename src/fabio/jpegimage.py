@@ -35,12 +35,14 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
 
 import logging
+
 try:
     from PIL import Image
 except ImportError:
     Image = None
 from .fabioimage import FabioImage
 from .utils import pilutils
+
 logger = logging.getLogger(__name__)
 
 # List of reserved keys reached from
@@ -62,7 +64,7 @@ JPEG_RESERVED_HEADER_KEYS = [
     "dpi",
     "exif",
     "subsampling",
-    "qtables"
+    "qtables",
 ]
 
 
@@ -70,6 +72,7 @@ class JpegImage(FabioImage):
     """
     Images in JPEG format using PIL
     """
+
     DESCRIPTION = "JPEG format"
 
     DEFAULT_EXTENSIONS = ["jpg", "jpeg"]
@@ -79,7 +82,7 @@ class JpegImage(FabioImage):
     _need_a_seek_to_read = True
 
     def __init__(self, *args, **kwds):
-        """ Tifimage constructor adds an nbits member attribute """
+        """Tifimage constructor adds an nbits member attribute"""
         self.nbits = None
         FabioImage.__init__(self, *args, **kwds)
 

@@ -39,13 +39,15 @@ import fabio
 from ...mrcimage import MrcImage
 from ...openimage import openimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
 class TestMrc(unittest.TestCase):
     """basic test"""
-    mrcfilename = ('EMD-3001.map', "0p67_5s_0000.mrc")
-    npyfilename = ('EMD-3001.npy', "0p67_5s_0000.npy")
+
+    mrcfilename = ("EMD-3001.map", "0p67_5s_0000.mrc")
+    npyfilename = ("EMD-3001.npy", "0p67_5s_0000.npy")
     results = """EMD-3001.map   73 43  -0.36814222  0.678705 0.0062340125 0.16349247
                  0p67_5s_0000.mrc 2048 2048 -344.0 33553.0 82.653259 243.213061"""
 
@@ -58,7 +60,7 @@ class TestMrc(unittest.TestCase):
             assert os.path.exists(self.fn[i])
 
     def test_read(self):
-        """ check we can read mrc images"""
+        """check we can read mrc images"""
         for results in self.results.split("\n"):
             vals = results.split()
             dim1, dim2 = [int(x) for x in vals[1:3]]
@@ -74,17 +76,19 @@ class TestMrc(unittest.TestCase):
                 self.assertAlmostEqual(mini, obj.getmin(), 4, f"{filename} getmin")
                 self.assertAlmostEqual(maxi, obj.getmax(), 4, f"{filename} getmax")
                 self.assertAlmostEqual(mean, obj.getmean(), 4, f"{filename} getmean")
-                self.assertAlmostEqual(stddev, obj.getstddev(), 4, f"{filename} getstddev")
+                self.assertAlmostEqual(
+                    stddev, obj.getstddev(), 4, f"{filename} getstddev"
+                )
                 self.assertEqual(shape, obj.shape, f"{filename} shape")
 
     def test_same(self):
-        """ see if we can read mrc images and if they are the same as the numpy dump"""
+        """see if we can read mrc images and if they are the same as the numpy dump"""
         for mrcfilename, npyfilename in zip(self.mrcfilename, self.npyfilename):
             logger.info("Comparing files %s and %s", mrcfilename, npyfilename)
             mrc = MrcImage()
             mrc.read(self.fn[mrcfilename])
             npy = fabio.open(self.fn[npyfilename])
-            diff = (mrc.data - npy.data)
+            diff = mrc.data - npy.data
             self.assertAlmostEqual(abs(diff).sum(), 0, 4, msg=mrcfilename)
 
 
@@ -95,6 +99,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

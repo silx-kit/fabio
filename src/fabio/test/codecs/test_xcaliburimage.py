@@ -31,6 +31,7 @@
 Unit tests for xcalibur struct used by crysalis to represent the mask
 
 """
+
 __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
@@ -43,17 +44,30 @@ import numpy
 import fabio
 from fabio.xcaliburimage import CcdCharacteristiscs, XcaliburImage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 
 class TestCcdCharacteristiscs(unittest.TestCase):
-    """ test CcdCharacteristiscs struct reader """
+    """test CcdCharacteristiscs struct reader"""
+
     @classmethod
-    def setUpClass(cls)->None:
-        cls.ccdfiles = [UtilsTest.getimage(i) for i in ("scan0001.ccd", "scan0005.ccd", "scan0050.ccd", "scan0059.ccd", "scan0066.ccd")]
+    def setUpClass(cls) -> None:
+        cls.ccdfiles = [
+            UtilsTest.getimage(i)
+            for i in (
+                "scan0001.ccd",
+                "scan0005.ccd",
+                "scan0050.ccd",
+                "scan0059.ccd",
+                "scan0066.ccd",
+            )
+        ]
+
     @classmethod
-    def tearDownClass(cls)->None:
+    def tearDownClass(cls) -> None:
         cls.ccfiles = None
+
     def test_parse(self):
         for afile in self.ccdfiles:
             ref = CcdCharacteristiscs.read(afile)
@@ -64,20 +78,25 @@ class TestCcdCharacteristiscs(unittest.TestCase):
                         what.__setattr__(key, [])
             self.assertEqual(ref, obt, f"{afile} matches ")
 
+
 class testXcalibureImage(unittest.TestCase):
     @classmethod
-    def setUpClass(cls)->None:
+    def setUpClass(cls) -> None:
         cls.filename = UtilsTest.getimage("Pilatus1M.cbf")
+
     @classmethod
-    def tearDownClass(cls)->None:
+    def tearDownClass(cls) -> None:
         cls.filename = None
+
     def test_decomposition(self):
-        ref = (fabio.open(self.filename).data<0).astype("int8")
+        ref = (fabio.open(self.filename).data < 0).astype("int8")
         xcal = XcaliburImage(data=ref)
         try:
             import pyFAI.ext.dynamic_rectangle  # noqa
         except ImportError:
-            logger.warning("PyFAI not available: only a coarse description of the mask is provided")
+            logger.warning(
+                "PyFAI not available: only a coarse description of the mask is provided"
+            )
             precise = False
         else:
             precise = True
@@ -96,7 +115,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())
-

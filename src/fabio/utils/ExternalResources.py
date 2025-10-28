@@ -51,10 +51,7 @@ class ExternalResources(object):
 
     """
 
-    def __init__(self, project,
-                 url_base,
-                 env_key=None,
-                 timeout=60):
+    def __init__(self, project, url_base, env_key=None, timeout=60):
         """Constructor of the class
 
         :param str project: name of the project, like "silx"
@@ -89,6 +86,7 @@ class ExternalResources(object):
         if data_home is None:
             try:
                 import getpass
+
                 name = getpass.getuser()
             except Exception:
                 if "getlogin" in dir(os):
@@ -136,14 +134,17 @@ class ExternalResources(object):
         fullfilename = os.path.abspath(os.path.join(self.data_home, filename))
 
         if not os.path.isfile(fullfilename):
-            logger.debug("Trying to download image %s, timeout set to %ss",
-                         filename, self.timeout)
+            logger.debug(
+                "Trying to download image %s, timeout set to %ss",
+                filename,
+                self.timeout,
+            )
             dictProxies = {}
             if "http_proxy" in os.environ:
-                dictProxies['http'] = os.environ["http_proxy"]
-                dictProxies['https'] = os.environ["http_proxy"]
+                dictProxies["http"] = os.environ["http_proxy"]
+                dictProxies["https"] = os.environ["http_proxy"]
             if "https_proxy" in os.environ:
-                dictProxies['https'] = os.environ["https_proxy"]
+                dictProxies["https"] = os.environ["https_proxy"]
             if dictProxies:
                 proxy_handler = urllib.request.ProxyHandler(dictProxies)
                 opener = urllib.request.build_opener(proxy_handler).open
@@ -152,8 +153,9 @@ class ExternalResources(object):
 
             logger.debug("wget %s/%s", self.url_base, filename)
             try:
-                data = opener("%s/%s" % (self.url_base, filename),
-                              data=None, timeout=self.timeout).read()
+                data = opener(
+                    "%s/%s" % (self.url_base, filename), data=None, timeout=self.timeout
+                ).read()
                 logger.info("Image %s successfully downloaded.", filename)
             except urllib.error.URLError:
                 raise unittest.SkipTest("network unreachable.")
@@ -166,16 +168,20 @@ class ExternalResources(object):
                 with open(fullfilename, "wb") as outfile:
                     outfile.write(data)
             except IOError:
-                raise IOError("unable to write downloaded \
-                    data to disk at %s" % self.data_home)
+                raise IOError(
+                    "unable to write downloaded \
+                    data to disk at %s"
+                    % self.data_home
+                )
 
             if not os.path.isfile(fullfilename):
                 raise RuntimeError(
-                    ("Could not automatically download test images %s!" % filename) +
-                    "If you are behind a firewall, please set both environment variable http_proxy and https_proxy." +
-                    "This works even under windows !" +
-                    "Otherwise please try to download the images manually from" +
-                    "%s/%s" % (self.url_base, filename))
+                    ("Could not automatically download test images %s!" % filename)
+                    + "If you are behind a firewall, please set both environment variable http_proxy and https_proxy."
+                    + "This works even under windows !"
+                    + "Otherwise please try to download the images manually from"
+                    + "%s/%s" % (self.url_base, filename)
+                )
 
         if filename not in self.all_data:
             self.all_data.add(filename)
@@ -198,17 +204,24 @@ class ExternalResources(object):
         :return: list of files with their full path.
         """
         lodn = dirname.lower()
-        if (lodn.endswith("tar") or lodn.endswith("tgz") or
-            lodn.endswith("tbz2") or lodn.endswith("tar.gz") or
-                lodn.endswith("tar.bz2")):
+        if (
+            lodn.endswith("tar")
+            or lodn.endswith("tgz")
+            or lodn.endswith("tbz2")
+            or lodn.endswith("tar.gz")
+            or lodn.endswith("tar.bz2")
+        ):
             import tarfile
+
             engine = tarfile.TarFile.open
         elif lodn.endswith("zip"):
             import zipfile
+
             engine = zipfile.ZipFile
         else:
-            raise RuntimeError("Unsupported archive format. Only tar and zip "
-                               "are currently supported")
+            raise RuntimeError(
+                "Unsupported archive format. Only tar and zip are currently supported"
+            )
         full_path = self.getfile(dirname)
         with engine(full_path, mode="r") as fd:
             output = os.path.join(self.data_home, dirname + "__content")
@@ -268,10 +281,11 @@ class ExternalResources(object):
             self.getfile(bzip2name)
             if not os.path.isfile(fullimagename_bz2):
                 raise RuntimeError(
-                    ("Could not automatically download test images %s!" % filename) +
-                    "If you are behind a firewall, please set the environment variable http_proxy and https_proxy." +
-                    "Otherwise please try to download the images manually from" +
-                    "%s/%s" % (self.url_base, filename))
+                    ("Could not automatically download test images %s!" % filename)
+                    + "If you are behind a firewall, please set the environment variable http_proxy and https_proxy."
+                    + "Otherwise please try to download the images manually from"
+                    + "%s/%s" % (self.url_base, filename)
+                )
 
         raw_file_exists = os.path.isfile(fullimagename_raw)
         gz_file_exists = os.path.isfile(fullimagename_gz)
@@ -285,16 +299,22 @@ class ExternalResources(object):
                     with open(fullimagename_raw, "wb") as fullimage:
                         fullimage.write(decompressed)
                 except IOError:
-                    raise IOError("unable to write decompressed \
-                    data to disk at %s" % self.data_home)
+                    raise IOError(
+                        "unable to write decompressed \
+                    data to disk at %s"
+                        % self.data_home
+                    )
 
             if not gz_file_exists:
                 try:
-                    with gzip.open(fullimagename_gz, "wb") as g: 
+                    with gzip.open(fullimagename_gz, "wb") as g:
                         g.write(decompressed)
                 except IOError:
-                    raise IOError("unable to write gzipped \
-                    data to disk at %s" % self.data_home)
+                    raise IOError(
+                        "unable to write gzipped \
+                    data to disk at %s"
+                        % self.data_home
+                    )
 
         return fullimagename
 

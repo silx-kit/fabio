@@ -35,6 +35,7 @@ __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 __status__ = "stable"
 
 import logging
+
 try:
     import PIL
     import PIL.Image
@@ -47,6 +48,7 @@ except ImportError:
 from .fabioimage import FabioImage
 from .fabioutils import OrderedDict
 from .utils import pilutils
+
 logger = logging.getLogger(__name__)
 
 
@@ -56,6 +58,7 @@ class Jpeg2KImage(FabioImage):
 
     It uses PIL or glymur libraries.
     """
+
     DESCRIPTION = "JPEG 2000 format"
 
     DEFAULT_EXTENSIONS = ["jp2", "jpx", "j2k", "jpf", "jpg2"]
@@ -63,7 +66,7 @@ class Jpeg2KImage(FabioImage):
     _need_a_seek_to_read = True
 
     def __init__(self, *args, **kwds):
-        """ Tifimage constructor adds an nbits member attribute """
+        """Tifimage constructor adds an nbits member attribute"""
         self.nbits = None
         FabioImage.__init__(self, *args, **kwds)
         self.lib = ""
@@ -94,7 +97,7 @@ class Jpeg2KImage(FabioImage):
         version = tuple(int(i) for i in glymur.__version__.split(".")[:2])
         if version == (0, 7):
             image = glymur.Jp2k(filename=filename)
-        elif version >= (0,8):
+        elif version >= (0, 8):
             # inject a shape  to avoid calling the read function
             image = glymur.Jp2k(filename=filename, shape=(1, 1))
         else:
@@ -145,7 +148,9 @@ class Jpeg2KImage(FabioImage):
             except IOError as e:
                 self.data = None
                 self.header = OrderedDict()
-                logger.debug("Error while using %s library: %s" % (name, e), exc_info=True)
+                logger.debug(
+                    "Error while using %s library: %s" % (name, e), exc_info=True
+                )
 
         if self.data is None:
             infile.seek(0)

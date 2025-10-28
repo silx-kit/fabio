@@ -33,11 +33,11 @@ import logging
 import io
 from .utilstest import UtilsTest
 import fabio
+
 logger = logging.getLogger(__name__)
 
 
 class TestFabio(unittest.TestCase):
-
     def test_open(self):
         filename = UtilsTest.getimage("multiframes.edf.bz2")
         filename = filename.replace(".bz2", "")
@@ -101,6 +101,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

@@ -37,9 +37,17 @@ from .version import __date__ as date, version, version_info, hexversion, strict
 from . import fabioformats as _fabioformats
 from . import fabioimage  # noqa
 from . import openimage  # noqa
-from .fabioutils import jump_filename, FilenameObject, \
-    previous_filename, next_filename, deconstruct_filename, \
-    extract_filenumber, getnum, construct_filename, exists  #noqa
+from .fabioutils import (
+    jump_filename,
+    FilenameObject,
+    previous_filename,
+    next_filename,
+    deconstruct_filename,
+    extract_filenumber,
+    getnum,
+    construct_filename,
+    exists,
+)  # noqa
 from .compression import COMPRESSORS  # noqa
 from .openimage import openimage as open  # noqa
 from .openimage import open_series as open_series  # noqa
@@ -57,7 +65,6 @@ _fabioformats.register_default_formats()
 
 # Compatibility with outside world:
 filename_object = FilenameObject
-
 
 
 def register(codec_class):
@@ -82,7 +89,7 @@ def register(codec_class):
         class MyCodec(fabio.fabioimage.FabioImage):
             pass
     """
-    assert(issubclass(codec_class, fabioimage.FabioImage))
+    assert issubclass(codec_class, fabioimage.FabioImage)
     _fabioformats.register(codec_class)
     return codec_class
 
@@ -99,6 +106,7 @@ def tests():
     export http_proxy=http://proxy.site.com:3128
     """
     from . import test
+
     test.run_tests()
 
 
@@ -107,5 +115,6 @@ def benchmarks():
     Run the benchmarks
     """
     from . import benchmark
+
     res = benchmark.run()
     return res

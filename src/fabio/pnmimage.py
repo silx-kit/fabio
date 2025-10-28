@@ -54,20 +54,19 @@ import numpy
 from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
-SUBFORMATS = (b'P1', b'P2', b'P3', b'P4', b'P5', b'P6', b'P7')
-HEADERITEMS = (b'SUBFORMAT', b'WIDTH', b'HEIGHT', b'MAXVAL')
-P7HEADERITEMS = (b'WIDTH', b'HEIGHT', b'DEPTH', b'MAXVAL', b'TUPLTYPE', b'ENDHDR')
+SUBFORMATS = (b"P1", b"P2", b"P3", b"P4", b"P5", b"P6", b"P7")
+HEADERITEMS = (b"SUBFORMAT", b"WIDTH", b"HEIGHT", b"MAXVAL")
+P7HEADERITEMS = (b"WIDTH", b"HEIGHT", b"DEPTH", b"MAXVAL", b"TUPLTYPE", b"ENDHDR")
 
 
 class PnmImage(FabioImage):
-
     DESCRIPTION = "PNM file format"
 
     DEFAULT_EXTENSIONS = ["pnm", "pgm", "pbm"]
 
     def __init__(self, *arg, **kwargs):
         FabioImage.__init__(self, *arg, **kwargs)
-        self.header['Subformat'] = 'P5'
+        self.header["Subformat"] = "P5"
 
     def _readheader(self, f):
         # pnm images have a 3-line header but ignore lines starting with '#'
@@ -77,25 +76,25 @@ class PnmImage(FabioImage):
 
         line = f.readline().strip()
         if line not in SUBFORMATS:
-            raise IOError('unknown subformat of pnm: %s' % line)
+            raise IOError("unknown subformat of pnm: %s" % line)
         else:
-            self.header[b'SUBFORMAT'] = line
+            self.header[b"SUBFORMAT"] = line
 
-        if self.header[b'SUBFORMAT'] == 'P7':
+        if self.header[b"SUBFORMAT"] == "P7":
             # this one has a special header
-            while b'ENDHDR' not in line:
+            while b"ENDHDR" not in line:
                 line = f.readline()
-                while(line[0] == '#'):
+                while line[0] == "#":
                     line = f.readline()
-                s = line.lsplit(' ', 1)
+                s = line.lsplit(" ", 1)
                 if s[0] not in P7HEADERITEMS:
-                    raise IOError('Illegal pam (netpnm p7) headeritem %s' % s[0])
+                    raise IOError("Illegal pam (netpnm p7) headeritem %s" % s[0])
                 self.header[s[0]] = s[1]
         else:
             values = list(line.split())
             while len(values) < len(HEADERITEMS):
                 line = f.readline()
-                while line[0] == '#':
+                while line[0] == "#":
                     line = f.readline()
                 values += line.split()
             for k, v in zip(HEADERITEMS, values):
@@ -107,16 +106,18 @@ class PnmImage(FabioImage):
         self._shape = dim2, dim1
         # figure out how many bytes are used to store the data
         # case construct here!
-        m = int(self.header[b'MAXVAL'])
+        m = int(self.header[b"MAXVAL"])
         if m < 256:
             self._dtype = numpy.dtype(numpy.uint8)
         elif m < 65536:
             self._dtype = numpy.dtype(numpy.uint16)
         elif m < 2147483648:
             self._dtype = numpy.dtype(numpy.uint32)
-            logger.warning('32-bit pixels are not really supported by the netpgm standard')
+            logger.warning(
+                "32-bit pixels are not really supported by the netpgm standard"
+            )
         else:
-            raise IOError('could not figure out what kind of pixels you have')
+            raise IOError("could not figure out what kind of pixels you have")
 
     def read(self, fname, frame=None):
         """
@@ -130,7 +131,7 @@ class PnmImage(FabioImage):
         self._readheader(infile)
 
         # read the image data
-        fmt = str(self.header[b'SUBFORMAT'], encoding="latin-1")
+        fmt = str(self.header[b"SUBFORMAT"], encoding="latin-1")
         decoder_name = "%sdec" % fmt
         if decoder_name in dir(PnmImage):
             decoder = getattr(PnmImage, decoder_name)
@@ -149,7 +150,9 @@ class PnmImage(FabioImage):
         self.header[b"WIDTH"] = self.shape[-1]
         self.header[b"HEIGHT"] = self.shape[-2]
         self.header[b"MAXVAL"] = self.data.max()
-        header = (" ".join([str(self.header[key]) for key in HEADERITEMS[1:]])).encode("latin-1")
+        header = (" ".join([str(self.header[key]) for key in HEADERITEMS[1:]])).encode(
+            "latin-1"
+        )
         with self._open(fname, "wb") as fobj:
             fobj.write(b"P5 \n")
             fobj.write(header)
@@ -170,13 +173,15 @@ class PnmImage(FabioImage):
         i = 0
         for line in buf:
             try:
-                data[i,:] = numpy.array(line.split()).astype(bytecode)
+                data[i, :] = numpy.array(line.split()).astype(bytecode)
             except ValueError:
-                raise IOError('Size spec in pnm-header does not match size of image data field')
+                raise IOError(
+                    "Size spec in pnm-header does not match size of image data field"
+                )
         return data
 
     def P4dec(self, buf, bytecode):
-        err = 'single bit (pbm) images are not supported - yet'
+        err = "single bit (pbm) images are not supported - yet"
         logger.error(err)
         raise NotImplementedError(err)
 
@@ -185,9 +190,11 @@ class PnmImage(FabioImage):
         i = 0
         for line in buf:
             try:
-                data[i,:] = numpy.array(line.split()).astype(bytecode)
+                data[i, :] = numpy.array(line.split()).astype(bytecode)
             except ValueError:
-                raise IOError('Size spec in pnm-header does not match size of image data field')
+                raise IOError(
+                    "Size spec in pnm-header does not match size of image data field"
+                )
         return data
 
     def P5dec(self, buf, bytecode):
@@ -195,24 +202,26 @@ class PnmImage(FabioImage):
         try:
             data = numpy.frombuffer(data, bytecode).copy()
         except ValueError:
-            raise IOError('Size spec in pnm-header does not match size of image data field')
+            raise IOError(
+                "Size spec in pnm-header does not match size of image data field"
+            )
         data.shape = self.shape
         if numpy.little_endian:
             data.byteswap(True)
         return data
 
     def P3dec(self, buf, bytecode):
-        err = '(plain-ppm) RGB images are not supported - yet'
+        err = "(plain-ppm) RGB images are not supported - yet"
         logger.error(err)
         raise NotImplementedError(err)
 
     def P6dec(self, buf, bytecode):
-        err = '(ppm) RGB images are not supported - yet'
+        err = "(ppm) RGB images are not supported - yet"
         logger.error(err)
         raise NotImplementedError(err)
 
     def P7dec(self, buf, bytecode):
-        err = '(pam) images are not supported - yet'
+        err = "(pam) images are not supported - yet"
         logger.error(err)
         raise NotImplementedError(err)
 

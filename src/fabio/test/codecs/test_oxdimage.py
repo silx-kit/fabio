@@ -42,6 +42,7 @@ import logging
 import fabio
 from fabio.OXDimage import OXDimage
 from ..utilstest import UtilsTest
+
 logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev values are from OD Sapphire 3.0
@@ -49,11 +50,11 @@ TESTIMAGES = [
     ("b191_1_9_1.img", 512, 512, -500, 11975, 25.70, 90.2526, "Sapphire2"),
     ("b191_1_9_1_uncompressed.img", 512, 512, -500, 11975, 25.70, 90.2526, "Sapphire2"),
     ("100nmfilmonglass_1_1.img", 1024, 1024, -172, 460, 44.20, 63.0245, "Sapphire3"),
-    ("pilatus300k.rod_img", 487, 619, -2, 173075, 27.315, 538.938, "Pilatus")]
+    ("pilatus300k.rod_img", 487, 619, -2, 173075, 27.315, 538.938, "Pilatus"),
+]
 
 
 class TestOxd(unittest.TestCase):
-
     def setUp(self):
         self.fn = {}
         for vals in TESTIMAGES:
@@ -84,7 +85,9 @@ class TestOxd(unittest.TestCase):
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean on " + name)
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev on " + name)
 
-            self.assertIn(detector_type, obj.header["Detector type"], "detector type on " + name)
+            self.assertIn(
+                detector_type, obj.header["Detector type"], "detector type on " + name
+            )
 
     def test_write(self):
         "Test writing with self consistency at the fabio level"
@@ -98,18 +101,25 @@ class TestOxd(unittest.TestCase):
             obj.write(os.path.join(UtilsTest.tempdir, name))
             other = OXDimage()
             other.read(os.path.join(UtilsTest.tempdir, name))
-            self.assertEqual(abs(obj.data - other.data).max(), 0, "data are not the same for %s" % name)
+            self.assertEqual(
+                abs(obj.data - other.data).max(),
+                0,
+                "data are not the same for %s" % name,
+            )
             for key in obj.header:
                 if key == "filename":
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
-                self.assertEqual(obj.header[key], other.header[key], "metadata '%s' are not the same for %s" % (key, name))
+                self.assertEqual(
+                    obj.header[key],
+                    other.header[key],
+                    "metadata '%s' are not the same for %s" % (key, name),
+                )
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
 
 class TestOxdSame(unittest.TestCase):
-
     def setUp(self):
         self.fn = {}
         for i in ["b191_1_9_1.img", "b191_1_9_1_uncompressed.img"]:
@@ -151,7 +161,6 @@ class TestOxdBig(unittest.TestCase):
 
 
 class TestConvert(unittest.TestCase):
-
     def setUp(self):
         self.fn = {}
         for i in ["face.msk"]:
@@ -181,6 +190,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

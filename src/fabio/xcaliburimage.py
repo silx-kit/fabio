@@ -44,6 +44,7 @@ from .fabioimage import FabioImage
 from dataclasses import dataclass
 from enum import Enum
 import struct
+
 logger = logging.getLogger(__name__)
 
 # Some constants used in the file:
@@ -283,9 +284,9 @@ class CCD_FILEVERSION(Enum):
     VERS_1_7 = 0x00010007
     VERS_1_8 = 0x00010008
     VERS_1_9 = 0x00010009
-    VERS_1_10 = 0x0001000a
-    VERS_1_11 = 0x0001000b
-    VERS_1_12 = 0x0001000c
+    VERS_1_10 = 0x0001000A
+    VERS_1_11 = 0x0001000B
+    VERS_1_12 = 0x0001000C
 
 
 CCD_FILEVERSION_VERS_HIGHEST = CCD_FILEVERSION.VERS_1_12
@@ -322,12 +323,14 @@ class CHIPCHARACTERISTICS_SCINTILLATORID(Enum):
 
 
 CHIPCHARACTERISTICS_SCINTILLATORID_FIRST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400
-CHIPCHARACTERISTICS_SCINTILLATORID_LAST = CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400_NEW
+CHIPCHARACTERISTICS_SCINTILLATORID_LAST = (
+    CHIPCHARACTERISTICS_SCINTILLATORID.GREEN400_NEW
+)
 
 
 class SCAN_TYPE(Enum):
-        Omega = 0
-        Phi = 4
+    Omega = 0
+    Phi = 4
 
 
 @dataclass
@@ -339,7 +342,7 @@ class ChipPoint:
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        return cls(*struct.unpack("<HH", buffer[:cls.SIZE]))
+        return cls(*struct.unpack("<HH", buffer[: cls.SIZE]))
 
     def dumps(self):
         return struct.pack("<HH", self.ix, self.iy)
@@ -348,62 +351,72 @@ class ChipPoint:
 @dataclass
 class ChipBadPoint:
     spt: ChipPoint
-    sptreplace1:ChipPoint
+    sptreplace1: ChipPoint
     sptreplace2: ChipPoint
-    itreatment:int = 0
+    itreatment: int = 0
     SIZE = 14
 
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        return cls(ChipPoint.loads(buffer[:4]),
-                   ChipPoint.loads(buffer[4:8]),
-                   ChipPoint.loads(buffer[8:12]),
-                   struct.unpack("<H", buffer[12:cls.SIZE]))
+        return cls(
+            ChipPoint.loads(buffer[:4]),
+            ChipPoint.loads(buffer[4:8]),
+            ChipPoint.loads(buffer[8:12]),
+            struct.unpack("<H", buffer[12 : cls.SIZE]),
+        )
 
     def dumps(self):
-        return  self.spt.dumps() + \
-                self.sptreplace1.dumps() + \
-                self.sptreplace2.dumps() + \
-                struct.pack("<H", self.itreatment)
+        return (
+            self.spt.dumps()
+            + self.sptreplace1.dumps()
+            + self.sptreplace2.dumps()
+            + struct.pack("<H", self.itreatment)
+        )
 
 
 @dataclass
 class ChipBadRow:
     """ROW STARTX ENDX Y"""
+
     sptstart: ChipPoint
     sptend: ChipPoint
-    sptstartreplace:ChipPoint
+    sptstartreplace: ChipPoint
     sptendreplace: ChipPoint
-    itreatment:int
+    itreatment: int
     SIZE = 18
 
     @classmethod
     def loads(cls, buffer):
         cls.SIZE = cls.SIZE
         assert len(buffer) >= cls.SIZE
-        return cls(ChipPoint.loads(buffer[:4]),
-                   ChipPoint.loads(buffer[4:8]),
-                   ChipPoint.loads(buffer[8:12]),
-                   ChipPoint.loads(buffer[12:16]),
-                   struct.unpack("<H", buffer[16:cls.SIZE])[0])
+        return cls(
+            ChipPoint.loads(buffer[:4]),
+            ChipPoint.loads(buffer[4:8]),
+            ChipPoint.loads(buffer[8:12]),
+            ChipPoint.loads(buffer[12:16]),
+            struct.unpack("<H", buffer[16 : cls.SIZE])[0],
+        )
 
     def dumps(self):
-        return  self.sptstart.dumps() + \
-                self.sptend.dumps() + \
-                self.sptstartreplace.dumps() + \
-                self.sptendreplace.dumps() + \
-                struct.pack("<H", self.itreatment)
+        return (
+            self.sptstart.dumps()
+            + self.sptend.dumps()
+            + self.sptstartreplace.dumps()
+            + self.sptendreplace.dumps()
+            + struct.pack("<H", self.itreatment)
+        )
 
 
 @dataclass
 class ChipBadColumn:
     """COLUMN X STARTY ENDY"""
+
     sptstart: ChipPoint
     sptend: ChipPoint
-    sptstartreplace:ChipPoint
+    sptstartreplace: ChipPoint
     sptendreplace: ChipPoint
-    itreatment:int
+    itreatment: int
     ilowlimit: int
     ihighlimit: int
     SIZE = 22
@@ -411,23 +424,27 @@ class ChipBadColumn:
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        return cls(ChipPoint.loads(buffer[:4]),
-                   ChipPoint.loads(buffer[4:8]),
-                   ChipPoint.loads(buffer[8:12]),
-                   ChipPoint.loads(buffer[12:16]),
-                   *struct.unpack("<HHH", buffer[16:cls.SIZE]))
+        return cls(
+            ChipPoint.loads(buffer[:4]),
+            ChipPoint.loads(buffer[4:8]),
+            ChipPoint.loads(buffer[8:12]),
+            ChipPoint.loads(buffer[12:16]),
+            *struct.unpack("<HHH", buffer[16 : cls.SIZE]),
+        )
 
     def dumps(self):
-        return self.sptstart.dumps() + \
-               self.sptend.dumps() + \
-               self.sptstartreplace.dumps() + \
-               self.sptendreplace.dumps() + \
-               struct.pack("<HHH", self.itreatment, self.ilowlimit, self.ihighlimit)
+        return (
+            self.sptstart.dumps()
+            + self.sptend.dumps()
+            + self.sptstartreplace.dumps()
+            + self.sptendreplace.dumps()
+            + struct.pack("<HHH", self.itreatment, self.ilowlimit, self.ihighlimit)
+        )
 
 
 @dataclass
 class ChipBadPolygon:
-    itype:int
+    itype: int
     ipoints: int
     iax: list
     iay: list
@@ -436,20 +453,30 @@ class ChipBadPolygon:
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        lst = struct.unpack("<HH" + "H"*2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
-                            buffer[:cls.SIZE])
-        return cls(lst[0], lst[1],
-                   lst[2:2 + CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value],
-                   lst[2 + CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value:],)
+        lst = struct.unpack(
+            "<HH" + "H" * 2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
+            buffer[: cls.SIZE],
+        )
+        return cls(
+            lst[0],
+            lst[1],
+            lst[2 : 2 + CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value],
+            lst[2 + CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value :],
+        )
 
     def dumps(self):
         for lst in (self.iax, self.iay):
             if len(lst) < CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value:
-                lst += [0] * (CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value - len(lst))
-        return struct.pack("<HH" + "H"*2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
-                           self.itype, self.ipoints,
-                           *self.iax[:CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value],
-                           *self.iay[:CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value])
+                lst += [0] * (
+                    CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value - len(lst)
+                )
+        return struct.pack(
+            "<HH" + "H" * 2 * CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value,
+            self.itype,
+            self.ipoints,
+            *self.iax[: CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value],
+            *self.iay[: CHIPCHARACTERISTICS_POLYGONTYPE.MAXPOINTS.value],
+        )
 
 
 @dataclass
@@ -458,6 +485,7 @@ class ChipMachineFunction:
     xl is log10 of true Xray intensity
     y=A * exp (B * xl)
     """
+
     iismachinefunction: int = 0
     da_machinefct: float = 0.0
     db_machinefct: float = 0.0
@@ -466,17 +494,19 @@ class ChipMachineFunction:
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        lst = struct.unpack("<Hdd",
-                            buffer[:cls.SIZE])
+        lst = struct.unpack("<Hdd", buffer[: cls.SIZE])
         return cls(lst[0], lst[1], lst[2])
 
     def dumps(self):
-        return struct.pack("<Hdd", self.iismachinefunction, self.da_machinefct, self.db_machinefct)
+        return struct.pack(
+            "<Hdd", self.iismachinefunction, self.da_machinefct, self.db_machinefct
+        )
 
 
 @dataclass
 class Sweep:
     "Describes one scan or sweep, continuous rotation of one motor"
+
     iscanindex: int = 0
     iscantype: int = 0
     dwunknown1: int = 0
@@ -498,16 +528,29 @@ class Sweep:
     @classmethod
     def loads(cls, buffer):
         assert len(buffer) >= cls.SIZE
-        lst = struct.unpack("<HHIddddddddHHHHd",
-                            buffer[:cls.SIZE])
+        lst = struct.unpack("<HHIddddddddHHHHd", buffer[: cls.SIZE])
         return cls(*lst)
 
     def dumps(self):
-        return struct.pack("<HHIddddddddHHHHd", self.iscanindex, self.iscantype,
-                           self.dwunknown1, self.domega, self.dtheta, self.dkappa,
-                           self.dphi, self.dstart, self.dend, self.dwidth,
-                           self.dunknown2, self.iunknown3, self.iunknown4, self.iunknown5, self.iunknown6,
-                           self.dexposure)
+        return struct.pack(
+            "<HHIddddddddHHHHd",
+            self.iscanindex,
+            self.iscantype,
+            self.dwunknown1,
+            self.domega,
+            self.dtheta,
+            self.dkappa,
+            self.dphi,
+            self.dstart,
+            self.dend,
+            self.dwidth,
+            self.dunknown2,
+            self.iunknown3,
+            self.iunknown4,
+            self.iunknown5,
+            self.iunknown6,
+            self.dexposure,
+        )
 
 
 @dataclass
@@ -518,11 +561,12 @@ class RunDescription:
     floats are 64bits
     integers are 16bits, probably unsigned
     """
+
     cprefix: str = "n/a"
     cfolder: str = "n/a"
     inumofsweeps: int = 0
     dunknown: float = 0.0
-    pssweep:list = tuple()
+    pssweep: list = tuple()
     SIZE = 528
 
     @classmethod
@@ -537,33 +581,32 @@ class RunDescription:
         assert len(buffer) >= cls.SIZE
         prefix = buffer[:256].decode().strip("\x00")
         path = buffer[256:512].decode().strip("\x00")
-        lst = struct.unpack("<Qd", buffer[512:cls.SIZE])
+        lst = struct.unpack("<Qd", buffer[512 : cls.SIZE])
         self = cls(prefix, path, *lst, [])
         size = cls.SIZE
         for _ in range(self.inumofsweeps):
-            self.pssweep.append(Sweep.loads(buffer[size:size + Sweep.SIZE]))
+            self.pssweep.append(Sweep.loads(buffer[size : size + Sweep.SIZE]))
             size += Sweep.SIZE
         return self
 
     def save(self, filename):
-        with open(filename, "wb")  as w:
+        with open(filename, "wb") as w:
             w.write(self.dumps())
 
     def dumps(self):
-
         # Some helper functions
         def record_str(key):
             value = self.__getattribute__(key)
-            buffer[end:end + len(value)] = value.encode()
+            buffer[end : end + len(value)] = value.encode()
             return 256
 
         def record_struct(key, dtype):
             value = self.__getattribute__(key)
             size = struct.calcsize(dtype)
             if isinstance(value, (list, tuple)):
-                buffer[end:end + size] = struct.pack(dtype, *value)
+                buffer[end : end + size] = struct.pack(dtype, *value)
             else:
-                buffer[end:end + size] = struct.pack(dtype, value)
+                buffer[end : end + size] = struct.pack(dtype, value)
             return size
 
         self.inumofsweeps = len(self.pssweep)
@@ -592,8 +635,9 @@ class CcdCharacteristiscs:
     floats are 64bits
     integers are 16bits, probably unsigned
     """
+
     dwversion: int = 0
-    ddarkcurrentinADUpersec:float = 0.0
+    ddarkcurrentinADUpersec: float = 0.0
     dreadnoiseinADU: float = 0.0
     ccharacteristicsfil: str = "n/a"
     cccdproducer: str = "n/a"
@@ -609,13 +653,13 @@ class CcdCharacteristiscs:
 
     inumofcornermasks: int = 0
     iacornermaskx: list = tuple()
-    iacornermasky:list = tuple()
+    iacornermasky: list = tuple()
     inumofglowingcornermasks: int = 0
     iaglowingcornermaskx: list = tuple()
-    iaglowingcornermasky:list = tuple()
+    iaglowingcornermasky: list = tuple()
 
     ibadpolygons: int = 0
-    pschipbadpolygon:list = tuple()
+    pschipbadpolygon: list = tuple()
 
     ibadpoints: int = 0
     pschipbadpoint: list = tuple()
@@ -634,8 +678,8 @@ class CcdCharacteristiscs:
 
     iscintillatorid: int = 0
     # iisscintillatorid: int =0
-    dgain_cu:float = 0.0
-    dgain_mo:float = 0.0
+    dgain_cu: float = 0.0
+    dgain_mo: float = 0.0
     chipmachinefunction: ChipMachineFunction = None
 
     ibadrows1x1: int = 0
@@ -647,7 +691,15 @@ class CcdCharacteristiscs:
 
     def _clip_string(self):
         """Clip all strings to 256 chars"""
-        for key in ("ccharacteristicsfil", "cccdproducer", "cccdchiptype", "cccdchipserial", "ctaperproducer", "ctapertype", "ctaperserial"):
+        for key in (
+            "ccharacteristicsfil",
+            "cccdproducer",
+            "cccdchiptype",
+            "cccdchipserial",
+            "ctaperproducer",
+            "ctapertype",
+            "ctaperserial",
+        ):
             value = self.__getattribute__(key)
             if len(value) > 256:
                 self.__setattr__(key, value[:256])
@@ -666,22 +718,46 @@ class CcdCharacteristiscs:
         dico = {}
         if length > 1854:
             dico["dwversion"] = struct.unpack("I", bytestream[:4])[0]  # VERSION
-            dico["ddarkcurrentinADUpersec"] = struct.unpack("d", bytestream[4:12])[0]  # DARK CURRENT IN ADU
-            dico["dreadnoiseinADU"] = struct.unpack("d", bytestream[12:20])[0]  # READ NOSE IN ADU
-            dico["ccharacteristicsfil"] = bytestream[20:276].decode().strip("\x00")  # CHARACTISTICS FILE NAME
-            dico["cccdproducer"] = bytestream[276:532].decode().strip("\x00")  # PRODUCER
-            dico["cccdchiptype"] = bytestream[532:788].decode().strip("\x00")  # CHIP TYPE
-            dico["cccdchipserial"] = bytestream[788:1044].decode().strip("\x00")  # CHIP SERIAL
-            dico["ctaperproducer"] = bytestream[1044:1300].decode().strip("\x00")  # TAPER PRODUCER
-            dico["ctapertype"] = bytestream[1300:1556].decode().strip("\x00")  #  TAPER TYPE
-            dico["ctaperserial"] = bytestream[1556:1812].decode().strip("\x00")  #  TAPER SERIAL
-            dico["iisfip60origin"], dico["ifip60xorigin"], dico["ifip60yorigin"] = struct.unpack("HHH", bytestream[1812:1818])  # FIP60ORIGIN
+            dico["ddarkcurrentinADUpersec"] = struct.unpack("d", bytestream[4:12])[
+                0
+            ]  # DARK CURRENT IN ADU
+            dico["dreadnoiseinADU"] = struct.unpack("d", bytestream[12:20])[
+                0
+            ]  # READ NOSE IN ADU
+            dico["ccharacteristicsfil"] = (
+                bytestream[20:276].decode().strip("\x00")
+            )  # CHARACTISTICS FILE NAME
+            dico["cccdproducer"] = (
+                bytestream[276:532].decode().strip("\x00")
+            )  # PRODUCER
+            dico["cccdchiptype"] = (
+                bytestream[532:788].decode().strip("\x00")
+            )  # CHIP TYPE
+            dico["cccdchipserial"] = (
+                bytestream[788:1044].decode().strip("\x00")
+            )  # CHIP SERIAL
+            dico["ctaperproducer"] = (
+                bytestream[1044:1300].decode().strip("\x00")
+            )  # TAPER PRODUCER
+            dico["ctapertype"] = (
+                bytestream[1300:1556].decode().strip("\x00")
+            )  #  TAPER TYPE
+            dico["ctaperserial"] = (
+                bytestream[1556:1812].decode().strip("\x00")
+            )  #  TAPER SERIAL
+            dico["iisfip60origin"], dico["ifip60xorigin"], dico["ifip60yorigin"] = (
+                struct.unpack("HHH", bytestream[1812:1818])
+            )  # FIP60ORIGIN
 
-            dico["inumofcornermasks"] = struct.unpack("H", bytestream[1818:1820])  # CORNER MASKS
+            dico["inumofcornermasks"] = struct.unpack(
+                "H", bytestream[1818:1820]
+            )  # CORNER MASKS
             dico["iacornermaskx"] = struct.unpack("HHHH", bytestream[1820:1828])
             dico["iacornermasky"] = struct.unpack("HHHH", bytestream[1828:1836])
 
-            dico["inumofglowingcornermasks"] = struct.unpack("H", bytestream[1836:1838])  # GLOWINGCORNER MASKS
+            dico["inumofglowingcornermasks"] = struct.unpack(
+                "H", bytestream[1836:1838]
+            )  # GLOWINGCORNER MASKS
             dico["iaglowingcornermaskx"] = struct.unpack("HHHH", bytestream[1838:1846])
             dico["iaglowingcornermasky"] = struct.unpack("HHHH", bytestream[1846:1854])
         else:
@@ -700,7 +776,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD POINTS
         if not ended and start + 2 <= length:
             try:
-                dico["ibadpoints"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadpoints"] = struct.unpack("H", bytestream[start : start + 2])[
+                    0
+                ]
                 start += 2
                 points = dico["pschipbadpoint"] = []
                 for _ in range(dico["ibadpoints"]):  # LOOP OVER BAD POINTS
@@ -712,7 +790,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD COLS
         if not ended and start + 2 <= length:
             try:
-                dico["ibadcolumns"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadcolumns"] = struct.unpack("H", bytestream[start : start + 2])[
+                    0
+                ]
                 start += 2
                 columns = dico["pschipbadcolumn"] = []
                 for _ in range(dico["ibadcolumns"]):  # LOOP OVER BAD COLS
@@ -724,7 +804,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD COLS 1X1
         if not ended and start + 2 <= length:
             try:
-                dico["ibadcolumns1x1"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadcolumns1x1"] = struct.unpack(
+                    "H", bytestream[start : start + 2]
+                )[0]
                 start += 2
                 columns = dico["pschipbadcolumn1x1"] = []
                 for _ in range(dico["ibadcolumns1x1"]):  # LOOP OVER BAD COLS
@@ -736,7 +818,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD COLS 2X2
         if not ended and start + 2 <= length:
             try:
-                dico["ibadcolumns2x2"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadcolumns2x2"] = struct.unpack(
+                    "H", bytestream[start : start + 2]
+                )[0]
                 start += 2
                 columns = dico["pschipbadcolumn2x2"] = []
                 for _ in range(dico["ibadcolumns2x2"]):  # LOOP OVER BAD COLS
@@ -748,7 +832,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD COLS 4X4
         if not ended and start + 2 <= length:
             try:
-                dico["ibadcolumns4x4"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadcolumns4x4"] = struct.unpack(
+                    "H", bytestream[start : start + 2]
+                )[0]
                 start += 2
                 columns = dico["pschipbadcolumn4x4"] = []
                 for _ in range(dico["ibadcolumns4x4"]):  # LOOP OVER BAD COLS
@@ -760,7 +846,7 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD ROWS
         if not ended and start + 2 <= length:
             try:
-                dico["ibadrows"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadrows"] = struct.unpack("H", bytestream[start : start + 2])[0]
                 start += 2
                 columns = dico["pschipbadrow"] = []
                 for _ in range(dico["ibadrows"]):  # LOOP OVER BAD COLS
@@ -771,11 +857,19 @@ class CcdCharacteristiscs:
 
         if not ended and start + 18 <= length:
             try:
-                dico["iscintillatorid"] = struct.unpack("H", bytestream[start:start + 2])[0]  # SCINTILLATOR DESCRIPTION
-                dico["dgain_mo"] = struct.unpack("d", bytestream[start + 2:start + 10])[0]  # GAINMO
-                dico["dgain_cu"] = struct.unpack("d", bytestream[start + 10:start + 18])[0]  # GAINCU
+                dico["iscintillatorid"] = struct.unpack(
+                    "H", bytestream[start : start + 2]
+                )[0]  # SCINTILLATOR DESCRIPTION
+                dico["dgain_mo"] = struct.unpack(
+                    "d", bytestream[start + 2 : start + 10]
+                )[0]  # GAINMO
+                dico["dgain_cu"] = struct.unpack(
+                    "d", bytestream[start + 10 : start + 18]
+                )[0]  # GAINCU
                 start += 18
-                dico["chipmachinefunction"] = ChipMachineFunction.loads(bytestream[start:])  # IISMACHINEFUNCTION
+                dico["chipmachinefunction"] = ChipMachineFunction.loads(
+                    bytestream[start:]
+                )  # IISMACHINEFUNCTION
                 start += ChipMachineFunction.SIZE
             except AssertionError:
                 ended = True
@@ -783,7 +877,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD ROWS 1X1
         if not ended and start + 2 <= length:
             try:
-                dico["ibadrows1x1"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadrows1x1"] = struct.unpack("H", bytestream[start : start + 2])[
+                    0
+                ]
                 start += 2
                 columns = dico["pschipbadrow1x1"] = []
                 for _ in range(dico["ibadcolumns1x1"]):  # LOOP OVER BAD COLS
@@ -795,7 +891,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD ROWS 2X2
         if not ended and start + 2 <= length:
             try:
-                dico["ibadrows2x2"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadrows2x2"] = struct.unpack("H", bytestream[start : start + 2])[
+                    0
+                ]
                 start += 2
                 columns = dico["pschipbadrow2x2"] = []
                 for _ in range(dico["ibadrows2x2"]):  # LOOP OVER BAD COLS
@@ -807,7 +905,9 @@ class CcdCharacteristiscs:
         # NUMBER OF BAD ROWS 4X4
         if not ended and start + 2 <= length:
             try:
-                dico["ibadrows4x4"] = struct.unpack("H", bytestream[start:start + 2])[0]
+                dico["ibadrows4x4"] = struct.unpack("H", bytestream[start : start + 2])[
+                    0
+                ]
                 start += 2
                 columns = dico["pschipbadrow4x4"] = []
                 for _ in range(dico["ibadrows4x4"]):  # LOOP OVER BAD COLS
@@ -820,7 +920,7 @@ class CcdCharacteristiscs:
         return self
 
     def save(self, filename):
-        with open(filename, "wb")  as w:
+        with open(filename, "wb") as w:
             w.write(self.dumps())
 
     def dumps(self):
@@ -833,8 +933,12 @@ class CcdCharacteristiscs:
         self._clip_string()
         self.ibadpolygons = len(self.pschipbadpolygon)
         self.ibadpoints = len(self.pschipbadpoint)
-        for empty_4_tuple in ("iacornermaskx", "iacornermasky",
-                              "iaglowingcornermaskx", "iaglowingcornermasky"):
+        for empty_4_tuple in (
+            "iacornermaskx",
+            "iacornermasky",
+            "iaglowingcornermaskx",
+            "iaglowingcornermasky",
+        ):
             value = self.__getattribute__(empty_4_tuple)
             if len(value) == 0:
                 self.__setattr__(empty_4_tuple, [0, 0, 0, 0])
@@ -844,23 +948,23 @@ class CcdCharacteristiscs:
         # Some helper functions
         def record_str(key):
             value = self.__getattribute__(key)
-            buffer[end:end + len(value)] = value.encode()
+            buffer[end : end + len(value)] = value.encode()
             return 256
 
         def record_struct(key, dtype):
             value = self.__getattribute__(key)
             size = struct.calcsize(dtype)
             if isinstance(value, (list, tuple)):
-                buffer[end:end + size] = struct.pack(dtype, *value)
+                buffer[end : end + size] = struct.pack(dtype, *value)
             else:
-                buffer[end:end + size] = struct.pack(dtype, value)
+                buffer[end : end + size] = struct.pack(dtype, value)
             return size
 
         def record_object(key):
             value = self.__getattribute__(key)
             tmp = value.dumps()
             ltmp = len(tmp)
-            buffer[end:end + ltmp] = tmp
+            buffer[end : end + ltmp] = tmp
             return ltmp
 
         def record_variable(key, subkey, dtype="H"):
@@ -868,11 +972,11 @@ class CcdCharacteristiscs:
             values = self.__getattribute__(subkey)
             nitems = len(values)
             self.__setattr__(key, nitems)
-            buffer[end:end + size] = struct.pack(dtype, nitems)
+            buffer[end : end + size] = struct.pack(dtype, nitems)
             for i in values:
                 tmp = i.dumps()
                 ltmp = len(tmp)
-                buffer[end + size:end + size + ltmp] = tmp
+                buffer[end + size : end + size + ltmp] = tmp
                 size += ltmp
             return size
 
@@ -916,23 +1020,21 @@ class CcdCharacteristiscs:
         mask = numpy.zeros(shape, dtype=numpy.int8)
         for poly in self.pschipbadpolygon:
             if poly.itype == CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value:
-                mask[poly.iay[0]:1 + poly.iay[1], poly.iax[0]:1 + poly.iax[1]] = 1
+                mask[poly.iay[0] : 1 + poly.iay[1], poly.iax[0] : 1 + poly.iax[1]] = 1
         for pt in self.pschipbadpoint:
             mask[pt.spt.iy, pt.spt.ix] = 1
         return mask
 
 
 class XcaliburImage(FabioImage):
-    """FabIO image class for CrysalisPro mask image
-    """
+    """FabIO image class for CrysalisPro mask image"""
 
     DESCRIPTION = "Xcalibur binary struct of masked pixels"
 
     DEFAULT_EXTENSIONS = []
 
     def __init__(self, *arg, **kwargs):
-        """
-        """
+        """ """
         FabioImage.__init__(self, *arg, **kwargs)
 
     def _readheader(self, infile):
@@ -972,9 +1074,9 @@ class XcaliburImage(FabioImage):
         :param: full: deal only with gaps (False) or perform the complete analysis (True)
         :return: CcdCharacteristiscs struct.
         """
-        ccd = CcdCharacteristiscs(CCD_FILEVERSION_VERS_HIGHEST.value,
-                                  pschipbadpolygon=[],
-                                  pschipbadpoint=[])
+        ccd = CcdCharacteristiscs(
+            CCD_FILEVERSION_VERS_HIGHEST.value, pschipbadpolygon=[], pschipbadpoint=[]
+        )
         mask = numpy.array(self.data, dtype=bool)
         shape = mask.shape
 
@@ -984,18 +1086,28 @@ class XcaliburImage(FabioImage):
         ccd.ibadpolygons = len(row_gaps) + len(col_gaps)
         ccd.pschipbadpolygon = []
         for gap in row_gaps:
-            polygon = ChipBadPolygon(CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value, 4,
-                                     [0, shape[1] - 1], [gap[0], gap[1] - 1])
+            polygon = ChipBadPolygon(
+                CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value,
+                4,
+                [0, shape[1] - 1],
+                [gap[0], gap[1] - 1],
+            )
             ccd.pschipbadpolygon.append(polygon)
         for gap in col_gaps:
-            polygon = ChipBadPolygon(CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value, 4,
-                                     [gap[0], gap[1] - 1], [0, shape[0] - 1])
+            polygon = ChipBadPolygon(
+                CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value,
+                4,
+                [gap[0], gap[1] - 1],
+                [0, shape[0] - 1],
+            )
             ccd.pschipbadpolygon.append(polygon)
 
         try:
             import pyFAI.ext.dynamic_rectangle
         except ImportError:
-            logger.warning("PyFAI not available: only a coarse description of the mask is provided")
+            logger.warning(
+                "PyFAI not available: only a coarse description of the mask is provided"
+            )
             full = False
         if not full:
             return ccd
@@ -1004,20 +1116,28 @@ class XcaliburImage(FabioImage):
         for cg in col_gaps + [(self.shape[1], self.shape[1])]:
             r = 0
             for rg in row_gaps + [(self.shape[0], self.shape[0])]:
-                mm = mask[r:rg[0], c:cg[0]]
+                mm = mask[r : rg[0], c : cg[0]]
                 if mm.size:
                     rectangles = pyFAI.ext.dynamic_rectangle.decompose_mask(mm)
                     for rec in rectangles:
                         if rec.area == 1:
                             point = ChipPoint(c + rec.col, r + rec.row)
-                            bad_point = ChipBadPoint(point, point, point, CHIPCHARACTERISTICS_TREATMENT.IGNORE.value)
+                            bad_point = ChipBadPoint(
+                                point,
+                                point,
+                                point,
+                                CHIPCHARACTERISTICS_TREATMENT.IGNORE.value,
+                            )
                             ccd.ibadpoints += 1
                             ccd.pschipbadpoint.append(bad_point)
                         else:
                             ccd.ibadpolygons += 1
-                            polygon = ChipBadPolygon(CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value, 4,
-                                                     [c + rec.col, c + rec.col + rec.width - 1],
-                                                     [r + rec.row, r + rec.row + rec.height - 1])
+                            polygon = ChipBadPolygon(
+                                CHIPCHARACTERISTICS_POLYGONTYPE.RECTANGLE.value,
+                                4,
+                                [c + rec.col, c + rec.col + rec.width - 1],
+                                [r + rec.row, r + rec.row + rec.height - 1],
+                            )
                             ccd.pschipbadpolygon.append(polygon)
                 r = rg[1]
             c = cg[1]
@@ -1025,7 +1145,6 @@ class XcaliburImage(FabioImage):
 
     @staticmethod
     def _search_gap(mask, dim=0):
-
         shape = mask.shape
         m0 = numpy.sum(mask, axis=dim, dtype="int") == shape[dim]
         if m0.any():
@@ -1033,39 +1152,44 @@ class XcaliburImage(FabioImage):
             d0 = m0[1:] - m0[:-1]
             starts = numpy.where(d0 == 1)[0]
             stops = numpy.where(d0 == -1)[0]
-            if  (len(starts) == 0):
+            if len(starts) == 0:
                 starts = numpy.array([-1])
-            if  (len(stops) == 0):
+            if len(stops) == 0:
                 stops = numpy.array([len(m0) - 1])
-            if (stops[0] < starts[0]):
+            if stops[0] < starts[0]:
                 starts = numpy.concatenate(([-1], starts))
-            if (stops[-1] < starts[-1]):
+            if stops[-1] < starts[-1]:
                 stops = numpy.concatenate((stops, [len(m0) - 1]))
-            r0 = [ (start + 1, stop + 1) for start, stop  in zip(starts, stops)]
+            r0 = [(start + 1, stop + 1) for start, stop in zip(starts, stops)]
         else:
             r0 = []
         return r0
 
     def save_par(self, path, prefix, **kwargs):
-        """Generate a *.par" file which contains the parameters of the scan
-        """
+        """Generate a *.par" file which contains the parameters of the scan"""
 
-        dico = {"alpha": kwargs.get("alpha", 50),
-                "beta": kwargs.get("beta", 0),
-                "wavelength": kwargs.get("wavelength", 1),
-                "polarization": kwargs.get("polarization", 0.98),
-                "shape_x": self.shape[1],
-                "shape_y": self.shape[0],
-                "distance": kwargs.get("distance", 100),  # mm
-                "path": path,
-                "ccd_file": prefix + ".ccd",
-                "oscil": kwargs.get("oscil", 1),
-                "center_x":kwargs.get("center_x", self.shape[1] / 2),
-                "center_y":kwargs.get("center_y", self.shape[1] / 2),
-                "date": time.ctime()
-                }
+        dico = {
+            "alpha": kwargs.get("alpha", 50),
+            "beta": kwargs.get("beta", 0),
+            "wavelength": kwargs.get("wavelength", 1),
+            "polarization": kwargs.get("polarization", 0.98),
+            "shape_x": self.shape[1],
+            "shape_y": self.shape[0],
+            "distance": kwargs.get("distance", 100),  # mm
+            "path": path,
+            "ccd_file": prefix + ".ccd",
+            "oscil": kwargs.get("oscil", 1),
+            "center_x": kwargs.get("center_x", self.shape[1] / 2),
+            "center_y": kwargs.get("center_y", self.shape[1] / 2),
+            "date": time.ctime(),
+        }
         string = PAR_TEMPLATE.format(**dico)
-        blines = [b"\xa7" + i[1:].rstrip().encode() if i.startswith("#") else i.rstrip().encode() for i in string.split("\n")]
+        blines = [
+            b"\xa7" + i[1:].rstrip().encode()
+            if i.startswith("#")
+            else i.rstrip().encode()
+            for i in string.split("\n")
+        ]
         with open(os.path.join(path, prefix + ".par"), "wb") as w:
             w.write(b"\r\n".join(blines))
 
