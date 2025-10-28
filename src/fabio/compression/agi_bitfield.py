@@ -39,7 +39,7 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "27/10/2025"
+__date__ = "28/10/2025"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
@@ -52,13 +52,15 @@ except ImportError:
     _get_fieldsize = None
     _compress_row = None
     _compress = None
+
 logger = logging.getLogger(__name__)
 
 
-def unpack(fmt, buff):
-    unpack_(fmt, buff)[0]
-
 MASK = [(1 << i) - 1 for i in range(9)]
+
+
+def unpack(fmt, buff):
+    return unpack_(fmt, buff)[0]
 
 
 def compress(frame):
