@@ -46,7 +46,7 @@ jobs:
       - name: Install from sdist
         run: |
           pip install "$(ls dist/fabio-*.tar.gz)"
-          pip install pyside6 matplotlib
+          pip install pyqt5 matplotlib
       - name: Run tests
         run: python -c "import fabio.test, sys; sys.exit(fabio.test.run_tests())"
 
@@ -111,6 +111,7 @@ jobs:
           # Use silx wheelhouse: needed for ppc64le
           CIBW_ENVIRONMENT_LINUX: "PIP_FIND_LINKS=https://www.silx.org/pub/wheelhouse/ PIP_TRUSTED_HOST=www.silx.org"
           CIBW_BEFORE_BUILD: "pip install --prefer-binary h5py"
+          CIBW_BEFORE_TEST: "pip install --prefer-binary h5py"
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD:  cp310-* cp311-* cp312-* cp313-* cp314-*
           # Do not build for pypy and muslinux
