@@ -50,12 +50,12 @@ environment:
           PYTHON_ARCH: "64"
         
         # Python 3.13
-        #- PYTHON_DIR: "C:\\Python313-x64"
-        #  PYTHON_ARCH: "64"
+        - PYTHON_DIR: "C:\\Python313-x64"
+          PYTHON_ARCH: "64"
 
         # Python 3.14
-        - PYTHON_DIR: "C:\\Python314-x64"
-          PYTHON_ARCH: "64"
+        #- PYTHON_DIR: "C:\\Python314-x64"
+        #  PYTHON_ARCH: "64"
 
 install:
   # Add Python to PATH
