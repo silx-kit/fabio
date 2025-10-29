@@ -106,7 +106,7 @@ jobs:
         if: runner.os == 'Linux'
         with:
           platforms: all
-      - uses: pypa/cibuildwheel@v2.21.3
+      - uses: pypa/cibuildwheel@v3.2.1
         env:
           # Use silx wheelhouse: needed for ppc64le
           CIBW_ENVIRONMENT_LINUX: "PIP_FIND_LINKS=https://www.silx.org/pub/wheelhouse/ PIP_TRUSTED_HOST=www.silx.org"
