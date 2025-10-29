@@ -64,7 +64,7 @@ jobs:
       - name: Install fabio
         run: pip install .
       - name: Install documentation dependencies
-        run: pip install -r requirements.txt ci/requirements_rtd.txt
+        run: pip install -r requirements.txt -r ci/requirements_rtd.txt
       - name: Build doc
         env:
           READTHEDOCS: "True"  # To skip checking that fabio is installed locally
@@ -106,10 +106,12 @@ jobs:
         if: runner.os == 'Linux'
         with:
           platforms: all
-      - uses: pypa/cibuildwheel@v2.21.3
+      - uses: pypa/cibuildwheel@v3.2.1
         env:
           # Use silx wheelhouse: needed for ppc64le
           CIBW_ENVIRONMENT_LINUX: "PIP_FIND_LINKS=https://www.silx.org/pub/wheelhouse/ PIP_TRUSTED_HOST=www.silx.org"
+          CIBW_BEFORE_BUILD: "pip install --prefer-binary h5py"
+          CIBW_BEFORE_TEST: "pip install --prefer-binary h5py"
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD:  cp310-* cp311-* cp312-* cp313-* cp314-*
           # Do not build for pypy and muslinux
