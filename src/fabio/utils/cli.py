@@ -88,26 +88,27 @@ class ProgressBar:
             encoding = sys.stdout.encoding
         if encoding is None:
             # We uses the safer aproch: a valid ASCII character.
-            self.progress_char = '#'
+            self.progress_char = "#"
         else:
             try:
                 import datetime
+
                 if str(datetime.datetime.now())[5:10] == "02-14":
-                    self.progress_char = u'\u2665'
+                    self.progress_char = "\u2665"
                 else:
-                    self.progress_char = u'\u25A0'
+                    self.progress_char = "\u25a0"
                 _byte = codecs.encode(self.progress_char, encoding)
             except (ValueError, TypeError, LookupError):
                 # In case the char is not supported by the encoding,
                 # or if the encoding does not exists
-                self.progress_char = '#'
+                self.progress_char = "#"
 
     def clear(self):
         """
         Remove the progress bar from the display and move the cursor
         at the beginning of the line using carriage return.
         """
-        sys.stdout.write('\r' + " " * self.last_size + "\r")
+        sys.stdout.write("\r" + " " * self.last_size + "\r")
         sys.stdout.flush()
 
     def display(self):
@@ -145,7 +146,13 @@ class ProgressBar:
             bar_position = self.bar_width
 
         # line to display
-        line = '\r%15s [%s%s] % 3d%%  %s' % (self.title, self.progress_char * bar_position, ' ' * (self.bar_width - bar_position), percent, message)
+        line = "\r%15s [%s%s] % 3d%%  %s" % (
+            self.title,
+            self.progress_char * bar_position,
+            " " * (self.bar_width - bar_position),
+            percent,
+            message,
+        )
 
         # trailing to mask the previous message
         line_size = len(line)

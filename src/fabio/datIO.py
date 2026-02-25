@@ -56,14 +56,15 @@ class fabiodata(object):
         set up initial values
         """
         if isinstance(data, str):
-            raise RuntimeError("fabioimage.__init__ bad argument - " +
-                               "data should be numpy array")
+            raise RuntimeError(
+                "fabioimage.__init__ bad argument - " + "data should be numpy array"
+            )
         self.data = data
-        if (self.data):
+        if self.data:
             self.dims = self.data.shape
         self.clabels = clabels
         self.rlabels = rlabels
-        if (fname):
+        if fname:
             self.read(fname)
 
     def read(self, fname=None, frame=None):
@@ -71,6 +72,7 @@ class fabiodata(object):
         To be overridden by format specific subclasses
         """
         raise Exception("Class has not implemented read method yet")
+
 
 # import stuff from Jon's columnfile things
 
@@ -80,8 +82,9 @@ class columnfile(fabiodata):
 
     def read(self, fname, frame=None):
         from .ext import cf_io
+
         try:
-            infile = open(fname, 'rb')
+            infile = open(fname, "rb")
         except Exception:
             logger.debug("Backtrace", exc_info=True)
             raise Exception("columnfile: file" + str(fname) + "not found.")
@@ -89,6 +92,8 @@ class columnfile(fabiodata):
             (self.data, self.clabels) = cf_io.read(infile)
         except Exception:
             logger.debug("Backtrace", exc_info=True)
-            raise Exception("columnfile: read error, file " + str(fname) + " possibly corrupt")
+            raise Exception(
+                "columnfile: read error, file " + str(fname) + " possibly corrupt"
+            )
         self.dims = self.data.shape
         infile.close()

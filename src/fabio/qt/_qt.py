@@ -25,7 +25,7 @@
 
 __authors__ = ["V.A. Sole"]
 __license__ = "MIT"
-__date__ = "12/01/2022"
+__date__ = "27/10/2025"
 
 
 import importlib
@@ -144,18 +144,18 @@ if BINDING == "PyQt5":
 
     from PyQt5.uic import loadUi  # noqa
 
-    Signal = pyqtSignal
+    Signal = pyqtSignal  # noqa
 
-    Property = pyqtProperty
+    Property = pyqtProperty  # noqa
 
-    Slot = pyqtSlot
+    Slot = pyqtSlot  # noqa
 
     # Disable PyQt5's cooperative multi-inheritance since other bindings do not provide it.
     # See https://www.riverbankcomputing.com/static/Docs/PyQt5/multiinheritance.html?highlight=inheritance
     class _Foo(object):
         pass
 
-    class QObject(QObject, _Foo):
+    class QObject(QObject, _Foo):  # noqa
         pass
 
 elif BINDING == "PySide6":
@@ -239,11 +239,11 @@ elif BINDING == "PyQt6":
 
     from PyQt6.uic import loadUi  # noqa
 
-    Signal = pyqtSignal
+    Signal = pyqtSignal  # noqa
 
-    Property = pyqtProperty
+    Property = pyqtProperty  # noqa
 
-    Slot = pyqtSlot
+    Slot = pyqtSlot  # noqa
 
     # Disable PyQt6 cooperative multi-inheritance since other bindings do not provide it.
     # See https://www.riverbankcomputing.com/static/Docs/PyQt6/multiinheritance.html?highlight=inheritance
@@ -272,9 +272,9 @@ def exceptionHandler(type_, value, trace):
 
     """
     _logger.error("%s %s %s", type_, value, "".join(traceback.format_tb(trace)))
-    msg = QMessageBox()
+    msg = QMessageBox()  # noqa
     msg.setWindowTitle("Unhandled exception")
-    msg.setIcon(QMessageBox.Critical)
+    msg.setIcon(QMessageBox.Critical)  # noqa
     msg.setInformativeText("%s %s\nPlease report details" % (type_, value))
     msg.setDetailedText(("%s " % value) + "".join(traceback.format_tb(trace)))
     msg.raise_()

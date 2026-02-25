@@ -52,7 +52,9 @@ except ImportError:
         # Try using the standard library
         import xml.etree.ElementTree as etree
     except ImportError:
-        logger.warning("xml/lxml library is probably not part of your python installation: disabling xsdimage format")
+        logger.warning(
+            "xml/lxml library is probably not part of your python installation: disabling xsdimage format"
+        )
         etree = None
 
 
@@ -83,8 +85,7 @@ class XsdImage(FabioImage):
             self.read(fname)
 
     def read(self, fname, frame=None):
-        """
-        """
+        """ """
         self.header = {}
         self.resetvals()
         self.filename = fname
@@ -105,7 +106,10 @@ class XsdImage(FabioImage):
         elif self.coding == "base16":
             decData = base64.b16decode(self.rawData)
         else:
-            logger.warning("Unable to recognize the encoding of the data !!! got %s, expected base64, base32 or base16, I assume it is base64 " % self.coding)
+            logger.warning(
+                "Unable to recognize the encoding of the data !!! got %s, expected base64, base32 or base16, I assume it is base64 "
+                % self.coding
+            )
             decData = base64.b64decode(self.rawData)
         if self.md5:
             assert hashlib.md5(decData).hexdigest() == self.md5
@@ -131,14 +135,20 @@ class XsdImage(FabioImage):
             try:
                 self._shape.insert(0, int(i.text))
             except ValueError as error:
-                logger.warning("%s Shape: Unable to convert %s to integer in %s" % (error, i.text, i))
+                logger.warning(
+                    "%s Shape: Unable to convert %s to integer in %s"
+                    % (error, i.text, i)
+                )
         self._shape = tuple(self._shape)
 
         for i in xml.findall(".//size"):
             try:
                 self.size = int(i.text)
             except Exception as error:
-                logger.warning("%s Size: Unable to convert %s to integer in %s" % (error, i.text, i))
+                logger.warning(
+                    "%s Size: Unable to convert %s to integer in %s"
+                    % (error, i.text, i)
+                )
 
         self._dtype = None
         for i in xml.findall(".//dtype"):

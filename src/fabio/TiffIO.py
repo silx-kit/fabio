@@ -37,22 +37,23 @@ import logging
 
 ALLOW_MULTIPLE_STRIPS = False
 
-TAG_ID = {256: "NumberOfColumns",  # S or L ImageWidth
-          257: "NumberOfRows",  # S or L ImageHeight
-          258: "BitsPerSample",  # S Number of bits per component
-          259: "Compression",  # SHORT (1 - NoCompression, ...
-          262: "PhotometricInterpretation",  # SHORT (0 - WhiteIsZero, 1 -BlackIsZero, 2 - RGB, 3 - Palette color
-          270: "ImageDescription",  # ASCII
-          272: "Model",  # ASCII
-          273: "StripOffsets",  # S or L, for each strip, the byte offset of the strip
-          277: "SamplesPerPixel",  # SHORT (>=3) only for RGB images
-          278: "RowsPerStrip",  # S or L, number of rows in each back may be not for the last
-          279: "StripByteCounts",  # S or L, The number of bytes in the strip AFTER any compression
-          305: "Software",  # ASCII
-          306: "Date",  # ASCII
-          320: "Colormap",  # Colormap of Palette-color Images
-          339: "SampleFormat",  # SHORT Interpretation of data in each pixel
-          }
+TAG_ID = {
+    256: "NumberOfColumns",  # S or L ImageWidth
+    257: "NumberOfRows",  # S or L ImageHeight
+    258: "BitsPerSample",  # S Number of bits per component
+    259: "Compression",  # SHORT (1 - NoCompression, ...
+    262: "PhotometricInterpretation",  # SHORT (0 - WhiteIsZero, 1 -BlackIsZero, 2 - RGB, 3 - Palette color
+    270: "ImageDescription",  # ASCII
+    272: "Model",  # ASCII
+    273: "StripOffsets",  # S or L, for each strip, the byte offset of the strip
+    277: "SamplesPerPixel",  # SHORT (>=3) only for RGB images
+    278: "RowsPerStrip",  # S or L, number of rows in each back may be not for the last
+    279: "StripByteCounts",  # S or L, The number of bytes in the strip AFTER any compression
+    305: "Software",  # ASCII
+    306: "Date",  # ASCII
+    320: "Colormap",  # Colormap of Palette-color Images
+    339: "SampleFormat",  # SHORT Interpretation of data in each pixel
+}
 
 # TILES ARE TO BE SUPPORTED TOO ...
 TAG_NUMBER_OF_COLUMNS = 256
@@ -71,30 +72,34 @@ TAG_DATE = 306
 TAG_COLORMAP = 320
 TAG_SAMPLE_FORMAT = 339
 
-FIELD_TYPE = {1: ('BYTE', "B"),
-              2: ('ASCII', "s"),  # string ending with binary zero
-              3: ('SHORT', "H"),
-              4: ('LONG', "I"),
-              5: ('RATIONAL', "II"),
-              6: ('SBYTE', "b"),
-              7: ('UNDEFINED', "B"),
-              8: ('SSHORT', "h"),
-              9: ('SLONG', "i"),
-              10: ('SRATIONAL', "ii"),
-              11: ('FLOAT', "f"),
-              12: ('DOUBLE', "d")}
+FIELD_TYPE = {
+    1: ("BYTE", "B"),
+    2: ("ASCII", "s"),  # string ending with binary zero
+    3: ("SHORT", "H"),
+    4: ("LONG", "I"),
+    5: ("RATIONAL", "II"),
+    6: ("SBYTE", "b"),
+    7: ("UNDEFINED", "B"),
+    8: ("SSHORT", "h"),
+    9: ("SLONG", "i"),
+    10: ("SRATIONAL", "ii"),
+    11: ("FLOAT", "f"),
+    12: ("DOUBLE", "d"),
+}
 
-FIELD_TYPE_OUT = {'B': 1,
-                  's': 2,
-                  'H': 3,
-                  'I': 4,
-                  'II': 5,
-                  'b': 6,
-                  'h': 8,
-                  'i': 9,
-                  'ii': 10,
-                  'f': 11,
-                  'd': 12}
+FIELD_TYPE_OUT = {
+    "B": 1,
+    "s": 2,
+    "H": 3,
+    "I": 4,
+    "II": 5,
+    "b": 6,
+    "h": 8,
+    "i": 9,
+    "ii": 10,
+    "f": 11,
+    "d": 12,
+}
 
 # sample formats (http://www.awaresystems.be/imaging/tiff/tiffflags/sampleformat.html)
 SAMPLE_FORMAT_UINT = 1
@@ -108,20 +113,18 @@ logger = logging.getLogger(__name__)
 
 
 class TiffIO(object):
-
     def __init__(self, filename, mode=None, cache_length=20, mono_output=False):
         if mode is None:
-            mode = 'rb'
-        if 'b' not in mode:
-            mode = mode + 'b'
-        if 'a' in mode.lower():
+            mode = "rb"
+        if "b" not in mode:
+            mode = mode + "b"
+        if "a" in mode.lower():
             raise IOError("Mode %s makes no sense on TIFF files. Consider 'rb+'" % mode)
-        if ('w' in mode):
-            if '+' not in mode:
-                mode += '+'
+        if "w" in mode:
+            if "+" not in mode:
+                mode += "+"
 
-        if hasattr(filename, "seek") and\
-           hasattr(filename, "read"):
+        if hasattr(filename, "seek") and hasattr(filename, "read"):
             fd = filename
             self._access = None
         else:
@@ -152,11 +155,11 @@ class TiffIO(object):
             if order == b"II":
                 # intel, little endian
                 fileOrder = "little"
-                self._structChar = '<'
+                self._structChar = "<"
             elif order == b"MM":
                 # motorola, high endian
                 fileOrder = "big"
-                self._structChar = '>'
+                self._structChar = ">"
             else:
                 raise IOError("File is not a Mar CCD file, nor a TIFF file")
             a = fd.read(2)
@@ -171,9 +174,9 @@ class TiffIO(object):
                 swap = False
         else:
             if sys.byteorder == "little":
-                self._structChar = '<'
+                self._structChar = "<"
             else:
-                self._structChar = '>'
+                self._structChar = ">"
             swap = False
         self._swap = swap
         self._IFD = []
@@ -191,7 +194,7 @@ class TiffIO(object):
         if self._access is None:
             # we do not own the file
             # open in read mode
-            newFile = open(fileName, 'rb')
+            newFile = open(fileName, "rb")
         else:
             newFile = open(fileName, self._access)
         self.fd = newFile
@@ -227,7 +230,7 @@ class TiffIO(object):
         fd.seek(4)
         self._IFD = []
         nImages = 0
-        fmt = st + 'I'
+        fmt = st + "I"
         inStr = fd.read(struct.calcsize(fmt))
         if not len(inStr):
             offsetToIFD = 0
@@ -238,11 +241,13 @@ class TiffIO(object):
             self._IFD.append(offsetToIFD)
             nImages += 1
             fd.seek(offsetToIFD)
-            fmt = st + 'H'
-            numberOfDirectoryEntries = struct.unpack(fmt, fd.read(struct.calcsize(fmt)))[0]
+            fmt = st + "H"
+            numberOfDirectoryEntries = struct.unpack(
+                fmt, fd.read(struct.calcsize(fmt))
+            )[0]
             logger.debug("Number of directory entries = %d", numberOfDirectoryEntries)
 
-            fmt = st + 'I'
+            fmt = st + "I"
             fd.seek(offsetToIFD + 2 + 12 * numberOfDirectoryEntries)
             offsetToIFD = struct.unpack(fmt, fd.read(struct.calcsize(fmt)))[0]
             logger.debug("Next Offset to IFD = %d", offsetToIFD)
@@ -255,11 +260,11 @@ class TiffIO(object):
         st = self._structChar
         fd = self.fd
         fd.seek(offsetToIFD)
-        fmt = st + 'H'
+        fmt = st + "H"
         numberOfDirectoryEntries = struct.unpack(fmt, fd.read(struct.calcsize(fmt)))[0]
         logger.debug("Number of directory entries = %d", numberOfDirectoryEntries)
 
-        fmt = st + 'HHI4s'
+        fmt = st + "HHI4s"
         tagIDList = []
         fieldTypeList = []
         nValuesList = []
@@ -271,12 +276,14 @@ class TiffIO(object):
             nValuesList.append(nValues)
             if nValues == 1:
                 ftype, vfmt = FIELD_TYPE[fieldType]
-                if ftype not in ['ASCII', 'RATIONAL', 'SRATIONAL']:
+                if ftype not in ["ASCII", "RATIONAL", "SRATIONAL"]:
                     vfmt = st + vfmt
-                    data = valueOffset[0: struct.calcsize(vfmt)]
+                    data = valueOffset[0 : struct.calcsize(vfmt)]
                     if struct.calcsize(vfmt) > len(data):
                         # Add a 0 padding to have the expected size
-                        logger.warning("Data at tag id '%s' is smaller than expected", tagID)
+                        logger.warning(
+                            "Data at tag id '%s' is smaller than expected", tagID
+                        )
                         data = data + b"\x00" * (struct.calcsize(vfmt) - len(data))
                     actualValue = struct.unpack(vfmt, data)[0]
                     valueOffsetList.append(actualValue)
@@ -285,7 +292,9 @@ class TiffIO(object):
             elif (nValues < 5) and (fieldType == 2):
                 ftype, vfmt = FIELD_TYPE[fieldType]
                 vfmt = st + "%d%s" % (nValues, vfmt)
-                actualValue = struct.unpack(vfmt, valueOffset[0: struct.calcsize(vfmt)])[0]
+                actualValue = struct.unpack(
+                    vfmt, valueOffset[0 : struct.calcsize(vfmt)]
+                )[0]
                 valueOffsetList.append(actualValue)
             else:
                 valueOffsetList.append(valueOffset)
@@ -300,7 +309,9 @@ class TiffIO(object):
                 #    logger.debug("valueOffset =  %s", valueOffset)
         return tagIDList, fieldTypeList, nValuesList, valueOffsetList
 
-    def _readIFDEntry(self, tag, tagIDList, fieldTypeList, nValuesList, valueOffsetList):
+    def _readIFDEntry(
+        self, tag, tagIDList, fieldTypeList, nValuesList, valueOffsetList
+    ):
         fd = self.fd
         st = self._structChar
         idx = tagIDList.index(tag)
@@ -329,10 +340,12 @@ class TiffIO(object):
                 try:
                     text = raw.decode("utf-8")
                 except UnicodeDecodeError:
-                    logger.warning("TIFF file tag %d contains non ASCII/UTF-8 characters. ", tag)
-                    text = raw.decode("utf-8", errors='replace')
+                    logger.warning(
+                        "TIFF file tag %d contains non ASCII/UTF-8 characters. ", tag
+                    )
+                    text = raw.decode("utf-8", errors="replace")
                     # Use a valid ASCII character to limit ferther encoding error
-                    text = text.replace(u"\ufffd", "?")
+                    text = text.replace("\ufffd", "?")
 
                 cleaned_output.append(text)
             if isinstance(output, tuple):
@@ -364,7 +377,9 @@ class TiffIO(object):
 
         # read the header
         self.__makeSureFileIsOpen()
-        tagIDList, fieldTypeList, nValuesList, valueOffsetList = self._parseImageFileDirectory(nImage)
+        tagIDList, fieldTypeList, nValuesList, valueOffsetList = (
+            self._parseImageFileDirectory(nImage)
+        )
 
         # rows and columns
         nColumns = valueOffsetList[tagIDList.index(TAG_NUMBER_OF_COLUMNS)]
@@ -375,22 +390,27 @@ class TiffIO(object):
         nBits = valueOffsetList[idx]
         if nValuesList[idx] != 1:
             # this happens with RGB and friends, nBits is not a single value
-            nBits = self._readIFDEntry(TAG_BITS_PER_SAMPLE,
-                                       tagIDList, fieldTypeList, nValuesList,
-                                       valueOffsetList)
+            nBits = self._readIFDEntry(
+                TAG_BITS_PER_SAMPLE,
+                tagIDList,
+                fieldTypeList,
+                nValuesList,
+                valueOffsetList,
+            )
 
         if TAG_COLORMAP in tagIDList:
             idx = tagIDList.index(TAG_COLORMAP)
-            tmpColormap = self._readIFDEntry(TAG_COLORMAP,
-                                             tagIDList, fieldTypeList, nValuesList, valueOffsetList)
+            tmpColormap = self._readIFDEntry(
+                TAG_COLORMAP, tagIDList, fieldTypeList, nValuesList, valueOffsetList
+            )
             if max(tmpColormap) > 255:
                 tmpColormap = numpy.array(tmpColormap, dtype=numpy.uint16)
-                tmpColormap = (tmpColormap / 256.).astype(numpy.uint8)
+                tmpColormap = (tmpColormap / 256.0).astype(numpy.uint8)
             else:
                 tmpColormap = numpy.array(tmpColormap, dtype=numpy.uint8)
             tmpColormap.shape = 3, -1
             colormap = numpy.zeros((tmpColormap.shape[-1], 3), tmpColormap.dtype)
-            colormap[:,:] = tmpColormap.T
+            colormap[:, :] = tmpColormap.T
             tmpColormap = None
         else:
             colormap = None
@@ -415,30 +435,41 @@ class TiffIO(object):
         # photometric interpretation
         interpretation = 1
         if TAG_PHOTOMETRIC_INTERPRETATION in tagIDList:
-            interpretation = valueOffsetList[tagIDList.index(TAG_PHOTOMETRIC_INTERPRETATION)]
+            interpretation = valueOffsetList[
+                tagIDList.index(TAG_PHOTOMETRIC_INTERPRETATION)
+            ]
         else:
-            logger.debug("WARNING: Non standard TIFF. Photometric interpretation TAG missing")
+            logger.debug(
+                "WARNING: Non standard TIFF. Photometric interpretation TAG missing"
+            )
         helpString = ""
 
         if TAG_IMAGE_DESCRIPTION in tagIDList:
-            imageDescription = self._readIFDEntry(TAG_IMAGE_DESCRIPTION,
-                                                  tagIDList, fieldTypeList, nValuesList, valueOffsetList)
+            imageDescription = self._readIFDEntry(
+                TAG_IMAGE_DESCRIPTION,
+                tagIDList,
+                fieldTypeList,
+                nValuesList,
+                valueOffsetList,
+            )
             if type(imageDescription) in [type([1]), type((1,))]:
                 imageDescription = helpString.join(imageDescription)
         else:
             imageDescription = "%d/%d" % (nImage + 1, len(self._IFD))
 
         if TAG_MODEL in tagIDList:
-            model = self._readIFDEntry(TAG_MODEL,
-                                       tagIDList, fieldTypeList, nValuesList, valueOffsetList)
+            model = self._readIFDEntry(
+                TAG_MODEL, tagIDList, fieldTypeList, nValuesList, valueOffsetList
+            )
         else:
             model = None
 
         defaultSoftware = "Unknown Software"
 
         if TAG_SOFTWARE in tagIDList:
-            software = self._readIFDEntry(TAG_SOFTWARE,
-                                          tagIDList, fieldTypeList, nValuesList, valueOffsetList)
+            software = self._readIFDEntry(
+                TAG_SOFTWARE, tagIDList, fieldTypeList, nValuesList, valueOffsetList
+            )
             if isinstance(software, (tuple, list)):
                 software = helpString.join(software)
         else:
@@ -452,37 +483,40 @@ class TiffIO(object):
                 pass
 
         if TAG_DATE in tagIDList:
-            date = self._readIFDEntry(TAG_DATE,
-                                      tagIDList, fieldTypeList, nValuesList, valueOffsetList)
+            date = self._readIFDEntry(
+                TAG_DATE, tagIDList, fieldTypeList, nValuesList, valueOffsetList
+            )
             if type(date) in [type([1]), type((1,))]:
                 date = helpString.join(date)
         else:
             date = "Unknown Date"
 
-        stripOffsets = self._readIFDEntry(TAG_STRIP_OFFSETS,
-                                          tagIDList,
-                                          fieldTypeList,
-                                          nValuesList,
-                                          valueOffsetList)
+        stripOffsets = self._readIFDEntry(
+            TAG_STRIP_OFFSETS, tagIDList, fieldTypeList, nValuesList, valueOffsetList
+        )
         if TAG_ROWS_PER_STRIP in tagIDList:
-            rowsPerStrip = self._readIFDEntry(TAG_ROWS_PER_STRIP,
-                                              tagIDList,
-                                              fieldTypeList,
-                                              nValuesList,
-                                              valueOffsetList)[0]
+            rowsPerStrip = self._readIFDEntry(
+                TAG_ROWS_PER_STRIP,
+                tagIDList,
+                fieldTypeList,
+                nValuesList,
+                valueOffsetList,
+            )[0]
         else:
             rowsPerStrip = nRows
             logger.warning("Non standard TIFF. Rows per strip TAG missing")
 
         if TAG_STRIP_BYTE_COUNTS in tagIDList:
-            stripByteCounts = self._readIFDEntry(TAG_STRIP_BYTE_COUNTS,
-                                                 tagIDList,
-                                                 fieldTypeList,
-                                                 nValuesList,
-                                                 valueOffsetList)
+            stripByteCounts = self._readIFDEntry(
+                TAG_STRIP_BYTE_COUNTS,
+                tagIDList,
+                fieldTypeList,
+                nValuesList,
+                valueOffsetList,
+            )
         else:
             logger.warning("Non standard TIFF. Strip byte counts TAG missing")
-            if hasattr(nBits, 'index'):
+            if hasattr(nBits, "index"):
                 expectedSum = 0
                 for n in nBits:
                     expectedSum += int(nRows * nColumns * n / 8)
@@ -512,9 +546,13 @@ class TiffIO(object):
         info["compression"] = compression
         info["compression_type"] = compression_type
         info["imageDescription"] = imageDescription
-        info["stripOffsets"] = stripOffsets  # This contains the file offsets to the data positions
+        info["stripOffsets"] = (
+            stripOffsets  # This contains the file offsets to the data positions
+        )
         info["rowsPerStrip"] = rowsPerStrip
-        info["stripByteCounts"] = stripByteCounts  # bytes in strip since I do not support compression
+        info["stripByteCounts"] = (
+            stripByteCounts  # bytes in strip since I do not support compression
+        )
         info["software"] = software
         info["date"] = date
         info["colormap"] = colormap
@@ -524,36 +562,38 @@ class TiffIO(object):
             info["model"] = model
 
         infoDict = {}
-        testString = 'PyMca'
+        testString = "PyMca"
         if software.startswith(testString):
             # str to make sure python 2.x sees it as string and not unicode
             descriptionString = imageDescription
             # interpret the image description in terms of supplied
             # information at writing time
-            items = descriptionString.split('=')
+            items = descriptionString.split("=")
             for i in range(int(len(items) / 2)):
                 key = "%s" % items[i * 2]
                 # get rid of the \n at the end of the value
                 value = "%s" % items[i * 2 + 1][:-1]
                 infoDict[key] = value
-        info['info'] = infoDict
+        info["info"] = infoDict
 
         if (self._maxImageCacheLength > 0) and useInfoCache:
             self._imageInfoCacheIndex.insert(0, nImage)
             self._imageInfoCache.insert(0, info)
             if len(self._imageInfoCacheIndex) > self._maxImageCacheLength:
-                self._imageInfoCacheIndex = self._imageInfoCacheIndex[:self._maxImageCacheLength]
-                self._imageInfoCache = self._imageInfoCache[:self._maxImageCacheLength]
+                self._imageInfoCacheIndex = self._imageInfoCacheIndex[
+                    : self._maxImageCacheLength
+                ]
+                self._imageInfoCache = self._imageInfoCache[: self._maxImageCacheLength]
         return info
 
     def _readImage(self, nImage, **kw):
         logger.debug("Reading image %d", nImage)
-        if 'close' in kw:
-            close = kw['close']
+        if "close" in kw:
+            close = kw["close"]
         else:
             close = True
-        rowMin = kw.get('rowMin', None)
-        rowMax = kw.get('rowMax', None)
+        rowMin = kw.get("rowMin", None)
+        rowMax = kw.get("rowMax", None)
         if nImage in self._imageDataCacheIndex:
             logger.debug("Reading image data from cache")
             return self._imageDataCache[self._imageDataCacheIndex.index(nImage)]
@@ -571,8 +611,8 @@ class TiffIO(object):
             logger.debug("Backtrace", exc_info=True)
             self._forceMonoOutput = oldMono
             raise
-        compression = info['compression']
-        compression_type = info['compression_type']
+        compression = info["compression"]
+        compression_type = info["compression_type"]
         if compression:
             if compression_type != 32773:
                 raise IOError("Compressed TIFF images not supported except packbits")
@@ -638,7 +678,9 @@ class TiffIO(object):
             elif nBits in [64, (64, 64, 64), [64, 64, 64]]:
                 dtype = numpy.uint64
             else:
-                raise ValueError("Unsupported number of bits for unsigned int: %s" % (nBits,))
+                raise ValueError(
+                    "Unsupported number of bits for unsigned int: %s" % (nBits,)
+                )
         elif sampleFormat == SAMPLE_FORMAT_INT:
             if nBits in [8, (8, 8, 8), [8, 8, 8]]:
                 dtype = numpy.int8
@@ -649,10 +691,15 @@ class TiffIO(object):
             elif nBits in [64, (64, 64, 64), [64, 64, 64]]:
                 dtype = numpy.int64
             else:
-                raise ValueError("Unsupported number of bits for signed int: %s" % (nBits,))
+                raise ValueError(
+                    "Unsupported number of bits for signed int: %s" % (nBits,)
+                )
         else:
-            raise ValueError("Unsupported combination. Bits = %s  Format = %d" % (nBits, sampleFormat))
-        if hasattr(nBits, 'index'):
+            raise ValueError(
+                "Unsupported combination. Bits = %s  Format = %d"
+                % (nBits, sampleFormat)
+            )
+        if hasattr(nBits, "index"):
             image = numpy.zeros((nRows, nColumns, len(nBits)), dtype=dtype)
         elif colormap is not None and interpretation == 3:
             # should I use colormap dtype?
@@ -661,9 +708,13 @@ class TiffIO(object):
             image = numpy.zeros((nRows, nColumns), dtype=dtype)
 
         fd = self.fd
-        stripOffsets = info["stripOffsets"]  # This contains the file offsets to the data positions
+        stripOffsets = info[
+            "stripOffsets"
+        ]  # This contains the file offsets to the data positions
         rowsPerStrip = info["rowsPerStrip"]
-        stripByteCounts = info["stripByteCounts"]  # bytes in strip since I do not support compression
+        stripByteCounts = info[
+            "stripByteCounts"
+        ]  # bytes in strip since I do not support compression
 
         rowStart = 0
         if len(stripOffsets) == 1:
@@ -679,9 +730,9 @@ class TiffIO(object):
             readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
             if self._swap:
                 readout.byteswap(True)
-            if hasattr(nBits, 'index'):
+            if hasattr(nBits, "index"):
                 readout.shape = -1, nColumns, len(nBits)
-            elif info['colormap'] is not None and interpretation == 3:
+            elif info["colormap"] is not None and interpretation == 3:
                 readout = colormap[readout]
                 readout.shape = -1, nColumns, 3
             else:
@@ -695,7 +746,7 @@ class TiffIO(object):
                 if rowEnd < rowMin:
                     rowStart += nRowsToRead
                     continue
-                if (rowStart > rowMax):
+                if rowStart > rowMax:
                     break
                 # we are in position
                 fd.seek(stripOffsets[i])
@@ -712,17 +763,20 @@ class TiffIO(object):
                     # intermediate buffer
                     tmpBuffer = fd.read(nBytes)
                     while readBytes < nBytes:
-                        n = struct.unpack('b', tmpBuffer[readBytes:(readBytes + 1)])[0]
+                        n = struct.unpack("b", tmpBuffer[readBytes : (readBytes + 1)])[
+                            0
+                        ]
                         readBytes += 1
                         if n >= 0:
                             # should I prevent reading more than the
                             # length of the chain? Let's python raise
                             # the exception...
-                            bufferBytes += tmpBuffer[readBytes:
-                                                     readBytes + (n + 1)]
-                            readBytes += (n + 1)
+                            bufferBytes += tmpBuffer[readBytes : readBytes + (n + 1)]
+                            readBytes += n + 1
                         elif n > -128:
-                            bufferBytes += (-n + 1) * tmpBuffer[readBytes:(readBytes + 1)]
+                            bufferBytes += (-n + 1) * tmpBuffer[
+                                readBytes : (readBytes + 1)
+                            ]
                             readBytes += 1
                         else:
                             # if read -128 ignore the byte
@@ -731,27 +785,27 @@ class TiffIO(object):
                     if self._swap:
                         readout.byteswap(True)
 
-                    if hasattr(nBits, 'index'):
+                    if hasattr(nBits, "index"):
                         readout.shape = -1, nColumns, len(nBits)
-                    elif info['colormap'] is not None:
+                    elif info["colormap"] is not None:
                         readout = colormap[readout]
                         readout.shape = -1, nColumns, 3
                     else:
                         readout.shape = -1, nColumns
-                    image[rowStart:rowEnd,:] = readout
+                    image[rowStart:rowEnd, :] = readout
                 else:
                     readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
                     if self._swap:
                         readout.byteswap(True)
 
-                    if hasattr(nBits, 'index'):
+                    if hasattr(nBits, "index"):
                         readout.shape = -1, nColumns, len(nBits)
                     elif colormap is not None:
                         readout = colormap[readout]
                         readout.shape = -1, nColumns, 3
                     else:
                         readout.shape = -1, nColumns
-                    image[rowStart:rowEnd,:] = readout
+                    image[rowStart:rowEnd, :] = readout
                 rowStart += nRowsToRead
         if close:
             self.__makeSureFileIsClosed()
@@ -760,22 +814,26 @@ class TiffIO(object):
             # color image
             if self._forceMonoOutput:
                 # color image, convert to monochrome
-                image = (image[:,:, 0] * 0.114 +
-                         image[:,:, 1] * 0.587 +
-                         image[:,:, 2] * 0.299).astype(numpy.float32)
+                image = (
+                    image[:, :, 0] * 0.114
+                    + image[:, :, 1] * 0.587
+                    + image[:, :, 2] * 0.299
+                ).astype(numpy.float32)
 
         if (rowMin == 0) and (rowMax == (nRows - 1)):
             self._imageDataCacheIndex.insert(0, nImage)
             self._imageDataCache.insert(0, image)
             if len(self._imageDataCacheIndex) > self._maxImageCacheLength:
-                self._imageDataCacheIndex = self._imageDataCacheIndex[:self._maxImageCacheLength]
-                self._imageDataCache = self._imageDataCache[:self._maxImageCacheLength]
+                self._imageDataCacheIndex = self._imageDataCacheIndex[
+                    : self._maxImageCacheLength
+                ]
+                self._imageDataCache = self._imageDataCache[: self._maxImageCacheLength]
 
         return image
 
     def writeImage(self, image0, info=None, software=None, date=None):
         if software is None:
-            software = 'PyMca.TiffIO'
+            software = "PyMca.TiffIO"
         # if date is None:
         #    date = time.ctime()
 
@@ -796,13 +854,13 @@ class TiffIO(object):
         fd.seek(0)
         mode = fd.mode
         name = fd.name
-        if 'w' in mode:
+        if "w" in mode:
             # we have to overwrite the file
             self.__makeSureFileIsClosed()
             fd = None
             if os.path.exists(name):
                 os.remove(name)
-            fd = open(name, mode='wb+')
+            fd = open(name, mode="wb+")
             self._initEmptyFile(fd)
         self.fd = fd
 
@@ -825,16 +883,18 @@ class TiffIO(object):
         logger.debug("File contains %d images", nImages)
         if nImages == 0:
             fd.seek(4)
-            fmt = st + 'I'
+            fmt = st + "I"
             fd.write(struct.pack(fmt, endOfFile))
         else:
             fd.seek(self._IFD[-1])
-            fmt = st + 'H'
-            numberOfDirectoryEntries = struct.unpack(fmt, fd.read(struct.calcsize(fmt)))[0]
-            fmt = st + 'I'
+            fmt = st + "H"
+            numberOfDirectoryEntries = struct.unpack(
+                fmt, fd.read(struct.calcsize(fmt))
+            )[0]
+            fmt = st + "I"
             pos = self._IFD[-1] + 2 + 12 * numberOfDirectoryEntries
             fd.seek(pos)
-            fmt = st + 'I'
+            fmt = st + "I"
             fd.write(struct.pack(fmt, endOfFile))
         fd.flush()
 
@@ -850,9 +910,9 @@ class TiffIO(object):
                 description += "%s=%s\n" % (key, info[key])
 
         # get the image file directory
-        outputIFD = self._getOutputIFD(image, description=description,
-                                       software=software,
-                                       date=date)
+        outputIFD = self._getOutputIFD(
+            image, description=description, software=software, date=date
+        )
 
         # write the new IFD
         fd.write(outputIFD)
@@ -874,21 +934,21 @@ class TiffIO(object):
             order = "II"
             # intel, little endian
             fileOrder = "little"
-            self._structChar = '<'
+            self._structChar = "<"
         else:
             order = "MM"
             # motorola, high endian
             fileOrder = "big"
-            self._structChar = '>'
+            self._structChar = ">"
         st = self._structChar
         if fileOrder == sys.byteorder:
             self._swap = False
         else:
             self._swap = True
         fd.seek(0)
-        fd.write(struct.pack(st + '2s', bytes(order, 'utf-8')))
-        fd.write(struct.pack(st + 'H', 42))
-        fd.write(struct.pack(st + 'I', 0))
+        fd.write(struct.pack(st + "2s", bytes(order, "utf-8")))
+        fd.write(struct.pack(st + "H", 42))
+        fd.write(struct.pack(st + "I", 0))
         fd.flush()
 
     def _getOutputIFD(self, image, description=None, software=None, date=None):
@@ -917,9 +977,9 @@ class TiffIO(object):
                 descriptionLength = len(description)
 
             if isinstance(description, str):
-                raw = description.encode('utf-8')
+                raw = description.encode("utf-8")
             else:
-                raw = bytes(description, 'utf-8')
+                raw = bytes(description, "utf-8")
             imageDescription = struct.pack("%ds" % len(raw), raw)
             nDirectoryEntries += 1
 
@@ -929,7 +989,7 @@ class TiffIO(object):
             while softwareLength < 4:
                 software = software + " "
                 softwareLength = len(software)
-            software = bytes(software, 'utf-8')
+            software = bytes(software, "utf-8")
             softwarePackedString = struct.pack("%ds" % softwareLength, software)
             nDirectoryEntries += 1
         else:
@@ -937,7 +997,7 @@ class TiffIO(object):
 
         if date is not None:
             dateLength = len(date)
-            date = bytes(date, 'utf-8')
+            date = bytes(date, "utf-8")
             datePackedString = struct.pack("%ds" % dateLength, date)
             dateLength = len(datePackedString)
             nDirectoryEntries += 1
@@ -967,7 +1027,8 @@ class TiffIO(object):
             nDirectoryEntries += 1  # For SamplesPerPixel
         else:
             raise RuntimeError(
-                "Image with %d color channel(s) not supported" % nChannels)
+                "Image with %d color channel(s) not supported" % nChannels
+            )
 
         # image description
         if imageDescription is not None:
@@ -1003,15 +1064,19 @@ class TiffIO(object):
             rowsPerStrip = nRows
 
         # stripByteCounts
-        stripByteCounts = int(nColumns * rowsPerStrip *
-                              bitsPerSample * nChannels / 8)
+        stripByteCounts = int(nColumns * rowsPerStrip * bitsPerSample * nChannels / 8)
 
         if descriptionLength > 4:
-            stripOffsets0 = (endOfFile + dateLength + descriptionLength +
-                             2 + 12 * nDirectoryEntries + 4)
+            stripOffsets0 = (
+                endOfFile
+                + dateLength
+                + descriptionLength
+                + 2
+                + 12 * nDirectoryEntries
+                + 4
+            )
         else:
-            stripOffsets0 = (endOfFile + dateLength +
-                             2 + 12 * nDirectoryEntries + 4)
+            stripOffsets0 = endOfFile + dateLength + 2 + 12 * nDirectoryEntries + 4
 
         if softwareLength > 4:
             stripOffsets0 += softwareLength
@@ -1026,7 +1091,7 @@ class TiffIO(object):
 
         if rowsPerStrip != nRows:
             nStripOffsets = int(nRows / rowsPerStrip)
-            fmt = st + 'I'
+            fmt = st + "I"
             stripOffsetsLength = struct.calcsize(fmt) * nStripOffsets
             stripOffsets0 += stripOffsetsLength
             # the length for the stripByteCounts will be the same
@@ -1045,8 +1110,7 @@ class TiffIO(object):
         logger.debug("IMAGE WILL START AT %d", stripOffsets[0])
 
         # sample format
-        if dtype in [numpy.float32, numpy.float64] or\
-           dtype.str[-2] == 'f':
+        if dtype in [numpy.float32, numpy.float64] or dtype.str[-2] == "f":
             sampleFormat = SAMPLE_FORMAT_FLOAT
         elif dtype in [numpy.uint8, numpy.uint16, numpy.uint32, numpy.uint64]:
             sampleFormat = SAMPLE_FORMAT_UINT
@@ -1075,116 +1139,169 @@ class TiffIO(object):
         outputIFD += struct.pack(fmt, nDirectoryEntries)
 
         fmt = st + "HHII"
-        outputIFD += struct.pack(fmt, TAG_NUMBER_OF_COLUMNS,
-                                 FIELD_TYPE_OUT['I'], 1, info["nColumns"])
-        outputIFD += struct.pack(fmt, TAG_NUMBER_OF_ROWS,
-                                 FIELD_TYPE_OUT['I'], 1, info["nRows"])
+        outputIFD += struct.pack(
+            fmt, TAG_NUMBER_OF_COLUMNS, FIELD_TYPE_OUT["I"], 1, info["nColumns"]
+        )
+        outputIFD += struct.pack(
+            fmt, TAG_NUMBER_OF_ROWS, FIELD_TYPE_OUT["I"], 1, info["nRows"]
+        )
 
         if info["photometricInterpretation"] == 1:
-            fmt = st + 'HHIHH'
-            outputIFD += struct.pack(fmt, TAG_BITS_PER_SAMPLE,
-                                     FIELD_TYPE_OUT['H'], 1, info["nBits"], 0)
+            fmt = st + "HHIHH"
+            outputIFD += struct.pack(
+                fmt, TAG_BITS_PER_SAMPLE, FIELD_TYPE_OUT["H"], 1, info["nBits"], 0
+            )
         elif info["photometricInterpretation"] == 2:
-            fmt = st + 'HHII'
-            outputIFD += struct.pack(fmt, TAG_BITS_PER_SAMPLE,
-                                     FIELD_TYPE_OUT['H'], 3,
-                                     info["stripOffsets"][0] - 2 * stripOffsetsLength - descriptionLength -
-                                     dateLength - softwareLength - bitsPerSampleLength)
+            fmt = st + "HHII"
+            outputIFD += struct.pack(
+                fmt,
+                TAG_BITS_PER_SAMPLE,
+                FIELD_TYPE_OUT["H"],
+                3,
+                info["stripOffsets"][0]
+                - 2 * stripOffsetsLength
+                - descriptionLength
+                - dateLength
+                - softwareLength
+                - bitsPerSampleLength,
+            )
         else:
             raise RuntimeError("Unsupported photometric interpretation")
 
-        fmt = st + 'HHIHH'
-        outputIFD += struct.pack(fmt, TAG_COMPRESSION,
-                                 FIELD_TYPE_OUT['H'], 1, info["compression"], 0)
-        fmt = st + 'HHIHH'
-        outputIFD += struct.pack(fmt, TAG_PHOTOMETRIC_INTERPRETATION,
-                                 FIELD_TYPE_OUT['H'], 1, info["photometricInterpretation"], 0)
+        fmt = st + "HHIHH"
+        outputIFD += struct.pack(
+            fmt, TAG_COMPRESSION, FIELD_TYPE_OUT["H"], 1, info["compression"], 0
+        )
+        fmt = st + "HHIHH"
+        outputIFD += struct.pack(
+            fmt,
+            TAG_PHOTOMETRIC_INTERPRETATION,
+            FIELD_TYPE_OUT["H"],
+            1,
+            info["photometricInterpretation"],
+            0,
+        )
         if imageDescription is not None:
             descriptionLength = len(imageDescription)
             if descriptionLength > 4:
-                fmt = st + 'HHII'
-                outputIFD += struct.pack(fmt, TAG_IMAGE_DESCRIPTION,
-                                         FIELD_TYPE_OUT['s'], descriptionLength,
-                                         info["stripOffsets"][0] - 2 * stripOffsetsLength -
-                                         descriptionLength)
+                fmt = st + "HHII"
+                outputIFD += struct.pack(
+                    fmt,
+                    TAG_IMAGE_DESCRIPTION,
+                    FIELD_TYPE_OUT["s"],
+                    descriptionLength,
+                    info["stripOffsets"][0]
+                    - 2 * stripOffsetsLength
+                    - descriptionLength,
+                )
             else:
                 # it has to have length 4
-                fmt = st + 'HHI%ds' % descriptionLength
-                outputIFD += struct.pack(fmt, TAG_IMAGE_DESCRIPTION,
-                                         FIELD_TYPE_OUT['s'],
-                                         descriptionLength,
-                                         imageDescription)
+                fmt = st + "HHI%ds" % descriptionLength
+                outputIFD += struct.pack(
+                    fmt,
+                    TAG_IMAGE_DESCRIPTION,
+                    FIELD_TYPE_OUT["s"],
+                    descriptionLength,
+                    imageDescription,
+                )
 
         if len(stripOffsets) == 1:
-            fmt = st + 'HHII'
-            outputIFD += struct.pack(fmt, TAG_STRIP_OFFSETS,
-                                     FIELD_TYPE_OUT['I'], 1,
-                                     info["stripOffsets"][0])
+            fmt = st + "HHII"
+            outputIFD += struct.pack(
+                fmt, TAG_STRIP_OFFSETS, FIELD_TYPE_OUT["I"], 1, info["stripOffsets"][0]
+            )
         else:
-            fmt = st + 'HHII'
-            outputIFD += struct.pack(fmt, TAG_STRIP_OFFSETS,
-                                     FIELD_TYPE_OUT['I'],
-                                     len(stripOffsets),
-                                     info["stripOffsets"][0] - 2 * stripOffsetsLength)
+            fmt = st + "HHII"
+            outputIFD += struct.pack(
+                fmt,
+                TAG_STRIP_OFFSETS,
+                FIELD_TYPE_OUT["I"],
+                len(stripOffsets),
+                info["stripOffsets"][0] - 2 * stripOffsetsLength,
+            )
 
         if info["photometricInterpretation"] == 2:
-            fmt = st + 'HHIHH'
-            outputIFD += struct.pack(fmt, TAG_SAMPLES_PER_PIXEL,
-                                     FIELD_TYPE_OUT['H'], 1,
-                                     info["samplesPerPixel"], 0)
+            fmt = st + "HHIHH"
+            outputIFD += struct.pack(
+                fmt,
+                TAG_SAMPLES_PER_PIXEL,
+                FIELD_TYPE_OUT["H"],
+                1,
+                info["samplesPerPixel"],
+                0,
+            )
 
-        fmt = st + 'HHII'
-        outputIFD += struct.pack(fmt, TAG_ROWS_PER_STRIP,
-                                 FIELD_TYPE_OUT['I'], 1,
-                                 info["rowsPerStrip"])
+        fmt = st + "HHII"
+        outputIFD += struct.pack(
+            fmt, TAG_ROWS_PER_STRIP, FIELD_TYPE_OUT["I"], 1, info["rowsPerStrip"]
+        )
 
         if len(stripOffsets) == 1:
-            fmt = st + 'HHII'
-            outputIFD += struct.pack(fmt, TAG_STRIP_BYTE_COUNTS,
-                                     FIELD_TYPE_OUT['I'], 1,
-                                     info["stripByteCounts"])
+            fmt = st + "HHII"
+            outputIFD += struct.pack(
+                fmt,
+                TAG_STRIP_BYTE_COUNTS,
+                FIELD_TYPE_OUT["I"],
+                1,
+                info["stripByteCounts"],
+            )
         else:
-            fmt = st + 'HHII'
-            outputIFD += struct.pack(fmt, TAG_STRIP_BYTE_COUNTS,
-                                     FIELD_TYPE_OUT['I'], len(stripOffsets),
-                                     info["stripOffsets"][0] - stripOffsetsLength)
+            fmt = st + "HHII"
+            outputIFD += struct.pack(
+                fmt,
+                TAG_STRIP_BYTE_COUNTS,
+                FIELD_TYPE_OUT["I"],
+                len(stripOffsets),
+                info["stripOffsets"][0] - stripOffsetsLength,
+            )
 
         if software is not None:
             if softwareLength > 4:
-                fmt = st + 'HHII'
-                outputIFD += struct.pack(fmt, TAG_SOFTWARE,
-                                         FIELD_TYPE_OUT['s'],
-                                         softwareLength,
-                                         info["stripOffsets"][0] -
-                                         2 * stripOffsetsLength -
-                                         descriptionLength - softwareLength - dateLength)
+                fmt = st + "HHII"
+                outputIFD += struct.pack(
+                    fmt,
+                    TAG_SOFTWARE,
+                    FIELD_TYPE_OUT["s"],
+                    softwareLength,
+                    info["stripOffsets"][0]
+                    - 2 * stripOffsetsLength
+                    - descriptionLength
+                    - softwareLength
+                    - dateLength,
+                )
             else:
                 # it has to have length 4
-                fmt = st + 'HHI%ds' % softwareLength
-                outputIFD += struct.pack(fmt, TAG_SOFTWARE,
-                                         FIELD_TYPE_OUT['s'],
-                                         softwareLength,
-                                         softwarePackedString)
+                fmt = st + "HHI%ds" % softwareLength
+                outputIFD += struct.pack(
+                    fmt,
+                    TAG_SOFTWARE,
+                    FIELD_TYPE_OUT["s"],
+                    softwareLength,
+                    softwarePackedString,
+                )
 
         if date is not None:
-            fmt = st + 'HHII'
-            outputIFD += struct.pack(fmt, TAG_DATE,
-                                     FIELD_TYPE_OUT['s'],
-                                     dateLength,
-                                     info["stripOffsets"][0] -
-                                     2 * stripOffsetsLength -
-                                     descriptionLength - dateLength)
+            fmt = st + "HHII"
+            outputIFD += struct.pack(
+                fmt,
+                TAG_DATE,
+                FIELD_TYPE_OUT["s"],
+                dateLength,
+                info["stripOffsets"][0]
+                - 2 * stripOffsetsLength
+                - descriptionLength
+                - dateLength,
+            )
 
-        fmt = st + 'HHIHH'
-        outputIFD += struct.pack(fmt, TAG_SAMPLE_FORMAT,
-                                 FIELD_TYPE_OUT['H'], 1,
-                                 info["sampleFormat"], 0)
-        fmt = st + 'I'
+        fmt = st + "HHIHH"
+        outputIFD += struct.pack(
+            fmt, TAG_SAMPLE_FORMAT, FIELD_TYPE_OUT["H"], 1, info["sampleFormat"], 0
+        )
+        fmt = st + "I"
         outputIFD += struct.pack(fmt, 0)
 
         if info["photometricInterpretation"] == 2:
-            outputIFD += struct.pack('HHH', info["nBits"],
-                                     info["nBits"], info["nBits"])
+            outputIFD += struct.pack("HHH", info["nBits"], info["nBits"], info["nBits"])
 
         if softwareLength > 4:
             outputIFD += softwarePackedString

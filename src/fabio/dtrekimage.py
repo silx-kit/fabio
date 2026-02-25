@@ -82,7 +82,7 @@ class DtrekImage(FabioImage):
             DtrekImage._keyvalue_pattern = re.compile(b"[^\n]+")
 
     def read(self, fname, frame=None):
-        """ read in the file """
+        """read in the file"""
         with self._open(fname, "rb") as infile:
             try:
                 self._readheader(infile)
@@ -101,11 +101,15 @@ class DtrekImage(FabioImage):
             if data_type is not None and data_type == "unsigned_short":
                 pass
             else:
-                logger.warning("Data_type key is mandatory. Fallback to unsigner integer 16-bits.")
+                logger.warning(
+                    "Data_type key is mandatory. Fallback to unsigner integer 16-bits."
+                )
             numpy_type = numpy.uint16
         else:
             if data_type not in _DATA_TYPES:
-                raise IOError("Data_type key contains an invalid/unsupported value: %s", data_type)
+                raise IOError(
+                    "Data_type key contains an invalid/unsupported value: %s", data_type
+                )
             numpy_type = _DATA_TYPES[data_type]
             if type is None:
                 raise IOError("Data_type %s is not supported by fabio", data_type)
@@ -122,7 +126,7 @@ class DtrekImage(FabioImage):
 
         shape = []
         for i in range(dim):
-            value = int(self.header['SIZE%d' % (i + 1)])
+            value = int(self.header["SIZE%d" % (i + 1)])
             shape.insert(0, value)
         self._shape = shape
 
@@ -140,8 +144,10 @@ class DtrekImage(FabioImage):
             try:
                 data.shape = self._shape
             except ValueError:
-                    raise IOError('Size spec in d*TREK header does not match ' +
-                                  'size of image data field %s != %s' % (self._shape, data.size))
+                raise IOError(
+                    "Size spec in d*TREK header does not match "
+                    + "size of image data field %s != %s" % (self._shape, data.size)
+                )
         self.data = data
         self._shape = None
         self._dtype = None
@@ -157,8 +163,8 @@ class DtrekImage(FabioImage):
         if b"=" not in line:
             raise ValueError("No meta")
         line = line.decode("ascii")
-        key, value = line.split('=')
-        return key.strip(), value.strip(' ;\n\r')
+        key, value = line.split("=")
+        return key.strip(), value.strip(" ;\n\r")
 
     def _readheader(self, infile):
         """Read a d*TREK header.
@@ -170,10 +176,10 @@ class DtrekImage(FabioImage):
             of the header.
         """
         header_line = infile.readline()
-        assert(header_line.startswith(b"{"))
+        assert header_line.startswith(b"{")
         header_bytes_line = infile.readline()
         key, header_bytes = self._split_meta(header_bytes_line)
-        assert(key == "HEADER_BYTES")
+        assert key == "HEADER_BYTES"
         self.header[key] = header_bytes
         header_bytes = int(header_bytes)
 
@@ -184,7 +190,7 @@ class DtrekImage(FabioImage):
 
         for line in DtrekImage._keyvalue_pattern.finditer(header_block):
             line = line.group(0)
-            if line.startswith(b'}'):
+            if line.startswith(b"}"):
                 # Remining part is padding
                 return
             try:
@@ -203,7 +209,7 @@ class DtrekImage(FabioImage):
 
         # From specification
         HEADER_START = b"{\n"
-        HEADER_END = b"}\n\x0C\n"
+        HEADER_END = b"}\n\x0c\n"
         HEADER_BYTES_TEMPLATE = "HEADER_BYTES=% 5d;\n"
         # start + end + header_bytes_key + header_bytes_value + header_bytes_end
         MINIMAL_HEADER_SIZE = 2 + 4 + 13 + 5 + 2
@@ -217,33 +223,37 @@ class DtrekImage(FabioImage):
                     break
 
             if dtrek_data_type is None:
-                if data.dtype.kind == 'f':
+                if data.dtype.kind == "f":
                     dtrek_data_type = "float IEEE"
-                elif data.dtype.kind == 'u':
+                elif data.dtype.kind == "u":
                     dtrek_data_type = "unsigned long int"
-                elif data.dtype.kind == 'i':
+                elif data.dtype.kind == "i":
                     dtrek_data_type = "long int"
                 else:
                     raise TypeError("Unsupported data type %s", data.dtype)
                 new_dtype = numpy.dtype(_DATA_TYPES[dtrek_data_type])
-                logger.warning("Data type %s unsupported. Store it as %s.", data.dtype, new_dtype)
+                logger.warning(
+                    "Data type %s unsupported. Store it as %s.", data.dtype, new_dtype
+                )
                 data = data.astype(new_dtype)
 
-            byte_order = self._get_dtrek_byte_order(default_little_endian=numpy.little_endian)
+            byte_order = self._get_dtrek_byte_order(
+                default_little_endian=numpy.little_endian
+            )
             little_endian = byte_order == "little_endian"
             if little_endian != numpy.little_endian:
                 data = data.byteswap()
 
             # Patch header to match the data
             self.header["Data_type"] = dtrek_data_type
-            self.header['DIM'] = str(len(data.shape))
+            self.header["DIM"] = str(len(data.shape))
             for i, size in enumerate(reversed(data.shape)):
-                self.header['SIZE%d' % (i + 1)] = str(size)
+                self.header["SIZE%d" % (i + 1)] = str(size)
             self.header["BYTE_ORDER"] = byte_order
         else:
             # No data
             self.header["Data_type"] = "long int"
-            self.header['DIM'] = "2"
+            self.header["DIM"] = "2"
             self.header["SIZE1"] = "0"
             self.header["SIZE2"] = "0"
             self.header["BYTE_ORDER"] = "little_endian"
@@ -270,7 +280,13 @@ class DtrekImage(FabioImage):
             pad = hsize - minimal_hsize
 
         header_bytes = HEADER_BYTES_TEMPLATE % hsize
-        out = HEADER_START + header_bytes.encode("ascii") + out + HEADER_END + (b' ' * pad)
+        out = (
+            HEADER_START
+            + header_bytes.encode("ascii")
+            + out
+            + HEADER_END
+            + (b" " * pad)
+        )
         assert len(out) % 512 == 0, "Header is not multiple of 512"
 
         with open(fname, "wb") as outf:
@@ -291,7 +307,10 @@ class DtrekImage(FabioImage):
             little_endian = "little" in byte_order
             big_endian = "big" in byte_order
             if not little_endian and not big_endian:
-                logger.warning("Invalid BYTE_ORDER value. Found '%s', assuming little_endian", byte_order)
+                logger.warning(
+                    "Invalid BYTE_ORDER value. Found '%s', assuming little_endian",
+                    byte_order,
+                )
                 little_endian = True
 
         if little_endian:

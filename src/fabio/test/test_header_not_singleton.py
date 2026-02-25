@@ -31,16 +31,14 @@
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 import shutil
 from .utilstest import UtilsTest
 
+logger = logging.getLogger(__name__)
+
 
 class TestHeaderNotSingleton(unittest.TestCase):
-
     def setUp(self):
         """
         download images
@@ -74,6 +72,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

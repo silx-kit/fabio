@@ -11,15 +11,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-
 class TestImport(unittest.TestCase):
     def test_import_all(self):
         import fabio
-        base = os.path.split(fabio.__path__[0])[0]+"/"
+
+        base = os.path.split(fabio.__path__[0])[0] + "/"
         for root, dirs, files in os.walk(fabio.__path__[0]):
             for f in files:
                 if f.endswith(".py"):
-                    module = os.path.join(root, f[:-3])[len(base):].replace(os.sep,".")
+                    module = os.path.join(root, f[:-3])[len(base) :].replace(
+                        os.sep, "."
+                    )
                     __import__(module)
 
 

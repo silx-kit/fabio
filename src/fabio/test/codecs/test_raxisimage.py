@@ -30,16 +30,16 @@
 # Unit tests for raxis images
 28/11/2014
 """
-__date__ = "03/04/2020"
+
+__date__ = "27/10/2025"
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.raxisimage import raxisimage
 from ..utilstest import UtilsTest
+
+logger = logging.getLogger(__name__)
 
 # filename dim1 dim2 min max mean stddev
 TESTIMAGES = """mgzn-20hpt.img     2300 1280 16 15040  287.82 570.72
@@ -49,7 +49,6 @@ TESTIMAGES = """mgzn-20hpt.img     2300 1280 16 15040  287.82 570.72
 
 
 class TestRaxisImage(unittest.TestCase):
-
     def setUp(self):
         """
         download images
@@ -60,7 +59,7 @@ class TestRaxisImage(unittest.TestCase):
         """
         Test the reading of Mar345 images
         """
-        for line in TESTIMAGES.split('\n'):
+        for line in TESTIMAGES.split("\n"):
             vals = line.strip().split()
             name = vals[0]
             logger.debug("Testing file %s" % name)
@@ -70,10 +69,21 @@ class TestRaxisImage(unittest.TestCase):
             obj = raxisimage()
             obj.read(os.path.join(os.path.dirname(self.mar), name))
 
-            self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin()))
-            self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax()))
-            self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean()))
-            self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev [%s,%s]" % (stddev, obj.getstddev()))
+            self.assertAlmostEqual(
+                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+            )
+            self.assertAlmostEqual(
+                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+            )
+            self.assertAlmostEqual(
+                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+            )
+            self.assertAlmostEqual(
+                stddev,
+                obj.getstddev(),
+                2,
+                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+            )
             self.assertEqual(shape, obj.shape)
 
     def _test_write(self):
@@ -93,7 +103,12 @@ class TestRaxisImage(unittest.TestCase):
                 if key == "filename":
                     continue
                 self.assertTrue(key in other.header, "Key %s is in header" % key)
-                self.assertEqual(obj.header[key], other.header[key], "value are the same for key %s: [%s|%s]" % (key, obj.header[key], other.header[key]))
+                self.assertEqual(
+                    obj.header[key],
+                    other.header[key],
+                    "value are the same for key %s: [%s|%s]"
+                    % (key, obj.header[key], other.header[key]),
+                )
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 
     def test_memoryleak(self):
@@ -114,6 +129,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

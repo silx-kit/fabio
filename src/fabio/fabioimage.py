@@ -42,70 +42,98 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "20/08/2024"
+__date__ = "27/10/2025"
 
 import os
 import logging
 import sys
 import tempfile
 import weakref
-logger = logging.getLogger(__name__)
 import numpy
 from . import fabioutils, converters
 from .fabioutils import OrderedDict
+from .compression import COMPRESSORS
 from .utils import pilutils
 from .utils import deprecation
 
+logger = logging.getLogger(__name__)
+
 
 class _FabioArray(object):
-    """"Abstract class providing array API used by :class:`FabioImage` and
+    """ "Abstract class providing array API used by :class:`FabioImage` and
     :class:`FabioFrame`."""
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'dim1'", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Prefer using 'shape[-1]' instead of 'dim1'",
+        deprecated_since="0.10.0beta",
+    )
     def dim1(self):
         return self.shape[-1]
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'dim2'", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Prefer using 'shape[-2]' instead of 'dim2'",
+        deprecated_since="0.10.0beta",
+    )
     def dim2(self):
         return self.shape[-2]
 
     @dim1.setter
-    @deprecation.deprecated(reason="dim1 should not be updated", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="dim1 should not be updated", deprecated_since="0.10.0beta"
+    )
     def dim1(self, value):
         self.__set_dim1(value)
 
     @dim2.setter
-    @deprecation.deprecated(reason="dim2 should not be updated", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="dim2 should not be updated", deprecated_since="0.10.0beta"
+    )
     def dim2(self, value):
         self.__set_dim2(value)
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape[-3]' instead of 'dim3'", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Prefer using 'shape[-3]' instead of 'dim3'",
+        deprecated_since="0.10.0beta",
+    )
     def dim3(self):
         if len(self.shape) < 3:
             raise AttributeError("No attribye dim3")
         return self.shape[-3]
 
     @property
-    @deprecation.deprecated(reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Prefer using 'shape' instead of 'dims' (the content in reverse order)",
+        deprecated_since="0.10.0beta",
+    )
     def dims(self):
         return list(reversed(self.shape))
 
-    @deprecation.deprecated(reason="Prefer using 'shape[-1]' instead of 'get_dim1'", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Prefer using 'shape[-1]' instead of 'get_dim1'",
+        deprecated_since="0.10.0beta",
+    )
     def get_dim1(self):
         return self.shape[-1]
 
-    @deprecation.deprecated(reason="Prefer using 'shape[-2]' instead of 'get_dim2'", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Prefer using 'shape[-2]' instead of 'get_dim2'",
+        deprecated_since="0.10.0beta",
+    )
     def get_dim2(self):
         return self.shape[-2]
 
-    @deprecation.deprecated(reason="dim1 should not be updated", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="dim1 should not be updated", deprecated_since="0.10.0beta"
+    )
     def set_dim1(self, value):
         self.__set_dim1(value)
 
-    @deprecation.deprecated(reason="dim2 should not be updated", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="dim2 should not be updated", deprecated_since="0.10.0beta"
+    )
     def set_dim2(self, value):
         self.__set_dim2(value)
 
@@ -116,7 +144,7 @@ class _FabioArray(object):
         self.data.shape = self.data.shape[:-2] + (value, -1)
 
     def resetvals(self):
-        """ Reset cache - call on changing data """
+        """Reset cache - call on changing data"""
         self.mean = None
         self.stddev = None
         self.maxval = None
@@ -125,7 +153,11 @@ class _FabioArray(object):
         self.slice = None
         self.area_sum = None
 
-    @deprecation.deprecated(reason="Not maintained", replacement="fabio.utils.pilutils.create_pil_16", since_version="0.9")
+    @deprecation.deprecated(
+        reason="Not maintained",
+        replacement="fabio.utils.pilutils.create_pil_16",
+        since_version="0.9",
+    )
     def toPIL16(self, filename=None):
         """
         Convert the image to Python Imaging Library 16-bits greyscale image.
@@ -135,7 +167,11 @@ class _FabioArray(object):
         return pilutils.create_pil_16(self.data)
 
     @property
-    @deprecation.deprecated(reason="Not maintained", replacement="fabio.utils.pilutils.create_pil_16", since_version="0.9")
+    @deprecation.deprecated(
+        reason="Not maintained",
+        replacement="fabio.utils.pilutils.create_pil_16",
+        since_version="0.9",
+    )
     def pilimage(self):
         """
         Convert the image to Python Imaging Library 16-bits greyscale image.
@@ -143,20 +179,23 @@ class _FabioArray(object):
         return self.toPIL16()
 
     @pilimage.setter
-    @deprecation.deprecated(reason="Setting pilimage not supported. This attrbute is not cached anymore", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Setting pilimage not supported. This attrbute is not cached anymore",
+        deprecated_since="0.10.0beta",
+    )
     def pilimage(self, value):
         if value is not None:
             raise ValueError("Setting pilimage attribute is not supported")
 
     def getmax(self):
-        """ Find max value in self.data, caching for the future """
+        """Find max value in self.data, caching for the future"""
         if self.maxval is None:
             if self.data is not None:
                 self.maxval = self.data.max()
         return self.maxval
 
     def getmin(self):
-        """ Find min value in self.data, caching for the future """
+        """Find min value in self.data, caching for the future"""
         if self.minval is None:
             if self.data is not None:
                 self.minval = self.data.min()
@@ -182,12 +221,11 @@ class _FabioArray(object):
             # down wrt to the matrix hence these tranformations
             dim2, dim1 = self.data.shape
             # FIXME: This code is just not working dim2 is used in place of dim1
-            fixme = (dim2 - coords[3] - 1,
-                     coords[0],
-                     dim2 - coords[1] - 1,
-                     coords[2])
-        return (slice(int(fixme[0]), int(fixme[2]) + 1),
-                slice(int(fixme[1]), int(fixme[3]) + 1))
+            fixme = (dim2 - coords[3] - 1, coords[0], dim2 - coords[1] - 1, coords[2])
+        return (
+            slice(int(fixme[0]), int(fixme[2]) + 1),
+            slice(int(fixme[1]), int(fixme[3]) + 1),
+        )
 
     def integrate_area(self, coords):
         """
@@ -201,8 +239,11 @@ class _FabioArray(object):
             return 0
         if len(coords) == 4:
             sli = self.make_slice(coords)
-        elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                isinstance(coords[1], slice):
+        elif (
+            len(coords) == 2
+            and isinstance(coords[0], slice)
+            and isinstance(coords[1], slice)
+        ):
             sli = coords
 
         if sli == self.slice and self.area_sum is not None:
@@ -216,13 +257,13 @@ class _FabioArray(object):
         return self.area_sum
 
     def getmean(self):
-        """ return the mean """
+        """return the mean"""
         if self.mean is None:
             self.mean = self.data.mean(dtype=numpy.float64)
         return self.mean
 
     def getstddev(self):
-        """ return the standard deviation """
+        """return the standard deviation"""
         if self.stddev is None:
             self.stddev = self.data.std(dtype=numpy.float64)
         return self.stddev
@@ -254,7 +295,10 @@ class _FabioArray(object):
     def get_bytecode(self):
         return self.bytecode
 
-    @deprecation.deprecated(reason="Prefer using 'bytecode' instead of 'getByteCode'", deprecated_since="0.10.0beta")
+    @deprecation.deprecated(
+        reason="Prefer using 'bytecode' instead of 'getByteCode'",
+        deprecated_since="0.10.0beta",
+    )
     def getByteCode(self):
         return self.bytecode
 
@@ -412,6 +456,7 @@ class FabioImage(_FabioArray):
         :rtype: fabio.fabioimage.FabioImage
         """
         from . import fabioformats
+
         return fabioformats.factory(name)
 
     @classmethod
@@ -473,7 +518,10 @@ class FabioImage(_FabioArray):
             frame = FabioFrame(self.data, self.header)
         else:
             if not (0 <= num < self.nframes):
-                raise IndexError("Frame number out of range (requested %d, but found %d)" % (num, self.nframes))
+                raise IndexError(
+                    "Frame number out of range (requested %d, but found %d)"
+                    % (num, self.nframes)
+                )
 
             # Try to use the old getframe API to avoid to implement many
             # things on mostly unused formats.
@@ -578,22 +626,29 @@ class FabioImage(_FabioArray):
         :return: the name of the class
         """
         if self._classname is None:
-            self._classname = str(self.__class__).replace("<class '", "").replace("'>", "").split(".")[-1]
+            self._classname = (
+                str(self.__class__)
+                .replace("<class '", "")
+                .replace("'>", "")
+                .split(".")[-1]
+            )
         return self._classname
 
     classname = property(getclassname)
 
     def getframe(self, num):
-        """ returns the file numbered 'num' in the series as a fabioimage """
+        """returns the file numbered 'num' in the series as a fabioimage"""
         if self.nframes == 1:
             # single image per file
             from .openimage import openimage
+
             return openimage(fabioutils.jump_filename(self.filename, num))
         raise Exception("getframe out of range")
 
     def previous(self):
-        """ returns the previous file in the series as a fabioimage """
+        """returns the previous file in the series as a fabioimage"""
         from .openimage import openimage
+
         if self.filename is None:
             raise IOError()
         return openimage(fabioutils.previous_filename(self.filename))
@@ -604,13 +659,13 @@ class FabioImage(_FabioArray):
         :raise IOError: When there is no next file in the series.
         """
         from .openimage import openimage
+
         if self.filename is None:
             raise IOError()
-        return openimage(
-            fabioutils.next_filename(self.filename))
+        return openimage(fabioutils.next_filename(self.filename))
 
     def getheader(self):
-        """ returns self.header """
+        """returns self.header"""
         return self.header
 
     def add(self, other):
@@ -621,10 +676,13 @@ class FabioImage(_FabioArray):
 
         :param FabioImage other: Another image to accumulate.
         """
-        if not hasattr(other, 'data'):
-            logger.warning('edfimage.add() called with something that '
-                           'does not have a data field')
-        assert self.data.shape == other.data.shape, 'incompatible images - Do they have the same size?'
+        if not hasattr(other, "data"):
+            logger.warning(
+                "edfimage.add() called with something that does not have a data field"
+            )
+        assert self.data.shape == other.data.shape, (
+            "incompatible images - Do they have the same size?"
+        )
         self.data = self.data + other.data
         self.resetvals()
 
@@ -637,12 +695,13 @@ class FabioImage(_FabioArray):
         :param bool keep_I: shall the signal increase ?
         """
         if self.data is None:
-            raise Exception('Please read in the file you wish to rebin first')
+            raise Exception("Please read in the file you wish to rebin first")
 
         dim2, dim1 = self.data.shape
         if (dim1 % x_rebin_fact != 0) or (dim2 % y_rebin_fact != 0):
-            raise RuntimeError('image size is not divisible by rebin factor - '
-                               'skipping rebin')
+            raise RuntimeError(
+                "image size is not divisible by rebin factor - skipping rebin"
+            )
         else:
             dataIn = self.data.astype("float64")
             shapeIn = self.data.shape
@@ -676,10 +735,12 @@ class FabioImage(_FabioArray):
             if not isinstance(fname, fabioutils.StringTypes):
                 fname = str(fname)
         module = sys.modules[self.__class__.__module__]
-        raise NotImplementedError("Writing %s format is not implemented" % module.__name__)
+        raise NotImplementedError(
+            "Writing %s format is not implemented" % module.__name__
+        )
 
     def save(self, fname):
-        'wrapper for write'
+        "wrapper for write"
         self.write(fname)
 
     def readheader(self, filename):
@@ -715,7 +776,8 @@ class FabioImage(_FabioArray):
         To be overridden - fill in self.header and self.data
         """
         raise Exception("Class has not implemented read method yet")
-#        return self
+
+    #        return self
 
     def load(self, *arg, **kwarg):
         "Wrapper for read"
@@ -732,11 +794,16 @@ class FabioImage(_FabioArray):
         self.read(filename, frame)
         if len(coords) == 4:
             self.slice = self.make_slice(coords)
-        elif len(coords) == 2 and isinstance(coords[0], slice) and \
-                isinstance(coords[1], slice):
+        elif (
+            len(coords) == 2
+            and isinstance(coords[0], slice)
+            and isinstance(coords[1], slice)
+        ):
             self.slice = coords
         else:
-            logger.warning('readROI: Unable to understand Region Of Interest: got %s', coords)
+            logger.warning(
+                "readROI: Unable to understand Region Of Interest: got %s", coords
+            )
         self.roi = self.data[self.slice]
         return self.roi
 
@@ -757,7 +824,10 @@ class FabioImage(_FabioArray):
                     setattr(fname, "name", self.filename)
                 except AttributeError:
                     # cStringIO
-                    logger.warning("Unable to set filename attribute to stream (cStringIO?) of type %s" % type(fname))
+                    logger.warning(
+                        "Unable to set filename attribute to stream (cStringIO?) of type %s"
+                        % type(fname)
+                    )
             return fname
 
         if isinstance(fname, fabioutils.PathTypes):
@@ -772,15 +842,13 @@ class FabioImage(_FabioArray):
 
         comp_type = os.path.splitext(fname)[-1]
         if comp_type == ".gz":
-            fileObject = self._compressed_stream(fname,
-                                                 fabioutils.COMPRESSORS['.gz'],
-                                                 fabioutils.GzipFile,
-                                                 mode)
-        elif comp_type == '.bz2':
-            fileObject = self._compressed_stream(fname,
-                                                 fabioutils.COMPRESSORS['.bz2'],
-                                                 fabioutils.BZ2File,
-                                                 mode)
+            fileObject = self._compressed_stream(
+                fname, COMPRESSORS[".gz"], fabioutils.GzipFile, mode
+            )
+        elif comp_type == ".bz2":
+            fileObject = self._compressed_stream(
+                fname, COMPRESSORS[".bz2"], fabioutils.BZ2File, mode
+            )
         #
         # Here we return the file even though it may be bzipped or gzipped
         # but named incorrectly...
@@ -794,11 +862,9 @@ class FabioImage(_FabioArray):
 
         return fileObject
 
-    def _compressed_stream(self,
-                           fname,
-                           system_uncompress,
-                           python_uncompress,
-                           mode='rb'):
+    def _compressed_stream(
+        self, fname, system_uncompress, python_uncompress, mode="rb"
+    ):
         """
         Try to transparently handle gzip / bzip2 without always getting python
         performance
@@ -836,6 +902,7 @@ class FabioImage(_FabioArray):
                 dest = dest[:-5]
             codec_name = dest + "image"
             from . import fabioformats
+
             codec_class = fabioformats.get_class_by_name(codec_name)
             if codec_class is not None:
                 other = fabioformats.factory(codec_name)
@@ -855,7 +922,9 @@ class FabioImage(_FabioArray):
             logger.error("Unrecognized destination format: %s " % dest)
             return self
         other.data = converters.convert_data(self.classname, other.classname, self.data)
-        other.header = converters.convert_header(self.classname, other.classname, self.header)
+        other.header = converters.convert_header(
+            self.classname, other.classname, self.header
+        )
         return other
 
     def __iter__(self):

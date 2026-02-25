@@ -28,11 +28,10 @@ Deep test to check IOError exceptions
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
-
 from .utilstest import UtilsTest
 import fabio
+
+logger = logging.getLogger(__name__)
 
 
 class TestImageConvert(unittest.TestCase):
@@ -60,6 +59,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

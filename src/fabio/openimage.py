@@ -56,65 +56,74 @@ logger = logging.getLogger(__name__)
 MAGIC_NUMBERS = [
     # "\42\5a" : 'bzipped'
     # "\1f\8b" : 'gzipped'
-    (b"FORMAT :100", 'bruker100'),
-    (b"FORMAT :        86", 'bruker'),
-    (b"\x4d\x4d\x00\x2a", 'tif'),
-    (b"\x4d\x4d\x2b\x00", 'tif'), # bigtiff, big endian
+    (b"FORMAT :100", "bruker100"),
+    (b"FORMAT :        86", "bruker"),
+    (b"\x4d\x4d\x00\x2a", "tif"),
+    (b"\x4d\x4d\x2b\x00", "tif"),  # bigtiff, big endian
     # The marCCD and Pilatus formats are both standard tif with a header
     # hopefully these byte patterns are unique for the formats
     # If not the image will be read, but the is missing
-    (b"\x49\x49\x2a\x00\x08\x00", 'marccd/tif'),
-    (b"\x49\x49\x2a\x00\x82\x00", 'pilatus'),
-    (b"\x49\x49\x2a\x00", 'tif'),
-    (b"\x49\x49\x2b\x00", 'tif'),  # bigtiff, little endian
+    (b"\x49\x49\x2a\x00\x08\x00", "marccd/tif"),
+    (b"\x49\x49\x2a\x00\x82\x00", "pilatus"),
+    (b"\x49\x49\x2a\x00", "tif"),
+    (b"\x49\x49\x2b\x00", "tif"),  # bigtiff, little endian
     # d*TREK must come before edf
-    (b"{\nHEA", 'dtrek'),
+    (b"{\nHEA", "dtrek"),
     # EDF_ types
-    (b"\r\n{\r\nEDF", 'edf'),  # EDF3 (can be interpreted like EDF1 but refused by fit2d)
-    (b"\n{\r\nEDF", 'edf'),  # EDF2 (can be interpreted like EDF1 but refused by fit2d)
-    (b"{\r\nEDF", 'edf'),  # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
-    (b"{\n", 'edf'),  # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
-    (b"\n{\n", 'edf'),  # EDFU (EDF unknown source, V1.xx)
+    (
+        b"\r\n{\r\nEDF",
+        "edf",
+    ),  # EDF3 (can be interpreted like EDF1 but refused by fit2d)
+    (b"\n{\r\nEDF", "edf"),  # EDF2 (can be interpreted like EDF1 but refused by fit2d)
+    (
+        b"{\r\nEDF",
+        "edf",
+    ),  # EDF1 (EDF >=V2.4 starting with EDF_, fit2d friendly, without starting newline)
+    (
+        b"{\n",
+        "edf",
+    ),  # EDF0 (EDF V1.xx "standard", without additional EDF_ structure information)
+    (b"\n{\n", "edf"),  # EDFU (EDF unknown source, V1.xx)
     # conventional
-    (b"{", 'edf'),
-    (b"\r{", 'edf'),
-    (b"\n{", 'edf'),
+    (b"{", "edf"),
+    (b"\r{", "edf"),
+    (b"\n{", "edf"),
     # had to add a special case for GE here because they blanked out
     # the default header for the GE's at APS with the firmware
     # update as of 2018
-    (b"ADEPT", 'GE'),
-    (b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 'GE'),
-    (b"OD", 'OXD'),
-    (b"IM", 'HiPiC'),
-    (b'\x2d\x04', 'mar345'),
-    (b'\xd2\x04', 'mar345'),
-    (b'\x04\x2d', 'mar345'),  # some machines may need byteswapping
-    (b'\x04\xd2', 'mar345'),
+    (b"ADEPT", "GE"),
+    (b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", "GE"),
+    (b"OD", "OXD"),
+    (b"IM", "HiPiC"),
+    (b"\x2d\x04", "mar345"),
+    (b"\xd2\x04", "mar345"),
+    (b"\x04\x2d", "mar345"),  # some machines may need byteswapping
+    (b"\x04\xd2", "mar345"),
     # hint : MASK in 32 bit
-    (b'M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00', 'fit2dmask'),
-    (b'\x00\x00\x00\x03', 'dm3'),
+    (b"M\x00\x00\x00A\x00\x00\x00S\x00\x00\x00K\x00\x00\x00", "fit2dmask"),
+    (b"\x00\x00\x00\x03", "dm3"),
     (b"No", "kcd"),
     (b"<", "xsd"),
-    (b"\n\xb8\x03\x00", 'pixi'),
+    (b"\n\xb8\x03\x00", "pixi"),
     (b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a", "eiger/lima/sparse/hdf5/lambda"),
-    (b"R-AXIS", 'raxis'),
-    (b"\x93NUMPY", 'numpy'),
-    (b"\\$FFF_START", 'fit2d'),
+    (b"R-AXIS", "raxis"),
+    (b"\x93NUMPY", "numpy"),
+    (b"\\$FFF_START", "fit2d"),
     # Raw JPEG
-    (b"\xFF\xD8\xFF\xDB", "jpeg"),
+    (b"\xff\xd8\xff\xdb", "jpeg"),
     # JFIF format
-    (b"\xFF\xD8\xFF\xE0", "jpeg"),
+    (b"\xff\xd8\xff\xe0", "jpeg"),
     # Exif format
-    (b"\xFF\xD8\xFF\xE1", "jpeg"),
+    (b"\xff\xd8\xff\xe1", "jpeg"),
     # JPEG 2000 (from RFC 3745)
-    (b"\x00\x00\x00\x0C\x6A\x50\x20\x20\x0D\x0A\x87\x0A", "jpeg2k"),
+    (b"\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a", "jpeg2k"),
     (b"ESPERANTO FORMAT", "esperanto"),
-    (b'###CBF: VERSION', "cbf")
+    (b"###CBF: VERSION", "cbf"),
 ]
 
 
 def do_magic(byts, filename):
-    """ Try to interpret the bytes starting the file as a magic number """
+    """Try to interpret the bytes starting the file as a magic number"""
     for magic, format_type in MAGIC_NUMBERS:
         if byts.startswith(magic):
             if "/" in format_type:
@@ -125,6 +134,7 @@ def do_magic(byts, filename):
                         # check if the creator is LIMA or other
                         lambda_path = "/entry/instrument/detector/description"
                         import h5py
+
                         with h5py.File(filename, "r") as h:
                             creator = h.attrs.get("creator")
                             if str(creator).startswith("LIMA"):
@@ -145,7 +155,10 @@ def do_magic(byts, filename):
                                 return "lima"
                             elif str(creator).startswith("pyFAI"):
                                 return "sparse"
-                            elif lambda_path in h and h[lambda_path][()].decode() == "Lambda":
+                            elif (
+                                lambda_path in h
+                                and h[lambda_path][()].decode() == "Lambda"
+                            ):
                                 return "lambda"
                             else:
                                 return "eiger"
@@ -159,11 +172,11 @@ def do_magic(byts, filename):
                 # Might be GE with an EDF header. Check the extension.
                 extension = filename.split(".")[-1]
                 # If it is a compression extension, check the next one up.
-                if f'.{extension}' in ExternalCompressors.COMMANDS:
+                if f".{extension}" in ExternalCompressors.COMMANDS:
                     extension = filename.split(".")[-2]
 
                 # If the extension is `ge` plus a number, assume it is GE
-                if re.search(r'^ge\d*$', extension):
+                if re.search(r"^ge\d*$", extension):
                     return "GE"
 
             return format_type
@@ -196,7 +209,12 @@ def openimage(filename, frame=None):
             actual_filename = filename.tostring()
             logger.debug("Attempting to open %s", actual_filename)
             obj = _openimage(actual_filename)
-            logger.debug("Attempting to read frame %s from %s with reader %s", frame, actual_filename, obj.classname)
+            logger.debug(
+                "Attempting to read frame %s from %s with reader %s",
+                frame,
+                actual_filename,
+                obj.classname,
+            )
             obj = obj.read(actual_filename, frame)
         except Exception as ex:
             # multiframe file
@@ -209,13 +227,16 @@ def openimage(filename, frame=None):
     else:
         logger.debug("Attempting to open %s" % (filename))
         obj = _openimage(filename)
-        logger.debug("Attempting to read frame %s from %s with reader %s" % (frame, filename, obj.classname))
+        logger.debug(
+            "Attempting to read frame %s from %s with reader %s"
+            % (frame, filename, obj.classname)
+        )
         obj = obj.read(obj.filename, frame)
     return obj
 
 
 def openheader(filename):
-    """ return only the header"""
+    """return only the header"""
     if isinstance(filename, fabioutils.PathTypes):
         if not isinstance(filename, fabioutils.StringTypes):
             filename = str(filename)
@@ -270,9 +291,11 @@ def _openimage(filename):
             file_obj = FilenameObject(filename=filename)
             if file_obj is None:
                 raise Exception("Unable to deconstruct filename")
-            if (file_obj.format is not None) and\
-               len(file_obj.format) != 1 and \
-               isinstance(file_obj.format, list):
+            if (
+                (file_obj.format is not None)
+                and len(file_obj.format) != 1
+                and isinstance(file_obj.format, list)
+            ):
                 # one of OXD/ADSC - should have got in previous
                 raise Exception("openimage failed on magic bytes & name guess")
             filetype = file_obj.format
@@ -284,7 +307,7 @@ def _openimage(filename):
     if filetype is None:
         raise IOError("Fabio could not identify " + filename)
 
-    klass_name = "".join(filetype) + 'image'
+    klass_name = "".join(filetype) + "image"
 
     try:
         obj = fabioformats.factory(klass_name)
@@ -297,8 +320,13 @@ def _openimage(filename):
     return obj
 
 
-def open_series(filenames=None, first_filename=None,
-                single_frame=None, fixed_frames=None, fixed_frame_number=None):
+def open_series(
+    filenames=None,
+    first_filename=None,
+    single_frame=None,
+    fixed_frames=None,
+    fixed_frame_number=None,
+):
     """
     Create an object to iterate frames through a file series.
 
@@ -332,7 +360,9 @@ def open_series(filenames=None, first_filename=None,
     if first_filename is not None:
         filenames = file_series.filename_series(filename=first_filename)
 
-    return file_series.FileSeries(filenames=filenames,
-                                  single_frame=single_frame,
-                                  fixed_frames=fixed_frames,
-                                  fixed_frame_number=fixed_frame_number)
+    return file_series.FileSeries(
+        filenames=filenames,
+        single_frame=single_frame,
+        fixed_frames=fixed_frames,
+        fixed_frame_number=fixed_frame_number,
+    )

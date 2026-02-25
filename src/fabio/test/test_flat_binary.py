@@ -27,23 +27,26 @@ Test cases for the flat binary images
 testsuite by Jerome Kieffer (Jerome.Kieffer@esrf.eu)
 28/11/2014
 """
+
 import unittest
 import os
 import logging
-
 from .utilstest import UtilsTest
+import fabio
 
 logger = logging.getLogger(__name__)
-import fabio
 
 
 class TestFlatBinary(unittest.TestCase):
-
-    filenames = [os.path.join(UtilsTest.tempdir, i)
-                 for i in ("not.a.file",
-                           "bad_news_1234",
-                           "empty_files_suck_1234.edf",
-                           "notRUBY_1234.dat")]
+    filenames = [
+        os.path.join(UtilsTest.tempdir, i)
+        for i in (
+            "not.a.file",
+            "bad_news_1234",
+            "empty_files_suck_1234.edf",
+            "notRUBY_1234.dat",
+        )
+    ]
 
     def setUp(self):
         for filename in self.filenames:
@@ -67,7 +70,9 @@ class TestFlatBinary(unittest.TestCase):
             except Exception:
                 logger.warning("failed for: %s" % filename)
                 nfail += 1
-        self.assertEqual(nfail, 0, " %s failures out of %s" % (nfail, len(self.filenames)))
+        self.assertEqual(
+            nfail, 0, " %s failures out of %s" % (nfail, len(self.filenames))
+        )
 
     def tearDown(self):
         for filename in self.filenames:
@@ -81,6 +86,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

@@ -40,11 +40,10 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@terre-adelie.org"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "23/04/2021"
+__date__ = "27/10/2025"
 
 import logging
 import numpy
-
 from .fabioimage import FabioImage
 from .fabioutils import previous_filename, next_filename
 
@@ -56,15 +55,44 @@ class MrcImage(FabioImage):
     FabIO image class for Images from a mrc image stack
     """
 
-    DESCRIPTION = "Medical Research Council file format for 3D electron density and 2D images"
+    DESCRIPTION = (
+        "Medical Research Council file format for 3D electron density and 2D images"
+    )
 
     DEFAULT_EXTENSIONS = ["mrc", "map", "fei"]
 
-    KEYS = ("NX", "NY", "NZ", "MODE", "NXSTART", "NYSTART", "NZSTART",
-            "MX", "MY", "MZ", "CELL_A", "CELL_B", "CELL_C",
-            "CELL_ALPHA", "CELL_BETA", "CELL_GAMMA",
-            "MAPC", "MAPR", "MAPS", "DMIN", "DMAX", "DMEAN", "ISPG", "NSYMBT",
-            "EXTRA", "ORIGIN", "MAP", "MACHST", "RMS", "NLABL")
+    KEYS = (
+        "NX",
+        "NY",
+        "NZ",
+        "MODE",
+        "NXSTART",
+        "NYSTART",
+        "NZSTART",
+        "MX",
+        "MY",
+        "MZ",
+        "CELL_A",
+        "CELL_B",
+        "CELL_C",
+        "CELL_ALPHA",
+        "CELL_BETA",
+        "CELL_GAMMA",
+        "MAPC",
+        "MAPR",
+        "MAPS",
+        "DMIN",
+        "DMAX",
+        "DMEAN",
+        "ISPG",
+        "NSYMBT",
+        "EXTRA",
+        "ORIGIN",
+        "MAP",
+        "MACHST",
+        "RMS",
+        "NLABL",
+    )
 
     _MODE_TO_DTYPE = {
         0: numpy.int8,
@@ -72,7 +100,7 @@ class MrcImage(FabioImage):
         2: numpy.float32,
         3: numpy.complex64,
         4: numpy.complex64,
-        6: numpy.uint16
+        6: numpy.uint16,
     }
 
     def _readheader(self, infile):
@@ -90,7 +118,7 @@ class MrcImage(FabioImage):
             self.header[key] = value
         # convert some headers ...
         self.header["MAP"] = self.header["MAP"].tobytes().decode()
-        if self.header["MAP"][:3] not in ('MAP ', 'FEI'):
+        if self.header["MAP"][:3] not in ("MAP ", "FEI"):
             logger.info("Expected 'MAP ', got %s", self.header["MAP"])
 
         for i in range(10):
@@ -138,8 +166,7 @@ class MrcImage(FabioImage):
         return 1024 + self.header["NSYMBT"] + frame * self.imagesize
 
     def _makeframename(self):
-        self.filename = "%s$%04d" % (self.sequencefilename,
-                                     self.currentframe)
+        self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
 
     def _readframe(self, infile, img_num):
         """
@@ -147,7 +174,7 @@ class MrcImage(FabioImage):
         :param infile: opened file
         :param img_num: frame number (int)
         """
-        if (img_num > self.nframes or img_num < 0):
+        if img_num > self.nframes or img_num < 0:
             raise RuntimeError("Requested frame number is out of range")
         infile.seek(self._calc_offset(img_num), 0)
         data_buffer = infile.read(self.imagesize)
@@ -168,7 +195,14 @@ class MrcImage(FabioImage):
             raise RuntimeError("Requested frame number is out of range")
         # Do a deep copy of the header to make a new one
         frame = MrcImage(header=self.header.copy())
-        for key in ("dim1", "dim2", "nframes", "bytecode", "imagesize", "sequencefilename"):
+        for key in (
+            "dim1",
+            "dim2",
+            "nframes",
+            "bytecode",
+            "imagesize",
+            "sequencefilename",
+        ):
             frame.__setattr__(key, self.__getattribute__(key))
         with frame._open(self.sequencefilename, "rb") as infile:
             frame._readframe(infile, num)
@@ -193,8 +227,7 @@ class MrcImage(FabioImage):
             return self.getframe(self.currentframe - 1)
         else:
             newobj = MrcImage()
-            newobj.read(previous_filename(
-                self.sequencefilename))
+            newobj.read(previous_filename(self.sequencefilename))
             return newobj
 
 

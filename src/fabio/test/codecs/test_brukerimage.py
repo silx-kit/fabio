@@ -37,24 +37,25 @@ import unittest
 import os
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 from ...brukerimage import brukerimage
 from ... import fabioutils
 from ..utilstest import UtilsTest
 
+logger = logging.getLogger(__name__)
+
 # this is actually a violation of the bruker format since the order of
 # the header items is specified
 # in the standard, whereas the order of a python dictionary is not
-MYHEADER = {"FORMAT": '86',
-            'NPIXELB': '2',
-            'VERSION': '9',
-            'HDRBLKS': '5',
-            'NOVERFL': '4',
-            'NCOLS': '256',
-            'NROWS': '256',
-            'WORDORD': '0'}
+MYHEADER = {
+    "FORMAT": "86",
+    "NPIXELB": "2",
+    "VERSION": "9",
+    "HDRBLKS": "5",
+    "NOVERFL": "4",
+    "NCOLS": "256",
+    "NROWS": "256",
+    "WORDORD": "0",
+}
 
 MYIMAGE = numpy.ones((256, 256), numpy.uint16) * 16
 MYIMAGE[0, 0] = 0
@@ -67,7 +68,7 @@ OVERFLOWS = [
     ["%09d" % 4194304, ("%07d" % (127 * 256 + 127))],
     ["%09d" % 4194304, ("%07d" % (127 * 256 + 128))],
     ["%09d" % 4194304, ("%07d" % (128 * 256 + 127))],
-    ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))]
+    ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))],
 ]
 
 
@@ -75,25 +76,25 @@ class TestBruker(unittest.TestCase):
     """basic test"""
 
     def setUp(self):
-        """ Generate a test bruker image """
+        """Generate a test bruker image"""
         self.filename = os.path.join(UtilsTest.tempdir, "image.0000")
 
-        with open(self.filename, 'wb') as fout:
+        with open(self.filename, "wb") as fout:
             wrb = 0
             for key, val in MYHEADER.items():
-                fout.write((("%-7s" % key) + ':' + ("%-72s" % val)).encode("ASCII"))
+                fout.write((("%-7s" % key) + ":" + ("%-72s" % val)).encode("ASCII"))
                 wrb = wrb + 80
-            hdrblks = int(MYHEADER['HDRBLKS'])
-            while (wrb < hdrblks * 512):
+            hdrblks = int(MYHEADER["HDRBLKS"])
+            while wrb < hdrblks * 512:
                 fout.write(b"\x1a\x04")
-                fout.write(b'.' * 78)
+                fout.write(b"." * 78)
                 wrb = wrb + 80
             fout.write(MYIMAGE.tobytes())
 
-            noverfl = int(MYHEADER['NOVERFL'])
+            noverfl = int(MYHEADER["NOVERFL"])
             for ovf in OVERFLOWS:
                 fout.write((ovf[0] + ovf[1]).encode("ASCII"))
-            fout.write(b'.' * (512 - (16 * noverfl) % 512))
+            fout.write(b"." * (512 - (16 * noverfl) % 512))
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
@@ -101,7 +102,7 @@ class TestBruker(unittest.TestCase):
             os.unlink(self.filename)
 
     def test_read(self):
-        """ see if we can read the test image """
+        """see if we can read the test image"""
         obj = brukerimage()
         obj.read(self.filename)
         self.assertAlmostEqual(obj.getmean(), 272.0, 2)
@@ -110,10 +111,10 @@ class TestBruker(unittest.TestCase):
 
 
 class TestBzipBruker(TestBruker):
-    """ test for a bzipped image """
+    """test for a bzipped image"""
 
     def setUp(self):
-        """ create the image """
+        """create the image"""
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".bz2"):
             os.unlink(self.filename + ".bz2")
@@ -124,10 +125,10 @@ class TestBzipBruker(TestBruker):
 
 
 class TestGzipBruker(TestBruker):
-    """ test for a gzipped image """
+    """test for a gzipped image"""
 
     def setUp(self):
-        """ Create the image """
+        """Create the image"""
         TestBruker.setUp(self)
         if os.path.isfile(self.filename + ".gz"):
             os.unlink(self.filename + ".gz")
@@ -146,13 +147,15 @@ class TestBrukerLinear(unittest.TestCase):
         self.data = numpy.random.random((500, 550)).astype("float32")
 
     def test_linear(self):
-        """ test for self consistency of random data read/write """
+        """test for self consistency of random data read/write"""
         obj = brukerimage(data=self.data)
         obj.write(self.filename)
         new = brukerimage()
         new.read(self.filename)
         error = abs(new.data - self.data).max()
-        self.assertTrue(error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error)
+        self.assertTrue(
+            error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error
+        )
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
@@ -168,7 +171,7 @@ TESTIMAGES = """Cr8F8140k103.0026   512  512  0  145942 289.37  432.17
 
 
 class TestRealImg(unittest.TestCase):
-    """ check some read data from bruker detector"""
+    """check some read data from bruker detector"""
 
     def setUp(self):
         """
@@ -181,7 +184,7 @@ class TestRealImg(unittest.TestCase):
         self.im_dir = None
 
     def test_read(self):
-        """ check we can read bruker images"""
+        """check we can read bruker images"""
         for line in TESTIMAGES.split("\n"):
             vals = line.split()
             name = vals[0]
@@ -214,9 +217,17 @@ class TestRealImg(unittest.TestCase):
                 if key in ("filename",):
                     continue
                 if key not in other.header:
-                    logger.warning("Key %s is missing in new header, was %s" % (key, ref.header[key]))
+                    logger.warning(
+                        "Key %s is missing in new header, was %s"
+                        % (key, ref.header[key])
+                    )
                 else:
-                    self.assertEqual(ref.header[key], other.header[key], "value are the same for key %s: was %s now %s" % (key, ref.header[key], other.header[key]))
+                    self.assertEqual(
+                        ref.header[key],
+                        other.header[key],
+                        "value are the same for key %s: was %s now %s"
+                        % (key, ref.header[key], other.header[key]),
+                    )
 
 
 def suite():
@@ -230,6 +241,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

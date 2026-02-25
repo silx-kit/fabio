@@ -29,27 +29,26 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 #
-"""General purpose utilities functions for fabio
-
-"""
+"""General purpose utilities functions for fabio"""
 
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "03/11/2020"
+__date__ = "27/10/2025"
 __status__ = "stable"
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 import re
 import os
 import logging
 import sys
 import json
-
-logger = logging.getLogger(__name__)
-
 from collections import OrderedDict as _OrderedDict
+import traceback
+from math import ceil
+import threading
+from .compression import bz2, gzip
 
 try:
     import pathlib
@@ -58,9 +57,10 @@ except ImportError:
         import pathlib2 as pathlib
     except ImportError:
         pathlib = None
-
-StringTypes = (str, bytes)
 from io import FileIO, BytesIO as _BytesIO
+
+logger = logging.getLogger(__name__)
+StringTypes = (str, bytes)
 
 
 def to_str(s):
@@ -71,11 +71,6 @@ PathTypes = StringTypes
 if pathlib is not None:
     PathTypes += (pathlib.PurePath,)
 
-from .compression import bz2, gzip, COMPRESSORS
-import traceback
-from math import ceil
-
-import threading
 
 dictAscii = {None: [chr(i) for i in range(32, 127)]}
 
@@ -94,7 +89,9 @@ def pad(mystr, pattern=" ", size=80):
     if len(pattern) == 1:
         return mystr.ljust(padded_size, pattern)
     else:
-        return (mystr + pattern * int(ceil(float(padded_size - len(mystr)) / len(pattern))))[:padded_size]
+        return (
+            mystr + pattern * int(ceil(float(padded_size - len(mystr)) / len(pattern)))
+        )[:padded_size]
 
 
 def getnum(name):
@@ -118,14 +115,17 @@ class FilenameObject(object):
     The 'meaning' of a filename ...
     """
 
-    def __init__(self, stem=None,
-                 num=None,
-                 directory=None,
-                 format_=None,
-                 extension=None,
-                 postnum=None,
-                 digits=4,
-                 filename=None):
+    def __init__(
+        self,
+        stem=None,
+        num=None,
+        directory=None,
+        format_=None,
+        extension=None,
+        postnum=None,
+        digits=4,
+        filename=None,
+    ):
         """
         This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...
 
@@ -154,16 +154,19 @@ class FilenameObject(object):
             self.deconstruct_filename(filename)
 
     def str(self):
-        """ Return a string representation """
-        fmt = "stem %s, num %s format %s extension %s " + \
-              "postnum = %s digits %s dir %s"
-        attrs = [self.stem,
-                 self.num,
-                 self.format,
-                 self.extension,
-                 self.postnum,
-                 self.digits,
-                 self.directory]
+        """Return a string representation"""
+        fmt = (
+            "stem %s, num %s format %s extension %s " + "postnum = %s digits %s dir %s"
+        )
+        attrs = [
+            self.stem,
+            self.num,
+            self.format,
+            self.extension,
+            self.postnum,
+            self.digits,
+            self.directory,
+        ]
         return fmt % tuple([str(x) for x in attrs])
 
     __repr__ = str
@@ -189,6 +192,7 @@ class FilenameObject(object):
         Break up a filename to get image type and number
         """
         from . import fabioformats
+
         direc, name = os.path.split(filename)
         direc = direc or None
         parts = name.split(".")
@@ -229,13 +233,13 @@ class FilenameObject(object):
                 if parts2[-1].isdigit():
                     num = int(parts2[-1])
                     ndigit = len(parts2[-1])
-                    typ = ['GE']
+                    typ = ["GE"]
                     stem = "_".join(parts2[:-1]) + "_"
             else:
                 try:
                     num = int(parts[-1])
                     ndigit = len(parts[-1])
-                    typ = ['bruker']
+                    typ = ["bruker"]
                     stem = ".".join(parts[:-1]) + "."
                 except Exception as err:
                     logger.debug("l262: %s" % err)
@@ -264,7 +268,7 @@ class FilenameObject(object):
 
 
 def numstem(name):
-    """ cant see how to do without reversing strings
+    """cant see how to do without reversing strings
     Match 1 or more digits going backwards from the end of the string
     """
     reg = re.compile(r"^(.*?)(-?[0-9]{0,9})(\D*)$")
@@ -274,7 +278,7 @@ def numstem(name):
         # res = reg.match(name[::-1]).groups()
         # return [ r[::-1] for r in res[::-1]]
         if len(res[0]) == len(res[1]) == 0:  # Hack for file without number
-            return [res[2], '', '']
+            return [res[2], "", ""]
         return [r for r in res]
     except AttributeError:  # no digits found
         return [name, "", ""]
@@ -298,7 +302,7 @@ def construct_filename(filename, frame=None):
 
 
 def next_filename(name, padding=True):
-    """ increment number """
+    """increment number"""
     fobj = FilenameObject(filename=name)
     fobj.num += 1
     if not padding:
@@ -307,7 +311,7 @@ def next_filename(name, padding=True):
 
 
 def previous_filename(name, padding=True):
-    """ decrement number """
+    """decrement number"""
     fobj = FilenameObject(filename=name)
     fobj.num -= 1
     if not padding:
@@ -316,7 +320,7 @@ def previous_filename(name, padding=True):
 
 
 def jump_filename(name, num, padding=True):
-    """ jump to number """
+    """jump to number"""
     fobj = FilenameObject(filename=name)
     fobj.num = num
     if not padding:
@@ -325,7 +329,7 @@ def jump_filename(name, num, padding=True):
 
 
 def extract_filenumber(name):
-    """ extract file number """
+    """extract file number"""
     fobj = FilenameObject(filename=name)
     return fobj.num
 
@@ -343,7 +347,7 @@ def isAscii(name, listExcluded=None):
         isascii = False
     else:
         if listExcluded:
-            isascii = not(any(bad in name for bad in listExcluded))
+            isascii = not (any(bad in name for bad in listExcluded))
         else:
             isascii = True
     return isascii
@@ -448,8 +452,7 @@ class File(FileIO):
         self.__temporary = temporary
 
     def __del__(self):
-        """Explicit close at deletion
-        """
+        """Explicit close at deletion"""
         if hasattr(self, "closed") and not self.closed:
             self.close()
 
@@ -461,7 +464,7 @@ class File(FileIO):
                 os.unlink(name)
             except Exception as err:
                 logger.error("Unable to remove %s: %s" % (name, err))
-                raise(err)
+                raise (err)
 
     def getSize(self):
         if self.__size is None:
@@ -499,7 +502,7 @@ class File(FileIO):
                 break
         return nwritten
 
-    def read(self, size = -1):
+    def read(self, size=-1):
         buffer = super().read(size)
         size -= len(buffer)
         while size > 0:
@@ -520,12 +523,13 @@ class UnknownCompressedFile(File):
     """
 
     def __init__(self, name, mode="rb", buffering=0):
-        logger.warning("No decompressor found for this type of file (are gzip anf bz2 installed ???")
+        logger.warning(
+            "No decompressor found for this type of file (are gzip anf bz2 installed ???"
+        )
         File.__init__(self, name, mode, buffering)
 
     def __del__(self):
-        """Explicit close at deletion
-        """
+        """Explicit close at deletion"""
         if hasattr(self, "closed") and not self.closed:
             self.close()
 
@@ -572,8 +576,7 @@ else:
             self.__size = None
 
         def __del__(self):
-            """Explicit close at deletion
-            """
+            """Explicit close at deletion"""
             if hasattr(self, "closed") and not self.closed:
                 self.close()
 
@@ -592,7 +595,10 @@ else:
                             pos = self.tell()
                         end_pos = len(gzip.GzipFile.read(self)) + pos
                         self.seek(pos)
-                        logger.debug("Measuring size of %s: %s @ %s == %s" % (self.name, end_pos, pos, pos))
+                        logger.debug(
+                            "Measuring size of %s: %s @ %s == %s"
+                            % (self.name, end_pos, pos, pos)
+                        )
                         self.__size = end_pos
             return self.__size
 
@@ -605,6 +611,7 @@ else:
         """
         gzip.GzipFile.close(self)
 
+
 if bz2 is None:
     BZ2File = UnknownCompressedFile
 else:
@@ -612,7 +619,7 @@ else:
     class BZ2File(bz2.BZ2File):
         "Wrapper with lock"
 
-        def __init__(self, name, mode='r', compresslevel=9):
+        def __init__(self, name, mode="r", compresslevel=9):
             """
             BZ2File(name [, mode='r', compresslevel=9]) -> file object
 
@@ -634,8 +641,7 @@ else:
             self.__size = None
 
         def __del__(self):
-            """Explicit close at deletion
-            """
+            """Explicit close at deletion"""
             if hasattr(self, "closed") and not self.closed:
                 self.close()
 
@@ -665,8 +671,8 @@ else:
 
 
 class NotGoodReader(RuntimeError):
-    """The reader used is probably not the good one
-    """
+    """The reader used is probably not the good one"""
+
     pass
 
 
@@ -674,6 +680,7 @@ class DebugSemaphore(threading.Semaphore):
     """
     threading.Semaphore like class with helper for fighting dead-locks
     """
+
     write_lock = threading.Semaphore()
     blocked = []
 
@@ -684,8 +691,13 @@ class DebugSemaphore(threading.Semaphore):
         if self._Semaphore__value == 0:
             with self.write_lock:
                 self.blocked.append(id(self))
-                sys.stderr.write(os.linesep.join(["Blocking sem %s" % id(self)] +
-                                 traceback.format_stack()[:-1] + [""]))
+                sys.stderr.write(
+                    os.linesep.join(
+                        ["Blocking sem %s" % id(self)]
+                        + traceback.format_stack()[:-1]
+                        + [""]
+                    )
+                )
 
         return threading.Semaphore.acquire(self, *arg, **kwarg)
 

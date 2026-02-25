@@ -29,19 +29,19 @@
 """
 Test for numpy images.
 """
+
 __author__ = "Jérôme Kieffer"
-__date__ = "03/04/2020"
+__date__ = "27/10/2025"
 
 import os
 import unittest
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio.numpyimage import NumpyImage
 from fabio.openimage import openimage
 from ..utilstest import UtilsTest
+
+logger = logging.getLogger(__name__)
 
 
 class TestNumpy(unittest.TestCase):
@@ -50,7 +50,9 @@ class TestNumpy(unittest.TestCase):
     def setUp(self):
         """Generate files"""
 
-        self.ary = numpy.random.randint(0, 6500, size=99).reshape(11, 9).astype("uint16")
+        self.ary = (
+            numpy.random.randint(0, 6500, size=99).reshape(11, 9).astype("uint16")
+        )
         self.fn = os.path.join(UtilsTest.tempdir, "numpy.npy")
         self.fn2 = os.path.join(UtilsTest.tempdir, "numpy2.npy")
         numpy.save(self.fn, self.ary)
@@ -63,7 +65,7 @@ class TestNumpy(unittest.TestCase):
         self.ary = self.fn = self.fn2 = None
 
     def test_read(self):
-        """ check we can read pnm images"""
+        """check we can read pnm images"""
         obj = openimage(self.fn)
 
         self.assertEqual(obj.bytecode, numpy.uint16, msg="bytecode is OK")
@@ -71,7 +73,7 @@ class TestNumpy(unittest.TestCase):
         self.assertTrue(numpy.allclose(obj.data, self.ary), "data")
 
     def test_write(self):
-        """ check we can write numpy images"""
+        """check we can write numpy images"""
         ref = NumpyImage(data=self.ary)
         ref.save(self.fn2)
         with openimage(self.fn2) as obj:
@@ -105,6 +107,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

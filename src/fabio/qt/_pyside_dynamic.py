@@ -64,11 +64,11 @@
 """How to load a user interface dynamically with PySide6"""
 
 import logging
-_logger = logging.getLogger(__name__)
 from ._qt import BINDING
 
-if BINDING == "PySide6":
+_logger = logging.getLogger(__name__)
 
+if BINDING == "PySide6":
     from PySide6.QtCore import QMetaObject, Property, Qt
     from PySide6.QtWidgets import QFrame
     from PySide6.QtUiTools import QUiLoader
@@ -100,7 +100,6 @@ if BINDING == "PySide6":
                 raise ValueError("Unsupported orientation %s" % str(orientation))
 
         orientation = Property("Qt::Orientation", getOrientation, setOrientation)
-
 
     CUSTOM_WIDGETS = {"Line": _Line}
     """Default custom widgets for `loadUi`"""
@@ -168,7 +167,7 @@ if BINDING == "PySide6":
                         widget = self.customWidgets[class_name](parent)
                     except KeyError as error:
                         raise Exception(
-                            f"No custom widget {class_name} " "found in customWidgets"
+                            f"No custom widget {class_name} found in customWidgets"
                         ) from error
 
                 if self.baseinstance:
@@ -178,14 +177,12 @@ if BINDING == "PySide6":
 
                 return widget
 
-
     def _get_custom_widgets(ui_file):
         """
         This function is used to parse a ui file and look for the <customwidgets>
         section, then automatically load all the custom widget classes.
         """
 
-        import sys
         import importlib
         from xml.etree.ElementTree import ElementTree
 
@@ -210,7 +207,6 @@ if BINDING == "PySide6":
             custom_widget_classes[cw_class] = getattr(module, cw_class)
 
         return custom_widget_classes
-
 
     def loadUi(uifile, baseinstance=None, package=None, resource_suffix=None):
         """
@@ -237,7 +233,9 @@ if BINDING == "PySide6":
         if package is not None:
             _logger.warning("loadUi package parameter not implemented with PySide")
         if resource_suffix is not None:
-            _logger.warning("loadUi resource_suffix parameter not implemented with PySide")
+            _logger.warning(
+                "loadUi resource_suffix parameter not implemented with PySide"
+            )
 
         # We parse the UI file and import any required custom widgets
         customWidgets = _get_custom_widgets(uifile)

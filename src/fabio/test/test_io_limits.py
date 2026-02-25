@@ -10,11 +10,10 @@ import logging
 import numpy
 import tempfile
 import shutil
-
-logger = logging.getLogger(__name__)
-
 import fabio.edfimage
 import fabio.tifimage
+
+logger = logging.getLogger(__name__)
 
 
 class _CommonIOLimitTest(unittest.TestCase):
@@ -27,7 +26,7 @@ class _CommonIOLimitTest(unittest.TestCase):
         cls.test_filename = os.path.join(cls.test_dir, "data")
 
         # A single IO operation is limited to `nbytes_single_io` bytes
-        nbytes_single_io = 2 ** 31
+        nbytes_single_io = 2**31
         cls.data_dtype = numpy.uint32
         itemsize = 4
 

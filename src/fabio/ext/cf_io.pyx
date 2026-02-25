@@ -27,10 +27,14 @@
 
 """New Cython version of cf_iomodule.c for preparing the migration to Python3"""
 
-__authors__ = ["Jerome Kieffer"]
+__authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
+__date__ = "27/10/2025"
 __copyright__ = "2013, European Synchrotron Radiation Facility, Grenoble, France"
+
+from libc.string cimport memcpy
+from libc.stdio cimport fopen, FILE
 
 import cython
 import numpy
@@ -39,8 +43,6 @@ import tempfile
 import logging
 logger = logging.getLogger(__name__)
 
-from libc.string cimport memcpy
-from libc.stdio cimport fopen, FILE
 
 CF_H = 1
 

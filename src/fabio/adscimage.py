@@ -28,5 +28,6 @@ This module is now renamed into :mod:`fabio.dtrekimage`.
 """
 
 from . import dtrekimage
+
 AdscImage = dtrekimage.DtrekImage
 adscimage = dtrekimage.DtrekImage

@@ -26,18 +26,17 @@
 # THE SOFTWARE.
 #
 
-"""Test binary images
-"""
+"""Test binary images"""
 
 import unittest
 import os
 import logging
-
-logger = logging.getLogger(__name__)
 import numpy
 from fabio.openimage import openimage
 from fabio.binaryimage import BinaryImage
 from ..utilstest import UtilsTest
+
+logger = logging.getLogger(__name__)
 
 
 def make_file(name, shape, dtype):
@@ -57,9 +56,16 @@ class TestBinaryImage(unittest.TestCase):
         cls.data = make_file(cls.fn3, cls.shape, cls.dtype)
 
     def test_read(self):
-        """ check we can read images from Eiger"""
+        """check we can read images from Eiger"""
         e = BinaryImage()
-        e.read(self.fn3, self.shape[1], self.shape[0], offset=-1, bytecode=self.dtype[1], endian=self.dtype[0])
+        e.read(
+            self.fn3,
+            self.shape[1],
+            self.shape[0],
+            offset=-1,
+            bytecode=self.dtype[1],
+            endian=self.dtype[0],
+        )
         f = openimage(self.fn3)
         self.assertEqual(e.shape, f.shape)
         self.assertEqual(e.bpp, f.bpp, "bpp OK")
@@ -73,8 +79,17 @@ class TestBinaryImage(unittest.TestCase):
         e.save(fn)
         self.assertTrue(os.path.exists(fn), "file exists")
         f = BinaryImage()
-        f.read(fn, self.shape[1], self.shape[0], offset=0, bytecode=ary.dtype, endian=ary.dtype.str[0])
-        self.assertEqual(str(f.__class__.__name__), "BinaryImage", "Used the write reader")
+        f.read(
+            fn,
+            self.shape[1],
+            self.shape[0],
+            offset=0,
+            bytecode=ary.dtype,
+            endian=ary.dtype.str[0],
+        )
+        self.assertEqual(
+            str(f.__class__.__name__), "BinaryImage", "Used the write reader"
+        )
         self.assertEqual(self.shape, f.shape, "shape matches")
         self.assertEqual(abs(f.data - ary).max(), 0, "first frame matches")
 
@@ -86,6 +101,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

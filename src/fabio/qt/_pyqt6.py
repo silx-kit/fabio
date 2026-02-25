@@ -36,8 +36,9 @@ _logger = logging.getLogger(__name__)
 try:
     import PyQt6.sip
 except ImportError:
-    pass 
+    pass
 else:
+
     def patch_enums(*modules):
         """Patch PyQt6 modules to provide backward compatibility of enum values
 

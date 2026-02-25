@@ -36,27 +36,54 @@ import os
 import logging
 import numpy
 import shutil
-
 from ..utilstest import UtilsTest
-
-logger = logging.getLogger(__name__)
-
 import fabio
 from fabio.dtrekimage import DtrekImage
 from fabio.edfimage import EdfImage
 from fabio.utils import testutils
 
+logger = logging.getLogger(__name__)
+
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
-TESTIMAGES = [("mb_LP_1_001.img", (3072, 3072), 0.0000, 65535., 120.33, 147.38,
-               {"BEAM_CENTER_Y": "157.500000"}),
-              ("mb_LP_1_001.img.gz", (3072, 3072), 0.0000, 65535., 120.33, 147.38,
-               {"BEAM_CENTER_Y": "157.500000"}),
-              ("mb_LP_1_001.img.bz2", (3072, 3072), 0.0000, 65535., 120.33, 147.38,
-               {"BEAM_CENTER_Y": "157.500000"}),
-              ("HSA_1_5mg_C1_0004.img", (385, 775), -2, 2127, 69.25, 59.52,
-               {"WAVELENGTH": "1.0 1.541870"}),
-              ]
+TESTIMAGES = [
+    (
+        "mb_LP_1_001.img",
+        (3072, 3072),
+        0.0000,
+        65535.0,
+        120.33,
+        147.38,
+        {"BEAM_CENTER_Y": "157.500000"},
+    ),
+    (
+        "mb_LP_1_001.img.gz",
+        (3072, 3072),
+        0.0000,
+        65535.0,
+        120.33,
+        147.38,
+        {"BEAM_CENTER_Y": "157.500000"},
+    ),
+    (
+        "mb_LP_1_001.img.bz2",
+        (3072, 3072),
+        0.0000,
+        65535.0,
+        120.33,
+        147.38,
+        {"BEAM_CENTER_Y": "157.500000"},
+    ),
+    (
+        "HSA_1_5mg_C1_0004.img",
+        (385, 775),
+        -2,
+        2127,
+        69.25,
+        59.52,
+        {"WAVELENGTH": "1.0 1.541870"},
+    ),
+]
 
 
 class TestMatch(unittest.TestCase):
@@ -65,7 +92,7 @@ class TestMatch(unittest.TestCase):
     """
 
     def setUp(self):
-        """ Download images """
+        """Download images"""
         self.fn_adsc = UtilsTest.getimage("mb_LP_1_001.img.bz2")[:-4]
         self.fn_edf = UtilsTest.getimage("mb_LP_1_001.edf.bz2")[:-4]
 
@@ -75,15 +102,22 @@ class TestMatch(unittest.TestCase):
         im1.read(self.fn_edf)
         im2 = DtrekImage()
         im2.read(self.fn_adsc)
-        diff = (im1.data.astype("float32") - im2.data.astype("float32"))
-        logger.debug("type: %s %s shape %s %s " % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape))
-        logger.debug("im1 min %s %s max %s %s " % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max()))
-        logger.debug("delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean()))
+        diff = im1.data.astype("float32") - im2.data.astype("float32")
+        logger.debug(
+            "type: %s %s shape %s %s "
+            % (im1.data.dtype, im2.data.dtype, im1.data.shape, im2.data.shape)
+        )
+        logger.debug(
+            "im1 min %s %s max %s %s "
+            % (im1.data.min(), im2.data.min(), im1.data.max(), im2.data.max())
+        )
+        logger.debug(
+            "delta min %s max %s mean %s" % (diff.min(), diff.max(), diff.mean())
+        )
         self.assertEqual(abs(diff).max(), 0.0, "asdc data == edf data")
 
 
 class TestDtrekImplementation(testutils.ParametricTestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.tmp_directory = os.path.join(UtilsTest.tempdir, cls.__name__)
@@ -141,7 +175,9 @@ class TestDtrekImplementation(testutils.ParametricTestCase):
                 data = numpy.arange(5 * 10).reshape(5, 10)
                 data = data.astype(input_type)
                 obj = DtrekImage(data=data, header=header)
-                filename = os.path.join(self.tmp_directory, "saved_%s.img" % hash(config))
+                filename = os.path.join(
+                    self.tmp_directory, "saved_%s.img" % hash(config)
+                )
                 obj.save(filename)
                 self.assertEqual(obj.data.dtype.type, input_type)
                 obj2 = fabio.open(filename)
@@ -174,7 +210,7 @@ class TestRealSamples(testutils.ParametricTestCase):
         cls.im_dir = UtilsTest.resources.data_home
 
     def test_read(self):
-        """ check we can read flat ADSC images"""
+        """check we can read flat ADSC images"""
         for datainfo in TESTIMAGES:
             with self.subTest(datainfo=datainfo):
                 name, shape, mini, maxi, mean, stddev, keys = datainfo
@@ -183,7 +219,9 @@ class TestRealSamples(testutils.ParametricTestCase):
                 self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
                 self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
                 got_mean = obj.getmean()
-                self.assertAlmostEqual(mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean))
+                self.assertAlmostEqual(
+                    mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean)
+                )
                 self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
                 for key, value in keys.items():
                     self.assertIn(key, obj.header)
@@ -200,6 +238,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

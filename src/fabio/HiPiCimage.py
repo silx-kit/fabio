@@ -42,12 +42,13 @@ Information about the file format from Masakatzu Kobayashi is highly appreciated
 
 import numpy
 import logging
-logger = logging.getLogger(__name__)
 from .fabioimage import FabioImage
+
+logger = logging.getLogger(__name__)
 
 
 class HipicImage(FabioImage):
-    """ Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
+    """Read HiPic images e.g. collected with a Hamamatsu CCD camera"""
 
     DESCRIPTION = "HiPic file format from Hamamatsu CCD cameras"
 
@@ -68,23 +69,24 @@ class HipicImage(FabioImage):
         _Dump = infile.read(50)
         Comment = infile.read(Comment_len[0])
         Comment = Comment.decode()
-        self.header['Image_tag'] = Image_tag
-        self.header['Dim_1'] = Dim_1
-        self.header['Dim_2'] = Dim_2
-        self.header['Dim_1_offset'] = Dim_1_offset
-        self.header['Dim_2_offset'] = Dim_2_offset
+        self.header["Image_tag"] = Image_tag
+        self.header["Dim_1"] = Dim_1
+        self.header["Dim_2"] = Dim_2
+        self.header["Dim_1_offset"] = Dim_1_offset
+        self.header["Dim_2_offset"] = Dim_2_offset
         # self.header['Comment'] = Comment
-        if Image_tag != 'IM':
+        if Image_tag != "IM":
             # This does not look like an HiPic file
-            logger.warning("No opening. Corrupt header of HiPic file %s",
-                           str(infile.name))
-        Comment_split = Comment[:Comment.find('\x00')].split('\r\n')
+            logger.warning(
+                "No opening. Corrupt header of HiPic file %s", str(infile.name)
+            )
+        Comment_split = Comment[: Comment.find("\x00")].split("\r\n")
 
         for topcomment in Comment_split:
-            topsplit = topcomment.split(',')
+            topsplit = topcomment.split(",")
             for line in topsplit:
-                if '=' in line:
-                    key, val = line.split('=', 1)
+                if "=" in line:
+                    key, val = line.split("=", 1)
                     # Users cannot type in significant whitespace
                     key = key.rstrip().lstrip()
                     self.header_keys.append(key)
@@ -102,8 +104,8 @@ class HipicImage(FabioImage):
         self._readheader(infile)
         # Compute image size
         try:
-            dim1 = int(self.header['Dim_1'])
-            dim2 = int(self.header['Dim_2'])
+            dim1 = int(self.header["Dim_1"])
+            dim2 = int(self.header["Dim_2"])
             self._shape = dim2, dim1
         except (ValueError, KeyError):
             raise IOError("HiPic file %s is corrupted, cannot read it" % str(fname))
@@ -120,16 +122,17 @@ class HipicImage(FabioImage):
         except Exception:
             logger.debug("%s %s %s %s %s", len(block), dtype, self.bpp, dim2, dim1)
             logger.debug("Backtrace", exc_info=True)
-            raise IOError('Size spec in HiPic-header does not match size of image data field')
+            raise IOError(
+                "Size spec in HiPic-header does not match size of image data field"
+            )
         self._dtype = None
         self._shape = None
 
-
-        #### The case below is not true for data collected at 
-        #### BL47XU/BL20XU/BL20B at SPring-8 - here the data is saved as 
+        #### The case below is not true for data collected at
+        #### BL47XU/BL20XU/BL20B at SPring-8 - here the data is saved as
         #### 16 bit - so values above 4095 should be negative.
         #### Therefore I have now commented it out.
-        
+
         # # Sometimes these files are not saved as 12 bit,
         # # But as 16 bit after bg subtraction - which results
         # # negative values saved as 16bit. Therefore values higher

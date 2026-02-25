@@ -31,11 +31,11 @@ They use a modified (simplified) byte-offset algorithm.  This file contains the
 decompression function from a string to an int64 numpy array.
 """
 
-__author__ = "Jerome Kieffer"
+__author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "2010-2016, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "14/12/2020"
+__date__ = "27/10/2025"
 
 
 import numpy
@@ -174,14 +174,14 @@ def dec_cbf(bytes stream not None, size=None):
         int lenStream = < int > len(stream)
         uint8_t[::1] cstream = bytearray(stream)
         int64_t[::1] data_out
-        
+
     if size is None:
         csize = lenStream
     else:
         csize = < int > size
-    
+
     data_out = numpy.empty(csize, dtype=numpy.int64)
-    
+
     with nogil:
         while (i < lenStream) and (j < csize):
             if (cstream[i] == key8):

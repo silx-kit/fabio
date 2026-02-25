@@ -32,23 +32,27 @@ Test for PNM images.
 
 Jerome Kieffer, 04/12/2014
 """
-__author__ = "Jerome Kieffer"
-__date__ = "03/04/2020"
+
+__author__ = "Jérôme Kieffer"
+__date__ = "27/10/2025"
+
 import os
 import unittest
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio.pnmimage import pnmimage
 from fabio.openimage import openimage
 from ..utilstest import UtilsTest
 
+logger = logging.getLogger(__name__)
+
 
 class TestPNM(unittest.TestCase):
     """basic test"""
-    results = """image0001.pgm  1024 1024  0  28416 353.795654296875   2218.0290682517543"""
+
+    results = (
+        """image0001.pgm  1024 1024  0  28416 353.795654296875   2218.0290682517543"""
+    )
 
     def setUp(self):
         """Download files"""
@@ -60,7 +64,7 @@ class TestPNM(unittest.TestCase):
             assert os.path.exists(self.fn[i])
 
     def test_read(self):
-        """ check we can read pnm images"""
+        """check we can read pnm images"""
         vals = self.results.split()
         name = vals[0]
         dim1, dim2 = [int(x) for x in vals[1:3]]
@@ -92,6 +96,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

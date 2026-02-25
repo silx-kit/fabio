@@ -37,12 +37,12 @@ import unittest
 import os
 import numpy
 import logging
-
-logger = logging.getLogger(__name__)
-
 from ...tifimage import tifimage
 from ...marccdimage import marccdimage
 from ..utilstest import UtilsTest
+
+logger = logging.getLogger(__name__)
+
 
 # statistics come from fit2d I think
 # filename dim1 dim2 min max mean stddev
@@ -71,13 +71,15 @@ class TestNormalTiffOK(unittest.TestCase):
 
     def test_read_openimage(self):
         from fabio.openimage import openimage
+
         obj = openimage(self.image)
         if obj.data.astype(int).tobytes() != self.imdata.astype(int).tobytes():
             logger.info("%s %s" % (type(self.imdata), self.imdata.dtype))
             logger.info("%s %s" % (type(obj.data), obj.data.dtype))
             logger.info("%s %s" % (obj.data - self.imdata))
-        self.assertEqual(obj.data.astype(int).tobytes(),
-                         self.imdata.astype(int).tobytes())
+        self.assertEqual(
+            obj.data.astype(int).tobytes(), self.imdata.astype(int).tobytes()
+        )
 
     def tearDown(self):
         unittest.TestCase.tearDown(self)
@@ -85,7 +87,6 @@ class TestNormalTiffOK(unittest.TestCase):
 
 
 class TestFlatMccds(unittest.TestCase):
-
     def setUp(self):
         self.fn = {}
         for i in ["corkcont2_H_0089.mccd", "somedata_0001.mccd"]:
@@ -96,7 +97,7 @@ class TestFlatMccds(unittest.TestCase):
             assert os.path.exists(self.fn[i])
 
     def test_read(self):
-        """ check we can read MarCCD images"""
+        """check we can read MarCCD images"""
         for line in TESTIMAGES.split("\n"):
             vals = line.split()
             name = vals[0]
@@ -120,6 +121,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

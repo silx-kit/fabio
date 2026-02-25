@@ -36,27 +36,37 @@ Authors: Jérôme Kieffer, ESRF email:jerome.kieffer@esrf.fr
 Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/esperantoframe.cpp
         Fortran code:   https://svn.debroglie.net/debroglie/Oxford/trunk/diamond2crysalis/bitfield.F90
 """
+
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "30/05/2024"
+__date__ = "28/10/2025"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
 from io import BytesIO
 from struct import pack, unpack as unpack_
+import numpy
+
 try:
-    from ..ext._agi_bitfield import get_fieldsize as _get_fieldsize, compress_row as _compress_row, compress as _compress
+    from ..ext._agi_bitfield import (
+        get_fieldsize as _get_fieldsize,
+        compress_row as _compress_row,
+        compress as _compress,
+    )
 except ImportError:
     _get_fieldsize = None
     _compress_row = None
     _compress = None
-logger = logging.getLogger(__name__)
-import numpy
 
-unpack = lambda fmt, buff: unpack_(fmt, buff)[0]
+logger = logging.getLogger(__name__)
+
 
 MASK = [(1 << i) - 1 for i in range(9)]
+
+
+def unpack(fmt, buff):
+    return unpack_(fmt, buff)[0]
 
 
 def compress(frame):
@@ -135,7 +145,12 @@ def decompress(comp_frame, dimensions):
     # read data components (row indices are ignored)
     data_size = unpack("I", comp_frame[:4])
     data_block = BytesIO(comp_frame[4:])
-    logger.debug("Size of binary data block: %d with image size: %s, compression ratio: %.3fx", data_size, dimensions, 4 * row_count * col_count / data_size)
+    logger.debug(
+        "Size of binary data block: %d with image size: %s, compression ratio: %.3fx",
+        data_size,
+        dimensions,
+        4 * row_count * col_count / data_size,
+    )
     output = numpy.zeros(dimensions, dtype=numpy.int32)
 
     for row_index in range(row_count):
@@ -177,33 +192,33 @@ def decompress_row(buffer, row_length):
 
 def fortran_fieldsize(nbvalue):
     "Direct translation of Fortran"
-    if(nbvalue < -63):
+    if nbvalue < -63:
         getfieldsize = 8
-    elif(nbvalue < -31):
+    elif nbvalue < -31:
         getfieldsize = 7
-    elif(nbvalue < -15):
+    elif nbvalue < -15:
         getfieldsize = 6
-    elif(nbvalue < -7):
+    elif nbvalue < -7:
         getfieldsize = 5
-    elif(nbvalue < -3):
+    elif nbvalue < -3:
         getfieldsize = 4
-    elif(nbvalue < -1):
+    elif nbvalue < -1:
         getfieldsize = 3
-    elif(nbvalue < 0):
+    elif nbvalue < 0:
         getfieldsize = 2
-    elif(nbvalue < 2):
+    elif nbvalue < 2:
         getfieldsize = 1
-    elif(nbvalue < 3):
+    elif nbvalue < 3:
         getfieldsize = 2
-    elif(nbvalue < 5):
+    elif nbvalue < 5:
         getfieldsize = 3
-    elif(nbvalue < 9):
+    elif nbvalue < 9:
         getfieldsize = 4
-    elif(nbvalue < 17):
+    elif nbvalue < 17:
         getfieldsize = 5
-    elif(nbvalue < 33):
+    elif nbvalue < 33:
         getfieldsize = 6
-    elif(nbvalue < 65):
+    elif nbvalue < 65:
         getfieldsize = 7
     else:
         getfieldsize = 8
@@ -253,7 +268,13 @@ def compress_field(ifield, fieldsize, overflow_table):
         try:
             res = pack("<Q", compressed_field)
         except:
-            logger.error("Exception in struct.pack: %s %s %s %s", fieldsize, type(fieldsize), ifield, compressed_field)
+            logger.error(
+                "Exception in struct.pack: %s %s %s %s",
+                fieldsize,
+                type(fieldsize),
+                ifield,
+                compressed_field,
+            )
             raise
         return res[:fieldsize]
     else:
@@ -261,19 +282,19 @@ def compress_field(ifield, fieldsize, overflow_table):
 
 
 def decode_field(field):
-    """decodes a field from bytes. 
-    
-    One field always encode for 8 pixels but my be stored on 1 to 8 pixels 
+    """decodes a field from bytes.
+
+    One field always encode for 8 pixels but my be stored on 1 to 8 pixels
     (overflow are handeled separately)
-    
+
     :param field: bytes
     :returns list
     """
     size = len(field)
     if size == 8:
-        return list(unpack_("B"*8, field))
+        return list(unpack_("B" * 8, field))
     elif size < 8:
-        field = unpack("<Q", field.ljust(8, b'\x00'))
+        field = unpack("<Q", field.ljust(8, b"\x00"))
         mask_ = MASK[size]
         return [(field >> (size * i)) & mask_ for i in range(8)]
     else:
@@ -285,7 +306,7 @@ def read_len_byte(lb):
     :param lb: int/byte
     :returns tuple
     """
-    return lb >> 4, lb & 0xf
+    return lb >> 4, lb & 0xF
 
 
 def write_escaped(value, buffer):
@@ -296,9 +317,9 @@ def write_escaped(value, buffer):
     if -127 <= value < 127:
         buffer.write(pack("B", value + 127))
     elif -32767 < value < 32767:
-        buffer.write(b'\xfe' + pack("<h", value))
+        buffer.write(b"\xfe" + pack("<h", value))
     else:
-        buffer.write(b'\xff' + pack("<i", value))
+        buffer.write(b"\xff" + pack("<i", value))
 
 
 def read_escaped(buffer):
@@ -307,9 +328,9 @@ def read_escaped(buffer):
     :returns int
     """
     byte = buffer.read(1)
-    if byte == b'\xfe':  # two byte overflow
+    if byte == b"\xfe":  # two byte overflow
         return unpack("<h", buffer.read(2))
-    elif byte == b'\xff':  # four byte overflow
+    elif byte == b"\xff":  # four byte overflow
         return unpack("<i", buffer.read(4))
     else:  # no overflow
         return unpack("B", byte) - 127
@@ -323,9 +344,9 @@ def undo_escapes(field, length, buffer):
     """
     conv_ = MASK[length - 1]
     for i, val in enumerate(field):
-        if val == 0xfe:
+        if val == 0xFE:
             field[i] = unpack("<h", buffer.read(2))
-        elif val == 0xff:
+        elif val == 0xFF:
             field[i] = unpack("<i", buffer.read(4))
         else:
             field[i] = val - conv_

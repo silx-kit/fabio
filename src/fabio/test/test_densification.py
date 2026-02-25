@@ -32,18 +32,18 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "02/09/2024"
+__date__ = "27/10/2025"
 
 import unittest
 import numpy
 import logging
-logger = logging.getLogger(__name__)
 from ..sparseimage import densify, cython_densify
 from ..ext.dense import distribution_uniform_mtc, distribution_normal_mtc
 
+logger = logging.getLogger(__name__)
+
 
 class TestDensification(unittest.TestCase):
-
     def test_rng_uniform(self):
         shape = (100, 100)
         U = distribution_uniform_mtc(shape).ravel()
@@ -70,8 +70,10 @@ class TestDensification(unittest.TestCase):
         shape = 256, 256
         nframes = 8
         vsize = 181  # This is cheated to avoid interpolation issues with rounding 128*sqrt(2)
-        y, x = numpy.ogrid[-shape[0] // 2:-shape[0] // 2 + shape[0],
-                          -shape[1] // 2:-shape[1] // 2 + shape[1]]
+        y, x = numpy.ogrid[
+            -shape[0] // 2 : -shape[0] // 2 + shape[0],
+            -shape[1] // 2 : -shape[1] // 2 + shape[1],
+        ]
         # To make this test "robust", those two radial position arrays needs to be in float64 ... in production float32 is more common
         r2d = numpy.sqrt(x * x + y * y).astype(numpy.float64)
         radius = numpy.linspace(0, r2d.max(), vsize).astype(numpy.float64)
@@ -80,7 +82,9 @@ class TestDensification(unittest.TestCase):
         osc = numpy.random.randint(40, 100, size=nframes)
         indptr = numpy.zeros(nframes + 1, dtype=int)
         indptr[1:] = numpy.cumsum(npeak)
-        index = numpy.random.randint(0, numpy.prod(shape), size=npeak.sum()).astype(numpy.uint32)
+        index = numpy.random.randint(0, numpy.prod(shape), size=npeak.sum()).astype(
+            numpy.uint32
+        )
         intensity = numpy.random.randint(0, 10, size=npeak.sum()).astype(numpy.uint16)
         frames = numpy.empty((nframes, *shape), dtype=numpy.uint16)
         background = numpy.empty((nframes, vsize), dtype=numpy.float32)
@@ -91,24 +95,70 @@ class TestDensification(unittest.TestCase):
             background[i] = numpy.arcsinh(scale[i] * numpy.sinc(radius / osc[i]) ** 2)
             noise[i] = abs(numpy.diff(background[i], prepend=background[i, 0]))
             f[...] = numpy.arcsinh(scale[i] * numpy.sinc(r2d / osc[i]) ** 2).round()
-            f.ravel()[index[indptr[i]:indptr[i + 1]]] = intensity[indptr[i]:indptr[i + 1]]
-            python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i])
-            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i])
+            f.ravel()[index[indptr[i] : indptr[i + 1]]] = intensity[
+                indptr[i] : indptr[i + 1]
+            ]
+            python = densify(
+                r2d,
+                radius,
+                index[indptr[i] : indptr[i + 1]],
+                intensity[indptr[i] : indptr[i + 1]],
+                0,
+                background[i],
+            )
+            cython = cython_densify.densify(
+                r2d,
+                radius,
+                index[indptr[i] : indptr[i + 1]],
+                intensity[indptr[i] : indptr[i + 1]],
+                0,
+                intensity.dtype,
+                background[i],
+            )
             if not numpy.all(python == cython):
                 print(python)
                 print(cython)
             self.assertTrue(numpy.all(python == cython), "python == cython #" + str(i))
             # Rounding errors:
-            delta = (python.astype(int) - f)
-            self.assertLessEqual(abs(delta).max(), 1, "Maximum difference is 1 due to rounding errors")
+            delta = python.astype(int) - f
+            self.assertLessEqual(
+                abs(delta).max(), 1, "Maximum difference is 1 due to rounding errors"
+            )
             bad = numpy.where(delta)
             print("#####", i)
-            self.assertLess(len(bad[0]), numpy.prod(shape) / 500, "python differs from reference on less then 0.2% of the pixel #" + str(i))
+            self.assertLess(
+                len(bad[0]),
+                numpy.prod(shape) / 500,
+                "python differs from reference on less then 0.2% of the pixel #"
+                + str(i),
+            )
 
             # Now consider the noise ...
-            python = densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, background[i], noise[i], seed=seed)
-            cython = cython_densify.densify(r2d, radius, index[indptr[i]:indptr[i + 1]], intensity[indptr[i]:indptr[i + 1]], 0, intensity.dtype, background[i], noise[i], seed=seed)
-            self.assertTrue(abs(python.astype(int) - cython).max() <= 2 * max(1, noise[i].max()), "python is close to cython #" + str(i))
+            python = densify(
+                r2d,
+                radius,
+                index[indptr[i] : indptr[i + 1]],
+                intensity[indptr[i] : indptr[i + 1]],
+                0,
+                background[i],
+                noise[i],
+                seed=seed,
+            )
+            cython = cython_densify.densify(
+                r2d,
+                radius,
+                index[indptr[i] : indptr[i + 1]],
+                intensity[indptr[i] : indptr[i + 1]],
+                0,
+                intensity.dtype,
+                background[i],
+                noise[i],
+                seed=seed,
+            )
+            self.assertTrue(
+                abs(python.astype(int) - cython).max() <= 2 * max(1, noise[i].max()),
+                "python is close to cython #" + str(i),
+            )
 
 
 def suite():
@@ -118,6 +168,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())

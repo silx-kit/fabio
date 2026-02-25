@@ -48,8 +48,8 @@ class PilatusTiffFrame(tifimage.TiffFrame):
 
 
 class PilatusImage(tifimage.TifImage):
-    """ Read in Pilatus format, also
-        pilatus images, including header info """
+    """Read in Pilatus format, also
+    pilatus images, including header info"""
 
     DESCRIPTION = "Pilatus file format based on Tiff"
 
@@ -86,7 +86,7 @@ class PilatusImage(tifimage.TifImage):
 
         description = tiff_header["imageDescription"]
         for line in description.split("\n"):
-            index = line.find('# ')
+            index = line.find("# ")
             if index == -1:
                 if line.strip(" \x00") != "":
                     # If it is not an empty line

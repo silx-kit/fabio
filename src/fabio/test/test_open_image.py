@@ -30,9 +30,6 @@ Jerome Kieffer 04/12/2014
 
 import unittest
 import logging
-
-logger = logging.getLogger(__name__)
-
 from fabio.openimage import openimage
 from fabio.edfimage import EdfImage
 from fabio.marccdimage import MarccdImage
@@ -42,12 +39,14 @@ from fabio.brukerimage import BrukerImage
 from fabio.dtrekimage import DtrekImage
 from .utilstest import UtilsTest
 
+logger = logging.getLogger(__name__)
+
 
 class TestOpenEdf(unittest.TestCase):
     """openimage opening edf"""
 
     def checkFile(self, filename):
-        """ check we can read EDF image with openimage"""
+        """check we can read EDF image with openimage"""
         obj = openimage(filename)
         obj2 = EdfImage()
         obj2.read(filename)
@@ -75,7 +74,7 @@ class TestOpenMccd(unittest.TestCase):
     """openimage opening mccd"""
 
     def checkFile(self, filename):
-        """ check we can read it"""
+        """check we can read it"""
         obj = openimage(filename)
         obj2 = MarccdImage()
         obj2.read(filename)
@@ -103,7 +102,7 @@ class TestOpenMask(unittest.TestCase):
     """openimage opening fit2d msk"""
 
     def checkFile(self, filename):
-        """ check we can read Fit2D mask with openimage"""
+        """check we can read Fit2D mask with openimage"""
         obj = openimage(filename)
         obj2 = Fit2dMaskImage()
         obj2.read(filename)
@@ -135,7 +134,7 @@ class TestOpenBruker(unittest.TestCase):
     """openimage opening bruker"""
 
     def checkFile(self, filename):
-        """ check we can read it"""
+        """check we can read it"""
         obj = openimage(filename)
         obj2 = BrukerImage()
         obj2.read(filename)
@@ -166,7 +165,7 @@ class TestOpenDtrek(unittest.TestCase):
     """openimage opening adsc"""
 
     def checkFile(self, filename):
-        """ check we can read it"""
+        """check we can read it"""
         obj = openimage(filename)
         obj2 = DtrekImage()
         obj2.read(filename)
@@ -197,7 +196,7 @@ class TestOpenOxd(unittest.TestCase):
     """openimage opening adsc"""
 
     def checkFile(self, filename):
-        """ check we can read OXD images with openimage"""
+        """check we can read OXD images with openimage"""
         obj = openimage(filename)
         obj2 = OXDimage()
         obj2.read(filename)
@@ -230,6 +229,6 @@ def suite():
     return testsuite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(suite())
