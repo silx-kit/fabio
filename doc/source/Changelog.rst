@@ -1,6 +1,10 @@
 Changelog
 =========
 
+FabIO-2026.xx.y: 
+................
+- Supports Python 3.11+ though Python's limited API
+
 FabIO-2025.10.0: 
 ................
 - Include patches from debian (Thanks Rolland Mas)
