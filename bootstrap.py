@@ -66,19 +66,19 @@ def build_project(name, root_dir):
     build = os.path.join(root_dir, "build")
     if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
         cmd = ["meson", "setup", "build"] + extra
-        print(" ".joint(cmd))
+        print(" ".join(cmd))
         p = subprocess.Popen(cmd,
                          shell=False, cwd=root_dir, env=os.environ)
         print(f"`meson setup` ended with rc= {p.wait()}")
 
     cmd = ["meson", "configure", "--prefix", "/"] + extra
-    print(" ".joint(cmd))
+    print(" ".join(cmd))
     p = subprocess.Popen(cmd,
                      shell=False, cwd=build, env=os.environ)
     print(f"`meson configure` ended with rc= {p.wait()}")
 
     cmd = ["meson", "install", "--destdir", "."]
-    print(" ".joint(cmd))
+    print(" ".join(cmd))
     p = subprocess.Popen(cmd,
                      shell=False, cwd=build, env=os.environ)
     print(f"`meson install` ended with rc= {p.wait()}")
