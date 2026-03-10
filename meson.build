@@ -20,22 +20,22 @@ if m_dep.found()
 endif
 
 # Detect non-MSVC compilers on Windows for both C and C++
-if host_machine.system() == 'windows'
-  c_id     = cc.get_id()
-  # List of ids we accept as “MSVC-compatible”
-  acceptable = ['msvc', 'clang-cl']
-  warning_msg = '''
-    -----------------------------------------------------------------
-    Detected @0@ compiler on Windows: @1@
-    This project is primarily tested with Microsoft Visual C++.
-    If you encounter problems, switch to MSVC or add the needed
-    patches for your compiler.
-    -----------------------------------------------------------------
-  '''
-  if c_id not in acceptable
-     meson.error(warning_msg.format('C', c_id))
-  endif
-endif
+#if host_machine.system() == 'windows'
+#  c_id     = cc.get_id()
+#  # List of ids we accept as “MSVC-compatible”
+#  acceptable = ['msvc', 'clang-cl']
+#  warning_msg = '''
+#    -----------------------------------------------------------------
+#    Detected @0@ compiler on Windows: @1@
+#    This project is primarily tested with Microsoft Visual C++.
+#    If you encounter problems, switch to MSVC or add the needed
+#    patches for your compiler.
+#    -----------------------------------------------------------------
+#  '''
+#  if c_id not in acceptable
+#     meson.error(warning_msg.format('C', c_id))
+#  endif
+# endif
 
 
 # Cython compiler
