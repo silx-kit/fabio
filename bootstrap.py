@@ -10,7 +10,7 @@ example: ./bootstrap.py ipython
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "11/04/2024"
+__date__ = "10/03/2026"
 
 import sys
 import os
@@ -36,6 +36,20 @@ def get_project_name(root_dir):
     return pyproject.get("project", {}).get("name")
 
 
+def is_debug_python():
+    """Returns True if the Python interpreter is in debug mode."""
+    try:
+        import sysconfig
+    except ImportError:  # pragma nocover
+        # Python < 2.7
+        import distutils.sysconfig as sysconfig
+
+    if sysconfig.get_config_var("Py_DEBUG"):
+        return True
+
+    return hasattr(sys, "gettotalrefcount")
+
+
 def build_project(name, root_dir):
     """Build locally the project using meson
 
@@ -47,19 +61,27 @@ def build_project(name, root_dir):
     libdir = "lib"
     if sys.platform == "win32":
         libdir = "Lib"
-        extra = ["--buildtype", "release"]
+        extra = ["-Dbuildtype=plain"]
 
     build = os.path.join(root_dir, "build")
     if not(os.path.isdir(build) and os.path.isdir(os.path.join(build, name))):
-        p = subprocess.Popen(["meson", "setup", "build"],
+        cmd = ["meson", "setup", "build"] + extra
+        print(" ".join(cmd))
+        p = subprocess.Popen(cmd,
                          shell=False, cwd=root_dir, env=os.environ)
-        p.wait()
-    p = subprocess.Popen(["meson", "configure", "--prefix", "/"] + extra,
+        print(f"`meson setup` ended with rc= {p.wait()}")
+
+    cmd = ["meson", "configure", "--prefix", "/"] + extra
+    print(" ".join(cmd))
+    p = subprocess.Popen(cmd,
                      shell=False, cwd=build, env=os.environ)
-    p.wait()
-    p = subprocess.Popen(["meson", "install", "--destdir", "."],
+    print(f"`meson configure` ended with rc= {p.wait()}")
+
+    cmd = ["meson", "install", "--destdir", "."]
+    print(" ".join(cmd))
+    p = subprocess.Popen(cmd,
                      shell=False, cwd=build, env=os.environ)
-    logger.debug("meson install ended with rc= %s", p.wait())
+    print(f"`meson install` ended with rc= {p.wait()}")
 
     home = None
     if os.environ.get("PYBUILD_NAME") == name:

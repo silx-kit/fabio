@@ -1,7 +1,11 @@
-version: 2023-10-dev{build}
+# AppVeyor.com is a Continuous Integration service to build and run tests under
+# Windows
+# https://ci.appveyor.com/project/ESRF/fabio
+version: 2026.3.{build}
 
-# fetch repository as zip archive
-shallow_clone: true
+#shallow_clone: true
+clone_depth: 1
+build: false
 
 notifications:
 - provider: Email
@@ -18,6 +22,8 @@ os:
 cache:
     - '%LOCALAPPDATA%\pip\Cache'
 
+image: Visual Studio 2022
+
 environment:
     global:
         WIN_SDK_ROOT: "C:\\Program Files\\Microsoft SDKs\\Windows"
@@ -30,13 +36,13 @@ environment:
         #   PYTHON_ARCH: "64"
 
         # Python 3.11
-        #- PYTHON_DIR: "C:\\Python311-x64"
-        #  PYTHON_ARCH: "64"
+        - PYTHON_DIR: "C:\\Python311-x64"
+          PYTHON_ARCH: "64"
 
         # Python 3.12
         - PYTHON_DIR: "C:\\Python312-x64"
           PYTHON_ARCH: "64"
-        
+
         # Python 3.13
         - PYTHON_DIR: "C:\\Python313-x64"
           PYTHON_ARCH: "64"
