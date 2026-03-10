@@ -35,11 +35,11 @@ if host_machine.system() == 'windows'
   '''
   # C compiler check
   if c_id not in acceptable
-    meson.warning(warning_msg.format('C', c_id))
+    meson.message(warning_msg.format('C', c_id))
   endif
   # C++ compiler check
   #if cpp_id not in acceptable
-  #  meson.warning(warning_msg.format('C++', cpp_id))
+  #  meson.message(warning_msg.format('C++', cpp_id))
   #endif
   # make it fatal:
   if c_id not in acceptable #or cpp_id not in acceptable
