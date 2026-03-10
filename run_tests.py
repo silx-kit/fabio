@@ -2,7 +2,7 @@
 # coding: utf-8
 # /*##########################################################################
 #
-# Copyright (c) 2015-2018 European Synchrotron Radiation Facility
+# Copyright (c) 2015-2026 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ Test coverage dependencies: coverage, lxml.
 """
 
 __authors__ = ["Jérôme Kieffer", "Thomas Vincent"]
-__date__ = "03/03/2023"
+__date__ = "10/03/2026"
 __license__ = "MIT"
 
 import logging
@@ -42,6 +42,9 @@ import sys
 import time
 import unittest
 import collections
+import warnings
+
+from bootstrap import get_project_name, build_project
 
 
 class StreamHandlerUnittestReady(logging.StreamHandler):
@@ -77,7 +80,6 @@ logging.root.addHandler(createBasicHandler())
 
 # Capture all default warnings
 logging.captureWarnings(True)
-import warnings
 warnings.simplefilter('default')
 
 logger = logging.getLogger("run_tests")
@@ -123,7 +125,6 @@ else:
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, PROJECT_DIR)
-from bootstrap import get_project_name, build_project
 PROJECT_NAME = get_project_name(PROJECT_DIR)
 logger.info("Project name: %s", PROJECT_NAME)
 
@@ -248,139 +249,128 @@ def report_rst(cov, package, version="0.0.0", base=""):
     return os.linesep.join(res)
 
 
-def is_debug_python():
-    """Returns true if the Python interpreter is in debug mode."""
-    try:
-        import sysconfig
-    except ImportError:  # pragma nocover
-        # Python < 2.7
-        import distutils.sysconfig as sysconfig
+def main():
+    parser = ArgumentParser(description='Run the tests.')
 
-    if sysconfig.get_config_var("Py_DEBUG"):
-        return True
+    parser.add_argument("--installed",
+                        action="store_true", dest="installed", default=False,
+                        help=("Test the installed version instead of" +
+                            "building from the source"))
+    parser.add_argument("-c", "--coverage", dest="coverage",
+                        action="store_true", default=False,
+                        help=("Report code coverage" +
+                            "(requires 'coverage' and 'lxml' module)"))
+    parser.add_argument("-m", "--memprofile", dest="memprofile",
+                        action="store_true", default=False,
+                        help="Report memory profiling")
+    parser.add_argument("-v", "--verbose", default=0,
+                        action="count", dest="verbose",
+                        help="Increase verbosity. Option -v prints additional " +
+                            "INFO messages. Use -vv for full verbosity, " +
+                            "including debug messages and test help strings.")
 
-    return hasattr(sys, "gettotalrefcount")
+    default_test_name = "%s.test.suite" % PROJECT_NAME
+    parser.add_argument("test_name", nargs='*',
+                        default=(default_test_name,),
+                        help="Test names to run (Default: %s)" % default_test_name)
+    options = parser.parse_args()
+    sys.argv = [sys.argv[0]]
 
+    test_verbosity = 1
+    use_buffer = True
+    if options.verbose == 1:
+        logging.root.setLevel(logging.INFO)
+        logger.info("Set log level: INFO")
+        test_verbosity = 2
+        use_buffer = False
+    elif options.verbose > 1:
+        logging.root.setLevel(logging.DEBUG)
+        logger.info("Set log level: DEBUG")
+        test_verbosity = 2
+        use_buffer = False
 
-parser = ArgumentParser(description='Run the tests.')
+    if options.coverage:
+        logger.info("Running test-coverage")
+        import coverage
+        omits = ["*test*", "*third_party*", "*/setup.py",
+                # temporary test modules (silx.math.fit.test.test_fitmanager)
+                "*customfun.py", ]
+        try:
+            cov = coverage.Coverage(omit=omits)
+        except AttributeError:
+            cov = coverage.coverage(omit=omits)
+        cov.start()
 
-parser.add_argument("--installed",
-                    action="store_true", dest="installed", default=False,
-                    help=("Test the installed version instead of" +
-                          "building from the source"))
-parser.add_argument("-c", "--coverage", dest="coverage",
-                    action="store_true", default=False,
-                    help=("Report code coverage" +
-                          "(requires 'coverage' and 'lxml' module)"))
-parser.add_argument("-m", "--memprofile", dest="memprofile",
-                    action="store_true", default=False,
-                    help="Report memory profiling")
-parser.add_argument("-v", "--verbose", default=0,
-                    action="count", dest="verbose",
-                    help="Increase verbosity. Option -v prints additional " +
-                         "INFO messages. Use -vv for full verbosity, " +
-                         "including debug messages and test help strings.")
+    # Prevent importing from source directory
+    if (os.path.dirname(os.path.abspath(__file__)) ==
+            os.path.abspath(sys.path[0])):
+        removed_from_sys_path = sys.path.pop(0)
+        logger.info("Patched sys.path, removed: '%s'", removed_from_sys_path)
 
-default_test_name = "%s.test.suite" % PROJECT_NAME
-parser.add_argument("test_name", nargs='*',
-                    default=(default_test_name,),
-                    help="Test names to run (Default: %s)" % default_test_name)
-options = parser.parse_args()
-sys.argv = [sys.argv[0]]
+    if options.installed:  # Use installed version
+        for bad_path in (".", os.getcwd(), os.path.abspath(".")):
+            if bad_path in sys.path:
+                sys.path.remove(bad_path)
+        try:
+            module = importer(PROJECT_NAME)
+        except Exception:
+            logger.error("Cannot run tests on installed version: %s not installed or raising error.",
+                        PROJECT_NAME)
+            raise
+    else:  # Use built source
+        build_dir = build_project(PROJECT_NAME, PROJECT_DIR)
 
-test_verbosity = 1
-use_buffer = True
-if options.verbose == 1:
-    logging.root.setLevel(logging.INFO)
-    logger.info("Set log level: INFO")
-    test_verbosity = 2
-    use_buffer = False
-elif options.verbose > 1:
-    logging.root.setLevel(logging.DEBUG)
-    logger.info("Set log level: DEBUG")
-    test_verbosity = 2
-    use_buffer = False
-
-if options.coverage:
-    logger.info("Running test-coverage")
-    import coverage
-    omits = ["*test*", "*third_party*", "*/setup.py",
-             # temporary test modules (silx.math.fit.test.test_fitmanager)
-             "*customfun.py", ]
-    try:
-        cov = coverage.Coverage(omit=omits)
-    except AttributeError:
-        cov = coverage.coverage(omit=omits)
-    cov.start()
-
-# Prevent importing from source directory
-if (os.path.dirname(os.path.abspath(__file__)) ==
-        os.path.abspath(sys.path[0])):
-    removed_from_sys_path = sys.path.pop(0)
-    logger.info("Patched sys.path, removed: '%s'", removed_from_sys_path)
-
-if options.installed:  # Use installed version
-    for bad_path in (".", os.getcwd(), os.path.abspath(".")):
-        if bad_path in sys.path:
-            sys.path.remove(bad_path)
-    try:
+        sys.path.insert(0, build_dir)
+        logger.warning("Patched sys.path, added: '%s'", build_dir)
         module = importer(PROJECT_NAME)
-    except Exception:
-        logger.error("Cannot run tests on installed version: %s not installed or raising error.",
-                     PROJECT_NAME)
-        raise
-else:  # Use built source
-    build_dir = build_project(PROJECT_NAME, PROJECT_DIR)
 
-    sys.path.insert(0, build_dir)
-    logger.warning("Patched sys.path, added: '%s'", build_dir)
-    module = importer(PROJECT_NAME)
+    PROJECT_VERSION = getattr(module, 'version', '')
+    PROJECT_PATH = module.__path__[0]
 
-PROJECT_VERSION = getattr(module, 'version', '')
-PROJECT_PATH = module.__path__[0]
+    # Run the tests
+    runnerArgs = {}
+    runnerArgs["verbosity"] = test_verbosity
+    runnerArgs["buffer"] = use_buffer
+    if options.memprofile:
+        runnerArgs["resultclass"] = ProfileTextTestResult
+    else:
+        runnerArgs["resultclass"] = TextTestResultWithSkipList
+    runner = unittest.TextTestRunner(**runnerArgs)
 
-# Run the tests
-runnerArgs = {}
-runnerArgs["verbosity"] = test_verbosity
-runnerArgs["buffer"] = use_buffer
-if options.memprofile:
-    runnerArgs["resultclass"] = ProfileTextTestResult
-else:
-    runnerArgs["resultclass"] = TextTestResultWithSkipList
-runner = unittest.TextTestRunner(**runnerArgs)
+    logger.warning("Test %s %s from %s",
+                PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH)
 
-logger.warning("Test %s %s from %s",
-               PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH)
+    test_module_name = PROJECT_NAME + '.test'
+    logger.info('Import %s', test_module_name)
+    test_module = importer(test_module_name)
 
-test_module_name = PROJECT_NAME + '.test'
-logger.info('Import %s', test_module_name)
-test_module = importer(test_module_name)
+    test_suite = unittest.TestSuite()
 
-test_suite = unittest.TestSuite()
+    if not options.test_name:
+        # Do not use test loader to avoid cryptic exception
+        # when an error occur during import
+        project_test_suite = getattr(test_module, 'suite')
+        test_suite.addTest(project_test_suite())
+    else:
+        test_suite.addTest(
+            unittest.defaultTestLoader.loadTestsFromNames(options.test_name))
 
-if not options.test_name:
-    # Do not use test loader to avoid cryptic exception
-    # when an error occur during import
-    project_test_suite = getattr(test_module, 'suite')
-    test_suite.addTest(project_test_suite())
-else:
-    test_suite.addTest(
-        unittest.defaultTestLoader.loadTestsFromNames(options.test_name))
+    # Display the result when using CTRL-C
+    unittest.installHandler()
 
-# Display the result when using CTRL-C
-unittest.installHandler()
+    result = runner.run(test_suite)
 
-result = runner.run(test_suite)
+    if result.wasSuccessful():
+        exit_status = 0
+    else:
+        exit_status = 1
 
-if result.wasSuccessful():
-    exit_status = 0
-else:
-    exit_status = 1
+    if options.coverage:
+        cov.stop()
+        cov.save()
+        with open("coverage.rst", "w") as fn:
+            fn.write(report_rst(cov, PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH))
+    return exit_status
 
-if options.coverage:
-    cov.stop()
-    cov.save()
-    with open("coverage.rst", "w") as fn:
-        fn.write(report_rst(cov, PROJECT_NAME, PROJECT_VERSION, PROJECT_PATH))
-
-sys.exit(exit_status)
+if __name__ == "__main__":
+    sys.exit(main())
