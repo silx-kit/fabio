@@ -10,7 +10,7 @@ example: ./bootstrap.py ipython
 __authors__ = ["Frédéric-Emmanuel Picca", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "11/04/2024"
+__date__ = "10/03/2026"
 
 import sys
 import os
@@ -34,6 +34,20 @@ def get_project_name(root_dir):
     with open("pyproject.toml") as f:
         pyproject = tomli.loads(f.read())
     return pyproject.get("project", {}).get("name")
+
+
+def is_debug_python():
+    """Returns True if the Python interpreter is in debug mode."""
+    try:
+        import sysconfig
+    except ImportError:  # pragma nocover
+        # Python < 2.7
+        import distutils.sysconfig as sysconfig
+
+    if sysconfig.get_config_var("Py_DEBUG"):
+        return True
+
+    return hasattr(sys, "gettotalrefcount")
 
 
 def build_project(name, root_dir):
