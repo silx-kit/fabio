@@ -3,7 +3,6 @@
 # https://ci.appveyor.com/project/ESRF/fabio
 version: 2026.3.{build}
 
-version: 2026.3.{build}
 #shallow_clone: true
 clone_depth: 1
 build: false
@@ -55,7 +54,7 @@ environment:
         # Python 3.12
         - PYTHON_DIR: "C:\\Python312-x64"
           PYTHON_ARCH: "64"
-        
+
         # Python 3.13
         - PYTHON_DIR: "C:\\Python313-x64"
           PYTHON_ARCH: "64"
