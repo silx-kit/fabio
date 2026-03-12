@@ -13,5 +13,6 @@ cython
 Pillow
 lxml>=4.6.3
 qtpy
+pyside6
 matplotlib
 hdf5plugin
