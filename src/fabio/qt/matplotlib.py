@@ -46,7 +46,11 @@ from qtpy import API as BINDING
 from qtpy.QtGui import QFont
 
 # This must be performed before any import from matplotlib
-if BINDING in ("PySide6", "PyQt6", "PyQt5"):
+if BINDING in ("pyside6", "pyqt6"):
+    matplotlib.use("QtAgg", force=False)
+    from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg  # noqa
+    from matplotlib.backends.backend_qtagg import NavigationToolbar2QT  # noqa
+elif BINDING =="pyqt5":
     matplotlib.use("Qt5Agg", force=False)
     from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa
     from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT  # noqa
