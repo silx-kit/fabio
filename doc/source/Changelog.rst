@@ -1,17 +1,18 @@
 Changelog
 =========
 
-FabIO-2026.xx.y: 
+FabIO-2026.xx.y:
 ................
+- Migrate viewer application to `qtpy`
 - Supports Python 3.11+ though Python's limited API
 
-FabIO-2025.10.0: 
+FabIO-2025.10.0:
 ................
 - Include patches from debian (Thanks Rolland Mas)
 - Compatibility with recent version of Glymur
 - Supports Python 3.10-3.14
 
-FabIO-2024.9.0: 
+FabIO-2024.9.0:
 ...............
 - Link `peak` from sparse dataset to the dense one when using `densify_Bragg`
 - New tool `hdf2neggia` which converts any HDF5 file compatible into something compatible with XDS+neggia pluggin
@@ -21,7 +22,7 @@ FabIO-2024.9.0:
 - Fix warning which became errors in gcc14
 - Supports Python 3.8-3.12
 
-FabIO-2024.4.0: 
+FabIO-2024.4.0:
 ................
 - Support for new style GE-files (contribution from Patrick Avery)
 - Support sparse frames without background
@@ -30,25 +31,25 @@ FabIO-2024.4.0:
 - Support for Numpy v2.0
 - Support Python 3.7-3.12
 
-FabIO-2023.10.0: 
+FabIO-2023.10.0:
 ................
 - New tutorial on the ccreation of multiframe Tiff
 - Fix regression related to the depreciation of `fopen` on MSVC compilers (validation code)
 - Clean-up packaging
 - Support Python 3.7-3.12
 
-FabIO-2023.6.0: 
+FabIO-2023.6.0:
 ...............
 - Move source code to src
 - Remove anything related to setup.py (i.e. exit setuptools and numpy.distutils)
 - Debian build works only on debian12 (impossible to meet requirements on former versions)
 - Supports python 3.7 - 3.11
 
-FabIO-2023.4.1: 
+FabIO-2023.4.1:
 ...............
-- Bugfix (#528) wrong checksum with small CBF files 
+- Bugfix (#528) wrong checksum with small CBF files
 
-FabIO-2023.04: 
+FabIO-2023.04:
 ..............
 - `eiger2crysalis` generates full CrysalisPro projects, including mask & scan description
 - Support Python 3.7 to 3.11 with Cython 0.21-3.0
@@ -56,7 +57,7 @@ FabIO-2023.04:
 FabIO-2022.12: (12/12/2022):
 ............................
 - First version declared stable
-- Change the versioning system to calendar 
+- Change the versioning system to calendar
 - Change build-system from `numpy.distutils` to `meson-python`
 - Deprecate the usage of setup.py (will be removed in next release)
 - Fix Tif-reader for wrong photometric interpretation
@@ -70,7 +71,7 @@ FabIO-2022.12: (12/12/2022):
 
 FabIO-0.14.0 (06/2022):
 .......................
-- fix infinite loop when iterating over lima/eiger image files (#468) 
+- fix infinite loop when iterating over lima/eiger image files (#468)
 - fix typo when saving in pilatus/CBF format (#471)
 - fix noisy test on densification (#440)
 - limit version of setuptools (related to the PEP517 and associated regressions)
@@ -96,7 +97,7 @@ FabIO-0.12.0 (07/2021):
 - Refactor all CLI tools
 - Disable the mask calculation by default in `eiger2crysalis`
 - Clean-up some debuging prints in CbfImage
-- Correct MrcImage format (and change in tests) 
+- Correct MrcImage format (and change in tests)
 - Support for Python versions 3.6 to 3.9, tested on amd64, ppc64le and arm64
 - Linux is officially the main platform, Windows and MacOS are supported in best effort mode.
 
@@ -138,7 +139,7 @@ FabIO-0.10.0 (04/2020):
 - Updated debian packaging (PR #324, #326), added debian11/ubuntu20.04 support (PR #355)
 - Added changelog file (PR #357)
 - Remove packagin for debian 6, 7 and 8, add support for debian11
-- Drop support for Python2 and 3.4, validated version are 3.5-3.8 on mac, win & linux 
+- Drop support for Python2 and 3.4, validated version are 3.5-3.8 on mac, win & linux
 
 
 FabIO-0.9.0 (03/2019):

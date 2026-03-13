@@ -2,7 +2,7 @@
 name = 'fabio'
 dynamic = ['version',]
 license = {file = 'copyright'}
-requires-python = '>=3.10'
+requires-python = '>=3.11'
 readme = 'README.rst'
 description = 'FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python'
 #keyword = ['image', 'detector']
@@ -59,8 +59,8 @@ requires = [
     "tomli>=1.0.0; python_version < '3.11'"
 ]
 [project.optional-dependencies]
-gui = [ "pyside6", "matplotlib", "packaging" ]
-all = [ "pyside6", "matplotlib", "packaging" ]
+gui = [ "qtpy", "pyside6", "matplotlib", "packaging" ]
+all = [ "qtpy", "pyside6", "matplotlib", "packaging" ]
 
 [project.urls]
 homepage = 'http://www.silx.org'
@@ -75,10 +75,19 @@ eiger2cbf = 'fabio.app.eiger2cbf:main'
 eiger2crysalis = 'fabio.app.eiger2crysalis:main'
 fabio-convert = 'fabio.app.convert:main'
 hdf2neggia = 'fabio.app.hdf2neggia:main'
-
 #[project.gui-scripts]
 fabio_viewer = 'fabio.app.viewer:main'
 
 [tool.cibuildwheel]
-test-requires = ["pyqt5", "matplotlib"]
+test-requires = ["qtpy", "matplotlib"]
+# Skip 32-bit builds and PyPy
+skip = ["*-win32", "*-manylinux_i686", "pp*", "*musllinux*"]
 
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+ignore_errors = true
+
+[tool.coverage.html]
+directory = "coverage_html_report"

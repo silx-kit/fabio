@@ -13,4 +13,5 @@ Pillow
 h5py
 hdf5plugin
 matplotlib
-pyqt5
+qtpy
+pyside6

@@ -35,22 +35,27 @@ from __future__ import annotations
 
 __authors__ = ["T. Vincent"]
 __license__ = "MIT"
-__date__ = "02/05/2018"
+__date__ = "12/03/2026"
 
 
 import io
 import matplotlib
 import numpy
 
-from .. import qt
+from qtpy import API as BINDING
+from qtpy.QtGui import QFont
 
 # This must be performed before any import from matplotlib
-if qt.BINDING in ("PySide6", "PyQt6", "PyQt5"):
+if BINDING in ("pyside6", "pyqt6"):
+    matplotlib.use("QtAgg", force=False)
+    from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg  # noqa
+    from matplotlib.backends.backend_qtagg import NavigationToolbar2QT  # noqa
+elif BINDING =="pyqt5":
     matplotlib.use("Qt5Agg", force=False)
     from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa
     from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT  # noqa
 else:
-    raise ImportError("Unsupported Qt binding: %s" % qt.BINDING)
+    raise ImportError("Unsupported Qt binding: %s" % BINDING)
 
 
 from matplotlib.font_manager import FontProperties
@@ -78,15 +83,15 @@ class DefaultTickFormatter(_ScalarFormatter):
 
 
 _FONT_STYLES = {
-    qt.QFont.StyleNormal: "normal",
-    qt.QFont.StyleItalic: "italic",
-    qt.QFont.StyleOblique: "oblique",
+    QFont.StyleNormal: "normal",
+    QFont.StyleItalic: "italic",
+    QFont.StyleOblique: "oblique",
 }
 
 
-def qFontToFontProperties(font: qt.QFont):
+def qFontToFontProperties(font: QFont):
     """Convert a QFont to a matplotlib FontProperties"""
-    weightFactor = 10 if qt.BINDING == "PyQt5" else 1
+    weightFactor = 10 if BINDING == "PyQt5" else 1
     families = [font.family(), font.defaultFamily()]
     if _MATPLOTLIB_VERSION >= Version("3.6.0"):
         # Prevent 'Font family not found' warnings
@@ -107,7 +112,7 @@ def qFontToFontProperties(font: qt.QFont):
 
 def rasterMathText(
     text: str,
-    font: qt.QFont,
+    font: QFont,
     dotsPerInch: float = 96.0,
 ) -> tuple[numpy.ndarray, float]:
     """Raster text using matplotlib supporting latex-like math syntax.
