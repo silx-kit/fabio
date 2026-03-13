@@ -28,7 +28,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "GPLv3+"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/10/2025"
+__date__ = "13/03/2026"
 __status__ = "stable"
 
 import sys
@@ -38,15 +38,15 @@ from . import fabioformats as _fabioformats
 from . import fabioimage  # noqa
 from . import openimage  # noqa
 from .fabioutils import (
-    jump_filename,
-    FilenameObject,
-    previous_filename,
-    next_filename,
-    deconstruct_filename,
-    extract_filenumber,
-    getnum,
-    construct_filename,
-    exists,
+    jump_filename,  # noqa
+    FilenameObject,  # noqa
+    previous_filename,  # noqa
+    next_filename,  # noqa
+    deconstruct_filename,  # noqa
+    extract_filenumber,  # noqa
+    getnum,  # noqa
+    construct_filename,  # noqa
+    exists,  # noqa
 )  # noqa
 from .compression import COMPRESSORS  # noqa
 from .openimage import openimage as open  # noqa
