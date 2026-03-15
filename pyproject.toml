@@ -54,7 +54,7 @@ requires = [
     "meson; platform_system!='Windows'",
     'ninja',
     'wheel',
-    'Cython>=0.29',
+    'Cython>=3.1',
     'pyproject-metadata>=0.5.0',
     "tomli>=1.0.0; python_version < '3.11'"
 ]
