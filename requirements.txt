@@ -12,3 +12,5 @@ sphinx
 sphinxcontrib-programoutput
 sphinx-rtd-theme
 nbsphinx
+qtpy
+pyside6
