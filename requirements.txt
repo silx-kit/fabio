@@ -4,7 +4,7 @@ meson-python
 ninja
 tomli
 numpy
-cython
+cython>3.1
 lxml>=4.6.3
 h5py
 hdf5plugin
