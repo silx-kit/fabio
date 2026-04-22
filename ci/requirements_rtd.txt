@@ -4,6 +4,6 @@ sphinx
 cython
 sphinxcontrib-programoutput
 nbsphinx
-lxml>=4.6.3
+lxml>=6.1.0
 pillow
 pydata-sphinx-theme
