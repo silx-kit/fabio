@@ -343,7 +343,7 @@ class GeImage(FabioImage):
         data = numpy.frombuffer(raw, datatype).copy()
         if not numpy.little_endian:
             data.byteswap(True)
-        data.shape = rows, cols
+        data = data.reshape(rows, cols)
         self.data = data
         self._shape = None
         self.currentframe = int(img_num)

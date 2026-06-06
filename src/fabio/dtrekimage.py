@@ -146,7 +146,7 @@ class DtrekImage(FabioImage):
                     # Older numpy without inplace
                     data = data.byteswap()
             try:
-                data.shape = self._shape
+                data = data.reshape(self._shape)
             except ValueError:
                 raise IOError(
                     "Size spec in d*TREK header does not match "

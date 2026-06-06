@@ -185,7 +185,7 @@ class TestMar345(unittest.TestCase):
         a = mar345_IO.calc_nb_bits(numpy.arange(50).astype("int32"), 0, 50)
         self.assertEqual(a, 350, 50 * 7)
 
-        img.shape = shape
+        img = img.reshape(shape)
         cmp_ccp4 = mar345_IO.compress_pck(img, use_CCP4=True)
         cmp_fab = mar345_IO.compress_pck(img, use_CCP4=False)
         delta = abs(len(cmp_fab) - len(cmp_ccp4))

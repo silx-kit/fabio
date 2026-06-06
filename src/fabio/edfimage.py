@@ -897,7 +897,7 @@ class EdfImage(fabioimage.FabioImage):
                 )
                 # make sure we do not change the shape of the input data
                 stored_data = numpy.array(data, copy=False)
-                stored_data.shape = (1, len(data))
+                stored_data = stored_data.reshape(1, len(data))
             elif dim == 2:
                 stored_data = data
             elif dim >= 3:
@@ -1467,7 +1467,7 @@ class EdfImage(fabioimage.FabioImage):
             raw = f.read(frame.blobsize)
         try:
             data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
-            data.shape = self.data.shape
+            data = data.reshape(self.data.shape)
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
         if frame.swap_needed():
@@ -1528,7 +1528,7 @@ class EdfImage(fabioimage.FabioImage):
             raw += b"\x00" * (size - len(raw))
         try:
             data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
-            data.shape = -1, d1
+            data = data.reshape(-1, d1)
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
         if frame.swap_needed():

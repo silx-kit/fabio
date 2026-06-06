@@ -281,7 +281,7 @@ class CbfImage(FabioImage):
                 ),
                 self._dtype,
             )
-            data.shape = self._shape
+            data = data.reshape(self._shape)
             self.data = data
             self._shape = None
             self._dtype = None

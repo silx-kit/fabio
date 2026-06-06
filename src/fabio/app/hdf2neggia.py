@@ -206,9 +206,8 @@ class XDSbuilder:
                     cnt += 1
                     if fimg.dataset.ndim < 3:
                         dataset = numpy.atleast_3d(fimg.dataset)
-                        dataset.shape = (1,) * (
-                            3 - fimg.dataset.ndim
-                        ) + fimg.dataset.shape
+                        new_shape = (1,) * (3 - fimg.dataset.ndim) + fimg.dataset.shape
+                        dataset = dataset.reshape(new_shape)
                     else:
                         dataset = fimg.dataset
                     data.create_dataset(
@@ -241,7 +240,8 @@ class XDSbuilder:
                             cnt += 1
                             if fimg.dataset.ndim < 3:
                                 dataset = numpy.atleast_3d(item)
-                                dataset.shape = (1,) * (3 - item.ndim) + item.shape
+                                new_shape = (1,) * (3 - item.ndim) + item.shape
+                                dataset = dataset.reshape(new_shape)
                             else:
                                 dataset = item
                             data.create_dataset(

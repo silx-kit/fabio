@@ -197,7 +197,7 @@ class EigerImage(FabioImage):
                 else:
                     data = numpy.atleast_2d(ds)
                 if len(data.shape) == 2:
-                    data.shape = (1,) + data.shape
+                    data = data.reshape((1,) + data.shape)
                 chunks = (1,) + data.shape[-2:]
                 if len(self.dataset) > 1:
                     hds = data_grp.create_dataset(

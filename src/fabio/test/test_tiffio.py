@@ -46,7 +46,7 @@ class TestTiffIO(unittest.TestCase):
         tif = TiffIO(filename, mode="wb+")
         dtype = numpy.uint16
         data = numpy.arange(10000).astype(dtype)
-        data.shape = 100, 100
+        data = data.reshape(100, 100)
         tif.writeImage(data, info={"Title": "1st"})
         tif = None
 
@@ -63,7 +63,7 @@ class TestTiffIO(unittest.TestCase):
         tif = TiffIO(filename, mode="rb+")
         dtype = numpy.uint16
         data = numpy.arange(100).astype(dtype)
-        data.shape = 10, 10
+        data = data.reshape(10, 10)
         tif.writeImage((data * 2).astype(dtype), info={"Title": "2nd"})
         self.assertEqual(tif.getNumberOfImages(), 2)
         tif = None

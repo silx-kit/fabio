@@ -122,7 +122,7 @@ class PixiImage(fabioimage.FabioImage):
         data = numpy.frombuffer(
             filepointer.read(self._IMAGE_SIZE), numpy.dtype("<u2")
         ).copy()
-        data.shape = self.header["height"], self.header["width"]
+        data = data.reshape(self.header["height"], self.header["width"])
         return data
 
     def _readframe(self, filepointer, img_num):

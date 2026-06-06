@@ -171,7 +171,7 @@ class KcdImage(FabioImage):
             start = stop
             stop = (i + 1) * expected_size // nbReadOut
             data = numpy.frombuffer(block[start:stop], self._dtype).copy()
-            data.shape = dim2, dim1
+            data = data.reshape(dim2, dim1)
             if not numpy.little_endian:
                 data.byteswap(True)
             self.data += data
