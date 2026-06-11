@@ -179,7 +179,7 @@ class MrcImage(FabioImage):
         infile.seek(self._calc_offset(img_num), 0)
         data_buffer = infile.read(self.imagesize)
         data = numpy.frombuffer(data_buffer, self._dtype).copy()
-        data.shape = self._shape
+        data = data.reshape(self._shape)
         self.data = data
         self._shape = None
         self._dtype = None

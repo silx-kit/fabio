@@ -558,7 +558,7 @@ class FabioImage(_FabioArray):
     @shape.setter
     def shape(self, value):
         if self.data is not None:
-            self.data.shape = value
+            self.data = self.data.reshape(value)
         else:
             self._shape = value
 
@@ -714,7 +714,7 @@ class FabioImage(_FabioArray):
                         out += dataIn[i::y_rebin_fact, j::x_rebin_fact]
             else:  # method faster for large binning (8x8)
                 temp = self.data.astype("float64")
-                temp.shape = (shapeOut[0], y_rebin_fact, shapeOut[1], x_rebin_fact)
+                temp = temp.reshape(shapeOut[0], y_rebin_fact, shapeOut[1], x_rebin_fact)
                 out = temp.sum(axis=3).sum(axis=1)
         self.resetvals()
         if keep_I:

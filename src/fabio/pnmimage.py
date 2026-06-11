@@ -205,7 +205,7 @@ class PnmImage(FabioImage):
             raise IOError(
                 "Size spec in pnm-header does not match size of image data field"
             )
-        data.shape = self.shape
+        data = data.reshape(self.shape)
         if numpy.little_endian:
             data.byteswap(True)
         return data
