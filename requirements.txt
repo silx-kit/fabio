@@ -5,7 +5,7 @@ ninja
 tomli
 numpy
 cython>3.1
-lxml>=4.6.3
+lxml>=6.1.1
 h5py
 hdf5plugin
 sphinx
