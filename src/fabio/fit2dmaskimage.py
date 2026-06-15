@@ -37,7 +37,7 @@ __authors__ = ["Jon Wright", "Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/10/2025"
+__date__ = "15/06/2026"
 
 import io
 import numpy
@@ -111,7 +111,7 @@ class Fit2dMaskImage(FabioImage):
         # Transpose appears to be needed to match edf reader (scary??)
         # self.data = numpy.transpose(self.data)
         self.data = numpy.ascontiguousarray(data, dtype=numpy.uint8)
-        self.data.shape = self._shape
+        self.data = self.data.reshape(self._shape)
         self._shape = None
         return self
 
