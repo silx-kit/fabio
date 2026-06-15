@@ -34,6 +34,7 @@ Jerome Kieffer 04/12/2014
 
 import unittest
 import logging
+import io
 from fabio.openimage import openimage
 from fabio.edfimage import EdfImage
 from fabio.marccdimage import MarccdImage
@@ -73,6 +74,18 @@ class TestOpenEdf(unittest.TestCase):
         filename = UtilsTest.getimage(fname)
         self.checkFile(filename)
 
+    def testStream(self):
+        fname = "F2K_Seb_Lyso0675.edf.bz2"
+        filename = UtilsTest.getimage(fname)[:-4]
+        stream = io.BytesIO(open(filename, "rb").read())
+        fimg = openimage(stream)
+        ref = EdfImage()
+        ref.read(filename)
+
+        self.assertEqual(type(ref), type(fimg), "type matches")
+        self.assertEqual(ref.shape, fimg.shape, "shape matches")
+        self.assertEqual(ref.dtype, fimg.dtype, "dtype matches")
+
 
 class TestOpenMccd(unittest.TestCase):
     """openimage opening mccd"""
@@ -100,6 +113,18 @@ class TestOpenMccd(unittest.TestCase):
         fname = "somedata_0001.mccd.bz2"
         filename = UtilsTest.getimage(fname)
         self.checkFile(filename)
+
+    def testStream(self):
+        fname = "somedata_0001.mccd.bz2"
+        filename = UtilsTest.getimage(fname)[:-4]
+        stream = io.BytesIO(open(filename, "rb").read())
+        fimg = openimage(stream)
+        ref = EdfImage()
+        ref.read(filename)
+
+        self.assertEqual("tifimage", type(fimg), "type matches")
+        self.assertEqual(ref.shape, fimg.shape, "shape matches")
+        self.assertEqual(ref.dtype, fimg.dtype, "dtype matches")
 
 
 class TestOpenMask(unittest.TestCase):

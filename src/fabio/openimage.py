@@ -123,7 +123,12 @@ MAGIC_NUMBERS = [
 
 
 def do_magic(byts, filename):
-    """Try to interpret the bytes starting the file as a magic number"""
+    """Try to interpret the bytes starting the file as a magic number
+
+    :param byts:
+    :param filename: name of the file or None in the case of a buffer
+    :return: format_type
+    """
     for magic, format_type in MAGIC_NUMBERS:
         if byts.startswith(magic):
             if "/" in format_type:
@@ -163,7 +168,7 @@ def do_magic(byts, filename):
                             else:
                                 return "eiger"
                 elif format_type == "marccd/tif":
-                    if "mccd" in filename.split("."):
+                    if filename and "mccd" in filename.split("."):
                         return "marccd"
                     else:
                         return "tif"
@@ -256,6 +261,7 @@ def _openimage(filename):
     hdf5:///example.h5?entry/instrument/detector/data/data#slice=[:,:,5]
 
     """
+    stream_input = False
     if hasattr(filename, "seek") and hasattr(filename, "read"):
         # Data stream without filename
         filename.seek(0)
@@ -263,6 +269,7 @@ def _openimage(filename):
         actual_filename = BytesIO(data)
         # Back to the location before the read
         filename.seek(0)
+        stream_input = True
     else:
         if os.path.exists(filename):
             # Already a valid filename
@@ -284,7 +291,8 @@ def _openimage(filename):
 
     filetype = None
     try:
-        filetype = do_magic(magic_bytes, filename)
+        filetype = do_magic(magic_bytes,
+                        None if stream_input else filename)
     except Exception:
         logger.debug("Backtrace", exc_info=True)
         try:
