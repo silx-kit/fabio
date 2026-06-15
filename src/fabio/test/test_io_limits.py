@@ -88,7 +88,7 @@ class TestCli(unittest.TestCase):
         fabio.utils.cli.relax_ulimit()
         try:
             import resource
-        except:
+        except Exception:
             return
         try:
             soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
