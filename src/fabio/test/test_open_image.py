@@ -77,7 +77,8 @@ class TestOpenEdf(unittest.TestCase):
     def testStream(self):
         fname = "F2K_Seb_Lyso0675.edf.bz2"
         filename = UtilsTest.getimage(fname)[:-4]
-        stream = io.BytesIO(open(filename, "rb").read())
+        with open(filename, "rb") as fd:
+            stream = io.BytesIO(fd.read())
         fimg = openimage(stream)
         ref = EdfImage()
         ref.read(filename)
@@ -117,12 +118,13 @@ class TestOpenMccd(unittest.TestCase):
     def testStream(self):
         fname = "somedata_0001.mccd.bz2"
         filename = UtilsTest.getimage(fname)[:-4]
-        stream = io.BytesIO(open(filename, "rb").read())
+        with open(filename, "rb") as fd:
+            stream = io.BytesIO(fd.read())
         fimg = openimage(stream)
-        ref = EdfImage()
+        ref = MarccdImage()
         ref.read(filename)
 
-        self.assertEqual("tifimage", type(fimg), "type matches")
+        self.assertTrue("TifImage" in type(fimg).__name__, "type matches")
         self.assertEqual(ref.shape, fimg.shape, "shape matches")
         self.assertEqual(ref.dtype, fimg.dtype, "dtype matches")
 
@@ -158,6 +160,18 @@ class TestOpenMask(unittest.TestCase):
         filename = UtilsTest.getimage(fname)
         self.checkFile(filename)
 
+    def testStream(self):
+        fname = "face.msk.bz2"
+        filename = UtilsTest.getimage(fname)[:-4]
+        with open(filename, "rb") as fd:
+            stream = io.BytesIO(fd.read())
+        fimg = openimage(stream)
+        ref = Fit2dMaskImage()
+        ref.read(filename)
+
+        self.assertTrue("Fit2dMaskImage" in type(fimg).__name__, "type matches")
+        self.assertEqual(ref.shape, fimg.shape, "shape matches")
+        self.assertEqual(ref.dtype, fimg.dtype, "dtype matches")
 
 class TestOpenBruker(unittest.TestCase):
     """openimage opening bruker"""
@@ -188,6 +202,19 @@ class TestOpenBruker(unittest.TestCase):
         fname = "Cr8F8140k103.0026.bz2"
         filename = UtilsTest.getimage(fname)
         self.checkFile(filename)
+
+    def testStream(self):
+        fname = "Cr8F8140k103.0026.bz2"
+        filename = UtilsTest.getimage(fname)[:-4]
+        with open(filename, "rb") as fd:
+            stream = io.BytesIO(fd.read())
+        fimg = openimage(stream)
+        ref = BrukerImage()
+        ref.read(filename)
+
+        self.assertTrue("BrukerImage" in type(fimg).__name__, "type matches")
+        self.assertEqual(ref.shape, fimg.shape, "shape matches")
+        self.assertEqual(ref.dtype, fimg.dtype, "dtype matches")
 
 
 class TestOpenDtrek(unittest.TestCase):
@@ -220,6 +247,19 @@ class TestOpenDtrek(unittest.TestCase):
         filename = UtilsTest.getimage(fname)
         self.checkFile(filename)
 
+    def testStream(self):
+        fname = "mb_LP_1_001.img.bz2"
+        filename = UtilsTest.getimage(fname)[:-4]
+        with open(filename, "rb") as fd:
+            stream = io.BytesIO(fd.read())
+        fimg = openimage(stream)
+        ref = DtrekImage()
+        ref.read(filename)
+
+        self.assertTrue("DtrekImage" in type(fimg).__name__, "type matches")
+        self.assertEqual(ref.shape, fimg.shape, "shape matches")
+        self.assertEqual(ref.dtype, fimg.dtype, "dtype matches")
+
 
 class TestOpenOxd(unittest.TestCase):
     """openimage opening adsc"""
@@ -244,6 +284,19 @@ class TestOpenOxd(unittest.TestCase):
         fname = "b191_1_9_1_uncompressed.img.bz2"
         filename = UtilsTest.getimage(fname)[:-4]
         self.checkFile(filename)
+
+    def testStream(self):
+        fname = "b191_1_9_1_uncompressed.img.bz2"
+        filename = UtilsTest.getimage(fname)[:-4]
+        with open(filename, "rb") as fd:
+            stream = io.BytesIO(fd.read())
+        fimg = openimage(stream)
+        ref = OXDimage()
+        ref.read(filename)
+
+        self.assertTrue("OxdImage" in type(fimg).__name__, "type matches")
+        self.assertEqual(ref.shape, fimg.shape, "shape matches")
+        self.assertEqual(ref.dtype, fimg.dtype, "dtype matches")
 
 
 def suite():
