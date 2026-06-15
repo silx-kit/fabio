@@ -136,7 +136,7 @@ class AppForm(qt.QMainWindow):
         """Return a nicely formatted header string.
 
         :param d: dict containing headers
-        :return: formated string
+        :return: formatted string
 	"""
         keys = sorted(d.keys())
         return " \n".join([f"{k}: {d[k]}" for k in keys]) + " \n"

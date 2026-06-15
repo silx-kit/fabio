@@ -24,7 +24,7 @@
 # ###########################################################################*/
 """Access to external resources.
 
-Module imported from silx project to avoid cyclic dependancy.
+Module imported from silx project to avoid cyclic dependency.
 """
 
 __authors__ = ["Thomas Vincent", "J. Kieffer"]

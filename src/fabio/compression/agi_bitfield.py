@@ -284,8 +284,8 @@ def compress_field(ifield, fieldsize, overflow_table):
 def decode_field(field):
     """decodes a field from bytes.
 
-    One field always encode for 8 pixels but my be stored on 1 to 8 pixels
-    (overflow are handeled separately)
+    One field always encode for 8 pixels but may be stored on 1 to 8 pixels
+    (overflow are handled separately)
 
     :param field: bytes
     :returns list
@@ -302,7 +302,7 @@ def decode_field(field):
 
 
 def read_len_byte(lb):
-    """parses the length byte and returns the sizes of the next twofields
+    """parses the length byte and returns the sizes of the next two fields
     :param lb: int/byte
     :returns tuple
     """
@@ -310,7 +310,7 @@ def read_len_byte(lb):
 
 
 def write_escaped(value, buffer):
-    """write an value to the buffer and escape when overflowing one byte
+    """write a value to the buffer and escape when overflowing one byte
     :param value: int
     :param buffer: io.BytesIO
     """

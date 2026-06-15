@@ -135,7 +135,7 @@ class Converter:
 
         :param x, y: position in the initial image
         :shape: shape of the input image
-        :return: x, y, coordinated of the new beam center within the esperanto frame.
+        :return: x, y, coordinates of the new beam center within the esperanto frame.
         """
         dummy = 123
         m = numpy.zeros(shape, dtype=numpy.int32)

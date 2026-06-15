@@ -100,7 +100,7 @@ class _FabioArray(object):
     )
     def dim3(self):
         if len(self.shape) < 3:
-            raise AttributeError("No attribye dim3")
+            raise AttributeError("No attribute dim3")
         return self.shape[-3]
 
     @property
@@ -180,7 +180,7 @@ class _FabioArray(object):
 
     @pilimage.setter
     @deprecation.deprecated(
-        reason="Setting pilimage not supported. This attrbute is not cached anymore",
+        reason="Setting pilimage not supported. This attribute is not cached anymore",
         deprecated_since="0.10.0beta",
     )
     def pilimage(self, value):
@@ -277,7 +277,7 @@ class _FabioArray(object):
 
     @property
     def bpp(self):
-        "Getter for bpp: data superseeds _bpp"
+        "Getter for bpp: data supersedes _bpp"
         if self.data is not None:
             return self.data.dtype.itemsize
         return self.dtype.itemsize
@@ -287,7 +287,7 @@ class _FabioArray(object):
 
     @property
     def bytecode(self):
-        "Getter for bpp: data superseeds _bytecode"
+        "Getter for bpp: data supersedes _bytecode"
         if self.data is not None:
             return self.data.dtype.type
         return self.dtype.type
@@ -587,7 +587,7 @@ class FabioImage(_FabioArray):
 
     @property
     def incomplete_file(self):
-        """Returns true if the readed file is not complete.
+        """Returns true if the read file is not complete.
 
         :rtype: bool
         """

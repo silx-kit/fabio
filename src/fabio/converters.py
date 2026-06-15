@@ -31,7 +31,7 @@
 """Converter module.
 
 This is for the moment empty (populated only with almost pass through anonymous functions)
-but aims to be populated with more sofisticated translators...
+but aims to be populated with more sophisticated translators...
 
 """
 

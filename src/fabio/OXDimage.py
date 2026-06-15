@@ -86,7 +86,7 @@ class OxdImage(FabioImage):
     """
     Oxford Diffraction Sapphire 3 images reader/writer class
 
-    Note: We assume the binary format is alway little-endian, is this True ?
+    Note: We assume the binary format is always little-endian, is this True ?
     """
 
     DESCRIPTION = "Oxford Diffraction Sapphire 3 file format"

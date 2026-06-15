@@ -28,7 +28,7 @@
 Authors: Jérôme Kieffer, ESRF
          email:jerome.kieffer@esrf.fr
 
-XSDimge are XML files containing numpy arrays
+XSDimage are XML files containing numpy arrays
 """
 
 __author__ = "Jérôme Kieffer"

@@ -124,7 +124,7 @@ def register(codec_class):
 def register_default_formats():
     """Register all available default image classes provided by fabio.
 
-    If a format is already registered, it will be overwriten
+    If a format is already registered, it will be overwritten
     """
     # we use __init__ rather than __new__ here because we want
     # to modify attributes of the class *after* they have been
@@ -134,13 +134,13 @@ def register_default_formats():
         codec_class = getattr(module, class_name)
         if codec_class is None:
             raise RuntimeError(
-                "Class name '%s' from mudule '%s' not found" % (class_name, module_name)
+                "Class name '%s' from module '%s' not found" % (class_name, module_name)
             )
         register(codec_class)
 
 
 def get_all_classes():
-    """Returns the list of supported codec identified by there fabio classes.
+    """Returns the list of supported codec identified by their fabio classes.
 
     :rtype: list"""
     return _registry.values()

@@ -344,7 +344,7 @@ class EdfFrame(fabioimage.FabioFrame):
         EDF_BinarySize and EDF_HeaderSize are expected.
 
         The keywords EDF_BinaryFileName, EDF_BinaryFileSize, EDF_BinaryFilePosition
-        musst always be written AFTER these keywords.  Therefore, bfname, bfsize
+        must always be written AFTER these keywords.  Therefore, bfname, bfsize
         and bfstart can only be updated when the full header has been read.
 
         The parameters EDF_BinaryFilePosition and EDF_BinaryFileSize specify the
@@ -1063,7 +1063,7 @@ class EdfImage(fabioimage.FabioImage):
         # Different to the original expression b'}[\r\n]' this
         # one matches only "}\r\n" and "}\n", but not "}\r" alone.
         # start_blob, end_block and offset can be calculated
-        # directly after a succesful search.
+        # directly after a successful search.
         #
         # The maximum length of the header end pattern is 3 bytes,
         # Additional checks are needed for locating header end
@@ -1486,7 +1486,7 @@ class EdfImage(fabioimage.FabioImage):
         The aim is performances, ... but only supports uncompressed files.
 
         :param filename: name of another file with the same structure.
-        :paran coords: 2 tuple of slices (RECOMMANDED) or a 4 tuple (NOT RECOMMANDED, cryptic fabian convention)
+        :paran coords: 2 tuple of slices (RECOMMENDED) or a 4 tuple (NOT RECOMMENDED, cryptic fabian convention)
         :return: ROI-data from another file using positions from current EdfImage
         :rtype: numpy 2darray
         """

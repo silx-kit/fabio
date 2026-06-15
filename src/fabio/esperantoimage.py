@@ -150,7 +150,7 @@ class EsperantoImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        :param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bzipped file)
         """
         self.header = self.check_header()
 

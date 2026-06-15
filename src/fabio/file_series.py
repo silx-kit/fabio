@@ -375,7 +375,7 @@ class numbered_file_series(file_series):
 class filename_series(object):
     """Iterator through a list of files indexed by a number.
 
-    Supports `next`, `prevous` and jump accessors.
+    Supports `next`, `previous` and jump accessors.
 
     :param Union[str,FilenameObject] filename: The first filename of the
         iteration.
@@ -415,7 +415,7 @@ class filename_series(object):
         return openimage(self.next())
 
     def prev_image(self):
-        """returns the previos image as a fabioimage"""
+        """returns the previous image as a fabioimage"""
         return openimage(self.previous())
 
     def current_image(self):
@@ -456,7 +456,7 @@ _FileDescription = collections.namedtuple(
 def _filename_series_adapter(series):
     """Adapter to list all available files from a `filename_series` class.
 
-    Without the adaptater `filename_series` will not list the first element,
+    Without the adapter `filename_series` will not list the first element,
     and will loop to the infinite.
     """
     assert isinstance(series, filename_series)
@@ -484,7 +484,7 @@ class FileSeries(FabioImage):
 
     .. code-block:: python
 
-        # Sequencial access through all the frames
+        # Sequential access through all the frames
         with FileSeries(filenames) as serie:
             for frame in serie.frames():
                 frame.data
@@ -518,7 +518,7 @@ class FileSeries(FabioImage):
         filenames = filename_series("foobar_0000.edf")
         serie = FileSeries(filenames=filenames)
 
-    Options are provided to optimize a non-sequencial access by providing the
+    Options are provided to optimize a non-sequential access by providing the
     amount of frames stored per files. This options (`single_frame`, `fixed_frames` and
     `fixed_frame_number`) can be used if we know an a priori on the way frames
     are stored in the files (the exact same amount of frames par file).
@@ -551,9 +551,9 @@ class FileSeries(FabioImage):
             contain only one frame.
         :param Union[Bool,None] fixed_frames: If True, all files are supposed to
             contain the same amount of frames (this fixed amount will be reached
-            from the first file of the serie).
+            from the first file of the series).
         :param Union[Integer,None] fixed_frame_number: If set, all files are
-            supposed to contain the same amount of frames (sepecified by this
+            supposed to contain the same amount of frames (specified by this
             argument)
         """
         if isinstance(filenames, filename_series):
@@ -588,17 +588,17 @@ class FileSeries(FabioImage):
 
         self.__nframes = None
         self.use_edf_shortcut = True
-        """If true a custom file sequencial file reader is used for EDF formats"""
+        """If true a custom file sequential file reader is used for EDF formats"""
 
     def close(self):
-        """Close any IO handler openned."""
+        """Close any IO handler opened."""
         if self.__current_fabio_file is not None:
             self.__current_fabio_file.close()
         self.__current_fabio_file_index = -1
         self.__current_fabio_file = None
 
     def __iter_filenames(self):
-        """Returns an iterator throug all filenames of the file series."""
+        """Returns an iterator through all filenames of the file series."""
         for filename in self.__filenames:
             yield filename
         if self.__filename_generator is not None:
@@ -609,7 +609,7 @@ class FileSeries(FabioImage):
             self.__filename_generator = None
 
     def frames(self):
-        """Returns an iterator throug all frames of all filenames of this
+        """Returns an iterator through all frames of all filenames of this
         file series."""
         import fabio.edfimage
 
@@ -645,7 +645,7 @@ class FileSeries(FabioImage):
 
         It is needed to know the number of frames.
 
-        .. note:: If the generator do not have endding, it will result an
+        .. note:: If the generator do not have ending, it will result an
             infinite loop.
         """
         if self.__filename_generator is not None:
@@ -682,7 +682,7 @@ class FileSeries(FabioImage):
         return filename
 
     def __get_file(self, file_number):
-        """Returns the opennned FabioImage from it's file position.
+        """Returns the opened FabioImage from it's file position.
 
         :param int file_number: Position of the file in the file series
         :rtype: FabioImage
@@ -701,7 +701,7 @@ class FileSeries(FabioImage):
     def __iter_file_descriptions(self):
         """Iter all file descriptions.
 
-        Use a cached structure which grows according to the requestes.
+        Use a cached structure which grows according to the requests.
         """
         assert self.__file_descriptions is not None
         for description in self.__file_descriptions:

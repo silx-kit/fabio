@@ -38,7 +38,7 @@
 Based on: openbruker,readbruker, readbrukerheader functions in the opendata
          module of ImageD11 written by Jon Wright, ESRF, Grenoble, France
 
-Writer by Jérôme Kieffer, ESRF, Grenoble, France
+Written by Jérôme Kieffer, ESRF, Grenoble, France
 
 """
 
@@ -67,7 +67,7 @@ class BrukerImage(FabioImage):
 
     TODO: int32 -> float32 conversion according to the "linear" keyword.
     This is done and works but we need to check with other program that we
-    are appliing the right formula and not the reciprocal one.
+    are applying the right formula and not the reciprocal one.
 
     """
 
@@ -145,7 +145,7 @@ class BrukerImage(FabioImage):
         "LUT",  # Recommended display lookup table
         "DISPLIM",  # Recommended display limits
         "PROGRAM",  # Name and version of program writing frame, such as:
-        "ROTATE",  # Non zero if acquired by rotation of phi during scan (or oscilate)
+        "ROTATE",  # Non zero if acquired by rotation of phi during scan (or oscillate)
         "BITMASK",  # File name of active pixel mask associated with this frame or $NULL
         "OCTMASK",  # Octagon mask parameters to use if BITMASK=$null. Min X, Min X+Y, Min Y, Max X-Y, Max X, Max X+Y, Max Y, Max Y-X.
         "ESDCELL",  # Unit cell parameter standard deviations
