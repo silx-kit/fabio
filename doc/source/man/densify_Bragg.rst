@@ -36,7 +36,7 @@ Options:
    output version and exit
 
 **-v**, **-\-verbose**
-   show information for each conversions
+   show information for each conversion
 
 **-\-debug**
    show debug information

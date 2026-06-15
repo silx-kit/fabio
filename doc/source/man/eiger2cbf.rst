@@ -33,7 +33,7 @@ Options:
    output version and exit
 
 **-v**, **-\-verbose**
-   show information for each conversions
+   show information for each conversion
 
 **-\-debug**
    show debug information
@@ -105,7 +105,7 @@ Goniometer setup:
 Image preprocessing:
 ++++++++++++++++++++
 
-Images are patched onto the center of a square frame, and transformation are applied in this order:
+Images are patched onto the center of a square frame, and transformations are applied in this order:
 
 **-\-rotation** ROTATION
    Rotate the initial image by this value in degrees. Must be a multiple
