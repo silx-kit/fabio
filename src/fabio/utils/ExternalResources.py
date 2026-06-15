@@ -1,7 +1,7 @@
 # coding: utf-8
 # /*##########################################################################
 #
-# Copyright (c) 2016-2018 European Synchrotron Radiation Facility
+# Copyright (c) 2016-2026 European Synchrotron Radiation Facility
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,36 +22,41 @@
 # THE SOFTWARE.
 #
 # ###########################################################################*/
-"""Access to external resources.
+"""Helper to access to external resources.
 
 Module imported from silx project to avoid cyclic dependancy.
 """
 
 __authors__ = ["Thomas Vincent", "J. Kieffer"]
 __license__ = "MIT"
-__date__ = "14/04/2020"
+__date__ = "15/06/2026"
 
-import os
-import threading
+
+import hashlib
 import json
 import logging
+import os
+import sys
+import tarfile
 import tempfile
+import threading
+import time
 import unittest
 import urllib.request
 import urllib.error
-import bz2
-import gzip
+import zipfile
+import filelock
 
 logger = logging.getLogger(__name__)
 
 
-class ExternalResources(object):
+class ExternalResources:
     """Utility class which allows to download test-data from www.silx.org
     and manage the temporary data during the tests.
 
     """
 
-    def __init__(self, project, url_base, env_key=None, timeout=60):
+    def __init__(self, project, url_base, env_key=None, timeout=60, data_home=None):
         """Constructor of the class
 
         :param str project: name of the project, like "silx"
@@ -64,16 +69,24 @@ class ExternalResources(object):
                             The environment variable is optional: in case it is not set,
                             a directory in the temporary folder is used.
         :param timeout: time in seconds before it breaks
+        :param data_home: Directory in which the data will be downloaded
         """
         self.project = project
         self._initialized = False
         self.sem = threading.Semaphore()
-
+        self.hash = hashlib.sha256
         self.env_key = env_key or (self.project.upper() + "_TESTDATA")
         self.url_base = url_base
-        self.all_data = set()
+        self.all_data = {}
         self.timeout = timeout
-        self._data_home = None
+        self._data_home = data_home
+        self.testdata = ""
+        self.lock = None
+
+    @property
+    def lockfile(self):
+        """Returns the lockfile path."""
+        return self.testdata + ".lock"
 
     @property
     def data_home(self):
@@ -98,12 +111,33 @@ class ExternalResources(object):
                 else:
                     name = "uid" + str(os.getuid())
 
-            basename = "%s_testdata_%s" % (self.project, name)
+            basename = f"{self.project}_testdata_{name}"
             data_home = os.path.join(tempfile.gettempdir(), basename)
         if not os.path.exists(data_home):
-            os.makedirs(data_home)
+            try:
+                os.makedirs(data_home)
+            except OSError as exc:
+                raise RuntimeError(
+                    f"Unable to create data directory {data_home} ! ({exc})"
+                )
         self._data_home = data_home
+
         return data_home
+
+    def get_hash(self, filename=None, data=None):
+        "Calculate and return the hash of a file or a bunch of data"
+        if data is None and filename is None:
+            return
+        h = self.hash()
+        if filename is not None:
+            fullfilename = os.path.join(self.data_home, filename)
+            if os.path.exists(fullfilename):
+                with open(fullfilename, "rb") as fd:
+                    data = fd.read()
+            else:
+                raise RuntimeError(f"Filename {fullfilename} does not exist !")
+        h.update(data)
+        return h.hexdigest()
 
     def _initialize_data(self):
         """Initialize for downloading test data"""
@@ -111,9 +145,8 @@ class ExternalResources(object):
             with self.sem:
                 if not self._initialized:
                     self.testdata = os.path.join(self.data_home, "all_testdata.json")
-                    if os.path.exists(self.testdata):
-                        with open(self.testdata) as f:
-                            self.all_data = set(json.load(f))
+                    self.lock = filelock.FileLock(self.lockfile, timeout=self.timeout)
+                    self.all_data = self.load_json()
                     self._initialized = True
 
     def clean_up(self):
@@ -123,7 +156,7 @@ class ExternalResources(object):
         """Downloads the requested file from web-server available
         at https://www.silx.org/pub/silx/
 
-        :param: relative name of the image.
+        :param: relative name of the file.
         :return: full path of the locally saved file.
         """
         logger.debug("ExternalResources.getfile('%s')", filename)
@@ -133,9 +166,36 @@ class ExternalResources(object):
 
         fullfilename = os.path.abspath(os.path.join(self.data_home, filename))
 
-        if not os.path.isfile(fullfilename):
+        if os.path.isfile(fullfilename):
+            if filename not in self.all_data:
+                """File already exists but is not in the list of known files"""
+                time_out = time.perf_counter() + self.timeout
+                while time.perf_counter() < time_out:
+                    dico = self.load_json()
+                    if filename in dico:
+                        dico.update(self.all_data)
+                        self.all_data = dico
+                        break
+                    time.sleep(1)
+                else:
+                    logger.warning(
+                        f"Timeout! Filename {filename} not present in all_data:{os.linesep}{json.dumps(self.all_data, indent=2)}"
+                    )
+                    os.remove(fullfilename)
+                    return self.getfile(filename)
+
+            h = self.hash()
+            with open(fullfilename, mode="rb") as fd:
+                h.update(fd.read())
+
+            if h.hexdigest() != self.all_data[filename]:
+                logger.warning(f"Detected corrupted file {fullfilename} !")
+                self.all_data.pop(filename)
+                os.unlink(fullfilename)
+                return self.getfile(filename)
+        else:
             logger.debug(
-                "Trying to download image %s, timeout set to %ss",
+                "Trying to download file %s, timeout set to %ss",
                 filename,
                 self.timeout,
             )
@@ -154,169 +214,180 @@ class ExternalResources(object):
             logger.debug("wget %s/%s", self.url_base, filename)
             try:
                 data = opener(
-                    "%s/%s" % (self.url_base, filename), data=None, timeout=self.timeout
+                    f"{self.url_base}/{filename}", data=None, timeout=self.timeout
                 ).read()
-                logger.info("Image %s successfully downloaded.", filename)
+                logger.info(f"File {filename} successfully downloaded.")
             except urllib.error.URLError:
                 raise unittest.SkipTest("network unreachable.")
 
-            if not os.path.isdir(os.path.dirname(fullfilename)):
-                # Create sub-directory if needed
-                os.makedirs(os.path.dirname(fullfilename))
+            dirname = os.path.dirname(fullfilename)
+            if not os.path.isdir(dirname):
+                """Create sub-directory if needed"""
+                os.makedirs(dirname)
 
             try:
-                with open(fullfilename, "wb") as outfile:
+                with open(fullfilename, mode="wb") as outfile:
                     outfile.write(data)
-            except IOError:
-                raise IOError(
-                    "unable to write downloaded \
-                    data to disk at %s"
-                    % self.data_home
-                )
+            except OSError:
+                raise OSError(f"unable to write downloaded \
+                    data to disk at {fullfilename}")
 
-            if not os.path.isfile(fullfilename):
-                raise RuntimeError(
-                    ("Could not automatically download test images %s!" % filename)
-                    + "If you are behind a firewall, please set both environment variable http_proxy and https_proxy."
-                    + "This works even under windows !"
-                    + "Otherwise please try to download the images manually from"
-                    + "%s/%s" % (self.url_base, filename)
-                )
-
-        if filename not in self.all_data:
-            self.all_data.add(filename)
-            image_list = list(self.all_data)
-            image_list.sort()
-            try:
-                with open(self.testdata, "w") as fp:
-                    json.dump(image_list, fp, indent=4)
-            except IOError:
-                logger.debug("Unable to save JSON list")
-
+            if os.path.isfile(fullfilename):
+                self.all_data[filename] = self.get_hash(data=data)
+                self.save_json()
+            else:
+                raise RuntimeError("""Could not automatically download test files %s!
+                    If you are behind a firewall, please set both environment variable
+                     http_proxy and https_proxy.
+                    This even works under windows !
+                    Otherwise please try to download the files manually from
+                    %s/%s""" % (filename, self.url_base, filename))
         return fullfilename
+
+    def load_json(self) -> dict:
+        """Loads the JSON file containing the list of files and their hashes"""
+        all_data = {}
+        if self.testdata and os.path.exists(self.testdata):
+            try:
+                with self.lock:
+                    with open(self.testdata) as f:
+                        jdata = json.load(f)
+            except filelock.Timeout:
+                logger.error("Unable to lock JSON file")
+                jdata = {}
+            if isinstance(jdata, dict):
+                all_data = jdata
+            else:
+                # recalculate the hash only if the data was stored as a list
+                all_data = {k: self.get_hash(k) for k in jdata}
+        return all_data
+
+    def save_json(self):
+        """Saves the JSON file containing the list of files and their hashes"""
+        dico = self.load_json()
+        dico.update(self.all_data)
+        file_list = list(dico.keys())
+        file_list.sort()
+        dico = {i: dico[i] for i in file_list}  # reorder items
+
+        try:
+            with self.lock:
+                with open(self.testdata, "w") as fp:
+                    json.dump(dico, fp, indent=4)
+        except filelock.Timeout:
+            logger.error("Unable to lock JSON file")
+        except OSError:
+            logger.error("Unable to save JSON dict")
 
     def getdir(self, dirname):
         """Downloads the requested tarball from the server
         https://www.silx.org/pub/silx/
         and unzips it into the data directory
 
-        :param: relative name of the image.
+        :param: relative name of the file.
         :return: list of files with their full path.
         """
         lodn = dirname.lower()
-        if (
-            lodn.endswith("tar")
-            or lodn.endswith("tgz")
-            or lodn.endswith("tbz2")
-            or lodn.endswith("tar.gz")
-            or lodn.endswith("tar.bz2")
-        ):
-            import tarfile
-
-            engine = tarfile.TarFile.open
-        elif lodn.endswith("zip"):
-            import zipfile
-
-            engine = zipfile.ZipFile
-        else:
-            raise RuntimeError(
-                "Unsupported archive format. Only tar and zip are currently supported"
-            )
         full_path = self.getfile(dirname)
-        with engine(full_path, mode="r") as fd:
-            output = os.path.join(self.data_home, dirname + "__content")
-            fd.extractall(output)
-            if lodn.endswith("zip"):
-                result = [os.path.join(output, i) for i in fd.namelist()]
-            else:
-                result = [os.path.join(output, i) for i in fd.getnames()]
-        return result
+        output = os.path.join(self.data_home, dirname + "__content")
+
+        if lodn.endswith(("tar", "tgz", "tbz2", "tar.gz", "tar.bz2")):
+            with tarfile.TarFile.open(full_path, mode="r") as fd:
+                # Avoid unsafe filter deprecation warning during mode change
+                if (3, 12) <= sys.version_info < (3, 14):
+                    fd.extraction_filter = tarfile.data_filter
+                fd.extractall(output)
+                return [os.path.join(output, i) for i in fd.getnames()]
+
+        if lodn.endswith("zip"):
+            with zipfile.ZipFile(full_path, mode="r") as fd:
+                fd.extractall(output)
+                return [os.path.join(output, i) for i in fd.namelist()]
+
+        raise RuntimeError(
+            "Unsupported archive format. Only tar and zip " "are currently supported"
+        )
 
     def get_file_and_repack(self, filename):
         """
-        Downloads the requested file and decompress it if needed.
+        Download the requested file, decompress and repack it to bz2 and gz.
 
-        :param str filename: name of the image.
-            For the RedMine forge, the filename contains a directory name that
-            is removed
+        :param str filename: name of the file.
+        :rtype: str
         :return: full path of the locally saved file
         """
         if not self._initialized:
             self._initialize_data()
         if filename not in self.all_data:
-            self.all_data.add(filename)
-            image_list = list(self.all_data)
-            image_list.sort()
-            try:
-                with open(self.testdata, "w") as fp:
-                    json.dump(image_list, fp, indent=4)
-            except IOError:
-                logger.debug("Unable to save JSON list")
-        baseimage = os.path.basename(filename)
-        logger.info("UtilsTest.getimage('%s')" % baseimage)
+            self.all_data[filename] = self.get_hash(filename)
+            self.save_json()
+        basefilename = os.path.basename(filename)
 
         if not os.path.exists(self.data_home):
             os.makedirs(self.data_home)
-        fullimagename = os.path.abspath(os.path.join(self.data_home, baseimage))
+        fullfilename = os.path.abspath(os.path.join(self.data_home, basefilename))
 
-        if baseimage.endswith(".bz2"):
-            bzip2name = baseimage
-            basename = baseimage[:-4]
+        if basefilename.endswith(".bz2"):
+            bzip2name = basefilename
+            basename = basefilename[:-4]
             gzipname = basename + ".gz"
-        elif baseimage.endswith(".gz"):
-            gzipname = baseimage
-            basename = baseimage[:-3]
+        elif basefilename.endswith(".gz"):
+            gzipname = basefilename
+            basename = basefilename[:-3]
             bzip2name = basename + ".bz2"
         else:
-            basename = baseimage
-            gzipname = baseimage + "gz2"
+            basename = basefilename
+            gzipname = basefilename + "gz2"
             bzip2name = basename + ".bz2"
 
-        fullimagename_gz = os.path.abspath(os.path.join(self.data_home, gzipname))
-        fullimagename_raw = os.path.abspath(os.path.join(self.data_home, basename))
-        fullimagename_bz2 = os.path.abspath(os.path.join(self.data_home, bzip2name))
+        fullfilename_gz = os.path.abspath(os.path.join(self.data_home, gzipname))
+        fullfilename_raw = os.path.abspath(os.path.join(self.data_home, basename))
+        fullfilename_bz2 = os.path.abspath(os.path.join(self.data_home, bzip2name))
 
         # The files are recreated from the bz2 file
-        if not os.path.isfile(fullimagename_bz2):
+        if not os.path.isfile(fullfilename_bz2):
             self.getfile(bzip2name)
-            if not os.path.isfile(fullimagename_bz2):
-                raise RuntimeError(
-                    ("Could not automatically download test images %s!" % filename)
-                    + "If you are behind a firewall, please set the environment variable http_proxy and https_proxy."
-                    + "Otherwise please try to download the images manually from"
-                    + "%s/%s" % (self.url_base, filename)
-                )
+            if not os.path.isfile(fullfilename_bz2):
+                raise RuntimeError("""Could not automatically download test files %s!
+                    If you are behind a firewall, please set the environment variable
+                     http_proxy.
+                    Otherwise please try to download the files manually from
+                    %s""" % (self.url_base, filename))
 
-        raw_file_exists = os.path.isfile(fullimagename_raw)
-        gz_file_exists = os.path.isfile(fullimagename_gz)
+        try:
+            import bz2
+        except ImportError:
+            raise RuntimeError("bz2 library is needed to decompress data")
+        try:
+            import gzip
+        except ImportError:
+            gzip = None
+
+        raw_file_exists = os.path.isfile(fullfilename_raw)
+        gz_file_exists = os.path.isfile(fullfilename_gz)
         if not raw_file_exists or not gz_file_exists:
-            with open(fullimagename_bz2, "rb") as f:
+            with open(fullfilename_bz2, "rb") as f:
                 data = f.read()
             decompressed = bz2.decompress(data)
 
             if not raw_file_exists:
                 try:
-                    with open(fullimagename_raw, "wb") as fullimage:
-                        fullimage.write(decompressed)
-                except IOError:
-                    raise IOError(
-                        "unable to write decompressed \
-                    data to disk at %s"
-                        % self.data_home
-                    )
+                    with open(fullfilename_raw, "wb") as fullfile:
+                        fullfile.write(decompressed)
+                except OSError:
+                    raise OSError("unable to write decompressed \
+                    data to disk at %s" % self.data_home)
 
             if not gz_file_exists:
+                if gzip is None:
+                    raise RuntimeError("gzip library is expected to recompress data")
                 try:
-                    with gzip.open(fullimagename_gz, "wb") as g:
-                        g.write(decompressed)
-                except IOError:
-                    raise IOError(
-                        "unable to write gzipped \
-                    data to disk at %s"
-                        % self.data_home
-                    )
+                    gzip.open(fullfilename_gz, "wb").write(decompressed)
+                except OSError:
+                    raise OSError("unable to write gzipped \
+                    data to disk at %s" % self.data_home)
 
-        return fullimagename
+        return fullfilename
 
     def download_all(self, imgs=None):
         """Download all data needed for the test/benchmarks
@@ -327,7 +398,7 @@ class ExternalResources(object):
         if not self._initialized:
             self._initialize_data()
         if not imgs:
-            imgs = self.all_data
+            imgs = self.all_data.keys()
         res = []
         for fn in imgs:
             logger.info("Downloading from silx.org: %s", fn)
