@@ -26,7 +26,7 @@ Positional arguments:
 IMAGE
    File with sparse images stored in them
 
-Pptions:
+Options:
 --------
 
 **-h**, **-\-help**
@@ -48,7 +48,7 @@ Main arguments:
    show the list of available output formats and exit
 
 **-o** OUTPUT, **-\-output** OUTPUT
-   output filename, by default {baseame}_densify.h5
+   output filename, by default {basename}_densify.h5
 
 **-O** FORMAT, **-\-output-format** FORMAT
    output format among ``lima``, ``eiger`` ...

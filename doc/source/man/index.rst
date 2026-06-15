@@ -8,8 +8,8 @@
 Application manuals
 ===================
 
-FabIO is first and formost a library to access images produced by 2D X-ray detectors. 
-Few programs, thus available from the command line are also prvided:
+FabIO is first and foremost a library to access images produced by 2D X-ray detectors.
+Few programs, thus available from the command line are also provided:
 
 .. toctree::
    :maxdepth: 1

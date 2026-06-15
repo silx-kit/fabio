@@ -4,9 +4,9 @@ Eiger2Crysalis
 Purpose:
 --------
 
-Convert a stack of images acquires with an Eiger detector (HDF5, format `eiger` or `lima`) into a CrysalisPro project
+Convert a stack of images acquired with an Eiger detector (HDF5, format `eiger` or `lima`) into a CrysalisPro project
 
-CrysalisPro is a single-crystal data reduction program developped by Mathias Meyer
+CrysalisPro is a single-crystal data reduction program developed by Mathias Meyer
 and gracefully made available free of charge by Rigaku.
 
 The Crysalis project directory is populated with:
@@ -44,7 +44,7 @@ Options:
    output version and exit
 
 **-v**, **-\-verbose**
-   show information for each conversions
+   show information for each conversion
 
 **-\-debug**
    show debug information
@@ -122,7 +122,7 @@ Goniometer setup:
 Image preprocessing:
 ++++++++++++++++++++
 
-Images are patched onto the center of a square frame, and transformation are applied in this order:
+Images are patched onto the center of a square frame, and transformations are applied in this order:
 
 **-\-rotation** ROTATION
    Rotate the initial image by this value in degrees. Must be a multiple
@@ -149,7 +149,7 @@ Return code:
 Nota:
 -----
 
-Images are made square, so the beam center found in the eperanto image differs from the one entered.
+Images are made square, so the beam center found in the esperanto image differs from the one entered.
 
 .. command-output:: eiger2crysalis -\-help
     :nostderr:
