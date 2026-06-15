@@ -26,11 +26,15 @@
 
 __authors__ = ["Valentin Valls", "Jérôme Kieffer"]
 __license__ = "MIT"
-__date__ = "23/04/2021"
+__date__ = "15/06/2026"
 
 import sys
 import codecs
 import glob
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 
 def expand_args(args):
@@ -163,3 +167,26 @@ class ProgressBar:
 
         sys.stdout.write(line + " " * clean_size + "\r")
         sys.stdout.flush()
+
+
+def relax_ulimit():
+    """This function is a work-around for this bug:
+    `Too many opened files`
+    which occures on linux when treating large datasets
+
+    The (ugly) solution implemented here just increases the
+    soft limit to the hard limit.
+    """
+    try:
+        import resource
+    except ImportError:
+        _logger.debug("No resource module available")
+    else:
+        if hasattr(resource, "RLIMIT_NOFILE"):
+            try:
+                hard_nofile = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
+                resource.setrlimit(resource.RLIMIT_NOFILE, (hard_nofile, hard_nofile))
+            except (ValueError, OSError):
+                _logger.warning("Failed to retrieve and set the max opened files limit")
+            else:
+                _logger.debug("Set max opened files to %d", hard_nofile)
