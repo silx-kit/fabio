@@ -228,9 +228,8 @@ class ExternalResources:
             os.makedirs(dirname, exist_ok=True)
 
             try:
-                with self.lock:
-                    with open(fullfilename, mode="wb") as outfile:
-                        outfile.write(data)
+                with self.lock, open(fullfilename, mode="wb") as outfile:
+                    outfile.write(data)
             except filelock.Timeout:
                 logger.error(f"Unable to lock to write {filename} file.")
             except OSError:
