@@ -30,7 +30,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "27/10/2025"
+__date__ = "15/06/2026"
 
 import logging
 import numpy
@@ -121,9 +121,9 @@ class NumpyImage(fabioimage.FabioImage):
             return
         if self.dataset.ndim > 3:
             shape = self.dataset.shape[-2:]
-            self.dataset.shape = (-1,) + shape
+            self.dataset = self.dataset.reshape((-1,) + shape)
         elif self.dataset.ndim < 2:
-            self.dataset.shape = 1, -1
+            self.dataset = self.dataset.reshape((1, -1))
 
         if self.dataset.ndim == 2:
             self.data = self.dataset

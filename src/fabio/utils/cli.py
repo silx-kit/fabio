@@ -26,11 +26,19 @@
 
 __authors__ = ["Valentin Valls", "Jérôme Kieffer"]
 __license__ = "MIT"
-__date__ = "23/04/2021"
+__date__ = "16/06/2026"
 
 import sys
 import codecs
 import glob
+import logging
+try:
+    import resource
+except ImportError:
+    resource = None
+
+
+_logger = logging.getLogger(__name__)
 
 
 def expand_args(args):
@@ -61,7 +69,7 @@ class ProgressBar:
 
         The display is done with stdout using carriage return to to hide the
         previous progress. It is not possible to use stdout for something else
-        whill a progress bar is in use.
+        while a progress bar is in use.
 
         The result looks like:
 
@@ -87,7 +95,7 @@ class ProgressBar:
             # StringIO and is None in Python3 StringIO.
             encoding = sys.stdout.encoding
         if encoding is None:
-            # We uses the safer aproch: a valid ASCII character.
+            # We uses the safer approach: a valid ASCII character.
             self.progress_char = "#"
         else:
             try:
@@ -119,12 +127,12 @@ class ProgressBar:
 
     def update(self, value, message="", max_value=None):
         """
-        Update the progrss bar with the progress bar's current value.
+        Update the progress bar with the progress bar's current value.
 
         Set the progress bar's current value, compute the percentage
         of progress and update the screen with. Carriage return is used
         first and then the content of the progress bar. The cursor is
-        at the begining of the line.
+        at the beginning of the line.
 
         :param float value: progress bar's current value
         :param str message: message displayed after the progress bar
@@ -163,3 +171,24 @@ class ProgressBar:
 
         sys.stdout.write(line + " " * clean_size + "\r")
         sys.stdout.flush()
+
+
+def relax_ulimit():
+    """This function is a work-around for this bug:
+    `Too many opened files`
+    which occures on linux when treating large datasets
+
+    The (ugly) solution implemented here just increases the
+    soft limit to the hard limit.
+    """
+    if resource is None:
+        _logger.debug("No resource module available")
+    else:
+        if hasattr(resource, "RLIMIT_NOFILE"):
+            try:
+                hard_nofile = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
+                resource.setrlimit(resource.RLIMIT_NOFILE, (hard_nofile, hard_nofile))
+            except (ValueError, OSError):
+                _logger.warning("Failed to retrieve and set the max opened files limit")
+            else:
+                _logger.debug("Set max opened files to %d", hard_nofile)

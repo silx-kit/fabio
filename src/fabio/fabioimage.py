@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "27/10/2025"
+__date__ = "15/06/2026"
 
 import os
 import logging
@@ -100,7 +100,7 @@ class _FabioArray(object):
     )
     def dim3(self):
         if len(self.shape) < 3:
-            raise AttributeError("No attribye dim3")
+            raise AttributeError("No attribute dim3")
         return self.shape[-3]
 
     @property
@@ -138,10 +138,10 @@ class _FabioArray(object):
         self.__set_dim2(value)
 
     def __set_dim1(self, value):
-        self.data.shape = self.data.shape[:-2] + (-1, value)
+        self.data = self.data.reshape(self.data.shape[:-2] + (-1, value))
 
     def __set_dim2(self, value):
-        self.data.shape = self.data.shape[:-2] + (value, -1)
+        self.data = self.data.reshape(self.data.shape[:-2] + (value, -1))
 
     def resetvals(self):
         """Reset cache - call on changing data"""
@@ -180,7 +180,7 @@ class _FabioArray(object):
 
     @pilimage.setter
     @deprecation.deprecated(
-        reason="Setting pilimage not supported. This attrbute is not cached anymore",
+        reason="Setting pilimage not supported. This attribute is not cached anymore",
         deprecated_since="0.10.0beta",
     )
     def pilimage(self, value):
@@ -277,7 +277,7 @@ class _FabioArray(object):
 
     @property
     def bpp(self):
-        "Getter for bpp: data superseeds _bpp"
+        "Getter for bpp: data supersedes _bpp"
         if self.data is not None:
             return self.data.dtype.itemsize
         return self.dtype.itemsize
@@ -287,7 +287,7 @@ class _FabioArray(object):
 
     @property
     def bytecode(self):
-        "Getter for bpp: data superseeds _bytecode"
+        "Getter for bpp: data supersedes _bytecode"
         if self.data is not None:
             return self.data.dtype.type
         return self.dtype.type
@@ -414,7 +414,7 @@ class FabioFrame(_FabioArray):
     @shape.setter
     def shape(self, shape):
         if self.data is not None:
-            self.data.shape = shape
+            self.data = self.data.reshape(shape)
             self._shape = None
         else:
             self._shape = shape
@@ -587,7 +587,7 @@ class FabioImage(_FabioArray):
 
     @property
     def incomplete_file(self):
-        """Returns true if the readed file is not complete.
+        """Returns true if the read file is not complete.
 
         :rtype: bool
         """

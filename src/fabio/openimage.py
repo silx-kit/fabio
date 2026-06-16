@@ -346,16 +346,16 @@ def open_series(
         iterator, or :class:`~fabio.file_series.filename_series` or
         :class:`~fabio.file_series.file_series` objects.
     :param str first_filename: If provided iterate filenames from this filename
-        and try to consecutivelly open next files. If this argument is specified
+        and try to consecutively open next files. If this argument is specified
         the `filenames` have to unspecified. Internally it uses
         :class:`~fabio.file_series.filename_series` to iterate the filenames.
     :param Union[Bool,None] single_frame: If True, all files are supposed to
         contain only one frame.
     :param Union[Bool,None] fixed_frames: If True, all files are supposed to
         contain the same amount of frames (this fixed amount will be reached
-        from the first file of the serie).
+        from the first file of the series).
     :param Union[Integer,None] fixed_frame_number: If set, all files are
-        supposed to contain the same amount of frames (sepecified by this
+        supposed to contain the same amount of frames (specified by this
         argument)
     :rtype: :class:`~file_series.FileSeries`
     """

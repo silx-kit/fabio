@@ -75,10 +75,10 @@ def register(codec_class):
     """
     Register a codec class with the set of formats supported by fabio.
 
-    It is a transitional function to prepare the next comming version of fabio.
+    It is a transitional function to prepare the next coming version of fabio.
 
     - On the current fabio library, when a module is imported, all the formats
-        inheriting FabioImage are automatically registred. And this function is
+        inheriting FabioImage are automatically registered. And this function is
         doing nothing.
     - On the next fabio library. Importing a module containing classes
         inheriting FabioImage will not be registered. And this function will

@@ -123,7 +123,7 @@ class Jpeg2KImage(FabioImage):
             logger.debug("Backtrace", exc_info=True)
             raise IOError("File %s is not a valid format" % filename)
 
-        # Now the image can be used normaly
+        # Now the image can be used normally
         return image
 
     def _readWithGlymur(self, filename, infile):

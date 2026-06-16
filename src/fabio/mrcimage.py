@@ -107,7 +107,7 @@ class MrcImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        :param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bzipped file)
         """
         # list of header key to keep the order (when writing)
         self.header = self.check_header()
@@ -170,7 +170,7 @@ class MrcImage(FabioImage):
 
     def _readframe(self, infile, img_num):
         """
-        Read a frame an populate data
+        Read a frame and populate data
         :param infile: opened file
         :param img_num: frame number (int)
         """

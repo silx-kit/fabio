@@ -144,8 +144,7 @@ class Dm3Image(FabioImage):
             dim1_binning, dim2_binning = map(lambda x: x * int(binning_raw) * x, (1, 1))
         self._shape = dim2_raw // dim2_binning, dim1_raw // dim1_binning
         if "Data" in self.header:
-            self.data = self.header["Data"]
-            self.data.shape = self._shape
+            self.data = self.header["Data"].reshape(self._shape)
             self._shape = None
         return self
 

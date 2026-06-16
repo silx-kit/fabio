@@ -4,7 +4,7 @@
 #    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
 #
-#    Copyright (C) 2015-2025 European Synchrotron Radiation Facility, Grenoble, France
+#    Copyright (C) 2015-2026 European Synchrotron Radiation Facility, Grenoble, France
 #
 #    Principal author:       Jérôme Kieffer (Jerome.Kieffer@ESRF.eu)
 #
@@ -53,12 +53,13 @@ Bits (big endian order)     Meaning
 Thus 2.1.0a3 is hexversion 0x020100a3.
 
 """
+from typing import NamedTuple
 
 __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "29/10/2025"
+__date__ = "15/06/2026"
 __status__ = "production"
 __docformat__ = "restructuredtext"
 __all__ = [
@@ -71,30 +72,32 @@ __all__ = [
 ]
 
 
-from collections import namedtuple
-
-
 RELEASE_LEVEL_VALUE = {"dev": 0, "alpha": 10, "beta": 11, "candidate": 12, "final": 15}
 
 PRERELEASE_NORMALIZED_NAME = {"dev": "a", "alpha": "a", "beta": "b", "candidate": "rc"}
 
 MAJOR = 2026
-MINOR = 3
+MINOR = 6
 MICRO = 0
-RELEV = "dev"  # <16
+RELEV = "final"  # <16
 SERIAL = 0       # <16
 date = __date__
 
-_version_info = namedtuple(
-    "version_info", ["major", "minor", "micro", "releaselevel", "serial"]
-)
+class _VersionInfo(NamedTuple):
+    major: int
+    minor: int
+    micro: int
+    releaselevel: str
+    serial: int
 
-version_info = _version_info(MAJOR, MINOR, MICRO, RELEV, SERIAL)
+
+version_info = _VersionInfo(MAJOR, MINOR, MICRO, RELEV, SERIAL)
+
 
 strictversion = version = debianversion = "%d.%d.%d" % version_info[:3]
 if version_info.releaselevel != "final":
     _prerelease = PRERELEASE_NORMALIZED_NAME[version_info[3]]
-    version += "%s%s" % (_prerelease, version_info[-1])
+    version += f"-{_prerelease}{version_info[-1]}"
     debianversion += (
         "~adev%i" % version_info[-1]
         if RELEV == "dev"

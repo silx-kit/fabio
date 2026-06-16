@@ -284,7 +284,7 @@ decByteOffset = decByteOffset_cython
 
 def compByteOffset_numpy(data):
     """
-    Compress a dataset into a string using the byte_offet algorithm
+    Compress a dataset into a string using the byte_offset algorithm
 
     :param data: ndarray
     :return: string/bytes with compressed data
@@ -339,7 +339,7 @@ def compByteOffset_numpy(data):
 
 def compByteOffset_cython(data):
     """
-    Compress a dataset into a string using the byte_offet algorithm
+    Compress a dataset into a string using the byte_offset algorithm
 
     :param data: ndarray
     :return: string/bytes with compressed data
