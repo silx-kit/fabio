@@ -75,7 +75,7 @@ def get_isotime(force_time=None):
 
 def from_isotime(text, use_tz=False):
     """
-    :param text: string representing the time is iso format
+    :param text: string representing the time in iso format
     :return: Time in second since epoch (float)
     """
     if len(text) == 1:
@@ -435,7 +435,7 @@ class Nexus(object):
         create a "name" entry in self containing a copy of the object
 
         :param where: path to the toplevel object (i.e. root)
-        :param  toplevel: firectly the top level Group
+        :param  toplevel: directly the top level Group
         :param excluded: list of keys to be excluded
         :param overwrite: replace content if already existing
         """

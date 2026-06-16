@@ -156,7 +156,7 @@ FabIO old-fashion file series
 
 Multi-frames for certain file formats are handled using file series.
 
-A set of methodes, specific for certain formats provide access to the data
+A set of methods, specific for certain formats provide access to the data
 through a series of files. These methods are :meth:`~fabio.fabioimage.FabioImage.next`,
 :meth:`~fabio.fabioimage.FabioImage.previous`, and :meth:`~fabio.fabioimage.FabioImage.getframe`.
 The behaviour of such methods varies depending on the image format: for single-frame
@@ -178,7 +178,7 @@ and depend on the actual number of frames per file
 
 The files used in this example are available from https://zenodo.org/record/2546760#.Y5H1n0jMLmE
 
-This conveniant way to iterate through many files has limitations. It is not
+This convenient way to iterate through many files has limitations. It is not
 working in case of many frames per files (TIF), the read access is difficult to
 optimize, and it is difficult to custom the list of files.
 
@@ -201,11 +201,11 @@ This object is a :class:`~fabio.fabioimage.FabioImage` which a set of file as a 
 The hi-level function :func:`~fabio.open_series` is provided to hide the complexity.
 
 This function (or this class) allows different ways to custom the file iteration.
-Plus optional informnation to describe the way frames as stored in files in order
+Plus optional information to describe the way frames as stored in files in order
 to optimize the random access.
 
-Methodes provided allow to reach frames
-using a sequencial access (:meth:`~fabio.fabioimage.FabioImage.frames`)
+Methods provided allow to reach frames
+using a sequential access (:meth:`~fabio.fabioimage.FabioImage.frames`)
 or using a random access (:meth:`~fabio.fabioimage.FabioImage.get_frame`).
 
 .. code-block:: python
@@ -223,12 +223,12 @@ Usually, in case of a random access only accessed data have to be decoded, but t
 have to be fully read to index the frames (depending of the codec, then the file
 format).
 
-In case of huge EDF file series a sequencial access to the frames speed up by
+In case of huge EDF file series a sequential access to the frames speed up by
 2 the reading time.
 
 .. code-block:: python
 
-    # Sequencial access
+    # Sequential access
     import fabio
     # The first filename of consecutive filenames while foobar_xxxx.edf exists
     filename = "foobar_0000.edf"
@@ -371,7 +371,7 @@ Adding new file formats
 .......................
 
 We hope it will be relatively easy to add new file formats to FabIO in the future.
-Please refere at the *fabio/templateimage.py* file in the source which describes
+Please refer to the *fabio/templateimage.py* file in the source which describes
 how to add a new format.
 
 

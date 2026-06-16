@@ -30,7 +30,7 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 """Portable image converter based on FabIO library
-to export Eiger frames (including te one from LIMA)
+to export Eiger frames (including the one from LIMA)
 to CBF and mimic the header from Dectris Pilatus.
 """
 
@@ -86,7 +86,7 @@ class ProgressBar:
 
         The display is done with stdout using carriage return to to hide the
         previous progress. It is not possible to use stdout for something else
-        whill a progress bar is in use.
+        while a progress bar is in use.
 
         The result looks like:
 
@@ -144,12 +144,12 @@ class ProgressBar:
 
     def update(self, value, message="", max_value=None):
         """
-        Update the progrss bar with the progress bar's current value.
+        Update the progress bar with the progress bar's current value.
 
         Set the progress bar's current value, compute the percentage
         of progress and update the screen with. Carriage return is used
         first and then the content of the progress bar. The cursor is
-        at the begining of the line.
+        at the beginning of the line.
 
         :param float value: progress bar's current value
         :param str message: message displayed after the progress bar

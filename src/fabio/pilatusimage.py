@@ -56,7 +56,7 @@ class PilatusImage(tifimage.TifImage):
     DEFAULT_EXTENSIONS = ["tif", "tiff"]
 
     _keyvalue_spliter = re.compile(r"\s*[,:=\s]\s*")
-    """It allow to split the first white space, colon, coma, or equal
+    """It allow to split the first white space, colon, comma, or equal
     character and remove white spaces around"""
 
     def _create_pilatus_header(self, tiff_header):

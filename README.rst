@@ -12,8 +12,8 @@ Main websites:
 ----
 
 FabIO is an I/O library for images produced by 2D X-ray detectors and written in Python.
-FabIO support images detectors from a dozen of companies (including Mar, Dectris, ADSC, Hamamatsu, Oxford, ...),
-for a total of 30 different file formats (like CBF, EDF, TIFF, ...) and offers an unified interface to their
+FabIO supports detector images from a dozen companies (including Mar, Dectris, ADSC, Hamamatsu, Oxford, ...),
+for a total of 30 different file formats (like CBF, EDF, TIFF, ...) and offers a unified interface to their
 headers (as a Python dictionary) and datasets (as a numpy ndarray of integers or floats)
 
 
@@ -62,7 +62,7 @@ Documentation
 
 See the `latest release documentation <http://www.silx.org/doc/fabio/latest/>`_ for further details.
 
-Documentation of previous versions are available on `silx <http://www.silx.org/doc/fabio/>`_.
+Documentation of previous versions is available on `silx <http://www.silx.org/doc/fabio/>`_.
 
 Changelog
 ---------
@@ -104,8 +104,8 @@ Supported file formats
 
 * Dectris:
 
-  + CbfImage (implements a fast byte offset de/compression scheme in python/cython)
-  + PilatusImage (fileformat derived from Tiff)
+  + CbfImage (implements a fast byte offset de/compression scheme in Python/Cython)
+  + PilatusImage (file format derived from Tiff)
   + EigerImage (derived from HDF5/NeXus format, depends on `h5py`)
 
 * ESRF:
@@ -115,10 +115,10 @@ Supported file formats
   + Fit2dImage: Fit2d binary format
   + Fit2dmaskImage: Fit2d Mask format
   + Fit2dSpreadsheetImage: Fit2d ascii tables (spread-sheet)
-  + LimaImage: image stacks written by the LImA aquisition system
+  + LimaImage: image stacks written by the LImA acquisition system
   + SparseImage: single crystal diffractions images written by pyFAI
 
-* General Electrics 
+* General Electric
 
   + GEimage (including support for variant used at APS) 
 
@@ -140,7 +140,7 @@ Supported file formats
   
 * Mar Research:
 
-  + MarccdImage (fileformat derived from Tiff)
+  + MarccdImage (file format derived from Tiff)
   + Mar345Image imaging plate with PCK compression
 
 * MPA multiwire 
@@ -215,7 +215,7 @@ Class attributes, often exposed as properties:
 
 * data   					-> 2D array
 * header 					-> ordered dictionary
-* rows, columns, dim1, dim2 -> data.shape (propertiy)
+* rows, columns, dim1, dim2 -> data.shape (property)
 * header_keys               -> property for list(header.keys()), formerly used to retain the order of the header
 * bytecode                 	-> data.typecode() (property)
 * m, minval, maxval, stddev	-> image statistics, could add others, eg roi[slice]
@@ -237,9 +237,9 @@ Class methods (functions):
 
 Each individual file format would then inherit all the functionality of this class and just make new read and write methods.
 
-There are also fileseries related methods (next(), previous(), ...) which returns a FabioImage instance of the next/previous frame in a fileserie
+There are also fileseries related methods (next(), previous(), ...) which returns a FabioImage instance of the next/previous frame in a file series
 
-Other feature:
+Other features:
 
 * possibility for using on-the-fly external compression - i.e. if files are
   stored as something as .gz, .bz2 etc could decompress them, using an external

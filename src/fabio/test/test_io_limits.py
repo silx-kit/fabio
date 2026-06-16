@@ -82,11 +82,26 @@ class TestTiff(_CommonIOLimitTest):
     HEADERSIZE = 196
 
 
+class TestCli(unittest.TestCase):
+    def test_ulimit(self):
+        import fabio.utils.cli
+        fabio.utils.cli.relax_ulimit()
+        try:
+            import resource
+        except Exception:
+            return
+        try:
+            soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        except Exception as err:
+            logger.error(f"{type(err)}: {err}")
+        self.assertEqual(soft, hard, "soft limits have been increased to hard ones")
+
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestEdf))
     testsuite.addTest(loadTests(TestTiff))
+    testsuite.addTest(loadTests(TestCli))
     return testsuite
 
 

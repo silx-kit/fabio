@@ -735,7 +735,7 @@ class CIF(dict):
 
     def tostring(self, _strFilename=None, linesep=os.linesep):
         """
-        Converts a cif dictionnary to a string according to the CIF syntax.
+        Converts a cif dictionary to a string according to the CIF syntax.
 
         :param str _strFilename: the name of the filename to be appended in the
             header of the CIF file.

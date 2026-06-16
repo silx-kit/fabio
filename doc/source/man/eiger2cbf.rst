@@ -33,7 +33,7 @@ Options:
    output version and exit
 
 **-v**, **-\-verbose**
-   show information for each conversions
+   show information for each conversion
 
 **-\-debug**
    show debug information
@@ -56,7 +56,7 @@ Main arguments:
    Set masked values to this dummy value
 
 **-\-pilatus**
-   Select an image shape similar to Pilatus detectors for compatibiliy
+   Select an image shape similar to Pilatus detectors for compatibility
    with Crysalis
 
 Optional behaviour arguments:
@@ -92,7 +92,7 @@ Goniometer setup:
    ``-80 + 2*index``
 
 **-\-chi** CHI
-   Goniometer angle chi value in degres or formula f(index)
+   Goniometer angle chi value in degrees or formula f(index)
 
 **-\-phi** PHI
    Goniometer angle phi value (inner-most rotation) in degrees or formula f(index)
@@ -105,7 +105,7 @@ Goniometer setup:
 Image preprocessing:
 ++++++++++++++++++++
 
-Images are patched onto the center of a square frame, and transformation are applied in this order:
+Images are patched onto the center of a square frame, and transformations are applied in this order:
 
 **-\-rotation** ROTATION
    Rotate the initial image by this value in degrees. Must be a multiple

@@ -61,7 +61,7 @@ class SpeImage(FabioImage):
         """
         Read and decode the header of an image:
 
-        :param infile: Opened python file (can be stringIO or bipped file)
+        :param infile: Opened python file (can be stringIO or bzipped file)
         """
 
         self.header["version"] = self._get_version(infile)
@@ -189,7 +189,7 @@ class SpeImage(FabioImage):
         return parseString(xml_string)
 
     def _read_exposure_from_dom(self, dom):
-        """Reads th exposure time of the experiment into the exposure_time field"""
+        """Reads the exposure time of the experiment into the exposure_time field"""
         if (
             len(dom.getElementsByTagName("Experiment")) != 1
         ):  # check if it is a real v3.0 file
@@ -316,7 +316,7 @@ class SpeImage(FabioImage):
             frame = 0
         dtype = self.DATA_TYPES.get(self.header["data_type"])
         if dtype is None:
-            raise RuntimeError("Unsuported data type: %s" % self.header["data_type"])
+            raise RuntimeError("Unsupported data type: %s" % self.header["data_type"])
         number_size = np.dtype(dtype).itemsize
         frame_size = self.header["x_dim"] * self.header["y_dim"] * number_size
         return self._read_frame(infile, 4100 + frame * frame_size)

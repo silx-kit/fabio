@@ -26,7 +26,7 @@
 
 """
 FabIO class for dealing with TIFF images.
-In facts wraps TiffIO from V. Armando Solé (available in PyMca) or falls back to PIL
+In fact wraps TiffIO from V. Armando Solé (available in PyMca) or falls back to PIL
 
 Authors:
 ........
