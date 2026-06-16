@@ -225,9 +225,7 @@ class ExternalResources:
                 raise unittest.SkipTest("network unreachable.")
 
             dirname = os.path.dirname(fullfilename)
-            if not os.path.isdir(dirname):
-                """Create sub-directory if needed"""
-                os.makedirs(dirname)
+            os.makedirs(dirname, exist_ok=True)
 
             try:
                 with self.lock:
