@@ -126,7 +126,7 @@ def _do_magic(byts:bytes, filename:str="") -> str:
     """Try to interpret the bytes starting the file as a magic number
 
     :param byts: begining of the file
-    :param filename: name of the file or None in the case of a buffer
+    :param filename: name of the file or empty string in the case of a buffer
     :return: format_type as string
     """
     for magic, format_type in MAGIC_NUMBERS:
