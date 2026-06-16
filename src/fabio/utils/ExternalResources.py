@@ -24,7 +24,7 @@
 # ###########################################################################*/
 """Helper to access to external resources.
 
-Module imported from silx project to avoid cyclic dependancy.
+Module imported from silx project to avoid cyclic dependency.
 """
 
 __authors__ = ["Thomas Vincent", "J. Kieffer"]
@@ -95,7 +95,7 @@ class ExternalResources:
         self.lock = None
 
     @property
-    def lockfile(self):
+    def _lockfile(self):
         """Returns the lockfile path."""
         return self.testdata + ".lock"
 
@@ -126,10 +126,10 @@ class ExternalResources:
             data_home = os.path.join(tempfile.gettempdir(), basename)
         if not os.path.exists(data_home):
             try:
-                os.makedirs(data_home)
-            except OSError as exc:
+                os.makedirs(data_home, exist_ok=True)
+            except OSError as err:
                 raise RuntimeError(
-                    f"Unable to create data directory {data_home} ! ({exc})"
+                    f"Unable to create data directory {data_home} : {err}"
                 )
         self._data_home = data_home
 
@@ -156,7 +156,7 @@ class ExternalResources:
             with self.sem:
                 if not self._initialized:
                     self.testdata = os.path.join(self.data_home, "all_testdata.json")
-                    self.lock = filelock.FileLock(self.lockfile, timeout=self.timeout)
+                    self.lock = filelock.FileLock(self._lockfile, timeout=self.timeout)
                     self.all_data = self.load_json()
                     self._initialized = True
 
@@ -236,7 +236,14 @@ class ExternalResources:
                 raise unittest.SkipTest("network unreachable.")
 
             dirname = os.path.dirname(fullfilename)
-            os.makedirs(dirname, exist_ok=True)
+
+            if not os.path.exists(dirname):
+                try:
+                    os.makedirs(dirname, exist_ok=True)
+                except OSError as err:
+                    raise RuntimeError(
+                        f"Unable to create directory {dirname}: {err}"
+                    )
 
             try:
                 with self.lock, open(fullfilename, mode="wb") as outfile:
@@ -259,14 +266,18 @@ class ExternalResources:
                     %s/%s""" % (filename, self.url_base, filename))
         return fullfilename
 
+    get_file = getfile
+
     def load_json(self) -> dict:
-        """Loads the JSON file containing the list of files and their hashes"""
+        """Loads the JSON file containing the list of files and their hashes
+
+        :return: dict with filename:hash
+        """
         all_data = {}
         if self.testdata and os.path.exists(self.testdata):
             try:
-                with self.lock:
-                    with open(self.testdata) as f:
-                        jdata = json.load(f)
+                with self.lock, open(self.testdata) as fd:
+                        jdata = json.load(fd)
             except filelock.Timeout:
                 logger.error("Unable to lock JSON file")
                 jdata = {}
@@ -294,7 +305,7 @@ class ExternalResources:
         except OSError:
             logger.error("Unable to save JSON dict")
 
-    def getdir(self, dirname):
+    def getdir(self, dirname:str) -> list:
         """Downloads the requested tarball from the server
         https://www.silx.org/pub/silx/
         and unzips it into the data directory
@@ -320,12 +331,14 @@ class ExternalResources:
                 return [os.path.join(output, i) for i in fd.namelist()]
 
         raise RuntimeError(
-            "Unsupported archive format. Only tar and zip " "are currently supported"
+            "Unsupported archive format. Only tar and zip are currently supported"
         )
+
+    get_dir = getdir
 
     def get_file_and_repack(self, filename:str) -> str:
         """
-        Download the bzipped2 file, decompress it and repack it to gzip.
+        Download the bzipped2 file, decompress it and repack it to gzip, if needed
 
         :param str filename: name of the file.
         :rtype: str
@@ -334,15 +347,15 @@ class ExternalResources:
         if not self._initialized:
             self._initialize_data()
 
-        if filename in self.all_data:
-            self.all_data[filename] = self.get_hash(filename)
-            self.save_json()
-        basefilename = os.path.basename(filename)
 
-        if not os.path.exists(self.data_home):
-            os.makedirs(self.data_home)
+        basefilename = os.path.basename(filename)
         fullfilename = os.path.abspath(os.path.join(self.data_home, basefilename))
 
+        if filename in self.all_data and os.path.isfile(fullfilename):
+            if self.all_data[filename] == self.get_hash(filename):
+                return fullfilename
+
+        # Else we download them all and decompress/recompress.
         if basefilename.endswith(".bz2"):
             bzip2name = basefilename
             basename = basefilename[:-4]
@@ -364,20 +377,18 @@ class ExternalResources:
         if not os.path.isfile(fullfilename_bz2):
             self.getfile(bzip2name)
             if not os.path.isfile(fullfilename_bz2):
-                raise RuntimeError("""Could not automatically download test files %s!
+                raise RuntimeError(f"""Could not automatically download test file: {filename}!
                     If you are behind a firewall, please set the environment variable
-                     http_proxy.
+                    http_proxy.
                     Otherwise please try to download the files manually from
-                    %s""" % (self.url_base, filename))
-
+                    {self.url_base}""" % (self.url_base, filename))
 
         raw_file_exists = os.path.isfile(fullfilename_raw)
         gz_file_exists = os.path.isfile(fullfilename_gz)
         if not raw_file_exists or not gz_file_exists:
             try:
-                with self.lock:
-                    with open(fullfilename_bz2, "rb") as f:
-                        data = f.read()
+                with self.lock, open(fullfilename_bz2, "rb") as fd:
+                        data = fd.read()
             except filelock.Timeout:
                 logger.error(f"Unable to obtain lock to read {bzip2name} file.")
 
@@ -385,38 +396,34 @@ class ExternalResources:
 
             if not raw_file_exists:
                 try:
-                    with self.lock:
-                        with open(fullfilename_raw, "wb") as fullfile:
-                            fullfile.write(decompressed)
+                    with self.lock, open(fullfilename_raw, "wb") as fd:
+                            fd.write(decompressed)
                 except filelock.Timeout:
                     logger.error(f"Unable to obtain lock to write {basename} file.")
                 except OSError:
-                    raise OSError("unable to write decompressed \
-                    data to disk at %s" % self.data_home)
+                    raise OSError(f"Unable to write decompressed data to disk at {self.data_home}")
                 else:
                     self.all_data[basename] = self.get_hash(basename)
 
             if not gz_file_exists:
                 if gzip is None:
-                    raise RuntimeError("gzip library is expected to recompress data")
+                    logger.error("Gzip library expected to recompress data")
                 try:
-                    with self.lock:
-                        with gzip.open(fullfilename_gz, "wb") as fd:
+                    with self.lock, gzip.open(fullfilename_gz, "wb") as fd:
                             fd.write(decompressed)
                 except filelock.Timeout:
                     logger.error(f"Unable to obtain lock to write {gzipname} file.")
-                except OSError:
-                    raise OSError("unable to write gzipped \
-                    data to disk at %s" % self.data_home)
+                except OSError as err:
+                    raise OSError(f"Unable to write gzipped data to disk at {self.data_home}: {err}")
                 else:
                     self.all_data[gzipname] = self.get_hash(gzipname)
         return fullfilename
 
-    def download_all(self, imgs=None):
+    def download_all(self, imgs:list|None=None) -> list:
         """Download all data needed for the test/benchmarks
 
         :param imgs: list of files to download, by default all
-        :return: list of path with all files
+        :return: list of path of all files
         """
         if not self._initialized:
             self._initialize_data()
