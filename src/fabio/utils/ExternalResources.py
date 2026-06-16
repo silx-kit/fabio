@@ -29,7 +29,7 @@ Module imported from silx project to avoid cyclic dependancy.
 
 __authors__ = ["Thomas Vincent", "J. Kieffer"]
 __license__ = "MIT"
-__date__ = "15/06/2026"
+__date__ = "16/06/2026"
 
 
 import hashlib
@@ -185,8 +185,12 @@ class ExternalResources:
                     return self.getfile(filename)
 
             h = self.hash()
-            with open(fullfilename, mode="rb") as fd:
-                h.update(fd.read())
+            try:
+                with self.lock:
+                    with open(fullfilename, mode="rb") as fd:
+                        h.update(fd.read())
+            except filelock.Timeout:
+                logger.error(f"Unable to lock to read {filename} file")
 
             if h.hexdigest() != self.all_data[filename]:
                 logger.warning(f"Detected corrupted file {fullfilename} !")
@@ -226,11 +230,14 @@ class ExternalResources:
                 os.makedirs(dirname)
 
             try:
-                with open(fullfilename, mode="wb") as outfile:
-                    outfile.write(data)
+                with self.lock:
+                    with open(fullfilename, mode="wb") as outfile:
+                        outfile.write(data)
+            except filelock.Timeout:
+                logger.error(f"Unable to lock to write {filename} file.")
             except OSError:
                 raise OSError(f"unable to write downloaded \
-                    data to disk at {fullfilename}")
+                    data into {filename} file.")
 
             if os.path.isfile(fullfilename):
                 self.all_data[filename] = self.get_hash(data=data)
@@ -318,7 +325,8 @@ class ExternalResources:
         """
         if not self._initialized:
             self._initialize_data()
-        if filename not in self.all_data:
+
+        if filename in self.all_data:
             self.all_data[filename] = self.get_hash(filename)
             self.save_json()
         basefilename = os.path.basename(filename)
@@ -337,7 +345,7 @@ class ExternalResources:
             bzip2name = basename + ".bz2"
         else:
             basename = basefilename
-            gzipname = basefilename + "gz2"
+            gzipname = basefilename + ".gz"
             bzip2name = basename + ".bz2"
 
         fullfilename_gz = os.path.abspath(os.path.join(self.data_home, gzipname))
@@ -366,27 +374,42 @@ class ExternalResources:
         raw_file_exists = os.path.isfile(fullfilename_raw)
         gz_file_exists = os.path.isfile(fullfilename_gz)
         if not raw_file_exists or not gz_file_exists:
-            with open(fullfilename_bz2, "rb") as f:
-                data = f.read()
+            try:
+                with self.lock:
+                    with open(fullfilename_bz2, "rb") as f:
+                        data = f.read()
+            except lockfile.Timeout:
+                logger.error(f"Unable to obtain lock to read {bzip2name} file.")
+
             decompressed = bz2.decompress(data)
 
             if not raw_file_exists:
                 try:
-                    with open(fullfilename_raw, "wb") as fullfile:
-                        fullfile.write(decompressed)
+                    with self.lock:
+                        with open(fullfilename_raw, "wb") as fullfile:
+                            fullfile.write(decompressed)
+                except lockfile.Timeout:
+                    logger.error(f"Unable to obtain lock to write {basename} file.")
                 except OSError:
                     raise OSError("unable to write decompressed \
                     data to disk at %s" % self.data_home)
+                else:
+                    self.all_data[basename] = self.get_hash(basename)
 
             if not gz_file_exists:
                 if gzip is None:
                     raise RuntimeError("gzip library is expected to recompress data")
                 try:
-                    gzip.open(fullfilename_gz, "wb").write(decompressed)
+                    with self.lock:
+                        with gzip.open(fullfilename_gz, "wb") as fd:
+                            fd.write(decompressed)
+                except lockfile.Timeout:
+                    logger.error(f"Unable to obtain lock to write {gzipname} file.")
                 except OSError:
                     raise OSError("unable to write gzipped \
                     data to disk at %s" % self.data_home)
-
+                else:
+                    self.all_data[gzipname] = self.get_hash(gzipname)
         return fullfilename
 
     def download_all(self, imgs=None):
