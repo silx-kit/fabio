@@ -282,6 +282,16 @@ class TestFabioImage(unittest.TestCase):
         for frame in image:
             self.assertEqual(frame.data[0, 0], 0)
 
+class TestSexedDtype(unittest.TestCase):
+    def test_sexed_dtypes(self):
+        a = FabioImage.get_sexed_dtype("float32", ">")
+        self.assertEqual(a.str, ">f4")
+        a = FabioImage.get_sexed_dtype("float64", "<")
+        self.assertEqual(a.str, "<f8")
+        a = FabioImage.get_sexed_dtype(numpy.float32, "big")
+        self.assertEqual(a.str, ">f4")
+        a = FabioImage.get_sexed_dtype(numpy.float64, "little")
+        self.assertEqual(a.str, "<f8")
 
 def suite():
     loadTests = unittest.defaultTestLoader.loadTestsFromTestCase
@@ -294,6 +304,7 @@ def suite():
     testsuite.addTest(loadTests(TestPilImage2))
     testsuite.addTest(loadTests(TestPilImage3))
     testsuite.addTest(loadTests(TestDeprecatedFabioImage))
+    testsuite.addTest(loadTests(TestSexedDtype))
     return testsuite
 
 
