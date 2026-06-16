@@ -122,12 +122,12 @@ MAGIC_NUMBERS = [
 ]
 
 
-def do_magic(byts, filename):
+def _do_magic(byts:bytes, filename:str="") -> str:
     """Try to interpret the bytes starting the file as a magic number
 
-    :param byts:
+    :param byts: begining of the file
     :param filename: name of the file or None in the case of a buffer
-    :return: format_type
+    :return: format_type as string
     """
     for magic, format_type in MAGIC_NUMBERS:
         if byts.startswith(magic):
@@ -168,22 +168,22 @@ def do_magic(byts, filename):
                             else:
                                 return "eiger"
                 elif format_type == "marccd/tif":
-                    if filename and "mccd" in filename.split("."):
+                    if "mccd" in filename.split("."):
                         return "marccd"
                     else:
                         return "tif"
 
-            if format_type == "edf" and isinstance(filename, str):
+            if format_type == "edf" and "." in filename:
+                dot_splitted = filename.split(".")
                 # Might be GE with an EDF header. Check the extension.
-                extension = filename.split(".")[-1]
+                extension = dot_splitted[-1]
                 # If it is a compression extension, check the next one up.
                 if f".{extension}" in ExternalCompressors.COMMANDS:
-                    extension = filename.split(".")[-2]
+                    extension = dot_splitted[-2]
 
                 # If the extension is `ge` plus a number, assume it is GE
                 if re.search(r"^ge\d*$", extension):
                     return "GE"
-
             return format_type
     raise Exception("Could not interpret magic string")
 
@@ -291,8 +291,8 @@ def _openimage(filename):
 
     filetype = None
     try:
-        filetype = do_magic(magic_bytes,
-                        None if stream_input else filename)
+        filetype = _do_magic(magic_bytes,
+                            "" if stream_input else filename)
     except Exception:
         logger.debug("Backtrace", exc_info=True)
         try:
@@ -310,10 +310,10 @@ def _openimage(filename):
 
         except Exception:
             logger.debug("Backtrace", exc_info=True)
-            raise IOError("Fabio could not identify " + filename)
+            raise IOError(f"Fabio could not identify {filename}")
 
     if filetype is None:
-        raise IOError("Fabio could not identify " + filename)
+        raise IOError(f"Fabio could not identify {filename}")
 
     klass_name = "".join(filetype) + "image"
 
