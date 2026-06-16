@@ -60,7 +60,7 @@ _DATA_TYPES = {
     # Valid but unsupported
     "Other_type": None,
 }
-"""Mapping from Data_type content to numpy equicalent"""
+"""Mapping from Data_type content to numpy equivalent"""
 
 
 class DtrekImage(FabioImage):
@@ -173,7 +173,7 @@ class DtrekImage(FabioImage):
     def _readheader(self, infile):
         """Read a d*TREK header.
 
-        After the execusion of this function, the cursor on infile will point
+        After the execution of this function, the cursor on infile will point
         at the end of the header (at the start of the binary data block).
 
         :param FileObject infile: A file object pointing at the first character

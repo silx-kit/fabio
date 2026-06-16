@@ -118,7 +118,7 @@ def densify(
 class SparseImage(FabioImage):
     """FabIO image class for images compressed by sparsification of Bragg peaks
 
-    While the sparsification requires pyFAI and substential resources, re-densifying the data is easy.
+    While the sparsification requires pyFAI and substantial resources, re-densifying the data is easy.
 
     The program used for the sparsification is `sparsify-Bragg` from the pyFAI suite
 

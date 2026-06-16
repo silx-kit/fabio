@@ -127,10 +127,10 @@ class FilenameObject(object):
         filename=None,
     ):
         """
-        This class can either be instanciated by a set of parameters like  directory, prefix, num, extension, ...
+        This class can either be instantiated by a set of parameters like  directory, prefix, num, extension, ...
 
         :param stem: the stem is a kind of prefix (str)
-        :param num: image number in the serie (int)
+        :param num: image number in the series (int)
         :param directory: name of the directory (str)
         :param format_: ??
         :param extension:
@@ -746,7 +746,7 @@ class OrderedDict(_OrderedDict):
 
 AVAILABLE_COMPRESSED_EXTENSIONS = set([])
 """Set of available compressed file extensions. Do not contains extensions for
-uninstalled optional dependancies."""
+uninstalled optional dependencies."""
 if GzipFile != UnknownCompressedFile:
     AVAILABLE_COMPRESSED_EXTENSIONS.add("gz")
 if BZ2File != UnknownCompressedFile:

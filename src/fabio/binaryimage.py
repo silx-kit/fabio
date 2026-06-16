@@ -93,7 +93,7 @@ class BinaryImage(FabioImage):
         :param int dim2: image dimensions (Slow index)
         :param int offset: starting position of the data-block. If negative, starts at the end.
         :param bytecode: can be "int8","int16","int32","int64","uint8","uint16","uint32","uint64","float32","float64",...
-        :param endian:  among litte or big endian ("<" or ">")
+        :param endian:  among little or big endian ("<" or ">")
 
         """
         assert endian in ("<", ">", "=")

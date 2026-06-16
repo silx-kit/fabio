@@ -8,7 +8,7 @@ Installation
 
 FabIO can, as any Python module, be installed from its sources,
 available on the `Python cheese shop <https://pypi.python.org/pypi/fabio>`_
-but we advice to use binary wheels packages provided for the most common platforms:
+but we advise to use binary wheels packages provided for the most common platforms:
 Windows, MacOSX. For Debian Linux and its derivatives (Ubuntu, Mint, ...), FabIO
 is part of the distributions and its package is named *python3-fabio* and can be installed via:
 
@@ -19,7 +19,7 @@ is part of the distributions and its package is named *python3-fabio* and can be
 If you are using MS Windows or MacOSX; binary version (as wheel packages) are
 PIP-installable.
 PIP is the Python Installer Program, similar to ``apt-get`` for Python.
-It runs under any architecture. It is best used in a virtual environament:
+It runs under any architecture. It is best used in a virtual environment:
 
 .. code-block:: shell
 
@@ -232,7 +232,7 @@ The same script, *build-deb.sh*, will create *real* debian packages:
 It will build a bunch of 4 debian packages:
 
 * *fabio-bin*: the GUI for visualizing diffraction images
-* *fabio-doc*: the documumentation package
+* *fabio-doc*: the documentation package
 * *python3-fabio*: library built for Python3
 * *python3-fabio-dbg*: debug symbols for Python3
 
@@ -284,7 +284,7 @@ Test coverage
 
 FabIO comes with 58 test-suites (360 tests in total) representing a coverage of 79%.
 This ensures both non regression over time and ease the distribution under different platforms:
-FabIO runs under Linux, MacOSX and Windows (64 bits, in 32 bits your milleage may vary) with Python versions 3.7 to 3.12.
+FabIO runs under Linux, MacOSX and Windows (64 bits, in 32 bits your mileage may vary) with Python versions 3.7 to 3.12.
 Under linux it has been tested on x86_64, arm64, ppc64le.
 FabIO may run on other untested systems but without warranty.
 

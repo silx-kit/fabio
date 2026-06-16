@@ -30,7 +30,7 @@ Authors: Jerome Kieffer
 email:  Jerome.Kieffer@terre-adelie.org
 
 Specifications:
-input should being the form:
+input should be in the form:
 
 filename::path
 
@@ -106,7 +106,7 @@ class Hdf5Image(fabioimage.FabioImage):
         self.resetvals()
         if "::" not in fname:
             err = (
-                "the '::' separator in mandatory for HDF5 container, absent in %s"
+                "the '::' separator is mandatory for HDF5 container, absent in %s"
                 % fname
             )
             logger.error(err)

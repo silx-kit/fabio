@@ -26,7 +26,7 @@
 #  OTHER DEALINGS IN THE SOFTWARE.
 
 """The CCD fileformat is used by the CrysalisPro software (provided for free by Rigaku)
-The main developper of CrysalisPro is Mathias Meyer. Thanks to him for providing the structure of the file.
+The main developer of CrysalisPro is Mathias Meyer. Thanks to him for providing the structure of the file.
 This file contains the code to generate a mask-file.
 """
 
@@ -555,7 +555,7 @@ class Sweep:
 
 @dataclass
 class RunDescription:
-    """Names are using the hugarian notation: the first letter describes the type
+    """Names are using the Hungarian notation: the first letter describes the type
 
     strings are 256bytes long
     floats are 64bits
@@ -629,7 +629,7 @@ class RunDescription:
 
 @dataclass
 class CcdCharacteristiscs:
-    """Names are using the hugarian notation: the first letter describes the type
+    """Names are using the Hungarian notation: the first letter describes the type
 
     strings are 256bytes long
     floats are 64bits
@@ -706,7 +706,7 @@ class CcdCharacteristiscs:
 
     @classmethod
     def read(cls, filename):
-        """The the filename.ccd"""
+        """Read the filename.ccd"""
         with open(filename, "rb") as f:
             bytestream = f.read()
         return cls.loads(bytestream)

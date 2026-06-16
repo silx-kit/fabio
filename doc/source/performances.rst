@@ -2,7 +2,7 @@ Benchmarks
 ==========
 
 Those benchmarks have been done with all data already in cache using a Intel Xeon E5520  @ 2.27GHz
-running Debian 7 and FabIO 0.2.2... (ubnuntu 20.04 for Python 3.8).
+running Debian 7 and FabIO 0.2.2... (ubuntu 20.04 for Python 3.8).
 
 .. table:: Execution time for reading a file, benchmarked using the *timeit* module. 
     :class: w
@@ -39,4 +39,4 @@ running Debian 7 and FabIO 0.2.2... (ubnuntu 20.04 for Python 3.8).
     | xsdimage      | XSDataImage.xml           | 256kpix|  13.3 ms     | 12.9 ms      | 18.4 ms      | 11.1 ms     |
     +---------------+---------------------------+--------+--------------+--------------+--------------+-------------+
     
-The Python3 version is sometimes twice slower then the Python2 version, this is especially true for TIFF based formats.
+The Python3 version is sometimes twice slower than the Python2 version, this is especially true for TIFF based formats.
