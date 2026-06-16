@@ -136,7 +136,7 @@ class KcdImage(FabioImage):
             except KeyError:
                 bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
-            self._dtype = numpy.dtype(bytecode)
+            self._dtype = self.get_sexed_dtype(bytecode, "little")
             try:
                 nbReadOut = int(self.header["Number of readouts"])
             except KeyError:
@@ -170,10 +170,7 @@ class KcdImage(FabioImage):
         for i in range(nbReadOut):
             start = stop
             stop = (i + 1) * expected_size // nbReadOut
-            data = numpy.frombuffer(block[start:stop], self._dtype).copy()
-            data = data.reshape(dim2, dim1)
-            if not numpy.little_endian:
-                data.byteswap(True)
+            data = numpy.frombuffer(block[start:stop], self._dtype).copy().reshape(dim2, dim1)
             self.data += data
         self._dtype = None
         self._shape = None
