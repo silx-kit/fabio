@@ -378,7 +378,7 @@ class ExternalResources:
                 with self.lock:
                     with open(fullfilename_bz2, "rb") as f:
                         data = f.read()
-            except lockfile.Timeout:
+            except filelock.Timeout:
                 logger.error(f"Unable to obtain lock to read {bzip2name} file.")
 
             decompressed = bz2.decompress(data)
@@ -388,7 +388,7 @@ class ExternalResources:
                     with self.lock:
                         with open(fullfilename_raw, "wb") as fullfile:
                             fullfile.write(decompressed)
-                except lockfile.Timeout:
+                except filelock.Timeout:
                     logger.error(f"Unable to obtain lock to write {basename} file.")
                 except OSError:
                     raise OSError("unable to write decompressed \
@@ -403,7 +403,7 @@ class ExternalResources:
                     with self.lock:
                         with gzip.open(fullfilename_gz, "wb") as fd:
                             fd.write(decompressed)
-                except lockfile.Timeout:
+                except filelock.Timeout:
                     logger.error(f"Unable to obtain lock to write {gzipname} file.")
                 except OSError:
                     raise OSError("unable to write gzipped \
