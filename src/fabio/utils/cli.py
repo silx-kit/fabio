@@ -26,12 +26,16 @@
 
 __authors__ = ["Valentin Valls", "Jérôme Kieffer"]
 __license__ = "MIT"
-__date__ = "15/06/2026"
+__date__ = "16/06/2026"
 
 import sys
 import codecs
 import glob
 import logging
+try:
+    import resource
+except ImportError:
+    resource = None
 
 
 _logger = logging.getLogger(__name__)
@@ -177,9 +181,7 @@ def relax_ulimit():
     The (ugly) solution implemented here just increases the
     soft limit to the hard limit.
     """
-    try:
-        import resource
-    except ImportError:
+    if resource is None:
         _logger.debug("No resource module available")
     else:
         if hasattr(resource, "RLIMIT_NOFILE"):
