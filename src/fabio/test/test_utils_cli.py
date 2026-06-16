@@ -28,15 +28,16 @@
 __author__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/10/2025"
+__date__ = "16/06/2026"
 __status__ = "development"
 __docformat__ = "restructuredtext"
 
 import unittest
 import logging
+from pathlib import Path
 from .utilstest import UtilsTest
 from ..utils.cli import ProgressBar, expand_args
-
+from .. import eigerimage
 logger = logging.getLogger(__name__)
 
 
@@ -55,10 +56,20 @@ class TestUtilShell(unittest.TestCase):
         _ = expand_args(["*.tif", "*.edf", "*.cbf", "*.img"])
 
 
+class TestMisc(unittest.TestCase):
+
+    def test_no_atleat_typo_in_source(self):
+        # Locate the source file directly
+        src_file = Path(eigerimage.__file__)
+        self.assertTrue(src_file.exists(), f"Source file not found: {src_file}")
+        content = src_file.read_text(encoding="utf-8")
+        self.assertTrue("atleat_2d" not in content, "Typo 'atleat_2d' still present in eigerimage.py")
+
 def suite():
     loader = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loader(TestUtilShell))
+    testsuite.addTest(loader(TestMisc))
     return testsuite
 
 
