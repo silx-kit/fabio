@@ -47,6 +47,17 @@ import urllib.error
 import zipfile
 import filelock
 
+try:
+    import bz2
+except ImportError:
+    raise RuntimeError("BZ2 library is needed to decompress data")
+    # Theoretically it would be possible to fall back on different compression scheme
+try:
+    import gzip
+except ImportError:
+    gzip = None
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -315,9 +326,9 @@ class ExternalResources:
             "Unsupported archive format. Only tar and zip " "are currently supported"
         )
 
-    def get_file_and_repack(self, filename):
+    def get_file_and_repack(self, filename:str) -> str:
         """
-        Download the requested file, decompress and repack it to bz2 and gz.
+        Download the bzipped2 file, decompress it and repack it to gzip.
 
         :param str filename: name of the file.
         :rtype: str
@@ -362,14 +373,6 @@ class ExternalResources:
                     Otherwise please try to download the files manually from
                     %s""" % (self.url_base, filename))
 
-        try:
-            import bz2
-        except ImportError:
-            raise RuntimeError("bz2 library is needed to decompress data")
-        try:
-            import gzip
-        except ImportError:
-            gzip = None
 
         raw_file_exists = os.path.isfile(fullfilename_raw)
         gz_file_exists = os.path.isfile(fullfilename_gz)
