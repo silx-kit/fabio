@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "27/10/2025"
+__date__ = "15/06/2026"
 
 import os
 import logging
@@ -138,10 +138,10 @@ class _FabioArray(object):
         self.__set_dim2(value)
 
     def __set_dim1(self, value):
-        self.data.shape = self.data.shape[:-2] + (-1, value)
+        self.data = self.data.reshape(self.data.shape[:-2] + (-1, value))
 
     def __set_dim2(self, value):
-        self.data.shape = self.data.shape[:-2] + (value, -1)
+        self.data = self.data.reshape(self.data.shape[:-2] + (value, -1))
 
     def resetvals(self):
         """Reset cache - call on changing data"""
@@ -414,7 +414,7 @@ class FabioFrame(_FabioArray):
     @shape.setter
     def shape(self, shape):
         if self.data is not None:
-            self.data.shape = shape
+            self.data = self.data.reshape(shape)
             self._shape = None
         else:
             self._shape = shape

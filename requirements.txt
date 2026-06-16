@@ -14,3 +14,4 @@ sphinx-rtd-theme
 nbsphinx
 qtpy
 pyside6
+filelock

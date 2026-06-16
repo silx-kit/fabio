@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 #
-#    Project: Fable Input Output
+#    Project: X-ray image reader
 #             https://github.com/silx-kit/fabio
+#
 #
 #    Copyright (C) European Synchrotron Radiation Facility, Grenoble, France
 #
