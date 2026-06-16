@@ -170,7 +170,7 @@ class ExternalResources:
         :param: relative name of the file.
         :return: full path of the locally saved file.
         """
-        logger.debug("ExternalResources.getfile('%s')", filename)
+        logger.debug(f"ExternalResources.getfile('{filename}')")
 
         if not self._initialized:
             self._initialize_data()
@@ -210,9 +210,7 @@ class ExternalResources:
                 return self.getfile(filename)
         else:
             logger.debug(
-                "Trying to download file %s, timeout set to %ss",
-                filename,
-                self.timeout,
+                f"Trying to download file {filename}, timeout set to {self.timeout}s",
             )
             dictProxies = {}
             if "http_proxy" in os.environ:
@@ -226,7 +224,7 @@ class ExternalResources:
             else:
                 opener = urllib.request.urlopen
 
-            logger.debug("wget %s/%s", self.url_base, filename)
+            logger.debug(f"wget {self.url_base}/{filename}")
             try:
                 data = opener(
                     f"{self.url_base}/{filename}", data=None, timeout=self.timeout
@@ -258,12 +256,12 @@ class ExternalResources:
                 self.all_data[filename] = self.get_hash(data=data)
                 self.save_json()
             else:
-                raise RuntimeError("""Could not automatically download test files %s!
+                raise RuntimeError(f"""Could not automatically download test files {filename}!
                     If you are behind a firewall, please set both environment variable
                      http_proxy and https_proxy.
                     This even works under windows !
                     Otherwise please try to download the files manually from
-                    %s/%s""" % (filename, self.url_base, filename))
+                    {self.url_base}/{filename}""")
         return fullfilename
 
     get_file = getfile
@@ -381,7 +379,7 @@ class ExternalResources:
                     If you are behind a firewall, please set the environment variable
                     http_proxy.
                     Otherwise please try to download the files manually from
-                    {self.url_base}""" % (self.url_base, filename))
+                    {self.url_base}""")
 
         raw_file_exists = os.path.isfile(fullfilename_raw)
         gz_file_exists = os.path.isfile(fullfilename_gz)
@@ -431,6 +429,6 @@ class ExternalResources:
             imgs = self.all_data.keys()
         res = []
         for fn in imgs:
-            logger.info("Downloading from silx.org: %s", fn)
+            logger.info(f"Downloading from silx.org: {fn}")
             res.append(self.getfile(fn))
         return res
