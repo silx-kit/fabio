@@ -86,11 +86,7 @@ class Fit2dMaskImage(FabioImage):
         fin.close()
 
         # Now to unpack it
-        data = numpy.frombuffer(data, numpy.uint8)
-        if not numpy.little_endian:
-            data = numpy.copy(data)
-            data.setflags(write=1)
-            data.byteswap(True)
+        data = numpy.frombuffer(data, "<u4").view(numpy.uint8)
 
         data = numpy.reshape(data, (dim2, num_ints * 4))
 
