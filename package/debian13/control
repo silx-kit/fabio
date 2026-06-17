@@ -22,7 +22,8 @@ Build-Depends:
  python3-mesonpy,
  python3-numpy,
  python3-pil,
- python3-pyqt5,
+ python3-qtpy,
+ python3-filelock,
  python3-pytest <!nocheck>,
  python3-tomli,
 Build-Depends-Indep:
@@ -70,7 +71,8 @@ Depends:
  python3-lxml,
  python3-matplotlib,
  python3-pil,
- python3-pyqt5,
+ python3-qtpy,
+ python3-filelock
  ${misc:Depends},
  ${python3:Depends},
  ${shlibs:Depends},
