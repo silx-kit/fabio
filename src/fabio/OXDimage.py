@@ -45,7 +45,7 @@ Authors:
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "Jérôme Kieffer"
-__date__ = "27/10/2025"
+__date__ = "17/06/2026"
 
 import time
 import logging
@@ -80,6 +80,11 @@ DEFAULT_HEADERS = {
     "History Section in Byte": 2048,
     "NSUPPLEMENT": 0,
 }
+
+
+LE_int16 = numpy.dtype("int16").newbyteorder("<")
+LE_int32 = numpy.dtype("int32").newbyteorder("<")
+LE_float64 = numpy.dtype("float64").newbyteorder("<")
 
 
 class OxdImage(FabioImage):
@@ -180,10 +185,10 @@ class OxdImage(FabioImage):
         self.header["Spatial correction file date"] = to_str(block[0:26].strip(b"\x00"))
         # Angles are in steps due to stepper motors - conversion factor RAD
         # angle[0] = omega, angle[1] = theta, angle[2] = kappa, angle[3] = phi,
-        start_angles_step = numpy.frombuffer(block[284:304], self.get_stype("int32", "little")).astype(numpy.int32)
-        end_angles_step = numpy.frombuffer(block[324:344], self.get_stype("int32", "little")).astype(numpy.int32)
-        step2rad = numpy.frombuffer(block[368:408], self.get_stype("float64", "little")).astype(numpy.float64)
-        zero_correction_soft_step = numpy.frombuffer(block[512:532], self.get_stype("int32", "little")).astype(numpy.int32)
+        start_angles_step = numpy.frombuffer(block[284:304], LE_int32).astype(numpy.int32)
+        end_angles_step = numpy.frombuffer(block[324:344], LE_int32).astype(numpy.int32)
+        step2rad = numpy.frombuffer(block[368:408], LE_float64).astype(numpy.float64)
+        zero_correction_soft_step = numpy.frombuffer(block[512:532], LE_int32).astype(numpy.int32)
         step_angles_deg = rad2deg(step2rad)
         # calc angles
         start_angles_deg = start_angles_step * step_angles_deg
@@ -596,7 +601,7 @@ class OxdImage(FabioImage):
                 ex1 += 1
                 # this is the special case 1:
                 # if the marker 254 is found the next 2 bytes encode one pixel
-                value = raw[pos_inp + 1 : pos_inp + 3].view(self.get_stype("int16", "little"))
+                value = raw[pos_inp + 1 : pos_inp + 3].view(LE_int16)
                 current = last + value[0]
                 pos_inp += 3
 
@@ -605,7 +610,7 @@ class OxdImage(FabioImage):
                 # if the marker 255 is found the next 4 bytes encode one pixel
                 ex2 += 1
                 logger.info("special case 32 bits.")
-                value = raw[pos_inp + 1 : pos_inp + 5].view(self.get_stype("int32", "little"))
+                value = raw[pos_inp + 1 : pos_inp + 5].view(LE_int32)
                 current = last + value[0]
                 pos_inp += 5
             data[pos_out] = current

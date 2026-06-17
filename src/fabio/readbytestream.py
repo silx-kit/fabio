@@ -59,7 +59,7 @@ def readbytestream(
     nbytespp,
     datatype="int",
     signed="n",
-    swap="n",
+    byteorder="<",
     typeout=numpy.uint16,
 ):
     """
@@ -103,12 +103,8 @@ def readbytestream(
 
     infile.seek(offset)
 
-    if swap == "y":
-        file_endianness = "big" if numpy.little_endian else "little"
-        file_dtype = FabioImage.get_stype(tin, file_endianness)
-    else:
-        file_dtype = numpy.dtype(tin)
-    data = numpy.frombuffer(infile.read(length), file_dtype)
+    stype = numpy.dtype(tin).newbyteorder(byteorder)
+    data = numpy.frombuffer(infile.read(length), stype)
     arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
 
     if opened:
