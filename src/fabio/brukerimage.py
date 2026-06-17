@@ -248,11 +248,10 @@ class BrukerImage(FabioImage):
                 logger.warning(errmsg)
                 raise RuntimeError(errmsg)
 
+            le_dtype = numpy.dtype(self.bpp_to_numpy[npixelb]).newbyteorder('<')
             data = numpy.frombuffer(
-                infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb]
-            ).copy()
-            if not numpy.little_endian and data.dtype.itemsize > 1:
-                data.byteswap(True)
+                infile.read(rows * cols * npixelb), dtype=le_dtype
+            ).astype(self.bpp_to_numpy[npixelb])
 
             # handle overflows
             nov = int(self.header["NOVERFL"])
@@ -327,12 +326,10 @@ class BrukerImage(FabioImage):
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1
-        data = tmp_data.astype(self.bpp_to_numpy[bpp])
+        le_dtype = numpy.dtype(self.bpp_to_numpy[bpp]).newbyteorder('<')
+        data = tmp_data.astype(le_dtype)
         reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
-        if not numpy.little_endian and bpp > 1:
-            # Bruker enforces little endian
-            data.byteswap(True)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
             if isinstance(bruker, io.BufferedWriter):
