@@ -276,9 +276,8 @@ class Mar345Image(FabioImage):
         binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
         self.header["HIGH"] = str(binheader[2])
-        if self.swap_needed:
-            binheader.byteswap(True)
-        return binheader.tobytes()
+        file_endianness = "big" if (numpy.little_endian == bool(self.swap_needed)) else "little"
+        return binheader.astype(self.get_stype("int32", file_endianness)).tobytes()
 
     def ascii_header(self, linesep="\n", size=4096):
         """
@@ -492,9 +491,8 @@ class Mar345Image(FabioImage):
             tmp = numpy.zeros(((nb_pix // 8 + 1) * 8, 2), dtype="int32")
         tmp[:nb_pix, 0] = pix_location + 1
         tmp[:nb_pix, 1] = flt_data[pix_location]
-        if self.swap_needed:
-            tmp.byteswap(True)
-        return tmp.tobytes()
+        file_endianness = "big" if (numpy.little_endian == bool(self.swap_needed)) else "little"
+        return tmp.astype(self.get_stype("int32", file_endianness)).tobytes()
 
     def nb_overflow_pixels(self):
         return (self.data > 65535).sum()

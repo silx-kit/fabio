@@ -34,6 +34,7 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
 
 import logging
 import numpy
+from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 
@@ -102,11 +103,13 @@ def readbytestream(
 
     infile.seek(offset)
 
-    data = numpy.frombuffer(infile.read(length), tin)
-    arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
-
     if swap == "y":
-        arr.byteswap(True)
+        file_endianness = "big" if numpy.little_endian else "little"
+        file_dtype = FabioImage.get_stype(tin, file_endianness)
+    else:
+        file_dtype = numpy.dtype(tin)
+    data = numpy.frombuffer(infile.read(length), file_dtype)
+    arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
 
     if opened:
         infile.close()

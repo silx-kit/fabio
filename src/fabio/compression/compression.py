@@ -38,7 +38,7 @@ Authors: Jérôme Kieffer, ESRF
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "04/10/2025"
+__date__ = "17/06/2026"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import sys
@@ -71,6 +71,11 @@ except ImportError:
 
 if sys.platform != "win32":
     WindowsError = OSError
+
+# few constants:
+LE_int64 = numpy.dtype("int64").newbyteorder("<")
+LE_int32 = numpy.dtype("int32").newbyteorder("<")
+LE_int16 = numpy.dtype("int16").newbyteorder("<")
 
 
 def is_incomplete_gz_block_exception(exception):
@@ -298,10 +303,6 @@ def compByteOffset_numpy(data):
     delta[1:] = flat[1:] - flat[:-1]
     mask = abs(delta) > 127
     exceptions = numpy.nonzero(mask)[0]
-    if numpy.little_endian:
-        byteswap = False
-    else:
-        byteswap = True
     start = 0
     binary_blob = b""
     for stop in exceptions:
@@ -311,26 +312,13 @@ def compByteOffset_numpy(data):
         absexc = abs(exc)
         if absexc > 2147483647:  # 2**31-1
             binary_blob += b"\x80\x00\x80\x00\x00\x00\x80"
-            if byteswap:
-                binary_blob += delta[stop : stop + 1].byteswap().tobytes()
-            else:
-                binary_blob += delta[stop : stop + 1].tobytes()
+            binary_blob += delta[stop : stop + 1].astype(LE_int64).tobytes()
         elif absexc > 32767:  # 2**15-1
             binary_blob += b"\x80\x00\x80"
-            if byteswap:
-                binary_blob += (
-                    delta[stop : stop + 1].astype(numpy.int32).byteswap().tobytes()
-                )
-            else:
-                binary_blob += delta[stop : stop + 1].astype(numpy.int32).tobytes()
+            binary_blob += delta[stop : stop + 1].astype(LE_int32).tobytes()
         else:  # >127
             binary_blob += b"\x80"
-            if byteswap:
-                binary_blob += (
-                    delta[stop : stop + 1].astype(numpy.int16).byteswap().tobytes()
-                )
-            else:
-                binary_blob += delta[stop : stop + 1].astype(numpy.int16).tobytes()
+            binary_blob += delta[stop : stop + 1].astype(LE_int16).tobytes()
         start = stop + 1
     if start < delta.size:
         binary_blob += delta[start:].astype(numpy.int8).tobytes()
@@ -379,14 +367,10 @@ def decTY1(raw_8, raw_16=None, raw_32=None):
     """
     data = numpy.frombuffer(raw_8, dtype=numpy.uint8).astype(int) - 127
     if raw_32 is not None:
-        int32 = numpy.frombuffer(raw_32, dtype=numpy.int32)
-        if not numpy.little_endian:
-            int32.byteswap(True)
+        int32 = numpy.frombuffer(raw_32, dtype=LE_int32).astype(numpy.int32)
         exception32 = numpy.where(data == 128)
     if raw_16 is not None:
-        int16 = numpy.frombuffer(raw_16, dtype="int16")
-        if not numpy.little_endian:
-            int16.byteswap(True)
+        int16 = numpy.frombuffer(raw_16, dtype=LE_int16).astype(numpy.int16)
         exception16 = numpy.where(data == 127)
         data[exception16] = int16
     if raw_32:
@@ -424,11 +408,8 @@ def compTY1(data):
     exception16 = (adiff >= (1 << 7) - 1) ^ exception32
     we16 = numpy.where(exception16)
     we32 = numpy.where(exception32)
-    data_16 = diff[we16].astype(numpy.int16)
-    data_32 = diff[we32].astype(numpy.int32)
-    if not numpy.little_endian:
-        data_16.byteswap(True)
-        data_32.byteswap(True)
+    data_16 = diff[we16].astype(LE_int16)
+    data_32 = diff[we32].astype(LE_int32)
     diff[we16] = 127
     diff[we32] = 128
     diff += 127

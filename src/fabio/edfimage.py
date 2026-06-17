@@ -679,9 +679,8 @@ class EdfFrame(fabioimage.FabioFrame):
                 rawData = rawData[:expected]
             # PB38k20190607: explicit way: count = get_data_counts(shape)
             count = self.size // self._dtype.itemsize
-            data = numpy.frombuffer(rawData, self._dtype, count).copy().reshape(shape)
-            if self.swap_needed():
-                data.byteswap(True)
+            file_endianness = "big" if (numpy.little_endian == bool(self._data_swap_needed)) else "little"
+            data = numpy.frombuffer(rawData, self.get_stype(self._dtype, file_endianness), count).astype(self._dtype).reshape(shape)
             self._data = data
             self._dtype = None
         return data
@@ -1466,12 +1465,11 @@ class EdfImage(fabioimage.FabioImage):
             f.seek(frame.start)
             raw = f.read(frame.blobsize)
         try:
-            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
+            file_endianness = "big" if (numpy.little_endian == bool(frame.swap_needed())) else "little"
+            data = numpy.frombuffer(raw, dtype=self.get_stype(self.bytecode, file_endianness)).astype(self.bytecode)
             data = data.reshape(self.data.shape)
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if frame.swap_needed():
-            data.byteswap(True)
         return data
 
     @deprecation.deprecated(
@@ -1527,12 +1525,11 @@ class EdfImage(fabioimage.FabioImage):
             # Pad with zero until the right size
             raw += b"\x00" * (size - len(raw))
         try:
-            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
+            file_endianness = "big" if (numpy.little_endian == bool(frame.swap_needed())) else "little"
+            data = numpy.frombuffer(raw, dtype=self.get_stype(self.bytecode, file_endianness)).astype(self.bytecode)
             data = data.reshape(-1, d1)
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if frame.swap_needed():
-            data.byteswap(True)
         return data[slice2]
 
     @deprecation.deprecated(

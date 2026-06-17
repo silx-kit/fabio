@@ -47,6 +47,7 @@ import logging
 from io import BytesIO
 from struct import pack, unpack as unpack_
 import numpy
+from ..fabioutils import ENDIANNESS
 
 try:
     from ..ext._agi_bitfield import (
@@ -86,7 +87,7 @@ def compress(frame):
 
     data_size = pack("<I", buffer.tell())
 
-    buffer.write(row_start.astype("<u4").tobytes())
+    buffer.write(row_start.astype(numpy.dtype("uint32").newbyteorder(ENDIANNESS.LITTLE)).tobytes())
 
     return data_size + buffer.getvalue()
 

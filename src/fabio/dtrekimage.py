@@ -138,13 +138,8 @@ class DtrekImage(FabioImage):
             data = None
         else:
             # Read the data into the array
-            data = numpy.frombuffer(binary, numpy_type).copy()
-            if self.swap_needed():
-                try:
-                    data.byteswap(inplace=True)
-                except TypeError:
-                    # Older numpy without inplace
-                    data = data.byteswap()
+            file_endianness = "big" if (numpy.little_endian == self.swap_needed()) else "little"
+            data = numpy.frombuffer(binary, self.get_stype(numpy_type, file_endianness)).astype(numpy_type)
             try:
                 data = data.reshape(self._shape)
             except ValueError:
@@ -245,8 +240,7 @@ class DtrekImage(FabioImage):
                 default_little_endian=numpy.little_endian
             )
             little_endian = byte_order == "little_endian"
-            if little_endian != numpy.little_endian:
-                data = data.byteswap()
+            data = data.astype(self.get_stype(data.dtype, "little" if little_endian else "big"))
 
             # Patch header to match the data
             self.header["Data_type"] = dtrek_data_type

@@ -380,4 +380,4 @@ def compress(int32_t [:,::1] frame):
         buffer[3] = (current & ((one<<32)-1))>>24
 
     return (numpy.asarray(buffer[:current+4]).tobytes()+
-            numpy.asarray(cumsum).astype("<u4").tobytes())
+            numpy.asarray(cumsum).astype(numpy.dtype("uint32").newbyteorder("little")).tobytes())

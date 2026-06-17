@@ -248,9 +248,9 @@ class BrukerImage(FabioImage):
                 logger.warning(errmsg)
                 raise RuntimeError(errmsg)
 
-            le_dtype = numpy.dtype(self.bpp_to_numpy[npixelb]).newbyteorder('<')
+            file_dtype = self.get_stype(self.bpp_to_numpy[npixelb], "little")
             data = numpy.frombuffer(
-                infile.read(rows * cols * npixelb), dtype=le_dtype
+                infile.read(rows * cols * npixelb), dtype=file_dtype
             ).astype(self.bpp_to_numpy[npixelb])
 
             # handle overflows
@@ -326,8 +326,8 @@ class BrukerImage(FabioImage):
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1
-        le_dtype = numpy.dtype(self.bpp_to_numpy[bpp]).newbyteorder('<')
-        data = tmp_data.astype(le_dtype)
+        file_dtype = self.get_stype(self.bpp_to_numpy[bpp], "little")
+        data = tmp_data.astype(file_dtype)
         reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
         with self._open(fname, "wb") as bruker:

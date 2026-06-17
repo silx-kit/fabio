@@ -215,9 +215,9 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
         ################################################################################
         records = (chigh + PACK_SIZE_HIGH - 1) // PACK_SIZE_HIGH
         stop = normal_offset - lenkey - 14
-        odata = numpy.frombuffer(raw[stop - 64 * records: stop], dtype=numpy.int32).copy()
-        if swap_needed:
-            odata.byteswap(True)
+        file_endianness = "big" if (numpy.little_endian == bool(swap_needed)) else "little"
+        odata = numpy.frombuffer(raw[stop - 64 * records: stop],
+                                 dtype=numpy.dtype("int32").newbyteorder(file_endianness)).astype(numpy.int32)
         overflow_data = odata.reshape((-1, 2))
         for i in range(overflow_data.shape[0]):
             idx = overflow_data[i, 0] - 1     # indexes are even values (-1 because 1 based counting)
