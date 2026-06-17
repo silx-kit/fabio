@@ -284,13 +284,13 @@ class TestFabioImage(unittest.TestCase):
 
 class TestSexedDtype(unittest.TestCase):
     def test_sexed_dtypes(self):
-        a = FabioImage.get_sexed_dtype("float32", ">")
+        a = FabioImage.get_stype("float32", ">")
         self.assertEqual(a.str, ">f4")
-        a = FabioImage.get_sexed_dtype("float64", "<")
+        a = FabioImage.get_stype("float64", "<")
         self.assertEqual(a.str, "<f8")
-        a = FabioImage.get_sexed_dtype(numpy.float32, "big")
+        a = FabioImage.get_stype(numpy.float32, "big")
         self.assertEqual(a.str, ">f4")
-        a = FabioImage.get_sexed_dtype(numpy.float64, "little")
+        a = FabioImage.get_stype(numpy.float64, "little")
         self.assertEqual(a.str, "<f8")
 
 def suite():

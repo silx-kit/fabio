@@ -114,7 +114,7 @@ class XsdImage(FabioImage):
         if self.md5:
             assert hashlib.md5(decData).hexdigest() == self.md5
 
-        data = numpy.frombuffer(decData, dtype=self.get_sexed_dtype(self._dtype, "little"))
+        data = numpy.frombuffer(decData, dtype=self.get_stype(self._dtype, "little"))
         data = data.reshape(self.shape)
         self.data = data
         self.resetvals()

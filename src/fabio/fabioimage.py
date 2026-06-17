@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "16/06/2026"
+__date__ = "17/06/2026"
 
 import os
 import logging
@@ -303,24 +303,16 @@ class _FabioArray(object):
         return self.bytecode
 
     @staticmethod
-    def get_sexed_dtype(dtype:str|numpy.dtype, endianness:str|ENDIANNESS="little") -> numpy.dtype:
+    def get_stype(dtype:str|numpy.dtype, endianness:str|ENDIANNESS="little") -> numpy.dtype:
         """return the sexed-dtype
 
         :param dtype: numpy datatype or str representing it
-        :param endianness: "little" or "big"
-        :return: the numpy datatype with order specified.
+        :param endianness: "little|big", "<|>", ...
+        :return: the numpy datatype with byte-order specified.
         """
-        if isinstance(dtype, numpy.dtype):
-            dtype = dtype.str
-        else:
-            dtype = numpy.dtype(dtype).str
-        if dtype[0] == "|":
-            return dtype
-        elif dtype[0] in ENDIANNESS:
-            dtype = dtype[1:]
-
-        endianness = ENDIANNESS.parse(endianness)
-        return numpy.dtype(endianness+dtype)
+        if not isinstance(dtype, numpy.dtype):
+            dtype = numpy.dtype(dtype)
+        return dtype.newbyteorder(ENDIANNESS.parse(endianness))
 
 
 class FabioFrame(_FabioArray):

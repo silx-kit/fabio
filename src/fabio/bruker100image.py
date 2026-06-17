@@ -244,7 +244,7 @@ class Bruker100Image(BrukerImage):
             #             data_size_padded = mround(data_size, 512)
             data_size_padded = data_size
             raw_data = infile.read(data_size_padded)
-            stype = self.get_sexed_dtype(self.bpp_to_numpy[npixelb], "little")
+            stype = self.get_stype(self.bpp_to_numpy[npixelb], "little")
             data = numpy.frombuffer(raw_data[:data_size], dtype=stype).reshape((rows, cols))
             # now process the overflows
             noverfl_values = [int(f) for f in self.header["NOVERFL"].split()]

@@ -39,7 +39,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "16/06/2026"
+__date__ = "17/06/2026"
 
 import logging
 import struct
@@ -306,7 +306,7 @@ class RaxisImage(FabioImage):
             except Exception as error:
                 logger.error("Uncommon error encountered when reading file: %s" % error)
         rawData = infile.read(size)
-        data = numpy.frombuffer(rawData, self.get_sexed_dtype(self._dtype, self.endianness)).copy().reshape(shape)
+        data = numpy.frombuffer(rawData, self.get_stype(self._dtype, self.endianness)).copy().reshape(shape)
         di = (data >> 15) != 0  # greater than 2^15
         if di.sum() >= 1:
             # find indices for which we need to do the correction (for which

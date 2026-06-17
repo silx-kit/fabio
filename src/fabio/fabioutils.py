@@ -35,7 +35,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/06/2026"
+__date__ = "17/06/2026"
 __status__ = "stable"
 __docformat__ = "restructuredtext"
 
@@ -749,7 +749,7 @@ class ENDIANNESS(StrEnum):
     LITTLE = '<'
     BIG = '>'
     @classmethod
-    def parse(cls, value:str) -> ENDIANNESS:
+    def parse(cls, value:str):
         res = cls.LITTLE
         if isinstance(value, cls):
             res = value

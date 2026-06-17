@@ -33,7 +33,7 @@ using version 8001 of the header from file:
 """
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer", "Joel Bernier"]
-__date__ = "16/06/2026"
+__date__ = "17/06/2026"
 __status__ = "production"
 __copyright__ = "2007-2020 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -340,7 +340,7 @@ class GeImage(FabioImage):
             raise IOError("Data depth format %sbits is not supported" % bitdepth)
 
         raw = filepointer.read(imglength)
-        data = numpy.frombuffer(raw, self.get_sexed_dtype(datatype, "little")).copy()
+        data = numpy.frombuffer(raw, self.get_stype(datatype, "little")).copy()
         data = data.reshape(rows, cols)
         self.data = data
         self._shape = None

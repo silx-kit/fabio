@@ -215,7 +215,7 @@ class Dm3Image(FabioImage):
             # simple type
             return self.readbytes(
                 DATA_BYTES[self.tag_encoded_type],
-                self.get_sexed_dtype(DATA_TYPES[self.tag_encoded_type], self.byte_order),
+                self.get_stype(DATA_TYPES[self.tag_encoded_type], self.byte_order),
             )[0]
         # are the data stored in a simple array?
         if self.tag_encoded_type == 20 and self.tag_data_type == 3:
@@ -231,7 +231,7 @@ class Dm3Image(FabioImage):
                 "%s data elements stored as %s", self.no_data_elements, self.data_type
             )
             read_no_bytes = DATA_BYTES[self.data_type] * self.no_data_elements
-            fmt = self.get_sexed_dtype(DATA_TYPES[self.data_type], self.byte_order)
+            fmt = self.get_stype(DATA_TYPES[self.data_type], self.byte_order)
             return self.readbytes(read_no_bytes, fmt)
 
         # are the data stored in a complex array ?
@@ -285,7 +285,7 @@ class Dm3Image(FabioImage):
                 field_data += self.readbytes(field_info[i][0], None) + b" "
                 data = self.readbytes(
                     DATA_BYTES[field_info[i][1]],
-                    self.get_sexed_dtype(DATA_TYPES[field_info[i][1]], self.byte_order))
+                    self.get_stype(DATA_TYPES[field_info[i][1]], self.byte_order))
                 field_data += str(data[0]).encode() + b" "
             return field_data
 

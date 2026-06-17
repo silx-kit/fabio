@@ -136,7 +136,7 @@ class KcdImage(FabioImage):
             except KeyError:
                 bytecode = numpy.uint16
                 logger.warning("Defaulting type to uint16")
-            self._dtype = self.get_sexed_dtype(bytecode, "little")
+            self._dtype = self.get_stype(bytecode, "little")
             try:
                 nbReadOut = int(self.header["Number of readouts"])
             except KeyError:
