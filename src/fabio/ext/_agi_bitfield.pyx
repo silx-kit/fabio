@@ -379,9 +379,5 @@ def compress(int32_t [:,::1] frame):
         buffer[2] = (current & ((one<<24)-1))>>16
         buffer[3] = (current & ((one<<32)-1))>>24
 
-    if numpy.little_endian:
-        return (numpy.asarray(buffer[:current+4]).tobytes()+
-                numpy.asarray(cumsum).tobytes())
-    else:
-        return (numpy.asarray(buffer[:current+4]).tobytes()+
-                numpy.asarray(cumsum).byteswap().tobytes())
+    return (numpy.asarray(buffer[:current+4]).tobytes()+
+            numpy.asarray(cumsum).astype("<u4").tobytes())

@@ -86,10 +86,7 @@ def compress(frame):
 
     data_size = pack("<I", buffer.tell())
 
-    if numpy.little_endian:
-        buffer.write(row_start.tobytes())
-    else:
-        buffer.write(row_start.byteswap().tobytes())
+    buffer.write(row_start.astype("<u4").tobytes())
 
     return data_size + buffer.getvalue()
 
