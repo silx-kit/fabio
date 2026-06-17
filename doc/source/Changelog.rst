@@ -1,10 +1,23 @@
 Changelog
 =========
 
-FabIO-2026.xx.y:
-................
-- Migrate viewer application to `qtpy`
-- Supports Python 3.11+ through Python's limited API
+FabIO-2026.6.0:
+...............
+- Migrate viewer application to `qtpy` for Qt-version independence (PySide6/PyQt5/PyQt6)
+- Introduce ``ENDIANNESS`` enum and ``FabioImage.get_stype()`` helper to build dtypes with
+  explicit byte order; migrate all codec and image-format modules away from
+  ``ndarray.byteswap()`` to endian-typed reads/writes (#310)
+- Support reading images from byte-streams and ``BytesIO`` objects (#612)
+- Privatise ``_do_magic()`` in ``openimage`` for consistency
+- All remaining GPL-licensed source files converted to MIT license
+- Helper function to raise the open-file ``ulimit`` on Linux systems (#568)
+- Fix resource-download locking strategy using ``filelock``
+- Fix compatibility with NumPy ≥ 2.5 (deprecation of in-place shape assignment)
+- Fix deprecation warnings introduced in Python 3.14
+- Update ``lxml`` requirement to ≥ 6.1.1
+- Code clean-up: ``bruker100image`` and ``kcdimage`` format handlers simplified
+- Ruff linting now enforced in CI
+- Drop Python 3.10; supports Python 3.11 - 3.14+ (Python limited API)
 
 FabIO-2025.10.0:
 ................
