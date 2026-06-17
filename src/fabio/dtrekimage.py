@@ -44,6 +44,7 @@ import re
 import logging
 
 from .fabioimage import FabioImage
+from .fabioutils import ENDIANNESS
 
 logger = logging.getLogger(__name__)
 
@@ -138,8 +139,8 @@ class DtrekImage(FabioImage):
             data = None
         else:
             # Read the data into the array
-            file_endianness = "big" if (numpy.little_endian == self.swap_needed()) else "little"
-            data = numpy.frombuffer(binary, self.get_stype(numpy_type, file_endianness)).astype(numpy_type)
+            stype = self.get_stype(self._dtype, self._get_dtrek_byte_order())
+            data = numpy.frombuffer(binary, stype).astype(self._dtype)
             try:
                 data = data.reshape(self._shape)
             except ValueError:
@@ -237,17 +238,15 @@ class DtrekImage(FabioImage):
                 data = data.astype(new_dtype)
 
             byte_order = self._get_dtrek_byte_order(
-                default_little_endian=numpy.little_endian
-            )
-            little_endian = byte_order == "little_endian"
-            data = data.astype(self.get_stype(data.dtype, "little" if little_endian else "big"))
+                default=ENDIANNESS.LITTLE if numpy.little_endian else ENDIANNESS.BIG)
+            data = data.astype(self.get_stype(data.dtype, byte_order))
 
             # Patch header to match the data
             self.header["Data_type"] = dtrek_data_type
             self.header["DIM"] = str(len(data.shape))
             for i, size in enumerate(reversed(data.shape)):
                 self.header["SIZE%d" % (i + 1)] = str(size)
-            self.header["BYTE_ORDER"] = byte_order
+            self.header["BYTE_ORDER"] = "little_endian" if byte_order==ENDIANNESS.LITTLE else "big_endian"
         else:
             # No data
             self.header["Data_type"] = "long int"
@@ -292,39 +291,19 @@ class DtrekImage(FabioImage):
             if data is not None:
                 data.tofile(outf)
 
-    def _get_dtrek_byte_order(self, default_little_endian=None):
+    def _get_dtrek_byte_order(self, default=ENDIANNESS.LITTLE) -> ENDIANNESS:
         """Returns the byte order value in d*TREK format."""
-        if "BYTE_ORDER" not in self.header:
-            if default_little_endian is None:
-                logger.warning("No byte order specified, assuming little_endian")
-                little_endian = True
-            else:
-                little_endian = default_little_endian
-        else:
+        if "BYTE_ORDER" in self.header:
             byte_order = self.header["BYTE_ORDER"]
-            little_endian = "little" in byte_order
-            big_endian = "big" in byte_order
-            if not little_endian and not big_endian:
+            if "little" in byte_order:
+                return ENDIANNESS.LITTLE
+            elif "big" in byte_order:
+                return ENDIANNESS.BIG
+            else:
                 logger.warning(
-                    "Invalid BYTE_ORDER value. Found '%s', assuming little_endian",
-                    byte_order,
+                    "Invalid BYTE_ORDER value. Found '%s', assuming default: %s",
+                    byte_order, default
                 )
-                little_endian = True
-
-        if little_endian:
-            return "little_endian"
+                return default
         else:
-            return "big_endian"
-
-        return byte_order
-
-    def swap_needed(self, check=True):
-        """
-        Returns True if the header does not use the same endianness than the
-        system.
-
-        :rtype: bool
-        """
-        byte_order = self._get_dtrek_byte_order()
-        little_endian = byte_order == "little_endian"
-        return little_endian != numpy.little_endian
+            return default

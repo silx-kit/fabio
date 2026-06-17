@@ -127,7 +127,6 @@ class Mar345Image(FabioImage):
         else:
             self.byte_order = ENDIANNESS.BIG
             fs = ">i"
-            # logger.debug("Going for big endian, swap_needed %s" % self.swap_needed)
 
         # image dimensions
         dim1 = int(struct.unpack(fs, data[4:8])[0])
