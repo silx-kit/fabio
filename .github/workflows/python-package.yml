@@ -25,6 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt-get update
         sudo apt-get -y install libgl1 libegl1
         python -m pip install --upgrade pip wheel build flake8 ruff
         if [ -f ci/requirements_gh.txt ]; then pip install -r ci/requirements_gh.txt; fi
