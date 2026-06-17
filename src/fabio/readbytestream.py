@@ -34,7 +34,6 @@ Authors: Jon Wright    Henning O. Sorensen & Erik Knudsen
 
 import logging
 import numpy
-from .fabioimage import FabioImage
 
 logger = logging.getLogger(__name__)
 
