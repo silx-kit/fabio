@@ -40,14 +40,13 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "28/10/2025"
+__date__ = "17/06/2026"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
 from io import BytesIO
 from struct import pack, unpack as unpack_
 import numpy
-from ..fabioutils import ENDIANNESS
 
 try:
     from ..ext._agi_bitfield import (
@@ -62,6 +61,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+LE_uint32 = numpy.dtype("uint32").newbyteorder("<")
 
 MASK = [(1 << i) - 1 for i in range(9)]
 
@@ -87,7 +87,7 @@ def compress(frame):
 
     data_size = pack("<I", buffer.tell())
 
-    buffer.write(row_start.astype(numpy.dtype("uint32").newbyteorder(ENDIANNESS.LITTLE)).tobytes())
+    buffer.write(row_start.astype(LE_uint32).tobytes())
 
     return data_size + buffer.getvalue()
 

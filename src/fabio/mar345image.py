@@ -47,7 +47,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "27/10/2025"
+__date__ = "17/06/2026"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -57,6 +57,7 @@ import time
 import logging
 import numpy
 import fabio
+from .fabioutils import ENDIANNESS
 from .fabioimage import FabioImage
 from .compression import compPCK, decPCK
 
@@ -83,7 +84,7 @@ class Mar345Image(FabioImage):
         FabioImage.__init__(self, *args, **kwargs)
         self.numhigh = None
         self.numpixels = None
-        self.swap_needed = None
+        self.byteorder = "="
 
     def read(self, fname, frame=None):
         """Read a mar345 image"""
@@ -93,7 +94,8 @@ class Mar345Image(FabioImage):
         if "compressed" in self.header["Format"]:
             dim2, dim1 = self._shape
             self.data = decPCK(
-                f, dim1, dim2, self.numhigh, swap_needed=self.swap_needed
+                f, dim1, dim2, self.numhigh,
+                byteorder=self.byteorder
             )
             self._shape = None
         else:
@@ -121,12 +123,11 @@ class Mar345Image(FabioImage):
         # first 4-byte integer is a marker to check endianness
         if struct.unpack("<i", data[0:4])[0] == 1234:
             fs = "<i"
-            self.swap_needed = not (numpy.little_endian)
-            logger.debug("Going for little endian, swap_needed %s" % self.swap_needed)
+            self.byteorder = ENDIANNESS.LITTLE
         else:
-            self.swap_needed = numpy.little_endian
+            self.byte_order = ENDIANNESS.BIG
             fs = ">i"
-            logger.debug("Going for big endian, swap_needed %s" % self.swap_needed)
+            # logger.debug("Going for big endian, swap_needed %s" % self.swap_needed)
 
         # image dimensions
         dim1 = int(struct.unpack(fs, data[4:8])[0])
@@ -276,8 +277,7 @@ class Mar345Image(FabioImage):
         binheader[14] = int(float(self.header.get("CHI", 1)) * 1e3)
         binheader[15] = int(float(self.header.get("TWOTHETA", 1)) * 1e3)
         self.header["HIGH"] = str(binheader[2])
-        file_endianness = "big" if (numpy.little_endian == bool(self.swap_needed)) else "little"
-        return binheader.astype(self.get_stype("int32", file_endianness)).tobytes()
+        return binheader.astype(self.get_stype("int32", self.byteorder)).tobytes()
 
     def ascii_header(self, linesep="\n", size=4096):
         """
@@ -491,8 +491,7 @@ class Mar345Image(FabioImage):
             tmp = numpy.zeros(((nb_pix // 8 + 1) * 8, 2), dtype="int32")
         tmp[:nb_pix, 0] = pix_location + 1
         tmp[:nb_pix, 1] = flt_data[pix_location]
-        file_endianness = "big" if (numpy.little_endian == bool(self.swap_needed)) else "little"
-        return tmp.astype(self.get_stype("int32", file_endianness)).tobytes()
+        return tmp.astype(self.get_stype("int32", self.byteorder)).tobytes()
 
     def nb_overflow_pixels(self):
         return (self.data > 65535).sum()

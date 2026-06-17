@@ -418,14 +418,14 @@ def compTY1(data):
 
 
 def decPCK(
-    stream,
-    dim1=None,
-    dim2=None,
-    overflowPix=None,
-    version=None,
-    normal_start=None,
-    swap_needed=None,
-):
+    stream: bytes,
+    dim1:int|None=None,
+    dim2:int|None=None,
+    overflowPix:int|None=None,
+    version:int|None=None,
+    normal_start:int|None=None,
+    byteorder:str|None=None,
+) -> numpy.ndarray:
     """
     Modified CCP4  pck decompressor used in MAR345 images
 
@@ -434,9 +434,8 @@ def decPCK(
     :param overflowPix: optional parameters: number of overflowed pixels
     :param version: PCK version 1 or 2
     :param normal_start: position of the normal value section (can be auto-guessed)
-    :param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
+    :param byteorder: set to ">" for big=endian or "<" for little-endian data decompression
     :return: ndarray of 2D with the right size
-
     """
     try:
         from ..ext.mar345_IO import uncompress_pck
@@ -451,7 +450,7 @@ def decPCK(
         raw = bytes(stream)
 
     return uncompress_pck(
-        raw, dim1, dim2, overflowPix, version, normal_start, swap_needed
+        raw, dim1, dim2, overflowPix, version, normal_start, byteorder
     )
 
 
