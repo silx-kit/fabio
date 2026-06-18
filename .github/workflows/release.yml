@@ -24,7 +24,7 @@ jobs:
         run: python -m build --sdist
       - name: Check the package
         run: python -m twine check dist/*
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: cibw-sdist
           path: dist/*.tar.gz
@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: "3.14"
           cache: "pip"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: cibw-sdist
           path: dist
@@ -74,7 +74,7 @@ jobs:
           export FABIO_VERSION="$(python -c 'import fabio; print(fabio.strictversion)')"
           sphinx-build doc/source/ "fabio-${FABIO_VERSION}_documentation/"
           zip -r "fabio-${FABIO_VERSION}_documentation.zip" "fabio-${FABIO_VERSION}_documentation/"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: documentation
           path: fabio-*_documentation.zip
@@ -119,8 +119,6 @@ jobs:
           # Do not build for pypy and muslinux
           CIBW_SKIP: pp* *-musllinux_*
           CIBW_ARCHS: ${{ matrix.cibw_archs }}
-          CIBW_BEFORE_ALL_LINUX: "sudo apt-get update ; sudo apt-get install libxkbcommon0"
-
           MACOSX_DEPLOYMENT_TARGET: "${{ matrix.macos_target }}"
 
           # Install test dependencies
@@ -129,7 +127,7 @@ jobs:
           # Skip tests for emulated architectures
           # and Python3.8 on macos/arm64 (https://github.com/pypa/cibuildwheel/pull/1169)
           CIBW_TEST_SKIP: "*-*linux_{aarch64,ppc64le,s390x}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
@@ -146,7 +144,7 @@ jobs:
     # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
     # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           pattern: cibw-*
           path: dist
