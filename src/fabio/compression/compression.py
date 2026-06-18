@@ -38,7 +38,7 @@ Authors: Jérôme Kieffer, ESRF
 __author__ = "Jérôme Kieffer"
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "17/06/2026"
+__date__ = "18/06/2026"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import sys
@@ -429,12 +429,12 @@ def decPCK(
     """
     Modified CCP4  pck decompressor used in MAR345 images
 
-    :param raw: input string (bytes in python3)
+    :param raw: input string (bytes since python3)
     :param dim1,dim2: optional parameters size
     :param overflowPix: optional parameters: number of overflowed pixels
     :param version: PCK version 1 or 2
     :param normal_start: position of the normal value section (can be auto-guessed)
-    :param byteorder: set to ">" for big=endian or "<" for little-endian data decompression
+    :param byteorder: Endianness of compressed data: ">" for big-endian or "<" for little-endian
     :return: ndarray of 2D with the right size
     """
     try:
@@ -449,9 +449,8 @@ def decPCK(
     else:
         raw = bytes(stream)
 
-    return uncompress_pck(
-        raw, dim1, dim2, overflowPix, version, normal_start, byteorder
-    )
+    return uncompress_pck(raw, dim1, dim2, overflowPix, version,
+                          normal_start, byteorder)
 
 
 def compPCK(data):
