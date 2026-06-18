@@ -106,8 +106,6 @@ jobs:
         if: runner.os == 'Linux'
         with:
           platforms: all
-      - name: Install X11 dependencies
-        run: sudo apt-get update ; sudo apt-get install libxkbcommon0
       - uses: pypa/cibuildwheel@v3.2.1
         env:
           # Use silx wheelhouse: needed for ppc64le
@@ -119,6 +117,7 @@ jobs:
           # Do not build for pypy and muslinux
           CIBW_SKIP: pp* *-musllinux_*
           CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_BEFORE_ALL_LINUX: "sudo apt-get update ; sudo apt-get install libxkbcommon0"
 
           MACOSX_DEPLOYMENT_TARGET: "${{ matrix.macos_target }}"
 
