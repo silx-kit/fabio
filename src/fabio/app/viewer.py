@@ -39,9 +39,10 @@ __version__ = "1.1"
 __author__ = "Gaël Goret, Jérôme Kieffer"
 __copyright__ = "2015-2026 ESRF"
 __licence__ = "MIT"
-__date__ = "12/03/2026"
+__date__ = "18/06/2026"
 
 
+import os
 import sys
 from argparse import ArgumentParser
 import numpy
@@ -50,9 +51,16 @@ import fabio
 # ----------------------------------------------------------------------
 # Qt imports via QtPy – this works with PyQt5, PySide2, PySide6, etc.
 # ----------------------------------------------------------------------
-from qtpy.QtWidgets import QApplication, QStyleFactory
-from ..qt.viewer import AppForm
-
+try:
+    from qtpy.QtWidgets import QApplication, QStyleFactory
+    from ..qt.viewer import AppForm
+except ImportError as err:
+    if os.environ.get("WITH_QT_TEST") == "False":
+        print("QtPy is not available but it does not matter as `WITH_QT_TEST=False`")
+    else:
+        raise err
+      
+        
 # Matplotlib imports (unchanged)
 # ----------------------------------------------------------------------
 # Global configuration
