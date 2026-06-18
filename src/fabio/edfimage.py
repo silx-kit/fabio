@@ -820,6 +820,7 @@ class EdfFrame(fabioimage.FabioFrame):
         """Returns the frame index of this frame"""
         return self._index
 
+    @deprecation.deprecated
     def swap_needed(self):
         """
         Decide if we need to byteswap
@@ -1319,7 +1320,7 @@ class EdfImage(fabioimage.FabioImage):
             raise e
         return self
 
-    #TODO deprecated
+    @deprecation.deprecated
     def swap_needed(self):
         """
         Decide if we need to byteswap
