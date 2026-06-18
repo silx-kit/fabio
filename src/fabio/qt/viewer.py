@@ -44,32 +44,39 @@ import os
 import numpy
 import fabio
 from fabio.nexus import Nexus
-# ----------------------------------------------------------------------
-# Qt imports via QtPy – this works with PyQt5, PySide2, PySide6, etc.
-# ----------------------------------------------------------------------
-from qtpy import QtWidgets as qt
-from qtpy import QtCore as qtc
-from qtpy.QtGui import QIcon
-from qtpy.QtWidgets import (
-    QSizePolicy,
-    QFileDialog,
-    QMessageBox,
-    QAction,
-    QComboBox,
-    QPlainTextEdit,
-    QLabel,
-    QSplitter,
-    QTabWidget,
-    QWidget,
-    QProgressBar,
-    QGroupBox,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QListWidget,
-    QCheckBox,
-    QButtonGroup
-)
+try:
+	# ----------------------------------------------------------------------
+	# Qt imports via QtPy – this works with PyQt5, PySide2, PySide6, etc.
+	# ----------------------------------------------------------------------
+	from qtpy import QtWidgets as qt
+	from qtpy import QtCore as qtc
+	from qtpy.QtGui import QIcon
+	from qtpy.QtWidgets import (
+	    QSizePolicy,
+	    QFileDialog,
+	    QMessageBox,
+	    QAction,
+	    QComboBox,
+	    QPlainTextEdit,
+	    QLabel,
+	    QSplitter,
+	    QTabWidget,
+	    QWidget,
+	    QProgressBar,
+	    QGroupBox,
+	    QVBoxLayout,
+	    QHBoxLayout,
+	    QPushButton,
+	    QListWidget,
+	    QCheckBox,
+	    QButtonGroup
+	)
+except ImportError as err:
+	if os.environ.get("WITH_QT_TEST") == "False":
+		print("QtPy does not import but it does not matter as `WITH_QT_TEST` is False.")
+	else:
+		raise err
+
 # Matplotlib imports (unchanged)
 from matplotlib.figure import Figure
 from .matplotlib import FigureCanvasQTAgg
