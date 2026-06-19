@@ -648,7 +648,6 @@ class EdfFrame(fabioimage.FabioFrame):
             # PB38k20190607: explicit way: count = get_data_counts(shape)
             count = self.size // self._dtype.itemsize
             stype = self.get_stype(self._dtype, self._data_byteorder)
-            print(stype)
             data = numpy.frombuffer(rawData, stype, count).astype(self._dtype).reshape(shape)
             self._data = data
             self._dtype = None
@@ -821,6 +820,7 @@ class EdfFrame(fabioimage.FabioFrame):
         """Returns the frame index of this frame"""
         return self._index
 
+    @deprecation.deprecated
     def swap_needed(self):
         """
         Decide if we need to byteswap
@@ -835,6 +835,14 @@ class EdfFrame(fabioimage.FabioFrame):
             return False
         else:
             logger.warning("Unconsistent endianness !!!")
+
+    @property
+    def byteorder(self):
+        """This is the byte-order originally on the disk.
+        read data have been transposed to native "=" when copying
+        at the asarray stage
+        """
+        return self._data_byteorder
 
 class EdfImage(fabioimage.FabioImage):
     """Read and try to write the ESRF edf data format"""
@@ -1312,6 +1320,7 @@ class EdfImage(fabioimage.FabioImage):
             raise e
         return self
 
+    @deprecation.deprecated
     def swap_needed(self):
         """
         Decide if we need to byteswap
@@ -1447,12 +1456,13 @@ class EdfImage(fabioimage.FabioImage):
         with open(filename, "rb") as f:
             f.seek(frame.start)
             raw = f.read(frame.blobsize)
+        stype = self.get_stype(self.bytecode, frame.byteorder)
         try:
-            file_endianness = "big" if (numpy.little_endian == bool(frame.swap_needed())) else "little"
-            data = numpy.frombuffer(raw, dtype=self.get_stype(self.bytecode, file_endianness)).astype(self.bytecode)
-            data = data.reshape(self.data.shape)
+            data = numpy.frombuffer(raw, dtype=stype)
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
+        else:
+            data = data.astype(self.bytecode).reshape(self.data.shape)
         return data
 
     @deprecation.deprecated(

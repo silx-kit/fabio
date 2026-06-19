@@ -47,7 +47,7 @@ http://rayonix.com/site_media/downloads/mar345_formats.pdf
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "17/06/2026"
+__date__ = "18/06/2026"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -84,7 +84,7 @@ class Mar345Image(FabioImage):
         FabioImage.__init__(self, *args, **kwargs)
         self.numhigh = None
         self.numpixels = None
-        self.byteorder = "="
+        self.byteorder = "|"
 
     def read(self, fname, frame=None):
         """Read a mar345 image"""
