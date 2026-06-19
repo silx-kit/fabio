@@ -88,7 +88,6 @@ def suite():
     testsuite = unittest.TestSuite()
     testsuite.addTest(loadTests(TestEdf))
     testsuite.addTest(loadTests(TestTiff))
-    # testsuite.addTest(loadTests(TestCli))
     return testsuite
 
 
