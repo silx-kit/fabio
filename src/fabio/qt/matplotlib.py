@@ -38,12 +38,19 @@ __license__ = "MIT"
 __date__ = "12/03/2026"
 
 
+import os
 import io
 import matplotlib
 import numpy
 
-from qtpy import API as BINDING
-from qtpy.QtGui import QFont
+try:
+    from qtpy import API as BINDING
+    from qtpy.QtGui import QFont
+except ImportError as err:
+    if os.environ["WITH_QT_TEST"] == "False":
+        print("QtPy not present but since `WITH_QT_TEST` is False, silence it")
+    else:
+        raise err
 
 # This must be performed before any import from matplotlib
 if BINDING in ("pyside6", "pyqt6"):
