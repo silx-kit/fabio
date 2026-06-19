@@ -121,18 +121,13 @@ class LoggingCounter(logging.Handler):
     :type logger: str or :class:`logging.Logger`
     """
 
-    def __init__(
-        self,
-        logger=None,
-    ):
+    def __init__(self, logger=None):
         if logger is None:
             logger = logging.getLogger()
         elif not isinstance(logger, logging.Logger):
             logger = logging.getLogger(logger)
         self.logger = logger
-
         self.records = []
-
         super(LoggingCounter, self).__init__()
 
     def __enter__(self):
@@ -198,7 +193,6 @@ class TestLogging(LoggingCounter):
                        Default: Do not check.
     :raises RuntimeError: If the message counts are the expected ones.
     """
-
     def __init__(
         self,
         logger=None,
@@ -209,14 +203,7 @@ class TestLogging(LoggingCounter):
         debug=None,
         notset=None,
     ):
-        if logger is None:
-            logger = logging.getLogger()
-        elif not isinstance(logger, logging.Logger):
-            logger = logging.getLogger(logger)
-        self.logger = logger
-
-        self.records = []
-
+        super(TestLogging, self).__init__(logger)
         self.count_by_level = {
             logging.CRITICAL: critical,
             logging.ERROR: error,
@@ -225,8 +212,6 @@ class TestLogging(LoggingCounter):
             logging.DEBUG: debug,
             logging.NOTSET: notset,
         }
-
-        super(TestLogging, self).__init__()
 
 
     def __exit__(self, exc_type, exc_value, traceback):
