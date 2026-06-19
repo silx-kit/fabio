@@ -82,7 +82,7 @@ class TestCli(unittest.TestCase):
             soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
         except Exception as err:
             logger.error(f"{type(err)}: {err}")
-        if counter[logging.warning] == 0:
+        if counters[logging.warning] == 0:
             self.assertEqual(soft, hard, "soft limits have been increased to hard ones")
         else:
             logger.warining("Test skipped as `relax_ulimit` emited warnings")
