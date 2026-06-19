@@ -826,9 +826,9 @@ class EdfFrame(fabioimage.FabioFrame):
         Decide if we need to byteswap
         """
         if self._data_byteorder is ENDIANNESS.LITTLE:
-            return not numpy.little_endian:
+            return not numpy.little_endian
         elif self._data_byteorder is ENDIANNESS.BIG:
-            return numpy.little_endian:
+            return numpy.little_endian
         else:
             logger.warning("Unconsistent endianness !!!")
 
