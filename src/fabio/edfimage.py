@@ -821,18 +821,14 @@ class EdfFrame(fabioimage.FabioFrame):
         return self._index
 
     @deprecation.deprecated
-    def swap_needed(self):
+    def swap_needed(self) -> bool:
         """
         Decide if we need to byteswap
         """
-        if self._data_byteorder is ENDIANNESS.LITTLE and numpy.little_endian:
-            return False
-        elif self._data_byteorder is ENDIANNESS.BIG and numpy.little_endian:
-            return True
-        elif self._data_byteorder is ENDIANNESS.LITTLE and not numpy.little_endian:
-            return True
-        elif self._data_byteorder is ENDIANNESS.BIG and not numpy.little_endian:
-            return False
+        if self._data_byteorder is ENDIANNESS.LITTLE:
+            return not numpy.little_endian
+        elif self._data_byteorder is ENDIANNESS.BIG:
+            return numpy.little_endian
         else:
             logger.warning("Unconsistent endianness !!!")
 
