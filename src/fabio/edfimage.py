@@ -832,7 +832,7 @@ class EdfFrame(fabioimage.FabioFrame):
         else:
             logger.warning("Unconsistent endianness !!!")
 
-  @property
+    @property
     def byteorder(self):
         """This is the byte-order originally on the disk.
         read data have been transposed to native "=" when copying
