@@ -85,7 +85,7 @@ class TestCli(unittest.TestCase):
         if counters.get(logging.warning) == 0:
             self.assertEqual(soft, hard, "soft limits have been increased to hard ones")
         else:
-            logger.warining("Test skipped as `relax_ulimit` emited warnings")
+            logger.warning("Test skipped as `relax_ulimit` emitted warnings")
 
 
 def suite():
