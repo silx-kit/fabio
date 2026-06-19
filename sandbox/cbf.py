@@ -2,7 +2,8 @@
 
 import numpy
 import fabio
-import pyopencl, pyopencl.array
+import pyopencl
+import pyopencl.array
 import time
 import os
 # os.environ["PYOPENCL_CTX"] = "1:0"

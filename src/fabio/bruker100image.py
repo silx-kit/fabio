@@ -244,15 +244,8 @@ class Bruker100Image(BrukerImage):
             #             data_size_padded = mround(data_size, 512)
             data_size_padded = data_size
             raw_data = infile.read(data_size_padded)
-            data = numpy.frombuffer(
-                raw_data[:data_size], dtype=self.bpp_to_numpy[npixelb]
-            ).reshape((rows, cols))
-            #             self.data = readbytestream(infile, infile.tell(), rows, cols, npixelb,
-            #                                        datatype="int", signed='n', swap='n')
-            if npixelb > 1 and not numpy.little_endian:
-                self.data = data.byteswap()
-            else:
-                self.data = data
+            stype = self.get_stype(self.bpp_to_numpy[npixelb], "little")
+            data = numpy.frombuffer(raw_data[:data_size], dtype=stype).reshape((rows, cols))
             # now process the overflows
             noverfl_values = [int(f) for f in self.header["NOVERFL"].split()]
             to_merge = {

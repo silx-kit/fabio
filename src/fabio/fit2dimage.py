@@ -127,10 +127,7 @@ class Fit2dImage(FabioImage):
                     bpp = 1
                     raw = infile.read(self.num_block * self.BUFFER_SIZE)
                     # Fit2d stores 31 pixels per int32
-                    i32 = numpy.frombuffer(raw, numpy.int32).copy()
-                    if numpy.little_endian:
-                        # lets's work in big-endian for the moment
-                        i32.byteswap(True)
+                    i32 = numpy.frombuffer(raw, numpy.int32).astype(self.get_stype("int32", "big"))
                     r32 = numpy.unpackbits(i32.view("uint8")).reshape((-1, 32))
                     # Remove the sign bit which is the first in big-endian
                     # all pixels are in reverse order in the group of 31

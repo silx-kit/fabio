@@ -39,7 +39,7 @@ __authors__ = ["Brian R. Pauw"]
 __contact__ = "brian@stack.nl"
 __license__ = "MIT"
 __copyright__ = "Brian R. Pauw"
-__date__ = "03/04/2020"
+__date__ = "17/06/2026"
 
 import logging
 import struct
@@ -195,19 +195,6 @@ class RaxisImage(FabioImage):
         self._dtype = numpy.dtype("uint16")  # same for all RAXIS images AFAICT
         self.endianness = ">"  # this may be tested for.
 
-    def swap_needed(self):
-        """not sure if this function is needed"""
-        endian = self.endianness
-        # Decide if we need to byteswap
-        if (endian == "<" and numpy.little_endian) or (
-            endian == ">" and not numpy.little_endian
-        ):
-            return False
-        if (endian == ">" and numpy.little_endian) or (
-            endian == "<" and not numpy.little_endian
-        ):
-            return True
-
     def _readheader(self, infile):
         """
         Read and decode the header of a Rigaku RAXIS image.
@@ -319,9 +306,7 @@ class RaxisImage(FabioImage):
             except Exception as error:
                 logger.error("Uncommon error encountered when reading file: %s" % error)
         rawData = infile.read(size)
-        data = numpy.frombuffer(rawData, self._dtype).copy().reshape(shape)
-        if self.swap_needed():
-            data.byteswap(True)
+        data = numpy.frombuffer(rawData, self.get_stype(self._dtype, self.endianness)).copy().reshape(shape)
         di = (data >> 15) != 0  # greater than 2^15
         if di.sum() >= 1:
             # find indices for which we need to do the correction (for which

@@ -47,8 +47,8 @@ original implementation which is buggy
 __authors__ = ["Jérôme Kieffer", "Gael Goret", "Thomas Vincent"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__copyright__ = "2012-2025, European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "25/10/2025"
+__copyright__ = "2012-2026, European Synchrotron Radiation Facility, Grenoble, France"
+__date__ = "17/06/2026"
 
 from libc.stdint cimport int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t
 
@@ -125,7 +125,14 @@ def compress_pck(image not None, bint use_CCP4=False):
 
 @cython.boundscheck(False)
 @cython.cdivision(True)
-def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, version=None, normal_start=None, swap_needed=None, bint use_CCP4=False):
+def uncompress_pck(bytes raw not None,
+                   dim1=None,
+                   dim2=None,
+                   overflowPix=None,
+                   version=None,
+                   normal_start=None,
+                   byteorder=None,
+                   bint use_CCP4=False) -> numpy.ndarray:
     """
     Unpack a mar345 compressed image
 
@@ -134,7 +141,7 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
     :param overflowPix: optional parameters: number of overflowed pixels
     :param version: PCK version 1 or 2
     :param normal_start: position of the normal value section (can be auto-guessed)
-    :param swap_needed: set to True when reading data from a foreign endianness (little on big or big on little)
+    :param byteorder: Endianness of compressed data: ">" for big-endian or "<" for little-endian
     :return: ndarray of 2D with the right size
     """
     cdef:
@@ -215,9 +222,9 @@ def uncompress_pck(bytes raw not None, dim1=None, dim2=None, overflowPix=None, v
         ################################################################################
         records = (chigh + PACK_SIZE_HIGH - 1) // PACK_SIZE_HIGH
         stop = normal_offset - lenkey - 14
-        odata = numpy.frombuffer(raw[stop - 64 * records: stop], dtype=numpy.int32).copy()
-        if swap_needed:
-            odata.byteswap(True)
+        stype = numpy.dtype("int32").newbyteorder(byteorder)
+        odata = numpy.frombuffer(raw[stop - 64 * records: stop],
+                                 dtype=stype).astype(numpy.int32)
         overflow_data = odata.reshape((-1, 2))
         for i in range(overflow_data.shape[0]):
             idx = overflow_data[i, 0] - 1     # indexes are even values (-1 because 1 based counting)
