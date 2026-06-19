@@ -28,7 +28,7 @@
 __author__ = "valentin.valls@esrf.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "16/06/2026"
+__date__ = "19/06/2026"
 __status__ = "development"
 __docformat__ = "restructuredtext"
 
@@ -36,6 +36,7 @@ import unittest
 import logging
 from pathlib import Path
 from .utilstest import UtilsTest
+from ..utils.testutils import  LoggingCounter
 from ..utils.cli import ProgressBar, expand_args
 from .. import eigerimage
 logger = logging.getLogger(__name__)
@@ -65,11 +66,34 @@ class TestMisc(unittest.TestCase):
         content = src_file.read_text(encoding="utf-8")
         self.assertTrue("atleat_2d" not in content, "Typo 'atleat_2d' still present in eigerimage.py")
 
+
+class TestCli(unittest.TestCase):
+    def test_ulimit(self):
+        import fabio.utils.cli
+        with LoggingCounter(fabio.utils.cli._logger) as lc:
+            fabio.utils.cli.relax_ulimit()
+            counters = lc.counters
+
+        try:
+            import resource
+        except Exception:
+            return
+        try:
+            soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        except Exception as err:
+            logger.error(f"{type(err)}: {err}")
+        if counter[logging.warning] == 0:
+            self.assertEqual(soft, hard, "soft limits have been increased to hard ones")
+        else:
+            logger.warining("Test skipped as `relax_ulimit` emited warnings")
+
+
 def suite():
     loader = unittest.defaultTestLoader.loadTestsFromTestCase
     testsuite = unittest.TestSuite()
     testsuite.addTest(loader(TestUtilShell))
     testsuite.addTest(loader(TestMisc))
+    testsuite.addTest(loader(TestCli))
     return testsuite
 
 
