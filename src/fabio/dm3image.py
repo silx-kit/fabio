@@ -75,9 +75,9 @@ DATA_BYTES = {
     20: None,
 }
 
-BE_uint16 = numpy.dtype(">u2")
-BE_uint32 = numpy.dtype(">u4")
-BE_int32 = numpy.dtype(">i4")
+BE_uint16 = numpy.dtype("uint16").newbyteorder(">")
+BE_uint32 = numpy.dtype("uint32").newbyteorder(">")
+BE_int32 = numpy.dtype("int32").newbyteorder(">")
 
 class Dm3Image(FabioImage):
     """Read and try to write the dm3 data format"""
