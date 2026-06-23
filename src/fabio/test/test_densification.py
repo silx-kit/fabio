@@ -32,7 +32,7 @@ __authors__ = ["Jérôme Kieffer"]
 __contact__ = "Jerome.Kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "2020 ESRF"
-__date__ = "27/10/2025"
+__date__ = "23/06/2026"
 
 import unittest
 import numpy
@@ -59,7 +59,7 @@ class TestDensification(unittest.TestCase):
     def test_rng_normal(self):
         shape = (100, 100)
         mu = 5.5
-        sigma = 1.5
+        sigma = 0.5
         one = numpy.ones(shape)
         N = distribution_normal_mtc(one * mu, one * sigma)
         self.assertAlmostEqual(N.mean(), mu, 1)

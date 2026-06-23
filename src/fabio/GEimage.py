@@ -33,7 +33,7 @@ using version 8001 of the header from file:
 """
 
 __authors__ = ["Antonino Miceli", "Jon Wright", "Jérôme Kieffer", "Joel Bernier"]
-__date__ = "03/04/2020"
+__date__ = "23/06/2026"
 __status__ = "production"
 __copyright__ = "2007-2020 APS; 2010-2020 ESRF"
 __licence__ = "MIT"
