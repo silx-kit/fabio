@@ -340,9 +340,7 @@ class GeImage(FabioImage):
             raise IOError("Data depth format %sbits is not supported" % bitdepth)
 
         raw = filepointer.read(imglength)
-        data = numpy.frombuffer(raw, datatype).copy()
-        if not numpy.little_endian:
-            data.byteswap(True)
+        data = numpy.frombuffer(raw, self.get_stype(datatype, "little")).copy()
         data = data.reshape(rows, cols)
         self.data = data
         self._shape = None

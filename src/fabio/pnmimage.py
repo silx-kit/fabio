@@ -157,16 +157,11 @@ class PnmImage(FabioImage):
             fobj.write(b"P5 \n")
             fobj.write(header)
             fobj.write(b" \n")
+            be_data = self.data.astype(self.get_stype(self.data.dtype, "big"))
             if isinstance(fobj, io.BufferedWriter):
-                if numpy.little_endian:
-                    self.data.byteswap().tofile(fobj)
-                else:
-                    self.data.tofile(fobj)
+                be_data.tofile(fobj)
             else:
-                if numpy.little_endian:
-                    fobj.write(self.data.byteswap().tobytes())
-                else:
-                    fobj.write(self.data.tobytes())
+                fobj.write(be_data.tobytes())
 
     def P1dec(self, buf, bytecode):
         data = numpy.zeros(self.shape)
@@ -200,14 +195,12 @@ class PnmImage(FabioImage):
     def P5dec(self, buf, bytecode):
         data = buf.read()
         try:
-            data = numpy.frombuffer(data, bytecode).copy()
+            data = numpy.frombuffer(data, self.get_stype(bytecode, "big")).astype(bytecode)
         except ValueError:
             raise IOError(
                 "Size spec in pnm-header does not match size of image data field"
             )
         data = data.reshape(self.shape)
-        if numpy.little_endian:
-            data.byteswap(True)
         return data
 
     def P3dec(self, buf, bytecode):

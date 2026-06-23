@@ -43,7 +43,7 @@ Written by Jérôme Kieffer, ESRF, Grenoble, France
 """
 
 __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Kieffer"]
-__date__ = "27/10/2025"
+__date__ = "17/06/2026"
 __status__ = "production"
 __copyright__ = "2007-2009 Risoe National Laboratory; 2010-2020 ESRF"
 __licence__ = "MIT"
@@ -248,11 +248,10 @@ class BrukerImage(FabioImage):
                 logger.warning(errmsg)
                 raise RuntimeError(errmsg)
 
-            data = numpy.frombuffer(
-                infile.read(rows * cols * npixelb), dtype=self.bpp_to_numpy[npixelb]
-            ).copy()
-            if not numpy.little_endian and data.dtype.itemsize > 1:
-                data.byteswap(True)
+            stype = self.get_stype(self.bpp_to_numpy[npixelb], "little")
+            data = numpy.frombuffer(infile.read(rows * cols * npixelb),
+                                    dtype=stype
+            ).astype(self.bpp_to_numpy[npixelb])
 
             # handle overflows
             nov = int(self.header["NOVERFL"])
@@ -327,12 +326,10 @@ class BrukerImage(FabioImage):
         bpp = self.calc_bpp(tmp_data)
         self.basic_translate(fname)
         limit = 2 ** (8 * bpp) - 1
-        data = tmp_data.astype(self.bpp_to_numpy[bpp])
+        stype = self.get_stype(self.bpp_to_numpy[bpp], "little")
+        data = tmp_data.astype(stype)
         reset = numpy.where(tmp_data >= limit)
         data[reset] = limit
-        if not numpy.little_endian and bpp > 1:
-            # Bruker enforces little endian
-            data.byteswap(True)
         with self._open(fname, "wb") as bruker:
             bruker.write(self.gen_header().encode("ASCII"))
             if isinstance(bruker, io.BufferedWriter):

@@ -26,7 +26,7 @@
 
 __authors__ = ["Valentin Valls", "Jérôme Kieffer"]
 __license__ = "MIT"
-__date__ = "16/06/2026"
+__date__ = "19/06/2026"
 
 import sys
 import codecs
@@ -189,6 +189,16 @@ def relax_ulimit():
                 hard_nofile = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
                 resource.setrlimit(resource.RLIMIT_NOFILE, (hard_nofile, hard_nofile))
             except (ValueError, OSError):
+                soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+                while 2*soft<hard:
+                    try:
+                        resource.setrlimit(resource.RLIMIT_NOFILE, (2*soft, hard))
+                    except (ValueError, OSError):
+                       _logger.warning("Set the max opened files limit to ({soft}, {hard})")
+                       return
+                    else:
+                        soft*=2
                 _logger.warning("Failed to retrieve and set the max opened files limit")
+
             else:
                 _logger.debug("Set max opened files to %d", hard_nofile)

@@ -114,12 +114,9 @@ class XsdImage(FabioImage):
         if self.md5:
             assert hashlib.md5(decData).hexdigest() == self.md5
 
-        data = numpy.frombuffer(decData, dtype=self._dtype)
+        data = numpy.frombuffer(decData, dtype=self.get_stype(self._dtype, "little"))
         data = data.reshape(self.shape)
         self.data = data
-
-        if not numpy.little_endian:  # by default little endian
-            self.data.byteswap(inplace=True)
         self.resetvals()
         return self
 

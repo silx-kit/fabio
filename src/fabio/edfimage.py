@@ -50,7 +50,7 @@ __authors__ = ["Jérôme Kieffer", "Jon Wright", "Henning O. Sorensen", "Erik Kn
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "20/08/2024"
+__date__ = "17/06/2026"
 
 import os
 import re
@@ -59,7 +59,7 @@ import logging
 import numpy
 from collections import namedtuple
 from . import fabioimage
-from .fabioutils import isAscii, toAscii, nice_int, OrderedDict
+from .fabioutils import isAscii, toAscii, nice_int, OrderedDict, ENDIANNESS
 from .compression import decBzip2, decGzip, decZlib
 from . import compression as compression_module
 from . import fabioutils
@@ -169,7 +169,7 @@ class EdfFrame(fabioimage.FabioFrame):
         super(EdfFrame, self).__init__(data, header=header)
 
         self._data_compression = None
-        self._data_swap_needed = None
+        self._data_byteorder = None
         self._data = data
         self.start = None
         """Start position of the raw data blob in the file"""
@@ -467,43 +467,17 @@ class EdfFrame(fabioimage.FabioFrame):
             # after decompression
             self.size = calcsize
 
-        # +++++++++++++++++++++++++++++
-        # PB38k20190607: ATTENTION, weird!:
-        # little_endian^=LowByteFirst, big_endian^=HighByteFirst
-        # Why should _data_swap_needed depend on bpp?
-        # little_endian==True means starting with least significant byte,
-        # i.e. LowByteFirst
-        # LowByteFirst&&little_endian => no swap
-        # HighByteFirst&&(!little_endian) => no swap
-        # otherwise swap needed
-        # How to perform byte swapping on data with specific bpps
-        # should be internally decided by the byte swapping function.
-        # PB38k20190607: proposing the following change:
-        #
-        # byte_order = self.header[capsHeader['BYTEORDER']]
-        # if ('Low' in byte_order):
-        #    little_endian=True
-        # else:
-        #    little_endian=False
-        #
-        # if ( little_endian==numpy.little_endian ):
-        #    self._data_swap_needed = False
-        # else:
-        #    self._data_swap_needed = True
-        # +++++++++++++++++++++++++++++
-
         byte_order = self.header[capsHeader["BYTEORDER"]]
-        if ("Low" in byte_order and numpy.little_endian) or (
-            "High" in byte_order and not numpy.little_endian
-        ):
-            self._data_swap_needed = False
-        if ("High" in byte_order and numpy.little_endian) or (
-            "Low" in byte_order and not numpy.little_endian
-        ):
-            if bpp in [2, 4, 8]:
-                self._data_swap_needed = True
+        if "Low" in byte_order:
+            self._data_byteorder = ENDIANNESS.LITTLE
+        elif "High" in byte_order:
+            self._data_byteorder = ENDIANNESS.BIG
+        else:
+            if bpp>1:
+                logger.warning("Byteorder is not defined ... defaulting to Little-endian")
+                self._data_byteorder = ENDIANNESS.LITTLE
             else:
-                self._data_swap_needed = False
+                self._data_byteorder = "|" # i.e. does not matter
 
     # renamed from _parseheader
     def _create_header(self, inputheader, defaultheader=None):
@@ -563,12 +537,6 @@ class EdfFrame(fabioimage.FabioFrame):
                 frame = ""
             logger.info(msg.format(filename, frame, " ".join(missing)))
         return len(missing) == 0
-
-    def swap_needed(self):
-        """
-        Decide if we need to byteswap
-        """
-        return self._data_swap_needed
 
     def _unpack(self):
         """
@@ -679,9 +647,8 @@ class EdfFrame(fabioimage.FabioFrame):
                 rawData = rawData[:expected]
             # PB38k20190607: explicit way: count = get_data_counts(shape)
             count = self.size // self._dtype.itemsize
-            data = numpy.frombuffer(rawData, self._dtype, count).copy().reshape(shape)
-            if self.swap_needed():
-                data.byteswap(True)
+            stype = self.get_stype(self._dtype, self._data_byteorder)
+            data = numpy.frombuffer(rawData, stype, count).astype(self._dtype).reshape(shape)
             self._data = data
             self._dtype = None
         return data
@@ -853,6 +820,25 @@ class EdfFrame(fabioimage.FabioFrame):
         """Returns the frame index of this frame"""
         return self._index
 
+    @deprecation.deprecated
+    def swap_needed(self) -> bool:
+        """
+        Decide if we need to byteswap
+        """
+        if self._data_byteorder is ENDIANNESS.LITTLE:
+            return not numpy.little_endian
+        elif self._data_byteorder is ENDIANNESS.BIG:
+            return numpy.little_endian
+        else:
+            logger.warning("Unconsistent endianness !!!")
+
+    @property
+    def byteorder(self):
+        """This is the byte-order originally on the disk.
+        read data have been transposed to native "=" when copying
+        at the asarray stage
+        """
+        return self._data_byteorder
 
 class EdfImage(fabioimage.FabioImage):
     """Read and try to write the ESRF edf data format"""
@@ -1330,6 +1316,7 @@ class EdfImage(fabioimage.FabioImage):
             raise e
         return self
 
+    @deprecation.deprecated
     def swap_needed(self):
         """
         Decide if we need to byteswap
@@ -1465,13 +1452,13 @@ class EdfImage(fabioimage.FabioImage):
         with open(filename, "rb") as f:
             f.seek(frame.start)
             raw = f.read(frame.blobsize)
+        stype = self.get_stype(self.bytecode, frame.byteorder)
         try:
-            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
-            data = data.reshape(self.data.shape)
+            data = numpy.frombuffer(raw, dtype=stype)
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if frame.swap_needed():
-            data.byteswap(True)
+        else:
+            data = data.astype(self.bytecode).reshape(self.data.shape)
         return data
 
     @deprecation.deprecated(
@@ -1526,13 +1513,12 @@ class EdfImage(fabioimage.FabioImage):
         if len(raw) < size:
             # Pad with zero until the right size
             raw += b"\x00" * (size - len(raw))
+
+        stype = self.get_stype(self.bytecode, frame._data_byteorder)
         try:
-            data = numpy.frombuffer(raw, dtype=self.bytecode).copy()
-            data = data.reshape(-1, d1)
+            data = numpy.frombuffer(raw, dtype=stype).astype(self.bytecode).reshape(-1, d1)
         except Exception as error:
             logger.error("unable to convert file content to numpy array: %s", error)
-        if frame.swap_needed():
-            data.byteswap(True)
         return data[slice2]
 
     @deprecation.deprecated(

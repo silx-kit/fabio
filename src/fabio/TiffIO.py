@@ -27,13 +27,14 @@ __author__ = "V.A. Sole - ESRF"
 __contact__ = "sole@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "26/10/2023"
+__date__ = "17/06/2026"
 
 import sys
 import os
 import struct
 import numpy
 import logging
+from .fabioimage import FabioImage
 
 ALLOW_MULTIPLE_STRIPS = False
 
@@ -727,9 +728,8 @@ class TiffIO(object):
                     bytesPerRow = actualBytesPerRow
                     nBytes = (rowMax - rowMin + 1) * bytesPerRow
             fd.seek(stripOffsets[0] + rowMin * bytesPerRow)
-            readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
-            if self._swap:
-                readout.byteswap(True)
+            stype = FabioImage.get_stype(dtype, self._structChar)
+            readout = numpy.frombuffer(fd.read(nBytes), stype).astype(dtype)
             if hasattr(nBits, "index"):
                 readout = readout.reshape(-1, nColumns, len(nBits))
             elif info["colormap"] is not None and interpretation == 3:
@@ -781,9 +781,8 @@ class TiffIO(object):
                         else:
                             # if read -128 ignore the byte
                             continue
-                    readout = numpy.frombuffer(bufferBytes, dtype).copy()
-                    if self._swap:
-                        readout.byteswap(True)
+                    stype = FabioImage.get_stype(dtype, self._structChar)
+                    readout = numpy.frombuffer(bufferBytes, stype).astype(dtype)
 
                     if hasattr(nBits, "index"):
                         readout = readout.reshape(-1, nColumns, len(nBits))
@@ -794,9 +793,8 @@ class TiffIO(object):
                         readout = readout.reshape(-1, nColumns)
                     image[rowStart:rowEnd, :] = readout
                 else:
-                    readout = numpy.frombuffer(fd.read(nBytes), dtype).copy()
-                    if self._swap:
-                        readout.byteswap(True)
+                    stype = FabioImage.get_stype(dtype, self._structChar)
+                    readout = numpy.frombuffer(fd.read(nBytes), stype).astype(dtype)
 
                     if hasattr(nBits, "index"):
                         readout = readout.reshape(-1, nColumns, len(nBits))
@@ -918,10 +916,8 @@ class TiffIO(object):
         fd.write(outputIFD)
 
         # write the image
-        if self._swap:
-            fd.write(image.byteswap().tobytes())
-        else:
-            fd.write(image.tobytes())
+        stype = FabioImage.get_stype(image.dtype, self._structChar)
+        fd.write(image.astype(stype).tobytes())
 
         fd.flush()
         self.fd = fd

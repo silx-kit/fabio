@@ -42,7 +42,7 @@ __authors__ = ["Henning O. Sorensen", "Erik Knudsen", "Jon Wright", "Jérôme Ki
 __contact__ = "jerome.kieffer@esrf.fr"
 __license__ = "MIT"
 __copyright__ = "ESRF"
-__date__ = "15/06/2026"
+__date__ = "17/06/2026"
 
 import os
 import logging
@@ -51,7 +51,7 @@ import tempfile
 import weakref
 import numpy
 from . import fabioutils, converters
-from .fabioutils import OrderedDict
+from .fabioutils import OrderedDict, ENDIANNESS
 from .compression import COMPRESSORS
 from .utils import pilutils
 from .utils import deprecation
@@ -301,6 +301,18 @@ class _FabioArray(object):
     )
     def getByteCode(self):
         return self.bytecode
+
+    @staticmethod
+    def get_stype(dtype:str|numpy.dtype, endianness:str|ENDIANNESS="little") -> numpy.dtype:
+        """return the sexed-dtype
+
+        :param dtype: numpy datatype or str representing it
+        :param endianness: "little|big", "<|>", ...
+        :return: the numpy datatype with byte-order specified.
+        """
+        if not isinstance(dtype, numpy.dtype):
+            dtype = numpy.dtype(dtype)
+        return dtype.newbyteorder(ENDIANNESS.parse(endianness))
 
 
 class FabioFrame(_FabioArray):

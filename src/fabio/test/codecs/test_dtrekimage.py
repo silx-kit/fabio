@@ -156,9 +156,11 @@ class TestDtrekImplementation(testutils.ParametricTestCase):
             (numpy.uint16, "little_endian", None),
             (numpy.uint16, "big_endian", None),
             (numpy.uint32, "little_endian", None),
+            (numpy.uint32, "big_endian", None),
             (numpy.int32, "little_endian", None),
+            (numpy.int32, "big_endian", None),
             (numpy.float32, "little_endian", None),
-            (numpy.float32, "little_endian", None),
+            (numpy.float32, "big_endian", None),
             # Data have to be converted before storage
             (numpy.uint64, "little_endian", numpy.uint32),
             (numpy.int64, "little_endian", numpy.int32),
