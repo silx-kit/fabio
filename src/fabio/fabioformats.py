@@ -116,7 +116,7 @@ def register(codec_class):
         raise AssertionError(
             "Expected subclass of FabioImage class but found %s" % type(codec_class)
         )
-    _registry[codec_class.codec_name()] = codec_class
+    _registry[codec_class.codec_name] = codec_class
     # clean u[p the cache
     _extension_cache = None
 
