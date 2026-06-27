@@ -85,10 +85,11 @@ def compress(frame):
         row_start[row_index] = buffer.tell()
         _compress_row(frame[row_index], buffer)
 
+    # Write row_start table before capturing final size
+    buffer.write(row_start.astype(LE_uint32).tobytes())
     data_size = pack("<I", buffer.tell())
 
-    buffer.write(row_start.astype(LE_uint32).tobytes())
-
+    # Now prepend the size header
     return data_size + buffer.getvalue()
 
 
