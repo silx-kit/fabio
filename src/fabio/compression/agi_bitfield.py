@@ -40,7 +40,7 @@ Inspired by C++ code:   https://git.3lp.cx/dyadkin/cryio/src/branch/master/src/e
 __author__ = ["Florian Plaswig", "Jérôme Kieffer"]
 __contact__ = "jerome.kieffer@esrf.eu"
 __license__ = "MIT"
-__date__ = "17/06/2026"
+__date__ = "30/06/2026"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
 
 import logging
@@ -141,7 +141,9 @@ def decompress(comp_frame, dimensions):
     row_count, col_count = dimensions
 
     # read data components (row indices are ignored)
-    data_size = unpack("I", comp_frame[:4])
+    data_size = unpack("<I", comp_frame[:4])
+    if len(comp_frame) + 4 < data_size:
+        raise IOError("Truncated data")
     data_block = BytesIO(comp_frame[4:])
     logger.debug(
         "Size of binary data block: %d with image size: %s, compression ratio: %.3fx",
