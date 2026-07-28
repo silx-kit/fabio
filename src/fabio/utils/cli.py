@@ -194,7 +194,7 @@ def relax_ulimit():
                     try:
                         resource.setrlimit(resource.RLIMIT_NOFILE, (2*soft, hard))
                     except (ValueError, OSError):
-                       _logger.warning("Set the max opened files limit to ({soft}, {hard})")
+                       _logger.warning(f"Set the max opened files limit to ({soft}, {hard})")
                        return
                     else:
                         soft*=2
