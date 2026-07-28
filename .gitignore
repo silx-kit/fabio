@@ -41,3 +41,9 @@ nosetests.xml
 # generated c files, i.e. all except the ones in the src directory
 *.c
 !fabio/ext/src/*.c
+
+# uv files
+uv.lock
+
+# VSCode
+.vscode
