@@ -56,26 +56,28 @@ class TestFlatBinary(unittest.TestCase):
         for filename in self.filenames:
             with open(filename, "wb") as f:
                 # A 2048 by 2048 blank image
-                f.write("\0x0" * 2048 * 2048 * 2)
+                f.write(b"\x00" * (2048 * 2048 * 2 + 8192))
 
     def test_openimage(self):
         """
         test the opening of "junk" empty images ...
-        JK: I wonder if this test makes sense !
+        JK: I doubt if this test makes sense !
         """
         nfail = 0
         for filename in self.filenames:
             try:
                 im = fabio.open(filename)
-                if im.data.tobytes() != "\0x0" * 2048 * 2048 * 2:
+            except Exception as err:
+                logger.warning("failed for: %s. \n%s: %s",filename, type(err), err)
+                nfail += 1
+            else:
+                if im.data.tobytes() == b"\x00" * (2048 * 2048 * 2 + 8192):
                     nfail += 1
                 else:
                     logger.info("**** Passed: %s" % filename)
-            except Exception:
-                logger.warning("failed for: %s" % filename)
-                nfail += 1
+
         self.assertEqual(
-            nfail, 0, " %s failures out of %s" % (nfail, len(self.filenames))
+            nfail, 0, f"{nfail} failures out of {len(self.filenames)}"
         )
 
     def tearDown(self):

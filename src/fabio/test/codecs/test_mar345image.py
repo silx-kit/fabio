@@ -133,7 +133,7 @@ class TestMar345(unittest.TestCase):
             name = vals[0]
             obj = mar345image()
             obj.read(os.path.join(os.path.dirname(self.mar345), name))
-            obj.swap_needed = not (obj.swap_needed)
+            # obj.byteorder = ">" if obj.byteorder == "<" else "<"
             obj.write(os.path.join(UtilsTest.tempdir, name))
             other = mar345image()
             other.read(os.path.join(UtilsTest.tempdir, name))

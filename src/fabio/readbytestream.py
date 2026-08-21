@@ -58,7 +58,7 @@ def readbytestream(
     nbytespp,
     datatype="int",
     signed="n",
-    swap="n",
+    byteorder="<",
     typeout=numpy.uint16,
 ):
     """
@@ -102,11 +102,9 @@ def readbytestream(
 
     infile.seek(offset)
 
-    data = numpy.frombuffer(infile.read(length), tin)
+    stype = numpy.dtype(tin).newbyteorder(byteorder)
+    data = numpy.frombuffer(infile.read(length), stype)
     arr = numpy.array(numpy.reshape(data, (x, y)), typeout)
-
-    if swap == "y":
-        arr.byteswap(True)
 
     if opened:
         infile.close()

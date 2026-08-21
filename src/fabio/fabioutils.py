@@ -35,7 +35,7 @@ __author__ = "Jérôme Kieffer"
 __contact__ = "Jerome.Kieffer@ESRF.eu"
 __license__ = "MIT"
 __copyright__ = "European Synchrotron Radiation Facility, Grenoble, France"
-__date__ = "27/10/2025"
+__date__ = "17/06/2026"
 __status__ = "stable"
 __docformat__ = "restructuredtext"
 
@@ -48,6 +48,7 @@ from collections import OrderedDict as _OrderedDict
 import traceback
 from math import ceil
 import threading
+from enum import StrEnum
 from .compression import bz2, gzip
 
 try:
@@ -744,6 +745,27 @@ class OrderedDict(_OrderedDict):
         return res
 
 
+class ENDIANNESS(StrEnum):
+    LITTLE = '<'
+    BIG = '>'
+    @classmethod
+    def parse(cls, value:str):
+        res = cls.LITTLE
+        if isinstance(value, cls):
+            res = value
+        elif len(value)==1:
+            return cls(value)
+        else:
+            value = value.upper()
+            if value.startswith("LITTLE"):
+                res = cls.LITTLE
+            elif value.startswith("BIG"):
+                res = cls.BIG
+            else:
+                raise ValueError(f"'{value}' is not a valid ENDIANNESS")
+        return res
+
+
 AVAILABLE_COMPRESSED_EXTENSIONS = set([])
 """Set of available compressed file extensions. Do not contains extensions for
 uninstalled optional dependencies."""
@@ -751,3 +773,4 @@ if GzipFile != UnknownCompressedFile:
     AVAILABLE_COMPRESSED_EXTENSIONS.add("gz")
 if BZ2File != UnknownCompressedFile:
     AVAILABLE_COMPRESSED_EXTENSIONS.add("bz2")
+

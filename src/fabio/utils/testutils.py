@@ -32,7 +32,7 @@
 
 __authors__ = ["T. Vincent"]
 __license__ = "MIT"
-__date__ = "26/01/2018"
+__date__ = "19/06/2026"
 
 
 import contextlib
@@ -105,7 +105,67 @@ def parameterize(test_case_class, *args, **kwargs):
     return suite
 
 
-class TestLogging(logging.Handler):
+class LoggingCounter(logging.Handler):
+    """Context chounting the number of logging messages from a specified Logger.
+
+    It disables propagation of logging message while running.
+
+    This is meant to be used as a with statement, for example:
+
+    >>> with LoggingCounter(logger, error=2, warning=0):
+    >>>     pass  # Run tests here expecting 2 ERROR and no WARNING from logger
+    ...
+
+    :param logger: Name or instance of the logger to test.
+                   (Default: root logger)
+    :type logger: str or :class:`logging.Logger`
+    """
+
+    def __init__(self, logger=None):
+        if logger is None:
+            logger = logging.getLogger()
+        elif not isinstance(logger, logging.Logger):
+            logger = logging.getLogger(logger)
+        self.logger = logger
+        self.records = []
+        super(LoggingCounter, self).__init__()
+
+    def __enter__(self):
+        """Context (i.e., with) support"""
+        self.records = []  # Reset recorded LogRecords
+        self.logger.addHandler(self)
+        self.logger.propagate = False
+        # ensure no log message is ignored
+        self.entry_level = self.logger.level * 1
+        self.logger.setLevel(logging.DEBUG)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Context (i.e., with) support"""
+        self.logger.removeHandler(self)
+        self.logger.propagate = True
+        self.logger.setLevel(self.entry_level)
+
+    @property
+    def counters(self) -> dict:
+        result = {}
+        for level in (
+                    logging.CRITICAL,
+                    logging.ERROR,
+                    logging.WARNING,
+                    logging.INFO,
+                    logging.DEBUG,
+                    logging.NOTSET):
+            # Number of records for the specified level_str
+            result[level] = len([r for r in self.records if r.levelno == level])
+        return result
+
+    def emit(self, record):
+        """Override :meth:`logging.Handler.emit`"""
+        self.records.append(record)
+
+
+class TestLogging(LoggingCounter):
     """Context checking the number of logging messages from a specified Logger.
 
     It disables propagation of logging message while running.
@@ -133,7 +193,6 @@ class TestLogging(logging.Handler):
                        Default: Do not check.
     :raises RuntimeError: If the message counts are the expected ones.
     """
-
     def __init__(
         self,
         logger=None,
@@ -144,14 +203,7 @@ class TestLogging(logging.Handler):
         debug=None,
         notset=None,
     ):
-        if logger is None:
-            logger = logging.getLogger()
-        elif not isinstance(logger, logging.Logger):
-            logger = logging.getLogger(logger)
-        self.logger = logger
-
-        self.records = []
-
+        super(TestLogging, self).__init__(logger)
         self.count_by_level = {
             logging.CRITICAL: critical,
             logging.ERROR: error,
@@ -161,29 +213,13 @@ class TestLogging(logging.Handler):
             logging.NOTSET: notset,
         }
 
-        super(TestLogging, self).__init__()
-
-    def __enter__(self):
-        """Context (i.e., with) support"""
-        self.records = []  # Reset recorded LogRecords
-        self.logger.addHandler(self)
-        self.logger.propagate = False
-        # ensure no log message is ignored
-        self.entry_level = self.logger.level * 1
-        self.logger.setLevel(logging.DEBUG)
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Context (i.e., with) support"""
-        self.logger.removeHandler(self)
-        self.logger.propagate = True
-        self.logger.setLevel(self.entry_level)
-
-        for level, expected_count in self.count_by_level.items():
+        for level, count in self.counters.items():
+            expected_count = self.count_by_level[level]
             if expected_count is None:
                 continue
-
-            # Number of records for the specified level_str
-            count = len([r for r in self.records if r.levelno == level])
             if count != expected_count:  # That's an error
                 # Resend record logs through logger as they where masked
                 # to help debug

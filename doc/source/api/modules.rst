@@ -24,7 +24,6 @@ FabIO Package
 
 .. automodule:: fabio.fabioutils
     :members:
-    :undoc-members:
     :show-inheritance:
 
 :mod:`fabio.file_series` Module

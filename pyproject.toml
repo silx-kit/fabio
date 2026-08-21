@@ -57,7 +57,6 @@ requires = [
     'wheel',
     'Cython>=3.1',
     'pyproject-metadata>=0.5.0',
-    "tomli>=1.0.0; python_version < '3.11'"
 ]
 [project.optional-dependencies]
 gui = [ "qtpy", "pyside6", "matplotlib", "packaging" ]

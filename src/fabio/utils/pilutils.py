@@ -36,6 +36,7 @@ __status__ = "stable"
 
 import logging
 import numpy
+from ..fabioutils import ENDIANNESS
 
 logger = logging.getLogger(__name__)
 
@@ -97,17 +98,20 @@ def get_numpy_array(pil_image):
     except Exception:
         # This PIL version do not support buffer interface
         logger.debug("Backtrace", exc_info=True)
-        if hasattr(pil_image, "tobytes"):
-            data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
-        else:
-            data = numpy.frombuffer(pil_image.tobytes(), dtype=dtype).copy()
-        # byteswap ?
+        raw = pil_image.tobytes()
         if numpy.dtype(dtype).itemsize > 1:
-            need_swap = False
-            need_swap |= numpy.little_endian and "B" in pil_image.mode
-            need_swap |= not numpy.little_endian and pil_image.mode.endswith("L")
-            if need_swap:
-                data.byteswap(True)
+            if "B" in pil_image.mode:
+                file_endianness = ENDIANNESS.BIG
+            elif pil_image.mode.endswith("L"):
+                file_endianness = ENDIANNESS.LITTLE
+            else:
+                file_endianness = None
+            if file_endianness is not None:
+                data = numpy.frombuffer(raw, numpy.dtype(dtype).newbyteorder(file_endianness)).astype(dtype)
+            else:
+                data = numpy.frombuffer(raw, dtype=dtype).copy()
+        else:
+            data = numpy.frombuffer(raw, dtype=dtype).copy()
         data = data.reshape((dim2, dim1))
 
     return data
