@@ -216,13 +216,7 @@ class TestPilImage(unittest.TestCase):
                 pim = img.toPIL16()
                 for i in [0, 5, 6, shape[1] - 1]:
                     for j in [0, 5, 7, shape[0] - 1]:
-                        errstr = str(typ) + " %d %d %f %f t=%s" % (
-                            i,
-                            j,
-                            testdata[j, i],
-                            pim.getpixel((i, j)),
-                            typ,
-                        )
+                        errstr = str(typ) + f" {i} {j} {testdata[j, i]:f} {pim.getpixel((i, j)):f} t={typ}"
 
                         er1 = img.data[j, i] - pim.getpixel((i, j))
                         er2 = img.data[j, i] + pim.getpixel((i, j))

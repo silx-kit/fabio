@@ -75,9 +75,9 @@ class TestNormalTiffOK(unittest.TestCase):
 
         obj = openimage(self.image)
         if obj.data.astype(int).tobytes() != self.imdata.astype(int).tobytes():
-            logger.info("%s %s" % (type(self.imdata), self.imdata.dtype))
-            logger.info("%s %s" % (type(obj.data), obj.data.dtype))
-            logger.info("%s %s" % (obj.data - self.imdata))
+            logger.info("%s %s", type(self.imdata), self.imdata.dtype)
+            logger.info("%s %s", type(obj.data), obj.data.dtype)
+            logger.info("delta %s", (obj.data - self.imdata))
         self.assertEqual(
             obj.data.astype(int).tobytes(), self.imdata.astype(int).tobytes()
         )

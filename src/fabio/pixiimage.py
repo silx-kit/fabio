@@ -96,9 +96,9 @@ class PixiImage(fabioimage.FabioImage):
     def _get_frame(self, num):
         """Inherited function returning a FabioFrame"""
         if num < 0:
-            raise IndexError("Requested frame id:%d out of bound" % num)
+            raise IndexError(f"Requested frame id:{int(num)} out of bound")
         if num >= self.nframes:
-            raise IndexError("Requested frame id:%d out of bound" % num)
+            raise IndexError(f"Requested frame id:{int(num)} out of bound")
 
         newheader = {}
         for k in self.header.keys():
@@ -113,7 +113,7 @@ class PixiImage(fabioimage.FabioImage):
     def _make_filename(self, img_num):
         self.currentframe = int(img_num)
         if self.nframes == 1:
-            self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
+            self.filename = f"{self.sequencefilename}${self.currentframe:04d}"
 
     def _readdata(self, filepointer, img_num):
         if img_num >= self.nframes or img_num < 0:

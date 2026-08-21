@@ -63,8 +63,8 @@ else:
         def subTest(self, msg=None, **params):
             """Use as unittest.TestCase.subTest method in Python >= 3.4."""
             # Format arguments as: '[msg] (key=value, ...)'
-            param_str = ", ".join(["%s=%s" % (k, v) for k, v in params.items()])
-            self._subtest_msg = "[%s] (%s)" % (msg or "", param_str)
+            param_str = ", ".join([f"{k}={v}" for k, v in params.items()])
+            self._subtest_msg = f"[{msg or ''}] ({param_str})"
             yield
             self._subtest_msg = None
 
@@ -225,8 +225,7 @@ class TestLogging(LoggingCounter):
                 for record in self.records:
                     self.logger.handle(record)
                 raise RuntimeError(
-                    "Expected %d %s logging messages, got %d"
-                    % (expected_count, logging.getLevelName(level), count)
+                    f"Expected {expected_count} {logging.getLevelName(level)} logging messages, got {count}"
                 )
 
     def emit(self, record):

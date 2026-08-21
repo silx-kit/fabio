@@ -49,13 +49,13 @@ testimages = None
 if "FABIO_TESTIMAGES" in os.environ:
     testimages = os.environ.get("FABIO_TESTIMAGES")
     if not os.path.exists(testimages):
-        logger.warning("testimage directory %s does not exist" % testimages)
+        logger.warning("testimage directory %s does not exist", testimages)
 elif os.path.isdir(SHARED_TESTIMAGES):
     testimages = SHARED_TESTIMAGES
 else:
     # create a temporary folder
     testimages = os.path.join(
-        tempfile.gettempdir(), "fabio_testimages_%s" % (getpass.getuser())
+        tempfile.gettempdir(), f"fabio_testimages_{getpass.getuser()}"
     )
 
 if not os.path.exists(testimages):

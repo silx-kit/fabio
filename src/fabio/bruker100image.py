@@ -285,7 +285,7 @@ class Bruker100Image(BrukerImage):
                 else:
                     break
                 logger.debug(
-                    "%s bytes read + %d bytes padding" % (nov * bpp, nbytes - nov * bpp)
+                    "%s bytes read + %d bytes padding", nov * bpp, nbytes - nov * bpp
                 )
 
         # Read baseline
@@ -347,7 +347,7 @@ class Bruker100Image(BrukerImage):
                             line = key.ljust(7) + ":"
                         line += value[72 * (i + 1) :]
                 elif "__len__" in dir(value):
-                    f = "%%.%is" % (72 // len(value) - 1)
+                    f = f"%.{72 // len(value) - 1}s"
                     line += " ".join([f % i for i in value])
                 else:
                     line += str(value)
@@ -358,7 +358,7 @@ class Bruker100Image(BrukerImage):
             self.header["HDRBLKS"] = mround(tmp, 5)
             for i in range(len(headers)):
                 if headers[i].startswith("HDRBLKS"):
-                    headers[i] = ("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " ")
+                    headers[i] = f"HDRBLKS:{self.header['HDRBLKS']}".ljust(80, " ")
 
         res = pad(
             "".join(headers), self.SPACER + "." * 78, 512 * int(self.header["HDRBLKS"])
@@ -378,8 +378,8 @@ class Bruker100Image(BrukerImage):
                     offset = float(offset)
                 except Exception:
                     logger.warning(
-                        "Error in converting to float data with linear parameter: %s"
-                        % self.header["LINEAR"]
+                        "Error in converting to float data with linear parameter: %s",
+                        self.header["LINEAR"],
                     )
                     slope, offset = 1.0, 0.0
 
@@ -392,7 +392,7 @@ class Bruker100Image(BrukerImage):
                 else:
                     slope = 1.0
             tmp_data = numpy.round((self.data - offset) / slope).astype(numpy.uint32)
-            self.header["LINEAR"] = "%s %s" % (slope, offset)
+            self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
 

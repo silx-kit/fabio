@@ -226,16 +226,18 @@ def openimage(filename, frame=None):
             # multiframe file
             # logger.debug( "DEBUG: multiframe file, start # %d"%(
             #    filename.num)
-            logger.debug("Exception %s, trying name %s" % (ex, filename.stem))
+            logger.debug("Exception %s, trying name %s", ex, filename.stem)
             obj = _openimage(filename.stem)
-            logger.debug("Reading frame %s from %s" % (filename.num, filename.stem))
+            logger.debug("Reading frame %s from %s", filename.num, filename.stem)
             obj.read(filename.stem, frame=filename.num)
     else:
-        logger.debug("Attempting to open %s" % (filename))
+        logger.debug("Attempting to open %s", filename)
         obj = _openimage(filename)
         logger.debug(
-            "Attempting to read frame %s from %s with reader %s"
-            % (frame, filename, obj.classname)
+            "Attempting to read frame %s from %s with reader %s",
+            frame,
+            filename,
+            obj.classname,
         )
         obj = obj.read(obj.filename, frame)
     return obj
@@ -322,7 +324,7 @@ def _openimage(filename):
         obj = fabioformats.factory(klass_name)
     except (RuntimeError, Exception):
         logger.debug("Backtrace", exc_info=True)
-        raise OSError("Filename %s can't be read as format %s" % (filename, klass_name))
+        raise OSError(f"Filename {filename} can't be read as format {klass_name}")
 
     obj.filename = filename
     # skip the read for read header

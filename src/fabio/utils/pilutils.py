@@ -132,7 +132,7 @@ def create_pil_16(numpy_array):
         mode2 = NUMPY_TO_PIL[numpy_array.dtype.name]
         mode1 = mode2[0]
     else:
-        raise RuntimeError("Unknown numpy type: %s" % (numpy_array.dtype.type))
+        raise RuntimeError(f"Unknown numpy type: {numpy_array.dtype.type}")
     dats = numpy_array.tobytes()
     pil_image = Image.frombuffer(mode1, size, dats, "raw", mode2, 0, 1)
 

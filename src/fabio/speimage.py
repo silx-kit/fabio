@@ -317,7 +317,7 @@ class SpeImage(FabioImage):
             frame = 0
         dtype = self.DATA_TYPES.get(self.header["data_type"])
         if dtype is None:
-            raise RuntimeError("Unsupported data type: %s" % self.header["data_type"])
+            raise RuntimeError(f"Unsupported data type: {self.header['data_type']}")
         number_size = np.dtype(dtype).itemsize
         frame_size = self.header["x_dim"] * self.header["y_dim"] * number_size
         return self._read_frame(infile, 4100 + frame * frame_size)

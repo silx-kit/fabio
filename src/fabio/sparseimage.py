@@ -321,7 +321,7 @@ class SparseImage(FabioImage):
                 new_img.normalization = self.normalization
             else:
                 raise OSError(
-                    "getframe %s out of range [%s %s[" % (num, 0, self.nframes)
+                    f"getframe {num} out of range [{0} {self.nframes}["
                 )
         else:
             new_img = FabioImage.getframe(self, num)

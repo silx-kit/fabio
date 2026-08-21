@@ -70,7 +70,7 @@ def get_isotime(force_time=None):
     gmtime = time.gmtime(force_time)
     tz_h = localtime.tm_hour - gmtime.tm_hour
     tz_m = localtime.tm_min - gmtime.tm_min
-    return "%s%+03i:%02i" % (time.strftime("%Y-%m-%dT%H:%M:%S", localtime), tz_h, tz_m)
+    return f"{time.strftime('%Y-%m-%dT%H:%M:%S', localtime)}{tz_h:+03d}:{tz_m:02d}"
 
 
 def from_isotime(text, use_tz=False):
@@ -111,7 +111,7 @@ def is_hdf5(filename):
     """
     signature = b"\x89\x48\x44\x46\x0d\x0a\x1a\x0a"
     if not exists(filename):
-        raise OSError("No such file %s" % (filename))
+        raise OSError(f"No such file {filename}")
     with open(filename.split("::")[0], "rb") as f:
         sig = f.read(len(signature))
     return sig == signature
@@ -318,7 +318,7 @@ class Nexus:
 
         if not force_name:
             nb_entries = len(self.get_entries())
-            entry = "%s_%04i" % (entry, nb_entries)
+            entry = f"{entry}_{nb_entries:04d}"
         entry_grp = self.h5.require_group(entry)
         self.h5.attrs["default"] = entry
         entry_grp.attrs["NX_class"] = "NXentry"

@@ -158,7 +158,7 @@ def decGzip(stream):
                 fileobj = io.BytesIO(stream[:-i])
                 uncompessed = gzip.GzipFile(fileobj=fileobj).read()
             except OSError:
-                logger.debug("trying with %s bytes less, doesn't work" % i)
+                logger.debug("trying with %s bytes less, doesn't work", i)
             else:
                 return uncompessed
 

@@ -108,8 +108,8 @@ class Dm3Image(FabioImage):
             raise RuntimeError("Wrong file type")
         self.bytes_in_file = self.readbytes(4, BE_uint32)[0]
         byte_order = self.readbytes(4, BE_uint32)[0]  # 0 = big, 1= little
-        logger.debug("read dm3 file - file format %s" % file_format)
-        logger.debug("Bytes in file: %s" % self.bytes_in_file)
+        logger.debug("read dm3 file - file format %s", file_format)
+        logger.debug("Bytes in file: %s", self.bytes_in_file)
         logger.debug("Byte order: %s  - 0 = bigEndian , 1 = littleEndian", self.byte_order)
 
         if byte_order == 0:
@@ -184,7 +184,7 @@ class Dm3Image(FabioImage):
                 key = tag_label.decode("latin-1")
             except Exception:
                 key = tag_label.decode("latin-1", "replace")
-                logger.warning("Non-valid latin-1 key renamed into '%s'" % key)
+                logger.warning("Non-valid latin-1 key renamed into '%s'", key)
             value = self.read_tag_type()
             if isinstance(value, bytes):
                 value = value.decode()

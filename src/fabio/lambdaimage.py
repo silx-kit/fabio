@@ -119,12 +119,9 @@ class LambdaImage(FabioImage):
 
     def __repr__(self):
         if self.h5 is None:
-            return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
+            return f"{self.__class__.__name__} object at {hex(id(self))}"
         else:
-            return "Lambda/nexus dataset with %i frames from %s" % (
-                self.nframes,
-                self.h5.filename,
-            )
+            return f"Lambda/nexus dataset with {self.nframes} frames from {self.h5.filename}"
 
     def _readheader(self, infile):
         """

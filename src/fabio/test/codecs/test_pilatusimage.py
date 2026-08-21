@@ -51,7 +51,7 @@ class TestPilatus(unittest.TestCase):
         """
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             dim1, dim2 = params[1:3]
             shape = dim2, dim1
             mini, maxi, mean, stddev = params[3:]
@@ -59,19 +59,19 @@ class TestPilatus(unittest.TestCase):
             obj.read(UtilsTest.getimage(name))
 
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+                mini, obj.getmin(), 2, f"getmin [{mini},{obj.getmin()}]"
             )
             self.assertAlmostEqual(
-                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+                maxi, obj.getmax(), 2, f"getmax [{maxi},{obj.getmax()}]"
             )
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+                mean, obj.getmean(), 2, f"getmean [{mean},{obj.getmean()}]"
             )
             self.assertAlmostEqual(
                 stddev,
                 obj.getstddev(),
                 2,
-                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+                f"getstddev [{stddev},{obj.getstddev()}]",
             )
             self.assertEqual(shape, obj.shape)
 
@@ -148,7 +148,7 @@ class TestPilatus1M(unittest.TestCase):
         """
         for params in self.TESTIMAGES:
             name = params[0]
-            logger.debug("Processing: %s" % name)
+            logger.debug("Processing: %s", name)
             dim1, dim2 = params[1:3]
             shape = dim2, dim1
             obj = fabio.pilatusimage.PilatusImage()

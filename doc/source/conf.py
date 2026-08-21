@@ -28,9 +28,9 @@ try:
         print("build_dir", build_dir)
         print("project_dir", project_dir)
     elif not build_dir.startswith(project_dir):
-        raise RuntimeError("%s looks to come from the system. Fix your PYTHONPATH and restart sphinx." % project)
+        raise RuntimeError(f"{project} looks to come from the system. Fix your PYTHONPATH and restart sphinx.")
 except ImportError:
-    raise RuntimeError("%s is not on the path. Fix your PYTHONPATH and restart sphinx." % project)
+    raise RuntimeError(f"{project} is not on the path. Fix your PYTHONPATH and restart sphinx.")
 
 
 # -- General configuration -----------------------------------------------------
@@ -74,7 +74,7 @@ from fabio.version import __date__ as fabio_date
 from fabio.version import strictversion
 
 year = fabio_date.split("/")[-1]
-copyright = '2006-%s, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer' % (year)
+copyright = f'2006-{year}, Henning Sorensen, Erik Knudsen, Jon Wright, Gael Goret, Brian Pauw and Jerome Kieffer'
 
 
 

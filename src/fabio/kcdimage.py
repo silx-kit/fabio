@@ -86,7 +86,7 @@ class KcdImage(FabioImage):
         if asciiHeader is False:
             # This does not look like an KappaCCD file
             logger.warning(
-                "First line of %s does not seam to be ascii text!" % infile.name
+                "First line of %s does not seam to be ascii text!", infile.name
             )
         end_of_headers = False
         while not end_of_headers:
@@ -130,7 +130,7 @@ class KcdImage(FabioImage):
                 dim2 = int(self.header["Y dimension"])
                 self._shape = dim2, dim1
             except (KeyError, ValueError):
-                raise OSError("KCD file %s is corrupt, cannot read it" % fname)
+                raise OSError(f"KCD file {fname} is corrupt, cannot read it")
             try:
                 bytecode = DATA_TYPES[self.header["Data type"]]
             except KeyError:

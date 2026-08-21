@@ -339,7 +339,7 @@ class Converter:
                     wavelength = entry["instrument/beam/incident_wavelength"][()]
             else:
                 raise NotImplementedError(
-                    "Unsupported format: %s" % source.__class__.__name__
+                    f"Unsupported format: {source.__class__.__name__}"
                 )
         if self.mask is None:
             self.mask = numpy.zeros(shape, dtype=dtype)
@@ -407,7 +407,7 @@ class Converter:
         input_exists = os.path.exists(input_filename)
 
         if self.options.verbose:
-            print("Converting file '%s'" % (input_filename))
+            print(f"Converting file '{input_filename}'")
 
         if not input_exists:
             logger.error(

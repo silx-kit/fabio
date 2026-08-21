@@ -107,8 +107,9 @@ class XsdImage(FabioImage):
             decData = base64.b16decode(self.rawData)
         else:
             logger.warning(
-                "Unable to recognize the encoding of the data !!! got %s, expected base64, base32 or base16, I assume it is base64 "
-                % self.coding
+                "Unable to recognize the encoding of the data !!! got %s, "
+                "expected base64, base32 or base16, I assume it is base64 ",
+                self.coding,
             )
             decData = base64.b64decode(self.rawData)
         if self.md5:
@@ -133,8 +134,7 @@ class XsdImage(FabioImage):
                 self._shape.insert(0, int(i.text))
             except ValueError as error:
                 logger.warning(
-                    "%s Shape: Unable to convert %s to integer in %s"
-                    % (error, i.text, i)
+                    "%s Shape: Unable to convert %s to integer in %s", error, i.text, i
                 )
         self._shape = tuple(self._shape)
 
@@ -143,8 +143,7 @@ class XsdImage(FabioImage):
                 self.size = int(i.text)
             except Exception as error:
                 logger.warning(
-                    "%s Size: Unable to convert %s to integer in %s"
-                    % (error, i.text, i)
+                    "%s Size: Unable to convert %s to integer in %s", error, i.text, i
                 )
 
         self._dtype = None

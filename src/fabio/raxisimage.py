@@ -301,11 +301,12 @@ class RaxisImage(FabioImage):
                     )  # seek from EOF backwards
             except OSError as error:
                 logger.warning(
-                    "expected datablock too large, please check bytecode settings: %s, IOError: %s"
-                    % (self._dtype.type, error)
+                    "expected datablock too large, please check bytecode settings: %s, IOError: %s",
+                    self._dtype.type,
+                    error,
                 )
             except Exception as error:
-                logger.error("Uncommon error encountered when reading file: %s" % error)
+                logger.error("Uncommon error encountered when reading file: %s", error)
         rawData = infile.read(size)
         data = numpy.frombuffer(rawData, self.get_stype(self._dtype, self.endianness)).copy().reshape(shape)
         di = (data >> 15) != 0  # greater than 2^15
@@ -313,7 +314,7 @@ class RaxisImage(FabioImage):
             # find indices for which we need to do the correction (for which
             # the 16th bit is set):
 
-            logger.debug("Correct for PM: %s" % di.sum())
+            logger.debug("Correct for PM: %s", di.sum())
             data = data << 1 >> 1  # reset bit #15 to zero
             self._dtype = numpy.dtype(numpy.uint32)
             data = data.astype(self._dtype)

@@ -96,14 +96,14 @@ class TestEiger(_CommonTestFrames):
         e = EigerImage()
         e.read(self.fn3)
         self.assertEqual(e.shape, (99, 101))
-        self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
+        self.assertEqual(e.nframes, 50, f"nframe: got {e.nframes}!=50")
         self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_open(self):
         """check we can read images from Eiger"""
         e = openimage(self.fn3)
         self.assertEqual(e.shape, (99, 101))
-        self.assertEqual(e.nframes, 50, "nframe: got %s!=50" % e.nframes)
+        self.assertEqual(e.nframes, 50, f"nframe: got {e.nframes}!=50")
         self.assertEqual(e.bpp, 4, "bpp OK")
 
     def test_write(self):

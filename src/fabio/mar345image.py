@@ -192,7 +192,7 @@ class Mar345Image(FabioImage):
                 if m.startswith(b"DATE"):
                     m = m[:39].decode("ASCII")
                 else:
-                    logger.warning("Skip binary trash on header line %s" % m)
+                    logger.warning("Skip binary trash on header line %s", m)
                     continue
             if m == "END OF HEADER":
                 break
@@ -297,7 +297,7 @@ class Mar345Image(FabioImage):
         lstout.append(
             "PROGRAM".ljust(15)
             + (
-                str(self.header.get("PROGRAM", "FabIO Version %s" % (version))).ljust(
+                str(self.header.get("PROGRAM", f"FabIO Version {version}")).ljust(
                     49 - lnsep
                 )
             )
@@ -313,7 +313,7 @@ class Mar345Image(FabioImage):
         if key in self.header:
             lstout.append(
                 "FORMAT".ljust(15)
-                + ("%s  %s %s" % (dim1, self.header[key], dim1 * dim2)).ljust(
+                + (f"{dim1}  {self.header[key]} {dim1 * dim2}").ljust(
                     49 - lnsep
                 )
             )
@@ -326,7 +326,7 @@ class Mar345Image(FabioImage):
             lstout.append(
                 "PIXEL".ljust(15)
                 + (
-                    "LENGTH %s  HEIGHT %s" % (self.header[key1], self.header[key2])
+                    f"LENGTH {self.header[key1]}  HEIGHT {self.header[key2]}"
                 ).ljust(49 - lnsep)
             )
         key1 = "OFFSET_ROFF"
@@ -334,7 +334,7 @@ class Mar345Image(FabioImage):
         if key1 in self.header and key2 in self.header:
             lstout.append(
                 "OFFSET".ljust(15)
-                + ("ROFF %s  TOFF %s" % (self.header[key1], self.header[key2])).ljust(
+                + (f"ROFF {self.header[key1]}  TOFF {self.header[key2]}").ljust(
                     49 - lnsep
                 )
             )
@@ -360,8 +360,7 @@ class Mar345Image(FabioImage):
             lstout.append(
                 "PHI".ljust(15)
                 + (
-                    "START %s  END %s  OSC %s"
-                    % (self.header[key1], self.header[key2], self.header[key3])
+                    f"START {self.header[key1]}  END {self.header[key2]}  OSC {self.header[key3]}"
                 ).ljust(49 - lnsep)
             )
         key1 = "OMEGA_START"
@@ -371,8 +370,7 @@ class Mar345Image(FabioImage):
             lstout.append(
                 "OMEGA".ljust(15)
                 + (
-                    "START %s  END %s  OSC %s"
-                    % (self.header[key1], self.header[key2], self.header[key3])
+                    f"START {self.header[key1]}  END {self.header[key2]}  OSC {self.header[key3]}"
                 ).ljust(49 - lnsep)
             )
         key = "CHI"
@@ -386,7 +384,7 @@ class Mar345Image(FabioImage):
         if (key1 in self.header) and (key2 in self.header):
             lstout.append(
                 "CENTER".ljust(15)
-                + ("X %s  Y %s" % (self.header[key1], self.header[key2])).ljust(
+                + (f"X {self.header[key1]}  Y {self.header[key2]}").ljust(
                     49 - lnsep
                 )
             )
@@ -403,8 +401,7 @@ class Mar345Image(FabioImage):
             lstout.append(
                 "COUNTS".ljust(15)
                 + (
-                    "START %s  END %s  NMEAS %s"
-                    % (self.header[key1], self.header[key2], self.header[key3])
+                    f"START {self.header[key1]}  END {self.header[key2]}  NMEAS {self.header[key3]}"
                 ).ljust(49 - lnsep)
             )
         key1 = "COUNTS_MIN"
@@ -412,7 +409,7 @@ class Mar345Image(FabioImage):
         if key1 in self.header and key2 in self.header:
             lstout.append(
                 "COUNTS".ljust(15)
-                + ("MIN %s  MAX %s" % (self.header[key1], self.header[key2])).ljust(
+                + (f"MIN {self.header[key1]}  MAX {self.header[key2]}").ljust(
                     49 - lnsep
                 )
             )
@@ -421,7 +418,7 @@ class Mar345Image(FabioImage):
         if key1 in self.header and key2 in self.header:
             lstout.append(
                 "COUNTS".ljust(15)
-                + ("AVE %s  SIG %s" % (self.header[key1], self.header[key2])).ljust(
+                + (f"AVE {self.header[key1]}  SIG {self.header[key2]}").ljust(
                     49 - lnsep
                 )
             )
@@ -438,13 +435,8 @@ class Mar345Image(FabioImage):
             lstout.append(
                 "INTENSITY".ljust(15)
                 + (
-                    "MIN %s  MAX %s  AVE %s  SIG %s"
-                    % (
-                        self.header[key1],
-                        self.header[key2],
-                        self.header[key3],
-                        self.header[key4],
-                    )
+                    f"MIN {self.header[key1]}  MAX {self.header[key2]}"
+                    f"  AVE {self.header[key3]}  SIG {self.header[key4]}"
                 ).ljust(49 - lnsep)
             )
         key1 = "HISTOGRAM_START"
@@ -454,8 +446,7 @@ class Mar345Image(FabioImage):
             lstout.append(
                 "HISTOGRAM".ljust(15)
                 + (
-                    "START %s  END %s  MAX %s"
-                    % (self.header[key1], self.header[key2], self.header[key3])
+                    f"START {self.header[key1]}  END {self.header[key2]}  MAX {self.header[key3]}"
                 ).ljust(49 - lnsep)
             )
         key = "GENERATOR"
@@ -470,7 +461,7 @@ class Mar345Image(FabioImage):
             lstout.append(
                 "COLLIMATOR".ljust(15)
                 + (
-                    "WIDTH %s  HEIGHT %s" % (self.header[key1], self.header[key2])
+                    f"WIDTH {self.header[key1]}  HEIGHT {self.header[key2]}"
                 ).ljust(49 - lnsep)
             )
         key = "REMARK"

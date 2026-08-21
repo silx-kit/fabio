@@ -73,8 +73,9 @@ class TestCbfReader(unittest.TestCase):
 
         self.assertAlmostEqual(0, abs(cbf.data - edf.data).max())
         logger.info(
-            "Reading CBF took %.3fs whereas the same EDF took %.3fs"
-            % (times[1] - times[0], times[2] - times[1])
+            "Reading CBF took %.3fs whereas the same EDF took %.3fs",
+            times[1] - times[0],
+            times[2] - times[1],
         )
 
     def test_write(self):
@@ -89,11 +90,11 @@ class TestCbfReader(unittest.TestCase):
         for key in obj.header:
             if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
-            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertTrue(key in other.header, f"Key {key} is in header")
             self.assertEqual(
                 obj.header[key],
                 other.header[key],
-                "value are the same for key %s" % key,
+                f"value are the same for key {key}",
             )
         # By destroying the object, one actually closes the file, which is needed under windows.
         del obj
@@ -112,7 +113,7 @@ class TestCbfReader(unittest.TestCase):
         size = cbf.shape[0] * cbf.shape[1]
         numpyRes = decByteOffset_numpy(data, size=size)
         tNumpy = time.time() - startTime
-        logger.info("Timing for Numpy method : %.3fs" % tNumpy)
+        logger.info("Timing for Numpy method : %.3fs", tNumpy)
 
         startTime = time.time()
         cythonRes = decByteOffset_cython(stream=data, size=size)
@@ -120,7 +121,7 @@ class TestCbfReader(unittest.TestCase):
         delta = abs(numpyRes - cythonRes).max()
         self.assertAlmostEqual(0, delta)
         logger.info(
-            "Timing for Cython method : %.3fs, max delta= %s" % (tCython, delta)
+            "Timing for Cython method : %.3fs, max delta= %s", tCython, delta
         )
 
     def test_consitency_manual(self):
@@ -136,12 +137,11 @@ class TestCbfReader(unittest.TestCase):
         for key in obj.header:
             if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
-            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertTrue(key in other.header, f"Key {key} is in header")
             self.assertEqual(
                 obj.header[key],
                 other.header[key],
-                "value are the same for key %s [%s|%s]"
-                % (key, obj.header[key], other.header[key]),
+                f"value are the same for key {key} [{obj.header[key]}|{other.header[key]}]",
             )
 
     def test_consitency_convert(self):
@@ -157,19 +157,18 @@ class TestCbfReader(unittest.TestCase):
         for key in obj.header:
             if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
-            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertTrue(key in other.header, f"Key {key} is in header")
             self.assertEqual(
                 obj.header[key],
                 other.header[key],
-                "value are the same for key %s [%s|%s]"
-                % (key, obj.header[key], other.header[key]),
+                f"value are the same for key {key} [{obj.header[key]}|{other.header[key]}]",
             )
 
     def test_unicode(self):
         """
         Test if an image can be read and saved to an unicode named
         """
-        name = "%s" % os.path.basename(self.cbf_filename)
+        name = f"{os.path.basename(self.cbf_filename)}"
         obj = fabio.open(self.cbf_filename)
         obj.write(os.path.join(UtilsTest.tempdir, name))
         other = fabio.open(os.path.join(UtilsTest.tempdir, name))
@@ -177,12 +176,11 @@ class TestCbfReader(unittest.TestCase):
         for key in obj.header:
             if key in ["filename", "X-Binary-Size-Padding"]:
                 continue
-            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertTrue(key in other.header, f"Key {key} is in header")
             self.assertEqual(
                 obj.header[key],
                 other.header[key],
-                "value are the same for key %s [%s|%s]"
-                % (key, obj.header[key], other.header[key]),
+                f"value are the same for key {key} [{obj.header[key]}|{other.header[key]}]",
             )
 
     def test_bug_388(self):

@@ -99,14 +99,14 @@ class TestLima(_CommonTestFrames):
         e = LimaImage()
         e.read(self.fn3)
         self.assertEqual(e.shape, (99, 101))
-        self.assertEqual(e.nframes, 17, "nframe: got %s!=17" % e.nframes)
+        self.assertEqual(e.nframes, 17, f"nframe: got {e.nframes}!=17")
         self.assertEqual(e.bpp, 2, "bpp OK")
 
     def test_open(self):
         """test_open check we can read images from Lima"""
         e = openimage(self.fn3)
         self.assertEqual(e.shape, (99, 101))
-        self.assertEqual(e.nframes, 17, "nframe: got %s!=17" % e.nframes)
+        self.assertEqual(e.nframes, 17, f"nframe: got {e.nframes}!=17")
         self.assertEqual(e.bpp, 2, "bpp OK")
 
     def test_write(self):

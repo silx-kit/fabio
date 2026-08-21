@@ -130,7 +130,7 @@ class DtrekImage(FabioImage):
 
         shape = []
         for i in range(dim):
-            value = int(self.header["SIZE%d" % (i + 1)])
+            value = int(self.header[f"SIZE{i + 1}"])
             shape.insert(0, value)
         self._shape = shape
 
@@ -145,7 +145,7 @@ class DtrekImage(FabioImage):
             except ValueError:
                 raise OSError(
                     "Size spec in d*TREK header does not match "
-                    + "size of image data field %s != %s" % (self._shape, data.size)
+                    + f"size of image data field {self._shape} != {data.size}"
                 )
         self.data = data
         self._shape = None
@@ -244,7 +244,7 @@ class DtrekImage(FabioImage):
             self.header["Data_type"] = dtrek_data_type
             self.header["DIM"] = str(len(data.shape))
             for i, size in enumerate(reversed(data.shape)):
-                self.header["SIZE%d" % (i + 1)] = str(size)
+                self.header[f"SIZE{i + 1}"] = str(size)
             self.header["BYTE_ORDER"] = "little_endian" if byte_order==ENDIANNESS.LITTLE else "big_endian"
         else:
             # No data
@@ -258,7 +258,7 @@ class DtrekImage(FabioImage):
         for key in self.header:
             if key == "HEADER_BYTES":
                 continue
-            line = "%s= %s;\n" % (key, self.header[key])
+            line = f"{key}= {self.header[key]};\n"
             out += line.encode("utf-8")
 
         # FIXME: This code do not take into account the size of "HEADER_BYTES"

@@ -235,7 +235,7 @@ class BrukerImage(FabioImage):
             try:
                 self._readheader(infile)
             except Exception as err:
-                raise RuntimeError("Unable to parse Bruker headers: %s" % err)
+                raise RuntimeError(f"Unable to parse Bruker headers: {err}")
 
             rows, cols = self._shape
 
@@ -277,16 +277,18 @@ class BrukerImage(FabioImage):
                 offset = float(offset)
             except Exception:
                 logger.warning(
-                    "Error in converting to float data with linear parameter: %s"
-                    % self.header["LINEAR"]
+                    "Error in converting to float data with linear parameter: %s",
+                    self.header["LINEAR"],
                 )
                 slope = 1
                 offset = 0
             if (slope != 1) or (offset != 0):
                 # TODO: check that the formula is OK, not reverted.
                 logger.warning(
-                    "performing correction with slope=%s, offset=%s (LINEAR=%s)"
-                    % (slope, offset, self.header["LINEAR"])
+                    "performing correction with slope=%s, offset=%s (LINEAR=%s)",
+                    slope,
+                    offset,
+                    self.header["LINEAR"],
                 )
                 data = (data * slope + offset).astype(numpy.float32)
         self.data = data.reshape(self._shape)
@@ -307,8 +309,8 @@ class BrukerImage(FabioImage):
                     offset = float(offset)
                 except Exception:
                     logger.warning(
-                        "Error in converting to float data with linear parameter: %s"
-                        % self.header["LINEAR"]
+                        "Error in converting to float data with linear parameter: %s",
+                        self.header["LINEAR"],
                     )
                     slope, offset = 1.0, 0.0
 
@@ -321,7 +323,7 @@ class BrukerImage(FabioImage):
                 else:
                     slope = 1.0
             tmp_data = numpy.round((self.data - offset) / slope).astype(numpy.uint32)
-            self.header["LINEAR"] = "%s %s" % (slope, offset)
+            self.header["LINEAR"] = f"{slope} {offset}"
         else:
             tmp_data = self.data
         bpp = self.calc_bpp(tmp_data)
@@ -381,7 +383,7 @@ class BrukerImage(FabioImage):
                             line = key.ljust(7) + ":"
                         line += value[72 * (i + 1) :]
                 elif "__len__" in dir(value):
-                    f = "%%.%is" % (72 // len(value) - 1)
+                    f = f"%.{72 // len(value) - 1}s"
                     line += " ".join([f % i for i in value])
                 else:
                     line += str(value)
@@ -394,7 +396,7 @@ class BrukerImage(FabioImage):
             for i in range(len(headers)):
                 if headers[i].startswith("HDRBLKS"):
                     headers[i] = headers.append(
-                        ("HDRBLKS:%s" % self.header["HDRBLKS"]).ljust(80, " ")
+                        f"HDRBLKS:{self.header['HDRBLKS']}".ljust(80, " ")
                     )
         res = pad(
             "".join(headers), self.SPACER + "." * 78, 512 * int(self.header["HDRBLKS"])
@@ -410,7 +412,7 @@ class BrukerImage(FabioImage):
         overflow_pos = numpy.where(flat >= limit)[0]  # list of indexes
         overflow_val = flat[overflow_pos]
         overflow = "".join(
-            ["%09i%07i" % (val, pos) for pos, val in zip(overflow_pos, overflow_val)]
+            [f"{val:09d}{pos:07d}" for pos, val in zip(overflow_pos, overflow_val)]
         )
         return pad(overflow, ".", 512)
 
@@ -427,7 +429,7 @@ class BrukerImage(FabioImage):
         if "USER" not in self.header:
             self.header["USER"] = getpass.getuser()
         if "FILENAM" not in self.header:
-            self.header["FILENAM"] = "%s" % fname
+            self.header["FILENAM"] = f"{fname}"
         if "CREATED" not in self.header:
             self.header["CREATED"] = time.ctime()
         if "NOVERFL" not in self.header:

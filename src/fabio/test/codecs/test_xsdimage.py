@@ -70,7 +70,7 @@ class TestXSD(unittest.TestCase):
             self.assertAlmostEqual(mini, obj.getmin(), 2, "getmin")
             self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
             self.assertAlmostEqual(mean, obj.getmean(), 2, "getmean")
-            logger.info("%s %s %s" % (name, stddev, obj.getstddev()))
+            logger.info("%s %s %s", name, stddev, obj.getstddev())
             self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
             self.assertEqual(shape, obj.shape)
 

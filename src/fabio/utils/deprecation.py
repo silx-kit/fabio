@@ -48,7 +48,7 @@ def hexversion_fromstring(string):
     if string is not None:
         result = _PATTERN.match(string)
         if result is None:
-            raise ValueError("'%s' is not a valid version" % string)
+            raise ValueError(f"'{string}' is not a valid version")
         result = result.groups()
         major, minor, micro = int(result[0]), int(result[1]), int(result[2])
         releaselevel = result[3]
@@ -142,12 +142,12 @@ def deprecated_warning(
 
     msg = "%s %s is deprecated"
     if since_version is not None:
-        msg += " since fabio version %s" % since_version
+        msg += f" since fabio version {since_version}"
     msg += "."
     if reason is not None:
-        msg += " Reason: %s." % reason
+        msg += f" Reason: {reason}."
     if replacement is not None:
-        msg += " Use '%s' instead." % replacement
+        msg += f" Use '{replacement}' instead."
     msg += "\n%s"
     limit = 2 + skip_backtrace_count
     backtrace = "".join(traceback.format_stack(limit=limit)[0])

@@ -98,7 +98,7 @@ class Fit2dImage(FabioImage):
                         infile.seek(0)
                         break
                 else:
-                    err = "issue while reading header, expected '', got %s" % line[0]
+                    err = f"issue while reading header, expected '', got {line[0]}"
                     logger.error(err)
                     raise RuntimeError(err)
             key, line = line.split(b":", 1)
@@ -137,7 +137,7 @@ class Fit2dImage(FabioImage):
                     header[key] = mask
                     continue
                 else:
-                    err = "unsupported data type: %s" % array_type
+                    err = f"unsupported data type: {array_type}"
                     logger.error(err)
                     raise RuntimeError(err)
                 raw = infile.read(self.num_block * self.BUFFER_SIZE)

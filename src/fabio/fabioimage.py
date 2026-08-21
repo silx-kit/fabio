@@ -531,8 +531,7 @@ class FabioImage(_FabioArray):
         else:
             if not (0 <= num < self.nframes):
                 raise IndexError(
-                    "Frame number out of range (requested %d, but found %d)"
-                    % (num, self.nframes)
+                    f"Frame number out of range (requested {int(num)}, but found {self.nframes})"
                 )
 
             # Try to use the old getframe API to avoid to implement many
@@ -748,7 +747,7 @@ class FabioImage(_FabioArray):
                 fname = str(fname)
         module = sys.modules[self.__class__.__module__]
         raise NotImplementedError(
-            "Writing %s format is not implemented" % module.__name__
+            f"Writing {module.__name__} format is not implemented"
         )
 
     def save(self, fname):
@@ -837,8 +836,8 @@ class FabioImage(_FabioArray):
                 except AttributeError:
                     # cStringIO
                     logger.warning(
-                        "Unable to set filename attribute to stream (cStringIO?) of type %s"
-                        % type(fname)
+                        "Unable to set filename attribute to stream (cStringIO?) of type %s",
+                        type(fname),
                     )
             return fname
 
@@ -846,7 +845,7 @@ class FabioImage(_FabioArray):
             if not isinstance(fname, fabioutils.StringTypes):
                 fname = str(fname)
         else:
-            raise TypeError("Unsupported type of fname (found %s)" % type(fname))
+            raise TypeError(f"Unsupported type of fname (found {type(fname)})")
 
         fileObject = None
         self.filename = fname
@@ -930,7 +929,7 @@ class FabioImage(_FabioArray):
         elif ("__new__" in dir(dest)) and isinstance(dest(), FabioImage):
             other = dest()
         else:
-            logger.error("Unrecognized destination format: %s " % dest)
+            logger.error("Unrecognized destination format: %s ", dest)
             return self
         other.data = converters.convert_data(self.classname, other.classname, self.data)
         other.header = converters.convert_header(

@@ -37,8 +37,8 @@ def html_visit_displaymath(self, node):
         if i == 0:
             # necessary to e.g. set the id property correctly
             if node['number']:
-                self.body.append('<span class="eqno">(%s)</span>' %
-                                 node['number'])
+                number = node['number']
+                self.body.append(f'<span class="eqno">({number})</span>')
         if '&' in part or '\\\\' in part:
             self.body.append(self.builder.config.mathjax_display[0] +
                              '\\begin{split}' + part + '\\end{split}' +

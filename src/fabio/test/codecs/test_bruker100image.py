@@ -96,11 +96,11 @@ class TestBruker100(unittest.TestCase):
         other = openimage(os.path.join(UtilsTest.tempdir, name))
         self.assertEqual(abs(obt.data - other.data).max(), 0, "data are the same")
         for key in obt.header:
-            self.assertTrue(key in other.header, "Key %s is in header" % key)
+            self.assertTrue(key in other.header, f"Key {key} is in header")
             self.assertEqual(
                 obt.header[key],
                 other.header[key],
-                "value are the same for key %s" % key,
+                f"value are the same for key {key}",
             )
         os.unlink(os.path.join(UtilsTest.tempdir, name))
 

@@ -87,8 +87,8 @@ def run_benchmark(number=10, repeat=3):
             [i / (0.001 * number) for i in timer.repeat(repeat=repeat, number=number)]
         )
         print(
-            "%13s %25s %.3f Mb \t %.3f Mpix \t  %.3f ms \t %.3f ms/Mpix"
-            % (fimg.__class__.__name__, img, file_size, img_size, tmin, tmin / img_size)
+            f"{fimg.__class__.__name__:>13} {img:>25} {file_size:.3f} Mb \t "
+            f"{img_size:.3f} Mpix \t  {tmin:.3f} ms \t {tmin / img_size:.3f} ms/Mpix"
         )
 
 

@@ -677,9 +677,9 @@ class FileSeries(FabioImage):
             if file_number < len(self.__filenames):
                 filename = self.__filenames[file_number]
             else:
-                raise IndexError("File number '%s' is not reachable" % file_number)
+                raise IndexError(f"File number '{file_number}' is not reachable")
         else:
-            raise IndexError("File number %s is not reachable" % file_number)
+            raise IndexError(f"File number {file_number} is not reachable")
         return filename
 
     def __get_file(self, file_number):
@@ -753,7 +753,7 @@ class FileSeries(FabioImage):
                 self.__current_file_description = description
                 return description
 
-        raise IndexError("Frame %s is out of range" % frame_number)
+        raise IndexError(f"Frame {frame_number} is out of range")
 
     def __get_file_description(self, frame_number):
         """Returns file description at the frame number.
@@ -773,7 +773,7 @@ class FileSeries(FabioImage):
         try:
             filename = self.__get_filename(file_number)
         except IndexError:
-            raise IndexError("Frame %s is out of range" % frame_number)
+            raise IndexError(f"Frame {frame_number} is out of range")
         first_frame = frame_number - (frame_number % self.__fixed_frame_number)
         nframes = self.__fixed_frame_number
         return _FileDescription(filename, file_number, first_frame, nframes)
@@ -785,7 +785,7 @@ class FileSeries(FabioImage):
         :rtype: FabioFrame
         """
         if num < 0:
-            raise IndexError("Frame %s is out of range" % num)
+            raise IndexError(f"Frame {num} is out of range")
         description = self.__get_file_description(num)
         fileimage = self.__get_file(description.file_number)
         local_frame = num - description.first_frame_number

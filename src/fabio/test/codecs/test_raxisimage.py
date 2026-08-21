@@ -63,7 +63,7 @@ class TestRaxisImage(unittest.TestCase):
         for line in TESTIMAGES.split("\n"):
             vals = line.strip().split()
             name = vals[0]
-            logger.debug("Testing file %s" % name)
+            logger.debug("Testing file %s", name)
             dim1, dim2 = [int(x) for x in vals[1:3]]
             shape = dim2, dim1
             mini, maxi, mean, stddev = [float(x) for x in vals[3:]]
@@ -71,19 +71,19 @@ class TestRaxisImage(unittest.TestCase):
             obj.read(os.path.join(os.path.dirname(self.mar), name))
 
             self.assertAlmostEqual(
-                mini, obj.getmin(), 2, "getmin [%s,%s]" % (mini, obj.getmin())
+                mini, obj.getmin(), 2, f"getmin [{mini},{obj.getmin()}]"
             )
             self.assertAlmostEqual(
-                maxi, obj.getmax(), 2, "getmax [%s,%s]" % (maxi, obj.getmax())
+                maxi, obj.getmax(), 2, f"getmax [{maxi},{obj.getmax()}]"
             )
             self.assertAlmostEqual(
-                mean, obj.getmean(), 2, "getmean [%s,%s]" % (mean, obj.getmean())
+                mean, obj.getmean(), 2, f"getmean [{mean},{obj.getmean()}]"
             )
             self.assertAlmostEqual(
                 stddev,
                 obj.getstddev(),
                 2,
-                "getstddev [%s,%s]" % (stddev, obj.getstddev()),
+                f"getstddev [{stddev},{obj.getstddev()}]",
             )
             self.assertEqual(shape, obj.shape)
 
@@ -91,7 +91,7 @@ class TestRaxisImage(unittest.TestCase):
         self.skipTest("Write is not implemented")
         "Test writing with self consistency at the fabio level"
         for line in TESTIMAGES.split("\n"):
-            logger.debug("Processing file: %s" % line)
+            logger.debug("Processing file: %s", line)
             vals = line.split()
             name = vals[0]
             obj = raxisimage()
@@ -103,12 +103,11 @@ class TestRaxisImage(unittest.TestCase):
             for key in obj.header:
                 if key == "filename":
                     continue
-                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertTrue(key in other.header, f"Key {key} is in header")
                 self.assertEqual(
                     obj.header[key],
                     other.header[key],
-                    "value are the same for key %s: [%s|%s]"
-                    % (key, obj.header[key], other.header[key]),
+                    f"value are the same for key {key}: [{obj.header[key]}|{other.header[key]}]",
                 )
             os.unlink(os.path.join(UtilsTest.tempdir, name))
 

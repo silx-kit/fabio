@@ -301,7 +301,7 @@ def decode_field(field):
         mask_ = MASK[size]
         return [(field >> (size * i)) & mask_ for i in range(8)]
     else:
-        raise RuntimeError("Expected a maximum of 8 bytes, got %s" % size)
+        raise RuntimeError(f"Expected a maximum of 8 bytes, got {size}")
 
 
 def read_len_byte(lb):

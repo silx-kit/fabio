@@ -63,8 +63,8 @@ else:
         def subTest(self, msg=None, **params):
             """Use as unittest.TestCase.subTest method in Python >= 3.4."""
             # Format arguments as: '[msg] (key=value, ...)'
-            param_str = ", ".join(["%s=%s" % (k, v) for k, v in params.items()])
-            self._subtest_msg = "[%s] (%s)" % (msg or "", param_str)
+            param_str = ", ".join([f"{k}={v}" for k, v in params.items()])
+            self._subtest_msg = f"[{msg or ''}] ({param_str})"
             yield
             self._subtest_msg = None
 
@@ -240,14 +240,10 @@ class LoggingValidator(logging.Handler):
                     message += ", "
                 count = count_by_level[level]
                 expected_count = expected_count_by_level[level]
-                message += "%d %s (got %d)" % (
-                    expected_count,
-                    logging.getLevelName(level),
-                    count,
-                )
+                message += f"{expected_count} {logging.getLevelName(level)} (got {count})"
 
             raise LoggingRuntimeError(
-                "Expected %s" % message, records=list(self.records)
+                f"Expected {message}", records=list(self.records)
             )
 
     def emit(self, record):

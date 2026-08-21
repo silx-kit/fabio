@@ -222,7 +222,7 @@ class FilenameObject:
                 ndigit = len(numstring)
             except Exception as err:
                 # There is no number - hence make num be None, not 0
-                logger.debug("l242: %s" % err)
+                logger.debug("l242: %s", err)
                 num = None
                 stem = "".join(parts[:-1])
         else:
@@ -242,14 +242,14 @@ class FilenameObject:
                     typ = ["bruker"]
                     stem = ".".join(parts[:-1]) + "."
                 except Exception as err:
-                    logger.debug("l262: %s" % err)
+                    logger.debug("l262: %s", err)
                     typ = None
                     extn = "." + parts[-1] + extn
                     numstring = ""
                     try:
                         stem, numstring, postnum = numstem(".".join(parts[:-1]))
                     except Exception as err:
-                        logger.debug("l269: %s" % err)
+                        logger.debug("l269: %s", err)
                         raise
                     if numstring.isdigit():
                         num = int(numstring)
@@ -365,7 +365,7 @@ def toAscii(name, excluded=None):
             if i in ascii:
                 ascii.remove(i)
             else:
-                logger.error("toAscii: %s not in ascii table" % i)
+                logger.error("toAscii: %s not in ascii table", i)
         dictAscii[excluded] = ascii
     else:
         ascii = dictAscii[excluded]
@@ -406,7 +406,7 @@ class BytesIO(_BytesIO):
 
     def getSize(self):
         if self.__size is None:
-            logger.debug("Measuring size of %s" % self.name)
+            logger.debug("Measuring size of %s", self.name)
             with self.lock:
                 pos = self.tell()
                 self.seek(0, os.SEEK_END)
@@ -463,12 +463,12 @@ class File(FileIO):
             try:
                 os.unlink(name)
             except Exception as err:
-                logger.error("Unable to remove %s: %s" % (name, err))
+                logger.error("Unable to remove %s: %s", name, err)
                 raise (err)
 
     def getSize(self):
         if self.__size is None:
-            logger.debug("Measuring size of %s" % self.name)
+            logger.debug("Measuring size of %s", self.name)
             with self.lock:
                 pos = self.tell()
                 self.seek(0, os.SEEK_END)
@@ -596,8 +596,11 @@ else:
                         end_pos = len(gzip.GzipFile.read(self)) + pos
                         self.seek(pos)
                         logger.debug(
-                            "Measuring size of %s: %s @ %s == %s"
-                            % (self.name, end_pos, pos, pos)
+                            "Measuring size of %s: %s @ %s == %s",
+                            self.name,
+                            end_pos,
+                            pos,
+                            pos,
                         )
                         self.__size = end_pos
             return self.__size
@@ -647,7 +650,7 @@ else:
 
         def getSize(self):
             if self.__size is None:
-                logger.debug("Measuring size of %s" % self.name)
+                logger.debug("Measuring size of %s", self.name)
                 with self.lock:
                     pos = self.tell()
                     _ = self.read()
@@ -692,7 +695,7 @@ class DebugSemaphore(threading.Semaphore):
                 self.blocked.append(id(self))
                 sys.stderr.write(
                     os.linesep.join(
-                        ["Blocking sem %s" % id(self)]
+                        [f"Blocking sem {id(self)}"]
                         + traceback.format_stack()[:-1]
                         + [""]
                     )
@@ -705,7 +708,7 @@ class DebugSemaphore(threading.Semaphore):
             uid = id(self)
             if uid in self.blocked:
                 self.blocked.remove(uid)
-                sys.stderr.write("Released sem %s %s" % (uid, os.linesep))
+                sys.stderr.write(f"Released sem {uid} {os.linesep}")
         threading.Semaphore.release(self, *arg, **kwarg)
 
     def __enter__(self):

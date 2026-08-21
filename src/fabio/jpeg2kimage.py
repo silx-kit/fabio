@@ -100,7 +100,7 @@ class Jpeg2KImage(FabioImage):
             # inject a shape  to avoid calling the read function
             image = glymur.Jp2k(filename=filename, shape=(1, 1))
         else:
-            raise OSError("Glymur version %s is not supported" % glymur.__version__)
+            raise OSError(f"Glymur version {glymur.__version__} is not supported")
 
         # Move to the end of the file to know the size
         infile.seek(0, 2)
@@ -120,7 +120,7 @@ class Jpeg2KImage(FabioImage):
             image._validate()
         except Exception:
             logger.debug("Backtrace", exc_info=True)
-            raise OSError("File %s is not a valid format" % filename)
+            raise OSError(f"File {filename} is not a valid format")
 
         # Now the image can be used normally
         return image
@@ -148,12 +148,12 @@ class Jpeg2KImage(FabioImage):
                 self.data = None
                 self.header = OrderedDict()
                 logger.debug(
-                    "Error while using %s library: %s" % (name, e), exc_info=True
+                    "Error while using %s library: %s", name, e, exc_info=True
                 )
 
         if self.data is None:
             infile.seek(0)
-            raise OSError("No decoder available for the file %s." % filename)
+            raise OSError(f"No decoder available for the file {filename}.")
         self.resetvals()
         return self
 

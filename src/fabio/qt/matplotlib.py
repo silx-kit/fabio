@@ -54,7 +54,7 @@ elif BINDING =="pyqt5":
     from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa
     from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT  # noqa
 else:
-    raise ImportError("Unsupported Qt binding: %s" % BINDING)
+    raise ImportError(f"Unsupported Qt binding: {BINDING}")
 
 
 from matplotlib import figure, font_manager

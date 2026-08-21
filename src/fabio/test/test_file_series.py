@@ -90,7 +90,7 @@ class TestEdfNumbered(unittest.TestCase):
 
     def testnext(self):
         """check all in order"""
-        mylist = ["mydata%04d.edf" % (i) for i in range(10005)]
+        mylist = [f"mydata{i:04d}.edf" for i in range(10005)]
         i = 1
         while i < len(mylist):
             self.assertEqual(mylist[i], self.fso.next())
@@ -98,7 +98,7 @@ class TestEdfNumbered(unittest.TestCase):
 
     def testprevious(self):
         """check all in order"""
-        mylist = ["mydata%04d.edf" % (i) for i in range(10005)]
+        mylist = [f"mydata{i:04d}.edf" for i in range(10005)]
         i = 10003
         self.fso.jump(10004)
         while i > 0:
@@ -165,7 +165,7 @@ class TestFileSeries(unittest.TestCase):
         filename = cls.get_filename(filename)
         image = fabio.factory("edfimage")
         for frame_id, data in enumerate(data_list):
-            header = {"frame_id": "%d" % frame_id, "filename": "%s" % filename}
+            header = {"frame_id": f"{frame_id}", "filename": f"{filename}"}
             if frame_id == 0:
                 image.data = data
                 image.header.update(header)
@@ -235,7 +235,7 @@ class TestFileSeries(unittest.TestCase):
         for frame_id, frame in enumerate(serie.frames()):
             self.assertEqual(frame.data[0, 0], frame_id)
             self.assertEqual(frame.header["frame_id"], "0")
-            self.assertIn("%03d" % frame_id, frame.header["filename"])
+            self.assertIn(f"{frame_id:03d}", frame.header["filename"])
         self.assertEqual(frame_id, 2)
         serie.close()
 
@@ -274,8 +274,8 @@ class TestFileSeries(unittest.TestCase):
             expected_data = {0: 0, 5: 1, 6: 2}[frame_id]
 
             self.assertEqual(frame.data[0, 0], expected_data)
-            self.assertEqual(frame.header["frame_id"], "%d" % expected_frame_id)
-            self.assertIn("%03d" % expected_file_num, frame.header["filename"])
+            self.assertEqual(frame.header["frame_id"], f"{expected_frame_id}")
+            self.assertIn(f"{expected_file_num:03d}", frame.header["filename"])
         self.assertEqual(frame_id, 6)
         serie.close()
 
@@ -318,12 +318,12 @@ class TestFileSeries(unittest.TestCase):
             expected_filename = filenames[expected_file_num]
 
             self.assertEqual(frame.data[0, 0], expected_data)
-            self.assertEqual(frame.header["frame_id"], "%d" % expected_file_frame_id)
+            self.assertEqual(frame.header["frame_id"], f"{expected_file_frame_id}")
             self.assertEqual(frame.index, frame_id)
             self.assertEqual(frame.file_index, expected_file_frame_id)
             self.assertIs(frame.container, serie)
             self.assertIs(frame.file_container.filename, expected_filename)
-            self.assertIn("%03d" % expected_file_num, frame.header["filename"])
+            self.assertIn(f"{expected_file_num:03d}", frame.header["filename"])
         self.assertEqual(frame_id, 9)
         serie.close()
 
@@ -339,12 +339,12 @@ class TestFileSeries(unittest.TestCase):
             expected_filename = filenames[expected_file_num]
 
             self.assertEqual(frame.data[0, 0], expected_data)
-            self.assertEqual(frame.header["frame_id"], "%d" % expected_file_frame_id)
+            self.assertEqual(frame.header["frame_id"], f"{expected_file_frame_id}")
             self.assertEqual(frame.index, frame_id)
             self.assertEqual(frame.file_index, expected_file_frame_id)
             self.assertIs(frame.container, serie)
             self.assertIs(frame.file_container.filename, expected_filename)
-            self.assertIn("%03d" % expected_file_num, frame.header["filename"])
+            self.assertIn(f"{expected_file_num:03d}", frame.header["filename"])
         self.assertEqual(frame_id, 9)
         serie.close()
 

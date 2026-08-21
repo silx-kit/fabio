@@ -78,7 +78,7 @@ class Fit2dSpreadsheetImage(FabioImage):
             dim2 = int(self.header["Dim_2"])
             self._shape = dim2, dim1
         except (ValueError, KeyError):
-            raise OSError("file %s is corrupt, cannot read it" % str(fname))
+            raise OSError(f"file {str(fname)} is corrupt, cannot read it")
 
         self._dtype = numpy.dtype(numpy.float32)
 

@@ -92,7 +92,7 @@ class TestDm3Image(unittest.TestCase):
                 self.assertAlmostEqual(maxi, obj.getmax(), 2, "getmax")
                 got_mean = obj.getmean()
                 self.assertAlmostEqual(
-                    mean, got_mean, 2, "getmean exp %s != got %s" % (mean, got_mean)
+                    mean, got_mean, 2, f"getmean exp {mean} != got {got_mean}"
                 )
                 self.assertAlmostEqual(stddev, obj.getstddev(), 2, "getstddev")
                 self.assertEqual(shape, obj.shape)

@@ -92,7 +92,7 @@ class JpegImage(FabioImage):
         except Exception:
             pilimage = None
             infile.seek(0)
-            raise OSError("Error in opening %s with PIL" % filename)
+            raise OSError(f"Error in opening {filename} with PIL")
 
         data = pilutils.get_numpy_array(pilimage)
         self.data = data
@@ -110,7 +110,7 @@ class JpegImage(FabioImage):
 
         if self.data is None:
             infile.seek(0)
-            raise OSError("Error in opening %s." % filename)
+            raise OSError(f"Error in opening {filename}.")
 
         self.resetvals()
         return self

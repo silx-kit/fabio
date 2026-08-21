@@ -66,10 +66,10 @@ if not numpy.little_endian:
     MYIMAGE.byteswap(True)
 
 OVERFLOWS = [
-    ["%09d" % 4194304, ("%07d" % (127 * 256 + 127))],
-    ["%09d" % 4194304, ("%07d" % (127 * 256 + 128))],
-    ["%09d" % 4194304, ("%07d" % (128 * 256 + 127))],
-    ["%09d" % 4194304, ("%07d" % (128 * 256 + 128))],
+    [f"{4194304:09d}", f"{127 * 256 + 127:07d}"],
+    [f"{4194304:09d}", f"{127 * 256 + 128:07d}"],
+    [f"{4194304:09d}", f"{128 * 256 + 127:07d}"],
+    [f"{4194304:09d}", f"{128 * 256 + 128:07d}"],
 ]
 
 
@@ -83,7 +83,7 @@ class TestBruker(unittest.TestCase):
         with open(self.filename, "wb") as fout:
             wrb = 0
             for key, val in MYHEADER.items():
-                fout.write((("%-7s" % key) + ":" + ("%-72s" % val)).encode("ASCII"))
+                fout.write((f"{key:<7}" + ":" + f"{val:<72}").encode("ASCII"))
                 wrb = wrb + 80
             hdrblks = int(MYHEADER["HDRBLKS"])
             while wrb < hdrblks * 512:
@@ -154,7 +154,7 @@ class TestBrukerLinear(unittest.TestCase):
         new.read(self.filename)
         error = abs(new.data - self.data).max()
         self.assertTrue(
-            error < numpy.finfo(numpy.float32).eps, "Error is %s>1e-7" % error
+            error < numpy.finfo(numpy.float32).eps, f"Error is {error}>1e-7"
         )
 
     def tearDown(self):
@@ -218,15 +218,15 @@ class TestRealImg(unittest.TestCase):
                     continue
                 if key not in other.header:
                     logger.warning(
-                        "Key %s is missing in new header, was %s"
-                        % (key, ref.header[key])
+                        "Key %s is missing in new header, was %s",
+                        key,
+                        ref.header[key],
                     )
                 else:
                     self.assertEqual(
                         ref.header[key],
                         other.header[key],
-                        "value are the same for key %s: was %s now %s"
-                        % (key, ref.header[key], other.header[key]),
+                        f"value are the same for key {key}: was {ref.header[key]} now {other.header[key]}",
                     )
 
 

@@ -172,12 +172,10 @@ class ProgressBar:
         bar_position = min(bar_position, self.bar_width)
 
         # line to display
-        line = "\r%15s [%s%s] % 3d%%  %s" % (
-            self.title,
-            self.progress_char * bar_position,
-            " " * (self.bar_width - bar_position),
-            percent,
-            message,
+        line = (
+            f"\r{self.title:>15} "
+            f"[{self.progress_char * bar_position}{' ' * (self.bar_width - bar_position)}]"
+            f" {percent: 3d}%  {message}"
         )
 
         # trailing to mask the previous message
@@ -243,7 +241,7 @@ def convert_one(input_filename, options, start_at=0):
     input_exists = os.path.exists(input_filename)
 
     if options.verbose:
-        print("Converting file '%s'" % (input_filename))
+        print(f"Converting file '{input_filename}'")
 
     if not input_exists:
         logger.error(
@@ -282,9 +280,9 @@ def convert_one(input_filename, options, start_at=0):
                     if data_grp:
                         nxdetector = data_grp.parent
                         try:
-                            detector = "%s, S/N %s" % (
-                                nxdetector["detector_information/model"][()],
-                                nxdetector["detector_information/name"][()],
+                            detector = (
+                                f"{nxdetector['detector_information/model'][()]}, "
+                                f"S/N {nxdetector['detector_information/name'][()]}"
                             )
                             pilatus_headers["Detector"] = detector
                         except Exception as e:
@@ -324,9 +322,9 @@ def convert_one(input_filename, options, start_at=0):
                     "No detector definition in Eiger file, is this a master file ?"
                 )
             else:
-                detector = "%s, S/N %s" % (
-                    nxdetector["description"][()].decode(),
-                    nxdetector["detector_number"][()].decode(),
+                detector = (
+                    f"{nxdetector['description'][()].decode()}, "
+                    f"S/N {nxdetector['detector_number'][()].decode()}"
                 )
                 pilatus_headers["Detector"] = detector
                 pilatus_headers["Pixel_size"] = (
@@ -350,7 +348,7 @@ def convert_one(input_filename, options, start_at=0):
                     nxdetector["sensor_thickness"][()],
                 )
     else:
-        raise NotImplementedError("Unsupported format: %s" % source.__class__.__name__)
+        raise NotImplementedError(f"Unsupported format: {source.__class__.__name__}")
 
     # Parse option for Pilatus headers
     if options.energy:

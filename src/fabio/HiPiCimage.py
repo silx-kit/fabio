@@ -109,7 +109,7 @@ class HipicImage(FabioImage):
             dim2 = int(self.header["Dim_2"])
             self._shape = dim2, dim1
         except (ValueError, KeyError):
-            raise OSError("HiPic file %s is corrupted, cannot read it" % str(fname))
+            raise OSError(f"HiPic file {str(fname)} is corrupted, cannot read it")
         dtype = numpy.dtype(numpy.uint16)
         self._dtype = dtype
 

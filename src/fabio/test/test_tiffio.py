@@ -52,12 +52,12 @@ class TestTiffIO(unittest.TestCase):
         tif = None
 
     def test_write(self):
-        filename = "%s.tiff" % self.id()
+        filename = f"{self.id()}.tiff"
         filename = os.path.join(UtilsTest.tempdir, filename)
         self.write(filename)
 
     def test_append(self):
-        filename = "%s.tiff" % self.id()
+        filename = f"{self.id()}.tiff"
         filename = os.path.join(UtilsTest.tempdir, filename)
         self.write(filename)
         # append
@@ -70,7 +70,7 @@ class TestTiffIO(unittest.TestCase):
         tif = None
 
     def test_read(self):
-        filename = "%s.tiff" % self.id()
+        filename = f"{self.id()}.tiff"
         filename = os.path.join(UtilsTest.tempdir, filename)
         self.write(filename)
 

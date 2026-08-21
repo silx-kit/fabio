@@ -105,16 +105,16 @@ class TestOxd(unittest.TestCase):
             self.assertEqual(
                 abs(obj.data - other.data).max(),
                 0,
-                "data are not the same for %s" % name,
+                f"data are not the same for {name}",
             )
             for key in obj.header:
                 if key == "filename":
                     continue
-                self.assertTrue(key in other.header, "Key %s is in header" % key)
+                self.assertTrue(key in other.header, f"Key {key} is in header")
                 self.assertEqual(
                     obj.header[key],
                     other.header[key],
-                    "metadata '%s' are not the same for %s" % (key, name),
+                    f"metadata '{key}' are not the same for {name}",
                 )
 
             os.unlink(os.path.join(UtilsTest.tempdir, name))
@@ -139,7 +139,7 @@ class TestOxdSame(unittest.TestCase):
         for attr in ["getmin", "getmax", "getmean", "getstddev"]:
             a1 = getattr(o1, attr)()
             a2 = getattr(o2, attr)()
-            self.assertEqual(a1, a2, "testing %s: %s | %s" % (attr, a1, a2))
+            self.assertEqual(a1, a2, f"testing {attr}: {a1} | {a2}")
 
 
 class TestOxdBig(unittest.TestCase):

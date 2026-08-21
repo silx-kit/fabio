@@ -97,12 +97,9 @@ class EigerImage(FabioImage):
 
     def __repr__(self):
         if self.h5 is not None:
-            return "Eiger dataset with %i frames from %s" % (
-                self.nframes,
-                self.h5.filename,
-            )
+            return f"Eiger dataset with {self.nframes} frames from {self.h5.filename}"
         else:
-            return "%s object at %s" % (self.__class__.__name__, hex(id(self)))
+            return f"{self.__class__.__name__} object at {hex(id(self))}"
 
     def _readheader(self, infile):
         """

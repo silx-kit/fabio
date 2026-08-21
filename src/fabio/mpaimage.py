@@ -104,7 +104,7 @@ class MpaImage(FabioImage):
             or "mpafmt" not in self.header.keys()
         ):
             logger.error("Error in opening %s: badly formatted mpa header.", fname)
-            raise OSError("Error in opening %s: badly formatted mpa header." % fname)
+            raise OSError(f"Error in opening {fname}: badly formatted mpa header.")
 
         dim2 = int(self.header["ADC1_range"])
         dim1 = int(self.header["ADC2_range"])

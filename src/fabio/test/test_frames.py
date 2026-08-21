@@ -76,14 +76,14 @@ class _CommonTestFrames(unittest.TestCase):
         with self.image() as image:
             cache = {}
             for i, frame in enumerate(image.frames()):
-                cache["data %d" % i] = numpy.array(frame.data)
-                cache["header %d" % i] = frame.header.copy()
+                cache[f"data {i}"] = numpy.array(frame.data)
+                cache[f"header {i}"] = frame.header.copy()
                 self.assertEqual(i, frame.index)
             self.assertEqual(i, self.meta.nframes - 1)
             for i, frame in enumerate(image.frames()):
-                data = cache.pop("data %d" % i)
+                data = cache.pop(f"data {i}")
                 self.assertTrue(numpy.array_equal(data, frame.data))
-                header = cache.pop("header %d" % i)
+                header = cache.pop(f"header {i}")
                 self.assertEqual(header, frame.header)
                 self.assertEqual(i, frame.index)
             self.assertEqual(len(cache), 0)

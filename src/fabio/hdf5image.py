@@ -106,8 +106,7 @@ class Hdf5Image(fabioimage.FabioImage):
         self.resetvals()
         if "::" not in fname:
             err = (
-                "the '::' separator is mandatory for HDF5 container, absent in %s"
-                % fname
+                f"the '::' separator is mandatory for HDF5 container, absent in {fname}"
             )
             logger.error(err)
             raise RuntimeError(err)
@@ -117,7 +116,7 @@ class Hdf5Image(fabioimage.FabioImage):
         if os.path.isfile(self.filename):
             self.hdf5 = h5py.File(self.filename, mode="r")
         else:
-            error = "No such file or directory: %s" % self.filename
+            error = f"No such file or directory: {self.filename}"
             logger.error(error)
             raise RuntimeError(error)
         try:
@@ -143,8 +142,7 @@ class Hdf5Image(fabioimage.FabioImage):
             self.data = self.dataset[:, :]
         else:
             err = (
-                "Only 2D and 3D datasets are supported by FabIO, here %sD"
-                % self.dataset.ndim
+                f"Only 2D and 3D datasets are supported by FabIO, here {self.dataset.ndim}D"
             )
             logger.error(err)
             raise RuntimeError(err)
@@ -160,8 +158,7 @@ class Hdf5Image(fabioimage.FabioImage):
         """
         if num < 0 or num >= self.nframes:
             raise IndexError(
-                "Requested frame number %i is out of range [0, %i[ "
-                % (num, self.nframes)
+                f"Requested frame number {int(num)} is out of range [0, {self.nframes}[ "
             )
         # Do a deep copy of the header to make a new one
         frame = Hdf5Frame(self, num)

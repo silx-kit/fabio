@@ -123,7 +123,7 @@ class MrcImage(FabioImage):
             logger.info("Expected 'MAP ', got %s", self.header["MAP"])
 
         for i in range(10):
-            label = "LABEL_%02i" % i
+            label = f"LABEL_{i:02d}"
             self.header[label] = infile.read(80).decode().strip()
 
         # Read extended header
@@ -136,7 +136,7 @@ class MrcImage(FabioImage):
         self._nframes = self.header["NZ"]
         mode = self.header["MODE"]
         if mode not in self._MODE_TO_DTYPE:
-            raise OSError("Mode %s unsupported" % mode)
+            raise OSError(f"Mode {mode} unsupported")
         dtype = numpy.dtype(self._MODE_TO_DTYPE[mode])
         self._dtype = dtype
         self.imagesize = dim1 * dim2 * dtype.itemsize
@@ -167,7 +167,7 @@ class MrcImage(FabioImage):
         return 1024 + self.header["NSYMBT"] + frame * self.imagesize
 
     def _makeframename(self):
-        self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
+        self.filename = f"{self.sequencefilename}${self.currentframe:04d}"
 
     def _readframe(self, infile, img_num):
         """

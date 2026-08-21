@@ -150,9 +150,9 @@ class TextTestResultWithSkipList(unittest.TextTestResult):
         for err, tests in grouped.items():
             self.stream.writeln(self.separator1)
             for test in tests:
-                self.stream.writeln("%s: %s" % (flavour, self.getDescription(test)))
+                self.stream.writeln(f"{flavour}: {self.getDescription(test)}")
             self.stream.writeln(self.separator2)
-            self.stream.writeln("%s" % err)
+            self.stream.writeln(f"{err}")
 
 
 class ProfileTextTestResult(unittest.TextTestRunner.resultclass):
@@ -208,10 +208,9 @@ def report_rst(cov, package, version="0.0.0", base=""):
     xml = etree.parse(fn)
     classes = xml.findall(".//class")
 
-    line0 = "Test coverage report for %s" % package
+    line0 = f"Test coverage report for {package}"
     res = [line0, "=" * len(line0), ""]
-    res.append("Measured on *%s* version %s, %s" %
-               (package, version, time.strftime("%d/%m/%Y")))
+    res.append(f"Measured on *{package}* version {version}, {time.strftime('%d/%m/%Y')}")
     res += ["",
             ".. csv-table:: Test suite coverage",
             '   :header: "Name", "Stmts", "Exec", "Cover"',
@@ -236,14 +235,12 @@ def report_rst(cov, package, version="0.0.0", base=""):
         if base:
             name = os.path.relpath(fname, base)
 
-        res.append('   "%s", "%s", "%s", "%.1f %%"' %
-                   (name, sum_lines, sum_hits, cover))
+        res.append(f'   "{name}", "{sum_lines}", "{sum_hits}", "{cover:.1f} %"')
         tot_sum_lines += sum_lines
         tot_sum_hits += sum_hits
     res.append("")
-    res.append('   "%s total", "%s", "%s", "%.1f %%"' %
-               (package, tot_sum_lines, tot_sum_hits,
-                100.0 * tot_sum_hits / tot_sum_lines if tot_sum_lines else 0))
+    total_cover = 100.0 * tot_sum_hits / tot_sum_lines if tot_sum_lines else 0
+    res.append(f'   "{package} total", "{tot_sum_lines}", "{tot_sum_hits}", "{total_cover:.1f} %"')
     res.append("")
     return os.linesep.join(res)
 
@@ -268,10 +265,10 @@ def main():
                             "INFO messages. Use -vv for full verbosity, " +
                             "including debug messages and test help strings.")
 
-    default_test_name = "%s.test.suite" % PROJECT_NAME
+    default_test_name = f"{PROJECT_NAME}.test.suite"
     parser.add_argument("test_name", nargs='*',
                         default=(default_test_name,),
-                        help="Test names to run (Default: %s)" % default_test_name)
+                        help=f"Test names to run (Default: {default_test_name})")
     options = parser.parse_args()
     sys.argv = [sys.argv[0]]
 

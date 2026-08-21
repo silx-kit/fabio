@@ -77,7 +77,7 @@ class PnmImage(FabioImage):
 
         line = f.readline().strip()
         if line not in SUBFORMATS:
-            raise OSError("unknown subformat of pnm: %s" % line)
+            raise OSError(f"unknown subformat of pnm: {line}")
         else:
             self.header[b"SUBFORMAT"] = line
 
@@ -89,7 +89,7 @@ class PnmImage(FabioImage):
                     line = f.readline()
                 s = line.lsplit(" ", 1)
                 if s[0] not in P7HEADERITEMS:
-                    raise OSError("Illegal pam (netpnm p7) headeritem %s" % s[0])
+                    raise OSError(f"Illegal pam (netpnm p7) headeritem {s[0]}")
                 self.header[s[0]] = s[1]
         else:
             values = list(line.split())
@@ -133,12 +133,12 @@ class PnmImage(FabioImage):
 
         # read the image data
         fmt = str(self.header[b"SUBFORMAT"], encoding="latin-1")
-        decoder_name = "%sdec" % fmt
+        decoder_name = f"{fmt}dec"
         if decoder_name in dir(PnmImage):
             decoder = getattr(PnmImage, decoder_name)
             self.data = decoder(self, infile, self._dtype)
         else:
-            raise OSError("No decoder named %s for file %s" % (decoder_name, fname))
+            raise OSError(f"No decoder named {decoder_name} for file {fname}")
         self.resetvals()
         return self
 

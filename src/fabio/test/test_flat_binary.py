@@ -75,7 +75,7 @@ class TestFlatBinary(unittest.TestCase):
                 if im.data.tobytes() == b"\x00" * (2048 * 2048 * 2 + 8192):
                     nfail += 1
                 else:
-                    logger.info("**** Passed: %s" % filename)
+                    logger.info("**** Passed: %s", filename)
 
         self.assertEqual(
             nfail, 0, f"{nfail} failures out of {len(self.filenames)}"

@@ -50,9 +50,9 @@ class Test1(unittest.TestCase):
         for ext in ["", ".bz2", ".gz"]:
             name = self.name + ext
             obj = openheader(name)
-            logger.debug(" %s obj = %s" % (name, obj.header))
+            logger.debug(" %s obj = %s", name, obj.header)
             self.assertEqual(
-                obj.header["title"], "ESPIA FRELON Image", "Error on file %s" % name
+                obj.header["title"], "ESPIA FRELON Image", f"Error on file {name}"
             )
 
 

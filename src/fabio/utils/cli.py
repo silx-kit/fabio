@@ -153,12 +153,10 @@ class ProgressBar:
         bar_position = min(bar_position, self.bar_width)
 
         # line to display
-        line = "\r%15s [%s%s] % 3d%%  %s" % (
-            self.title,
-            self.progress_char * bar_position,
-            " " * (self.bar_width - bar_position),
-            percent,
-            message,
+        line = (
+            f"\r{self.title:>15} "
+            f"[{self.progress_char * bar_position}{' ' * (self.bar_width - bar_position)}]"
+            f" {percent: 3d}%  {message}"
         )
 
         # trailing to mask the previous message

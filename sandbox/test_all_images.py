@@ -63,7 +63,7 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             raise
         except Exception:
-            print("Problem with image %s" % im)
+            print(f"Problem with image {im}")
             continue
         times[im].append(time.perf_counter() - start)
         nt = 3
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         # Speed ratings in megabytes per second (for fabio)
         MB = len(the_file) / 1024.0 / 1024.0
         try:
-            print(("%.4f " * nt + " " * 7 * ns) % tuple(times[im]), "%8.3f" % (MB), im)
+            print(("%.4f " * nt + " " * 7 * ns) % tuple(times[im]), f"{MB:8.3f}", im)
         except Exception:
             print(times[im], MB, im)
             raise

@@ -308,7 +308,7 @@ class GeImage(FabioImage):
         The thing to be printed for the user to represent a frame inside
         a file.
         """
-        self.filename = "%s$%04d" % (self.sequencefilename, self.currentframe)
+        self.filename = f"{self.sequencefilename}${self.currentframe:04d}"
 
     def _readframe(self, filepointer, img_num):
         """
@@ -338,7 +338,7 @@ class GeImage(FabioImage):
 
         datatype = self.BITDEPTH_TO_DATATYPES.get(bitdepth, None)
         if datatype is None:
-            raise OSError("Data depth format %sbits is not supported" % bitdepth)
+            raise OSError(f"Data depth format {bitdepth}bits is not supported")
 
         raw = filepointer.read(imglength)
         data = numpy.frombuffer(raw, self.get_stype(datatype, "little")).copy()

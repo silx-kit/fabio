@@ -129,7 +129,7 @@ class TestFilenameObjects(unittest.TestCase):
         self.nframes = 5
         self.tempdir = tempfile.mkdtemp()
         self.fnames = [
-            os.path.join(self.tempdir, "FNO%04d.edf" % iframe)
+            os.path.join(self.tempdir, f"FNO{iframe:04d}.edf")
             for iframe in range(self.nframes)
         ]
         data = numpy.zeros(self.datashape, numpy.uint16)
